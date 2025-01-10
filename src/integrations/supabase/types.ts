@@ -66,13 +66,6 @@ export type Database = {
             referencedRelation: "youtube_videos"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "video_comments_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          }
         ]
       }
       youtube_channels: {

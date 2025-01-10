@@ -3,6 +3,7 @@ import { VideoCard } from "./VideoCard";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "./ui/use-toast";
 import { useEffect, useState } from "react";
+import { VideoGridHeader } from "./video/VideoGridHeader";
 
 export const VideoGrid = () => {
   const [session, setSession] = useState(null);
@@ -52,7 +53,6 @@ export const VideoGrid = () => {
       });
 
       try {
-        // First, fetch new videos from YouTube
         const { error: fetchError, data: fetchData } = await supabase.functions.invoke("fetch-youtube-videos", {
           body: { channels: channels.map(c => c.channel_id) }
         });
@@ -69,17 +69,10 @@ export const VideoGrid = () => {
 
         console.log("Edge function response:", fetchData);
 
-        let query = supabase
+        const { data, error } = await supabase
           .from("youtube_videos")
-          .select("*");
-
-        if (session?.user) {
-          query = query.order("uploaded_at", { ascending: false });
-        } else {
-          query = query.order("uploaded_at", { ascending: false });
-        }
-
-        const { data, error } = await query;
+          .select("*")
+          .order("uploaded_at", { ascending: false });
 
         if (error) {
           console.error("Error fetching videos:", error);
@@ -119,35 +112,15 @@ export const VideoGrid = () => {
 
   const isLoading = isLoadingChannels || isLoadingVideos;
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[200px]">
-        <p className="text-muted-foreground">Loading videos...</p>
-      </div>
-    );
-  }
-
-  if (!channels?.length) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[200px] gap-2">
-        <p className="text-muted-foreground">No channels added yet</p>
-        <p className="text-sm text-muted-foreground">
-          Add your first channel in the dashboard
-        </p>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-4">
-      {!videos?.length ? (
-        <div className="flex flex-col items-center justify-center min-h-[200px] gap-2">
-          <p className="text-muted-foreground">No videos found</p>
-          <p className="text-sm text-muted-foreground">
-            Videos will appear here once they are fetched from your channels
-          </p>
-        </div>
-      ) : (
+      <VideoGridHeader 
+        isLoading={isLoading}
+        hasChannels={!!channels?.length}
+        hasVideos={!!videos?.length}
+      />
+      
+      {videos?.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-4">
           {videos.map((video) => (
             <VideoCard key={video.id} {...video} />
