@@ -10,7 +10,7 @@ import { ChannelList } from "@/components/youtube/ChannelList";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 export const YouTubeChannelsSection = () => {
-  const [showAddForm, setShowAddForm] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const { toast } = useToast();
 
@@ -74,7 +74,7 @@ export const YouTubeChannelsSection = () => {
 
   const handleSuccess = async () => {
     await refetch();
-    setShowAddForm(false);
+    setIsDialogOpen(false);
     toast({
       title: "Success",
       description: "Channel added successfully",
@@ -82,30 +82,28 @@ export const YouTubeChannelsSection = () => {
   };
 
   return (
-    <>
-      <div className="bg-white rounded-lg shadow">
-        <div className="p-4 border-b flex items-center justify-between">
-          <h2 className="text-lg font-semibold">YouTube Channels</h2>
-          <div className="flex items-center gap-4">
-            <ChannelSearch value={searchQuery} onChange={setSearchQuery} />
-            <Dialog open={showAddForm} onOpenChange={setShowAddForm}>
-              <DialogTrigger asChild>
-                <Button className="flex items-center gap-2">
-                  <Plus className="h-4 w-4" />
-                  Add Channel
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <AddChannelForm
-                  onClose={() => setShowAddForm(false)}
-                  onSuccess={handleSuccess}
-                />
-              </DialogContent>
-            </Dialog>
-          </div>
+    <div className="bg-white rounded-lg shadow">
+      <div className="p-4 border-b flex items-center justify-between">
+        <h2 className="text-lg font-semibold">YouTube Channels</h2>
+        <div className="flex items-center gap-4">
+          <ChannelSearch value={searchQuery} onChange={setSearchQuery} />
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button variant="default" size="default">
+                <Plus className="h-4 w-4 mr-2" />
+                Add Channel
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <AddChannelForm
+                onClose={() => setIsDialogOpen(false)}
+                onSuccess={handleSuccess}
+              />
+            </DialogContent>
+          </Dialog>
         </div>
-        <ChannelList channels={channels || []} onRemoveChannel={handleRemoveChannel} />
       </div>
-    </>
+      <ChannelList channels={channels || []} onRemoveChannel={handleRemoveChannel} />
+    </div>
   );
 };
