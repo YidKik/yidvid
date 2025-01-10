@@ -20,63 +20,64 @@ serve(async (req) => {
 
     console.log('Starting to fetch videos...');
 
-    // Get channels from the database
-    const { data: channels, error: channelsError } = await supabaseClient
-      .from('youtube_channels')
-      .select('channel_id');
-
-    if (channelsError) {
-      console.error('Error fetching channels:', channelsError);
-      throw channelsError;
-    }
-
-    if (!channels?.length) {
-      console.log('No channels found');
-      return new Response(
-        JSON.stringify({ message: 'No channels found' }),
-        { 
-          headers: { 
-            ...corsHeaders,
-            'Content-Type': 'application/json',
-          },
-          status: 200 
-        }
-      );
+    // Get request body
+    const { channels } = await req.json();
+    
+    if (!channels || !Array.isArray(channels)) {
+      throw new Error('No channels provided or invalid format');
     }
 
     console.log('Fetching videos for channels:', channels);
 
+    const apiKey = Deno.env.get('YOUTUBE_API_KEY');
+    if (!apiKey) {
+      throw new Error('YouTube API key not configured');
+    }
+
     // Fetch videos for each channel
-    const videoPromises = channels.map(async (channel) => {
-      const apiKey = Deno.env.get('YOUTUBE_API_KEY');
-      if (!apiKey) {
-        throw new Error('YouTube API key not configured');
-      }
+    const videoPromises = channels.map(async (channelId) => {
+      console.log(`Fetching videos for channel ${channelId}`);
 
-      console.log(`Fetching videos for channel ${channel.channel_id}`);
+      try {
+        const response = await fetch(
+          `https://www.googleapis.com/youtube/v3/search?` +
+          `part=snippet&channelId=${channelId}&maxResults=50&order=date&type=video&key=${apiKey}`
+        );
 
-      const response = await fetch(
-        `https://www.googleapis.com/youtube/v3/search?` +
-        `part=snippet&channelId=${channel.channel_id}&maxResults=50&order=date&type=video&key=${apiKey}`
-      );
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error(`Error fetching videos for channel ${channelId}:`, errorText);
+          return [];
+        }
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error(`Error fetching videos for channel ${channel.channel_id}:`, errorText);
+        const data = await response.json();
+        console.log(`Received ${data.items?.length || 0} videos for channel ${channelId}`);
+        
+        // Get video statistics in batches
+        const videoIds = data.items.map((item: any) => item.id.videoId).join(',');
+        const statsResponse = await fetch(
+          `https://www.googleapis.com/youtube/v3/videos?` +
+          `part=statistics&id=${videoIds}&key=${apiKey}`
+        );
+        
+        const statsData = await statsResponse.json();
+        const statsMap = new Map(
+          statsData.items.map((item: any) => [item.id, item.statistics])
+        );
+
+        return data.items.map((item: any) => ({
+          video_id: item.id.videoId,
+          title: item.snippet.title,
+          thumbnail: item.snippet.thumbnails.high.url,
+          channel_id: channelId,
+          channel_name: item.snippet.channelTitle,
+          uploaded_at: item.snippet.publishedAt,
+          views: parseInt(statsMap.get(item.id.videoId)?.viewCount || '0'),
+        }));
+      } catch (error) {
+        console.error(`Error processing channel ${channelId}:`, error);
         return [];
       }
-
-      const data = await response.json();
-      console.log(`Received ${data.items?.length || 0} videos for channel ${channel.channel_id}`);
-      
-      return data.items.map((item: any) => ({
-        video_id: item.id.videoId,
-        title: item.snippet.title,
-        thumbnail: item.snippet.thumbnails.high.url,
-        channel_id: channel.channel_id,
-        channel_name: item.snippet.channelTitle,
-        uploaded_at: item.snippet.publishedAt,
-      }));
     });
 
     const videos = (await Promise.all(videoPromises)).flat();
@@ -88,7 +89,7 @@ serve(async (req) => {
         .from('youtube_videos')
         .upsert(video, { 
           onConflict: 'video_id',
-          ignoreDuplicates: true 
+          ignoreDuplicates: false // Set to false to update existing records
         });
 
       if (upsertError) {
