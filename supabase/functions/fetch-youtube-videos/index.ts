@@ -7,6 +7,7 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -16,6 +17,8 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
+
+    console.log('Starting to fetch videos...');
 
     // Get channels from the database
     const { data: channels, error: channelsError } = await supabaseClient
@@ -28,6 +31,7 @@ serve(async (req) => {
     }
 
     if (!channels?.length) {
+      console.log('No channels found');
       return new Response(
         JSON.stringify({ message: 'No channels found' }),
         { 
@@ -65,7 +69,6 @@ serve(async (req) => {
       const data = await response.json();
       console.log(`Received ${data.items?.length || 0} videos for channel ${channel.channel_id}`);
       
-      // Map YouTube API response to our database schema
       return data.items.map((item: any) => ({
         video_id: item.id.videoId,
         title: item.snippet.title,
@@ -93,7 +96,7 @@ serve(async (req) => {
       }
     }
 
-    // Return success response
+    // Return success response with CORS headers
     return new Response(
       JSON.stringify({ success: true, count: videos.length }),
       { 
@@ -104,7 +107,7 @@ serve(async (req) => {
       },
     );
   } catch (error) {
-    console.error('Error:', error);
+    console.error('Error in edge function:', error);
     return new Response(
       JSON.stringify({ error: error.message }),
       { 
