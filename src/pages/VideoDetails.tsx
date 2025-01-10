@@ -58,12 +58,17 @@ const VideoDetails = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("video_comments")
-        .select("*, profiles(email)")
+        .select(`
+          *,
+          profiles:user_id (
+            email
+          )
+        `)
         .eq("video_id", id)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data;
+      return data as Comment[];
     },
   });
 
