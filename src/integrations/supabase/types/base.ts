@@ -1,3 +1,8 @@
+import { ProfilesTable } from './profiles';
+import { VideoCommentsTable } from './video-comments';
+import { YoutubeChannelsTable } from './youtube-channels';
+import { YoutubeVideosTable } from './youtube-videos';
+
 export type Json =
   | string
   | number
