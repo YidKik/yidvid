@@ -1,5 +1,7 @@
 import { Search } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 export const Header = () => {
   return (
@@ -17,6 +19,11 @@ export const Header = () => {
             />
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary h-4 w-4" />
           </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" asChild>
+            <Link to="/dashboard">Dashboard</Link>
+          </Button>
         </div>
       </div>
     </header>
