@@ -4,7 +4,7 @@ import { X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { AddChannelFields } from "@/components/youtube/AddChannelFields";
 
 interface AddChannelFormProps {
@@ -70,8 +70,8 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
         description: "The YouTube channel has been added to your dashboard.",
       });
       onSuccess();
-      onClose();
     } catch (error: any) {
+      console.error("Error adding channel:", error);
       toast({
         title: "Error adding channel",
         description: error.message,

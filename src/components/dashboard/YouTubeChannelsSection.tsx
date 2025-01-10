@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { AddChannelForm } from "@/components/AddChannelForm";
 import { ChannelSearch } from "@/components/youtube/ChannelSearch";
 import { ChannelList } from "@/components/youtube/ChannelList";
@@ -28,6 +28,7 @@ export const YouTubeChannelsSection = () => {
       const { data, error } = await query;
 
       if (error) {
+        console.error("Error fetching channels:", error);
         toast({
           title: "Error fetching channels",
           description: error.message,
@@ -78,8 +79,8 @@ export const YouTubeChannelsSection = () => {
     setShowAddForm(false);
   };
 
-  const handleSuccess = () => {
-    refetch();
+  const handleSuccess = async () => {
+    await refetch();
     setShowAddForm(false);
     toast({
       title: "Success",
@@ -94,8 +95,8 @@ export const YouTubeChannelsSection = () => {
           <h2 className="text-lg font-semibold">YouTube Channels</h2>
           <div className="flex items-center gap-4">
             <ChannelSearch value={searchQuery} onChange={setSearchQuery} />
-            <Button onClick={handleAddChannel}>
-              <Plus className="h-4 w-4 mr-2" />
+            <Button onClick={handleAddChannel} className="flex items-center gap-2">
+              <Plus className="h-4 w-4" />
               Add Channel
             </Button>
           </div>
