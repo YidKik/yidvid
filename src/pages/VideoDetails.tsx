@@ -69,10 +69,11 @@ const VideoDetails = () => {
   });
 
   const handleSubmitComment = async (content: string) => {
-    if (!content.trim()) {
+    const session = await supabase.auth.getSession();
+    if (!session.data.session) {
       toast({
         title: "Error",
-        description: "Please enter a comment",
+        description: "You must be logged in to comment",
         variant: "destructive",
       });
       return;
@@ -81,24 +82,15 @@ const VideoDetails = () => {
     const { error } = await supabase.from("video_comments").insert({
       video_id: id,
       content,
-      user_id: (await supabase.auth.getUser()).data.user?.id,
+      user_id: session.data.session.user.id,
     });
 
     if (error) {
       console.error("Error submitting comment:", error);
-      toast({
-        title: "Error",
-        description: "Failed to submit comment. Please try again.",
-        variant: "destructive",
-      });
-      return;
+      throw error;
     }
 
-    refetchComments();
-    toast({
-      title: "Success",
-      description: "Comment posted successfully",
-    });
+    await refetchComments();
   };
 
   if (isLoadingVideo) {
