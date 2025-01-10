@@ -67,20 +67,28 @@ export const Header = () => {
                     <Settings className="h-5 w-5" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>Settings</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>
-                    <Link to="/dashboard">Dashboard</Link>
+                <DropdownMenuContent 
+                  className="w-56 bg-[#1A1F2C] text-white border border-gray-700"
+                  align="end"
+                >
+                  <DropdownMenuLabel className="font-normal">
+                    Settings
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator className="bg-gray-700" />
+                  <DropdownMenuItem className="focus:bg-gray-700 cursor-pointer">
+                    <Link to="/dashboard" className="w-full">Dashboard</Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
+                  <DropdownMenuItem className="focus:bg-gray-700 cursor-pointer">
                     Profile Settings
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
+                  <DropdownMenuItem className="focus:bg-gray-700 cursor-pointer">
                     Notification Preferences
                   </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleSignOut}>
+                  <DropdownMenuSeparator className="bg-gray-700" />
+                  <DropdownMenuItem 
+                    onClick={handleSignOut}
+                    className="focus:bg-gray-700 cursor-pointer text-red-400"
+                  >
                     Sign Out
                   </DropdownMenuItem>
                 </DropdownMenuContent>
