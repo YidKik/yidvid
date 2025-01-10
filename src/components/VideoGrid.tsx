@@ -11,7 +11,12 @@ export const VideoGrid = () => {
         .select("*")
         .order("created_at", { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching channels:", error);
+        throw error;
+      }
+      
+      console.log("Fetched channels:", data);
       return data;
     },
   });
@@ -24,14 +29,17 @@ export const VideoGrid = () => {
         .select("*")
         .order("uploaded_at", { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching videos:", error);
+        throw error;
+      }
+
+      console.log("Fetched videos:", data);
       return data.map((video: any) => ({
         ...video,
-        views: Math.floor(Math.random() * 100000), // YouTube API v3 doesn't provide view counts in search results
         uploadedAt: new Date(video.uploaded_at),
       }));
     },
-    enabled: !!channels?.length,
   });
 
   const isLoading = isLoadingChannels || isLoadingVideos;
