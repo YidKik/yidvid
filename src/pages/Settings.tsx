@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
 import { BackButton } from "@/components/navigation/BackButton";
 import { ChannelSubscriptions } from "@/components/youtube/ChannelSubscriptions";
+import { VideoHistorySection } from "@/components/dashboard/VideoHistorySection";
 import {
   Table,
   TableBody,
@@ -130,6 +131,13 @@ const Settings = () => {
         <BackButton />
         <h1 className="text-3xl font-bold mb-8">Settings</h1>
         
+        {/* Watch History Section */}
+        <section className="mb-12">
+          <Card className="p-6">
+            {userId && <VideoHistorySection />}
+          </Card>
+        </section>
+
         {/* Account Information */}
         <section className="mb-12">
           <Card className="p-6">
