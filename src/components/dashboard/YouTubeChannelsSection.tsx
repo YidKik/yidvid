@@ -10,7 +10,8 @@ import { ChannelList } from "@/components/youtube/ChannelList";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 export const YouTubeChannelsSection = () => {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isPrimaryDialogOpen, setIsPrimaryDialogOpen] = useState(false);
+  const [isSecondaryDialogOpen, setIsSecondaryDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const { toast } = useToast();
 
@@ -72,9 +73,18 @@ export const YouTubeChannelsSection = () => {
     }
   };
 
-  const handleSuccess = async () => {
+  const handlePrimarySuccess = async () => {
     await refetch();
-    setIsDialogOpen(false);
+    setIsPrimaryDialogOpen(false);
+    toast({
+      title: "Success",
+      description: "Channel added successfully",
+    });
+  };
+
+  const handleSecondarySuccess = async () => {
+    await refetch();
+    setIsSecondaryDialogOpen(false);
     toast({
       title: "Success",
       description: "Channel added successfully",
@@ -88,11 +98,10 @@ export const YouTubeChannelsSection = () => {
         <div className="flex items-center gap-4">
           <ChannelSearch value={searchQuery} onChange={setSearchQuery} />
           
-          {/* First Add Channel Button */}
-          <Dialog modal open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          {/* Primary Add Channel Button */}
+          <Dialog open={isPrimaryDialogOpen} onOpenChange={setIsPrimaryDialogOpen}>
             <DialogTrigger asChild>
               <Button
-                onClick={() => setIsDialogOpen(true)}
                 className="bg-primary hover:bg-primary/90 text-white cursor-pointer"
               >
                 <Plus className="h-4 w-4 mr-2" />
@@ -101,17 +110,16 @@ export const YouTubeChannelsSection = () => {
             </DialogTrigger>
             <DialogContent>
               <AddChannelForm
-                onClose={() => setIsDialogOpen(false)}
-                onSuccess={handleSuccess}
+                onClose={() => setIsPrimaryDialogOpen(false)}
+                onSuccess={handlePrimarySuccess}
               />
             </DialogContent>
           </Dialog>
           
-          {/* Second Add Channel Button - Alternative Style */}
-          <Dialog modal open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          {/* Secondary Add Channel Button */}
+          <Dialog open={isSecondaryDialogOpen} onOpenChange={setIsSecondaryDialogOpen}>
             <DialogTrigger asChild>
               <Button
-                onClick={() => setIsDialogOpen(true)}
                 variant="secondary"
                 className="cursor-pointer"
               >
@@ -121,8 +129,8 @@ export const YouTubeChannelsSection = () => {
             </DialogTrigger>
             <DialogContent>
               <AddChannelForm
-                onClose={() => setIsDialogOpen(false)}
-                onSuccess={handleSuccess}
+                onClose={() => setIsSecondaryDialogOpen(false)}
+                onSuccess={handleSecondarySuccess}
               />
             </DialogContent>
           </Dialog>
