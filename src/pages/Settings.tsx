@@ -10,6 +10,14 @@ import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
 import { BackButton } from "@/components/navigation/BackButton";
 import { ChannelSubscriptions } from "@/components/youtube/ChannelSubscriptions";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 const Settings = () => {
   const navigate = useNavigate();
