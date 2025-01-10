@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "./ui/use-toast";
 import { useEffect, useState } from "react";
 import { VideoGridHeader } from "./video/VideoGridHeader";
+import { FeaturedVideos } from "./video/FeaturedVideos";
 
 export const VideoGrid = () => {
   const [session, setSession] = useState(null);
@@ -22,7 +23,6 @@ export const VideoGrid = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  // Fetch user's video interactions
   const { data: userInteractions } = useQuery({
     queryKey: ["user-interactions"],
     queryFn: async () => {
@@ -134,7 +134,6 @@ export const VideoGrid = () => {
     enabled: !!channels?.length,
   });
 
-  // Track video views
   const handleVideoView = async (videoId: string) => {
     if (!session?.user) return;
 
@@ -171,13 +170,23 @@ export const VideoGrid = () => {
       />
       
       {videos?.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-4">
-          {videos.map((video) => (
-            <div key={video.id} onClick={() => handleVideoView(video.id)}>
-              <VideoCard {...video} />
+        <>
+          <FeaturedVideos 
+            videos={videos} 
+            onVideoClick={handleVideoView}
+          />
+          
+          <div className="w-full max-w-[1800px] mx-auto">
+            <h2 className="text-xl font-semibold px-4 mb-4">All Videos</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-4">
+              {videos.slice(2).map((video) => (
+                <div key={video.id} onClick={() => handleVideoView(video.id)}>
+                  <VideoCard {...video} />
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          </div>
+        </>
       )}
     </div>
   );
