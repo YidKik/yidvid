@@ -83,12 +83,17 @@ export const Header = () => {
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary h-4 w-4" />
               </div>
             </PopoverTrigger>
-            <PopoverContent className="w-[500px] p-0" align="start">
-              <Command>
-                <CommandList>
-                  <CommandEmpty>No results found.</CommandEmpty>
+            <PopoverContent 
+              className="w-[500px] p-0 bg-white border border-gray-200 shadow-lg" 
+              align="start"
+            >
+              <Command className="bg-white rounded-lg">
+                <CommandList className="max-h-[300px] overflow-y-auto">
+                  <CommandEmpty className="py-6 text-sm text-gray-500">
+                    No results found.
+                  </CommandEmpty>
                   {searchResults.channels.length > 0 && (
-                    <CommandGroup heading="Channels">
+                    <CommandGroup heading="Channels" className="px-2">
                       {searchResults.channels.map((channel) => (
                         <CommandItem
                           key={channel.channel_id}
@@ -96,20 +101,21 @@ export const Header = () => {
                             setOpen(false);
                             setSearchQuery("");
                           }}
+                          className="flex items-center px-4 py-2 hover:bg-gray-100 rounded-md cursor-pointer"
                         >
                           <Link
                             to={`/channel/${channel.channel_id}`}
                             className="flex items-center gap-2 w-full"
                           >
-                            <Search className="h-4 w-4" />
-                            <span>{channel.title}</span>
+                            <Search className="h-4 w-4 text-gray-500" />
+                            <span className="text-gray-900 font-medium">{channel.title}</span>
                           </Link>
                         </CommandItem>
                       ))}
                     </CommandGroup>
                   )}
                   {searchResults.videos.length > 0 && (
-                    <CommandGroup heading="Videos">
+                    <CommandGroup heading="Videos" className="px-2">
                       {searchResults.videos.map((video) => (
                         <CommandItem
                           key={video.id}
@@ -117,15 +123,16 @@ export const Header = () => {
                             setOpen(false);
                             setSearchQuery("");
                           }}
+                          className="flex items-center px-4 py-2 hover:bg-gray-100 rounded-md cursor-pointer"
                         >
                           <Link
                             to={`/video/${video.id}`}
                             className="flex items-center gap-2 w-full"
                           >
-                            <Search className="h-4 w-4" />
+                            <Search className="h-4 w-4 text-gray-500" />
                             <div className="flex flex-col">
-                              <span>{video.title}</span>
-                              <span className="text-sm text-muted-foreground">
+                              <span className="text-gray-900 font-medium">{video.title}</span>
+                              <span className="text-sm text-gray-500">
                                 {video.channel_name}
                               </span>
                             </div>
