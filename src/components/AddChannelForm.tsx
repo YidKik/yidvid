@@ -29,16 +29,31 @@ interface FormValues {
 export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
-  const form = useForm<FormValues>();
+  const form = useForm<FormValues>({
+    defaultValues: {
+      channelId: "",
+      title: "",
+      description: "",
+    },
+  });
 
   const onSubmit = async (values: FormValues) => {
+    if (!values.channelId.trim() || !values.title.trim()) {
+      toast({
+        title: "Validation Error",
+        description: "Channel ID and Title are required.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       // First check if the channel already exists
       const { data: existingChannel } = await supabase
         .from("youtube_channels")
         .select("channel_id")
-        .eq("channel_id", values.channelId)
+        .eq("channel_id", values.channelId.trim())
         .maybeSingle();
 
       if (existingChannel) {
@@ -52,9 +67,9 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
 
       // If channel doesn't exist, proceed with insertion
       const { error } = await supabase.from("youtube_channels").insert({
-        channel_id: values.channelId,
-        title: values.title,
-        description: values.description,
+        channel_id: values.channelId.trim(),
+        title: values.title.trim(),
+        description: values.description?.trim() || null,
       });
 
       if (error) throw error;

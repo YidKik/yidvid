@@ -23,13 +23,13 @@ export const YouTubeChannelsSection = () => {
   const { data: channels, refetch } = useQuery({
     queryKey: ["youtube-channels", searchQuery],
     queryFn: async () => {
-      const query = supabase
+      let query = supabase
         .from("youtube_channels")
         .select("*")
         .order("created_at", { ascending: false });
 
-      if (searchQuery) {
-        query.ilike("title", `%${searchQuery}%`);
+      if (searchQuery.trim()) {
+        query = query.ilike("title", `%${searchQuery.trim()}%`);
       }
 
       const { data, error } = await query;
@@ -43,7 +43,7 @@ export const YouTubeChannelsSection = () => {
         return [];
       }
 
-      return data;
+      return data || [];
     },
   });
 
@@ -152,8 +152,8 @@ export const YouTubeChannelsSection = () => {
         <AddChannelForm
           onClose={() => setShowAddForm(false)}
           onSuccess={() => {
-            setShowAddForm(false);
             refetch();
+            setShowAddForm(false);
           }}
         />
       )}
