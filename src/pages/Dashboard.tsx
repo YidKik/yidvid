@@ -161,17 +161,11 @@ const Dashboard = () => {
       <BackButton />
       <DashboardAnalytics />
       
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Admin Dashboard</h1>
-        <Button onClick={() => setShowAddForm(true)}>
-          <Plus className="mr-2" />
-          Add Channel
-        </Button>
-      </div>
+      <h1 className="text-2xl font-bold">Admin Dashboard</h1>
 
       {/* Users Management Section */}
       <div className="bg-white rounded-lg shadow mb-8">
-        <div className="p-4 border-b">
+        <div className="p-4 border-b flex items-center justify-between">
           <h2 className="text-lg font-semibold">User Management</h2>
         </div>
         <Table>
@@ -212,29 +206,26 @@ const Dashboard = () => {
         </Table>
       </div>
 
-      <div className="flex w-full max-w-sm items-center space-x-2">
-        <Search className="w-4 h-4 text-muted-foreground" />
-        <Input
-          type="search"
-          placeholder="Search channels..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
-      </div>
-
-      {showAddForm && (
-        <AddChannelForm
-          onClose={() => setShowAddForm(false)}
-          onSuccess={() => {
-            setShowAddForm(false);
-            refetch();
-          }}
-        />
-      )}
-
+      {/* YouTube Channels Section */}
       <div className="bg-white rounded-lg shadow">
-        <div className="p-4 border-b">
+        <div className="p-4 border-b flex items-center justify-between">
           <h2 className="text-lg font-semibold">YouTube Channels</h2>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <Search className="w-4 h-4 text-muted-foreground" />
+              <Input
+                type="search"
+                placeholder="Search channels..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-64"
+              />
+            </div>
+            <Button onClick={() => setShowAddForm(true)}>
+              <Plus className="mr-2" />
+              Add Channel
+            </Button>
+          </div>
         </div>
         <Table>
           <TableHeader>
@@ -284,6 +275,16 @@ const Dashboard = () => {
           </TableBody>
         </Table>
       </div>
+
+      {showAddForm && (
+        <AddChannelForm
+          onClose={() => setShowAddForm(false)}
+          onSuccess={() => {
+            setShowAddForm(false);
+            refetch();
+          }}
+        />
+      )}
     </div>
   );
 };
