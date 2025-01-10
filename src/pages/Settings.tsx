@@ -10,7 +10,7 @@ import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
 import { BackButton } from "@/components/navigation/BackButton";
 import { ChannelSubscriptions } from "@/components/youtube/ChannelSubscriptions";
-import { VideoHistorySection } from "@/components/dashboard/VideoHistorySection";
+import { VideoHistorySection } from "@/components/history/VideoHistorySection";
 import {
   Table,
   TableBody,
