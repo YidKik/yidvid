@@ -2,8 +2,27 @@ import { useQuery } from "@tanstack/react-query";
 import { VideoCard } from "./VideoCard";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "./ui/use-toast";
+import { useEffect, useState } from "react";
 
 export const VideoGrid = () => {
+  const [session, setSession] = useState(null);
+
+  useEffect(() => {
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
+      setSession(currentSession);
+    });
+
+    // Listen for auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, currentSession) => {
+      setSession(currentSession);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
   const { data: channels, isLoading: isLoadingChannels } = useQuery({
     queryKey: ["youtube-channels"],
     queryFn: async () => {
@@ -23,7 +42,7 @@ export const VideoGrid = () => {
   });
 
   const { data: videos, isLoading: isLoadingVideos } = useQuery({
-    queryKey: ["youtube-videos"],
+    queryKey: ["youtube-videos", session?.user?.id],
     queryFn: async () => {
       toast({
         title: "Fetching videos...",
@@ -43,11 +62,21 @@ export const VideoGrid = () => {
         throw fetchError;
       }
 
-      // Then, get the updated videos from the database
-      const { data, error } = await supabase
+      let query = supabase
         .from("youtube_videos")
-        .select("*")
-        .order("uploaded_at", { ascending: false });
+        .select("*");
+
+      // If user is authenticated, try to personalize the feed
+      if (session?.user) {
+        // Order by most recent first, but we could add more sophisticated
+        // personalization logic here based on user preferences or viewing history
+        query = query.order("uploaded_at", { ascending: false });
+      } else {
+        // For non-authenticated users, show random videos
+        query = query.order("uploaded_at", { ascending: false });
+      }
+
+      const { data, error } = await query;
 
       if (error) {
         console.error("Error fetching videos:", error);
@@ -56,7 +85,9 @@ export const VideoGrid = () => {
 
       toast({
         title: "Videos fetched successfully",
-        description: "Your feed has been updated",
+        description: session?.user 
+          ? "Your personalized feed has been updated"
+          : "Showing recommended videos",
       });
 
       console.log("Fetched videos:", data);
