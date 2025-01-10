@@ -53,6 +53,7 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
           description: "This YouTube channel has already been added to your dashboard.",
           variant: "destructive",
         });
+        setIsSubmitting(false);
         return;
       }
 

@@ -70,6 +70,23 @@ export const YouTubeChannelsSection = () => {
     }
   };
 
+  const handleAddChannel = () => {
+    setShowAddForm(true);
+  };
+
+  const handleCloseForm = () => {
+    setShowAddForm(false);
+  };
+
+  const handleSuccess = () => {
+    refetch();
+    setShowAddForm(false);
+    toast({
+      title: "Success",
+      description: "Channel added successfully",
+    });
+  };
+
   return (
     <>
       <div className="bg-white rounded-lg shadow">
@@ -77,7 +94,7 @@ export const YouTubeChannelsSection = () => {
           <h2 className="text-lg font-semibold">YouTube Channels</h2>
           <div className="flex items-center gap-4">
             <ChannelSearch value={searchQuery} onChange={setSearchQuery} />
-            <Button onClick={() => setShowAddForm(true)}>
+            <Button onClick={handleAddChannel}>
               <Plus className="h-4 w-4 mr-2" />
               Add Channel
             </Button>
@@ -88,11 +105,8 @@ export const YouTubeChannelsSection = () => {
 
       {showAddForm && (
         <AddChannelForm
-          onClose={() => setShowAddForm(false)}
-          onSuccess={() => {
-            refetch();
-            setShowAddForm(false);
-          }}
+          onClose={handleCloseForm}
+          onSuccess={handleSuccess}
         />
       )}
     </>
