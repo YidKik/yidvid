@@ -54,10 +54,21 @@ export const Header = () => {
       });
     };
 
-    // Reduced debounce delay from 300ms to 150ms for faster search
     const debounceTimeout = setTimeout(searchContent, 150);
     return () => clearTimeout(debounceTimeout);
   }, [searchQuery]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+    if (!open) setOpen(true);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === " " && !searchQuery) {
+      e.preventDefault();
+    }
+  };
 
   return (
     <header className="fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-200 z-50 px-4">
@@ -75,10 +86,8 @@ export const Header = () => {
                   type="search"
                   placeholder="Search videos..."
                   value={searchQuery}
-                  onChange={(e) => {
-                    setSearchQuery(e.target.value);
-                    if (!open) setOpen(true);
-                  }}
+                  onChange={handleInputChange}
+                  onKeyDown={handleKeyDown}
                   className="w-full pl-10 bg-muted rounded-full focus:outline-none focus:ring-1 focus:ring-primary text-youtube-title"
                 />
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary h-4 w-4" />
