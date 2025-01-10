@@ -53,7 +53,7 @@ const VideoDetails = () => {
         .from("video_comments")
         .select(`
           *,
-          profiles:user_id (
+          profiles (
             email
           )
         `)
