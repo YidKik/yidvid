@@ -20,10 +20,32 @@ import { BackButton } from "@/components/navigation/BackButton";
 
 const Settings = () => {
   const navigate = useNavigate();
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(() => {
+    // Initialize dark mode state from localStorage or system preference
+    if (typeof window !== 'undefined') {
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme) {
+        return savedTheme === 'dark';
+      }
+      return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
+    return false;
+  });
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [autoplay, setAutoplay] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
+
+  // Effect to handle dark mode changes
+  useEffect(() => {
+    const root = window.document.documentElement;
+    if (darkMode) {
+      root.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      root.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  }, [darkMode]);
 
   const { data: profile } = useQuery({
     queryKey: ["user-profile"],
