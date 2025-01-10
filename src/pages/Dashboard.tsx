@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Plus, Youtube, Trash2 } from "lucide-react";
+import { Plus, Youtube, Trash2, Search } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -13,18 +14,53 @@ import {
 } from "@/components/ui/table";
 import { AddChannelForm } from "@/components/AddChannelForm";
 import { useToast } from "@/components/ui/use-toast";
+import { DashboardAnalytics } from "@/components/dashboard/DashboardAnalytics";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const [showAddForm, setShowAddForm] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const { toast } = useToast();
+  const navigate = useNavigate();
+
+  // Check if user is admin
+  const { data: profile } = useQuery({
+    queryKey: ["user-profile"],
+    queryFn: async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        navigate("/");
+        return null;
+      }
+
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", session.user.id)
+        .single();
+
+      if (error || !data?.is_admin) {
+        navigate("/");
+        return null;
+      }
+
+      return data;
+    },
+  });
 
   const { data: channels, refetch } = useQuery({
-    queryKey: ["youtube-channels"],
+    queryKey: ["youtube-channels", searchQuery],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const query = supabase
         .from("youtube_channels")
         .select("*")
         .order("created_at", { ascending: false });
+
+      if (searchQuery) {
+        query.ilike("title", `%${searchQuery}%`);
+      }
+
+      const { data, error } = await query;
 
       if (error) {
         toast({
@@ -41,7 +77,6 @@ const Dashboard = () => {
 
   const handleRemoveChannel = async (channelId: string) => {
     try {
-      // First, delete all videos associated with this channel
       const { error: videosError } = await supabase
         .from("youtube_videos")
         .delete()
@@ -49,7 +84,6 @@ const Dashboard = () => {
 
       if (videosError) throw videosError;
 
-      // Then delete the channel
       const { error: channelError } = await supabase
         .from("youtube_channels")
         .delete()
@@ -71,14 +105,30 @@ const Dashboard = () => {
     }
   };
 
+  if (!profile?.is_admin) {
+    return null;
+  }
+
   return (
-    <div className="container mx-auto py-8">
-      <div className="flex items-center justify-between mb-8">
+    <div className="container mx-auto py-8 space-y-8">
+      <DashboardAnalytics />
+      
+      <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">YouTube Channels Dashboard</h1>
         <Button onClick={() => setShowAddForm(true)}>
           <Plus className="mr-2" />
           Add Channel
         </Button>
+      </div>
+
+      <div className="flex w-full max-w-sm items-center space-x-2">
+        <Search className="w-4 h-4 text-muted-foreground" />
+        <Input
+          type="search"
+          placeholder="Search channels..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
       </div>
 
       {showAddForm && (
