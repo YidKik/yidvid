@@ -1,13 +1,11 @@
 import { formatDistanceToNow } from "date-fns";
+import { Database } from "@/integrations/supabase/types";
 
-interface Comment {
-  id: string;
-  content: string;
-  created_at: string;
+type Comment = Database["public"]["Tables"]["video_comments"]["Row"] & {
   profiles?: {
     email?: string;
-  };
-}
+  } | null;
+};
 
 interface CommentListProps {
   comments?: Comment[];
