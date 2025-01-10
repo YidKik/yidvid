@@ -88,7 +88,7 @@ export const Header = () => {
               align="start"
             >
               <Command className="bg-white rounded-lg">
-                <CommandList className="max-h-[300px] overflow-y-auto">
+                <CommandList className="max-h-[300px] overflow-y-auto scrollbar-hide">
                   <CommandEmpty className="py-6 text-sm text-gray-500">
                     No results found.
                   </CommandEmpty>
@@ -108,7 +108,7 @@ export const Header = () => {
                             className="flex items-center gap-2 w-full"
                           >
                             <Search className="h-4 w-4 text-gray-500" />
-                            <span className="text-gray-900 font-medium">{channel.title}</span>
+                            <span className="text-gray-900 font-medium hover:text-gray-700">{channel.title}</span>
                           </Link>
                         </CommandItem>
                       ))}
@@ -131,7 +131,7 @@ export const Header = () => {
                           >
                             <Search className="h-4 w-4 text-gray-500" />
                             <div className="flex flex-col">
-                              <span className="text-gray-900 font-medium">{video.title}</span>
+                              <span className="text-gray-900 font-medium hover:text-gray-700">{video.title}</span>
                               <span className="text-sm text-gray-500">
                                 {video.channel_name}
                               </span>
