@@ -90,12 +90,11 @@ export const YouTubeChannelsSection = () => {
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
                 <Button 
-                  type="button"
-                  onClick={() => setIsDialogOpen(true)}
+                  variant="default"
                   size="lg"
-                  className="bg-primary hover:bg-primary/90 text-white font-semibold px-8 py-6 text-lg shadow-lg hover:shadow-xl transition-all cursor-pointer"
+                  className="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-white font-semibold px-8 py-6 text-lg rounded-md shadow-lg hover:shadow-xl transition-all duration-200 ease-in-out transform hover:-translate-y-0.5 active:translate-y-0 active:shadow-md focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                 >
-                  <Plus className="h-6 w-6 mr-2" />
+                  <Plus className="h-6 w-6" />
                   Add Channel
                 </Button>
               </DialogTrigger>
