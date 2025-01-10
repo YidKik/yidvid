@@ -78,7 +78,7 @@ export const YouTubeChannelsSection = () => {
           <div className="flex items-center gap-4">
             <ChannelSearch value={searchQuery} onChange={setSearchQuery} />
             <Button onClick={() => setShowAddForm(true)}>
-              <Plus className="mr-2" />
+              <Plus className="h-4 w-4 mr-2" />
               Add Channel
             </Button>
           </div>
