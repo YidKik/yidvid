@@ -34,6 +34,23 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
   const onSubmit = async (values: FormValues) => {
     setIsSubmitting(true);
     try {
+      // First check if the channel already exists
+      const { data: existingChannel } = await supabase
+        .from("youtube_channels")
+        .select("channel_id")
+        .eq("channel_id", values.channelId)
+        .single();
+
+      if (existingChannel) {
+        toast({
+          title: "Channel already exists",
+          description: "This YouTube channel has already been added to your dashboard.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // If channel doesn't exist, proceed with insertion
       const { error } = await supabase.from("youtube_channels").insert({
         channel_id: values.channelId,
         title: values.title,
@@ -47,6 +64,7 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
         description: "The YouTube channel has been added to your dashboard.",
       });
       onSuccess();
+      onClose();
     } catch (error: any) {
       toast({
         title: "Error adding channel",
