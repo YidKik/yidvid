@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
 import { formatDistanceToNow } from "date-fns";
 import { VideoCard } from "@/components/VideoCard";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const VideoDetails = () => {
   const { id } = useParams();
@@ -15,14 +16,14 @@ const VideoDetails = () => {
   const { data: video, isLoading: isLoadingVideo } = useQuery({
     queryKey: ["video", id],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data: videoData, error: videoError } = await supabase
         .from("youtube_videos")
-        .select("*")
+        .select("*, youtube_channels(thumbnail_url)")
         .eq("id", id)
         .single();
 
-      if (error) throw error;
-      return data;
+      if (videoError) throw videoError;
+      return videoData;
     },
   });
 
@@ -34,13 +35,14 @@ const VideoDetails = () => {
         .from("youtube_videos")
         .select("*")
         .eq("channel_id", video.channel_id)
-        .neq("id", id) // Exclude current video
+        .neq("id", id)
         .order("uploaded_at", { ascending: false })
         .limit(12);
 
       if (error) throw error;
       return data.map((video) => ({
         ...video,
+        channelName: video.channel_name,
         uploadedAt: new Date(video.uploaded_at),
       }));
     },
@@ -126,7 +128,13 @@ const VideoDetails = () => {
           </div>
           <h1 className="text-2xl font-bold mb-2">{video.title}</h1>
           <div className="flex items-center justify-between mb-4">
-            <p className="text-muted-foreground">{video.channel_name}</p>
+            <div className="flex items-center gap-2">
+              <Avatar className="h-10 w-10">
+                <AvatarImage src={video.youtube_channels?.thumbnail_url || ''} alt={video.channel_name} />
+                <AvatarFallback>{video.channel_name[0]}</AvatarFallback>
+              </Avatar>
+              <p className="text-muted-foreground">{video.channel_name}</p>
+            </div>
             <p className="text-muted-foreground">
               {video.views?.toLocaleString()} views •{" "}
               {formatDistanceToNow(new Date(video.uploaded_at), { addSuffix: true })}
