@@ -71,7 +71,7 @@ export const SearchBar = () => {
   const hasResults = searchResults.videos.length > 0 || searchResults.channels.length > 0;
 
   return (
-    <div className="flex-1 max-w-2xl px-4">
+    <div className="flex-1 max-w-2xl px-4 mb-16">
       <Popover open={open && hasResults} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <div className="relative">
@@ -81,9 +81,9 @@ export const SearchBar = () => {
               value={searchQuery}
               onChange={handleInputChange}
               onKeyDown={handleKeyDown}
-              className="w-full pl-10 bg-muted rounded-full focus:outline-none focus:ring-1 focus:ring-primary text-youtube-title"
+              className="w-full pl-12 py-6 bg-muted rounded-full focus:outline-none focus:ring-2 focus:ring-primary text-lg"
             />
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary h-4 w-4" />
+            <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 text-secondary h-5 w-5" />
           </div>
         </PopoverTrigger>
         <PopoverContent 
