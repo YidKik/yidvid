@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Plus, Youtube } from "lucide-react";
+import { Plus, Youtube, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import {
@@ -39,6 +39,29 @@ const Dashboard = () => {
     },
   });
 
+  const handleRemoveChannel = async (channelId: string) => {
+    try {
+      const { error } = await supabase
+        .from("youtube_channels")
+        .delete()
+        .eq("channel_id", channelId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Channel removed",
+        description: "The channel has been removed from your dashboard.",
+      });
+      refetch();
+    } catch (error: any) {
+      toast({
+        title: "Error removing channel",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="container mx-auto py-8">
       <div className="flex items-center justify-between mb-8">
@@ -66,6 +89,7 @@ const Dashboard = () => {
               <TableHead>Channel</TableHead>
               <TableHead>Description</TableHead>
               <TableHead>Added On</TableHead>
+              <TableHead className="w-[100px]">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -91,6 +115,16 @@ const Dashboard = () => {
                 <TableCell>{channel.description || "No description"}</TableCell>
                 <TableCell>
                   {new Date(channel.created_at).toLocaleDateString()}
+                </TableCell>
+                <TableCell>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleRemoveChannel(channel.channel_id)}
+                    className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}
