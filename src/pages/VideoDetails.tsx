@@ -9,6 +9,7 @@ import { CommentList } from "@/components/comments/CommentList";
 import { RelatedVideos } from "@/components/video/RelatedVideos";
 import { VideoCommentsTable } from "@/integrations/supabase/types/video-comments";
 import { BackButton } from "@/components/navigation/BackButton";
+import { VideoInteractions } from "@/components/video/VideoInteractions";
 
 type Comment = VideoCommentsTable["Row"] & {
   profiles: {
@@ -115,6 +116,8 @@ const VideoDetails = () => {
             views={video.views}
             uploadedAt={video.uploaded_at}
           />
+          
+          <VideoInteractions videoId={id!} />
           
           <div className="mt-8">
             <h2 className="text-xl font-semibold mb-4">Comments</h2>
