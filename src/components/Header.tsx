@@ -102,7 +102,7 @@ export const Header = () => {
                             setOpen(false);
                             setSearchQuery("");
                           }}
-                          className="flex items-center px-4 py-2 hover:bg-gray-100 rounded-md cursor-pointer"
+                          className="flex items-center px-4 py-2 hover:bg-[#F1F1F1] data-[selected]:bg-[#F1F1F1] rounded-md cursor-pointer"
                         >
                           <Link
                             to={`/channel/${channel.channel_id}`}
@@ -126,7 +126,7 @@ export const Header = () => {
                             setOpen(false);
                             setSearchQuery("");
                           }}
-                          className="flex items-center px-4 py-2 hover:bg-gray-100 rounded-md cursor-pointer"
+                          className="flex items-center px-4 py-2 hover:bg-[#F1F1F1] data-[selected]:bg-[#F1F1F1] rounded-md cursor-pointer"
                         >
                           <Link
                             to={`/video/${video.id}`}
