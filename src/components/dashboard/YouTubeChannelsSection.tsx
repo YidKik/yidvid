@@ -87,9 +87,14 @@ export const YouTubeChannelsSection = () => {
         <h2 className="text-lg font-semibold">YouTube Channels</h2>
         <div className="flex items-center gap-4">
           <ChannelSearch value={searchQuery} onChange={setSearchQuery} />
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <Dialog modal={true} open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-              <Button variant="default" size="default">
+              <Button 
+                onClick={() => setIsDialogOpen(true)}
+                variant="default" 
+                size="default"
+                className="cursor-pointer"
+              >
                 <Plus className="h-4 w-4 mr-2" />
                 Add Channel
               </Button>
