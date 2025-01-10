@@ -35,19 +35,20 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
     
     setIsFetchingChannel(true);
     try {
-      const response = await fetch(`https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/fetch-youtube-channel?channelId=${channelId}`);
-      const data = await response.json();
+      const { data, error } = await supabase.functions.invoke('fetch-youtube-channel', {
+        body: { channelId: channelId.trim() }
+      });
       
-      if (data.error) {
+      if (error) {
         toast({
           title: "Error fetching channel",
-          description: data.error,
+          description: error.message,
           variant: "destructive",
         });
         return;
       }
 
-      if (data.title) {
+      if (data?.title) {
         form.setValue("title", data.title);
         if (data.description) {
           form.setValue("description", data.description);

@@ -2,18 +2,27 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const YOUTUBE_API_KEY = Deno.env.get('YOUTUBE_API_KEY');
 
-serve(async (req) => {
-  const url = new URL(req.url);
-  const channelId = url.searchParams.get('channelId');
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+};
 
-  if (!channelId) {
-    return new Response(
-      JSON.stringify({ error: 'Channel ID is required' }),
-      { headers: { 'Content-Type': 'application/json' } }
-    );
+serve(async (req) => {
+  // Handle CORS preflight requests
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
   }
 
   try {
+    const { channelId } = await req.json();
+
+    if (!channelId) {
+      return new Response(
+        JSON.stringify({ error: 'Channel ID is required' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+      );
+    }
+
     const response = await fetch(
       `https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${channelId}&key=${YOUTUBE_API_KEY}`
     );
@@ -23,7 +32,7 @@ serve(async (req) => {
     if (!data.items || data.items.length === 0) {
       return new Response(
         JSON.stringify({ error: 'Channel not found' }),
-        { headers: { 'Content-Type': 'application/json' } }
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 404 }
       );
     }
 
@@ -35,12 +44,13 @@ serve(async (req) => {
         description: channel.description,
         thumbnailUrl: channel.thumbnails?.default?.url
       }),
-      { headers: { 'Content-Type': 'application/json' } }
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (error) {
+    console.error('Error:', error);
     return new Response(
       JSON.stringify({ error: 'Failed to fetch channel details' }),
-      { headers: { 'Content-Type': 'application/json' } }
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
     );
   }
 });
