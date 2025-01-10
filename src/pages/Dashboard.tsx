@@ -41,16 +41,25 @@ const Dashboard = () => {
 
   const handleRemoveChannel = async (channelId: string) => {
     try {
-      const { error } = await supabase
+      // First, delete all videos associated with this channel
+      const { error: videosError } = await supabase
+        .from("youtube_videos")
+        .delete()
+        .eq("channel_id", channelId);
+
+      if (videosError) throw videosError;
+
+      // Then delete the channel
+      const { error: channelError } = await supabase
         .from("youtube_channels")
         .delete()
         .eq("channel_id", channelId);
 
-      if (error) throw error;
+      if (channelError) throw channelError;
 
       toast({
         title: "Channel removed",
-        description: "The channel has been removed from your dashboard.",
+        description: "The channel and its videos have been removed from your dashboard.",
       });
       refetch();
     } catch (error: any) {

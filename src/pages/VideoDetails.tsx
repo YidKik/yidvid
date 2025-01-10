@@ -8,6 +8,18 @@ import { CommentForm } from "@/components/comments/CommentForm";
 import { CommentList } from "@/components/comments/CommentList";
 import { RelatedVideos } from "@/components/video/RelatedVideos";
 
+interface Comment {
+  id: string;
+  content: string;
+  created_at: string;
+  updated_at: string;
+  user_id: string;
+  video_id: string;
+  profiles: {
+    email: string;
+  };
+}
+
 const VideoDetails = () => {
   const { id } = useParams();
 
@@ -46,22 +58,17 @@ const VideoDetails = () => {
     },
   });
 
-  const { data: comments, refetch: refetchComments } = useQuery({
+  const { data: comments, refetch: refetchComments } = useQuery<Comment[]>({
     queryKey: ["video-comments", id],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("video_comments")
-        .select(`
-          *,
-          profiles (
-            email
-          )
-        `)
+        .select("*, profiles(email)")
         .eq("video_id", id)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data;
+      return data as Comment[];
     },
   });
 
