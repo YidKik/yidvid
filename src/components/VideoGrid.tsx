@@ -40,8 +40,8 @@ export const VideoGrid = () => {
     },
   });
 
-  const { data: videos, isLoading: isLoadingVideos, refetch: refetchVideos } = useQuery({
-    queryKey: ["youtube-videos", session?.user?.id],
+  const { data: videos, isLoading: isLoadingVideos } = useQuery({
+    queryKey: ["youtube-videos", channels],
     queryFn: async () => {
       if (!channels?.length) {
         return [];
@@ -103,12 +103,6 @@ export const VideoGrid = () => {
     },
     enabled: !!channels?.length,
   });
-
-  useEffect(() => {
-    if (channels?.length) {
-      refetchVideos();
-    }
-  }, [channels, refetchVideos]);
 
   const isLoading = isLoadingChannels || isLoadingVideos;
 
