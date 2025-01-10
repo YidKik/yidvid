@@ -7,7 +7,6 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -41,6 +40,8 @@ serve(async (req) => {
       );
     }
 
+    console.log('Fetching videos for channels:', channels);
+
     // Fetch videos for each channel
     const videoPromises = channels.map(async (channel) => {
       const apiKey = Deno.env.get('YOUTUBE_API_KEY');
@@ -48,17 +49,21 @@ serve(async (req) => {
         throw new Error('YouTube API key not configured');
       }
 
+      console.log(`Fetching videos for channel ${channel.channel_id}`);
+
       const response = await fetch(
         `https://www.googleapis.com/youtube/v3/search?` +
         `part=snippet&channelId=${channel.channel_id}&maxResults=50&order=date&type=video&key=${apiKey}`
       );
 
       if (!response.ok) {
-        console.error(`Error fetching videos for channel ${channel.channel_id}:`, await response.text());
+        const errorText = await response.text();
+        console.error(`Error fetching videos for channel ${channel.channel_id}:`, errorText);
         return [];
       }
 
       const data = await response.json();
+      console.log(`Received ${data.items?.length || 0} videos for channel ${channel.channel_id}`);
       
       // Map YouTube API response to our database schema
       return data.items.map((item: any) => ({
@@ -72,6 +77,7 @@ serve(async (req) => {
     });
 
     const videos = (await Promise.all(videoPromises)).flat();
+    console.log(`Total videos fetched: ${videos.length}`);
 
     // Store videos in the database
     for (const video of videos) {

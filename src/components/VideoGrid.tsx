@@ -8,12 +8,10 @@ export const VideoGrid = () => {
   const [session, setSession] = useState(null);
 
   useEffect(() => {
-    // Get initial session
     supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
       setSession(currentSession);
     });
 
-    // Listen for auth changes
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, currentSession) => {
@@ -41,62 +39,83 @@ export const VideoGrid = () => {
     },
   });
 
-  const { data: videos, isLoading: isLoadingVideos } = useQuery({
+  const { data: videos, isLoading: isLoadingVideos, refetch: refetchVideos } = useQuery({
     queryKey: ["youtube-videos", session?.user?.id],
     queryFn: async () => {
+      if (!channels?.length) {
+        return [];
+      }
+
       toast({
         title: "Fetching videos...",
         description: "This may take a few moments",
       });
 
-      // First, fetch new videos from YouTube
-      const { error: fetchError } = await supabase.functions.invoke("fetch-youtube-videos");
-      
-      if (fetchError) {
-        console.error("Error fetching videos from YouTube:", fetchError);
+      try {
+        // First, fetch new videos from YouTube
+        const { error: fetchError, data: fetchData } = await supabase.functions.invoke("fetch-youtube-videos", {
+          body: { channels: channels.map(c => c.channel_id) }
+        });
+        
+        if (fetchError) {
+          console.error("Error fetching videos from YouTube:", fetchError);
+          toast({
+            title: "Error fetching videos",
+            description: "Please try again later",
+            variant: "destructive",
+          });
+          throw fetchError;
+        }
+
+        console.log("Edge function response:", fetchData);
+
+        let query = supabase
+          .from("youtube_videos")
+          .select("*");
+
+        if (session?.user) {
+          query = query.order("uploaded_at", { ascending: false });
+        } else {
+          query = query.order("uploaded_at", { ascending: false });
+        }
+
+        const { data, error } = await query;
+
+        if (error) {
+          console.error("Error fetching videos:", error);
+          throw error;
+        }
+
+        toast({
+          title: "Videos fetched successfully",
+          description: session?.user 
+            ? "Your personalized feed has been updated"
+            : "Showing recommended videos",
+        });
+
+        console.log("Fetched videos:", data);
+        return data.map((video: any) => ({
+          ...video,
+          uploadedAt: new Date(video.uploaded_at),
+        }));
+      } catch (error) {
+        console.error("Error in video fetch process:", error);
         toast({
           title: "Error fetching videos",
           description: "Please try again later",
           variant: "destructive",
         });
-        throw fetchError;
-      }
-
-      let query = supabase
-        .from("youtube_videos")
-        .select("*");
-
-      // If user is authenticated, try to personalize the feed
-      if (session?.user) {
-        // Order by most recent first, but we could add more sophisticated
-        // personalization logic here based on user preferences or viewing history
-        query = query.order("uploaded_at", { ascending: false });
-      } else {
-        // For non-authenticated users, show random videos
-        query = query.order("uploaded_at", { ascending: false });
-      }
-
-      const { data, error } = await query;
-
-      if (error) {
-        console.error("Error fetching videos:", error);
         throw error;
       }
-
-      toast({
-        title: "Videos fetched successfully",
-        description: session?.user 
-          ? "Your personalized feed has been updated"
-          : "Showing recommended videos",
-      });
-
-      console.log("Fetched videos:", data);
-      return data.map((video: any) => ({
-        ...video,
-        uploadedAt: new Date(video.uploaded_at),
-      }));
     },
+    enabled: !!channels?.length,
   });
+
+  useEffect(() => {
+    if (channels?.length) {
+      refetchVideos();
+    }
+  }, [channels, refetchVideos]);
 
   const isLoading = isLoadingChannels || isLoadingVideos;
 
