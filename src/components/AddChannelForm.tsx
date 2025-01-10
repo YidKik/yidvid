@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -20,6 +20,7 @@ interface FormValues {
 
 export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isFetchingChannel, setIsFetchingChannel] = useState(false);
   const { toast } = useToast();
   const form = useForm<FormValues>({
     defaultValues: {
@@ -28,6 +29,51 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
       description: "",
     },
   });
+
+  const fetchChannelDetails = async (channelId: string) => {
+    if (!channelId.trim()) return;
+    
+    setIsFetchingChannel(true);
+    try {
+      const response = await fetch(`https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/fetch-youtube-channel?channelId=${channelId}`);
+      const data = await response.json();
+      
+      if (data.error) {
+        toast({
+          title: "Error fetching channel",
+          description: data.error,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (data.title) {
+        form.setValue("title", data.title);
+        if (data.description) {
+          form.setValue("description", data.description);
+        }
+      }
+    } catch (error: any) {
+      console.error("Error fetching channel details:", error);
+      toast({
+        title: "Error fetching channel details",
+        description: "Failed to fetch channel information. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsFetchingChannel(false);
+    }
+  };
+
+  // Watch for changes in the channelId field
+  useEffect(() => {
+    const subscription = form.watch((value, { name }) => {
+      if (name === "channelId" && value.channelId) {
+        fetchChannelDetails(value.channelId);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [form.watch]);
 
   const onSubmit = async (values: FormValues) => {
     if (!values.channelId.trim() || !values.title.trim()) {
@@ -96,12 +142,12 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
       </div>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <AddChannelFields form={form} />
+          <AddChannelFields form={form} isLoading={isFetchingChannel} />
           <div className="flex justify-end gap-2">
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit" disabled={isSubmitting}>
+            <Button type="submit" disabled={isSubmitting || isFetchingChannel}>
               {isSubmitting ? "Adding..." : "Add Channel"}
             </Button>
           </div>

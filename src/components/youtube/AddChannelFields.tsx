@@ -1,4 +1,5 @@
 import { UseFormReturn } from "react-hook-form";
+import { Loader2 } from "lucide-react";
 import {
   FormField,
   FormItem,
@@ -17,9 +18,10 @@ interface FormValues {
 
 interface AddChannelFieldsProps {
   form: UseFormReturn<FormValues>;
+  isLoading?: boolean;
 }
 
-export const AddChannelFields = ({ form }: AddChannelFieldsProps) => {
+export const AddChannelFields = ({ form, isLoading }: AddChannelFieldsProps) => {
   return (
     <>
       <FormField
@@ -46,11 +48,19 @@ export const AddChannelFields = ({ form }: AddChannelFieldsProps) => {
           <FormItem>
             <FormLabel>Channel Title</FormLabel>
             <FormControl>
-              <Input
-                placeholder="Enter channel title"
-                {...field}
-                required
-              />
+              <div className="relative">
+                <Input
+                  placeholder="Enter channel title"
+                  {...field}
+                  required
+                  disabled={isLoading}
+                />
+                {isLoading && (
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                    <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                  </div>
+                )}
+              </div>
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -66,6 +76,7 @@ export const AddChannelFields = ({ form }: AddChannelFieldsProps) => {
               <Textarea
                 placeholder="Enter channel description"
                 {...field}
+                disabled={isLoading}
               />
             </FormControl>
             <FormMessage />
