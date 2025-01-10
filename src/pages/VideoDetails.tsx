@@ -53,15 +53,7 @@ const VideoDetails = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("video_comments")
-        .select(`
-          id,
-          content,
-          created_at,
-          user_id,
-          profiles (
-            email
-          )
-        `)
+        .select("*, profiles(email)")
         .eq("video_id", id)
         .order("created_at", { ascending: false });
 
