@@ -32,7 +32,7 @@ const VideoDetails = () => {
         .from("video_comments")
         .select(`
           *,
-          profiles (
+          profiles!video_comments_user_id_fkey (
             email
           )
         `)
