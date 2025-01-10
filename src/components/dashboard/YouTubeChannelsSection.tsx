@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { AddChannelForm } from "@/components/AddChannelForm";
 import { ChannelSearch } from "@/components/youtube/ChannelSearch";
 import { ChannelList } from "@/components/youtube/ChannelList";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 export const YouTubeChannelsSection = () => {
   const [showAddForm, setShowAddForm] = useState(false);
@@ -71,14 +72,6 @@ export const YouTubeChannelsSection = () => {
     }
   };
 
-  const handleAddChannel = () => {
-    setShowAddForm(true);
-  };
-
-  const handleCloseForm = () => {
-    setShowAddForm(false);
-  };
-
   const handleSuccess = async () => {
     await refetch();
     setShowAddForm(false);
@@ -95,21 +88,24 @@ export const YouTubeChannelsSection = () => {
           <h2 className="text-lg font-semibold">YouTube Channels</h2>
           <div className="flex items-center gap-4">
             <ChannelSearch value={searchQuery} onChange={setSearchQuery} />
-            <Button onClick={handleAddChannel} className="flex items-center gap-2">
-              <Plus className="h-4 w-4" />
-              Add Channel
-            </Button>
+            <Dialog open={showAddForm} onOpenChange={setShowAddForm}>
+              <DialogTrigger asChild>
+                <Button className="flex items-center gap-2">
+                  <Plus className="h-4 w-4" />
+                  Add Channel
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <AddChannelForm
+                  onClose={() => setShowAddForm(false)}
+                  onSuccess={handleSuccess}
+                />
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
         <ChannelList channels={channels || []} onRemoveChannel={handleRemoveChannel} />
       </div>
-
-      {showAddForm && (
-        <AddChannelForm
-          onClose={handleCloseForm}
-          onSuccess={handleSuccess}
-        />
-      )}
     </>
   );
 };

@@ -83,31 +83,30 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-full max-w-md relative">
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-semibold">Add YouTube Channel</h2>
         <Button
           variant="ghost"
           size="icon"
-          className="absolute right-4 top-4"
           onClick={onClose}
         >
           <X className="h-4 w-4" />
         </Button>
-        <h2 className="text-lg font-semibold mb-4">Add YouTube Channel</h2>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <AddChannelFields form={form} />
-            <div className="flex justify-end gap-2">
-              <Button type="button" variant="outline" onClick={onClose}>
-                Cancel
-              </Button>
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "Adding..." : "Add Channel"}
-              </Button>
-            </div>
-          </form>
-        </Form>
       </div>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <AddChannelFields form={form} />
+          <div className="flex justify-end gap-2">
+            <Button type="button" variant="outline" onClick={onClose}>
+              Cancel
+            </Button>
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? "Adding..." : "Add Channel"}
+            </Button>
+          </div>
+        </form>
+      </Form>
     </div>
   );
 };
