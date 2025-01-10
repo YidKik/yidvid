@@ -39,7 +39,7 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
         .from("youtube_channels")
         .select("channel_id")
         .eq("channel_id", values.channelId)
-        .single();
+        .maybeSingle();
 
       if (existingChannel) {
         toast({
