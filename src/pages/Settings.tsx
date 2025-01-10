@@ -8,12 +8,38 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { useQuery } from "@tanstack/react-query";
 
 const Settings = () => {
   const navigate = useNavigate();
   const [darkMode, setDarkMode] = useState(false);
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [autoplay, setAutoplay] = useState(true);
+
+  // Query to check if user is admin
+  const { data: profile } = useQuery({
+    queryKey: ["user-profile"],
+    queryFn: async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        navigate("/auth");
+        return null;
+      }
+
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", session.user.id)
+        .single();
+
+      if (error) {
+        toast.error("Error fetching profile");
+        return null;
+      }
+
+      return data;
+    },
+  });
 
   useEffect(() => {
     // Check if user is authenticated
@@ -24,6 +50,10 @@ const Settings = () => {
       }
     });
   }, [navigate]);
+
+  const handleDashboardAccess = () => {
+    navigate("/dashboard");
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -37,6 +67,9 @@ const Settings = () => {
             <TabsTrigger value="notifications">Notifications</TabsTrigger>
             <TabsTrigger value="playback">Playback</TabsTrigger>
             <TabsTrigger value="privacy">Privacy</TabsTrigger>
+            {profile?.is_admin && (
+              <TabsTrigger value="admin">Admin</TabsTrigger>
+            )}
           </TabsList>
 
           <TabsContent value="appearance" className="space-y-4">
@@ -108,6 +141,27 @@ const Settings = () => {
               </div>
             </Card>
           </TabsContent>
+
+          {profile?.is_admin && (
+            <TabsContent value="admin" className="space-y-4">
+              <Card className="p-6">
+                <h2 className="text-xl font-semibold mb-4">Admin Controls</h2>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <Label>Dashboard Access</Label>
+                      <p className="text-sm text-muted-foreground">
+                        Access the admin dashboard to manage channels and videos
+                      </p>
+                    </div>
+                    <Button onClick={handleDashboardAccess}>
+                      Open Dashboard
+                    </Button>
+                  </div>
+                </div>
+              </Card>
+            </TabsContent>
+          )}
         </Tabs>
       </main>
     </div>
