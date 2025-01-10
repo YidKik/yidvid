@@ -1,9 +1,9 @@
 import { formatDistanceToNow } from "date-fns";
-import { Database } from "@/integrations/supabase/types";
+import { VideoCommentsTable } from "@/integrations/supabase/types";
 
-type Comment = Database["public"]["Tables"]["video_comments"]["Row"] & {
-  profiles?: {
-    email?: string;
+type Comment = VideoCommentsTable["Row"] & {
+  profiles: {
+    email: string;
   } | null;
 };
 
