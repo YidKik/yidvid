@@ -1,7 +1,17 @@
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
+import { Button } from "./ui/button";
 
 export const Header = () => {
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    navigate("/auth");
+  };
+
   return (
     <header className="fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-200 z-50 px-4">
       <div className="flex items-center justify-between h-full max-w-[1800px] mx-auto">
@@ -19,9 +29,12 @@ export const Header = () => {
           </div>
         </div>
         <div className="flex items-center gap-4">
-          <button className="px-4 py-2 bg-primary text-white text-youtube-title font-medium rounded-full hover:bg-primary-hover transition-colors">
-            Sign In
-          </button>
+          <Button
+            onClick={handleSignOut}
+            className="px-4 py-2 bg-primary text-white text-youtube-title font-medium rounded-full hover:bg-primary/90 transition-colors"
+          >
+            Sign Out
+          </Button>
         </div>
       </div>
     </header>
