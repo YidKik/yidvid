@@ -28,11 +28,17 @@ const VideoDetails = () => {
   const { data: comments, refetch: refetchComments } = useQuery({
     queryKey: ["video-comments", id],
     queryFn: async () => {
+      // Updated query to properly join with profiles
       const { data, error } = await supabase
         .from("video_comments")
         .select(`
-          *,
-          profiles!video_comments_user_id_fkey(email)
+          id,
+          content,
+          created_at,
+          user_id,
+          profiles (
+            email
+          )
         `)
         .eq("video_id", id)
         .order("created_at", { ascending: false });
