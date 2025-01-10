@@ -70,6 +70,8 @@ export const Header = () => {
     }
   };
 
+  const hasResults = searchResults.videos.length > 0 || searchResults.channels.length > 0;
+
   return (
     <header className="fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-200 z-50 px-4">
       <div className="flex items-center justify-between h-full max-w-[1800px] mx-auto">
@@ -79,7 +81,7 @@ export const Header = () => {
           </Link>
         </div>
         <div className="flex-1 max-w-2xl px-4">
-          <Popover open={open} onOpenChange={setOpen}>
+          <Popover open={open && hasResults} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
               <div className="relative">
                 <Input
@@ -99,9 +101,6 @@ export const Header = () => {
             >
               <Command className="bg-white rounded-lg">
                 <CommandList className="max-h-[300px] overflow-y-auto scrollbar-hide">
-                  <CommandEmpty className="py-6 text-sm text-gray-500">
-                    No results found.
-                  </CommandEmpty>
                   {searchResults.channels.length > 0 && (
                     <CommandGroup heading="Channels" className="px-2">
                       {searchResults.channels.map((channel) => (
