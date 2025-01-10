@@ -54,7 +54,8 @@ export const Header = () => {
       });
     };
 
-    const debounceTimeout = setTimeout(searchContent, 300);
+    // Reduced debounce delay from 300ms to 150ms for faster search
+    const debounceTimeout = setTimeout(searchContent, 150);
     return () => clearTimeout(debounceTimeout);
   }, [searchQuery]);
 
@@ -108,7 +109,9 @@ export const Header = () => {
                             className="flex items-center gap-2 w-full"
                           >
                             <Search className="h-4 w-4 text-gray-500" />
-                            <span className="text-gray-900 font-medium hover:text-gray-700">{channel.title}</span>
+                            <span className="text-gray-700 font-medium hover:text-primary transition-colors">
+                              {channel.title}
+                            </span>
                           </Link>
                         </CommandItem>
                       ))}
@@ -131,7 +134,9 @@ export const Header = () => {
                           >
                             <Search className="h-4 w-4 text-gray-500" />
                             <div className="flex flex-col">
-                              <span className="text-gray-900 font-medium hover:text-gray-700">{video.title}</span>
+                              <span className="text-gray-700 font-medium hover:text-primary transition-colors">
+                                {video.title}
+                              </span>
                               <span className="text-sm text-gray-500">
                                 {video.channel_name}
                               </span>
