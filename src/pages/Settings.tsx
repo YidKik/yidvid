@@ -9,6 +9,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 const Settings = () => {
   const navigate = useNavigate();
@@ -17,7 +25,7 @@ const Settings = () => {
   const [autoplay, setAutoplay] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
 
-  // Query to check if user is admin
+  // Query to check if user is admin and get all profiles
   const { data: profile } = useQuery({
     queryKey: ["user-profile"],
     queryFn: async () => {
@@ -43,6 +51,41 @@ const Settings = () => {
       return data;
     },
   });
+
+  // Query to fetch all profiles for admin management
+  const { data: profiles, refetch: refetchProfiles } = useQuery({
+    queryKey: ["all-profiles"],
+    queryFn: async () => {
+      if (!profile?.is_admin) return null;
+
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        toast.error("Error fetching profiles");
+        return null;
+      }
+
+      return data;
+    },
+    enabled: !!profile?.is_admin,
+  });
+
+  const toggleAdminStatus = async (userId: string, currentStatus: boolean) => {
+    const { error } = await supabase
+      .from("profiles")
+      .update({ is_admin: !currentStatus })
+      .eq("id", userId);
+
+    if (error) {
+      toast.error("Error updating admin status");
+    } else {
+      toast.success(`Admin status ${currentStatus ? "removed" : "granted"} successfully`);
+      refetchProfiles();
+    }
+  };
 
   useEffect(() => {
     // Check if user is authenticated
@@ -161,6 +204,39 @@ const Settings = () => {
                       Open Dashboard
                     </Button>
                   </div>
+
+                  <div className="mt-8">
+                    <h3 className="text-lg font-semibold mb-4">Manage Admins</h3>
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Email</TableHead>
+                          <TableHead>Admin Status</TableHead>
+                          <TableHead>Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {profiles?.map((profile) => (
+                          <TableRow key={profile.id}>
+                            <TableCell>{profile.email}</TableCell>
+                            <TableCell>
+                              {profile.is_admin ? "Admin" : "User"}
+                            </TableCell>
+                            <TableCell>
+                              <Button
+                                variant={profile.is_admin ? "destructive" : "default"}
+                                onClick={() => toggleAdminStatus(profile.id, !!profile.is_admin)}
+                                disabled={profile.id === userId}
+                              >
+                                {profile.is_admin ? "Remove Admin" : "Make Admin"}
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+
                   <div className="mt-4 p-4 bg-muted rounded-lg">
                     <p className="text-sm text-muted-foreground">Your User ID: {userId}</p>
                   </div>
