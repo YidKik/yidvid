@@ -107,6 +107,20 @@ const Settings = () => {
       <main className="container mx-auto pt-24 px-4">
         <h1 className="text-3xl font-bold mb-8">Settings</h1>
         
+        {/* Add User ID Card at the top */}
+        <Card className="p-6 mb-8">
+          <h2 className="text-xl font-semibold mb-4">Your Account Information</h2>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <Label>User ID</Label>
+              <code className="bg-muted px-2 py-1 rounded">{userId || 'Loading...'}</code>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              This is your unique identifier in the system. You might need this when requesting admin access.
+            </p>
+          </div>
+        </Card>
+
         <Tabs defaultValue="appearance" className="space-y-4">
           <TabsList>
             <TabsTrigger value="appearance">Appearance</TabsTrigger>
