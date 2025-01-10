@@ -7,16 +7,14 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    // Create Supabase client
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? ''
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
     // Get channels from the database
@@ -30,7 +28,7 @@ serve(async (req) => {
     const videoPromises = channels.map(async (channel) => {
       const response = await fetch(
         `https://www.googleapis.com/youtube/v3/search?` +
-        `part=snippet&channelId=${channel.channel_id}&maxResults=2&order=date&type=video&key=${Deno.env.get('YOUTUBE_API_KEY')}`
+        `part=snippet&channelId=${channel.channel_id}&maxResults=50&order=date&type=video&key=${Deno.env.get('YOUTUBE_API_KEY')}`
       );
 
       if (!response.ok) {
@@ -39,17 +37,37 @@ serve(async (req) => {
       }
 
       const data = await response.json();
-      return data.items.map((item: any) => ({
-        id: item.id.videoId,
+      
+      // Map YouTube API response to our database schema
+      const videos = data.items.map((item: any) => ({
+        video_id: item.id.videoId,
         title: item.snippet.title,
         thumbnail: item.snippet.thumbnails.high.url,
-        channelName: item.snippet.channelTitle,
-        uploadedAt: item.snippet.publishedAt,
+        channel_id: channel.channel_id,
+        channel_name: item.snippet.channelTitle,
+        uploaded_at: item.snippet.publishedAt,
       }));
+
+      // Store videos in the database
+      for (const video of videos) {
+        const { error: upsertError } = await supabaseClient
+          .from('youtube_videos')
+          .upsert(video, { 
+            onConflict: 'video_id',
+            ignoreDuplicates: true 
+          });
+
+        if (upsertError) {
+          console.error('Error upserting video:', upsertError);
+        }
+      }
+
+      return videos;
     });
 
     const videos = (await Promise.all(videoPromises)).flat();
 
+    // Return the videos for the frontend
     return new Response(
       JSON.stringify(videos),
       { 

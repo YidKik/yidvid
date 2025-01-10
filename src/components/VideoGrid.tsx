@@ -19,11 +19,16 @@ export const VideoGrid = () => {
   const { data: videos, isLoading: isLoadingVideos } = useQuery({
     queryKey: ["youtube-videos"],
     queryFn: async () => {
-      const { data } = await supabase.functions.invoke("fetch-youtube-videos");
+      const { data, error } = await supabase
+        .from("youtube_videos")
+        .select("*")
+        .order("uploaded_at", { ascending: false });
+
+      if (error) throw error;
       return data.map((video: any) => ({
         ...video,
         views: Math.floor(Math.random() * 100000), // YouTube API v3 doesn't provide view counts in search results
-        uploadedAt: new Date(video.uploadedAt),
+        uploadedAt: new Date(video.uploaded_at),
       }));
     },
     enabled: !!channels?.length,
