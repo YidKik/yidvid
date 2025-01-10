@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AuthError, AuthApiError } from "@supabase/supabase-js";
+import { BackButton } from "@/components/navigation/BackButton";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -49,6 +50,7 @@ const Auth = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
+      <BackButton />
       <div className="w-full max-w-md space-y-4">
         <div className="text-center">
           <h1 className="text-2xl font-bold">Welcome to JewTube</h1>

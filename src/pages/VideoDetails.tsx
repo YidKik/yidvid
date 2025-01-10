@@ -8,6 +8,7 @@ import { CommentForm } from "@/components/comments/CommentForm";
 import { CommentList } from "@/components/comments/CommentList";
 import { RelatedVideos } from "@/components/video/RelatedVideos";
 import { VideoCommentsTable } from "@/integrations/supabase/types/video-comments";
+import { BackButton } from "@/components/navigation/BackButton";
 
 type Comment = VideoCommentsTable["Row"] & {
   profiles: {
@@ -103,6 +104,7 @@ const VideoDetails = () => {
 
   return (
     <div className="container mx-auto p-4 mt-16">
+      <BackButton />
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
           <VideoPlayer videoId={video.video_id} />

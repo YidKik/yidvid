@@ -17,6 +17,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { BackButton } from "@/components/navigation/BackButton";
 
 const Settings = () => {
   const navigate = useNavigate();
@@ -105,6 +106,7 @@ const Settings = () => {
     <div className="min-h-screen bg-background">
       <Header />
       <main className="container mx-auto pt-24 px-4">
+        <BackButton />
         <h1 className="text-3xl font-bold mb-8">Settings</h1>
         
         {/* Add User ID Card at the top */}

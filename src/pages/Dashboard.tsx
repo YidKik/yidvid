@@ -4,6 +4,7 @@ import { Plus, Youtube, Trash2, Search, Shield } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { BackButton } from "@/components/navigation/BackButton";
 import {
   Table,
   TableBody,
@@ -157,6 +158,7 @@ const Dashboard = () => {
 
   return (
     <div className="container mx-auto py-8 space-y-8">
+      <BackButton />
       <DashboardAnalytics />
       
       <div className="flex items-center justify-between">
