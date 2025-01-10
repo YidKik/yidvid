@@ -31,7 +31,7 @@ const menuItems = [
 
 export const Sidebar = () => {
   return (
-    <ShadcnSidebar defaultCollapsed={false} className="border-r border-gray-200">
+    <ShadcnSidebar className="border-r border-gray-200">
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupContent>
