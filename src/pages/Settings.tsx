@@ -8,15 +8,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { BackButton } from "@/components/navigation/BackButton";
+import { ChannelSubscriptions } from "@/components/youtube/ChannelSubscriptions";
 
 const Settings = () => {
   const navigate = useNavigate();
@@ -142,6 +135,13 @@ const Settings = () => {
                 This is your unique identifier in the system. You might need this when requesting admin access.
               </p>
             </div>
+          </Card>
+        </section>
+
+        {/* Channel Subscriptions Section */}
+        <section className="mb-12">
+          <Card className="p-6">
+            {userId && <ChannelSubscriptions userId={userId} />}
           </Card>
         </section>
 
