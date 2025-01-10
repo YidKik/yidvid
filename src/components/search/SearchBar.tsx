@@ -71,7 +71,7 @@ export const SearchBar = () => {
   const hasResults = searchResults.videos.length > 0 || searchResults.channels.length > 0;
 
   return (
-    <div className="flex-1 max-w-2xl px-4 mb-16">
+    <div className="flex-1 max-w-2xl px-4 mb-24">
       <Popover open={open && hasResults} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <div className="relative">
