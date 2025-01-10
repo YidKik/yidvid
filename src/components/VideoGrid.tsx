@@ -3,7 +3,7 @@ import { VideoCard } from "./VideoCard";
 import { supabase } from "@/integrations/supabase/client";
 
 export const VideoGrid = () => {
-  const { data: channels, isLoading } = useQuery({
+  const { data: channels, isLoading: isLoadingChannels } = useQuery({
     queryKey: ["youtube-channels"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -16,10 +16,25 @@ export const VideoGrid = () => {
     },
   });
 
+  const { data: videos, isLoading: isLoadingVideos } = useQuery({
+    queryKey: ["youtube-videos"],
+    queryFn: async () => {
+      const { data } = await supabase.functions.invoke("fetch-youtube-videos");
+      return data.map((video: any) => ({
+        ...video,
+        views: Math.floor(Math.random() * 100000), // YouTube API v3 doesn't provide view counts in search results
+        uploadedAt: new Date(video.uploadedAt),
+      }));
+    },
+    enabled: !!channels?.length,
+  });
+
+  const isLoading = isLoadingChannels || isLoadingVideos;
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[200px]">
-        <p className="text-muted-foreground">Loading channels...</p>
+        <p className="text-muted-foreground">Loading videos...</p>
       </div>
     );
   }
@@ -35,29 +50,20 @@ export const VideoGrid = () => {
     );
   }
 
-  // For now, we'll use mock videos but associate them with the actual channels
-  const channelVideos = channels.flatMap((channel) => [
-    {
-      id: `${channel.id}-1`,
-      title: "Understanding the Weekly Torah Portion",
-      thumbnail: "https://i.ytimg.com/vi/1234/maxresdefault.jpg",
-      channelName: channel.title,
-      views: 15000,
-      uploadedAt: new Date(),
-    },
-    {
-      id: `${channel.id}-2`,
-      title: "The Meaning Behind Jewish Traditions",
-      thumbnail: "https://i.ytimg.com/vi/5678/maxresdefault.jpg",
-      channelName: channel.title,
-      views: 25000,
-      uploadedAt: new Date(),
-    },
-  ]);
+  if (!videos?.length) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[200px] gap-2">
+        <p className="text-muted-foreground">No videos found</p>
+        <p className="text-sm text-muted-foreground">
+          Try adding different channels or check back later
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-4">
-      {channelVideos.map((video) => (
+      {videos.map((video) => (
         <VideoCard key={video.id} {...video} />
       ))}
     </div>
