@@ -176,8 +176,8 @@ export const VideoGrid = () => {
             onVideoClick={handleVideoView}
           />
           
-          <div className="w-full max-w-[1800px] mx-auto">
-            <h2 className="text-2xl md:text-3xl font-bold px-4 mb-8">All Videos</h2>
+          <div className="w-full max-w-[1800px] mx-auto mt-8">
+            <h2 className="text-3xl md:text-4xl font-bold px-4 mb-10 text-accent">All Videos</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-4">
               {videos.slice(2).map((video) => (
                 <div key={video.id} onClick={() => handleVideoView(video.id)}>
