@@ -18,6 +18,13 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ['Roboto', 'sans-serif'],
+      },
+      fontSize: {
+        'youtube-title': ['14px', '20px'],
+        'youtube-small': ['13px', '18px'],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -25,12 +32,12 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "#FF0000", // YouTube red
-          hover: "#CC0000", // Darker red for hover
+          DEFAULT: "#FF0000",
+          hover: "#CC0000",
           foreground: "#FFFFFF",
         },
         secondary: {
-          DEFAULT: "#606060", // YouTube gray
+          DEFAULT: "#606060",
           hover: "#4D4D4D",
           foreground: "#FFFFFF",
         },
@@ -39,11 +46,11 @@ export default {
           foreground: "hsl(var(--destructive-foreground))",
         },
         muted: {
-          DEFAULT: "#F2F2F2", // YouTube light gray background
-          foreground: "#606060", // YouTube text gray
+          DEFAULT: "#F2F2F2",
+          foreground: "#606060",
         },
         accent: {
-          DEFAULT: "#030303", // YouTube black
+          DEFAULT: "#030303",
           foreground: "#FFFFFF",
         },
         card: {
