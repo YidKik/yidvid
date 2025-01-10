@@ -3,17 +3,9 @@ import { useForm } from "react-hook-form";
 import { X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { Form } from "@/components/ui/form";
 import { useToast } from "@/components/ui/use-toast";
+import { AddChannelFields } from "@/components/youtube/AddChannelFields";
 
 interface AddChannelFormProps {
   onClose: () => void;
@@ -49,7 +41,6 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
 
     setIsSubmitting(true);
     try {
-      // First check if the channel already exists
       const { data: existingChannel } = await supabase
         .from("youtube_channels")
         .select("channel_id")
@@ -65,7 +56,6 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
         return;
       }
 
-      // If channel doesn't exist, proceed with insertion
       const { error } = await supabase.from("youtube_channels").insert({
         channel_id: values.channelId.trim(),
         title: values.title.trim(),
@@ -105,56 +95,7 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
         <h2 className="text-lg font-semibold mb-4">Add YouTube Channel</h2>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="channelId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Channel ID</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Enter YouTube channel ID"
-                      {...field}
-                      required
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="title"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Channel Title</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Enter channel title"
-                      {...field}
-                      required
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Description (Optional)</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Enter channel description"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <AddChannelFields form={form} />
             <div className="flex justify-end gap-2">
               <Button type="button" variant="outline" onClick={onClose}>
                 Cancel
