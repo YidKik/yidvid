@@ -25,6 +25,13 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
     }
 
     try {
+      // Add console.log to debug the interaction
+      console.log('Attempting to insert interaction:', {
+        user_id: session.user.id,
+        video_id: videoId,
+        interaction_type: 'like'
+      });
+
       const { error } = await supabase
         .from('user_video_interactions')
         .insert({
@@ -33,7 +40,10 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
           interaction_type: 'like'
         });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error details:', error);
+        throw error;
+      }
 
       setIsLiked(true);
       toast({
