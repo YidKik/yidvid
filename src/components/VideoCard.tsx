@@ -1,4 +1,5 @@
 import { formatDistanceToNow } from "date-fns";
+import { Link } from "react-router-dom";
 
 interface VideoCardProps {
   id: string;
@@ -18,7 +19,7 @@ export const VideoCard = ({
   uploadedAt,
 }: VideoCardProps) => {
   return (
-    <div className="group cursor-pointer">
+    <Link to={`/video/${id}`} className="group cursor-pointer">
       <div className="aspect-video rounded-lg overflow-hidden mb-3 group-hover:animate-card-hover">
         <img
           src={thumbnail}
@@ -41,6 +42,6 @@ export const VideoCard = ({
           </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
