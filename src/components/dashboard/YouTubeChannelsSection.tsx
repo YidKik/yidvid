@@ -87,16 +87,36 @@ export const YouTubeChannelsSection = () => {
         <h2 className="text-lg font-semibold">YouTube Channels</h2>
         <div className="flex items-center gap-4">
           <ChannelSearch value={searchQuery} onChange={setSearchQuery} />
-          <Dialog modal={true} open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          
+          {/* First Add Channel Button */}
+          <Dialog modal open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-              <Button 
+              <Button
                 onClick={() => setIsDialogOpen(true)}
-                variant="default" 
-                size="default"
-                className="cursor-pointer"
+                className="bg-primary hover:bg-primary/90 text-white cursor-pointer"
               >
                 <Plus className="h-4 w-4 mr-2" />
                 Add Channel
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <AddChannelForm
+                onClose={() => setIsDialogOpen(false)}
+                onSuccess={handleSuccess}
+              />
+            </DialogContent>
+          </Dialog>
+          
+          {/* Second Add Channel Button - Alternative Style */}
+          <Dialog modal open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button
+                onClick={() => setIsDialogOpen(true)}
+                variant="secondary"
+                className="cursor-pointer"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                New Channel
               </Button>
             </DialogTrigger>
             <DialogContent>
