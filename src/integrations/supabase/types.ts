@@ -142,6 +142,41 @@ export type Database = {
           },
         ]
       }
+      video_history: {
+        Row: {
+          created_at: string
+          id: string
+          updated_at: string
+          user_id: string
+          video_id: string
+          watched_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id: string
+          video_id: string
+          watched_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+          video_id?: string
+          watched_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "video_history_video_id_fkey"
+            columns: ["video_id"]
+            isOneToOne: false
+            referencedRelation: "youtube_videos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       video_notifications: {
         Row: {
           created_at: string

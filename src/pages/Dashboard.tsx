@@ -4,6 +4,7 @@ import { BackButton } from "@/components/navigation/BackButton";
 import { DashboardAnalytics } from "@/components/dashboard/DashboardAnalytics";
 import { UserManagementSection } from "@/components/dashboard/UserManagementSection";
 import { YouTubeChannelsSection } from "@/components/dashboard/YouTubeChannelsSection";
+import { VideoHistorySection } from "@/components/dashboard/VideoHistorySection";
 import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
@@ -47,6 +48,7 @@ const Dashboard = () => {
 
       <UserManagementSection currentUserId={profile.id} />
       <YouTubeChannelsSection />
+      <VideoHistorySection />
     </div>
   );
 };
