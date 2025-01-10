@@ -7,13 +7,17 @@ import { VideoInfo } from "@/components/video/VideoInfo";
 import { CommentForm } from "@/components/comments/CommentForm";
 import { CommentList } from "@/components/comments/CommentList";
 import { RelatedVideos } from "@/components/video/RelatedVideos";
-import { VideoCommentsTable } from "@/integrations/supabase/types/video-comments";
 
-type Comment = VideoCommentsTable["Row"] & {
+interface Comment {
+  id: string;
+  content: string;
+  created_at: string;
+  user_id: string | null;
+  video_id: string | null;
   profiles: {
     email: string;
   } | null;
-};
+}
 
 const VideoDetails = () => {
   const { id } = useParams();
@@ -58,12 +62,17 @@ const VideoDetails = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("video_comments")
-        .select("*, profiles(email)")
+        .select(`
+          *,
+          profiles (
+            email
+          )
+        `)
         .eq("video_id", id)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data as Comment[];
+      return data;
     },
   });
 
