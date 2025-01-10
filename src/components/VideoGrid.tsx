@@ -22,6 +22,27 @@ export const VideoGrid = () => {
     return () => subscription.unsubscribe();
   }, []);
 
+  // Fetch user's video interactions
+  const { data: userInteractions } = useQuery({
+    queryKey: ["user-interactions"],
+    queryFn: async () => {
+      if (!session?.user) return [];
+      
+      const { data, error } = await supabase
+        .from("user_video_interactions")
+        .select("video_id, interaction_type")
+        .eq("user_id", session.user.id);
+
+      if (error) {
+        console.error("Error fetching user interactions:", error);
+        return [];
+      }
+      
+      return data;
+    },
+    enabled: !!session?.user,
+  });
+
   const { data: channels, isLoading: isLoadingChannels } = useQuery({
     queryKey: ["youtube-channels"],
     queryFn: async () => {
@@ -40,7 +61,7 @@ export const VideoGrid = () => {
   });
 
   const { data: videos, isLoading: isLoadingVideos } = useQuery({
-    queryKey: ["youtube-videos", channels?.map(c => c.channel_id)],
+    queryKey: ["youtube-videos", channels?.map(c => c.channel_id), userInteractions],
     queryFn: async () => {
       if (!channels?.length) {
         return [];
@@ -77,6 +98,21 @@ export const VideoGrid = () => {
           throw error;
         }
 
+        // Transform video data and sort based on user interactions
+        const processedVideos = data.map((video: any) => ({
+          ...video,
+          uploadedAt: new Date(video.uploaded_at),
+          interactionScore: calculateInteractionScore(video.id, userInteractions || [])
+        }));
+
+        // Sort videos by interaction score (personalized) and then by upload date
+        const sortedVideos = processedVideos.sort((a, b) => {
+          if (b.interactionScore !== a.interactionScore) {
+            return b.interactionScore - a.interactionScore;
+          }
+          return b.uploadedAt.getTime() - a.uploadedAt.getTime();
+        });
+
         toast({
           title: "Videos fetched successfully",
           description: session?.user 
@@ -84,10 +120,7 @@ export const VideoGrid = () => {
             : "Showing recommended videos",
         });
 
-        return data.map((video: any) => ({
-          ...video,
-          uploadedAt: new Date(video.uploaded_at),
-        }));
+        return sortedVideos;
       } catch (error) {
         console.error("Error in video fetch process:", error);
         toast({
@@ -100,6 +133,32 @@ export const VideoGrid = () => {
     },
     enabled: !!channels?.length,
   });
+
+  // Track video views
+  const handleVideoView = async (videoId: string) => {
+    if (!session?.user) return;
+
+    try {
+      const { error } = await supabase
+        .from("user_video_interactions")
+        .insert({
+          user_id: session.user.id,
+          video_id: videoId,
+          interaction_type: "view"
+        });
+
+      if (error) {
+        console.error("Error tracking video view:", error);
+      }
+    } catch (error) {
+      console.error("Error tracking video view:", error);
+    }
+  };
+
+  const calculateInteractionScore = (videoId: string, interactions: any[]) => {
+    const videoInteractions = interactions.filter(i => i.video_id === videoId);
+    return videoInteractions.length;
+  };
 
   const isLoading = isLoadingChannels || isLoadingVideos;
 
@@ -114,7 +173,9 @@ export const VideoGrid = () => {
       {videos?.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-4">
           {videos.map((video) => (
-            <VideoCard key={video.id} {...video} />
+            <div key={video.id} onClick={() => handleVideoView(video.id)}>
+              <VideoCard {...video} />
+            </div>
           ))}
         </div>
       )}
