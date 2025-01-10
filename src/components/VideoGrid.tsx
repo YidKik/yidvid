@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { VideoCard } from "./VideoCard";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "./ui/button";
 import { toast } from "./ui/use-toast";
 
 export const VideoGrid = () => {
@@ -23,9 +22,28 @@ export const VideoGrid = () => {
     },
   });
 
-  const { data: videos, isLoading: isLoadingVideos, refetch: refetchVideos } = useQuery({
+  const { data: videos, isLoading: isLoadingVideos } = useQuery({
     queryKey: ["youtube-videos"],
     queryFn: async () => {
+      toast({
+        title: "Fetching videos...",
+        description: "This may take a few moments",
+      });
+
+      // First, fetch new videos from YouTube
+      const { error: fetchError } = await supabase.functions.invoke("fetch-youtube-videos");
+      
+      if (fetchError) {
+        console.error("Error fetching videos from YouTube:", fetchError);
+        toast({
+          title: "Error fetching videos",
+          description: "Please try again later",
+          variant: "destructive",
+        });
+        throw fetchError;
+      }
+
+      // Then, get the updated videos from the database
       const { data, error } = await supabase
         .from("youtube_videos")
         .select("*")
@@ -36,6 +54,11 @@ export const VideoGrid = () => {
         throw error;
       }
 
+      toast({
+        title: "Videos fetched successfully",
+        description: "Your feed has been updated",
+      });
+
       console.log("Fetched videos:", data);
       return data.map((video: any) => ({
         ...video,
@@ -43,33 +66,6 @@ export const VideoGrid = () => {
       }));
     },
   });
-
-  const handleManualFetch = async () => {
-    try {
-      toast({
-        title: "Fetching videos...",
-        description: "This may take a few moments",
-      });
-
-      const { error } = await supabase.functions.invoke("fetch-youtube-videos");
-      
-      if (error) throw error;
-      
-      await refetchVideos();
-      
-      toast({
-        title: "Videos fetched successfully",
-        description: "Your feed has been updated",
-      });
-    } catch (error) {
-      console.error("Error fetching videos:", error);
-      toast({
-        title: "Error fetching videos",
-        description: "Please try again later",
-        variant: "destructive",
-      });
-    }
-  };
 
   const isLoading = isLoadingChannels || isLoadingVideos;
 
@@ -94,16 +90,11 @@ export const VideoGrid = () => {
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-end px-4">
-        <Button onClick={handleManualFetch}>
-          Fetch Latest Videos
-        </Button>
-      </div>
       {!videos?.length ? (
         <div className="flex flex-col items-center justify-center min-h-[200px] gap-2">
           <p className="text-muted-foreground">No videos found</p>
           <p className="text-sm text-muted-foreground">
-            Click the button above to fetch videos from your channels
+            Videos will appear here once they are fetched from your channels
           </p>
         </div>
       ) : (
