@@ -123,6 +123,5 @@ export const VideoHistorySection = () => {
         </Table>
       )}
     </div>
-  </div>
   );
 };
