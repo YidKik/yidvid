@@ -35,13 +35,12 @@ export const VideoGrid = () => {
         throw error;
       }
       
-      console.log("Fetched channels:", data);
       return data;
     },
   });
 
   const { data: videos, isLoading: isLoadingVideos } = useQuery({
-    queryKey: ["youtube-videos", channels],
+    queryKey: ["youtube-videos", channels?.map(c => c.channel_id)],
     queryFn: async () => {
       if (!channels?.length) {
         return [];
@@ -53,7 +52,7 @@ export const VideoGrid = () => {
       });
 
       try {
-        const { error: fetchError, data: fetchData } = await supabase.functions.invoke("fetch-youtube-videos", {
+        const { error: fetchError } = await supabase.functions.invoke("fetch-youtube-videos", {
           body: { channels: channels.map(c => c.channel_id) }
         });
         
@@ -67,11 +66,10 @@ export const VideoGrid = () => {
           throw fetchError;
         }
 
-        console.log("Edge function response:", fetchData);
-
         const { data, error } = await supabase
           .from("youtube_videos")
           .select("*")
+          .in("channel_id", channels.map(c => c.channel_id))
           .order("uploaded_at", { ascending: false });
 
         if (error) {
@@ -86,7 +84,6 @@ export const VideoGrid = () => {
             : "Showing recommended videos",
         });
 
-        console.log("Fetched videos:", data);
         return data.map((video: any) => ({
           ...video,
           uploadedAt: new Date(video.uploaded_at),
