@@ -7,6 +7,7 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -22,13 +23,34 @@ serve(async (req) => {
       .from('youtube_channels')
       .select('channel_id');
 
-    if (channelsError) throw channelsError;
+    if (channelsError) {
+      console.error('Error fetching channels:', channelsError);
+      throw channelsError;
+    }
+
+    if (!channels?.length) {
+      return new Response(
+        JSON.stringify({ message: 'No channels found' }),
+        { 
+          headers: { 
+            ...corsHeaders,
+            'Content-Type': 'application/json',
+          },
+          status: 200 
+        }
+      );
+    }
 
     // Fetch videos for each channel
     const videoPromises = channels.map(async (channel) => {
+      const apiKey = Deno.env.get('YOUTUBE_API_KEY');
+      if (!apiKey) {
+        throw new Error('YouTube API key not configured');
+      }
+
       const response = await fetch(
         `https://www.googleapis.com/youtube/v3/search?` +
-        `part=snippet&channelId=${channel.channel_id}&maxResults=50&order=date&type=video&key=${Deno.env.get('YOUTUBE_API_KEY')}`
+        `part=snippet&channelId=${channel.channel_id}&maxResults=50&order=date&type=video&key=${apiKey}`
       );
 
       if (!response.ok) {
@@ -39,7 +61,7 @@ serve(async (req) => {
       const data = await response.json();
       
       // Map YouTube API response to our database schema
-      const videos = data.items.map((item: any) => ({
+      return data.items.map((item: any) => ({
         video_id: item.id.videoId,
         title: item.snippet.title,
         thumbnail: item.snippet.thumbnails.high.url,
@@ -47,29 +69,27 @@ serve(async (req) => {
         channel_name: item.snippet.channelTitle,
         uploaded_at: item.snippet.publishedAt,
       }));
-
-      // Store videos in the database
-      for (const video of videos) {
-        const { error: upsertError } = await supabaseClient
-          .from('youtube_videos')
-          .upsert(video, { 
-            onConflict: 'video_id',
-            ignoreDuplicates: true 
-          });
-
-        if (upsertError) {
-          console.error('Error upserting video:', upsertError);
-        }
-      }
-
-      return videos;
     });
 
     const videos = (await Promise.all(videoPromises)).flat();
 
-    // Return the videos for the frontend
+    // Store videos in the database
+    for (const video of videos) {
+      const { error: upsertError } = await supabaseClient
+        .from('youtube_videos')
+        .upsert(video, { 
+          onConflict: 'video_id',
+          ignoreDuplicates: true 
+        });
+
+      if (upsertError) {
+        console.error('Error upserting video:', upsertError);
+      }
+    }
+
+    // Return success response
     return new Response(
-      JSON.stringify(videos),
+      JSON.stringify({ success: true, count: videos.length }),
       { 
         headers: { 
           ...corsHeaders,

@@ -32,7 +32,7 @@ const VideoDetails = () => {
         .from("video_comments")
         .select(`
           *,
-          user:profiles(email)
+          profiles!video_comments_user_id_fkey(email)
         `)
         .eq("video_id", id)
         .order("created_at", { ascending: false });
@@ -124,7 +124,7 @@ const VideoDetails = () => {
                 <div key={comment.id} className="border-b pb-4">
                   <div className="flex justify-between items-start mb-2">
                     <p className="font-medium">
-                      {comment.user?.email || "Anonymous"}
+                      {comment.profiles?.email || "Anonymous"}
                     </p>
                     <p className="text-sm text-muted-foreground">
                       {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}
