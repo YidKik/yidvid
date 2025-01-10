@@ -83,25 +83,31 @@ export const YouTubeChannelsSection = () => {
 
   return (
     <div className="bg-white rounded-lg shadow">
-      <div className="p-4 border-b flex items-center justify-between">
-        <h2 className="text-lg font-semibold">YouTube Channels</h2>
-        <div className="flex items-center gap-4">
-          <ChannelSearch value={searchQuery} onChange={setSearchQuery} />
-          
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-              <Button className="bg-primary hover:bg-primary/90 text-white">
-                <Plus className="h-4 w-4 mr-2" />
-                Add Channel
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <AddChannelForm
-                onClose={() => setIsDialogOpen(false)}
-                onSuccess={handleSuccess}
-              />
-            </DialogContent>
-          </Dialog>
+      <div className="p-6 border-b">
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-semibold">YouTube Channels</h2>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <Button 
+                  size="lg"
+                  className="bg-primary hover:bg-primary/90 text-white font-semibold px-8 py-6 text-lg shadow-lg hover:shadow-xl transition-all"
+                >
+                  <Plus className="h-6 w-6 mr-2" />
+                  Add Channel
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <AddChannelForm
+                  onClose={() => setIsDialogOpen(false)}
+                  onSuccess={handleSuccess}
+                />
+              </DialogContent>
+            </Dialog>
+          </div>
+          <div className="w-full">
+            <ChannelSearch value={searchQuery} onChange={setSearchQuery} />
+          </div>
         </div>
       </div>
       <ChannelList channels={channels || []} onRemoveChannel={handleRemoveChannel} />
