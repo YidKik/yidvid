@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
 import { formatDistanceToNow } from "date-fns";
+import { VideoCard } from "@/components/VideoCard";
 
 const VideoDetails = () => {
   const { id } = useParams();
@@ -25,10 +26,29 @@ const VideoDetails = () => {
     },
   });
 
+  const { data: channelVideos } = useQuery({
+    queryKey: ["channel-videos", video?.channel_id],
+    enabled: !!video?.channel_id,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("youtube_videos")
+        .select("*")
+        .eq("channel_id", video.channel_id)
+        .neq("id", id) // Exclude current video
+        .order("uploaded_at", { ascending: false })
+        .limit(12);
+
+      if (error) throw error;
+      return data.map((video) => ({
+        ...video,
+        uploadedAt: new Date(video.uploaded_at),
+      }));
+    },
+  });
+
   const { data: comments, refetch: refetchComments } = useQuery({
     queryKey: ["video-comments", id],
     queryFn: async () => {
-      // Updated query to properly join with profiles
       const { data, error } = await supabase
         .from("video_comments")
         .select(`
@@ -144,7 +164,12 @@ const VideoDetails = () => {
         </div>
         
         <div className="lg:col-span-1">
-          {/* Recommended videos section can be added here later */}
+          <h2 className="text-xl font-semibold mb-4">More from {video.channel_name}</h2>
+          <div className="space-y-4">
+            {channelVideos?.map((video) => (
+              <VideoCard key={video.id} {...video} />
+            ))}
+          </div>
         </div>
       </div>
     </div>
