@@ -15,6 +15,7 @@ const Settings = () => {
   const [darkMode, setDarkMode] = useState(false);
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [autoplay, setAutoplay] = useState(true);
+  const [userId, setUserId] = useState<string | null>(null);
 
   // Query to check if user is admin
   const { data: profile } = useQuery({
@@ -25,6 +26,8 @@ const Settings = () => {
         navigate("/auth");
         return null;
       }
+
+      setUserId(session.user.id);
 
       const { data, error } = await supabase
         .from("profiles")
@@ -157,6 +160,9 @@ const Settings = () => {
                     <Button onClick={handleDashboardAccess}>
                       Open Dashboard
                     </Button>
+                  </div>
+                  <div className="mt-4 p-4 bg-muted rounded-lg">
+                    <p className="text-sm text-muted-foreground">Your User ID: {userId}</p>
                   </div>
                 </div>
               </Card>
