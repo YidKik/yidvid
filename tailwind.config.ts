@@ -25,13 +25,13 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "#9b87f5",
-          hover: "#8b74f2",
+          DEFAULT: "#FF0000", // YouTube red
+          hover: "#CC0000", // Darker red for hover
           foreground: "#FFFFFF",
         },
         secondary: {
-          DEFAULT: "#7E69AB",
-          hover: "#6d5799",
+          DEFAULT: "#606060", // YouTube gray
+          hover: "#4D4D4D",
           foreground: "#FFFFFF",
         },
         destructive: {
@@ -39,16 +39,16 @@ export default {
           foreground: "hsl(var(--destructive-foreground))",
         },
         muted: {
-          DEFAULT: "#F5F5F7",
-          foreground: "#666666",
+          DEFAULT: "#F2F2F2", // YouTube light gray background
+          foreground: "#606060", // YouTube text gray
         },
         accent: {
-          DEFAULT: "#1A1F2C",
+          DEFAULT: "#030303", // YouTube black
           foreground: "#FFFFFF",
         },
         card: {
           DEFAULT: "#FFFFFF",
-          foreground: "#1A1F2C",
+          foreground: "#030303",
         },
       },
       borderRadius: {

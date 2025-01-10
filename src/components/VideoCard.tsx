@@ -28,9 +28,13 @@ export const VideoCard = ({
       </div>
       <div className="flex gap-3">
         <div className="flex-1">
-          <h3 className="font-semibold text-accent line-clamp-2 mb-1">{title}</h3>
-          <p className="text-sm text-muted-foreground">{channelName}</p>
-          <div className="text-sm text-muted-foreground flex items-center gap-1">
+          <h3 className="font-semibold text-accent line-clamp-2 mb-1 hover:text-primary transition-colors">
+            {title}
+          </h3>
+          <p className="text-sm text-secondary hover:text-accent transition-colors">
+            {channelName}
+          </p>
+          <div className="text-sm text-secondary flex items-center gap-1">
             <span>{views.toLocaleString()} views</span>
             <span>•</span>
             <span>{formatDistanceToNow(uploadedAt, { addSuffix: true })}</span>

@@ -31,16 +31,16 @@ const menuItems = [
 
 export const Sidebar = () => {
   return (
-    <ShadcnSidebar className="border-r border-gray-200">
+    <ShadcnSidebar className="border-r border-gray-200 bg-white">
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
               {menuItems.map((item) => (
                 <SidebarMenuItem key={item.label}>
-                  <SidebarMenuButton>
-                    <item.icon className="h-4 w-4" />
-                    <span>{item.label}</span>
+                  <SidebarMenuButton className="hover:bg-muted">
+                    <item.icon className="h-4 w-4 text-secondary" />
+                    <span className="text-secondary">{item.label}</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}

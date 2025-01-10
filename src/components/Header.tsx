@@ -13,13 +13,13 @@ export const Header = () => {
             <Input
               type="search"
               placeholder="Search videos..."
-              className="w-full pl-10 bg-muted"
+              className="w-full pl-10 bg-muted rounded-full focus:outline-none focus:ring-1 focus:ring-primary"
             />
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary h-4 w-4" />
           </div>
         </div>
         <div className="flex items-center gap-4">
-          <button className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-hover transition-colors">
+          <button className="px-4 py-2 bg-primary text-white rounded-full hover:bg-primary-hover transition-colors">
             Sign In
           </button>
         </div>
