@@ -37,7 +37,7 @@ export const FeaturedVideos = ({ videos, onVideoClick }: FeaturedVideosProps) =>
           .from("user_video_interactions")
           .select(`
             video_id,
-            youtube_videos (
+            youtube_videos!inner (
               channel_id,
               channel_name
             )
