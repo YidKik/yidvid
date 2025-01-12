@@ -1,4 +1,4 @@
-import { Trash2, Youtube } from "lucide-react";
+import { Trash2, Youtube, Video } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -8,6 +8,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { ChannelVideosManagement } from "./ChannelVideosManagement";
 
 interface Channel {
   id: string;
@@ -31,7 +37,7 @@ export const ChannelList = ({ channels, onRemoveChannel }: ChannelListProps) => 
           <TableHead>Channel</TableHead>
           <TableHead>Description</TableHead>
           <TableHead>Added On</TableHead>
-          <TableHead className="w-[100px]">Actions</TableHead>
+          <TableHead className="w-[150px]">Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -58,7 +64,21 @@ export const ChannelList = ({ channels, onRemoveChannel }: ChannelListProps) => 
             <TableCell>
               {new Date(channel.created_at).toLocaleDateString()}
             </TableCell>
-            <TableCell>
+            <TableCell className="flex items-center gap-2">
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-primary hover:text-primary hover:bg-primary/10"
+                  >
+                    <Video className="h-4 w-4" />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-4xl">
+                  <ChannelVideosManagement channelId={channel.channel_id} />
+                </DialogContent>
+              </Dialog>
               <Button
                 variant="ghost"
                 size="icon"
