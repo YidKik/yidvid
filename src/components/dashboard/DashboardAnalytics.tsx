@@ -19,17 +19,18 @@ export const DashboardAnalytics = () => {
       sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
       const { data, error } = await supabase
-        .from("youtube_videos")
-        .select("views, uploaded_at")
-        .gte("uploaded_at", sevenDaysAgo.toISOString())
-        .order("uploaded_at", { ascending: true });
+        .from("user_video_interactions")
+        .select("created_at")
+        .eq('interaction_type', 'view')
+        .gte("created_at", sevenDaysAgo.toISOString())
+        .order("created_at", { ascending: true });
 
       if (error) throw error;
 
-      // Group by day and sum views
-      const dailyViews = data.reduce((acc: any, video) => {
-        const date = new Date(video.uploaded_at).toLocaleDateString();
-        acc[date] = (acc[date] || 0) + (video.views || 0);
+      // Group by day and count views
+      const dailyViews = data.reduce((acc: any, interaction) => {
+        const date = new Date(interaction.created_at).toLocaleDateString();
+        acc[date] = (acc[date] || 0) + 1;
         return acc;
       }, {});
 
@@ -47,9 +48,10 @@ export const DashboardAnalytics = () => {
         .from("youtube_channels")
         .select("channel_id", { count: "exact" });
 
-      const { data: videos, error: videosError } = await supabase
-        .from("youtube_videos")
-        .select("views");
+      const { data: interactions, error: interactionsError } = await supabase
+        .from("user_video_interactions")
+        .select("*")
+        .eq('interaction_type', 'view');
 
       const { data: users, error: usersError } = await supabase
         .from("profiles")
@@ -59,8 +61,8 @@ export const DashboardAnalytics = () => {
         .from("user_analytics")
         .select("session_start, session_end");
 
-      if (channelsError || videosError || usersError || sessionsError) 
-        throw channelsError || videosError || usersError || sessionsError;
+      if (channelsError || interactionsError || usersError || sessionsError) 
+        throw channelsError || interactionsError || usersError || sessionsError;
 
       // Calculate total watch time in hours
       const totalHours = sessions?.reduce((sum, session) => {
@@ -81,12 +83,10 @@ export const DashboardAnalytics = () => {
         { hour: 0, count: 0 }
       );
 
-      const totalViews = videos?.reduce((sum, video) => sum + (video.views || 0), 0);
-
       return {
         totalChannels: channels?.length || 0,
-        totalVideos: videos?.length || 0,
-        totalViews: totalViews || 0,
+        totalVideos: interactions?.length || 0,
+        totalViews: interactions?.length || 0,
         totalUsers: users?.length || 0,
         totalHours: Math.round(totalHours || 0),
         mostPopularHour: mostPopularHour.hour,
@@ -133,7 +133,7 @@ export const DashboardAnalytics = () => {
       <Card>
         <CardHeader>
           <CardTitle>Total Views</CardTitle>
-          <CardDescription>Combined video views</CardDescription>
+          <CardDescription>Total video views on website</CardDescription>
         </CardHeader>
         <CardContent>
           <p className="text-3xl font-bold">
