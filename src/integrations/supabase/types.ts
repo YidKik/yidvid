@@ -65,6 +65,36 @@ export type Database = {
         }
         Relationships: []
       }
+      user_analytics: {
+        Row: {
+          created_at: string
+          id: string
+          page_path: string
+          session_end: string | null
+          session_start: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          page_path: string
+          session_end?: string | null
+          session_start?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          page_path?: string
+          session_end?: string | null
+          session_start?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       user_video_interactions: {
         Row: {
           created_at: string

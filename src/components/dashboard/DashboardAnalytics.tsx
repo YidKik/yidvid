@@ -51,7 +51,35 @@ export const DashboardAnalytics = () => {
         .from("youtube_videos")
         .select("views");
 
-      if (channelsError || videosError) throw channelsError || videosError;
+      const { data: users, error: usersError } = await supabase
+        .from("profiles")
+        .select("id", { count: "exact" });
+
+      const { data: sessions, error: sessionsError } = await supabase
+        .from("user_analytics")
+        .select("session_start, session_end");
+
+      if (channelsError || videosError || usersError || sessionsError) 
+        throw channelsError || videosError || usersError || sessionsError;
+
+      // Calculate total watch time in hours
+      const totalHours = sessions?.reduce((sum, session) => {
+        if (!session.session_end) return sum;
+        const duration = new Date(session.session_end).getTime() - new Date(session.session_start).getTime();
+        return sum + (duration / (1000 * 60 * 60)); // Convert ms to hours
+      }, 0);
+
+      // Calculate most popular hour
+      const hourCounts: { [key: number]: number } = {};
+      sessions?.forEach(session => {
+        const hour = new Date(session.session_start).getHours();
+        hourCounts[hour] = (hourCounts[hour] || 0) + 1;
+      });
+
+      const mostPopularHour = Object.entries(hourCounts).reduce(
+        (max, [hour, count]) => (count > max.count ? { hour: Number(hour), count } : max),
+        { hour: 0, count: 0 }
+      );
 
       const totalViews = videos?.reduce((sum, video) => sum + (video.views || 0), 0);
 
@@ -59,6 +87,9 @@ export const DashboardAnalytics = () => {
         totalChannels: channels?.length || 0,
         totalVideos: videos?.length || 0,
         totalViews: totalViews || 0,
+        totalUsers: users?.length || 0,
+        totalHours: Math.round(totalHours || 0),
+        mostPopularHour: mostPopularHour.hour,
       };
     },
   });
@@ -101,6 +132,38 @@ export const DashboardAnalytics = () => {
         <CardContent>
           <p className="text-3xl font-bold">
             {totalStats?.totalViews.toLocaleString()}
+          </p>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Total Users</CardTitle>
+          <CardDescription>Registered accounts</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p className="text-3xl font-bold">{totalStats?.totalUsers}</p>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Total Watch Time</CardTitle>
+          <CardDescription>Hours spent on website</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p className="text-3xl font-bold">{totalStats?.totalHours}</p>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Peak Activity</CardTitle>
+          <CardDescription>Most active hour (24h)</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p className="text-3xl font-bold">
+            {totalStats?.mostPopularHour}:00
           </p>
         </CardContent>
       </Card>
