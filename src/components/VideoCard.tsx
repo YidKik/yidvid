@@ -1,5 +1,7 @@
 import { formatDistanceToNow } from "date-fns";
 import { Link } from "react-router-dom";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Youtube } from "lucide-react";
 
 interface VideoCardProps {
   id: string;
@@ -8,6 +10,7 @@ interface VideoCardProps {
   channelName: string;
   views: number;
   uploadedAt: Date;
+  channelThumbnail?: string;
 }
 
 export const VideoCard = ({
@@ -17,6 +20,7 @@ export const VideoCard = ({
   channelName,
   views,
   uploadedAt,
+  channelThumbnail,
 }: VideoCardProps) => {
   return (
     <Link to={`/video/${id}`} className="group cursor-pointer">
@@ -28,6 +32,14 @@ export const VideoCard = ({
         />
       </div>
       <div className="flex gap-3">
+        <div className="flex-shrink-0">
+          <Avatar className="w-8 h-8">
+            <AvatarImage src={channelThumbnail} alt={channelName} />
+            <AvatarFallback>
+              <Youtube className="w-4 h-4 text-primary" />
+            </AvatarFallback>
+          </Avatar>
+        </div>
         <div className="flex-1">
           <h3 className="text-youtube-title font-medium text-accent line-clamp-2 mb-1 hover:text-primary transition-colors">
             {title}

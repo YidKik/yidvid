@@ -87,9 +87,9 @@ export const VideoGrid = () => {
           throw fetchError;
         }
 
-        const { data, error } = await supabase
+        const { data: videosData, error } = await supabase
           .from("youtube_videos")
-          .select("*")
+          .select("*, youtube_channels!inner(thumbnail_url)")
           .in("channel_id", channels.map(c => c.channel_id))
           .order("uploaded_at", { ascending: false });
 
@@ -99,9 +99,10 @@ export const VideoGrid = () => {
         }
 
         // Transform video data and sort based on user interactions
-        const processedVideos = data.map((video: any) => ({
+        const processedVideos = videosData.map((video: any) => ({
           ...video,
           uploadedAt: new Date(video.uploaded_at),
+          channelThumbnail: video.youtube_channels.thumbnail_url,
           interactionScore: calculateInteractionScore(video.id, userInteractions || [])
         }));
 
