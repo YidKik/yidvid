@@ -89,6 +89,7 @@ export const SearchBar = () => {
         <PopoverContent 
           className="search-results w-[500px] p-0 border-2 shadow-lg rounded-xl" 
           align="start"
+          sideOffset={5}
         >
           <Command className="bg-white rounded-xl">
             <CommandList className="max-h-[300px] overflow-y-auto scrollbar-hide">
