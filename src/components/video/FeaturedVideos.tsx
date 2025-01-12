@@ -74,7 +74,7 @@ export const FeaturedVideos = ({ videos, onVideoClick }: FeaturedVideosProps) =>
       }
     },
     enabled: !!session?.user,
-    retry: 3, // Add retry logic
+    retry: 3,
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
     staleTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
