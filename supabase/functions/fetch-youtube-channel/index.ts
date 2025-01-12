@@ -33,17 +33,41 @@ serve(async (req) => {
       );
     }
 
-    // Clean the channel ID
-    const cleanChannelId = channelId.trim().replace(/[^\w-]/g, '');
-    console.log('[YouTube API] Cleaned channelId:', cleanChannelId);
+    // Try different channel ID formats
+    let cleanChannelId = channelId.trim();
     
-    const apiUrl = `https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${cleanChannelId}&key=${YOUTUBE_API_KEY}`;
+    // If it's a channel URL, extract the ID
+    if (cleanChannelId.includes('youtube.com')) {
+      const urlMatch = cleanChannelId.match(/(?:\/channel\/|\/c\/|\/user\/)([\w-]+)/);
+      if (urlMatch) {
+        cleanChannelId = urlMatch[1];
+      }
+    }
+    
+    // Remove any remaining special characters
+    cleanChannelId = cleanChannelId.replace(/[^\w-]/g, '');
+    
+    console.log('[YouTube API] Processing channelId:', cleanChannelId);
+    
+    // First try with channel ID
+    let apiUrl = `https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${cleanChannelId}&key=${YOUTUBE_API_KEY}`;
     console.log('[YouTube API] Making request to:', apiUrl.replace(YOUTUBE_API_KEY, '[REDACTED]'));
 
-    const response = await fetch(apiUrl);
+    let response = await fetch(apiUrl);
+    let data = await response.json();
     
+    // If no results, try with username
+    if (!data.items || data.items.length === 0) {
+      console.log('[YouTube API] No results with ID, trying forUsername');
+      apiUrl = `https://www.googleapis.com/youtube/v3/channels?part=snippet&forUsername=${cleanChannelId}&key=${YOUTUBE_API_KEY}`;
+      console.log('[YouTube API] Making request to:', apiUrl.replace(YOUTUBE_API_KEY, '[REDACTED]'));
+      
+      response = await fetch(apiUrl);
+      data = await response.json();
+    }
+
     if (!response.ok) {
-      const errorText = await response.text();
+      const errorText = JSON.stringify(data);
       console.error('[YouTube API] Error Response:', errorText);
       console.error('[YouTube API] Status:', response.status);
       return new Response(
@@ -56,7 +80,6 @@ serve(async (req) => {
       );
     }
 
-    const data = await response.json();
     console.log('[YouTube API] Response received:', JSON.stringify(data));
     
     if (!data.items || data.items.length === 0) {
@@ -64,7 +87,7 @@ serve(async (req) => {
       return new Response(
         JSON.stringify({ 
           error: 'Channel not found',
-          details: 'Please verify the channel ID is correct'
+          details: 'Please verify the channel ID is correct. You can try using the channel URL or username instead.'
         }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 404 }
       );
