@@ -52,6 +52,21 @@ const Settings = () => {
   const [buttonColor, setButtonColor] = useState(colors.buttonColor);
   const [logoColor, setLogoColor] = useState(colors.logoColor);
 
+  // Add the missing functions
+  const handleSignOut = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      toast.error("Error signing out");
+    } else {
+      toast.success("Signed out successfully");
+      navigate("/");
+    }
+  };
+
+  const handleDashboardAccess = () => {
+    navigate("/dashboard");
+  };
+
   // Effect to sync with ColorContext
   useEffect(() => {
     setBackgroundColor(colors.backgroundColor);
