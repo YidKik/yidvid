@@ -72,11 +72,16 @@ serve(async (req) => {
     const channel = data.items[0].snippet;
     console.log('Successfully fetched channel:', channel.title);
     
+    // Get the highest quality thumbnail available
+    const thumbnailUrl = channel.thumbnails?.high?.url || 
+                        channel.thumbnails?.medium?.url || 
+                        channel.thumbnails?.default?.url;
+    
     return new Response(
       JSON.stringify({
         title: channel.title,
         description: channel.description,
-        thumbnailUrl: channel.thumbnails?.default?.url
+        thumbnailUrl: thumbnailUrl
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
