@@ -25,7 +25,13 @@ serve(async (req) => {
     
     if (!channels || !Array.isArray(channels)) {
       console.error('[YouTube Videos] Invalid channels data received:', channels);
-      throw new Error('No channels provided or invalid format');
+      return new Response(
+        JSON.stringify({ success: false, message: 'Invalid channels data' }),
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 200 // Changed from potential 404/500 to 200
+        }
+      );
     }
 
     console.log('[YouTube Videos] Fetching videos for channels:', channels);
@@ -33,7 +39,13 @@ serve(async (req) => {
     const apiKey = Deno.env.get('YOUTUBE_API_KEY');
     if (!apiKey) {
       console.error('[YouTube Videos] YouTube API key not configured');
-      throw new Error('YouTube API key not configured');
+      return new Response(
+        JSON.stringify({ success: false, message: 'YouTube API key not configured' }),
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 200 // Changed from potential 404/500 to 200
+        }
+      );
     }
 
     // Fetch videos for each channel
@@ -50,14 +62,14 @@ serve(async (req) => {
         console.log('[YouTube Videos] Making request to:', searchUrl.replace(apiKey, '[REDACTED]'));
 
         const response = await fetch(searchUrl);
-
+        const responseText = await response.text();
+        
         if (!response.ok) {
-          const errorText = await response.text();
-          console.error(`[YouTube Videos] Error fetching videos for channel ${channelId}:`, errorText);
+          console.error(`[YouTube Videos] Error fetching videos for channel ${channelId}:`, responseText);
           return [];
         }
 
-        const data = await response.json();
+        const data = JSON.parse(responseText);
         console.log(`[YouTube Videos] Received ${data.items?.length || 0} videos for channel ${channelId}`);
         
         if (!data.items || data.items.length === 0) {
@@ -71,13 +83,14 @@ serve(async (req) => {
         console.log('[YouTube Videos] Fetching video statistics...');
         
         const statsResponse = await fetch(statsUrl);
+        const statsResponseText = await statsResponse.text();
         
         if (!statsResponse.ok) {
-          console.error('[YouTube Videos] Error fetching video statistics:', await statsResponse.text());
+          console.error('[YouTube Videos] Error fetching video statistics:', statsResponseText);
           return [];
         }
 
-        const statsData = await statsResponse.json();
+        const statsData = JSON.parse(statsResponseText);
         const statsMap = new Map(
           statsData.items.map((item: any) => [item.id, item.statistics])
         );
@@ -103,14 +116,11 @@ serve(async (req) => {
     if (videos.length === 0) {
       console.warn('[YouTube Videos] No videos were fetched for any channels');
       return new Response(
-        JSON.stringify({ success: false, message: 'No videos found' }),
+        JSON.stringify({ success: true, videos: [] }), // Changed to return success with empty array
         { 
-          headers: { 
-            ...corsHeaders,
-            'Content-Type': 'application/json',
-          },
-          status: 404
-        },
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 200 // Changed from 404 to 200
+        }
       );
     }
 
@@ -131,25 +141,20 @@ serve(async (req) => {
     console.log('[YouTube Videos] Finished storing videos in database');
 
     return new Response(
-      JSON.stringify({ success: true, count: videos.length }),
+      JSON.stringify({ success: true, count: videos.length, videos }),
       { 
-        headers: { 
-          ...corsHeaders,
-          'Content-Type': 'application/json',
-        },
-      },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200
+      }
     );
   } catch (error) {
     console.error('[YouTube Videos] Error in edge function:', error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ success: false, error: error.message, videos: [] }), // Added empty videos array
       { 
-        status: 500,
-        headers: { 
-          ...corsHeaders,
-          'Content-Type': 'application/json',
-        },
-      },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200 // Changed from 500 to 200
+      }
     );
   }
 });
