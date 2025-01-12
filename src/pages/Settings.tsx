@@ -33,6 +33,7 @@ const Settings = () => {
   });
 
   const [autoplay, setAutoplay] = useState(true);
+  const [emailNotifications, setEmailNotifications] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
   
   // Color customization states
