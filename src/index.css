@@ -6,10 +6,10 @@
   :root {
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
-    --background-custom: #F2FCE2;
-    --text-custom: #1A1F2C;
-    --button-custom: #9b87f5;
-    --logo-custom: #221F26;
+    --background-custom: #FFFFFF;
+    --text-custom: #030303;
+    --button-custom: #FF0000;
+    --logo-custom: #030303;
     --search-background: #F2F2F2;
     --search-text: #606060;
     --search-border: #E5E5E5;
@@ -54,10 +54,10 @@
   .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
-    --background-custom: #F2FCE2;
-    --text-custom: #1A1F2C;
-    --button-custom: #9b87f5;
-    --logo-custom: #221F26;
+    --background-custom: #FFFFFF;
+    --text-custom: #030303;
+    --button-custom: #FF0000;
+    --logo-custom: #030303;
     --search-background: #F2F2F2;
     --search-text: #606060;
     --search-border: #E5E5E5;
