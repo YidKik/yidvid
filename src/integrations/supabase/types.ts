@@ -69,7 +69,7 @@ export type Database = {
         Row: {
           created_at: string
           id: string
-          interaction_type: string
+          interaction_type: Database["public"]["Enums"]["interaction_type_enum"]
           updated_at: string
           user_id: string
           video_id: string
@@ -77,7 +77,7 @@ export type Database = {
         Insert: {
           created_at?: string
           id?: string
-          interaction_type: string
+          interaction_type: Database["public"]["Enums"]["interaction_type_enum"]
           updated_at?: string
           user_id: string
           video_id: string
@@ -85,7 +85,7 @@ export type Database = {
         Update: {
           created_at?: string
           id?: string
-          interaction_type?: string
+          interaction_type?: Database["public"]["Enums"]["interaction_type_enum"]
           updated_at?: string
           user_id?: string
           video_id?: string
@@ -297,7 +297,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      interaction_type_enum: "view" | "like" | "dislike" | "save"
     }
     CompositeTypes: {
       [_ in never]: never

@@ -84,7 +84,7 @@ export const VideoGrid = () => {
 
       try {
         // First, try to fetch new videos from YouTube
-        const { error: fetchError, data: fetchResponse } = await supabase.functions.invoke("fetch-youtube-videos", {
+        const { error: fetchError } = await supabase.functions.invoke("fetch-youtube-videos", {
           body: { channels: channels.map(c => c.channel_id) }
         });
         
@@ -95,8 +95,6 @@ export const VideoGrid = () => {
             description: "Some videos might not be up to date",
             variant: "destructive",
           });
-        } else {
-          console.log("Fetch response:", fetchResponse);
         }
 
         // Then fetch all videos from the database
@@ -132,14 +130,6 @@ export const VideoGrid = () => {
           interactionScore: calculateInteractionScore(video.id, userInteractions || [])
         }));
 
-        // Sort videos by interaction score (personalized) and then by upload date
-        const sortedVideos = processedVideos.sort((a, b) => {
-          if (b.interactionScore !== a.interactionScore) {
-            return b.interactionScore - a.interactionScore;
-          }
-          return b.uploadedAt.getTime() - a.uploadedAt.getTime();
-        });
-
         toast({
           title: "Videos fetched successfully",
           description: session?.user 
@@ -147,7 +137,7 @@ export const VideoGrid = () => {
             : "Showing recommended videos",
         });
 
-        return sortedVideos;
+        return processedVideos;
       } catch (error) {
         console.error("Error in video fetch process:", error);
         toast({
@@ -188,6 +178,11 @@ export const VideoGrid = () => {
 
   const isLoading = isLoadingChannels || isLoadingVideos;
 
+  // Sort videos by views for the most viewed section
+  const mostViewedVideos = videos ? [...videos].sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, 12) : [];
+  // Get latest videos for the new videos section
+  const newVideos = videos ? [...videos].sort((a, b) => b.uploadedAt.getTime() - a.uploadedAt.getTime()).slice(0, 12) : [];
+
   return (
     <div className="space-y-4">
       <VideoGridHeader 
@@ -211,6 +206,28 @@ export const VideoGrid = () => {
                   <VideoCard {...video} />
                 </div>
               ))}
+            </div>
+
+            <div className="mt-12">
+              <h2 className="text-2xl font-bold px-4 mb-8 text-accent">New Videos</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-4">
+                {newVideos.map((video) => (
+                  <div key={video.id} onClick={() => handleVideoView(video.id)}>
+                    <VideoCard {...video} />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-12">
+              <h2 className="text-2xl font-bold px-4 mb-8 text-accent">Most Viewed Videos</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-4">
+                {mostViewedVideos.map((video) => (
+                  <div key={video.id} onClick={() => handleVideoView(video.id)}>
+                    <VideoCard {...video} />
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </>
