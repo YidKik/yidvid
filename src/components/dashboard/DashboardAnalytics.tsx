@@ -196,7 +196,7 @@ export const DashboardAnalytics = () => {
           <CardDescription>Last 7 days</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="h-[300px]">
+          <div className="h-[200px]"> {/* Reduced from 300px to 200px */}
             <ChartContainer
               config={{
                 views: {
@@ -216,6 +216,7 @@ export const DashboardAnalytics = () => {
                   dataKey="views"
                   stroke="hsl(var(--primary))"
                   fill="hsl(var(--primary)/.2)"
+                  strokeWidth={1} // Added to make the line thinner
                 />
               </AreaChart>
             </ChartContainer>
