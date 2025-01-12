@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Youtube } from "lucide-react";
 import { VideoCard } from "@/components/VideoCard";
 import { BackButton } from "@/components/navigation/BackButton";
+import { toast } from "@/components/ui/use-toast";
 
 const ChannelDetails = () => {
   const { channelId } = useParams();
@@ -11,37 +12,88 @@ const ChannelDetails = () => {
   const { data: channel, isLoading: isLoadingChannel } = useQuery({
     queryKey: ["channel", channelId],
     queryFn: async () => {
+      if (!channelId) {
+        throw new Error("Channel ID is required");
+      }
+
       const { data, error } = await supabase
         .from("youtube_channels")
         .select("*")
         .eq("channel_id", channelId)
-        .single();
+        .maybeSingle();
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching channel:", error);
+        toast({
+          title: "Error",
+          description: "Failed to load channel details",
+          variant: "destructive",
+        });
+        throw error;
+      }
+
+      if (!data) {
+        toast({
+          title: "Not Found",
+          description: "Channel not found",
+          variant: "destructive",
+        });
+        throw new Error("Channel not found");
+      }
+
       return data;
     },
+    retry: false,
   });
 
   const { data: videos, isLoading: isLoadingVideos } = useQuery({
     queryKey: ["channel-videos", channelId],
     queryFn: async () => {
+      if (!channelId) {
+        throw new Error("Channel ID is required");
+      }
+
       const { data, error } = await supabase
         .from("youtube_videos")
         .select("*")
         .eq("channel_id", channelId)
         .order("uploaded_at", { ascending: false });
 
-      if (error) throw error;
-      return data;
+      if (error) {
+        console.error("Error fetching videos:", error);
+        toast({
+          title: "Error",
+          description: "Failed to load channel videos",
+          variant: "destructive",
+        });
+        throw error;
+      }
+
+      return data || [];
     },
+    enabled: !!channel,
   });
 
   if (isLoadingChannel || isLoadingVideos) {
-    return <div className="p-8">Loading...</div>;
+    return (
+      <div className="container mx-auto p-4 mt-16">
+        <BackButton />
+        <div className="flex items-center justify-center min-h-[200px]">
+          <p className="text-lg text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
   }
 
   if (!channel) {
-    return <div className="p-8">Channel not found</div>;
+    return (
+      <div className="container mx-auto p-4 mt-16">
+        <BackButton />
+        <div className="flex items-center justify-center min-h-[200px]">
+          <p className="text-lg text-destructive">Channel not found</p>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -77,6 +129,7 @@ const ChannelDetails = () => {
             channelName={video.channel_name}
             views={video.views || 0}
             uploadedAt={new Date(video.uploaded_at)}
+            channelThumbnail={channel.thumbnail_url}
           />
         ))}
       </div>
