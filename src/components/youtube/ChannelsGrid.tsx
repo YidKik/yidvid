@@ -30,7 +30,7 @@ export const ChannelsGrid = () => {
         <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-9 gap-4">
           {[...Array(5)].map((_, i) => (
             <div key={i} className="animate-pulse">
-              <div className="w-16 h-16 bg-gray-200 rounded-full mb-2 mx-auto" />
+              <div className="w-20 h-20 bg-gray-200 rounded-full mb-2 mx-auto" />
               <div className="h-4 bg-gray-200 rounded w-3/4 mx-auto" />
             </div>
           ))}
@@ -51,9 +51,9 @@ export const ChannelsGrid = () => {
           <Link 
             key={channel.id}
             to={`/channel/${channel.channel_id}`}
-            className="flex flex-col items-center p-3 rounded-lg bg-[#333333] hover:bg-[#444444] transition-colors"
+            className="flex flex-col items-center p-4 rounded-lg bg-[#F8F8F8] hover:bg-[#F1F1F1] transition-colors"
           >
-            <Avatar className="w-16 h-16 mb-2">
+            <Avatar className="w-20 h-20 mb-3">
               <AvatarImage
                 src={channel.thumbnail_url}
                 alt={channel.title}
@@ -63,10 +63,10 @@ export const ChannelsGrid = () => {
                 }}
               />
               <AvatarFallback className="bg-primary/10">
-                <Youtube className="w-8 h-8 text-primary" />
+                <Youtube className="w-10 h-10 text-primary" />
               </AvatarFallback>
             </Avatar>
-            <h3 className="text-sm font-medium text-center text-[#FFFFFF] line-clamp-2 mt-2">
+            <h3 className="text-sm font-medium text-center text-[#333333] line-clamp-2 mt-2">
               {channel.title}
             </h3>
           </Link>
