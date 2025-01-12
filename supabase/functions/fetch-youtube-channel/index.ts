@@ -16,6 +16,7 @@ serve(async (req) => {
   try {
     const { channelId } = await req.json();
     console.log('Received request with channelId:', channelId);
+    console.log('API Key exists:', !!YOUTUBE_API_KEY);
 
     if (!channelId) {
       console.error('No channel ID provided');
@@ -36,6 +37,7 @@ serve(async (req) => {
     // Clean the channel ID by removing any whitespace and special characters
     const cleanChannelId = channelId.trim().replace(/[^\w-]/g, '');
     console.log('Fetching channel details for ID:', cleanChannelId);
+    console.log('Using API URL:', `https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${cleanChannelId}&key=${YOUTUBE_API_KEY}`);
 
     const response = await fetch(
       `https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${cleanChannelId}&key=${YOUTUBE_API_KEY}`
