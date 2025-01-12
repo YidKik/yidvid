@@ -199,14 +199,6 @@ export const VideoGrid = () => {
           />
           
           <div className="w-full max-w-[1800px] mx-auto mt-8">
-            <h2 className="text-2xl font-bold px-4 mb-8 text-accent">All Videos</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-4">
-              {videos.slice(2, 14).map((video) => (
-                <div key={video.id} onClick={() => handleVideoView(video.id)}>
-                  <VideoCard {...video} />
-                </div>
-              ))}
-            </div>
 
             <div className="mt-12">
               <h2 className="text-2xl font-bold px-4 mb-8 text-accent">New Videos</h2>
