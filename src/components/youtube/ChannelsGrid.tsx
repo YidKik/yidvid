@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Youtube } from "lucide-react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 export const ChannelsGrid = () => {
   const { data: channels, isLoading } = useQuery({
@@ -17,7 +18,7 @@ export const ChannelsGrid = () => {
         throw error;
       }
       
-      console.log("Fetched channels:", data); // Add this log to debug thumbnail data
+      console.log("Fetched channels with thumbnails:", data); // Debug log
       return data || [];
     },
   });
@@ -52,25 +53,20 @@ export const ChannelsGrid = () => {
             to={`/channel/${channel.channel_id}`}
             className="flex flex-col items-center p-4 rounded-lg hover:bg-gray-50 transition-colors"
           >
-            <div className="w-16 h-16 rounded-full mb-2 overflow-hidden flex items-center justify-center bg-primary/10">
-              {channel.thumbnail_url ? (
-                <img
-                  src={channel.thumbnail_url}
-                  alt={channel.title}
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    console.error("Error loading thumbnail:", e);
-                    e.currentTarget.style.display = 'none';
-                    e.currentTarget.nextElementSibling?.removeAttribute('style');
-                  }}
-                />
-              ) : null}
-              <Youtube 
-                className="w-8 h-8 text-primary" 
-                style={{ display: channel.thumbnail_url ? 'none' : 'block' }}
+            <Avatar className="w-16 h-16">
+              <AvatarImage
+                src={channel.thumbnail_url}
+                alt={channel.title}
+                onError={(e) => {
+                  console.error("Error loading thumbnail for channel:", channel.title);
+                  e.currentTarget.style.display = 'none';
+                }}
               />
-            </div>
-            <h3 className="text-sm font-medium text-center text-accent line-clamp-2">
+              <AvatarFallback className="bg-primary/10">
+                <Youtube className="w-8 h-8 text-primary" />
+              </AvatarFallback>
+            </Avatar>
+            <h3 className="text-sm font-medium text-center text-accent line-clamp-2 mt-2">
               {channel.title}
             </h3>
           </Link>
