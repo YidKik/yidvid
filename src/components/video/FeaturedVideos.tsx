@@ -32,40 +32,50 @@ export const FeaturedVideos = ({ videos, onVideoClick }: FeaturedVideosProps) =>
     queryFn: async () => {
       if (!session?.user) return null;
 
-      const { data, error } = await supabase
-        .from("user_video_interactions")
-        .select(`
-          video_id,
-          youtube_videos!inner (
-            channel_id,
-            channel_name
-          )
-        `)
-        .eq("user_id", session.user.id);
+      try {
+        const { data, error } = await supabase
+          .from("user_video_interactions")
+          .select(`
+            video_id,
+            youtube_videos (
+              channel_id,
+              channel_name
+            )
+          `)
+          .eq("user_id", session.user.id)
+          .eq("interaction_type", "view");
 
-      if (error) {
-        console.error("Error fetching user interactions:", error);
-        toast.error("Unable to load personalized recommendations");
+        if (error) {
+          console.error("Error fetching user interactions:", error);
+          toast.error("Unable to load personalized recommendations");
+          return null;
+        }
+
+        if (!data || data.length === 0) {
+          return null;
+        }
+
+        // Count channel views and sort by most viewed
+        const channelViews = data.reduce((acc: any, curr: any) => {
+          const channelId = curr.youtube_videos?.channel_id;
+          if (channelId) {
+            acc[channelId] = (acc[channelId] || 0) + 1;
+          }
+          return acc;
+        }, {});
+
+        return Object.entries(channelViews)
+          .sort(([, a]: any, [, b]: any) => b - a)
+          .map(([channelId]) => channelId);
+      } catch (error) {
+        console.error("Error in fetching channel views:", error);
+        toast.error("Error loading recommendations");
         return null;
       }
-
-      if (!data || data.length === 0) {
-        return null;
-      }
-
-      // Count channel views and sort by most viewed
-      const channelViews = data.reduce((acc: any, curr: any) => {
-        const channelId = curr.youtube_videos.channel_id;
-        acc[channelId] = (acc[channelId] || 0) + 1;
-        return acc;
-      }, {});
-
-      return Object.entries(channelViews)
-        .sort(([, a]: any, [, b]: any) => b - a)
-        .map(([channelId]) => channelId);
     },
     enabled: !!session?.user,
-    retry: 1,
+    retry: 3, // Add retry logic
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
     staleTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
 
@@ -97,7 +107,7 @@ export const FeaturedVideos = ({ videos, onVideoClick }: FeaturedVideosProps) =>
       setCurrentIndex((prevIndex) => 
         prevIndex + 2 >= featuredVideos.length ? 0 : prevIndex + 2
       );
-    }, 60000); // 60000ms = 1 minute
+    }, 60000);
 
     return () => clearInterval(interval);
   }, [videos, mostViewedChannels]);
