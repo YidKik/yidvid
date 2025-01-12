@@ -42,7 +42,6 @@ export function ColorProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    // Apply colors to CSS variables
     document.documentElement.style.setProperty('--background-custom', colors.backgroundColor);
     document.documentElement.style.setProperty('--text-custom', colors.textColor);
     document.documentElement.style.setProperty('--button-custom', colors.buttonColor);
@@ -53,24 +52,30 @@ export function ColorProvider({ children }: { children: React.ReactNode }) {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session?.user) return;
 
-    const { data: preferences, error } = await supabase
-      .from('user_preferences')
-      .select('*')
-      .eq('user_id', session.user.id)
-      .maybeSingle();
+    try {
+      const { data: preferences, error } = await supabase
+        .from('user_preferences')
+        .select('*')
+        .eq('user_id', session.user.id)
+        .maybeSingle();
 
-    if (error) {
-      console.error('Error loading preferences:', error);
-      return;
-    }
+      if (error) {
+        console.error('Error loading preferences:', error);
+        toast.error("Failed to load preferences");
+        return;
+      }
 
-    if (preferences) {
-      setColors({
-        backgroundColor: preferences.background_color,
-        textColor: preferences.text_color,
-        buttonColor: preferences.button_color,
-        logoColor: preferences.logo_color,
-      });
+      if (preferences) {
+        setColors({
+          backgroundColor: preferences.background_color,
+          textColor: preferences.text_color,
+          buttonColor: preferences.button_color,
+          logoColor: preferences.logo_color,
+        });
+      }
+    } catch (error) {
+      console.error('Error in loadUserPreferences:', error);
+      toast.error("Failed to load preferences");
     }
   };
 
@@ -81,25 +86,30 @@ export function ColorProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    const { error } = await supabase
-      .from('user_preferences')
-      .upsert({
-        user_id: session.user.id,
-        background_color: newColors.backgroundColor,
-        text_color: newColors.textColor,
-        button_color: newColors.buttonColor,
-        logo_color: newColors.logoColor,
-        updated_at: new Date().toISOString(),
-      });
+    try {
+      const { error } = await supabase
+        .from('user_preferences')
+        .upsert({
+          user_id: session.user.id,
+          background_color: newColors.backgroundColor,
+          text_color: newColors.textColor,
+          button_color: newColors.buttonColor,
+          logo_color: newColors.logoColor,
+          updated_at: new Date().toISOString(),
+        });
 
-    if (error) {
-      console.error('Error updating preferences:', error);
+      if (error) {
+        console.error('Error updating preferences:', error);
+        toast.error("Failed to save preferences");
+        return;
+      }
+
+      setColors(newColors);
+      toast.success("Preferences saved successfully");
+    } catch (error) {
+      console.error('Error in updateColors:', error);
       toast.error("Failed to save preferences");
-      return;
     }
-
-    setColors(newColors);
-    toast.success("Preferences saved successfully");
   };
 
   const resetColors = async () => {

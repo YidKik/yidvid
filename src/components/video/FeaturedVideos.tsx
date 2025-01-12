@@ -13,7 +13,6 @@ export const FeaturedVideos = ({ videos, onVideoClick }: FeaturedVideosProps) =>
   const [currentIndex, setCurrentIndex] = useState(0);
   const [session, setSession] = useState<any>(null);
 
-  // Get current user session
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
@@ -26,7 +25,6 @@ export const FeaturedVideos = ({ videos, onVideoClick }: FeaturedVideosProps) =>
     return () => subscription.unsubscribe();
   }, []);
 
-  // Fetch user's most viewed channels with error handling
   const { data: mostViewedChannels } = useQuery({
     queryKey: ["most-viewed-channels", session?.user?.id],
     queryFn: async () => {
@@ -55,7 +53,6 @@ export const FeaturedVideos = ({ videos, onVideoClick }: FeaturedVideosProps) =>
           return null;
         }
 
-        // Count channel views and sort by most viewed
         const channelViews = data.reduce((acc: any, curr: any) => {
           const channelId = curr.youtube_videos?.channel_id;
           if (channelId) {
@@ -74,19 +71,15 @@ export const FeaturedVideos = ({ videos, onVideoClick }: FeaturedVideosProps) =>
       }
     },
     enabled: !!session?.user,
-    retry: 3,
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
-    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+    retry: false,
   });
 
-  // Filter and sort videos based on user preferences
   const getFeaturedVideos = () => {
     if (!videos.length) return [];
     
     let sortedVideos = [...videos];
     
     if (mostViewedChannels?.length) {
-      // Prioritize videos from user's most viewed channels
       sortedVideos.sort((a, b) => {
         const aIndex = mostViewedChannels.indexOf(a.channel_id);
         const bIndex = mostViewedChannels.indexOf(b.channel_id);
@@ -100,7 +93,6 @@ export const FeaturedVideos = ({ videos, onVideoClick }: FeaturedVideosProps) =>
     return sortedVideos;
   };
 
-  // Auto-slide every minute
   useEffect(() => {
     const interval = setInterval(() => {
       const featuredVideos = getFeaturedVideos();
