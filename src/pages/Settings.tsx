@@ -19,12 +19,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-// Default colors object
+// Default colors object updated to match YouTube's color scheme
 const DEFAULT_COLORS = {
-  background: '#F2FCE2',
-  text: '#1A1F2C',
-  button: '#9b87f5',
-  logo: '#221F26'
+  background: '#FFFFFF', // YouTube's background color
+  text: '#030303',      // YouTube's text color
+  button: '#FF0000',    // YouTube's primary red
+  logo: '#030303'       // YouTube's logo color (typically black)
 };
 
 const Settings = () => {
@@ -96,7 +96,7 @@ const Settings = () => {
     localStorage.setItem('customColors', JSON.stringify(DEFAULT_COLORS));
     
     // Show success message
-    toast.success('Colors reset to defaults');
+    toast.success('Colors reset to YouTube defaults');
   };
 
   const { data: profile } = useQuery({
