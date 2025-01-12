@@ -1,6 +1,7 @@
 import { Header } from "@/components/Header";
 import { Sidebar } from "@/components/Sidebar";
 import { VideoGrid } from "@/components/VideoGrid";
+import { ChannelsGrid } from "@/components/youtube/ChannelsGrid";
 import { SidebarProvider } from "@/components/ui/sidebar";
 
 const Index = () => {
@@ -12,6 +13,7 @@ const Index = () => {
           <Header />
           <main className="mt-16">
             <VideoGrid />
+            <ChannelsGrid />
           </main>
         </div>
       </div>
