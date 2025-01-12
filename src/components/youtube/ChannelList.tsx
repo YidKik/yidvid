@@ -126,7 +126,7 @@ export const ChannelList = ({ channels, onRemoveChannel }: ChannelListProps) => 
                       <Video className="h-4 w-4" />
                     </Button>
                   </DialogTrigger>
-                  <DialogContent className="max-w-4xl">
+                  <DialogContent className="max-w-4xl max-h-[80vh] overflow-hidden">
                     <ChannelVideosManagement channelId={channel.channel_id} />
                   </DialogContent>
                 </Dialog>
