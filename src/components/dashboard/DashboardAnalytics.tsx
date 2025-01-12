@@ -174,7 +174,7 @@ export const DashboardAnalytics = () => {
             <p className="text-2xl font-bold">
               {totalStats?.mostPopularHour !== undefined ? formatHour(totalStats.mostPopularHour) : '-'}
             </p>
-            <div className="w-full bg-muted h-1.5 rounded-full overflow-hidden">
+            <div className="w-full bg-muted h-1 rounded-full overflow-hidden">
               <div 
                 className="bg-primary h-full transition-all" 
                 style={{ 
