@@ -81,13 +81,13 @@ export const SearchBar = () => {
               value={searchQuery}
               onChange={handleInputChange}
               onKeyDown={handleKeyDown}
-              className="w-full pl-12 py-6 bg-muted rounded-full focus:outline-none focus:border-none text-lg border-none"
+              className="search-input w-full pl-12 py-6 rounded-full focus:outline-none focus:border-none text-lg border-none"
             />
-            <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 text-secondary h-5 w-5" />
+            <Search className="search-icon absolute left-5 top-1/2 transform -translate-y-1/2 h-5 w-5" />
           </div>
         </PopoverTrigger>
         <PopoverContent 
-          className="w-[500px] p-0 bg-white border border-gray-200 shadow-lg" 
+          className="search-results w-[500px] p-0 border border-gray-200 shadow-lg" 
           align="start"
         >
           <Command className="bg-white rounded-lg">

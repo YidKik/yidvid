@@ -10,6 +10,9 @@
     --text-custom: #1A1F2C;
     --button-custom: #9b87f5;
     --logo-custom: #221F26;
+    --search-background: #F2F2F2;
+    --search-text: #606060;
+    --search-border: #E5E5E5;
 
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
@@ -55,6 +58,9 @@
     --text-custom: #1A1F2C;
     --button-custom: #9b87f5;
     --logo-custom: #221F26;
+    --search-background: #F2F2F2;
+    --search-text: #606060;
+    --search-border: #E5E5E5;
 
     --card: 222.2 84% 4.9%;
     --card-foreground: 210 40% 98%;
@@ -101,6 +107,22 @@
     @apply bg-background text-foreground;
     background-color: var(--background-custom);
     color: var(--text-custom);
+  }
+
+  /* Search bar specific styles - these won't be affected by color customization */
+  .search-input {
+    background-color: var(--search-background) !important;
+    color: var(--search-text) !important;
+    border-color: var(--search-border) !important;
+  }
+
+  .search-icon {
+    color: var(--search-text) !important;
+  }
+
+  .search-results {
+    background-color: white !important;
+    color: #606060 !important;
   }
 
   /* Global button styles */
