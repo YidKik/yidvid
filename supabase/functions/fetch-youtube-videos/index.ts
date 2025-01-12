@@ -13,67 +13,67 @@ serve(async (req) => {
   }
 
   try {
+    console.log('[YouTube Videos] Starting video fetch process');
+    
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    console.log('Starting to fetch videos...');
-
     // Get request body
     const { channels } = await req.json();
     
     if (!channels || !Array.isArray(channels)) {
-      console.error('Invalid channels data received:', channels);
+      console.error('[YouTube Videos] Invalid channels data received:', channels);
       throw new Error('No channels provided or invalid format');
     }
 
-    console.log('Fetching videos for channels:', channels);
+    console.log('[YouTube Videos] Fetching videos for channels:', channels);
 
     const apiKey = Deno.env.get('YOUTUBE_API_KEY');
     if (!apiKey) {
-      console.error('YouTube API key not configured');
+      console.error('[YouTube Videos] YouTube API key not configured');
       throw new Error('YouTube API key not configured');
     }
 
     // Fetch videos for each channel
     const videoPromises = channels.map(async (channelId) => {
       if (!channelId) {
-        console.error('Invalid channel ID:', channelId);
+        console.error('[YouTube Videos] Invalid channel ID:', channelId);
         return [];
       }
 
-      console.log(`Fetching videos for channel ${channelId}`);
+      console.log(`[YouTube Videos] Fetching videos for channel ${channelId}`);
 
       try {
         const searchUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channelId}&maxResults=50&order=date&type=video&key=${apiKey}`;
-        console.log('Making request to YouTube API:', searchUrl);
+        console.log('[YouTube Videos] Making request to:', searchUrl.replace(apiKey, '[REDACTED]'));
 
         const response = await fetch(searchUrl);
 
         if (!response.ok) {
           const errorText = await response.text();
-          console.error(`Error fetching videos for channel ${channelId}:`, errorText);
+          console.error(`[YouTube Videos] Error fetching videos for channel ${channelId}:`, errorText);
           return [];
         }
 
         const data = await response.json();
-        console.log(`Received ${data.items?.length || 0} videos for channel ${channelId}`);
+        console.log(`[YouTube Videos] Received ${data.items?.length || 0} videos for channel ${channelId}`);
         
         if (!data.items || data.items.length === 0) {
-          console.log(`No videos found for channel ${channelId}`);
+          console.log(`[YouTube Videos] No videos found for channel ${channelId}`);
           return [];
         }
 
         // Get video statistics in batches
         const videoIds = data.items.map((item: any) => item.id.videoId).join(',');
         const statsUrl = `https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${videoIds}&key=${apiKey}`;
-        console.log('Fetching video statistics...');
+        console.log('[YouTube Videos] Fetching video statistics...');
         
         const statsResponse = await fetch(statsUrl);
         
         if (!statsResponse.ok) {
-          console.error('Error fetching video statistics:', await statsResponse.text());
+          console.error('[YouTube Videos] Error fetching video statistics:', await statsResponse.text());
           return [];
         }
 
@@ -92,16 +92,16 @@ serve(async (req) => {
           views: parseInt(statsMap.get(item.id.videoId)?.viewCount || '0'),
         }));
       } catch (error) {
-        console.error(`Error processing channel ${channelId}:`, error);
+        console.error(`[YouTube Videos] Error processing channel ${channelId}:`, error);
         return [];
       }
     });
 
     const videos = (await Promise.all(videoPromises)).flat();
-    console.log(`Total videos fetched: ${videos.length}`);
+    console.log(`[YouTube Videos] Total videos fetched: ${videos.length}`);
 
     if (videos.length === 0) {
-      console.warn('No videos were fetched for any channels');
+      console.warn('[YouTube Videos] No videos were fetched for any channels');
       return new Response(
         JSON.stringify({ success: false, message: 'No videos found' }),
         { 
@@ -115,6 +115,7 @@ serve(async (req) => {
     }
 
     // Store videos in the database
+    console.log('[YouTube Videos] Starting to store videos in database');
     for (const video of videos) {
       const { error: upsertError } = await supabaseClient
         .from('youtube_videos')
@@ -124,9 +125,10 @@ serve(async (req) => {
         });
 
       if (upsertError) {
-        console.error('Error upserting video:', upsertError);
+        console.error('[YouTube Videos] Error upserting video:', upsertError);
       }
     }
+    console.log('[YouTube Videos] Finished storing videos in database');
 
     return new Response(
       JSON.stringify({ success: true, count: videos.length }),
@@ -138,7 +140,7 @@ serve(async (req) => {
       },
     );
   } catch (error) {
-    console.error('Error in edge function:', error);
+    console.error('[YouTube Videos] Error in edge function:', error);
     return new Response(
       JSON.stringify({ error: error.message }),
       { 

@@ -15,7 +15,9 @@ serve(async (req) => {
 
   try {
     const { channelId } = await req.json();
-    console.log('[YouTube API] Request received for channelId:', channelId);
+    console.log('[YouTube API] Starting channel fetch process');
+    console.log('[YouTube API] API Key present:', !!YOUTUBE_API_KEY);
+    console.log('[YouTube API] Channel ID received:', channelId);
 
     if (!channelId) {
       console.error('[YouTube API] No channel ID provided');
@@ -47,7 +49,7 @@ serve(async (req) => {
     // Remove any remaining special characters
     cleanChannelId = cleanChannelId.replace(/[^\w-]/g, '');
     
-    console.log('[YouTube API] Processing channelId:', cleanChannelId);
+    console.log('[YouTube API] Cleaned channel ID:', cleanChannelId);
     
     // First try with channel ID
     let apiUrl = `https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${cleanChannelId}&key=${YOUTUBE_API_KEY}`;
@@ -67,21 +69,18 @@ serve(async (req) => {
     }
 
     if (!response.ok) {
-      const errorText = JSON.stringify(data);
-      console.error('[YouTube API] Error Response:', errorText);
+      console.error('[YouTube API] Error Response:', JSON.stringify(data));
       console.error('[YouTube API] Status:', response.status);
       return new Response(
         JSON.stringify({ 
           error: 'Failed to fetch channel from YouTube API',
           details: `YouTube API returned status ${response.status}`,
-          response: errorText
+          response: JSON.stringify(data)
         }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: response.status }
       );
     }
 
-    console.log('[YouTube API] Response received:', JSON.stringify(data));
-    
     if (!data.items || data.items.length === 0) {
       console.error('[YouTube API] Channel not found:', cleanChannelId);
       return new Response(
