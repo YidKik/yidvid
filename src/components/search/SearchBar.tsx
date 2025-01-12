@@ -81,7 +81,7 @@ export const SearchBar = () => {
               value={searchQuery}
               onChange={handleInputChange}
               onKeyDown={handleKeyDown}
-              className="w-full pl-12 py-6 bg-muted rounded-full focus:outline-none focus:ring-2 focus:ring-primary text-lg"
+              className="w-full pl-12 py-6 bg-muted rounded-full focus:outline-none text-lg"
             />
             <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 text-secondary h-5 w-5" />
           </div>
