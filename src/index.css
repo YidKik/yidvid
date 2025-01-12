@@ -99,6 +99,18 @@
 
   body {
     @apply bg-background text-foreground;
+    background-color: var(--background-custom);
+    color: var(--text-custom);
+  }
+
+  /* Global button styles */
+  button, .button-custom {
+    background-color: var(--button-custom);
+  }
+
+  /* Global logo styles */
+  .logo-custom, h1.logo-custom {
+    color: var(--logo-custom);
   }
 
   /* Add custom color classes */

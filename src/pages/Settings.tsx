@@ -42,13 +42,12 @@ const Settings = () => {
   const [buttonColor, setButtonColor] = useState('#9b87f5'); // Primary purple default
   const [logoColor, setLogoColor] = useState('#221F26'); // Dark charcoal default
 
-  // Effect to apply color changes
+  // Effect to apply color changes globally
   useEffect(() => {
-    const root = document.documentElement;
-    root.style.setProperty('--background-custom', backgroundColor);
-    root.style.setProperty('--text-custom', textColor);
-    root.style.setProperty('--button-custom', buttonColor);
-    root.style.setProperty('--logo-custom', logoColor);
+    document.documentElement.style.setProperty('--background-custom', backgroundColor);
+    document.documentElement.style.setProperty('--text-custom', textColor);
+    document.documentElement.style.setProperty('--button-custom', buttonColor);
+    document.documentElement.style.setProperty('--logo-custom', logoColor);
 
     // Save colors to localStorage
     localStorage.setItem('customColors', JSON.stringify({
