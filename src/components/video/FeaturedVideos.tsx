@@ -33,13 +33,7 @@ export const FeaturedVideos = ({ videos, onVideoClick }: FeaturedVideosProps) =>
       try {
         const { data, error } = await supabase
           .from("user_video_interactions")
-          .select(`
-            video_id,
-            youtube_videos (
-              channel_id,
-              channel_name
-            )
-          `)
+          .select("video_id, youtube_videos(channel_id)")
           .eq("user_id", session.user.id)
           .eq("interaction_type", "view");
 
