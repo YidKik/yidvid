@@ -6,21 +6,25 @@ import { useNavigate } from "react-router-dom";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AuthError, AuthApiError } from "@supabase/supabase-js";
 import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
-const Auth = () => {
+interface AuthProps {
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
+}
+
+const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState("");
-  const [open, setOpen] = useState(true);
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === "SIGNED_IN" && session) {
-        setOpen(false);
+        onOpenChange(false);
         navigate("/");
       }
       if (event === "USER_UPDATED") {
@@ -35,7 +39,7 @@ const Auth = () => {
     });
 
     return () => subscription.unsubscribe();
-  }, [navigate]);
+  }, [navigate, onOpenChange]);
 
   const getErrorMessage = (error: AuthError) => {
     if (error instanceof AuthApiError) {
@@ -56,37 +60,42 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background/80 backdrop-blur-sm">
-      <AlertDialog open={open} onOpenChange={setOpen}>
-        <AlertDialogContent className="sm:max-w-md">
-          <AlertDialogHeader>
-            <AlertDialogTitle className="text-center">Welcome to JewTube</AlertDialogTitle>
-          </AlertDialogHeader>
-          {errorMessage && (
-            <Alert variant="destructive">
-              <AlertDescription>{errorMessage}</AlertDescription>
-            </Alert>
-          )}
-          <div className="bg-card rounded-lg">
-            <SupabaseAuth
-              supabaseClient={supabase}
-              appearance={{
-                theme: ThemeSupa,
-                variables: {
-                  default: {
-                    colors: {
-                      brand: 'rgb(var(--primary))',
-                      brandAccent: 'rgb(var(--primary))',
-                    },
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle className="text-center">Welcome to JewTube</DialogTitle>
+        </DialogHeader>
+        {errorMessage && (
+          <Alert variant="destructive">
+            <AlertDescription>{errorMessage}</AlertDescription>
+          </Alert>
+        )}
+        <div className="bg-card rounded-lg">
+          <SupabaseAuth
+            supabaseClient={supabase}
+            appearance={{
+              theme: ThemeSupa,
+              variables: {
+                default: {
+                  colors: {
+                    brand: '#FF0000',
+                    brandAccent: '#CC0000',
+                    defaultButtonBackground: '#000000e6',
+                    defaultButtonBackgroundHover: '#222222',
                   },
                 },
-              }}
-              providers={[]}
-            />
-          </div>
-        </AlertDialogContent>
-      </AlertDialog>
-    </div>
+              },
+              className: {
+                container: 'auth-container',
+                button: 'auth-button',
+                anchor: 'auth-link',
+              },
+            }}
+            providers={[]}
+          />
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 };
 

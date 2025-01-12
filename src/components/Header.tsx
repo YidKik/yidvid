@@ -4,18 +4,14 @@ import { SearchBar } from "@/components/search/SearchBar";
 import { Settings, LayoutDashboard } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
-export const Header = () => {
+interface HeaderProps {
+  onSignInClick?: () => void;
+}
+
+export const Header = ({ onSignInClick }: HeaderProps) => {
   const [session, setSession] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
@@ -67,10 +63,6 @@ export const Header = () => {
     }
   };
 
-  const handleSignIn = () => {
-    navigate("/auth");
-  };
-
   const handleSettingsClick = () => {
     navigate("/settings");
   };
@@ -108,9 +100,15 @@ export const Header = () => {
               >
                 <Settings className="h-5 w-5" />
               </Button>
+              <Button 
+                variant="outline" 
+                onClick={handleSignOut}
+              >
+                Sign Out
+              </Button>
             </>
           ) : (
-            <Button onClick={handleSignIn}>Sign In</Button>
+            <Button onClick={onSignInClick}>Sign In</Button>
           )}
         </div>
       </div>
