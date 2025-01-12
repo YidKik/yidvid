@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Youtube } from "lucide-react";
+import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 
 export const ChannelsGrid = () => {
@@ -45,8 +46,9 @@ export const ChannelsGrid = () => {
       <h2 className="text-2xl font-bold mb-8 text-accent">YouTube Channels</h2>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
         {channels.map((channel) => (
-          <div 
-            key={channel.id} 
+          <Link 
+            key={channel.id}
+            to={`/channel/${channel.channel_id}`}
             className="flex flex-col items-center p-4 rounded-lg hover:bg-gray-50 transition-colors"
           >
             {channel.thumbnail_url ? (
@@ -63,7 +65,7 @@ export const ChannelsGrid = () => {
             <h3 className="text-sm font-medium text-center text-accent line-clamp-2">
               {channel.title}
             </h3>
-          </div>
+          </Link>
         ))}
       </div>
     </div>
