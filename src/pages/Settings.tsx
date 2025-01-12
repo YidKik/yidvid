@@ -19,6 +19,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+// Default colors object
+const DEFAULT_COLORS = {
+  background: '#F2FCE2',
+  text: '#1A1F2C',
+  button: '#9b87f5',
+  logo: '#221F26'
+};
+
 const Settings = () => {
   const navigate = useNavigate();
   const [darkMode, setDarkMode] = useState(() => {
@@ -37,10 +45,10 @@ const Settings = () => {
   const [userId, setUserId] = useState<string | null>(null);
   
   // Color customization states
-  const [backgroundColor, setBackgroundColor] = useState('#F2FCE2'); // Light green default
-  const [textColor, setTextColor] = useState('#1A1F2C'); // Dark purple default
-  const [buttonColor, setButtonColor] = useState('#9b87f5'); // Primary purple default
-  const [logoColor, setLogoColor] = useState('#221F26'); // Dark charcoal default
+  const [backgroundColor, setBackgroundColor] = useState(DEFAULT_COLORS.background);
+  const [textColor, setTextColor] = useState(DEFAULT_COLORS.text);
+  const [buttonColor, setButtonColor] = useState(DEFAULT_COLORS.button);
+  const [logoColor, setLogoColor] = useState(DEFAULT_COLORS.logo);
 
   // Effect to apply color changes globally
   useEffect(() => {
@@ -69,6 +77,19 @@ const Settings = () => {
       setLogoColor(colors.logo);
     }
   }, []);
+
+  const resetToDefaults = () => {
+    setBackgroundColor(DEFAULT_COLORS.background);
+    setTextColor(DEFAULT_COLORS.text);
+    setButtonColor(DEFAULT_COLORS.button);
+    setLogoColor(DEFAULT_COLORS.logo);
+    
+    // Update localStorage with default values
+    localStorage.setItem('customColors', JSON.stringify(DEFAULT_COLORS));
+    
+    // Show success message
+    toast.success('Colors reset to defaults');
+  };
 
   const { data: profile } = useQuery({
     queryKey: ["user-profile"],
@@ -232,12 +253,7 @@ const Settings = () => {
 
               <div className="col-span-full">
                 <Button 
-                  onClick={() => {
-                    setBackgroundColor('#F2FCE2');
-                    setTextColor('#1A1F2C');
-                    setButtonColor('#9b87f5');
-                    setLogoColor('#221F26');
-                  }}
+                  onClick={resetToDefaults}
                   variant="outline"
                 >
                   Reset to Defaults
