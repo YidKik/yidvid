@@ -17,6 +17,7 @@ export const ChannelsGrid = () => {
         throw error;
       }
       
+      console.log("Fetched channels:", data); // Add this log to debug thumbnail data
       return data || [];
     },
   });
@@ -51,17 +52,24 @@ export const ChannelsGrid = () => {
             to={`/channel/${channel.channel_id}`}
             className="flex flex-col items-center p-4 rounded-lg hover:bg-gray-50 transition-colors"
           >
-            {channel.thumbnail_url ? (
-              <img
-                src={channel.thumbnail_url}
-                alt={channel.title}
-                className="w-16 h-16 rounded-full mb-2 object-cover"
+            <div className="w-16 h-16 rounded-full mb-2 overflow-hidden flex items-center justify-center bg-primary/10">
+              {channel.thumbnail_url ? (
+                <img
+                  src={channel.thumbnail_url}
+                  alt={channel.title}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    console.error("Error loading thumbnail:", e);
+                    e.currentTarget.style.display = 'none';
+                    e.currentTarget.nextElementSibling?.removeAttribute('style');
+                  }}
+                />
+              ) : null}
+              <Youtube 
+                className="w-8 h-8 text-primary" 
+                style={{ display: channel.thumbnail_url ? 'none' : 'block' }}
               />
-            ) : (
-              <div className="w-16 h-16 rounded-full mb-2 bg-primary/10 flex items-center justify-center">
-                <Youtube className="w-8 h-8 text-primary" />
-              </div>
-            )}
+            </div>
             <h3 className="text-sm font-medium text-center text-accent line-clamp-2">
               {channel.title}
             </h3>
