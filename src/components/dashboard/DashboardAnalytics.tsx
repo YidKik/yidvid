@@ -94,6 +94,12 @@ export const DashboardAnalytics = () => {
     },
   });
 
+  const formatHour = (hour: number) => {
+    const period = hour >= 12 ? 'PM' : 'AM';
+    const displayHour = hour % 12 || 12;
+    return `${displayHour}:00 ${period}`;
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -163,7 +169,7 @@ export const DashboardAnalytics = () => {
         </CardHeader>
         <CardContent>
           <p className="text-3xl font-bold">
-            {totalStats?.mostPopularHour}:00
+            {totalStats?.mostPopularHour !== undefined ? formatHour(totalStats.mostPopularHour) : '-'}
           </p>
         </CardContent>
       </Card>
