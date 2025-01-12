@@ -8,6 +8,8 @@ interface VideoInteractionsProps {
   videoId: string;
 }
 
+type InteractionType = 'view' | 'like' | 'dislike' | 'save';
+
 export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
   const [isLiked, setIsLiked] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
@@ -25,20 +27,17 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
     }
 
     try {
-      // Add console.log to debug the interaction
-      console.log('Attempting to insert interaction:', {
+      const interactionData = {
         user_id: session.user.id,
         video_id: videoId,
-        interaction_type: 'like'
-      });
+        interaction_type: 'like' as InteractionType
+      };
+
+      console.log('Attempting to insert interaction:', interactionData);
 
       const { error } = await supabase
         .from('user_video_interactions')
-        .insert({
-          user_id: session.user.id,
-          video_id: videoId,
-          interaction_type: 'like'
-        });
+        .insert(interactionData);
 
       if (error) {
         console.error('Error details:', error);
