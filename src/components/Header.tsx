@@ -76,7 +76,7 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
       <div className="flex items-center justify-between h-full max-w-[1800px] mx-auto">
         <div className="flex items-center gap-2">
           <Link to="/">
-            <h1 className="text-2xl font-bold text-primary">JewTube</h1>
+            <h1 className="text-2xl font-bold logo-custom">JewTube</h1>
           </Link>
         </div>
         <SearchBar />
@@ -88,7 +88,7 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
                   variant="ghost"
                   size="icon"
                   onClick={handleDashboardClick}
-                  className="relative"
+                  className="relative button-custom"
                 >
                   <LayoutDashboard className="h-5 w-5" />
                 </Button>
@@ -97,12 +97,14 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
                 variant="ghost" 
                 size="icon"
                 onClick={handleSettingsClick}
+                className="button-custom"
               >
                 <Settings className="h-5 w-5" />
               </Button>
               <Button 
                 variant="outline" 
                 onClick={handleSignOut}
+                className="button-custom"
               >
                 Sign Out
               </Button>

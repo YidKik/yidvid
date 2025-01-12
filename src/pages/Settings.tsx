@@ -22,7 +22,6 @@ import {
 const Settings = () => {
   const navigate = useNavigate();
   const [darkMode, setDarkMode] = useState(() => {
-    // Initialize dark mode state from localStorage or system preference
     if (typeof window !== 'undefined') {
       const savedTheme = localStorage.getItem('theme');
       if (savedTheme) {
@@ -32,21 +31,44 @@ const Settings = () => {
     }
     return false;
   });
-  const [emailNotifications, setEmailNotifications] = useState(true);
+
   const [autoplay, setAutoplay] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
+  
+  // Color customization states
+  const [backgroundColor, setBackgroundColor] = useState('#F2FCE2'); // Light green default
+  const [textColor, setTextColor] = useState('#1A1F2C'); // Dark purple default
+  const [buttonColor, setButtonColor] = useState('#9b87f5'); // Primary purple default
+  const [logoColor, setLogoColor] = useState('#221F26'); // Dark charcoal default
 
-  // Effect to handle dark mode changes
+  // Effect to apply color changes
   useEffect(() => {
-    const root = window.document.documentElement;
-    if (darkMode) {
-      root.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      root.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
+    const root = document.documentElement;
+    root.style.setProperty('--background-custom', backgroundColor);
+    root.style.setProperty('--text-custom', textColor);
+    root.style.setProperty('--button-custom', buttonColor);
+    root.style.setProperty('--logo-custom', logoColor);
+
+    // Save colors to localStorage
+    localStorage.setItem('customColors', JSON.stringify({
+      background: backgroundColor,
+      text: textColor,
+      button: buttonColor,
+      logo: logoColor,
+    }));
+  }, [backgroundColor, textColor, buttonColor, logoColor]);
+
+  // Load saved colors on mount
+  useEffect(() => {
+    const savedColors = localStorage.getItem('customColors');
+    if (savedColors) {
+      const colors = JSON.parse(savedColors);
+      setBackgroundColor(colors.background);
+      setTextColor(colors.text);
+      setButtonColor(colors.button);
+      setLogoColor(colors.logo);
     }
-  }, [darkMode]);
+  }, []);
 
   const { data: profile } = useQuery({
     queryKey: ["user-profile"],
@@ -134,16 +156,94 @@ const Settings = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen" style={{ backgroundColor: backgroundColor, color: textColor }}>
       <Header />
       <main className="container mx-auto pt-24 px-4 pb-16">
         <BackButton />
         <h1 className="text-3xl font-bold mb-8">Settings</h1>
         
-        {/* Watch History Section */}
+        {/* Color Customization Section */}
         <section className="mb-12">
+          <h2 className="text-2xl font-semibold mb-4">Customize Colors</h2>
           <Card className="p-6">
-            {userId && <VideoHistorySection />}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="backgroundColor">Background Color</Label>
+                  <div className="flex items-center gap-4">
+                    <input
+                      type="color"
+                      id="backgroundColor"
+                      value={backgroundColor}
+                      onChange={(e) => setBackgroundColor(e.target.value)}
+                      className="w-20 h-10 rounded cursor-pointer"
+                    />
+                    <span className="text-sm">{backgroundColor}</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Choose a light color for better readability
+                  </p>
+                </div>
+
+                <div>
+                  <Label htmlFor="textColor">Text Color</Label>
+                  <div className="flex items-center gap-4">
+                    <input
+                      type="color"
+                      id="textColor"
+                      value={textColor}
+                      onChange={(e) => setTextColor(e.target.value)}
+                      className="w-20 h-10 rounded cursor-pointer"
+                    />
+                    <span className="text-sm">{textColor}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="buttonColor">Button Color</Label>
+                  <div className="flex items-center gap-4">
+                    <input
+                      type="color"
+                      id="buttonColor"
+                      value={buttonColor}
+                      onChange={(e) => setButtonColor(e.target.value)}
+                      className="w-20 h-10 rounded cursor-pointer"
+                    />
+                    <span className="text-sm">{buttonColor}</span>
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="logoColor">Logo Color</Label>
+                  <div className="flex items-center gap-4">
+                    <input
+                      type="color"
+                      id="logoColor"
+                      value={logoColor}
+                      onChange={(e) => setLogoColor(e.target.value)}
+                      className="w-20 h-10 rounded cursor-pointer"
+                    />
+                    <span className="text-sm">{logoColor}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="col-span-full">
+                <Button 
+                  onClick={() => {
+                    setBackgroundColor('#F2FCE2');
+                    setTextColor('#1A1F2C');
+                    setButtonColor('#9b87f5');
+                    setLogoColor('#221F26');
+                  }}
+                  variant="outline"
+                >
+                  Reset to Defaults
+                </Button>
+              </div>
+            </div>
           </Card>
         </section>
 

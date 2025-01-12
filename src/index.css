@@ -6,6 +6,10 @@
   :root {
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
+    --background-custom: #F2FCE2;
+    --text-custom: #1A1F2C;
+    --button-custom: #9b87f5;
+    --logo-custom: #221F26;
 
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
@@ -47,6 +51,10 @@
   .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
+    --background-custom: #F2FCE2;
+    --text-custom: #1A1F2C;
+    --button-custom: #9b87f5;
+    --logo-custom: #221F26;
 
     --card: 222.2 84% 4.9%;
     --card-foreground: 210 40% 98%;
@@ -91,5 +99,22 @@
 
   body {
     @apply bg-background text-foreground;
+  }
+
+  /* Add custom color classes */
+  .bg-custom {
+    background-color: var(--background-custom);
+  }
+
+  .text-custom {
+    color: var(--text-custom);
+  }
+
+  .button-custom {
+    background-color: var(--button-custom);
+  }
+
+  .logo-custom {
+    color: var(--logo-custom);
   }
 }
