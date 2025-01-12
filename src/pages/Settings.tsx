@@ -168,13 +168,6 @@ const Settings = () => {
           </Card>
         </section>
 
-        {/* Channel Subscriptions Section */}
-        <section className="mb-12">
-          <Card className="p-6">
-            {userId && <ChannelSubscriptions userId={userId} />}
-          </Card>
-        </section>
-
         {/* Appearance Section */}
         <section className="mb-12">
           <h2 className="text-2xl font-semibold mb-4">Appearance</h2>
