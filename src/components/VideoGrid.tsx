@@ -35,6 +35,11 @@ export const VideoGrid = () => {
 
       if (error) {
         console.error("Error fetching user interactions:", error);
+        toast({
+          title: "Error",
+          description: "Failed to fetch user interactions",
+          variant: "destructive",
+        });
         return [];
       }
       
@@ -53,6 +58,11 @@ export const VideoGrid = () => {
 
       if (error) {
         console.error("Error fetching channels:", error);
+        toast({
+          title: "Error",
+          description: "Failed to fetch channels",
+          variant: "destructive",
+        });
         throw error;
       }
       
@@ -73,20 +83,23 @@ export const VideoGrid = () => {
       });
 
       try {
-        const { error: fetchError } = await supabase.functions.invoke("fetch-youtube-videos", {
+        // First, try to fetch new videos from YouTube
+        const { error: fetchError, data: fetchResponse } = await supabase.functions.invoke("fetch-youtube-videos", {
           body: { channels: channels.map(c => c.channel_id) }
         });
         
         if (fetchError) {
           console.error("Error fetching videos from YouTube:", fetchError);
           toast({
-            title: "Error fetching videos",
-            description: "Please try again later",
+            title: "Warning",
+            description: "Some videos might not be up to date",
             variant: "destructive",
           });
-          throw fetchError;
+        } else {
+          console.log("Fetch response:", fetchResponse);
         }
 
+        // Then fetch all videos from the database
         const { data: videosData, error } = await supabase
           .from("youtube_videos")
           .select("*, youtube_channels!inner(thumbnail_url)")
@@ -95,7 +108,20 @@ export const VideoGrid = () => {
 
         if (error) {
           console.error("Error fetching videos:", error);
+          toast({
+            title: "Error",
+            description: "Failed to fetch videos",
+            variant: "destructive",
+          });
           throw error;
+        }
+
+        if (!videosData || videosData.length === 0) {
+          toast({
+            title: "No videos found",
+            description: "Try adding some channels first",
+          });
+          return [];
         }
 
         // Transform video data and sort based on user interactions

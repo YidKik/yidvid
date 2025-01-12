@@ -24,6 +24,7 @@ serve(async (req) => {
     const { channels } = await req.json();
     
     if (!channels || !Array.isArray(channels)) {
+      console.error('Invalid channels data received:', channels);
       throw new Error('No channels provided or invalid format');
     }
 
@@ -31,18 +32,24 @@ serve(async (req) => {
 
     const apiKey = Deno.env.get('YOUTUBE_API_KEY');
     if (!apiKey) {
+      console.error('YouTube API key not configured');
       throw new Error('YouTube API key not configured');
     }
 
     // Fetch videos for each channel
     const videoPromises = channels.map(async (channelId) => {
+      if (!channelId) {
+        console.error('Invalid channel ID:', channelId);
+        return [];
+      }
+
       console.log(`Fetching videos for channel ${channelId}`);
 
       try {
-        const response = await fetch(
-          `https://www.googleapis.com/youtube/v3/search?` +
-          `part=snippet&channelId=${channelId}&maxResults=50&order=date&type=video&key=${apiKey}`
-        );
+        const searchUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channelId}&maxResults=50&order=date&type=video&key=${apiKey}`;
+        console.log('Making request to YouTube API:', searchUrl);
+
+        const response = await fetch(searchUrl);
 
         if (!response.ok) {
           const errorText = await response.text();
@@ -53,13 +60,23 @@ serve(async (req) => {
         const data = await response.json();
         console.log(`Received ${data.items?.length || 0} videos for channel ${channelId}`);
         
+        if (!data.items || data.items.length === 0) {
+          console.log(`No videos found for channel ${channelId}`);
+          return [];
+        }
+
         // Get video statistics in batches
         const videoIds = data.items.map((item: any) => item.id.videoId).join(',');
-        const statsResponse = await fetch(
-          `https://www.googleapis.com/youtube/v3/videos?` +
-          `part=statistics&id=${videoIds}&key=${apiKey}`
-        );
+        const statsUrl = `https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${videoIds}&key=${apiKey}`;
+        console.log('Fetching video statistics...');
         
+        const statsResponse = await fetch(statsUrl);
+        
+        if (!statsResponse.ok) {
+          console.error('Error fetching video statistics:', await statsResponse.text());
+          return [];
+        }
+
         const statsData = await statsResponse.json();
         const statsMap = new Map(
           statsData.items.map((item: any) => [item.id, item.statistics])
@@ -68,7 +85,7 @@ serve(async (req) => {
         return data.items.map((item: any) => ({
           video_id: item.id.videoId,
           title: item.snippet.title,
-          thumbnail: item.snippet.thumbnails.high.url,
+          thumbnail: item.snippet.thumbnails.high?.url || item.snippet.thumbnails.default?.url,
           channel_id: channelId,
           channel_name: item.snippet.channelTitle,
           uploaded_at: item.snippet.publishedAt,
@@ -83,13 +100,27 @@ serve(async (req) => {
     const videos = (await Promise.all(videoPromises)).flat();
     console.log(`Total videos fetched: ${videos.length}`);
 
+    if (videos.length === 0) {
+      console.warn('No videos were fetched for any channels');
+      return new Response(
+        JSON.stringify({ success: false, message: 'No videos found' }),
+        { 
+          headers: { 
+            ...corsHeaders,
+            'Content-Type': 'application/json',
+          },
+          status: 404
+        },
+      );
+    }
+
     // Store videos in the database
     for (const video of videos) {
       const { error: upsertError } = await supabaseClient
         .from('youtube_videos')
         .upsert(video, { 
           onConflict: 'video_id',
-          ignoreDuplicates: false // Set to false to update existing records
+          ignoreDuplicates: false
         });
 
       if (upsertError) {
@@ -97,7 +128,6 @@ serve(async (req) => {
       }
     }
 
-    // Return success response with CORS headers
     return new Response(
       JSON.stringify({ success: true, count: videos.length }),
       { 
