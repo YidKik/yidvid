@@ -57,9 +57,9 @@ export function ColorProvider({ children }: { children: React.ReactNode }) {
       .from('user_preferences')
       .select('*')
       .eq('user_id', session.user.id)
-      .single();
+      .maybeSingle();
 
-    if (error && error.code !== 'PGRST116') { // PGRST116 is "no rows returned" error
+    if (error) {
       console.error('Error loading preferences:', error);
       return;
     }
@@ -71,21 +71,6 @@ export function ColorProvider({ children }: { children: React.ReactNode }) {
         buttonColor: preferences.button_color,
         logoColor: preferences.logo_color,
       });
-    } else {
-      // Create default preferences for new users
-      const { error: insertError } = await supabase
-        .from('user_preferences')
-        .insert({
-          user_id: session.user.id,
-          background_color: DEFAULT_COLORS.backgroundColor,
-          text_color: DEFAULT_COLORS.textColor,
-          button_color: DEFAULT_COLORS.buttonColor,
-          logo_color: DEFAULT_COLORS.logoColor,
-        });
-
-      if (insertError) {
-        console.error('Error creating default preferences:', insertError);
-      }
     }
   };
 
