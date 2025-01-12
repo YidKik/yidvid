@@ -52,6 +52,7 @@ const Settings = () => {
 
   // Effect to apply color changes globally
   useEffect(() => {
+    // Update CSS variables
     document.documentElement.style.setProperty('--background-custom', backgroundColor);
     document.documentElement.style.setProperty('--text-custom', textColor);
     document.documentElement.style.setProperty('--button-custom', buttonColor);
@@ -79,10 +80,17 @@ const Settings = () => {
   }, []);
 
   const resetToDefaults = () => {
+    // Update state with default values
     setBackgroundColor(DEFAULT_COLORS.background);
     setTextColor(DEFAULT_COLORS.text);
     setButtonColor(DEFAULT_COLORS.button);
     setLogoColor(DEFAULT_COLORS.logo);
+    
+    // Update CSS variables immediately
+    document.documentElement.style.setProperty('--background-custom', DEFAULT_COLORS.background);
+    document.documentElement.style.setProperty('--text-custom', DEFAULT_COLORS.text);
+    document.documentElement.style.setProperty('--button-custom', DEFAULT_COLORS.button);
+    document.documentElement.style.setProperty('--logo-custom', DEFAULT_COLORS.logo);
     
     // Update localStorage with default values
     localStorage.setItem('customColors', JSON.stringify(DEFAULT_COLORS));
