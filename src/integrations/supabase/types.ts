@@ -95,6 +95,39 @@ export type Database = {
         }
         Relationships: []
       }
+      user_preferences: {
+        Row: {
+          background_color: string
+          button_color: string
+          created_at: string
+          id: string
+          logo_color: string
+          text_color: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          background_color?: string
+          button_color?: string
+          created_at?: string
+          id?: string
+          logo_color?: string
+          text_color?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          background_color?: string
+          button_color?: string
+          created_at?: string
+          id?: string
+          logo_color?: string
+          text_color?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_video_interactions: {
         Row: {
           created_at: string

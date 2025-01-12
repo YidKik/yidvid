@@ -18,6 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useColors } from "@/contexts/ColorContext";
 
 // Default colors object updated to match YouTube's color scheme
 const DEFAULT_COLORS = {
@@ -45,58 +46,41 @@ const Settings = () => {
   const [userId, setUserId] = useState<string | null>(null);
   
   // Color customization states
-  const [backgroundColor, setBackgroundColor] = useState(DEFAULT_COLORS.background);
-  const [textColor, setTextColor] = useState(DEFAULT_COLORS.text);
-  const [buttonColor, setButtonColor] = useState(DEFAULT_COLORS.button);
-  const [logoColor, setLogoColor] = useState(DEFAULT_COLORS.logo);
+  const { colors, updateColors, resetColors } = useColors();
+  const [backgroundColor, setBackgroundColor] = useState(colors.backgroundColor);
+  const [textColor, setTextColor] = useState(colors.textColor);
+  const [buttonColor, setButtonColor] = useState(colors.buttonColor);
+  const [logoColor, setLogoColor] = useState(colors.logoColor);
 
-  // Effect to apply color changes globally
+  // Effect to sync with ColorContext
   useEffect(() => {
-    // Update CSS variables
-    document.documentElement.style.setProperty('--background-custom', backgroundColor);
-    document.documentElement.style.setProperty('--text-custom', textColor);
-    document.documentElement.style.setProperty('--button-custom', buttonColor);
-    document.documentElement.style.setProperty('--logo-custom', logoColor);
+    setBackgroundColor(colors.backgroundColor);
+    setTextColor(colors.textColor);
+    setButtonColor(colors.buttonColor);
+    setLogoColor(colors.logoColor);
+  }, [colors]);
 
-    // Save colors to localStorage
-    localStorage.setItem('customColors', JSON.stringify({
-      background: backgroundColor,
-      text: textColor,
-      button: buttonColor,
-      logo: logoColor,
-    }));
-  }, [backgroundColor, textColor, buttonColor, logoColor]);
-
-  // Load saved colors on mount
+  // Check if user is authenticated
   useEffect(() => {
-    const savedColors = localStorage.getItem('customColors');
-    if (savedColors) {
-      const colors = JSON.parse(savedColors);
-      setBackgroundColor(colors.background);
-      setTextColor(colors.text);
-      setButtonColor(colors.button);
-      setLogoColor(colors.logo);
-    }
-  }, []);
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) {
+        navigate("/auth");
+        toast.error("Please sign in to access settings");
+      }
+    });
+  }, [navigate]);
 
-  const resetToDefaults = () => {
-    // Update state with default values
-    setBackgroundColor(DEFAULT_COLORS.background);
-    setTextColor(DEFAULT_COLORS.text);
-    setButtonColor(DEFAULT_COLORS.button);
-    setLogoColor(DEFAULT_COLORS.logo);
-    
-    // Update CSS variables immediately
-    document.documentElement.style.setProperty('--background-custom', DEFAULT_COLORS.background);
-    document.documentElement.style.setProperty('--text-custom', DEFAULT_COLORS.text);
-    document.documentElement.style.setProperty('--button-custom', DEFAULT_COLORS.button);
-    document.documentElement.style.setProperty('--logo-custom', DEFAULT_COLORS.logo);
-    
-    // Update localStorage with default values
-    localStorage.setItem('customColors', JSON.stringify(DEFAULT_COLORS));
-    
-    // Show success message
-    toast.success('Colors reset to YouTube defaults');
+  const resetToDefaults = async () => {
+    await resetColors();
+  };
+
+  const saveColors = async () => {
+    await updateColors({
+      backgroundColor,
+      textColor,
+      buttonColor,
+      logoColor,
+    });
   };
 
   const { data: profile } = useQuery({
@@ -160,30 +144,6 @@ const Settings = () => {
     }
   };
 
-  useEffect(() => {
-    // Check if user is authenticated
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!session) {
-        navigate("/auth");
-        toast.error("Please sign in to access settings");
-      }
-    });
-  }, [navigate]);
-
-  const handleDashboardAccess = () => {
-    navigate("/dashboard");
-  };
-
-  const handleSignOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      toast.error("Error signing out");
-    } else {
-      toast.success("Signed out successfully");
-      navigate("/");
-    }
-  };
-
   return (
     <div className="min-h-screen" style={{ backgroundColor: backgroundColor, color: textColor }}>
       <Header />
@@ -209,9 +169,6 @@ const Settings = () => {
                     />
                     <span className="text-sm">{backgroundColor}</span>
                   </div>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Choose a light color for better readability
-                  </p>
                 </div>
 
                 <div>
@@ -259,7 +216,13 @@ const Settings = () => {
                 </div>
               </div>
 
-              <div className="col-span-full">
+              <div className="col-span-full flex gap-4">
+                <Button 
+                  onClick={saveColors}
+                  variant="default"
+                >
+                  Save Changes
+                </Button>
                 <Button 
                   onClick={resetToDefaults}
                   variant="outline"

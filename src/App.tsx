@@ -1,14 +1,15 @@
 import { Routes, Route } from "react-router-dom";
-import { Toaster } from "@/components/ui/toaster";
 import Index from "@/pages/Index";
 import VideoDetails from "@/pages/VideoDetails";
 import ChannelDetails from "@/pages/ChannelDetails";
 import Settings from "@/pages/Settings";
 import Dashboard from "@/pages/Dashboard";
+import { Toaster } from "sonner";
+import { ColorProvider } from "@/contexts/ColorContext";
 
 function App() {
   return (
-    <>
+    <ColorProvider>
       <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/video/:id" element={<VideoDetails />} />
@@ -16,8 +17,8 @@ function App() {
         <Route path="/settings" element={<Settings />} />
         <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
-      <Toaster />
-    </>
+      <Toaster position="top-center" />
+    </ColorProvider>
   );
 }
 
