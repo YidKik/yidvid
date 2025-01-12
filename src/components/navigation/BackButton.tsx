@@ -10,7 +10,7 @@ export const BackButton = () => {
       variant="ghost"
       size="icon"
       onClick={() => navigate(-1)}
-      className="absolute top-20 left-4"
+      className="absolute top-4 left-4"
     >
       <ArrowLeft className="h-5 w-5" />
     </Button>
