@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
 import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer } from "recharts";
-import { Loader2 } from "lucide-react";
+import { Loader2, Clock } from "lucide-react";
 
 export const DashboardAnalytics = () => {
   const { data: viewsData, isLoading } = useQuery({
@@ -163,14 +163,30 @@ export const DashboardAnalytics = () => {
       </Card>
 
       <Card>
-        <CardHeader>
-          <CardTitle>Peak Activity</CardTitle>
-          <CardDescription>Most active hour (24h)</CardDescription>
+        <CardHeader className="pb-2">
+          <CardTitle className="flex items-center gap-2">
+            <Clock className="w-4 h-4" />
+            Peak Activity
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-3xl font-bold">
-            {totalStats?.mostPopularHour !== undefined ? formatHour(totalStats.mostPopularHour) : '-'}
-          </p>
+          <div className="space-y-1">
+            <p className="text-2xl font-bold">
+              {totalStats?.mostPopularHour !== undefined ? formatHour(totalStats.mostPopularHour) : '-'}
+            </p>
+            <div className="w-full bg-muted h-2 rounded-full overflow-hidden">
+              <div 
+                className="bg-primary h-full transition-all" 
+                style={{ 
+                  width: totalStats?.mostPopularHour !== undefined ? 
+                    `${(totalStats.mostPopularHour / 24) * 100}%` : '0%' 
+                }}
+              />
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Most active hour of the day
+            </p>
+          </div>
         </CardContent>
       </Card>
 
