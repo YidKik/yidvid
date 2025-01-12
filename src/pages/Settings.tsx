@@ -9,7 +9,6 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
 import { BackButton } from "@/components/navigation/BackButton";
-import { ChannelSubscriptions } from "@/components/youtube/ChannelSubscriptions";
 import { VideoHistorySection } from "@/components/history/VideoHistorySection";
 import {
   Table,
@@ -124,6 +123,16 @@ const Settings = () => {
     navigate("/dashboard");
   };
 
+  const handleSignOut = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      toast.error("Error signing out");
+    } else {
+      toast.success("Signed out successfully");
+      navigate("/");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -142,7 +151,7 @@ const Settings = () => {
         <section className="mb-12">
           <Card className="p-6">
             <h2 className="text-xl font-semibold mb-4">Your Account Information</h2>
-            <div className="space-y-2">
+            <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <Label>User ID</Label>
                 <code className="bg-muted px-2 py-1 rounded">{userId || 'Loading...'}</code>
@@ -150,6 +159,11 @@ const Settings = () => {
               <p className="text-sm text-muted-foreground">
                 This is your unique identifier in the system. You might need this when requesting admin access.
               </p>
+              <div className="pt-4 border-t">
+                <Button variant="destructive" onClick={handleSignOut}>
+                  Sign Out
+                </Button>
+              </div>
             </div>
           </Card>
         </section>
