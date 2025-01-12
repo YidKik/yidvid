@@ -66,42 +66,37 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
     <div className="space-y-4">
       <h3 className="text-lg font-semibold">Channel Subscriptions</h3>
       {subscriptions && subscriptions.length > 0 ? (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Channel</TableHead>
-              <TableHead className="w-[100px]">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {subscriptions.map((subscription) => (
-              <TableRow key={subscription.channel.channel_id}>
-                <TableCell className="flex items-center gap-2">
-                  {subscription.channel.thumbnail_url ? (
-                    <img
-                      src={subscription.channel.thumbnail_url}
-                      alt={subscription.channel.title}
-                      className="w-8 h-8 rounded"
-                    />
-                  ) : (
-                    <Youtube className="w-8 h-8 text-primary" />
-                  )}
-                  <span>{subscription.channel.title}</span>
-                </TableCell>
-                <TableCell>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handleUnsubscribe(subscription.channel.channel_id)}
-                    className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {subscriptions.map((subscription) => (
+            <div
+              key={subscription.channel.channel_id}
+              className="flex flex-col items-center p-4 rounded-lg bg-[#F8F8F8] hover:bg-[#F1F1F1] transition-colors relative group"
+            >
+              {subscription.channel.thumbnail_url ? (
+                <img
+                  src={subscription.channel.thumbnail_url}
+                  alt={subscription.channel.title}
+                  className="w-20 h-20 rounded-full mb-3"
+                />
+              ) : (
+                <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mb-3">
+                  <Youtube className="w-10 h-10 text-primary" />
+                </div>
+              )}
+              <h4 className="text-sm font-medium text-center text-[#333333] line-clamp-2 mt-2">
+                {subscription.channel.title}
+              </h4>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => handleUnsubscribe(subscription.channel.channel_id)}
+                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity text-destructive hover:text-destructive hover:bg-destructive/10"
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </div>
+          ))}
+        </div>
       ) : (
         <p className="text-muted-foreground">You are not subscribed to any channels.</p>
       )}
