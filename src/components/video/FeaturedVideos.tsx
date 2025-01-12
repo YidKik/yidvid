@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { VideoCard } from "../VideoCard";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface FeaturedVideosProps {
   videos: any[];
@@ -17,6 +18,12 @@ export const FeaturedVideos = ({ videos, onVideoClick }: FeaturedVideosProps) =>
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
     });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   // Fetch user's most viewed channels
@@ -25,34 +32,43 @@ export const FeaturedVideos = ({ videos, onVideoClick }: FeaturedVideosProps) =>
     queryFn: async () => {
       if (!session?.user) return null;
 
-      const { data, error } = await supabase
-        .from("user_video_interactions")
-        .select(`
-          video_id,
-          youtube_videos!inner(
-            channel_id,
-            channel_name
-          )
-        `)
-        .eq("user_id", session.user.id);
+      try {
+        const { data, error } = await supabase
+          .from("user_video_interactions")
+          .select(`
+            video_id,
+            youtube_videos (
+              channel_id,
+              channel_name
+            )
+          `)
+          .eq("user_id", session.user.id);
 
-      if (error) {
-        console.error("Error fetching user interactions:", error);
+        if (error) {
+          console.error("Error fetching user interactions:", error);
+          toast.error("Failed to fetch user preferences");
+          return null;
+        }
+
+        // Count channel views and sort by most viewed
+        const channelViews = data.reduce((acc: any, curr: any) => {
+          const channelId = curr.youtube_videos.channel_id;
+          acc[channelId] = (acc[channelId] || 0) + 1;
+          return acc;
+        }, {});
+
+        return Object.entries(channelViews)
+          .sort(([, a]: any, [, b]: any) => b - a)
+          .map(([channelId]) => channelId);
+      } catch (error) {
+        console.error("Error processing user interactions:", error);
+        toast.error("Failed to process user preferences");
         return null;
       }
-
-      // Count channel views and sort by most viewed
-      const channelViews = data.reduce((acc: any, curr: any) => {
-        const channelId = curr.youtube_videos.channel_id;
-        acc[channelId] = (acc[channelId] || 0) + 1;
-        return acc;
-      }, {});
-
-      return Object.entries(channelViews)
-        .sort(([, a]: any, [, b]: any) => b - a)
-        .map(([channelId]) => channelId);
     },
     enabled: !!session?.user,
+    retry: 1,
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
 
   // Filter and sort videos based on user preferences
