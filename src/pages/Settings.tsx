@@ -159,10 +159,11 @@ const Settings = () => {
               <p className="text-sm text-muted-foreground">
                 This is your unique identifier in the system. You might need this when requesting admin access.
               </p>
-              <div className="pt-4 border-t">
+              <div className="pt-4 border-t flex gap-4">
                 <Button variant="destructive" onClick={handleSignOut}>
                   Sign Out
                 </Button>
+                <Button variant="destructive">Delete Account</Button>
               </div>
             </div>
           </Card>
