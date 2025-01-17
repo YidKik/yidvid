@@ -12,9 +12,10 @@ const queryClient = new QueryClient({
       staleTime: 1000 * 60 * 5, // 5 minutes
       refetchOnWindowFocus: false,
       retry: 1,
-      // Add error handling for failed queries
-      onError: (error) => {
-        console.error('Query error:', error)
+      meta: {
+        onError: (error: Error) => {
+          console.error('Query error:', error)
+        }
       }
     },
   },

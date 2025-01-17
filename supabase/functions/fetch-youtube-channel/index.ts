@@ -1,31 +1,8 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-
-const YOUTUBE_API_KEY = Deno.env.get('YOUTUBE_API_KEY');
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
-
-// Simple in-memory rate limiting
-const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
-const MAX_REQUESTS_PER_WINDOW = 5;
-const requestLog: { timestamp: number }[] = [];
-
-function isRateLimited(): boolean {
-  const now = Date.now();
-  // Remove old requests
-  const windowStart = now - RATE_LIMIT_WINDOW;
-  while (requestLog.length > 0 && requestLog[0].timestamp < windowStart) {
-    requestLog.shift();
-  }
-  // Check if we're over the limit
-  if (requestLog.length >= MAX_REQUESTS_PER_WINDOW) {
-    return true;
-  }
-  // Add current request
-  requestLog.push({ timestamp: now });
-  return false;
 }
 
 serve(async (req) => {
@@ -35,21 +12,6 @@ serve(async (req) => {
   }
 
   try {
-    // Check rate limiting
-    if (isRateLimited()) {
-      console.error('[YouTube API] Rate limit exceeded');
-      return new Response(
-        JSON.stringify({
-          error: 'Rate limit exceeded',
-          details: 'Too many requests. Please try again in a minute.'
-        }),
-        { 
-          status: 429,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        }
-      );
-    }
-
     const { channelId } = await req.json();
     console.log('[YouTube API] Starting channel fetch process');
     console.log('[YouTube API] Channel ID received:', channelId);
@@ -62,6 +24,7 @@ serve(async (req) => {
       );
     }
 
+    const YOUTUBE_API_KEY = Deno.env.get('YOUTUBE_API_KEY');
     if (!YOUTUBE_API_KEY) {
       console.error('[YouTube API] Missing YouTube API key');
       return new Response(
