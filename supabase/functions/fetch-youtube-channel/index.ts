@@ -7,6 +7,27 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Simple in-memory rate limiting
+const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
+const MAX_REQUESTS_PER_WINDOW = 5;
+const requestLog: { timestamp: number }[] = [];
+
+function isRateLimited(): boolean {
+  const now = Date.now();
+  // Remove old requests
+  const windowStart = now - RATE_LIMIT_WINDOW;
+  while (requestLog.length > 0 && requestLog[0].timestamp < windowStart) {
+    requestLog.shift();
+  }
+  // Check if we're over the limit
+  if (requestLog.length >= MAX_REQUESTS_PER_WINDOW) {
+    return true;
+  }
+  // Add current request
+  requestLog.push({ timestamp: now });
+  return false;
+}
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -14,6 +35,21 @@ serve(async (req) => {
   }
 
   try {
+    // Check rate limiting
+    if (isRateLimited()) {
+      console.error('[YouTube API] Rate limit exceeded');
+      return new Response(
+        JSON.stringify({
+          error: 'Rate limit exceeded',
+          details: 'Too many requests. Please try again in a minute.'
+        }),
+        { 
+          status: 429,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      );
+    }
+
     const { channelId } = await req.json();
     console.log('[YouTube API] Starting channel fetch process');
     console.log('[YouTube API] Channel ID received:', channelId);
@@ -29,7 +65,10 @@ serve(async (req) => {
     if (!YOUTUBE_API_KEY) {
       console.error('[YouTube API] Missing YouTube API key');
       return new Response(
-        JSON.stringify({ error: 'YouTube API key not configured' }),
+        JSON.stringify({ 
+          error: 'Configuration error',
+          details: 'YouTube API key not configured. Please contact support.'
+        }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
       );
     }
@@ -66,10 +105,19 @@ serve(async (req) => {
 
     if (!response.ok) {
       console.error('[YouTube API] Error Response:', data);
+      let errorMessage = 'Failed to fetch channel from YouTube API';
+      let errorDetails = data.error?.message || 'Unknown error';
+      
+      // Handle quota exceeded error specifically
+      if (data.error?.message?.includes('quota')) {
+        errorMessage = 'YouTube API quota exceeded';
+        errorDetails = 'The daily API quota has been exceeded. Please try again tomorrow or contact support.';
+      }
+      
       return new Response(
         JSON.stringify({ 
-          error: 'Failed to fetch channel from YouTube API',
-          details: data.error?.message || 'Unknown error'
+          error: errorMessage,
+          details: errorDetails
         }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: response.status }
       );
