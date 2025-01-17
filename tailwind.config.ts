@@ -68,9 +68,14 @@ export default {
           "0%": { transform: "scale(1)" },
           "100%": { transform: "scale(1.02)" },
         },
+        "fade-in": {
+          "0%": { opacity: "0", transform: "translateY(10px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
       },
       animation: {
         "gentle-fade": "gentle-fade 0.5s ease-in-out forwards, gentle-fade 0.8s ease-in-out reverse forwards paused group-hover:running",
+        "fade-in": "fade-in 1s ease-in-out",
       },
     },
   },

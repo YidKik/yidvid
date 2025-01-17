@@ -118,7 +118,7 @@ export const FeaturedVideos = ({ videos, onVideoClick }: FeaturedVideosProps) =>
           <div 
             key={video.id} 
             onClick={() => onVideoClick(video.id)} 
-            className="w-full transition-all duration-500 ease-in-out"
+            className="w-full transition-all duration-1000 ease-in-out animate-fade-in"
           >
             <VideoCard {...video} />
           </div>
