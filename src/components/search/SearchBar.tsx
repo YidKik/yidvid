@@ -87,11 +87,11 @@ export const SearchBar = () => {
           </div>
         </PopoverTrigger>
         <PopoverContent 
-          className="w-[500px] p-0 border-2 shadow-lg rounded-xl bg-[#1A1F2C]" 
+          className="w-[500px] p-0 shadow-lg bg-[#1A1F2C]" 
           align="start"
           sideOffset={5}
         >
-          <Command className="rounded-xl bg-[#1A1F2C]">
+          <Command className="bg-[#1A1F2C]">
             <CommandList className="max-h-[300px] overflow-y-auto scrollbar-hide">
               {searchResults.channels.length > 0 && (
                 <CommandGroup heading="Channels" className="px-2 text-gray-300">
@@ -102,14 +102,14 @@ export const SearchBar = () => {
                         setOpen(false);
                         setSearchQuery("");
                       }}
-                      className="flex items-center px-4 py-3 hover:bg-[#2A2F3C] data-[selected]:bg-[#2A2F3C] rounded-lg cursor-pointer transition-colors duration-200"
+                      className="px-4 py-2 hover:bg-[#2A2F3C] transition-colors duration-200"
                     >
                       <Link
                         to={`/channel/${channel.channel_id}`}
                         className="flex items-center gap-2 w-full"
                       >
                         <Search className="h-4 w-4 text-gray-400" />
-                        <span className="text-gray-200 font-medium hover:text-white transition-colors">
+                        <span className="text-gray-200 hover:text-white transition-colors">
                           {channel.title}
                         </span>
                       </Link>
@@ -126,7 +126,7 @@ export const SearchBar = () => {
                         setOpen(false);
                         setSearchQuery("");
                       }}
-                      className="flex items-center px-4 py-3 hover:bg-[#2A2F3C] data-[selected]:bg-[#2A2F3C] rounded-lg cursor-pointer transition-colors duration-200"
+                      className="px-4 py-2 hover:bg-[#2A2F3C] transition-colors duration-200"
                     >
                       <Link
                         to={`/video/${video.id}`}
@@ -134,7 +134,7 @@ export const SearchBar = () => {
                       >
                         <Search className="h-4 w-4 text-gray-400" />
                         <div className="flex flex-col">
-                          <span className="text-gray-200 font-medium hover:text-white transition-colors">
+                          <span className="text-gray-200 hover:text-white transition-colors">
                             {video.title}
                           </span>
                           <span className="text-sm text-gray-400">
