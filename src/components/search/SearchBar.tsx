@@ -81,7 +81,7 @@ export const SearchBar = () => {
               value={searchQuery}
               onChange={handleInputChange}
               onKeyDown={handleKeyDown}
-              className="w-full pl-12 py-6 rounded-xl bg-[#F2F2F2] border-transparent focus:border-gray-300 hover:border-gray-300 transition-colors duration-200 focus:ring-0 focus:ring-offset-0 ring-0 outline-none"
+              className="w-full pl-12 py-6 rounded-xl bg-[#F2F2F2] border-transparent focus:border-gray-300 hover:border-gray-300 transition-colors duration-200"
             />
             <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" />
           </div>
