@@ -1,17 +1,5 @@
 project_id = "euincktvsiuztsxcuqfd"
 
-[api]
-enabled = true
-port = 54321
-schemas = ["public", "storage", "graphql_public"]
-
-[db]
-port = 54322
-
-[studio]
-enabled = true
-port = 54323
-
 [functions.fetch-youtube-channel]
 verify_jwt = false
 

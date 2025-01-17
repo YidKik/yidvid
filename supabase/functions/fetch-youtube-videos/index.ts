@@ -27,21 +27,19 @@ serve(async (req) => {
       console.error('[YouTube Videos] Invalid channels data received:', channels);
       return new Response(
         JSON.stringify({ success: false, message: 'Invalid channels data' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
       );
     }
 
     console.log('[YouTube Videos] Fetching videos for channels:', channels);
 
     const apiKey = Deno.env.get('YOUTUBE_API_KEY');
-    const clientId = Deno.env.get('YOUTUBE_CLIENT_ID');
-    const clientSecret = Deno.env.get('YOUTUBE_CLIENT_SECRET');
 
-    if (!apiKey || !clientId || !clientSecret) {
-      console.error('[YouTube Videos] Missing required credentials');
+    if (!apiKey) {
+      console.error('[YouTube Videos] Missing YouTube API key');
       return new Response(
-        JSON.stringify({ success: false, message: 'YouTube credentials not fully configured' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
+        JSON.stringify({ success: false, message: 'YouTube API key not configured' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
       );
     }
 
@@ -147,7 +145,7 @@ serve(async (req) => {
     console.error('[YouTube Videos] Error in edge function:', error);
     return new Response(
       JSON.stringify({ success: false, error: error.message, videos: [] }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
     );
   }
 });

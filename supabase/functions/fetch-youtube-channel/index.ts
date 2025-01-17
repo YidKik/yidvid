@@ -33,10 +33,10 @@ serve(async (req) => {
       );
     }
 
-    if (!YOUTUBE_API_KEY || !YOUTUBE_CLIENT_ID || !YOUTUBE_CLIENT_SECRET) {
-      console.error('[YouTube API] Missing required credentials');
+    if (!YOUTUBE_API_KEY) {
+      console.error('[YouTube API] Missing YouTube API key');
       return new Response(
-        JSON.stringify({ error: 'YouTube credentials not fully configured' }),
+        JSON.stringify({ error: 'YouTube API key not configured' }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
       );
     }
@@ -51,9 +51,6 @@ serve(async (req) => {
         cleanChannelId = urlMatch[1];
       }
     }
-    
-    // Remove any remaining special characters
-    cleanChannelId = cleanChannelId.replace(/[^\w-]/g, '');
     
     console.log('[YouTube API] Cleaned channel ID:', cleanChannelId);
 
@@ -75,13 +72,11 @@ serve(async (req) => {
     }
 
     if (!response.ok) {
-      console.error('[YouTube API] Error Response:', JSON.stringify(data));
-      console.error('[YouTube API] Status:', response.status);
+      console.error('[YouTube API] Error Response:', data);
       return new Response(
         JSON.stringify({ 
           error: 'Failed to fetch channel from YouTube API',
-          details: `YouTube API returned status ${response.status}`,
-          response: JSON.stringify(data)
+          details: data.error?.message || 'Unknown error'
         }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: response.status }
       );
@@ -119,8 +114,7 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({ 
         error: 'Failed to fetch channel details',
-        details: error.message,
-        stack: error.stack
+        details: error.message
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
     );
