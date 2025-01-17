@@ -65,12 +65,12 @@ export default {
       },
       keyframes: {
         "gentle-fade": {
-          "0%": { opacity: "1" },
-          "100%": { opacity: "0.8", transform: "scale(1.02)" },
+          "0%": { transform: "scale(1)" },
+          "100%": { transform: "scale(1.02)" },
         },
       },
       animation: {
-        "gentle-fade": "gentle-fade 0.3s ease-in-out forwards",
+        "gentle-fade": "gentle-fade 0.5s ease-in-out forwards",
       },
     },
   },
