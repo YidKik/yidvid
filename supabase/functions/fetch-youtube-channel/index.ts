@@ -1,8 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const YOUTUBE_API_KEY = Deno.env.get('YOUTUBE_API_KEY');
-const YOUTUBE_CLIENT_ID = Deno.env.get('YOUTUBE_CLIENT_ID');
-const YOUTUBE_CLIENT_SECRET = Deno.env.get('YOUTUBE_CLIENT_SECRET');
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -18,11 +16,6 @@ serve(async (req) => {
   try {
     const { channelId } = await req.json();
     console.log('[YouTube API] Starting channel fetch process');
-    console.log('[YouTube API] API Key and OAuth credentials present:', {
-      hasApiKey: !!YOUTUBE_API_KEY,
-      hasClientId: !!YOUTUBE_CLIENT_ID,
-      hasClientSecret: !!YOUTUBE_CLIENT_SECRET
-    });
     console.log('[YouTube API] Channel ID received:', channelId);
 
     if (!channelId) {
