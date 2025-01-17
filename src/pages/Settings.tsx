@@ -52,7 +52,6 @@ const Settings = () => {
   const [buttonColor, setButtonColor] = useState(colors.buttonColor);
   const [logoColor, setLogoColor] = useState(colors.logoColor);
 
-  // Add the missing functions
   const handleSignOut = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) {
@@ -286,26 +285,6 @@ const Settings = () => {
                 id="dark-mode"
                 checked={darkMode}
                 onCheckedChange={setDarkMode}
-              />
-            </div>
-          </Card>
-        </section>
-
-        {/* Notifications Section */}
-        <section className="mb-12">
-          <h2 className="text-2xl font-semibold mb-4">Notifications</h2>
-          <Card className="p-6">
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="email-notifications">Email Notifications</Label>
-                <p className="text-sm text-muted-foreground">
-                  Receive email notifications about new videos
-                </p>
-              </div>
-              <Switch
-                id="email-notifications"
-                checked={emailNotifications}
-                onCheckedChange={setEmailNotifications}
               />
             </div>
           </Card>
