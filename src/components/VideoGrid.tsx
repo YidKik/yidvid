@@ -66,38 +66,19 @@ export const VideoGrid = () => {
         throw error;
       }
       
-      return data;
+      return data || [];
     },
   });
 
   const { data: videos, isLoading: isLoadingVideos } = useQuery({
-    queryKey: ["youtube-videos", channels?.map(c => c.channel_id), userInteractions],
+    queryKey: ["youtube-videos", channels?.map(c => c.channel_id)],
     queryFn: async () => {
       if (!channels?.length) {
         return [];
       }
 
-      toast({
-        title: "Fetching videos...",
-        description: "This may take a few moments",
-      });
-
       try {
-        // First, try to fetch new videos from YouTube
-        const { error: fetchError } = await supabase.functions.invoke("fetch-youtube-videos", {
-          body: { channels: channels.map(c => c.channel_id) }
-        });
-        
-        if (fetchError) {
-          console.error("Error fetching videos from YouTube:", fetchError);
-          toast({
-            title: "Warning",
-            description: "Some videos might not be up to date",
-            variant: "destructive",
-          });
-        }
-
-        // Then fetch all videos from the database
+        // Fetch all videos from the database
         const { data: videosData, error } = await supabase
           .from("youtube_videos")
           .select("*, youtube_channels!inner(thumbnail_url)")
@@ -122,20 +103,13 @@ export const VideoGrid = () => {
           return [];
         }
 
-        // Transform video data and sort based on user interactions
+        // Transform video data
         const processedVideos = videosData.map((video: any) => ({
           ...video,
           uploadedAt: new Date(video.uploaded_at),
           channelThumbnail: video.youtube_channels.thumbnail_url,
           interactionScore: calculateInteractionScore(video.id, userInteractions || [])
         }));
-
-        toast({
-          title: "Videos fetched successfully",
-          description: session?.user 
-            ? "Your personalized feed has been updated"
-            : "Showing recommended videos",
-        });
 
         return processedVideos;
       } catch (error) {
@@ -199,7 +173,6 @@ export const VideoGrid = () => {
           />
           
           <div className="w-full max-w-[1800px] mx-auto mt-8">
-
             <div className="mt-12">
               <h2 className="text-2xl font-bold px-4 mb-8 text-accent">New Videos</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-4">
