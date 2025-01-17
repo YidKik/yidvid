@@ -24,7 +24,7 @@ export const VideoCard = ({
 }: VideoCardProps) => {
   return (
     <Link to={`/video/${id}`} className="group cursor-pointer">
-      <div className="aspect-video rounded-lg overflow-hidden mb-3 group-hover:animate-card-hover">
+      <div className="aspect-video rounded-lg overflow-hidden mb-3 group-hover:animate-gentle-fade">
         <img
           src={thumbnail}
           alt={title}

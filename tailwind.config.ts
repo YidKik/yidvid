@@ -64,13 +64,13 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       keyframes: {
-        "card-hover": {
-          "0%": { transform: "translateY(0)" },
-          "100%": { transform: "translateY(-5px)" },
+        "gentle-fade": {
+          "0%": { opacity: "1" },
+          "100%": { opacity: "0.8", transform: "scale(1.02)" },
         },
       },
       animation: {
-        "card-hover": "card-hover 0.2s ease-out forwards",
+        "gentle-fade": "gentle-fade 0.3s ease-in-out forwards",
       },
     },
   },
