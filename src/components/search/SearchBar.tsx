@@ -71,7 +71,7 @@ export const SearchBar = () => {
   const hasResults = searchResults.videos.length > 0 || searchResults.channels.length > 0;
 
   return (
-    <div className="flex-1 max-w-2xl px-4 mt-2">
+    <div className="flex-1 max-w-2xl px-4">
       <Popover open={open && hasResults} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <div className="relative">
@@ -81,17 +81,17 @@ export const SearchBar = () => {
               value={searchQuery}
               onChange={handleInputChange}
               onKeyDown={handleKeyDown}
-              className="search-input w-full pl-12 py-6 rounded-xl focus:outline-none focus:ring-0 text-lg border-2 hover:border-gray-300 transition-colors duration-200"
+              className="w-full pl-12 py-6 rounded-xl bg-[#F2F2F2] border-transparent focus:border-gray-300 hover:border-gray-300 transition-colors duration-200"
             />
-            <Search className="search-icon absolute left-5 top-1/2 transform -translate-y-1/2 h-5 w-5" />
+            <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" />
           </div>
         </PopoverTrigger>
         <PopoverContent 
-          className="search-results w-[500px] p-0 border-2 shadow-lg rounded-xl" 
+          className="w-[500px] p-0 border-2 shadow-lg rounded-xl" 
           align="start"
           sideOffset={5}
         >
-          <Command className="bg-white rounded-xl">
+          <Command className="rounded-xl">
             <CommandList className="max-h-[300px] overflow-y-auto scrollbar-hide">
               {searchResults.channels.length > 0 && (
                 <CommandGroup heading="Channels" className="px-2">
