@@ -26,7 +26,7 @@ serve(async (req) => {
     if (!channels || !Array.isArray(channels)) {
       console.error('[YouTube Videos] Invalid channels data received:', channels);
       return new Response(
-        JSON.stringify({ success: false, message: 'Invalid channels data' }),
+        JSON.stringify({ error: 'Invalid channels data' }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
       );
     }
@@ -34,11 +34,10 @@ serve(async (req) => {
     console.log('[YouTube Videos] Fetching videos for channels:', channels);
 
     const apiKey = Deno.env.get('YOUTUBE_API_KEY');
-
     if (!apiKey) {
       console.error('[YouTube Videos] Missing YouTube API key');
       return new Response(
-        JSON.stringify({ success: false, message: 'YouTube API key not configured' }),
+        JSON.stringify({ error: 'YouTube API key not configured' }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
       );
     }
@@ -101,8 +100,6 @@ serve(async (req) => {
           channel_name: item.snippet.channelTitle,
           uploaded_at: item.snippet.publishedAt,
           views: parseInt(statsMap.get(item.snippet.resourceId.videoId)?.viewCount || '0'),
-          likes: parseInt(statsMap.get(item.snippet.resourceId.videoId)?.likeCount || '0'),
-          comments: parseInt(statsMap.get(item.snippet.resourceId.videoId)?.commentCount || '0')
         }));
       } catch (error) {
         console.error(`[YouTube Videos] Error processing channel ${channelId}:`, error);
@@ -117,7 +114,7 @@ serve(async (req) => {
       console.warn('[YouTube Videos] No videos were fetched for any channels');
       return new Response(
         JSON.stringify({ success: true, videos: [] }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
@@ -139,12 +136,12 @@ serve(async (req) => {
 
     return new Response(
       JSON.stringify({ success: true, count: videos.length, videos }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (error) {
     console.error('[YouTube Videos] Error in edge function:', error);
     return new Response(
-      JSON.stringify({ success: false, error: error.message, videos: [] }),
+      JSON.stringify({ success: false, error: error.message }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
     );
   }
