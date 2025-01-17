@@ -1,6 +1,8 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const YOUTUBE_API_KEY = Deno.env.get('YOUTUBE_API_KEY');
+const YOUTUBE_CLIENT_ID = Deno.env.get('YOUTUBE_CLIENT_ID');
+const YOUTUBE_CLIENT_SECRET = Deno.env.get('YOUTUBE_CLIENT_SECRET');
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -16,7 +18,11 @@ serve(async (req) => {
   try {
     const { channelId } = await req.json();
     console.log('[YouTube API] Starting channel fetch process');
-    console.log('[YouTube API] API Key present:', !!YOUTUBE_API_KEY);
+    console.log('[YouTube API] API Key and OAuth credentials present:', {
+      hasApiKey: !!YOUTUBE_API_KEY,
+      hasClientId: !!YOUTUBE_CLIENT_ID,
+      hasClientSecret: !!YOUTUBE_CLIENT_SECRET
+    });
     console.log('[YouTube API] Channel ID received:', channelId);
 
     if (!channelId) {
@@ -27,10 +33,10 @@ serve(async (req) => {
       );
     }
 
-    if (!YOUTUBE_API_KEY) {
-      console.error('[YouTube API] API key not configured');
+    if (!YOUTUBE_API_KEY || !YOUTUBE_CLIENT_ID || !YOUTUBE_CLIENT_SECRET) {
+      console.error('[YouTube API] Missing required credentials');
       return new Response(
-        JSON.stringify({ error: 'YouTube API key not configured' }),
+        JSON.stringify({ error: 'YouTube credentials not fully configured' }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
       );
     }
@@ -50,9 +56,9 @@ serve(async (req) => {
     cleanChannelId = cleanChannelId.replace(/[^\w-]/g, '');
     
     console.log('[YouTube API] Cleaned channel ID:', cleanChannelId);
-    
+
     // First try with channel ID
-    let apiUrl = `https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${cleanChannelId}&key=${YOUTUBE_API_KEY}`;
+    let apiUrl = `https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&id=${cleanChannelId}&key=${YOUTUBE_API_KEY}`;
     console.log('[YouTube API] Making request to:', apiUrl.replace(YOUTUBE_API_KEY, '[REDACTED]'));
 
     let response = await fetch(apiUrl);
@@ -61,7 +67,7 @@ serve(async (req) => {
     // If no results, try with username
     if (!data.items || data.items.length === 0) {
       console.log('[YouTube API] No results with ID, trying forUsername');
-      apiUrl = `https://www.googleapis.com/youtube/v3/channels?part=snippet&forUsername=${cleanChannelId}&key=${YOUTUBE_API_KEY}`;
+      apiUrl = `https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&forUsername=${cleanChannelId}&key=${YOUTUBE_API_KEY}`;
       console.log('[YouTube API] Making request to:', apiUrl.replace(YOUTUBE_API_KEY, '[REDACTED]'));
       
       response = await fetch(apiUrl);
@@ -92,18 +98,19 @@ serve(async (req) => {
       );
     }
 
-    const channel = data.items[0].snippet;
-    console.log('[YouTube API] Successfully fetched channel:', channel.title);
+    const channel = data.items[0];
+    console.log('[YouTube API] Successfully fetched channel:', channel.snippet.title);
     
-    const thumbnailUrl = channel.thumbnails?.high?.url || 
-                        channel.thumbnails?.medium?.url || 
-                        channel.thumbnails?.default?.url;
+    const thumbnailUrl = channel.snippet.thumbnails?.high?.url || 
+                        channel.snippet.thumbnails?.medium?.url || 
+                        channel.snippet.thumbnails?.default?.url;
     
     return new Response(
       JSON.stringify({
-        title: channel.title,
-        description: channel.description,
-        thumbnailUrl: thumbnailUrl
+        title: channel.snippet.title,
+        description: channel.snippet.description,
+        thumbnailUrl: thumbnailUrl,
+        statistics: channel.statistics
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );

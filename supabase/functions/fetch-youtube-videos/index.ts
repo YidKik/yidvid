@@ -27,24 +27,21 @@ serve(async (req) => {
       console.error('[YouTube Videos] Invalid channels data received:', channels);
       return new Response(
         JSON.stringify({ success: false, message: 'Invalid channels data' }),
-        { 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 200 // Changed from potential 404/500 to 200
-        }
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
       );
     }
 
     console.log('[YouTube Videos] Fetching videos for channels:', channels);
 
     const apiKey = Deno.env.get('YOUTUBE_API_KEY');
-    if (!apiKey) {
-      console.error('[YouTube Videos] YouTube API key not configured');
+    const clientId = Deno.env.get('YOUTUBE_CLIENT_ID');
+    const clientSecret = Deno.env.get('YOUTUBE_CLIENT_SECRET');
+
+    if (!apiKey || !clientId || !clientSecret) {
+      console.error('[YouTube Videos] Missing required credentials');
       return new Response(
-        JSON.stringify({ success: false, message: 'YouTube API key not configured' }),
-        { 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 200 // Changed from potential 404/500 to 200
-        }
+        JSON.stringify({ success: false, message: 'YouTube credentials not fully configured' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
       );
     }
 
@@ -58,51 +55,56 @@ serve(async (req) => {
       console.log(`[YouTube Videos] Fetching videos for channel ${channelId}`);
 
       try {
-        const searchUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channelId}&maxResults=50&order=date&type=video&key=${apiKey}`;
-        console.log('[YouTube Videos] Making request to:', searchUrl.replace(apiKey, '[REDACTED]'));
+        // First, get channel details including upload playlist ID
+        const channelUrl = `https://www.googleapis.com/youtube/v3/channels?part=contentDetails,statistics&id=${channelId}&key=${apiKey}`;
+        const channelResponse = await fetch(channelUrl);
+        const channelData = await channelResponse.json();
 
-        const response = await fetch(searchUrl);
-        const responseText = await response.text();
-        
-        if (!response.ok) {
-          console.error(`[YouTube Videos] Error fetching videos for channel ${channelId}:`, responseText);
+        if (!channelResponse.ok || !channelData.items?.[0]) {
+          console.error(`[YouTube Videos] Error fetching channel ${channelId}:`, channelData);
           return [];
         }
 
-        const data = JSON.parse(responseText);
-        console.log(`[YouTube Videos] Received ${data.items?.length || 0} videos for channel ${channelId}`);
-        
-        if (!data.items || data.items.length === 0) {
-          console.log(`[YouTube Videos] No videos found for channel ${channelId}`);
+        const uploadsPlaylistId = channelData.items[0].contentDetails.relatedPlaylists.uploads;
+
+        // Get videos from uploads playlist
+        const playlistUrl = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${uploadsPlaylistId}&maxResults=50&key=${apiKey}`;
+        const response = await fetch(playlistUrl);
+        const data = await response.json();
+
+        if (!response.ok || !data.items) {
+          console.error(`[YouTube Videos] Error fetching videos for channel ${channelId}:`, data);
           return [];
         }
+
+        console.log(`[YouTube Videos] Received ${data.items.length} videos for channel ${channelId}`);
 
         // Get video statistics in batches
-        const videoIds = data.items.map((item: any) => item.id.videoId).join(',');
+        const videoIds = data.items.map((item: any) => item.snippet.resourceId.videoId).join(',');
         const statsUrl = `https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${videoIds}&key=${apiKey}`;
-        console.log('[YouTube Videos] Fetching video statistics...');
         
         const statsResponse = await fetch(statsUrl);
-        const statsResponseText = await statsResponse.text();
-        
-        if (!statsResponse.ok) {
-          console.error('[YouTube Videos] Error fetching video statistics:', statsResponseText);
+        const statsData = await statsResponse.json();
+
+        if (!statsResponse.ok || !statsData.items) {
+          console.error('[YouTube Videos] Error fetching video statistics:', statsData);
           return [];
         }
 
-        const statsData = JSON.parse(statsResponseText);
         const statsMap = new Map(
           statsData.items.map((item: any) => [item.id, item.statistics])
         );
 
         return data.items.map((item: any) => ({
-          video_id: item.id.videoId,
+          video_id: item.snippet.resourceId.videoId,
           title: item.snippet.title,
           thumbnail: item.snippet.thumbnails.high?.url || item.snippet.thumbnails.default?.url,
           channel_id: channelId,
           channel_name: item.snippet.channelTitle,
           uploaded_at: item.snippet.publishedAt,
-          views: parseInt(statsMap.get(item.id.videoId)?.viewCount || '0'),
+          views: parseInt(statsMap.get(item.snippet.resourceId.videoId)?.viewCount || '0'),
+          likes: parseInt(statsMap.get(item.snippet.resourceId.videoId)?.likeCount || '0'),
+          comments: parseInt(statsMap.get(item.snippet.resourceId.videoId)?.commentCount || '0')
         }));
       } catch (error) {
         console.error(`[YouTube Videos] Error processing channel ${channelId}:`, error);
@@ -116,11 +118,8 @@ serve(async (req) => {
     if (videos.length === 0) {
       console.warn('[YouTube Videos] No videos were fetched for any channels');
       return new Response(
-        JSON.stringify({ success: true, videos: [] }), // Changed to return success with empty array
-        { 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 200 // Changed from 404 to 200
-        }
+        JSON.stringify({ success: true, videos: [] }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
       );
     }
 
@@ -142,19 +141,13 @@ serve(async (req) => {
 
     return new Response(
       JSON.stringify({ success: true, count: videos.length, videos }),
-      { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200
-      }
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
     );
   } catch (error) {
     console.error('[YouTube Videos] Error in edge function:', error);
     return new Response(
-      JSON.stringify({ success: false, error: error.message, videos: [] }), // Added empty videos array
-      { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200 // Changed from 500 to 200
-      }
+      JSON.stringify({ success: false, error: error.message, videos: [] }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
     );
   }
 });
