@@ -14,10 +14,12 @@ export const FeaturedVideos = ({ videos, onVideoClick }: FeaturedVideosProps) =>
   const [session, setSession] = useState<any>(null);
 
   useEffect(() => {
+    // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
     });
 
+    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
     });
@@ -44,7 +46,6 @@ export const FeaturedVideos = ({ videos, onVideoClick }: FeaturedVideosProps) =>
 
         if (error) {
           console.error("Error fetching user interactions:", error);
-          toast.error("Unable to load personalized recommendations");
           return null;
         }
 
@@ -52,6 +53,7 @@ export const FeaturedVideos = ({ videos, onVideoClick }: FeaturedVideosProps) =>
           return null;
         }
 
+        // Process channel views
         const channelViews = data.reduce((acc: any, curr: any) => {
           const channelId = curr.youtube_videos?.channel_id;
           if (channelId) {
@@ -65,7 +67,6 @@ export const FeaturedVideos = ({ videos, onVideoClick }: FeaturedVideosProps) =>
           .map(([channelId]) => channelId);
       } catch (error) {
         console.error("Error in fetching channel views:", error);
-        toast.error("Error loading recommendations");
         return null;
       }
     },
