@@ -81,20 +81,20 @@ export const SearchBar = () => {
               value={searchQuery}
               onChange={handleInputChange}
               onKeyDown={handleKeyDown}
-              className="w-full pl-12 py-6 rounded-xl bg-[#F2F2F2] border-transparent focus:border-gray-300 hover:border-gray-300 transition-colors duration-200"
+              className="w-full pl-12 py-6 rounded-xl bg-[#F2F2F2] border-transparent focus:border-gray-300 hover:border-gray-300 transition-colors duration-200 text-black placeholder:text-gray-500"
             />
             <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" />
           </div>
         </PopoverTrigger>
         <PopoverContent 
-          className="w-[500px] p-0 border-2 shadow-lg rounded-xl" 
+          className="w-[500px] p-0 border-2 shadow-lg rounded-xl bg-[#1A1F2C]" 
           align="start"
           sideOffset={5}
         >
-          <Command className="rounded-xl">
+          <Command className="rounded-xl bg-[#1A1F2C]">
             <CommandList className="max-h-[300px] overflow-y-auto scrollbar-hide">
               {searchResults.channels.length > 0 && (
-                <CommandGroup heading="Channels" className="px-2">
+                <CommandGroup heading="Channels" className="px-2 text-gray-300">
                   {searchResults.channels.map((channel) => (
                     <CommandItem
                       key={channel.channel_id}
@@ -102,14 +102,14 @@ export const SearchBar = () => {
                         setOpen(false);
                         setSearchQuery("");
                       }}
-                      className="flex items-center px-4 py-3 hover:bg-[#F8F8F8] data-[selected]:bg-[#F8F8F8] rounded-lg cursor-pointer transition-colors duration-200"
+                      className="flex items-center px-4 py-3 hover:bg-[#2A2F3C] data-[selected]:bg-[#2A2F3C] rounded-lg cursor-pointer transition-colors duration-200"
                     >
                       <Link
                         to={`/channel/${channel.channel_id}`}
                         className="flex items-center gap-2 w-full"
                       >
-                        <Search className="h-4 w-4 text-gray-500" />
-                        <span className="text-gray-700 font-medium hover:text-primary transition-colors">
+                        <Search className="h-4 w-4 text-gray-400" />
+                        <span className="text-gray-200 font-medium hover:text-white transition-colors">
                           {channel.title}
                         </span>
                       </Link>
@@ -118,7 +118,7 @@ export const SearchBar = () => {
                 </CommandGroup>
               )}
               {searchResults.videos.length > 0 && (
-                <CommandGroup heading="Videos" className="px-2">
+                <CommandGroup heading="Videos" className="px-2 text-gray-300">
                   {searchResults.videos.map((video) => (
                     <CommandItem
                       key={video.id}
@@ -126,18 +126,18 @@ export const SearchBar = () => {
                         setOpen(false);
                         setSearchQuery("");
                       }}
-                      className="flex items-center px-4 py-3 hover:bg-[#F8F8F8] data-[selected]:bg-[#F8F8F8] rounded-lg cursor-pointer transition-colors duration-200"
+                      className="flex items-center px-4 py-3 hover:bg-[#2A2F3C] data-[selected]:bg-[#2A2F3C] rounded-lg cursor-pointer transition-colors duration-200"
                     >
                       <Link
                         to={`/video/${video.id}`}
                         className="flex items-center gap-2 w-full"
                       >
-                        <Search className="h-4 w-4 text-gray-500" />
+                        <Search className="h-4 w-4 text-gray-400" />
                         <div className="flex flex-col">
-                          <span className="text-gray-700 font-medium hover:text-primary transition-colors">
+                          <span className="text-gray-200 font-medium hover:text-white transition-colors">
                             {video.title}
                           </span>
-                          <span className="text-sm text-gray-500">
+                          <span className="text-sm text-gray-400">
                             {video.channel_name}
                           </span>
                         </div>
