@@ -70,7 +70,7 @@ export default {
         },
       },
       animation: {
-        "gentle-fade": "gentle-fade 0.5s ease-in-out forwards",
+        "gentle-fade": "gentle-fade 0.5s ease-in-out forwards, gentle-fade 0.8s ease-in-out reverse forwards paused group-hover:running",
       },
     },
   },
