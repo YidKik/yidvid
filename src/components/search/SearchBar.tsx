@@ -102,14 +102,14 @@ export const SearchBar = () => {
                         setOpen(false);
                         setSearchQuery("");
                       }}
-                      className="px-4 py-2 hover:bg-gray-50 transition-colors duration-200 group"
+                      className="px-4 py-2 hover:text-primary transition-colors duration-200"
                     >
                       <Link
                         to={`/channel/${channel.channel_id}`}
                         className="flex items-center gap-2 w-full"
                       >
                         <Search className="h-4 w-4 text-gray-400" />
-                        <span className="text-gray-800 group-hover:text-primary transition-colors">
+                        <span className="text-gray-800 hover:text-primary transition-colors">
                           {channel.title}
                         </span>
                       </Link>
@@ -126,7 +126,7 @@ export const SearchBar = () => {
                         setOpen(false);
                         setSearchQuery("");
                       }}
-                      className="px-4 py-2 hover:bg-gray-50 transition-colors duration-200 group"
+                      className="px-4 py-2 hover:text-primary transition-colors duration-200"
                     >
                       <Link
                         to={`/video/${video.id}`}
@@ -134,7 +134,7 @@ export const SearchBar = () => {
                       >
                         <Search className="h-4 w-4 text-gray-400" />
                         <div className="flex flex-col">
-                          <span className="text-gray-800 group-hover:text-primary transition-colors">
+                          <span className="text-gray-800 hover:text-primary transition-colors">
                             {video.title}
                           </span>
                           <span className="text-sm text-gray-500">
