@@ -7,41 +7,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
-import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer } from "recharts";
 import { Loader2, Clock } from "lucide-react";
 
 export const DashboardAnalytics = () => {
-  const { data: viewsData, isLoading } = useQuery({
-    queryKey: ["video-views"],
-    queryFn: async () => {
-      const sevenDaysAgo = new Date();
-      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-
-      const { data, error } = await supabase
-        .from("user_video_interactions")
-        .select("created_at")
-        .eq('interaction_type', 'view')
-        .gte("created_at", sevenDaysAgo.toISOString())
-        .order("created_at", { ascending: true });
-
-      if (error) throw error;
-
-      // Group by day and count views
-      const dailyViews = data.reduce((acc: any, interaction) => {
-        const date = new Date(interaction.created_at).toLocaleDateString();
-        acc[date] = (acc[date] || 0) + 1;
-        return acc;
-      }, {});
-
-      return Object.entries(dailyViews).map(([date, views]) => ({
-        date,
-        views,
-      }));
-    },
-  });
-
-  const { data: totalStats } = useQuery({
+  const { data: totalStats, isLoading } = useQuery({
     queryKey: ["dashboard-stats"],
     queryFn: async () => {
       const { data: channels, error: channelsError } = await supabase
@@ -186,40 +155,6 @@ export const DashboardAnalytics = () => {
             <p className="text-xs text-muted-foreground">
               Most active hour of the day
             </p>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card className="col-span-3">
-        <CardHeader>
-          <CardTitle>Views Over Time</CardTitle>
-          <CardDescription>Last 7 days</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="h-[200px]"> {/* Reduced from 300px to 200px */}
-            <ChartContainer
-              config={{
-                views: {
-                  theme: {
-                    light: "hsl(var(--primary))",
-                    dark: "hsl(var(--primary))",
-                  },
-                },
-              }}
-            >
-              <AreaChart data={viewsData}>
-                <XAxis dataKey="date" />
-                <YAxis />
-                <ChartTooltip />
-                <Area
-                  type="monotone"
-                  dataKey="views"
-                  stroke="hsl(var(--primary))"
-                  fill="hsl(var(--primary)/.2)"
-                  strokeWidth={1} // Added to make the line thinner
-                />
-              </AreaChart>
-            </ChartContainer>
           </div>
         </CardContent>
       </Card>
