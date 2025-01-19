@@ -34,10 +34,14 @@ export const VideoCard = ({
       <div className="flex gap-3">
         <div className="flex-shrink-0">
           <Link to={`/channel/${channelName}`} onClick={(e) => e.stopPropagation()}>
-            <Avatar className="w-8 h-8">
-              <AvatarImage src={channelThumbnail} alt={channelName} />
-              <AvatarFallback>
-                <Youtube className="w-4 h-4 text-primary" />
+            <Avatar className="w-10 h-10 rounded-full border-2 border-background shadow-sm">
+              <AvatarImage 
+                src={channelThumbnail} 
+                alt={channelName}
+                className="object-cover"
+              />
+              <AvatarFallback className="bg-primary/10">
+                <Youtube className="w-5 h-5 text-primary" />
               </AvatarFallback>
             </Avatar>
           </Link>
