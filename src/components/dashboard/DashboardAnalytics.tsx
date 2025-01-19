@@ -13,25 +13,35 @@ export const DashboardAnalytics = () => {
   const { data: totalStats, isLoading } = useQuery({
     queryKey: ["dashboard-stats"],
     queryFn: async () => {
+      // Get total channels
       const { data: channels, error: channelsError } = await supabase
         .from("youtube_channels")
-        .select("channel_id", { count: "exact" });
+        .select("*", { count: "exact" });
 
-      const { data: interactions, error: interactionsError } = await supabase
+      // Get total videos
+      const { data: videos, error: videosError } = await supabase
+        .from("youtube_videos")
+        .select("*", { count: "exact" });
+
+      // Get total views from interactions
+      const { data: views, error: viewsError } = await supabase
         .from("user_video_interactions")
-        .select("*")
+        .select("*", { count: "exact" })
         .eq('interaction_type', 'view');
 
+      // Get total users
       const { data: users, error: usersError } = await supabase
         .from("profiles")
-        .select("id", { count: "exact" });
+        .select("*", { count: "exact" });
 
+      // Get session data for watch time calculation
       const { data: sessions, error: sessionsError } = await supabase
         .from("user_analytics")
-        .select("session_start, session_end");
+        .select("session_start, session_end")
+        .not('session_end', 'is', null);
 
-      if (channelsError || interactionsError || usersError || sessionsError) 
-        throw channelsError || interactionsError || usersError || sessionsError;
+      if (channelsError || videosError || viewsError || usersError || sessionsError) 
+        throw channelsError || videosError || viewsError || usersError || sessionsError;
 
       // Calculate total watch time in hours
       const totalHours = sessions?.reduce((sum, session) => {
@@ -54,8 +64,8 @@ export const DashboardAnalytics = () => {
 
       return {
         totalChannels: channels?.length || 0,
-        totalVideos: interactions?.length || 0,
-        totalViews: interactions?.length || 0,
+        totalVideos: videos?.length || 0,
+        totalViews: views?.length || 0,
         totalUsers: users?.length || 0,
         totalHours: Math.round(totalHours || 0),
         mostPopularHour: mostPopularHour.hour,
