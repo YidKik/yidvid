@@ -15,6 +15,8 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
   const [session, setSession] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [searchResults, setSearchResults] = useState<Array<{ id: string; title: string }>>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -76,7 +78,34 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
     e.preventDefault();
     if (searchQuery.trim()) {
       navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
+      setShowDropdown(false);
     }
+  };
+
+  const handleSearchInput = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+    
+    if (value.trim()) {
+      const { data, error } = await supabase
+        .from('youtube_videos')
+        .select('id, title')
+        .ilike('title', `%${value}%`)
+        .limit(5);
+      
+      if (!error && data) {
+        setSearchResults(data);
+        setShowDropdown(true);
+      }
+    } else {
+      setShowDropdown(false);
+    }
+  };
+
+  const handleResultClick = (videoId: string) => {
+    navigate(`/video/${videoId}`);
+    setShowDropdown(false);
+    setSearchQuery("");
   };
 
   return (
@@ -93,7 +122,7 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
             <Input
               type="text"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={handleSearchInput}
               placeholder="Search..."
               className="w-full bg-[#222] text-white border-none rounded-full px-6 py-2 focus:outline-none focus:ring-0 transition-all duration-300 placeholder:text-gray-400"
             />
@@ -103,6 +132,20 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
             >
               <Search className="h-5 w-5" />
             </button>
+            
+            {showDropdown && searchResults.length > 0 && (
+              <div className="absolute w-full mt-2 bg-[#222] rounded-lg shadow-lg overflow-hidden z-50">
+                {searchResults.map((result) => (
+                  <button
+                    key={result.id}
+                    onClick={() => handleResultClick(result.id)}
+                    className="w-full px-4 py-3 text-left text-gray-200 hover:bg-[#333] transition-colors duration-200"
+                  >
+                    {result.title}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </form>
 
