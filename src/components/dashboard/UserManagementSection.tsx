@@ -58,7 +58,9 @@ export const UserManagementSection = ({ currentUserId }: { currentUserId: string
         .eq("id", currentUserId)
         .single();
 
-      if (currentUserError || !currentUser?.is_admin) {
+      if (currentUserError) throw currentUserError;
+
+      if (!currentUser?.is_admin) {
         toast({
           title: "Permission denied",
           description: "Only admins can modify admin status.",
@@ -67,17 +69,19 @@ export const UserManagementSection = ({ currentUserId }: { currentUserId: string
         return;
       }
 
-      const { error } = await supabase
+      // Update the user's admin status
+      const { error: updateError } = await supabase
         .from("profiles")
         .update({ is_admin: !currentStatus })
         .eq("id", userId);
 
-      if (error) throw error;
+      if (updateError) throw updateError;
 
       toast({
         title: `Admin status ${currentStatus ? "removed" : "granted"}`,
         description: `User has been ${currentStatus ? "removed from" : "made"} admin.`,
       });
+      
       refetchUsers();
     } catch (error: any) {
       toast({
@@ -97,7 +101,9 @@ export const UserManagementSection = ({ currentUserId }: { currentUserId: string
         .eq("id", currentUserId)
         .single();
 
-      if (currentUserError || !currentUser?.is_admin) {
+      if (currentUserError) throw currentUserError;
+
+      if (!currentUser?.is_admin) {
         toast({
           title: "Permission denied",
           description: "Only admins can add new admins.",
