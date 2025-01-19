@@ -2,9 +2,6 @@ import { formatDistanceToNow } from "date-fns";
 import { Link } from "react-router-dom";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Youtube } from "lucide-react";
-import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "./ui/use-toast";
 
 interface VideoCardProps {
   id: string;
@@ -14,6 +11,7 @@ interface VideoCardProps {
   views: number;
   uploadedAt: Date;
   channelId: string;
+  channelThumbnail?: string | null;
 }
 
 export const VideoCard = ({
@@ -24,79 +22,8 @@ export const VideoCard = ({
   views,
   uploadedAt,
   channelId,
+  channelThumbnail,
 }: VideoCardProps) => {
-  const [channelThumbnail, setChannelThumbnail] = useState<string | null>(null);
-  const [isLoadingThumbnail, setIsLoadingThumbnail] = useState(true);
-
-  useEffect(() => {
-    const fetchChannelThumbnail = async () => {
-      if (!channelId) return;
-
-      try {
-        setIsLoadingThumbnail(true);
-        console.log('Fetching thumbnail for channel:', channelId);
-        
-        // Using Supabase client which automatically handles authentication headers
-        const { data: channelData, error } = await supabase
-          .from('youtube_channels')
-          .select('thumbnail_url')
-          .eq('channel_id', channelId)
-          .single();
-
-        if (error) {
-          console.error('Error fetching channel thumbnail:', error);
-          return;
-        }
-
-        if (channelData?.thumbnail_url) {
-          console.log('Found thumbnail:', channelData.thumbnail_url);
-          setChannelThumbnail(channelData.thumbnail_url);
-        } else {
-          console.log('No thumbnail found for channel:', channelId);
-          // If no thumbnail is found, automatically trigger an update
-          const { data: functionResponse, error: functionError } = await supabase.functions.invoke(
-            'update-channel-thumbnails',
-            {
-              body: { channels: [channelId] }
-            }
-          );
-
-          if (functionError) {
-            console.error('Error updating channel thumbnails:', functionError);
-            toast({
-              title: "Error",
-              description: "Failed to update channel thumbnail",
-              variant: "destructive",
-            });
-            return;
-          }
-
-          // Refetch the thumbnail after update
-          const { data: updatedChannel, error: refetchError } = await supabase
-            .from('youtube_channels')
-            .select('thumbnail_url')
-            .eq('channel_id', channelId)
-            .single();
-            
-          if (updatedChannel?.thumbnail_url) {
-            setChannelThumbnail(updatedChannel.thumbnail_url);
-          }
-        }
-      } catch (error) {
-        console.error('Error in fetchChannelThumbnail:', error);
-        toast({
-          title: "Error",
-          description: "Failed to load channel thumbnail",
-          variant: "destructive",
-        });
-      } finally {
-        setIsLoadingThumbnail(false);
-      }
-    };
-
-    fetchChannelThumbnail();
-  }, [channelId]);
-
   return (
     <div className="group cursor-pointer">
       <Link to={`/video/${id}`} className="block">
@@ -119,7 +46,7 @@ export const VideoCard = ({
                   className="object-cover"
                   onError={(e) => {
                     console.error("Error loading channel thumbnail:", channelThumbnail);
-                    setChannelThumbnail(null);
+                    e.currentTarget.style.display = 'none';
                   }}
                 />
               ) : (
