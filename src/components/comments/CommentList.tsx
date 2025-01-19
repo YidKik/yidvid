@@ -4,6 +4,7 @@ import { VideoCommentsTable } from "@/integrations/supabase/types/video-comments
 type Comment = VideoCommentsTable["Row"] & {
   profiles: {
     email: string;
+    name: string | null;
   } | null;
 };
 
@@ -18,7 +19,7 @@ export const CommentList = ({ comments }: CommentListProps) => {
         <div key={comment.id} className="border-b pb-4">
           <div className="flex justify-between items-start mb-2">
             <p className="font-medium">
-              {comment.profiles?.email || "Anonymous"}
+              {comment.profiles?.name || comment.profiles?.email || "Anonymous"}
             </p>
             <p className="text-sm text-muted-foreground">
               {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}
