@@ -25,12 +25,17 @@ export const VideoCard = ({
   channelId,
 }: VideoCardProps) => {
   const [channelThumbnail, setChannelThumbnail] = useState<string | null>(null);
+  const [isLoadingThumbnail, setIsLoadingThumbnail] = useState(true);
 
   useEffect(() => {
     const fetchChannelThumbnail = async () => {
+      if (!channelId) return;
+
       try {
+        setIsLoadingThumbnail(true);
         console.log('Fetching thumbnail for channel:', channelId);
-        const { data, error } = await supabase
+        
+        const { data: channelData, error } = await supabase
           .from('youtube_channels')
           .select('thumbnail_url')
           .eq('channel_id', channelId)
@@ -41,20 +46,43 @@ export const VideoCard = ({
           return;
         }
 
-        if (data?.thumbnail_url) {
-          console.log('Found thumbnail:', data.thumbnail_url);
-          setChannelThumbnail(data.thumbnail_url);
+        if (channelData?.thumbnail_url) {
+          console.log('Found thumbnail:', channelData.thumbnail_url);
+          setChannelThumbnail(channelData.thumbnail_url);
         } else {
           console.log('No thumbnail found for channel:', channelId);
+          // If no thumbnail is found, trigger an update
+          const response = await fetch(
+            "https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/update-channel-thumbnails",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
+
+          if (response.ok) {
+            // Refetch the thumbnail after update
+            const { data: updatedChannel } = await supabase
+              .from('youtube_channels')
+              .select('thumbnail_url')
+              .eq('channel_id', channelId)
+              .single();
+              
+            if (updatedChannel?.thumbnail_url) {
+              setChannelThumbnail(updatedChannel.thumbnail_url);
+            }
+          }
         }
       } catch (error) {
         console.error('Error in fetchChannelThumbnail:', error);
+      } finally {
+        setIsLoadingThumbnail(false);
       }
     };
 
-    if (channelId) {
-      fetchChannelThumbnail();
-    }
+    fetchChannelThumbnail();
   }, [channelId]);
 
   return (
