@@ -2,6 +2,8 @@ import { formatDistanceToNow } from "date-fns";
 import { Link } from "react-router-dom";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Youtube } from "lucide-react";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 interface VideoCardProps {
   id: string;
@@ -10,7 +12,7 @@ interface VideoCardProps {
   channelName: string;
   views: number;
   uploadedAt: Date;
-  channelThumbnail?: string;
+  channelId: string;
 }
 
 export const VideoCard = ({
@@ -20,9 +22,36 @@ export const VideoCard = ({
   channelName,
   views,
   uploadedAt,
-  channelThumbnail,
+  channelId,
 }: VideoCardProps) => {
-  console.log("Channel thumbnail in VideoCard:", channelThumbnail); // Debug log
+  const [channelThumbnail, setChannelThumbnail] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchChannelThumbnail = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('youtube_channels')
+          .select('thumbnail_url')
+          .eq('channel_id', channelId)
+          .single();
+
+        if (error) {
+          console.error('Error fetching channel thumbnail:', error);
+          return;
+        }
+
+        if (data?.thumbnail_url) {
+          setChannelThumbnail(data.thumbnail_url);
+        }
+      } catch (error) {
+        console.error('Error in fetchChannelThumbnail:', error);
+      }
+    };
+
+    if (channelId) {
+      fetchChannelThumbnail();
+    }
+  }, [channelId]);
 
   return (
     <div className="group cursor-pointer">
