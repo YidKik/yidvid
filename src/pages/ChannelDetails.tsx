@@ -20,25 +20,33 @@ const ChannelDetails = () => {
         throw new Error("Channel ID is required");
       }
 
-      const { data, error } = await supabase
-        .from("youtube_channels")
-        .select("*")
-        .eq("channel_id", decodeURIComponent(channelId))
-        .maybeSingle();
+      try {
+        const { data, error } = await supabase
+          .from("youtube_channels")
+          .select("*")
+          .eq("channel_id", decodeURIComponent(channelId))
+          .maybeSingle();
 
-      if (error) {
-        console.error("Error fetching channel:", error);
-        toast.error("Failed to load channel details");
+        if (error) {
+          console.error("Error fetching channel:", error);
+          toast.error("Failed to load channel details. Please try again.");
+          throw error;
+        }
+
+        if (!data) {
+          toast.error("Channel not found");
+          throw new Error("Channel not found");
+        }
+
+        return data;
+      } catch (error) {
+        console.error("Network error:", error);
+        toast.error("Network error. Please check your connection and try again.");
         throw error;
       }
-
-      if (!data) {
-        toast.error("Channel not found");
-        throw new Error("Channel not found");
-      }
-
-      return data;
     },
+    retry: 3, // Add retry logic
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000), // Exponential backoff
   });
 
   const { data: videos, isLoading: isLoadingVideos, refetch } = useQuery({
@@ -48,20 +56,28 @@ const ChannelDetails = () => {
         throw new Error("Channel ID is required");
       }
 
-      const { data, error } = await supabase
-        .from("youtube_videos")
-        .select("*")
-        .eq("channel_id", decodeURIComponent(channelId))
-        .order("uploaded_at", { ascending: false });
+      try {
+        const { data, error } = await supabase
+          .from("youtube_videos")
+          .select("*")
+          .eq("channel_id", decodeURIComponent(channelId))
+          .order("uploaded_at", { ascending: false });
 
-      if (error) {
-        console.error("Error fetching videos:", error);
-        toast.error("Failed to load channel videos");
+        if (error) {
+          console.error("Error fetching videos:", error);
+          toast.error("Failed to load channel videos. Please try again.");
+          throw error;
+        }
+
+        return data || [];
+      } catch (error) {
+        console.error("Network error:", error);
+        toast.error("Network error. Please check your connection and try again.");
         throw error;
       }
-
-      return data || [];
     },
+    retry: 3,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
     enabled: !!channel,
   });
 
