@@ -40,8 +40,8 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
 
   const tourSteps = [
     {
-      target: '.logo-custom',
-      content: 'Welcome to JewTube! This is your hub for Jewish content. Click here anytime to return to the home page.',
+      target: '.search-custom',
+      content: 'Welcome to JewTube! Start your journey by searching for videos or browsing by channel using our powerful search feature.',
       placement: 'bottom' as Placement,
       styles: {
         options: {
@@ -97,18 +97,6 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
       },
     },
     {
-      target: '.search-custom',
-      content: 'Search for videos or browse by channel using our powerful search feature.',
-      placement: 'bottom' as Placement,
-      styles: {
-        options: {
-          backgroundColor: '#F1F0FB',
-          borderRadius: '8px',
-          padding: '20px',
-        },
-      },
-    },
-    {
       target: '.button-custom',
       content: 'Access your account settings, customize your experience, and manage your profile here.',
       placement: 'left' as Placement,
@@ -131,6 +119,7 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
           padding: '20px',
         },
       },
+      disableBeacon: true,
     },
     {
       target: '.channels-grid',
@@ -143,6 +132,7 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
           padding: '20px',
         },
       },
+      disableBeacon: true,
     },
   ];
 
@@ -277,6 +267,7 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
         hideCloseButton
         disableOverlayClose
         spotlightClicks
+        scrollToFirstStep
         styles={{
           options: {
             arrowColor: '#F1F0FB',
