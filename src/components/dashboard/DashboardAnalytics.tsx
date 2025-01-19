@@ -41,10 +41,14 @@ export const DashboardAnalytics = () => {
           .from("youtube_channels")
           .select("*", { count: "exact" });
 
+        if (channelsError) throw channelsError;
+
         // Get total videos
         const { data: videos, error: videosError } = await supabase
           .from("youtube_videos")
           .select("*", { count: "exact" });
+
+        if (videosError) throw videosError;
 
         // Get total views from interactions
         const { data: views, error: viewsError } = await supabase
@@ -53,17 +57,23 @@ export const DashboardAnalytics = () => {
           .eq('interaction_type', 'view')
           .eq('user_id', session.user.id);
 
+        if (viewsError) throw viewsError;
+
         // Get total users
         const { data: users, error: usersError } = await supabase
           .from("profiles")
           .select("*", { count: "exact" });
 
+        if (usersError) throw usersError;
+
         // Get session data for watch time calculation
         const { data: sessions, error: sessionsError } = await supabase
           .from("user_analytics")
-          .select("session_start, session_end, user_id")
+          .select("session_start, session_end")
           .eq('user_id', session.user.id)
           .not('session_end', 'is', null);
+
+        if (sessionsError) throw sessionsError;
 
         // Get anonymous sessions
         const { data: anonSessions, error: anonSessionsError } = await supabase
@@ -71,11 +81,7 @@ export const DashboardAnalytics = () => {
           .select("*", { count: "exact" })
           .is('user_id', null);
 
-        if (channelsError || videosError || viewsError || usersError || sessionsError || anonSessionsError) {
-          const error = channelsError || videosError || viewsError || usersError || sessionsError || anonSessionsError;
-          toast.error(`Error fetching analytics: ${error.message}`);
-          throw error;
-        }
+        if (anonSessionsError) throw anonSessionsError;
 
         // Calculate total watch time in hours
         const totalHours = sessions?.reduce((sum, session) => {
@@ -117,13 +123,8 @@ export const DashboardAnalytics = () => {
       }
     },
     enabled: !!session?.user?.id,
+    retry: 1,
   });
-
-  const formatHour = (hour: number) => {
-    const period = hour >= 12 ? 'PM' : 'AM';
-    const displayHour = hour % 12 || 12;
-    return `${displayHour}:00 ${period}`;
-  };
 
   if (isLoading) {
     return (
