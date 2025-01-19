@@ -57,12 +57,13 @@ export const ChannelsGrid = () => {
           <Link 
             key={channel.id}
             to={`/channel/${channel.channel_id}`}
-            className="flex flex-col items-center p-4 rounded-lg bg-[#F8F8F8] hover:bg-[#F1F1F1] transition-colors"
+            className="group flex flex-col items-center p-4 rounded-lg bg-[#F8F8F8] hover:bg-[#F1F1F1] transition-colors"
           >
-            <Avatar className="w-20 h-20 mb-3">
+            <Avatar className="w-20 h-20 mb-3 transition-transform group-hover:scale-105">
               <AvatarImage
                 src={channel.thumbnail_url}
                 alt={channel.title}
+                className="object-cover"
                 onError={(e) => {
                   console.error("Error loading thumbnail for channel:", channel.title);
                   e.currentTarget.style.display = 'none';
