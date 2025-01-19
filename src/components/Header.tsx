@@ -43,6 +43,8 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
       target: '.search-custom',
       content: 'Welcome to JewTube! Start your journey by searching for videos or browsing by channel using our powerful search feature.',
       placement: 'bottom' as Placement,
+      disableBeacon: true,
+      spotlightPadding: 0,
       styles: {
         options: {
           backgroundColor: '#F1F0FB',
@@ -268,6 +270,8 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
         disableOverlayClose
         spotlightClicks
         scrollToFirstStep
+        disableOverlay={false}
+        disableScrolling={false}
         styles={{
           options: {
             arrowColor: '#F1F0FB',
