@@ -29,7 +29,7 @@ const ChannelDetails = () => {
 
         if (error) {
           console.error("Error fetching channel:", error);
-          toast.error("Failed to load channel details. Please try again.");
+          toast.error("Failed to load channel details");
           throw error;
         }
 
@@ -40,13 +40,13 @@ const ChannelDetails = () => {
 
         return data;
       } catch (error) {
-        console.error("Network error:", error);
-        toast.error("Network error. Please check your connection and try again.");
+        console.error("Error in channel fetch:", error);
+        toast.error("Failed to load channel. Please try again later.");
         throw error;
       }
     },
-    retry: 3, // Add retry logic
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000), // Exponential backoff
+    retry: 2,
+    retryDelay: 1000,
   });
 
   const { data: videos, isLoading: isLoadingVideos, refetch } = useQuery({
@@ -65,19 +65,19 @@ const ChannelDetails = () => {
 
         if (error) {
           console.error("Error fetching videos:", error);
-          toast.error("Failed to load channel videos. Please try again.");
+          toast.error("Failed to load channel videos");
           throw error;
         }
 
         return data || [];
       } catch (error) {
-        console.error("Network error:", error);
-        toast.error("Network error. Please check your connection and try again.");
+        console.error("Error in videos fetch:", error);
+        toast.error("Failed to load videos. Please try again later.");
         throw error;
       }
     },
-    retry: 3,
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
+    retry: 2,
+    retryDelay: 1000,
     enabled: !!channel,
   });
 
