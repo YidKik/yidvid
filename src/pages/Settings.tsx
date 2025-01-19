@@ -350,17 +350,17 @@ const Settings = () => {
             <div className="space-y-2">
               <Label htmlFor="playback-speed">Default Playback Speed</Label>
               <Select value={playbackSpeed} onValueChange={setPlaybackSpeed}>
-                <SelectTrigger>
+                <SelectTrigger className="w-full bg-background border-input">
                   <SelectValue placeholder="Select speed" />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="0.25">0.25x</SelectItem>
-                  <SelectItem value="0.5">0.5x</SelectItem>
-                  <SelectItem value="0.75">0.75x</SelectItem>
-                  <SelectItem value="1">Normal</SelectItem>
-                  <SelectItem value="1.25">1.25x</SelectItem>
-                  <SelectItem value="1.5">1.5x</SelectItem>
-                  <SelectItem value="2">2x</SelectItem>
+                <SelectContent className="bg-background border-2 border-input shadow-lg">
+                  <SelectItem value="0.25" className="hover:bg-accent">0.25x</SelectItem>
+                  <SelectItem value="0.5" className="hover:bg-accent">0.5x</SelectItem>
+                  <SelectItem value="0.75" className="hover:bg-accent">0.75x</SelectItem>
+                  <SelectItem value="1" className="hover:bg-accent">Normal</SelectItem>
+                  <SelectItem value="1.25" className="hover:bg-accent">1.25x</SelectItem>
+                  <SelectItem value="1.5" className="hover:bg-accent">1.5x</SelectItem>
+                  <SelectItem value="2" className="hover:bg-accent">2x</SelectItem>
                 </SelectContent>
               </Select>
             </div>
