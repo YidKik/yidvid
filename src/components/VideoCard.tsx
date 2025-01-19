@@ -51,12 +51,11 @@ export const VideoCard = ({
           setChannelThumbnail(channelData.thumbnail_url);
         } else {
           console.log('No thumbnail found for channel:', channelId);
-          // If no thumbnail is found, trigger an update using supabase.functions.invoke
+          // If no thumbnail is found, automatically trigger an update
           const { data, error: functionError } = await supabase.functions.invoke(
             'update-channel-thumbnails',
             {
-              method: 'POST',
-              body: JSON.stringify({ channels: [channelId] })
+              body: { channels: [channelId] }
             }
           );
 

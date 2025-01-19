@@ -3,7 +3,6 @@ import { Youtube } from "lucide-react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { UpdateChannelThumbnails } from "./UpdateChannelThumbnails";
 
 export const ChannelsGrid = () => {
   const { data: channels, isLoading } = useQuery({
@@ -50,7 +49,6 @@ export const ChannelsGrid = () => {
     <div className="w-full max-w-[1800px] mx-auto px-4 py-6">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold text-accent">YouTube Channels</h2>
-        <UpdateChannelThumbnails />
       </div>
       <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-9 gap-4">
         {channels.map((channel) => (
