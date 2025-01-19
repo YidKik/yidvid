@@ -71,11 +71,54 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
       return;
     }
 
-    setIsSubscribed(true);
-    toast({
-      title: "Success",
-      description: "Subscribed to channel",
-    });
+    try {
+      // Get the channel ID for the current video
+      const { data: videoData, error: videoError } = await supabase
+        .from('youtube_videos')
+        .select('channel_id')
+        .eq('id', videoId)
+        .single();
+
+      if (videoError) throw videoError;
+
+      if (isSubscribed) {
+        // Unsubscribe
+        const { error } = await supabase
+          .from('channel_subscriptions')
+          .delete()
+          .eq('channel_id', videoData.channel_id)
+          .eq('user_id', session.user.id);
+
+        if (error) throw error;
+        setIsSubscribed(false);
+        toast({
+          title: "Success",
+          description: "Unsubscribed from channel",
+        });
+      } else {
+        // Subscribe
+        const { error } = await supabase
+          .from('channel_subscriptions')
+          .insert({
+            channel_id: videoData.channel_id,
+            user_id: session.user.id
+          });
+
+        if (error) throw error;
+        setIsSubscribed(true);
+        toast({
+          title: "Success",
+          description: "Subscribed to channel",
+        });
+      }
+    } catch (error) {
+      console.error('Error managing subscription:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update subscription",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
