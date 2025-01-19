@@ -21,13 +21,18 @@ const ChannelDetails = () => {
       const { data, error } = await supabase
         .from("youtube_channels")
         .select("*")
-        .eq("channel_id", channelId)
-        .single();
+        .eq("channel_id", decodeURIComponent(channelId))
+        .maybeSingle();
 
       if (error) {
         console.error("Error fetching channel:", error);
         toast.error("Failed to load channel details");
         throw error;
+      }
+
+      if (!data) {
+        toast.error("Channel not found");
+        throw new Error("Channel not found");
       }
 
       return data;
@@ -44,7 +49,7 @@ const ChannelDetails = () => {
       const { data, error } = await supabase
         .from("youtube_videos")
         .select("*")
-        .eq("channel_id", channelId)
+        .eq("channel_id", decodeURIComponent(channelId))
         .order("uploaded_at", { ascending: false });
 
       if (error) {
@@ -70,7 +75,7 @@ const ChannelDetails = () => {
           event: '*',
           schema: 'public',
           table: 'youtube_videos',
-          filter: `channel_id=eq.${channelId}`
+          filter: `channel_id=eq.${decodeURIComponent(channelId)}`
         },
         (payload) => {
           console.log('Realtime update:', payload);
