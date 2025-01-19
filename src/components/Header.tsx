@@ -82,7 +82,6 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
       },
       disableBeacon: true,
       spotlightPadding: 10,
-      isFixed: true,
     },
     {
       target: '.channels-grid',
@@ -97,9 +96,12 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
       },
       disableBeacon: true,
       spotlightPadding: 10,
-      isFixed: true,
     },
   ];
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const handleJoyrideCallback = (data: CallBackProps) => {
     const { status, action, index, type } = data;
@@ -107,22 +109,44 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
 
     if (finishedStatuses.includes(status) || action === ACTIONS.CLOSE) {
       setRunTour(false);
+      setTimeout(scrollToTop, 100);
       return;
     }
 
     // Handle scrolling for specific steps
     if (type === 'step:after' || action === ACTIONS.START) {
       const nextIndex = action === ACTIONS.START ? 0 : index + 1;
+      
+      // If we're moving to the first step or going back to it, scroll to top
+      if (nextIndex === 0) {
+        setTimeout(scrollToTop, 300);
+        return;
+      }
+
+      // Handle scrolling for video grid and channels grid
       if (nextIndex < tourSteps.length) {
         const nextTarget = document.querySelector(tourSteps[nextIndex].target);
         if (nextTarget && (nextIndex === 2 || nextIndex === 3)) {
           setTimeout(() => {
-            nextTarget.scrollIntoView({
-              behavior: 'smooth',
-              block: 'center',
+            const offset = nextIndex === 2 ? -50 : 0; // Adjust offset for video grid
+            const elementPosition = nextTarget.getBoundingClientRect().top + window.pageYOffset + offset;
+            window.scrollTo({
+              top: elementPosition,
+              behavior: 'smooth'
             });
           }, 300);
+        } else {
+          // For other steps, ensure we're at the top
+          setTimeout(scrollToTop, 300);
         }
+      }
+    }
+
+    // Handle back button
+    if (action === ACTIONS.PREV) {
+      const prevIndex = index - 1;
+      if (prevIndex <= 1) { // If going back to first or second step
+        setTimeout(scrollToTop, 300);
       }
     }
   };
