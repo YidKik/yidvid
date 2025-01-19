@@ -6,6 +6,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface HeaderProps {
   onSignInClick?: () => void;
@@ -17,6 +24,8 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
   const [searchResults, setSearchResults] = useState<Array<{ id: string; title: string }>>([]);
+  const [channels, setChannels] = useState<Array<{ channel_id: string; title: string }>>([]);
+  const [selectedChannel, setSelectedChannel] = useState<string>("all");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -38,8 +47,25 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
       }
     });
 
+    // Fetch channels
+    fetchChannels();
+
     return () => subscription.unsubscribe();
   }, []);
+
+  const fetchChannels = async () => {
+    const { data, error } = await supabase
+      .from('youtube_channels')
+      .select('channel_id, title')
+      .order('title');
+    
+    if (error) {
+      console.error('Error fetching channels:', error);
+      return;
+    }
+    
+    setChannels(data || []);
+  };
 
   const checkAdminStatus = async (userId: string) => {
     const { data, error } = await supabase
@@ -77,7 +103,7 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
+      navigate(`/search?q=${encodeURIComponent(searchQuery)}${selectedChannel !== 'all' ? `&channel=${selectedChannel}` : ''}`);
       setShowDropdown(false);
     }
   };
@@ -87,11 +113,17 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
     setSearchQuery(value);
     
     if (value.trim()) {
-      const { data, error } = await supabase
+      let query = supabase
         .from('youtube_videos')
         .select('id, title')
         .ilike('title', `%${value}%`)
         .limit(5);
+
+      if (selectedChannel !== 'all') {
+        query = query.eq('channel_id', selectedChannel);
+      }
+      
+      const { data, error } = await query;
       
       if (!error && data) {
         setSearchResults(data);
@@ -118,34 +150,53 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
         </div>
 
         <form onSubmit={handleSearch} className="flex-1 max-w-xl mx-4">
-          <div className="relative group">
-            <Input
-              type="text"
-              value={searchQuery}
-              onChange={handleSearchInput}
-              placeholder="Search..."
-              className="w-full bg-[#222] text-white border-none rounded-full px-6 py-2 focus:outline-none focus:ring-0 transition-all duration-300 placeholder:text-gray-400"
-            />
-            <button
-              type="submit"
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+          <div className="relative group flex gap-2">
+            <Select
+              value={selectedChannel}
+              onValueChange={setSelectedChannel}
             >
-              <Search className="h-5 w-5" />
-            </button>
-            
-            {showDropdown && searchResults.length > 0 && (
-              <div className="absolute w-full mt-2 bg-[#2A2A2A] rounded-lg shadow-lg overflow-hidden z-50">
-                {searchResults.map((result) => (
-                  <button
-                    key={result.id}
-                    onClick={() => handleResultClick(result.id)}
-                    className="w-full px-4 py-3 text-left text-gray-200 hover:bg-[#3A3A3A] transition-colors duration-200"
-                  >
-                    {result.title}
-                  </button>
+              <SelectTrigger className="w-[180px] bg-[#2A2A2A] text-white border-none">
+                <SelectValue placeholder="All Channels" />
+              </SelectTrigger>
+              <SelectContent className="bg-[#2A2A2A] text-white border-none">
+                <SelectItem value="all">All Channels</SelectItem>
+                {channels.map((channel) => (
+                  <SelectItem key={channel.channel_id} value={channel.channel_id}>
+                    {channel.title}
+                  </SelectItem>
                 ))}
-              </div>
-            )}
+              </SelectContent>
+            </Select>
+
+            <div className="relative flex-1">
+              <Input
+                type="text"
+                value={searchQuery}
+                onChange={handleSearchInput}
+                placeholder="Search..."
+                className="w-full bg-[#222] text-white border-none rounded-full px-6 py-2 focus:outline-none focus:ring-0 transition-all duration-300 placeholder:text-gray-400"
+              />
+              <button
+                type="submit"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+              >
+                <Search className="h-5 w-5" />
+              </button>
+              
+              {showDropdown && searchResults.length > 0 && (
+                <div className="absolute w-full mt-2 bg-[#2A2A2A] rounded-lg shadow-lg overflow-hidden z-50">
+                  {searchResults.map((result) => (
+                    <button
+                      key={result.id}
+                      onClick={() => handleResultClick(result.id)}
+                      className="w-full px-4 py-3 text-left text-gray-200 hover:bg-[#3A3A3A] transition-colors duration-200"
+                    >
+                      {result.title}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </form>
 
