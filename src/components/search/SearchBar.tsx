@@ -81,17 +81,17 @@ export const SearchBar = () => {
               value={searchQuery}
               onChange={handleInputChange}
               onKeyDown={handleKeyDown}
-              className="w-full pl-12 py-6 rounded-xl bg-white border-transparent focus:border-gray-300 hover:border-gray-300 transition-colors duration-200 text-black placeholder:text-gray-500"
+              className="w-full pl-12 py-6 rounded-full bg-[#F2F2F2] border-[#E5E5E5] focus:border-primary hover:border-primary/80 transition-colors duration-200 text-gray-800 placeholder:text-gray-500 shadow-sm"
             />
-            <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" />
+            <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
           </div>
         </PopoverTrigger>
         <PopoverContent 
-          className="w-[500px] p-0 shadow-lg bg-white" 
+          className="w-[500px] p-0 shadow-lg bg-white rounded-xl border border-[#E5E5E5]" 
           align="start"
           sideOffset={5}
         >
-          <Command className="bg-white">
+          <Command className="bg-white rounded-xl">
             <CommandList className="max-h-[300px] overflow-y-auto scrollbar-hide">
               {searchResults.channels.length > 0 && (
                 <CommandGroup heading="Channels" className="px-2 text-gray-600">
@@ -102,7 +102,7 @@ export const SearchBar = () => {
                         setOpen(false);
                         setSearchQuery("");
                       }}
-                      className="px-4 py-2 hover:text-primary transition-colors duration-200"
+                      className="px-4 py-2 hover:bg-gray-50 transition-colors duration-200"
                     >
                       <Link
                         to={`/channel/${channel.channel_id}`}
@@ -126,7 +126,7 @@ export const SearchBar = () => {
                         setOpen(false);
                         setSearchQuery("");
                       }}
-                      className="px-4 py-2 hover:text-primary transition-colors duration-200"
+                      className="px-4 py-2 hover:bg-gray-50 transition-colors duration-200"
                     >
                       <Link
                         to={`/video/${video.id}`}
