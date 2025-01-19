@@ -4,6 +4,7 @@ import { BackButton } from "@/components/navigation/BackButton";
 import { DashboardAnalytics } from "@/components/dashboard/DashboardAnalytics";
 import { UserManagementSection } from "@/components/dashboard/UserManagementSection";
 import { YouTubeChannelsSection } from "@/components/dashboard/YouTubeChannelsSection";
+import { CommentsManagementSection } from "@/components/dashboard/CommentsManagementSection";
 import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
@@ -46,6 +47,7 @@ const Dashboard = () => {
       <h1 className="text-2xl font-bold">Admin Dashboard</h1>
 
       <UserManagementSection currentUserId={profile.id} />
+      <CommentsManagementSection />
       <YouTubeChannelsSection />
     </div>
   );
