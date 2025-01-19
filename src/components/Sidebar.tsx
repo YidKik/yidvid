@@ -22,7 +22,6 @@ const menuItems = [
   { icon: Home, label: "Home" },
   { icon: Flame, label: "Trending" },
   { icon: Clock, label: "History" },
-  { icon: BookOpen, label: "Torah Study" },
   { icon: Music, label: "Jewish Music" },
   { icon: UtensilsCrossed, label: "Kosher Cooking" },
   { icon: GraduationCap, label: "Learning" },
