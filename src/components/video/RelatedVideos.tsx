@@ -5,6 +5,7 @@ interface Video {
   title: string;
   thumbnail: string;
   channel_name: string;
+  channel_id: string;
   views: number;
   uploaded_at: string;
 }
@@ -23,6 +24,7 @@ export const RelatedVideos = ({ videos }: RelatedVideosProps) => {
             key={video.id}
             {...video}
             channelName={video.channel_name}
+            channelId={video.channel_id}
             uploadedAt={new Date(video.uploaded_at)}
           />
         ))}

@@ -156,7 +156,7 @@ const ChannelDetails = () => {
             channelName={video.channel_name}
             views={video.views || 0}
             uploadedAt={new Date(video.uploaded_at)}
-            channelThumbnail={channel.thumbnail_url}
+            channelId={video.channel_id}
           />
         ))}
       </div>

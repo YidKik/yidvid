@@ -115,6 +115,7 @@ const VideoDetails = () => {
             channelThumbnail={video.youtube_channels?.thumbnail_url}
             views={video.views}
             uploadedAt={video.uploaded_at}
+            description={video.description}
           />
           
           <VideoInteractions videoId={id!} />
