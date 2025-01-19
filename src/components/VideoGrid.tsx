@@ -27,7 +27,6 @@ export const VideoGrid = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  // Set up realtime subscription for video updates
   useEffect(() => {
     const channel = supabase
       .channel('youtube_videos_changes')
@@ -40,7 +39,6 @@ export const VideoGrid = () => {
         },
         (payload) => {
           console.log('Realtime update:', payload);
-          // Refetch videos when changes occur
           refetch();
         }
       )
@@ -106,29 +104,39 @@ export const VideoGrid = () => {
       }
 
       try {
-        const { data: videosData, error } = await supabase
-          .from("youtube_videos")
-          .select(`
-            *,
-            youtube_channels (
-              channel_id,
-              thumbnail_url
-            )
-          `)
-          .order("uploaded_at", { ascending: false })
-          .in("channel_id", channels.map(c => c.channel_id));
+        // Process channels in smaller batches to avoid URL length issues
+        const batchSize = 3;
+        let allVideos = [];
+        
+        for (let i = 0; i < channels.length; i += batchSize) {
+          const batchChannels = channels.slice(i, i + batchSize);
+          const channelIds = batchChannels.map(c => c.channel_id);
+          
+          console.log(`Fetching videos for channels batch ${i / batchSize + 1}:`, channelIds);
+          
+          const { data: videosData, error } = await supabase
+            .from("youtube_videos")
+            .select(`
+              *,
+              youtube_channels (
+                channel_id,
+                thumbnail_url
+              )
+            `)
+            .in("channel_id", channelIds)
+            .order("uploaded_at", { ascending: false });
 
-        if (error) {
-          console.error("Error fetching videos:", error);
-          toast({
-            title: "Error",
-            description: "Failed to fetch videos",
-            variant: "destructive",
-          });
-          return [];
+          if (error) {
+            console.error(`Error fetching videos for batch ${i / batchSize + 1}:`, error);
+            continue;
+          }
+
+          if (videosData) {
+            allVideos = [...allVideos, ...videosData];
+          }
         }
 
-        if (!videosData || videosData.length === 0) {
+        if (allVideos.length === 0) {
           toast({
             title: "No videos found",
             description: "Try adding some channels first",
@@ -137,14 +145,13 @@ export const VideoGrid = () => {
         }
 
         // Transform video data
-        const processedVideos = videosData.map((video: any) => ({
+        return allVideos.map((video: any) => ({
           ...video,
           uploadedAt: new Date(video.uploaded_at),
           channelThumbnail: video.youtube_channels?.thumbnail_url,
           interactionScore: calculateInteractionScore(video.id, userInteractions || [])
         }));
 
-        return processedVideos;
       } catch (error) {
         console.error("Error in video fetch process:", error);
         toast({
@@ -152,7 +159,7 @@ export const VideoGrid = () => {
           description: "Please try again later",
           variant: "destructive",
         });
-        throw error;
+        return [];
       }
     },
     enabled: !!channels?.length,
