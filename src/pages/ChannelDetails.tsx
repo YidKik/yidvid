@@ -249,10 +249,10 @@ const ChannelDetails = () => {
         {channel.description && (
           <div className="flex flex-col items-center">
             <Button
-              variant="ghost"
+              variant="outline"
               size="sm"
               onClick={() => setShowDescription(!showDescription)}
-              className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+              className="text-xs text-muted-foreground hover:text-foreground transition-colors border-muted-foreground/30 h-7 px-2"
             >
               {showDescription ? (
                 <span className="flex items-center gap-1">
