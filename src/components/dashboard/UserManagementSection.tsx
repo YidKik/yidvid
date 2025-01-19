@@ -51,6 +51,22 @@ export const UserManagementSection = ({ currentUserId }: { currentUserId: string
 
   const toggleAdminStatus = async (userId: string, currentStatus: boolean) => {
     try {
+      // First check if the current user is an admin
+      const { data: currentUser, error: currentUserError } = await supabase
+        .from("profiles")
+        .select("is_admin")
+        .eq("id", currentUserId)
+        .single();
+
+      if (currentUserError || !currentUser?.is_admin) {
+        toast({
+          title: "Permission denied",
+          description: "Only admins can modify admin status.",
+          variant: "destructive",
+        });
+        return;
+      }
+
       const { error } = await supabase
         .from("profiles")
         .update({ is_admin: !currentStatus })
@@ -74,7 +90,23 @@ export const UserManagementSection = ({ currentUserId }: { currentUserId: string
 
   const handleAddAdmin = async () => {
     try {
-      // First, check if the user exists
+      // First check if the current user is an admin
+      const { data: currentUser, error: currentUserError } = await supabase
+        .from("profiles")
+        .select("is_admin")
+        .eq("id", currentUserId)
+        .single();
+
+      if (currentUserError || !currentUser?.is_admin) {
+        toast({
+          title: "Permission denied",
+          description: "Only admins can add new admins.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Check if the user exists
       const { data: userData, error: userError } = await supabase
         .from("profiles")
         .select("*")
