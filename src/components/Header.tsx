@@ -155,7 +155,7 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
               value={selectedChannel}
               onValueChange={setSelectedChannel}
             >
-              <SelectTrigger className="w-[180px] bg-[#2A2A2A] text-white border-none">
+              <SelectTrigger className="w-[140px] h-10 bg-[#2A2A2A] text-white border-none rounded-full">
                 <SelectValue placeholder="All Channels" />
               </SelectTrigger>
               <SelectContent className="bg-[#2A2A2A] text-white border-none">
@@ -174,7 +174,7 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
                 value={searchQuery}
                 onChange={handleSearchInput}
                 placeholder="Search..."
-                className="w-full bg-[#222] text-white border-none rounded-full px-6 py-2 focus:outline-none focus:ring-0 transition-all duration-300 placeholder:text-gray-400"
+                className="w-full h-10 bg-[#222] text-white border-none rounded-full px-6 py-2 focus:outline-none focus:ring-0 transition-all duration-300 placeholder:text-gray-400 flex-grow"
               />
               <button
                 type="submit"
