@@ -101,7 +101,7 @@ export const DashboardAnalytics = () => {
         }, 0);
 
         // Calculate most popular hour
-        const hourCounts = {};
+        const hourCounts: Record<number, number> = {};
         sessions?.forEach(session => {
           const hour = new Date(session.session_start).getHours();
           hourCounts[hour] = (hourCounts[hour] || 0) + 1;
