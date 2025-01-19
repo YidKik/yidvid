@@ -134,12 +134,12 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
             </button>
             
             {showDropdown && searchResults.length > 0 && (
-              <div className="absolute w-full mt-2 bg-[#222] rounded-lg shadow-lg overflow-hidden z-50">
+              <div className="absolute w-full mt-2 bg-[#2A2A2A] rounded-lg shadow-lg overflow-hidden z-50">
                 {searchResults.map((result) => (
                   <button
                     key={result.id}
                     onClick={() => handleResultClick(result.id)}
-                    className="w-full px-4 py-3 text-left text-gray-200 hover:bg-[#333] transition-colors duration-200"
+                    className="w-full px-4 py-3 text-left text-gray-200 hover:bg-[#3A3A3A] transition-colors duration-200"
                   >
                     {result.title}
                   </button>
