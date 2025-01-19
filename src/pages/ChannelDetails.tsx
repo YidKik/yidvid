@@ -45,7 +45,7 @@ const ChannelDetails = () => {
         throw error;
       }
     },
-    retry: 2,
+    retry: 3,
     retryDelay: 1000,
   });
 
@@ -76,7 +76,7 @@ const ChannelDetails = () => {
         throw error;
       }
     },
-    retry: 2,
+    retry: 3,
     retryDelay: 1000,
     enabled: !!channel,
   });
@@ -182,6 +182,7 @@ const ChannelDetails = () => {
             views={video.views || 0}
             uploadedAt={new Date(video.uploaded_at)}
             channelId={video.channel_id}
+            channelThumbnail={channel.thumbnail_url}
           />
         ))}
       </div>
