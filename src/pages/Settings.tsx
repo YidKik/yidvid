@@ -3,6 +3,8 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { Slider } from "@/components/ui/slider";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
@@ -19,14 +21,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useColors } from "@/contexts/ColorContext";
-
-// Default colors object updated to match YouTube's color scheme
-const DEFAULT_COLORS = {
-  background: '#FFFFFF', // YouTube's background color
-  text: '#030303',      // YouTube's text color
-  button: '#FF0000',    // YouTube's primary red
-  logo: '#030303'       // YouTube's logo color (typically black)
-};
+import { Settings as SettingsIcon, Volume2, Globe, Bell, Shield, Eye } from "lucide-react";
 
 const Settings = () => {
   const navigate = useNavigate();
@@ -41,16 +36,61 @@ const Settings = () => {
     return false;
   });
 
+  // Existing states
   const [autoplay, setAutoplay] = useState(true);
-  const [emailNotifications, setEmailNotifications] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
-  
-  // Color customization states
   const { colors, updateColors, resetColors } = useColors();
   const [backgroundColor, setBackgroundColor] = useState(colors.backgroundColor);
   const [textColor, setTextColor] = useState(colors.textColor);
   const [buttonColor, setButtonColor] = useState(colors.buttonColor);
   const [logoColor, setLogoColor] = useState(colors.logoColor);
+
+  // New settings states
+  const [volume, setVolume] = useState(80);
+  const [language, setLanguage] = useState("en");
+  const [subtitles, setSubtitles] = useState(false);
+  const [highContrast, setHighContrast] = useState(false);
+  const [playbackSpeed, setPlaybackSpeed] = useState("1");
+  const [emailNotifications, setEmailNotifications] = useState(false);
+  const [pushNotifications, setPushNotifications] = useState(false);
+  const [autoHideComments, setAutoHideComments] = useState(false);
+  const [privateAccount, setPrivateAccount] = useState(false);
+  const [dataCollection, setDataCollection] = useState(true);
+
+  // Save settings to local storage
+  useEffect(() => {
+    localStorage.setItem('settings', JSON.stringify({
+      volume,
+      language,
+      subtitles,
+      highContrast,
+      playbackSpeed,
+      emailNotifications,
+      pushNotifications,
+      autoHideComments,
+      privateAccount,
+      dataCollection,
+    }));
+  }, [volume, language, subtitles, highContrast, playbackSpeed, emailNotifications, 
+      pushNotifications, autoHideComments, privateAccount, dataCollection]);
+
+  // Load settings from local storage
+  useEffect(() => {
+    const savedSettings = localStorage.getItem('settings');
+    if (savedSettings) {
+      const settings = JSON.parse(savedSettings);
+      setVolume(settings.volume ?? 80);
+      setLanguage(settings.language ?? 'en');
+      setSubtitles(settings.subtitles ?? false);
+      setHighContrast(settings.highContrast ?? false);
+      setPlaybackSpeed(settings.playbackSpeed ?? '1');
+      setEmailNotifications(settings.emailNotifications ?? false);
+      setPushNotifications(settings.pushNotifications ?? false);
+      setAutoHideComments(settings.autoHideComments ?? false);
+      setPrivateAccount(settings.privateAccount ?? false);
+      setDataCollection(settings.dataCollection ?? true);
+    }
+  }, []);
 
   const handleSignOut = async () => {
     const { error } = await supabase.auth.signOut();
@@ -144,27 +184,16 @@ const Settings = () => {
     enabled: !!profile?.is_admin,
   });
 
-  const toggleAdminStatus = async (userId: string, currentStatus: boolean) => {
-    const { error } = await supabase
-      .from("profiles")
-      .update({ is_admin: !currentStatus })
-      .eq("id", userId);
-
-    if (error) {
-      toast.error("Error updating admin status");
-    } else {
-      toast.success(`Admin status ${currentStatus ? "removed" : "granted"} successfully`);
-      refetchProfiles();
-    }
-  };
-
   return (
     <div className="min-h-screen" style={{ backgroundColor: backgroundColor, color: textColor }}>
       <Header />
       <main className="container mx-auto pt-24 px-4 pb-16">
         <BackButton />
-        <h1 className="text-3xl font-bold mb-8">Settings</h1>
-        
+        <h1 className="text-3xl font-bold mb-8 flex items-center gap-2">
+          <SettingsIcon className="h-8 w-8" />
+          Settings
+        </h1>
+
         {/* Color Customization Section */}
         <section className="mb-12">
           <h2 className="text-2xl font-semibold mb-4">Customize Colors</h2>
@@ -270,30 +299,72 @@ const Settings = () => {
           </Card>
         </section>
 
-        {/* Appearance Section */}
+        {/* Accessibility Settings */}
         <section className="mb-12">
-          <h2 className="text-2xl font-semibold mb-4">Appearance</h2>
-          <Card className="p-6">
+          <h2 className="text-2xl font-semibold mb-4">Accessibility</h2>
+          <Card className="p-6 space-y-6">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label htmlFor="dark-mode">Dark Mode</Label>
+                <Label htmlFor="high-contrast">High Contrast Mode</Label>
                 <p className="text-sm text-muted-foreground">
-                  Enable dark mode for a better viewing experience at night
+                  Increase contrast for better visibility
                 </p>
               </div>
               <Switch
-                id="dark-mode"
-                checked={darkMode}
-                onCheckedChange={setDarkMode}
+                id="high-contrast"
+                checked={highContrast}
+                onCheckedChange={setHighContrast}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="subtitles">Subtitles</Label>
+              <Switch
+                id="subtitles"
+                checked={subtitles}
+                onCheckedChange={setSubtitles}
               />
             </div>
           </Card>
         </section>
 
-        {/* Playback Section */}
+        {/* Video Playback Settings */}
         <section className="mb-12">
-          <h2 className="text-2xl font-semibold mb-4">Playback</h2>
-          <Card className="p-6">
+          <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
+            <Volume2 className="h-6 w-6" />
+            Playback Settings
+          </h2>
+          <Card className="p-6 space-y-6">
+            <div className="space-y-2">
+              <Label htmlFor="volume">Default Volume ({volume}%)</Label>
+              <Slider
+                id="volume"
+                min={0}
+                max={100}
+                step={1}
+                value={[volume]}
+                onValueChange={(value) => setVolume(value[0])}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="playback-speed">Default Playback Speed</Label>
+              <Select value={playbackSpeed} onValueChange={setPlaybackSpeed}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select speed" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="0.25">0.25x</SelectItem>
+                  <SelectItem value="0.5">0.5x</SelectItem>
+                  <SelectItem value="0.75">0.75x</SelectItem>
+                  <SelectItem value="1">Normal</SelectItem>
+                  <SelectItem value="1.25">1.25x</SelectItem>
+                  <SelectItem value="1.5">1.5x</SelectItem>
+                  <SelectItem value="2">2x</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label htmlFor="autoplay">Autoplay</Label>
@@ -310,11 +381,116 @@ const Settings = () => {
           </Card>
         </section>
 
-        {/* Privacy Section */}
+        {/* Language Settings */}
         <section className="mb-12">
-          <h2 className="text-2xl font-semibold mb-4">Privacy</h2>
+          <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
+            <Globe className="h-6 w-6" />
+            Language Settings
+          </h2>
           <Card className="p-6">
-            <Button variant="destructive">Delete Account</Button>
+            <div className="space-y-2">
+              <Label htmlFor="language">Interface Language</Label>
+              <Select value={language} onValueChange={setLanguage}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select language" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="en">English</SelectItem>
+                  <SelectItem value="es">Español</SelectItem>
+                  <SelectItem value="fr">Français</SelectItem>
+                  <SelectItem value="de">Deutsch</SelectItem>
+                  <SelectItem value="it">Italiano</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </Card>
+        </section>
+
+        {/* Notification Settings */}
+        <section className="mb-12">
+          <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
+            <Bell className="h-6 w-6" />
+            Notification Settings
+          </h2>
+          <Card className="p-6 space-y-6">
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label htmlFor="email-notifications">Email Notifications</Label>
+                <p className="text-sm text-muted-foreground">
+                  Receive updates via email
+                </p>
+              </div>
+              <Switch
+                id="email-notifications"
+                checked={emailNotifications}
+                onCheckedChange={setEmailNotifications}
+              />
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label htmlFor="push-notifications">Push Notifications</Label>
+                <p className="text-sm text-muted-foreground">
+                  Receive browser notifications
+                </p>
+              </div>
+              <Switch
+                id="push-notifications"
+                checked={pushNotifications}
+                onCheckedChange={setPushNotifications}
+              />
+            </div>
+          </Card>
+        </section>
+
+        {/* Privacy Settings */}
+        <section className="mb-12">
+          <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
+            <Shield className="h-6 w-6" />
+            Privacy Settings
+          </h2>
+          <Card className="p-6 space-y-6">
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label htmlFor="private-account">Private Account</Label>
+                <p className="text-sm text-muted-foreground">
+                  Only show your activity to followers
+                </p>
+              </div>
+              <Switch
+                id="private-account"
+                checked={privateAccount}
+                onCheckedChange={setPrivateAccount}
+              />
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label htmlFor="data-collection">Data Collection</Label>
+                <p className="text-sm text-muted-foreground">
+                  Allow us to collect usage data to improve your experience
+                </p>
+              </div>
+              <Switch
+                id="data-collection"
+                checked={dataCollection}
+                onCheckedChange={setDataCollection}
+              />
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label htmlFor="auto-hide-comments">Auto-hide Comments</Label>
+                <p className="text-sm text-muted-foreground">
+                  Automatically hide comments on videos
+                </p>
+              </div>
+              <Switch
+                id="auto-hide-comments"
+                checked={autoHideComments}
+                onCheckedChange={setAutoHideComments}
+              />
+            </div>
           </Card>
         </section>
 
