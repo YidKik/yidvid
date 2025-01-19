@@ -6,6 +6,7 @@ import { VideoCard } from "@/components/VideoCard";
 import { BackButton } from "@/components/navigation/BackButton";
 import { toast } from "@/components/ui/use-toast";
 import { useEffect } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const ChannelDetails = () => {
   const { channelId } = useParams();
@@ -127,18 +128,22 @@ const ChannelDetails = () => {
     <div className="container mx-auto p-4 mt-16">
       <BackButton />
       <div className="flex flex-col items-center mb-8">
-        {channel.thumbnail_url ? (
-          <img
+        <Avatar className="w-32 h-32 mb-4">
+          <AvatarImage
             src={channel.thumbnail_url}
             alt={channel.title}
-            className="w-32 h-32 rounded-full mb-4 object-cover"
+            className="object-cover"
           />
-        ) : (
-          <div className="w-32 h-32 rounded-full mb-4 bg-primary/10 flex items-center justify-center">
+          <AvatarFallback className="bg-primary/10">
             <Youtube className="w-16 h-16 text-primary" />
-          </div>
-        )}
+          </AvatarFallback>
+        </Avatar>
         <h1 className="text-3xl font-bold text-center mb-2">{channel.title}</h1>
+        {channel.description && (
+          <p className="text-muted-foreground text-center max-w-2xl">
+            {channel.description}
+          </p>
+        )}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
