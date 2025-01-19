@@ -107,7 +107,12 @@ export const VideoGrid = () => {
       try {
         let query = supabase
           .from("youtube_videos")
-          .select("*, youtube_channels!inner(thumbnail_url)")
+          .select(`
+            *,
+            youtube_channels (
+              thumbnail_url
+            )
+          `)
           .order("uploaded_at", { ascending: false });
 
         // If a channel is selected, filter by that channel
@@ -141,7 +146,7 @@ export const VideoGrid = () => {
         const processedVideos = videosData.map((video: any) => ({
           ...video,
           uploadedAt: new Date(video.uploaded_at),
-          channelThumbnail: video.youtube_channels.thumbnail_url,
+          channelThumbnail: video.youtube_channels?.thumbnail_url,
           interactionScore: calculateInteractionScore(video.id, userInteractions || [])
         }));
 
