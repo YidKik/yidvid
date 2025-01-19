@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Settings, LayoutDashboard, Search, Info, Compass } from "lucide-react";
+import { Settings, LayoutDashboard, Search, Info, Compass, Bell } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -22,9 +22,26 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Badge } from "@/components/ui/badge";
 
 interface HeaderProps {
   onSignInClick?: () => void;
+}
+
+interface Notification {
+  id: string;
+  video_id: string;
+  is_read: boolean;
+  video: {
+    title: string;
+    channel_name: string;
+  };
 }
 
 export const Header = ({ onSignInClick }: HeaderProps) => {
@@ -38,6 +55,8 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
   const [showAboutDialog, setShowAboutDialog] = useState(false);
   const [runTour, setRunTour] = useState(false);
   const [showTourDialog, setShowTourDialog] = useState(false);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [showNotifications, setShowNotifications] = useState(false);
   const navigate = useNavigate();
 
   const tourSteps = [
@@ -163,6 +182,7 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
       setSession(session);
       if (session) {
         checkAdminStatus(session.user.id);
+        fetchNotifications();
       }
     });
 
@@ -173,6 +193,7 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
       setSession(session);
       if (session) {
         checkAdminStatus(session.user.id);
+        fetchNotifications();
       }
     });
 
@@ -210,6 +231,51 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
     
     setIsAdmin(data?.is_admin || false);
   };
+
+  const fetchNotifications = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return;
+
+    const { data, error } = await supabase
+      .from('video_notifications')
+      .select(`
+        id,
+        video_id,
+        is_read,
+        video:youtube_videos (
+          title,
+          channel_name
+        )
+      `)
+      .eq('user_id', session.user.id)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching notifications:', error);
+      return;
+    }
+
+    setNotifications(data as Notification[]);
+  };
+
+  const handleNotificationClick = async (notificationId: string, videoId: string) => {
+    // Mark notification as read
+    const { error } = await supabase
+      .from('video_notifications')
+      .update({ is_read: true })
+      .eq('id', notificationId);
+
+    if (error) {
+      console.error('Error marking notification as read:', error);
+      return;
+    }
+
+    // Navigate to video
+    navigate(`/video/${videoId}`);
+    setShowNotifications(false);
+  };
+
+  const unreadCount = notifications.filter(n => !n.is_read).length;
 
   const handleSignOut = async () => {
     const { error } = await supabase.auth.signOut();
@@ -368,6 +434,51 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
         </form>
 
         <div className="flex items-center gap-2">
+          {session && (
+            <DropdownMenu open={showNotifications} onOpenChange={setShowNotifications}>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="relative"
+                >
+                  <Bell className="h-5 w-5" />
+                  {unreadCount > 0 && (
+                    <Badge 
+                      className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-red-500"
+                      variant="destructive"
+                    >
+                      {unreadCount}
+                    </Badge>
+                  )}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-80">
+                {notifications.length === 0 ? (
+                  <div className="p-4 text-center text-sm text-muted-foreground">
+                    No notifications
+                  </div>
+                ) : (
+                  notifications.map((notification) => (
+                    <DropdownMenuItem
+                      key={notification.id}
+                      className={`p-4 cursor-pointer ${!notification.is_read ? 'bg-muted/50' : ''}`}
+                      onClick={() => handleNotificationClick(notification.id, notification.video_id)}
+                    >
+                      <div className="flex flex-col gap-1">
+                        <span className="font-medium">
+                          {notification.video.channel_name}
+                        </span>
+                        <span className="text-sm text-muted-foreground">
+                          {notification.video.title}
+                        </span>
+                      </div>
+                    </DropdownMenuItem>
+                  ))
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
           <Button
             variant="ghost"
             size="icon"
