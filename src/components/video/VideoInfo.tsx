@@ -7,6 +7,7 @@ interface VideoInfoProps {
   channelThumbnail?: string;
   views?: number;
   uploadedAt: string;
+  description?: string;
 }
 
 export const VideoInfo = ({ 
@@ -14,7 +15,8 @@ export const VideoInfo = ({
   channelName, 
   channelThumbnail,
   views,
-  uploadedAt
+  uploadedAt,
+  description
 }: VideoInfoProps) => {
   return (
     <>
@@ -32,6 +34,11 @@ export const VideoInfo = ({
           {formatDistanceToNow(new Date(uploadedAt), { addSuffix: true })}
         </p>
       </div>
+      {description && (
+        <div className="mt-4 p-4 bg-muted rounded-lg">
+          <p className="whitespace-pre-wrap text-sm">{description}</p>
+        </div>
+      )}
     </>
   );
 };
