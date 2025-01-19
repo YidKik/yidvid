@@ -13,6 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import {
   Select,
@@ -36,6 +37,7 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
   const [selectedChannel, setSelectedChannel] = useState<string>("all");
   const [showAboutDialog, setShowAboutDialog] = useState(false);
   const [runTour, setRunTour] = useState(false);
+  const [showTourDialog, setShowTourDialog] = useState(false);
   const navigate = useNavigate();
 
   const tourSteps = [
@@ -163,6 +165,12 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
   };
 
   useEffect(() => {
+    // Check if it's the first visit
+    const hasVisited = localStorage.getItem('hasVisitedBefore');
+    if (!hasVisited) {
+      setShowTourDialog(true);
+    }
+
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
@@ -272,6 +280,17 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
     navigate(`/video/${videoId}`);
     setShowDropdown(false);
     setSearchQuery("");
+  };
+
+  const handleStartTour = () => {
+    setShowTourDialog(false);
+    localStorage.setItem('hasVisitedBefore', 'true');
+    setRunTour(true);
+  };
+
+  const handleSkipTour = () => {
+    setShowTourDialog(false);
+    localStorage.setItem('hasVisitedBefore', 'true');
   };
 
   return (
@@ -412,6 +431,25 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
           )}
         </div>
       </div>
+
+      <Dialog open={showTourDialog} onOpenChange={setShowTourDialog}>
+        <DialogContent className="bg-[#2A2A2A] text-white border-none max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold mb-2">Welcome to JewTube!</DialogTitle>
+            <DialogDescription className="text-gray-200">
+              Would you like to take a quick tour to learn about the main features of our platform?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex gap-2 mt-4">
+            <Button variant="outline" onClick={handleSkipTour}>
+              Skip Tour
+            </Button>
+            <Button onClick={handleStartTour}>
+              Start Tour
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={showAboutDialog} onOpenChange={setShowAboutDialog}>
         <DialogContent className="bg-[#2A2A2A] text-white border-none max-w-2xl">
