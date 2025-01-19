@@ -5,10 +5,14 @@ import { toast } from "./ui/use-toast";
 import { useEffect, useState } from "react";
 import { VideoGridHeader } from "./video/VideoGridHeader";
 import { FeaturedVideos } from "./video/FeaturedVideos";
+import { Button } from "./ui/button";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 export const VideoGrid = () => {
   const [session, setSession] = useState(null);
   const [selectedChannelId, setSelectedChannelId] = useState<string | null>(null);
+  const [showAllNewVideos, setShowAllNewVideos] = useState(false);
+  const [showAllMostViewed, setShowAllMostViewed] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
@@ -198,10 +202,14 @@ export const VideoGrid = () => {
 
   const isLoading = isLoadingChannels || isLoadingVideos;
 
-  // Sort videos by views for the most viewed section
-  const mostViewedVideos = videos ? [...videos].sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, 12) : [];
   // Get latest videos for the new videos section
-  const newVideos = videos ? [...videos].sort((a, b) => b.uploadedAt.getTime() - a.uploadedAt.getTime()).slice(0, 12) : [];
+  const newVideos = videos ? [...videos].sort((a, b) => b.uploadedAt.getTime() - a.uploadedAt.getTime()) : [];
+  // Sort videos by views for the most viewed section
+  const mostViewedVideos = videos ? [...videos].sort((a, b) => (b.views || 0) - (a.views || 0)) : [];
+
+  // Display only first 12 videos (3 rows of 4) if not showing all
+  const displayedNewVideos = showAllNewVideos ? newVideos : newVideos.slice(0, 12);
+  const displayedMostViewedVideos = showAllMostViewed ? mostViewedVideos : mostViewedVideos.slice(0, 12);
 
   return (
     <div className="space-y-4">
@@ -227,27 +235,62 @@ export const VideoGrid = () => {
                 {selectedChannelId ? "Channel Videos" : "New Videos"}
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-4">
-                {videos.map((video) => (
+                {displayedNewVideos.map((video) => (
                   <div key={video.id} onClick={() => handleVideoView(video.id)}>
                     <VideoCard {...video} />
                   </div>
                 ))}
               </div>
+              {newVideos.length > 12 && (
+                <div className="flex justify-center mt-6">
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowAllNewVideos(!showAllNewVideos)}
+                    className="gap-2"
+                  >
+                    {showAllNewVideos ? (
+                      <>
+                        Show Less <ChevronUp className="h-4 w-4" />
+                      </>
+                    ) : (
+                      <>
+                        See More <ChevronDown className="h-4 w-4" />
+                      </>
+                    )}
+                  </Button>
+                </div>
+              )}
             </div>
 
             {!selectedChannelId && (
               <div className="mt-12">
                 <h2 className="text-2xl font-bold px-4 mb-8 text-accent">Most Viewed Videos</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-4">
-                  {videos
-                    .sort((a, b) => (b.views || 0) - (a.views || 0))
-                    .slice(0, 12)
-                    .map((video) => (
-                      <div key={video.id} onClick={() => handleVideoView(video.id)}>
-                        <VideoCard {...video} />
-                      </div>
-                    ))}
+                  {displayedMostViewedVideos.map((video) => (
+                    <div key={video.id} onClick={() => handleVideoView(video.id)}>
+                      <VideoCard {...video} />
+                    </div>
+                  ))}
                 </div>
+                {mostViewedVideos.length > 12 && (
+                  <div className="flex justify-center mt-6">
+                    <Button
+                      variant="outline"
+                      onClick={() => setShowAllMostViewed(!showAllMostViewed)}
+                      className="gap-2"
+                    >
+                      {showAllMostViewed ? (
+                        <>
+                          Show Less <ChevronUp className="h-4 w-4" />
+                        </>
+                      ) : (
+                        <>
+                          See More <ChevronDown className="h-4 w-4" />
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                )}
               </div>
             )}
           </div>
