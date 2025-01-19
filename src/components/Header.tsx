@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { SearchBar } from "@/components/search/SearchBar";
 import { Settings, LayoutDashboard } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -79,7 +78,6 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
             <h1 className="text-2xl font-bold logo-custom">JewTube</h1>
           </Link>
         </div>
-        <SearchBar />
         <div className="flex items-center gap-2">
           {session ? (
             <>
