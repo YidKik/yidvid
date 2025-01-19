@@ -46,7 +46,7 @@ const ChannelDetails = () => {
       }
     },
     retry: 3,
-    retryDelay: 1000,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 
   const { data: videos, isLoading: isLoadingVideos, refetch } = useQuery({
@@ -77,7 +77,7 @@ const ChannelDetails = () => {
       }
     },
     retry: 3,
-    retryDelay: 1000,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
     enabled: !!channel,
   });
 
