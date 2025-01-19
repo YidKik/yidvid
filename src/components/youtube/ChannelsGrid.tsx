@@ -29,8 +29,8 @@ export const ChannelsGrid = () => {
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold text-accent">YouTube Channels</h2>
         </div>
-        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-9 gap-4">
-          {[...Array(5)].map((_, i) => (
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+          {[...Array(6)].map((_, i) => (
             <div key={i} className="animate-pulse">
               <div className="w-20 h-20 bg-gray-200 rounded-full mb-2 mx-auto" />
               <div className="h-4 bg-gray-200 rounded w-3/4 mx-auto" />
@@ -50,14 +50,14 @@ export const ChannelsGrid = () => {
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold text-accent">YouTube Channels</h2>
       </div>
-      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-9 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
         {channels.map((channel) => (
           <Link 
             key={channel.id}
             to={`/channel/${channel.channel_id}`}
-            className="group flex flex-col items-center p-4 rounded-lg bg-[#F8F8F8] hover:bg-[#F1F1F1] transition-colors"
+            className="group flex flex-col items-center p-6 rounded-lg bg-card hover:bg-accent/5 transition-all duration-200 cursor-pointer shadow-sm hover:shadow-md"
           >
-            <Avatar className="w-20 h-20 mb-3 transition-transform group-hover:scale-105">
+            <Avatar className="w-24 h-24 mb-4 transition-transform group-hover:scale-105">
               <AvatarImage
                 src={channel.thumbnail_url}
                 alt={channel.title}
@@ -68,12 +68,17 @@ export const ChannelsGrid = () => {
                 }}
               />
               <AvatarFallback className="bg-primary/10">
-                <Youtube className="w-10 h-10 text-primary" />
+                <Youtube className="w-12 h-12 text-primary" />
               </AvatarFallback>
             </Avatar>
-            <h3 className="text-sm font-medium text-center text-[#333333] line-clamp-2 mt-2">
+            <h3 className="text-sm font-medium text-center line-clamp-2 group-hover:text-accent-foreground transition-colors">
               {channel.title}
             </h3>
+            {channel.description && (
+              <p className="mt-2 text-xs text-muted-foreground text-center line-clamp-2">
+                {channel.description}
+              </p>
+            )}
           </Link>
         ))}
       </div>
