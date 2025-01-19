@@ -98,15 +98,14 @@ export const VideoGrid = () => {
     },
   });
 
-  const { data: videos, isLoading: isLoadingVideos, refetch } = useQuery({
-    queryKey: ["youtube-videos", channels?.map(c => c.channel_id)],
-    queryFn: async () => {
-      if (!channels?.length) {
-        return [];
-      }
-
-      try {
-        let query = supabase
+  const fetchVideosForChannels = async (channelIds: string[]) => {
+    try {
+      const batchSize = 5; // Process 5 channels at a time
+      let allVideos = [];
+      
+      for (let i = 0; i < channelIds.length; i += batchSize) {
+        const batchChannelIds = channelIds.slice(i, i + batchSize);
+        const { data: videosData, error } = await supabase
           .from("youtube_videos")
           .select(`
             *,
@@ -116,19 +115,35 @@ export const VideoGrid = () => {
             )
           `)
           .order("uploaded_at", { ascending: false })
-          .in("channel_id", channels.map(c => c.channel_id));
-
-        const { data: videosData, error } = await query;
+          .in("channel_id", batchChannelIds);
 
         if (error) {
-          console.error("Error fetching videos:", error);
-          toast({
-            title: "Error",
-            description: "Failed to fetch videos",
-            variant: "destructive",
-          });
-          throw error;
+          console.error("Error fetching videos batch:", error);
+          continue;
         }
+
+        if (videosData) {
+          allVideos = [...allVideos, ...videosData];
+        }
+      }
+
+      return allVideos;
+    } catch (error) {
+      console.error("Error in batch fetch:", error);
+      throw error;
+    }
+  };
+
+  const { data: videos, isLoading: isLoadingVideos, refetch } = useQuery({
+    queryKey: ["youtube-videos", channels?.map(c => c.channel_id)],
+    queryFn: async () => {
+      if (!channels?.length) {
+        return [];
+      }
+
+      try {
+        const channelIds = channels.map(c => c.channel_id);
+        const videosData = await fetchVideosForChannels(channelIds);
 
         if (!videosData || videosData.length === 0) {
           toast({
