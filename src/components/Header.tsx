@@ -1,11 +1,18 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Settings, LayoutDashboard, Search } from "lucide-react";
+import { Settings, LayoutDashboard, Search, Info } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import {
   Select,
   SelectContent,
@@ -26,6 +33,7 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
   const [searchResults, setSearchResults] = useState<Array<{ id: string; title: string }>>([]);
   const [channels, setChannels] = useState<Array<{ channel_id: string; title: string }>>([]);
   const [selectedChannel, setSelectedChannel] = useState<string>("all");
+  const [showAboutDialog, setShowAboutDialog] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -147,6 +155,15 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
           <Link to="/">
             <h1 className="text-2xl font-bold logo-custom">JewTube</h1>
           </Link>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowAboutDialog(true)}
+            className="flex items-center gap-2 text-gray-200 hover:text-white transition-colors"
+          >
+            <Info className="h-4 w-4" />
+            About
+          </Button>
         </div>
 
         <form onSubmit={handleSearch} className="flex-1 max-w-xl mx-4">
@@ -229,6 +246,35 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
           )}
         </div>
       </div>
+
+      <Dialog open={showAboutDialog} onOpenChange={setShowAboutDialog}>
+        <DialogContent className="bg-[#2A2A2A] text-white border-none max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold mb-4">Welcome to JewTube!</DialogTitle>
+            <DialogDescription className="text-gray-200 space-y-4">
+              <p>
+                JewTube is your dedicated platform for discovering and engaging with Jewish content from various YouTube channels. Our mission is to create a centralized hub where you can easily find, watch, and interact with meaningful Jewish content.
+              </p>
+              
+              <div className="mt-6">
+                <h3 className="text-lg font-semibold mb-2 text-white">What you can do here:</h3>
+                <ul className="list-disc pl-6 space-y-2">
+                  <li>Browse curated Jewish content from various YouTube channels</li>
+                  <li>Search for specific topics or channels</li>
+                  <li>Subscribe to your favorite channels to stay updated</li>
+                  <li>Create an account to personalize your experience</li>
+                  <li>Interact with videos through likes and comments</li>
+                  <li>Customize your viewing experience with theme settings</li>
+                </ul>
+              </div>
+
+              <p className="mt-6">
+                Whether you're looking for Torah lessons, Jewish music, cultural content, or educational materials, JewTube makes it easy to find exactly what you're looking for in one place.
+              </p>
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
     </header>
   );
 };
