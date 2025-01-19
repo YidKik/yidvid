@@ -73,10 +73,6 @@ export const VideoCard = ({
                   src={channelThumbnail} 
                   alt={channelName}
                   className="object-cover"
-                  onError={(e) => {
-                    console.error("Error loading channel thumbnail:", channelThumbnail);
-                    e.currentTarget.style.display = 'none';
-                  }}
                 />
               ) : (
                 <AvatarFallback className="bg-primary/10">
