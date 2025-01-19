@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
-import Joyride, { CallBackProps, STATUS, ACTIONS, Placement } from 'react-joyride';
+import Joyride, { CallBackProps, STATUS, ACTIONS, Placement, Status } from 'react-joyride';
 import {
   Dialog,
   DialogContent,
@@ -68,7 +68,8 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
 
   const handleJoyrideCallback = (data: CallBackProps) => {
     const { status, action } = data;
-    if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status) || action === ACTIONS.CLOSE) {
+    const finishedStatuses: Status[] = [STATUS.FINISHED, STATUS.SKIPPED];
+    if (finishedStatuses.includes(status) || action === ACTIONS.CLOSE) {
       setRunTour(false);
     }
   };
