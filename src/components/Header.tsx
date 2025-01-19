@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { SearchBar } from "@/components/search/SearchBar";
 
 interface HeaderProps {
   onSignInClick?: () => void;
@@ -73,11 +74,14 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
   return (
     <header className="fixed top-0 left-0 right-0 h-16 bg-custom border-b border-gray-200 z-50 px-4">
       <div className="flex items-center justify-between h-full max-w-[1800px] mx-auto">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-4">
           <Link to="/">
             <h1 className="text-2xl font-bold logo-custom">JewTube</h1>
           </Link>
         </div>
+        
+        <SearchBar />
+
         <div className="flex items-center gap-2">
           {session ? (
             <>
