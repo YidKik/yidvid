@@ -137,6 +137,20 @@ const Settings = () => {
     });
   };
 
+  const toggleAdminStatus = async (userId: string, currentStatus: boolean) => {
+    const { error } = await supabase
+      .from('profiles')
+      .update({ is_admin: !currentStatus })
+      .eq('id', userId);
+
+    if (error) {
+      toast.error("Error updating admin status");
+    } else {
+      toast.success(`User ${currentStatus ? 'removed from' : 'made'} admin successfully`);
+      refetchProfiles();
+    }
+  };
+
   const { data: profile } = useQuery({
     queryKey: ["user-profile"],
     queryFn: async () => {
@@ -400,6 +414,7 @@ const Settings = () => {
                   <SelectItem value="fr" className="hover:bg-accent">Français</SelectItem>
                   <SelectItem value="de" className="hover:bg-accent">Deutsch</SelectItem>
                   <SelectItem value="it" className="hover:bg-accent">Italiano</SelectItem>
+                  <SelectItem value="yi" className="hover:bg-accent">יידיש</SelectItem>
                 </SelectContent>
               </Select>
             </div>
