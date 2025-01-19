@@ -7,7 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { AddChannelForm } from "@/components/AddChannelForm";
 import { ChannelSearch } from "@/components/youtube/ChannelSearch";
 import { ChannelList } from "@/components/youtube/ChannelList";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 export const YouTubeChannelsSection = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -74,11 +74,6 @@ export const YouTubeChannelsSection = () => {
 
   const handleSuccess = async () => {
     await refetch();
-    setIsDialogOpen(false);
-    toast({
-      title: "Success",
-      description: "Channel added successfully",
-    });
   };
 
   return (
@@ -99,6 +94,9 @@ export const YouTubeChannelsSection = () => {
                 </Button>
               </DialogTrigger>
               <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Add YouTube Channel</DialogTitle>
+                </DialogHeader>
                 <AddChannelForm
                   onClose={() => setIsDialogOpen(false)}
                   onSuccess={handleSuccess}

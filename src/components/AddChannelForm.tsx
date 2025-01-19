@@ -5,7 +5,12 @@ import { Label } from "@/components/ui/label";
 import { toast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
-export const AddChannelForm = () => {
+interface AddChannelFormProps {
+  onClose?: () => void;
+  onSuccess?: () => void;
+}
+
+export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
   const [channelId, setChannelId] = useState("");
   const [isFetchingChannel, setIsFetchingChannel] = useState(false);
   const [isAddingChannel, setIsAddingChannel] = useState(false);
@@ -57,17 +62,16 @@ export const AddChannelForm = () => {
           title: data.title,
           description: data.description,
           thumbnail_url: data.thumbnailUrl,
-        })
-        .select()
-        .single();
+        });
 
       if (insertError) {
         if (insertError.code === "23505") {
           toast({
             title: "Channel already exists",
-            description: "This channel has already been added",
-            variant: "destructive",
+            description: "This channel has already been added to your dashboard",
           });
+          onSuccess?.();
+          onClose?.();
         } else {
           console.error("Error adding channel:", insertError);
           toast({
@@ -84,6 +88,8 @@ export const AddChannelForm = () => {
         description: `Successfully added ${data.title}`,
       });
       setChannelId("");
+      onSuccess?.();
+      onClose?.();
     } catch (error: any) {
       console.error("Error in add channel process:", error);
       toast({
