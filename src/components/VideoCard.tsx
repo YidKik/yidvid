@@ -29,6 +29,7 @@ export const VideoCard = ({
   useEffect(() => {
     const fetchChannelThumbnail = async () => {
       try {
+        console.log('Fetching thumbnail for channel:', channelId);
         const { data, error } = await supabase
           .from('youtube_channels')
           .select('thumbnail_url')
@@ -41,7 +42,10 @@ export const VideoCard = ({
         }
 
         if (data?.thumbnail_url) {
+          console.log('Found thumbnail:', data.thumbnail_url);
           setChannelThumbnail(data.thumbnail_url);
+        } else {
+          console.log('No thumbnail found for channel:', channelId);
         }
       } catch (error) {
         console.error('Error in fetchChannelThumbnail:', error);
@@ -73,6 +77,10 @@ export const VideoCard = ({
                   src={channelThumbnail} 
                   alt={channelName}
                   className="object-cover"
+                  onError={(e) => {
+                    console.error("Error loading channel thumbnail:", channelThumbnail);
+                    setChannelThumbnail(null);
+                  }}
                 />
               ) : (
                 <AvatarFallback className="bg-primary/10">
