@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
+import Joyride, { CallBackProps, STATUS } from 'react-joyride';
 import {
   Dialog,
   DialogContent,
@@ -34,8 +35,43 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
   const [channels, setChannels] = useState<Array<{ channel_id: string; title: string }>>([]);
   const [selectedChannel, setSelectedChannel] = useState<string>("all");
   const [showAboutDialog, setShowAboutDialog] = useState(false);
-  const [showTourDialog, setShowTourDialog] = useState(false);
+  const [runTour, setRunTour] = useState(false);
   const navigate = useNavigate();
+
+  const tourSteps = [
+    {
+      target: '.logo-custom',
+      content: 'Welcome to JewTube! This is your hub for Jewish content. Click here anytime to return to the home page.',
+      placement: 'bottom',
+    },
+    {
+      target: '.search-custom',
+      content: 'Search for videos or browse by channel using our powerful search feature.',
+      placement: 'bottom',
+    },
+    {
+      target: '.button-custom',
+      content: 'Access your account settings, customize your experience, and manage your profile here.',
+      placement: 'left',
+    },
+    {
+      target: '.video-grid',
+      content: 'Browse through our curated collection of Jewish videos from various channels.',
+      placement: 'top',
+    },
+    {
+      target: '.channels-grid',
+      content: 'Discover and subscribe to your favorite Jewish content creators.',
+      placement: 'top',
+    },
+  ];
+
+  const handleJoyrideCallback = (data: CallBackProps) => {
+    const { status } = data;
+    if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
+      setRunTour(false);
+    }
+  };
 
   useEffect(() => {
     // Get initial session
@@ -151,6 +187,22 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
 
   return (
     <header className="fixed top-0 left-0 right-0 h-16 bg-custom border-b border-gray-200 z-50 px-4">
+      <Joyride
+        steps={tourSteps}
+        run={runTour}
+        continuous
+        showProgress
+        showSkipButton
+        styles={{
+          options: {
+            primaryColor: '#FF0000',
+            backgroundColor: '#2A2A2A',
+            textColor: '#FFFFFF',
+          },
+        }}
+        callback={handleJoyrideCallback}
+      />
+      
       <div className="flex items-center justify-between h-full max-w-[1800px] mx-auto">
         <div className="flex items-center">
           <Link to="/">
@@ -159,7 +211,7 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
         </div>
 
         <form onSubmit={handleSearch} className="flex-1 max-w-xl mx-4">
-          <div className="relative group flex gap-2">
+          <div className="relative group flex gap-2 search-custom">
             <Select
               value={selectedChannel}
               onValueChange={setSelectedChannel}
@@ -208,7 +260,7 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => setShowTourDialog(true)}
+            onClick={() => setRunTour(true)}
             className="relative button-custom"
           >
             <HelpCircle className="h-4 w-4" />

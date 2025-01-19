@@ -16,8 +16,12 @@ const Index = () => {
         <div className="flex-1">
           <Header onSignInClick={() => setIsAuthOpen(true)} />
           <main className="mt-16">
-            <VideoGrid />
-            <ChannelsGrid />
+            <div className="video-grid">
+              <VideoGrid />
+            </div>
+            <div className="channels-grid">
+              <ChannelsGrid />
+            </div>
           </main>
         </div>
       </div>
