@@ -15,10 +15,12 @@ export const DashboardAnalytics = () => {
   const [session, setSession] = useState(null);
 
   useEffect(() => {
+    // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
     });
 
+    // Listen for auth changes
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -36,46 +38,54 @@ export const DashboardAnalytics = () => {
       }
 
       try {
-        // Get total channels
+        // Check if user is admin first
+        const { data: profile, error: profileError } = await supabase
+          .from("profiles")
+          .select("is_admin")
+          .eq("id", session.user.id)
+          .single();
+
+        if (profileError) throw profileError;
+        if (!profile?.is_admin) throw new Error("Unauthorized access");
+
+        // Get total channels with error handling
         const { data: channels, error: channelsError } = await supabase
           .from("youtube_channels")
           .select("*", { count: "exact" });
 
         if (channelsError) throw channelsError;
 
-        // Get total videos
+        // Get total videos with error handling
         const { data: videos, error: videosError } = await supabase
           .from("youtube_videos")
           .select("*", { count: "exact" });
 
         if (videosError) throw videosError;
 
-        // Get total views from interactions
+        // Get total views with error handling
         const { data: views, error: viewsError } = await supabase
           .from("user_video_interactions")
           .select("*", { count: "exact" })
-          .eq('interaction_type', 'view')
-          .eq('user_id', session.user.id);
+          .eq('interaction_type', 'view');
 
         if (viewsError) throw viewsError;
 
-        // Get total users
+        // Get total users with error handling
         const { data: users, error: usersError } = await supabase
           .from("profiles")
           .select("*", { count: "exact" });
 
         if (usersError) throw usersError;
 
-        // Get session data for watch time calculation
+        // Get session data for watch time calculation with error handling
         const { data: sessions, error: sessionsError } = await supabase
           .from("user_analytics")
           .select("session_start, session_end")
-          .eq('user_id', session.user.id)
           .not('session_end', 'is', null);
 
         if (sessionsError) throw sessionsError;
 
-        // Get anonymous sessions
+        // Get anonymous sessions with error handling
         const { data: anonSessions, error: anonSessionsError } = await supabase
           .from("user_analytics")
           .select("*", { count: "exact" })
@@ -87,11 +97,11 @@ export const DashboardAnalytics = () => {
         const totalHours = sessions?.reduce((sum, session) => {
           if (!session.session_end) return sum;
           const duration = new Date(session.session_end).getTime() - new Date(session.session_start).getTime();
-          return sum + (duration / (1000 * 60 * 60)); // Convert ms to hours
+          return sum + (duration / (1000 * 60 * 60));
         }, 0);
 
         // Calculate most popular hour
-        const hourCounts: { [key: number]: number } = {};
+        const hourCounts = {};
         sessions?.forEach(session => {
           const hour = new Date(session.session_start).getHours();
           hourCounts[hour] = (hourCounts[hour] || 0) + 1;
@@ -118,18 +128,27 @@ export const DashboardAnalytics = () => {
         };
       } catch (error) {
         console.error('Error fetching dashboard stats:', error);
-        toast.error('Failed to fetch dashboard statistics');
+        toast.error(error.message || 'Failed to fetch dashboard statistics');
         throw error;
       }
     },
     enabled: !!session?.user?.id,
-    retry: 1,
+    retry: 2,
+    retryDelay: 1000,
   });
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
         <Loader2 className="w-8 h-8 animate-spin" />
+      </div>
+    );
+  }
+
+  if (!session?.user?.id) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <p className="text-muted-foreground">Please sign in to view analytics</p>
       </div>
     );
   }
