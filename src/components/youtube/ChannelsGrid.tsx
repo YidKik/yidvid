@@ -71,7 +71,7 @@ export const ChannelsGrid = () => {
                 <Youtube className="w-12 h-12 text-primary" />
               </AvatarFallback>
             </Avatar>
-            <h3 className="text-sm font-medium text-center line-clamp-2 group-hover:text-accent-foreground transition-colors">
+            <h3 className="text-sm font-medium text-center line-clamp-2 group-hover:text-[#ea384c] transition-colors">
               {channel.title}
             </h3>
             {channel.description && (
