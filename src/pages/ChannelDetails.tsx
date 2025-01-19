@@ -134,20 +134,20 @@ const ChannelDetails = () => {
               variant="ghost"
               size="sm"
               onClick={() => setShowDescription(!showDescription)}
-              className="mb-2"
+              className="text-xs text-muted-foreground hover:text-foreground transition-colors"
             >
               {showDescription ? (
-                <>
-                  Hide Description <ChevronUp className="ml-1" />
-                </>
+                <span className="flex items-center gap-1">
+                  Less <ChevronUp className="h-3 w-3" />
+                </span>
               ) : (
-                <>
-                  Show Description <ChevronDown className="ml-1" />
-                </>
+                <span className="flex items-center gap-1">
+                  More <ChevronDown className="h-3 w-3" />
+                </span>
               )}
             </Button>
             {showDescription && (
-              <p className="text-muted-foreground text-center max-w-2xl">
+              <p className="text-muted-foreground text-sm text-center max-w-2xl mt-2 animate-fade-in">
                 {channel.description}
               </p>
             )}
