@@ -33,20 +33,26 @@ export const VideoCard = ({
       </div>
       <div className="flex gap-3">
         <div className="flex-shrink-0">
-          <Avatar className="w-8 h-8">
-            <AvatarImage src={channelThumbnail} alt={channelName} />
-            <AvatarFallback>
-              <Youtube className="w-4 h-4 text-primary" />
-            </AvatarFallback>
-          </Avatar>
+          <Link to={`/channel/${channelName}`} onClick={(e) => e.stopPropagation()}>
+            <Avatar className="w-8 h-8">
+              <AvatarImage src={channelThumbnail} alt={channelName} />
+              <AvatarFallback>
+                <Youtube className="w-4 h-4 text-primary" />
+              </AvatarFallback>
+            </Avatar>
+          </Link>
         </div>
         <div className="flex-1">
           <h3 className="text-youtube-title font-medium text-accent line-clamp-2 mb-1">
             {title}
           </h3>
-          <p className="text-youtube-small font-normal text-secondary hover-text">
+          <Link 
+            to={`/channel/${channelName}`} 
+            onClick={(e) => e.stopPropagation()}
+            className="text-youtube-small font-normal text-secondary hover:text-accent"
+          >
             {channelName}
-          </p>
+          </Link>
           <div className="text-youtube-small font-normal text-secondary flex items-center gap-1">
             <span>{views.toLocaleString()} views</span>
             <span>•</span>
