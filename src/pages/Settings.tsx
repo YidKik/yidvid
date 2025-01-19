@@ -391,15 +391,15 @@ const Settings = () => {
             <div className="space-y-2">
               <Label htmlFor="language">Interface Language</Label>
               <Select value={language} onValueChange={setLanguage}>
-                <SelectTrigger>
+                <SelectTrigger className="w-full bg-background border-input">
                   <SelectValue placeholder="Select language" />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="en">English</SelectItem>
-                  <SelectItem value="es">Español</SelectItem>
-                  <SelectItem value="fr">Français</SelectItem>
-                  <SelectItem value="de">Deutsch</SelectItem>
-                  <SelectItem value="it">Italiano</SelectItem>
+                <SelectContent className="bg-background border-2 border-input shadow-lg">
+                  <SelectItem value="en" className="hover:bg-accent">English</SelectItem>
+                  <SelectItem value="es" className="hover:bg-accent">Español</SelectItem>
+                  <SelectItem value="fr" className="hover:bg-accent">Français</SelectItem>
+                  <SelectItem value="de" className="hover:bg-accent">Deutsch</SelectItem>
+                  <SelectItem value="it" className="hover:bg-accent">Italiano</SelectItem>
                 </SelectContent>
               </Select>
             </div>
