@@ -55,34 +55,13 @@ export const VideoCard = ({
 
   return (
     <div className="group cursor-pointer">
-      <Link to={`/video/${id}`} className="block relative">
+      <Link to={`/video/${id}`} className="block">
         <div className="aspect-video rounded-lg overflow-hidden mb-3 group-hover:animate-gentle-fade">
           <img
             src={thumbnail}
             alt={title}
             className="w-full h-full object-cover"
           />
-        </div>
-        <div className="absolute bottom-5 right-2">
-          <Link to={`/channel/${channelName}`} onClick={(e) => e.stopPropagation()}>
-            <Avatar className="w-8 h-8 rounded-full border-2 border-background shadow-sm">
-              {channelThumbnail ? (
-                <AvatarImage 
-                  src={channelThumbnail} 
-                  alt={channelName}
-                  className="object-cover"
-                  onError={(e) => {
-                    console.error("Error loading channel thumbnail:", channelThumbnail);
-                    e.currentTarget.style.display = 'none';
-                  }}
-                />
-              ) : (
-                <AvatarFallback className="bg-primary/10">
-                  <Youtube className="w-5 h-5 text-primary" />
-                </AvatarFallback>
-              )}
-            </Avatar>
-          </Link>
         </div>
       </Link>
       <div className="flex gap-3">
