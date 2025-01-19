@@ -43,26 +43,106 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
       target: '.logo-custom',
       content: 'Welcome to JewTube! This is your hub for Jewish content. Click here anytime to return to the home page.',
       placement: 'bottom' as Placement,
+      styles: {
+        options: {
+          backgroundColor: '#2A2A2A',
+          borderRadius: '8px',
+          padding: '20px',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+        },
+        tooltip: {
+          backgroundColor: '#2A2A2A',
+          color: '#FFFFFF',
+          fontSize: '16px',
+          lineHeight: '1.5',
+        },
+        buttonNext: {
+          backgroundColor: '#FF0000',
+          color: '#FFFFFF',
+          padding: '10px 20px',
+          borderRadius: '20px',
+          border: 'none',
+          fontSize: '14px',
+          fontWeight: 'bold',
+          cursor: 'pointer',
+          transition: 'all 0.2s ease',
+          '&:hover': {
+            backgroundColor: '#CC0000',
+            transform: 'translateY(-1px)',
+          },
+        },
+        buttonBack: {
+          color: '#FFFFFF',
+          marginRight: '10px',
+          padding: '10px 20px',
+          borderRadius: '20px',
+          border: '1px solid #FFFFFF',
+          fontSize: '14px',
+          fontWeight: 'bold',
+          cursor: 'pointer',
+          transition: 'all 0.2s ease',
+          '&:hover': {
+            backgroundColor: 'rgba(255,255,255,0.1)',
+          },
+        },
+        buttonSkip: {
+          color: '#999999',
+          fontSize: '14px',
+          textDecoration: 'underline',
+          cursor: 'pointer',
+          '&:hover': {
+            color: '#FFFFFF',
+          },
+        },
+      },
     },
     {
       target: '.search-custom',
       content: 'Search for videos or browse by channel using our powerful search feature.',
       placement: 'bottom' as Placement,
+      styles: {
+        options: {
+          backgroundColor: '#2A2A2A',
+          borderRadius: '8px',
+          padding: '20px',
+        },
+      },
     },
     {
       target: '.button-custom',
       content: 'Access your account settings, customize your experience, and manage your profile here.',
       placement: 'left' as Placement,
+      styles: {
+        options: {
+          backgroundColor: '#2A2A2A',
+          borderRadius: '8px',
+          padding: '20px',
+        },
+      },
     },
     {
       target: '.video-grid',
       content: 'Browse through our curated collection of Jewish videos from various channels.',
       placement: 'top' as Placement,
+      styles: {
+        options: {
+          backgroundColor: '#2A2A2A',
+          borderRadius: '8px',
+          padding: '20px',
+        },
+      },
     },
     {
       target: '.channels-grid',
       content: 'Discover and subscribe to your favorite Jewish content creators.',
       placement: 'top' as Placement,
+      styles: {
+        options: {
+          backgroundColor: '#2A2A2A',
+          borderRadius: '8px',
+          padding: '20px',
+        },
+      },
     },
   ];
 
@@ -194,14 +274,27 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
         continuous
         showProgress
         showSkipButton
+        disableOverlayClose
+        spotlightClicks
         styles={{
           options: {
-            primaryColor: '#FF0000',
+            arrowColor: '#2A2A2A',
             backgroundColor: '#2A2A2A',
+            overlayColor: 'rgba(0, 0, 0, 0.85)',
+            primaryColor: '#FF0000',
             textColor: '#FFFFFF',
+            zIndex: 1000,
           },
         }}
         callback={handleJoyrideCallback}
+        floaterProps={{
+          disableAnimation: false,
+          styles: {
+            floater: {
+              filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.15))',
+            },
+          },
+        }}
       />
       
       <div className="flex items-center justify-between h-full max-w-[1800px] mx-auto">
