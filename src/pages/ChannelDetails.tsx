@@ -1,15 +1,17 @@
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Youtube } from "lucide-react";
+import { Youtube, ChevronDown, ChevronUp } from "lucide-react";
 import { VideoCard } from "@/components/VideoCard";
 import { BackButton } from "@/components/navigation/BackButton";
 import { toast } from "sonner";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 
 const ChannelDetails = () => {
   const { id: channelId } = useParams();
+  const [showDescription, setShowDescription] = useState(false);
 
   const { data: channel, isLoading: isLoadingChannel } = useQuery({
     queryKey: ["channel", channelId],
@@ -127,9 +129,29 @@ const ChannelDetails = () => {
         </Avatar>
         <h1 className="text-3xl font-bold text-center mb-2">{channel.title}</h1>
         {channel.description && (
-          <p className="text-muted-foreground text-center max-w-2xl">
-            {channel.description}
-          </p>
+          <div className="flex flex-col items-center">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowDescription(!showDescription)}
+              className="mb-2"
+            >
+              {showDescription ? (
+                <>
+                  Hide Description <ChevronUp className="ml-1" />
+                </>
+              ) : (
+                <>
+                  Show Description <ChevronDown className="ml-1" />
+                </>
+              )}
+            </Button>
+            {showDescription && (
+              <p className="text-muted-foreground text-center max-w-2xl">
+                {channel.description}
+              </p>
+            )}
+          </div>
         )}
       </div>
 
