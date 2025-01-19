@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Loader2, Clock } from "lucide-react";
+import { Loader2, Clock, Users } from "lucide-react";
 
 export const DashboardAnalytics = () => {
   const { data: totalStats, isLoading } = useQuery({
@@ -37,11 +37,17 @@ export const DashboardAnalytics = () => {
       // Get session data for watch time calculation
       const { data: sessions, error: sessionsError } = await supabase
         .from("user_analytics")
-        .select("session_start, session_end")
+        .select("session_start, session_end, user_id")
         .not('session_end', 'is', null);
 
-      if (channelsError || videosError || viewsError || usersError || sessionsError) 
-        throw channelsError || videosError || viewsError || usersError || sessionsError;
+      // Get anonymous sessions (where user_id is null)
+      const { data: anonSessions, error: anonSessionsError } = await supabase
+        .from("user_analytics")
+        .select("*", { count: "exact" })
+        .is('user_id', null);
+
+      if (channelsError || videosError || viewsError || usersError || sessionsError || anonSessionsError) 
+        throw channelsError || videosError || viewsError || usersError || sessionsError || anonSessionsError;
 
       // Calculate total watch time in hours
       const totalHours = sessions?.reduce((sum, session) => {
@@ -62,6 +68,11 @@ export const DashboardAnalytics = () => {
         { hour: 0, count: 0 }
       );
 
+      // Count unique anonymous users by grouping sessions
+      const uniqueAnonUsers = new Set(anonSessions?.map(session => 
+        `${session.page_path}-${new Date(session.session_start).toDateString()}`
+      )).size;
+
       return {
         totalChannels: channels?.length || 0,
         totalVideos: videos?.length || 0,
@@ -69,6 +80,7 @@ export const DashboardAnalytics = () => {
         totalUsers: users?.length || 0,
         totalHours: Math.round(totalHours || 0),
         mostPopularHour: mostPopularHour.hour,
+        anonymousUsers: uniqueAnonUsers || 0,
       };
     },
   });
@@ -122,12 +134,28 @@ export const DashboardAnalytics = () => {
       </Card>
 
       <Card>
-        <CardHeader>
-          <CardTitle>Total Users</CardTitle>
-          <CardDescription>Registered accounts</CardDescription>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <div>
+            <CardTitle>Total Users</CardTitle>
+            <CardDescription>Registered accounts</CardDescription>
+          </div>
+          <Users className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
           <p className="text-3xl font-bold">{totalStats?.totalUsers}</p>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <div>
+            <CardTitle>Anonymous Users</CardTitle>
+            <CardDescription>Visitors without accounts</CardDescription>
+          </div>
+          <Users className="h-4 w-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent>
+          <p className="text-3xl font-bold">{totalStats?.anonymousUsers}</p>
         </CardContent>
       </Card>
 
