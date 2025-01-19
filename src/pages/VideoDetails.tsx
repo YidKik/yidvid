@@ -29,7 +29,12 @@ const VideoDetails = () => {
         .eq("id", id)
         .single();
 
-      if (videoError) throw videoError;
+      if (videoError) {
+        console.error("Error fetching video:", videoError);
+        throw videoError;
+      }
+      
+      console.log("Fetched video data:", videoData);
       return videoData;
     },
   });
@@ -102,6 +107,15 @@ const VideoDetails = () => {
   if (!video) {
     return <div className="p-4">Video not found</div>;
   }
+
+  console.log("Rendering VideoInfo with props:", {
+    title: video.title,
+    channelName: video.channel_name,
+    channelThumbnail: video.youtube_channels?.thumbnail_url,
+    views: video.views,
+    uploadedAt: video.uploaded_at,
+    description: video.description,
+  });
 
   return (
     <div className="container mx-auto p-4 mt-16">

@@ -18,8 +18,17 @@ export const VideoInfo = ({
   uploadedAt,
   description
 }: VideoInfoProps) => {
+  console.log("VideoInfo received props:", {
+    title,
+    channelName,
+    channelThumbnail,
+    views,
+    uploadedAt,
+    description
+  });
+
   return (
-    <>
+    <div className="space-y-4">
       <h1 className="text-2xl font-bold mb-2">{title}</h1>
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
@@ -39,6 +48,6 @@ export const VideoInfo = ({
           <p className="whitespace-pre-wrap text-sm">{description}</p>
         </div>
       )}
-    </>
+    </div>
   );
 };
