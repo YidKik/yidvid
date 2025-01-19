@@ -29,15 +29,22 @@ function extractChannelId(input: string): string {
   
   // Handle @username format
   if (cleaned.startsWith('@')) {
-    console.log('[YouTube API] Processing username:', cleaned.substring(1));
-    return cleaned.substring(1);
+    console.log('[YouTube API] Processing username:', cleaned);
+    return cleaned;
   }
   
-  console.log('[YouTube API] Using raw input as channel ID:', cleaned);
+  // Handle direct channel IDs (starting with UC)
+  if (cleaned.startsWith('UC')) {
+    console.log('[YouTube API] Using channel ID directly:', cleaned);
+    return cleaned;
+  }
+  
+  console.log('[YouTube API] Using input as channel handle:', cleaned);
   return cleaned;
 }
 
 serve(async (req) => {
+  // Handle CORS preflight request
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -67,59 +74,62 @@ serve(async (req) => {
     const processedChannelId = extractChannelId(channelId);
     console.log('[YouTube API] Processed channel ID:', processedChannelId);
 
-    // First try with channel ID
-    let apiUrl = `https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&id=${processedChannelId}&key=${YOUTUBE_API_KEY}`;
-    console.log('[YouTube API] Making request with ID:', processedChannelId);
+    // Try different API endpoints in sequence
+    let channelData = null;
 
-    let response = await fetch(apiUrl);
-    let data = await response.json();
-    
-    // If no results, try with username/handle
-    if (!data.items || data.items.length === 0) {
-      console.log('[YouTube API] No results with ID, trying with forUsername');
-      apiUrl = `https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&forUsername=${processedChannelId}&key=${YOUTUBE_API_KEY}`;
-      response = await fetch(apiUrl);
-      data = await response.json();
-      
-      // If still no results, try search
-      if (!data.items || data.items.length === 0) {
-        console.log('[YouTube API] No results with username, trying search');
-        const searchUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=channel&q=${processedChannelId}&key=${YOUTUBE_API_KEY}`;
-        const searchResponse = await fetch(searchUrl);
-        const searchData = await searchResponse.json();
-        
-        if (searchData.items?.length > 0) {
-          const channelId = searchData.items[0].id.channelId;
-          apiUrl = `https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&id=${channelId}&key=${YOUTUBE_API_KEY}`;
-          response = await fetch(apiUrl);
-          data = await response.json();
-        }
+    // 1. First try with direct channel ID
+    if (processedChannelId.startsWith('UC')) {
+      console.log('[YouTube API] Trying direct channel ID lookup');
+      const response = await fetch(
+        `https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&id=${processedChannelId}&key=${YOUTUBE_API_KEY}`
+      );
+      const data = await response.json();
+      if (data.items?.length > 0) {
+        channelData = data;
       }
     }
 
-    if (!response.ok) {
-      console.error('[YouTube API] Error Response:', data);
-      return new Response(
-        JSON.stringify({ 
-          error: 'Failed to fetch channel from YouTube API',
-          details: data.error?.message || 'Unknown error'
-        }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: response.status }
+    // 2. If not found, try with username
+    if (!channelData) {
+      console.log('[YouTube API] Trying username lookup');
+      const response = await fetch(
+        `https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&forUsername=${processedChannelId.replace('@', '')}&key=${YOUTUBE_API_KEY}`
       );
+      const data = await response.json();
+      if (data.items?.length > 0) {
+        channelData = data;
+      }
     }
 
-    if (!data.items || data.items.length === 0) {
-      console.error('[YouTube API] Channel not found:', processedChannelId);
+    // 3. If still not found, try search
+    if (!channelData) {
+      console.log('[YouTube API] Trying search lookup');
+      const searchResponse = await fetch(
+        `https://www.googleapis.com/youtube/v3/search?part=snippet&type=channel&q=${processedChannelId}&key=${YOUTUBE_API_KEY}`
+      );
+      const searchData = await searchResponse.json();
+      
+      if (searchData.items?.length > 0) {
+        const channelId = searchData.items[0].id.channelId;
+        const response = await fetch(
+          `https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&id=${channelId}&key=${YOUTUBE_API_KEY}`
+        );
+        channelData = await response.json();
+      }
+    }
+
+    if (!channelData || !channelData.items || channelData.items.length === 0) {
+      console.error('[YouTube API] Channel not found after all attempts');
       return new Response(
         JSON.stringify({ 
           error: 'Channel not found',
-          details: 'Could not find a YouTube channel with the provided ID/URL'
+          details: 'Could not find a YouTube channel with the provided ID/URL. Please try using the full channel URL or ID.'
         }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 404 }
       );
     }
 
-    const channel = data.items[0];
+    const channel = channelData.items[0];
     console.log('[YouTube API] Successfully fetched channel:', channel.snippet.title);
     
     const thumbnailUrl = channel.snippet.thumbnails?.high?.url || 
