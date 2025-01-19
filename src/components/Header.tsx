@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Settings, LayoutDashboard, Search, Info } from "lucide-react";
+import { Settings, LayoutDashboard, Search, Info, HelpCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -34,6 +34,7 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
   const [channels, setChannels] = useState<Array<{ channel_id: string; title: string }>>([]);
   const [selectedChannel, setSelectedChannel] = useState<string>("all");
   const [showAboutDialog, setShowAboutDialog] = useState(false);
+  const [showTourDialog, setShowTourDialog] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -207,6 +208,14 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
           <Button
             variant="ghost"
             size="icon"
+            onClick={() => setShowTourDialog(true)}
+            className="relative button-custom"
+          >
+            <HelpCircle className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={() => setShowAboutDialog(true)}
             className="relative button-custom"
           >
@@ -270,6 +279,46 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
               <p className="mt-6">
                 Whether you're looking for Torah lessons, Jewish music, cultural content, or educational materials, JewTube makes it easy to find exactly what you're looking for in one place.
               </p>
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showTourDialog} onOpenChange={setShowTourDialog}>
+        <DialogContent className="bg-[#2A2A2A] text-white border-none max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold mb-4">Let's Take a Tour!</DialogTitle>
+            <DialogDescription className="text-gray-200 space-y-6">
+              <div>
+                <h3 className="text-lg font-semibold mb-2 text-white">🔍 Search & Navigation</h3>
+                <p>Use the search bar in the center to find videos. You can filter by specific channels using the dropdown menu on the left of the search bar.</p>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-semibold mb-2 text-white">📺 Video Browsing</h3>
+                <p>Scroll through our curated collection of videos on the home page. Click on any video to watch it and engage with the content.</p>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-semibold mb-2 text-white">👤 User Account</h3>
+                <p>Sign in to unlock personalized features like:</p>
+                <ul className="list-disc pl-6 mt-2 space-y-1">
+                  <li>Subscribing to channels</li>
+                  <li>Commenting on videos</li>
+                  <li>Creating playlists</li>
+                  <li>Tracking your watch history</li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-semibold mb-2 text-white">⚙️ Customization</h3>
+                <p>Click the settings icon to customize your viewing experience, including theme preferences and notification settings.</p>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-semibold mb-2 text-white">📱 Responsive Design</h3>
+                <p>Enjoy JewTube on any device - our responsive design ensures a great experience on desktop, tablet, or mobile.</p>
+              </div>
             </DialogDescription>
           </DialogHeader>
         </DialogContent>
