@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Settings, LayoutDashboard, Search, Info, HelpCircle } from "lucide-react";
+import { Settings, LayoutDashboard, Search, Info, Compass } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -388,7 +388,7 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
             onClick={() => setRunTour(true)}
             className="relative button-custom"
           >
-            <HelpCircle className="h-4 w-4" />
+            <Compass className="h-4 w-4" />
           </Button>
           <Button
             variant="ghost"
