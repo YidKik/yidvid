@@ -48,14 +48,14 @@ export const VideoGridHeader = ({
   return (
     <div className="flex items-center justify-between p-4">
       <Select
-        value={selectedChannelId || ""}
-        onValueChange={(value) => onChannelSelect(value || null)}
+        value={selectedChannelId || "all"}
+        onValueChange={(value) => onChannelSelect(value === "all" ? null : value)}
       >
         <SelectTrigger className="w-[280px]">
           <SelectValue placeholder="Select a channel" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="">All Channels</SelectItem>
+          <SelectItem value="all">All Channels</SelectItem>
           {channels.map((channel) => (
             <SelectItem key={channel.channel_id} value={channel.channel_id}>
               {channel.title}
