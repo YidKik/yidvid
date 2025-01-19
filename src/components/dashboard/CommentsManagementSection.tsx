@@ -4,7 +4,7 @@ import { formatDistanceToNow } from "date-fns";
 import { Trash2, Edit } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { useToast } from "sonner";
+import { toast } from "sonner";
 import {
   Dialog,
   DialogContent,
@@ -37,7 +37,6 @@ interface Comment {
 }
 
 export const CommentsManagementSection = () => {
-  const toast = useToast();
   const [editingComment, setEditingComment] = useState<Comment | null>(null);
   const [editedContent, setEditedContent] = useState("");
 
