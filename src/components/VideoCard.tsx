@@ -4,6 +4,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Youtube } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "./ui/use-toast";
 
 interface VideoCardProps {
   id: string;
@@ -35,6 +36,7 @@ export const VideoCard = ({
         setIsLoadingThumbnail(true);
         console.log('Fetching thumbnail for channel:', channelId);
         
+        // Using Supabase client which automatically handles authentication headers
         const { data: channelData, error } = await supabase
           .from('youtube_channels')
           .select('thumbnail_url')
@@ -52,7 +54,7 @@ export const VideoCard = ({
         } else {
           console.log('No thumbnail found for channel:', channelId);
           // If no thumbnail is found, automatically trigger an update
-          const { data, error: functionError } = await supabase.functions.invoke(
+          const { data: functionResponse, error: functionError } = await supabase.functions.invoke(
             'update-channel-thumbnails',
             {
               body: { channels: [channelId] }
@@ -61,11 +63,16 @@ export const VideoCard = ({
 
           if (functionError) {
             console.error('Error updating channel thumbnails:', functionError);
+            toast({
+              title: "Error",
+              description: "Failed to update channel thumbnail",
+              variant: "destructive",
+            });
             return;
           }
 
           // Refetch the thumbnail after update
-          const { data: updatedChannel } = await supabase
+          const { data: updatedChannel, error: refetchError } = await supabase
             .from('youtube_channels')
             .select('thumbnail_url')
             .eq('channel_id', channelId)
@@ -77,6 +84,11 @@ export const VideoCard = ({
         }
       } catch (error) {
         console.error('Error in fetchChannelThumbnail:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load channel thumbnail",
+          variant: "destructive",
+        });
       } finally {
         setIsLoadingThumbnail(false);
       }
