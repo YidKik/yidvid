@@ -176,12 +176,7 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
                 placeholder="Search..."
                 className="w-full h-10 bg-[#222] text-white border-none rounded-full px-6 py-2 focus:outline-none focus:ring-0 transition-all duration-300 placeholder:text-gray-400 flex-grow"
               />
-              <button
-                type="submit"
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
-              >
-                <Search className="h-5 w-5" />
-              </button>
+              <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 hover:text-white transition-colors" />
               
               {showDropdown && searchResults.length > 0 && (
                 <div className="absolute w-full mt-2 bg-[#2A2A2A] rounded-lg shadow-lg overflow-hidden z-50">
