@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Shield } from "lucide-react";
+import { Shield, Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
@@ -12,9 +12,21 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export const UserManagementSection = ({ currentUserId }: { currentUserId: string }) => {
   const { toast } = useToast();
+  const [showAddAdminDialog, setShowAddAdminDialog] = useState(false);
+  const [newAdminEmail, setNewAdminEmail] = useState("");
   
   const { data: users, refetch: refetchUsers } = useQuery({
     queryKey: ["all-users"],
@@ -60,10 +72,60 @@ export const UserManagementSection = ({ currentUserId }: { currentUserId: string
     }
   };
 
+  const handleAddAdmin = async () => {
+    try {
+      // First, check if the user exists
+      const { data: userData, error: userError } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("email", newAdminEmail)
+        .single();
+
+      if (userError) {
+        toast({
+          title: "User not found",
+          description: "Please check the email address and try again.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Make the user an admin
+      const { error: updateError } = await supabase
+        .from("profiles")
+        .update({ is_admin: true })
+        .eq("id", userData.id);
+
+      if (updateError) throw updateError;
+
+      toast({
+        title: "Admin added successfully",
+        description: `${newAdminEmail} has been granted admin privileges.`,
+      });
+
+      setNewAdminEmail("");
+      setShowAddAdminDialog(false);
+      refetchUsers();
+    } catch (error: any) {
+      toast({
+        title: "Error adding admin",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="bg-white rounded-lg shadow mb-8">
       <div className="p-4 border-b flex items-center justify-between">
         <h2 className="text-lg font-semibold">User Management</h2>
+        <Button 
+          onClick={() => setShowAddAdminDialog(true)}
+          className="flex items-center gap-2"
+        >
+          <Plus className="w-4 h-4" />
+          Add Admin
+        </Button>
       </div>
       <Table>
         <TableHeader>
@@ -101,6 +163,35 @@ export const UserManagementSection = ({ currentUserId }: { currentUserId: string
           ))}
         </TableBody>
       </Table>
+
+      <Dialog open={showAddAdminDialog} onOpenChange={setShowAddAdminDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add New Admin</DialogTitle>
+            <DialogDescription>
+              Enter the email address of the user you want to make an admin. The user must already have an account.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email Address</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="user@example.com"
+                value={newAdminEmail}
+                onChange={(e) => setNewAdminEmail(e.target.value)}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowAddAdminDialog(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleAddAdmin}>Add Admin</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
