@@ -274,6 +274,7 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
         continuous
         showProgress
         showSkipButton
+        hideCloseButton
         disableOverlayClose
         spotlightClicks
         styles={{
@@ -291,7 +292,7 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
           disableAnimation: false,
           styles: {
             floater: {
-              filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.15))',
+              filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.15)',
             },
           },
         }}
