@@ -109,6 +109,7 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
           padding: '20px',
         },
       },
+      spotlightPadding: 5,
     },
     {
       target: '.video-grid',
@@ -122,6 +123,9 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
         },
       },
       disableBeacon: true,
+      spotlightPadding: 10,
+      isFixed: true,
+      scrollOffset: 200,
     },
     {
       target: '.channels-grid',
@@ -135,12 +139,24 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
         },
       },
       disableBeacon: true,
+      spotlightPadding: 10,
+      isFixed: true,
+      scrollOffset: 200,
     },
   ];
 
   const handleJoyrideCallback = (data: CallBackProps) => {
-    const { status, action } = data;
+    const { status, action, index } = data;
     const finishedStatuses: Status[] = [STATUS.FINISHED, STATUS.SKIPPED];
+
+    // Handle scrolling for specific steps
+    if (action === ACTIONS.START || (action === ACTIONS.NEXT && (index === 1 || index === 2))) {
+      const element = document.querySelector(tourSteps[index + 1]?.target);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+
     if (finishedStatuses.includes(status) || action === ACTIONS.CLOSE) {
       setRunTour(false);
     }
