@@ -4,12 +4,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { Youtube } from "lucide-react";
 import { VideoCard } from "@/components/VideoCard";
 import { BackButton } from "@/components/navigation/BackButton";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const ChannelDetails = () => {
-  const { channelId } = useParams();
+  const { id: channelId } = useParams();
 
   const { data: channel, isLoading: isLoadingChannel } = useQuery({
     queryKey: ["channel", channelId],
@@ -22,30 +22,16 @@ const ChannelDetails = () => {
         .from("youtube_channels")
         .select("*")
         .eq("channel_id", channelId)
-        .maybeSingle();
+        .single();
 
       if (error) {
         console.error("Error fetching channel:", error);
-        toast({
-          title: "Error",
-          description: "Failed to load channel details",
-          variant: "destructive",
-        });
+        toast.error("Failed to load channel details");
         throw error;
-      }
-
-      if (!data) {
-        toast({
-          title: "Not Found",
-          description: "Channel not found",
-          variant: "destructive",
-        });
-        throw new Error("Channel not found");
       }
 
       return data;
     },
-    retry: false,
   });
 
   const { data: videos, isLoading: isLoadingVideos, refetch } = useQuery({
@@ -63,11 +49,7 @@ const ChannelDetails = () => {
 
       if (error) {
         console.error("Error fetching videos:", error);
-        toast({
-          title: "Error",
-          description: "Failed to load channel videos",
-          variant: "destructive",
-        });
+        toast.error("Failed to load channel videos");
         throw error;
       }
 
