@@ -3,6 +3,7 @@ import { Youtube } from "lucide-react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { UpdateChannelThumbnails } from "./UpdateChannelThumbnails";
 
 export const ChannelsGrid = () => {
   const { data: channels, isLoading } = useQuery({
@@ -18,7 +19,7 @@ export const ChannelsGrid = () => {
         throw error;
       }
       
-      console.log("Fetched channels with thumbnails:", data); // Debug log
+      console.log("Fetched channels with thumbnails:", data);
       return data || [];
     },
   });
@@ -26,7 +27,9 @@ export const ChannelsGrid = () => {
   if (isLoading) {
     return (
       <div className="w-full max-w-[1800px] mx-auto px-4 py-6">
-        <h2 className="text-2xl font-bold mb-6 text-accent">YouTube Channels</h2>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold text-accent">YouTube Channels</h2>
+        </div>
         <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-9 gap-4">
           {[...Array(5)].map((_, i) => (
             <div key={i} className="animate-pulse">
@@ -45,7 +48,10 @@ export const ChannelsGrid = () => {
 
   return (
     <div className="w-full max-w-[1800px] mx-auto px-4 py-6">
-      <h2 className="text-2xl font-bold mb-6 text-accent">YouTube Channels</h2>
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-2xl font-bold text-accent">YouTube Channels</h2>
+        <UpdateChannelThumbnails />
+      </div>
       <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-9 gap-4">
         {channels.map((channel) => (
           <Link 
