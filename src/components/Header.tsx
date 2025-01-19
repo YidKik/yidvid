@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
-import Joyride, { CallBackProps, STATUS } from 'react-joyride';
+import Joyride, { CallBackProps, STATUS, ACTIONS, Placement } from 'react-joyride';
 import {
   Dialog,
   DialogContent,
@@ -42,33 +42,33 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
     {
       target: '.logo-custom',
       content: 'Welcome to JewTube! This is your hub for Jewish content. Click here anytime to return to the home page.',
-      placement: 'bottom',
+      placement: 'bottom' as Placement,
     },
     {
       target: '.search-custom',
       content: 'Search for videos or browse by channel using our powerful search feature.',
-      placement: 'bottom',
+      placement: 'bottom' as Placement,
     },
     {
       target: '.button-custom',
       content: 'Access your account settings, customize your experience, and manage your profile here.',
-      placement: 'left',
+      placement: 'left' as Placement,
     },
     {
       target: '.video-grid',
       content: 'Browse through our curated collection of Jewish videos from various channels.',
-      placement: 'top',
+      placement: 'top' as Placement,
     },
     {
       target: '.channels-grid',
       content: 'Discover and subscribe to your favorite Jewish content creators.',
-      placement: 'top',
+      placement: 'top' as Placement,
     },
   ];
 
   const handleJoyrideCallback = (data: CallBackProps) => {
-    const { status } = data;
-    if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
+    const { status, action } = data;
+    if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status) || action === ACTIONS.CLOSE) {
       setRunTour(false);
     }
   };
@@ -331,46 +331,6 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
               <p className="mt-6">
                 Whether you're looking for Torah lessons, Jewish music, cultural content, or educational materials, JewTube makes it easy to find exactly what you're looking for in one place.
               </p>
-            </DialogDescription>
-          </DialogHeader>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={showTourDialog} onOpenChange={setShowTourDialog}>
-        <DialogContent className="bg-[#2A2A2A] text-white border-none max-w-2xl">
-          <DialogHeader>
-            <DialogTitle className="text-2xl font-bold mb-4">Let's Take a Tour!</DialogTitle>
-            <DialogDescription className="text-gray-200 space-y-6">
-              <div>
-                <h3 className="text-lg font-semibold mb-2 text-white">🔍 Search & Navigation</h3>
-                <p>Use the search bar in the center to find videos. You can filter by specific channels using the dropdown menu on the left of the search bar.</p>
-              </div>
-
-              <div>
-                <h3 className="text-lg font-semibold mb-2 text-white">📺 Video Browsing</h3>
-                <p>Scroll through our curated collection of videos on the home page. Click on any video to watch it and engage with the content.</p>
-              </div>
-
-              <div>
-                <h3 className="text-lg font-semibold mb-2 text-white">👤 User Account</h3>
-                <p>Sign in to unlock personalized features like:</p>
-                <ul className="list-disc pl-6 mt-2 space-y-1">
-                  <li>Subscribing to channels</li>
-                  <li>Commenting on videos</li>
-                  <li>Creating playlists</li>
-                  <li>Tracking your watch history</li>
-                </ul>
-              </div>
-
-              <div>
-                <h3 className="text-lg font-semibold mb-2 text-white">⚙️ Customization</h3>
-                <p>Click the settings icon to customize your viewing experience, including theme preferences and notification settings.</p>
-              </div>
-
-              <div>
-                <h3 className="text-lg font-semibold mb-2 text-white">📱 Responsive Design</h3>
-                <p>Enjoy JewTube on any device - our responsive design ensures a great experience on desktop, tablet, or mobile.</p>
-              </div>
             </DialogDescription>
           </DialogHeader>
         </DialogContent>
