@@ -5,6 +5,7 @@ import { Youtube } from "lucide-react";
 import { VideoCard } from "@/components/VideoCard";
 import { BackButton } from "@/components/navigation/BackButton";
 import { toast } from "@/components/ui/use-toast";
+import { useEffect } from "react";
 
 const ChannelDetails = () => {
   const { channelId } = useParams();
@@ -46,7 +47,7 @@ const ChannelDetails = () => {
     retry: false,
   });
 
-  const { data: videos, isLoading: isLoadingVideos } = useQuery({
+  const { data: videos, isLoading: isLoadingVideos, refetch } = useQuery({
     queryKey: ["channel-videos", channelId],
     queryFn: async () => {
       if (!channelId) {
@@ -73,6 +74,32 @@ const ChannelDetails = () => {
     },
     enabled: !!channel,
   });
+
+  // Set up realtime subscription for video updates
+  useEffect(() => {
+    if (!channelId) return;
+
+    const channel = supabase
+      .channel('channel_videos_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'youtube_videos',
+          filter: `channel_id=eq.${channelId}`
+        },
+        (payload) => {
+          console.log('Realtime update:', payload);
+          refetch();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [channelId, refetch]);
 
   if (isLoadingChannel || isLoadingVideos) {
     return (
