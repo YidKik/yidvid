@@ -54,50 +54,6 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
           padding: '20px',
           boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
         },
-        tooltip: {
-          backgroundColor: '#F1F0FB',
-          color: '#1A1F2C',
-          fontSize: '16px',
-          lineHeight: '1.5',
-        },
-        buttonNext: {
-          backgroundColor: '#FF0000',
-          color: '#FFFFFF',
-          padding: '10px 20px',
-          borderRadius: '20px',
-          border: 'none',
-          fontSize: '14px',
-          fontWeight: 'bold',
-          cursor: 'pointer',
-          transition: 'all 0.2s ease',
-          '&:hover': {
-            backgroundColor: '#CC0000',
-            transform: 'translateY(-1px)',
-          },
-        },
-        buttonBack: {
-          color: '#1A1F2C',
-          marginRight: '10px',
-          padding: '10px 20px',
-          borderRadius: '20px',
-          border: '1px solid #1A1F2C',
-          fontSize: '14px',
-          fontWeight: 'bold',
-          cursor: 'pointer',
-          transition: 'all 0.2s ease',
-          '&:hover': {
-            backgroundColor: 'rgba(26, 31, 44, 0.1)',
-          },
-        },
-        buttonSkip: {
-          color: '#666666',
-          fontSize: '14px',
-          textDecoration: 'underline',
-          cursor: 'pointer',
-          '&:hover': {
-            color: '#1A1F2C',
-          },
-        },
       },
     },
     {
@@ -127,7 +83,6 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
       disableBeacon: true,
       spotlightPadding: 10,
       isFixed: true,
-      scrollOffset: 200,
     },
     {
       target: '.channels-grid',
@@ -143,24 +98,32 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
       disableBeacon: true,
       spotlightPadding: 10,
       isFixed: true,
-      scrollOffset: 200,
     },
   ];
 
   const handleJoyrideCallback = (data: CallBackProps) => {
-    const { status, action, index } = data;
+    const { status, action, index, type } = data;
     const finishedStatuses: Status[] = [STATUS.FINISHED, STATUS.SKIPPED];
-
-    // Handle scrolling for specific steps
-    if (action === ACTIONS.START || (action === ACTIONS.NEXT && (index === 1 || index === 2))) {
-      const element = document.querySelector(tourSteps[index + 1]?.target);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-    }
 
     if (finishedStatuses.includes(status) || action === ACTIONS.CLOSE) {
       setRunTour(false);
+      return;
+    }
+
+    // Handle scrolling for specific steps
+    if (type === 'step:after' || action === ACTIONS.START) {
+      const nextIndex = action === ACTIONS.START ? 0 : index + 1;
+      if (nextIndex < tourSteps.length) {
+        const nextTarget = document.querySelector(tourSteps[nextIndex].target);
+        if (nextTarget && (nextIndex === 2 || nextIndex === 3)) {
+          setTimeout(() => {
+            nextTarget.scrollIntoView({
+              behavior: 'smooth',
+              block: 'center',
+            });
+          }, 300);
+        }
+      }
     }
   };
 
@@ -304,9 +267,8 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
         hideCloseButton
         disableOverlayClose
         spotlightClicks
-        scrollToFirstStep
-        disableOverlay={false}
-        disableScrolling={false}
+        scrollToFirstStep={false}
+        disableScrollParentFix={false}
         styles={{
           options: {
             arrowColor: '#F1F0FB',
@@ -319,7 +281,7 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
         }}
         callback={handleJoyrideCallback}
         floaterProps={{
-          disableAnimation: false,
+          disableAnimation: true,
           styles: {
             floater: {
               filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.15))',
