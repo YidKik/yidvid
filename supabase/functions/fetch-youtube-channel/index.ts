@@ -132,6 +132,7 @@ serve(async (req) => {
     const channel = channelData.items[0];
     console.log('[YouTube API] Successfully fetched channel:', channel.snippet.title);
     
+    // Get the highest quality thumbnail available
     const thumbnailUrl = channel.snippet.thumbnails?.high?.url || 
                         channel.snippet.thumbnails?.medium?.url || 
                         channel.snippet.thumbnails?.default?.url;
