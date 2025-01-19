@@ -2,7 +2,6 @@ import {
   Home,
   Flame,
   Clock,
-  BookOpen,
   Music,
   UtensilsCrossed,
   GraduationCap,
