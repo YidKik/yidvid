@@ -215,20 +215,23 @@ const ChannelDetails = () => {
   }
 
   return (
-    <div className="container mx-auto p-4 mt-16 animate-fade-in">
+    <div className="container mx-auto p-4 mt-16 opacity-0 animate-[fadeIn_0.6s_ease-out_forwards]">
       <BackButton />
       <div className="flex flex-col items-center mb-8">
-        <Avatar className="w-32 h-32 mb-4 animate-fade-in group">
+        <Avatar className="w-32 h-32 mb-4 opacity-0 animate-[scaleIn_0.6s_ease-out_0.3s_forwards] group">
           <AvatarImage
             src={channel.thumbnail_url}
             alt={channel.title}
-            className="object-cover group-hover:scale-105 transition-transform duration-300"
+            className="object-cover transition-transform duration-300 group-hover:scale-105"
           />
           <AvatarFallback className="bg-primary/10">
             <Youtube className="w-16 h-16 text-primary" />
           </AvatarFallback>
         </Avatar>
-        <h1 className="text-3xl font-bold text-center mb-2">{channel.title}</h1>
+        <h1 className="text-3xl font-bold text-center mb-2 opacity-0 animate-[fadeIn_0.6s_ease-out_0.4s_forwards]">
+          {channel.title}
+        </h1>
+        
         <Button
           variant={isSubscribed ? "default" : "outline"}
           onClick={handleSubscribe}
@@ -277,8 +280,10 @@ const ChannelDetails = () => {
         {videos?.map((video, index) => (
           <div 
             key={video.id} 
-            className="animate-fade-in"
-            style={{ animationDelay: `${index * 0.1}s` }}
+            className="opacity-0"
+            style={{ 
+              animation: `fadeIn 0.6s ease-out ${0.5 + index * 0.1}s forwards`
+            }}
           >
             <VideoCard
               id={video.id}
