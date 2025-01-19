@@ -218,11 +218,11 @@ const ChannelDetails = () => {
     <div className="container mx-auto p-4 mt-16">
       <BackButton />
       <div className="flex flex-col items-center mb-8">
-        <Avatar className="w-32 h-32 mb-4">
+        <Avatar className="w-32 h-32 mb-4 animate-fade-in group">
           <AvatarImage
             src={channel.thumbnail_url}
             alt={channel.title}
-            className="object-cover"
+            className="object-cover group-hover:scale-105 transition-transform duration-300"
           />
           <AvatarFallback className="bg-primary/10">
             <Youtube className="w-16 h-16 text-primary" />
