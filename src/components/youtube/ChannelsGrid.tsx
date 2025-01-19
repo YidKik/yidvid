@@ -46,18 +46,22 @@ export const ChannelsGrid = () => {
   }
 
   return (
-    <div className="w-full max-w-[1800px] mx-auto px-4 py-6">
+    <div className="w-full max-w-[1800px] mx-auto px-4 py-6 animate-scaleIn">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold text-accent">YouTube Channels</h2>
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-        {channels.map((channel) => (
+        {channels.map((channel, index) => (
           <Link 
             key={channel.id}
             to={`/channel/${channel.channel_id}`}
-            className="group flex flex-col items-center p-6 rounded-lg bg-card hover:bg-accent/5 transition-all duration-200 cursor-pointer shadow-sm hover:shadow-md"
+            className="opacity-0 animate-fadeIn group flex flex-col items-center p-6 rounded-lg bg-card hover:bg-accent/5 transition-all duration-300 cursor-pointer shadow-sm hover:shadow-md"
+            style={{ 
+              animationDelay: `${index * 0.1}s`,
+              animationFillMode: 'forwards'
+            }}
           >
-            <Avatar className="w-24 h-24 mb-4 transition-transform group-hover:scale-105">
+            <Avatar className="w-24 h-24 mb-4 transition-transform duration-300 group-hover:scale-110">
               <AvatarImage
                 src={channel.thumbnail_url}
                 alt={channel.title}
@@ -71,7 +75,7 @@ export const ChannelsGrid = () => {
                 <Youtube className="w-12 h-12 text-primary" />
               </AvatarFallback>
             </Avatar>
-            <h3 className="text-sm font-medium text-center line-clamp-2 group-hover:text-[#ea384c] transition-colors">
+            <h3 className="text-sm font-medium text-center line-clamp-2 group-hover:text-[#ea384c] transition-colors duration-300">
               {channel.title}
             </h3>
           </Link>

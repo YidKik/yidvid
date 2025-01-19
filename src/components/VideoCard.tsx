@@ -12,6 +12,7 @@ interface VideoCardProps {
   uploadedAt: Date;
   channelId: string;
   channelThumbnail?: string | null;
+  index?: number;
 }
 
 export const VideoCard = ({
@@ -23,11 +24,18 @@ export const VideoCard = ({
   uploadedAt,
   channelId,
   channelThumbnail,
+  index = 0,
 }: VideoCardProps) => {
+  // Calculate staggered animation delay based on index
+  const animationDelay = `${index * 0.1}s`;
+
   return (
-    <div className="group cursor-pointer">
+    <div 
+      className="group cursor-pointer opacity-0 animate-fadeIn"
+      style={{ animationDelay, animationFillMode: 'forwards' }}
+    >
       <Link to={`/video/${id}`} className="block">
-        <div className="aspect-video rounded-lg overflow-hidden mb-3 group-hover:animate-gentle-fade">
+        <div className="aspect-video rounded-lg overflow-hidden mb-3 transition-transform duration-300 ease-out group-hover:scale-[1.02]">
           <img
             src={thumbnail}
             alt={title}
@@ -38,7 +46,7 @@ export const VideoCard = ({
       <div className="flex gap-3">
         <div className="flex-shrink-0">
           <Link to={`/channel/${channelName}`}>
-            <Avatar className="w-10 h-10 rounded-full border-2 border-background shadow-sm">
+            <Avatar className="w-10 h-10 rounded-full border-2 border-background shadow-sm transition-transform duration-300 hover:scale-110">
               {channelThumbnail ? (
                 <AvatarImage 
                   src={channelThumbnail} 
@@ -59,13 +67,13 @@ export const VideoCard = ({
         </div>
         <div className="flex-1">
           <Link to={`/video/${id}`}>
-            <h3 className="text-youtube-title font-medium text-accent line-clamp-2 mb-1">
+            <h3 className="text-youtube-title font-medium text-accent line-clamp-2 mb-1 transition-colors duration-200">
               {title}
             </h3>
           </Link>
           <Link 
             to={`/channel/${channelName}`}
-            className="text-youtube-small font-normal text-secondary hover:text-accent"
+            className="text-youtube-small font-normal text-secondary hover:text-accent transition-colors duration-200"
           >
             {channelName}
           </Link>
