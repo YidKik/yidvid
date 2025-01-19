@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Youtube, ChevronDown, ChevronUp } from "lucide-react";
+import { Youtube, ChevronDown, ChevronUp, UserPlus, Check } from "lucide-react";
 import { VideoCard } from "@/components/VideoCard";
 import { BackButton } from "@/components/navigation/BackButton";
 import { toast } from "sonner";
@@ -15,6 +15,65 @@ const INITIAL_RETRY_DELAY = 1000;
 const ChannelDetails = () => {
   const { id: channelId } = useParams();
   const [showDescription, setShowDescription] = useState(false);
+  const [isSubscribed, setIsSubscribed] = useState(false);
+
+  // Check subscription status
+  const checkSubscription = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return;
+
+    const { data: subscription } = await supabase
+      .from("channel_subscriptions")
+      .select("*")
+      .eq("channel_id", channelId)
+      .eq("user_id", session.user.id)
+      .maybeSingle();
+
+    setIsSubscribed(!!subscription);
+  };
+
+  useEffect(() => {
+    checkSubscription();
+  }, [channelId]);
+
+  const handleSubscribe = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    if (!session) {
+      toast.error("Please sign in to subscribe to channels");
+      return;
+    }
+
+    try {
+      if (isSubscribed) {
+        // Unsubscribe
+        const { error } = await supabase
+          .from("channel_subscriptions")
+          .delete()
+          .eq("channel_id", channelId)
+          .eq("user_id", session.user.id);
+
+        if (error) throw error;
+        setIsSubscribed(false);
+        toast.success("Unsubscribed from channel");
+      } else {
+        // Subscribe
+        const { error } = await supabase
+          .from("channel_subscriptions")
+          .insert({
+            channel_id: channelId,
+            user_id: session.user.id
+          });
+
+        if (error) throw error;
+        setIsSubscribed(true);
+        toast.success("Subscribed to channel");
+      }
+    } catch (error) {
+      console.error("Error managing subscription:", error);
+      toast.error("Failed to update subscription");
+    }
+  };
 
   const { data: channel, isLoading: isLoadingChannel } = useQuery({
     queryKey: ["channel", channelId],
@@ -170,6 +229,23 @@ const ChannelDetails = () => {
           </AvatarFallback>
         </Avatar>
         <h1 className="text-3xl font-bold text-center mb-2">{channel.title}</h1>
+        <Button
+          variant={isSubscribed ? "default" : "outline"}
+          onClick={handleSubscribe}
+          className="mb-4"
+        >
+          {isSubscribed ? (
+            <>
+              <Check className="w-4 h-4 mr-2" />
+              Subscribed
+            </>
+          ) : (
+            <>
+              <UserPlus className="w-4 h-4 mr-2" />
+              Subscribe
+            </>
+          )}
+        </Button>
         {channel.description && (
           <div className="flex flex-col items-center">
             <Button
