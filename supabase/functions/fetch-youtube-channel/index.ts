@@ -6,12 +6,11 @@ const corsHeaders = {
 }
 
 function extractChannelId(input: string): string {
-  // Clean the input
+  console.log('[YouTube API] Processing input:', input);
   const cleaned = input.trim();
   
   // Handle full URLs
   if (cleaned.includes('youtube.com')) {
-    // Match channel ID from various URL formats
     const urlPatterns = [
       /youtube\.com\/channel\/([\w-]+)/,
       /youtube\.com\/c\/([\w-]+)/,
@@ -21,21 +20,24 @@ function extractChannelId(input: string): string {
 
     for (const pattern of urlPatterns) {
       const match = cleaned.match(pattern);
-      if (match) return match[1];
+      if (match) {
+        console.log('[YouTube API] Extracted channel ID from URL:', match[1]);
+        return match[1];
+      }
     }
   }
   
   // Handle @username format
   if (cleaned.startsWith('@')) {
+    console.log('[YouTube API] Processing username:', cleaned.substring(1));
     return cleaned.substring(1);
   }
   
-  // Return as-is if no special format detected
+  console.log('[YouTube API] Using raw input as channel ID:', cleaned);
   return cleaned;
 }
 
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -57,10 +59,7 @@ serve(async (req) => {
     if (!YOUTUBE_API_KEY) {
       console.error('[YouTube API] Missing YouTube API key');
       return new Response(
-        JSON.stringify({ 
-          error: 'Configuration error',
-          details: 'YouTube API key not configured. Please contact support.'
-        }),
+        JSON.stringify({ error: 'YouTube API key not configured' }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
       );
     }
@@ -77,9 +76,7 @@ serve(async (req) => {
     
     // If no results, try with username/handle
     if (!data.items || data.items.length === 0) {
-      console.log('[YouTube API] No results with ID, trying with forUsername/handle');
-      
-      // Try custom URL/handle first
+      console.log('[YouTube API] No results with ID, trying with forUsername');
       apiUrl = `https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&forUsername=${processedChannelId}&key=${YOUTUBE_API_KEY}`;
       response = await fetch(apiUrl);
       data = await response.json();
@@ -92,7 +89,7 @@ serve(async (req) => {
         const searchData = await searchResponse.json();
         
         if (searchData.items?.length > 0) {
-          const channelId = searchData.items[0].snippet.channelId;
+          const channelId = searchData.items[0].id.channelId;
           apiUrl = `https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&id=${channelId}&key=${YOUTUBE_API_KEY}`;
           response = await fetch(apiUrl);
           data = await response.json();
@@ -102,18 +99,10 @@ serve(async (req) => {
 
     if (!response.ok) {
       console.error('[YouTube API] Error Response:', data);
-      let errorMessage = 'Failed to fetch channel from YouTube API';
-      let errorDetails = data.error?.message || 'Unknown error';
-      
-      if (data.error?.message?.includes('quota')) {
-        errorMessage = 'YouTube API quota exceeded';
-        errorDetails = 'The daily API quota has been exceeded. Please try again tomorrow or contact support.';
-      }
-      
       return new Response(
         JSON.stringify({ 
-          error: errorMessage,
-          details: errorDetails
+          error: 'Failed to fetch channel from YouTube API',
+          details: data.error?.message || 'Unknown error'
         }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: response.status }
       );
@@ -124,7 +113,7 @@ serve(async (req) => {
       return new Response(
         JSON.stringify({ 
           error: 'Channel not found',
-          details: 'Could not find a YouTube channel with the provided ID/URL. Please verify it is correct.'
+          details: 'Could not find a YouTube channel with the provided ID/URL'
         }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 404 }
       );
@@ -143,7 +132,7 @@ serve(async (req) => {
         description: channel.snippet.description,
         thumbnailUrl: thumbnailUrl,
         statistics: channel.statistics,
-        channelId: channel.id // Return the actual channel ID
+        channelId: channel.id
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );

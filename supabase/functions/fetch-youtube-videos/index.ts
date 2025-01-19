@@ -7,7 +7,6 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -20,7 +19,6 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    // Get request body
     const { channels } = await req.json();
     
     if (!channels || !Array.isArray(channels)) {
@@ -42,7 +40,6 @@ serve(async (req) => {
       );
     }
 
-    // Fetch videos for each channel
     const videoPromises = channels.map(async (channelId) => {
       if (!channelId) {
         console.error('[YouTube Videos] Invalid channel ID:', channelId);
@@ -53,7 +50,7 @@ serve(async (req) => {
 
       try {
         // First, get channel details including upload playlist ID
-        const channelUrl = `https://www.googleapis.com/youtube/v3/channels?part=contentDetails,statistics&id=${channelId}&key=${apiKey}`;
+        const channelUrl = `https://www.googleapis.com/youtube/v3/channels?part=contentDetails&id=${channelId}&key=${apiKey}`;
         const channelResponse = await fetch(channelUrl);
         const channelData = await channelResponse.json();
 
@@ -63,6 +60,7 @@ serve(async (req) => {
         }
 
         const uploadsPlaylistId = channelData.items[0].contentDetails.relatedPlaylists.uploads;
+        console.log(`[YouTube Videos] Found uploads playlist: ${uploadsPlaylistId}`);
 
         // Get videos from uploads playlist
         const playlistUrl = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${uploadsPlaylistId}&maxResults=50&key=${apiKey}`;
@@ -77,8 +75,8 @@ serve(async (req) => {
         console.log(`[YouTube Videos] Received ${data.items.length} videos for channel ${channelId}`);
 
         // Get video statistics in batches
-        const videoIds = data.items.map((item: any) => item.snippet.resourceId.videoId).join(',');
-        const statsUrl = `https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${videoIds}&key=${apiKey}`;
+        const videoIds = data.items.map((item: any) => item.snippet.resourceId.videoId);
+        const statsUrl = `https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${videoIds.join(',')}&key=${apiKey}`;
         
         const statsResponse = await fetch(statsUrl);
         const statsData = await statsResponse.json();
