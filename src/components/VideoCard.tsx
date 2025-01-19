@@ -51,28 +51,29 @@ export const VideoCard = ({
           setChannelThumbnail(channelData.thumbnail_url);
         } else {
           console.log('No thumbnail found for channel:', channelId);
-          // If no thumbnail is found, trigger an update
-          const response = await fetch(
-            "https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/update-channel-thumbnails",
+          // If no thumbnail is found, trigger an update using supabase.functions.invoke
+          const { data, error: functionError } = await supabase.functions.invoke(
+            'update-channel-thumbnails',
             {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
+              method: 'POST',
+              body: JSON.stringify({ channels: [channelId] })
             }
           );
 
-          if (response.ok) {
-            // Refetch the thumbnail after update
-            const { data: updatedChannel } = await supabase
-              .from('youtube_channels')
-              .select('thumbnail_url')
-              .eq('channel_id', channelId)
-              .single();
-              
-            if (updatedChannel?.thumbnail_url) {
-              setChannelThumbnail(updatedChannel.thumbnail_url);
-            }
+          if (functionError) {
+            console.error('Error updating channel thumbnails:', functionError);
+            return;
+          }
+
+          // Refetch the thumbnail after update
+          const { data: updatedChannel } = await supabase
+            .from('youtube_channels')
+            .select('thumbnail_url')
+            .eq('channel_id', channelId)
+            .single();
+            
+          if (updatedChannel?.thumbnail_url) {
+            setChannelThumbnail(updatedChannel.thumbnail_url);
           }
         }
       } catch (error) {
