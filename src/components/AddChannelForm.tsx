@@ -36,10 +36,14 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
     setIsFetchingChannel(true);
     try {
       const { data, error } = await supabase.functions.invoke('fetch-youtube-channel', {
-        body: { channelId: channelId.trim() }
+        body: { channelId: channelId.trim() },
+        headers: {
+          apikey: process.env.SUPABASE_ANON_KEY || '',
+        }
       });
       
       if (error) {
+        console.error("Error fetching channel:", error);
         toast({
           title: "Error fetching channel",
           description: error.message,
