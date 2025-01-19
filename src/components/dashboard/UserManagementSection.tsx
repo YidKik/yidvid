@@ -79,9 +79,11 @@ export const UserManagementSection = ({ currentUserId }: { currentUserId: string
         .from("profiles")
         .select("*")
         .eq("email", newAdminEmail)
-        .single();
+        .maybeSingle();
 
-      if (userError) {
+      if (userError) throw userError;
+
+      if (!userData) {
         toast({
           title: "User not found",
           description: "Please check the email address and try again.",
