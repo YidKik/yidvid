@@ -4,7 +4,7 @@ import { formatDistanceToNow } from "date-fns";
 import { Trash2, Edit } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
+import { toast } from "@/hooks/use-toast";
 import {
   Dialog,
   DialogContent,
@@ -58,8 +58,10 @@ export const CommentsManagementSection = () => {
         .order("created_at", { ascending: false });
 
       if (error) {
-        toast.error("Error fetching comments", {
+        toast({
+          title: "Error fetching comments",
           description: error.message,
+          variant: "destructive",
         });
         return [];
       }
@@ -77,11 +79,16 @@ export const CommentsManagementSection = () => {
 
       if (error) throw error;
 
-      toast.success("Comment deleted successfully");
+      toast({
+        title: "Success",
+        description: "Comment deleted successfully",
+      });
       refetchComments();
     } catch (error: any) {
-      toast.error("Error deleting comment", {
-        description: error.message,
+      toast({
+        title: "Error",
+        description: "Error deleting comment: " + error.message,
+        variant: "destructive",
       });
     }
   };
@@ -97,12 +104,17 @@ export const CommentsManagementSection = () => {
 
       if (error) throw error;
 
-      toast.success("Comment updated successfully");
+      toast({
+        title: "Success",
+        description: "Comment updated successfully",
+      });
       setEditingComment(null);
       refetchComments();
     } catch (error: any) {
-      toast.error("Error updating comment", {
-        description: error.message,
+      toast({
+        title: "Error",
+        description: "Error updating comment: " + error.message,
+        variant: "destructive",
       });
     }
   };
