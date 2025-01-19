@@ -45,14 +45,14 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
       placement: 'bottom' as Placement,
       styles: {
         options: {
-          backgroundColor: '#2A2A2A',
+          backgroundColor: '#F1F0FB',
           borderRadius: '8px',
           padding: '20px',
           boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
         },
         tooltip: {
-          backgroundColor: '#2A2A2A',
-          color: '#FFFFFF',
+          backgroundColor: '#F1F0FB',
+          color: '#1A1F2C',
           fontSize: '16px',
           lineHeight: '1.5',
         },
@@ -72,26 +72,26 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
           },
         },
         buttonBack: {
-          color: '#FFFFFF',
+          color: '#1A1F2C',
           marginRight: '10px',
           padding: '10px 20px',
           borderRadius: '20px',
-          border: '1px solid #FFFFFF',
+          border: '1px solid #1A1F2C',
           fontSize: '14px',
           fontWeight: 'bold',
           cursor: 'pointer',
           transition: 'all 0.2s ease',
           '&:hover': {
-            backgroundColor: 'rgba(255,255,255,0.1)',
+            backgroundColor: 'rgba(26, 31, 44, 0.1)',
           },
         },
         buttonSkip: {
-          color: '#999999',
+          color: '#666666',
           fontSize: '14px',
           textDecoration: 'underline',
           cursor: 'pointer',
           '&:hover': {
-            color: '#FFFFFF',
+            color: '#1A1F2C',
           },
         },
       },
@@ -102,7 +102,7 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
       placement: 'bottom' as Placement,
       styles: {
         options: {
-          backgroundColor: '#2A2A2A',
+          backgroundColor: '#F1F0FB',
           borderRadius: '8px',
           padding: '20px',
         },
@@ -114,7 +114,7 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
       placement: 'left' as Placement,
       styles: {
         options: {
-          backgroundColor: '#2A2A2A',
+          backgroundColor: '#F1F0FB',
           borderRadius: '8px',
           padding: '20px',
         },
@@ -126,7 +126,7 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
       placement: 'top' as Placement,
       styles: {
         options: {
-          backgroundColor: '#2A2A2A',
+          backgroundColor: '#F1F0FB',
           borderRadius: '8px',
           padding: '20px',
         },
@@ -138,7 +138,7 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
       placement: 'top' as Placement,
       styles: {
         options: {
-          backgroundColor: '#2A2A2A',
+          backgroundColor: '#F1F0FB',
           borderRadius: '8px',
           padding: '20px',
         },
@@ -279,11 +279,11 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
         spotlightClicks
         styles={{
           options: {
-            arrowColor: '#2A2A2A',
-            backgroundColor: '#2A2A2A',
+            arrowColor: '#F1F0FB',
+            backgroundColor: '#F1F0FB',
             overlayColor: 'rgba(0, 0, 0, 0.85)',
             primaryColor: '#FF0000',
-            textColor: '#FFFFFF',
+            textColor: '#1A1F2C',
             zIndex: 1000,
           },
         }}
@@ -292,7 +292,7 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
           disableAnimation: false,
           styles: {
             floater: {
-              filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.15)',
+              filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.15))',
             },
           },
         }}
