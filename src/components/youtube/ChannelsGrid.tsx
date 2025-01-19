@@ -74,11 +74,6 @@ export const ChannelsGrid = () => {
             <h3 className="text-sm font-medium text-center line-clamp-2 group-hover:text-[#ea384c] transition-colors">
               {channel.title}
             </h3>
-            {channel.description && (
-              <p className="mt-2 text-xs text-muted-foreground text-center line-clamp-2">
-                {channel.description}
-              </p>
-            )}
           </Link>
         ))}
       </div>
