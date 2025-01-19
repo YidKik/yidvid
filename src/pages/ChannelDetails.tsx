@@ -215,7 +215,7 @@ const ChannelDetails = () => {
   }
 
   return (
-    <div className="container mx-auto p-4 mt-16">
+    <div className="container mx-auto p-4 mt-16 animate-fade-in">
       <BackButton />
       <div className="flex flex-col items-center mb-8">
         <Avatar className="w-32 h-32 mb-4 animate-fade-in group">
@@ -274,18 +274,23 @@ const ChannelDetails = () => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8">
-        {videos?.map((video) => (
-          <VideoCard
-            key={video.id}
-            id={video.id}
-            title={video.title}
-            thumbnail={video.thumbnail}
-            channelName={video.channel_name}
-            views={video.views || 0}
-            uploadedAt={new Date(video.uploaded_at)}
-            channelId={video.channel_id}
-            channelThumbnail={channel.thumbnail_url}
-          />
+        {videos?.map((video, index) => (
+          <div 
+            key={video.id} 
+            className="animate-fade-in"
+            style={{ animationDelay: `${index * 0.1}s` }}
+          >
+            <VideoCard
+              id={video.id}
+              title={video.title}
+              thumbnail={video.thumbnail}
+              channelName={video.channel_name}
+              views={video.views || 0}
+              uploadedAt={new Date(video.uploaded_at)}
+              channelId={video.channel_id}
+              channelThumbnail={channel.thumbnail_url}
+            />
+          </div>
         ))}
       </div>
     </div>
