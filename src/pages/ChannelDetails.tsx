@@ -9,6 +9,9 @@ import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 
+const MAX_RETRIES = 3;
+const INITIAL_RETRY_DELAY = 1000;
+
 const ChannelDetails = () => {
   const { id: channelId } = useParams();
   const [showDescription, setShowDescription] = useState(false);
@@ -20,32 +23,44 @@ const ChannelDetails = () => {
         throw new Error("Channel ID is required");
       }
 
-      try {
-        const { data, error } = await supabase
-          .from("youtube_channels")
-          .select("*")
-          .eq("channel_id", decodeURIComponent(channelId))
-          .maybeSingle();
+      let retries = 0;
+      let lastError;
 
-        if (error) {
-          console.error("Error fetching channel:", error);
-          toast.error("Failed to load channel details");
-          throw error;
+      while (retries < MAX_RETRIES) {
+        try {
+          const { data, error } = await supabase
+            .from("youtube_channels")
+            .select("*")
+            .eq("channel_id", decodeURIComponent(channelId))
+            .maybeSingle();
+
+          if (error) {
+            console.error("Error fetching channel:", error);
+            throw error;
+          }
+
+          if (!data) {
+            toast.error("Channel not found");
+            throw new Error("Channel not found");
+          }
+
+          return data;
+        } catch (error) {
+          lastError = error;
+          retries++;
+          if (retries < MAX_RETRIES) {
+            await new Promise(resolve => 
+              setTimeout(resolve, INITIAL_RETRY_DELAY * Math.pow(2, retries - 1))
+            );
+          }
         }
-
-        if (!data) {
-          toast.error("Channel not found");
-          throw new Error("Channel not found");
-        }
-
-        return data;
-      } catch (error) {
-        console.error("Error in channel fetch:", error);
-        toast.error("Failed to load channel. Please try again later.");
-        throw error;
       }
+
+      console.error("Final error in channel fetch:", lastError);
+      toast.error("Failed to load channel. Please try again later.");
+      throw lastError;
     },
-    retry: 3,
+    retry: false,
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 
@@ -56,28 +71,39 @@ const ChannelDetails = () => {
         throw new Error("Channel ID is required");
       }
 
-      try {
-        const { data, error } = await supabase
-          .from("youtube_videos")
-          .select("*")
-          .eq("channel_id", decodeURIComponent(channelId))
-          .order("uploaded_at", { ascending: false });
+      let retries = 0;
+      let lastError;
 
-        if (error) {
-          console.error("Error fetching videos:", error);
-          toast.error("Failed to load channel videos");
-          throw error;
+      while (retries < MAX_RETRIES) {
+        try {
+          const { data, error } = await supabase
+            .from("youtube_videos")
+            .select("*")
+            .eq("channel_id", decodeURIComponent(channelId))
+            .order("uploaded_at", { ascending: false });
+
+          if (error) {
+            console.error("Error fetching videos:", error);
+            throw error;
+          }
+
+          return data || [];
+        } catch (error) {
+          lastError = error;
+          retries++;
+          if (retries < MAX_RETRIES) {
+            await new Promise(resolve => 
+              setTimeout(resolve, INITIAL_RETRY_DELAY * Math.pow(2, retries - 1))
+            );
+          }
         }
-
-        return data || [];
-      } catch (error) {
-        console.error("Error in videos fetch:", error);
-        toast.error("Failed to load videos. Please try again later.");
-        throw error;
       }
+
+      console.error("Final error in videos fetch:", lastError);
+      toast.error("Failed to load videos. Please try again later.");
+      throw lastError;
     },
-    retry: 3,
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
+    retry: false,
     enabled: !!channel,
   });
 
