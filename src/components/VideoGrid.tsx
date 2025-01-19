@@ -97,7 +97,6 @@ export const VideoGrid = () => {
         throw error;
       }
       
-      console.log("Fetched channels:", data); // Debug log
       return data || [];
     },
   });
@@ -114,7 +113,7 @@ export const VideoGrid = () => {
           .from("youtube_videos")
           .select(`
             *,
-            youtube_channels!inner (
+            youtube_channels (
               channel_id,
               thumbnail_url
             )
@@ -147,20 +146,14 @@ export const VideoGrid = () => {
           return [];
         }
 
-        console.log("Raw videos data:", videosData); // Debug log
-
         // Transform video data
-        const processedVideos = videosData.map((video: any) => {
-          console.log("Processing video:", video); // Debug log for each video
-          return {
-            ...video,
-            uploadedAt: new Date(video.uploaded_at),
-            channelThumbnail: video.youtube_channels?.thumbnail_url,
-            interactionScore: calculateInteractionScore(video.id, userInteractions || [])
-          };
-        });
+        const processedVideos = videosData.map((video: any) => ({
+          ...video,
+          uploadedAt: new Date(video.uploaded_at),
+          channelThumbnail: video.youtube_channels?.thumbnail_url,
+          interactionScore: calculateInteractionScore(video.id, userInteractions || [])
+        }));
 
-        console.log("Processed videos:", processedVideos); // Debug log
         return processedVideos;
       } catch (error) {
         console.error("Error in video fetch process:", error);
