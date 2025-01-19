@@ -14,6 +14,7 @@ import { VideoInteractions } from "@/components/video/VideoInteractions";
 type Comment = VideoCommentsTable["Row"] & {
   profiles: {
     email: string;
+    name: string | null;
   } | null;
 };
 
@@ -64,7 +65,8 @@ const VideoDetails = () => {
         .select(`
           *,
           profiles (
-            email
+            email,
+            name
           )
         `)
         .eq("video_id", id)
