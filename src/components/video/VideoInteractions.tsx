@@ -1,4 +1,4 @@
-import { ThumbsUp, UserPlus } from "lucide-react";
+import { ThumbsUp, UserPlus, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -83,19 +83,32 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
       <Button
         variant={isLiked ? "default" : "outline"}
         onClick={handleLike}
-        className="w-32"
+        className={`w-32 transition-all duration-200 ${
+          isLiked ? "bg-primary hover:bg-primary-hover text-white shadow-md" : ""
+        }`}
       >
-        <ThumbsUp className="mr-2" />
+        <ThumbsUp className={`mr-2 ${isLiked ? "fill-current" : ""}`} />
         {isLiked ? "Liked" : "Like"}
       </Button>
       
       <Button
         variant={isSubscribed ? "default" : "outline"}
         onClick={handleSubscribe}
-        className="w-32"
+        className={`w-32 transition-all duration-200 ${
+          isSubscribed ? "bg-primary hover:bg-primary-hover text-white shadow-md" : ""
+        }`}
       >
-        <UserPlus className="mr-2" />
-        {isSubscribed ? "Subscribed" : "Subscribe"}
+        {isSubscribed ? (
+          <>
+            <Check className="mr-2 animate-in" />
+            Subscribed
+          </>
+        ) : (
+          <>
+            <UserPlus className="mr-2" />
+            Subscribe
+          </>
+        )}
       </Button>
     </div>
   );

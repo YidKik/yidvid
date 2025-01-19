@@ -235,11 +235,13 @@ const ChannelDetails = () => {
         <Button
           variant={isSubscribed ? "default" : "outline"}
           onClick={handleSubscribe}
-          className="mb-4"
+          className={`mb-4 transition-all duration-200 ${
+            isSubscribed ? "bg-primary hover:bg-primary-hover text-white shadow-md" : ""
+          }`}
         >
           {isSubscribed ? (
             <>
-              <Check className="w-4 h-4 mr-2" />
+              <Check className="w-4 h-4 mr-2 animate-in" />
               Subscribed
             </>
           ) : (
@@ -249,6 +251,7 @@ const ChannelDetails = () => {
             </>
           )}
         </Button>
+
         {channel.description && (
           <div className="flex flex-col items-center">
             <Button
