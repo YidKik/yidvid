@@ -28,6 +28,23 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
 
     setIsFetchingChannel(true);
     try {
+      // First check if the channel already exists
+      const { data: existingChannel } = await supabase
+        .from("youtube_channels")
+        .select("title")
+        .eq("channel_id", channelId.trim())
+        .maybeSingle();
+
+      if (existingChannel) {
+        toast({
+          title: "Channel already exists",
+          description: "This channel has already been added to your dashboard",
+        });
+        onSuccess?.();
+        onClose?.();
+        return;
+      }
+
       const { data, error } = await supabase.functions.invoke('fetch-youtube-channel', {
         body: { channelId: channelId.trim() },
         headers: {
@@ -65,21 +82,12 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
         });
 
       if (insertError) {
-        if (insertError.code === "23505") {
-          toast({
-            title: "Channel already exists",
-            description: "This channel has already been added to your dashboard",
-          });
-          onSuccess?.();
-          onClose?.();
-        } else {
-          console.error("Error adding channel:", insertError);
-          toast({
-            title: "Error adding channel",
-            description: "Failed to add the channel",
-            variant: "destructive",
-          });
-        }
+        console.error("Error adding channel:", insertError);
+        toast({
+          title: "Error adding channel",
+          description: "Failed to add the channel",
+          variant: "destructive",
+        });
         return;
       }
 
