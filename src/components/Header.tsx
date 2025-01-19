@@ -151,19 +151,10 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
   return (
     <header className="fixed top-0 left-0 right-0 h-16 bg-custom border-b border-gray-200 z-50 px-4">
       <div className="flex items-center justify-between h-full max-w-[1800px] mx-auto">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center">
           <Link to="/">
             <h1 className="text-2xl font-bold logo-custom">JewTube</h1>
           </Link>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setShowAboutDialog(true)}
-            className="flex items-center gap-2 text-gray-200 hover:text-white transition-colors"
-          >
-            <Info className="h-4 w-4" />
-            About
-          </Button>
         </div>
 
         <form onSubmit={handleSearch} className="flex-1 max-w-xl mx-4">
@@ -213,6 +204,14 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
         </form>
 
         <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setShowAboutDialog(true)}
+            className="relative button-custom"
+          >
+            <Info className="h-4 w-4" />
+          </Button>
           {session ? (
             <>
               {isAdmin && (
