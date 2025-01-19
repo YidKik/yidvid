@@ -110,14 +110,13 @@ export const VideoGrid = () => {
           .from("youtube_videos")
           .select(`
             *,
-            youtube_channels (
+            youtube_channels!inner (
               channel_id,
               thumbnail_url
             )
           `)
           .order("uploaded_at", { ascending: false });
 
-        // If a channel is selected, filter by that channel
         if (selectedChannelId) {
           query = query.eq("channel_id", selectedChannelId);
         } else {
@@ -228,7 +227,7 @@ export const VideoGrid = () => {
                 {selectedChannelId ? "Channel Videos" : "New Videos"}
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-4">
-                {newVideos.map((video) => (
+                {videos.map((video) => (
                   <div key={video.id} onClick={() => handleVideoView(video.id)}>
                     <VideoCard {...video} />
                   </div>
@@ -240,11 +239,14 @@ export const VideoGrid = () => {
               <div className="mt-12">
                 <h2 className="text-2xl font-bold px-4 mb-8 text-accent">Most Viewed Videos</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-4">
-                  {mostViewedVideos.map((video) => (
-                    <div key={video.id} onClick={() => handleVideoView(video.id)}>
-                      <VideoCard {...video} />
-                    </div>
-                  ))}
+                  {videos
+                    .sort((a, b) => (b.views || 0) - (a.views || 0))
+                    .slice(0, 12)
+                    .map((video) => (
+                      <div key={video.id} onClick={() => handleVideoView(video.id)}>
+                        <VideoCard {...video} />
+                      </div>
+                    ))}
                 </div>
               </div>
             )}

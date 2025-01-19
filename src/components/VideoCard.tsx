@@ -22,37 +22,49 @@ export const VideoCard = ({
   uploadedAt,
   channelThumbnail,
 }: VideoCardProps) => {
+  console.log("Channel thumbnail in VideoCard:", channelThumbnail); // Debug log
+
   return (
-    <Link to={`/video/${id}`} className="group cursor-pointer">
-      <div className="aspect-video rounded-lg overflow-hidden mb-3 group-hover:animate-gentle-fade">
-        <img
-          src={thumbnail}
-          alt={title}
-          className="w-full h-full object-cover"
-        />
-      </div>
+    <div className="group cursor-pointer">
+      <Link to={`/video/${id}`} className="block">
+        <div className="aspect-video rounded-lg overflow-hidden mb-3 group-hover:animate-gentle-fade">
+          <img
+            src={thumbnail}
+            alt={title}
+            className="w-full h-full object-cover"
+          />
+        </div>
+      </Link>
       <div className="flex gap-3">
         <div className="flex-shrink-0">
-          <Link to={`/channel/${channelName}`} onClick={(e) => e.stopPropagation()}>
+          <Link to={`/channel/${channelName}`}>
             <Avatar className="w-10 h-10 rounded-full border-2 border-background shadow-sm">
-              <AvatarImage 
-                src={channelThumbnail} 
-                alt={channelName}
-                className="object-cover"
-              />
-              <AvatarFallback className="bg-primary/10">
-                <Youtube className="w-5 h-5 text-primary" />
-              </AvatarFallback>
+              {channelThumbnail ? (
+                <AvatarImage 
+                  src={channelThumbnail} 
+                  alt={channelName}
+                  className="object-cover"
+                  onError={(e) => {
+                    console.error("Error loading channel thumbnail:", channelThumbnail);
+                    e.currentTarget.style.display = 'none';
+                  }}
+                />
+              ) : (
+                <AvatarFallback className="bg-primary/10">
+                  <Youtube className="w-5 h-5 text-primary" />
+                </AvatarFallback>
+              )}
             </Avatar>
           </Link>
         </div>
         <div className="flex-1">
-          <h3 className="text-youtube-title font-medium text-accent line-clamp-2 mb-1">
-            {title}
-          </h3>
+          <Link to={`/video/${id}`}>
+            <h3 className="text-youtube-title font-medium text-accent line-clamp-2 mb-1">
+              {title}
+            </h3>
+          </Link>
           <Link 
-            to={`/channel/${channelName}`} 
-            onClick={(e) => e.stopPropagation()}
+            to={`/channel/${channelName}`}
             className="text-youtube-small font-normal text-secondary hover:text-accent"
           >
             {channelName}
@@ -64,6 +76,6 @@ export const VideoCard = ({
           </div>
         </div>
       </div>
-    </Link>
+    </div>
   );
 };
