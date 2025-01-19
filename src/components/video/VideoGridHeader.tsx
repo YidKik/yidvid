@@ -19,12 +19,12 @@ export const VideoGridHeader = ({
   if (!hasChannels) {
     return (
       <div className="flex flex-col items-center justify-center p-8 text-center">
-        <h2 className="text-2xl font-bold mb-4">Welcome to Your Video Dashboard</h2>
-        <p className="text-muted-foreground mb-8">
-          Get started by adding your favorite YouTube channels
+        <h2 className="text-2xl font-bold mb-4">No channels added yet</h2>
+        <p className="text-muted-foreground mb-4">
+          Start by adding some YouTube channels to see their videos here
         </p>
         <Link to="/dashboard">
-          <Button size="lg">Add Channels</Button>
+          <Button>Add Channels</Button>
         </Link>
       </div>
     );
@@ -33,7 +33,9 @@ export const VideoGridHeader = ({
   if (!hasVideos) {
     return (
       <div className="flex items-center justify-center p-8">
-        <p className="text-muted-foreground">Loading videos...</p>
+        <p className="text-muted-foreground">
+          No videos found. Try adding more channels or check back later.
+        </p>
       </div>
     );
   }
