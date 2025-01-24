@@ -1,19 +1,17 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Settings, LayoutDashboard, Search, Info, Compass, Bell } from "lucide-react";
+import { Settings, LayoutDashboard, Search, Info, Bell } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
-import Joyride, { CallBackProps, STATUS, ACTIONS, Placement, Status } from 'react-joyride';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogDescription,
-  DialogFooter,
 } from "@/components/ui/dialog";
 import {
   Select,
@@ -53,130 +51,11 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
   const [channels, setChannels] = useState<Array<{ channel_id: string; title: string }>>([]);
   const [selectedChannel, setSelectedChannel] = useState<string>("all");
   const [showAboutDialog, setShowAboutDialog] = useState(false);
-  const [runTour, setRunTour] = useState(false);
-  const [showTourDialog, setShowTourDialog] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [showNotifications, setShowNotifications] = useState(false);
   const navigate = useNavigate();
 
-  const tourSteps = [
-    {
-      target: '.search-custom',
-      content: 'Welcome to JewTube! Start your journey by searching for videos or browsing by channel using our powerful search feature.',
-      placement: 'bottom' as Placement,
-      disableBeacon: true,
-      spotlightPadding: 0,
-      styles: {
-        options: {
-          backgroundColor: '#F1F0FB',
-          borderRadius: '8px',
-          padding: '20px',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-        },
-      },
-    },
-    {
-      target: '.button-custom',
-      content: 'Access your account settings, customize your experience, and manage your profile here.',
-      placement: 'left' as Placement,
-      styles: {
-        options: {
-          backgroundColor: '#F1F0FB',
-          borderRadius: '8px',
-          padding: '20px',
-        },
-      },
-      spotlightPadding: 5,
-    },
-    {
-      target: '.video-grid',
-      content: 'Browse through our curated collection of Jewish videos from various channels.',
-      placement: 'top' as Placement,
-      styles: {
-        options: {
-          backgroundColor: '#F1F0FB',
-          borderRadius: '8px',
-          padding: '20px',
-        },
-      },
-      disableBeacon: true,
-      spotlightPadding: 10,
-    },
-    {
-      target: '.channels-grid',
-      content: 'Discover and subscribe to your favorite Jewish content creators.',
-      placement: 'top' as Placement,
-      styles: {
-        options: {
-          backgroundColor: '#F1F0FB',
-          borderRadius: '8px',
-          padding: '20px',
-        },
-      },
-      disableBeacon: true,
-      spotlightPadding: 10,
-    },
-  ];
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const handleJoyrideCallback = (data: CallBackProps) => {
-    const { status, action, index, type } = data;
-    const finishedStatuses: Status[] = [STATUS.FINISHED, STATUS.SKIPPED];
-
-    if (finishedStatuses.includes(status) || action === ACTIONS.CLOSE) {
-      setRunTour(false);
-      setTimeout(scrollToTop, 100);
-      return;
-    }
-
-    // Handle scrolling for specific steps
-    if (type === 'step:after' || action === ACTIONS.START) {
-      const nextIndex = action === ACTIONS.START ? 0 : index + 1;
-      
-      // If we're moving to the first step or going back to it, scroll to top
-      if (nextIndex === 0) {
-        setTimeout(scrollToTop, 300);
-        return;
-      }
-
-      // Handle scrolling for video grid and channels grid
-      if (nextIndex < tourSteps.length) {
-        const nextTarget = document.querySelector(tourSteps[nextIndex].target);
-        if (nextTarget && (nextIndex === 2 || nextIndex === 3)) {
-          setTimeout(() => {
-            const offset = nextIndex === 2 ? -50 : 0; // Adjust offset for video grid
-            const elementPosition = nextTarget.getBoundingClientRect().top + window.pageYOffset + offset;
-            window.scrollTo({
-              top: elementPosition,
-              behavior: 'smooth'
-            });
-          }, 300);
-        } else {
-          // For other steps, ensure we're at the top
-          setTimeout(scrollToTop, 300);
-        }
-      }
-    }
-
-    // Handle back button
-    if (action === ACTIONS.PREV) {
-      const prevIndex = index - 1;
-      if (prevIndex <= 1) { // If going back to first or second step
-        setTimeout(scrollToTop, 300);
-      }
-    }
-  };
-
   useEffect(() => {
-    // Check if it's the first visit
-    const hasVisited = localStorage.getItem('hasVisitedBefore');
-    if (!hasVisited) {
-      setShowTourDialog(true);
-    }
-
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
@@ -335,17 +214,6 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
     setSearchQuery("");
   };
 
-  const handleStartTour = () => {
-    setShowTourDialog(false);
-    localStorage.setItem('hasVisitedBefore', 'true');
-    setRunTour(true);
-  };
-
-  const handleSkipTour = () => {
-    setShowTourDialog(false);
-    localStorage.setItem('hasVisitedBefore', 'true');
-  };
-
   const handleNotificationsOpen = async (isOpen: boolean) => {
     if (isOpen) {
       // When opening the dropdown, mark all notifications as read
@@ -375,38 +243,6 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
 
   return (
     <header className="fixed top-0 left-0 right-0 h-16 bg-custom border-b border-gray-200 z-50 px-4">
-      <Joyride
-        steps={tourSteps}
-        run={runTour}
-        continuous
-        showProgress
-        showSkipButton
-        hideCloseButton
-        disableOverlayClose
-        spotlightClicks
-        scrollToFirstStep={false}
-        disableScrollParentFix={false}
-        styles={{
-          options: {
-            arrowColor: '#F1F0FB',
-            backgroundColor: '#F1F0FB',
-            overlayColor: 'rgba(0, 0, 0, 0.85)',
-            primaryColor: '#FF0000',
-            textColor: '#1A1F2C',
-            zIndex: 1000,
-          },
-        }}
-        callback={handleJoyrideCallback}
-        floaterProps={{
-          disableAnimation: true,
-          styles: {
-            floater: {
-              filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.15))',
-            },
-          },
-        }}
-      />
-      
       <div className="flex items-center justify-between h-full max-w-[1800px] mx-auto">
         <div className="flex items-center">
           <Link to="/">
@@ -509,14 +345,6 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => setRunTour(true)}
-            className="relative button-custom"
-          >
-            <Compass className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
             onClick={() => setShowAboutDialog(true)}
             className="relative button-custom"
           >
@@ -555,25 +383,6 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
           )}
         </div>
       </div>
-
-      <Dialog open={showTourDialog} onOpenChange={setShowTourDialog}>
-        <DialogContent className="bg-[#2A2A2A] text-white border-none max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-xl font-bold mb-2">Welcome to JewTube!</DialogTitle>
-            <DialogDescription className="text-gray-200">
-              Would you like to take a quick tour to learn about the main features of our platform?
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="flex gap-2 mt-4">
-            <Button variant="outline" onClick={handleSkipTour}>
-              Skip Tour
-            </Button>
-            <Button onClick={handleStartTour}>
-              Start Tour
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
 
       <Dialog open={showAboutDialog} onOpenChange={setShowAboutDialog}>
         <DialogContent className="bg-[#2A2A2A] text-white border-none max-w-2xl">
