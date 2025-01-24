@@ -29,7 +29,7 @@ export const VideoCard = ({
 
   return (
     <Link to={`/video/${id}`} className="block group">
-      <div className="aspect-video rounded-lg overflow-hidden bg-muted mb-3 shadow-md transition-shadow duration-200 hover:shadow-lg">
+      <div className="aspect-video rounded-lg overflow-hidden bg-muted mb-3 shadow-[0_3px_10px_rgb(0,0,0,0.2)] transition-all duration-300 hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:-translate-y-1">
         <img
           src={thumbnail}
           alt={title}
