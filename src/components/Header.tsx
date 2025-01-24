@@ -245,6 +245,29 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
     setShowNotifications(isOpen);
   };
 
+  const handleLanguageChange = async (newLanguage: string) => {
+    try {
+      const { error } = await supabase
+        .from('user_preferences')
+        .upsert({
+          user_id: session.user.id,
+          language: newLanguage
+        });
+
+      if (error) {
+        console.error('Error updating language:', error);
+        toast.error('Failed to update language preference');
+        return;
+      }
+
+      document.documentElement.dir = newLanguage === 'yi' ? 'rtl' : 'ltr';
+      toast.success('Language updated successfully');
+    } catch (error) {
+      console.error('Error updating language:', error);
+      toast.error('Failed to update language preference');
+    }
+  };
+
   return (
     <header className="fixed top-0 left-0 right-0 h-16 bg-custom border-b border-gray-200 z-50 px-4">
       <div className="flex items-center justify-between h-full max-w-[1800px] mx-auto">
