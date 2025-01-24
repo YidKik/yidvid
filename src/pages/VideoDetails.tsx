@@ -24,15 +24,21 @@ const VideoDetails = () => {
   const { data: video, isLoading: isLoadingVideo } = useQuery({
     queryKey: ["video", id],
     queryFn: async () => {
+      if (!id) throw new Error("No video ID provided");
+
       const { data: videoData, error: videoError } = await supabase
         .from("youtube_videos")
         .select("*, youtube_channels(thumbnail_url)")
-        .eq("video_id", id)  // Changed from id to video_id
-        .single();
+        .eq("video_id", id)
+        .maybeSingle();
 
       if (videoError) {
         console.error("Error fetching video:", videoError);
         throw videoError;
+      }
+
+      if (!videoData) {
+        throw new Error("Video not found");
       }
       
       console.log("Fetched video data:", videoData);
@@ -48,7 +54,7 @@ const VideoDetails = () => {
         .from("youtube_videos")
         .select("*")
         .eq("channel_id", video.channel_id)
-        .neq("video_id", id)  // Changed from id to video_id
+        .neq("video_id", id)
         .order("uploaded_at", { ascending: false })
         .limit(12);
 
@@ -58,9 +64,11 @@ const VideoDetails = () => {
   });
 
   const { data: comments, refetch: refetchComments } = useQuery({
-    queryKey: ["video-comments", video?.id],  // Use video.id (UUID) for comments
-    enabled: !!video?.id,  // Only run query when we have the video UUID
+    queryKey: ["video-comments", video?.id],
+    enabled: !!video?.id,
     queryFn: async () => {
+      if (!video?.id) throw new Error("No video UUID available");
+
       const { data, error } = await supabase
         .from("video_comments")
         .select(`
@@ -70,7 +78,7 @@ const VideoDetails = () => {
             name
           )
         `)
-        .eq("video_id", video.id)  // Use video.id (UUID) for comments
+        .eq("video_id", video.id)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
@@ -89,8 +97,17 @@ const VideoDetails = () => {
       return;
     }
 
+    if (!video?.id) {
+      toast({
+        title: "Error",
+        description: "Cannot add comment: video not found",
+        variant: "destructive",
+      });
+      return;
+    }
+
     const { error } = await supabase.from("video_comments").insert({
-      video_id: video?.id,  // Use video.id (UUID) for new comments
+      video_id: video.id,
       content,
       user_id: session.data.session.user.id,
     });
@@ -110,15 +127,6 @@ const VideoDetails = () => {
   if (!video) {
     return <div className="p-4">Video not found</div>;
   }
-
-  console.log("Rendering VideoInfo with props:", {
-    title: video.title,
-    channelName: video.channel_name,
-    channelThumbnail: video.youtube_channels?.thumbnail_url,
-    views: video.views,
-    uploadedAt: video.uploaded_at,
-    description: video.description,
-  });
 
   return (
     <div className="container mx-auto p-4 mt-16">
