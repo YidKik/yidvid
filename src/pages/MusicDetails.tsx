@@ -6,8 +6,9 @@ import { Sidebar } from "@/components/Sidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { BackButton } from "@/components/navigation/BackButton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Music } from "lucide-react";
+import { Music, Play } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
+import { Button } from "@/components/ui/button";
 
 const MusicDetails = () => {
   const { id } = useParams();
@@ -41,6 +42,10 @@ const MusicDetails = () => {
       return `${(count / 1000).toFixed(1)}K`;
     }
     return count.toString();
+  };
+
+  const handlePlay = () => {
+    window.open(`https://www.youtube.com/watch?v=${track?.track_id}`, '_blank');
   };
 
   if (isLoading) {
@@ -86,16 +91,21 @@ const MusicDetails = () => {
               <BackButton />
               <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div className="md:col-span-2">
-                  <div className="aspect-video w-full rounded-lg overflow-hidden bg-black">
-                    <iframe
-                      width="100%"
-                      height="100%"
-                      src={`https://www.youtube.com/embed/${track.track_id}`}
-                      title={track.title}
-                      frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
+                  <div className="aspect-video w-full rounded-lg overflow-hidden bg-black relative group">
+                    <img
+                      src={track.thumbnail}
+                      alt={track.title}
+                      className="w-full h-full object-cover"
                     />
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <Button
+                        onClick={handlePlay}
+                        size="icon"
+                        className="w-16 h-16 rounded-full bg-primary/90 hover:bg-primary transition-colors"
+                      >
+                        <Play className="w-8 h-8 text-white" />
+                      </Button>
+                    </div>
                   </div>
                 </div>
                 <div className="space-y-6">
