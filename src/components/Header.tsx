@@ -122,8 +122,7 @@ export const Header = () => {
 
   const hasResults = searchResults.videos.length > 0 || searchResults.channels.length > 0;
 
-  const iconClassName = "h-5 w-5 stroke-[1.5] hover:scale-110 transition-transform stroke-black";
-  const navigationIconClassName = "h-5 w-5 text-primary stroke-[1.5] hover:scale-110 transition-transform stroke-black fill-primary";
+  const iconClassName = "h-5 w-5 text-primary hover:scale-110 transition-transform";
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -208,7 +207,7 @@ export const Header = () => {
                   className="hover:bg-transparent p-0"
                 >
                   <Link to="/dashboard">
-                    <LayoutDashboard className={navigationIconClassName} />
+                    <LayoutDashboard className={iconClassName} />
                   </Link>
                 </Button>
               )}
@@ -219,7 +218,7 @@ export const Header = () => {
                 className="hover:bg-transparent p-0"
               >
                 <Link to="/settings">
-                  <Settings className={navigationIconClassName} />
+                  <Settings className={iconClassName} />
                 </Link>
               </Button>
               <Button
