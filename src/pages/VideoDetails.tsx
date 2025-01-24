@@ -26,13 +26,28 @@ const VideoDetails = () => {
     queryFn: async () => {
       if (!id) throw new Error("No video ID provided");
 
-      const { data: videoData, error: videoError } = await supabase
+      // First try to find by UUID
+      let { data: videoData, error: videoError } = await supabase
         .from("youtube_videos")
         .select("*, youtube_channels(thumbnail_url)")
-        .eq("video_id", id)
+        .eq("id", id)
         .maybeSingle();
 
-      if (videoError) {
+      // If not found by UUID, try video_id
+      if (!videoData && !videoError) {
+        const { data: videoByVideoId, error: videoByVideoIdError } = await supabase
+          .from("youtube_videos")
+          .select("*, youtube_channels(thumbnail_url)")
+          .eq("video_id", id)
+          .maybeSingle();
+
+        if (videoByVideoIdError) {
+          console.error("Error fetching video by video_id:", videoByVideoIdError);
+          throw videoByVideoIdError;
+        }
+
+        videoData = videoByVideoId;
+      } else if (videoError) {
         console.error("Error fetching video:", videoError);
         throw videoError;
       }
