@@ -199,7 +199,8 @@ export const VideoGrid = ({
                   onClick={(e) => {
                     e.preventDefault();
                     handlePageChange(currentPage - 1);
-                  }} 
+                  }}
+                  className="hover:bg-transparent hover:border-primary hover:text-primary transition-colors"
                 />
               </PaginationItem>
             )}
@@ -210,7 +211,8 @@ export const VideoGrid = ({
                   onClick={(e) => {
                     e.preventDefault();
                     handlePageChange(currentPage + 1);
-                  }} 
+                  }}
+                  className="hover:bg-transparent hover:border-primary hover:text-primary transition-colors"
                 />
               </PaginationItem>
             )}
