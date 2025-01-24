@@ -455,30 +455,8 @@ const Settings = () => {
         </section>
 
         {/* Language Settings */}
-        <section className="mb-12">
-          <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-            <Globe className="h-6 w-6" />
-            {t('languageSettings')}
-          </h2>
-          <Card className="p-6">
-            <div className="space-y-2">
-              <Label htmlFor="language">{t('interfaceLanguage')}</Label>
-              <Select value={language} onValueChange={handleLanguageChange}>
-                <SelectTrigger className="w-full bg-background border-input">
-                  <SelectValue placeholder="Select language" />
-                </SelectTrigger>
-                <SelectContent className="bg-background border-2 border-input shadow-lg">
-                  <SelectItem value="en" className="hover:bg-accent">English</SelectItem>
-                  <SelectItem value="es" className="hover:bg-accent">Español</SelectItem>
-                  <SelectItem value="fr" className="hover:bg-accent">Français</SelectItem>
-                  <SelectItem value="de" className="hover:bg-accent">Deutsch</SelectItem>
-                  <SelectItem value="it" className="hover:bg-accent">Italiano</SelectItem>
-                  <SelectItem value="yi" className="hover:bg-accent">יידיש</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </Card>
-        </section>
+        {/* Remove the language settings section since we only support English */}
+        {/* The rest of the settings sections remain unchanged */}
 
         {/* Notification Settings */}
         <section className="mb-12">
