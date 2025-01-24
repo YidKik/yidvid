@@ -39,15 +39,11 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
     <div className="w-full max-w-[1600px] mx-auto px-4 mb-12">
       <h2 className="text-2xl font-bold mb-8 text-accent">Most Viewed Videos</h2>
       <div className="relative">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="absolute left-2 top-[40%] -translate-y-1/2 z-10 p-0 hover:bg-transparent"
+        <ChevronLeft 
+          className="absolute left-2 top-[40%] -translate-y-1/2 z-10 w-8 h-8 text-primary hover:text-primary/80 cursor-pointer"
           onClick={handlePrevious}
-          disabled={currentIndex === 0}
-        >
-          <ChevronLeft className="h-8 w-8 text-primary hover:text-primary/80" />
-        </Button>
+          style={{ opacity: currentIndex === 0 ? 0.5 : 1 }}
+        />
 
         <div className="grid grid-cols-4 gap-4 w-full px-10">
           {currentVideos.map((video) => (
@@ -57,15 +53,11 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
           ))}
         </div>
 
-        <Button
-          variant="ghost"
-          size="icon"
-          className="absolute right-2 top-[40%] -translate-y-1/2 z-10 p-0 hover:bg-transparent"
+        <ChevronRight 
+          className="absolute right-2 top-[40%] -translate-y-1/2 z-10 w-8 h-8 text-primary hover:text-primary/80 cursor-pointer"
           onClick={handleNext}
-          disabled={currentIndex + videosPerPage >= videos.length}
-        >
-          <ChevronRight className="h-8 w-8 text-primary hover:text-primary/80" />
-        </Button>
+          style={{ opacity: currentIndex + videosPerPage >= videos.length ? 0.5 : 1 }}
+        />
       </div>
     </div>
   );
