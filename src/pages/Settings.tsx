@@ -258,7 +258,7 @@ const Settings = () => {
     loadUserPreferences();
   }, []);
 
-  const t = (key: keyof typeof translations) => getTranslation(key, language);
+  const t = (key: TranslationKey) => getTranslation(key);
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: backgroundColor, color: textColor }}>
@@ -516,4 +516,3 @@ const Settings = () => {
 };
 
 export default Settings;
-

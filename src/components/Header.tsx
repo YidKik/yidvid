@@ -57,7 +57,7 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
   const [showNotifications, setShowNotifications] = useState(false);
   const navigate = useNavigate();
   const { language } = useLanguage();
-  const t = (key: TranslationKey) => getTranslation(key, language);
+  const t = (key: TranslationKey) => getTranslation(key);
 
   useEffect(() => {
     // Get initial session
