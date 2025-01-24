@@ -52,33 +52,42 @@ export const ChannelsGrid = () => {
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
         {channels.map((channel, index) => (
-          <Link 
+          <div 
             key={channel.id}
-            to={`/channel/${channel.channel_id}`}
-            className="opacity-0 animate-fadeIn group flex flex-col items-center p-6 rounded-lg bg-card hover:bg-accent/5 transition-all duration-300 cursor-pointer shadow-sm hover:shadow-md"
+            className="opacity-0 animate-fadeIn group flex flex-col items-center p-6 rounded-lg bg-card hover:bg-accent/5 transition-all duration-300"
             style={{ 
               animationDelay: `${index * 0.1}s`,
               animationFillMode: 'forwards'
             }}
           >
-            <Avatar className="w-24 h-24 mb-4 transition-transform duration-300 group-hover:scale-110">
-              <AvatarImage
-                src={channel.thumbnail_url}
-                alt={channel.title}
-                className="object-cover"
-                onError={(e) => {
-                  console.error("Error loading thumbnail for channel:", channel.title);
-                  e.currentTarget.style.display = 'none';
-                }}
-              />
-              <AvatarFallback className="bg-primary/10">
-                <Youtube className="w-12 h-12 text-primary" />
-              </AvatarFallback>
-            </Avatar>
-            <h3 className="text-sm font-medium text-center line-clamp-2 group-hover:text-[#ea384c] transition-colors duration-300">
+            <a 
+              href={`https://www.youtube.com/channel/${channel.channel_id}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block mb-4"
+            >
+              <Avatar className="w-24 h-24 transition-transform duration-300 group-hover:scale-110 cursor-pointer">
+                <AvatarImage
+                  src={channel.thumbnail_url}
+                  alt={channel.title}
+                  className="object-cover"
+                  onError={(e) => {
+                    console.error("Error loading thumbnail for channel:", channel.title);
+                    e.currentTarget.style.display = 'none';
+                  }}
+                />
+                <AvatarFallback className="bg-primary/10">
+                  <Youtube className="w-12 h-12 text-primary" />
+                </AvatarFallback>
+              </Avatar>
+            </a>
+            <Link 
+              to={`/channel/${channel.channel_id}`}
+              className="text-sm font-medium text-center line-clamp-2 group-hover:text-[#ea384c] transition-colors duration-300"
+            >
               {channel.title}
-            </h3>
-          </Link>
+            </Link>
+          </div>
         ))}
       </div>
     </div>
