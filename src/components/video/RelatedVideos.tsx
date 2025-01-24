@@ -18,16 +18,17 @@ export const RelatedVideos = ({ videos }: RelatedVideosProps) => {
   return (
     <div>
       <h2 className="text-xl font-semibold mb-4">More videos</h2>
-      <div className="space-y-4">
-        {videos?.map((video) => (
-          <VideoCard
-            key={video.id}
-            {...video}
-            channelName={video.channel_name}
-            channelId={video.channel_id}
-            uploadedAt={video.uploaded_at}
-          />
-        ))}
+      <div className="h-[calc(3*240px)] overflow-y-auto pr-4 scrollbar-hide">
+        <div className="space-y-4">
+          {videos?.map((video) => (
+            <VideoCard
+              key={video.id}
+              {...video}
+              channelName={video.channel_name}
+              uploadedAt={video.uploaded_at}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );
