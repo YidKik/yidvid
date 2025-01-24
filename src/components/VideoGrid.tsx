@@ -4,6 +4,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Button } from "./ui/button";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 interface Channel {
   channel_id: string;
@@ -42,7 +50,7 @@ export const VideoGrid = ({
 }: VideoGridProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [retryCount, setRetryCount] = useState(0);
-  const [displayedVideos, setDisplayedVideos] = useState(maxVideos);
+  const [currentPage, setCurrentPage] = useState(1);
   const MAX_RETRIES = 3;
 
   const fetchVideos = async () => {
@@ -57,8 +65,7 @@ export const VideoGrid = ({
             thumbnail_url
           )
         `)
-        .order('uploaded_at', { ascending: false })
-        .limit(maxVideos * 2); // Fetch more videos for "See More" functionality
+        .order('uploaded_at', { ascending: false });
 
       if (error) {
         console.error('Error fetching videos:', error);
@@ -81,7 +88,7 @@ export const VideoGrid = ({
   };
 
   const { data: videos = [], error } = useQuery({
-    queryKey: ['videos', searchQuery, maxVideos],
+    queryKey: ['videos', searchQuery],
     queryFn: fetchVideos,
     retry: MAX_RETRIES,
     retryDelay: (attemptIndex) => Math.min(1000 * Math.pow(2, attemptIndex), 30000),
@@ -106,7 +113,7 @@ export const VideoGrid = ({
       video.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       video.channel_name.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesChannel && matchesSearch;
-  }).slice(0, displayedVideos);
+  });
 
   if (isLoading) {
     return (
@@ -124,14 +131,21 @@ export const VideoGrid = ({
     );
   }
 
-  // Create rows of videos
+  // Calculate pagination
+  const totalPages = Math.ceil(filteredVideos.length / maxVideos);
+  const startIndex = (currentPage - 1) * maxVideos;
+  const endIndex = startIndex + maxVideos;
+  const currentVideos = filteredVideos.slice(startIndex, endIndex);
+
+  // Create rows of videos for current page
   const rows = [];
-  for (let i = 0; i < filteredVideos.length; i += rowSize) {
-    rows.push(filteredVideos.slice(i, i + rowSize));
+  for (let i = 0; i < currentVideos.length; i += rowSize) {
+    rows.push(currentVideos.slice(i, i + rowSize));
   }
 
-  const handleSeeMore = () => {
-    setDisplayedVideos(prev => prev + maxVideos);
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
@@ -154,16 +168,47 @@ export const VideoGrid = ({
           ))}
         </div>
       ))}
-      {videos.length > displayedVideos && (
-        <div className="flex justify-center mt-8">
-          <Button 
-            onClick={handleSeeMore}
-            variant="outline"
-            className="px-8"
-          >
-            See More
-          </Button>
-        </div>
+      {totalPages > 1 && (
+        <Pagination className="mt-8">
+          <PaginationContent>
+            {currentPage > 1 && (
+              <PaginationItem>
+                <PaginationPrevious 
+                  href="#" 
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handlePageChange(currentPage - 1);
+                  }} 
+                />
+              </PaginationItem>
+            )}
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <PaginationItem key={page}>
+                <PaginationLink
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handlePageChange(page);
+                  }}
+                  isActive={currentPage === page}
+                >
+                  {page}
+                </PaginationLink>
+              </PaginationItem>
+            ))}
+            {currentPage < totalPages && (
+              <PaginationItem>
+                <PaginationNext 
+                  href="#" 
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handlePageChange(currentPage + 1);
+                  }} 
+                />
+              </PaginationItem>
+            )}
+          </PaginationContent>
+        </Pagination>
       )}
     </div>
   );
