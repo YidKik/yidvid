@@ -30,7 +30,7 @@ export const VideoCard = ({
 
   return (
     <div 
-      className="group cursor-pointer opacity-0 animate-fadeIn"
+      className="group cursor-pointer opacity-0 animate-fadeIn rounded-lg shadow-sm hover:shadow-md transition-all duration-300"
       style={{ animationDelay, animationFillMode: 'forwards' }}
     >
       <Link to={`/music/${id}`} className="block">
@@ -42,7 +42,7 @@ export const VideoCard = ({
           />
         </div>
       </Link>
-      <div className="flex gap-3">
+      <div className="flex gap-3 p-3">
         <div className="flex-shrink-0">
           <Link to={`/artist/${channelId}`}>
             <Avatar className="w-10 h-10 rounded-full border-2 border-background shadow-sm transition-transform duration-300 hover:scale-110">
