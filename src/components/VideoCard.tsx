@@ -10,7 +10,7 @@ interface VideoCardProps {
   channelName: string;
   channelThumbnail?: string;
   views?: number;
-  uploadedAt: string;
+  uploadedAt: string | Date;
 }
 
 export const VideoCard = ({
