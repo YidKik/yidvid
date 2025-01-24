@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { getTranslation } from "@/utils/translations";
+import { getTranslation, TranslationKey } from "@/utils/translations";
 import {
   Dialog,
   DialogContent,
@@ -57,7 +57,7 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
   const [showNotifications, setShowNotifications] = useState(false);
   const navigate = useNavigate();
   const { language } = useLanguage();
-  const t = (key: keyof typeof translations) => getTranslation(key, language);
+  const t = (key: TranslationKey) => getTranslation(key, language);
 
   useEffect(() => {
     // Get initial session

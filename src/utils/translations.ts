@@ -1,4 +1,4 @@
-type TranslationKey = 
+export type TranslationKey = 
   | 'settings'
   | 'customizeColors'
   | 'backgroundColor'
@@ -11,6 +11,7 @@ type TranslationKey =
   | 'userId'
   | 'uniqueIdentifier'
   | 'signOut'
+  | 'signIn'
   | 'deleteAccount'
   | 'accessibility'
   | 'highContrastMode'
@@ -291,5 +292,10 @@ export const translations: Translations = {
 };
 
 export const getTranslation = (key: TranslationKey, lang: string): string => {
-  return translations[key][lang as keyof typeof translations[typeof key]] || translations[key]['en'];
+  const translation = translations[key];
+  if (!translation) {
+    console.warn(`Translation missing for key: ${key}`);
+    return key;
+  }
+  return translation[lang as keyof typeof translation] || translation['en'];
 };
