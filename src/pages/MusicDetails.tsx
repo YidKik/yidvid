@@ -9,7 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Music, Play, Pause } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { Button } from "@/components/ui/button";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { toast } from "sonner";
 
 const MusicDetails = () => {
@@ -20,6 +20,7 @@ const MusicDetails = () => {
   const { data: track, isLoading } = useQuery({
     queryKey: ['music-track', id],
     queryFn: async () => {
+      console.log('Fetching track with ID:', id);
       const { data, error } = await supabase
         .from('music_tracks')
         .select(`
@@ -33,7 +34,12 @@ const MusicDetails = () => {
         .eq('id', id)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching track:', error);
+        throw error;
+      }
+      
+      console.log('Fetched track:', data);
       return data;
     },
   });
@@ -49,6 +55,10 @@ const MusicDetails = () => {
   };
 
   const handlePlay = () => {
+    console.log('Play button clicked');
+    console.log('Audio URL:', track?.audio_url);
+    console.log('Audio ref:', audioRef.current);
+
     if (!track?.audio_url) {
       toast.error("No audio file available for this track");
       return;
@@ -70,6 +80,24 @@ const MusicDetails = () => {
   const handleAudioEnded = () => {
     setIsPlaying(false);
   };
+
+  // Update play count when track starts playing
+  useEffect(() => {
+    if (isPlaying && track?.id) {
+      const updatePlays = async () => {
+        const { error } = await supabase
+          .from('music_tracks')
+          .update({ plays: (track.plays || 0) + 1 })
+          .eq('id', track.id);
+        
+        if (error) {
+          console.error('Error updating play count:', error);
+        }
+      };
+      
+      updatePlays();
+    }
+  }, [isPlaying, track?.id, track?.plays]);
 
   if (isLoading) {
     return (
@@ -126,7 +154,6 @@ const MusicDetails = () => {
                       onClick={handlePlay}
                       size="icon"
                       className="w-12 h-12 rounded-full bg-primary hover:bg-primary/90 transition-colors"
-                      disabled={!track.audio_url}
                     >
                       {isPlaying ? (
                         <Pause className="w-6 h-6 text-white" />
