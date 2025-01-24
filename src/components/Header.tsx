@@ -5,11 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { SearchBar } from "./search/SearchBar";
 
-interface HeaderProps {
-  onSignInClick?: () => void;
-}
-
-export const Header = ({ onSignInClick }: HeaderProps) => {
+export const Header = () => {
   const { data: session } = useQuery({
     queryKey: ["session"],
     queryFn: async () => {
@@ -60,11 +56,8 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
                 </Avatar>
               </Link>
             ) : (
-              <Button 
-                variant="default" 
-                onClick={onSignInClick}
-              >
-                Sign In
+              <Button variant="default" asChild>
+                <Link to="/auth">Sign In</Link>
               </Button>
             )}
           </nav>
