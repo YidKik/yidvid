@@ -55,7 +55,7 @@ const Index = () => {
               </ToggleGroup>
             </div>
             <div className="video-grid mt-4">
-              <VideoGrid />
+              <VideoGrid maxVideos={12} rowSize={4} />
             </div>
             <div className="channels-grid">
               <ChannelsGrid />

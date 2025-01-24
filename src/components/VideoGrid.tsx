@@ -16,7 +16,7 @@ interface Video {
   video_id: string;
   channel_name: string;
   channel_id: string;
-  uploaded_at: string; // Changed from Date to string
+  uploaded_at: string;
   views: number;
   youtube_channels?: {
     channel_id: string;
@@ -28,9 +28,17 @@ interface VideoGridProps {
   channels?: Channel[];
   selectedChannel?: string | null;
   searchQuery?: string;
+  maxVideos?: number;
+  rowSize?: number;
 }
 
-export const VideoGrid = ({ channels = [], selectedChannel = null, searchQuery = "" }: VideoGridProps) => {
+export const VideoGrid = ({ 
+  channels = [], 
+  selectedChannel = null, 
+  searchQuery = "",
+  maxVideos = 12,
+  rowSize = 4
+}: VideoGridProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [retryCount, setRetryCount] = useState(0);
   const MAX_RETRIES = 3;
@@ -47,7 +55,8 @@ export const VideoGrid = ({ channels = [], selectedChannel = null, searchQuery =
             thumbnail_url
           )
         `)
-        .order('uploaded_at', { ascending: false });
+        .order('uploaded_at', { ascending: false })
+        .limit(maxVideos);
 
       if (error) {
         console.error('Error fetching videos:', error);
@@ -70,7 +79,7 @@ export const VideoGrid = ({ channels = [], selectedChannel = null, searchQuery =
   };
 
   const { data: videos = [], error } = useQuery({
-    queryKey: ['videos', searchQuery],
+    queryKey: ['videos', searchQuery, maxVideos],
     queryFn: fetchVideos,
     retry: MAX_RETRIES,
     retryDelay: (attemptIndex) => Math.min(1000 * Math.pow(2, attemptIndex), 30000),
@@ -95,7 +104,7 @@ export const VideoGrid = ({ channels = [], selectedChannel = null, searchQuery =
       video.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       video.channel_name.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesChannel && matchesSearch;
-  });
+  }).slice(0, maxVideos);
 
   if (isLoading) {
     return (
@@ -113,20 +122,31 @@ export const VideoGrid = ({ channels = [], selectedChannel = null, searchQuery =
     );
   }
 
+  // Create rows of videos
+  const rows = [];
+  for (let i = 0; i < filteredVideos.length; i += rowSize) {
+    rows.push(filteredVideos.slice(i, i + rowSize));
+  }
+
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
-      {filteredVideos.map((video) => (
-        <VideoCard
-          key={video.id}
-          id={video.id}
-          title={video.title}
-          thumbnail={video.thumbnail}
-          channelName={video.channel_name}
-          views={video.views}
-          uploadedAt={new Date(video.uploaded_at)}
-          channelId={video.channel_id}
-          channelThumbnail={video.youtube_channels?.thumbnail_url}
-        />
+    <div className="space-y-8 p-4">
+      {rows.map((row, rowIndex) => (
+        <div key={rowIndex} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+          {row.map((video, index) => (
+            <VideoCard
+              key={video.id}
+              id={video.id}
+              title={video.title}
+              thumbnail={video.thumbnail}
+              channelName={video.channel_name}
+              views={video.views}
+              uploadedAt={new Date(video.uploaded_at)}
+              channelId={video.channel_id}
+              channelThumbnail={video.youtube_channels?.thumbnail_url}
+              index={rowIndex * rowSize + index}
+            />
+          ))}
+        </div>
       ))}
     </div>
   );
