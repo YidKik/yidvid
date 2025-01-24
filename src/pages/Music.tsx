@@ -6,6 +6,7 @@ import { useState } from "react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Music, Video } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { MusicGrid } from "@/components/MusicGrid";
 
 const MusicPage = () => {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
@@ -52,9 +53,8 @@ const MusicPage = () => {
                 </ToggleGroupItem>
               </ToggleGroup>
             </div>
-            <div className="text-center mt-8">
-              <h1 className="text-2xl font-bold">Music Page</h1>
-              <p className="text-muted-foreground mt-2">Coming soon...</p>
+            <div className="music-grid mt-4">
+              <MusicGrid maxTracks={12} rowSize={4} />
             </div>
           </main>
         </div>

@@ -41,6 +41,89 @@ export type Database = {
           },
         ]
       }
+      music_artists: {
+        Row: {
+          artist_id: string
+          created_at: string
+          description: string | null
+          id: string
+          thumbnail_url: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          artist_id: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          thumbnail_url?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          artist_id?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          thumbnail_url?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      music_tracks: {
+        Row: {
+          artist_id: string
+          artist_name: string
+          created_at: string
+          duration: number | null
+          genre: Database["public"]["Enums"]["music_genre"] | null
+          id: string
+          plays: number | null
+          thumbnail: string
+          title: string
+          track_id: string
+          updated_at: string
+          uploaded_at: string
+        }
+        Insert: {
+          artist_id: string
+          artist_name: string
+          created_at?: string
+          duration?: number | null
+          genre?: Database["public"]["Enums"]["music_genre"] | null
+          id?: string
+          plays?: number | null
+          thumbnail: string
+          title: string
+          track_id: string
+          updated_at?: string
+          uploaded_at: string
+        }
+        Update: {
+          artist_id?: string
+          artist_name?: string
+          created_at?: string
+          duration?: number | null
+          genre?: Database["public"]["Enums"]["music_genre"] | null
+          id?: string
+          plays?: number | null
+          thumbnail?: string
+          title?: string
+          track_id?: string
+          updated_at?: string
+          uploaded_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "music_tracks_artist_id_fkey"
+            columns: ["artist_id"]
+            isOneToOne: false
+            referencedRelation: "music_artists"
+            referencedColumns: ["artist_id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
@@ -370,6 +453,14 @@ export type Database = {
     }
     Enums: {
       interaction_type_enum: "view" | "like" | "dislike" | "save"
+      music_genre:
+        | "pop"
+        | "rock"
+        | "hip_hop"
+        | "jazz"
+        | "classical"
+        | "electronic"
+        | "other"
     }
     CompositeTypes: {
       [_ in never]: never
