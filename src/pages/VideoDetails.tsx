@@ -27,7 +27,7 @@ const VideoDetails = () => {
       const { data: videoData, error: videoError } = await supabase
         .from("youtube_videos")
         .select("*, youtube_channels(thumbnail_url)")
-        .eq("id", id)
+        .eq("video_id", id)  // Changed from id to video_id
         .single();
 
       if (videoError) {
@@ -48,7 +48,7 @@ const VideoDetails = () => {
         .from("youtube_videos")
         .select("*")
         .eq("channel_id", video.channel_id)
-        .neq("id", id)
+        .neq("video_id", id)  // Changed from id to video_id
         .order("uploaded_at", { ascending: false })
         .limit(12);
 
@@ -58,7 +58,8 @@ const VideoDetails = () => {
   });
 
   const { data: comments, refetch: refetchComments } = useQuery({
-    queryKey: ["video-comments", id],
+    queryKey: ["video-comments", video?.id],  // Use video.id (UUID) for comments
+    enabled: !!video?.id,  // Only run query when we have the video UUID
     queryFn: async () => {
       const { data, error } = await supabase
         .from("video_comments")
@@ -69,7 +70,7 @@ const VideoDetails = () => {
             name
           )
         `)
-        .eq("video_id", id)
+        .eq("video_id", video.id)  // Use video.id (UUID) for comments
         .order("created_at", { ascending: false });
 
       if (error) throw error;
@@ -89,7 +90,7 @@ const VideoDetails = () => {
     }
 
     const { error } = await supabase.from("video_comments").insert({
-      video_id: id,
+      video_id: video?.id,  // Use video.id (UUID) for new comments
       content,
       user_id: session.data.session.user.id,
     });
@@ -134,7 +135,7 @@ const VideoDetails = () => {
             description={video.description}
           />
           
-          <VideoInteractions videoId={id!} />
+          <VideoInteractions videoId={video.id} />
           
           <div className="mt-8">
             <h2 className="text-xl font-semibold mb-4">Comments</h2>
