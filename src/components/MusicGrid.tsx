@@ -69,11 +69,26 @@ export const MusicGrid = ({
         throw error;
       }
 
+      console.log('Raw tracks data:', tracksData);
+
       if (!tracksData || tracksData.length === 0) {
-        console.log('No tracks found in the database');
-        toast.info("No music tracks found. Try adding some artists first.");
+        // Check if we have any artists in the music_artists table
+        const { data: artistsData, error: artistsError } = await supabase
+          .from("music_artists")
+          .select("*");
+
+        if (artistsError) {
+          console.error('Error checking artists:', artistsError);
+        } else {
+          console.log('Artists in database:', artistsData);
+          if (artistsData && artistsData.length > 0) {
+            toast.info("Artists found but no tracks available. Please wait a few moments for tracks to be fetched.");
+          } else {
+            toast.info("No music tracks or artists found. Try adding some artists first.");
+          }
+        }
       } else {
-        console.log('Fetched tracks:', tracksData);
+        console.log('Successfully fetched tracks:', tracksData);
       }
 
       return tracksData || [];
