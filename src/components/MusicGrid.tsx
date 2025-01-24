@@ -63,7 +63,6 @@ export const MusicGrid = ({
         `)
         .order('uploaded_at', { ascending: false });
 
-      // Add filters if needed
       if (selectedArtist) {
         query = query.eq('artist_id', selectedArtist);
       }
@@ -79,10 +78,7 @@ export const MusicGrid = ({
         throw error;
       }
 
-      console.log('Raw tracks data:', tracksData);
-
       if (!tracksData || tracksData.length === 0) {
-        // Check if we have any artists in the music_artists table
         const { data: artistsData, error: artistsError } = await supabase
           .from("music_artists")
           .select("*");
@@ -97,8 +93,6 @@ export const MusicGrid = ({
             toast.info("No music tracks or artists found. Try adding some artists first.");
           }
         }
-      } else {
-        console.log('Successfully fetched tracks:', tracksData);
       }
 
       return tracksData || [];
@@ -126,12 +120,10 @@ export const MusicGrid = ({
   }, [tracks]);
 
   useEffect(() => {
-    // Refetch tracks when component mounts or when filters change
     refetch();
   }, [refetch, selectedArtist, searchQuery]);
 
   if (error) {
-    console.error('Query error:', error);
     return (
       <div className="text-center py-8">
         <p className="text-red-500">Error loading tracks. Please try again later.</p>
@@ -192,9 +184,12 @@ export const MusicGrid = ({
   };
 
   return (
-    <div className="space-y-8 p-4">
+    <div className="space-y-8 p-6">
       {rows.map((row, rowIndex) => (
-        <div key={rowIndex} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+        <div 
+          key={rowIndex} 
+          className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4"
+        >
           {row.map((track, index) => (
             <MusicTrackCard
               key={track.id}

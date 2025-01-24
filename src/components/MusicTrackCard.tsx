@@ -1,7 +1,8 @@
 import { formatDistanceToNow } from "date-fns";
 import { Link } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Music } from "lucide-react";
+import { Music, Play } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface MusicTrackCardProps {
   id: string;
@@ -46,30 +47,36 @@ export const MusicTrackCard = ({
 
   return (
     <div 
-      className="group relative bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300 animate-fadeIn"
+      className={cn(
+        "group relative bg-background rounded-lg transition-all duration-300 animate-fadeIn hover:bg-accent/50",
+        "cursor-pointer"
+      )}
       style={{ animationDelay: `${index * 100}ms` }}
     >
       <Link to={`/music/${id}`} className="block">
-        <div className="aspect-video relative rounded-t-lg overflow-hidden">
+        <div className="relative aspect-square rounded-lg overflow-hidden mb-3">
           <img
             src={thumbnail}
             alt={title}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
+          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+            <Play className="w-12 h-12 text-white" />
+          </div>
           {duration && (
             <div className="absolute bottom-2 right-2 bg-black/80 text-white text-xs px-2 py-1 rounded">
               {formatDuration(duration)}
             </div>
           )}
         </div>
-        <div className="p-3">
+        <div className="px-3 pb-4">
           <div className="flex gap-3">
             <Link 
               to={`/artist/${artistId}`}
               className="flex-shrink-0"
               onClick={(e) => e.stopPropagation()}
             >
-              <Avatar className="w-9 h-9">
+              <Avatar className="w-8 h-8">
                 <AvatarImage src={artistThumbnail || undefined} />
                 <AvatarFallback>
                   <Music className="w-4 h-4" />
@@ -77,17 +84,17 @@ export const MusicTrackCard = ({
               </Avatar>
             </Link>
             <div className="flex-grow min-w-0">
-              <h3 className="text-youtube-title font-medium line-clamp-2 mb-1">
+              <h3 className="font-medium line-clamp-2 mb-1 text-sm">
                 {title}
               </h3>
               <Link
                 to={`/artist/${artistId}`}
-                className="text-youtube-small text-secondary hover:text-secondary-hover"
+                className="text-xs text-muted-foreground hover:text-primary transition-colors"
                 onClick={(e) => e.stopPropagation()}
               >
                 {artistName}
               </Link>
-              <div className="text-youtube-small text-secondary mt-1">
+              <div className="text-xs text-muted-foreground mt-1">
                 {formatPlays(plays)} plays • {formatDistanceToNow(uploadedAt, { addSuffix: true })}
               </div>
             </div>
