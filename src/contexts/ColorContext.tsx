@@ -96,6 +96,8 @@ export function ColorProvider({ children }: { children: React.ReactNode }) {
           button_color: newColors.buttonColor,
           logo_color: newColors.logoColor,
           updated_at: new Date().toISOString(),
+        }, {
+          onConflict: 'user_id'
         });
 
       if (error) {
