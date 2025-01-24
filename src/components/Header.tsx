@@ -346,6 +346,33 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
     localStorage.setItem('hasVisitedBefore', 'true');
   };
 
+  const handleNotificationsOpen = async (isOpen: boolean) => {
+    if (isOpen) {
+      // When opening the dropdown, mark all notifications as read
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        const { error } = await supabase
+          .from('video_notifications')
+          .update({ is_read: true })
+          .eq('user_id', session.user.id)
+          .eq('is_read', false);
+
+        if (error) {
+          console.error('Error marking notifications as read:', error);
+          toast.error("Failed to update notifications");
+          return;
+        }
+
+        // Update local state to reflect the changes
+        setNotifications(notifications.map(notification => ({
+          ...notification,
+          is_read: true
+        })));
+      }
+    }
+    setShowNotifications(isOpen);
+  };
+
   return (
     <header className="fixed top-0 left-0 right-0 h-16 bg-custom border-b border-gray-200 z-50 px-4">
       <Joyride
@@ -435,7 +462,7 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
 
         <div className="flex items-center gap-2">
           {session && (
-            <DropdownMenu open={showNotifications} onOpenChange={setShowNotifications}>
+            <DropdownMenu open={showNotifications} onOpenChange={handleNotificationsOpen}>
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
@@ -462,7 +489,7 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
                   notifications.map((notification) => (
                     <DropdownMenuItem
                       key={notification.id}
-                      className={`p-4 cursor-pointer hover:bg-[#3A3A3A] ${!notification.is_read ? 'bg-[#404040]' : ''}`}
+                      className={`p-4 cursor-pointer hover:bg-[#3A3A3A]`}
                       onClick={() => handleNotificationClick(notification.id, notification.video_id)}
                     >
                       <div className="flex flex-col gap-1">
