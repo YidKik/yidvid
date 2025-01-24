@@ -10,6 +10,7 @@ import { Music, Video } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { MostViewedVideos } from "@/components/video/MostViewedVideos";
 
 const Index = () => {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
@@ -29,7 +30,6 @@ const Index = () => {
         throw error;
       }
 
-      // Transform the data to match the VideoGrid props interface
       return (data || []).map(video => ({
         id: video.video_id,
         title: video.title,
@@ -37,7 +37,34 @@ const Index = () => {
         channelName: video.channel_name,
         channelId: video.channel_id,
         views: video.views || 0,
-        uploadedAt: video.uploaded_at // Keep as ISO string from Supabase
+        uploadedAt: video.uploaded_at
+      }));
+    },
+  });
+
+  // New query for most viewed videos
+  const { data: mostViewedVideos } = useQuery({
+    queryKey: ["most_viewed_videos"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("youtube_videos")
+        .select("*")
+        .order("views", { ascending: false })
+        .limit(12);
+
+      if (error) {
+        console.error("Error fetching most viewed videos:", error);
+        throw error;
+      }
+
+      return (data || []).map(video => ({
+        id: video.video_id,
+        title: video.title,
+        thumbnail: video.thumbnail,
+        channelName: video.channel_name,
+        channelId: video.channel_id,
+        views: video.views || 0,
+        uploadedAt: video.uploaded_at
       }));
     },
   });
@@ -97,6 +124,11 @@ const Index = () => {
                 isLoading={isLoading}
               />
             </div>
+            {mostViewedVideos && mostViewedVideos.length > 0 && (
+              <div className="mt-8">
+                <MostViewedVideos videos={mostViewedVideos} />
+              </div>
+            )}
             <div className="channels-grid">
               <ChannelsGrid />
             </div>
