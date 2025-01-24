@@ -21,7 +21,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useColors } from "@/contexts/ColorContext";
-import { Settings as SettingsIcon, Volume2, Globe, Bell, Shield } from "lucide-react";
+import { Settings as SettingsIcon, Volume2, Globe, Bell } from "lucide-react";
 import { translations, getTranslation } from "@/utils/translations";
 
 const Settings = () => {
@@ -454,10 +454,6 @@ const Settings = () => {
           </Card>
         </section>
 
-        {/* Language Settings */}
-        {/* Remove the language settings section since we only support English */}
-        {/* The rest of the settings sections remain unchanged */}
-
         {/* Notification Settings */}
         <section className="mb-12">
           <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
@@ -490,57 +486,6 @@ const Settings = () => {
                 id="push-notifications"
                 checked={pushNotifications}
                 onCheckedChange={setPushNotifications}
-              />
-            </div>
-          </Card>
-        </section>
-
-        {/* Privacy Settings */}
-        <section className="mb-12">
-          <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-            <Shield className="h-6 w-6" />
-            {t('privacySettings')}
-          </h2>
-          <Card className="p-6 space-y-6">
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="private-account">{t('privateAccount')}</Label>
-                <p className="text-sm text-muted-foreground">
-                  {t('showActivityFollowers')}
-                </p>
-              </div>
-              <Switch
-                id="private-account"
-                checked={privateAccount}
-                onCheckedChange={setPrivateAccount}
-              />
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="data-collection">{t('dataCollection')}</Label>
-                <p className="text-sm text-muted-foreground">
-                  {t('allowDataCollection')}
-                </p>
-              </div>
-              <Switch
-                id="data-collection"
-                checked={dataCollection}
-                onCheckedChange={setDataCollection}
-              />
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="auto-hide-comments">{t('autoHideComments')}</Label>
-                <p className="text-sm text-muted-foreground">
-                  {t('autoHideComments')}
-                </p>
-              </div>
-              <Switch
-                id="auto-hide-comments"
-                checked={autoHideComments}
-                onCheckedChange={setAutoHideComments}
               />
             </div>
           </Card>
@@ -608,4 +553,3 @@ const Settings = () => {
 };
 
 export default Settings;
-
