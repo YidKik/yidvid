@@ -8,11 +8,30 @@ import { useState } from "react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Music, Video } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 const Index = () => {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [activeView, setActiveView] = useState("videos");
   const navigate = useNavigate();
+
+  const { data: videos, isLoading } = useQuery({
+    queryKey: ["youtube_videos"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("youtube_videos")
+        .select("*")
+        .order("uploaded_at", { ascending: false });
+
+      if (error) {
+        console.error("Error fetching videos:", error);
+        throw error;
+      }
+
+      return data || [];
+    },
+  });
 
   const handleViewChange = (value: string) => {
     if (value === "music") {
@@ -62,7 +81,11 @@ const Index = () => {
               </div>
             </div>
             <div className="video-grid mt-4">
-              <VideoGrid maxVideos={12} rowSize={4} />
+              <VideoGrid 
+                videos={videos} 
+                maxVideos={12} 
+                rowSize={4} 
+              />
             </div>
             <div className="channels-grid">
               <ChannelsGrid />
