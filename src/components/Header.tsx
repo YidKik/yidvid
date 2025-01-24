@@ -136,7 +136,7 @@ export const Header = () => {
   const iconClassName = "text-primary hover:scale-110 transition-transform";
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-xl bg-gradient-to-r from-red-50/30 via-background/80 to-red-50/30 supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 items-center justify-between gap-4 px-4">
         {/* Logo Section */}
         <Link to="/" className="flex-shrink-0">
@@ -225,7 +225,7 @@ export const Header = () => {
                   className="hover:bg-transparent p-0"
                 >
                   <Link to="/dashboard">
-                    <LayoutDashboard className={iconClassName} />
+                    <LayoutDashboard className="text-primary hover:scale-110 transition-transform" />
                   </Link>
                 </Button>
               )}
@@ -236,7 +236,7 @@ export const Header = () => {
                 className="hover:bg-transparent p-0"
               >
                 <Link to="/settings">
-                  <Settings className={iconClassName} />
+                  <Settings className="text-primary hover:scale-110 transition-transform" />
                 </Link>
               </Button>
               <Button
@@ -245,7 +245,7 @@ export const Header = () => {
                 onClick={handleSignOut}
                 className="hover:bg-transparent p-0"
               >
-                <LogOut className={iconClassName} />
+                <LogOut className="text-primary hover:scale-110 transition-transform" />
               </Button>
               <Avatar>
                 <AvatarImage src={session.user.user_metadata.avatar_url} />
