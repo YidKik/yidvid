@@ -48,36 +48,36 @@ export const DashboardAnalytics = () => {
         if (profileError) throw profileError;
         if (!profile?.is_admin) throw new Error("Unauthorized access");
 
-        // Get total channels with error handling
-        const { data: channels, error: channelsError } = await supabase
+        // Get total channels count
+        const { count: totalChannels, error: channelsError } = await supabase
           .from("youtube_channels")
-          .select("*", { count: "exact" });
+          .select("*", { count: "exact", head: true });
 
         if (channelsError) throw channelsError;
 
-        // Get total videos with error handling
-        const { data: videos, error: videosError } = await supabase
+        // Get total videos count
+        const { count: totalVideos, error: videosError } = await supabase
           .from("youtube_videos")
-          .select("*", { count: "exact" });
+          .select("*", { count: "exact", head: true });
 
         if (videosError) throw videosError;
 
-        // Get total views with error handling
-        const { data: views, error: viewsError } = await supabase
+        // Get total views count
+        const { count: totalViews, error: viewsError } = await supabase
           .from("user_video_interactions")
-          .select("*", { count: "exact" })
+          .select("*", { count: "exact", head: true })
           .eq('interaction_type', 'view');
 
         if (viewsError) throw viewsError;
 
-        // Get total users with error handling
-        const { data: users, error: usersError } = await supabase
+        // Get total users count
+        const { count: totalUsers, error: usersError } = await supabase
           .from("profiles")
-          .select("*", { count: "exact" });
+          .select("*", { count: "exact", head: true });
 
         if (usersError) throw usersError;
 
-        // Get session data for watch time calculation with error handling
+        // Get session data for watch time calculation
         const { data: sessions, error: sessionsError } = await supabase
           .from("user_analytics")
           .select("session_start, session_end")
@@ -85,10 +85,10 @@ export const DashboardAnalytics = () => {
 
         if (sessionsError) throw sessionsError;
 
-        // Get anonymous sessions with error handling
-        const { data: anonSessions, error: anonSessionsError } = await supabase
+        // Get anonymous sessions count
+        const { count: anonymousUsers, error: anonSessionsError } = await supabase
           .from("user_analytics")
-          .select("*", { count: "exact" })
+          .select("*", { count: "exact", head: true })
           .is('user_id', null);
 
         if (anonSessionsError) throw anonSessionsError;
@@ -112,19 +112,14 @@ export const DashboardAnalytics = () => {
           { hour: 0, count: 0 }
         );
 
-        // Count unique anonymous users
-        const uniqueAnonUsers = new Set(anonSessions?.map(session => 
-          `${session.page_path}-${new Date(session.session_start).toDateString()}`
-        )).size;
-
         return {
-          totalChannels: channels?.length || 0,
-          totalVideos: videos?.length || 0,
-          totalViews: views?.length || 0,
-          totalUsers: users?.length || 0,
+          totalChannels: totalChannels || 0,
+          totalVideos: totalVideos || 0,
+          totalViews: totalViews || 0,
+          totalUsers: totalUsers || 0,
           totalHours: Math.round(totalHours || 0),
           mostPopularHour: mostPopularHour.hour,
-          anonymousUsers: uniqueAnonUsers || 0,
+          anonymousUsers: anonymousUsers || 0,
         };
       } catch (error) {
         console.error('Error fetching dashboard stats:', error);
