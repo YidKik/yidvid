@@ -21,15 +21,14 @@ const queryClient = new QueryClient({
   },
 })
 
-// Wrap the entire app with React.StrictMode
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <Router>
-      <QueryClientProvider client={queryClient}>
-        <TooltipProvider delayDuration={0}>
+    <QueryClientProvider client={queryClient}>
+      <Router>
+        <TooltipProvider>
           <App />
         </TooltipProvider>
-      </QueryClientProvider>
-    </Router>
+      </Router>
+    </QueryClientProvider>
   </React.StrictMode>
 );
