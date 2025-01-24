@@ -6,11 +6,15 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Settings, LogOut, LayoutDashboard, Search } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export const Header = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [showResults, setShowResults] = useState(false);
+  const [searchResults, setSearchResults] = useState<{
+    videos: any[];
+    channels: any[];
+  }>({ videos: [], channels: [] });
   
   const { data: session } = useQuery({
     queryKey: ["session"],
@@ -33,6 +37,38 @@ export const Header = () => {
     },
   });
 
+  useEffect(() => {
+    const searchContent = async () => {
+      if (searchQuery.length < 2) {
+        setSearchResults({ videos: [], channels: [] });
+        return;
+      }
+
+      const searchTerm = `%${searchQuery}%`;
+
+      const [videosResponse, channelsResponse] = await Promise.all([
+        supabase
+          .from("youtube_videos")
+          .select("id, title, channel_name")
+          .ilike("title", searchTerm)
+          .limit(5),
+        supabase
+          .from("youtube_channels")
+          .select("channel_id, title")
+          .ilike("title", searchTerm)
+          .limit(3),
+      ]);
+
+      setSearchResults({
+        videos: videosResponse.data || [],
+        channels: channelsResponse.data || [],
+      });
+    };
+
+    const debounceTimeout = setTimeout(searchContent, 150);
+    return () => clearTimeout(debounceTimeout);
+  }, [searchQuery]);
+
   const handleSignOut = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) {
@@ -44,16 +80,10 @@ export const Header = () => {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Searching for:", searchQuery);
     // Implement search functionality here
   };
 
-  // Mock search results - replace with actual search logic
-  const searchResults = [
-    "Result 1",
-    "Result 2",
-    "Result 3"
-  ];
+  const hasResults = searchResults.videos.length > 0 || searchResults.channels.length > 0;
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -69,7 +99,7 @@ export const Header = () => {
             <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
-              placeholder="Search..."
+              placeholder="Search videos and channels..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onFocus={() => setShowResults(true)}
@@ -77,16 +107,37 @@ export const Header = () => {
               className="w-full pl-8 h-8 bg-transparent border-none focus:ring-0 text-sm placeholder:text-muted-foreground"
             />
           </div>
-          {showResults && searchQuery && (
+          {showResults && searchQuery && hasResults && (
             <div className="absolute w-full mt-1 bg-white rounded-md shadow-lg border border-gray-100 overflow-hidden z-50">
               <div className="max-h-60 overflow-y-auto">
-                {searchResults.map((result, index) => (
-                  <div
-                    key={index}
-                    className="px-4 py-2 hover:bg-gray-50 cursor-pointer text-primary"
-                  >
-                    {result}
+                {searchResults.channels.length > 0 && (
+                  <div className="px-2 py-1.5 text-xs font-semibold text-gray-500 uppercase bg-gray-50">
+                    Channels
                   </div>
+                )}
+                {searchResults.channels.map((channel) => (
+                  <Link
+                    key={channel.channel_id}
+                    to={`/channel/${channel.channel_id}`}
+                    className="block px-4 py-2 hover:bg-gray-50 cursor-pointer"
+                  >
+                    <span className="text-primary">{channel.title}</span>
+                  </Link>
+                ))}
+                {searchResults.videos.length > 0 && (
+                  <div className="px-2 py-1.5 text-xs font-semibold text-gray-500 uppercase bg-gray-50">
+                    Videos
+                  </div>
+                )}
+                {searchResults.videos.map((video) => (
+                  <Link
+                    key={video.id}
+                    to={`/video/${video.id}`}
+                    className="block px-4 py-2 hover:bg-gray-50 cursor-pointer"
+                  >
+                    <span className="text-primary">{video.title}</span>
+                    <p className="text-sm text-gray-500">{video.channel_name}</p>
+                  </Link>
                 ))}
               </div>
             </div>
