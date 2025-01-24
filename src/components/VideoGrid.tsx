@@ -15,7 +15,8 @@ interface Video {
   thumbnail: string;
   video_id: string;
   channel_name: string;
-  uploaded_at: string;
+  channel_id: string; // Added this field
+  uploaded_at: string; // Changed to string since that's what we get from the DB
   views: number;
   youtube_channels?: {
     channel_id: string;

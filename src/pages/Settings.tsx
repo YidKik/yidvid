@@ -213,8 +213,6 @@ const Settings = () => {
         .upsert({
           user_id: userId,
           language: newLanguage
-        }, {
-          onConflict: 'user_id'
         });
 
       if (error) {
@@ -508,41 +506,6 @@ const Settings = () => {
                     {t('openDashboard')}
                   </Button>
                 </div>
-
-                {/* Only show manage admins section to super admins */}
-                {profile?.is_super_admin && (
-                  <div>
-                    <h3 className="text-lg font-semibold mb-4">{t('manageAdmins')}</h3>
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>{t('email')}</TableHead>
-                          <TableHead>{t('adminStatus')}</TableHead>
-                          <TableHead>{t('actions')}</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {profiles?.map((profile) => (
-                          <TableRow key={profile.id}>
-                            <TableCell>{profile.email}</TableCell>
-                            <TableCell>
-                              {profile.is_admin ? "Admin" : "User"}
-                            </TableCell>
-                            <TableCell>
-                              <Button
-                                variant={profile.is_admin ? "destructive" : "default"}
-                                onClick={() => toggleAdminStatus(profile.id, !!profile.is_admin)}
-                                disabled={profile.id === userId}
-                              >
-                                {profile.is_admin ? "Remove Admin" : "Make Admin"}
-                              </Button>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </div>
-                )}
               </div>
             </Card>
           </section>
