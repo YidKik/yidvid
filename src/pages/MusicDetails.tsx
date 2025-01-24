@@ -32,11 +32,15 @@ const MusicDetails = () => {
           )
         `)
         .eq('id', id)
-        .single();
+        .maybeSingle();
 
       if (error) {
         console.error('Error fetching track:', error);
         throw error;
+      }
+      
+      if (!data) {
+        throw new Error('Track not found');
       }
       
       console.log('Fetched track:', data);
@@ -107,7 +111,12 @@ const MusicDetails = () => {
           <div className="flex-1">
             <Header />
             <main className="mt-16 p-6">
-              <div>Loading...</div>
+              <div className="flex items-center justify-center h-[60vh]">
+                <div className="text-center">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+                  <p>Loading track...</p>
+                </div>
+              </div>
             </main>
           </div>
         </div>
@@ -123,7 +132,14 @@ const MusicDetails = () => {
           <div className="flex-1">
             <Header />
             <main className="mt-16 p-6">
-              <div>Track not found</div>
+              <BackButton />
+              <div className="flex items-center justify-center h-[60vh]">
+                <div className="text-center">
+                  <Music className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                  <h2 className="text-xl font-semibold mb-2">Track Not Found</h2>
+                  <p className="text-gray-500 mb-4">The track you're looking for doesn't exist or has been removed.</p>
+                </div>
+              </div>
             </main>
           </div>
         </div>
@@ -204,6 +220,3 @@ const MusicDetails = () => {
       </div>
     </SidebarProvider>
   );
-};
-
-export default MusicDetails;
