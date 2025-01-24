@@ -31,7 +31,8 @@ const Index = () => {
       }
 
       return (data || []).map(video => ({
-        id: video.video_id,
+        id: video.id,
+        video_id: video.video_id,  // Include video_id in the mapping
         title: video.title,
         thumbnail: video.thumbnail,
         channelName: video.channel_name,
@@ -42,7 +43,6 @@ const Index = () => {
     },
   });
 
-  // New query for most viewed videos
   const { data: mostViewedVideos } = useQuery({
     queryKey: ["most_viewed_videos"],
     queryFn: async () => {
@@ -124,9 +124,9 @@ const Index = () => {
                 isLoading={isLoading}
               />
             </div>
-            {mostViewedVideos && mostViewedVideos.length > 0 && (
+            {videos && videos.length > 0 && (
               <div className="mt-8">
-                <MostViewedVideos videos={mostViewedVideos} />
+                <MostViewedVideos videos={videos} />
               </div>
             )}
             <div className="channels-grid">
