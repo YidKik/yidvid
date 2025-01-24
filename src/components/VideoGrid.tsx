@@ -51,6 +51,7 @@ export const VideoGrid = ({
   const [isLoading, setIsLoading] = useState(true);
   const [retryCount, setRetryCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
+  const [showAllVideos, setShowAllVideos] = useState(false);
   const MAX_RETRIES = 3;
 
   const fetchVideos = async () => {
@@ -99,7 +100,6 @@ export const VideoGrid = ({
   }, [videos]);
 
   if (error) {
-    console.error('Error loading videos:', error);
     return (
       <div className="text-center py-8">
         <p className="text-red-500">Error loading videos. Please try again later.</p>
@@ -131,21 +131,30 @@ export const VideoGrid = ({
     );
   }
 
-  // Calculate pagination
+  // If not showing all videos, display only first 12 videos (3 rows of 4)
+  const initialVideos = filteredVideos.slice(0, maxVideos);
+  
+  // For pagination when showing all videos
   const totalPages = Math.ceil(filteredVideos.length / maxVideos);
   const startIndex = (currentPage - 1) * maxVideos;
   const endIndex = startIndex + maxVideos;
   const currentVideos = filteredVideos.slice(startIndex, endIndex);
 
-  // Create rows of videos for current page
+  // Create rows of videos based on whether we're showing all or initial videos
+  const videosToDisplay = showAllVideos ? currentVideos : initialVideos;
   const rows = [];
-  for (let i = 0; i < currentVideos.length; i += rowSize) {
-    rows.push(currentVideos.slice(i, i + rowSize));
+  for (let i = 0; i < videosToDisplay.length; i += rowSize) {
+    rows.push(videosToDisplay.slice(i, i + rowSize));
   }
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleShowMore = () => {
+    setShowAllVideos(true);
+    setCurrentPage(1);
   };
 
   return (
@@ -168,7 +177,20 @@ export const VideoGrid = ({
           ))}
         </div>
       ))}
-      {totalPages > 1 && (
+      
+      {!showAllVideos && filteredVideos.length > maxVideos && (
+        <div className="flex justify-center mt-8">
+          <Button 
+            onClick={handleShowMore}
+            variant="outline"
+            className="px-8"
+          >
+            See More
+          </Button>
+        </div>
+      )}
+
+      {showAllVideos && totalPages > 1 && (
         <Pagination className="mt-8">
           <PaginationContent>
             {currentPage > 1 && (
