@@ -41,7 +41,20 @@ type TranslationKey =
   | 'manageAdmins'
   | 'email'
   | 'adminStatus'
-  | 'actions';
+  | 'actions'
+  | 'allChannels'
+  | 'search'
+  | 'noNotifications'
+  | 'welcomeToJewTube'
+  | 'jewTubeDescription'
+  | 'whatYouCanDo'
+  | 'browseCuratedContent'
+  | 'searchTopics'
+  | 'subscribeToChannels'
+  | 'createAccount'
+  | 'interactWithVideos'
+  | 'customizeExperience'
+  | 'whetherLooking';
 
 type Translations = {
   [key in TranslationKey]: {
@@ -222,6 +235,58 @@ export const translations: Translations = {
   actions: {
     en: 'Actions',
     yi: 'אַקציעס'
+  },
+  allChannels: {
+    en: 'All Channels',
+    yi: 'אַלע קאַנאַלן'
+  },
+  search: {
+    en: 'Search...',
+    yi: 'זוכן...'
+  },
+  noNotifications: {
+    en: 'No notifications',
+    yi: 'קיין מעלדונגען'
+  },
+  welcomeToJewTube: {
+    en: 'Welcome to JewTube!',
+    yi: 'ברוכים הבאים צו דזשוטוב!'
+  },
+  jewTubeDescription: {
+    en: 'JewTube is your dedicated platform for discovering and engaging with Jewish content from various YouTube channels. Our mission is to create a centralized hub where you can easily find, watch, and interact with meaningful Jewish content.',
+    yi: 'דזשוטוב איז דײַן געווידמעט פּלאַטפאָרמע פֿאַר אַנטדעקן און אַרײַננעמען מיט אידישע אינהאַלט פֿון פֿאַרשידענע יוטוב קאַנאַלן. אונדזער מיסיע איז צו שאַפֿן אַ צענטראַליזירט צענטער ווו איר קענט גרינג געפֿינען, קוקן און אינטעראַקטירן מיט באַטײַטיק אידישע אינהאַלט.'
+  },
+  whatYouCanDo: {
+    en: 'What you can do here:',
+    yi: 'וואָס איר קענט טאָן דאָ:'
+  },
+  browseCuratedContent: {
+    en: 'Browse curated Jewish content from various YouTube channels',
+    yi: 'בלעטערן קוראַטעד אידישע אינהאַלט פֿון פֿאַרשידענע יוטוב קאַנאַלן'
+  },
+  searchTopics: {
+    en: 'Search for specific topics or channels',
+    yi: 'זוכן פֿאַר ספּעציפֿישע טעמעס אָדער קאַנאַלן'
+  },
+  subscribeToChannels: {
+    en: 'Subscribe to your favorite channels to stay updated',
+    yi: 'אַבאָנירן צו דײַן באַליבטע קאַנאַלן צו בלײַבן דערהײַנטיקט'
+  },
+  createAccount: {
+    en: 'Create an account to personalize your experience',
+    yi: 'שאַפֿן אַ קאָנטע צו פּערסאַנאַליזירן דײַן דערפֿאַרונג'
+  },
+  interactWithVideos: {
+    en: 'Interact with videos through likes and comments',
+    yi: 'אינטעראַקטירן מיט ווידעאס דורך לייקס און קאָמענטאַרן'
+  },
+  customizeExperience: {
+    en: 'Customize your viewing experience with theme settings',
+    yi: 'צופּאַסן דײַן קוקן דערפֿאַרונג מיט טעמע שטעלונגען'
+  },
+  whetherLooking: {
+    en: 'Whether you\'re looking for Torah lessons, Jewish music, cultural content, or educational materials, JewTube makes it easy to find exactly what you\'re looking for in one place.',
+    yi: 'צי איר זוכט תּורה לעקציעס, אידישע מוזיק, קולטור אינהאַלט, אָדער בילדונג מאַטעריאַלן, דזשוטוב מאַכט עס גרינג צו געפֿינען פּונקט וואָס איר זוכט אין איין אָרט.'
   }
 };
 

@@ -6,6 +6,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { getTranslation } from "@/utils/translations";
 import {
   Dialog,
   DialogContent,
@@ -54,6 +56,8 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [showNotifications, setShowNotifications] = useState(false);
   const navigate = useNavigate();
+  const { language } = useLanguage();
+  const t = (key: keyof typeof translations) => getTranslation(key, language);
 
   useEffect(() => {
     // Get initial session
@@ -257,10 +261,10 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
               onValueChange={setSelectedChannel}
             >
               <SelectTrigger className="w-[140px] h-10 bg-[#2A2A2A] text-white border-none rounded-full">
-                <SelectValue placeholder="All Channels" />
+                <SelectValue placeholder={t('allChannels')} />
               </SelectTrigger>
               <SelectContent className="bg-[#2A2A2A] text-white border-none">
-                <SelectItem value="all">All Channels</SelectItem>
+                <SelectItem value="all">{t('allChannels')}</SelectItem>
                 {channels.map((channel) => (
                   <SelectItem key={channel.channel_id} value={channel.channel_id}>
                     {channel.title}
@@ -274,7 +278,7 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
                 type="text"
                 value={searchQuery}
                 onChange={handleSearchInput}
-                placeholder="Search..."
+                placeholder={t('search')}
                 className="w-full h-10 bg-[#222] text-white border-none rounded-full px-6 py-2 focus:outline-none focus:ring-0 transition-all duration-300 placeholder:text-gray-400 flex-grow"
               />
               <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 hover:text-white transition-colors" />
@@ -319,7 +323,7 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
               <DropdownMenuContent align="end" className="w-80 bg-[#2A2A2A] text-white border-none">
                 {notifications.length === 0 ? (
                   <div className="p-4 text-center text-sm text-gray-300">
-                    No notifications
+                    {t('noNotifications')}
                   </div>
                 ) : (
                   notifications.map((notification) => (
@@ -375,11 +379,11 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
                 onClick={handleSignOut}
                 className="button-custom"
               >
-                Sign Out
+                {t('signOut')}
               </Button>
             </>
           ) : (
-            <Button onClick={onSignInClick} className="button-custom">Sign In</Button>
+            <Button onClick={onSignInClick} className="button-custom">{t('signIn')}</Button>
           )}
         </div>
       </div>
@@ -387,26 +391,26 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
       <Dialog open={showAboutDialog} onOpenChange={setShowAboutDialog}>
         <DialogContent className="bg-[#2A2A2A] text-white border-none max-w-2xl">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold mb-4">Welcome to JewTube!</DialogTitle>
+            <DialogTitle className="text-2xl font-bold mb-4">{t('welcomeToJewTube')}</DialogTitle>
             <DialogDescription className="text-gray-200 space-y-4">
               <p>
-                JewTube is your dedicated platform for discovering and engaging with Jewish content from various YouTube channels. Our mission is to create a centralized hub where you can easily find, watch, and interact with meaningful Jewish content.
+                {t('jewTubeDescription')}
               </p>
               
               <div className="mt-6">
-                <h3 className="text-lg font-semibold mb-2 text-white">What you can do here:</h3>
+                <h3 className="text-lg font-semibold mb-2 text-white">{t('whatYouCanDo')}</h3>
                 <ul className="list-disc pl-6 space-y-2">
-                  <li>Browse curated Jewish content from various YouTube channels</li>
-                  <li>Search for specific topics or channels</li>
-                  <li>Subscribe to your favorite channels to stay updated</li>
-                  <li>Create an account to personalize your experience</li>
-                  <li>Interact with videos through likes and comments</li>
-                  <li>Customize your viewing experience with theme settings</li>
+                  <li>{t('browseCuratedContent')}</li>
+                  <li>{t('searchTopics')}</li>
+                  <li>{t('subscribeToChannels')}</li>
+                  <li>{t('createAccount')}</li>
+                  <li>{t('interactWithVideos')}</li>
+                  <li>{t('customizeExperience')}</li>
                 </ul>
               </div>
 
               <p className="mt-6">
-                Whether you're looking for Torah lessons, Jewish music, cultural content, or educational materials, JewTube makes it easy to find exactly what you're looking for in one place.
+                {t('whetherLooking')}
               </p>
             </DialogDescription>
           </DialogHeader>
