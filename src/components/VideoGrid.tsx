@@ -77,22 +77,23 @@ export const VideoGrid = () => {
   const { data: channels, isLoading: isLoadingChannels } = useQuery({
     queryKey: ["youtube-channels"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("youtube_channels")
-        .select("*")
-        .order("created_at", { ascending: false });
+      try {
+        const { data, error } = await supabase
+          .from("youtube_channels")
+          .select("*")
+          .order("created_at", { ascending: false });
 
-      if (error) {
+        if (error) throw error;
+        return data || [];
+      } catch (error) {
         console.error("Error fetching channels:", error);
         toast({
           title: "Error",
           description: "Failed to fetch channels",
           variant: "destructive",
         });
-        throw error;
+        return [];
       }
-      
-      return data || [];
     },
   });
 
@@ -105,7 +106,7 @@ export const VideoGrid = () => {
 
       try {
         // Process channels in smaller batches to avoid URL length issues
-        const batchSize = 3;
+        const batchSize = 2; // Reduced batch size to avoid URL length issues
         let allVideos = [];
         
         for (let i = 0; i < channels.length; i += batchSize) {
@@ -136,14 +137,6 @@ export const VideoGrid = () => {
           }
         }
 
-        if (allVideos.length === 0) {
-          toast({
-            title: "No videos found",
-            description: "Try adding some channels first",
-          });
-          return [];
-        }
-
         // Transform video data
         return allVideos.map((video: any) => ({
           ...video,
@@ -163,6 +156,8 @@ export const VideoGrid = () => {
       }
     },
     enabled: !!channels?.length,
+    retry: 3,
+    retryDelay: 1000,
   });
 
   const handleVideoView = async (videoId: string) => {
