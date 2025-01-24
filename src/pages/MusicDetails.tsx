@@ -6,7 +6,7 @@ import { Sidebar } from "@/components/Sidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { BackButton } from "@/components/navigation/BackButton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Music, Play } from "lucide-react";
+import { Music, Play, Pause } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -47,7 +47,7 @@ const MusicDetails = () => {
   };
 
   const handlePlay = () => {
-    setIsPlaying(true);
+    setIsPlaying(!isPlaying);
   };
 
   if (isLoading) {
@@ -106,23 +106,29 @@ const MusicDetails = () => {
                         className="absolute inset-0"
                       />
                     ) : (
-                      <>
-                        <img
-                          src={track.thumbnail}
-                          alt={track.title}
-                          className="w-full h-full object-cover"
-                        />
-                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                          <Button
-                            onClick={handlePlay}
-                            size="icon"
-                            className="w-16 h-16 rounded-full bg-primary/90 hover:bg-primary transition-colors"
-                          >
-                            <Play className="w-8 h-8 text-white" />
-                          </Button>
-                        </div>
-                      </>
+                      <img
+                        src={track.thumbnail}
+                        alt={track.title}
+                        className="w-full h-full object-cover"
+                      />
                     )}
+                  </div>
+                  <div className="mt-4 flex items-center gap-4 p-4 bg-muted rounded-lg">
+                    <Button
+                      onClick={handlePlay}
+                      size="icon"
+                      className="w-12 h-12 rounded-full bg-primary hover:bg-primary/90 transition-colors"
+                    >
+                      {isPlaying ? (
+                        <Pause className="w-6 h-6 text-white" />
+                      ) : (
+                        <Play className="w-6 h-6 text-white" />
+                      )}
+                    </Button>
+                    <div className="flex-1">
+                      <h2 className="font-semibold text-lg">{track.title}</h2>
+                      <p className="text-sm text-gray-500">{track.artist_name}</p>
+                    </div>
                   </div>
                 </div>
                 <div className="space-y-6">
