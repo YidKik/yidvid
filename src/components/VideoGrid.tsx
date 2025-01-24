@@ -17,13 +17,13 @@ interface VideoGridProps {
   isLoading?: boolean;
 }
 
-export default function VideoGrid({ videos = [], maxVideos, rowSize, isLoading }: VideoGridProps) {
+export default function VideoGrid({ videos = [], maxVideos = 12, rowSize = 4, isLoading }: VideoGridProps) {
   const displayVideos = maxVideos ? videos.slice(0, maxVideos) : videos;
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {Array.from({ length: maxVideos || 6 }).map((_, index) => (
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {Array.from({ length: maxVideos || 12 }).map((_, index) => (
           <div key={index} className="space-y-3">
             <Skeleton className="aspect-video w-full" />
             <div className="flex gap-3">
@@ -40,7 +40,7 @@ export default function VideoGrid({ videos = [], maxVideos, rowSize, isLoading }
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       {displayVideos.map((video) => (
         <VideoCard
           key={video.id}
