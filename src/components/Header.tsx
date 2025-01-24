@@ -3,10 +3,14 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Settings, LogOut, LayoutDashboard } from "lucide-react";
+import { Settings, LogOut, LayoutDashboard, Search } from "lucide-react";
 import { toast } from "sonner";
+import { Input } from "@/components/ui/input";
+import { useState } from "react";
 
 export const Header = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+  
   const { data: session } = useQuery({
     queryKey: ["session"],
     queryFn: async () => {
@@ -37,6 +41,12 @@ export const Header = () => {
     }
   };
 
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log("Searching for:", searchQuery);
+    // Implement search functionality here
+  };
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 items-center justify-between">
@@ -45,6 +55,19 @@ export const Header = () => {
             Jewish Tube
           </span>
         </Link>
+
+        <form onSubmit={handleSearch} className="flex-1 max-w-md mx-4">
+          <div className="relative">
+            <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="search"
+              placeholder="Search..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-8 h-8 bg-transparent border-none focus:ring-0 text-sm placeholder:text-muted-foreground"
+            />
+          </div>
+        </form>
 
         <nav className="flex items-center space-x-2">
           {session ? (
