@@ -42,6 +42,8 @@ serve(async (req) => {
 
     const musicPromises = artists.map(async (artistId: string) => {
       try {
+        console.log(`[YouTube Music] Processing artist ID: ${artistId}`);
+        
         // First, get channel details
         const channelUrl = `https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${artistId}&key=${apiKey}`;
         const channelResponse = await fetch(channelUrl);
@@ -52,7 +54,7 @@ serve(async (req) => {
           return [];
         }
 
-        console.log(`[YouTube Music] Successfully fetched channel data for ${artistId}`);
+        console.log(`[YouTube Music] Successfully fetched channel data for ${artistId}:`, channelData.items[0].snippet.title);
 
         // Get videos/music from the channel
         const searchUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${artistId}&type=video&maxResults=50&key=${apiKey}`;
@@ -98,20 +100,34 @@ serve(async (req) => {
           console.error('[YouTube Music] Error storing artist:', artistError);
         }
 
-        // Transform and return tracks
-        return data.items.map((item: any) => {
-          const details = detailsMap.get(item.id.videoId);
-          return {
-            track_id: item.id.videoId,
-            title: item.snippet.title,
-            thumbnail: item.snippet.thumbnails.high?.url || item.snippet.thumbnails.default?.url,
-            artist_id: artistId,
-            artist_name: item.snippet.channelTitle,
-            uploaded_at: item.snippet.publishedAt,
-            plays: parseInt(details?.statistics?.viewCount || '0'),
-            duration: details?.contentDetails?.duration ? parseDuration(details.contentDetails.duration) : null
-          };
-        });
+        // Transform and store tracks
+        const tracks = data.items.map((item: any) => ({
+          track_id: item.id.videoId,
+          title: item.snippet.title,
+          thumbnail: item.snippet.thumbnails.high?.url || item.snippet.thumbnails.default?.url,
+          artist_id: artistId,
+          artist_name: item.snippet.channelTitle,
+          uploaded_at: item.snippet.publishedAt,
+          plays: parseInt(detailsMap.get(item.id.videoId)?.statistics?.viewCount || '0'),
+          duration: parseDuration(detailsMap.get(item.id.videoId)?.contentDetails?.duration || 'PT0S')
+        }));
+
+        // Store tracks in batches
+        for (const track of tracks) {
+          const { error: trackError } = await supabaseClient
+            .from('music_tracks')
+            .upsert(track, {
+              onConflict: 'track_id'
+            });
+
+          if (trackError) {
+            console.error('[YouTube Music] Error storing track:', trackError, track);
+          } else {
+            console.log(`[YouTube Music] Successfully stored track: ${track.title}`);
+          }
+        }
+
+        return tracks;
       } catch (error) {
         console.error(`[YouTube Music] Error processing artist ${artistId}:`, error);
         return [];
@@ -119,24 +135,7 @@ serve(async (req) => {
     });
 
     const tracks = (await Promise.all(musicPromises)).flat();
-    console.log(`[YouTube Music] Total tracks fetched: ${tracks.length}`);
-
-    // Store tracks in the database
-    if (tracks.length > 0) {
-      console.log('[YouTube Music] Starting to store tracks in database');
-      for (const track of tracks) {
-        const { error: trackError } = await supabaseClient
-          .from('music_tracks')
-          .upsert(track, {
-            onConflict: 'track_id'
-          });
-
-        if (trackError) {
-          console.error('[YouTube Music] Error storing track:', trackError);
-        }
-      }
-      console.log('[YouTube Music] Finished storing tracks in database');
-    }
+    console.log(`[YouTube Music] Total tracks fetched and stored: ${tracks.length}`);
 
     return new Response(
       JSON.stringify({ success: true, count: tracks.length, tracks }),
