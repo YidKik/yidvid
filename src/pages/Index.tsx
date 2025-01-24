@@ -29,7 +29,16 @@ const Index = () => {
         throw error;
       }
 
-      return data || [];
+      // Transform the data to match the VideoGrid props interface
+      return (data || []).map(video => ({
+        id: video.video_id,
+        title: video.title,
+        thumbnail: video.thumbnail,
+        channelName: video.channel_name,
+        channelId: video.channel_id,
+        views: video.views || 0,
+        uploadedAt: video.uploaded_at
+      }));
     },
   });
 
@@ -85,6 +94,7 @@ const Index = () => {
                 videos={videos} 
                 maxVideos={12} 
                 rowSize={4} 
+                isLoading={isLoading}
               />
             </div>
             <div className="channels-grid">
