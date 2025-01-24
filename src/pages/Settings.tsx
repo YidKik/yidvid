@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/table";
 import { useColors } from "@/contexts/ColorContext";
 import { Settings as SettingsIcon, Volume2, Globe, Bell } from "lucide-react";
-import { translations, getTranslation } from "@/utils/translations";
+import { translations, getTranslation, TranslationKey } from "@/utils/translations";
 
 const Settings = () => {
   const navigate = useNavigate();
