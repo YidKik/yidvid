@@ -453,23 +453,23 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
                   )}
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-80">
+              <DropdownMenuContent align="end" className="w-80 bg-[#2A2A2A] text-white border-none">
                 {notifications.length === 0 ? (
-                  <div className="p-4 text-center text-sm text-muted-foreground">
+                  <div className="p-4 text-center text-sm text-gray-300">
                     No notifications
                   </div>
                 ) : (
                   notifications.map((notification) => (
                     <DropdownMenuItem
                       key={notification.id}
-                      className={`p-4 cursor-pointer ${!notification.is_read ? 'bg-muted/50' : ''}`}
+                      className={`p-4 cursor-pointer hover:bg-[#3A3A3A] ${!notification.is_read ? 'bg-[#404040]' : ''}`}
                       onClick={() => handleNotificationClick(notification.id, notification.video_id)}
                     >
                       <div className="flex flex-col gap-1">
-                        <span className="font-medium">
+                        <span className="font-medium text-white">
                           {notification.video.channel_name}
                         </span>
-                        <span className="text-sm text-muted-foreground">
+                        <span className="text-sm text-gray-300">
                           {notification.video.title}
                         </span>
                       </div>
