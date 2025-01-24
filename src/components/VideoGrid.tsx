@@ -8,7 +8,6 @@ import {
   Pagination,
   PaginationContent,
   PaginationItem,
-  PaginationLink,
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
@@ -192,7 +191,7 @@ export const VideoGrid = ({
 
       {showAllVideos && totalPages > 1 && (
         <Pagination className="mt-8">
-          <PaginationContent>
+          <PaginationContent className="flex justify-center gap-4">
             {currentPage > 1 && (
               <PaginationItem>
                 <PaginationPrevious 
@@ -204,20 +203,6 @@ export const VideoGrid = ({
                 />
               </PaginationItem>
             )}
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-              <PaginationItem key={page}>
-                <PaginationLink
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handlePageChange(page);
-                  }}
-                  isActive={currentPage === page}
-                >
-                  {page}
-                </PaginationLink>
-              </PaginationItem>
-            ))}
             {currentPage < totalPages && (
               <PaginationItem>
                 <PaginationNext 
