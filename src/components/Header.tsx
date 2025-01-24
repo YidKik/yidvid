@@ -65,39 +65,51 @@ export const Header = () => {
 
       const retryCount = 3;
       let attempt = 0;
+      const baseDelay = 1000; // 1 second
 
       while (attempt < retryCount) {
         try {
           const searchTerm = `%${searchQuery}%`;
+          
+          // Add timeout to the fetch requests
+          const timeout = new Promise((_, reject) => {
+            setTimeout(() => reject(new Error('Request timeout')), 5000);
+          });
 
-          const [videosResponse, channelsResponse] = await Promise.all([
-            supabase
-              .from("youtube_videos")
-              .select("id, title, channel_name")
-              .ilike("title", searchTerm)
-              .limit(5),
-            supabase
-              .from("youtube_channels")
-              .select("channel_id, title")
-              .ilike("title", searchTerm)
-              .limit(3),
+          const [videosResponse, channelsResponse] = await Promise.race([
+            Promise.all([
+              supabase
+                .from("youtube_videos")
+                .select("id, title, channel_name")
+                .ilike("title", searchTerm)
+                .limit(5),
+              supabase
+                .from("youtube_channels")
+                .select("channel_id, title")
+                .ilike("title", searchTerm)
+                .limit(3),
+            ]),
+            timeout
           ]);
 
-          if (videosResponse.error) {
-            console.error("Video search error:", videosResponse.error);
-            throw new Error(videosResponse.error.message);
-          }
+          // Type guard to ensure we have the responses and not the timeout
+          if (Array.isArray(videosResponse) && Array.isArray(channelsResponse)) {
+            if (videosResponse.error) {
+              console.error("Video search error:", videosResponse.error);
+              throw new Error(videosResponse.error.message);
+            }
 
-          if (channelsResponse.error) {
-            console.error("Channel search error:", channelsResponse.error);
-            throw new Error(channelsResponse.error.message);
-          }
+            if (channelsResponse.error) {
+              console.error("Channel search error:", channelsResponse.error);
+              throw new Error(channelsResponse.error.message);
+            }
 
-          setSearchResults({
-            videos: videosResponse.data || [],
-            channels: channelsResponse.data || [],
-          });
-          break; // Success, exit retry loop
+            setSearchResults({
+              videos: videosResponse.data || [],
+              channels: channelsResponse.data || [],
+            });
+            break; // Success, exit retry loop
+          }
         } catch (error: any) {
           console.error(`Search attempt ${attempt + 1} failed:`, error);
           attempt++;
@@ -105,10 +117,11 @@ export const Header = () => {
           if (attempt === retryCount) {
             setSearchError("Search is temporarily unavailable. Please try again later.");
             toast.error("Unable to perform search. Please try again later.");
+          } else {
+            // Exponential backoff
+            const delay = Math.min(baseDelay * Math.pow(2, attempt), 10000); // Max 10 seconds
+            await new Promise(resolve => setTimeout(resolve, delay));
           }
-          
-          // Wait before retrying
-          await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
         }
       }
       setIsSearching(false);
@@ -132,8 +145,6 @@ export const Header = () => {
   };
 
   const hasResults = searchResults.videos.length > 0 || searchResults.channels.length > 0;
-
-  const iconClassName = "text-primary hover:scale-110 transition-transform";
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-xl bg-gradient-to-r from-red-50/30 via-background/80 to-red-50/30 supports-[backdrop-filter]:bg-background/60">
