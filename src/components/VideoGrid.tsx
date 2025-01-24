@@ -1,284 +1,152 @@
-import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { VideoCard } from "./VideoCard";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "./ui/use-toast";
-import { useEffect, useState } from "react";
-import { VideoGridHeader } from "./video/VideoGridHeader";
-import { FeaturedVideos } from "./video/FeaturedVideos";
-import { Button } from "./ui/button";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { toast } from "sonner";
 
-export const VideoGrid = () => {
-  const [session, setSession] = useState(null);
-  const [showAllNewVideos, setShowAllNewVideos] = useState(false);
-  const [showAllMostViewed, setShowAllMostViewed] = useState(false);
+interface Channel {
+  channel_id: string;
+  title: string;
+}
 
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
-      setSession(currentSession);
-    });
+interface Video {
+  id: string;
+  title: string;
+  thumbnail: string;
+  video_id: string;
+  channel_name: string;
+  uploaded_at: string;
+  views: number;
+  youtube_channels?: {
+    channel_id: string;
+    thumbnail_url: string;
+  };
+}
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, currentSession) => {
-      setSession(currentSession);
-    });
+interface VideoGridProps {
+  channels?: Channel[];
+  selectedChannel?: string | null;
+  searchQuery?: string;
+}
 
-    return () => subscription.unsubscribe();
-  }, []);
+export const VideoGrid = ({ channels = [], selectedChannel = null, searchQuery = "" }: VideoGridProps) => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [retryCount, setRetryCount] = useState(0);
+  const MAX_RETRIES = 3;
 
-  useEffect(() => {
-    const channel = supabase
-      .channel('youtube_videos_changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'youtube_videos'
-        },
-        (payload) => {
-          console.log('Realtime update:', payload);
-          refetch();
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, []);
-
-  const { data: userInteractions } = useQuery({
-    queryKey: ["user-interactions"],
-    queryFn: async () => {
-      if (!session?.user) return [];
-      
-      const { data, error } = await supabase
-        .from("user_video_interactions")
-        .select("video_id, interaction_type")
-        .eq("user_id", session.user.id);
-
-      if (error) {
-        console.error("Error fetching user interactions:", error);
-        toast({
-          title: "Error",
-          description: "Failed to fetch user interactions",
-          variant: "destructive",
-        });
-        return [];
-      }
-      
-      return data;
-    },
-    enabled: !!session?.user,
-  });
-
-  const { data: channels, isLoading: isLoadingChannels } = useQuery({
-    queryKey: ["youtube-channels"],
-    queryFn: async () => {
-      try {
-        const { data, error } = await supabase
-          .from("youtube_channels")
-          .select("*")
-          .order("created_at", { ascending: false });
-
-        if (error) throw error;
-        return data || [];
-      } catch (error) {
-        console.error("Error fetching channels:", error);
-        toast({
-          title: "Error",
-          description: "Failed to fetch channels",
-          variant: "destructive",
-        });
-        return [];
-      }
-    },
-  });
-
-  const { data: videos, isLoading: isLoadingVideos, refetch } = useQuery({
-    queryKey: ["youtube-videos", channels?.map(c => c.channel_id)],
-    queryFn: async () => {
-      if (!channels?.length) {
-        return [];
-      }
-
-      try {
-        // Process channels in smaller batches to avoid URL length issues
-        const batchSize = 1; // Reduced batch size to avoid URL length issues
-        let allVideos = [];
-        
-        for (let i = 0; i < channels.length; i += batchSize) {
-          const batchChannels = channels.slice(i, i + batchSize);
-          const channelIds = batchChannels.map(c => c.channel_id);
-          
-          console.log(`Fetching videos for channel batch ${i / batchSize + 1}:`, channelIds);
-          
-          const { data: videosData, error } = await supabase
-            .from("youtube_videos")
-            .select(`
-              *,
-              youtube_channels (
-                channel_id,
-                thumbnail_url
-              )
-            `)
-            .in("channel_id", channelIds)
-            .order("uploaded_at", { ascending: false });
-
-          if (error) {
-            console.error(`Error fetching videos for batch ${i / batchSize + 1}:`, error);
-            continue;
-          }
-
-          if (videosData) {
-            allVideos = [...allVideos, ...videosData];
-          }
-
-          // Add a small delay between batches to prevent rate limiting
-          if (i + batchSize < channels.length) {
-            await new Promise(resolve => setTimeout(resolve, 100));
-          }
-        }
-
-        // Transform video data
-        return allVideos.map((video: any) => ({
-          ...video,
-          uploadedAt: new Date(video.uploaded_at),
-          channelThumbnail: video.youtube_channels?.thumbnail_url,
-          interactionScore: calculateInteractionScore(video.id, userInteractions || [])
-        }));
-
-      } catch (error) {
-        console.error("Error in video fetch process:", error);
-        toast({
-          title: "Error fetching videos",
-          description: "Please try again later",
-          variant: "destructive",
-        });
-        return [];
-      }
-    },
-    enabled: !!channels?.length,
-    retry: 3,
-    retryDelay: 1000,
-  });
-
-  const handleVideoView = async (videoId: string) => {
-    if (!session?.user) return;
-
+  const fetchVideosForChannels = async () => {
     try {
-      const { error } = await supabase
-        .from("user_video_interactions")
-        .insert({
-          user_id: session.user.id,
-          video_id: videoId,
-          interaction_type: "view"
-        });
+      // Process channels in smaller batches to avoid URL length issues
+      const batchSize = 1; // Process one channel at a time
+      let allVideos: Video[] = [];
+      
+      for (let i = 0; i < channels.length; i += batchSize) {
+        const batchChannels = channels.slice(i, i + batchSize);
+        const channelIds = batchChannels.map(c => c.channel_id);
+        
+        console.log(`Fetching videos for channel ${channelIds[0]}`);
+        
+        const { data: videosData, error } = await supabase
+          .from("youtube_videos")
+          .select(`
+            *,
+            youtube_channels (
+              channel_id,
+              thumbnail_url
+            )
+          `)
+          .in('channel_id', channelIds)
+          .order('uploaded_at', { ascending: false });
 
-      if (error) {
-        console.error("Error tracking video view:", error);
+        if (error) {
+          console.error('Error fetching videos:', error);
+          toast.error(`Error fetching videos: ${error.message}`);
+          throw error;
+        }
+
+        if (videosData) {
+          allVideos = [...allVideos, ...videosData];
+        }
+
+        // Add a delay between requests to prevent rate limiting
+        if (i + batchSize < channels.length) {
+          await new Promise(resolve => setTimeout(resolve, 500)); // 500ms delay between requests
+        }
       }
+
+      return allVideos;
     } catch (error) {
-      console.error("Error tracking video view:", error);
+      console.error('Error in fetchVideosForChannels:', error);
+      if (retryCount < MAX_RETRIES) {
+        setRetryCount(prev => prev + 1);
+        // Exponential backoff delay
+        const delay = Math.pow(2, retryCount) * 1000;
+        await new Promise(resolve => setTimeout(resolve, delay));
+        return fetchVideosForChannels();
+      }
+      throw error;
     }
   };
 
-  const calculateInteractionScore = (videoId: string, interactions: any[]) => {
-    const videoInteractions = interactions.filter(i => i.video_id === videoId);
-    return videoInteractions.length;
-  };
+  const { data: videos = [], error } = useQuery({
+    queryKey: ['videos', channels, selectedChannel, searchQuery],
+    queryFn: fetchVideosForChannels,
+    enabled: channels.length > 0,
+    retry: MAX_RETRIES,
+    retryDelay: (attemptIndex) => Math.min(1000 * Math.pow(2, attemptIndex), 30000),
+  });
 
-  const isLoading = isLoadingChannels || isLoadingVideos;
+  useEffect(() => {
+    setIsLoading(false);
+  }, [videos]);
 
-  // Get latest videos for the new videos section
-  const newVideos = videos ? [...videos].sort((a, b) => b.uploadedAt.getTime() - a.uploadedAt.getTime()) : [];
-  // Sort videos by views for the most viewed section
-  const mostViewedVideos = videos ? [...videos].sort((a, b) => (b.views || 0) - (a.views || 0)) : [];
+  if (error) {
+    console.error('Error loading videos:', error);
+    return (
+      <div className="text-center py-8">
+        <p className="text-red-500">Error loading videos. Please try again later.</p>
+      </div>
+    );
+  }
 
-  // Display only first 12 videos (3 rows of 4) if not showing all
-  const displayedNewVideos = showAllNewVideos ? newVideos : newVideos.slice(0, 12);
-  const displayedMostViewedVideos = showAllMostViewed ? mostViewedVideos : mostViewedVideos.slice(0, 12);
+  const filteredVideos = videos.filter(video => {
+    const matchesChannel = !selectedChannel || video.channel_id === selectedChannel;
+    const matchesSearch = !searchQuery || 
+      video.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      video.channel_name.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesChannel && matchesSearch;
+  });
+
+  if (isLoading) {
+    return (
+      <div className="text-center py-8">
+        <p>Loading videos...</p>
+      </div>
+    );
+  }
+
+  if (filteredVideos.length === 0) {
+    return (
+      <div className="text-center py-8">
+        <p>No videos found.</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-4">
-      <VideoGridHeader 
-        isLoading={isLoading}
-        hasChannels={!!channels?.length}
-        hasVideos={!!videos?.length}
-      />
-      
-      {videos?.length > 0 && (
-        <>
-          <FeaturedVideos 
-            videos={videos} 
-            onVideoClick={handleVideoView}
-          />
-          
-          <div className="w-full max-w-[1800px] mx-auto mt-8">
-            <div className="mt-12">
-              <h2 className="text-2xl font-bold px-4 mb-8 text-accent">New Videos</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-4">
-                {displayedNewVideos.map((video) => (
-                  <div key={video.id} onClick={() => handleVideoView(video.id)}>
-                    <VideoCard {...video} />
-                  </div>
-                ))}
-              </div>
-              {newVideos.length > 12 && (
-                <div className="flex justify-center mt-6">
-                  <Button
-                    variant="outline"
-                    onClick={() => setShowAllNewVideos(!showAllNewVideos)}
-                    className="gap-2"
-                  >
-                    {showAllNewVideos ? (
-                      <>
-                        Show Less <ChevronUp className="h-4 w-4" />
-                      </>
-                    ) : (
-                      <>
-                        See More <ChevronDown className="h-4 w-4" />
-                      </>
-                    )}
-                  </Button>
-                </div>
-              )}
-            </div>
-
-            <div className="mt-12">
-              <h2 className="text-2xl font-bold px-4 mb-8 text-accent">Most Viewed Videos</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-4">
-                {displayedMostViewedVideos.map((video) => (
-                  <div key={video.id} onClick={() => handleVideoView(video.id)}>
-                    <VideoCard {...video} />
-                  </div>
-                ))}
-              </div>
-              {mostViewedVideos.length > 12 && (
-                <div className="flex justify-center mt-6">
-                  <Button
-                    variant="outline"
-                    onClick={() => setShowAllMostViewed(!showAllMostViewed)}
-                    className="gap-2"
-                  >
-                    {showAllMostViewed ? (
-                      <>
-                        Show Less <ChevronUp className="h-4 w-4" />
-                      </>
-                    ) : (
-                      <>
-                        See More <ChevronDown className="h-4 w-4" />
-                      </>
-                    )}
-                  </Button>
-                </div>
-              )}
-            </div>
-          </div>
-        </>
-      )}
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
+      {filteredVideos.map((video) => (
+        <VideoCard
+          key={video.id}
+          id={video.id}
+          title={video.title}
+          thumbnail={video.thumbnail}
+          channelName={video.channel_name}
+          views={video.views}
+          uploadedAt={video.uploaded_at}
+          channelThumbnail={video.youtube_channels?.thumbnail_url}
+        />
+      ))}
     </div>
   );
 };
