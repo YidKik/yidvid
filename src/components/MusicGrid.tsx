@@ -52,7 +52,7 @@ export const MusicGrid = ({
   const fetchTracks = async () => {
     try {
       console.log('Fetching music tracks...');
-      const { data: tracksData, error } = await supabase
+      let query = supabase
         .from("music_tracks")
         .select(`
           *,
@@ -62,6 +62,16 @@ export const MusicGrid = ({
           )
         `)
         .order('uploaded_at', { ascending: false });
+
+      // Add filters if needed
+      if (selectedArtist) {
+        query = query.eq('artist_id', selectedArtist);
+      }
+      if (searchQuery) {
+        query = query.or(`title.ilike.%${searchQuery}%,artist_name.ilike.%${searchQuery}%`);
+      }
+
+      const { data: tracksData, error } = await query;
 
       if (error) {
         console.error('Error fetching tracks:', error);
@@ -105,7 +115,7 @@ export const MusicGrid = ({
   };
 
   const { data: tracks = [], error, refetch } = useQuery({
-    queryKey: ['tracks', searchQuery],
+    queryKey: ['tracks', searchQuery, selectedArtist],
     queryFn: fetchTracks,
     retry: MAX_RETRIES,
     retryDelay: (attemptIndex) => Math.min(1000 * Math.pow(2, attemptIndex), 30000),
@@ -116,9 +126,9 @@ export const MusicGrid = ({
   }, [tracks]);
 
   useEffect(() => {
-    // Refetch tracks when component mounts
+    // Refetch tracks when component mounts or when filters change
     refetch();
-  }, [refetch]);
+  }, [refetch, selectedArtist, searchQuery]);
 
   if (error) {
     console.error('Query error:', error);
