@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import Index from "@/pages/Index";
@@ -11,7 +11,7 @@ import MusicDetails from "@/pages/MusicDetails";
 
 function App() {
   return (
-    <Router>
+    <>
       <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/video/:id" element={<VideoDetails />} />
@@ -23,7 +23,7 @@ function App() {
       </Routes>
       <Toaster />
       <Sonner />
-    </Router>
+    </>
   );
 }
 
