@@ -26,7 +26,6 @@ export const VideoCard = ({
   channelThumbnail,
   index = 0,
 }: VideoCardProps) => {
-  // Calculate staggered animation delay based on index
   const animationDelay = `${index * 0.1}s`;
 
   return (
@@ -45,7 +44,7 @@ export const VideoCard = ({
       </Link>
       <div className="flex gap-3">
         <div className="flex-shrink-0">
-          <Link to={`/channel/${channelName}`}>
+          <Link to={`/channel/${channelId}`}>
             <Avatar className="w-10 h-10 rounded-full border-2 border-background shadow-sm transition-transform duration-300 hover:scale-110">
               {channelThumbnail ? (
                 <AvatarImage 
@@ -72,13 +71,13 @@ export const VideoCard = ({
             </h3>
           </Link>
           <Link 
-            to={`/channel/${channelName}`}
+            to={`/channel/${channelId}`}
             className="text-youtube-small font-normal text-secondary hover:text-accent transition-colors duration-200"
           >
             {channelName}
           </Link>
           <div className="text-youtube-small font-normal text-secondary flex items-center gap-1">
-            <span>{views.toLocaleString()} views</span>
+            <span>{views?.toLocaleString() || 0} views</span>
             <span>•</span>
             <span>{formatDistanceToNow(uploadedAt, { addSuffix: true })}</span>
           </div>

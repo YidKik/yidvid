@@ -16,7 +16,7 @@ interface Video {
   video_id: string;
   channel_name: string;
   channel_id: string;
-  uploaded_at: string; // Changed to string since that's what we get from the DB
+  uploaded_at: string;
   views: number;
   youtube_channels?: {
     channel_id: string;
@@ -35,64 +35,43 @@ export const VideoGrid = ({ channels = [], selectedChannel = null, searchQuery =
   const [retryCount, setRetryCount] = useState(0);
   const MAX_RETRIES = 3;
 
-  const fetchVideosForChannels = async () => {
+  const fetchVideos = async () => {
     try {
-      // Process channels in smaller batches to avoid URL length issues
-      const batchSize = 1; // Process one channel at a time
-      let allVideos: Video[] = [];
-      
-      for (let i = 0; i < channels.length; i += batchSize) {
-        const batchChannels = channels.slice(i, i + batchSize);
-        const channelIds = batchChannels.map(c => c.channel_id);
-        
-        console.log(`Fetching videos for channel ${channelIds[0]}`);
-        
-        const { data: videosData, error } = await supabase
-          .from("youtube_videos")
-          .select(`
-            *,
-            youtube_channels (
-              channel_id,
-              thumbnail_url
-            )
-          `)
-          .in('channel_id', channelIds)
-          .order('uploaded_at', { ascending: false });
+      console.log('Fetching videos...');
+      const { data: videosData, error } = await supabase
+        .from("youtube_videos")
+        .select(`
+          *,
+          youtube_channels (
+            channel_id,
+            thumbnail_url
+          )
+        `)
+        .order('uploaded_at', { ascending: false });
 
-        if (error) {
-          console.error('Error fetching videos:', error);
-          toast.error(`Error fetching videos: ${error.message}`);
-          throw error;
-        }
-
-        if (videosData) {
-          allVideos = [...allVideos, ...videosData];
-        }
-
-        // Add a delay between requests to prevent rate limiting
-        if (i + batchSize < channels.length) {
-          await new Promise(resolve => setTimeout(resolve, 500)); // 500ms delay between requests
-        }
+      if (error) {
+        console.error('Error fetching videos:', error);
+        toast.error(`Error fetching videos: ${error.message}`);
+        throw error;
       }
 
-      return allVideos;
+      console.log('Fetched videos:', videosData);
+      return videosData || [];
     } catch (error) {
-      console.error('Error in fetchVideosForChannels:', error);
+      console.error('Error in fetchVideos:', error);
       if (retryCount < MAX_RETRIES) {
         setRetryCount(prev => prev + 1);
-        // Exponential backoff delay
         const delay = Math.pow(2, retryCount) * 1000;
         await new Promise(resolve => setTimeout(resolve, delay));
-        return fetchVideosForChannels();
+        return fetchVideos();
       }
       throw error;
     }
   };
 
   const { data: videos = [], error } = useQuery({
-    queryKey: ['videos', channels, selectedChannel, searchQuery],
-    queryFn: fetchVideosForChannels,
-    enabled: channels.length > 0,
+    queryKey: ['videos', searchQuery],
+    queryFn: fetchVideos,
     retry: MAX_RETRIES,
     retryDelay: (attemptIndex) => Math.min(1000 * Math.pow(2, attemptIndex), 30000),
   });
@@ -144,7 +123,8 @@ export const VideoGrid = ({ channels = [], selectedChannel = null, searchQuery =
           thumbnail={video.thumbnail}
           channelName={video.channel_name}
           views={video.views}
-          uploadedAt={video.uploaded_at}
+          uploadedAt={new Date(video.uploaded_at)}
+          channelId={video.channel_id}
           channelThumbnail={video.youtube_channels?.thumbnail_url}
         />
       ))}
