@@ -3,6 +3,7 @@ import { VideoCard } from "./VideoCard";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { Button } from "./ui/button";
 
 interface Channel {
   channel_id: string;
@@ -41,6 +42,7 @@ export const VideoGrid = ({
 }: VideoGridProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [retryCount, setRetryCount] = useState(0);
+  const [displayedVideos, setDisplayedVideos] = useState(maxVideos);
   const MAX_RETRIES = 3;
 
   const fetchVideos = async () => {
@@ -56,7 +58,7 @@ export const VideoGrid = ({
           )
         `)
         .order('uploaded_at', { ascending: false })
-        .limit(maxVideos);
+        .limit(maxVideos * 2); // Fetch more videos for "See More" functionality
 
       if (error) {
         console.error('Error fetching videos:', error);
@@ -104,7 +106,7 @@ export const VideoGrid = ({
       video.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       video.channel_name.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesChannel && matchesSearch;
-  }).slice(0, maxVideos);
+  }).slice(0, displayedVideos);
 
   if (isLoading) {
     return (
@@ -128,6 +130,10 @@ export const VideoGrid = ({
     rows.push(filteredVideos.slice(i, i + rowSize));
   }
 
+  const handleSeeMore = () => {
+    setDisplayedVideos(prev => prev + maxVideos);
+  };
+
   return (
     <div className="space-y-8 p-4">
       {rows.map((row, rowIndex) => (
@@ -148,6 +154,17 @@ export const VideoGrid = ({
           ))}
         </div>
       ))}
+      {videos.length > displayedVideos && (
+        <div className="flex justify-center mt-8">
+          <Button 
+            onClick={handleSeeMore}
+            variant="outline"
+            className="px-8"
+          >
+            See More
+          </Button>
+        </div>
+      )}
     </div>
   );
 };
