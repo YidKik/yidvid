@@ -41,11 +41,16 @@ export const Header = () => {
     queryKey: ["profile", session?.user?.id],
     enabled: !!session?.user?.id,
     queryFn: async () => {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("profiles")
         .select("*")
         .eq("id", session?.user?.id)
         .single();
+      
+      if (error) {
+        console.error("Error fetching profile:", error);
+        return null;
+      }
       return data;
     },
   });
@@ -113,7 +118,6 @@ export const Header = () => {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    // Implement search functionality here
   };
 
   const hasResults = searchResults.videos.length > 0 || searchResults.channels.length > 0;
