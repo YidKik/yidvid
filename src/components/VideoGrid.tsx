@@ -13,7 +13,7 @@ interface VideoGridProps {
   }[];
 }
 
-const VideoGrid: React.FC<VideoGridProps> = ({ videos }) => {
+export default function VideoGrid({ videos }: VideoGridProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {videos.map((video) => (
@@ -23,13 +23,10 @@ const VideoGrid: React.FC<VideoGridProps> = ({ videos }) => {
           title={video.title}
           thumbnail={video.thumbnail}
           channelName={video.channelName}
-          channelId={video.channelId}
           views={video.views}
           uploadedAt={video.uploadedAt}
         />
       ))}
     </div>
   );
-};
-
-export default VideoGrid;
+}

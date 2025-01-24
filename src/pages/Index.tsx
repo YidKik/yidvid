@@ -1,6 +1,6 @@
 import { Header } from "@/components/Header";
 import { Sidebar } from "@/components/Sidebar";
-import { VideoGrid } from "@/components/VideoGrid";
+import VideoGrid from "@/components/VideoGrid";
 import { ChannelsGrid } from "@/components/youtube/ChannelsGrid";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import Auth from "@/pages/Auth";

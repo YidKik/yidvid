@@ -7,6 +7,7 @@ interface VideoCardProps {
   thumbnail: string;
   channelName: string;
   channelThumbnail?: string;
+  channelId?: string;
   views?: number;
   uploadedAt: string | Date;
 }
