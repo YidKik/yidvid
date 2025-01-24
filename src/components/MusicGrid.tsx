@@ -69,7 +69,13 @@ export const MusicGrid = ({
         throw error;
       }
 
-      console.log('Fetched tracks:', tracksData);
+      if (!tracksData || tracksData.length === 0) {
+        console.log('No tracks found in the database');
+        toast.info("No music tracks found. Try adding some artists first.");
+      } else {
+        console.log('Fetched tracks:', tracksData);
+      }
+
       return tracksData || [];
     } catch (error) {
       console.error('Error in fetchTracks:', error);
@@ -83,7 +89,7 @@ export const MusicGrid = ({
     }
   };
 
-  const { data: tracks = [], error } = useQuery({
+  const { data: tracks = [], error, refetch } = useQuery({
     queryKey: ['tracks', searchQuery],
     queryFn: fetchTracks,
     retry: MAX_RETRIES,
@@ -94,10 +100,19 @@ export const MusicGrid = ({
     setIsLoading(false);
   }, [tracks]);
 
+  useEffect(() => {
+    // Refetch tracks when component mounts
+    refetch();
+  }, [refetch]);
+
   if (error) {
+    console.error('Query error:', error);
     return (
       <div className="text-center py-8">
         <p className="text-red-500">Error loading tracks. Please try again later.</p>
+        <Button onClick={() => refetch()} className="mt-4">
+          Retry
+        </Button>
       </div>
     );
   }
@@ -122,6 +137,9 @@ export const MusicGrid = ({
     return (
       <div className="text-center py-8">
         <p>No tracks found.</p>
+        <Button onClick={() => refetch()} className="mt-4">
+          Refresh
+        </Button>
       </div>
     );
   }
