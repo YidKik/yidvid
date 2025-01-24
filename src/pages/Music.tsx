@@ -1,7 +1,5 @@
 import { Header } from "@/components/Header";
 import { Sidebar } from "@/components/Sidebar";
-import { VideoGrid } from "@/components/VideoGrid";
-import { ChannelsGrid } from "@/components/youtube/ChannelsGrid";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import Auth from "@/pages/Auth";
 import { useState } from "react";
@@ -9,16 +7,16 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Music, Video } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-const Index = () => {
+const MusicPage = () => {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
-  const [activeView, setActiveView] = useState("videos");
+  const [activeView, setActiveView] = useState("music");
   const navigate = useNavigate();
 
   const handleViewChange = (value: string) => {
-    if (value === "music") {
-      navigate("/music");
+    if (value === "videos") {
+      navigate("/");
     } else {
-      setActiveView("videos");
+      setActiveView("music");
     }
   };
 
@@ -54,11 +52,9 @@ const Index = () => {
                 </ToggleGroupItem>
               </ToggleGroup>
             </div>
-            <div className="video-grid mt-4">
-              <VideoGrid />
-            </div>
-            <div className="channels-grid">
-              <ChannelsGrid />
+            <div className="text-center mt-8">
+              <h1 className="text-2xl font-bold">Music Page</h1>
+              <p className="text-muted-foreground mt-2">Coming soon...</p>
             </div>
           </main>
         </div>
@@ -68,4 +64,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default MusicPage;
