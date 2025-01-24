@@ -10,6 +10,7 @@ import { useState } from "react";
 
 export const Header = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [showResults, setShowResults] = useState(false);
   
   const { data: session } = useQuery({
     queryKey: ["session"],
@@ -47,6 +48,13 @@ export const Header = () => {
     // Implement search functionality here
   };
 
+  // Mock search results - replace with actual search logic
+  const searchResults = [
+    "Result 1",
+    "Result 2",
+    "Result 3"
+  ];
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 items-center justify-between">
@@ -56,7 +64,7 @@ export const Header = () => {
           </span>
         </Link>
 
-        <form onSubmit={handleSearch} className="flex-1 max-w-md mx-4">
+        <form onSubmit={handleSearch} className="flex-1 max-w-md mx-4 relative">
           <div className="relative">
             <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
@@ -64,9 +72,25 @@ export const Header = () => {
               placeholder="Search..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              onFocus={() => setShowResults(true)}
+              onBlur={() => setTimeout(() => setShowResults(false), 200)}
               className="w-full pl-8 h-8 bg-transparent border-none focus:ring-0 text-sm placeholder:text-muted-foreground"
             />
           </div>
+          {showResults && searchQuery && (
+            <div className="absolute w-full mt-1 bg-white rounded-md shadow-lg border border-gray-100 overflow-hidden z-50">
+              <div className="max-h-60 overflow-y-auto">
+                {searchResults.map((result, index) => (
+                  <div
+                    key={index}
+                    className="px-4 py-2 hover:bg-gray-50 cursor-pointer text-primary"
+                  >
+                    {result}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </form>
 
         <nav className="flex items-center space-x-2">
