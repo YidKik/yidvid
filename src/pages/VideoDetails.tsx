@@ -26,38 +26,43 @@ const VideoDetails = () => {
     queryFn: async () => {
       if (!id) throw new Error("No video ID provided");
 
-      // First try to find by UUID
-      let { data: videoData, error: videoError } = await supabase
+      console.log("Attempting to fetch video with ID:", id);
+
+      // First try to find by video_id
+      const { data: videoByVideoId, error: videoByVideoIdError } = await supabase
+        .from("youtube_videos")
+        .select("*, youtube_channels(thumbnail_url)")
+        .eq("video_id", id)
+        .maybeSingle();
+
+      if (videoByVideoIdError) {
+        console.error("Error fetching video by video_id:", videoByVideoIdError);
+        throw videoByVideoIdError;
+      }
+
+      if (videoByVideoId) {
+        console.log("Found video by video_id:", videoByVideoId);
+        return videoByVideoId;
+      }
+
+      // If not found by video_id, try UUID
+      const { data: videoByUuid, error: videoByUuidError } = await supabase
         .from("youtube_videos")
         .select("*, youtube_channels(thumbnail_url)")
         .eq("id", id)
         .maybeSingle();
 
-      // If not found by UUID, try video_id
-      if (!videoData && !videoError) {
-        const { data: videoByVideoId, error: videoByVideoIdError } = await supabase
-          .from("youtube_videos")
-          .select("*, youtube_channels(thumbnail_url)")
-          .eq("video_id", id)
-          .maybeSingle();
-
-        if (videoByVideoIdError) {
-          console.error("Error fetching video by video_id:", videoByVideoIdError);
-          throw videoByVideoIdError;
-        }
-
-        videoData = videoByVideoId;
-      } else if (videoError) {
-        console.error("Error fetching video:", videoError);
-        throw videoError;
+      if (videoByUuidError) {
+        console.error("Error fetching video by UUID:", videoByUuidError);
+        throw videoByUuidError;
       }
 
-      if (!videoData) {
+      if (!videoByUuid) {
         throw new Error("Video not found");
       }
-      
-      console.log("Fetched video data:", videoData);
-      return videoData;
+
+      console.log("Found video by UUID:", videoByUuid);
+      return videoByUuid;
     },
   });
 
