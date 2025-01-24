@@ -22,7 +22,7 @@ export default function VideoGrid({ videos = [], maxVideos = 12, rowSize = 4, is
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-4 max-w-[1600px] mx-auto">
         {Array.from({ length: maxVideos || 12 }).map((_, index) => (
           <div key={index} className="space-y-3">
             <Skeleton className="aspect-video w-full" />
@@ -40,7 +40,7 @@ export default function VideoGrid({ videos = [], maxVideos = 12, rowSize = 4, is
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-4 max-w-[1600px] mx-auto">
       {displayVideos.map((video) => (
         <VideoCard
           key={video.id}
