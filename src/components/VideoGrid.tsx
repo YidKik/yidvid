@@ -1,6 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import { VideoCard } from "./VideoCard";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 interface VideoGridProps {
   videos?: {
@@ -18,7 +27,19 @@ interface VideoGridProps {
 }
 
 export default function VideoGrid({ videos = [], maxVideos = 12, rowSize = 4, isLoading }: VideoGridProps) {
-  const displayVideos = maxVideos ? videos.slice(0, maxVideos) : videos;
+  const [showAll, setShowAll] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const videosPerPage = showAll ? rowSize * 3 : maxVideos;
+  const totalPages = Math.ceil(videos.length / videosPerPage);
+
+  const indexOfLastVideo = currentPage * videosPerPage;
+  const indexOfFirstVideo = indexOfLastVideo - videosPerPage;
+  const currentVideos = videos.slice(indexOfFirstVideo, indexOfLastVideo);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   if (isLoading) {
     return (
@@ -40,18 +61,66 @@ export default function VideoGrid({ videos = [], maxVideos = 12, rowSize = 4, is
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-4 max-w-[1600px] mx-auto">
-      {displayVideos.map((video) => (
-        <VideoCard
-          key={video.id}
-          id={video.id}
-          title={video.title}
-          thumbnail={video.thumbnail}
-          channelName={video.channelName}
-          views={video.views}
-          uploadedAt={video.uploadedAt}
-        />
-      ))}
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-4 max-w-[1600px] mx-auto">
+        {currentVideos.map((video) => (
+          <VideoCard
+            key={video.id}
+            id={video.id}
+            title={video.title}
+            thumbnail={video.thumbnail}
+            channelName={video.channelName}
+            views={video.views}
+            uploadedAt={video.uploadedAt}
+          />
+        ))}
+      </div>
+      
+      <div className="flex flex-col items-center gap-4 mt-8">
+        {!showAll && videos.length > maxVideos && (
+          <Button 
+            onClick={() => {
+              setShowAll(true);
+              setCurrentPage(1);
+            }}
+            variant="outline"
+            className="w-40"
+          >
+            See More
+          </Button>
+        )}
+        
+        {showAll && totalPages > 1 && (
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious 
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  className={currentPage === 1 ? 'pointer-events-none opacity-50' : ''}
+                />
+              </PaginationItem>
+              
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                <PaginationItem key={page}>
+                  <PaginationLink
+                    onClick={() => handlePageChange(page)}
+                    isActive={currentPage === page}
+                  >
+                    {page}
+                  </PaginationLink>
+                </PaginationItem>
+              ))}
+              
+              <PaginationItem>
+                <PaginationNext 
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  className={currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        )}
+      </div>
     </div>
   );
 }
