@@ -32,7 +32,7 @@ const Index = () => {
 
       return (data || []).map(video => ({
         id: video.id,
-        video_id: video.video_id,  // Include video_id in the mapping
+        video_id: video.video_id,
         title: video.title,
         thumbnail: video.thumbnail,
         channelName: video.channel_name,
@@ -50,6 +50,7 @@ const Index = () => {
         .from("youtube_videos")
         .select("*")
         .order("views", { ascending: false })
+        .not("views", "is", null)  // Only include videos with views
         .limit(12);
 
       if (error) {
@@ -58,7 +59,7 @@ const Index = () => {
       }
 
       return (data || []).map(video => ({
-        id: video.video_id,
+        id: video.video_id,  // Using video_id for consistent routing
         title: video.title,
         thumbnail: video.thumbnail,
         channelName: video.channel_name,
@@ -124,9 +125,9 @@ const Index = () => {
                 isLoading={isLoading}
               />
             </div>
-            {videos && videos.length > 0 && (
+            {mostViewedVideos && mostViewedVideos.length > 0 && (
               <div className="mt-8">
-                <MostViewedVideos videos={videos} />
+                <MostViewedVideos videos={mostViewedVideos} />
               </div>
             )}
             <div className="channels-grid">
