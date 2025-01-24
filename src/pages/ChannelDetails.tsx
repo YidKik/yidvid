@@ -90,7 +90,7 @@ const ChannelDetails = () => {
           const { data, error } = await supabase
             .from("youtube_channels")
             .select("*")
-            .eq("channel_id", decodeURIComponent(channelId))
+            .eq("channel_id", channelId)
             .maybeSingle();
 
           if (error) {
@@ -123,7 +123,7 @@ const ChannelDetails = () => {
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 
-  const { data: videos, isLoading: isLoadingVideos, refetch } = useQuery({
+  const { data: videos, isLoading: isLoadingVideos } = useQuery({
     queryKey: ["channel-videos", channelId],
     queryFn: async () => {
       if (!channelId) {
@@ -138,7 +138,7 @@ const ChannelDetails = () => {
           const { data, error } = await supabase
             .from("youtube_videos")
             .select("*")
-            .eq("channel_id", decodeURIComponent(channelId))
+            .eq("channel_id", channelId)
             .order("uploaded_at", { ascending: false });
 
           if (error) {
@@ -146,6 +146,7 @@ const ChannelDetails = () => {
             throw error;
           }
 
+          console.log("Fetched videos for channel:", data);
           return data || [];
         } catch (error) {
           lastError = error;
@@ -163,34 +164,8 @@ const ChannelDetails = () => {
       throw lastError;
     },
     retry: false,
-    enabled: !!channel,
+    enabled: !!channelId,
   });
-
-  // Set up realtime subscription for video updates
-  useEffect(() => {
-    if (!channelId) return;
-
-    const channel = supabase
-      .channel('channel_videos_changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'youtube_videos',
-          filter: `channel_id=eq.${decodeURIComponent(channelId)}`
-        },
-        (payload) => {
-          console.log('Realtime update:', payload);
-          refetch();
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [channelId, refetch]);
 
   if (isLoadingChannel || isLoadingVideos) {
     return (
