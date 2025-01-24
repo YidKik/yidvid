@@ -8,10 +8,11 @@ import Dashboard from "@/pages/Dashboard";
 import Settings from "@/pages/Settings";
 import Music from "@/pages/Music";
 import MusicDetails from "@/pages/MusicDetails";
+import { ColorProvider } from "@/contexts/ColorContext";
 
 function App() {
   return (
-    <>
+    <ColorProvider>
       <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/video/:id" element={<VideoDetails />} />
@@ -23,7 +24,7 @@ function App() {
       </Routes>
       <Toaster />
       <Sonner />
-    </>
+    </ColorProvider>
   );
 }
 
