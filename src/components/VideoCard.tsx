@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow, parseISO } from "date-fns";
 
 interface VideoCardProps {
   id: string;
@@ -22,7 +22,7 @@ export const VideoCard = ({
   uploadedAt,
 }: VideoCardProps) => {
   const formattedDate = typeof uploadedAt === 'string' 
-    ? uploadedAt 
+    ? formatDistanceToNow(parseISO(uploadedAt), { addSuffix: true })
     : formatDistanceToNow(uploadedAt, { addSuffix: true });
 
   const formattedViews = views ? `${views.toLocaleString()} views` : '';

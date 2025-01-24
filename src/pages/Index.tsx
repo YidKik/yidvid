@@ -37,7 +37,7 @@ const Index = () => {
         channelName: video.channel_name,
         channelId: video.channel_id,
         views: video.views || 0,
-        uploadedAt: video.uploaded_at
+        uploadedAt: new Date(video.uploaded_at).toISOString() // Ensure proper date formatting
       }));
     },
   });
