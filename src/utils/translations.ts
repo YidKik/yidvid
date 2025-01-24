@@ -113,6 +113,10 @@ export const translations: Translations = {
     en: 'Sign Out',
     yi: 'אַרויסשרײַבן'
   },
+  signIn: {
+    en: 'Sign In',
+    yi: 'אַרײַנשרײַבן'
+  },
   deleteAccount: {
     en: 'Delete Account',
     yi: 'אויסמעקן קאָנטע'
