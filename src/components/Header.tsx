@@ -58,10 +58,10 @@ export const Header = () => {
                     variant="ghost"
                     size="icon"
                     asChild
-                    className="hover:bg-transparent"
+                    className="hover:bg-transparent p-0"
                   >
                     <Link to="/dashboard">
-                      <LayoutDashboard className="h-5 w-5 text-primary stroke-[1.5] hover:scale-110 transition-transform" />
+                      <LayoutDashboard className="h-5 w-5 text-primary stroke-[1.5] hover:scale-110 transition-transform stroke-black" />
                     </Link>
                   </Button>
                 )}
@@ -69,19 +69,19 @@ export const Header = () => {
                   variant="ghost"
                   size="icon"
                   asChild
-                  className="hover:bg-transparent"
+                  className="hover:bg-transparent p-0"
                 >
                   <Link to="/settings">
-                    <Settings className="h-5 w-5 text-primary stroke-[1.5] hover:scale-110 transition-transform" />
+                    <Settings className="h-5 w-5 text-primary stroke-[1.5] hover:scale-110 transition-transform stroke-black" />
                   </Link>
                 </Button>
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={handleSignOut}
-                  className="hover:bg-transparent"
+                  className="hover:bg-transparent p-0"
                 >
-                  <LogOut className="h-5 w-5 text-primary stroke-[1.5] hover:scale-110 transition-transform" />
+                  <LogOut className="h-5 w-5 text-primary stroke-[1.5] hover:scale-110 transition-transform stroke-black" />
                 </Button>
                 <Avatar>
                   <AvatarImage src={session.user.user_metadata.avatar_url} />
