@@ -29,29 +29,36 @@ const MusicPage = () => {
           <Header />
           <main className="mt-16">
             <div className="flex justify-center my-6 px-4">
-              <ToggleGroup
-                type="single"
-                value={activeView}
-                onValueChange={handleViewChange}
-                className="border rounded-full p-1 bg-white shadow-sm"
-              >
-                <ToggleGroupItem 
-                  value="videos" 
-                  aria-label="Toggle videos"
-                  className="data-[state=on]:bg-primary data-[state=on]:text-white rounded-full px-6 py-2 transition-all duration-200"
+              <div className="relative bg-white rounded-full shadow-md p-1 w-64">
+                <div 
+                  className={`absolute inset-y-1 w-1/2 bg-primary rounded-full transition-transform duration-300 ease-out ${
+                    activeView === "videos" ? "translate-x-0" : "translate-x-full"
+                  }`}
+                />
+                <ToggleGroup
+                  type="single"
+                  value={activeView}
+                  onValueChange={handleViewChange}
+                  className="relative grid grid-cols-2 gap-1"
                 >
-                  <Video className="w-4 h-4 mr-2 inline-block" />
-                  Videos
-                </ToggleGroupItem>
-                <ToggleGroupItem 
-                  value="music" 
-                  aria-label="Toggle music"
-                  className="data-[state=on]:bg-primary data-[state=on]:text-white rounded-full px-6 py-2 transition-all duration-200"
-                >
-                  <Music className="w-4 h-4 mr-2 inline-block" />
-                  Music
-                </ToggleGroupItem>
-              </ToggleGroup>
+                  <ToggleGroupItem 
+                    value="videos" 
+                    aria-label="Toggle videos"
+                    className="relative z-10 px-6 py-2 transition-all duration-200 data-[state=on]:text-white"
+                  >
+                    <Video className="w-4 h-4 mr-2 inline-block" />
+                    Videos
+                  </ToggleGroupItem>
+                  <ToggleGroupItem 
+                    value="music" 
+                    aria-label="Toggle music"
+                    className="relative z-10 px-6 py-2 transition-all duration-200 data-[state=on]:text-white"
+                  >
+                    <Music className="w-4 h-4 mr-2 inline-block" />
+                    Music
+                  </ToggleGroupItem>
+                </ToggleGroup>
+              </div>
             </div>
             <div className="music-grid mt-4">
               <MusicGrid maxTracks={12} rowSize={4} />
