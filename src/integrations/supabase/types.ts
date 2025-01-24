@@ -104,6 +104,7 @@ export type Database = {
           button_color: string
           created_at: string
           id: string
+          language: string
           logo_color: string
           text_color: string
           updated_at: string
@@ -114,6 +115,7 @@ export type Database = {
           button_color?: string
           created_at?: string
           id?: string
+          language?: string
           logo_color?: string
           text_color?: string
           updated_at?: string
@@ -124,6 +126,7 @@ export type Database = {
           button_color?: string
           created_at?: string
           id?: string
+          language?: string
           logo_color?: string
           text_color?: string
           updated_at?: string

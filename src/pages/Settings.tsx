@@ -204,6 +204,61 @@ const Settings = () => {
     enabled: !!profile?.is_admin,
   });
 
+  // Update language in Supabase when changed
+  const handleLanguageChange = async (newLanguage: string) => {
+    try {
+      const { error } = await supabase
+        .from('user_preferences')
+        .upsert({
+          user_id: userId,
+          language: newLanguage
+        }, {
+          onConflict: 'user_id'
+        });
+
+      if (error) {
+        console.error('Error updating language:', error);
+        toast.error('Failed to update language preference');
+        return;
+      }
+
+      setLanguage(newLanguage);
+      // Update the document's dir attribute for RTL languages
+      document.documentElement.dir = newLanguage === 'yi' ? 'rtl' : 'ltr';
+      toast.success('Language updated successfully');
+    } catch (error) {
+      console.error('Error updating language:', error);
+      toast.error('Failed to update language preference');
+    }
+  };
+
+  // Load user preferences including language on component mount
+  useEffect(() => {
+    const loadUserPreferences = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+
+      const { data, error } = await supabase
+        .from('user_preferences')
+        .select('*')
+        .eq('user_id', session.user.id)
+        .single();
+
+      if (error) {
+        console.error('Error loading preferences:', error);
+        return;
+      }
+
+      if (data) {
+        setLanguage(data.language || 'en');
+        // Set RTL direction for Yiddish
+        document.documentElement.dir = data.language === 'yi' ? 'rtl' : 'ltr';
+      }
+    };
+
+    loadUserPreferences();
+  }, []);
+
   return (
     <div className="min-h-screen" style={{ backgroundColor: backgroundColor, color: textColor }}>
       <Header />
@@ -410,7 +465,7 @@ const Settings = () => {
           <Card className="p-6">
             <div className="space-y-2">
               <Label htmlFor="language">Interface Language</Label>
-              <Select value={language} onValueChange={setLanguage}>
+              <Select value={language} onValueChange={handleLanguageChange}>
                 <SelectTrigger className="w-full bg-background border-input">
                   <SelectValue placeholder="Select language" />
                 </SelectTrigger>
