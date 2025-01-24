@@ -122,6 +122,8 @@ export const Header = () => {
 
   const hasResults = searchResults.videos.length > 0 || searchResults.channels.length > 0;
 
+  const iconClassName = "h-5 w-5 text-primary stroke-[1.5] hover:scale-110 transition-transform stroke-black";
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 items-center justify-between">
@@ -205,7 +207,7 @@ export const Header = () => {
                   className="hover:bg-transparent p-0"
                 >
                   <Link to="/dashboard">
-                    <LayoutDashboard className="h-5 w-5 text-primary stroke-[1.5] hover:scale-110 transition-transform stroke-black" />
+                    <LayoutDashboard className={iconClassName} />
                   </Link>
                 </Button>
               )}
@@ -216,7 +218,7 @@ export const Header = () => {
                 className="hover:bg-transparent p-0"
               >
                 <Link to="/settings">
-                  <Settings className="h-5 w-5 text-primary stroke-[1.5] hover:scale-110 transition-transform stroke-black" />
+                  <Settings className={iconClassName} />
                 </Link>
               </Button>
               <Button
@@ -225,7 +227,7 @@ export const Header = () => {
                 onClick={handleSignOut}
                 className="hover:bg-transparent p-0"
               >
-                <LogOut className="h-5 w-5 text-primary stroke-[1.5] hover:scale-110 transition-transform stroke-black" />
+                <LogOut className={iconClassName} />
               </Button>
               <Avatar>
                 <AvatarImage src={session.user.user_metadata.avatar_url} />
