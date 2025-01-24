@@ -33,7 +33,7 @@ export const VideoCard = ({
       className="group cursor-pointer opacity-0 animate-fadeIn"
       style={{ animationDelay, animationFillMode: 'forwards' }}
     >
-      <Link to={`/video/${id}`} className="block">
+      <Link to={`/music/${id}`} className="block">
         <div className="aspect-video rounded-lg overflow-hidden mb-3 transition-transform duration-300 ease-out group-hover:scale-[1.02]">
           <img
             src={thumbnail}
@@ -44,7 +44,7 @@ export const VideoCard = ({
       </Link>
       <div className="flex gap-3">
         <div className="flex-shrink-0">
-          <Link to={`/channel/${channelId}`}>
+          <Link to={`/artist/${channelId}`}>
             <Avatar className="w-10 h-10 rounded-full border-2 border-background shadow-sm transition-transform duration-300 hover:scale-110">
               {channelThumbnail ? (
                 <AvatarImage 
@@ -65,13 +65,13 @@ export const VideoCard = ({
           </Link>
         </div>
         <div className="flex-1">
-          <Link to={`/video/${id}`}>
+          <Link to={`/music/${id}`}>
             <h3 className="text-youtube-title font-medium text-accent line-clamp-2 mb-1 transition-colors duration-200">
               {title}
             </h3>
           </Link>
           <Link 
-            to={`/channel/${channelId}`}
+            to={`/artist/${channelId}`}
             className="text-youtube-small font-normal text-secondary hover:text-accent transition-colors duration-200"
           >
             {channelName}
