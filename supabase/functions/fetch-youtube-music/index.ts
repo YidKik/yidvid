@@ -40,7 +40,7 @@ serve(async (req) => {
       );
     }
 
-    const musicPromises = artists.map(async (artistId) => {
+    const musicPromises = artists.map(async (artistId: string) => {
       try {
         // First, get channel details
         const channelUrl = `https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${artistId}&key=${apiKey}`;
@@ -51,6 +51,8 @@ serve(async (req) => {
           console.error(`[YouTube Music] Error fetching artist ${artistId}:`, channelData);
           return [];
         }
+
+        console.log(`[YouTube Music] Successfully fetched channel data for ${artistId}`);
 
         // Get videos/music from the channel
         const searchUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${artistId}&type=video&maxResults=50&key=${apiKey}`;
