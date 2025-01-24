@@ -37,7 +37,7 @@ const Index = () => {
         channelName: video.channel_name,
         channelId: video.channel_id,
         views: video.views || 0,
-        uploadedAt: new Date(video.uploaded_at).toISOString() // Ensure proper date formatting
+        uploadedAt: video.uploaded_at // Keep as ISO string from Supabase
       }));
     },
   });
