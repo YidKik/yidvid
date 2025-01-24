@@ -45,7 +45,7 @@ const Index = () => {
                   <ToggleGroupItem 
                     value="videos" 
                     aria-label="Toggle videos"
-                    className="relative z-10 px-6 transition-all duration-300 data-[state=on]:text-white font-medium hover:bg-gray-50/50 data-[state=on]:hover:bg-transparent text-gray-600"
+                    className="relative z-10 px-6 transition-all duration-300 data-[state=on]:text-white data-[state=off]:text-primary font-medium"
                   >
                     <Video className="w-4 h-4 mr-2 inline-block" />
                     Videos
@@ -53,7 +53,7 @@ const Index = () => {
                   <ToggleGroupItem 
                     value="music" 
                     aria-label="Toggle music"
-                    className="relative z-10 px-6 transition-all duration-300 data-[state=on]:text-white font-medium hover:bg-gray-50/50 data-[state=on]:hover:bg-transparent text-gray-600"
+                    className="relative z-10 px-6 transition-all duration-300 data-[state=on]:text-white data-[state=off]:text-primary font-medium"
                   >
                     <Music className="w-4 h-4 mr-2 inline-block" />
                     Music
