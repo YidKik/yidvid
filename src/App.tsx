@@ -16,7 +16,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/video/:id" element={<VideoDetails />} />
-        <Route path="/artist/:id" element={<ChannelDetails />} />
+        <Route path="/channel/:id" element={<ChannelDetails />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/music" element={<Music />} />
