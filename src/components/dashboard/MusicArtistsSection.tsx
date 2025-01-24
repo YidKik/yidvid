@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import {
   Table,
   TableBody,
@@ -171,15 +171,18 @@ export const MusicArtistsSection = () => {
                 <Button 
                   variant="default"
                   size="lg"
-                  className="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-white font-semibold px-8 py-6 text-lg rounded-md shadow-lg hover:shadow-xl transition-all duration-200 ease-in-out transform hover:-translate-y-0.5 active:translate-y-0 active:shadow-md focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                  className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold px-8 py-6 text-lg rounded-md shadow-lg hover:shadow-xl transition-all duration-200 ease-in-out transform hover:-translate-y-0.5 active:translate-y-0 active:shadow-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
                 >
-                  <Plus className="h-6 w-6" />
+                  <Music2 className="h-6 w-6" />
                   Add Music Artist
                 </Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Add Music Artist</DialogTitle>
+                  <DialogDescription>
+                    Add a YouTube music channel to your dashboard. The channel's music tracks will be automatically imported.
+                  </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleAddArtist} className="space-y-4">
                   <div className="space-y-2">
@@ -221,7 +224,7 @@ export const MusicArtistsSection = () => {
                     className="w-8 h-8 rounded"
                   />
                 ) : (
-                  <Music2 className="w-8 h-8 text-primary" />
+                  <Music2 className="w-8 h-8 text-purple-500" />
                 )}
                 <div>
                   <p className="font-medium">{artist.title}</p>
