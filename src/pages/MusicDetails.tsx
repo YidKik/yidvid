@@ -220,3 +220,6 @@ const MusicDetails = () => {
       </div>
     </SidebarProvider>
   );
+};
+
+export default MusicDetails;
