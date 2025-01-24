@@ -440,7 +440,7 @@ export const Header = ({ onSignInClick }: HeaderProps) => {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="relative"
+                  className="relative bg-[#8B5CF6] hover:bg-[#7C3AED] text-white"
                 >
                   <Bell className="h-5 w-5" />
                   {unreadCount > 0 && (
