@@ -29,9 +29,9 @@ const MusicPage = () => {
           <Header />
           <main className="mt-16">
             <div className="flex justify-center my-6 px-4">
-              <div className="relative bg-white rounded-full shadow-xl p-1.5 w-80">
+              <div className="relative bg-white shadow-xl p-1 w-80 h-12">
                 <div 
-                  className={`absolute inset-y-1.5 w-1/2 bg-gradient-to-r from-primary to-primary/90 rounded-full transition-transform duration-300 ease-out shadow-lg ${
+                  className={`absolute inset-y-0 w-1/2 bg-primary transition-transform duration-300 ease-out ${
                     activeView === "videos" ? "translate-x-0" : "translate-x-full"
                   }`}
                 />
@@ -39,12 +39,12 @@ const MusicPage = () => {
                   type="single"
                   value={activeView}
                   onValueChange={handleViewChange}
-                  className="relative grid grid-cols-2 gap-1"
+                  className="relative grid grid-cols-2 h-full"
                 >
                   <ToggleGroupItem 
                     value="videos" 
                     aria-label="Toggle videos"
-                    className="relative z-10 px-6 py-3 transition-all duration-300 data-[state=on]:text-white font-medium rounded-full hover:bg-gray-50/50 data-[state=on]:hover:bg-transparent text-gray-600 data-[state=on]:shadow-inner"
+                    className="relative z-10 px-6 transition-all duration-300 data-[state=on]:text-white font-medium hover:bg-gray-50/50 data-[state=on]:hover:bg-transparent text-gray-600"
                   >
                     <Video className="w-4 h-4 mr-2 inline-block" />
                     Videos
@@ -52,7 +52,7 @@ const MusicPage = () => {
                   <ToggleGroupItem 
                     value="music" 
                     aria-label="Toggle music"
-                    className="relative z-10 px-6 py-3 transition-all duration-300 data-[state=on]:text-white font-medium rounded-full hover:bg-gray-50/50 data-[state=on]:hover:bg-transparent text-gray-600 data-[state=on]:shadow-inner"
+                    className="relative z-10 px-6 transition-all duration-300 data-[state=on]:text-white font-medium hover:bg-gray-50/50 data-[state=on]:hover:bg-transparent text-gray-600"
                   >
                     <Music className="w-4 h-4 mr-2 inline-block" />
                     Music
