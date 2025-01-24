@@ -27,7 +27,7 @@ const Index = () => {
       <div className="min-h-screen flex w-full">
         <Sidebar />
         <div className="flex-1">
-          <Header onSignInClick={() => setIsAuthOpen(true)} />
+          <Header />
           <main className="mt-16">
             <div className="flex justify-center my-6 px-4">
               <ToggleGroup
