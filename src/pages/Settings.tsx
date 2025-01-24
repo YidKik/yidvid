@@ -129,12 +129,58 @@ const Settings = () => {
   };
 
   const saveColors = async () => {
-    await updateColors({
-      backgroundColor,
-      textColor,
-      buttonColor,
-      logoColor,
-    });
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) {
+        toast.error("Please sign in to save preferences");
+        return;
+      }
+
+      // First check if preferences exist
+      const { data: existingPrefs } = await supabase
+        .from('user_preferences')
+        .select('*')
+        .eq('user_id', session.user.id)
+        .single();
+
+      let result;
+      
+      if (existingPrefs) {
+        // Update existing preferences
+        result = await supabase
+          .from('user_preferences')
+          .update({
+            background_color: backgroundColor,
+            text_color: textColor,
+            button_color: buttonColor,
+            logo_color: logoColor,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('user_id', session.user.id);
+      } else {
+        // Insert new preferences
+        result = await supabase
+          .from('user_preferences')
+          .insert({
+            user_id: session.user.id,
+            background_color: backgroundColor,
+            text_color: textColor,
+            button_color: buttonColor,
+            logo_color: logoColor,
+          });
+      }
+
+      if (result.error) {
+        console.error('Error saving preferences:', result.error);
+        toast.error("Failed to save preferences");
+        return;
+      }
+
+      toast.success("Colors saved successfully");
+    } catch (error) {
+      console.error('Error in saveColors:', error);
+      toast.error("Failed to save preferences");
+    }
   };
 
   const toggleAdminStatus = async (userId: string, currentStatus: boolean) => {
