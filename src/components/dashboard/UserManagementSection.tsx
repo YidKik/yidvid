@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Shield, Plus } from "lucide-react";
+import { Shield, Plus, ChevronDown, ChevronUp } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
@@ -27,6 +27,7 @@ export const UserManagementSection = ({ currentUserId }: { currentUserId: string
   const { toast } = useToast();
   const [showAddAdminDialog, setShowAddAdminDialog] = useState(false);
   const [newAdminEmail, setNewAdminEmail] = useState("");
+  const [isExpanded, setIsExpanded] = useState(false);
   
   const { data: users, refetch: refetchUsers } = useQuery({
     queryKey: ["all-users"],
@@ -155,54 +156,61 @@ export const UserManagementSection = ({ currentUserId }: { currentUserId: string
     }
   };
 
+  const nonAdminUsers = users?.filter(user => !user.is_admin) || [];
+
   return (
     <div className="bg-white rounded-lg shadow mb-8">
-      <div className="p-4 border-b flex items-center justify-between">
-        <h2 className="text-lg font-semibold">User Management</h2>
+      <div 
+        className="p-4 border-b flex items-center justify-between cursor-pointer hover:bg-gray-50 transition-colors"
+        onClick={() => setIsExpanded(!isExpanded)}
+      >
+        <div className="flex items-center gap-2">
+          <h2 className="text-lg font-semibold">User Management</h2>
+          {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+        </div>
         <Button 
-          onClick={() => setShowAddAdminDialog(true)}
+          onClick={(e) => {
+            e.stopPropagation();
+            setShowAddAdminDialog(true);
+          }}
           className="flex items-center gap-2"
         >
           <Plus className="w-4 h-4" />
           Add Admin
         </Button>
       </div>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Email</TableHead>
-            <TableHead>Admin Status</TableHead>
-            <TableHead className="w-[100px]">Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {users?.map((user) => (
-            <TableRow key={user.id}>
-              <TableCell>{user.email}</TableCell>
-              <TableCell>
-                {user.is_admin ? (
-                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary">
-                    <Shield className="w-3 h-3 mr-1" />
-                    Admin
-                  </span>
-                ) : (
-                  <span className="text-muted-foreground">User</span>
-                )}
-              </TableCell>
-              <TableCell>
-                <Button
-                  variant={user.is_admin ? "destructive" : "default"}
-                  size="sm"
-                  onClick={() => toggleAdminStatus(user.id, !!user.is_admin)}
-                  disabled={user.id === currentUserId}
-                >
-                  {user.is_admin ? "Remove Admin" : "Make Admin"}
-                </Button>
-              </TableCell>
+      
+      {isExpanded && (
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Email</TableHead>
+              <TableHead>Admin Status</TableHead>
+              <TableHead className="w-[100px]">Actions</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {nonAdminUsers.map((user) => (
+              <TableRow key={user.id}>
+                <TableCell>{user.email}</TableCell>
+                <TableCell>
+                  <span className="text-muted-foreground">User</span>
+                </TableCell>
+                <TableCell>
+                  <Button
+                    variant="default"
+                    size="sm"
+                    onClick={() => toggleAdminStatus(user.id, !!user.is_admin)}
+                    disabled={user.id === currentUserId}
+                  >
+                    Make Admin
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      )}
 
       <Dialog open={showAddAdminDialog} onOpenChange={setShowAddAdminDialog}>
         <DialogContent>
