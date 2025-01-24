@@ -16,7 +16,7 @@ interface Video {
   video_id: string;
   channel_name: string;
   channel_id: string;
-  uploaded_at: string;
+  uploaded_at: string; // Changed from Date to string
   views: number;
   youtube_channels?: {
     channel_id: string;
