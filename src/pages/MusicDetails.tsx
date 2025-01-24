@@ -9,11 +9,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Music, Play, Pause } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useRef } from "react";
+import { toast } from "sonner";
 
 const MusicDetails = () => {
   const { id } = useParams();
   const [isPlaying, setIsPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   const { data: track, isLoading } = useQuery({
     queryKey: ['music-track', id],
@@ -47,7 +49,26 @@ const MusicDetails = () => {
   };
 
   const handlePlay = () => {
-    setIsPlaying(!isPlaying);
+    if (!track?.audio_url) {
+      toast.error("No audio file available for this track");
+      return;
+    }
+
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause();
+      } else {
+        audioRef.current.play().catch(error => {
+          console.error('Error playing audio:', error);
+          toast.error("Error playing audio");
+        });
+      }
+      setIsPlaying(!isPlaying);
+    }
+  };
+
+  const handleAudioEnded = () => {
+    setIsPlaying(false);
   };
 
   if (isLoading) {
@@ -94,30 +115,18 @@ const MusicDetails = () => {
               <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div className="md:col-span-2">
                   <div className="aspect-video w-full rounded-lg overflow-hidden bg-black relative">
-                    {isPlaying ? (
-                      <iframe
-                        width="100%"
-                        height="100%"
-                        src={`https://www.youtube.com/embed/${track.track_id}?autoplay=1`}
-                        title={track.title}
-                        frameBorder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                        className="absolute inset-0"
-                      />
-                    ) : (
-                      <img
-                        src={track.thumbnail}
-                        alt={track.title}
-                        className="w-full h-full object-cover"
-                      />
-                    )}
+                    <img
+                      src={track.thumbnail}
+                      alt={track.title}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                   <div className="mt-4 flex items-center gap-4 p-4 bg-muted rounded-lg">
                     <Button
                       onClick={handlePlay}
                       size="icon"
                       className="w-12 h-12 rounded-full bg-primary hover:bg-primary/90 transition-colors"
+                      disabled={!track.audio_url}
                     >
                       {isPlaying ? (
                         <Pause className="w-6 h-6 text-white" />
@@ -129,6 +138,14 @@ const MusicDetails = () => {
                       <h2 className="font-semibold text-lg">{track.title}</h2>
                       <p className="text-sm text-gray-500">{track.artist_name}</p>
                     </div>
+                    {track.audio_url && (
+                      <audio
+                        ref={audioRef}
+                        src={track.audio_url}
+                        onEnded={handleAudioEnded}
+                        className="hidden"
+                      />
+                    )}
                   </div>
                 </div>
                 <div className="space-y-6">

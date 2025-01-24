@@ -75,6 +75,7 @@ export type Database = {
         Row: {
           artist_id: string
           artist_name: string
+          audio_url: string | null
           created_at: string
           duration: number | null
           genre: Database["public"]["Enums"]["music_genre"] | null
@@ -89,6 +90,7 @@ export type Database = {
         Insert: {
           artist_id: string
           artist_name: string
+          audio_url?: string | null
           created_at?: string
           duration?: number | null
           genre?: Database["public"]["Enums"]["music_genre"] | null
@@ -103,6 +105,7 @@ export type Database = {
         Update: {
           artist_id?: string
           artist_name?: string
+          audio_url?: string | null
           created_at?: string
           duration?: number | null
           genre?: Database["public"]["Enums"]["music_genre"] | null
