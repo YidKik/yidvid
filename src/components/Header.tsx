@@ -20,6 +20,13 @@ interface SearchResult {
   }[];
 }
 
+interface SupabaseResponse<T> {
+  data: T[] | null;
+  error: {
+    message: string;
+  } | null;
+}
+
 export const Header = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [showResults, setShowResults] = useState(false);
@@ -71,45 +78,50 @@ export const Header = () => {
         try {
           const searchTerm = `%${searchQuery}%`;
           
-          // Add timeout to the fetch requests
-          const timeout = new Promise((_, reject) => {
+          const fetchPromises = Promise.all([
+            supabase
+              .from("youtube_videos")
+              .select("id, title, channel_name")
+              .ilike("title", searchTerm)
+              .limit(5) as Promise<SupabaseResponse<{
+                id: string;
+                title: string;
+                channel_name: string;
+              }>>,
+            supabase
+              .from("youtube_channels")
+              .select("channel_id, title")
+              .ilike("title", searchTerm)
+              .limit(3) as Promise<SupabaseResponse<{
+                channel_id: string;
+                title: string;
+              }>>
+          ]);
+
+          const timeoutPromise = new Promise((_, reject) => {
             setTimeout(() => reject(new Error('Request timeout')), 5000);
           });
 
-          const [videosResponse, channelsResponse] = await Promise.race([
-            Promise.all([
-              supabase
-                .from("youtube_videos")
-                .select("id, title, channel_name")
-                .ilike("title", searchTerm)
-                .limit(5),
-              supabase
-                .from("youtube_channels")
-                .select("channel_id, title")
-                .ilike("title", searchTerm)
-                .limit(3),
-            ]),
-            timeout
-          ]);
+          const responses = await Promise.race([
+            fetchPromises,
+            timeoutPromise
+          ]) as [SupabaseResponse<any>, SupabaseResponse<any>];
 
-          // Type guard to ensure we have the responses and not the timeout
-          if (Array.isArray(videosResponse) && Array.isArray(channelsResponse)) {
-            if (videosResponse.error) {
-              console.error("Video search error:", videosResponse.error);
-              throw new Error(videosResponse.error.message);
-            }
+          const [videosResponse, channelsResponse] = responses;
 
-            if (channelsResponse.error) {
-              console.error("Channel search error:", channelsResponse.error);
-              throw new Error(channelsResponse.error.message);
-            }
-
-            setSearchResults({
-              videos: videosResponse.data || [],
-              channels: channelsResponse.data || [],
-            });
-            break; // Success, exit retry loop
+          if (videosResponse.error) {
+            throw new Error(videosResponse.error.message);
           }
+
+          if (channelsResponse.error) {
+            throw new Error(channelsResponse.error.message);
+          }
+
+          setSearchResults({
+            videos: videosResponse.data || [],
+            channels: channelsResponse.data || [],
+          });
+          break; // Success, exit retry loop
         } catch (error: any) {
           console.error(`Search attempt ${attempt + 1} failed:`, error);
           attempt++;
