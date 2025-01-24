@@ -7,7 +7,7 @@ interface Video {
   channel_name: string;
   channel_id: string;
   views: number;
-  uploaded_at: string;
+  uploaded_at: string | Date;
 }
 
 interface RelatedVideosProps {
@@ -25,7 +25,7 @@ export const RelatedVideos = ({ videos }: RelatedVideosProps) => {
             {...video}
             channelName={video.channel_name}
             channelId={video.channel_id}
-            uploadedAt={new Date(video.uploaded_at)}
+            uploadedAt={video.uploaded_at}
           />
         ))}
       </div>
