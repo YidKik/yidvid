@@ -2,7 +2,8 @@ import { Link } from "react-router-dom";
 import { formatDistanceToNow, parseISO } from "date-fns";
 
 interface VideoCardProps {
-  id: string;
+  id: string;  // This will be the video_id (text)
+  uuid?: string; // This will be the database uuid
   title: string;
   thumbnail: string;
   channelName: string;

@@ -12,8 +12,8 @@ import {
 
 interface VideoGridProps {
   videos?: {
-    id: string;
-    video_id: string;  // Added this field
+    id: string;  // This is the UUID from the database
+    video_id: string;  // This is the YouTube video ID
     title: string;
     thumbnail: string;
     channelName: string;
@@ -66,7 +66,8 @@ export default function VideoGrid({ videos = [], maxVideos = 12, rowSize = 4, is
         {currentVideos.map((video) => (
           <VideoCard
             key={video.id}
-            id={video.video_id}  // Use video_id instead of id
+            id={video.video_id}  // Pass the video_id for the URL
+            uuid={video.id}      // Pass the UUID for database operations
             title={video.title}
             thumbnail={video.thumbnail}
             channelName={video.channelName}
