@@ -106,14 +106,14 @@ export const VideoGrid = () => {
 
       try {
         // Process channels in smaller batches to avoid URL length issues
-        const batchSize = 2; // Reduced batch size to avoid URL length issues
+        const batchSize = 1; // Reduced batch size to avoid URL length issues
         let allVideos = [];
         
         for (let i = 0; i < channels.length; i += batchSize) {
           const batchChannels = channels.slice(i, i + batchSize);
           const channelIds = batchChannels.map(c => c.channel_id);
           
-          console.log(`Fetching videos for channels batch ${i / batchSize + 1}:`, channelIds);
+          console.log(`Fetching videos for channel batch ${i / batchSize + 1}:`, channelIds);
           
           const { data: videosData, error } = await supabase
             .from("youtube_videos")
@@ -134,6 +134,11 @@ export const VideoGrid = () => {
 
           if (videosData) {
             allVideos = [...allVideos, ...videosData];
+          }
+
+          // Add a small delay between batches to prevent rate limiting
+          if (i + batchSize < channels.length) {
+            await new Promise(resolve => setTimeout(resolve, 100));
           }
         }
 
