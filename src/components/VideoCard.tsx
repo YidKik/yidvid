@@ -15,6 +15,7 @@ interface VideoCardProps {
 
 export const VideoCard = ({
   id,
+  uuid,
   title,
   thumbnail,
   channelName,
@@ -28,8 +29,11 @@ export const VideoCard = ({
 
   const formattedViews = views ? `${views.toLocaleString()} views` : '';
 
+  // Use video_id for routing if uuid is not available
+  const routeId = uuid || id;
+
   return (
-    <Link to={`/video/${id}`} className="block group">
+    <Link to={`/video/${routeId}`} className="block group">
       <div className="aspect-video rounded-lg overflow-hidden bg-muted mb-3 shadow-[0_3px_10px_rgb(0,0,0,0.2)] transition-all duration-300 hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:-translate-y-1">
         <img
           src={thumbnail}

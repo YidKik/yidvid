@@ -50,7 +50,7 @@ const Index = () => {
         .from("youtube_videos")
         .select("*")
         .order("views", { ascending: false })
-        .not("views", "is", null)  // Only include videos with views
+        .not("views", "is", null)
         .limit(12);
 
       if (error) {
@@ -59,7 +59,8 @@ const Index = () => {
       }
 
       return (data || []).map(video => ({
-        id: video.video_id,  // Using video_id for consistent routing
+        id: video.video_id,
+        uuid: video.id,  // Pass both IDs
         title: video.title,
         thumbnail: video.thumbnail,
         channelName: video.channel_name,
