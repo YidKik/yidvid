@@ -60,10 +60,8 @@ export const ChannelsGrid = () => {
               animationFillMode: 'forwards'
             }}
           >
-            <a 
-              href={`https://www.youtube.com/channel/${channel.channel_id}`}
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link 
+              to={`/channel/${channel.channel_id}`}
               className="block mb-4"
             >
               <Avatar className="w-24 h-24 transition-transform duration-300 group-hover:scale-110 cursor-pointer">
@@ -80,7 +78,7 @@ export const ChannelsGrid = () => {
                   <Youtube className="w-12 h-12 text-primary" />
                 </AvatarFallback>
               </Avatar>
-            </a>
+            </Link>
             <Link 
               to={`/channel/${channel.channel_id}`}
               className="text-sm font-medium text-center line-clamp-2 group-hover:text-[#ea384c] transition-colors duration-300"
