@@ -28,6 +28,7 @@ export const Header = () => {
     channels: [] 
   });
   const [isSearching, setIsSearching] = useState(false);
+  const [searchError, setSearchError] = useState<string | null>(null);
   
   const { data: session } = useQuery({
     queryKey: ["session"],
@@ -41,16 +42,12 @@ export const Header = () => {
     queryKey: ["profile", session?.user?.id],
     enabled: !!session?.user?.id,
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from("profiles")
         .select("*")
         .eq("id", session?.user?.id)
-        .single();
+        .maybeSingle();
       
-      if (error) {
-        console.error("Error fetching profile:", error);
-        return null;
-      }
       return data;
     },
   });
@@ -59,51 +56,65 @@ export const Header = () => {
     const searchContent = async () => {
       if (searchQuery.length < 2) {
         setSearchResults({ videos: [], channels: [] });
+        setSearchError(null);
         return;
       }
 
       setIsSearching(true);
-      try {
-        const searchTerm = `%${searchQuery}%`;
+      setSearchError(null);
 
-        const [videosResponse, channelsResponse] = await Promise.all([
-          supabase
-            .from("youtube_videos")
-            .select("id, title, channel_name")
-            .ilike("title", searchTerm)
-            .limit(5),
-          supabase
-            .from("youtube_channels")
-            .select("channel_id, title")
-            .ilike("title", searchTerm)
-            .limit(3),
-        ]);
+      const retryCount = 3;
+      let attempt = 0;
 
-        if (videosResponse.error) {
-          console.error("Video search error:", videosResponse.error);
-          toast.error("Error searching videos");
-          return;
+      while (attempt < retryCount) {
+        try {
+          const searchTerm = `%${searchQuery}%`;
+
+          const [videosResponse, channelsResponse] = await Promise.all([
+            supabase
+              .from("youtube_videos")
+              .select("id, title, channel_name")
+              .ilike("title", searchTerm)
+              .limit(5),
+            supabase
+              .from("youtube_channels")
+              .select("channel_id, title")
+              .ilike("title", searchTerm)
+              .limit(3),
+          ]);
+
+          if (videosResponse.error) {
+            console.error("Video search error:", videosResponse.error);
+            throw new Error(videosResponse.error.message);
+          }
+
+          if (channelsResponse.error) {
+            console.error("Channel search error:", channelsResponse.error);
+            throw new Error(channelsResponse.error.message);
+          }
+
+          setSearchResults({
+            videos: videosResponse.data || [],
+            channels: channelsResponse.data || [],
+          });
+          break; // Success, exit retry loop
+        } catch (error: any) {
+          console.error(`Search attempt ${attempt + 1} failed:`, error);
+          attempt++;
+          
+          if (attempt === retryCount) {
+            setSearchError("Search is temporarily unavailable. Please try again later.");
+            toast.error("Unable to perform search. Please try again later.");
+          }
+          
+          // Wait before retrying
+          await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
         }
-
-        if (channelsResponse.error) {
-          console.error("Channel search error:", channelsResponse.error);
-          toast.error("Error searching channels");
-          return;
-        }
-
-        setSearchResults({
-          videos: videosResponse.data || [],
-          channels: channelsResponse.data || [],
-        });
-      } catch (error) {
-        console.error("Search error:", error);
-        toast.error("Error performing search");
-      } finally {
-        setIsSearching(false);
       }
+      setIsSearching(false);
     };
 
-    const debounceTimeout = setTimeout(searchContent, 150);
+    const debounceTimeout = setTimeout(searchContent, 300);
     return () => clearTimeout(debounceTimeout);
   }, [searchQuery]);
 
@@ -122,7 +133,7 @@ export const Header = () => {
 
   const hasResults = searchResults.videos.length > 0 || searchResults.channels.length > 0;
 
-  const iconClassName = "h-5 w-5 text-primary hover:scale-110 transition-transform";
+  const iconClassName = "text-primary hover:scale-110 transition-transform";
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -148,12 +159,16 @@ export const Header = () => {
               className="w-full pl-8 h-9 bg-transparent border focus:ring-0 text-sm placeholder:text-muted-foreground rounded-full"
             />
           </div>
-          {showResults && searchQuery && (isSearching || hasResults) && (
+          {showResults && searchQuery && (isSearching || hasResults || searchError) && (
             <div className="absolute w-full mt-1 bg-white rounded-md shadow-lg border border-gray-100 overflow-hidden z-50">
               <div className="max-h-60 overflow-y-auto">
                 {isSearching ? (
                   <div className="px-4 py-2 text-sm text-gray-500">
                     Searching...
+                  </div>
+                ) : searchError ? (
+                  <div className="px-4 py-2 text-sm text-red-500">
+                    {searchError}
                   </div>
                 ) : (
                   <>
