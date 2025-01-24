@@ -1,17 +1,12 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Plus, Music, Trash2 } from "lucide-react";
+import { Plus, Trash2, Music2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import {
   Table,
   TableBody,
@@ -20,12 +15,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Label } from "@/components/ui/label";
 
 export const MusicArtistsSection = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [artistId, setArtistId] = useState("");
-  const [isAddingArtist, setIsAddingArtist] = useState(false);
+  const [channelId, setChannelId] = useState("");
   const { toast } = useToast();
 
   const { data: artists, refetch } = useQuery({
@@ -37,9 +30,9 @@ export const MusicArtistsSection = () => {
         .order("created_at", { ascending: false });
 
       if (error) {
-        console.error("Error fetching artists:", error);
+        console.error("Error fetching music artists:", error);
         toast({
-          title: "Error fetching artists",
+          title: "Error fetching music artists",
           description: error.message,
           variant: "destructive",
         });
@@ -50,24 +43,23 @@ export const MusicArtistsSection = () => {
     },
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleAddArtist = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!artistId) {
+    if (!channelId) {
       toast({
-        title: "Artist ID required",
-        description: "Please enter an artist ID or URL",
+        title: "Channel ID required",
+        description: "Please enter a YouTube channel ID",
         variant: "destructive",
       });
       return;
     }
 
-    setIsAddingArtist(true);
     try {
       // First check if the artist already exists
       const { data: existingArtist } = await supabase
         .from("music_artists")
         .select("title")
-        .eq("artist_id", artistId.trim())
+        .eq("artist_id", channelId.trim())
         .maybeSingle();
 
       if (existingArtist) {
@@ -79,17 +71,14 @@ export const MusicArtistsSection = () => {
         return;
       }
 
-      const { data, error } = await supabase.functions.invoke('fetch-youtube-music', {
-        body: { artistId: artistId.trim() },
-        headers: {
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`
-        }
+      const { data, error } = await supabase.functions.invoke('fetch-youtube-channel', {
+        body: { channelId: channelId.trim() },
       });
       
       if (error) {
-        console.error("Error fetching artist:", error);
+        console.error("Error fetching channel:", error);
         toast({
-          title: "Error fetching artist",
+          title: "Error fetching channel",
           description: error.message,
           variant: "destructive",
         });
@@ -98,8 +87,8 @@ export const MusicArtistsSection = () => {
 
       if (!data) {
         toast({
-          title: "Artist not found",
-          description: "Could not find an artist with the provided ID",
+          title: "Channel not found",
+          description: "Could not find a channel with the provided ID",
           variant: "destructive",
         });
         return;
@@ -108,7 +97,7 @@ export const MusicArtistsSection = () => {
       const { error: insertError } = await supabase
         .from("music_artists")
         .insert({
-          artist_id: data.artistId,
+          artist_id: data.channelId,
           title: data.title,
           description: data.description,
           thumbnail_url: data.thumbnailUrl,
@@ -128,7 +117,7 @@ export const MusicArtistsSection = () => {
         title: "Artist added",
         description: `Successfully added ${data.title}`,
       });
-      setArtistId("");
+      setChannelId("");
       setIsDialogOpen(false);
       refetch();
     } catch (error: any) {
@@ -138,8 +127,6 @@ export const MusicArtistsSection = () => {
         description: error.message || "An unexpected error occurred",
         variant: "destructive",
       });
-    } finally {
-      setIsAddingArtist(false);
     }
   };
 
@@ -187,29 +174,25 @@ export const MusicArtistsSection = () => {
                   className="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-white font-semibold px-8 py-6 text-lg rounded-md shadow-lg hover:shadow-xl transition-all duration-200 ease-in-out transform hover:-translate-y-0.5 active:translate-y-0 active:shadow-md focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                 >
                   <Plus className="h-6 w-6" />
-                  Add Artist
+                  Add Music Artist
                 </Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Add Music Artist</DialogTitle>
                 </DialogHeader>
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form onSubmit={handleAddArtist} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="artistId">YouTube Channel ID or URL</Label>
+                    <Label htmlFor="channelId">YouTube Channel ID or URL</Label>
                     <Input
-                      id="artistId"
+                      id="channelId"
                       placeholder="Enter channel ID, URL, or @handle"
-                      value={artistId}
-                      onChange={(e) => setArtistId(e.target.value)}
-                      disabled={isAddingArtist}
+                      value={channelId}
+                      onChange={(e) => setChannelId(e.target.value)}
                     />
                   </div>
-                  <Button 
-                    type="submit" 
-                    disabled={isAddingArtist}
-                  >
-                    {isAddingArtist ? "Adding..." : "Add Artist"}
+                  <Button type="submit" className="w-full">
+                    Add Artist
                   </Button>
                 </form>
               </DialogContent>
@@ -217,6 +200,7 @@ export const MusicArtistsSection = () => {
           </div>
         </div>
       </div>
+
       <Table>
         <TableHeader>
           <TableRow>
@@ -237,7 +221,7 @@ export const MusicArtistsSection = () => {
                     className="w-8 h-8 rounded"
                   />
                 ) : (
-                  <Music className="w-8 h-8 text-primary" />
+                  <Music2 className="w-8 h-8 text-primary" />
                 )}
                 <div>
                   <p className="font-medium">{artist.title}</p>
