@@ -113,7 +113,9 @@ serve(async (req) => {
           artist_name: channelTitle,
           uploaded_at: item.snippet.publishedAt,
           plays: parseInt(detailsMap.get(item.id.videoId)?.statistics?.viewCount || '0'),
-          duration: parseDuration(detailsMap.get(item.id.videoId)?.contentDetails?.duration || 'PT0S')
+          duration: parseDuration(detailsMap.get(item.id.videoId)?.contentDetails?.duration || 'PT0S'),
+          // Generate audio URL using YouTube video ID
+          audio_url: `https://www.youtube.com/watch?v=${item.id.videoId}`
         }));
 
         // Store tracks in batches
