@@ -5,12 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { SearchBar } from "./search/SearchBar";
 import { Settings, LogOut, LayoutDashboard } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
 
 export const Header = () => {
@@ -58,38 +52,46 @@ export const Header = () => {
         <div className="flex flex-1 items-center justify-end space-x-4">
           <nav className="flex items-center space-x-2">
             {session ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Avatar className="cursor-pointer">
-                    <AvatarImage src={session.user.user_metadata.avatar_url} />
-                    <AvatarFallback>
-                      {session.user.email?.charAt(0).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
-                  {profile?.is_admin && (
-                    <DropdownMenuItem asChild>
-                      <Link to="/dashboard" className="flex items-center">
-                        <LayoutDashboard className="mr-2 h-4 w-4" />
-                        Dashboard
-                      </Link>
-                    </DropdownMenuItem>
-                  )}
-                  <DropdownMenuItem asChild>
-                    <Link to="/settings" className="flex items-center">
-                      <Settings className="mr-2 h-4 w-4" />
-                      Settings
+              <div className="flex items-center space-x-2">
+                {profile?.is_admin && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    asChild
+                    className="hover:bg-accent"
+                  >
+                    <Link to="/dashboard">
+                      <LayoutDashboard className="h-5 w-5" />
                     </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={handleSignOut} className="flex items-center text-red-600">
-                    <LogOut className="mr-2 h-4 w-4" />
-                    Sign Out
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                  </Button>
+                )}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  asChild
+                  className="hover:bg-accent"
+                >
+                  <Link to="/settings">
+                    <Settings className="h-5 w-5" />
+                  </Link>
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={handleSignOut}
+                  className="hover:bg-accent text-red-600"
+                >
+                  <LogOut className="h-5 w-5" />
+                </Button>
+                <Avatar>
+                  <AvatarImage src={session.user.user_metadata.avatar_url} />
+                  <AvatarFallback>
+                    {session.user.email?.charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+              </div>
             ) : (
-              <Button variant="default" asChild className="bg-primary hover:bg-primary-hover text-white">
+              <Button variant="default" asChild className="bg-primary hover:bg-primary/90 text-white">
                 <Link to="/auth">Sign In</Link>
               </Button>
             )}
