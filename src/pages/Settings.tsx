@@ -21,7 +21,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useColors } from "@/contexts/ColorContext";
-import { Settings as SettingsIcon, Volume2, Globe, Bell, Shield, Eye } from "lucide-react";
+import { Settings as SettingsIcon, Volume2, Globe, Bell, Shield } from "lucide-react";
+import { translations, getTranslation } from "@/utils/translations";
 
 const Settings = () => {
   const navigate = useNavigate();
@@ -259,6 +260,8 @@ const Settings = () => {
     loadUserPreferences();
   }, []);
 
+  const t = (key: keyof typeof translations) => getTranslation(key, language);
+
   return (
     <div className="min-h-screen" style={{ backgroundColor: backgroundColor, color: textColor }}>
       <Header />
@@ -266,17 +269,16 @@ const Settings = () => {
         <BackButton />
         <h1 className="text-3xl font-bold mb-8 flex items-center gap-2">
           <SettingsIcon className="h-8 w-8" />
-          Settings
+          {t('settings')}
         </h1>
 
-        {/* Color Customization Section */}
         <section className="mb-12">
-          <h2 className="text-2xl font-semibold mb-4">Customize Colors</h2>
+          <h2 className="text-2xl font-semibold mb-4">{t('customizeColors')}</h2>
           <Card className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="backgroundColor">Background Color</Label>
+                  <Label htmlFor="backgroundColor">{t('backgroundColor')}</Label>
                   <div className="flex items-center gap-4">
                     <input
                       type="color"
@@ -290,7 +292,7 @@ const Settings = () => {
                 </div>
 
                 <div>
-                  <Label htmlFor="textColor">Text Color</Label>
+                  <Label htmlFor="textColor">{t('textColor')}</Label>
                   <div className="flex items-center gap-4">
                     <input
                       type="color"
@@ -306,7 +308,7 @@ const Settings = () => {
 
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="buttonColor">Button Color</Label>
+                  <Label htmlFor="buttonColor">{t('buttonColor')}</Label>
                   <div className="flex items-center gap-4">
                     <input
                       type="color"
@@ -320,7 +322,7 @@ const Settings = () => {
                 </div>
 
                 <div>
-                  <Label htmlFor="logoColor">Logo Color</Label>
+                  <Label htmlFor="logoColor">{t('logoColor')}</Label>
                   <div className="flex items-center gap-4">
                     <input
                       type="color"
@@ -335,17 +337,11 @@ const Settings = () => {
               </div>
 
               <div className="col-span-full flex gap-4">
-                <Button 
-                  onClick={saveColors}
-                  variant="default"
-                >
-                  Save Changes
+                <Button onClick={saveColors} variant="default">
+                  {t('saveChanges')}
                 </Button>
-                <Button 
-                  onClick={resetToDefaults}
-                  variant="outline"
-                >
-                  Reset to Defaults
+                <Button onClick={resetToDefaults} variant="outline">
+                  {t('resetDefaults')}
                 </Button>
               </div>
             </div>
@@ -355,20 +351,22 @@ const Settings = () => {
         {/* Account Information */}
         <section className="mb-12">
           <Card className="p-6">
-            <h2 className="text-xl font-semibold mb-4">Your Account Information</h2>
+            <h2 className="text-xl font-semibold mb-4">{t('accountInformation')}</h2>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <Label>User ID</Label>
+                <Label>{t('userId')}</Label>
                 <code className="bg-muted px-2 py-1 rounded">{userId || 'Loading...'}</code>
               </div>
               <p className="text-sm text-muted-foreground">
-                This is your unique identifier in the system. You might need this when requesting admin access.
+                {t('uniqueIdentifier')}
               </p>
               <div className="pt-4 border-t flex gap-4">
                 <Button variant="destructive" onClick={handleSignOut}>
-                  Sign Out
+                  {t('signOut')}
                 </Button>
-                <Button variant="destructive">Delete Account</Button>
+                <Button variant="destructive">
+                  {t('deleteAccount')}
+                </Button>
               </div>
             </div>
           </Card>
@@ -376,13 +374,13 @@ const Settings = () => {
 
         {/* Accessibility Settings */}
         <section className="mb-12">
-          <h2 className="text-2xl font-semibold mb-4">Accessibility</h2>
+          <h2 className="text-2xl font-semibold mb-4">{t('accessibility')}</h2>
           <Card className="p-6 space-y-6">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label htmlFor="high-contrast">High Contrast Mode</Label>
+                <Label htmlFor="high-contrast">{t('highContrastMode')}</Label>
                 <p className="text-sm text-muted-foreground">
-                  Increase contrast for better visibility
+                  {t('increaseContrast')}
                 </p>
               </div>
               <Switch
@@ -393,7 +391,7 @@ const Settings = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="subtitles">Subtitles</Label>
+              <Label htmlFor="subtitles">{t('subtitles')}</Label>
               <Switch
                 id="subtitles"
                 checked={subtitles}
@@ -407,11 +405,11 @@ const Settings = () => {
         <section className="mb-12">
           <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
             <Volume2 className="h-6 w-6" />
-            Playback Settings
+            {t('playbackSettings')}
           </h2>
           <Card className="p-6 space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="volume">Default Volume ({volume}%)</Label>
+              <Label htmlFor="volume">{t('defaultVolume')} ({volume}%)</Label>
               <Slider
                 id="volume"
                 min={0}
@@ -423,7 +421,7 @@ const Settings = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="playback-speed">Default Playback Speed</Label>
+              <Label htmlFor="playback-speed">{t('defaultPlaybackSpeed')}</Label>
               <Select value={playbackSpeed} onValueChange={setPlaybackSpeed}>
                 <SelectTrigger className="w-full bg-background border-input">
                   <SelectValue placeholder="Select speed" />
@@ -442,9 +440,9 @@ const Settings = () => {
 
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label htmlFor="autoplay">Autoplay</Label>
+                <Label htmlFor="autoplay">{t('autoplay')}</Label>
                 <p className="text-sm text-muted-foreground">
-                  Automatically play next video
+                  {t('autoplayNextVideo')}
                 </p>
               </div>
               <Switch
@@ -460,11 +458,11 @@ const Settings = () => {
         <section className="mb-12">
           <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
             <Globe className="h-6 w-6" />
-            Language Settings
+            {t('languageSettings')}
           </h2>
           <Card className="p-6">
             <div className="space-y-2">
-              <Label htmlFor="language">Interface Language</Label>
+              <Label htmlFor="language">{t('interfaceLanguage')}</Label>
               <Select value={language} onValueChange={handleLanguageChange}>
                 <SelectTrigger className="w-full bg-background border-input">
                   <SelectValue placeholder="Select language" />
@@ -486,14 +484,14 @@ const Settings = () => {
         <section className="mb-12">
           <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
             <Bell className="h-6 w-6" />
-            Notification Settings
+            {t('notificationSettings')}
           </h2>
           <Card className="p-6 space-y-6">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label htmlFor="email-notifications">Email Notifications</Label>
+                <Label htmlFor="email-notifications">{t('emailNotifications')}</Label>
                 <p className="text-sm text-muted-foreground">
-                  Receive updates via email
+                  {t('receiveUpdates')}
                 </p>
               </div>
               <Switch
@@ -505,9 +503,9 @@ const Settings = () => {
 
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label htmlFor="push-notifications">Push Notifications</Label>
+                <Label htmlFor="push-notifications">{t('pushNotifications')}</Label>
                 <p className="text-sm text-muted-foreground">
-                  Receive browser notifications
+                  {t('browserNotifications')}
                 </p>
               </div>
               <Switch
@@ -523,14 +521,14 @@ const Settings = () => {
         <section className="mb-12">
           <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
             <Shield className="h-6 w-6" />
-            Privacy Settings
+            {t('privacySettings')}
           </h2>
           <Card className="p-6 space-y-6">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label htmlFor="private-account">Private Account</Label>
+                <Label htmlFor="private-account">{t('privateAccount')}</Label>
                 <p className="text-sm text-muted-foreground">
-                  Only show your activity to followers
+                  {t('showActivityFollowers')}
                 </p>
               </div>
               <Switch
@@ -542,9 +540,9 @@ const Settings = () => {
 
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label htmlFor="data-collection">Data Collection</Label>
+                <Label htmlFor="data-collection">{t('dataCollection')}</Label>
                 <p className="text-sm text-muted-foreground">
-                  Allow us to collect usage data to improve your experience
+                  {t('allowDataCollection')}
                 </p>
               </div>
               <Switch
@@ -556,9 +554,9 @@ const Settings = () => {
 
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label htmlFor="auto-hide-comments">Auto-hide Comments</Label>
+                <Label htmlFor="auto-hide-comments">{t('autoHideComments')}</Label>
                 <p className="text-sm text-muted-foreground">
-                  Automatically hide comments on videos
+                  {t('autoHideComments')}
                 </p>
               </div>
               <Switch
@@ -573,29 +571,29 @@ const Settings = () => {
         {/* Admin Section */}
         {profile?.is_admin && (
           <section className="mb-12">
-            <h2 className="text-2xl font-semibold mb-4">Admin Controls</h2>
+            <h2 className="text-2xl font-semibold mb-4">{t('adminControls')}</h2>
             <Card className="p-6">
               <div className="space-y-8">
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label>Dashboard Access</Label>
+                    <Label>{t('dashboardAccess')}</Label>
                     <p className="text-sm text-muted-foreground">
-                      Access the admin dashboard to manage channels and videos
+                      {t('manageChannels')}
                     </p>
                   </div>
                   <Button onClick={handleDashboardAccess}>
-                    Open Dashboard
+                    {t('openDashboard')}
                   </Button>
                 </div>
 
                 <div>
-                  <h3 className="text-lg font-semibold mb-4">Manage Admins</h3>
+                  <h3 className="text-lg font-semibold mb-4">{t('manageAdmins')}</h3>
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Email</TableHead>
-                        <TableHead>Admin Status</TableHead>
-                        <TableHead>Actions</TableHead>
+                        <TableHead>{t('email')}</TableHead>
+                        <TableHead>{t('adminStatus')}</TableHead>
+                        <TableHead>{t('actions')}</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
