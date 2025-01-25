@@ -211,7 +211,7 @@ export const Header = () => {
                   className="hover:bg-transparent p-0"
                 >
                   <Link to="/dashboard">
-                    <LayoutDashboard className="text-primary hover:text-primary/80 transition-colors" />
+                    <LayoutDashboard className="text-primary hover:text-primary/80 transition-all duration-300 hover:scale-110 hover:rotate-12" />
                   </Link>
                 </Button>
               )}
@@ -222,11 +222,11 @@ export const Header = () => {
                 className="hover:bg-transparent p-0"
               >
                 <Link to="/settings">
-                  <Settings className="text-primary hover:text-primary/80 transition-colors" />
+                  <Settings className="text-primary hover:text-primary/80 transition-all duration-300 hover:scale-110 hover:-rotate-12" />
                 </Link>
               </Button>
               <LogOut 
-                className="text-primary hover:text-primary/80 transition-colors cursor-pointer" 
+                className="text-primary hover:text-primary/80 transition-all duration-300 hover:scale-110 hover:rotate-12 cursor-pointer" 
                 onClick={handleSignOut}
               />
               <Avatar>
