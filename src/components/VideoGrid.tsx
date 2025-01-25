@@ -30,8 +30,8 @@ export default function VideoGrid({ videos = [], maxVideos = 12, rowSize = 4, is
   const [showAll, setShowAll] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Filter videos to show only the most recent video from each channel
-  const uniqueChannelVideos = videos.reduce((acc, current) => {
+  // Get unique channel videos for the first page only
+  const firstPageVideos = videos.reduce((acc, current) => {
     const existingVideo = acc.find(video => video.channelId === current.channelId);
     if (!existingVideo) {
       // If no video from this channel exists yet, add it
@@ -50,11 +50,15 @@ export default function VideoGrid({ videos = [], maxVideos = 12, rowSize = 4, is
   }, [] as VideoGridProps['videos']);
 
   const videosPerPage = showAll ? rowSize * 3 : maxVideos;
-  const totalPages = Math.ceil((uniqueChannelVideos?.length || 0) / videosPerPage);
+  const totalPages = Math.ceil((showAll ? videos.length : firstPageVideos.length) / videosPerPage);
 
   const indexOfLastVideo = currentPage * videosPerPage;
   const indexOfFirstVideo = indexOfLastVideo - videosPerPage;
-  const currentVideos = uniqueChannelVideos?.slice(indexOfFirstVideo, indexOfLastVideo) || [];
+  
+  // Use filtered videos only for the first page, show all videos for subsequent pages
+  const currentVideos = currentPage === 1 && !showAll
+    ? firstPageVideos.slice(indexOfFirstVideo, indexOfLastVideo)
+    : videos.slice(indexOfFirstVideo, indexOfLastVideo);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -98,7 +102,7 @@ export default function VideoGrid({ videos = [], maxVideos = 12, rowSize = 4, is
       </div>
       
       <div className="flex flex-col items-center gap-4 mt-8">
-        {!showAll && uniqueChannelVideos.length > maxVideos && (
+        {!showAll && firstPageVideos.length > maxVideos && (
           <Button 
             onClick={() => {
               setShowAll(true);
