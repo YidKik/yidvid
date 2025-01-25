@@ -252,9 +252,11 @@ export const Header = () => {
               )}
               <DropdownMenu>
                 <DropdownMenuTrigger className="relative">
-                  <Bell className="text-primary hover:text-primary/80 transition-all duration-300 hover:scale-110 hover:-rotate-12 cursor-pointer" />
+                  <Bell 
+                    className="text-primary hover:text-primary/80 transition-all duration-300 hover:scale-110 hover:-rotate-12 cursor-pointer" 
+                  />
                   {notifications && notifications.length > 0 && (
-                    <span className="absolute -top-2 -right-2 bg-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center animate-fade-in">
+                    <span className="absolute -top-2 -right-2 text-primary text-xs font-bold animate-fade-in">
                       {notifications.length}
                     </span>
                   )}
