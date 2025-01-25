@@ -204,27 +204,17 @@ export const Header = () => {
           {session ? (
             <div className="flex items-center gap-3">
               {profile?.is_admin && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  asChild
-                  className="hover:bg-transparent p-0"
-                >
-                  <Link to="/dashboard">
-                    <LayoutDashboard className="text-primary hover:text-primary/80 transition-all duration-300 hover:scale-110 hover:rotate-12" />
-                  </Link>
-                </Button>
-              )}
-              <Button
-                variant="ghost"
-                size="icon"
-                asChild
-                className="hover:bg-transparent p-0"
-              >
-                <Link to="/settings">
-                  <Settings className="text-primary hover:text-primary/80 transition-all duration-300 hover:scale-110 hover:-rotate-12" />
+                <Link to="/dashboard">
+                  <LayoutDashboard 
+                    className="text-primary hover:text-primary/80 transition-all duration-300 hover:scale-110 hover:rotate-12 cursor-pointer" 
+                  />
                 </Link>
-              </Button>
+              )}
+              <Link to="/settings">
+                <Settings 
+                  className="text-primary hover:text-primary/80 transition-all duration-300 hover:scale-110 hover:-rotate-12 cursor-pointer" 
+                />
+              </Link>
               <LogOut 
                 className="text-primary hover:text-primary/80 transition-all duration-300 hover:scale-110 hover:rotate-12 cursor-pointer" 
                 onClick={handleSignOut}
