@@ -64,75 +64,43 @@ export const Header = () => {
       setIsSearching(true);
       setSearchError(null);
 
-      const retryCount = 3;
-      let attempt = 0;
-      const baseDelay = 1000; // 1 second
+      try {
+        const searchTerm = `%${searchQuery}%`;
+        
+        const [videosResponse, channelsResponse] = await Promise.all([
+          supabase
+            .from("youtube_videos")
+            .select("id, title, channel_name")
+            .ilike("title", searchTerm)
+            .limit(5),
+          supabase
+            .from("youtube_channels")
+            .select("channel_id, title")
+            .ilike("title", searchTerm)
+            .limit(3)
+        ]);
 
-      while (attempt < retryCount) {
-        try {
-          const searchTerm = `%${searchQuery}%`;
-          
-          const fetchPromises = Promise.all([
-            supabase
-              .from("youtube_videos")
-              .select("id, title, channel_name")
-              .ilike("title", searchTerm)
-              .limit(5)
-              .then((response): PostgrestResponse<{
-                id: string;
-                title: string;
-                channel_name: string;
-              }> => response),
-            supabase
-              .from("youtube_channels")
-              .select("channel_id, title")
-              .ilike("title", searchTerm)
-              .limit(3)
-              .then((response): PostgrestResponse<{
-                channel_id: string;
-                title: string;
-              }> => response)
-          ]);
-
-          const timeoutPromise = new Promise((_, reject) => {
-            setTimeout(() => reject(new Error('Request timeout')), 5000);
-          });
-
-          const responses = await Promise.race([
-            fetchPromises,
-            timeoutPromise
-          ]) as [PostgrestResponse<any>, PostgrestResponse<any>];
-
-          const [videosResponse, channelsResponse] = responses;
-
-          if (videosResponse.error) {
-            throw new Error(videosResponse.error.message);
-          }
-
-          if (channelsResponse.error) {
-            throw new Error(channelsResponse.error.message);
-          }
-
-          setSearchResults({
-            videos: videosResponse.data || [],
-            channels: channelsResponse.data || [],
-          });
-          break; // Success, exit retry loop
-        } catch (error: any) {
-          console.error(`Search attempt ${attempt + 1} failed:`, error);
-          attempt++;
-          
-          if (attempt === retryCount) {
-            setSearchError("Search is temporarily unavailable. Please try again later.");
-            toast.error("Unable to perform search. Please try again later.");
-          } else {
-            // Exponential backoff
-            const delay = Math.min(baseDelay * Math.pow(2, attempt), 10000); // Max 10 seconds
-            await new Promise(resolve => setTimeout(resolve, delay));
-          }
+        if (videosResponse.error) {
+          console.error("Videos search error:", videosResponse.error);
+          throw new Error(videosResponse.error.message);
         }
+
+        if (channelsResponse.error) {
+          console.error("Channels search error:", channelsResponse.error);
+          throw new Error(channelsResponse.error.message);
+        }
+
+        setSearchResults({
+          videos: videosResponse.data || [],
+          channels: channelsResponse.data || [],
+        });
+      } catch (error: any) {
+        console.error("Search error:", error);
+        setSearchError("Unable to perform search. Please try again.");
+        toast.error("Search failed. Please try again later.");
+      } finally {
+        setIsSearching(false);
       }
-      setIsSearching(false);
     };
 
     const debounceTimeout = setTimeout(searchContent, 300);
