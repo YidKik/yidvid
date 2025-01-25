@@ -7,7 +7,6 @@ import { Settings, LogOut, LayoutDashboard, Search } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
-import { PostgrestResponse } from "@supabase/supabase-js";
 
 interface SearchResult {
   videos: {
@@ -125,14 +124,14 @@ export const Header = () => {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-xl bg-gradient-to-r from-red-50/30 via-background/80 to-red-50/30 supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 items-center justify-between gap-4 px-4">
-        {/* Logo Section - Made more compact */}
+        {/* Logo Section */}
         <Link to="/" className="flex-shrink-0 w-32">
           <span className="text-xl font-bold text-primary">
             Jewish Tube
           </span>
         </Link>
 
-        {/* Search Section - Centered with max-width */}
+        {/* Search Section */}
         <form onSubmit={handleSearch} className="flex-1 max-w-xl mx-auto">
           <div className="relative w-full">
             <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -200,7 +199,7 @@ export const Header = () => {
           )}
         </form>
 
-        {/* Navigation Section - Kept unchanged */}
+        {/* Navigation Section */}
         <nav className="flex items-center gap-2 w-32 justify-end">
           {session ? (
             <div className="flex items-center gap-3">
@@ -212,7 +211,7 @@ export const Header = () => {
                   className="hover:bg-transparent p-0"
                 >
                   <Link to="/dashboard">
-                    <LayoutDashboard className="text-primary hover:scale-110 transition-transform" />
+                    <LayoutDashboard className="text-primary hover:text-primary/80 transition-colors" />
                   </Link>
                 </Button>
               )}
@@ -223,7 +222,7 @@ export const Header = () => {
                 className="hover:bg-transparent p-0"
               >
                 <Link to="/settings">
-                  <Settings className="text-primary hover:scale-110 transition-transform" />
+                  <Settings className="text-primary hover:text-primary/80 transition-colors" />
                 </Link>
               </Button>
               <Button
@@ -232,7 +231,7 @@ export const Header = () => {
                 onClick={handleSignOut}
                 className="hover:bg-transparent p-0"
               >
-                <LogOut className="text-primary hover:scale-110 transition-transform" />
+                <LogOut className="text-primary hover:text-primary/80 transition-colors" />
               </Button>
               <Avatar>
                 <AvatarImage src={session.user.user_metadata.avatar_url} />
