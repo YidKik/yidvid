@@ -63,7 +63,7 @@ const PaginationPrevious = ({
     aria-label="Go to previous page"
     size="default"
     className={cn(
-      "flex items-center gap-1 cursor-pointer transition-all duration-300 hover:scale-110 hover:text-primary",
+      "flex items-center gap-1 cursor-pointer transition-all duration-300 hover:scale-110 hover:text-primary animate-fade-in",
       className
     )}
     {...props}
@@ -82,7 +82,7 @@ const PaginationNext = ({
     aria-label="Go to next page"
     size="default"
     className={cn(
-      "flex items-center gap-1 cursor-pointer transition-all duration-300 hover:scale-110 hover:text-primary",
+      "flex items-center gap-1 cursor-pointer transition-all duration-300 hover:scale-110 hover:text-primary animate-fade-in",
       className
     )}
     {...props}
