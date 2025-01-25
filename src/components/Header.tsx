@@ -157,16 +157,16 @@ export const Header = () => {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-xl bg-gradient-to-r from-red-50/30 via-background/80 to-red-50/30 supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 items-center justify-between gap-4 px-4">
-        {/* Logo Section */}
-        <Link to="/" className="flex-shrink-0">
+        {/* Logo Section - Made more compact */}
+        <Link to="/" className="flex-shrink-0 w-32">
           <span className="text-xl font-bold text-primary">
             Jewish Tube
           </span>
         </Link>
 
-        {/* Search Section - Centered */}
-        <form onSubmit={handleSearch} className="flex-1 max-w-2xl mx-auto">
-          <div className="relative">
+        {/* Search Section - Centered with max-width */}
+        <form onSubmit={handleSearch} className="flex-1 max-w-xl mx-auto">
+          <div className="relative w-full">
             <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
@@ -175,11 +175,11 @@ export const Header = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
               onFocus={() => setShowResults(true)}
               onBlur={() => setTimeout(() => setShowResults(false), 200)}
-              className="w-full pl-8 h-9 bg-transparent border focus:ring-0 text-sm placeholder:text-muted-foreground rounded-full"
+              className="w-full pl-8 h-9 bg-transparent border focus:ring-0 text-sm placeholder:text-muted-foreground rounded-full max-w-full"
             />
           </div>
           {showResults && searchQuery && (isSearching || hasResults || searchError) && (
-            <div className="absolute w-full mt-1 bg-white rounded-md shadow-lg border border-gray-100 overflow-hidden z-50">
+            <div className="absolute w-full max-w-xl mt-1 bg-white rounded-md shadow-lg border border-gray-100 overflow-hidden z-50">
               <div className="max-h-60 overflow-y-auto">
                 {isSearching ? (
                   <div className="px-4 py-2 text-sm text-gray-500">
@@ -232,8 +232,8 @@ export const Header = () => {
           )}
         </form>
 
-        {/* Navigation Section */}
-        <nav className="flex items-center gap-2">
+        {/* Navigation Section - Kept unchanged */}
+        <nav className="flex items-center gap-2 w-32 justify-end">
           {session ? (
             <div className="flex items-center gap-3">
               {profile?.is_admin && (
