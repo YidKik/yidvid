@@ -251,15 +251,17 @@ export const Header = () => {
                 </Link>
               )}
               <DropdownMenu>
-                <DropdownMenuTrigger className="relative">
-                  <Bell 
-                    className="text-primary hover:text-primary/80 transition-all duration-300 hover:scale-110 hover:-rotate-12 cursor-pointer" 
-                  />
-                  {notifications && notifications.length > 0 && (
-                    <span className="absolute -top-2 -right-2 text-primary text-xs font-bold">
-                      {notifications.length}
-                    </span>
-                  )}
+                <DropdownMenuTrigger asChild>
+                  <div className="relative cursor-pointer">
+                    <Bell 
+                      className="text-primary hover:text-primary/80 transition-all duration-300 hover:scale-110 hover:-rotate-12" 
+                    />
+                    {notifications && notifications.length > 0 && (
+                      <span className="absolute -top-2 -right-2 text-primary text-xs font-bold">
+                        {notifications.length}
+                      </span>
+                    )}
+                  </div>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-80">
                   {notifications && notifications.length > 0 ? (
