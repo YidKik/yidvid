@@ -225,14 +225,10 @@ export const Header = () => {
                   <Settings className="text-primary hover:text-primary/80 transition-colors" />
                 </Link>
               </Button>
-              <Button
-                variant="ghost"
-                size="icon"
+              <LogOut 
+                className="text-primary hover:text-primary/80 transition-colors cursor-pointer" 
                 onClick={handleSignOut}
-                className="hover:bg-transparent p-0"
-              >
-                <LogOut className="text-primary hover:text-primary/80 transition-colors" />
-              </Button>
+              />
               <Avatar>
                 <AvatarImage src={session.user.user_metadata.avatar_url} />
                 <AvatarFallback>
