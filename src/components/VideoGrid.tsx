@@ -106,7 +106,8 @@ export default function VideoGrid({ videos = [], maxVideos = 12, rowSize = 4, is
           <Button 
             onClick={() => {
               setShowAll(true);
-              setCurrentPage(1);
+              setCurrentPage(2); // Automatically go to page 2 when clicking See More
+              window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
             variant="outline"
             className="w-40"
