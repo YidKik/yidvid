@@ -29,12 +29,32 @@ interface VideoGridProps {
 export default function VideoGrid({ videos = [], maxVideos = 12, rowSize = 4, isLoading }: VideoGridProps) {
   const [showAll, setShowAll] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+
+  // Filter videos to show only the most recent video from each channel
+  const uniqueChannelVideos = videos.reduce((acc, current) => {
+    const existingVideo = acc.find(video => video.channelId === current.channelId);
+    if (!existingVideo) {
+      // If no video from this channel exists yet, add it
+      acc.push(current);
+    } else {
+      // If a video from this channel exists, keep the most recent one
+      const existingDate = new Date(existingVideo.uploadedAt);
+      const currentDate = new Date(current.uploadedAt);
+      if (currentDate > existingDate) {
+        // Replace the existing video with the more recent one
+        const index = acc.findIndex(video => video.channelId === current.channelId);
+        acc[index] = current;
+      }
+    }
+    return acc;
+  }, [] as VideoGridProps['videos']);
+
   const videosPerPage = showAll ? rowSize * 3 : maxVideos;
-  const totalPages = Math.ceil(videos.length / videosPerPage);
+  const totalPages = Math.ceil((uniqueChannelVideos?.length || 0) / videosPerPage);
 
   const indexOfLastVideo = currentPage * videosPerPage;
   const indexOfFirstVideo = indexOfLastVideo - videosPerPage;
-  const currentVideos = videos.slice(indexOfFirstVideo, indexOfLastVideo);
+  const currentVideos = uniqueChannelVideos?.slice(indexOfFirstVideo, indexOfLastVideo) || [];
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -78,7 +98,7 @@ export default function VideoGrid({ videos = [], maxVideos = 12, rowSize = 4, is
       </div>
       
       <div className="flex flex-col items-center gap-4 mt-8">
-        {!showAll && videos.length > maxVideos && (
+        {!showAll && uniqueChannelVideos.length > maxVideos && (
           <Button 
             onClick={() => {
               setShowAll(true);
