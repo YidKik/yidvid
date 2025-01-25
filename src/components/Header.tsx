@@ -256,7 +256,7 @@ export const Header = () => {
                     className="text-primary hover:text-primary/80 transition-all duration-300 hover:scale-110 hover:-rotate-12 cursor-pointer" 
                   />
                   {notifications && notifications.length > 0 && (
-                    <span className="absolute -top-2 -right-2 text-primary text-xs font-bold animate-fade-in">
+                    <span className="absolute -top-2 -right-2 text-primary text-xs font-bold">
                       {notifications.length}
                     </span>
                   )}
