@@ -7,6 +7,7 @@ import { Settings, LogOut, LayoutDashboard, Search } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
+import { PostgrestResponse } from "@supabase/supabase-js";
 
 interface SearchResult {
   videos: {
@@ -18,13 +19,6 @@ interface SearchResult {
     channel_id: string;
     title: string;
   }[];
-}
-
-interface SupabaseResponse<T> {
-  data: T[] | null;
-  error: {
-    message: string;
-  } | null;
 }
 
 export const Header = () => {
@@ -83,19 +77,21 @@ export const Header = () => {
               .from("youtube_videos")
               .select("id, title, channel_name")
               .ilike("title", searchTerm)
-              .limit(5) as Promise<SupabaseResponse<{
+              .limit(5)
+              .then((response): PostgrestResponse<{
                 id: string;
                 title: string;
                 channel_name: string;
-              }>>,
+              }> => response),
             supabase
               .from("youtube_channels")
               .select("channel_id, title")
               .ilike("title", searchTerm)
-              .limit(3) as Promise<SupabaseResponse<{
+              .limit(3)
+              .then((response): PostgrestResponse<{
                 channel_id: string;
                 title: string;
-              }>>
+              }> => response)
           ]);
 
           const timeoutPromise = new Promise((_, reject) => {
@@ -105,7 +101,7 @@ export const Header = () => {
           const responses = await Promise.race([
             fetchPromises,
             timeoutPromise
-          ]) as [SupabaseResponse<any>, SupabaseResponse<any>];
+          ]) as [PostgrestResponse<any>, PostgrestResponse<any>];
 
           const [videosResponse, channelsResponse] = responses;
 
