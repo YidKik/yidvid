@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Settings, LogOut, LayoutDashboard, Search, Bell } from "lucide-react";
+import { Settings, LogOut, LayoutDashboard, Search, Sunset } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
@@ -253,7 +253,7 @@ export const Header = () => {
               <DropdownMenu>
                 <DropdownMenuTrigger className="outline-none">
                   <div className="relative inline-flex items-center">
-                    <Bell 
+                    <Sunset 
                       className="text-primary hover:text-primary/80 transition-all duration-300 hover:scale-110 hover:-rotate-12 cursor-pointer" 
                     />
                     {notifications && notifications.length > 0 && (
