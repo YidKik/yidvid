@@ -32,7 +32,7 @@ export const ChannelRequestsSection = () => {
         .from("channel_requests")
         .select(`
           *,
-          profiles(
+          profiles:user_id(
             email
           )
         `)
