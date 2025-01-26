@@ -99,7 +99,7 @@ export const Header = () => {
           <Popover open={isSearchOpen} onOpenChange={setIsSearchOpen}>
             <PopoverTrigger asChild>
               <form onSubmit={handleSearch} className="w-full max-w-lg flex items-center">
-                <div className="relative w-full">
+                <div className="relative w-full border rounded-md">
                   <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <input
                     type="search"
@@ -109,7 +109,7 @@ export const Header = () => {
                       setSearchQuery(e.target.value);
                       setIsSearchOpen(true);
                     }}
-                    className="w-full pl-8 pr-4 py-2 text-sm bg-transparent border-none focus:outline-none focus:ring-0"
+                    className="w-full pl-8 pr-4 py-2 text-sm border-none focus:outline-none focus:ring-1 focus:ring-gray-200 rounded-md"
                   />
                 </div>
               </form>
