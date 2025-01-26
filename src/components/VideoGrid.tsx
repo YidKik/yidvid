@@ -35,7 +35,7 @@ export default function VideoGrid({ maxVideos = 12, rowSize = 4 }: VideoGridProp
   const [hiddenChannels, setHiddenChannels] = useState<Set<string>>(new Set());
 
   // Fetch videos using React Query
-  const { data: videos, isLoading, error } = useQuery({
+  const { data: rawVideos, isLoading, error } = useQuery({
     queryKey: ["youtube_videos"],
     queryFn: async () => {
       console.log("Fetching videos...");
@@ -50,7 +50,17 @@ export default function VideoGrid({ maxVideos = 12, rowSize = 4 }: VideoGridProp
       }
 
       console.log("Fetched videos:", data);
-      return data || [];
+      // Map the raw data to match the expected interface
+      return (data || []).map(video => ({
+        id: video.id,
+        video_id: video.video_id,
+        title: video.title,
+        thumbnail: video.thumbnail,
+        channelName: video.channel_name,
+        channelId: video.channel_id,
+        views: video.views || 0,
+        uploadedAt: video.uploaded_at
+      }));
     },
   });
 
@@ -113,7 +123,7 @@ export default function VideoGrid({ maxVideos = 12, rowSize = 4 }: VideoGridProp
   const videosPerPage = rowSize * 3;
 
   // Filter out videos from hidden channels
-  const filteredVideos = videos ? videos.filter(
+  const filteredVideos = rawVideos ? rawVideos.filter(
     (video) => !hiddenChannels.has(video.channelId)
   ) : [];
 
