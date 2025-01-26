@@ -162,6 +162,14 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
             providers={["google"]}
             view="sign_in"
             showLinks={false}
+            localization={{
+              variables: {
+                sign_in: {
+                  email_label: "",
+                  password_label: "",
+                },
+              },
+            }}
           />
         </form>
       </DialogContent>
