@@ -21,10 +21,11 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
   const { data: subscriptions, refetch } = useQuery({
     queryKey: ["channel-subscriptions", userId],
     queryFn: async () => {
+      console.log("Fetching subscriptions for user:", userId);
       const { data, error } = await supabase
         .from("channel_subscriptions")
         .select(`
-          channel:youtube_channels (
+          channel:youtube_channels!inner (
             title,
             thumbnail_url,
             channel_id
@@ -33,12 +34,15 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
         .eq("user_id", userId);
 
       if (error) {
+        console.error("Error fetching subscriptions:", error);
         toast.error("Error fetching subscriptions");
         return [];
       }
 
+      console.log("Fetched subscriptions:", data);
       return data as ChannelSubscription[];
     },
+    enabled: !!userId,
   });
 
   const handleUnsubscribe = async (channelId: string) => {
@@ -54,6 +58,7 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
       toast.success("Unsubscribed from channel");
       refetch();
     } catch (error: any) {
+      console.error("Error unsubscribing:", error);
       toast.error("Error unsubscribing from channel");
     }
   };
@@ -80,6 +85,14 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
       container.scrollLeft < container.scrollWidth - container.clientWidth - 10
     );
   };
+
+  if (!subscriptions) {
+    return (
+      <div className="flex items-center justify-center h-40">
+        <p className="text-muted-foreground">Loading subscriptions...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
