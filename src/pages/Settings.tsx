@@ -464,11 +464,11 @@ const Settings = () => {
                 </div>
 
                 <div>
-                  <Label htmlFor="logoColor">{t('logoColor')}</Label>
+                  <Label htmlFor="otherColors">{t('otherColors')}</Label>
                   <div className="flex items-center gap-4">
                     <input
                       type="color"
-                      id="logoColor"
+                      id="otherColors"
                       value={logoColor}
                       onChange={(e) => setLogoColor(e.target.value)}
                       className="w-20 h-10 rounded cursor-pointer"

@@ -4,7 +4,7 @@ export type TranslationKey =
   | 'backgroundColor'
   | 'textColor'
   | 'buttonColor'
-  | 'logoColor'
+  | 'otherColors'
   | 'saveChanges'
   | 'resetDefaults'
   | 'accountInformation'
@@ -67,7 +67,7 @@ export const translations: Translations = {
   backgroundColor: 'Background Color',
   textColor: 'Text Color',
   buttonColor: 'Button Color',
-  logoColor: 'Logo Color',
+  otherColors: 'Other Colors',
   saveChanges: 'Save Changes',
   resetDefaults: 'Reset to Defaults',
   accountInformation: 'Your Account Information',
