@@ -103,44 +103,20 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
               Sign Up
             </Button>
           </div>
-          <div className="bg-card rounded-lg">
-            <SupabaseAuth
-              supabaseClient={supabase}
-              appearance={{
-                theme: ThemeSupa,
-                variables: {
-                  default: {
-                    colors: {
-                      brand: '#FF0000',
-                      brandAccent: '#CC0000',
-                      defaultButtonBackground: '#000000e6',
-                      defaultButtonBackgroundHover: '#222222',
-                    },
-                  },
-                },
-                className: {
-                  container: 'auth-container',
-                  button: 'auth-button',
-                  anchor: 'auth-link',
-                },
-              }}
-              view={isSignUp ? "sign_up" : "sign_in"}
-            />
-          </div>
-          {isSignUp && (
-            <div className="space-y-2">
-              <Label htmlFor="name">Name</Label>
-              <Input
-                id="name"
-                type="text"
-                placeholder="Enter your name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="border border-[#E5E5E5] focus:border-[#a8a8a8] focus:ring-0"
-              />
-            </div>
-          )}
-          <div className="mt-4">
+          <div className="space-y-4">
+            {isSignUp && (
+              <div className="space-y-2">
+                <Label htmlFor="name">Name</Label>
+                <Input
+                  id="name"
+                  type="text"
+                  placeholder="Enter your name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="border border-[#E5E5E5] focus:border-[#a8a8a8] focus:ring-0"
+                />
+              </div>
+            )}
             <SupabaseAuth
               supabaseClient={supabase}
               appearance={{
