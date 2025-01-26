@@ -89,6 +89,10 @@ export const Header = () => {
     queryKey: ["notifications", session?.user?.id],
     enabled: !!session?.user?.id,
     queryFn: async () => {
+      // Get notifications for new videos (last 24 hours) from subscribed channels
+      const twentyFourHoursAgo = new Date();
+      twentyFourHoursAgo.setHours(twentyFourHoursAgo.getTime() - 24);
+
       const { data } = await supabase
         .from("video_notifications")
         .select(`
@@ -97,14 +101,18 @@ export const Header = () => {
             id,
             title,
             channel_name,
-            thumbnail
+            thumbnail,
+            uploaded_at
           )
         `)
         .eq("user_id", session?.user?.id)
         .eq("is_read", false)
+        .gte("youtube_videos.uploaded_at", twentyFourHoursAgo.toISOString())
         .order("created_at", { ascending: false });
       
-      return data;
+      return data?.filter(notification => 
+        notification.youtube_videos?.uploaded_at >= twentyFourHoursAgo.toISOString()
+      );
     },
   });
 
