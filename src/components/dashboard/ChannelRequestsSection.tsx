@@ -1,118 +1,135 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
-type ChannelRequest = {
+interface ChannelRequest {
   id: string;
   channel_name: string;
-  channel_id: string | null;
-  user_id: string | null;
-  status: string | null;
+  channel_id: string;
+  user_id: string;
+  status: string;
   created_at: string;
   updated_at: string;
   profiles: {
     email: string;
-  } | null;
+  };
 }
 
 export const ChannelRequestsSection = () => {
-  const { data: requests, refetch } = useQuery({
-    queryKey: ["channel-requests"],
+  const { data: requests, isLoading, refetch } = useQuery({
+    queryKey: ["channel_requests"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("channel_requests")
         .select(`
           *,
-          profiles:profiles!channel_requests_user_id_fkey (
+          profiles:user_id (
             email
           )
         `)
-        .order('created_at', { ascending: false });
+        .order("created_at", { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching channel requests:", error);
+        throw error;
+      }
+
       return data as ChannelRequest[];
     },
   });
 
-  const handleStatusUpdate = async (requestId: string, newStatus: 'approved' | 'rejected') => {
+  const handleApprove = async (requestId: string) => {
     try {
       const { error } = await supabase
         .from('channel_requests')
-        .update({ status: newStatus })
+        .update({ status: 'approved' })
         .eq('id', requestId);
 
       if (error) throw error;
 
-      toast.success(`Request ${newStatus} successfully`);
+      toast.success('Channel request approved');
       refetch();
     } catch (error) {
-      console.error('Error updating request status:', error);
-      toast.error('Failed to update request status');
+      console.error('Error approving request:', error);
+      toast.error('Failed to approve request');
     }
   };
 
+  const handleReject = async (requestId: string) => {
+    try {
+      const { error } = await supabase
+        .from('channel_requests')
+        .update({ status: 'rejected' })
+        .eq('id', requestId);
+
+      if (error) throw error;
+
+      toast.success('Channel request rejected');
+      refetch();
+    } catch (error) {
+      console.error('Error rejecting request:', error);
+      toast.error('Failed to reject request');
+    }
+  };
+
+  if (isLoading) {
+    return <div>Loading channel requests...</div>;
+  }
+
+  if (!requests?.length) {
+    return <div>No channel requests found.</div>;
+  }
+
   return (
     <div className="space-y-4">
-      <h2 className="text-2xl font-bold">Channel Requests</h2>
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Channel Name</TableHead>
-              <TableHead>Channel ID</TableHead>
-              <TableHead>Requested By</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {requests?.map((request) => (
-              <TableRow key={request.id}>
-                <TableCell>{request.channel_name}</TableCell>
-                <TableCell>{request.channel_id || 'Not provided'}</TableCell>
-                <TableCell>{request.profiles?.email}</TableCell>
-                <TableCell className="capitalize">{request.status}</TableCell>
-                <TableCell className="space-x-2">
-                  {request.status === 'pending' && (
-                    <>
-                      <Button
-                        size="sm"
-                        variant="default"
-                        onClick={() => handleStatusUpdate(request.id, 'approved')}
-                      >
-                        Approve
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="destructive"
-                        onClick={() => handleStatusUpdate(request.id, 'rejected')}
-                      >
-                        Reject
-                      </Button>
-                    </>
-                  )}
-                </TableCell>
-              </TableRow>
-            ))}
-            {!requests?.length && (
-              <TableRow>
-                <TableCell colSpan={5} className="text-center py-4">
-                  No channel requests found
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
+      <h2 className="text-xl font-semibold mb-4">Channel Requests</h2>
+      {requests.map((request) => (
+        <Card key={request.id} className="p-4">
+          <div className="flex items-start justify-between">
+            <div>
+              <h3 className="font-medium">{request.channel_name}</h3>
+              <p className="text-sm text-gray-500">{request.profiles.email}</p>
+              <p className="text-sm text-gray-500">
+                Requested: {new Date(request.created_at).toLocaleDateString()}
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <Badge
+                variant={
+                  request.status === 'approved'
+                    ? 'default'
+                    : request.status === 'rejected'
+                    ? 'destructive'
+                    : 'secondary'
+                }
+              >
+                {request.status}
+              </Badge>
+              {request.status === 'pending' && (
+                <div className="flex gap-2">
+                  <Button
+                    size="sm"
+                    variant="default"
+                    onClick={() => handleApprove(request.id)}
+                  >
+                    Approve
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="destructive"
+                    onClick={() => handleReject(request.id)}
+                  >
+                    Reject
+                  </Button>
+                </div>
+              )}
+            </div>
+          </div>
+        </Card>
+      ))}
     </div>
   );
 };

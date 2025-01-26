@@ -8,7 +8,6 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { MostViewedVideos } from "@/components/video/MostViewedVideos";
-import { WelcomeAnimation } from "@/components/WelcomeAnimation";
 import { motion } from "framer-motion";
 import { MusicGrid } from "@/components/music/MusicGrid";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -128,7 +127,6 @@ const MainContent = () => {
 
 const Index = () => {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
-  const isMobile = useIsMobile();
 
   return (
     <SidebarProvider>
