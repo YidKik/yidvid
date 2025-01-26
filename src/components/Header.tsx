@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Settings, LogOut, LayoutDashboard, Bell, Search } from "lucide-react";
 import { toast } from "sonner";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Auth from "@/pages/Auth";
 import { useIsMobile } from "@/hooks/use-mobile";
 import {
@@ -24,6 +24,23 @@ export const Header = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
+  const [session, setSession] = useState(null);
+
+  useEffect(() => {
+    // Set up initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    // Listen for auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   const { data: searchResults, isLoading } = useQuery({
     queryKey: ["search", debouncedSearchQuery],
@@ -48,17 +65,11 @@ export const Header = () => {
     enabled: true,
   });
 
-  const { data: session } = useQuery({
-    queryKey: ["session"],
-    queryFn: async () => {
-      const { data } = await supabase.auth.getSession();
-      return data.session;
-    },
-  });
-
   const handleLogout = async () => {
     try {
-      await supabase.auth.signOut();
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      
       toast.success("Logged out successfully");
       navigate("/");
     } catch (error) {
