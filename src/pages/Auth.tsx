@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Video } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 
 interface AuthProps {
   isOpen: boolean;
@@ -17,94 +18,31 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { toast } = useToast();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const validateForm = () => {
     if (!email || !password) {
-      toast({
-        title: "Missing fields",
-        description: "Please fill in all required fields",
-        variant: "destructive",
-      });
+      toast.error("Please fill in all required fields");
       return false;
     }
     
     if (!email.includes('@')) {
-      toast({
-        title: "Invalid email",
-        description: "Please enter a valid email address",
-        variant: "destructive",
-      });
+      toast.error("Please enter a valid email address");
       return false;
     }
 
     if (password.length < 6) {
-      toast({
-        title: "Invalid password",
-        description: "Password must be at least 6 characters long",
-        variant: "destructive",
-      });
+      toast.error("Password must be at least 6 characters long");
       return false;
     }
 
     if (isSignUp && !name) {
-      toast({
-        title: "Missing name",
-        description: "Please enter your name",
-        variant: "destructive",
-      });
+      toast.error("Please enter your name");
       return false;
     }
 
     return true;
-  };
-
-  const prefetchUserData = async (userId: string) => {
-    await queryClient.prefetchQuery({
-      queryKey: ["profile", userId],
-      queryFn: async () => {
-        const { data } = await supabase
-          .from("profiles")
-          .select("*")
-          .eq("id", userId)
-          .maybeSingle();
-        return data;
-      },
-    });
-
-    await queryClient.prefetchQuery({
-      queryKey: ["notifications", userId],
-      queryFn: async () => {
-        const { data } = await supabase
-          .from("video_notifications")
-          .select(`
-            *,
-            youtube_videos (
-              id,
-              title,
-              channel_name,
-              thumbnail
-            )
-          `)
-          .eq("user_id", userId)
-          .eq("is_read", false)
-          .order("created_at", { ascending: false });
-        return data;
-      },
-    });
-
-    await queryClient.prefetchQuery({
-      queryKey: ["user_preferences", userId],
-      queryFn: async () => {
-        const { data } = await supabase
-          .from("user_preferences")
-          .select("*")
-          .eq("user_id", userId)
-          .maybeSingle();
-        return data;
-      },
-    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -124,63 +62,40 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
           options: {
             data: {
               full_name: name,
-              avatar_url: null,
             },
           },
         });
 
         if (signUpError) {
-          console.error("Sign up error:", signUpError);
           if (signUpError.message.includes("User already registered")) {
-            toast({
-              title: "Account exists",
-              description: "This email is already registered. Please sign in instead.",
-              variant: "destructive",
-            });
+            toast.error("This email is already registered. Please sign in instead.");
             setIsSignUp(false);
             return;
           }
           throw signUpError;
         }
-        
-        // Sign in immediately after sign up
-        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
 
-        if (signInError) {
-          console.error("Auto sign in error after signup:", signInError);
-          if (signInError.message.includes("Email not confirmed")) {
-            toast({
-              title: "Almost there!",
-              description: "Please check your email to confirm your account before signing in.",
-            });
-            setIsSignUp(false);
-            return;
-          }
-          throw signInError;
-        }
-
-        if (signInData.user) {
-          // Update the profile with the name
+        // Check if user was created successfully
+        if (signUpData?.user) {
+          // Create or update profile
           const { error: profileError } = await supabase
-            .from("profiles")
-            .update({ name: name })
-            .eq("id", signInData.user.id);
+            .from('profiles')
+            .upsert({
+              id: signUpData.user.id,
+              email: signUpData.user.email,
+              name: name,
+              is_admin: false,
+            });
 
           if (profileError) {
-            console.error("Error updating profile:", profileError);
+            console.error("Error creating profile:", profileError);
+            toast.error("Failed to create user profile");
+            return;
           }
 
-          await prefetchUserData(signInData.user.id);
+          toast.success("Account created successfully! Please check your email to confirm your account.");
+          onOpenChange(false);
         }
-
-        toast({
-          title: "Success!",
-          description: "You have been signed up and logged in.",
-        });
-        onOpenChange(false);
       } else {
         const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
           email,
@@ -188,40 +103,51 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
         });
 
         if (signInError) {
-          console.error("Sign in error:", signInError);
-          let errorMessage = "Please check your email and password and try again.";
-          
           if (signInError.message.includes("Invalid login credentials")) {
-            errorMessage = "Invalid email or password. Please try again.";
+            toast.error("Invalid email or password");
           } else if (signInError.message.includes("Email not confirmed")) {
-            errorMessage = "Please check your email to confirm your account before signing in.";
+            toast.error("Please check your email to confirm your account before signing in");
+          } else {
+            toast.error(signInError.message);
           }
-          
-          toast({
-            title: "Sign in failed",
-            description: errorMessage,
-            variant: "destructive",
-          });
           return;
         }
 
-        if (signInData.user) {
-          await prefetchUserData(signInData.user.id);
-        }
+        if (signInData?.user) {
+          // Prefetch user data
+          await queryClient.prefetchQuery({
+            queryKey: ["profile", signInData.user.id],
+            queryFn: async () => {
+              const { data } = await supabase
+                .from("profiles")
+                .select("*")
+                .eq("id", signInData.user.id)
+                .single();
+              return data;
+            },
+          });
 
-        toast({
-          title: "Success!",
-          description: "You have been signed in.",
-        });
-        onOpenChange(false);
+          // Prefetch user preferences
+          await queryClient.prefetchQuery({
+            queryKey: ["user_preferences", signInData.user.id],
+            queryFn: async () => {
+              const { data } = await supabase
+                .from("user_preferences")
+                .select("*")
+                .eq("user_id", signInData.user.id)
+                .single();
+              return data;
+            },
+          });
+
+          toast.success("Signed in successfully!");
+          onOpenChange(false);
+          navigate("/");
+        }
       }
     } catch (error: any) {
       console.error("Auth error:", error);
-      toast({
-        title: "Error",
-        description: error.message || "An error occurred during authentication.",
-        variant: "destructive",
-      });
+      toast.error(error.message || "An error occurred during authentication");
     } finally {
       setIsLoading(false);
     }
