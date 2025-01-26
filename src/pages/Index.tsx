@@ -99,15 +99,15 @@ const MainContent = () => {
                 </div>
               </>
             ) : (
-              <div className="relative min-h-[60vh] md:min-h-[70vh]">
-                <div className="absolute inset-0 backdrop-blur-md z-10 flex flex-col items-center justify-center text-center p-4 md:p-8">
+              <div className="min-h-[60vh] md:min-h-[70vh] flex flex-col items-center justify-start pt-12 md:pt-16">
+                <div className="text-center max-w-2xl mx-auto px-4">
                   <h2 className="text-2xl md:text-3xl font-bold mb-4 text-primary animate-fade-in">Coming Soon!</h2>
-                  <p className="text-base md:text-lg text-gray-800 max-w-2xl animate-fade-in delay-100">
+                  <p className="text-base md:text-lg text-gray-800 animate-fade-in delay-100">
                     We're working on bringing you an amazing collection of kosher entertainment music. 
                     Stay tuned for a curated selection of artists and tracks that will elevate your listening experience!
                   </p>
                 </div>
-                <div className="opacity-30">
+                <div className="w-full mt-12 opacity-30">
                   <MusicGrid />
                 </div>
               </div>
