@@ -24,6 +24,7 @@ import { useColors } from "@/contexts/ColorContext";
 import { Settings as SettingsIcon, Volume2, Globe, Bell } from "lucide-react";
 import { translations, getTranslation, TranslationKey } from "@/utils/translations";
 import { ChannelSubscriptions } from "@/components/youtube/ChannelSubscriptions";
+import { UserAnalyticsSection } from "@/components/analytics/UserAnalyticsSection";
 
 const Settings = () => {
   const navigate = useNavigate();
@@ -501,6 +502,9 @@ const Settings = () => {
             </div>
           </Card>
         </section>
+
+        {/* User Analytics Section */}
+        <UserAnalyticsSection />
 
         {/* Admin Section - Last */}
         {profile?.is_admin && (
