@@ -15,7 +15,7 @@ interface ChannelRequest {
   updated_at: string;
   profiles: {
     email: string;
-  } | null;
+  };
 }
 
 export const ChannelRequestsSection = () => {
@@ -26,7 +26,7 @@ export const ChannelRequestsSection = () => {
         .from("channel_requests")
         .select(`
           *,
-          profiles (
+          profiles:user_id (
             email
           )
         `);
