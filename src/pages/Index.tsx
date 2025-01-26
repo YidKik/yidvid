@@ -77,11 +77,11 @@ const Index = () => {
         <Sidebar />
         <div className="flex-1">
           <Header />
-          <main className="mt-16">
-            <div className="max-w-3xl mx-auto px-4 py-6">
-              <div className="relative w-[200px] h-10 mx-auto bg-gray-100 rounded-full p-1 cursor-pointer"
+          <main className="mt-12">
+            <div className="max-w-3xl mx-auto px-4 py-4">
+              <div className="relative w-[240px] h-12 mx-auto bg-gray-100 rounded-full p-1 cursor-pointer mb-8"
                    onClick={() => setIsMusic(!isMusic)}>
-                <div className="relative w-full h-full flex items-center justify-between px-4 text-sm font-medium">
+                <div className="relative w-full h-full flex items-center justify-between px-6 text-sm font-medium">
                   <span className={`z-10 transition-colors duration-200 ${!isMusic ? 'text-white' : 'text-gray-600'}`}>
                     Videos
                   </span>
@@ -89,9 +89,9 @@ const Index = () => {
                     Music
                   </span>
                   <motion.div
-                    className="absolute top-0 left-0 w-[90px] h-full bg-primary rounded-full"
+                    className="absolute top-0 left-0 w-[108px] h-full bg-primary rounded-full"
                     animate={{
-                      x: isMusic ? 106 : 2
+                      x: isMusic ? 126 : 2
                     }}
                     transition={{
                       type: "spring",
@@ -112,7 +112,7 @@ const Index = () => {
             >
               {!isMusic ? (
                 <>
-                  <div className="video-grid mt-4">
+                  <div className="video-grid mt-2">
                     <VideoGrid 
                       videos={videos} 
                       maxVideos={12} 
