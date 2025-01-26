@@ -131,7 +131,7 @@ const Index = () => {
                     </div>
                   </>
                 ) : (
-                  <div className="relative">
+                  <div className="relative min-h-[60vh] md:min-h-[70vh]">
                     <div className="absolute inset-0 backdrop-blur-md z-10 flex flex-col items-center justify-center text-center p-4 md:p-8">
                       <h2 className="text-2xl md:text-3xl font-bold mb-4 text-primary animate-fade-in">Coming Soon!</h2>
                       <p className="text-base md:text-lg text-gray-800 max-w-2xl animate-fade-in delay-100">
