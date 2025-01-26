@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
 import { Trash2, Edit } from "lucide-react";
@@ -70,6 +70,29 @@ export const CommentsManagementSection = () => {
     },
   });
 
+  // Set up real-time subscription for comments
+  useEffect(() => {
+    const channel = supabase
+      .channel('comments-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*', // Listen to all events (INSERT, UPDATE, DELETE)
+          schema: 'public',
+          table: 'video_comments'
+        },
+        () => {
+          // Refetch comments when any change occurs
+          refetchComments();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [refetchComments]);
+
   const handleDeleteComment = async (commentId: string) => {
     try {
       const { error } = await supabase
@@ -83,7 +106,6 @@ export const CommentsManagementSection = () => {
         title: "Success",
         description: "Comment deleted successfully",
       });
-      refetchComments();
     } catch (error: any) {
       toast({
         title: "Error",
@@ -109,7 +131,6 @@ export const CommentsManagementSection = () => {
         description: "Comment updated successfully",
       });
       setEditingComment(null);
-      refetchComments();
     } catch (error: any) {
       toast({
         title: "Error",
