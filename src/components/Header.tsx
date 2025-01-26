@@ -2,17 +2,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Settings, LogOut, LayoutDashboard, Search, Sunset } from "lucide-react";
+import { Settings, LogOut, LayoutDashboard, Search } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
 import Auth from "@/pages/Auth";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 interface SearchResult {
   videos: {
@@ -59,40 +53,6 @@ export const Header = () => {
       return data;
     },
   });
-
-  const { data: notifications } = useQuery({
-    queryKey: ["notifications", session?.user?.id],
-    enabled: !!session?.user?.id,
-    queryFn: async () => {
-      const { data } = await supabase
-        .from("video_notifications")
-        .select(`
-          *,
-          youtube_videos (
-            id,
-            title,
-            channel_name,
-            thumbnail
-          )
-        `)
-        .eq("user_id", session?.user?.id)
-        .eq("is_read", false)
-        .order("created_at", { ascending: false });
-      
-      return data;
-    },
-  });
-
-  const markNotificationAsRead = async (notificationId: string) => {
-    const { error } = await supabase
-      .from("video_notifications")
-      .update({ is_read: true })
-      .eq("id", notificationId);
-
-    if (error) {
-      toast.error("Failed to mark notification as read");
-    }
-  };
 
   useEffect(() => {
     const searchContent = async () => {
@@ -154,8 +114,8 @@ export const Header = () => {
       toast.error("Error signing out");
     } else {
       toast.success("Signed out successfully");
-      await refetchSession(); // Refetch session to update UI
-      navigate("/"); // Redirect to home page
+      await refetchSession();
+      navigate("/");
     }
   };
 
@@ -252,49 +212,6 @@ export const Header = () => {
                   />
                 </Link>
               )}
-              <DropdownMenu>
-                <DropdownMenuTrigger className="outline-none">
-                  <div className="relative inline-flex items-center">
-                    <Sunset 
-                      className={`text-accent hover:text-accent/80 transition-all duration-300 hover:scale-110 hover:-rotate-12 cursor-pointer ${notifications && notifications.length > 0 ? 'animate-pulse' : ''}`}
-                    />
-                  </div>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-80">
-                  {notifications && notifications.length > 0 ? (
-                    notifications.map((notification: any) => (
-                      <DropdownMenuItem
-                        key={notification.id}
-                        className="flex flex-col items-start p-3 cursor-pointer hover:bg-muted"
-                        onClick={() => {
-                          markNotificationAsRead(notification.id);
-                          window.location.href = `/video/${notification.youtube_videos.id}`;
-                        }}
-                      >
-                        <div className="flex items-center gap-2 w-full">
-                          <img
-                            src={notification.youtube_videos.thumbnail}
-                            alt={notification.youtube_videos.title}
-                            className="w-10 h-10 rounded object-cover"
-                          />
-                          <div className="flex-1">
-                            <p className="text-sm font-medium line-clamp-1">
-                              {notification.youtube_videos.title}
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                              {notification.youtube_videos.channel_name}
-                            </p>
-                          </div>
-                        </div>
-                      </DropdownMenuItem>
-                    ))
-                  ) : (
-                    <div className="p-3 text-sm text-center text-muted-foreground">
-                      No new notifications
-                    </div>
-                  )}
-                </DropdownMenuContent>
-              </DropdownMenu>
               <Link to="/settings">
                 <Settings 
                   className="text-primary hover:text-primary/80 transition-all duration-300 hover:scale-110 hover:-rotate-12 cursor-pointer" 
