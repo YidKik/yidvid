@@ -32,26 +32,32 @@ export const Header = () => {
     },
   });
 
-  const { data: searchResults } = useQuery({
+  const { data: searchResults, isError } = useQuery({
     queryKey: ["search", searchQuery],
     queryFn: async () => {
-      if (!searchQuery) return [];
+      if (!searchQuery.trim()) return [];
       
-      const { data, error } = await supabase
-        .from("youtube_videos")
-        .select("*")
-        .ilike("title", `%${searchQuery}%`)
-        .limit(5);
+      try {
+        const { data, error } = await supabase
+          .from("youtube_videos")
+          .select("*")
+          .ilike("title", `%${searchQuery}%`)
+          .limit(5);
 
-      if (error) {
-        console.error("Error searching videos:", error);
-        toast.error("Failed to search videos");
+        if (error) {
+          console.error("Error searching videos:", error);
+          toast.error("Failed to search videos");
+          return [];
+        }
+
+        return data || [];
+      } catch (error) {
+        console.error("Error in search:", error);
+        toast.error("Search failed. Please try again.");
         return [];
       }
-
-      return data;
     },
-    enabled: searchQuery.length > 0,
+    enabled: searchQuery.trim().length > 0,
   });
 
   const handleLogout = async () => {
@@ -111,7 +117,7 @@ export const Header = () => {
                     <CommandItem
                       key={video.id}
                       onSelect={() => {
-                        navigate(`/video/${video.id}`);
+                        navigate(`/video/${video.video_id}`);
                         setSearchOpen(false);
                         setSearchQuery("");
                       }}
