@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useState, useEffect } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -26,6 +26,8 @@ interface VideoReport {
 }
 
 export const ReportedVideosSection = () => {
+  const queryClient = useQueryClient();
+
   const { data: reports } = useQuery({
     queryKey: ["video-reports"],
     queryFn: async () => {
@@ -50,6 +52,35 @@ export const ReportedVideosSection = () => {
       return data as VideoReport[];
     },
   });
+
+  useEffect(() => {
+    // Subscribe to changes in the video_reports table
+    const channel = supabase
+      .channel('schema-db-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'video_reports'
+        },
+        (payload) => {
+          // Invalidate and refetch the reports query
+          queryClient.invalidateQueries({ queryKey: ["video-reports"] });
+          
+          // Show a notification
+          toast("New Report", {
+            description: "A new video has been reported"
+          });
+        }
+      )
+      .subscribe();
+
+    // Cleanup subscription on component unmount
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [queryClient]);
 
   const openVideo = (videoId: string) => {
     window.open(`/video/${videoId}`, '_blank');
