@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import VoiceAssistant from "@/components/VoiceAssistant";
 
 interface SearchResult {
   videos: {
@@ -297,6 +298,12 @@ export const Header = () => {
         <nav className="flex items-center gap-2 w-32 justify-end">
           {session ? (
             <div className="flex items-center gap-3">
+              <VoiceAssistant 
+                onSpeakingChange={(speaking) => {
+                  // You can add visual feedback when the assistant is speaking
+                  console.log("Assistant speaking:", speaking);
+                }} 
+              />
               {profile?.is_admin && (
                 <Link to="/dashboard">
                   <LayoutDashboard 
@@ -373,6 +380,11 @@ export const Header = () => {
             </div>
           ) : (
             <>
+              <VoiceAssistant 
+                onSpeakingChange={(speaking) => {
+                  console.log("Assistant speaking:", speaking);
+                }} 
+              />
               <Button 
                 variant="default" 
                 className="bg-primary hover:bg-primary text-primary-foreground hover:text-black transition-colors"
