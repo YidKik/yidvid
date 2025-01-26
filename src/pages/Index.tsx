@@ -9,6 +9,7 @@ import { MostViewedVideos } from "@/components/video/MostViewedVideos";
 import { motion } from "framer-motion";
 import { MusicGrid } from "@/components/music/MusicGrid";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { WelcomeAnimation } from "@/components/WelcomeAnimation";
 
 const MainContent = () => {
   const [isMusic, setIsMusic] = useState(false);
@@ -123,6 +124,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen w-full">
+      <WelcomeAnimation />
       <MainContent />
       <Auth isOpen={isAuthOpen} onOpenChange={setIsAuthOpen} />
     </div>
