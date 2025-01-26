@@ -159,9 +159,9 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
                 anchor: 'auth-link',
               },
               style: {
-                input: 'display: none',
-                label: 'display: none',
-                button: 'width: 100%',
+                input: { display: 'none' },
+                label: { display: 'none' },
+                button: { width: '100%' },
               },
             }}
             providers={["google"]}
