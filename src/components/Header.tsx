@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
 import Auth from "@/pages/Auth";
+import { useIsMobile } from "@/hooks/use-mobile";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -40,6 +41,7 @@ export const Header = () => {
   const [searchError, setSearchError] = useState<string | null>(null);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [hiddenChannels, setHiddenChannels] = useState<Set<string>>(new Set());
+  const isMobile = useIsMobile();
   
   const { data: session, refetch: refetchSession } = useQuery({
     queryKey: ["session"],
@@ -222,9 +224,12 @@ export const Header = () => {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-xl bg-gradient-to-r from-red-50/30 via-background/80 to-red-50/30 supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-14 items-center justify-between gap-4 px-4">
-        <Link to="/" className="flex-shrink-0 w-32">
-          <span className="text-xl font-bold text-primary">
+      <div className="container flex h-14 items-center justify-between gap-2 md:gap-4 px-2 md:px-4">
+        <Link 
+          to="/" 
+          className={`flex-shrink-0 ${isMobile ? 'w-24' : 'w-32'} transition-all duration-300`}
+        >
+          <span className={`font-bold text-primary ${isMobile ? 'text-sm' : 'text-xl'}`}>
             Jewish Tube
           </span>
         </Link>
@@ -234,7 +239,7 @@ export const Header = () => {
             <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
-              placeholder="Search videos and channels..."
+              placeholder={isMobile ? "Search..." : "Search videos and channels..."}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onFocus={() => setShowResults(true)}
@@ -294,24 +299,28 @@ export const Header = () => {
           )}
         </form>
 
-        <nav className="flex items-center gap-2 w-32 justify-end">
+        <nav className={`flex items-center ${isMobile ? 'gap-1' : 'gap-2'} w-32 justify-end`}>
           {session ? (
-            <div className="flex items-center gap-3">
+            <div className={`flex items-center ${isMobile ? 'gap-1.5' : 'gap-3'}`}>
               {profile?.is_admin && (
                 <Link to="/dashboard">
                   <LayoutDashboard 
-                    className="text-primary hover:text-primary/80 transition-all duration-300 hover:scale-110 hover:-rotate-12 cursor-pointer" 
+                    className={`text-primary hover:text-primary/80 transition-all duration-300 hover:scale-110 hover:-rotate-12 cursor-pointer ${
+                      isMobile ? 'h-5 w-5' : 'h-6 w-6'
+                    }`} 
                   />
                 </Link>
               )}
-              <span className="text-sm font-medium">
-                {session.user.user_metadata.full_name || profile?.name || "User"}
-              </span>
+              {!isMobile && (
+                <span className="text-sm font-medium">
+                  {session.user.user_metadata.full_name || profile?.name || "User"}
+                </span>
+              )}
               <DropdownMenu>
                 <DropdownMenuTrigger className="outline-none">
                   <div className="relative inline-flex items-center justify-center bg-white p-1.5 rounded-full">
                     <Bell 
-                      size={18}
+                      size={isMobile ? 16 : 18}
                       className={`text-primary hover:text-primary/80 transition-all duration-300 hover:scale-110 hover:rotate-12 cursor-pointer ${
                         notifications && notifications.length > 0 ? 'animate-[gentle-fade_1s_ease-in-out_infinite_alternate]' : ''
                       }`}
@@ -363,11 +372,15 @@ export const Header = () => {
               </DropdownMenu>
               <Link to="/settings">
                 <Settings 
-                  className="text-primary hover:text-primary/80 transition-all duration-300 hover:scale-110 hover:-rotate-12 cursor-pointer" 
+                  className={`text-primary hover:text-primary/80 transition-all duration-300 hover:scale-110 hover:-rotate-12 cursor-pointer ${
+                    isMobile ? 'h-5 w-5' : 'h-6 w-6'
+                  }`} 
                 />
               </Link>
               <LogOut 
-                className="text-primary hover:text-primary/80 transition-all duration-300 hover:scale-110 hover:rotate-12 cursor-pointer" 
+                className={`text-primary hover:text-primary/80 transition-all duration-300 hover:scale-110 hover:rotate-12 cursor-pointer ${
+                  isMobile ? 'h-5 w-5' : 'h-6 w-6'
+                }`} 
                 onClick={handleSignOut}
               />
             </div>
@@ -378,7 +391,7 @@ export const Header = () => {
                 className="bg-primary hover:bg-primary text-primary-foreground hover:text-black transition-colors"
                 onClick={() => setIsAuthOpen(true)}
               >
-                Sign In
+                {isMobile ? 'Sign' : 'Sign In'}
               </Button>
               <Auth isOpen={isAuthOpen} onOpenChange={setIsAuthOpen} />
             </>
