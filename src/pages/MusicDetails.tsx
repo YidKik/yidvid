@@ -15,7 +15,7 @@ import { toast } from "sonner";
 const MusicDetails = () => {
   const { id } = useParams();
   const [isPlaying, setIsPlaying] = useState(false);
-  const audioRef = useRef<HTMLAudioElement>(null);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
 
   const { data: track, isLoading } = useQuery({
     queryKey: ['music-track', id],
@@ -48,25 +48,26 @@ const MusicDetails = () => {
 
   const handlePlay = () => {
     if (!track?.audio_url) {
-      toast.error("No audio file available for this track");
+      toast.error("No audio URL available for this track");
       return;
     }
 
-    if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.pause();
+    // Extract video ID from YouTube URL
+    const videoId = track.audio_url.split('v=')[1];
+    if (!videoId) {
+      toast.error("Invalid YouTube URL");
+      return;
+    }
+
+    // Create or update iframe for YouTube embed
+    if (iframeRef.current) {
+      if (!isPlaying) {
+        iframeRef.current.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
       } else {
-        audioRef.current.play().catch(error => {
-          console.error('Error playing audio:', error);
-          toast.error("Error playing audio");
-        });
+        iframeRef.current.src = '';
       }
       setIsPlaying(!isPlaying);
     }
-  };
-
-  const handleAudioEnded = () => {
-    setIsPlaying(false);
   };
 
   // Update play count when track starts playing
@@ -143,11 +144,20 @@ const MusicDetails = () => {
               <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div className="md:col-span-2">
                   <div className="aspect-video w-full rounded-lg overflow-hidden bg-black relative">
-                    <img
-                      src={track.thumbnail}
-                      alt={track.title}
-                      className="w-full h-full object-cover"
-                    />
+                    {isPlaying ? (
+                      <iframe
+                        ref={iframeRef}
+                        className="w-full h-full"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      />
+                    ) : (
+                      <img
+                        src={track.thumbnail}
+                        alt={track.title}
+                        className="w-full h-full object-cover"
+                      />
+                    )}
                   </div>
                   <div className="mt-4 flex items-center gap-4 p-4 bg-muted rounded-lg">
                     <Button
@@ -165,14 +175,6 @@ const MusicDetails = () => {
                       <h2 className="font-semibold text-lg">{track.title}</h2>
                       <p className="text-sm text-gray-500">{track.artist_name}</p>
                     </div>
-                    {track.audio_url && (
-                      <audio
-                        ref={audioRef}
-                        src={track.audio_url}
-                        onEnded={handleAudioEnded}
-                        className="hidden"
-                      />
-                    )}
                   </div>
                 </div>
                 <div className="space-y-6">
