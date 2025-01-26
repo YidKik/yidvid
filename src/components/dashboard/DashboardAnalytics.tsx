@@ -83,7 +83,27 @@ export const DashboardAnalytics = () => {
           .select("session_start, session_end")
           .not('session_end', 'is', null);
 
-        if (sessionsError) throw sessionsError;
+        if (sessionsError) {
+          console.error('Error fetching sessions:', sessionsError);
+          throw sessionsError;
+        }
+
+        // Calculate total watch time in hours with proper conversion
+        const totalHours = sessions?.reduce((sum, session) => {
+          if (!session.session_end || !session.session_start) return sum;
+          
+          const start = new Date(session.session_start);
+          const end = new Date(session.session_end);
+          
+          // Calculate duration in milliseconds and convert to hours
+          const durationInHours = (end.getTime() - start.getTime()) / (1000 * 60 * 60);
+          
+          // Only add if duration is positive and less than 24 hours (to filter out potentially invalid sessions)
+          if (durationInHours > 0 && durationInHours < 24) {
+            return sum + durationInHours;
+          }
+          return sum;
+        }, 0) || 0;
 
         // Get anonymous sessions count
         const { count: anonymousUsers, error: anonSessionsError } = await supabase
@@ -93,15 +113,8 @@ export const DashboardAnalytics = () => {
 
         if (anonSessionsError) throw anonSessionsError;
 
-        // Calculate total watch time in hours
-        const totalHours = sessions?.reduce((sum, session) => {
-          if (!session.session_end) return sum;
-          const duration = new Date(session.session_end).getTime() - new Date(session.session_start).getTime();
-          return sum + (duration / (1000 * 60 * 60));
-        }, 0);
-
         // Calculate most popular hour
-        const hourCounts: Record<number, number> = {};
+        const hourCounts = {};
         sessions?.forEach(session => {
           const hour = new Date(session.session_start).getHours();
           hourCounts[hour] = (hourCounts[hour] || 0) + 1;
@@ -117,7 +130,7 @@ export const DashboardAnalytics = () => {
           totalVideos: totalVideos || 0,
           totalViews: totalViews || 0,
           totalUsers: totalUsers || 0,
-          totalHours: Math.round(totalHours || 0),
+          totalHours: Math.round(totalHours * 100) / 100, // Round to 2 decimal places
           mostPopularHour: mostPopularHour.hour,
           anonymousUsers: anonymousUsers || 0,
         };
