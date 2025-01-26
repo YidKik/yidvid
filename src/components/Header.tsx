@@ -254,7 +254,7 @@ export const Header = () => {
                   <div className="relative inline-flex items-center justify-center bg-white p-2 rounded-full">
                     <Bell 
                       className={`text-primary hover:text-primary/80 transition-all duration-300 hover:scale-110 hover:rotate-12 cursor-pointer ${
-                        notifications && notifications.length > 0 ? 'animate-pulse' : ''
+                        notifications && notifications.length > 0 ? 'animate-[gentle-fade_1s_ease-in-out_infinite_alternate]' : ''
                       }`}
                     />
                     {notifications && notifications.length > 0 && (
