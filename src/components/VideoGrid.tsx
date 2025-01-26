@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { VideoCard } from "./VideoCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
@@ -30,9 +30,23 @@ export default function VideoGrid({ videos = [], maxVideos = 12, rowSize = 4, is
   const [showAll, setShowAll] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const videosPerPage = rowSize * 3;
+  const [hiddenChannels, setHiddenChannels] = useState<Set<string>>(new Set());
+
+  // Load hidden channels from localStorage
+  useEffect(() => {
+    const savedHiddenChannels = localStorage.getItem("hiddenChannels");
+    if (savedHiddenChannels) {
+      setHiddenChannels(new Set(JSON.parse(savedHiddenChannels)));
+    }
+  }, []);
+
+  // Filter out videos from hidden channels
+  const filteredVideos = videos.filter(
+    (video) => !hiddenChannels.has(video.channelId)
+  );
 
   // Get unique channel videos for the first page only if not showing all
-  const firstPageVideos = videos.reduce((acc, current) => {
+  const firstPageVideos = filteredVideos.reduce((acc, current) => {
     const existingVideo = acc.find(video => video.channelId === current.channelId);
     if (!existingVideo) {
       acc.push(current);
@@ -47,13 +61,15 @@ export default function VideoGrid({ videos = [], maxVideos = 12, rowSize = 4, is
     return acc;
   }, [] as VideoGridProps['videos']);
 
-  const totalPages = Math.ceil((showAll ? videos.length : firstPageVideos.length) / videosPerPage);
+  const totalPages = Math.ceil(
+    (showAll ? filteredVideos.length : firstPageVideos.length) / videosPerPage
+  );
   const indexOfLastVideo = currentPage * videosPerPage;
   const indexOfFirstVideo = indexOfLastVideo - videosPerPage;
   
   const currentVideos = !showAll
     ? firstPageVideos.slice(0, maxVideos)
-    : videos.slice(indexOfFirstVideo, indexOfLastVideo);
+    : filteredVideos.slice(indexOfFirstVideo, indexOfLastVideo);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -97,7 +113,7 @@ export default function VideoGrid({ videos = [], maxVideos = 12, rowSize = 4, is
       </div>
       
       <div className="flex flex-col items-center gap-4 mt-8">
-        {!showAll && videos.length > maxVideos && (
+        {!showAll && filteredVideos.length > maxVideos && (
           <Button 
             onClick={() => {
               setShowAll(true);

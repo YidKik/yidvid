@@ -25,6 +25,7 @@ import { Settings as SettingsIcon, Volume2, Globe, Bell } from "lucide-react";
 import { translations, getTranslation, TranslationKey } from "@/utils/translations";
 import { ChannelSubscriptions } from "@/components/youtube/ChannelSubscriptions";
 import { UserAnalyticsSection } from "@/components/analytics/UserAnalyticsSection";
+import { ChannelPreferences } from "@/components/youtube/ChannelPreferences";
 
 const Settings = () => {
   const navigate = useNavigate();
@@ -266,12 +267,6 @@ const Settings = () => {
     <div className="min-h-screen" style={{ backgroundColor: backgroundColor, color: textColor }}>
       <Header />
       <main className="container mx-auto pt-24 px-4 pb-16">
-        <BackButton />
-        <h1 className="text-3xl font-bold mb-8 flex items-center gap-2">
-          <SettingsIcon className="h-8 w-8" />
-          {t('settings')}
-        </h1>
-
         {/* Account Information Section */}
         <section className="mb-12">
           <Card className="p-6">
@@ -306,6 +301,15 @@ const Settings = () => {
               <p className="text-muted-foreground">Please sign in to manage your subscriptions.</p>
             )}
           </Card>
+        </section>
+
+        {/* Channel Preferences Section - New */}
+        <section className="mb-12">
+          <h2 className="text-2xl font-semibold mb-4">Channel Preferences</h2>
+          <p className="text-muted-foreground mb-4">
+            Choose which channels you want to see in your feed. Hidden channels won't appear in your recommendations or search results.
+          </p>
+          <ChannelPreferences />
         </section>
 
         {/* Accessibility Settings */}
