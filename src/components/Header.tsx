@@ -254,7 +254,7 @@ export const Header = () => {
                 <DropdownMenuTrigger className="outline-none">
                   <div className="relative inline-flex items-center">
                     <Sunset 
-                      className={`text-primary hover:text-primary/80 transition-all duration-300 hover:scale-110 hover:-rotate-12 cursor-pointer ${notifications && notifications.length > 0 ? 'animate-pulse' : ''}`}
+                      className={`text-accent hover:text-accent/80 transition-all duration-300 hover:scale-110 hover:-rotate-12 cursor-pointer ${notifications && notifications.length > 0 ? 'animate-pulse' : ''}`}
                     />
                   </div>
                 </DropdownMenuTrigger>
