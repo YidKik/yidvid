@@ -88,7 +88,7 @@ export const Header = () => {
         <div className="flex-1 flex justify-center px-4">
           <Popover open={searchOpen} onOpenChange={setSearchOpen}>
             <PopoverTrigger asChild>
-              <div className="flex items-center w-full max-w-sm cursor-text border-b border-black/10 hover:border-black/30 transition-colors">
+              <div className="flex items-center w-full max-w-sm cursor-text border-b border-black/10 hover:border-black/30 transition-colors bg-white">
                 <Search className="h-4 w-4 text-black/70" />
                 <input
                   type="text"
