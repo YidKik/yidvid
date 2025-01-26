@@ -19,6 +19,7 @@ interface SearchResult {
     id: string;
     title: string;
     channel_name: string;
+    channel_id: string;
   }[];
   channels: {
     channel_id: string;
@@ -129,18 +130,16 @@ export const Header = () => {
       setSearchError(null);
 
       try {
-        const searchTerm = `%${searchQuery}%`;
-        
         const [videosResponse, channelsResponse] = await Promise.all([
           supabase
             .from("youtube_videos")
             .select("id, title, channel_name, channel_id")
-            .ilike("title", searchTerm)
+            .ilike('title', `%${searchQuery}%`)
             .limit(5),
           supabase
             .from("youtube_channels")
             .select("channel_id, title")
-            .ilike("title", searchTerm)
+            .ilike('title', `%${searchQuery}%`)
             .limit(3)
         ]);
 
