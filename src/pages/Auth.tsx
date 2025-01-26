@@ -158,18 +158,15 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
                 button: 'auth-button',
                 anchor: 'auth-link',
               },
+              style: {
+                input: 'display: none',
+                label: 'display: none',
+                button: 'width: 100%',
+              },
             }}
             providers={["google"]}
             view="sign_in"
             showLinks={false}
-            localization={{
-              variables: {
-                sign_in: {
-                  email_label: "",
-                  password_label: "",
-                },
-              },
-            }}
           />
         </form>
       </DialogContent>
