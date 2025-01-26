@@ -7,7 +7,6 @@ import { toast } from "sonner";
 import { useState } from "react";
 import Auth from "@/pages/Auth";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { SearchBar } from "@/components/search/SearchBar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -46,10 +45,6 @@ export const Header = () => {
         <Link to="/" className="flex items-center space-x-2">
           <span className="text-xl font-bold">Jewish Tube</span>
         </Link>
-
-        <div className="flex-1 flex justify-center max-w-2xl mx-4">
-          <SearchBar />
-        </div>
 
         <div className="flex items-center space-x-2">
           {session ? (
