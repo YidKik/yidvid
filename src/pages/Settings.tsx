@@ -253,9 +253,7 @@ const Settings = () => {
   return (
     <div className="min-h-screen" style={{ backgroundColor: backgroundColor, color: textColor }}>
       <Header />
-      <BackButton className="fixed top-20 left-4 rounded-full hover:bg-accent/10 z-10">
-        <ArrowLeft className="h-5 w-5 text-primary" />
-      </BackButton>
+      <BackButton />
       <main className="container mx-auto pt-24 px-4 pb-16">
         <section className="mb-12">
           <Card className="p-6">
