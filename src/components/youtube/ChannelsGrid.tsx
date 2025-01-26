@@ -3,8 +3,33 @@ import { Youtube } from "lucide-react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { useState, useEffect } from "react";
 
 export const ChannelsGrid = () => {
+  const [hiddenChannels, setHiddenChannels] = useState<Set<string>>(new Set());
+
+  // Load hidden channels
+  useEffect(() => {
+    const loadHiddenChannels = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+
+      const { data: hiddenChannelsData, error } = await supabase
+        .from('hidden_channels')
+        .select('channel_id')
+        .eq('user_id', session.user.id);
+
+      if (error) {
+        console.error('Error loading hidden channels:', error);
+        return;
+      }
+
+      setHiddenChannels(new Set(hiddenChannelsData.map(hc => hc.channel_id)));
+    };
+
+    loadHiddenChannels();
+  }, []);
+
   const { data: channels, isLoading } = useQuery({
     queryKey: ["youtube-channels"],
     queryFn: async () => {
@@ -18,7 +43,6 @@ export const ChannelsGrid = () => {
         throw error;
       }
       
-      console.log("Fetched channels with thumbnails:", data);
       return data || [];
     },
   });
@@ -41,7 +65,10 @@ export const ChannelsGrid = () => {
     );
   }
 
-  if (!channels?.length) {
+  // Filter out hidden channels
+  const visibleChannels = channels?.filter(channel => !hiddenChannels.has(channel.channel_id)) || [];
+
+  if (!visibleChannels.length) {
     return null;
   }
 
@@ -51,7 +78,7 @@ export const ChannelsGrid = () => {
         <h2 className="text-2xl font-bold text-accent">View All Channels</h2>
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-        {channels.map((channel, index) => (
+        {visibleChannels.map((channel, index) => (
           <div 
             key={channel.id}
             className="opacity-0 animate-fadeIn group flex flex-col items-center p-6 rounded-lg bg-card hover:bg-accent/5 transition-all duration-300"

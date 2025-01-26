@@ -116,11 +116,7 @@ export const ChannelPreferences = () => {
         {filteredChannels?.map((channel) => (
           <div
             key={channel.channel_id}
-            className={`flex items-center justify-between p-4 rounded-lg border ${
-              hiddenChannels.has(channel.channel_id)
-                ? "bg-muted/50 line-through"
-                : "bg-card"
-            }`}
+            className="flex items-center justify-between p-4 rounded-lg border bg-card"
           >
             <div className="flex items-center gap-4">
               <Avatar className="h-10 w-10">
