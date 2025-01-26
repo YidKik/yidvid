@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Trash2, Youtube, Video, Edit2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Table,
   TableBody,
@@ -58,12 +59,10 @@ export const ChannelList = ({ channels, onRemoveChannel }: ChannelListProps) => 
         description: "The channel has been renamed successfully.",
       });
 
-      // Close dialog and reset state
       setIsRenameDialogOpen(false);
       setSelectedChannel(null);
       setNewTitle("");
 
-      // Trigger a refetch of the channels
       window.location.reload();
     } catch (error: any) {
       toast({
@@ -82,75 +81,77 @@ export const ChannelList = ({ channels, onRemoveChannel }: ChannelListProps) => 
 
   return (
     <>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Channel</TableHead>
-            <TableHead>Description</TableHead>
-            <TableHead>Added On</TableHead>
-            <TableHead className="w-[150px]">Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {channels?.map((channel) => (
-            <TableRow key={channel.id}>
-              <TableCell className="flex items-center gap-2">
-                {channel.thumbnail_url ? (
-                  <img
-                    src={channel.thumbnail_url}
-                    alt={channel.title}
-                    className="w-8 h-8 rounded"
-                  />
-                ) : (
-                  <Youtube className="w-8 h-8 text-primary" />
-                )}
-                <div>
-                  <p className="font-medium">{channel.title}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {channel.channel_id}
-                  </p>
-                </div>
-              </TableCell>
-              <TableCell>{channel.description || "No description"}</TableCell>
-              <TableCell>
-                {new Date(channel.created_at).toLocaleDateString()}
-              </TableCell>
-              <TableCell className="flex items-center gap-2">
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="text-primary hover:text-primary hover:bg-primary/10"
-                    >
-                      <Video className="h-4 w-4" />
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="max-w-4xl max-h-[80vh] overflow-hidden">
-                    <ChannelVideosManagement channelId={channel.channel_id} />
-                  </DialogContent>
-                </Dialog>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => openRenameDialog(channel)}
-                  className="text-primary hover:text-primary hover:bg-primary/10"
-                >
-                  <Edit2 className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => onRemoveChannel(channel.channel_id)}
-                  className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </TableCell>
+      <ScrollArea className="h-[500px] rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Channel</TableHead>
+              <TableHead>Description</TableHead>
+              <TableHead>Added On</TableHead>
+              <TableHead className="w-[150px]">Actions</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {channels?.map((channel) => (
+              <TableRow key={channel.id}>
+                <TableCell className="flex items-center gap-2">
+                  {channel.thumbnail_url ? (
+                    <img
+                      src={channel.thumbnail_url}
+                      alt={channel.title}
+                      className="w-8 h-8 rounded"
+                    />
+                  ) : (
+                    <Youtube className="w-8 h-8 text-primary" />
+                  )}
+                  <div>
+                    <p className="font-medium">{channel.title}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {channel.channel_id}
+                    </p>
+                  </div>
+                </TableCell>
+                <TableCell>{channel.description || "No description"}</TableCell>
+                <TableCell>
+                  {new Date(channel.created_at).toLocaleDateString()}
+                </TableCell>
+                <TableCell className="flex items-center gap-2">
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-primary hover:text-primary hover:bg-primary/10"
+                      >
+                        <Video className="h-4 w-4" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-4xl max-h-[80vh] overflow-hidden">
+                      <ChannelVideosManagement channelId={channel.channel_id} />
+                    </DialogContent>
+                  </Dialog>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => openRenameDialog(channel)}
+                    className="text-primary hover:text-primary hover:bg-primary/10"
+                  >
+                    <Edit2 className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => onRemoveChannel(channel.channel_id)}
+                    className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </ScrollArea>
 
       <Dialog open={isRenameDialogOpen} onOpenChange={setIsRenameDialogOpen}>
         <DialogContent>
