@@ -19,25 +19,46 @@ const VoiceAssistant: React.FC<VoiceAssistantProps> = ({ onSpeakingChange }) => 
 
   const playWelcomeMessage = async () => {
     try {
+      console.log('Fetching welcome message...');
       const { data, error } = await supabase.functions.invoke('text-to-speech');
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error from text-to-speech function:', error);
+        throw error;
+      }
       
+      console.log('Received response:', data);
+      if (!data?.audioContent) {
+        throw new Error('No audio content received');
+      }
+
       const audioContent = data.audioContent;
+      console.log('Creating audio blob...');
       const audioBlob = new Blob(
         [Uint8Array.from(atob(audioContent), c => c.charCodeAt(0))],
         { type: 'audio/mpeg' }
       );
       
       if (audioRef.current) {
-        audioRef.current.src = URL.createObjectURL(audioBlob);
+        console.log('Setting up audio element...');
+        const audioUrl = URL.createObjectURL(audioBlob);
+        audioRef.current.src = audioUrl;
+        
+        // Add event listeners for better debugging
+        audioRef.current.onplay = () => console.log('Audio started playing');
+        audioRef.current.onended = () => console.log('Audio finished playing');
+        audioRef.current.onerror = (e) => console.error('Audio error:', e);
+        
+        console.log('Playing audio...');
         await audioRef.current.play();
+      } else {
+        throw new Error('Audio element not initialized');
       }
     } catch (error) {
       console.error('Error playing welcome message:', error);
       toast({
         title: "Error",
-        description: "Failed to play welcome message",
+        description: error instanceof Error ? error.message : 'Failed to play welcome message',
         variant: "destructive",
       });
     }
@@ -57,6 +78,7 @@ const VoiceAssistant: React.FC<VoiceAssistantProps> = ({ onSpeakingChange }) => 
 
   const startConversation = async () => {
     try {
+      console.log('Starting conversation...');
       await playWelcomeMessage();
       
       chatRef.current = new RealtimeChat(handleMessage);
@@ -85,6 +107,7 @@ const VoiceAssistant: React.FC<VoiceAssistantProps> = ({ onSpeakingChange }) => 
   };
 
   useEffect(() => {
+    console.log('Initializing audio element...');
     audioRef.current = new Audio();
     
     return () => {

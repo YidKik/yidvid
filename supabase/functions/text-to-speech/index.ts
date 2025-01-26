@@ -13,6 +13,8 @@ serve(async (req) => {
   }
 
   try {
+    console.log('Starting text-to-speech request...');
+    
     // First, create a speech synthesis task
     const createResponse = await fetch(
       'https://api.assemblyai.com/v3/speech-synthesis',
@@ -30,10 +32,13 @@ serve(async (req) => {
     )
 
     if (!createResponse.ok) {
+      const errorText = await createResponse.text();
+      console.error('Failed to create speech:', errorText);
       throw new Error(`Failed to create speech: ${createResponse.statusText}`)
     }
 
     const { id } = await createResponse.json()
+    console.log('Speech synthesis task created with ID:', id);
 
     // Poll until the audio is ready
     let audioUrl = null
@@ -41,6 +46,8 @@ serve(async (req) => {
     const maxAttempts = 10
 
     while (!audioUrl && attempts < maxAttempts) {
+      console.log(`Checking speech status (attempt ${attempts + 1}/${maxAttempts})...`);
+      
       const checkResponse = await fetch(
         `https://api.assemblyai.com/v3/speech-synthesis/${id}`,
         {
@@ -51,10 +58,13 @@ serve(async (req) => {
       )
 
       if (!checkResponse.ok) {
+        const errorText = await checkResponse.text();
+        console.error('Failed to check speech status:', errorText);
         throw new Error(`Failed to check speech status: ${checkResponse.statusText}`)
       }
 
       const status = await checkResponse.json()
+      console.log('Speech status:', status);
       
       if (status.status === 'completed') {
         audioUrl = status.audio_url
@@ -71,10 +81,20 @@ serve(async (req) => {
       throw new Error('Timed out waiting for audio')
     }
 
+    console.log('Audio URL received:', audioUrl);
+
     // Fetch the audio file
     const audioResponse = await fetch(audioUrl)
+    if (!audioResponse.ok) {
+      const errorText = await audioResponse.text();
+      console.error('Failed to fetch audio:', errorText);
+      throw new Error(`Failed to fetch audio: ${audioResponse.statusText}`);
+    }
+
     const audioBuffer = await audioResponse.arrayBuffer()
     const base64Audio = btoa(String.fromCharCode(...new Uint8Array(audioBuffer)))
+
+    console.log('Audio successfully processed and converted to base64');
 
     return new Response(
       JSON.stringify({ audioContent: base64Audio }),
