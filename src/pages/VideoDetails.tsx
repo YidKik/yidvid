@@ -110,19 +110,15 @@ const VideoDetails = () => {
   const handleSubmitComment = async (content: string) => {
     const session = await supabase.auth.getSession();
     if (!session.data.session) {
-      toast({
-        title: "Error",
-        description: "You must be logged in to comment",
-        variant: "destructive",
+      toast("Error", {
+        description: "You must be logged in to comment"
       });
       return;
     }
 
     if (!video?.id) {
-      toast({
-        title: "Error",
-        description: "Cannot add comment: video not found",
-        variant: "destructive",
+      toast("Error", {
+        description: "Cannot add comment: video not found"
       });
       return;
     }
