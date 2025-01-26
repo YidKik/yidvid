@@ -48,13 +48,13 @@ const MainContent = () => {
   const sortedVideos = videos ? [...videos].sort((a, b) => (b.views || 0) - (a.views || 0)) : [];
 
   return (
-    <div className={`flex-1 transition-all duration-300 ${
+    <div className={`flex-1 ${
       state === "collapsed" 
-        ? "pl-20 pr-4 md:px-8 lg:px-12" 
-        : "px-4 md:px-6 lg:px-8"
+        ? "pl-4 md:pl-20" 
+        : "pl-4"
     }`}>
       <Header />
-      <main className="mt-4 md:mt-8">
+      <main className="mt-4 md:mt-8 max-w-[1400px]">
         <div className="w-full py-4 md:py-6">
           <div className="relative w-[240px] h-12 mx-auto bg-gray-100 rounded-full p-1.5 cursor-pointer mb-4 md:mb-8 shadow-sm hover:shadow-md transition-shadow"
                onClick={() => setIsMusic(!isMusic)}>
@@ -85,11 +85,6 @@ const MainContent = () => {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: isMusic ? -20 : 20 }}
             transition={{ duration: 0.3 }}
-            className={`px-2 md:px-0 ${
-              state === "collapsed" 
-                ? "max-w-[1600px] mx-auto" 
-                : ""
-            }`}
           >
             {!isMusic ? (
               <>
@@ -136,7 +131,7 @@ const Index = () => {
   const isMobile = useIsMobile();
 
   return (
-    <SidebarProvider defaultOpen={!isMobile}>
+    <SidebarProvider>
       <div className="min-h-screen flex w-full">
         <Sidebar />
         <MainContent />
