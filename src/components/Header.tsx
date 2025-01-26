@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -28,6 +28,7 @@ interface SearchResult {
 }
 
 export const Header = () => {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [showResults, setShowResults] = useState(false);
   const [searchResults, setSearchResults] = useState<SearchResult>({ 
@@ -38,7 +39,7 @@ export const Header = () => {
   const [searchError, setSearchError] = useState<string | null>(null);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   
-  const { data: session } = useQuery({
+  const { data: session, refetch: refetchSession } = useQuery({
     queryKey: ["session"],
     queryFn: async () => {
       const { data } = await supabase.auth.getSession();
@@ -154,6 +155,8 @@ export const Header = () => {
       toast.error("Error signing out");
     } else {
       toast.success("Signed out successfully");
+      await refetchSession(); // Refetch session to update UI
+      navigate("/"); // Redirect to home page
     }
   };
 
@@ -189,7 +192,6 @@ export const Header = () => {
           </div>
           {showResults && searchQuery && (isSearching || hasResults || searchError) && (
             <div className="absolute w-full max-w-xl mt-1 bg-white rounded-md shadow-lg border border-gray-100 overflow-hidden z-50">
-              <div className="max-h-60 overflow-y-auto">
                 {isSearching ? (
                   <div className="px-4 py-2 text-sm text-gray-500">
                     Searching...
@@ -236,7 +238,6 @@ export const Header = () => {
                     )}
                   </>
                 )}
-              </div>
             </div>
           )}
         </form>
