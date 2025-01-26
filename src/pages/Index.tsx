@@ -78,7 +78,7 @@ const Index = () => {
         <div className="flex-1">
           <Header />
           <main className="mt-8">
-            <div className="max-w-4xl mx-auto px-4 py-6">
+            <div className="w-full px-4 py-6">
               <div className="relative w-[240px] h-12 mx-auto bg-gray-100 rounded-full p-1.5 cursor-pointer mb-8 shadow-sm hover:shadow-md transition-shadow"
                    onClick={() => setIsMusic(!isMusic)}>
                 <div className="relative w-full h-full flex items-center justify-between px-8 text-sm font-medium">
@@ -108,7 +108,6 @@ const Index = () => {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: isMusic ? -20 : 20 }}
                 transition={{ duration: 0.3 }}
-                className="mt-4"
               >
                 {!isMusic ? (
                   <>
