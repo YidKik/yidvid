@@ -20,7 +20,6 @@ const MusicDetails = () => {
   const { data: track, isLoading } = useQuery({
     queryKey: ['music-track', id],
     queryFn: async () => {
-      console.log('Fetching track with ID:', id);
       const { data, error } = await supabase
         .from('music_tracks')
         .select(`
@@ -43,26 +42,11 @@ const MusicDetails = () => {
         throw new Error('Track not found');
       }
       
-      console.log('Fetched track:', data);
       return data;
     },
   });
 
-  const formatPlays = (count: number): string => {
-    if (count >= 1000000) {
-      return `${(count / 1000000).toFixed(1)}M`;
-    }
-    if (count >= 1000) {
-      return `${(count / 1000).toFixed(1)}K`;
-    }
-    return count.toString();
-  };
-
   const handlePlay = () => {
-    console.log('Play button clicked');
-    console.log('Audio URL:', track?.audio_url);
-    console.log('Audio ref:', audioRef.current);
-
     if (!track?.audio_url) {
       toast.error("No audio file available for this track");
       return;
@@ -204,7 +188,7 @@ const MusicDetails = () => {
                       <div>
                         <h2 className="font-semibold">{track.artist_name}</h2>
                         <p className="text-sm text-gray-500">
-                          {formatPlays(track.plays)} plays
+                          {track.plays} plays
                         </p>
                       </div>
                     </div>
