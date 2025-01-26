@@ -48,39 +48,53 @@ export const SearchBar = () => {
 
   useEffect(() => {
     const searchContent = async () => {
-      if (searchQuery.length < 2) {
-        setSearchResults({ videos: [], channels: [] });
-        return;
+      try {
+        if (searchQuery.length < 2) {
+          setSearchResults({ videos: [], channels: [] });
+          return;
+        }
+
+        const searchTerm = `%${searchQuery}%`;
+
+        const [videosResponse, channelsResponse] = await Promise.all([
+          supabase
+            .from("youtube_videos")
+            .select("id, title, channel_name, channel_id")
+            .ilike("title", searchTerm)
+            .limit(5),
+          supabase
+            .from("youtube_channels")
+            .select("channel_id, title")
+            .ilike("title", searchTerm)
+            .limit(3),
+        ]);
+
+        if (videosResponse.error) {
+          console.error('Videos search error:', videosResponse.error);
+          return;
+        }
+
+        if (channelsResponse.error) {
+          console.error('Channels search error:', channelsResponse.error);
+          return;
+        }
+
+        // Filter out videos and channels that are hidden
+        const filteredVideos = (videosResponse.data || []).filter(
+          video => !hiddenChannels.has(video.channel_id)
+        );
+
+        const filteredChannels = (channelsResponse.data || []).filter(
+          channel => !hiddenChannels.has(channel.channel_id)
+        );
+
+        setSearchResults({
+          videos: filteredVideos,
+          channels: filteredChannels,
+        });
+      } catch (error) {
+        console.error('Search error:', error);
       }
-
-      const searchTerm = `%${searchQuery}%`;
-
-      const [videosResponse, channelsResponse] = await Promise.all([
-        supabase
-          .from("youtube_videos")
-          .select("id, title, channel_name, channel_id")
-          .ilike("title", searchTerm)
-          .limit(5),
-        supabase
-          .from("youtube_channels")
-          .select("channel_id, title")
-          .ilike("title", searchTerm)
-          .limit(3),
-      ]);
-
-      // Filter out videos and channels that are hidden
-      const filteredVideos = (videosResponse.data || []).filter(
-        video => !hiddenChannels.has(video.channel_id)
-      );
-
-      const filteredChannels = (channelsResponse.data || []).filter(
-        channel => !hiddenChannels.has(channel.channel_id)
-      );
-
-      setSearchResults({
-        videos: filteredVideos,
-        channels: filteredChannels,
-      });
     };
 
     const debounceTimeout = setTimeout(searchContent, 150);
