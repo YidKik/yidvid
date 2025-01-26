@@ -46,7 +46,7 @@ export const Header = () => {
           <img 
             src="https://euincktvsiuztsxcuqfd.supabase.co/storage/v1/object/public/logos/play_button_outline_and_glyph.png" 
             alt="YidKik Logo"
-            className="h-8 w-auto" 
+            className="h-10 w-auto" 
             style={{ 
               objectFit: 'contain',
               minWidth: '40px',
