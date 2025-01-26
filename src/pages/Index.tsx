@@ -12,6 +12,7 @@ import { WelcomeAnimation } from "@/components/WelcomeAnimation";
 import { Slider } from "@/components/ui/slider";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
+import { MusicGrid } from "@/components/music/MusicGrid";
 
 const Index = () => {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
@@ -141,9 +142,7 @@ const Index = () => {
                   exit={{ opacity: 0, x: -20 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <div className="text-center text-lg text-muted-foreground">
-                    Music content coming soon...
-                  </div>
+                  <MusicGrid />
                 </motion.div>
               )}
             </AnimatePresence>
