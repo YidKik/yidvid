@@ -83,7 +83,12 @@ export const Header = () => {
     <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
       <div className="container flex h-14 items-center">
         <Link to="/" className="flex items-center space-x-2 mr-4">
-          <img src="/yidkik-logo.png" alt="YidKik" className="h-8" />
+          <img 
+            src="/yidkik-logo.png" 
+            alt="YidKik" 
+            className="h-8 w-auto object-contain"
+            style={{ maxWidth: '120px' }} 
+          />
         </Link>
 
         <div className="flex-1 flex justify-center px-4">
