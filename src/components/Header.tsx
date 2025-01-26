@@ -51,13 +51,13 @@ export const Header = () => {
             <>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon">
+                  <Button variant="ghost" size="icon" className="bg-[#222222] hover:bg-[#333333] text-white">
                     <Bell className="h-5 w-5" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
+                <DropdownMenuContent align="end" className="bg-[#222222] border-[#333333]">
                   <ScrollArea className="h-[300px] w-[300px] p-4">
-                    <p className="text-sm text-muted-foreground">No new notifications</p>
+                    <p className="text-sm text-white/70">No new notifications</p>
                   </ScrollArea>
                 </DropdownMenuContent>
               </DropdownMenu>
