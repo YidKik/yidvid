@@ -27,6 +27,7 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isSignUp, setIsSignUp] = useState(true);
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
@@ -83,6 +84,17 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
     }
   };
 
+  const handleSignIn = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    if (error) {
+      setErrorMessage(getErrorMessage(error));
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
@@ -94,18 +106,20 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
             <AlertDescription>{errorMessage}</AlertDescription>
           </Alert>
         )}
-        <form onSubmit={handleSignUp} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="name">Name</Label>
-            <Input
-              id="name"
-              type="text"
-              placeholder="Enter your name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="border border-[#E5E5E5] focus:border-[#a8a8a8] focus:ring-0"
-            />
-          </div>
+        <form onSubmit={isSignUp ? handleSignUp : handleSignIn} className="space-y-4">
+          {isSignUp && (
+            <div className="space-y-2">
+              <Label htmlFor="name">Name</Label>
+              <Input
+                id="name"
+                type="text"
+                placeholder="Enter your name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="border border-[#E5E5E5] focus:border-[#a8a8a8] focus:ring-0"
+              />
+            </div>
+          )}
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input
@@ -122,14 +136,22 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
             <Input
               id="password"
               type="password"
-              placeholder="Create a password"
+              placeholder={isSignUp ? "Create a password" : "Enter your password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="border border-[#E5E5E5] focus:border-[#a8a8a8] focus:ring-0"
             />
           </div>
           <Button type="submit" className="w-full">
-            Sign Up
+            {isSignUp ? "Sign Up" : "Sign In"}
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full"
+            onClick={() => setIsSignUp(!isSignUp)}
+          >
+            {isSignUp ? "Sign In Instead" : "Sign Up Instead"}
           </Button>
           <div className="relative my-4">
             <div className="absolute inset-0 flex items-center">
