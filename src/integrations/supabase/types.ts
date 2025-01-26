@@ -36,6 +36,36 @@ export type Database = {
         }
         Relationships: []
       }
+      channel_requests: {
+        Row: {
+          channel_id: string | null
+          channel_name: string
+          created_at: string
+          id: string
+          status: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          channel_id?: string | null
+          channel_name: string
+          created_at?: string
+          id?: string
+          status?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          channel_id?: string | null
+          channel_name?: string
+          created_at?: string
+          id?: string
+          status?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       channel_subscriptions: {
         Row: {
           channel_id: string

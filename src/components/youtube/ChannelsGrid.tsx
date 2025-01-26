@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useState, useEffect } from "react";
+import { RequestChannelDialog } from "./RequestChannelDialog";
 
 export const ChannelsGrid = () => {
   const [hiddenChannels, setHiddenChannels] = useState<Set<string>>(new Set());
@@ -50,8 +51,9 @@ export const ChannelsGrid = () => {
   if (isLoading) {
     return (
       <div className="w-full max-w-[1600px] mx-auto px-4">
-        <div className="flex items-center mb-8">
+        <div className="flex items-center justify-between mb-8">
           <h2 className="text-2xl font-bold text-accent">View All Channels</h2>
+          <RequestChannelDialog />
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
           {[...Array(6)].map((_, i) => (
@@ -69,13 +71,24 @@ export const ChannelsGrid = () => {
   const visibleChannels = channels?.filter(channel => !hiddenChannels.has(channel.channel_id)) || [];
 
   if (!visibleChannels.length) {
-    return null;
+    return (
+      <div className="w-full max-w-[1600px] mx-auto px-4">
+        <div className="flex items-center justify-between mb-8">
+          <h2 className="text-2xl font-bold text-accent">View All Channels</h2>
+          <RequestChannelDialog />
+        </div>
+        <div className="text-center py-8 text-gray-500">
+          No channels available
+        </div>
+      </div>
+    );
   }
 
   return (
     <div className="w-full max-w-[1600px] mx-auto px-4 animate-scaleIn">
-      <div className="flex items-center mb-8">
+      <div className="flex items-center justify-between mb-8">
         <h2 className="text-2xl font-bold text-accent">View All Channels</h2>
+        <RequestChannelDialog />
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
         {visibleChannels.map((channel, index) => (
