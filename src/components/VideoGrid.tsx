@@ -132,7 +132,7 @@ export default function VideoGrid({ maxVideos = 12, rowSize = 4, isLoading }: Vi
 
   if (loadingVideos) {
     return (
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 max-w-[1600px] mx-auto">
+      <div className={`grid ${isMobile ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4'} gap-3 md:gap-4 max-w-[1600px] mx-auto`}>
         {Array.from({ length: isMobile ? 6 : maxVideos }).map((_, index) => (
           <div key={index} className="space-y-2 md:space-y-3">
             <Skeleton className="aspect-video w-full" />
@@ -151,7 +151,7 @@ export default function VideoGrid({ maxVideos = 12, rowSize = 4, isLoading }: Vi
 
   return (
     <div className="space-y-4 md:space-y-6">
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 max-w-[1600px] mx-auto">
+      <div className={`grid ${isMobile ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4'} gap-3 md:gap-4 max-w-[1600px] mx-auto`}>
         {currentVideos?.map((video) => (
           <VideoCard
             key={video.id}
