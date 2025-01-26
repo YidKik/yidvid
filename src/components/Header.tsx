@@ -42,18 +42,26 @@ export const Header = () => {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
       <div className="container flex h-14 items-center">
-        <Link to="/" className="flex items-center space-x-2 mr-4">
+        <Link to="/" className="flex items-center space-x-2">
           <img 
             src="/yidkik-logo.png" 
-            alt="YidKik" 
-            className="h-8 w-auto object-contain"
-            style={{ maxWidth: '120px' }} 
+            alt="YidKik Logo"
+            className="h-8 w-auto" 
+            style={{ 
+              objectFit: 'contain',
+              minWidth: '120px',
+              maxWidth: '120px'
+            }}
+            onError={(e) => {
+              console.error('Logo failed to load:', e);
+              e.currentTarget.style.display = 'none';
+            }}
           />
         </Link>
 
         <div className="flex-1" />
 
-        <div className="flex items-center space-x-2 ml-4">
+        <div className="flex items-center space-x-2">
           {session ? (
             <>
               <DropdownMenu>
