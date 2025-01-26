@@ -46,11 +46,11 @@ export const Header = () => {
           <img 
             src="https://euincktvsiuztsxcuqfd.supabase.co/storage/v1/object/public/logos/play_button_outline_and_glyph.png" 
             alt="YidKik Logo"
-            className="h-10 w-auto" 
+            className="h-12 w-auto" 
             style={{ 
               objectFit: 'contain',
-              minWidth: '40px',
-              maxWidth: '40px'
+              minWidth: '48px',
+              maxWidth: '48px'
             }}
             onError={(e) => {
               console.error('Logo failed to load:', e);
