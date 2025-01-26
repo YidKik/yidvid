@@ -251,8 +251,9 @@ export const Header = () => {
               )}
               <DropdownMenu>
                 <DropdownMenuTrigger className="outline-none">
-                  <div className="relative inline-flex items-center justify-center bg-white p-2 rounded-full">
+                  <div className="relative inline-flex items-center justify-center bg-white p-1.5 rounded-full">
                     <Bell 
+                      size={18}
                       className={`text-primary hover:text-primary/80 transition-all duration-300 hover:scale-110 hover:rotate-12 cursor-pointer ${
                         notifications && notifications.length > 0 ? 'animate-[gentle-fade_1s_ease-in-out_infinite_alternate]' : ''
                       }`}
