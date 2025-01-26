@@ -44,19 +44,20 @@ export const Header = () => {
       <div className="container flex h-14 items-center">
         <Link to="/" className="flex items-center space-x-2">
           <img 
-            src="/yidkik-logo.png" 
+            src="https://euincktvsiuztsxcuqfd.supabase.co/storage/v1/object/public/logos/play_button_outline_and_glyph.png" 
             alt="YidKik Logo"
             className="h-8 w-auto" 
             style={{ 
               objectFit: 'contain',
-              minWidth: '120px',
-              maxWidth: '120px'
+              minWidth: '32px',
+              maxWidth: '32px'
             }}
             onError={(e) => {
               console.error('Logo failed to load:', e);
               e.currentTarget.style.display = 'none';
             }}
           />
+          <span className="text-xl font-bold">YidKik</span>
         </Link>
 
         <div className="flex-1" />
