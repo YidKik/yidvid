@@ -11,6 +11,19 @@ import {
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
+type ChannelRequest = {
+  id: string;
+  channel_name: string;
+  channel_id: string | null;
+  user_id: string | null;
+  status: string | null;
+  created_at: string;
+  updated_at: string;
+  profiles: {
+    email: string;
+  } | null;
+}
+
 export const ChannelRequestsSection = () => {
   const { data: requests, refetch } = useQuery({
     queryKey: ["channel-requests"],
@@ -26,7 +39,7 @@ export const ChannelRequestsSection = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data;
+      return data as ChannelRequest[];
     },
   });
 
