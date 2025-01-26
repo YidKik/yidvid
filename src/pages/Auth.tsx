@@ -20,6 +20,46 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
+  const validateForm = () => {
+    if (!email || !password) {
+      toast({
+        title: "Missing fields",
+        description: "Please fill in all required fields",
+        variant: "destructive",
+      });
+      return false;
+    }
+    
+    if (!email.includes('@')) {
+      toast({
+        title: "Invalid email",
+        description: "Please enter a valid email address",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    if (password.length < 6) {
+      toast({
+        title: "Invalid password",
+        description: "Password must be at least 6 characters long",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    if (isSignUp && !name) {
+      toast({
+        title: "Missing name",
+        description: "Please enter your name",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    return true;
+  };
+
   const prefetchUserData = async (userId: string) => {
     await queryClient.prefetchQuery({
       queryKey: ["profile", userId],
@@ -69,11 +109,16 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+
     setIsLoading(true);
 
     try {
       if (isSignUp) {
-        const { error: signUpError } = await supabase.auth.signUp({
+        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
           email,
           password,
           options: {
@@ -141,6 +186,7 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
         });
 
         if (signInError) {
+          console.error("Sign in error:", signInError);
           if (signInError.message.includes("Invalid login credentials")) {
             toast({
               title: "Invalid credentials",
@@ -203,6 +249,7 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
                 className="border border-input rounded-md"
                 required
                 disabled={isLoading}
+                aria-label="Full Name"
               />
             </div>
           )}
@@ -216,6 +263,7 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
               className="border border-input rounded-md"
               required
               disabled={isLoading}
+              aria-label="Email"
             />
           </div>
           <div className="space-y-2">
@@ -228,6 +276,8 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
               className="border border-input rounded-md"
               required
               disabled={isLoading}
+              minLength={6}
+              aria-label="Password"
             />
           </div>
           <button
