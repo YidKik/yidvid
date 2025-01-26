@@ -26,7 +26,7 @@ export const ChannelRequestsSection = () => {
         .from("channel_requests")
         .select(`
           *,
-          profiles!inner (
+          profiles (
             email
           )
         `);
