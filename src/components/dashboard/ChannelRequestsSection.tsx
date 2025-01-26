@@ -39,7 +39,7 @@ export const ChannelRequestsSection = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data as ChannelRequest[];
+      return (data as ChannelRequest[]) || [];
     },
   });
 
