@@ -49,6 +49,20 @@ export const Header = () => {
     },
   });
 
+  // Listen for auth state changes
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_IN') {
+        await refetchSession();
+        // This will trigger a refetch of profile and notifications since they depend on session
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [refetchSession]);
+
   // Load hidden channels
   useEffect(() => {
     const loadHiddenChannels = async () => {
