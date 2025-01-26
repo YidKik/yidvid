@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Settings, LogOut, LayoutDashboard, Search, BellDot } from "lucide-react";
+import { Settings, LogOut, LayoutDashboard, Search, Bell } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
@@ -239,7 +239,6 @@ export const Header = () => {
           )}
         </form>
 
-        {/* Navigation Section */}
         <nav className="flex items-center gap-2 w-32 justify-end">
           {session ? (
             <div className="flex items-center gap-3">
@@ -253,7 +252,7 @@ export const Header = () => {
               <DropdownMenu>
                 <DropdownMenuTrigger className="outline-none">
                   <div className="relative inline-flex items-center">
-                    <BellDot 
+                    <Bell 
                       className={`text-primary hover:text-primary/80 transition-all duration-300 hover:scale-110 cursor-pointer ${
                         notifications && notifications.length > 0 ? 'animate-pulse' : ''
                       }`}
