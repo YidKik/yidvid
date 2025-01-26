@@ -9,9 +9,14 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { MostViewedVideos } from "@/components/video/MostViewedVideos";
 import { WelcomeAnimation } from "@/components/WelcomeAnimation";
+import { Slider } from "@/components/ui/slider";
+import { MusicGrid } from "@/components/MusicGrid";
+import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
 
 const Index = () => {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [sliderValue, setSliderValue] = useState([0]);
 
   const { data: videos, isLoading } = useQuery({
     queryKey: ["youtube_videos"],
@@ -67,6 +72,8 @@ const Index = () => {
     },
   });
 
+  const isMusic = sliderValue[0] >= 50;
+
   return (
     <SidebarProvider defaultOpen={false}>
       <WelcomeAnimation />
@@ -75,22 +82,70 @@ const Index = () => {
         <div className="flex-1">
           <Header />
           <main className="mt-16">
-            <div className="video-grid mt-4">
-              <VideoGrid 
-                videos={videos} 
-                maxVideos={12} 
-                rowSize={4} 
-                isLoading={isLoading}
-              />
-            </div>
-            {mostViewedVideos && mostViewedVideos.length > 0 && (
-              <div className="mt-8">
-                <MostViewedVideos videos={mostViewedVideos} />
+            <div className="max-w-3xl mx-auto px-4 py-6">
+              <div className="flex items-center justify-between mb-8">
+                <span className={cn(
+                  "text-sm font-medium transition-colors",
+                  !isMusic ? "text-primary" : "text-muted-foreground"
+                )}>
+                  Videos
+                </span>
+                <div className="w-[200px] px-4">
+                  <Slider
+                    value={sliderValue}
+                    onValueChange={setSliderValue}
+                    max={100}
+                    step={1}
+                    className="cursor-pointer"
+                  />
+                </div>
+                <span className={cn(
+                  "text-sm font-medium transition-colors",
+                  isMusic ? "text-primary" : "text-muted-foreground"
+                )}>
+                  Music
+                </span>
               </div>
-            )}
-            <div className="channels-grid">
-              <ChannelsGrid />
             </div>
+
+            <AnimatePresence mode="wait">
+              {!isMusic ? (
+                <motion.div
+                  key="videos"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <div className="video-grid mt-4">
+                    <VideoGrid 
+                      videos={videos} 
+                      maxVideos={12} 
+                      rowSize={4} 
+                      isLoading={isLoading}
+                    />
+                  </div>
+                  {mostViewedVideos && mostViewedVideos.length > 0 && (
+                    <div className="mt-8">
+                      <MostViewedVideos videos={mostViewedVideos} />
+                    </div>
+                  )}
+                  <div className="channels-grid">
+                    <ChannelsGrid />
+                  </div>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="music"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <MusicGrid maxTracks={12} rowSize={4} />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </main>
         </div>
       </div>
