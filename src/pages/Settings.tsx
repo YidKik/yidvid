@@ -21,7 +21,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useColors } from "@/contexts/ColorContext";
-import { Settings as SettingsIcon, Volume2, Globe, Bell } from "lucide-react";
+import { Settings as SettingsIcon, Volume2, Globe, Bell, ArrowLeft } from "lucide-react";
 import { translations, getTranslation, TranslationKey } from "@/utils/translations";
 import { ChannelSubscriptions } from "@/components/youtube/ChannelSubscriptions";
 import { UserAnalyticsSection } from "@/components/analytics/UserAnalyticsSection";
@@ -40,7 +40,6 @@ const Settings = () => {
     return false;
   });
 
-  // Existing states
   const [autoplay, setAutoplay] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
   const { colors, updateColors, resetColors } = useColors();
@@ -49,7 +48,6 @@ const Settings = () => {
   const [buttonColor, setButtonColor] = useState(colors.buttonColor);
   const [logoColor, setLogoColor] = useState(colors.logoColor);
 
-  // New settings states
   const [volume, setVolume] = useState(80);
   const [language, setLanguage] = useState("en");
   const [subtitles, setSubtitles] = useState(false);
@@ -61,7 +59,6 @@ const Settings = () => {
   const [privateAccount, setPrivateAccount] = useState(false);
   const [dataCollection, setDataCollection] = useState(true);
 
-  // Save settings to local storage
   useEffect(() => {
     localStorage.setItem('settings', JSON.stringify({
       volume,
@@ -78,7 +75,6 @@ const Settings = () => {
   }, [volume, language, subtitles, highContrast, playbackSpeed, emailNotifications, 
       pushNotifications, autoHideComments, privateAccount, dataCollection]);
 
-  // Load settings from local storage
   useEffect(() => {
     const savedSettings = localStorage.getItem('settings');
     if (savedSettings) {
@@ -110,7 +106,6 @@ const Settings = () => {
     navigate("/dashboard");
   };
 
-  // Effect to sync with ColorContext
   useEffect(() => {
     setBackgroundColor(colors.backgroundColor);
     setTextColor(colors.textColor);
@@ -118,7 +113,6 @@ const Settings = () => {
     setLogoColor(colors.logoColor);
   }, [colors]);
 
-  // Check if user is authenticated
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!session) {
@@ -140,10 +134,8 @@ const Settings = () => {
         buttonColor,
         logoColor,
       });
-      // The toast is already handled in the ColorContext
     } catch (error) {
       console.error('Error in saveColors:', error);
-      // The toast is already handled in the ColorContext
     }
   };
 
@@ -187,7 +179,6 @@ const Settings = () => {
     },
   });
 
-  // Query to fetch all profiles for admin management
   const { data: profiles, refetch: refetchProfiles } = useQuery({
     queryKey: ["all-profiles"],
     queryFn: async () => {
@@ -208,7 +199,6 @@ const Settings = () => {
     enabled: !!profile?.is_admin,
   });
 
-  // Update language in Supabase when changed
   const handleLanguageChange = async (newLanguage: string) => {
     try {
       const { error } = await supabase
@@ -225,7 +215,6 @@ const Settings = () => {
       }
 
       setLanguage(newLanguage);
-      // Update the document's dir attribute for RTL languages
       document.documentElement.dir = newLanguage === 'yi' ? 'rtl' : 'ltr';
       toast.success('Language updated successfully');
     } catch (error) {
@@ -234,7 +223,6 @@ const Settings = () => {
     }
   };
 
-  // Load user preferences including language on component mount
   useEffect(() => {
     const loadUserPreferences = async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -253,7 +241,6 @@ const Settings = () => {
 
       if (data) {
         setLanguage(data.language || 'en');
-        // Set RTL direction for Yiddish
         document.documentElement.dir = data.language === 'yi' ? 'rtl' : 'ltr';
       }
     };
@@ -266,8 +253,10 @@ const Settings = () => {
   return (
     <div className="min-h-screen" style={{ backgroundColor: backgroundColor, color: textColor }}>
       <Header />
+      <BackButton className="fixed top-20 left-4 rounded-full hover:bg-accent/10 z-10">
+        <ArrowLeft className="h-5 w-5 text-primary" />
+      </BackButton>
       <main className="container mx-auto pt-24 px-4 pb-16">
-        {/* Account Information Section */}
         <section className="mb-12">
           <Card className="p-6">
             <h2 className="text-xl font-semibold mb-4">{t('accountInformation')}</h2>
@@ -291,7 +280,6 @@ const Settings = () => {
           </Card>
         </section>
 
-        {/* Channel Subscriptions - New Section */}
         <section className="mb-12">
           <h2 className="text-2xl font-semibold mb-4">Channel Subscriptions</h2>
           <Card className="p-6">
@@ -303,7 +291,6 @@ const Settings = () => {
           </Card>
         </section>
 
-        {/* Channel Preferences Section - New */}
         <section className="mb-12">
           <h2 className="text-2xl font-semibold mb-4">Channel Preferences</h2>
           <p className="text-muted-foreground mb-4">
@@ -312,7 +299,6 @@ const Settings = () => {
           <ChannelPreferences />
         </section>
 
-        {/* Accessibility Settings */}
         <section className="mb-12">
           <h2 className="text-2xl font-semibold mb-4">{t('accessibility')}</h2>
           <Card className="p-6 space-y-6">
@@ -332,7 +318,6 @@ const Settings = () => {
           </Card>
         </section>
 
-        {/* Video Playback Settings */}
         <section className="mb-12">
           <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
             <Volume2 className="h-6 w-6" />
@@ -385,7 +370,6 @@ const Settings = () => {
           </Card>
         </section>
 
-        {/* Notification Settings */}
         <section className="mb-12">
           <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
             <Bell className="h-6 w-6" />
@@ -430,7 +414,6 @@ const Settings = () => {
           </Card>
         </section>
 
-        {/* Customize Colors - Moved to near the end */}
         <section className="mb-12">
           <h2 className="text-2xl font-semibold mb-4">{t('customizeColors')}</h2>
           <Card className="p-6">
@@ -507,10 +490,8 @@ const Settings = () => {
           </Card>
         </section>
 
-        {/* User Analytics Section */}
         <UserAnalyticsSection />
 
-        {/* Admin Section - Last */}
         {profile?.is_admin && (
           <section className="mb-12">
             <h2 className="text-2xl font-semibold mb-4">{t('adminControls')}</h2>
