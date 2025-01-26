@@ -44,7 +44,7 @@ serve(async (req) => {
       let allVideos = [];
       let nextPageToken = '';
       let totalVideosFetched = 0;
-      const maxVideosToFetch = 500; // Set a reasonable limit to avoid excessive API calls
+      const maxVideosToFetch = 1000; // Increased limit to fetch more videos
       
       try {
         // First, get channel details including upload playlist ID
@@ -67,6 +67,8 @@ serve(async (req) => {
             break;
           }
 
+          console.log(`[YouTube Videos] Fetching page of videos. Current total: ${totalVideosFetched}`);
+          
           const playlistUrl = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${uploadsPlaylistId}&maxResults=50&key=${apiKey}${nextPageToken ? `&pageToken=${nextPageToken}` : ''}`;
           const response = await fetch(playlistUrl);
           const data = await response.json();
@@ -111,10 +113,11 @@ serve(async (req) => {
           console.log(`[YouTube Videos] Fetched ${processedVideos.length} videos. Total so far: ${allVideos.length}`);
           
           // Add a small delay to avoid rate limiting
-          await new Promise(resolve => setTimeout(resolve, 100));
+          await new Promise(resolve => setTimeout(resolve, 250)); // Increased delay to be safer with rate limits
           
         } while (nextPageToken && totalVideosFetched < maxVideosToFetch);
 
+        console.log(`[YouTube Videos] Completed fetching videos for channel ${channelId}. Total videos: ${allVideos.length}`);
         return allVideos;
       } catch (error) {
         console.error(`[YouTube Videos] Error processing channel ${channelId}:`, error);
@@ -122,9 +125,23 @@ serve(async (req) => {
       }
     };
 
+    // First, clear existing videos for these channels
+    for (const channelId of channels) {
+      const { error: deleteError } = await supabaseClient
+        .from('youtube_videos')
+        .delete()
+        .eq('channel_id', channelId);
+      
+      if (deleteError) {
+        console.error(`[YouTube Videos] Error deleting existing videos for channel ${channelId}:`, deleteError);
+      } else {
+        console.log(`[YouTube Videos] Cleared existing videos for channel ${channelId}`);
+      }
+    }
+
     const videoPromises = channels.map(fetchAllVideosForChannel);
     const videos = (await Promise.all(videoPromises)).flat();
-    console.log(`[YouTube Videos] Total videos fetched: ${videos.length}`);
+    console.log(`[YouTube Videos] Total videos fetched across all channels: ${videos.length}`);
 
     if (videos.length === 0) {
       console.warn('[YouTube Videos] No videos were fetched for any channels');
