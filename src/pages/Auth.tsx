@@ -145,14 +145,15 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
           <Button type="submit" className="w-full">
             {isSignUp ? "Sign Up" : "Sign In"}
           </Button>
-          <Button
-            type="button"
-            variant="outline"
-            className="w-full"
-            onClick={() => setIsSignUp(!isSignUp)}
-          >
-            {isSignUp ? "Sign In Instead" : "Sign Up Instead"}
-          </Button>
+          <div className="text-center mt-2">
+            <button
+              type="button"
+              onClick={() => setIsSignUp(!isSignUp)}
+              className="text-primary hover:underline text-sm"
+            >
+              {isSignUp ? "Already have an account? Sign In" : "Need an account? Sign Up"}
+            </button>
+          </div>
           <div className="relative my-4">
             <div className="absolute inset-0 flex items-center">
               <span className="w-full border-t" />
