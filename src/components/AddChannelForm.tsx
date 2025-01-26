@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
 interface AddChannelFormProps {
@@ -18,11 +18,7 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!channelId) {
-      toast({
-        title: "Channel ID required",
-        description: "Please enter a channel ID or URL",
-        variant: "destructive",
-      });
+      toast.error("Please enter a channel ID or URL");
       return;
     }
 
@@ -36,38 +32,22 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
         .maybeSingle();
 
       if (existingChannel) {
-        toast({
-          title: "Channel already exists",
-          description: "This channel has already been added to your dashboard",
-        });
-        onSuccess?.();
-        onClose?.();
+        toast.error("This channel has already been added to your dashboard");
         return;
       }
 
       const { data, error } = await supabase.functions.invoke('fetch-youtube-channel', {
-        body: { channelId: channelId.trim() },
-        headers: {
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`
-        }
+        body: { channelId: channelId.trim() }
       });
       
       if (error) {
         console.error("Error fetching channel:", error);
-        toast({
-          title: "Error fetching channel",
-          description: error.message,
-          variant: "destructive",
-        });
+        toast.error(error.message || "Failed to fetch channel details");
         return;
       }
 
       if (!data) {
-        toast({
-          title: "Channel not found",
-          description: "Could not find a channel with the provided ID",
-          variant: "destructive",
-        });
+        toast.error("Could not find a channel with the provided ID");
         return;
       }
 
@@ -83,28 +63,22 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
 
       if (insertError) {
         console.error("Error adding channel:", insertError);
-        toast({
-          title: "Error adding channel",
-          description: "Failed to add the channel",
-          variant: "destructive",
-        });
+        toast.error("Failed to add the channel");
         return;
       }
 
-      toast({
-        title: "Channel added",
-        description: `Successfully added ${data.title}`,
-      });
+      toast.success(`Successfully added ${data.title}`);
       setChannelId("");
       onSuccess?.();
       onClose?.();
+
+      // Wait a bit for videos to be fetched
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
     } catch (error: any) {
       console.error("Error in add channel process:", error);
-      toast({
-        title: "Error",
-        description: error.message || "An unexpected error occurred",
-        variant: "destructive",
-      });
+      toast.error(error.message || "An unexpected error occurred");
     } finally {
       setIsFetchingChannel(false);
       setIsAddingChannel(false);
@@ -126,6 +100,7 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
       <Button 
         type="submit" 
         disabled={isFetchingChannel || isAddingChannel}
+        className="w-full"
       >
         {isFetchingChannel ? "Fetching..." : isAddingChannel ? "Adding..." : "Add Channel"}
       </Button>

@@ -49,22 +49,6 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
-  // Verify authorization
-  const authHeader = req.headers.get('Authorization');
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    console.error('[YouTube API] Missing or invalid authorization header');
-    return new Response(
-      JSON.stringify({ 
-        error: 'Missing or invalid authorization',
-        details: 'Please provide a valid Bearer token in the Authorization header'
-      }),
-      { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 401 
-      }
-    );
-  }
-
   try {
     const { channelId } = await req.json();
     console.log('[YouTube API] Starting channel fetch process');
