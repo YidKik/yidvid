@@ -57,7 +57,6 @@ export const Header = () => {
               e.currentTarget.style.display = 'none';
             }}
           />
-          <span className="text-xl font-bold">YidKik</span>
         </Link>
 
         <div className="flex-1" />
