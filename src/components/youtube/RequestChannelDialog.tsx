@@ -22,21 +22,32 @@ import { Input } from "@/components/ui/input";
 import { Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-interface RequestChannelFormValues {
-  channelName: string;
-  channelId?: string;
-}
+const formSchema = z.object({
+  channelName: z.string().min(1, "Channel name is required"),
+  channelId: z.string().optional(),
+});
+
+type FormValues = z.infer<typeof formSchema>;
 
 export const RequestChannelDialog = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const form = useForm<RequestChannelFormValues>();
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      channelName: "",
+      channelId: "",
+    },
+  });
 
-  const onSubmit = async (data: RequestChannelFormValues) => {
+  const onSubmit = async (data: FormValues) => {
     try {
       const { error } = await supabase.from("channel_requests").insert({
         channel_name: data.channelName,
         channel_id: data.channelId || null,
+        user_id: (await supabase.auth.getUser()).data.user?.id,
       });
 
       if (error) throw error;
@@ -77,7 +88,7 @@ export const RequestChannelDialog = () => {
                 <FormItem>
                   <FormLabel>Channel Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter channel name" {...field} required />
+                    <Input placeholder="Enter channel name" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
