@@ -44,15 +44,6 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
         onOpenChange(false);
         navigate("/");
       }
-      if (event === "USER_UPDATED") {
-        const { error } = await supabase.auth.getSession();
-        if (error) {
-          setErrorMessage(getErrorMessage(error));
-        }
-      }
-      if (event === "SIGNED_OUT") {
-        setErrorMessage("");
-      }
     });
 
     return () => subscription.unsubscribe();
