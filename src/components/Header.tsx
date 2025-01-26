@@ -109,7 +109,7 @@ export const Header = () => {
                       setSearchQuery(e.target.value);
                       setIsSearchOpen(true);
                     }}
-                    className="w-full pl-8 pr-4 py-2 text-sm border-none focus:outline-none focus:ring-1 focus:ring-gray-200 rounded-md"
+                    className="w-full pl-8 pr-4 py-2 text-sm border-none focus:outline-none focus:ring-1 focus:ring-gray-200 rounded-md text-black"
                   />
                 </div>
               </form>
