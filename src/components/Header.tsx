@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Settings, LogOut, LayoutDashboard, Search, Bell } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Auth from "@/pages/Auth";
 import { useIsMobile } from "@/hooks/use-mobile";
 import {
