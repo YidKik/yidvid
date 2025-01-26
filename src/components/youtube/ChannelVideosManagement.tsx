@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Table,
@@ -31,11 +31,7 @@ export const ChannelVideosManagement = ({ channelId }: ChannelVideosManagementPr
         .order("uploaded_at", { ascending: false });
 
       if (error) {
-        toast({
-          title: "Error",
-          description: "Failed to fetch channel videos",
-          variant: "destructive",
-        });
+        toast("Error fetching videos");
         throw error;
       }
 
@@ -46,24 +42,40 @@ export const ChannelVideosManagement = ({ channelId }: ChannelVideosManagementPr
   const handleDeleteVideo = async (videoId: string) => {
     try {
       setIsDeleting(true);
-      const { error } = await supabase
+
+      // First, delete related notifications
+      const { error: notificationsError } = await supabase
+        .from("video_notifications")
+        .delete()
+        .eq("video_id", videoId);
+
+      if (notificationsError) {
+        throw notificationsError;
+      }
+
+      // Then, delete related reports
+      const { error: reportsError } = await supabase
+        .from("video_reports")
+        .delete()
+        .eq("video_id", videoId);
+
+      if (reportsError) {
+        throw reportsError;
+      }
+
+      // Finally, delete the video
+      const { error: videoError } = await supabase
         .from("youtube_videos")
         .delete()
         .eq("id", videoId);
 
-      if (error) throw error;
+      if (videoError) throw videoError;
 
-      toast({
-        title: "Success",
-        description: "Video deleted successfully",
-      });
+      toast("Video deleted successfully");
       refetch();
     } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
+      toast("Error deleting video");
+      console.error("Error deleting video:", error);
     } finally {
       setIsDeleting(false);
     }
