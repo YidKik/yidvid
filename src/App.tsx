@@ -6,8 +6,6 @@ import VideoDetails from "@/pages/VideoDetails";
 import ChannelDetails from "@/pages/ChannelDetails";
 import Dashboard from "@/pages/Dashboard";
 import Settings from "@/pages/Settings";
-import Music from "@/pages/Music";
-import MusicDetails from "@/pages/MusicDetails";
 import { ColorProvider } from "@/contexts/ColorContext";
 
 function App() {
@@ -19,8 +17,6 @@ function App() {
         <Route path="/channel/:id" element={<ChannelDetails />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/settings" element={<Settings />} />
-        <Route path="/music" element={<Music />} />
-        <Route path="/music/:id" element={<MusicDetails />} />
       </Routes>
       <Toaster />
       <Sonner />
