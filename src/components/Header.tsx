@@ -242,9 +242,6 @@ export const Header = () => {
         <nav className="flex items-center gap-2 w-32 justify-end">
           {session ? (
             <div className="flex items-center gap-3">
-              <span className="text-sm font-medium">
-                {session.user.user_metadata.full_name || profile?.name || "User"}
-              </span>
               {profile?.is_admin && (
                 <Link to="/dashboard">
                   <LayoutDashboard 
@@ -252,6 +249,9 @@ export const Header = () => {
                   />
                 </Link>
               )}
+              <span className="text-sm font-medium">
+                {session.user.user_metadata.full_name || profile?.name || "User"}
+              </span>
               <DropdownMenu>
                 <DropdownMenuTrigger className="outline-none">
                   <div className="relative inline-flex items-center justify-center bg-white p-1.5 rounded-full">
