@@ -23,6 +23,7 @@ import {
 import { useColors } from "@/contexts/ColorContext";
 import { Settings as SettingsIcon, Volume2, Globe, Bell } from "lucide-react";
 import { translations, getTranslation, TranslationKey } from "@/utils/translations";
+import { ChannelSubscriptions } from "@/components/youtube/ChannelSubscriptions";
 
 const Settings = () => {
   const navigate = useNavigate();
@@ -270,7 +271,7 @@ const Settings = () => {
           {t('settings')}
         </h1>
 
-        {/* Account Information - Now First */}
+        {/* Account Information Section */}
         <section className="mb-12">
           <Card className="p-6">
             <h2 className="text-xl font-semibold mb-4">{t('accountInformation')}</h2>
@@ -291,6 +292,18 @@ const Settings = () => {
                 </Button>
               </div>
             </div>
+          </Card>
+        </section>
+
+        {/* Channel Subscriptions - New Section */}
+        <section className="mb-12">
+          <h2 className="text-2xl font-semibold mb-4">Channel Subscriptions</h2>
+          <Card className="p-6">
+            {userId ? (
+              <ChannelSubscriptions userId={userId} />
+            ) : (
+              <p className="text-muted-foreground">Please sign in to manage your subscriptions.</p>
+            )}
           </Card>
         </section>
 
