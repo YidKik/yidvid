@@ -9,14 +9,12 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { MostViewedVideos } from "@/components/video/MostViewedVideos";
 import { WelcomeAnimation } from "@/components/WelcomeAnimation";
-import { Slider } from "@/components/ui/slider";
-import { cn } from "@/lib/utils";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { MusicGrid } from "@/components/music/MusicGrid";
 
 const Index = () => {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
-  const [sliderValue, setSliderValue] = useState([0]);
+  const [isMusic, setIsMusic] = useState(false);
 
   const { data: videos, isLoading } = useQuery({
     queryKey: ["youtube_videos"],
@@ -72,8 +70,6 @@ const Index = () => {
     },
   });
 
-  const isMusic = sliderValue[0] >= 50;
-
   return (
     <SidebarProvider defaultOpen={false}>
       <WelcomeAnimation />
@@ -83,40 +79,39 @@ const Index = () => {
           <Header />
           <main className="mt-16">
             <div className="max-w-3xl mx-auto px-4 py-6">
-              <div className="flex items-center justify-between mb-8">
-                <span className={cn(
-                  "text-sm font-medium transition-colors",
-                  !isMusic ? "text-primary" : "text-muted-foreground"
-                )}>
-                  Videos
-                </span>
-                <div className="w-[200px] px-4">
-                  <Slider
-                    value={sliderValue}
-                    onValueChange={setSliderValue}
-                    max={100}
-                    step={1}
-                    className="cursor-pointer"
+              <div className="relative w-[300px] h-12 mx-auto bg-gray-100 rounded-full p-1.5 cursor-pointer"
+                   onClick={() => setIsMusic(!isMusic)}>
+                <div className="relative w-full h-full flex items-center justify-between px-6 text-sm font-medium">
+                  <span className={`z-10 transition-colors duration-200 ${!isMusic ? 'text-white' : 'text-gray-600'}`}>
+                    Videos
+                  </span>
+                  <span className={`z-10 transition-colors duration-200 ${isMusic ? 'text-white' : 'text-gray-600'}`}>
+                    Music
+                  </span>
+                  <motion.div
+                    className="absolute top-0 left-0 w-[145px] h-full bg-primary rounded-full"
+                    animate={{
+                      x: isMusic ? 145 : 0
+                    }}
+                    transition={{
+                      type: "spring",
+                      stiffness: 300,
+                      damping: 30
+                    }}
                   />
                 </div>
-                <span className={cn(
-                  "text-sm font-medium transition-colors",
-                  isMusic ? "text-primary" : "text-muted-foreground"
-                )}>
-                  Music
-                </span>
               </div>
             </div>
 
-            <AnimatePresence mode="wait">
+            <motion.div
+              key={isMusic ? "music" : "videos"}
+              initial={{ opacity: 0, x: isMusic ? 20 : -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: isMusic ? -20 : 20 }}
+              transition={{ duration: 0.3 }}
+            >
               {!isMusic ? (
-                <motion.div
-                  key="videos"
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 20 }}
-                  transition={{ duration: 0.3 }}
-                >
+                <>
                   <div className="video-grid mt-4">
                     <VideoGrid 
                       videos={videos} 
@@ -133,19 +128,11 @@ const Index = () => {
                   <div className="channels-grid">
                     <ChannelsGrid />
                   </div>
-                </motion.div>
+                </>
               ) : (
-                <motion.div
-                  key="music"
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <MusicGrid />
-                </motion.div>
+                <MusicGrid />
               )}
-            </AnimatePresence>
+            </motion.div>
           </main>
         </div>
       </div>
