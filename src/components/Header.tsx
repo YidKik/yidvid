@@ -30,11 +30,13 @@ export const Header = () => {
     queryFn: async () => {
       if (!searchQuery.trim()) return [];
       
+      // Search in youtube_videos table with a more comprehensive search
       const { data: videos, error } = await supabase
         .from("youtube_videos")
         .select("*")
-        .ilike("title", `%${searchQuery}%`)
-        .limit(5);
+        .or(`title.ilike.%${searchQuery}%,channel_name.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%`)
+        .order('views', { ascending: false })
+        .limit(10);
 
       if (error) {
         console.error("Error searching videos:", error);
