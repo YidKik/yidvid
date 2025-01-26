@@ -12,8 +12,8 @@ import {
 
 interface VideoGridProps {
   videos?: {
-    id: string;  // This is the UUID from the database
-    video_id: string;  // This is the YouTube video ID
+    id: string;
+    video_id: string;
     title: string;
     thumbnail: string;
     channelName: string;
@@ -119,11 +119,6 @@ export default function VideoGrid({ videos = [], maxVideos = 12, rowSize = 4, is
                   onClick={() => handlePageChange(currentPage - 1)}
                   className={currentPage === 1 ? 'pointer-events-none opacity-50' : ''}
                 />
-              </PaginationItem>
-              <PaginationItem>
-                <span className="px-4">
-                  Page {currentPage} of {totalPages}
-                </span>
               </PaginationItem>
               <PaginationItem>
                 <PaginationNext 
