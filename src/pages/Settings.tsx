@@ -281,7 +281,7 @@ const Settings = () => {
                 <code className="bg-muted px-2 py-1 rounded">{userId || 'Loading...'}</code>
               </div>
               <p className="text-sm text-muted-foreground">
-                {t('uniqueIdentifier')}
+                This is your unique identifier in the system.
               </p>
               <div className="pt-4 border-t flex gap-4">
                 <Button variant="destructive" onClick={handleSignOut}>
