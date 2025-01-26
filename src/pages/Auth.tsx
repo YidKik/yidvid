@@ -87,7 +87,7 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
             <button
               type="button"
               onClick={() => setIsSignUp(!isSignUp)}
-              className="text-sm text-muted-foreground"
+              className="text-sm text-primary hover:text-primary/80"
             >
               {isSignUp ? "Already have an account? Sign In" : "Need an account? Sign Up"}
             </button>
