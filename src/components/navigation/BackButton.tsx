@@ -14,7 +14,7 @@ export const BackButton = ({ className }: BackButtonProps) => {
     <Button
       variant="ghost"
       size="icon"
-      onClick={() => navigate("/")}
+      onClick={() => navigate("/?skipWelcome=true")}
       className={cn("fixed top-20 left-4 hover:bg-transparent", className)}
     >
       <ArrowLeft className="h-5 w-5 text-black" />

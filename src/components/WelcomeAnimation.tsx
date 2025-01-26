@@ -2,9 +2,12 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useSearchParams } from "react-router-dom";
 
 export const WelcomeAnimation = () => {
   const [show, setShow] = useState(true);
+  const [searchParams] = useSearchParams();
+  const skipWelcome = searchParams.get("skipWelcome") === "true";
 
   const { data: session } = useQuery({
     queryKey: ["session"],
@@ -29,12 +32,17 @@ export const WelcomeAnimation = () => {
   });
 
   useEffect(() => {
+    if (skipWelcome) {
+      setShow(false);
+      return;
+    }
+
     const timer = setTimeout(() => {
       setShow(false);
     }, 3000);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [skipWelcome]);
 
   const userName = profile?.name || session?.user?.user_metadata?.full_name || "to Jewish Tube";
 
