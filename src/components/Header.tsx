@@ -304,12 +304,17 @@ export const Header = () => {
                 className="text-primary hover:text-primary/80 transition-all duration-300 hover:scale-110 hover:rotate-12 cursor-pointer" 
                 onClick={handleSignOut}
               />
-              <Avatar>
-                <AvatarImage src={session.user.user_metadata.avatar_url} />
-                <AvatarFallback>
-                  {session.user.email?.charAt(0).toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-medium">
+                  {session.user.user_metadata.full_name || session.user.email}
+                </span>
+                <Avatar>
+                  <AvatarImage src={session.user.user_metadata.avatar_url} />
+                  <AvatarFallback>
+                    {session.user.email?.charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+              </div>
             </div>
           ) : (
             <>
