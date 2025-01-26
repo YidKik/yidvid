@@ -49,8 +49,8 @@ export const Header = () => {
             className="h-8 w-auto" 
             style={{ 
               objectFit: 'contain',
-              minWidth: '32px',
-              maxWidth: '32px'
+              minWidth: '40px',
+              maxWidth: '40px'
             }}
             onError={(e) => {
               console.error('Logo failed to load:', e);
