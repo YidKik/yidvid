@@ -310,7 +310,7 @@ export const Header = () => {
               </Avatar>
             </div>
           ) : (
-            <Button variant="default" asChild className="bg-primary hover:bg-primary/90 text-white">
+            <Button variant="default" asChild className="bg-primary hover:bg-accent hover:text-accent-foreground text-white">
               <Link to="/auth">Sign In</Link>
             </Button>
           )}
