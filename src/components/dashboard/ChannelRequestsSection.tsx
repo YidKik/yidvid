@@ -13,7 +13,9 @@ interface ChannelRequest {
   status: string;
   created_at: string;
   updated_at: string;
-  user_email?: string;
+  profiles: {
+    email: string;
+  } | null;
 }
 
 export const ChannelRequestsSection = () => {
@@ -24,7 +26,9 @@ export const ChannelRequestsSection = () => {
         .from("channel_requests")
         .select(`
           *,
-          profiles:user_id (email)
+          profiles (
+            email
+          )
         `);
 
       if (error) {
@@ -32,13 +36,7 @@ export const ChannelRequestsSection = () => {
         throw error;
       }
 
-      // Transform the data to match our interface
-      const transformedData: ChannelRequest[] = requestsData.map((request: any) => ({
-        ...request,
-        user_email: request.profiles?.email
-      }));
-
-      return transformedData;
+      return requestsData as ChannelRequest[];
     },
   });
 
@@ -92,7 +90,7 @@ export const ChannelRequestsSection = () => {
           <div className="flex items-start justify-between">
             <div>
               <h3 className="font-medium">{request.channel_name}</h3>
-              <p className="text-sm text-gray-500">{request.user_email}</p>
+              <p className="text-sm text-gray-500">{request.profiles?.email}</p>
               <p className="text-sm text-gray-500">
                 Requested: {new Date(request.created_at).toLocaleDateString()}
               </p>
