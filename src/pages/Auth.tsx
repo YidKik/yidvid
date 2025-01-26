@@ -11,11 +11,6 @@ interface AuthProps {
   onOpenChange: (open: boolean) => void;
 }
 
-interface AuthError {
-  message: string;
-  code?: string;
-}
-
 const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
   const [isSignUp, setIsSignUp] = useState(true);
   const [email, setEmail] = useState("");
@@ -25,7 +20,6 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
   const queryClient = useQueryClient();
 
   const prefetchUserData = async (userId: string) => {
-    // Prefetch profile data
     await queryClient.prefetchQuery({
       queryKey: ["profile", userId],
       queryFn: async () => {
@@ -38,7 +32,6 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
       },
     });
 
-    // Prefetch notifications
     await queryClient.prefetchQuery({
       queryKey: ["notifications", userId],
       queryFn: async () => {
@@ -60,7 +53,6 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
       },
     });
 
-    // Prefetch user preferences
     await queryClient.prefetchQuery({
       queryKey: ["user_preferences", userId],
       queryFn: async () => {
@@ -84,7 +76,8 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
           password,
           options: {
             data: {
-              name: name,
+              full_name: name,
+              avatar_url: null,
             },
           },
         });
@@ -98,20 +91,29 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
         });
 
         if (signInError) {
-          // Parse the error message from the JSON string in the body
           const errorBody = signInError.message && JSON.parse(signInError.message);
           if (errorBody?.code === "email_not_confirmed") {
             toast({
               title: "Almost there!",
               description: "Your account has been created. You can now sign in.",
             });
-            setIsSignUp(false); // Switch to sign in mode
+            setIsSignUp(false);
             return;
           }
           throw signInError;
         }
 
         if (signInData.user) {
+          // Update the profile with the name
+          const { error: profileError } = await supabase
+            .from("profiles")
+            .update({ name: name })
+            .eq("id", signInData.user.id);
+
+          if (profileError) {
+            console.error("Error updating profile:", profileError);
+          }
+
           await prefetchUserData(signInData.user.id);
         }
 
@@ -127,7 +129,6 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
         });
 
         if (error) {
-          // Parse the error message from the JSON string in the body
           const errorBody = error.message && JSON.parse(error.message);
           if (errorBody?.code === "email_not_confirmed") {
             toast({
@@ -171,7 +172,7 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
               <Input
                 id="name"
                 type="text"
-                placeholder="Name"
+                placeholder="Full Name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className="border border-input rounded-md"
