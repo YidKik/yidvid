@@ -374,7 +374,13 @@ const Settings = () => {
             {t('notificationSettings')}
           </h2>
           <Card className="p-6 space-y-6">
-            <div className="flex items-center justify-between">
+            <div className="bg-muted/50 rounded-lg p-4 mb-4">
+              <p className="text-sm text-muted-foreground italic">
+                🚧 Coming Soon: We're currently working on implementing email and push notifications. Stay tuned for updates! 🚧
+              </p>
+            </div>
+            
+            <div className="flex items-center justify-between opacity-50">
               <div className="space-y-0.5">
                 <Label htmlFor="email-notifications">{t('emailNotifications')}</Label>
                 <p className="text-sm text-muted-foreground">
@@ -385,10 +391,11 @@ const Settings = () => {
                 id="email-notifications"
                 checked={emailNotifications}
                 onCheckedChange={setEmailNotifications}
+                disabled
               />
             </div>
 
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between opacity-50">
               <div className="space-y-0.5">
                 <Label htmlFor="push-notifications">{t('pushNotifications')}</Label>
                 <p className="text-sm text-muted-foreground">
@@ -399,6 +406,7 @@ const Settings = () => {
                 id="push-notifications"
                 checked={pushNotifications}
                 onCheckedChange={setPushNotifications}
+                disabled
               />
             </div>
           </Card>
