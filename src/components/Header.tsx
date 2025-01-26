@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Settings, LogOut, LayoutDashboard, Bell, Search } from "lucide-react";
 import { toast } from "sonner";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Auth from "@/pages/Auth";
 import { useIsMobile } from "@/hooks/use-mobile";
 import {
@@ -25,6 +25,7 @@ export const Header = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const [session, setSession] = useState(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     // Set up initial session
@@ -86,6 +87,13 @@ export const Header = () => {
     }
   };
 
+  // Effect to maintain focus when popover opens
+  useEffect(() => {
+    if (isSearchOpen && searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  }, [isSearchOpen]);
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
       <div className="container flex h-14 items-center">
@@ -113,6 +121,7 @@ export const Header = () => {
                 <div className="relative w-full border rounded-md">
                   <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <input
+                    ref={searchInputRef}
                     type="search"
                     placeholder="Search..."
                     value={searchQuery}
