@@ -217,7 +217,7 @@ export const MusicArtistsSection = () => {
             <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={handleAddArtist}>Add Artist</Button>
+            <Button type="submit" onClick={handleAddArtist}>Add Artist</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
