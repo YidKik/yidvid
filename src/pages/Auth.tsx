@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
 interface AuthProps {
@@ -24,6 +25,8 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState("");
   const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
@@ -73,6 +76,22 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
     return error.message;
   };
 
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          name,
+        },
+      },
+    });
+    if (error) {
+      setErrorMessage(getErrorMessage(error));
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
@@ -84,75 +103,75 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
             <AlertDescription>{errorMessage}</AlertDescription>
           </Alert>
         )}
-        <div className="space-y-4">
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">Name</Label>
-              <Input
-                id="name"
-                type="text"
-                placeholder="Enter your name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="border border-[#E5E5E5] focus:border-[#a8a8a8] focus:ring-0"
-              />
-            </div>
-            <SupabaseAuth
-              supabaseClient={supabase}
-              appearance={{
-                theme: ThemeSupa,
-                variables: {
-                  default: {
-                    colors: {
-                      brand: '#FF0000',
-                      brandAccent: '#CC0000',
-                      defaultButtonBackground: '#000000e6',
-                      defaultButtonBackgroundHover: '#222222',
-                    },
-                  },
-                },
-                className: {
-                  container: 'auth-container',
-                  button: 'auth-button',
-                  anchor: 'auth-link',
-                },
-              }}
-              providers={[]}
-              view="sign_up"
-            />
-            <div className="relative my-4">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
-              </div>
-            </div>
-            <SupabaseAuth
-              supabaseClient={supabase}
-              appearance={{
-                theme: ThemeSupa,
-                variables: {
-                  default: {
-                    colors: {
-                      brand: '#FF0000',
-                      brandAccent: '#CC0000',
-                      defaultButtonBackground: '#000000e6',
-                      defaultButtonBackgroundHover: '#222222',
-                    },
-                  },
-                },
-                className: {
-                  container: 'auth-container',
-                  button: 'auth-button',
-                  anchor: 'auth-link',
-                },
-              }}
-              providers={["google"]}
-              view="sign_in"
+        <form onSubmit={handleSignUp} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="name">Name</Label>
+            <Input
+              id="name"
+              type="text"
+              placeholder="Enter your name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="border border-[#E5E5E5] focus:border-[#a8a8a8] focus:ring-0"
             />
           </div>
-        </div>
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="border border-[#E5E5E5] focus:border-[#a8a8a8] focus:ring-0"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="password">Password</Label>
+            <Input
+              id="password"
+              type="password"
+              placeholder="Create a password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="border border-[#E5E5E5] focus:border-[#a8a8a8] focus:ring-0"
+            />
+          </div>
+          <Button type="submit" className="w-full">
+            Sign Up
+          </Button>
+          <div className="relative my-4">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+            </div>
+          </div>
+          <SupabaseAuth
+            supabaseClient={supabase}
+            appearance={{
+              theme: ThemeSupa,
+              variables: {
+                default: {
+                  colors: {
+                    brand: '#FF0000',
+                    brandAccent: '#CC0000',
+                    defaultButtonBackground: '#000000e6',
+                    defaultButtonBackgroundHover: '#222222',
+                  },
+                },
+              },
+              className: {
+                container: 'auth-container',
+                button: 'auth-button',
+                anchor: 'auth-link',
+              },
+            }}
+            providers={["google"]}
+            view="sign_in"
+          />
+        </form>
       </DialogContent>
     </Dialog>
   );
