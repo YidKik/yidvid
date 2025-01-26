@@ -2,7 +2,7 @@ import { Header } from "@/components/Header";
 import { Sidebar } from "@/components/Sidebar";
 import VideoGrid from "@/components/VideoGrid";
 import { ChannelsGrid } from "@/components/youtube/ChannelsGrid";
-import { SidebarProvider } from "@/components/ui/sidebar";
+import { SidebarProvider, useSidebar } from "@/components/ui/sidebar";
 import Auth from "@/pages/Auth";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -13,11 +13,11 @@ import { motion } from "framer-motion";
 import { MusicGrid } from "@/components/music/MusicGrid";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-const Index = () => {
-  const [isAuthOpen, setIsAuthOpen] = useState(false);
+const MainContent = () => {
   const [isMusic, setIsMusic] = useState(false);
   const isMobile = useIsMobile();
-
+  const { state } = useSidebar();
+  
   const { data: videos, isLoading } = useQuery({
     queryKey: ["youtube_videos"],
     queryFn: async () => {
@@ -73,15 +73,12 @@ const Index = () => {
   });
 
   return (
-    <SidebarProvider defaultOpen={!isMobile}>
-      <div className="min-h-screen flex w-full">
-        <Sidebar />
-        <div className="flex-1">
-          <Header />
-          <main className="mt-4 md:mt-8">
-            <div className="w-full px-2 md:px-4 py-4 md:py-6">
-              <div className="relative w-[240px] h-12 mx-auto bg-gray-100 rounded-full p-1.5 cursor-pointer mb-4 md:mb-8 shadow-sm hover:shadow-md transition-shadow"
-                   onClick={() => setIsMusic(!isMusic)}>
+    <div className={`flex-1 transition-all duration-300 ${state === "collapsed" ? "max-w-7xl mx-auto px-4" : ""}`}>
+      <Header />
+      <main className="mt-4 md:mt-8">
+        <div className="w-full py-4 md:py-6">
+          <div className="relative w-[240px] h-12 mx-auto bg-gray-100 rounded-full p-1.5 cursor-pointer mb-4 md:mb-8 shadow-sm hover:shadow-md transition-shadow"
+               onClick={() => setIsMusic(!isMusic)}>
                 <div className="relative w-full h-full flex items-center justify-between px-8 text-sm font-medium">
                   <span className={`z-10 transition-colors duration-200 ${!isMusic ? 'text-white' : 'text-gray-600'}`}>
                     Videos
@@ -101,37 +98,37 @@ const Index = () => {
                     }}
                   />
                 </div>
-              </div>
+          </div>
 
-              <motion.div
-                key={isMusic ? "music" : "videos"}
-                initial={{ opacity: 0, x: isMusic ? 20 : -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: isMusic ? -20 : 20 }}
-                transition={{ duration: 0.3 }}
-                className="px-2 md:px-0"
-              >
-                {!isMusic ? (
-                  <>
-                    <div className="video-grid">
-                      <VideoGrid 
-                        videos={videos} 
-                        maxVideos={isMobile ? 6 : 12} 
-                        rowSize={isMobile ? 1 : 4} 
-                        isLoading={isLoading}
-                      />
-                    </div>
-                    {mostViewedVideos && mostViewedVideos.length > 0 && (
-                      <div className="mt-8 md:mt-12">
-                        <MostViewedVideos videos={mostViewedVideos} />
-                      </div>
-                    )}
-                    <div className="channels-grid mt-8 md:mt-12">
-                      <ChannelsGrid />
-                    </div>
-                  </>
-                ) : (
-                  <div className="relative min-h-[60vh] md:min-h-[70vh]">
+          <motion.div
+            key={isMusic ? "music" : "videos"}
+            initial={{ opacity: 0, x: isMusic ? 20 : -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: isMusic ? -20 : 20 }}
+            transition={{ duration: 0.3 }}
+            className="px-2 md:px-0"
+          >
+            {!isMusic ? (
+              <>
+                <div className="video-grid">
+                  <VideoGrid 
+                    videos={videos} 
+                    maxVideos={isMobile ? 6 : 12} 
+                    rowSize={isMobile ? 1 : 4} 
+                    isLoading={isLoading}
+                  />
+                </div>
+                {mostViewedVideos && mostViewedVideos.length > 0 && (
+                  <div className="mt-8 md:mt-12">
+                    <MostViewedVideos videos={mostViewedVideos} />
+                  </div>
+                )}
+                <div className="channels-grid mt-8 md:mt-12">
+                  <ChannelsGrid />
+                </div>
+              </>
+            ) : (
+              <div className="relative min-h-[60vh] md:min-h-[70vh]">
                     <div className="absolute inset-0 backdrop-blur-md z-10 flex flex-col items-center justify-center text-center p-4 md:p-8">
                       <h2 className="text-2xl md:text-3xl font-bold mb-4 text-primary animate-fade-in">Coming Soon!</h2>
                       <p className="text-base md:text-lg text-gray-800 max-w-2xl animate-fade-in delay-100">
@@ -142,12 +139,24 @@ const Index = () => {
                     <div className="opacity-30">
                       <MusicGrid />
                     </div>
-                  </div>
-                )}
-              </motion.div>
-            </div>
-          </main>
+              </div>
+            )}
+          </motion.div>
         </div>
+      </main>
+    </div>
+  );
+};
+
+const Index = () => {
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const isMobile = useIsMobile();
+
+  return (
+    <SidebarProvider defaultOpen={!isMobile}>
+      <div className="min-h-screen flex w-full">
+        <Sidebar />
+        <MainContent />
       </div>
       <Auth isOpen={isAuthOpen} onOpenChange={setIsAuthOpen} />
     </SidebarProvider>
