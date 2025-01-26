@@ -10,6 +10,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 interface VideoGridProps {
   videos?: {
@@ -31,6 +32,7 @@ export default function VideoGrid({ videos = [], maxVideos = 12, rowSize = 4, is
   const [showAll, setShowAll] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [hiddenChannels, setHiddenChannels] = useState<Set<string>>(new Set());
+  const queryClient = useQueryClient();
 
   // Load hidden channels from database
   useEffect(() => {
@@ -53,6 +55,30 @@ export default function VideoGrid({ videos = [], maxVideos = 12, rowSize = 4, is
 
     loadHiddenChannels();
   }, []);
+
+  // Subscribe to real-time updates
+  useEffect(() => {
+    const channel = supabase
+      .channel('youtube_videos_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'youtube_videos'
+        },
+        (payload) => {
+          console.log('Real-time update received:', payload);
+          // Invalidate and refetch the videos query
+          queryClient.invalidateQueries({ queryKey: ['youtube_videos'] });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [queryClient]);
 
   const videosPerPage = rowSize * 3;
 
