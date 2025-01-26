@@ -251,19 +251,17 @@ export const Header = () => {
               )}
               <DropdownMenu>
                 <DropdownMenuTrigger className="outline-none">
-                  <div className="relative inline-flex items-center bg-white p-2 rounded-full">
-                    <Bell 
-                      className={`text-primary hover:text-primary/80 transition-all duration-300 hover:scale-110 cursor-pointer ${
-                        notifications && notifications.length > 0 ? 'animate-pulse' : ''
-                      }`}
-                    />
-                    {notifications && notifications.length > 0 && (
-                      <span className="absolute -top-1 -right-1 flex h-2 w-2">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
-                      </span>
-                    )}
-                  </div>
+                  <Bell 
+                    className={`text-primary hover:text-primary/80 transition-all duration-300 hover:scale-110 hover:rotate-12 cursor-pointer ${
+                      notifications && notifications.length > 0 ? 'animate-pulse' : ''
+                    }`}
+                  />
+                  {notifications && notifications.length > 0 && (
+                    <span className="absolute -top-1 -right-1 flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                    </span>
+                  )}
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-80">
                   {notifications && notifications.length > 0 ? (
