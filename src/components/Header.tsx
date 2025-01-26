@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Settings, LogOut, LayoutDashboard, Bell } from "lucide-react";
+import { Settings, LogOut, LayoutDashboard, Bell, Search } from "lucide-react";
 import { toast } from "sonner";
 import { useState } from "react";
 import Auth from "@/pages/Auth";
@@ -14,11 +14,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Input } from "@/components/ui/input";
 
 export const Header = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const { data: session } = useQuery({
     queryKey: ["session"],
@@ -37,6 +39,12 @@ export const Header = () => {
       console.error("Error logging out:", error);
       toast.error("Failed to log out");
     }
+  };
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Implement search functionality here
+    console.log("Searching for:", searchQuery);
   };
 
   return (
@@ -59,7 +67,20 @@ export const Header = () => {
           />
         </Link>
 
-        <div className="flex-1" />
+        <div className="flex-1 flex justify-center px-4">
+          <form onSubmit={handleSearch} className="w-full max-w-lg flex items-center">
+            <div className="relative w-full">
+              <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="search"
+                placeholder="Search..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-9 border-none focus:ring-0 bg-transparent text-muted-foreground"
+              />
+            </div>
+          </form>
+        </div>
 
         <div className="flex items-center space-x-2">
           {session ? (
