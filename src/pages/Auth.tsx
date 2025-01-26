@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { Video } from "lucide-react";
 
 interface AuthProps {
   isOpen: boolean;
@@ -33,10 +33,9 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
         });
 
         if (error) throw error;
-
         toast({
-          title: "Check your email",
-          description: "We sent you a confirmation link to complete your registration.",
+          title: "Success!",
+          description: "Please check your email to verify your account.",
         });
       } else {
         const { error } = await supabase.auth.signInWithPassword({
@@ -45,14 +44,12 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
         });
 
         if (error) throw error;
-
         toast({
-          title: "Successfully signed in",
-          description: "Welcome back!",
+          title: "Success!",
+          description: "You have been signed in.",
         });
+        onOpenChange(false);
       }
-
-      onOpenChange(false);
     } catch (error: any) {
       toast({
         title: "Error",
@@ -65,6 +62,10 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
+        <div className="flex flex-col items-center mb-6">
+          <Video className="h-12 w-12 text-primary mb-2" />
+          <h1 className="text-2xl font-bold text-primary">Jewish Tube</h1>
+        </div>
         <form onSubmit={handleSubmit} className="space-y-4 mt-4">
           {isSignUp && (
             <div className="space-y-2">
@@ -101,9 +102,12 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
               required
             />
           </div>
-          <Button type="submit" className="w-full">
+          <button
+            type="submit"
+            className="w-full bg-primary text-white rounded-md py-2"
+          >
             {isSignUp ? "Sign Up" : "Sign In"}
-          </Button>
+          </button>
           <div className="text-center">
             <button
               type="button"
