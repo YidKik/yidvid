@@ -242,10 +242,13 @@ export const Header = () => {
         <nav className="flex items-center gap-2 w-32 justify-end">
           {session ? (
             <div className="flex items-center gap-3">
+              <span className="text-sm font-medium">
+                {session.user.user_metadata.full_name || profile?.name || "User"}
+              </span>
               {profile?.is_admin && (
                 <Link to="/dashboard">
                   <LayoutDashboard 
-                    className="text-primary hover:text-primary/80 transition-all duration-300 hover:scale-110 hover:rotate-12 cursor-pointer" 
+                    className="text-primary hover:text-primary/80 transition-all duration-300 hover:scale-110 hover:-rotate-12 cursor-pointer" 
                   />
                 </Link>
               )}
@@ -310,9 +313,6 @@ export const Header = () => {
                 className="text-primary hover:text-primary/80 transition-all duration-300 hover:scale-110 hover:rotate-12 cursor-pointer" 
                 onClick={handleSignOut}
               />
-              <span className="text-sm font-medium">
-                {session.user.user_metadata.full_name || profile?.name || "User"}
-              </span>
             </div>
           ) : (
             <>
