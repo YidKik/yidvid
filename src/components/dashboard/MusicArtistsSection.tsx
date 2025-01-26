@@ -11,6 +11,7 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogFooter,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -25,7 +26,7 @@ import {
 
 export const MusicArtistsSection = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [channelUrl, setChannelUrl] = useState("");
+  const [channelId, setChannelId] = useState("");
   const [isExpanded, setIsExpanded] = useState(false);
   const { toast } = useToast();
 
@@ -52,12 +53,10 @@ export const MusicArtistsSection = () => {
 
   const handleAddArtist = async () => {
     try {
-      // Extract channel ID from URL
-      const channelId = channelUrl.split("/").pop();
       if (!channelId) {
         toast({
-          title: "Invalid URL",
-          description: "Please enter a valid YouTube channel URL",
+          title: "Channel ID required",
+          description: "Please enter a YouTube channel ID",
           variant: "destructive",
         });
         return;
@@ -67,7 +66,7 @@ export const MusicArtistsSection = () => {
       const { data: existingArtist } = await supabase
         .from("music_artists")
         .select("*")
-        .eq("artist_id", channelId)
+        .eq("artist_id", channelId.trim())
         .maybeSingle();
 
       if (existingArtist) {
@@ -84,7 +83,7 @@ export const MusicArtistsSection = () => {
         .from("music_artists")
         .insert([
           {
-            artist_id: channelId,
+            artist_id: channelId.trim(),
             title: "Loading...", // Will be updated by the fetch-youtube-music function
             description: null,
             thumbnail_url: null,
@@ -98,7 +97,7 @@ export const MusicArtistsSection = () => {
         description: "The artist's music will be fetched automatically.",
       });
 
-      setChannelUrl("");
+      setChannelId("");
       setIsDialogOpen(false);
       refetchArtists();
     } catch (error: any) {
@@ -197,15 +196,20 @@ export const MusicArtistsSection = () => {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Add YouTube Music Artist</DialogTitle>
+            <DialogDescription>
+              Enter the YouTube channel ID of the music artist you want to add.
+              You can find the channel ID in the URL of the artist's YouTube channel
+              or in their channel's about page.
+            </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="channelUrl">YouTube Channel URL</Label>
+              <Label htmlFor="channelId">YouTube Channel ID</Label>
               <Input
-                id="channelUrl"
-                placeholder="https://www.youtube.com/channel/..."
-                value={channelUrl}
-                onChange={(e) => setChannelUrl(e.target.value)}
+                id="channelId"
+                placeholder="Enter channel ID (e.g., UC...)"
+                value={channelId}
+                onChange={(e) => setChannelId(e.target.value)}
               />
             </div>
           </div>
