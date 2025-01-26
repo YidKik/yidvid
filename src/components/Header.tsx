@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Settings, LogOut, LayoutDashboard, Search, BellRing } from "lucide-react";
+import { Settings, LogOut, LayoutDashboard, Search, BellDot } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
@@ -168,14 +168,12 @@ export const Header = () => {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-xl bg-gradient-to-r from-red-50/30 via-background/80 to-red-50/30 supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 items-center justify-between gap-4 px-4">
-        {/* Logo Section */}
         <Link to="/" className="flex-shrink-0 w-32">
           <span className="text-xl font-bold text-primary">
             Jewish Tube
           </span>
         </Link>
 
-        {/* Search Section */}
         <form onSubmit={handleSearch} className="flex-1 max-w-xl mx-auto">
           <div className="relative w-full">
             <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -255,7 +253,7 @@ export const Header = () => {
               <DropdownMenu>
                 <DropdownMenuTrigger className="outline-none">
                   <div className="relative inline-flex items-center">
-                    <BellRing 
+                    <BellDot 
                       className={`text-primary hover:text-primary/80 transition-all duration-300 hover:scale-110 cursor-pointer ${
                         notifications && notifications.length > 0 ? 'animate-pulse' : ''
                       }`}
