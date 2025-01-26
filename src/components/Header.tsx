@@ -127,7 +127,7 @@ export const Header = () => {
                       setSearchQuery(e.target.value);
                       if (!open) setOpen(true);
                     }}
-                    className="w-full pl-8 h-9 bg-transparent border-0 ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-sm placeholder:text-gray-400"
+                    className="w-full pl-8 h-9 bg-white border-0 ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-sm placeholder:text-gray-400"
                   />
                 </div>
               </form>
