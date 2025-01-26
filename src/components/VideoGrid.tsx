@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/pagination";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface VideoGridProps {
   videos?: {
@@ -29,13 +30,14 @@ interface VideoGridProps {
   isLoading?: boolean;
 }
 
-export default function VideoGrid({ maxVideos = 12, rowSize = 4 }: VideoGridProps) {
+export default function VideoGrid({ maxVideos = 12, rowSize = 4, isLoading }: VideoGridProps) {
   const [showAll, setShowAll] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [hiddenChannels, setHiddenChannels] = useState<Set<string>>(new Set());
+  const isMobile = useIsMobile();
 
   // Fetch videos using React Query with better error handling
-  const { data: rawVideos, isLoading, error } = useQuery({
+  const { data: rawVideos, isLoading: loadingVideos, error } = useQuery({
     queryKey: ["youtube_videos"],
     queryFn: async () => {
       console.log("Fetching videos...");
@@ -128,7 +130,7 @@ export default function VideoGrid({ maxVideos = 12, rowSize = 4 }: VideoGridProp
     );
   }
 
-  const videosPerPage = rowSize * 3;
+  const videosPerPage = isMobile ? 4 : rowSize * 3;
 
   // Filter out videos from hidden channels
   const filteredVideos = rawVideos ? rawVideos.filter(
@@ -166,17 +168,17 @@ export default function VideoGrid({ maxVideos = 12, rowSize = 4 }: VideoGridProp
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  if (isLoading) {
+  if (loadingVideos) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-w-[1600px] mx-auto">
-        {Array.from({ length: maxVideos }).map((_, index) => (
-          <div key={index} className="space-y-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 max-w-[1600px] mx-auto">
+        {Array.from({ length: isMobile ? 4 : maxVideos }).map((_, index) => (
+          <div key={index} className="space-y-2 md:space-y-3">
             <Skeleton className="aspect-video w-full" />
-            <div className="flex gap-3">
-              <Skeleton className="h-10 w-10 rounded-full" />
-              <div className="space-y-2">
-                <Skeleton className="h-4 w-[250px]" />
-                <Skeleton className="h-4 w-[200px]" />
+            <div className="flex gap-2 md:gap-3">
+              <Skeleton className="h-8 w-8 md:h-10 md:w-10 rounded-full" />
+              <div className="space-y-1 md:space-y-2 flex-1">
+                <Skeleton className="h-3 md:h-4 w-full" />
+                <Skeleton className="h-3 md:h-4 w-3/4" />
               </div>
             </div>
           </div>
@@ -186,8 +188,8 @@ export default function VideoGrid({ maxVideos = 12, rowSize = 4 }: VideoGridProp
   }
 
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-w-[1600px] mx-auto">
+    <div className="space-y-4 md:space-y-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 max-w-[1600px] mx-auto">
         {currentVideos?.map((video) => (
           <VideoCard
             key={video.id}
@@ -202,7 +204,7 @@ export default function VideoGrid({ maxVideos = 12, rowSize = 4 }: VideoGridProp
         ))}
       </div>
       
-      <div className="flex flex-col items-center gap-4 mt-8">
+      <div className="flex flex-col items-center gap-3 md:gap-4 mt-6 md:mt-8">
         {!showAll && filteredVideos.length > maxVideos && (
           <Button 
             onClick={() => {
@@ -211,7 +213,7 @@ export default function VideoGrid({ maxVideos = 12, rowSize = 4 }: VideoGridProp
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
             variant="outline"
-            className="w-40"
+            className="w-32 md:w-40 text-sm md:text-base"
           >
             See More
           </Button>
@@ -223,13 +225,13 @@ export default function VideoGrid({ maxVideos = 12, rowSize = 4 }: VideoGridProp
               <PaginationItem>
                 <PaginationPrevious 
                   onClick={() => handlePageChange(currentPage - 1)}
-                  className={currentPage === 1 ? 'pointer-events-none opacity-50' : ''}
+                  className={`${currentPage === 1 ? 'pointer-events-none opacity-50' : ''} text-sm md:text-base`}
                 />
               </PaginationItem>
               <PaginationItem>
                 <PaginationNext 
                   onClick={() => handlePageChange(currentPage + 1)}
-                  className={currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}
+                  className={`${currentPage === totalPages ? 'pointer-events-none opacity-50' : ''} text-sm md:text-base`}
                 />
               </PaginationItem>
             </PaginationContent>

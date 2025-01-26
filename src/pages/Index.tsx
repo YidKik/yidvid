@@ -11,10 +11,12 @@ import { MostViewedVideos } from "@/components/video/MostViewedVideos";
 import { WelcomeAnimation } from "@/components/WelcomeAnimation";
 import { motion } from "framer-motion";
 import { MusicGrid } from "@/components/music/MusicGrid";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Index = () => {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isMusic, setIsMusic] = useState(false);
+  const isMobile = useIsMobile();
 
   const { data: videos, isLoading } = useQuery({
     queryKey: ["youtube_videos"],
@@ -71,15 +73,14 @@ const Index = () => {
   });
 
   return (
-    <SidebarProvider defaultOpen={false}>
-      <WelcomeAnimation />
+    <SidebarProvider defaultOpen={!isMobile}>
       <div className="min-h-screen flex w-full">
         <Sidebar />
         <div className="flex-1">
           <Header />
-          <main className="mt-8">
-            <div className="w-full px-4 py-6">
-              <div className="relative w-[240px] h-12 mx-auto bg-gray-100 rounded-full p-1.5 cursor-pointer mb-8 shadow-sm hover:shadow-md transition-shadow"
+          <main className="mt-4 md:mt-8">
+            <div className="w-full px-2 md:px-4 py-4 md:py-6">
+              <div className="relative w-[240px] h-12 mx-auto bg-gray-100 rounded-full p-1.5 cursor-pointer mb-4 md:mb-8 shadow-sm hover:shadow-md transition-shadow"
                    onClick={() => setIsMusic(!isMusic)}>
                 <div className="relative w-full h-full flex items-center justify-between px-8 text-sm font-medium">
                   <span className={`z-10 transition-colors duration-200 ${!isMusic ? 'text-white' : 'text-gray-600'}`}>
@@ -108,31 +109,32 @@ const Index = () => {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: isMusic ? -20 : 20 }}
                 transition={{ duration: 0.3 }}
+                className="px-2 md:px-0"
               >
                 {!isMusic ? (
                   <>
                     <div className="video-grid">
                       <VideoGrid 
                         videos={videos} 
-                        maxVideos={12} 
-                        rowSize={4} 
+                        maxVideos={isMobile ? 6 : 12} 
+                        rowSize={isMobile ? 1 : 4} 
                         isLoading={isLoading}
                       />
                     </div>
                     {mostViewedVideos && mostViewedVideos.length > 0 && (
-                      <div className="mt-12">
+                      <div className="mt-8 md:mt-12">
                         <MostViewedVideos videos={mostViewedVideos} />
                       </div>
                     )}
-                    <div className="channels-grid mt-12">
+                    <div className="channels-grid mt-8 md:mt-12">
                       <ChannelsGrid />
                     </div>
                   </>
                 ) : (
                   <div className="relative">
-                    <div className="absolute inset-0 backdrop-blur-md z-10 flex flex-col items-center justify-center text-center p-8">
-                      <h2 className="text-3xl font-bold mb-4 text-primary animate-fade-in">Coming Soon!</h2>
-                      <p className="text-lg text-gray-800 max-w-2xl animate-fade-in delay-100">
+                    <div className="absolute inset-0 backdrop-blur-md z-10 flex flex-col items-center justify-center text-center p-4 md:p-8">
+                      <h2 className="text-2xl md:text-3xl font-bold mb-4 text-primary animate-fade-in">Coming Soon!</h2>
+                      <p className="text-base md:text-lg text-gray-800 max-w-2xl animate-fade-in delay-100">
                         We're working on bringing you an amazing collection of kosher entertainment music. 
                         Stay tuned for a curated selection of artists and tracks that will elevate your listening experience!
                       </p>

@@ -2,8 +2,8 @@ import { Link } from "react-router-dom";
 import { formatDistanceToNow, parseISO } from "date-fns";
 
 interface VideoCardProps {
-  id: string;  // This will be the video_id (text)
-  uuid?: string; // This will be the database uuid
+  id: string;
+  uuid?: string;
   title: string;
   thumbnail: string;
   channelName: string;
@@ -28,22 +28,20 @@ export const VideoCard = ({
     : formatDistanceToNow(uploadedAt, { addSuffix: true });
 
   const formattedViews = views ? `${views.toLocaleString()} views` : '';
-
-  // Use video_id for routing if uuid is not available
   const routeId = uuid || id;
 
   return (
     <Link to={`/video/${routeId}`} className="block group">
-      <div className="aspect-video rounded-lg overflow-hidden bg-muted mb-3 shadow-[0_3px_10px_rgb(0,0,0,0.2)] transition-all duration-300 hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:-translate-y-1">
+      <div className="aspect-video rounded-lg overflow-hidden bg-muted mb-2 md:mb-3 shadow-[0_3px_10px_rgb(0,0,0,0.2)] transition-all duration-300 hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:-translate-y-1">
         <img
           src={thumbnail}
           alt={title}
           className="w-full h-full object-cover"
         />
       </div>
-      <div className="flex gap-3">
+      <div className="flex gap-2 md:gap-3">
         {channelThumbnail && (
-          <div className="w-9 h-9 rounded-full overflow-hidden flex-shrink-0">
+          <div className="w-8 h-8 md:w-9 md:h-9 rounded-full overflow-hidden flex-shrink-0">
             <img
               src={channelThumbnail}
               alt={channelName}
@@ -52,13 +50,13 @@ export const VideoCard = ({
           </div>
         )}
         <div>
-          <h3 className="font-medium text-youtube-title line-clamp-2 group-hover:text-button-custom">
+          <h3 className="font-medium text-sm md:text-youtube-title line-clamp-2 group-hover:text-button-custom">
             {title}
           </h3>
-          <p className="text-youtube-small text-muted-foreground mt-1">
+          <p className="text-xs md:text-youtube-small text-muted-foreground mt-0.5 md:mt-1">
             {channelName}
           </p>
-          <div className="text-youtube-small text-muted-foreground flex items-center gap-1">
+          <div className="text-xs md:text-youtube-small text-muted-foreground flex items-center gap-1">
             {views !== undefined && <span>{formattedViews}</span>}
             {views !== undefined && <span>•</span>}
             <span>{formattedDate}</span>
