@@ -36,11 +36,10 @@ export default function VideoGrid({ maxVideos = 12, rowSize = 4, isLoading }: Vi
   const [hiddenChannels, setHiddenChannels] = useState<Set<string>>(new Set());
   const isMobile = useIsMobile();
 
-  // Fetch videos using React Query with better error handling
+  // Fetch videos using React Query
   const { data: rawVideos, isLoading: loadingVideos, error } = useQuery({
     queryKey: ["youtube_videos"],
     queryFn: async () => {
-      console.log("Fetching videos...");
       const { data, error } = await supabase
         .from("youtube_videos")
         .select("*")
@@ -51,8 +50,6 @@ export default function VideoGrid({ maxVideos = 12, rowSize = 4, isLoading }: Vi
         throw error;
       }
 
-      console.log("Fetched videos:", data);
-      // Map the raw data to match the expected interface
       return (data || []).map(video => ({
         id: video.id,
         video_id: video.video_id,
@@ -64,18 +61,13 @@ export default function VideoGrid({ maxVideos = 12, rowSize = 4, isLoading }: Vi
         uploadedAt: video.uploaded_at
       }));
     },
-    retry: 3, // Retry failed requests 3 times
-    refetchOnWindowFocus: true, // Refresh data when window regains focus
   });
 
   // Load hidden channels from database
   useEffect(() => {
     const loadHiddenChannels = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        console.log("No session found");
-        return;
-      }
+      if (!session) return;
 
       const { data: hiddenChannelsData, error } = await supabase
         .from('hidden_channels')
@@ -94,32 +86,6 @@ export default function VideoGrid({ maxVideos = 12, rowSize = 4, isLoading }: Vi
     loadHiddenChannels();
   }, []);
 
-  // Subscribe to real-time updates
-  useEffect(() => {
-    console.log("Setting up real-time subscription");
-    const channel = supabase
-      .channel('youtube_videos_changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'youtube_videos'
-        },
-        (payload) => {
-          console.log('Real-time update received:', payload);
-          // Invalidate and refetch the videos query
-          // queryClient.invalidateQueries({ queryKey: ['youtube_videos'] });
-        }
-      )
-      .subscribe();
-
-    return () => {
-      console.log("Cleaning up real-time subscription");
-      supabase.removeChannel(channel);
-    };
-  }, []);
-
   if (error) {
     console.error("Error in VideoGrid:", error);
     toast.error("Failed to load videos. Please try again later.");
@@ -129,8 +95,6 @@ export default function VideoGrid({ maxVideos = 12, rowSize = 4, isLoading }: Vi
       </div>
     );
   }
-
-  const videosPerPage = isMobile ? 4 : rowSize * 3;
 
   // Filter out videos from hidden channels
   const filteredVideos = rawVideos ? rawVideos.filter(
@@ -153,6 +117,9 @@ export default function VideoGrid({ maxVideos = 12, rowSize = 4, isLoading }: Vi
     return acc;
   }, [] as VideoGridProps['videos']);
 
+  // Adjust videosPerPage based on mobile view
+  const videosPerPage = isMobile ? 6 : rowSize * 3; // Show 6 videos (3 rows x 2 videos) on mobile
+
   const totalPages = Math.ceil(
     (showAll ? filteredVideos.length : firstPageVideos.length) / videosPerPage
   );
@@ -160,18 +127,13 @@ export default function VideoGrid({ maxVideos = 12, rowSize = 4, isLoading }: Vi
   const indexOfFirstVideo = indexOfLastVideo - videosPerPage;
   
   const currentVideos = !showAll
-    ? firstPageVideos.slice(0, maxVideos)
+    ? firstPageVideos.slice(0, isMobile ? 6 : maxVideos) // Show only 6 videos on mobile
     : filteredVideos.slice(indexOfFirstVideo, indexOfLastVideo);
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
 
   if (loadingVideos) {
     return (
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 max-w-[1600px] mx-auto">
-        {Array.from({ length: isMobile ? 4 : maxVideos }).map((_, index) => (
+        {Array.from({ length: isMobile ? 6 : maxVideos }).map((_, index) => (
           <div key={index} className="space-y-2 md:space-y-3">
             <Skeleton className="aspect-video w-full" />
             <div className="flex gap-2 md:gap-3">
@@ -205,7 +167,7 @@ export default function VideoGrid({ maxVideos = 12, rowSize = 4, isLoading }: Vi
       </div>
       
       <div className="flex flex-col items-center gap-3 md:gap-4 mt-6 md:mt-8">
-        {!showAll && filteredVideos.length > maxVideos && (
+        {!showAll && filteredVideos.length > (isMobile ? 6 : maxVideos) && (
           <Button 
             onClick={() => {
               setShowAll(true);
@@ -224,13 +186,19 @@ export default function VideoGrid({ maxVideos = 12, rowSize = 4, isLoading }: Vi
             <PaginationContent>
               <PaginationItem>
                 <PaginationPrevious 
-                  onClick={() => handlePageChange(currentPage - 1)}
+                  onClick={() => {
+                    setCurrentPage(currentPage - 1);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
                   className={`${currentPage === 1 ? 'pointer-events-none opacity-50' : ''} text-sm md:text-base`}
                 />
               </PaginationItem>
               <PaginationItem>
                 <PaginationNext 
-                  onClick={() => handlePageChange(currentPage + 1)}
+                  onClick={() => {
+                    setCurrentPage(currentPage + 1);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
                   className={`${currentPage === totalPages ? 'pointer-events-none opacity-50' : ''} text-sm md:text-base`}
                 />
               </PaginationItem>
