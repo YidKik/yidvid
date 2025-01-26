@@ -10,6 +10,11 @@ interface AuthProps {
   onOpenChange: (open: boolean) => void;
 }
 
+interface AuthError {
+  message: string;
+  code?: string;
+}
+
 const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
   const [isSignUp, setIsSignUp] = useState(true);
   const [email, setEmail] = useState("");
@@ -40,7 +45,20 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
           password,
         });
 
-        if (signInError) throw signInError;
+        if (signInError) {
+          // Parse the error message from the JSON string in the body
+          const errorBody = signInError.message && JSON.parse(signInError.message);
+          if (errorBody?.code === "email_not_confirmed") {
+            // Handle the specific error case
+            toast({
+              title: "Almost there!",
+              description: "Your account has been created. You can now sign in.",
+            });
+            setIsSignUp(false); // Switch to sign in mode
+            return;
+          }
+          throw signInError;
+        }
 
         toast({
           title: "Success!",
@@ -53,7 +71,19 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
           password,
         });
 
-        if (error) throw error;
+        if (error) {
+          // Parse the error message from the JSON string in the body
+          const errorBody = error.message && JSON.parse(error.message);
+          if (errorBody?.code === "email_not_confirmed") {
+            toast({
+              title: "Welcome back!",
+              description: "You can now sign in with your account.",
+            });
+            return;
+          }
+          throw error;
+        }
+
         toast({
           title: "Success!",
           description: "You have been signed in.",
