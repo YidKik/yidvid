@@ -11,6 +11,11 @@ import { Loader2, Clock, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
+interface Session {
+  session_start: string;
+  session_end: string | null;
+}
+
 export const DashboardAnalytics = () => {
   const [session, setSession] = useState(null);
 
@@ -89,7 +94,7 @@ export const DashboardAnalytics = () => {
         }
 
         // Calculate total watch time in hours with proper conversion
-        const totalHours = sessions?.reduce((sum, session) => {
+        const totalHours = (sessions as Session[] || []).reduce((sum, session) => {
           if (!session.session_end || !session.session_start) return sum;
           
           const start = new Date(session.session_start);
@@ -103,7 +108,7 @@ export const DashboardAnalytics = () => {
             return sum + durationInHours;
           }
           return sum;
-        }, 0) || 0;
+        }, 0);
 
         // Get anonymous sessions count
         const { count: anonymousUsers, error: anonSessionsError } = await supabase
@@ -114,8 +119,8 @@ export const DashboardAnalytics = () => {
         if (anonSessionsError) throw anonSessionsError;
 
         // Calculate most popular hour
-        const hourCounts = {};
-        sessions?.forEach(session => {
+        const hourCounts: { [key: number]: number } = {};
+        (sessions as Session[] || []).forEach(session => {
           const hour = new Date(session.session_start).getHours();
           hourCounts[hour] = (hourCounts[hour] || 0) + 1;
         });
@@ -130,7 +135,7 @@ export const DashboardAnalytics = () => {
           totalVideos: totalVideos || 0,
           totalViews: totalViews || 0,
           totalUsers: totalUsers || 0,
-          totalHours: Math.round(totalHours * 100) / 100, // Round to 2 decimal places
+          totalHours: Math.round(totalHours * 100) / 100,
           mostPopularHour: mostPopularHour.hour,
           anonymousUsers: anonymousUsers || 0,
         };
