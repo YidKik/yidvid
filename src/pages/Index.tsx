@@ -44,60 +44,36 @@ const MainContent = () => {
     },
   });
 
-  const { data: mostViewedVideos } = useQuery({
-    queryKey: ["most_viewed_videos"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("youtube_videos")
-        .select("*")
-        .order("views", { ascending: false })
-        .not("views", "is", null)
-        .limit(12);
-
-      if (error) {
-        console.error("Error fetching most viewed videos:", error);
-        throw error;
-      }
-
-      return (data || []).map(video => ({
-        id: video.video_id,
-        uuid: video.id,
-        title: video.title,
-        thumbnail: video.thumbnail,
-        channelName: video.channel_name,
-        channelId: video.channel_id,
-        views: video.views || 0,
-        uploadedAt: video.uploaded_at
-      }));
-    },
-  });
-
   return (
-    <div className={`flex-1 transition-all duration-300 ${state === "collapsed" ? "max-w-7xl mx-auto px-4" : ""}`}>
+    <div className={`flex-1 transition-all duration-300 ${
+      state === "collapsed" 
+        ? "pl-20 pr-4 md:px-8 lg:px-12" 
+        : "px-4 md:px-6 lg:px-8"
+    }`}>
       <Header />
       <main className="mt-4 md:mt-8">
         <div className="w-full py-4 md:py-6">
           <div className="relative w-[240px] h-12 mx-auto bg-gray-100 rounded-full p-1.5 cursor-pointer mb-4 md:mb-8 shadow-sm hover:shadow-md transition-shadow"
                onClick={() => setIsMusic(!isMusic)}>
-                <div className="relative w-full h-full flex items-center justify-between px-8 text-sm font-medium">
-                  <span className={`z-10 transition-colors duration-200 ${!isMusic ? 'text-white' : 'text-gray-600'}`}>
-                    Videos
-                  </span>
-                  <span className={`z-10 transition-colors duration-200 ${isMusic ? 'text-white' : 'text-gray-600'}`}>
-                    Music
-                  </span>
-                  <motion.div
-                    className="absolute top-0 left-0 w-[108px] h-full bg-primary rounded-full"
-                    animate={{
-                      x: isMusic ? 128 : 2
-                    }}
-                    transition={{
-                      type: "spring",
-                      stiffness: 300,
-                      damping: 30
-                    }}
-                  />
-                </div>
+            <div className="relative w-full h-full flex items-center justify-between px-8 text-sm font-medium">
+              <span className={`z-10 transition-colors duration-200 ${!isMusic ? 'text-white' : 'text-gray-600'}`}>
+                Videos
+              </span>
+              <span className={`z-10 transition-colors duration-200 ${isMusic ? 'text-white' : 'text-gray-600'}`}>
+                Music
+              </span>
+              <motion.div
+                className="absolute top-0 left-0 w-[108px] h-full bg-primary rounded-full"
+                animate={{
+                  x: isMusic ? 128 : 2
+                }}
+                transition={{
+                  type: "spring",
+                  stiffness: 300,
+                  damping: 30
+                }}
+              />
+            </div>
           </div>
 
           <motion.div
@@ -106,7 +82,11 @@ const MainContent = () => {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: isMusic ? -20 : 20 }}
             transition={{ duration: 0.3 }}
-            className="px-2 md:px-0"
+            className={`px-2 md:px-0 ${
+              state === "collapsed" 
+                ? "max-w-[1600px] mx-auto" 
+                : ""
+            }`}
           >
             {!isMusic ? (
               <>
@@ -129,16 +109,16 @@ const MainContent = () => {
               </>
             ) : (
               <div className="relative min-h-[60vh] md:min-h-[70vh]">
-                    <div className="absolute inset-0 backdrop-blur-md z-10 flex flex-col items-center justify-center text-center p-4 md:p-8">
-                      <h2 className="text-2xl md:text-3xl font-bold mb-4 text-primary animate-fade-in">Coming Soon!</h2>
-                      <p className="text-base md:text-lg text-gray-800 max-w-2xl animate-fade-in delay-100">
-                        We're working on bringing you an amazing collection of kosher entertainment music. 
-                        Stay tuned for a curated selection of artists and tracks that will elevate your listening experience!
-                      </p>
-                    </div>
-                    <div className="opacity-30">
-                      <MusicGrid />
-                    </div>
+                <div className="absolute inset-0 backdrop-blur-md z-10 flex flex-col items-center justify-center text-center p-4 md:p-8">
+                  <h2 className="text-2xl md:text-3xl font-bold mb-4 text-primary animate-fade-in">Coming Soon!</h2>
+                  <p className="text-base md:text-lg text-gray-800 max-w-2xl animate-fade-in delay-100">
+                    We're working on bringing you an amazing collection of kosher entertainment music. 
+                    Stay tuned for a curated selection of artists and tracks that will elevate your listening experience!
+                  </p>
+                </div>
+                <div className="opacity-30">
+                  <MusicGrid />
+                </div>
               </div>
             )}
           </motion.div>
