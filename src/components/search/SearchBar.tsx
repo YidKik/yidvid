@@ -79,11 +79,12 @@ export const SearchBar = () => {
           return;
         }
 
-        // Filter out videos and channels that are hidden
+        // Filter out videos from hidden channels
         const filteredVideos = (videosResponse.data || []).filter(
           video => !hiddenChannels.has(video.channel_id)
         );
 
+        // Filter out hidden channels
         const filteredChannels = (channelsResponse.data || []).filter(
           channel => !hiddenChannels.has(channel.channel_id)
         );
