@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Settings, LogOut, LayoutDashboard, Bell } from "lucide-react";
+import { Settings, LogOut, LayoutDashboard, Bell, Search } from "lucide-react";
 import { toast } from "sonner";
 import { useState } from "react";
 import Auth from "@/pages/Auth";
@@ -14,11 +14,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Command, CommandInput, CommandList, CommandItem } from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 export const Header = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const { data: session } = useQuery({
     queryKey: ["session"],
@@ -26,6 +30,28 @@ export const Header = () => {
       const { data } = await supabase.auth.getSession();
       return data.session;
     },
+  });
+
+  const { data: searchResults } = useQuery({
+    queryKey: ["search", searchQuery],
+    queryFn: async () => {
+      if (!searchQuery) return [];
+      
+      const { data, error } = await supabase
+        .from("youtube_videos")
+        .select("*")
+        .ilike("title", `%${searchQuery}%`)
+        .limit(5);
+
+      if (error) {
+        console.error("Error searching videos:", error);
+        toast.error("Failed to search videos");
+        return [];
+      }
+
+      return data;
+    },
+    enabled: searchQuery.length > 0,
   });
 
   const handleLogout = async () => {
@@ -59,7 +85,59 @@ export const Header = () => {
           />
         </Link>
 
-        <div className="flex-1" />
+        <div className="flex-1 px-4">
+          <Popover open={searchOpen} onOpenChange={setSearchOpen}>
+            <PopoverTrigger asChild>
+              <div className="flex items-center w-full max-w-sm cursor-text">
+                <Search className="h-4 w-4 text-black mr-2" />
+                <input
+                  type="text"
+                  placeholder="Search videos..."
+                  className="w-full bg-transparent border-none outline-none text-black placeholder:text-gray-500 focus:ring-0"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onClick={() => setSearchOpen(true)}
+                />
+              </div>
+            </PopoverTrigger>
+            <PopoverContent 
+              className="w-[300px] p-0 bg-white shadow-lg" 
+              align="start"
+              sideOffset={5}
+            >
+              <Command>
+                <CommandList>
+                  {searchResults?.map((video) => (
+                    <CommandItem
+                      key={video.id}
+                      onSelect={() => {
+                        navigate(`/video/${video.video_id}`);
+                        setSearchOpen(false);
+                        setSearchQuery("");
+                      }}
+                      className="flex items-center gap-2 p-2 cursor-pointer hover:bg-gray-100"
+                    >
+                      <img
+                        src={video.thumbnail}
+                        alt={video.title}
+                        className="w-10 h-10 object-cover rounded"
+                      />
+                      <div className="flex flex-col">
+                        <span className="text-sm font-medium">{video.title}</span>
+                        <span className="text-xs text-gray-500">{video.channel_name}</span>
+                      </div>
+                    </CommandItem>
+                  ))}
+                  {searchQuery && (!searchResults || searchResults.length === 0) && (
+                    <div className="p-4 text-sm text-gray-500">
+                      No results found
+                    </div>
+                  )}
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
+        </div>
 
         <div className="flex items-center space-x-2">
           {session ? (
