@@ -33,10 +33,20 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
         });
 
         if (error) throw error;
+        
+        // Sign in immediately after sign up
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+        if (signInError) throw signInError;
+
         toast({
           title: "Success!",
-          description: "Please check your email to verify your account.",
+          description: "You have been signed up and logged in.",
         });
+        onOpenChange(false);
       } else {
         const { error } = await supabase.auth.signInWithPassword({
           email,
