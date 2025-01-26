@@ -7,6 +7,7 @@ import { YouTubeChannelsSection } from "@/components/dashboard/YouTubeChannelsSe
 import { MusicArtistsSection } from "@/components/dashboard/MusicArtistsSection";
 import { CommentsManagementSection } from "@/components/dashboard/CommentsManagementSection";
 import { ReportedVideosSection } from "@/components/dashboard/ReportedVideosSection";
+import { ChannelRequestsSection } from "@/components/dashboard/ChannelRequestsSection";
 import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
@@ -48,6 +49,7 @@ const Dashboard = () => {
       
       <h1 className="text-2xl font-bold">Admin Dashboard</h1>
 
+      <ChannelRequestsSection />
       <UserManagementSection currentUserId={profile.id} />
       <ReportedVideosSection />
       <CommentsManagementSection />
