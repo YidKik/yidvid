@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Switch } from "@/components/ui/switch";
@@ -7,9 +7,11 @@ import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Youtube } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ChannelSearch } from "@/components/youtube/ChannelSearch";
 
 export const ChannelPreferences = () => {
   const [hiddenChannels, setHiddenChannels] = useState<Set<string>>(new Set());
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Fetch all channels
   const { data: channels, isLoading } = useQuery({
@@ -56,14 +58,22 @@ export const ChannelPreferences = () => {
     );
   };
 
+  // Filter channels based on search query
+  const filteredChannels = channels?.filter(channel =>
+    channel.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   if (isLoading) {
     return <div>Loading channels...</div>;
   }
 
   return (
     <Card className="p-6">
+      <div className="mb-6">
+        <ChannelSearch value={searchQuery} onChange={setSearchQuery} />
+      </div>
       <div className="max-h-[400px] overflow-y-auto scrollbar-hide space-y-6">
-        {channels?.map((channel) => (
+        {filteredChannels?.map((channel) => (
           <div
             key={channel.channel_id}
             className={`flex items-center justify-between p-4 rounded-lg border ${
