@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -16,6 +16,7 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -68,10 +69,11 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
 
     try {
       if (isSignUp) {
-        const { error } = await supabase.auth.signUp({
+        const { error: signUpError } = await supabase.auth.signUp({
           email,
           password,
           options: {
@@ -82,7 +84,18 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
           },
         });
 
-        if (error) throw error;
+        if (signUpError) {
+          if (signUpError.message.includes("User already registered")) {
+            toast({
+              title: "Account exists",
+              description: "This email is already registered. Please sign in instead.",
+              variant: "destructive",
+            });
+            setIsSignUp(false);
+            return;
+          }
+          throw signUpError;
+        }
         
         // Sign in immediately after sign up
         const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
@@ -91,11 +104,10 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
         });
 
         if (signInError) {
-          const errorBody = signInError.message && JSON.parse(signInError.message);
-          if (errorBody?.code === "email_not_confirmed") {
+          if (signInError.message.includes("Email not confirmed")) {
             toast({
               title: "Almost there!",
-              description: "Your account has been created. You can now sign in.",
+              description: "Please check your email to confirm your account before signing in.",
             });
             setIsSignUp(false);
             return;
@@ -123,21 +135,29 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
         });
         onOpenChange(false);
       } else {
-        const { data: signInData, error } = await supabase.auth.signInWithPassword({
+        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
           email,
           password,
         });
 
-        if (error) {
-          const errorBody = error.message && JSON.parse(error.message);
-          if (errorBody?.code === "email_not_confirmed") {
+        if (signInError) {
+          if (signInError.message.includes("Invalid login credentials")) {
             toast({
-              title: "Welcome back!",
-              description: "You can now sign in with your account.",
+              title: "Invalid credentials",
+              description: "Please check your email and password and try again.",
+              variant: "destructive",
             });
             return;
           }
-          throw error;
+          if (signInError.message.includes("Email not confirmed")) {
+            toast({
+              title: "Email not confirmed",
+              description: "Please check your email to confirm your account before signing in.",
+              variant: "destructive",
+            });
+            return;
+          }
+          throw signInError;
         }
 
         if (signInData.user) {
@@ -151,21 +171,26 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
         onOpenChange(false);
       }
     } catch (error: any) {
+      console.error("Auth error:", error);
       toast({
         title: "Error",
-        description: error.message,
+        description: error.message || "An error occurred during authentication.",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
-        <div className="flex flex-col items-center mb-6">
-          <Video className="h-12 w-12 text-primary mb-2" />
-          <h1 className="text-2xl font-bold text-primary">Jewish Tube</h1>
-        </div>
+        <DialogTitle className="text-center">
+          <div className="flex flex-col items-center mb-6">
+            <Video className="h-12 w-12 text-primary mb-2" />
+            <h1 className="text-2xl font-bold text-primary">Jewish Tube</h1>
+          </div>
+        </DialogTitle>
         <form onSubmit={handleSubmit} className="space-y-4 mt-4">
           {isSignUp && (
             <div className="space-y-2">
@@ -177,6 +202,7 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
                 onChange={(e) => setName(e.target.value)}
                 className="border border-input rounded-md"
                 required
+                disabled={isLoading}
               />
             </div>
           )}
@@ -189,6 +215,7 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
               onChange={(e) => setEmail(e.target.value)}
               className="border border-input rounded-md"
               required
+              disabled={isLoading}
             />
           </div>
           <div className="space-y-2">
@@ -200,19 +227,22 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
               onChange={(e) => setPassword(e.target.value)}
               className="border border-input rounded-md"
               required
+              disabled={isLoading}
             />
           </div>
           <button
             type="submit"
-            className="w-full bg-primary text-white rounded-md py-2"
+            className="w-full bg-primary text-white rounded-md py-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={isLoading}
           >
-            {isSignUp ? "Sign Up" : "Sign In"}
+            {isLoading ? "Loading..." : (isSignUp ? "Sign Up" : "Sign In")}
           </button>
           <div className="text-center">
             <button
               type="button"
               onClick={() => setIsSignUp(!isSignUp)}
               className="text-sm text-primary hover:text-primary/80 transition-colors"
+              disabled={isLoading}
             >
               {isSignUp ? "Already have an account? Sign In" : "Need an account? Sign Up"}
             </button>
