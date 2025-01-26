@@ -388,7 +388,9 @@ export const Header = () => {
             <>
               <Button 
                 variant="default" 
-                className="bg-primary hover:bg-primary text-primary-foreground hover:text-black transition-colors"
+                className={`bg-primary hover:bg-primary text-primary-foreground hover:text-black transition-colors ${
+                  isMobile ? 'text-xs px-2 py-1 h-8' : 'text-sm px-4 py-2 h-10'
+                }`}
                 onClick={() => setIsAuthOpen(true)}
               >
                 {isMobile ? 'Sign' : 'Sign In'}
