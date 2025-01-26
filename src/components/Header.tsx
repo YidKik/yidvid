@@ -7,6 +7,7 @@ import { Settings, LogOut, LayoutDashboard, Search, Sunset } from "lucide-react"
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
+import Auth from "@/pages/Auth";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -35,6 +36,7 @@ export const Header = () => {
   });
   const [isSearching, setIsSearching] = useState(false);
   const [searchError, setSearchError] = useState<string | null>(null);
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
   
   const { data: session } = useQuery({
     queryKey: ["session"],
@@ -310,13 +312,16 @@ export const Header = () => {
               </Avatar>
             </div>
           ) : (
-            <Button 
-              variant="default" 
-              asChild 
-              className="bg-primary hover:bg-primary text-primary-foreground hover:text-black transition-colors"
-            >
-              <Link to="/auth">Sign In</Link>
-            </Button>
+            <>
+              <Button 
+                variant="default" 
+                className="bg-primary hover:bg-primary text-primary-foreground hover:text-black transition-colors"
+                onClick={() => setIsAuthOpen(true)}
+              >
+                Sign In
+              </Button>
+              <Auth isOpen={isAuthOpen} onOpenChange={setIsAuthOpen} />
+            </>
           )}
         </nav>
       </div>
