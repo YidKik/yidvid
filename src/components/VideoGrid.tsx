@@ -27,38 +27,33 @@ interface VideoGridProps {
 }
 
 export default function VideoGrid({ videos = [], maxVideos = 12, rowSize = 4, isLoading }: VideoGridProps) {
-  const [showAll, setShowAll] = useState(false);
+  const [showAll, setShowAll] = useState(true); // Changed to true by default for channel pages
   const [currentPage, setCurrentPage] = useState(1);
+  const videosPerPage = rowSize * 3;
 
-  // Get unique channel videos for the first page only
-  const firstPageVideos = videos.reduce((acc, current) => {
+  // Get unique channel videos for the first page only if not showing all
+  const firstPageVideos = !showAll ? videos.reduce((acc, current) => {
     const existingVideo = acc.find(video => video.channelId === current.channelId);
     if (!existingVideo) {
-      // If no video from this channel exists yet, add it
       acc.push(current);
     } else {
-      // If a video from this channel exists, keep the most recent one
       const existingDate = new Date(existingVideo.uploadedAt);
       const currentDate = new Date(current.uploadedAt);
       if (currentDate > existingDate) {
-        // Replace the existing video with the more recent one
         const index = acc.findIndex(video => video.channelId === current.channelId);
         acc[index] = current;
       }
     }
     return acc;
-  }, [] as VideoGridProps['videos']);
+  }, [] as VideoGridProps['videos']) : videos;
 
-  const videosPerPage = showAll ? rowSize * 3 : maxVideos;
   const totalPages = Math.ceil((showAll ? videos.length : firstPageVideos.length) / videosPerPage);
-
   const indexOfLastVideo = currentPage * videosPerPage;
   const indexOfFirstVideo = indexOfLastVideo - videosPerPage;
   
-  // Use filtered videos only for the first page, show all videos for subsequent pages
-  const currentVideos = currentPage === 1 && !showAll
-    ? firstPageVideos.slice(indexOfFirstVideo, indexOfLastVideo)
-    : videos.slice(indexOfFirstVideo, indexOfLastVideo);
+  const currentVideos = showAll
+    ? videos.slice(indexOfFirstVideo, indexOfLastVideo)
+    : firstPageVideos.slice(indexOfFirstVideo, indexOfLastVideo);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -90,8 +85,8 @@ export default function VideoGrid({ videos = [], maxVideos = 12, rowSize = 4, is
         {currentVideos.map((video) => (
           <VideoCard
             key={video.id}
-            id={video.video_id}  // Pass the video_id for the URL
-            uuid={video.id}      // Pass the UUID for database operations
+            id={video.video_id}
+            uuid={video.id}
             title={video.title}
             thumbnail={video.thumbnail}
             channelName={video.channelName}
@@ -102,21 +97,7 @@ export default function VideoGrid({ videos = [], maxVideos = 12, rowSize = 4, is
       </div>
       
       <div className="flex flex-col items-center gap-4 mt-8">
-        {!showAll && firstPageVideos.length > maxVideos && (
-          <Button 
-            onClick={() => {
-              setShowAll(true);
-              setCurrentPage(2); // Automatically go to page 2 when clicking See More
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
-            variant="outline"
-            className="w-40"
-          >
-            See More
-          </Button>
-        )}
-        
-        {showAll && totalPages > 1 && (
+        {totalPages > 1 && (
           <Pagination>
             <PaginationContent>
               <PaginationItem>
@@ -124,6 +105,11 @@ export default function VideoGrid({ videos = [], maxVideos = 12, rowSize = 4, is
                   onClick={() => handlePageChange(currentPage - 1)}
                   className={currentPage === 1 ? 'pointer-events-none opacity-50' : ''}
                 />
+              </PaginationItem>
+              <PaginationItem>
+                <span className="px-4">
+                  Page {currentPage} of {totalPages}
+                </span>
               </PaginationItem>
               <PaginationItem>
                 <PaginationNext 
