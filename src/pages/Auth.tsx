@@ -137,7 +137,7 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
                   anchor: 'auth-link',
                 },
               }}
-              providers={[]}
+              providers={["google"]}
               view={isSignUp ? "sign_up" : "sign_in"}
             />
           </div>
