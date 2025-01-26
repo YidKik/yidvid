@@ -44,6 +44,9 @@ const MainContent = () => {
     },
   });
 
+  // Sort videos by views to get most viewed videos
+  const mostViewedVideos = videos ? [...videos].sort((a, b) => (b.views || 0) - (a.views || 0)) : [];
+
   return (
     <div className={`flex-1 transition-all duration-300 ${
       state === "collapsed" 
