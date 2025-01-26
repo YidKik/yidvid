@@ -130,6 +130,7 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
         });
 
         if (signUpError) {
+          console.error("Sign up error:", signUpError);
           if (signUpError.message.includes("User already registered")) {
             toast({
               title: "Account exists",
@@ -149,6 +150,7 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
         });
 
         if (signInError) {
+          console.error("Auto sign in error after signup:", signInError);
           if (signInError.message.includes("Email not confirmed")) {
             toast({
               title: "Almost there!",
@@ -187,23 +189,20 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
 
         if (signInError) {
           console.error("Sign in error:", signInError);
+          let errorMessage = "Please check your email and password and try again.";
+          
           if (signInError.message.includes("Invalid login credentials")) {
-            toast({
-              title: "Invalid credentials",
-              description: "Please check your email and password and try again.",
-              variant: "destructive",
-            });
-            return;
+            errorMessage = "Invalid email or password. Please try again.";
+          } else if (signInError.message.includes("Email not confirmed")) {
+            errorMessage = "Please check your email to confirm your account before signing in.";
           }
-          if (signInError.message.includes("Email not confirmed")) {
-            toast({
-              title: "Email not confirmed",
-              description: "Please check your email to confirm your account before signing in.",
-              variant: "destructive",
-            });
-            return;
-          }
-          throw signInError;
+          
+          toast({
+            title: "Sign in failed",
+            description: errorMessage,
+            variant: "destructive",
+          });
+          return;
         }
 
         if (signInData.user) {
