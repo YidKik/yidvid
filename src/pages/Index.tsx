@@ -77,11 +77,11 @@ const Index = () => {
         <Sidebar />
         <div className="flex-1">
           <Header />
-          <main className="mt-12">
-            <div className="max-w-3xl mx-auto px-4 py-4">
-              <div className="relative w-[240px] h-12 mx-auto bg-gray-100 rounded-full p-1 cursor-pointer mb-8"
+          <main className="mt-8">
+            <div className="max-w-4xl mx-auto px-4 py-6">
+              <div className="relative w-[280px] h-14 mx-auto bg-gray-100 rounded-full p-1.5 cursor-pointer mb-10 shadow-sm hover:shadow-md transition-shadow"
                    onClick={() => setIsMusic(!isMusic)}>
-                <div className="relative w-full h-full flex items-center justify-between px-6 text-sm font-medium">
+                <div className="relative w-full h-full flex items-center justify-between px-8 text-base font-medium">
                   <span className={`z-10 transition-colors duration-200 ${!isMusic ? 'text-white' : 'text-gray-600'}`}>
                     Videos
                   </span>
@@ -89,9 +89,9 @@ const Index = () => {
                     Music
                   </span>
                   <motion.div
-                    className="absolute top-0 left-0 w-[108px] h-full bg-primary rounded-full"
+                    className="absolute top-0 left-0 w-[126px] h-full bg-primary rounded-full"
                     animate={{
-                      x: isMusic ? 126 : 2
+                      x: isMusic ? 148 : 2
                     }}
                     transition={{
                       type: "spring",
@@ -101,49 +101,50 @@ const Index = () => {
                   />
                 </div>
               </div>
-            </div>
 
-            <motion.div
-              key={isMusic ? "music" : "videos"}
-              initial={{ opacity: 0, x: isMusic ? 20 : -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: isMusic ? -20 : 20 }}
-              transition={{ duration: 0.3 }}
-            >
-              {!isMusic ? (
-                <>
-                  <div className="video-grid mt-2">
-                    <VideoGrid 
-                      videos={videos} 
-                      maxVideos={12} 
-                      rowSize={4} 
-                      isLoading={isLoading}
-                    />
-                  </div>
-                  {mostViewedVideos && mostViewedVideos.length > 0 && (
-                    <div className="mt-8">
-                      <MostViewedVideos videos={mostViewedVideos} />
+              <motion.div
+                key={isMusic ? "music" : "videos"}
+                initial={{ opacity: 0, x: isMusic ? 20 : -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: isMusic ? -20 : 20 }}
+                transition={{ duration: 0.3 }}
+                className="mt-4"
+              >
+                {!isMusic ? (
+                  <>
+                    <div className="video-grid">
+                      <VideoGrid 
+                        videos={videos} 
+                        maxVideos={12} 
+                        rowSize={4} 
+                        isLoading={isLoading}
+                      />
                     </div>
-                  )}
-                  <div className="channels-grid">
-                    <ChannelsGrid />
+                    {mostViewedVideos && mostViewedVideos.length > 0 && (
+                      <div className="mt-12">
+                        <MostViewedVideos videos={mostViewedVideos} />
+                      </div>
+                    )}
+                    <div className="channels-grid mt-12">
+                      <ChannelsGrid />
+                    </div>
+                  </>
+                ) : (
+                  <div className="relative">
+                    <div className="absolute inset-0 backdrop-blur-md z-10 flex flex-col items-center justify-center text-center p-8">
+                      <h2 className="text-3xl font-bold mb-4 text-primary animate-fade-in">Coming Soon!</h2>
+                      <p className="text-lg text-gray-800 max-w-2xl animate-fade-in delay-100">
+                        We're working on bringing you an amazing collection of kosher entertainment music. 
+                        Stay tuned for a curated selection of artists and tracks that will elevate your listening experience!
+                      </p>
+                    </div>
+                    <div className="opacity-30">
+                      <MusicGrid />
+                    </div>
                   </div>
-                </>
-              ) : (
-                <div className="relative">
-                  <div className="absolute inset-0 backdrop-blur-md z-10 flex flex-col items-center justify-center text-center p-8">
-                    <h2 className="text-3xl font-bold mb-4 text-primary animate-fade-in">Coming Soon!</h2>
-                    <p className="text-lg text-gray-800 max-w-2xl animate-fade-in delay-100">
-                      We're working on bringing you an amazing collection of kosher entertainment music. 
-                      Stay tuned for a curated selection of artists and tracks that will elevate your listening experience!
-                    </p>
-                  </div>
-                  <div className="opacity-30">
-                    <MusicGrid />
-                  </div>
-                </div>
-              )}
-            </motion.div>
+                )}
+              </motion.div>
+            </div>
           </main>
         </div>
       </div>
