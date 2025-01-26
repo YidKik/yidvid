@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Settings, LogOut, LayoutDashboard, Bell } from "lucide-react";
+import { Settings, LogOut, LayoutDashboard, Bell, Search } from "lucide-react";
 import { toast } from "sonner";
 import { useState } from "react";
 import Auth from "@/pages/Auth";
@@ -14,11 +14,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Input } from "@/components/ui/input";
 
 export const Header = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const { data: session } = useQuery({
     queryKey: ["session"],
@@ -39,14 +41,34 @@ export const Header = () => {
     }
   };
 
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-14 items-center justify-between">
-        <Link to="/" className="flex items-center space-x-2">
+      <div className="container flex h-14 items-center">
+        <Link to="/" className="flex items-center space-x-2 mr-4">
           <span className="text-xl font-bold">Jewish Tube</span>
         </Link>
 
-        <div className="flex items-center space-x-2">
+        <form onSubmit={handleSearch} className="flex-1 max-w-md mx-auto">
+          <div className="relative flex items-center">
+            <Search className="absolute left-2 h-4 w-4 text-gray-400" />
+            <Input
+              type="search"
+              placeholder="Search..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-8 h-9 bg-transparent border-0 ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-sm placeholder:text-gray-400"
+            />
+          </div>
+        </form>
+
+        <div className="flex items-center space-x-2 ml-4">
           {session ? (
             <>
               <DropdownMenu>
