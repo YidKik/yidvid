@@ -13,6 +13,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface SearchResult {
   videos: {
@@ -301,39 +302,41 @@ export const Header = () => {
                     )}
                   </div>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-80">
-                  {notifications && notifications.length > 0 ? (
-                    notifications.map((notification: any) => (
-                      <DropdownMenuItem
-                        key={notification.id}
-                        className="flex flex-col items-start p-3 cursor-pointer hover:bg-muted"
-                        onClick={() => {
-                          markNotificationAsRead(notification.id);
-                          window.location.href = `/video/${notification.youtube_videos.id}`;
-                        }}
-                      >
-                        <div className="flex items-center gap-2 w-full">
-                          <img
-                            src={notification.youtube_videos.thumbnail}
-                            alt={notification.youtube_videos.title}
-                            className="w-10 h-10 rounded object-cover"
-                          />
-                          <div className="flex-1">
-                            <p className="text-sm font-medium line-clamp-1">
-                              {notification.youtube_videos.title}
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                              {notification.youtube_videos.channel_name}
-                            </p>
+                <DropdownMenuContent align="end" className="w-80 bg-zinc-950 border-zinc-800">
+                  <ScrollArea className="h-[300px] w-full rounded-md">
+                    {notifications && notifications.length > 0 ? (
+                      notifications.map((notification: any) => (
+                        <DropdownMenuItem
+                          key={notification.id}
+                          className="flex flex-col items-start p-3 cursor-pointer hover:bg-zinc-900 focus:bg-zinc-900 border-b border-zinc-800 last:border-0"
+                          onClick={() => {
+                            markNotificationAsRead(notification.id);
+                            window.location.href = `/video/${notification.youtube_videos.id}`;
+                          }}
+                        >
+                          <div className="flex items-center gap-2 w-full">
+                            <img
+                              src={notification.youtube_videos.thumbnail}
+                              alt={notification.youtube_videos.title}
+                              className="w-10 h-10 rounded object-cover"
+                            />
+                            <div className="flex-1">
+                              <p className="text-sm font-medium line-clamp-1 text-zinc-100">
+                                {notification.youtube_videos.title}
+                              </p>
+                              <p className="text-xs text-zinc-400">
+                                {notification.youtube_videos.channel_name}
+                              </p>
+                            </div>
                           </div>
-                        </div>
-                      </DropdownMenuItem>
-                    ))
-                  ) : (
-                    <div className="p-3 text-sm text-center text-muted-foreground">
-                      No new notifications
-                    </div>
-                  )}
+                        </DropdownMenuItem>
+                      ))
+                    ) : (
+                      <div className="p-3 text-sm text-center text-zinc-400">
+                        No new notifications
+                      </div>
+                    )}
+                  </ScrollArea>
                 </DropdownMenuContent>
               </DropdownMenu>
               <Link to="/settings">
