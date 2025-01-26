@@ -15,7 +15,8 @@ export const MusicGrid = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("music_tracks")
-        .select("*, music_artists(*)");
+        .select("*, music_artists(*)")
+        .order('plays', { ascending: false });
 
       if (error) {
         console.error("Error fetching music tracks:", error);
@@ -43,20 +44,24 @@ export const MusicGrid = () => {
       // Stop playing
       if (player) {
         player.src = '';
+        document.body.removeChild(player);
+        setPlayer(null);
       }
       setPlayingTrackId(null);
     } else {
-      // Create or update iframe for the new track
+      // Stop current player if exists
       if (player) {
-        player.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
-      } else {
-        const iframe = document.createElement('iframe');
-        iframe.style.display = 'none';
-        iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
-        iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
-        document.body.appendChild(iframe);
-        setPlayer(iframe);
+        player.src = '';
+        document.body.removeChild(player);
       }
+
+      // Create new iframe for the track
+      const iframe = document.createElement('iframe');
+      iframe.style.display = 'none';
+      iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+      iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+      document.body.appendChild(iframe);
+      setPlayer(iframe);
       setPlayingTrackId(trackId);
 
       // Update play count
