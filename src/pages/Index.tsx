@@ -49,11 +49,11 @@ const MainContent = () => {
   return (
     <div className={`flex-1 ${
       state === "collapsed" 
-        ? "pl-4 md:pl-20" 
+        ? "pl-20" 
         : "pl-4"
     }`}>
       <Header />
-      <main className="mt-4 md:mt-8 max-w-[1400px]">
+      <main className="mt-4 md:mt-8 max-w-[1200px] mx-auto">
         <div className="w-full py-4 md:py-6">
           <div className="relative w-[240px] h-12 mx-auto bg-gray-100 rounded-full p-1.5 cursor-pointer mb-4 md:mb-8 shadow-sm hover:shadow-md transition-shadow"
                onClick={() => setIsMusic(!isMusic)}>
