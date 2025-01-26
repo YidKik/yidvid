@@ -48,22 +48,30 @@ export const Header = () => {
     queryFn: async () => {
       if (!debouncedSearchQuery.trim()) return [];
       
-      const { data: videos, error } = await supabase
-        .from("youtube_videos")
-        .select("*")
-        .or(`title.ilike.%${debouncedSearchQuery}%,channel_name.ilike.%${debouncedSearchQuery}%,description.ilike.%${debouncedSearchQuery}%`)
-        .order('views', { ascending: false })
-        .limit(10);
+      try {
+        const { data: videos, error } = await supabase
+          .from("youtube_videos")
+          .select("*")
+          .or(`title.ilike.%${debouncedSearchQuery}%,channel_name.ilike.%${debouncedSearchQuery}%,description.ilike.%${debouncedSearchQuery}%`)
+          .order('views', { ascending: false })
+          .limit(10);
 
-      if (error) {
-        console.error("Error searching videos:", error);
-        toast.error("Failed to search videos");
+        if (error) {
+          console.error("Error searching videos:", error);
+          toast.error("Failed to search videos");
+          return [];
+        }
+
+        return videos || [];
+      } catch (error) {
+        console.error("Error in search query:", error);
+        toast.error("Search failed. Please try again.");
         return [];
       }
-
-      return videos || [];
     },
-    enabled: true,
+    enabled: debouncedSearchQuery.trim().length > 0,
+    staleTime: 30000, // Cache results for 30 seconds
+    retry: 2,
   });
 
   const handleLogout = async () => {
@@ -82,8 +90,9 @@ export const Header = () => {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
+      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
       setIsSearchOpen(false);
+      setSearchQuery("");
     }
   };
 
@@ -93,6 +102,19 @@ export const Header = () => {
       searchInputRef.current.focus();
     }
   }, [isSearchOpen]);
+
+  // Handle escape key to close search
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsSearchOpen(false);
+        setSearchQuery("");
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, []);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
@@ -115,10 +137,18 @@ export const Header = () => {
         </Link>
 
         <div className="flex-1 flex justify-center px-4">
-          <Popover open={isSearchOpen} onOpenChange={setIsSearchOpen}>
+          <Popover 
+            open={isSearchOpen} 
+            onOpenChange={(open) => {
+              setIsSearchOpen(open);
+              if (!open) {
+                setSearchQuery("");
+              }
+            }}
+          >
             <PopoverTrigger asChild>
               <form onSubmit={handleSearch} className="w-full max-w-lg flex items-center">
-                <div className="relative w-full border rounded-md">
+                <div className="relative w-full">
                   <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <input
                     ref={searchInputRef}
@@ -126,18 +156,31 @@ export const Header = () => {
                     placeholder="Search..."
                     value={searchQuery}
                     onChange={(e) => {
-                      setSearchQuery(e.target.value);
-                      if (e.target.value.trim()) {
+                      const value = e.target.value;
+                      setSearchQuery(value);
+                      if (value.trim()) {
                         setIsSearchOpen(true);
                       }
                     }}
-                    className="w-full pl-8 pr-4 py-2 text-sm border-none focus:outline-none focus:ring-1 focus:ring-gray-200 rounded-md text-black"
+                    onFocus={() => {
+                      if (searchQuery.trim()) {
+                        setIsSearchOpen(true);
+                      }
+                    }}
+                    className="w-full pl-8 pr-4 py-2 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-gray-200 bg-white text-gray-900"
                     autoComplete="off"
                   />
                 </div>
               </form>
             </PopoverTrigger>
-            <PopoverContent className="w-[400px] p-0 bg-white border border-gray-200 shadow-lg" align="start">
+            <PopoverContent 
+              className="w-[400px] p-0 bg-white border border-gray-200 shadow-lg" 
+              align="start"
+              onInteractOutside={() => {
+                setIsSearchOpen(false);
+                setSearchQuery("");
+              }}
+            >
               <ScrollArea className="h-[300px]">
                 {isLoading ? (
                   <div className="p-4 text-sm text-gray-500">Searching...</div>
