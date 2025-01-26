@@ -7,20 +7,34 @@ import ChannelDetails from "@/pages/ChannelDetails";
 import Dashboard from "@/pages/Dashboard";
 import Settings from "@/pages/Settings";
 import { ColorProvider } from "@/contexts/ColorContext";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+// Create a client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 3,
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      refetchOnWindowFocus: true,
+    },
+  },
+});
 
 function App() {
   return (
-    <ColorProvider>
-      <Routes>
-        <Route path="/" element={<Index />} />
-        <Route path="/video/:id" element={<VideoDetails />} />
-        <Route path="/channel/:id" element={<ChannelDetails />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/settings" element={<Settings />} />
-      </Routes>
-      <Toaster />
-      <Sonner />
-    </ColorProvider>
+    <QueryClientProvider client={queryClient}>
+      <ColorProvider>
+        <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/video/:id" element={<VideoDetails />} />
+          <Route path="/channel/:id" element={<ChannelDetails />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/settings" element={<Settings />} />
+        </Routes>
+        <Toaster />
+        <Sonner />
+      </ColorProvider>
+    </QueryClientProvider>
   );
 }
 

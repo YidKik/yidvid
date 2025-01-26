@@ -34,7 +34,7 @@ export default function VideoGrid({ maxVideos = 12, rowSize = 4 }: VideoGridProp
   const [currentPage, setCurrentPage] = useState(1);
   const [hiddenChannels, setHiddenChannels] = useState<Set<string>>(new Set());
 
-  // Fetch videos using React Query
+  // Fetch videos using React Query with better error handling
   const { data: rawVideos, isLoading, error } = useQuery({
     queryKey: ["youtube_videos"],
     queryFn: async () => {
@@ -62,13 +62,18 @@ export default function VideoGrid({ maxVideos = 12, rowSize = 4 }: VideoGridProp
         uploadedAt: video.uploaded_at
       }));
     },
+    retry: 3, // Retry failed requests 3 times
+    refetchOnWindowFocus: true, // Refresh data when window regains focus
   });
 
   // Load hidden channels from database
   useEffect(() => {
     const loadHiddenChannels = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return;
+      if (!session) {
+        console.log("No session found");
+        return;
+      }
 
       const { data: hiddenChannelsData, error } = await supabase
         .from('hidden_channels')
@@ -77,6 +82,7 @@ export default function VideoGrid({ maxVideos = 12, rowSize = 4 }: VideoGridProp
 
       if (error) {
         console.error('Error loading hidden channels:', error);
+        toast.error("Failed to load channel preferences");
         return;
       }
 
@@ -88,6 +94,7 @@ export default function VideoGrid({ maxVideos = 12, rowSize = 4 }: VideoGridProp
 
   // Subscribe to real-time updates
   useEffect(() => {
+    console.log("Setting up real-time subscription");
     const channel = supabase
       .channel('youtube_videos_changes')
       .on(
@@ -106,6 +113,7 @@ export default function VideoGrid({ maxVideos = 12, rowSize = 4 }: VideoGridProp
       .subscribe();
 
     return () => {
+      console.log("Cleaning up real-time subscription");
       supabase.removeChannel(channel);
     };
   }, []);
@@ -180,7 +188,21 @@ export default function VideoGrid({ maxVideos = 12, rowSize = 4 }: VideoGridProp
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-4 max-w-[1600px] mx-auto">
-        {currentVideos?.map((video) => (
+        {isLoading ? (
+          // Show loading skeletons
+          Array.from({ length: maxVideos }).map((_, index) => (
+            <div key={index} className="space-y-3">
+              <Skeleton className="aspect-video w-full" />
+              <div className="flex gap-3">
+                <Skeleton className="h-10 w-10 rounded-full" />
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-[250px]" />
+                  <Skeleton className="h-4 w-[200px]" />
+                </div>
+              </div>
+            </div>
+          ))
+        ) : currentVideos?.map((video) => (
           <VideoCard
             key={video.id}
             id={video.video_id}
