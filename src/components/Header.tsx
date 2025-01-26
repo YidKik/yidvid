@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Settings, LogOut, LayoutDashboard, Bell, Search } from "lucide-react";
 import { toast } from "sonner";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import Auth from "@/pages/Auth";
 import { useIsMobile } from "@/hooks/use-mobile";
 import {
@@ -14,8 +14,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Command, CommandInput, CommandList, CommandItem } from "@/components/ui/command";
+import { Command, CommandList, CommandItem } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { useDebounce } from "@/hooks/use-debounce";
 
 export const Header = () => {
   const navigate = useNavigate();
@@ -23,6 +24,8 @@ export const Header = () => {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  
+  const debouncedSearch = useDebounce(searchQuery, 300);
 
   const { data: session } = useQuery({
     queryKey: ["session"],
@@ -32,16 +35,16 @@ export const Header = () => {
     },
   });
 
-  const { data: searchResults, isError } = useQuery({
-    queryKey: ["search", searchQuery],
+  const { data: searchResults, isLoading } = useQuery({
+    queryKey: ["search", debouncedSearch],
     queryFn: async () => {
-      if (!searchQuery.trim()) return [];
+      if (!debouncedSearch.trim()) return [];
       
       try {
         const { data, error } = await supabase
           .from("youtube_videos")
           .select("*")
-          .ilike("title", `%${searchQuery}%`)
+          .textSearch('title', debouncedSearch)
           .limit(5);
 
         if (error) {
@@ -57,7 +60,9 @@ export const Header = () => {
         return [];
       }
     },
-    enabled: searchQuery.trim().length > 0,
+    enabled: debouncedSearch.trim().length > 0,
+    retry: false,
+    staleTime: 1000 * 60, // Cache for 1 minute
   });
 
   const handleLogout = async () => {
@@ -113,31 +118,36 @@ export const Header = () => {
             >
               <Command>
                 <CommandList>
-                  {searchResults?.map((video) => (
-                    <CommandItem
-                      key={video.id}
-                      onSelect={() => {
-                        navigate(`/video/${video.video_id}`);
-                        setSearchOpen(false);
-                        setSearchQuery("");
-                      }}
-                      className="flex items-center gap-2 p-2 cursor-pointer hover:bg-gray-50 transition-colors"
-                    >
-                      <img
-                        src={video.thumbnail}
-                        alt={video.title}
-                        className="w-10 h-10 object-cover rounded"
-                      />
-                      <div className="flex flex-col">
-                        <span className="text-sm font-medium line-clamp-1">{video.title}</span>
-                        <span className="text-xs text-gray-500">{video.channel_name}</span>
-                      </div>
-                    </CommandItem>
-                  ))}
-                  {searchQuery && (!searchResults || searchResults.length === 0) && (
+                  {isLoading ? (
+                    <div className="p-4 text-sm text-gray-500 text-center">
+                      Searching...
+                    </div>
+                  ) : searchResults?.length === 0 && debouncedSearch ? (
                     <div className="p-4 text-sm text-gray-500 text-center">
                       No results found
                     </div>
+                  ) : (
+                    searchResults?.map((video) => (
+                      <CommandItem
+                        key={video.id}
+                        onSelect={() => {
+                          navigate(`/video/${video.video_id}`);
+                          setSearchOpen(false);
+                          setSearchQuery("");
+                        }}
+                        className="flex items-center gap-2 p-2 cursor-pointer hover:bg-gray-50 transition-colors"
+                      >
+                        <img
+                          src={video.thumbnail}
+                          alt={video.title}
+                          className="w-10 h-10 object-cover rounded"
+                        />
+                        <div className="flex flex-col">
+                          <span className="text-sm font-medium line-clamp-1">{video.title}</span>
+                          <span className="text-xs text-gray-500">{video.channel_name}</span>
+                        </div>
+                      </CommandItem>
+                    ))
                   )}
                 </CommandList>
               </Command>
