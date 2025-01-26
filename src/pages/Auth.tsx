@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Video } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface AuthProps {
   isOpen: boolean;
@@ -21,6 +22,57 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  const prefetchUserData = async (userId: string) => {
+    // Prefetch profile data
+    await queryClient.prefetchQuery({
+      queryKey: ["profile", userId],
+      queryFn: async () => {
+        const { data } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", userId)
+          .maybeSingle();
+        return data;
+      },
+    });
+
+    // Prefetch notifications
+    await queryClient.prefetchQuery({
+      queryKey: ["notifications", userId],
+      queryFn: async () => {
+        const { data } = await supabase
+          .from("video_notifications")
+          .select(`
+            *,
+            youtube_videos (
+              id,
+              title,
+              channel_name,
+              thumbnail
+            )
+          `)
+          .eq("user_id", userId)
+          .eq("is_read", false)
+          .order("created_at", { ascending: false });
+        return data;
+      },
+    });
+
+    // Prefetch user preferences
+    await queryClient.prefetchQuery({
+      queryKey: ["user_preferences", userId],
+      queryFn: async () => {
+        const { data } = await supabase
+          .from("user_preferences")
+          .select("*")
+          .eq("user_id", userId)
+          .maybeSingle();
+        return data;
+      },
+    });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,7 +92,7 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
         if (error) throw error;
         
         // Sign in immediately after sign up
-        const { error: signInError } = await supabase.auth.signInWithPassword({
+        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
           email,
           password,
         });
@@ -49,7 +101,6 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
           // Parse the error message from the JSON string in the body
           const errorBody = signInError.message && JSON.parse(signInError.message);
           if (errorBody?.code === "email_not_confirmed") {
-            // Handle the specific error case
             toast({
               title: "Almost there!",
               description: "Your account has been created. You can now sign in.",
@@ -60,13 +111,17 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
           throw signInError;
         }
 
+        if (signInData.user) {
+          await prefetchUserData(signInData.user.id);
+        }
+
         toast({
           title: "Success!",
           description: "You have been signed up and logged in.",
         });
         onOpenChange(false);
       } else {
-        const { error } = await supabase.auth.signInWithPassword({
+        const { data: signInData, error } = await supabase.auth.signInWithPassword({
           email,
           password,
         });
@@ -82,6 +137,10 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
             return;
           }
           throw error;
+        }
+
+        if (signInData.user) {
+          await prefetchUserData(signInData.user.id);
         }
 
         toast({
