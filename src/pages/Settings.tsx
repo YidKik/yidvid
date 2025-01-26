@@ -311,15 +311,6 @@ const Settings = () => {
                 onCheckedChange={setHighContrast}
               />
             </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="subtitles">{t('subtitles')}</Label>
-              <Switch
-                id="subtitles"
-                checked={subtitles}
-                onCheckedChange={setSubtitles}
-              />
-            </div>
           </Card>
         </section>
 
