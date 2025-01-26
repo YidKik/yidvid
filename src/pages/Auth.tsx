@@ -161,6 +161,7 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
             }}
             providers={["google"]}
             view="sign_in"
+            showLinks={false}
           />
         </form>
       </DialogContent>
