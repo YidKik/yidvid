@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { useDebounce } from "@/hooks/use-debounce";
 
 export const Header = () => {
   const navigate = useNavigate();
@@ -22,16 +23,17 @@ export const Header = () => {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
   const { data: searchResults, isLoading } = useQuery({
-    queryKey: ["search", searchQuery],
+    queryKey: ["search", debouncedSearchQuery],
     queryFn: async () => {
-      if (!searchQuery.trim()) return [];
+      if (!debouncedSearchQuery.trim()) return [];
       
       const { data: videos, error } = await supabase
         .from("youtube_videos")
         .select("*")
-        .or(`title.ilike.%${searchQuery}%,channel_name.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%`)
+        .or(`title.ilike.%${debouncedSearchQuery}%,channel_name.ilike.%${debouncedSearchQuery}%,description.ilike.%${debouncedSearchQuery}%`)
         .order('views', { ascending: false })
         .limit(10);
 
@@ -43,7 +45,7 @@ export const Header = () => {
 
       return videos || [];
     },
-    enabled: searchQuery.length > 0,
+    enabled: true,
   });
 
   const { data: session } = useQuery({
@@ -103,48 +105,48 @@ export const Header = () => {
                     type="search"
                     placeholder="Search..."
                     value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onChange={(e) => {
+                      setSearchQuery(e.target.value);
+                      setIsSearchOpen(true);
+                    }}
                     className="w-full pl-8 pr-4 py-2 text-sm bg-transparent border-none focus:outline-none focus:ring-0"
-                    onClick={() => setIsSearchOpen(true)}
                   />
                 </div>
               </form>
             </PopoverTrigger>
-            {searchQuery.trim() && (
-              <PopoverContent className="w-[400px] p-0 bg-white border border-gray-200 shadow-lg" align="start">
-                <ScrollArea className="h-[300px]">
-                  {isLoading ? (
-                    <div className="p-4 text-sm text-gray-500">Searching...</div>
-                  ) : searchResults?.length === 0 ? (
-                    <div className="p-4 text-sm text-gray-500">No results found</div>
-                  ) : (
-                    <div className="py-2">
-                      {searchResults?.map((video) => (
-                        <div
-                          key={video.id}
-                          onClick={() => {
-                            navigate(`/video/${video.id}`);
-                            setIsSearchOpen(false);
-                            setSearchQuery("");
-                          }}
-                          className="flex items-center gap-3 p-2 hover:bg-gray-100 cursor-pointer"
-                        >
-                          <img
-                            src={video.thumbnail}
-                            alt={video.title}
-                            className="w-16 h-12 object-cover rounded"
-                          />
-                          <div className="flex flex-col">
-                            <span className="text-sm font-medium line-clamp-1">{video.title}</span>
-                            <span className="text-xs text-gray-500">{video.channel_name}</span>
-                          </div>
+            <PopoverContent className="w-[400px] p-0 bg-white border border-gray-200 shadow-lg" align="start">
+              <ScrollArea className="h-[300px]">
+                {isLoading ? (
+                  <div className="p-4 text-sm text-gray-500">Searching...</div>
+                ) : searchResults?.length === 0 ? (
+                  <div className="p-4 text-sm text-gray-500">No results found</div>
+                ) : (
+                  <div className="py-2">
+                    {searchResults?.map((video) => (
+                      <div
+                        key={video.id}
+                        onClick={() => {
+                          navigate(`/video/${video.id}`);
+                          setIsSearchOpen(false);
+                          setSearchQuery("");
+                        }}
+                        className="flex items-center gap-3 p-2 hover:bg-gray-100 cursor-pointer"
+                      >
+                        <img
+                          src={video.thumbnail}
+                          alt={video.title}
+                          className="w-16 h-12 object-cover rounded"
+                        />
+                        <div className="flex flex-col">
+                          <span className="text-sm font-medium line-clamp-1">{video.title}</span>
+                          <span className="text-xs text-gray-500">{video.channel_name}</span>
                         </div>
-                      ))}
-                    </div>
-                  )}
-                </ScrollArea>
-              </PopoverContent>
-            )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </ScrollArea>
+            </PopoverContent>
           </Popover>
         </div>
 
