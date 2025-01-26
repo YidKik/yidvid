@@ -13,6 +13,28 @@ export const ChannelPreferences = () => {
   const [hiddenChannels, setHiddenChannels] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState("");
 
+  // Load hidden channels from database
+  const loadHiddenChannels = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return;
+
+    const { data: hiddenChannelsData, error } = await supabase
+      .from('hidden_channels')
+      .select('channel_id')
+      .eq('user_id', session.user.id);
+
+    if (error) {
+      console.error('Error loading hidden channels:', error);
+      return;
+    }
+
+    setHiddenChannels(new Set(hiddenChannelsData.map(hc => hc.channel_id)));
+  };
+
+  useEffect(() => {
+    loadHiddenChannels();
+  }, []);
+
   // Fetch all channels
   const { data: channels, isLoading } = useQuery({
     queryKey: ["youtube-channels"],
@@ -32,30 +54,48 @@ export const ChannelPreferences = () => {
     },
   });
 
-  // Load user's hidden channels from localStorage
-  useState(() => {
-    const savedHiddenChannels = localStorage.getItem("hiddenChannels");
-    if (savedHiddenChannels) {
-      setHiddenChannels(new Set(JSON.parse(savedHiddenChannels)));
+  const toggleChannel = async (channelId: string) => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      toast.error("You must be logged in to manage channel preferences");
+      return;
     }
-  });
 
-  const toggleChannel = (channelId: string) => {
     const newHiddenChannels = new Set(hiddenChannels);
-    if (newHiddenChannels.has(channelId)) {
-      newHiddenChannels.delete(channelId);
-    } else {
-      newHiddenChannels.add(channelId);
+    const isCurrentlyHidden = newHiddenChannels.has(channelId);
+
+    try {
+      if (isCurrentlyHidden) {
+        // Unhide channel
+        const { error } = await supabase
+          .from('hidden_channels')
+          .delete()
+          .eq('user_id', session.user.id)
+          .eq('channel_id', channelId);
+
+        if (error) throw error;
+        newHiddenChannels.delete(channelId);
+      } else {
+        // Hide channel
+        const { error } = await supabase
+          .from('hidden_channels')
+          .insert({
+            user_id: session.user.id,
+            channel_id: channelId
+          });
+
+        if (error) throw error;
+        newHiddenChannels.add(channelId);
+      }
+
+      setHiddenChannels(newHiddenChannels);
+      toast.success(
+        `Channel ${isCurrentlyHidden ? "unhidden" : "hidden"} successfully`
+      );
+    } catch (error) {
+      console.error('Error toggling channel visibility:', error);
+      toast.error("Failed to update channel visibility");
     }
-    setHiddenChannels(newHiddenChannels);
-    localStorage.setItem(
-      "hiddenChannels",
-      JSON.stringify(Array.from(newHiddenChannels))
-    );
-    
-    toast.success(
-      `Channel ${newHiddenChannels.has(channelId) ? "hidden" : "visible"}`
-    );
   };
 
   // Filter channels based on search query

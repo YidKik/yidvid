@@ -30,7 +30,6 @@ interface VideoGridProps {
 export default function VideoGrid({ videos = [], maxVideos = 12, rowSize = 4, isLoading }: VideoGridProps) {
   const [showAll, setShowAll] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const videosPerPage = rowSize * 3;
   const [hiddenChannels, setHiddenChannels] = useState<Set<string>>(new Set());
 
   // Load hidden channels from database
@@ -54,6 +53,8 @@ export default function VideoGrid({ videos = [], maxVideos = 12, rowSize = 4, is
 
     loadHiddenChannels();
   }, []);
+
+  const videosPerPage = rowSize * 3;
 
   // Filter out videos from hidden channels
   const filteredVideos = videos.filter(
