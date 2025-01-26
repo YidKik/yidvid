@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
-import { Trash2, Edit } from "lucide-react";
+import { Trash2, Edit, MessageSquare } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
@@ -21,6 +21,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
 
 interface Comment {
   id: string;
@@ -36,9 +37,40 @@ interface Comment {
   } | null;
 }
 
+interface AdminNotification {
+  id: string;
+  type: string;
+  content: string;
+  is_read: boolean;
+  created_at: string;
+}
+
 export const CommentsManagementSection = () => {
   const [editingComment, setEditingComment] = useState<Comment | null>(null);
   const [editedContent, setEditedContent] = useState("");
+
+  const { data: notifications } = useQuery({
+    queryKey: ["admin-notifications"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("admin_notifications")
+        .select("*")
+        .eq("type", "new_comment")
+        .eq("is_read", false)
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        toast({
+          title: "Error fetching notifications",
+          description: error.message,
+          variant: "destructive",
+        });
+        return [];
+      }
+
+      return data as AdminNotification[];
+    },
+  });
 
   const { data: comments, refetch: refetchComments } = useQuery({
     queryKey: ["all-comments"],
@@ -77,12 +109,11 @@ export const CommentsManagementSection = () => {
       .on(
         'postgres_changes',
         {
-          event: '*', // Listen to all events (INSERT, UPDATE, DELETE)
+          event: '*',
           schema: 'public',
           table: 'video_comments'
         },
         () => {
-          // Refetch comments when any change occurs
           refetchComments();
         }
       )
@@ -142,8 +173,16 @@ export const CommentsManagementSection = () => {
 
   return (
     <div className="bg-white rounded-lg shadow mb-8">
-      <div className="p-4 border-b">
-        <h2 className="text-lg font-semibold">Comments Management</h2>
+      <div className="p-4 border-b flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <h2 className="text-lg font-semibold">Comments Management</h2>
+          {notifications && notifications.length > 0 && (
+            <Badge variant="destructive" className="flex items-center gap-1">
+              <MessageSquare className="h-3 w-3" />
+              {notifications.length} new
+            </Badge>
+          )}
+        </div>
       </div>
       <Table>
         <TableHeader>
