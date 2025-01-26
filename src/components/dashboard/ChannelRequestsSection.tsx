@@ -32,14 +32,14 @@ export const ChannelRequestsSection = () => {
         .from("channel_requests")
         .select(`
           *,
-          profiles (
+          profiles:user_id (
             email
           )
         `)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return (data as ChannelRequest[]) || [];
+      return data as ChannelRequest[];
     },
   });
 
