@@ -1,16 +1,42 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 export const WelcomeAnimation = () => {
   const [show, setShow] = useState(true);
 
+  const { data: session } = useQuery({
+    queryKey: ["session"],
+    queryFn: async () => {
+      const { data } = await supabase.auth.getSession();
+      return data.session;
+    },
+  });
+
+  const { data: profile } = useQuery({
+    queryKey: ["profile", session?.user?.id],
+    enabled: !!session?.user?.id,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", session?.user?.id)
+        .maybeSingle();
+      
+      return data;
+    },
+  });
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setShow(false);
-    }, 3000); // 3 seconds duration
+    }, 3000);
 
     return () => clearTimeout(timer);
   }, []);
+
+  const userName = profile?.name || session?.user?.user_metadata?.full_name || "to Jewish Tube";
 
   return (
     <AnimatePresence>
@@ -45,7 +71,7 @@ export const WelcomeAnimation = () => {
                 }}
                 className="text-5xl font-bold text-primary inline-block"
               >
-                Jewish
+                Welcome
               </motion.span>
               <motion.span
                 initial={{ scale: 0 }}
@@ -58,7 +84,7 @@ export const WelcomeAnimation = () => {
                 }}
                 className="text-5xl font-bold text-accent ml-3 inline-block"
               >
-                Tube
+                {userName}
               </motion.span>
             </motion.div>
             
