@@ -9,9 +9,6 @@ import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 
-const MAX_RETRIES = 3;
-const INITIAL_RETRY_DELAY = 1000;
-
 const ChannelDetails = () => {
   const { id: channelId } = useParams();
   const [showDescription, setShowDescription] = useState(false);
@@ -46,7 +43,6 @@ const ChannelDetails = () => {
 
     try {
       if (isSubscribed) {
-        // Unsubscribe
         const { error } = await supabase
           .from("channel_subscriptions")
           .delete()
@@ -57,7 +53,6 @@ const ChannelDetails = () => {
         setIsSubscribed(false);
         toast.success("Unsubscribed from channel");
       } else {
-        // Subscribe
         const { error } = await supabase
           .from("channel_subscriptions")
           .insert({
@@ -75,6 +70,7 @@ const ChannelDetails = () => {
     }
   };
 
+  // Fetch channel details with improved error handling
   const { data: channel, isLoading: isLoadingChannel } = useQuery({
     queryKey: ["channel", channelId],
     queryFn: async () => {
@@ -82,47 +78,30 @@ const ChannelDetails = () => {
         throw new Error("Channel ID is required");
       }
 
-      let retries = 0;
-      let lastError;
+      const { data, error } = await supabase
+        .from("youtube_channels")
+        .select("*")
+        .eq("channel_id", channelId)
+        .maybeSingle();
 
-      while (retries < MAX_RETRIES) {
-        try {
-          const { data, error } = await supabase
-            .from("youtube_channels")
-            .select("*")
-            .eq("channel_id", channelId)
-            .maybeSingle();
-
-          if (error) {
-            console.error("Error fetching channel:", error);
-            throw error;
-          }
-
-          if (!data) {
-            toast.error("Channel not found");
-            throw new Error("Channel not found");
-          }
-
-          return data;
-        } catch (error) {
-          lastError = error;
-          retries++;
-          if (retries < MAX_RETRIES) {
-            await new Promise(resolve => 
-              setTimeout(resolve, INITIAL_RETRY_DELAY * Math.pow(2, retries - 1))
-            );
-          }
-        }
+      if (error) {
+        console.error("Error fetching channel:", error);
+        toast.error("Failed to load channel details");
+        throw error;
       }
 
-      console.error("Final error in channel fetch:", lastError);
-      toast.error("Failed to load channel. Please try again later.");
-      throw lastError;
+      if (!data) {
+        toast.error("Channel not found");
+        throw new Error("Channel not found");
+      }
+
+      return data;
     },
-    retry: false,
+    retry: 2,
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 
+  // Fetch videos with improved reliability
   const { data: videos, isLoading: isLoadingVideos } = useQuery({
     queryKey: ["channel-videos", channelId],
     queryFn: async () => {
@@ -130,41 +109,51 @@ const ChannelDetails = () => {
         throw new Error("Channel ID is required");
       }
 
-      let retries = 0;
-      let lastError;
+      const { data, error } = await supabase
+        .from("youtube_videos")
+        .select("*")
+        .eq("channel_id", channelId)
+        .order("uploaded_at", { ascending: false });
 
-      while (retries < MAX_RETRIES) {
+      if (error) {
+        console.error("Error fetching videos:", error);
+        toast.error("Failed to load videos");
+        throw error;
+      }
+
+      // Trigger a video fetch if no videos are found
+      if (!data || data.length === 0) {
         try {
-          const { data, error } = await supabase
+          await fetch(`https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/fetch-youtube-videos`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${process.env.SUPABASE_ANON_KEY}`,
+            },
+            body: JSON.stringify({ channels: [channelId] })
+          });
+          
+          // Retry fetching videos after triggering the fetch
+          const { data: refetchedData, error: refetchError } = await supabase
             .from("youtube_videos")
             .select("*")
             .eq("channel_id", channelId)
             .order("uploaded_at", { ascending: false });
 
-          if (error) {
-            console.error("Error fetching videos:", error);
-            throw error;
-          }
-
-          console.log("Fetched videos for channel:", data);
-          return data || [];
-        } catch (error) {
-          lastError = error;
-          retries++;
-          if (retries < MAX_RETRIES) {
-            await new Promise(resolve => 
-              setTimeout(resolve, INITIAL_RETRY_DELAY * Math.pow(2, retries - 1))
-            );
-          }
+          if (refetchError) throw refetchError;
+          return refetchedData || [];
+        } catch (fetchError) {
+          console.error("Error fetching videos:", fetchError);
+          toast.error("Failed to load videos");
+          return [];
         }
       }
 
-      console.error("Final error in videos fetch:", lastError);
-      toast.error("Failed to load videos. Please try again later.");
-      throw lastError;
+      return data;
     },
-    retry: false,
-    enabled: !!channelId,
+    retry: 3,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
+    enabled: !!channelId && !!channel,
   });
 
   if (isLoadingChannel || isLoadingVideos) {
@@ -264,12 +253,13 @@ const ChannelDetails = () => {
             }}
           >
             <VideoCard
-              id={video.id}
+              id={video.video_id}
+              uuid={video.id}
               title={video.title}
               thumbnail={video.thumbnail}
               channelName={video.channel_name}
               views={video.views || 0}
-              uploadedAt={new Date(video.uploaded_at)}
+              uploadedAt={video.uploaded_at}
               channelId={video.channel_id}
               channelThumbnail={channel.thumbnail_url}
             />
