@@ -62,7 +62,7 @@ export const ChannelPreferences = () => {
 
   return (
     <Card className="p-6">
-      <div className="space-y-6">
+      <div className="max-h-[400px] overflow-y-auto scrollbar-hide space-y-6">
         {channels?.map((channel) => (
           <div
             key={channel.channel_id}
