@@ -43,6 +43,8 @@ serve(async (req) => {
     const fetchAllVideosForChannel = async (channelId: string) => {
       let allVideos = [];
       let nextPageToken = '';
+      let totalVideosFetched = 0;
+      const maxVideosToFetch = 500; // Set a reasonable limit to avoid excessive API calls
       
       try {
         // First, get channel details including upload playlist ID
@@ -60,6 +62,11 @@ serve(async (req) => {
 
         // Keep fetching videos until there are no more pages
         do {
+          if (totalVideosFetched >= maxVideosToFetch) {
+            console.log(`[YouTube Videos] Reached maximum video limit (${maxVideosToFetch}) for channel ${channelId}`);
+            break;
+          }
+
           const playlistUrl = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${uploadsPlaylistId}&maxResults=50&key=${apiKey}${nextPageToken ? `&pageToken=${nextPageToken}` : ''}`;
           const response = await fetch(playlistUrl);
           const data = await response.json();
@@ -99,13 +106,14 @@ serve(async (req) => {
 
           allVideos = [...allVideos, ...processedVideos];
           nextPageToken = data.nextPageToken;
+          totalVideosFetched += processedVideos.length;
           
           console.log(`[YouTube Videos] Fetched ${processedVideos.length} videos. Total so far: ${allVideos.length}`);
           
           // Add a small delay to avoid rate limiting
           await new Promise(resolve => setTimeout(resolve, 100));
           
-        } while (nextPageToken);
+        } while (nextPageToken && totalVideosFetched < maxVideosToFetch);
 
         return allVideos;
       } catch (error) {
