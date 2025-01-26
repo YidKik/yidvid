@@ -18,7 +18,6 @@ import {
   Command,
   CommandEmpty,
   CommandGroup,
-  CommandInput,
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
@@ -96,14 +95,14 @@ export const Header = () => {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search..."
-                  className="w-full py-2 pl-10 pr-4 text-sm border-b border-[#888888] focus:border-[#555555] outline-none transition-colors bg-transparent"
+                  className="w-full py-2 pl-10 pr-4 text-sm border-b border-[#222222] focus:border-[#000000] outline-none transition-colors bg-transparent text-black"
                 />
-                <Search className="absolute left-0 top-1/2 transform -translate-y-1/2 h-5 w-5 text-[#888888]" />
+                <Search className="absolute left-0 top-1/2 transform -translate-y-1/2 h-5 w-5 text-[#222222]" />
               </div>
             </PopoverTrigger>
             {searchQuery.length >= 2 && (
               <PopoverContent 
-                className="w-[400px] p-0 border-[#888888]" 
+                className="w-[400px] p-0 bg-white border-[#222222]" 
                 align="start"
                 sideOffset={5}
               >
@@ -111,7 +110,7 @@ export const Header = () => {
                   <CommandList>
                     <CommandEmpty>No results found.</CommandEmpty>
                     {searchResults?.channels && searchResults.channels.length > 0 && (
-                      <CommandGroup heading="Channels" className="text-[#888888]">
+                      <CommandGroup heading="Channels" className="text-[#222222]">
                         {searchResults.channels.map((channel) => (
                           <CommandItem
                             key={channel.channel_id}
@@ -120,7 +119,7 @@ export const Header = () => {
                               setSearchOpen(false);
                               setSearchQuery("");
                             }}
-                            className="hover:bg-[#f3f3f3]"
+                            className="hover:bg-gray-50"
                           >
                             <span>{channel.title}</span>
                           </CommandItem>
@@ -128,7 +127,7 @@ export const Header = () => {
                       </CommandGroup>
                     )}
                     {searchResults?.videos && searchResults.videos.length > 0 && (
-                      <CommandGroup heading="Videos" className="text-[#888888]">
+                      <CommandGroup heading="Videos" className="text-[#222222]">
                         {searchResults.videos.map((video) => (
                           <CommandItem
                             key={video.id}
@@ -137,11 +136,11 @@ export const Header = () => {
                               setSearchOpen(false);
                               setSearchQuery("");
                             }}
-                            className="hover:bg-[#f3f3f3]"
+                            className="hover:bg-gray-50"
                           >
                             <div className="flex flex-col">
                               <span>{video.title}</span>
-                              <span className="text-xs text-[#888888]">
+                              <span className="text-xs text-[#666666]">
                                 {video.channel_name}
                               </span>
                             </div>
