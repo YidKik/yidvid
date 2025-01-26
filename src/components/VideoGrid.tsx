@@ -27,12 +27,12 @@ interface VideoGridProps {
 }
 
 export default function VideoGrid({ videos = [], maxVideos = 12, rowSize = 4, isLoading }: VideoGridProps) {
-  const [showAll, setShowAll] = useState(true); // Changed to true by default for channel pages
+  const [showAll, setShowAll] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const videosPerPage = rowSize * 3;
 
   // Get unique channel videos for the first page only if not showing all
-  const firstPageVideos = !showAll ? videos.reduce((acc, current) => {
+  const firstPageVideos = videos.reduce((acc, current) => {
     const existingVideo = acc.find(video => video.channelId === current.channelId);
     if (!existingVideo) {
       acc.push(current);
@@ -45,15 +45,15 @@ export default function VideoGrid({ videos = [], maxVideos = 12, rowSize = 4, is
       }
     }
     return acc;
-  }, [] as VideoGridProps['videos']) : videos;
+  }, [] as VideoGridProps['videos']);
 
   const totalPages = Math.ceil((showAll ? videos.length : firstPageVideos.length) / videosPerPage);
   const indexOfLastVideo = currentPage * videosPerPage;
   const indexOfFirstVideo = indexOfLastVideo - videosPerPage;
   
-  const currentVideos = showAll
-    ? videos.slice(indexOfFirstVideo, indexOfLastVideo)
-    : firstPageVideos.slice(indexOfFirstVideo, indexOfLastVideo);
+  const currentVideos = !showAll
+    ? firstPageVideos.slice(0, maxVideos)
+    : videos.slice(indexOfFirstVideo, indexOfLastVideo);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -97,7 +97,21 @@ export default function VideoGrid({ videos = [], maxVideos = 12, rowSize = 4, is
       </div>
       
       <div className="flex flex-col items-center gap-4 mt-8">
-        {totalPages > 1 && (
+        {!showAll && videos.length > maxVideos && (
+          <Button 
+            onClick={() => {
+              setShowAll(true);
+              setCurrentPage(1);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            variant="outline"
+            className="w-40"
+          >
+            See More
+          </Button>
+        )}
+        
+        {showAll && totalPages > 1 && (
           <Pagination>
             <PaginationContent>
               <PaginationItem>
