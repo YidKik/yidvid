@@ -14,8 +14,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Input } from "@/components/ui/input";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 export const Header = () => {
@@ -23,14 +21,13 @@ export const Header = () => {
   const isMobile = useIsMobile();
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [open, setOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   const { data: searchResults, isLoading } = useQuery({
     queryKey: ["search", searchQuery],
     queryFn: async () => {
       if (!searchQuery.trim()) return [];
       
-      // Search in youtube_videos table with a more comprehensive search
       const { data: videos, error } = await supabase
         .from("youtube_videos")
         .select("*")
@@ -72,7 +69,7 @@ export const Header = () => {
     e.preventDefault();
     if (searchQuery.trim()) {
       navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
-      setOpen(false);
+      setIsSearchOpen(false);
     }
   };
 
@@ -97,62 +94,57 @@ export const Header = () => {
         </Link>
 
         <div className="flex-1 flex justify-center px-4">
-          <Popover open={open} onOpenChange={setOpen}>
+          <Popover open={isSearchOpen} onOpenChange={setIsSearchOpen}>
             <PopoverTrigger asChild>
               <form onSubmit={handleSearch} className="w-full max-w-lg flex items-center">
                 <div className="relative w-full">
-                  <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
+                  <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <input
                     type="search"
                     placeholder="Search..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-9 border-none focus:ring-0 bg-transparent text-muted-foreground"
-                    onClick={() => setOpen(true)}
+                    className="w-full pl-8 pr-4 py-2 text-sm bg-transparent border-none focus:outline-none focus:ring-0"
+                    onClick={() => setIsSearchOpen(true)}
                   />
                 </div>
               </form>
             </PopoverTrigger>
-            <PopoverContent className="w-[400px] p-0" align="start">
-              <Command>
-                <CommandInput 
-                  placeholder="Search videos..." 
-                  value={searchQuery} 
-                  onValueChange={setSearchQuery}
-                />
-                <CommandList>
+            {searchQuery.trim() && (
+              <PopoverContent className="w-[400px] p-0" align="start">
+                <ScrollArea className="h-[300px]">
                   {isLoading ? (
-                    <CommandEmpty>Searching...</CommandEmpty>
+                    <div className="p-4 text-sm text-gray-500">Searching...</div>
                   ) : searchResults?.length === 0 ? (
-                    <CommandEmpty>No results found.</CommandEmpty>
+                    <div className="p-4 text-sm text-gray-500">No results found</div>
                   ) : (
-                    <CommandGroup heading="Videos">
-                      {(searchResults || []).map((video) => (
-                        <CommandItem
+                    <div className="py-2">
+                      {searchResults?.map((video) => (
+                        <div
                           key={video.id}
-                          onSelect={() => {
+                          onClick={() => {
                             navigate(`/video/${video.id}`);
-                            setOpen(false);
+                            setIsSearchOpen(false);
                             setSearchQuery("");
                           }}
-                          className="flex items-center gap-2 p-2 cursor-pointer hover:bg-accent"
+                          className="flex items-center gap-3 p-2 hover:bg-gray-100 cursor-pointer"
                         >
                           <img
                             src={video.thumbnail}
                             alt={video.title}
-                            className="w-12 h-8 object-cover rounded"
+                            className="w-16 h-12 object-cover rounded"
                           />
                           <div className="flex flex-col">
-                            <span className="text-sm font-medium">{video.title}</span>
-                            <span className="text-xs text-muted-foreground">{video.channel_name}</span>
+                            <span className="text-sm font-medium line-clamp-1">{video.title}</span>
+                            <span className="text-xs text-gray-500">{video.channel_name}</span>
                           </div>
-                        </CommandItem>
+                        </div>
                       ))}
-                    </CommandGroup>
+                    </div>
                   )}
-                </CommandList>
-              </Command>
-            </PopoverContent>
+                </ScrollArea>
+              </PopoverContent>
+            )}
           </Popover>
         </div>
 
