@@ -192,52 +192,52 @@ export const Header = () => {
           </div>
           {showResults && searchQuery && (isSearching || hasResults || searchError) && (
             <div className="absolute w-full max-w-xl mt-1 bg-white rounded-md shadow-lg border border-gray-100 overflow-hidden z-50">
-                {isSearching ? (
-                  <div className="px-4 py-2 text-sm text-gray-500">
-                    Searching...
-                  </div>
-                ) : searchError ? (
-                  <div className="px-4 py-2 text-sm text-red-500">
-                    {searchError}
-                  </div>
-                ) : (
-                  <>
-                    {searchResults.channels.length > 0 && (
-                      <div className="px-2 py-1.5 text-xs font-semibold text-gray-500 uppercase bg-gray-50">
-                        Channels
-                      </div>
-                    )}
-                    {searchResults.channels.map((channel) => (
-                      <Link
-                        key={channel.channel_id}
-                        to={`/channel/${channel.channel_id}`}
-                        className="block px-4 py-2 hover:bg-gray-50 cursor-pointer"
-                      >
-                        <span className="text-primary">{channel.title}</span>
-                      </Link>
-                    ))}
-                    {searchResults.videos.length > 0 && (
-                      <div className="px-2 py-1.5 text-xs font-semibold text-gray-500 uppercase bg-gray-50">
-                        Videos
-                      </div>
-                    )}
-                    {searchResults.videos.map((video) => (
-                      <Link
-                        key={video.id}
-                        to={`/video/${video.id}`}
-                        className="block px-4 py-2 hover:bg-gray-50 cursor-pointer"
-                      >
-                        <span className="text-primary">{video.title}</span>
-                        <p className="text-sm text-gray-500">{video.channel_name}</p>
-                      </Link>
-                    ))}
-                    {!hasResults && (
-                      <div className="px-4 py-2 text-sm text-gray-500">
-                        No results found
-                      </div>
-                    )}
-                  </>
-                )}
+              {isSearching ? (
+                <div className="px-4 py-2 text-sm text-gray-500">
+                  Searching...
+                </div>
+              ) : searchError ? (
+                <div className="px-4 py-2 text-sm text-red-500">
+                  {searchError}
+                </div>
+              ) : (
+                <>
+                  {searchResults.channels.length > 0 && (
+                    <div className="px-2 py-1.5 text-xs font-semibold text-gray-500 uppercase bg-gray-50">
+                      Channels
+                    </div>
+                  )}
+                  {searchResults.channels.map((channel) => (
+                    <Link
+                      key={channel.channel_id}
+                      to={`/channel/${channel.channel_id}`}
+                      className="block px-4 py-2 hover:bg-gray-50 cursor-pointer"
+                    >
+                      <span className="text-primary">{channel.title}</span>
+                    </Link>
+                  ))}
+                  {searchResults.videos.length > 0 && (
+                    <div className="px-2 py-1.5 text-xs font-semibold text-gray-500 uppercase bg-gray-50">
+                      Videos
+                    </div>
+                  )}
+                  {searchResults.videos.map((video) => (
+                    <Link
+                      key={video.id}
+                      to={`/video/${video.id}`}
+                      className="block px-4 py-2 hover:bg-gray-50 cursor-pointer"
+                    >
+                      <span className="text-primary">{video.title}</span>
+                      <p className="text-sm text-gray-500">{video.channel_name}</p>
+                    </Link>
+                  ))}
+                  {!hasResults && (
+                    <div className="px-4 py-2 text-sm text-gray-500">
+                      No results found
+                    </div>
+                  )}
+                </>
+              )}
             </div>
           )}
         </form>
@@ -307,12 +307,12 @@ export const Header = () => {
               />
               <div className="flex items-center gap-2">
                 <span className="text-sm font-medium">
-                  {session.user.user_metadata.full_name || session.user.email}
+                  {session.user.user_metadata.full_name || profile?.name || "User"}
                 </span>
                 <Avatar>
                   <AvatarImage src={session.user.user_metadata.avatar_url} />
                   <AvatarFallback>
-                    {session.user.email?.charAt(0).toUpperCase()}
+                    {(session.user.user_metadata.full_name || profile?.name || "U").charAt(0).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
               </div>
