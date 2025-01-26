@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { VideoPlayer } from "@/components/video/VideoPlayer";
 import { VideoInfo } from "@/components/video/VideoInfo";
 import { CommentForm } from "@/components/comments/CommentForm";
@@ -10,6 +10,7 @@ import { RelatedVideos } from "@/components/video/RelatedVideos";
 import { VideoCommentsTable } from "@/integrations/supabase/types/video-comments";
 import { BackButton } from "@/components/navigation/BackButton";
 import { VideoInteractions } from "@/components/video/VideoInteractions";
+import { ReportVideoDialog } from "@/components/video/ReportVideoDialog";
 
 type Comment = VideoCommentsTable["Row"] & {
   profiles: {
@@ -154,14 +155,17 @@ const VideoDetails = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
           <VideoPlayer videoId={video.video_id} />
-          <VideoInfo
-            title={video.title}
-            channelName={video.channel_name}
-            channelThumbnail={video.youtube_channels?.thumbnail_url}
-            views={video.views}
-            uploadedAt={video.uploaded_at}
-            description={video.description}
-          />
+          <div className="flex justify-between items-start mb-4">
+            <VideoInfo
+              title={video.title}
+              channelName={video.channel_name}
+              channelThumbnail={video.youtube_channels?.thumbnail_url}
+              views={video.views}
+              uploadedAt={video.uploaded_at}
+              description={video.description}
+            />
+            <ReportVideoDialog videoId={video.id} />
+          </div>
           
           <VideoInteractions videoId={video.id} />
           
