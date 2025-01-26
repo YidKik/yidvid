@@ -107,9 +107,12 @@ export const Header = () => {
                     value={searchQuery}
                     onChange={(e) => {
                       setSearchQuery(e.target.value);
-                      setIsSearchOpen(true);
+                      if (e.target.value.trim()) {
+                        setIsSearchOpen(true);
+                      }
                     }}
                     className="w-full pl-8 pr-4 py-2 text-sm border-none focus:outline-none focus:ring-1 focus:ring-gray-200 rounded-md text-black"
+                    autoComplete="off"
                   />
                 </div>
               </form>
