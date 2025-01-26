@@ -117,29 +117,62 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
                 />
               </div>
             )}
-            <SupabaseAuth
-              supabaseClient={supabase}
-              appearance={{
-                theme: ThemeSupa,
-                variables: {
-                  default: {
-                    colors: {
-                      brand: '#FF0000',
-                      brandAccent: '#CC0000',
-                      defaultButtonBackground: '#000000e6',
-                      defaultButtonBackgroundHover: '#222222',
+            <div className="space-y-4">
+              <SupabaseAuth
+                supabaseClient={supabase}
+                appearance={{
+                  theme: ThemeSupa,
+                  variables: {
+                    default: {
+                      colors: {
+                        brand: '#FF0000',
+                        brandAccent: '#CC0000',
+                        defaultButtonBackground: '#000000e6',
+                        defaultButtonBackgroundHover: '#222222',
+                      },
                     },
                   },
-                },
-                className: {
-                  container: 'auth-container',
-                  button: 'auth-button',
-                  anchor: 'auth-link',
-                },
-              }}
-              providers={["google"]}
-              view={isSignUp ? "sign_up" : "sign_in"}
-            />
+                  className: {
+                    container: 'auth-container',
+                    button: 'auth-button',
+                    anchor: 'auth-link',
+                  },
+                }}
+                providers={[]}
+                view={isSignUp ? "sign_up" : "sign_in"}
+              />
+              <div className="relative my-4">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+                </div>
+              </div>
+              <SupabaseAuth
+                supabaseClient={supabase}
+                appearance={{
+                  theme: ThemeSupa,
+                  variables: {
+                    default: {
+                      colors: {
+                        brand: '#FF0000',
+                        brandAccent: '#CC0000',
+                        defaultButtonBackground: '#000000e6',
+                        defaultButtonBackgroundHover: '#222222',
+                      },
+                    },
+                  },
+                  className: {
+                    container: 'auth-container',
+                    button: 'auth-button',
+                    anchor: 'auth-link',
+                  },
+                }}
+                providers={["google"]}
+                view="sign_in"
+              />
+            </div>
           </div>
         </div>
       </DialogContent>
