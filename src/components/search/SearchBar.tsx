@@ -23,6 +23,28 @@ export const SearchBar = () => {
     videos: any[];
     channels: any[];
   }>({ videos: [], channels: [] });
+  const [hiddenChannels, setHiddenChannels] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    const loadHiddenChannels = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+
+      const { data: hiddenChannelsData, error } = await supabase
+        .from('hidden_channels')
+        .select('channel_id')
+        .eq('user_id', session.user.id);
+
+      if (error) {
+        console.error('Error loading hidden channels:', error);
+        return;
+      }
+
+      setHiddenChannels(new Set(hiddenChannelsData.map(hc => hc.channel_id)));
+    };
+
+    loadHiddenChannels();
+  }, []);
 
   useEffect(() => {
     const searchContent = async () => {
@@ -36,7 +58,7 @@ export const SearchBar = () => {
       const [videosResponse, channelsResponse] = await Promise.all([
         supabase
           .from("youtube_videos")
-          .select("id, title, channel_name")
+          .select("id, title, channel_name, channel_id")
           .ilike("title", searchTerm)
           .limit(5),
         supabase
@@ -46,15 +68,24 @@ export const SearchBar = () => {
           .limit(3),
       ]);
 
+      // Filter out videos and channels that are hidden
+      const filteredVideos = (videosResponse.data || []).filter(
+        video => !hiddenChannels.has(video.channel_id)
+      );
+
+      const filteredChannels = (channelsResponse.data || []).filter(
+        channel => !hiddenChannels.has(channel.channel_id)
+      );
+
       setSearchResults({
-        videos: videosResponse.data || [],
-        channels: channelsResponse.data || [],
+        videos: filteredVideos,
+        channels: filteredChannels,
       });
     };
 
     const debounceTimeout = setTimeout(searchContent, 150);
     return () => clearTimeout(debounceTimeout);
-  }, [searchQuery]);
+  }, [searchQuery, hiddenChannels]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;

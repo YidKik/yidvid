@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { VideoCard } from "./VideoCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
 import {
   Pagination,
   PaginationContent,
@@ -32,12 +33,26 @@ export default function VideoGrid({ videos = [], maxVideos = 12, rowSize = 4, is
   const videosPerPage = rowSize * 3;
   const [hiddenChannels, setHiddenChannels] = useState<Set<string>>(new Set());
 
-  // Load hidden channels from localStorage
+  // Load hidden channels from database
   useEffect(() => {
-    const savedHiddenChannels = localStorage.getItem("hiddenChannels");
-    if (savedHiddenChannels) {
-      setHiddenChannels(new Set(JSON.parse(savedHiddenChannels)));
-    }
+    const loadHiddenChannels = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+
+      const { data: hiddenChannelsData, error } = await supabase
+        .from('hidden_channels')
+        .select('channel_id')
+        .eq('user_id', session.user.id);
+
+      if (error) {
+        console.error('Error loading hidden channels:', error);
+        return;
+      }
+
+      setHiddenChannels(new Set(hiddenChannelsData.map(hc => hc.channel_id)));
+    };
+
+    loadHiddenChannels();
   }, []);
 
   // Filter out videos from hidden channels
