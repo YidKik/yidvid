@@ -79,9 +79,9 @@ const Index = () => {
           <Header />
           <main className="mt-8">
             <div className="max-w-4xl mx-auto px-4 py-6">
-              <div className="relative w-[280px] h-14 mx-auto bg-gray-100 rounded-full p-1.5 cursor-pointer mb-10 shadow-sm hover:shadow-md transition-shadow"
+              <div className="relative w-[240px] h-12 mx-auto bg-gray-100 rounded-full p-1.5 cursor-pointer mb-8 shadow-sm hover:shadow-md transition-shadow"
                    onClick={() => setIsMusic(!isMusic)}>
-                <div className="relative w-full h-full flex items-center justify-between px-8 text-base font-medium">
+                <div className="relative w-full h-full flex items-center justify-between px-8 text-sm font-medium">
                   <span className={`z-10 transition-colors duration-200 ${!isMusic ? 'text-white' : 'text-gray-600'}`}>
                     Videos
                   </span>
@@ -89,9 +89,9 @@ const Index = () => {
                     Music
                   </span>
                   <motion.div
-                    className="absolute top-0 left-0 w-[126px] h-full bg-primary rounded-full"
+                    className="absolute top-0 left-0 w-[108px] h-full bg-primary rounded-full"
                     animate={{
-                      x: isMusic ? 148 : 2
+                      x: isMusic ? 128 : 2
                     }}
                     transition={{
                       type: "spring",
