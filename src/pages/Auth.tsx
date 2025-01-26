@@ -14,6 +14,7 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
   const [isSignUp, setIsSignUp] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -24,6 +25,11 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
         const { error } = await supabase.auth.signUp({
           email,
           password,
+          options: {
+            data: {
+              name: name,
+            },
+          },
         });
 
         if (error) throw error;
@@ -60,6 +66,19 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+          {isSignUp && (
+            <div className="space-y-2">
+              <Input
+                id="name"
+                type="text"
+                placeholder="Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="border border-input rounded-md"
+                required
+              />
+            </div>
+          )}
           <div className="space-y-2">
             <Input
               id="email"
@@ -67,6 +86,7 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              className="border border-input rounded-md"
               required
             />
           </div>
@@ -77,6 +97,7 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              className="border border-input rounded-md"
               required
             />
           </div>
@@ -87,7 +108,7 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
             <button
               type="button"
               onClick={() => setIsSignUp(!isSignUp)}
-              className="text-sm text-primary hover:text-primary/80"
+              className="text-sm text-muted-foreground"
             >
               {isSignUp ? "Already have an account? Sign In" : "Need an account? Sign Up"}
             </button>
