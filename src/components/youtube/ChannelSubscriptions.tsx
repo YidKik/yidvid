@@ -114,27 +114,29 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
             {subscriptions.map((subscription) => (
               <div
                 key={subscription.channel.channel_id}
-                className="flex-shrink-0 w-[200px] p-4 rounded-lg bg-[#F8F8F8] hover:bg-[#F1F1F1] transition-colors relative group"
+                className="flex-shrink-0 w-[200px] p-4 rounded-lg bg-[#F8F8F8] hover:bg-[#F1F1F1] transition-colors relative group flex flex-col h-[280px]"
               >
-                {subscription.channel.thumbnail_url ? (
-                  <img
-                    src={subscription.channel.thumbnail_url}
-                    alt={subscription.channel.title}
-                    className="w-20 h-20 rounded-full mx-auto mb-3"
-                  />
-                ) : (
-                  <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
-                    <Youtube className="w-10 h-10 text-primary" />
-                  </div>
-                )}
-                <h4 className="text-sm font-medium text-center text-[#333333] line-clamp-2 mb-3">
-                  {subscription.channel.title}
-                </h4>
+                <div className="flex-grow flex flex-col items-center">
+                  {subscription.channel.thumbnail_url ? (
+                    <img
+                      src={subscription.channel.thumbnail_url}
+                      alt={subscription.channel.title}
+                      className="w-20 h-20 rounded-full mx-auto mb-3"
+                    />
+                  ) : (
+                    <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
+                      <Youtube className="w-10 h-10 text-primary" />
+                    </div>
+                  )}
+                  <h4 className="text-sm font-medium text-center text-[#333333] line-clamp-2 mb-3">
+                    {subscription.channel.title}
+                  </h4>
+                </div>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => handleUnsubscribe(subscription.channel.channel_id)}
-                  className="w-full text-destructive hover:text-destructive hover:bg-destructive/10"
+                  className="w-full text-destructive hover:text-destructive hover:bg-destructive/10 mt-auto"
                 >
                   Unsubscribe
                 </Button>
