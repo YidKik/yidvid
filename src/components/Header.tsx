@@ -2,7 +2,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Settings, LogOut, LayoutDashboard, Search, Sunset } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
@@ -305,17 +304,9 @@ export const Header = () => {
                 className="text-primary hover:text-primary/80 transition-all duration-300 hover:scale-110 hover:rotate-12 cursor-pointer" 
                 onClick={handleSignOut}
               />
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-medium">
-                  {session.user.user_metadata.full_name || profile?.name || "User"}
-                </span>
-                <Avatar>
-                  <AvatarImage src={session.user.user_metadata.avatar_url} />
-                  <AvatarFallback>
-                    {(session.user.user_metadata.full_name || profile?.name || "U").charAt(0).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-              </div>
+              <span className="text-sm font-medium">
+                {session.user.user_metadata.full_name || profile?.name || "User"}
+              </span>
             </div>
           ) : (
             <>
