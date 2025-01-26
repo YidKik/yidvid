@@ -13,6 +13,7 @@ const ChannelDetails = () => {
   const { id: channelId } = useParams();
   const [showDescription, setShowDescription] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
+  const [isRefetching, setIsRefetching] = useState(false);
 
   // Check subscription status
   const checkSubscription = async () => {
@@ -101,8 +102,8 @@ const ChannelDetails = () => {
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 
-  // Fetch videos with improved reliability
-  const { data: videos, isLoading: isLoadingVideos } = useQuery({
+  // Fetch videos with improved reliability and refetching
+  const { data: videos, isLoading: isLoadingVideos, refetch: refetchVideos } = useQuery({
     queryKey: ["channel-videos", channelId],
     queryFn: async () => {
       if (!channelId) {
@@ -121,40 +122,59 @@ const ChannelDetails = () => {
         throw error;
       }
 
-      // Trigger a video fetch if no videos are found
+      // If no videos found, trigger a fetch and retry
       if (!data || data.length === 0) {
-        try {
-          await fetch(`https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/fetch-youtube-videos`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${process.env.SUPABASE_ANON_KEY}`,
-            },
-            body: JSON.stringify({ channels: [channelId] })
-          });
-          
-          // Retry fetching videos after triggering the fetch
-          const { data: refetchedData, error: refetchError } = await supabase
-            .from("youtube_videos")
-            .select("*")
-            .eq("channel_id", channelId)
-            .order("uploaded_at", { ascending: false });
+        if (!isRefetching) {
+          setIsRefetching(true);
+          try {
+            const response = await fetch(`https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/fetch-youtube-videos`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${process.env.SUPABASE_ANON_KEY}`,
+              },
+              body: JSON.stringify({ channels: [channelId] })
+            });
+            
+            if (!response.ok) {
+              throw new Error('Failed to fetch videos');
+            }
 
-          if (refetchError) throw refetchError;
-          return refetchedData || [];
-        } catch (fetchError) {
-          console.error("Error fetching videos:", fetchError);
-          toast.error("Failed to load videos");
-          return [];
+            // Wait a moment for the videos to be processed
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            
+            // Retry fetching videos after the fetch function has run
+            const { data: refetchedData, error: refetchError } = await supabase
+              .from("youtube_videos")
+              .select("*")
+              .eq("channel_id", channelId)
+              .order("uploaded_at", { ascending: false });
+
+            if (refetchError) throw refetchError;
+            setIsRefetching(false);
+            return refetchedData || [];
+          } catch (fetchError) {
+            console.error("Error fetching videos:", fetchError);
+            toast.error("Failed to load videos");
+            setIsRefetching(false);
+            return [];
+          }
         }
       }
 
-      return data;
+      return data || [];
     },
     retry: 3,
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
     enabled: !!channelId && !!channel,
   });
+
+  useEffect(() => {
+    if (videos && videos.length === 0 && !isLoadingVideos && !isRefetching) {
+      toast.loading("Fetching channel videos...");
+      refetchVideos();
+    }
+  }, [videos, isLoadingVideos, isRefetching]);
 
   if (isLoadingChannel || isLoadingVideos) {
     return (
