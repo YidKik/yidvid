@@ -49,62 +49,61 @@ export const Header = () => {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-14 items-center">
+      <div className="container flex h-14 items-center justify-between">
         <Link to="/" className="flex items-center space-x-2">
           <span className="text-xl font-bold">Jewish Tube</span>
         </Link>
 
-        <div className="flex flex-1 items-center justify-end space-x-2">
-          <form onSubmit={handleSearch} className="flex items-center">
-            <div className="relative">
-              <Search className={`absolute left-2 top-1/2 transform -translate-y-1/2 ${isMobile ? 'h-4 w-4' : 'h-5 w-5'} text-muted-foreground`} />
-              <Input
-                type="search"
-                placeholder="Search..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className={`w-full ${isMobile ? 'h-8 pl-8 text-sm' : 'h-10 pl-10'} pr-4 md:w-[300px] lg:w-[400px]`}
-              />
-            </div>
-          </form>
+        <form onSubmit={handleSearch} className="flex-1 flex justify-center max-w-2xl mx-4">
+          <div className="relative w-full">
+            <Search className={`absolute left-2 top-1/2 transform -translate-y-1/2 ${isMobile ? 'h-4 w-4' : 'h-5 w-5'} text-muted-foreground`} />
+            <Input
+              type="search"
+              placeholder="Search..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className={`w-full ${isMobile ? 'h-8 pl-8 text-sm' : 'h-10 pl-10'} pr-4`}
+            />
+          </div>
+        </form>
 
+        <div className="flex items-center space-x-2">
           {session ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <Bell className="h-5 w-5" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <ScrollArea className="h-[300px] w-[300px] p-4">
-                  <p className="text-sm text-muted-foreground">No new notifications</p>
-                </ScrollArea>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          ) : null}
-
-          {session ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <Settings className="h-5 w-5" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => navigate("/dashboard")}>
-                  <LayoutDashboard className="mr-2 h-4 w-4" />
-                  Dashboard
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate("/settings")}>
-                  <Settings className="mr-2 h-4 w-4" />
-                  Settings
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleLogout}>
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Logout
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <Bell className="h-5 w-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <ScrollArea className="h-[300px] w-[300px] p-4">
+                    <p className="text-sm text-muted-foreground">No new notifications</p>
+                  </ScrollArea>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <Settings className="h-5 w-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => navigate("/dashboard")}>
+                    <LayoutDashboard className="mr-2 h-4 w-4" />
+                    Dashboard
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate("/settings")}>
+                    <Settings className="mr-2 h-4 w-4" />
+                    Settings
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleLogout}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </>
           ) : (
             <Button onClick={() => setIsAuthOpen(true)}>Login</Button>
           )}
