@@ -15,9 +15,9 @@ export const BackButton = ({ className }: BackButtonProps) => {
       variant="ghost"
       size="icon"
       onClick={() => navigate("/")}
-      className={cn("fixed top-20 left-4 rounded-full border border-foreground/20 hover:bg-accent/10 z-10", className)}
+      className={cn("fixed top-20 left-4 hover:bg-transparent", className)}
     >
-      <ArrowLeft className="h-5 w-5 text-red-500" />
+      <ArrowLeft className="h-5 w-5 text-black" />
     </Button>
   );
 };
