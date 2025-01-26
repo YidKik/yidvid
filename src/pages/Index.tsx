@@ -45,7 +45,7 @@ const MainContent = () => {
   });
 
   // Sort videos by views to get most viewed videos
-  const mostViewedVideos = videos ? [...videos].sort((a, b) => (b.views || 0) - (a.views || 0)) : [];
+  const sortedVideos = videos ? [...videos].sort((a, b) => (b.views || 0) - (a.views || 0)) : [];
 
   return (
     <div className={`flex-1 transition-all duration-300 ${
@@ -101,9 +101,9 @@ const MainContent = () => {
                     isLoading={isLoading}
                   />
                 </div>
-                {mostViewedVideos && mostViewedVideos.length > 0 && (
+                {sortedVideos && sortedVideos.length > 0 && (
                   <div className="mt-8 md:mt-12">
-                    <MostViewedVideos videos={mostViewedVideos} />
+                    <MostViewedVideos videos={sortedVideos} />
                   </div>
                 )}
                 <div className="channels-grid mt-8 md:mt-12">
