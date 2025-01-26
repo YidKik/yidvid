@@ -111,7 +111,7 @@ export const Header = () => {
               </form>
             </PopoverTrigger>
             {searchQuery.trim() && (
-              <PopoverContent className="w-[400px] p-0" align="start">
+              <PopoverContent className="w-[400px] p-0 bg-white border border-gray-200 shadow-lg" align="start">
                 <ScrollArea className="h-[300px]">
                   {isLoading ? (
                     <div className="p-4 text-sm text-gray-500">Searching...</div>
