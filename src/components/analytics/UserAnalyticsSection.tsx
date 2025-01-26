@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
-import { Clock, Eye, Calendar } from "lucide-react";
+import { Clock, Eye, Layout } from "lucide-react";
 
 export const UserAnalyticsSection = () => {
   const { data: analytics } = useQuery({
@@ -10,30 +10,55 @@ export const UserAnalyticsSection = () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return null;
 
-      // Fetch analytics data
+      // Fetch video history for unique videos count
+      const { data: videoHistory, error: videoError } = await supabase
+        .from("video_history")
+        .select("video_id")
+        .eq("user_id", session.user.id);
+
+      if (videoError) {
+        console.error("Error fetching video history:", videoError);
+        return null;
+      }
+
+      // Get unique videos viewed
+      const uniqueVideos = new Set(videoHistory?.map(h => h.video_id));
+
+      // Get unique channels from video history
+      const { data: channelData, error: channelError } = await supabase
+        .from("video_history")
+        .select(`
+          video:youtube_videos!inner (
+            channel_id
+          )
+        `)
+        .eq("user_id", session.user.id);
+
+      if (channelError) {
+        console.error("Error fetching channel data:", channelError);
+        return null;
+      }
+
+      // Get unique channels viewed
+      const uniqueChannels = new Set(channelData?.map(d => d.video.channel_id));
+
+      // Calculate total watch time
       const { data: sessions } = await supabase
         .from("user_analytics")
         .select("*")
         .eq("user_id", session.user.id);
 
-      if (!sessions) return null;
-
-      // Calculate metrics
-      const totalSessions = sessions.length;
-      const totalTimeSpent = sessions.reduce((total, session) => {
+      const totalTimeSpent = sessions?.reduce((total, session) => {
         if (!session.session_end) return total;
         const start = new Date(session.session_start);
         const end = new Date(session.session_end);
         return total + (end.getTime() - start.getTime());
-      }, 0);
-
-      // Get unique pages viewed (excluding duplicates)
-      const uniquePagesViewed = new Set(sessions.map(s => s.page_path)).size;
+      }, 0) || 0;
 
       return {
-        totalSessions,
         totalTimeSpent,
-        uniquePagesViewed,
+        uniqueVideosViewed: uniqueVideos.size,
+        uniqueChannelsViewed: uniqueChannels.size,
       };
     },
   });
@@ -66,17 +91,17 @@ export const UserAnalyticsSection = () => {
 
         <Card className="p-6 flex flex-col items-center text-center">
           <Eye className="h-8 w-8 mb-2" />
-          <h3 className="text-lg font-medium">Pages Viewed</h3>
+          <h3 className="text-lg font-medium">Videos Viewed</h3>
           <p className="text-2xl font-bold mt-2">
-            {analytics.uniquePagesViewed}
+            {analytics.uniqueVideosViewed}
           </p>
         </Card>
 
         <Card className="p-6 flex flex-col items-center text-center">
-          <Calendar className="h-8 w-8 mb-2" />
-          <h3 className="text-lg font-medium">Total Sessions</h3>
+          <Layout className="h-8 w-8 mb-2" />
+          <h3 className="text-lg font-medium">Total Channels Viewed</h3>
           <p className="text-2xl font-bold mt-2">
-            {analytics.totalSessions}
+            {analytics.uniqueChannelsViewed}
           </p>
         </Card>
       </div>
