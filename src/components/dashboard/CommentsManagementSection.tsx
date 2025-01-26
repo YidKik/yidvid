@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
-import { Trash2, Edit, MessageSquare } from "lucide-react";
+import { Trash2, Edit, MessageSquare, Bell } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
@@ -49,7 +49,7 @@ export const CommentsManagementSection = () => {
   const [editingComment, setEditingComment] = useState<Comment | null>(null);
   const [editedContent, setEditedContent] = useState("");
 
-  const { data: notifications } = useQuery({
+  const { data: notifications, refetch: refetchNotifications } = useQuery({
     queryKey: ["admin-notifications"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -115,6 +115,7 @@ export const CommentsManagementSection = () => {
         },
         () => {
           refetchComments();
+          refetchNotifications();
         }
       )
       .subscribe();
@@ -122,7 +123,7 @@ export const CommentsManagementSection = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [refetchComments]);
+  }, [refetchComments, refetchNotifications]);
 
   const handleDeleteComment = async (commentId: string) => {
     try {
@@ -137,6 +138,10 @@ export const CommentsManagementSection = () => {
         title: "Success",
         description: "Comment deleted successfully",
       });
+      
+      // After deleting, refetch both comments and notifications
+      refetchComments();
+      refetchNotifications();
     } catch (error: any) {
       toast({
         title: "Error",
@@ -162,10 +167,33 @@ export const CommentsManagementSection = () => {
         description: "Comment updated successfully",
       });
       setEditingComment(null);
+      
+      // After editing, refetch both comments and notifications
+      refetchComments();
+      refetchNotifications();
     } catch (error: any) {
       toast({
         title: "Error",
         description: "Error updating comment: " + error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const markNotificationsAsRead = async () => {
+    try {
+      const { error } = await supabase
+        .from("admin_notifications")
+        .update({ is_read: true })
+        .eq("type", "new_comment")
+        .eq("is_read", false);
+
+      if (error) throw error;
+      refetchNotifications();
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: "Error marking notifications as read: " + error.message,
         variant: "destructive",
       });
     }
@@ -177,8 +205,12 @@ export const CommentsManagementSection = () => {
         <div className="flex items-center gap-2">
           <h2 className="text-lg font-semibold">Comments Management</h2>
           {notifications && notifications.length > 0 && (
-            <Badge variant="destructive" className="flex items-center gap-1">
-              <MessageSquare className="h-3 w-3" />
+            <Badge 
+              variant="destructive" 
+              className="flex items-center gap-1 cursor-pointer hover:bg-destructive/90 transition-colors"
+              onClick={markNotificationsAsRead}
+            >
+              <Bell className="h-3 w-3" />
               {notifications.length} new
             </Badge>
           )}
