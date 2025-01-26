@@ -10,7 +10,7 @@ export const BackButton = () => {
       variant="ghost"
       size="icon"
       onClick={() => navigate("/")}
-      className="absolute top-4 left-4 rounded-full border border-foreground/20 hover:bg-accent/10"
+      className="fixed top-20 left-4 rounded-full border border-foreground/20 hover:bg-accent/10 z-10"
     >
       <ArrowLeft className="h-5 w-5" />
     </Button>
