@@ -37,6 +37,7 @@ export const Header = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [searchError, setSearchError] = useState<string | null>(null);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [hiddenChannels, setHiddenChannels] = useState<Set<string>>(new Set());
   
   const { data: session, refetch: refetchSession } = useQuery({
     queryKey: ["session"],
@@ -45,6 +46,28 @@ export const Header = () => {
       return data.session;
     },
   });
+
+  // Load hidden channels
+  useEffect(() => {
+    const loadHiddenChannels = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+
+      const { data: hiddenChannelsData, error } = await supabase
+        .from('hidden_channels')
+        .select('channel_id')
+        .eq('user_id', session.user.id);
+
+      if (error) {
+        console.error('Error loading hidden channels:', error);
+        return;
+      }
+
+      setHiddenChannels(new Set(hiddenChannelsData.map(hc => hc.channel_id)));
+    };
+
+    loadHiddenChannels();
+  }, []);
 
   const { data: profile } = useQuery({
     queryKey: ["profile", session?.user?.id],
@@ -111,7 +134,7 @@ export const Header = () => {
         const [videosResponse, channelsResponse] = await Promise.all([
           supabase
             .from("youtube_videos")
-            .select("id, title, channel_name")
+            .select("id, title, channel_name, channel_id")
             .ilike("title", searchTerm)
             .limit(5),
           supabase
@@ -131,9 +154,19 @@ export const Header = () => {
           throw new Error(channelsResponse.error.message);
         }
 
+        // Filter out videos from hidden channels
+        const filteredVideos = (videosResponse.data || []).filter(
+          video => !hiddenChannels.has(video.channel_id)
+        );
+
+        // Filter out hidden channels
+        const filteredChannels = (channelsResponse.data || []).filter(
+          channel => !hiddenChannels.has(channel.channel_id)
+        );
+
         setSearchResults({
-          videos: videosResponse.data || [],
-          channels: channelsResponse.data || [],
+          videos: filteredVideos,
+          channels: filteredChannels,
         });
       } catch (error: any) {
         console.error("Search error:", error);
@@ -146,7 +179,7 @@ export const Header = () => {
 
     const debounceTimeout = setTimeout(searchContent, 300);
     return () => clearTimeout(debounceTimeout);
-  }, [searchQuery]);
+  }, [searchQuery, hiddenChannels]);
 
   const handleSignOut = async () => {
     const { error } = await supabase.auth.signOut();
@@ -187,7 +220,7 @@ export const Header = () => {
               className="w-full pl-8 h-9 bg-transparent border focus:ring-0 text-sm placeholder:text-muted-foreground rounded-full max-w-full"
             />
           </div>
-          {showResults && searchQuery && (isSearching || hasResults || searchError) && (
+          {showResults && searchQuery && (isSearching || searchResults.videos.length > 0 || searchResults.channels.length > 0 || searchError) && (
             <div className="absolute w-full max-w-xl mt-1 bg-white rounded-md shadow-lg border border-gray-100 overflow-hidden z-50">
               {isSearching ? (
                 <div className="px-4 py-2 text-sm text-gray-500">
@@ -228,7 +261,7 @@ export const Header = () => {
                       <p className="text-sm text-gray-500">{video.channel_name}</p>
                     </Link>
                   ))}
-                  {!hasResults && (
+                  {!searchResults.videos.length && !searchResults.channels.length && (
                     <div className="px-4 py-2 text-sm text-gray-500">
                       No results found
                     </div>
