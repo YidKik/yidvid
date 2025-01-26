@@ -186,40 +186,40 @@ export type Database = {
       }
       user_preferences: {
         Row: {
-          id: string
-          user_id: string
-          background_color: string
-          text_color: string
-          button_color: string
-          logo_color: string
-          language: string
           autoplay: boolean
+          background_color: string
+          button_color: string
           created_at: string
+          id: string
+          language: string
+          logo_color: string
+          text_color: string
           updated_at: string
+          user_id: string
         }
         Insert: {
-          id?: string
-          user_id: string
-          background_color?: string
-          text_color?: string
-          button_color?: string
-          logo_color?: string
-          language?: string
           autoplay?: boolean
+          background_color?: string
+          button_color?: string
           created_at?: string
+          id?: string
+          language?: string
+          logo_color?: string
+          text_color?: string
           updated_at?: string
+          user_id: string
         }
         Update: {
-          id?: string
-          user_id?: string
-          background_color?: string
-          text_color?: string
-          button_color?: string
-          logo_color?: string
-          language?: string
           autoplay?: boolean
+          background_color?: string
+          button_color?: string
           created_at?: string
+          id?: string
+          language?: string
+          logo_color?: string
+          text_color?: string
           updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -483,7 +483,7 @@ export type Tables<
   TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
     ? keyof (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
         Database[PublicTableNameOrOptions["schema"]]["Views"])
-    : never,
+    : never = never,
 > = PublicTableNameOrOptions extends { schema: keyof Database }
   ? (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
       Database[PublicTableNameOrOptions["schema"]]["Views"])[TableName] extends {
@@ -537,10 +537,10 @@ export type TablesUpdate<
     : never
   : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
     ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
-      Update: infer U
-    }
-    ? U
-    : never
+        Update: infer U
+      }
+      ? U
+      : never
     : never
 
 export type Enums<

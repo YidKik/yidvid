@@ -8,6 +8,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { MostViewedVideos } from "@/components/video/MostViewedVideos";
+import { WelcomeAnimation } from "@/components/WelcomeAnimation";
 
 const Index = () => {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
@@ -55,7 +56,7 @@ const Index = () => {
 
       return (data || []).map(video => ({
         id: video.video_id,
-        uuid: video.id,  // Pass both IDs
+        uuid: video.id,
         title: video.title,
         thumbnail: video.thumbnail,
         channelName: video.channel_name,
@@ -68,6 +69,7 @@ const Index = () => {
 
   return (
     <SidebarProvider defaultOpen={false}>
+      <WelcomeAnimation />
       <div className="min-h-screen flex w-full">
         <Sidebar />
         <div className="flex-1">
