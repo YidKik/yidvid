@@ -118,7 +118,7 @@ export const SearchBar = () => {
 
   return (
     <div className="flex-1 max-w-2xl px-4">
-      <Popover open={open && hasResults} onOpenChange={setOpen}>
+      <Popover open={open && searchQuery.length >= 2} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <div className="relative">
             <Input
@@ -139,6 +139,11 @@ export const SearchBar = () => {
         >
           <Command className="bg-white rounded-xl">
             <CommandList className="max-h-[300px] overflow-y-auto scrollbar-hide">
+              {!hasResults && searchQuery.length >= 2 && (
+                <div className="py-6 text-center text-gray-500">
+                  No results found
+                </div>
+              )}
               {searchResults.channels.length > 0 && (
                 <CommandGroup heading="Channels" className="px-2 text-gray-600">
                   {searchResults.channels.map((channel) => (
