@@ -10,7 +10,8 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 interface VideoGridProps {
   videos?: {
@@ -28,11 +29,30 @@ interface VideoGridProps {
   isLoading?: boolean;
 }
 
-export default function VideoGrid({ videos = [], maxVideos = 12, rowSize = 4, isLoading }: VideoGridProps) {
+export default function VideoGrid({ maxVideos = 12, rowSize = 4 }: VideoGridProps) {
   const [showAll, setShowAll] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [hiddenChannels, setHiddenChannels] = useState<Set<string>>(new Set());
-  const queryClient = useQueryClient();
+
+  // Fetch videos using React Query
+  const { data: videos, isLoading, error } = useQuery({
+    queryKey: ["youtube_videos"],
+    queryFn: async () => {
+      console.log("Fetching videos...");
+      const { data, error } = await supabase
+        .from("youtube_videos")
+        .select("*")
+        .order("uploaded_at", { ascending: false });
+
+      if (error) {
+        console.error("Error fetching videos:", error);
+        throw error;
+      }
+
+      console.log("Fetched videos:", data);
+      return data || [];
+    },
+  });
 
   // Load hidden channels from database
   useEffect(() => {
@@ -70,7 +90,7 @@ export default function VideoGrid({ videos = [], maxVideos = 12, rowSize = 4, is
         (payload) => {
           console.log('Real-time update received:', payload);
           // Invalidate and refetch the videos query
-          queryClient.invalidateQueries({ queryKey: ['youtube_videos'] });
+          // queryClient.invalidateQueries({ queryKey: ['youtube_videos'] });
         }
       )
       .subscribe();
@@ -78,14 +98,24 @@ export default function VideoGrid({ videos = [], maxVideos = 12, rowSize = 4, is
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [queryClient]);
+  }, []);
+
+  if (error) {
+    console.error("Error in VideoGrid:", error);
+    toast.error("Failed to load videos. Please try again later.");
+    return (
+      <div className="text-center p-4">
+        <p className="text-red-500">Failed to load videos. Please try again later.</p>
+      </div>
+    );
+  }
 
   const videosPerPage = rowSize * 3;
 
   // Filter out videos from hidden channels
-  const filteredVideos = videos.filter(
+  const filteredVideos = videos ? videos.filter(
     (video) => !hiddenChannels.has(video.channelId)
-  );
+  ) : [];
 
   // Get unique channel videos for the first page only if not showing all
   const firstPageVideos = filteredVideos.reduce((acc, current) => {
@@ -121,7 +151,7 @@ export default function VideoGrid({ videos = [], maxVideos = 12, rowSize = 4, is
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-4 max-w-[1600px] mx-auto">
-        {Array.from({ length: maxVideos || 12 }).map((_, index) => (
+        {Array.from({ length: maxVideos }).map((_, index) => (
           <div key={index} className="space-y-3">
             <Skeleton className="aspect-video w-full" />
             <div className="flex gap-3">
@@ -140,7 +170,7 @@ export default function VideoGrid({ videos = [], maxVideos = 12, rowSize = 4, is
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-4 max-w-[1600px] mx-auto">
-        {currentVideos.map((video) => (
+        {currentVideos?.map((video) => (
           <VideoCard
             key={video.id}
             id={video.video_id}
