@@ -45,7 +45,7 @@ export const Header = () => {
   }, []);
 
   // Fetch notifications for the current user
-  const { data: notifications } = useQuery({
+  const { data: notifications, refetch: refetchNotifications } = useQuery({
     queryKey: ["video-notifications", session?.user?.id],
     queryFn: async () => {
       const { data: notifications, error } = await supabase
@@ -87,6 +87,9 @@ export const Header = () => {
     if (error) {
       console.error("Error marking notifications as read:", error);
       toast.error("Failed to mark notifications as read");
+    } else {
+      // Refetch notifications to update the UI
+      refetchNotifications();
     }
   };
 
