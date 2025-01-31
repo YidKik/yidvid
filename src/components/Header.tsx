@@ -113,7 +113,7 @@ export const Header = () => {
         .from("youtube_videos")
         .select("id, title, thumbnail, channel_name")
         .ilike("title", `%${debouncedSearch}%`)
-        .limit(10); // Increased limit for more scroll content
+        .limit(10);
 
       if (error) {
         console.error("Error searching videos:", error);
