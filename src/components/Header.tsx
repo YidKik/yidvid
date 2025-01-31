@@ -148,8 +148,8 @@ export const Header = () => {
           >
             <PopoverTrigger asChild>
               <form onSubmit={handleSearch} className="w-full max-w-lg flex items-center">
-                <div className="relative w-full">
-                  <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <div className="relative w-full flex items-center gap-2">
+                  <Search className="h-4 w-4 text-[#222222]" />
                   <input
                     ref={searchInputRef}
                     type="search"
@@ -167,7 +167,7 @@ export const Header = () => {
                         setIsSearchOpen(true);
                       }
                     }}
-                    className="w-full pl-8 pr-4 py-2 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-gray-200 bg-white text-gray-900"
+                    className="w-full bg-transparent border-none text-sm text-[#222222] placeholder:text-[#222222]/60 focus:outline-none focus:ring-0"
                     autoComplete="off"
                   />
                 </div>
