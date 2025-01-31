@@ -2,9 +2,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Settings, LogOut, LayoutDashboard, Bell, Search } from "lucide-react";
+import { Settings, LogOut, LayoutDashboard, Bell } from "lucide-react";
 import { toast } from "sonner";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import Auth from "@/pages/Auth";
 import { useIsMobile } from "@/hooks/use-mobile";
 import {
@@ -14,19 +14,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { useDebounce } from "@/hooks/use-debounce";
 import { Badge } from "@/components/ui/badge";
 
 export const Header = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const [isAuthOpen, setIsAuthOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const [session, setSession] = useState(null);
-  const searchInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     // Set up initial session
@@ -93,37 +87,6 @@ export const Header = () => {
     }
   };
 
-  const { data: searchResults, isLoading } = useQuery({
-    queryKey: ["search", debouncedSearchQuery],
-    queryFn: async () => {
-      if (!debouncedSearchQuery.trim()) return [];
-      
-      try {
-        const { data: videos, error } = await supabase
-          .from("youtube_videos")
-          .select("*")
-          .or(`title.ilike.%${debouncedSearchQuery}%,channel_name.ilike.%${debouncedSearchQuery}%,description.ilike.%${debouncedSearchQuery}%`)
-          .order('views', { ascending: false })
-          .limit(10);
-
-        if (error) {
-          console.error("Error searching videos:", error);
-          toast.error("Failed to search videos");
-          return [];
-        }
-
-        return videos || [];
-      } catch (error) {
-        console.error("Error in search query:", error);
-        toast.error("Search failed. Please try again.");
-        return [];
-      }
-    },
-    enabled: debouncedSearchQuery.trim().length > 0,
-    staleTime: 30000, // Cache results for 30 seconds
-    retry: 2,
-  });
-
   const handleLogout = async () => {
     try {
       const { error } = await supabase.auth.signOut();
@@ -136,35 +99,6 @@ export const Header = () => {
       toast.error("Failed to log out");
     }
   };
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
-      setIsSearchOpen(false);
-      setSearchQuery("");
-    }
-  };
-
-  // Effect to maintain focus when popover opens
-  useEffect(() => {
-    if (isSearchOpen && searchInputRef.current) {
-      searchInputRef.current.focus();
-    }
-  }, [isSearchOpen]);
-
-  // Handle escape key to close search
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        setIsSearchOpen(false);
-        setSearchQuery("");
-      }
-    };
-
-    document.addEventListener('keydown', handleEscape);
-    return () => document.removeEventListener('keydown', handleEscape);
-  }, []);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
@@ -186,85 +120,7 @@ export const Header = () => {
           />
         </Link>
 
-        <div className="flex-1 flex justify-center px-4">
-          <Popover 
-            open={isSearchOpen} 
-            onOpenChange={(open) => {
-              setIsSearchOpen(open);
-              if (!open) {
-                setSearchQuery("");
-              }
-            }}
-          >
-            <PopoverTrigger asChild>
-              <form onSubmit={handleSearch} className="w-full max-w-lg flex items-center">
-                <div className="relative w-full flex items-center gap-2">
-                  <Search className="h-4 w-4 text-[#222222]" />
-                  <input
-                    ref={searchInputRef}
-                    type="search"
-                    placeholder="Search..."
-                    value={searchQuery}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      setSearchQuery(value);
-                      if (value.trim()) {
-                        setIsSearchOpen(true);
-                      }
-                    }}
-                    onFocus={() => {
-                      if (searchQuery.trim()) {
-                        setIsSearchOpen(true);
-                      }
-                    }}
-                    className="w-full bg-transparent border-none text-sm text-[#222222] placeholder:text-[#222222]/60 focus:outline-none focus:ring-0"
-                    autoComplete="off"
-                  />
-                </div>
-              </form>
-            </PopoverTrigger>
-            <PopoverContent 
-              className="w-[400px] p-0 bg-white border border-gray-200 shadow-lg" 
-              align="start"
-              onInteractOutside={() => {
-                setIsSearchOpen(false);
-                setSearchQuery("");
-              }}
-            >
-              <ScrollArea className="h-[300px]">
-                {isLoading ? (
-                  <div className="p-4 text-sm text-gray-500">Searching...</div>
-                ) : searchResults?.length === 0 ? (
-                  <div className="p-4 text-sm text-gray-500">No results found</div>
-                ) : (
-                  <div className="py-2">
-                    {searchResults?.map((video) => (
-                      <div
-                        key={video.id}
-                        onClick={() => {
-                          navigate(`/video/${video.id}`);
-                          setIsSearchOpen(false);
-                          setSearchQuery("");
-                        }}
-                        className="flex items-center gap-3 p-2 hover:bg-gray-100 cursor-pointer"
-                      >
-                        <img
-                          src={video.thumbnail}
-                          alt={video.title}
-                          className="w-16 h-12 object-cover rounded"
-                        />
-                        <div className="flex flex-col">
-                          <span className="text-sm font-medium line-clamp-1">{video.title}</span>
-                          <span className="text-xs text-gray-500">{video.channel_name}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </ScrollArea>
-            </PopoverContent>
-          </Popover>
-        </div>
+        <div className="flex-1" />
 
         <div className="flex items-center space-x-2">
           {session ? (
