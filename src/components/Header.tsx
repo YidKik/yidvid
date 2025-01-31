@@ -112,11 +112,13 @@ export const Header = () => {
       console.log("Searching for:", debouncedSearch);
       
       try {
+        // Using a more comprehensive search approach
         const { data: videos, error } = await supabase
           .from("youtube_videos")
           .select("id, title, thumbnail, channel_name")
-          .textSearch('title', `'${debouncedSearch}'`)
-          .limit(10);
+          .or(`title.ilike.%${debouncedSearch}%, channel_name.ilike.%${debouncedSearch}%`)
+          .order('created_at', { ascending: false })
+          .limit(50); // Increased limit to show more results
 
         if (error) {
           console.error("Error searching videos:", error);
@@ -133,7 +135,8 @@ export const Header = () => {
       }
     },
     enabled: debouncedSearch.length > 0,
-    retry: 1,
+    retry: 2,
+    staleTime: 1000 * 60, // Cache results for 1 minute
   });
 
   const handleSearch = (e: React.FormEvent) => {
