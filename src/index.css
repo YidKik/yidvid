@@ -49,6 +49,9 @@
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Custom cursor size */
+    --cursor-size: 12px;
   }
 
   .dark {
@@ -103,13 +106,47 @@
     @apply border-border;
   }
 
+  /* Custom cursor styles */
+  html, 
+  body, 
+  #root {
+    cursor: none !important;
+  }
+
+  /* Create custom cursor */
+  body::before {
+    content: '';
+    position: fixed;
+    width: var(--cursor-size);
+    height: var(--cursor-size);
+    background: #ea384c;
+    border-radius: 0;
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s ease;
+    display: block;
+  }
+
+  /* Update cursor position on mouse move */
   body {
     @apply bg-background text-foreground;
     background-color: var(--background-custom);
     color: var(--text-custom);
   }
 
-  /* Search bar specific styles - these won't be affected by color customization */
+  /* Add hover effect for interactive elements */
+  a:hover,
+  button:hover,
+  [role="button"]:hover,
+  input:hover,
+  select:hover,
+  textarea:hover {
+    cursor: none !important;
+  }
+
+  /* Search bar specific styles */
   .search-input {
     background-color: var(--search-background) !important;
     color: var(--search-text) !important;
@@ -180,3 +217,23 @@
     color: var(--logo-custom);
   }
 }
+
+/* Custom cursor movement script */
+@layer utilities {
+  @keyframes cursorMove {
+    from {
+      transform: translate(var(--cursor-x, -100px), var(--cursor-y, -100px)) rotate(0deg);
+    }
+    to {
+      transform: translate(var(--cursor-x, -100px), var(--cursor-y, -100px)) rotate(360deg);
+    }
+  }
+}
+
+/* Add this script to the root element */
+<script>
+document.addEventListener('mousemove', (e) => {
+  document.body.style.setProperty('--cursor-x', `${e.clientX}px`);
+  document.body.style.setProperty('--cursor-y', `${e.clientY}px`);
+});
+</script>
