@@ -109,20 +109,31 @@ export const Header = () => {
     queryFn: async () => {
       if (!debouncedSearch.trim()) return [];
       
-      const { data: videos, error } = await supabase
-        .from("youtube_videos")
-        .select("id, title, thumbnail, channel_name")
-        .ilike("title", `%${debouncedSearch}%`)
-        .limit(10);
+      console.log("Searching for:", debouncedSearch);
+      
+      try {
+        const { data: videos, error } = await supabase
+          .from("youtube_videos")
+          .select("id, title, thumbnail, channel_name")
+          .textSearch('title', `'${debouncedSearch}'`)
+          .limit(10);
 
-      if (error) {
-        console.error("Error searching videos:", error);
+        if (error) {
+          console.error("Error searching videos:", error);
+          toast.error("Failed to search videos");
+          return [];
+        }
+
+        console.log("Search results:", videos);
+        return videos || [];
+      } catch (error) {
+        console.error("Unexpected error during search:", error);
+        toast.error("An unexpected error occurred");
         return [];
       }
-
-      return videos;
     },
     enabled: debouncedSearch.length > 0,
+    retry: 1,
   });
 
   const handleSearch = (e: React.FormEvent) => {
