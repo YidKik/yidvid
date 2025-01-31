@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Settings, LogOut, LayoutDashboard, Bell } from "lucide-react";
+import { Settings, LogOut, LayoutDashboard, Bell, Search } from "lucide-react";
 import { toast } from "sonner";
 import { useState, useEffect } from "react";
 import Auth from "@/pages/Auth";
@@ -15,12 +15,14 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 
 export const Header = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [session, setSession] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     // Set up initial session
@@ -38,7 +40,6 @@ export const Header = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  // Fetch notifications for the current user
   const { data: notifications, refetch: refetchNotifications } = useQuery({
     queryKey: ["video-notifications", session?.user?.id],
     queryFn: async () => {
@@ -100,6 +101,13 @@ export const Header = () => {
     }
   };
 
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
+    }
+  };
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
       <div className="container flex h-14 items-center">
@@ -120,7 +128,20 @@ export const Header = () => {
           />
         </Link>
 
-        <div className="flex-1" />
+        <div className="flex-1 flex justify-center px-4">
+          <form onSubmit={handleSearch} className="w-full max-w-lg flex items-center relative group">
+            <Input
+              type="search"
+              placeholder="Search..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-transparent border-none text-[#555555] placeholder:text-[#555555] focus-visible:ring-0 focus-visible:ring-offset-0"
+            />
+            <Search 
+              className="absolute right-2 w-4 h-4 text-[#555555] pointer-events-none" 
+            />
+          </form>
+        </div>
 
         <div className="flex items-center space-x-2">
           {session ? (
@@ -131,7 +152,6 @@ export const Header = () => {
                     variant="ghost" 
                     size="icon" 
                     className="bg-[#222222] hover:bg-[#333333] text-white relative"
-                    onClick={markNotificationsAsRead}
                   >
                     <Bell className="h-5 w-5" />
                     {notifications && notifications.length > 0 && (
