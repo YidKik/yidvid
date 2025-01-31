@@ -164,7 +164,7 @@ export const Header = () => {
                 setShowResults(true);
               }}
               onFocus={() => setShowResults(true)}
-              className="w-full bg-transparent border-none text-[#555555] placeholder:text-[#555555] focus-visible:ring-0 focus-visible:ring-offset-0"
+              className="w-full bg-transparent border-none text-[#555555] placeholder:text-[#555555] focus-visible:ring-0 focus-visible:ring-offset-0 [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden [&::-webkit-search-results-button]:hidden [&::-webkit-search-results-decoration]:hidden"
             />
             <Search 
               className="absolute right-2 w-4 h-4 text-[#555555] pointer-events-none" 
