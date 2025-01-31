@@ -8,12 +8,107 @@ import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+
+const INITIAL_VIDEOS_COUNT = 6;
 
 const ChannelDetails = () => {
   const { id: channelId } = useParams();
   const [showDescription, setShowDescription] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
-  const [isRefetching, setIsRefetching] = useState(false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [displayedVideos, setDisplayedVideos] = useState<any[]>([]);
+
+  // Fetch channel details
+  const { data: channel, isLoading: isLoadingChannel } = useQuery({
+    queryKey: ["channel", channelId],
+    queryFn: async () => {
+      if (!channelId) throw new Error("Channel ID is required");
+
+      const { data, error } = await supabase
+        .from("youtube_channels")
+        .select("*")
+        .eq("channel_id", channelId)
+        .maybeSingle();
+
+      if (error) {
+        console.error("Error fetching channel:", error);
+        toast.error("Failed to load channel details");
+        throw error;
+      }
+
+      if (!data) {
+        toast.error("Channel not found");
+        throw new Error("Channel not found");
+      }
+
+      return data;
+    },
+  });
+
+  // Initial fetch of videos with limit
+  const { data: initialVideos, isLoading: isLoadingInitialVideos } = useQuery({
+    queryKey: ["initial-channel-videos", channelId],
+    queryFn: async () => {
+      if (!channelId) throw new Error("Channel ID is required");
+
+      const { data, error } = await supabase
+        .from("youtube_videos")
+        .select("*")
+        .eq("channel_id", channelId)
+        .order("uploaded_at", { ascending: false })
+        .limit(INITIAL_VIDEOS_COUNT);
+
+      if (error) {
+        console.error("Error fetching initial videos:", error);
+        toast.error("Failed to load videos");
+        throw error;
+      }
+
+      return data || [];
+    },
+    enabled: !!channelId && !!channel,
+  });
+
+  // Background fetch for remaining videos
+  const { data: allVideos } = useQuery({
+    queryKey: ["all-channel-videos", channelId],
+    queryFn: async () => {
+      if (!channelId) throw new Error("Channel ID is required");
+
+      const { data, error } = await supabase
+        .from("youtube_videos")
+        .select("*")
+        .eq("channel_id", channelId)
+        .order("uploaded_at", { ascending: false });
+
+      if (error) {
+        console.error("Error fetching all videos:", error);
+        return initialVideos || []; // Fallback to initial videos if error
+      }
+
+      return data || [];
+    },
+    enabled: !!channelId && !!initialVideos,
+  });
+
+  // Update displayed videos when initial or all videos change
+  useEffect(() => {
+    if (initialVideos) {
+      setDisplayedVideos(initialVideos);
+    }
+  }, [initialVideos]);
+
+  useEffect(() => {
+    if (allVideos && allVideos.length > INITIAL_VIDEOS_COUNT) {
+      setIsLoadingMore(true);
+      const timer = setTimeout(() => {
+        setDisplayedVideos(allVideos);
+        setIsLoadingMore(false);
+      }, 500); // Small delay to prevent UI jank
+      return () => clearTimeout(timer);
+    }
+  }, [allVideos]);
 
   // Check subscription status
   const checkSubscription = async () => {
@@ -71,117 +166,14 @@ const ChannelDetails = () => {
     }
   };
 
-  // Fetch channel details with improved error handling
-  const { data: channel, isLoading: isLoadingChannel } = useQuery({
-    queryKey: ["channel", channelId],
-    queryFn: async () => {
-      if (!channelId) {
-        throw new Error("Channel ID is required");
-      }
-
-      const { data, error } = await supabase
-        .from("youtube_channels")
-        .select("*")
-        .eq("channel_id", channelId)
-        .maybeSingle();
-
-      if (error) {
-        console.error("Error fetching channel:", error);
-        toast.error("Failed to load channel details");
-        throw error;
-      }
-
-      if (!data) {
-        toast.error("Channel not found");
-        throw new Error("Channel not found");
-      }
-
-      return data;
-    },
-    retry: 2,
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
-  });
-
-  // Fetch videos with improved reliability and refetching
-  const { data: videos, isLoading: isLoadingVideos, refetch: refetchVideos } = useQuery({
-    queryKey: ["channel-videos", channelId],
-    queryFn: async () => {
-      if (!channelId) {
-        throw new Error("Channel ID is required");
-      }
-
-      const { data, error } = await supabase
-        .from("youtube_videos")
-        .select("*")
-        .eq("channel_id", channelId)
-        .order("uploaded_at", { ascending: false });
-
-      if (error) {
-        console.error("Error fetching videos:", error);
-        toast.error("Failed to load videos");
-        throw error;
-      }
-
-      // If no videos found, trigger a fetch and retry
-      if (!data || data.length === 0) {
-        if (!isRefetching) {
-          setIsRefetching(true);
-          try {
-            const response = await fetch(`https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/fetch-youtube-videos`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${process.env.SUPABASE_ANON_KEY}`,
-              },
-              body: JSON.stringify({ channels: [channelId] })
-            });
-            
-            if (!response.ok) {
-              throw new Error('Failed to fetch videos');
-            }
-
-            // Wait a moment for the videos to be processed
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            
-            // Retry fetching videos after the fetch function has run
-            const { data: refetchedData, error: refetchError } = await supabase
-              .from("youtube_videos")
-              .select("*")
-              .eq("channel_id", channelId)
-              .order("uploaded_at", { ascending: false });
-
-            if (refetchError) throw refetchError;
-            setIsRefetching(false);
-            return refetchedData || [];
-          } catch (fetchError) {
-            console.error("Error fetching videos:", fetchError);
-            toast.error("Failed to load videos");
-            setIsRefetching(false);
-            return [];
-          }
-        }
-      }
-
-      return data || [];
-    },
-    retry: 3,
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
-    enabled: !!channelId && !!channel,
-  });
-
-  useEffect(() => {
-    if (videos && videos.length === 0 && !isLoadingVideos && !isRefetching) {
-      toast.loading("Fetching channel videos...");
-      refetchVideos();
-    }
-  }, [videos, isLoadingVideos, isRefetching]);
-
-  if (isLoadingChannel || isLoadingVideos) {
+  if (isLoadingChannel) {
     return (
       <div className="container mx-auto p-4 mt-16">
         <BackButton />
-        <div className="flex items-center justify-center min-h-[200px]">
-          <p className="text-lg text-muted-foreground">Loading...</p>
+        <div className="flex flex-col items-center space-y-4">
+          <Skeleton className="h-32 w-32 rounded-full" />
+          <Skeleton className="h-8 w-64" />
+          <Skeleton className="h-4 w-48" />
         </div>
       </div>
     );
@@ -264,28 +256,46 @@ const ChannelDetails = () => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8">
-        {videos?.map((video, index) => (
-          <div 
-            key={video.id} 
-            className="opacity-0"
-            style={{ 
-              animation: `fadeIn 0.6s ease-out ${0.5 + index * 0.1}s forwards`
-            }}
-          >
-            <VideoCard
-              id={video.video_id}
-              uuid={video.id}
-              title={video.title}
-              thumbnail={video.thumbnail}
-              channelName={video.channel_name}
-              views={video.views || 0}
-              uploadedAt={video.uploaded_at}
-              channelId={video.channel_id}
-              channelThumbnail={channel.thumbnail_url}
-            />
-          </div>
-        ))}
+        {isLoadingInitialVideos ? (
+          Array.from({ length: INITIAL_VIDEOS_COUNT }).map((_, index) => (
+            <div key={index} className="space-y-2">
+              <Skeleton className="w-full aspect-video rounded-lg" />
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-3/4" />
+                <Skeleton className="h-4 w-1/2" />
+              </div>
+            </div>
+          ))
+        ) : (
+          displayedVideos.map((video, index) => (
+            <div 
+              key={video.id} 
+              className="opacity-0"
+              style={{ 
+                animation: `fadeIn 0.6s ease-out ${0.5 + index * 0.1}s forwards`
+              }}
+            >
+              <VideoCard
+                id={video.video_id}
+                uuid={video.id}
+                title={video.title}
+                thumbnail={video.thumbnail}
+                channelName={video.channel_name}
+                views={video.views || 0}
+                uploadedAt={video.uploaded_at}
+                channelId={video.channel_id}
+                channelThumbnail={channel.thumbnail_url}
+              />
+            </div>
+          ))
+        )}
       </div>
+
+      {isLoadingMore && (
+        <div className="flex justify-center mt-8">
+          <p className="text-muted-foreground">Loading more videos...</p>
+        </div>
+      )}
     </div>
   );
 };
