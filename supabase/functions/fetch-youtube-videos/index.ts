@@ -19,14 +19,25 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    const { channels } = await req.json();
-    
-    if (!channels || !Array.isArray(channels)) {
-      console.error('[YouTube Videos] Invalid channels data received:', channels);
-      return new Response(
-        JSON.stringify({ error: 'Invalid channels data' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
-      );
+    // If no channels provided, fetch all channels from the database
+    let channels;
+    if (req.body) {
+      const body = await req.json();
+      channels = body.channels;
+    }
+
+    if (!channels || !Array.isArray(channels) || channels.length === 0) {
+      console.log('[YouTube Videos] No channels provided, fetching all channels');
+      const { data: channelsData, error: channelsError } = await supabaseClient
+        .from('youtube_channels')
+        .select('channel_id');
+
+      if (channelsError) {
+        console.error('[YouTube Videos] Error fetching channels:', channelsError);
+        throw channelsError;
+      }
+
+      channels = channelsData.map(channel => channel.channel_id);
     }
 
     console.log('[YouTube Videos] Fetching videos for channels:', channels);
@@ -34,21 +45,18 @@ serve(async (req) => {
     const apiKey = Deno.env.get('YOUTUBE_API_KEY');
     if (!apiKey) {
       console.error('[YouTube Videos] Missing YouTube API key');
-      return new Response(
-        JSON.stringify({ error: 'YouTube API key not configured' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
-      );
+      throw new Error('YouTube API key not configured');
     }
 
     const fetchAllVideosForChannel = async (channelId: string) => {
       let allVideos = [];
       let nextPageToken = '';
       let totalVideosFetched = 0;
-      const maxVideosToFetch = 1000; // Increased limit to fetch more videos
+      const maxVideosToFetch = 1000;
       
       try {
         // First, get channel details including upload playlist ID
-        const channelUrl = `https://www.googleapis.com/youtube/v3/channels?part=contentDetails&id=${channelId}&key=${apiKey}`;
+        const channelUrl = `https://www.googleapis.com/youtube/v3/channels?part=contentDetails,snippet&id=${channelId}&key=${apiKey}`;
         const channelResponse = await fetch(channelUrl);
         const channelData = await channelResponse.json();
 
@@ -58,7 +66,8 @@ serve(async (req) => {
         }
 
         const uploadsPlaylistId = channelData.items[0].contentDetails.relatedPlaylists.uploads;
-        console.log(`[YouTube Videos] Found uploads playlist: ${uploadsPlaylistId}`);
+        const channelTitle = channelData.items[0].snippet.title;
+        console.log(`[YouTube Videos] Found uploads playlist: ${uploadsPlaylistId} for channel: ${channelTitle}`);
 
         // Keep fetching videos until there are no more pages
         do {
@@ -82,7 +91,7 @@ serve(async (req) => {
           const videoIds = data.items.map((item: any) => item.snippet.resourceId.videoId);
           
           // Fetch statistics for these videos
-          const statsUrl = `https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${videoIds.join(',')}&key=${apiKey}`;
+          const statsUrl = `https://www.googleapis.com/youtube/v3/videos?part=statistics,snippet&id=${videoIds.join(',')}&key=${apiKey}`;
           const statsResponse = await fetch(statsUrl);
           const statsData = await statsResponse.json();
 
@@ -92,7 +101,10 @@ serve(async (req) => {
           }
 
           const statsMap = new Map(
-            statsData.items.map((item: any) => [item.id, item.statistics])
+            statsData.items.map((item: any) => [item.id, {
+              statistics: item.statistics,
+              description: item.snippet.description
+            }])
           );
 
           // Process videos from this page
@@ -103,7 +115,8 @@ serve(async (req) => {
             channel_id: channelId,
             channel_name: item.snippet.channelTitle,
             uploaded_at: item.snippet.publishedAt,
-            views: parseInt(statsMap.get(item.snippet.resourceId.videoId)?.viewCount || '0'),
+            views: parseInt(statsMap.get(item.snippet.resourceId.videoId)?.statistics.viewCount || '0'),
+            description: statsMap.get(item.snippet.resourceId.videoId)?.description || null,
           }));
 
           allVideos = [...allVideos, ...processedVideos];
@@ -113,7 +126,7 @@ serve(async (req) => {
           console.log(`[YouTube Videos] Fetched ${processedVideos.length} videos. Total so far: ${allVideos.length}`);
           
           // Add a small delay to avoid rate limiting
-          await new Promise(resolve => setTimeout(resolve, 250)); // Increased delay to be safer with rate limits
+          await new Promise(resolve => setTimeout(resolve, 250));
           
         } while (nextPageToken && totalVideosFetched < maxVideosToFetch);
 
@@ -125,22 +138,19 @@ serve(async (req) => {
       }
     };
 
-    // First, clear existing videos for these channels
-    for (const channelId of channels) {
-      const { error: deleteError } = await supabaseClient
-        .from('youtube_videos')
-        .delete()
-        .eq('channel_id', channelId);
-      
-      if (deleteError) {
-        console.error(`[YouTube Videos] Error deleting existing videos for channel ${channelId}:`, deleteError);
-      } else {
-        console.log(`[YouTube Videos] Cleared existing videos for channel ${channelId}`);
+    // Process channels in parallel with a concurrency limit
+    const concurrencyLimit = 3;
+    const processChannels = async (channelIds: string[]) => {
+      const results = [];
+      for (let i = 0; i < channelIds.length; i += concurrencyLimit) {
+        const batch = channelIds.slice(i, i + concurrencyLimit);
+        const batchResults = await Promise.all(batch.map(fetchAllVideosForChannel));
+        results.push(...batchResults.flat());
       }
-    }
+      return results;
+    };
 
-    const videoPromises = channels.map(fetchAllVideosForChannel);
-    const videos = (await Promise.all(videoPromises)).flat();
+    const videos = await processChannels(channels);
     console.log(`[YouTube Videos] Total videos fetched across all channels: ${videos.length}`);
 
     if (videos.length === 0) {
