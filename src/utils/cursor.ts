@@ -1,6 +1,12 @@
 export function initializeCursor() {
+  // Create cursor element
+  const cursor = document.createElement('div');
+  cursor.id = 'custom-cursor';
+  document.body.appendChild(cursor);
+
+  // Update cursor position
   document.addEventListener('mousemove', (e) => {
-    document.body.style.setProperty('--cursor-x', `${e.clientX}px`);
-    document.body.style.setProperty('--cursor-y', `${e.clientY}px`);
+    cursor.style.left = `${e.clientX}px`;
+    cursor.style.top = `${e.clientY}px`;
   });
 }

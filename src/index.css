@@ -114,26 +114,17 @@
   }
 
   /* Create custom cursor */
-  body::before {
-    content: '';
+  #custom-cursor {
     position: fixed;
-    width: var(--cursor-size);
-    height: var(--cursor-size);
+    width: 12px;
+    height: 12px;
     background: #ea384c;
     border-radius: 0;
     clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
     pointer-events: none;
     z-index: 9999;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%) rotate(180deg);
     transition: transform 0.1s ease;
-    display: block;
-  }
-
-  /* Update cursor position on mouse move */
-  body {
-    @apply bg-background text-foreground;
-    background-color: var(--background-custom);
-    color: var(--text-custom);
   }
 
   /* Add hover effect for interactive elements */
@@ -144,6 +135,13 @@
   select:hover,
   textarea:hover {
     cursor: none !important;
+  }
+
+  /* Global styles */
+  body {
+    @apply bg-background text-foreground;
+    background-color: var(--background-custom);
+    color: var(--text-custom);
   }
 
   /* Search bar specific styles */
@@ -215,17 +213,5 @@
 
   .logo-custom {
     color: var(--logo-custom);
-  }
-}
-
-/* Custom cursor movement script */
-@layer utilities {
-  @keyframes cursorMove {
-    from {
-      transform: translate(var(--cursor-x, -100px), var(--cursor-y, -100px)) rotate(0deg);
-    }
-    to {
-      transform: translate(var(--cursor-x, -100px), var(--cursor-y, -100px)) rotate(360deg);
-    }
   }
 }
