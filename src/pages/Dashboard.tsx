@@ -12,6 +12,7 @@ import { ChannelRequestsSection } from "@/components/dashboard/ChannelRequestsSe
 import { useNavigate } from "react-router-dom";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LayoutDashboard, Users, Music, Video, MessageSquare } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -40,6 +41,31 @@ const Dashboard = () => {
 
       return data;
     },
+  });
+
+  // Fetch notification counts
+  const { data: notificationCounts } = useQuery({
+    queryKey: ["notification-counts"],
+    queryFn: async () => {
+      const [channelRequests, unreadComments] = await Promise.all([
+        supabase
+          .from("channel_requests")
+          .select("id", { count: "exact", head: true })
+          .eq("status", "pending"),
+        supabase
+          .from("admin_notifications")
+          .select("id", { count: "exact", head: true })
+          .eq("type", "new_comment")
+          .eq("is_read", false)
+      ]);
+
+      return {
+        overview: (channelRequests.count || 0),
+        comments: (unreadComments.count || 0)
+      };
+    },
+    enabled: !!profile?.is_admin,
+    refetchInterval: 30000, // Refetch every 30 seconds
   });
 
   if (!profile?.is_admin) {
@@ -84,9 +110,17 @@ const Dashboard = () => {
       <div className="flex justify-center w-full">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full max-w-4xl">
           <TabsList className="grid w-full grid-cols-5 gap-4">
-            <TabsTrigger value="overview" className="flex items-center gap-2 px-6">
+            <TabsTrigger value="overview" className="flex items-center gap-2 px-6 relative">
               <LayoutDashboard className="h-4 w-4" />
               <span className="hidden sm:inline">Overview</span>
+              {notificationCounts?.overview > 0 && (
+                <Badge 
+                  variant="destructive" 
+                  className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs"
+                >
+                  {notificationCounts.overview}
+                </Badge>
+              )}
             </TabsTrigger>
             <TabsTrigger value="users" className="flex items-center gap-2 px-6">
               <Users className="h-4 w-4" />
@@ -100,9 +134,17 @@ const Dashboard = () => {
               <Music className="h-4 w-4" />
               <span className="hidden sm:inline">Music</span>
             </TabsTrigger>
-            <TabsTrigger value="comments" className="flex items-center gap-2 px-6">
+            <TabsTrigger value="comments" className="flex items-center gap-2 px-6 relative">
               <MessageSquare className="h-4 w-4" />
               <span className="hidden sm:inline">Comments</span>
+              {notificationCounts?.comments > 0 && (
+                <Badge 
+                  variant="destructive" 
+                  className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs"
+                >
+                  {notificationCounts.comments}
+                </Badge>
+              )}
             </TabsTrigger>
           </TabsList>
         </Tabs>
