@@ -16,6 +16,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useDebounce } from "@/hooks/use-debounce";
+import { Badge } from "@/components/ui/badge";
 
 export const Header = () => {
   const navigate = useNavigate();
@@ -42,6 +43,52 @@ export const Header = () => {
 
     return () => subscription.unsubscribe();
   }, []);
+
+  // Fetch notifications for the current user
+  const { data: notifications } = useQuery({
+    queryKey: ["video-notifications", session?.user?.id],
+    queryFn: async () => {
+      const { data: notifications, error } = await supabase
+        .from("video_notifications")
+        .select(`
+          *,
+          youtube_videos (
+            title,
+            thumbnail,
+            channel_name
+          )
+        `)
+        .eq("user_id", session?.user?.id)
+        .eq("is_read", false)
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error("Error fetching notifications:", error);
+        toast.error("Failed to fetch notifications");
+        return [];
+      }
+
+      return notifications || [];
+    },
+    enabled: !!session?.user?.id,
+    refetchInterval: 30000, // Refetch every 30 seconds
+  });
+
+  // Mark notifications as read
+  const markNotificationsAsRead = async () => {
+    if (!session?.user?.id || !notifications?.length) return;
+
+    const { error } = await supabase
+      .from("video_notifications")
+      .update({ is_read: true })
+      .eq("user_id", session.user.id)
+      .eq("is_read", false);
+
+    if (error) {
+      console.error("Error marking notifications as read:", error);
+      toast.error("Failed to mark notifications as read");
+    }
+  };
 
   const { data: searchResults, isLoading } = useQuery({
     queryKey: ["search", debouncedSearchQuery],
@@ -221,13 +268,54 @@ export const Header = () => {
             <>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="bg-[#222222] hover:bg-[#333333] text-white">
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="bg-[#222222] hover:bg-[#333333] text-white relative"
+                    onClick={markNotificationsAsRead}
+                  >
                     <Bell className="h-5 w-5" />
+                    {notifications && notifications.length > 0 && (
+                      <Badge 
+                        variant="destructive" 
+                        className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs"
+                      >
+                        {notifications.length}
+                      </Badge>
+                    )}
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="bg-[#222222] border-[#333333]">
-                  <ScrollArea className="h-[300px] w-[300px] p-4">
-                    <p className="text-sm text-white/70">No new notifications</p>
+                <DropdownMenuContent align="end" className="bg-[#222222] border-[#333333] w-[300px]">
+                  <ScrollArea className="h-[300px]">
+                    {notifications && notifications.length > 0 ? (
+                      notifications.map((notification) => (
+                        <div
+                          key={notification.id}
+                          className="p-3 hover:bg-[#333333] cursor-pointer"
+                          onClick={() => {
+                            navigate(`/video/${notification.video_id}`);
+                          }}
+                        >
+                          <div className="flex items-start gap-3">
+                            <img
+                              src={notification.youtube_videos.thumbnail}
+                              alt={notification.youtube_videos.title}
+                              className="w-16 h-12 object-cover rounded"
+                            />
+                            <div>
+                              <p className="text-sm text-white line-clamp-2">
+                                New video from {notification.youtube_videos.channel_name}
+                              </p>
+                              <p className="text-xs text-white/70 mt-1 line-clamp-1">
+                                {notification.youtube_videos.title}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-sm text-white/70 p-4">No new notifications</p>
+                    )}
                   </ScrollArea>
                 </DropdownMenuContent>
               </DropdownMenu>
