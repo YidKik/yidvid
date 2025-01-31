@@ -113,7 +113,7 @@ export const Header = () => {
         .from("youtube_videos")
         .select("id, title, thumbnail, channel_name")
         .ilike("title", `%${debouncedSearch}%`)
-        .limit(5);
+        .limit(10); // Increased limit for more scroll content
 
       if (error) {
         console.error("Error searching videos:", error);
@@ -174,32 +174,34 @@ export const Header = () => {
                 className="absolute top-full left-0 right-0 mt-1 bg-white rounded-md shadow-lg border border-gray-100 overflow-hidden z-50"
                 onMouseDown={(e) => e.preventDefault()}
               >
-                <ScrollArea className="max-h-[300px]">
-                  {searchResults.map((video) => (
-                    <Link
-                      key={video.id}
-                      to={`/video/${video.id}`}
-                      className="flex items-start gap-3 p-3 hover:bg-gray-50 transition-colors"
-                      onClick={() => {
-                        setShowResults(false);
-                        setSearchQuery("");
-                      }}
-                    >
-                      <img
-                        src={video.thumbnail}
-                        alt={video.title}
-                        className="w-16 h-12 object-cover rounded"
-                      />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm text-[#555555] font-medium line-clamp-2">
-                          {video.title}
-                        </p>
-                        <p className="text-xs text-[#555555]/70 mt-0.5">
-                          {video.channel_name}
-                        </p>
-                      </div>
-                    </Link>
-                  ))}
+                <ScrollArea className="h-[400px] overflow-y-auto scrollbar-hide">
+                  <div className="p-1">
+                    {searchResults.map((video) => (
+                      <Link
+                        key={video.id}
+                        to={`/video/${video.id}`}
+                        className="flex items-start gap-3 p-3 hover:bg-gray-50 transition-colors rounded-md"
+                        onClick={() => {
+                          setShowResults(false);
+                          setSearchQuery("");
+                        }}
+                      >
+                        <img
+                          src={video.thumbnail}
+                          alt={video.title}
+                          className="w-16 h-12 object-cover rounded"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm text-[#555555] font-medium line-clamp-2">
+                            {video.title}
+                          </p>
+                          <p className="text-xs text-[#555555]/70 mt-0.5">
+                            {video.channel_name}
+                          </p>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
                 </ScrollArea>
               </div>
             )}
