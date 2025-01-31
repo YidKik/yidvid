@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Plus } from "lucide-react";
+import { Plus, Video } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -8,9 +8,11 @@ import { AddChannelForm } from "@/components/AddChannelForm";
 import { ChannelSearch } from "@/components/youtube/ChannelSearch";
 import { ChannelList } from "@/components/youtube/ChannelList";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { ChannelVideosManagement } from "@/components/youtube/ChannelVideosManagement";
 
 export const YouTubeChannelsSection = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedChannelId, setSelectedChannelId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const { toast } = useToast();
 
@@ -109,7 +111,24 @@ export const YouTubeChannelsSection = () => {
           </div>
         </div>
       </div>
-      <ChannelList channels={channels || []} onRemoveChannel={handleRemoveChannel} />
+      <div className="flex">
+        <div className="w-1/2 border-r">
+          <ChannelList 
+            channels={channels || []} 
+            onRemoveChannel={handleRemoveChannel}
+            onManageVideos={(channelId) => setSelectedChannelId(channelId)}
+          />
+        </div>
+        <div className="w-1/2 p-4">
+          {selectedChannelId ? (
+            <ChannelVideosManagement channelId={selectedChannelId} />
+          ) : (
+            <div className="flex items-center justify-center h-full text-muted-foreground">
+              Select a channel to manage its videos
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
