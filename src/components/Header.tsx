@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { useState, useEffect } from "react";
 import Auth from "@/pages/Auth";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useDebounce } from "@/hooks/use-debounce";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,6 +24,8 @@ export const Header = () => {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [session, setSession] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [showResults, setShowResults] = useState(false);
+  const debouncedSearch = useDebounce(searchQuery, 300);
 
   useEffect(() => {
     // Set up initial session
@@ -101,9 +104,31 @@ export const Header = () => {
     }
   };
 
+  const { data: searchResults } = useQuery({
+    queryKey: ["search", debouncedSearch],
+    queryFn: async () => {
+      if (!debouncedSearch.trim()) return [];
+      
+      const { data: videos, error } = await supabase
+        .from("youtube_videos")
+        .select("id, title, thumbnail, channel_name")
+        .ilike("title", `%${debouncedSearch}%`)
+        .limit(5);
+
+      if (error) {
+        console.error("Error searching videos:", error);
+        return [];
+      }
+
+      return videos;
+    },
+    enabled: debouncedSearch.length > 0,
+  });
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
+      setShowResults(false);
       navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
     }
   };
@@ -134,12 +159,50 @@ export const Header = () => {
               type="search"
               placeholder="Search..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setShowResults(true);
+              }}
+              onFocus={() => setShowResults(true)}
               className="w-full bg-transparent border-none text-[#555555] placeholder:text-[#555555] focus-visible:ring-0 focus-visible:ring-offset-0"
             />
             <Search 
               className="absolute right-2 w-4 h-4 text-[#555555] pointer-events-none" 
             />
+            {showResults && searchResults && searchResults.length > 0 && (
+              <div 
+                className="absolute top-full left-0 right-0 mt-1 bg-white rounded-md shadow-lg border border-gray-100 overflow-hidden z-50"
+                onMouseDown={(e) => e.preventDefault()}
+              >
+                <ScrollArea className="max-h-[300px]">
+                  {searchResults.map((video) => (
+                    <Link
+                      key={video.id}
+                      to={`/video/${video.id}`}
+                      className="flex items-start gap-3 p-3 hover:bg-gray-50 transition-colors"
+                      onClick={() => {
+                        setShowResults(false);
+                        setSearchQuery("");
+                      }}
+                    >
+                      <img
+                        src={video.thumbnail}
+                        alt={video.title}
+                        className="w-16 h-12 object-cover rounded"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm text-[#555555] font-medium line-clamp-2">
+                          {video.title}
+                        </p>
+                        <p className="text-xs text-[#555555]/70 mt-0.5">
+                          {video.channel_name}
+                        </p>
+                      </div>
+                    </Link>
+                  ))}
+                </ScrollArea>
+              </div>
+            )}
           </form>
         </div>
 
