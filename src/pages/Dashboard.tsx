@@ -81,30 +81,32 @@ const Dashboard = () => {
         <h1 className="text-2xl font-bold">Admin Dashboard</h1>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-5 lg:w-[600px]">
-          <TabsTrigger value="overview" className="flex items-center gap-2">
-            <LayoutDashboard className="h-4 w-4" />
-            <span className="hidden sm:inline">Overview</span>
-          </TabsTrigger>
-          <TabsTrigger value="users" className="flex items-center gap-2">
-            <Users className="h-4 w-4" />
-            <span className="hidden sm:inline">Users</span>
-          </TabsTrigger>
-          <TabsTrigger value="youtube" className="flex items-center gap-2">
-            <Video className="h-4 w-4" />
-            <span className="hidden sm:inline">YouTube</span>
-          </TabsTrigger>
-          <TabsTrigger value="music" className="flex items-center gap-2">
-            <Music className="h-4 w-4" />
-            <span className="hidden sm:inline">Music</span>
-          </TabsTrigger>
-          <TabsTrigger value="comments" className="flex items-center gap-2">
-            <MessageSquare className="h-4 w-4" />
-            <span className="hidden sm:inline">Comments</span>
-          </TabsTrigger>
-        </TabsList>
-      </Tabs>
+      <div className="flex justify-center w-full">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full max-w-4xl">
+          <TabsList className="grid w-full grid-cols-5 gap-4">
+            <TabsTrigger value="overview" className="flex items-center gap-2 px-6">
+              <LayoutDashboard className="h-4 w-4" />
+              <span className="hidden sm:inline">Overview</span>
+            </TabsTrigger>
+            <TabsTrigger value="users" className="flex items-center gap-2 px-6">
+              <Users className="h-4 w-4" />
+              <span className="hidden sm:inline">Users</span>
+            </TabsTrigger>
+            <TabsTrigger value="youtube" className="flex items-center gap-2 px-6">
+              <Video className="h-4 w-4" />
+              <span className="hidden sm:inline">YouTube</span>
+            </TabsTrigger>
+            <TabsTrigger value="music" className="flex items-center gap-2 px-6">
+              <Music className="h-4 w-4" />
+              <span className="hidden sm:inline">Music</span>
+            </TabsTrigger>
+            <TabsTrigger value="comments" className="flex items-center gap-2 px-6">
+              <MessageSquare className="h-4 w-4" />
+              <span className="hidden sm:inline">Comments</span>
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
+      </div>
 
       <div className="mt-6">
         {renderActiveSection()}
