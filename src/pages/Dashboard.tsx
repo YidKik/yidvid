@@ -11,8 +11,11 @@ import { ReportedVideosSection } from "@/components/dashboard/ReportedVideosSect
 import { ChannelRequestsSection } from "@/components/dashboard/ChannelRequestsSection";
 import { useNavigate } from "react-router-dom";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { LayoutDashboard, Users, Music, Video, MessageSquare } from "lucide-react";
+import { LayoutDashboard, Users, Music, Video, MessageSquare, FileDown } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { generatePDF } from "react-to-pdf";
+import { toast } from "sonner";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -43,6 +46,19 @@ const Dashboard = () => {
     },
   });
 
+  const handleDownloadPDF = async () => {
+    try {
+      await generatePDF(() => document.getElementById('root'), {
+        filename: 'website-snapshot.pdf',
+        page: { margin: 20 }
+      });
+      toast.success("PDF downloaded successfully");
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      toast.error("Failed to generate PDF");
+    }
+  };
+
   // Fetch notification counts
   const { data: notificationCounts } = useQuery({
     queryKey: ["notification-counts"],
@@ -72,36 +88,20 @@ const Dashboard = () => {
     return null;
   }
 
-  const renderActiveSection = () => {
-    switch (activeTab) {
-      case "overview":
-        return (
-          <>
-            <DashboardAnalytics />
-            <ChannelRequestsSection />
-          </>
-        );
-      case "users":
-        return <UserManagementSection currentUserId={profile.id} />;
-      case "youtube":
-        return <YouTubeChannelsSection />;
-      case "music":
-        return <MusicArtistsSection />;
-      case "comments":
-        return (
-          <>
-            <CommentsManagementSection />
-            <ReportedVideosSection />
-          </>
-        );
-      default:
-        return null;
-    }
-  };
-
   return (
     <div className="container mx-auto py-8 space-y-8">
-      <BackButton />
+      <div className="flex items-center justify-between">
+        <BackButton />
+        <Button
+          onClick={handleDownloadPDF}
+          variant="outline"
+          size="sm"
+          className="flex items-center gap-2"
+        >
+          <FileDown className="h-4 w-4" />
+          Download PDF
+        </Button>
+      </div>
       
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Admin Dashboard</h1>
@@ -155,6 +155,33 @@ const Dashboard = () => {
       </div>
     </div>
   );
+
+  function renderActiveSection() {
+    switch (activeTab) {
+      case "overview":
+        return (
+          <>
+            <DashboardAnalytics />
+            <ChannelRequestsSection />
+          </>
+        );
+      case "users":
+        return <UserManagementSection currentUserId={profile.id} />;
+      case "youtube":
+        return <YouTubeChannelsSection />;
+      case "music":
+        return <MusicArtistsSection />;
+      case "comments":
+        return (
+          <>
+            <CommentsManagementSection />
+            <ReportedVideosSection />
+          </>
+        );
+      default:
+        return null;
+    }
+  }
 };
 
 export default Dashboard;
