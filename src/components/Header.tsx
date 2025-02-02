@@ -191,14 +191,19 @@ export const Header = () => {
         return videos || [];
       } catch (error) {
         console.error("Search error:", error);
-        toast.error("Failed to search videos. Please try again later.");
+        // Don't show error toast for network issues as it might be temporary
+        if (error.message !== "Failed to fetch") {
+          toast.error("Failed to search videos. Please try again later.");
+        }
         return [];
       }
     },
     enabled: debouncedSearch.length > 0,
     staleTime: 1000 * 30,
-    gcTime: 1000 * 60 * 5, // Changed from cacheTime to gcTime
+    gcTime: 1000 * 60 * 5,
     refetchOnWindowFocus: false,
+    retry: 3,
+    retryDelay: (attemptIndex) => Math.min(1000 * (2 ** attemptIndex), 10000),
   });
 
   const handleSearch = (e: React.FormEvent) => {
@@ -390,5 +395,3 @@ export const Header = () => {
     </header>
   );
 };
-
-export default Header;
