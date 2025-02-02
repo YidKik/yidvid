@@ -73,6 +73,45 @@ export const YouTubeChannelsSection = () => {
     },
   });
 
+  const handleDeleteChannel = async (channelId: string) => {
+    try {
+      setIsDeleting(true);
+      console.log("Starting channel deletion process for:", channelId);
+
+      // First, delete all videos associated with this channel
+      const { error: videosError } = await supabase
+        .from("youtube_videos")
+        .delete()
+        .eq("channel_id", channelId);
+
+      if (videosError) {
+        console.error("Error deleting videos:", videosError);
+        throw videosError;
+      }
+
+      // Then delete the channel
+      const { error: channelError } = await supabase
+        .from("youtube_channels")
+        .delete()
+        .eq("channel_id", channelId);
+
+      if (channelError) {
+        console.error("Error deleting channel:", channelError);
+        throw channelError;
+      }
+
+      toast.success("Channel deleted successfully");
+      refetch();
+      setSelectedChannelId(null);
+    } catch (error: any) {
+      console.error("Error in deletion process:", error);
+      toast.error("Error deleting channel");
+    } finally {
+      setIsDeleting(false);
+      setChannelToDelete(null);
+    }
+  };
+
   const handleSuccess = () => {
     setIsChannelDialogOpen(false);
     refetch();
