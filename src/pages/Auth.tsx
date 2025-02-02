@@ -56,19 +56,15 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
 
     try {
       if (isSignUp) {
-        console.log("Starting signup process...");
         const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
           email,
           password,
           options: {
             data: {
               full_name: name,
-            },
-            emailRedirectTo: `${window.location.origin}/auth/callback`,
-          },
+            }
+          }
         });
-
-        console.log("Signup response:", { signUpData, signUpError });
 
         if (signUpError) {
           console.error("Signup error:", signUpError);
