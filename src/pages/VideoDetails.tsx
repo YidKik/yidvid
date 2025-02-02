@@ -152,14 +152,7 @@ const VideoDetails = () => {
         <div className="lg:col-span-2">
           <VideoPlayer videoId={video.video_id} />
           <div className="flex justify-between items-start mb-4">
-            <VideoInfo
-              title={video.title}
-              channelName={video.channel_name}
-              channelThumbnail={video.youtube_channels?.thumbnail_url}
-              views={video.views}
-              uploadedAt={video.uploaded_at}
-              description={video.description}
-            />
+            <h1 className="text-2xl font-bold">{video.title}</h1>
             <ReportVideoDialog videoId={video.id} />
           </div>
           
@@ -169,6 +162,17 @@ const VideoDetails = () => {
             <h2 className="text-xl font-semibold mb-4">Comments</h2>
             <CommentForm onSubmit={handleSubmitComment} />
             <CommentList comments={comments} />
+          </div>
+
+          <div className="mt-8 border-t pt-8">
+            <VideoInfo
+              title={video.title}
+              channelName={video.channel_name}
+              channelThumbnail={video.youtube_channels?.thumbnail_url}
+              views={video.views}
+              uploadedAt={video.uploaded_at}
+              description={video.description}
+            />
           </div>
         </div>
         
