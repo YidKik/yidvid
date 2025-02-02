@@ -238,29 +238,32 @@ export const Header = () => {
                     )}
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="bg-[#222222] border-[#333333] w-[300px]">
-                  <ScrollArea className="h-[300px]">
+                <DropdownMenuContent 
+                  align="end" 
+                  className="bg-[#222222] border-[#333333] w-[280px] md:w-[300px] max-h-[60vh] md:max-h-[70vh]"
+                >
+                  <ScrollArea className="h-[250px] md:h-[300px]">
                     {notifications && notifications.length > 0 ? (
                       notifications.map((notification) => (
                         <div
                           key={notification.id}
-                          className="p-3 hover:bg-[#333333] cursor-pointer"
+                          className="p-2 md:p-3 hover:bg-[#333333] cursor-pointer"
                           onClick={() => {
                             navigate(`/video/${notification.video_id}`);
                             markNotificationsAsRead();
                           }}
                         >
-                          <div className="flex items-start gap-3">
+                          <div className="flex items-start gap-2">
                             <img
                               src={notification.youtube_videos.thumbnail}
                               alt={notification.youtube_videos.title}
-                              className="w-16 h-12 object-cover rounded"
+                              className="w-14 h-10 md:w-16 md:h-12 object-cover rounded"
                             />
                             <div>
-                              <p className="text-sm text-white line-clamp-2">
+                              <p className="text-xs md:text-sm text-white line-clamp-2">
                                 New video from {notification.youtube_videos.channel_name}
                               </p>
-                              <p className="text-xs text-white/70 mt-1 line-clamp-1">
+                              <p className="text-[10px] md:text-xs text-white/70 mt-0.5 line-clamp-1">
                                 {notification.youtube_videos.title}
                               </p>
                             </div>
@@ -268,7 +271,7 @@ export const Header = () => {
                         </div>
                       ))
                     ) : (
-                      <p className="text-sm text-white/70 p-4">No new notifications</p>
+                      <p className="text-xs md:text-sm text-white/70 p-3">No new notifications</p>
                     )}
                   </ScrollArea>
                 </DropdownMenuContent>
