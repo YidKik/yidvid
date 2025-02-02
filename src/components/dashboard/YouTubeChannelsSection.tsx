@@ -204,10 +204,10 @@ export const YouTubeChannelsSection = () => {
             {channels?.map((channel) => (
               <div 
                 key={channel.id} 
-                className="flex items-center justify-between p-4 hover:bg-gray-50 group"
+                className="flex items-center justify-between p-4 hover:bg-gray-50"
               >
                 <div 
-                  className="flex items-center gap-4 cursor-pointer flex-1 min-w-0"
+                  className="flex items-center gap-4 cursor-pointer flex-1"
                   onClick={() => setSelectedChannelId(channel.channel_id)}
                 >
                   <img 
@@ -215,9 +215,9 @@ export const YouTubeChannelsSection = () => {
                     alt={channel.title}
                     className="w-12 h-12 rounded-full object-cover flex-shrink-0"
                   />
-                  <div className="min-w-0 flex-1 pr-4">
+                  <div className="flex-1 min-w-0 pr-4">
                     <h3 className="font-medium truncate">{channel.title}</h3>
-                    <p className="text-sm text-gray-500 truncate">
+                    <p className="text-sm text-gray-500 truncate max-w-[200px]">
                       {channel.description || 'No description'}
                     </p>
                   </div>
@@ -226,9 +226,9 @@ export const YouTubeChannelsSection = () => {
                   <AlertDialogTrigger asChild>
                     <Button
                       variant="ghost"
-                      size="icon"
+                      size="sm"
                       disabled={isDeleting}
-                      className="text-destructive hover:text-destructive hover:bg-destructive/10 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="text-destructive hover:text-destructive hover:bg-destructive/10 flex-shrink-0 ml-2"
                       onClick={(e) => {
                         e.stopPropagation();
                         setChannelToDelete(channel.channel_id);
