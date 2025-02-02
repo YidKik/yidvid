@@ -19,7 +19,6 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    // If no channels provided, fetch all channels from the database
     let channels;
     if (req.body) {
       const body = await req.json();
@@ -48,14 +47,9 @@ serve(async (req) => {
       throw new Error('YouTube API key not configured');
     }
 
-    const fetchAllVideosForChannel = async (channelId: string) => {
-      let allVideos = [];
-      let nextPageToken = '';
-      let totalVideosFetched = 0;
-      const maxVideosToFetch = 1000;
-      
+    const fetchChannelVideos = async (channelId: string) => {
       try {
-        // First, get channel details including upload playlist ID
+        // Get channel details
         const channelUrl = `https://www.googleapis.com/youtube/v3/channels?part=contentDetails,snippet&id=${channelId}&key=${apiKey}`;
         const channelResponse = await fetch(channelUrl);
         const channelData = await channelResponse.json();
@@ -67,118 +61,90 @@ serve(async (req) => {
 
         const uploadsPlaylistId = channelData.items[0].contentDetails.relatedPlaylists.uploads;
         const channelTitle = channelData.items[0].snippet.title;
-        console.log(`[YouTube Videos] Found uploads playlist: ${uploadsPlaylistId} for channel: ${channelTitle}`);
 
-        // Keep fetching videos until there are no more pages
-        do {
-          if (totalVideosFetched >= maxVideosToFetch) {
-            console.log(`[YouTube Videos] Reached maximum video limit (${maxVideosToFetch}) for channel ${channelId}`);
-            break;
-          }
+        // Fetch only the most recent videos (last 50)
+        const playlistUrl = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${uploadsPlaylistId}&maxResults=50&key=${apiKey}`;
+        const response = await fetch(playlistUrl);
+        const data = await response.json();
 
-          console.log(`[YouTube Videos] Fetching page of videos. Current total: ${totalVideosFetched}`);
-          
-          const playlistUrl = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${uploadsPlaylistId}&maxResults=50&key=${apiKey}${nextPageToken ? `&pageToken=${nextPageToken}` : ''}`;
-          const response = await fetch(playlistUrl);
-          const data = await response.json();
+        if (!response.ok || !data.items) {
+          console.error(`[YouTube Videos] Error fetching videos for channel ${channelId}:`, data);
+          return [];
+        }
 
-          if (!response.ok || !data.items) {
-            console.error(`[YouTube Videos] Error fetching videos for channel ${channelId}:`, data);
-            break;
-          }
+        // Get video IDs and fetch statistics in a single batch
+        const videoIds = data.items.map((item: any) => item.snippet.resourceId.videoId);
+        const statsUrl = `https://www.googleapis.com/youtube/v3/videos?part=statistics,snippet&id=${videoIds.join(',')}&key=${apiKey}`;
+        const statsResponse = await fetch(statsUrl);
+        const statsData = await statsResponse.json();
 
-          // Get video IDs for this page
-          const videoIds = data.items.map((item: any) => item.snippet.resourceId.videoId);
-          
-          // Fetch statistics for these videos
-          const statsUrl = `https://www.googleapis.com/youtube/v3/videos?part=statistics,snippet&id=${videoIds.join(',')}&key=${apiKey}`;
-          const statsResponse = await fetch(statsUrl);
-          const statsData = await statsResponse.json();
+        if (!statsResponse.ok || !statsData.items) {
+          console.error('[YouTube Videos] Error fetching video statistics:', statsData);
+          return [];
+        }
 
-          if (!statsResponse.ok || !statsData.items) {
-            console.error('[YouTube Videos] Error fetching video statistics:', statsData);
-            break;
-          }
+        // Create a map for quick lookup of statistics
+        const statsMap = new Map(
+          statsData.items.map((item: any) => [item.id, {
+            statistics: item.statistics,
+            description: item.snippet.description
+          }])
+        );
 
-          const statsMap = new Map(
-            statsData.items.map((item: any) => [item.id, {
-              statistics: item.statistics,
-              description: item.snippet.description
-            }])
-          );
-
-          // Process videos from this page
-          const processedVideos = data.items.map((item: any) => ({
-            video_id: item.snippet.resourceId.videoId,
-            title: item.snippet.title,
-            thumbnail: item.snippet.thumbnails.high?.url || item.snippet.thumbnails.default?.url,
-            channel_id: channelId,
-            channel_name: item.snippet.channelTitle,
-            uploaded_at: item.snippet.publishedAt,
-            views: parseInt(statsMap.get(item.snippet.resourceId.videoId)?.statistics.viewCount || '0'),
-            description: statsMap.get(item.snippet.resourceId.videoId)?.description || null,
-          }));
-
-          allVideos = [...allVideos, ...processedVideos];
-          nextPageToken = data.nextPageToken;
-          totalVideosFetched += processedVideos.length;
-          
-          console.log(`[YouTube Videos] Fetched ${processedVideos.length} videos. Total so far: ${allVideos.length}`);
-          
-          // Add a small delay to avoid rate limiting
-          await new Promise(resolve => setTimeout(resolve, 250));
-          
-        } while (nextPageToken && totalVideosFetched < maxVideosToFetch);
-
-        console.log(`[YouTube Videos] Completed fetching videos for channel ${channelId}. Total videos: ${allVideos.length}`);
-        return allVideos;
+        // Process videos with their statistics
+        return data.items.map((item: any) => ({
+          video_id: item.snippet.resourceId.videoId,
+          title: item.snippet.title,
+          thumbnail: item.snippet.thumbnails.high?.url || item.snippet.thumbnails.default?.url,
+          channel_id: channelId,
+          channel_name: item.snippet.channelTitle,
+          uploaded_at: item.snippet.publishedAt,
+          views: parseInt(statsMap.get(item.snippet.resourceId.videoId)?.statistics.viewCount || '0'),
+          description: statsMap.get(item.snippet.resourceId.videoId)?.description || null,
+        }));
       } catch (error) {
         console.error(`[YouTube Videos] Error processing channel ${channelId}:`, error);
         return [];
       }
     };
 
-    // Process channels in parallel with a concurrency limit
-    const concurrencyLimit = 3;
-    const processChannels = async (channelIds: string[]) => {
-      const results = [];
-      for (let i = 0; i < channelIds.length; i += concurrencyLimit) {
-        const batch = channelIds.slice(i, i + concurrencyLimit);
-        const batchResults = await Promise.all(batch.map(fetchAllVideosForChannel));
-        results.push(...batchResults.flat());
+    // Process channels in parallel with a smaller batch size
+    const batchSize = 2; // Process 2 channels at a time to avoid rate limits
+    const results = [];
+    
+    for (let i = 0; i < channels.length; i += batchSize) {
+      const batch = channels.slice(i, i + batchSize);
+      console.log(`[YouTube Videos] Processing batch ${i / batchSize + 1} of ${Math.ceil(channels.length / batchSize)}`);
+      
+      const batchResults = await Promise.all(batch.map(fetchChannelVideos));
+      results.push(...batchResults.flat());
+      
+      if (i + batchSize < channels.length) {
+        // Add a small delay between batches to avoid rate limiting
+        await new Promise(resolve => setTimeout(resolve, 1000));
       }
-      return results;
-    };
-
-    const videos = await processChannels(channels);
-    console.log(`[YouTube Videos] Total videos fetched across all channels: ${videos.length}`);
-
-    if (videos.length === 0) {
-      console.warn('[YouTube Videos] No videos were fetched for any channels');
-      return new Response(
-        JSON.stringify({ success: true, videos: [] }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
     }
 
-    // Store videos in the database
-    console.log('[YouTube Videos] Starting to store videos in database');
-    for (const video of videos) {
+    console.log(`[YouTube Videos] Total videos fetched: ${results.length}`);
+
+    // Store videos in batches
+    const batchInsertSize = 100;
+    for (let i = 0; i < results.length; i += batchInsertSize) {
+      const batch = results.slice(i, i + batchInsertSize);
       const { error: upsertError } = await supabaseClient
         .from('youtube_videos')
-        .upsert(video, { 
+        .upsert(batch, { 
           onConflict: 'video_id',
           ignoreDuplicates: false
         });
 
       if (upsertError) {
-        console.error('[YouTube Videos] Error upserting video:', upsertError);
+        console.error(`[YouTube Videos] Error upserting batch ${Math.floor(i / batchInsertSize) + 1}:`, upsertError);
       }
     }
-    console.log('[YouTube Videos] Finished storing videos in database');
 
     return new Response(
-      JSON.stringify({ success: true, count: videos.length, videos }),
+      JSON.stringify({ success: true, count: results.length }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (error) {
