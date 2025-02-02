@@ -69,10 +69,12 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
         if (signUpError) {
           console.error("Signup error:", signUpError);
           
-          // Handle specific error cases
           if (signUpError.message.includes("User already registered")) {
             toast.error("This email is already registered. Please sign in instead.");
             setIsSignUp(false);
+          } else if (signUpError.message.includes("Database error saving new user")) {
+            toast.error("There was an issue creating your account. Please try again later.");
+            console.error("Database error during signup:", signUpError);
           } else if (signUpError.message.includes("rate limit")) {
             toast.error("Too many signup attempts. Please try again later.");
           } else {
@@ -84,16 +86,14 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
         if (signUpData?.user) {
           console.log("Signup successful:", signUpData);
           
-          // Ensure profile is created
+          // Create profile after successful signup
           const { error: profileError } = await supabase
             .from('profiles')
-            .upsert({
+            .insert({
               id: signUpData.user.id,
               email: email,
               name: name,
               is_admin: false
-            }, {
-              onConflict: 'id'
             });
 
           if (profileError) {
@@ -139,7 +139,6 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
                 console.error("Error fetching profile:", error);
                 throw error;
               }
-              console.log("Profile data fetched:", data);
               return data;
             },
           });
