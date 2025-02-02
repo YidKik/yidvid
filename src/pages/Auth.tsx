@@ -67,7 +67,6 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
         });
 
         if (signUpError) {
-          console.error("Signup error:", signUpError);
           if (signUpError.message.includes("User already registered")) {
             toast.error("This email is already registered. Please sign in instead.");
             setIsSignUp(false);
@@ -88,7 +87,6 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
         });
 
         if (signInError) {
-          console.error("Signin error:", signInError);
           if (signInError.message.includes("Invalid login credentials")) {
             toast.error("Invalid email or password");
           } else if (signInError.message.includes("Email not confirmed")) {
