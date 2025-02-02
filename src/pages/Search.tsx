@@ -63,7 +63,7 @@ const Search = () => {
         </h1>
 
         <Tabs defaultValue="videos" className="w-full">
-          <TabsList className="mb-8 w-full flex justify-start gap-6 border-b pb-1">
+          <TabsList className="mb-8 w-full flex justify-start gap-6 pb-1">
             <TabsTrigger 
               value="videos" 
               className="px-6 py-2.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all duration-300 rounded-md hover:bg-accent/80"
