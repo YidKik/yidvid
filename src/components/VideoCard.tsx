@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { formatDistanceToNow, parseISO } from "date-fns";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface VideoCardProps {
   id: string;
@@ -23,6 +24,7 @@ export const VideoCard = ({
   views,
   uploadedAt,
 }: VideoCardProps) => {
+  const isMobile = useIsMobile();
   const formattedDate = typeof uploadedAt === 'string' 
     ? formatDistanceToNow(parseISO(uploadedAt), { addSuffix: true })
     : formatDistanceToNow(uploadedAt, { addSuffix: true });
@@ -58,11 +60,13 @@ export const VideoCard = ({
           <p className="text-xs md:text-youtube-small text-muted-foreground mt-0.5 md:mt-1 line-clamp-1">
             {channelName}
           </p>
-          <div className="text-xs md:text-youtube-small text-muted-foreground flex items-center gap-1 flex-wrap">
-            {views !== undefined && <span>{formattedViews}</span>}
-            {views !== undefined && <span>•</span>}
-            <span>{formattedDate}</span>
-          </div>
+          {!isMobile && (
+            <div className="text-xs md:text-youtube-small text-muted-foreground flex items-center gap-1 flex-wrap">
+              {views !== undefined && <span>{formattedViews}</span>}
+              {views !== undefined && <span>•</span>}
+              <span>{formattedDate}</span>
+            </div>
+          )}
         </div>
       </div>
     </Link>

@@ -46,9 +46,9 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
           style={{ opacity: currentIndex === 0 ? 0.5 : 1 }}
         />
 
-        <div className={`grid ${isMobile ? 'grid-cols-2' : 'grid-cols-4'} gap-4 w-full px-10`}>
+        <div className={`grid ${isMobile ? 'grid-cols-2 gap-2' : 'grid-cols-4 gap-4'} w-full px-6 md:px-10`}>
           {currentVideos.map((video) => (
-            <div key={video.id} className="transition-all duration-300 animate-scaleIn">
+            <div key={video.id} className={`transition-all duration-300 animate-scaleIn ${isMobile ? 'px-1' : ''}`}>
               <VideoCard {...video} />
             </div>
           ))}
