@@ -30,8 +30,8 @@ export const Header = () => {
   useEffect(() => {
     const initializeSession = async () => {
       try {
-        // Clear any stale session data
-        localStorage.removeItem('supabase.auth.token');
+        // First, clear ALL local storage to ensure no stale data
+        localStorage.clear();
         
         // Get initial session
         const { data: { session: initialSession }, error: sessionError } = await supabase.auth.getSession();
@@ -41,7 +41,7 @@ export const Header = () => {
         }
 
         if (initialSession) {
-          console.log("Initial session loaded");
+          console.log("Initial session loaded:", initialSession.user?.email);
           setSession(initialSession);
         }
 
@@ -63,13 +63,20 @@ export const Header = () => {
             case 'SIGNED_OUT':
               console.log('User signed out');
               setSession(null);
-              localStorage.clear(); // Clear all local storage
+              localStorage.clear();
               navigate('/');
               break;
               
             case 'USER_UPDATED':
               console.log('User updated');
               setSession(currentSession);
+              break;
+              
+            case 'USER_DELETED':
+              console.log('User deleted');
+              setSession(null);
+              localStorage.clear();
+              navigate('/');
               break;
           }
         });
@@ -79,6 +86,9 @@ export const Header = () => {
         };
       } catch (error) {
         console.error("Error initializing session:", error);
+        // Clear everything and show error
+        setSession(null);
+        localStorage.clear();
         toast.error("There was an error with authentication. Please try logging in again.");
       }
     };
@@ -146,20 +156,24 @@ export const Header = () => {
 
   const handleLogout = async () => {
     try {
-      // Clear session state and local storage first
+      // First clear all state and storage
       setSession(null);
       localStorage.clear();
       
-      const { error } = await supabase.auth.signOut();
+      // Then sign out from Supabase
+      const { error } = await supabase.auth.signOut({
+        scope: 'global' // This ensures all sessions are terminated
+      });
       
       if (error) {
         console.error("Error during logout:", error);
+        // Only show error if it's not the common "Session not found" error
         if (error.message !== "Session from session_id claim in JWT does not exist") {
           toast.error("There was an issue logging out");
         }
       }
       
-      // Always navigate to home page and show success message
+      // Always navigate and show success
       navigate("/");
       toast.success("Logged out successfully");
       
