@@ -49,9 +49,9 @@ const MainContent = () => {
       <Header />
       <main className="mt-4 md:mt-8 max-w-[1400px] mx-auto px-4 md:px-6">
         <div className="w-full py-4 md:py-6">
-          <div className="relative w-[240px] h-12 mx-auto bg-gray-100 rounded-full p-1.5 cursor-pointer mb-4 md:mb-8 shadow-sm hover:shadow-md transition-shadow"
+          <div className="relative w-full md:w-[240px] h-8 md:h-12 mx-auto bg-gray-100 rounded-full p-1 md:p-1.5 cursor-pointer mb-4 md:mb-8 shadow-sm hover:shadow-md transition-shadow"
                onClick={() => setIsMusic(!isMusic)}>
-            <div className="relative w-full h-full flex items-center justify-between px-8 text-sm font-medium">
+            <div className="relative w-full h-full flex items-center justify-between px-4 md:px-8 text-xs md:text-sm font-medium">
               <span className={`z-10 transition-colors duration-200 ${!isMusic ? 'text-white' : 'text-gray-600'}`}>
                 Videos
               </span>
@@ -59,9 +59,9 @@ const MainContent = () => {
                 Music
               </span>
               <motion.div
-                className="absolute top-0 left-0 w-[108px] h-full bg-primary rounded-full"
+                className="absolute top-0 left-0 w-[85px] md:w-[108px] h-full bg-primary rounded-full"
                 animate={{
-                  x: isMusic ? 128 : 2
+                  x: isMusic ? (isMobile ? 102 : 128) : 2
                 }}
                 transition={{
                   type: "spring",
