@@ -63,17 +63,18 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
             data: {
               full_name: name,
             },
+            emailRedirectTo: window.location.origin,
           },
         });
 
         if (signUpError) {
+          console.error("Signup error:", signUpError);
           if (signUpError.message.includes("User already registered")) {
             toast.error("This email is already registered. Please sign in instead.");
             setIsSignUp(false);
           } else {
-            toast.error(signUpError.message);
+            toast.error(signUpError.message || "Error during signup");
           }
-          setIsLoading(false);
           return;
         }
 
@@ -88,14 +89,14 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
         });
 
         if (signInError) {
+          console.error("Signin error:", signInError);
           if (signInError.message.includes("Invalid login credentials")) {
             toast.error("Invalid email or password");
           } else if (signInError.message.includes("Email not confirmed")) {
             toast.error("Please check your email to confirm your account before signing in");
           } else {
-            toast.error(signInError.message);
+            toast.error(signInError.message || "Error during sign in");
           }
-          setIsLoading(false);
           return;
         }
 
@@ -104,11 +105,13 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
           await queryClient.prefetchQuery({
             queryKey: ["profile", signInData.user.id],
             queryFn: async () => {
-              const { data } = await supabase
+              const { data, error } = await supabase
                 .from("profiles")
                 .select("*")
                 .eq("id", signInData.user.id)
                 .single();
+                
+              if (error) throw error;
               return data;
             },
           });
