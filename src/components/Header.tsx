@@ -197,7 +197,7 @@ export const Header = () => {
     },
     enabled: debouncedSearch.length > 0,
     staleTime: 1000 * 30,
-    cacheTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 5, // Changed from cacheTime to gcTime
     refetchOnWindowFocus: false,
   });
 
