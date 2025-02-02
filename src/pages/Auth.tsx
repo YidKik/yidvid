@@ -56,6 +56,7 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
 
     try {
       if (isSignUp) {
+        console.log("Starting signup process...");
         const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
           email,
           password,
@@ -63,9 +64,11 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
             data: {
               full_name: name,
             },
-            emailRedirectTo: window.location.origin,
+            emailRedirectTo: `${window.location.origin}/auth/callback`,
           },
         });
+
+        console.log("Signup response:", { signUpData, signUpError });
 
         if (signUpError) {
           console.error("Signup error:", signUpError);
@@ -79,6 +82,24 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
         }
 
         if (signUpData?.user) {
+          // Ensure profile is created
+          const { error: profileError } = await supabase
+            .from('profiles')
+            .insert([
+              {
+                id: signUpData.user.id,
+                email: email,
+                name: name,
+                is_admin: false
+              }
+            ]);
+
+          if (profileError) {
+            console.error("Profile creation error:", profileError);
+            toast.error("Error creating user profile. Please try again.");
+            return;
+          }
+
           toast.success("Account created successfully! Please check your email to confirm your account.");
           onOpenChange(false);
         }
@@ -101,7 +122,6 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
         }
 
         if (signInData?.user) {
-          // Prefetch user data
           await queryClient.prefetchQuery({
             queryKey: ["profile", signInData.user.id],
             queryFn: async () => {
