@@ -70,29 +70,14 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
           if (signUpError.message.includes("User already registered")) {
             toast.error("This email is already registered. Please sign in instead.");
             setIsSignUp(false);
-            return;
+          } else {
+            toast.error(signUpError.message);
           }
-          throw signUpError;
+          setIsLoading(false);
+          return;
         }
 
-        // Check if user was created successfully
         if (signUpData?.user) {
-          // Create or update profile
-          const { error: profileError } = await supabase
-            .from('profiles')
-            .upsert({
-              id: signUpData.user.id,
-              email: signUpData.user.email,
-              name: name,
-              is_admin: false,
-            });
-
-          if (profileError) {
-            console.error("Error creating profile:", profileError);
-            toast.error("Failed to create user profile");
-            return;
-          }
-
           toast.success("Account created successfully! Please check your email to confirm your account.");
           onOpenChange(false);
         }
@@ -110,6 +95,7 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
           } else {
             toast.error(signInError.message);
           }
+          setIsLoading(false);
           return;
         }
 
@@ -122,19 +108,6 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
                 .from("profiles")
                 .select("*")
                 .eq("id", signInData.user.id)
-                .single();
-              return data;
-            },
-          });
-
-          // Prefetch user preferences
-          await queryClient.prefetchQuery({
-            queryKey: ["user_preferences", signInData.user.id],
-            queryFn: async () => {
-              const { data } = await supabase
-                .from("user_preferences")
-                .select("*")
-                .eq("user_id", signInData.user.id)
                 .single();
               return data;
             },
