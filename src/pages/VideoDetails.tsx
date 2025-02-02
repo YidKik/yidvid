@@ -20,7 +20,7 @@ type Comment = VideoCommentsTable["Row"] & {
 };
 
 const VideoDetails = () => {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
 
   const { data: video, isLoading: isLoadingVideo } = useQuery({
     queryKey: ["video", id],
@@ -46,6 +46,12 @@ const VideoDetails = () => {
         return videoByVideoId;
       }
 
+      // Check if the id is a valid UUID before querying
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+      if (!uuidRegex.test(id)) {
+        throw new Error("Invalid video ID format");
+      }
+
       // If not found by video_id, try UUID
       const { data: videoByUuid, error: videoByUuidError } = await supabase
         .from("youtube_videos")
@@ -65,6 +71,7 @@ const VideoDetails = () => {
       console.log("Found video by UUID:", videoByUuid);
       return videoByUuid;
     },
+    retry: false,
   });
 
   const { data: channelVideos } = useQuery({
