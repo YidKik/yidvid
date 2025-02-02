@@ -47,6 +47,9 @@ async function fetchChannelData(channelIdentifier: string, apiKey: string) {
         const response = await fetch(
           `https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${cleanedIdentifier}&key=${apiKey}`
         );
+        if (!response.ok) {
+          throw new Error(`YouTube API error: ${response.status} ${response.statusText}`);
+        }
         const data = await response.json();
         if (data.items?.length > 0) return data;
       }
@@ -59,6 +62,9 @@ async function fetchChannelData(channelIdentifier: string, apiKey: string) {
       const response = await fetch(
         `https://www.googleapis.com/youtube/v3/channels?part=snippet&forUsername=${cleanedIdentifier}&key=${apiKey}`
       );
+      if (!response.ok) {
+        throw new Error(`YouTube API error: ${response.status} ${response.statusText}`);
+      }
       const data = await response.json();
       if (data.items?.length > 0) return data;
       return null;
@@ -70,18 +76,25 @@ async function fetchChannelData(channelIdentifier: string, apiKey: string) {
       const response = await fetch(
         `https://www.googleapis.com/youtube/v3/search?part=snippet&type=channel&q=${cleanedIdentifier}&key=${apiKey}`
       );
+      if (!response.ok) {
+        throw new Error(`YouTube API error: ${response.status} ${response.statusText}`);
+      }
       const data = await response.json();
       if (data.items?.length > 0) {
         const channelId = data.items[0].snippet.channelId;
         const channelResponse = await fetch(
           `https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${channelId}&key=${apiKey}`
         );
+        if (!channelResponse.ok) {
+          throw new Error(`YouTube API error: ${channelResponse.status} ${channelResponse.statusText}`);
+        }
         return await channelResponse.json();
       }
       return null;
     }
   ];
 
+  let lastError = null;
   for (const method of methods) {
     try {
       const data = await method();
@@ -91,10 +104,11 @@ async function fetchChannelData(channelIdentifier: string, apiKey: string) {
       }
     } catch (error) {
       console.error('[YouTube API] Method error:', error);
+      lastError = error;
     }
   }
 
-  throw new Error('Channel not found');
+  throw lastError || new Error('Channel not found');
 }
 
 serve(async (req) => {
