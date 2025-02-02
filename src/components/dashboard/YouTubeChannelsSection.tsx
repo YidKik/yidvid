@@ -204,10 +204,10 @@ export const YouTubeChannelsSection = () => {
             {channels?.map((channel) => (
               <div 
                 key={channel.id} 
-                className="flex items-center justify-between p-4 hover:bg-gray-50"
+                className="flex items-center justify-between p-4 hover:bg-gray-50 group"
               >
                 <div 
-                  className="flex items-center gap-4 cursor-pointer flex-1"
+                  className="flex items-center gap-4 cursor-pointer flex-1 min-w-0"
                   onClick={() => setSelectedChannelId(channel.channel_id)}
                 >
                   <img 
@@ -215,7 +215,7 @@ export const YouTubeChannelsSection = () => {
                     alt={channel.title}
                     className="w-12 h-12 rounded-full object-cover flex-shrink-0"
                   />
-                  <div className="min-w-0 flex-1">
+                  <div className="min-w-0 flex-1 pr-4">
                     <h3 className="font-medium truncate">{channel.title}</h3>
                     <p className="text-sm text-gray-500 truncate">
                       {channel.description || 'No description'}
@@ -228,7 +228,7 @@ export const YouTubeChannelsSection = () => {
                       variant="ghost"
                       size="icon"
                       disabled={isDeleting}
-                      className="text-destructive hover:text-destructive hover:bg-destructive/10 flex-shrink-0"
+                      className="text-destructive hover:text-destructive hover:bg-destructive/10 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
                       onClick={(e) => {
                         e.stopPropagation();
                         setChannelToDelete(channel.channel_id);
