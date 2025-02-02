@@ -99,23 +99,25 @@ export const Header = () => {
       // Attempt to sign out from Supabase
       const { error } = await supabase.auth.signOut();
       
-      // Even if there's an error, we want to clear local state and redirect
       if (error) {
         console.error("Error during logout:", error);
-        // Only show error if it's not the session_not_found error
+        // Only show error toast if it's not the session_not_found error
         if (error.message !== "Session from session_id claim in JWT does not exist") {
           toast.error("There was an issue logging out");
         }
-      } else {
-        toast.success("Logged out successfully");
       }
 
-      // Always navigate to home page after logout attempt
+      // Clear any local storage items related to the session
+      localStorage.removeItem('supabase.auth.token');
+      
+      // Always navigate to home page and show success message
       navigate("/");
+      toast.success("Logged out successfully");
       
     } catch (error) {
       console.error("Unexpected error during logout:", error);
-      toast.error("An unexpected error occurred");
+      // Even if there's an error, we want to clear state and redirect
+      navigate("/");
     }
   };
 
