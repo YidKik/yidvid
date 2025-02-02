@@ -55,6 +55,15 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
     setIsLoading(true);
 
     try {
+      // Test Supabase connection first
+      const { data: connectionTest, error: connectionError } = await supabase.from('profiles').select('count').single();
+      if (connectionError) {
+        console.error("Supabase connection error:", connectionError);
+        toast.error("Unable to connect to the database. Please try again later.");
+        return;
+      }
+      console.log("Supabase connection successful:", connectionTest);
+
       if (isSignUp) {
         const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
           email,
@@ -78,6 +87,7 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
         }
 
         if (signUpData?.user) {
+          console.log("Signup successful:", signUpData);
           toast.success("Account created successfully! Please check your email to confirm your account.");
           onOpenChange(false);
         }
@@ -100,6 +110,8 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
         }
 
         if (signInData?.user) {
+          console.log("Signin successful:", signInData);
+          // Prefetch user profile data
           await queryClient.prefetchQuery({
             queryKey: ["profile", signInData.user.id],
             queryFn: async () => {
@@ -109,7 +121,11 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
                 .eq("id", signInData.user.id)
                 .single();
                 
-              if (error) throw error;
+              if (error) {
+                console.error("Error fetching profile:", error);
+                throw error;
+              }
+              console.log("Profile data fetched:", data);
               return data;
             },
           });
