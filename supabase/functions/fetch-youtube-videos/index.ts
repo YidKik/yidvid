@@ -47,7 +47,7 @@ serve(async (req) => {
       throw new Error('YouTube API key not configured');
     }
 
-    const fetchChannelVideos = async (channelId: string) => {
+    const fetchChannelVideos = async (channelId: string, pageToken?: string) => {
       try {
         // Get channel details
         const channelUrl = `https://www.googleapis.com/youtube/v3/channels?part=contentDetails,snippet&id=${channelId}&key=${apiKey}`;
@@ -56,20 +56,20 @@ serve(async (req) => {
 
         if (!channelResponse.ok || !channelData.items?.[0]) {
           console.error(`[YouTube Videos] Error fetching channel ${channelId}:`, channelData);
-          return [];
+          return { videos: [], nextPageToken: null };
         }
 
         const uploadsPlaylistId = channelData.items[0].contentDetails.relatedPlaylists.uploads;
         const channelTitle = channelData.items[0].snippet.title;
 
-        // Fetch only the most recent videos (last 50)
-        const playlistUrl = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${uploadsPlaylistId}&maxResults=50&key=${apiKey}`;
+        // Fetch videos with pagination
+        const playlistUrl = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${uploadsPlaylistId}&maxResults=50${pageToken ? `&pageToken=${pageToken}` : ''}&key=${apiKey}`;
         const response = await fetch(playlistUrl);
         const data = await response.json();
 
         if (!response.ok || !data.items) {
           console.error(`[YouTube Videos] Error fetching videos for channel ${channelId}:`, data);
-          return [];
+          return { videos: [], nextPageToken: null };
         }
 
         // Get video IDs and fetch statistics in a single batch
@@ -80,7 +80,7 @@ serve(async (req) => {
 
         if (!statsResponse.ok || !statsData.items) {
           console.error('[YouTube Videos] Error fetching video statistics:', statsData);
-          return [];
+          return { videos: [], nextPageToken: null };
         }
 
         // Create a map for quick lookup of statistics
@@ -92,7 +92,7 @@ serve(async (req) => {
         );
 
         // Process videos with their statistics
-        return data.items.map((item: any) => ({
+        const videos = data.items.map((item: any) => ({
           video_id: item.snippet.resourceId.videoId,
           title: item.snippet.title,
           thumbnail: item.snippet.thumbnails.high?.url || item.snippet.thumbnails.default?.url,
@@ -102,9 +102,14 @@ serve(async (req) => {
           views: parseInt(statsMap.get(item.snippet.resourceId.videoId)?.statistics.viewCount || '0'),
           description: statsMap.get(item.snippet.resourceId.videoId)?.description || null,
         }));
+
+        return { 
+          videos,
+          nextPageToken: data.nextPageToken || null
+        };
       } catch (error) {
         console.error(`[YouTube Videos] Error processing channel ${channelId}:`, error);
-        return [];
+        return { videos: [], nextPageToken: null };
       }
     };
 
@@ -112,12 +117,13 @@ serve(async (req) => {
     const batchSize = 2; // Process 2 channels at a time to avoid rate limits
     const results = [];
     
+    // First phase: Fetch initial 50 videos for each channel
     for (let i = 0; i < channels.length; i += batchSize) {
       const batch = channels.slice(i, i + batchSize);
       console.log(`[YouTube Videos] Processing batch ${i / batchSize + 1} of ${Math.ceil(channels.length / batchSize)}`);
       
-      const batchResults = await Promise.all(batch.map(fetchChannelVideos));
-      results.push(...batchResults.flat());
+      const batchResults = await Promise.all(batch.map(channelId => fetchChannelVideos(channelId)));
+      results.push(...batchResults.map(r => r.videos).flat());
       
       if (i + batchSize < channels.length) {
         // Add a small delay between batches to avoid rate limiting
@@ -125,9 +131,9 @@ serve(async (req) => {
       }
     }
 
-    console.log(`[YouTube Videos] Total videos fetched: ${results.length}`);
+    console.log(`[YouTube Videos] Initial fetch complete. Total videos: ${results.length}`);
 
-    // Store videos in batches
+    // Store initial videos in batches
     const batchInsertSize = 100;
     for (let i = 0; i < results.length; i += batchInsertSize) {
       const batch = results.slice(i, i + batchInsertSize);
@@ -142,6 +148,38 @@ serve(async (req) => {
         console.error(`[YouTube Videos] Error upserting batch ${Math.floor(i / batchInsertSize) + 1}:`, upsertError);
       }
     }
+
+    // Second phase: Start background task to fetch remaining videos
+    const fetchRemainingVideos = async () => {
+      for (const channelId of channels) {
+        let nextPageToken = null;
+        do {
+          const { videos, nextPageToken: newPageToken } = await fetchChannelVideos(channelId, nextPageToken);
+          
+          if (videos.length > 0) {
+            const { error: upsertError } = await supabaseClient
+              .from('youtube_videos')
+              .upsert(videos, { 
+                onConflict: 'video_id',
+                ignoreDuplicates: false
+              });
+
+            if (upsertError) {
+              console.error(`[YouTube Videos] Error upserting additional videos for channel ${channelId}:`, upsertError);
+            }
+          }
+
+          nextPageToken = newPageToken;
+          
+          // Add delay between requests to avoid rate limiting
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        } while (nextPageToken);
+      }
+      console.log('[YouTube Videos] Background fetch complete');
+    };
+
+    // Start background task
+    EdgeRuntime.waitUntil(fetchRemainingVideos());
 
     return new Response(
       JSON.stringify({ success: true, count: results.length }),
