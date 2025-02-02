@@ -49,26 +49,28 @@ const MainContent = () => {
       <Header />
       <main className="mt-4 md:mt-8 max-w-[1400px] mx-auto px-4 md:px-6">
         <div className="w-full py-4 md:py-6">
-          <div className="relative w-full md:w-[240px] h-8 md:h-12 mx-auto bg-gray-100 rounded-full p-1 md:p-1.5 cursor-pointer mb-4 md:mb-8 shadow-sm hover:shadow-md transition-shadow"
-               onClick={() => setIsMusic(!isMusic)}>
-            <div className="relative w-full h-full flex items-center justify-between px-4 md:px-8 text-xs md:text-sm font-medium">
-              <span className={`z-10 transition-colors duration-200 ${!isMusic ? 'text-white' : 'text-gray-600'}`}>
-                Videos
-              </span>
-              <span className={`z-10 transition-colors duration-200 ${isMusic ? 'text-white' : 'text-gray-600'}`}>
-                Music
-              </span>
-              <motion.div
-                className="absolute top-0 left-0 w-[85px] md:w-[108px] h-full bg-primary rounded-full"
-                animate={{
-                  x: isMusic ? (isMobile ? 102 : 128) : 2
-                }}
-                transition={{
-                  type: "spring",
-                  stiffness: 300,
-                  damping: 30
-                }}
-              />
+          <div className="flex justify-center w-full">
+            <div className="relative w-[180px] md:w-[240px] h-8 md:h-12 bg-gray-100 rounded-full p-1 md:p-1.5 cursor-pointer mb-4 md:mb-8 shadow-sm hover:shadow-md transition-shadow"
+                 onClick={() => setIsMusic(!isMusic)}>
+              <div className="relative w-full h-full flex items-center justify-between px-4 md:px-8 text-xs md:text-sm font-medium">
+                <span className={`z-10 transition-colors duration-200 ${!isMusic ? 'text-white' : 'text-gray-600'}`}>
+                  Videos
+                </span>
+                <span className={`z-10 transition-colors duration-200 ${isMusic ? 'text-white' : 'text-gray-600'}`}>
+                  Music
+                </span>
+                <motion.div
+                  className="absolute top-0 left-0 w-[82px] md:w-[108px] h-full bg-primary rounded-full"
+                  animate={{
+                    x: isMusic ? (isMobile ? 94 : 128) : 2
+                  }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 300,
+                    damping: 30
+                  }}
+                />
+              </div>
             </div>
           </div>
 
