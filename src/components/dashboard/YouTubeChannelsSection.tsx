@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ChannelVideosManagement } from "@/components/youtube/ChannelVideosManagement";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Input } from "@/components/ui/input";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -28,6 +29,7 @@ export const YouTubeChannelsSection = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedChannelId, setSelectedChannelId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [videoSearchQuery, setVideoSearchQuery] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
   const [channelToDelete, setChannelToDelete] = useState<string | null>(null);
 
@@ -68,6 +70,29 @@ export const YouTubeChannelsSection = () => {
 
       return data || [];
     },
+  });
+
+  const { data: videos } = useQuery({
+    queryKey: ["youtube-videos-search", videoSearchQuery],
+    queryFn: async () => {
+      if (!videoSearchQuery.trim()) return [];
+
+      const { data, error } = await supabase
+        .from("youtube_videos")
+        .select("*")
+        .ilike("title", `%${videoSearchQuery.trim()}%`)
+        .order("uploaded_at", { ascending: false })
+        .limit(50);
+
+      if (error) {
+        console.error("Error searching videos:", error);
+        toast.error("Error searching videos");
+        return [];
+      }
+
+      return data || [];
+    },
+    enabled: videoSearchQuery.length > 0,
   });
 
   const handleSuccess = () => {
@@ -193,73 +218,114 @@ export const YouTubeChannelsSection = () => {
               </DialogContent>
             </Dialog>
           </div>
-          <div className="w-full">
-            <ChannelSearch value={searchQuery} onChange={setSearchQuery} />
+          <div className="flex items-center gap-4">
+            <div className="flex-1">
+              <ChannelSearch value={searchQuery} onChange={setSearchQuery} />
+            </div>
+            <div className="flex-1">
+              <div className="flex items-center gap-2">
+                <Video className="w-4 h-4 text-muted-foreground" />
+                <Input
+                  type="search"
+                  placeholder="Search videos..."
+                  value={videoSearchQuery}
+                  onChange={(e) => setVideoSearchQuery(e.target.value)}
+                  className="w-64"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
       <div className="flex h-[calc(100vh-24rem)]">
         <ScrollArea className="w-1/2 border-r">
           <div className="divide-y">
-            {channels?.map((channel) => (
-              <div 
-                key={channel.id} 
-                className="flex items-center justify-between p-4 hover:bg-gray-50"
-              >
+            {videoSearchQuery ? (
+              // Show video search results
+              videos?.map((video) => (
                 <div 
-                  className="flex items-center gap-4 cursor-pointer flex-1"
-                  onClick={() => setSelectedChannelId(channel.channel_id)}
+                  key={video.id} 
+                  className="flex items-center gap-4 p-4 hover:bg-gray-50"
+                  onClick={() => {
+                    const channel = channels?.find(c => c.channel_id === video.channel_id);
+                    if (channel) {
+                      setSelectedChannelId(channel.channel_id);
+                    }
+                  }}
                 >
                   <img 
-                    src={channel.thumbnail_url || '/placeholder.svg'} 
-                    alt={channel.title}
-                    className="w-12 h-12 rounded-full object-cover flex-shrink-0"
+                    src={video.thumbnail} 
+                    alt={video.title}
+                    className="w-24 h-16 object-cover rounded"
                   />
-                  <div className="flex-1 min-w-0 pr-4">
-                    <h3 className="font-medium truncate">{channel.title}</h3>
-                    <p className="text-sm text-gray-500 truncate max-w-[200px]">
-                      {channel.description || 'No description'}
-                    </p>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-medium truncate">{video.title}</h3>
+                    <p className="text-sm text-gray-500">{video.channel_name}</p>
                   </div>
                 </div>
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      disabled={isDeleting}
-                      className="text-destructive hover:text-destructive hover:bg-destructive/10 flex-shrink-0 ml-2"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setChannelToDelete(channel.channel_id);
-                      }}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Delete Channel</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        Are you sure you want to delete this channel? This action cannot be undone
-                        and will permanently remove the channel and all its videos for all users.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel onClick={() => setChannelToDelete(null)}>
-                        Cancel
-                      </AlertDialogCancel>
-                      <AlertDialogAction
-                        onClick={() => channelToDelete && handleDeleteChannel(channelToDelete)}
-                        className="bg-destructive hover:bg-destructive/90"
+              ))
+            ) : (
+              // Show channel list
+              channels?.map((channel) => (
+                <div 
+                  key={channel.id} 
+                  className="flex items-center justify-between p-4 hover:bg-gray-50"
+                >
+                  <div 
+                    className="flex items-center gap-4 cursor-pointer flex-1"
+                    onClick={() => setSelectedChannelId(channel.channel_id)}
+                  >
+                    <img 
+                      src={channel.thumbnail_url || '/placeholder.svg'} 
+                      alt={channel.title}
+                      className="w-12 h-12 rounded-full object-cover flex-shrink-0"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-medium truncate">{channel.title}</h3>
+                      <p className="text-sm text-gray-500 truncate max-w-[200px]">
+                        {channel.description || 'No description'}
+                      </p>
+                    </div>
+                  </div>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        disabled={isDeleting}
+                        className="text-destructive hover:text-destructive hover:bg-destructive/10 flex-shrink-0"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setChannelToDelete(channel.channel_id);
+                        }}
                       >
-                        Delete
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              </div>
-            ))}
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Delete Channel</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Are you sure you want to delete this channel? This action cannot be undone
+                          and will permanently remove the channel and all its videos for all users.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel onClick={() => setChannelToDelete(null)}>
+                          Cancel
+                        </AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => channelToDelete && handleDeleteChannel(channelToDelete)}
+                          className="bg-destructive hover:bg-destructive/90"
+                        >
+                          Delete
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </div>
+              ))
+            )}
           </div>
         </ScrollArea>
         <div className="w-1/2 p-4 overflow-auto">
