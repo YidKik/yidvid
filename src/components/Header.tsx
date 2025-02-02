@@ -241,7 +241,7 @@ export const Header = () => {
                 setShowResults(true);
               }}
               onFocus={() => setShowResults(true)}
-              className="w-full bg-transparent border-none text-[#555555] placeholder:text-[#555555] focus-visible:ring-0 focus-visible:ring-offset-0 [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden [&::-webkit-search-results-button]:hidden [&::-webkit-search-results-decoration]:hidden"
+              className="w-full bg-transparent border-none text-[#555555] placeholder:text-[#555555] focus-visible:ring-primary focus-visible:ring-2 focus-visible:ring-offset-2 [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden [&::-webkit-search-results-button]:hidden [&::-webkit-search-results-decoration]:hidden"
             />
             <Button 
               type="submit"
