@@ -67,11 +67,11 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
 
     setIsFetchingChannel(true);
     try {
-      // First check if the channel already exists
+      // First check if the channel already exists using a more reliable query
       const { data: existingChannel, error: checkError } = await supabase
         .from("youtube_channels")
-        .select("title")
-        .eq("channel_id", processedChannelId)
+        .select("title, channel_id")
+        .or(`channel_id.eq.${processedChannelId},channel_id.ilike.${processedChannelId}`)
         .maybeSingle();
 
       if (checkError) {
@@ -81,10 +81,11 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
       }
 
       if (existingChannel) {
-        toast.error("This channel has already been added to your dashboard");
+        toast.error(`Channel "${existingChannel.title}" has already been added to your dashboard`);
         return;
       }
 
+      // Fetch channel details from YouTube API
       const { data, error } = await supabase.functions.invoke('fetch-youtube-channel', {
         body: { channelId: processedChannelId }
       });
@@ -104,6 +105,24 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
         return;
       }
 
+      // Double-check for duplicates one more time before inserting
+      const { data: finalCheck, error: finalCheckError } = await supabase
+        .from("youtube_channels")
+        .select("title")
+        .eq("channel_id", data.channelId)
+        .maybeSingle();
+
+      if (finalCheckError) {
+        console.error("Error in final duplicate check:", finalCheckError);
+        toast.error("Failed to verify channel uniqueness");
+        return;
+      }
+
+      if (finalCheck) {
+        toast.error("This channel has already been added to your dashboard");
+        return;
+      }
+
       setIsAddingChannel(true);
       const { error: insertError } = await supabase
         .from("youtube_channels")
@@ -116,7 +135,11 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
 
       if (insertError) {
         console.error("Error adding channel:", insertError);
-        toast.error("Failed to add the channel");
+        if (insertError.code === '23505') {
+          toast.error("This channel has already been added to your dashboard");
+        } else {
+          toast.error("Failed to add the channel");
+        }
         return;
       }
 
