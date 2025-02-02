@@ -63,9 +63,19 @@ const Search = () => {
         </h1>
 
         <Tabs defaultValue="videos" className="w-full">
-          <TabsList className="mb-6">
-            <TabsTrigger value="videos">Videos ({videos?.length || 0})</TabsTrigger>
-            <TabsTrigger value="channels">Channels ({channels?.length || 0})</TabsTrigger>
+          <TabsList className="mb-8 w-full flex justify-start gap-6 border-b pb-1">
+            <TabsTrigger 
+              value="videos" 
+              className="px-6 py-2.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all duration-300 rounded-md hover:bg-accent/80"
+            >
+              Videos ({videos?.length || 0})
+            </TabsTrigger>
+            <TabsTrigger 
+              value="channels"
+              className="px-6 py-2.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all duration-300 rounded-md hover:bg-accent/80"
+            >
+              Channels ({channels?.length || 0})
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="videos">
