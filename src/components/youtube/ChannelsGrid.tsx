@@ -51,8 +51,8 @@ export const ChannelsGrid = () => {
   if (isLoading) {
     return (
       <div className="w-full max-w-[1600px] mx-auto px-4">
-        <div className="flex items-center justify-between mb-8">
-          <h2 className="text-2xl font-bold text-accent">View All Channels</h2>
+        <div className="flex items-center justify-between mb-4 md:mb-8">
+          <h2 className="text-lg md:text-2xl font-bold text-accent">View All Channels</h2>
           <RequestChannelDialog />
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
@@ -73,8 +73,8 @@ export const ChannelsGrid = () => {
   if (!visibleChannels.length) {
     return (
       <div className="w-full max-w-[1600px] mx-auto px-4">
-        <div className="flex items-center justify-between mb-8">
-          <h2 className="text-2xl font-bold text-accent">View All Channels</h2>
+        <div className="flex items-center justify-between mb-4 md:mb-8">
+          <h2 className="text-lg md:text-2xl font-bold text-accent">View All Channels</h2>
           <RequestChannelDialog />
         </div>
         <div className="text-center py-8 text-gray-500">
@@ -86,8 +86,8 @@ export const ChannelsGrid = () => {
 
   return (
     <div className="w-full max-w-[1600px] mx-auto px-4 animate-scaleIn">
-      <div className="flex items-center justify-between mb-8">
-        <h2 className="text-2xl font-bold text-accent">View All Channels</h2>
+      <div className="flex items-center justify-between mb-4 md:mb-8">
+        <h2 className="text-lg md:text-2xl font-bold text-accent">View All Channels</h2>
         <RequestChannelDialog />
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">

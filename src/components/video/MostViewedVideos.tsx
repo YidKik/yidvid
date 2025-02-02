@@ -38,7 +38,7 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
 
   return (
     <div className="w-full max-w-[1600px] mx-auto px-4 mb-12">
-      <h2 className="text-2xl font-bold mb-8 text-accent">Most Viewed Videos</h2>
+      <h2 className="text-lg md:text-2xl font-bold mb-4 md:mb-8 text-accent">Most Viewed Videos</h2>
       <div className="relative">
         <ChevronLeft 
           className="absolute left-0 md:left-2 top-[40%] -translate-y-1/2 z-10 w-8 h-8 text-primary hover:text-primary/80 cursor-pointer"
