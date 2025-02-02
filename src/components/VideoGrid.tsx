@@ -77,7 +77,7 @@ export default function VideoGrid({ maxVideos = 12, rowSize = 4, isLoading }: Vi
     queryKey: ["youtube_videos"],
     queryFn: fetchVideos,
     staleTime: 1000 * 60 * 5, // 5 minutes
-    cacheTime: 1000 * 60 * 30, // 30 minutes
+    gcTime: 1000 * 60 * 30, // 30 minutes (renamed from cacheTime)
     refetchOnWindowFocus: false,
   });
 
