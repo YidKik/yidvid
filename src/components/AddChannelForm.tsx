@@ -68,11 +68,17 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
     setIsFetchingChannel(true);
     try {
       // First check if the channel already exists
-      const { data: existingChannel } = await supabase
+      const { data: existingChannel, error: checkError } = await supabase
         .from("youtube_channels")
         .select("title")
         .eq("channel_id", processedChannelId)
         .maybeSingle();
+
+      if (checkError) {
+        console.error("Error checking existing channel:", checkError);
+        toast.error("Failed to check if channel exists");
+        return;
+      }
 
       if (existingChannel) {
         toast.error("This channel has already been added to your dashboard");
@@ -138,7 +144,7 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
         <Label htmlFor="channelId">YouTube Channel ID or URL</Label>
         <Input
           id="channelId"
-          placeholder="Enter channel ID, URL, or @handle"
+          placeholder="Enter channel URL, @handle, or ID"
           value={channelId}
           onChange={(e) => setChannelId(e.target.value)}
           disabled={isFetchingChannel || isAddingChannel}
