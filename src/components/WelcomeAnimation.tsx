@@ -44,7 +44,7 @@ export const WelcomeAnimation = () => {
     return () => clearTimeout(timer);
   }, [skipWelcome]);
 
-  const userName = profile?.name || session?.user?.user_metadata?.full_name || "to YidKik";
+  const userName = profile?.name || session?.user?.user_metadata?.full_name || "to YidVid";
 
   return (
     <AnimatePresence>

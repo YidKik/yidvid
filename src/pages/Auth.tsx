@@ -132,7 +132,7 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
         <DialogTitle className="text-center">
           <div className="flex flex-col items-center mb-6">
             <Video className="h-12 w-12 text-primary mb-2" />
-            <h1 className="text-2xl font-bold text-primary">Jewish Tube</h1>
+            <h1 className="text-2xl font-bold text-primary">YidVid</h1>
           </div>
         </DialogTitle>
         <form onSubmit={handleSubmit} className="space-y-4 mt-4">

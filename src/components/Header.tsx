@@ -221,7 +221,7 @@ export const Header = () => {
         <Link to="/" className="flex items-center space-x-2">
           <img 
             src="https://euincktvsiuztsxcuqfd.supabase.co/storage/v1/object/public/logos/play_button_outline_and_glyph.png" 
-            alt="YidKik Logo"
+            alt="YidVid Logo"
             className="h-12 w-12 md:h-20 md:w-20 object-contain min-h-[50px] min-w-[50px] md:min-h-[80px] md:min-w-[80px] max-h-[50px] max-w-[50px] md:max-h-[80px] md:max-w-[80px]"
             onError={(e) => {
               console.error('Logo failed to load:', e);
