@@ -65,9 +65,10 @@ const Search = () => {
         <div className="space-y-12">
           {/* Channels Section */}
           <section>
-            <h2 className="text-lg md:text-xl font-semibold mb-6">
-              Channels ({channels?.length || 0})
-            </h2>
+            <div className="flex items-baseline gap-2 mb-6">
+              <h2 className="text-lg md:text-xl font-semibold text-accent">Channels</h2>
+              <span className="text-base text-muted-foreground">{channels?.length || 0}</span>
+            </div>
             {isLoadingChannels ? (
               <div className="text-center">Loading channels...</div>
             ) : channels?.length === 0 ? (
@@ -102,9 +103,10 @@ const Search = () => {
 
           {/* Videos Section */}
           <section>
-            <h2 className="text-lg md:text-xl font-semibold mb-6">
-              Videos ({videos?.length || 0})
-            </h2>
+            <div className="flex items-baseline gap-2 mb-6">
+              <h2 className="text-lg md:text-xl font-semibold text-accent">Videos</h2>
+              <span className="text-base text-muted-foreground">{videos?.length || 0}</span>
+            </div>
             {isLoadingVideos ? (
               <div className="text-center">Loading videos...</div>
             ) : videos?.length === 0 ? (
