@@ -29,6 +29,7 @@ async function fetchChannelData(channelIdentifier: string, apiKey: string) {
     }
   } catch (error) {
     console.error('[YouTube API] URL parsing error:', error);
+    throw new Error('Invalid YouTube URL format');
   }
 
   // Remove @ symbol if present
@@ -37,6 +38,10 @@ async function fetchChannelData(channelIdentifier: string, apiKey: string) {
   }
 
   console.log('[YouTube API] Cleaned identifier:', cleanedIdentifier);
+
+  if (!cleanedIdentifier) {
+    throw new Error('Invalid channel identifier');
+  }
 
   // Try different methods to fetch the channel
   const methods = [
@@ -94,7 +99,6 @@ async function fetchChannelData(channelIdentifier: string, apiKey: string) {
     }
   ];
 
-  let lastError = null;
   for (const method of methods) {
     try {
       const data = await method();
@@ -104,11 +108,12 @@ async function fetchChannelData(channelIdentifier: string, apiKey: string) {
       }
     } catch (error) {
       console.error('[YouTube API] Method error:', error);
-      lastError = error;
+      // Continue to next method instead of throwing immediately
     }
   }
 
-  throw lastError || new Error('Channel not found');
+  // If we get here, no method succeeded in finding the channel
+  throw new Error('Channel not found');
 }
 
 serve(async (req) => {
@@ -122,8 +127,14 @@ serve(async (req) => {
     
     if (!channelId) {
       return new Response(
-        JSON.stringify({ error: 'Channel ID is required' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+        JSON.stringify({ 
+          error: 'Channel ID is required',
+          details: 'Please provide a valid channel ID or URL'
+        }),
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }, 
+          status: 400 
+        }
       );
     }
 
@@ -131,48 +142,80 @@ serve(async (req) => {
     if (!YOUTUBE_API_KEY) {
       console.error('[YouTube API] Missing API key');
       return new Response(
-        JSON.stringify({ error: 'YouTube API key not configured' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+        JSON.stringify({ 
+          error: 'Configuration error',
+          details: 'YouTube API key not configured'
+        }),
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }, 
+          status: 500 
+        }
       );
     }
 
     console.log('[YouTube API] Processing channel identifier:', channelId);
 
-    const channelData = await fetchChannelData(channelId, YOUTUBE_API_KEY);
-    
-    if (!channelData?.items?.[0]) {
+    try {
+      const channelData = await fetchChannelData(channelId, YOUTUBE_API_KEY);
+      
+      if (!channelData?.items?.[0]) {
+        return new Response(
+          JSON.stringify({ 
+            error: 'Channel not found',
+            details: 'Could not find a YouTube channel with the provided ID/URL. Please try using the full channel URL or ID.'
+          }),
+          { 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }, 
+            status: 404 
+          }
+        );
+      }
+
+      const channel = channelData.items[0];
+      const thumbnailUrl = channel.snippet.thumbnails?.high?.url || 
+                          channel.snippet.thumbnails?.medium?.url || 
+                          channel.snippet.thumbnails?.default?.url;
+
+      return new Response(
+        JSON.stringify({
+          channelId: channel.id,
+          title: channel.snippet.title,
+          description: channel.snippet.description,
+          thumbnailUrl: thumbnailUrl,
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+
+    } catch (error) {
+      console.error('[YouTube API] Channel fetch error:', error);
+      
+      // Determine if this is a "not found" error or a different type of error
+      const isNotFound = error.message.includes('Channel not found') || 
+                        error.message.includes('Invalid channel identifier');
+      
       return new Response(
         JSON.stringify({ 
-          error: 'Channel not found',
-          details: 'Could not find a YouTube channel with the provided ID/URL. Please try using a different format like the full channel URL, @handle, or channel ID.'
+          error: isNotFound ? 'Channel not found' : 'Failed to fetch channel details',
+          details: error.message
         }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 404 }
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }, 
+          status: isNotFound ? 404 : 500 
+        }
       );
     }
 
-    const channel = channelData.items[0];
-    const thumbnailUrl = channel.snippet.thumbnails?.high?.url || 
-                        channel.snippet.thumbnails?.medium?.url || 
-                        channel.snippet.thumbnails?.default?.url;
-
-    return new Response(
-      JSON.stringify({
-        channelId: channel.id,
-        title: channel.snippet.title,
-        description: channel.snippet.description,
-        thumbnailUrl: thumbnailUrl,
-      }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
-
   } catch (error) {
-    console.error('[YouTube API] Error:', error);
+    console.error('[YouTube API] Request processing error:', error);
     return new Response(
       JSON.stringify({ 
-        error: 'Failed to fetch channel details',
+        error: 'Invalid request',
         details: error.message
       }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+      { 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }, 
+        status: 400 
+      }
     );
   }
 });
