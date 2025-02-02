@@ -118,7 +118,7 @@ export const Header = () => {
           .select("id, title, thumbnail, channel_name")
           .or(`title.ilike.%${debouncedSearch}%, channel_name.ilike.%${debouncedSearch}%`)
           .order('created_at', { ascending: false })
-          .limit(50); // Increased limit to show more results
+          .limit(50);
 
         if (error) {
           console.error("Error searching videos:", error);
@@ -252,6 +252,7 @@ export const Header = () => {
                           className="p-3 hover:bg-[#333333] cursor-pointer"
                           onClick={() => {
                             navigate(`/video/${notification.video_id}`);
+                            markNotificationsAsRead();
                           }}
                         >
                           <div className="flex items-start gap-3">
