@@ -16,10 +16,12 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import html2canvas from "html2canvas";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("overview");
+  const [selectedPage, setSelectedPage] = useState("dashboard");
 
   // Check if user is admin
   const { data: profile } = useQuery({
@@ -48,7 +50,13 @@ const Dashboard = () => {
 
   const handleDownloadPDF = async () => {
     try {
-      const element = document.getElementById('root');
+      let element;
+      if (selectedPage === "dashboard") {
+        element = document.getElementById('root');
+      } else {
+        element = document.getElementById(selectedPage);
+      }
+      
       if (!element) {
         toast.error("Could not find page content");
         return;
@@ -57,19 +65,14 @@ const Dashboard = () => {
       const { jsPDF } = await import('jspdf');
       const doc = new jsPDF();
       
-      // Get the element's dimensions
-      const { offsetWidth, offsetHeight } = element;
-      
-      // Convert to canvas and then to PDF
       const canvas = await html2canvas(element);
       const imgData = canvas.toDataURL('image/png');
       
-      // Calculate dimensions to fit on PDF
       const pdfWidth = doc.internal.pageSize.getWidth();
-      const pdfHeight = (offsetHeight * pdfWidth) / offsetWidth;
+      const pdfHeight = (element.offsetHeight * pdfWidth) / element.offsetWidth;
       
       doc.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-      doc.save('website-snapshot.pdf');
+      doc.save(`${selectedPage}-snapshot.pdf`);
       
       toast.success("PDF downloaded successfully");
     } catch (error) {
@@ -111,15 +114,30 @@ const Dashboard = () => {
     <div className="container mx-auto py-8 space-y-8">
       <div className="flex items-center justify-between">
         <BackButton />
-        <Button
-          onClick={handleDownloadPDF}
-          variant="outline"
-          size="sm"
-          className="flex items-center gap-2"
-        >
-          <FileDown className="h-4 w-4" />
-          Download PDF
-        </Button>
+        <div className="flex flex-col gap-2 items-end">
+          <Button
+            onClick={handleDownloadPDF}
+            variant="outline"
+            size="sm"
+            className="flex items-center gap-2"
+          >
+            <FileDown className="h-4 w-4" />
+            Download PDF
+          </Button>
+          <Select value={selectedPage} onValueChange={setSelectedPage}>
+            <SelectTrigger className="w-[200px]">
+              <SelectValue placeholder="Select page to download" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="dashboard">Full Dashboard</SelectItem>
+              <SelectItem value="overview">Overview Section</SelectItem>
+              <SelectItem value="users">Users Section</SelectItem>
+              <SelectItem value="youtube">YouTube Section</SelectItem>
+              <SelectItem value="music">Music Section</SelectItem>
+              <SelectItem value="comments">Comments Section</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
       
       <div className="flex items-center justify-between">
@@ -179,23 +197,23 @@ const Dashboard = () => {
     switch (activeTab) {
       case "overview":
         return (
-          <>
+          <div id="overview">
             <DashboardAnalytics />
             <ChannelRequestsSection />
-          </>
+          </div>
         );
       case "users":
-        return <UserManagementSection currentUserId={profile.id} />;
+        return <div id="users"><UserManagementSection currentUserId={profile.id} /></div>;
       case "youtube":
-        return <YouTubeChannelsSection />;
+        return <div id="youtube"><YouTubeChannelsSection /></div>;
       case "music":
-        return <MusicArtistsSection />;
+        return <div id="music"><MusicArtistsSection /></div>;
       case "comments":
         return (
-          <>
+          <div id="comments">
             <CommentsManagementSection />
             <ReportedVideosSection />
-          </>
+          </div>
         );
       default:
         return null;
