@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { VideoCard } from "../VideoCard";
-import { Button } from "../ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface MostViewedVideosProps {
   videos: {
@@ -17,7 +17,8 @@ interface MostViewedVideosProps {
 
 export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const videosPerPage = 4;
+  const isMobile = useIsMobile();
+  const videosPerPage = isMobile ? 2 : 4;
 
   const handleNext = () => {
     setCurrentIndex((prevIndex) => 
@@ -45,7 +46,7 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
           style={{ opacity: currentIndex === 0 ? 0.5 : 1 }}
         />
 
-        <div className="grid grid-cols-4 gap-4 w-full px-10">
+        <div className={`grid ${isMobile ? 'grid-cols-2' : 'grid-cols-4'} gap-4 w-full px-10`}>
           {currentVideos.map((video) => (
             <div key={video.id} className="transition-all duration-300 animate-scaleIn">
               <VideoCard {...video} />
