@@ -159,9 +159,13 @@ export const Header = () => {
               objectFit: 'contain',
               minWidth: '50px',
               maxWidth: '50px',
+              minHeight: '50px',
+              maxHeight: '50px',
               '@media (min-width: 768px)': {
                 minWidth: '80px',
-                maxWidth: '80px'
+                maxWidth: '80px',
+                minHeight: '80px',
+                maxHeight: '80px'
               }
             }}
             onError={(e) => {
@@ -189,16 +193,16 @@ export const Header = () => {
             />
             {showResults && searchResults && searchResults.length > 0 && (
               <div 
-                className="absolute top-full left-0 right-0 mt-1 bg-white rounded-md shadow-lg border border-gray-100 overflow-hidden z-50"
+                className="absolute top-full left-0 right-0 mt-1 bg-white rounded-md shadow-lg border border-gray-100 overflow-hidden z-50 max-w-[calc(100vw-2rem)] md:max-w-none mx-auto"
                 onMouseDown={(e) => e.preventDefault()}
               >
-                <ScrollArea className="h-[400px] overflow-y-auto scrollbar-hide">
+                <ScrollArea className="h-[300px] md:h-[400px] overflow-y-auto scrollbar-hide">
                   <div className="p-1">
                     {searchResults.map((video) => (
                       <Link
                         key={video.id}
                         to={`/video/${video.id}`}
-                        className="flex items-start gap-3 p-3 hover:bg-gray-50 transition-colors rounded-md"
+                        className="flex items-start gap-2 md:gap-3 p-2 md:p-3 hover:bg-gray-50 transition-colors rounded-md"
                         onClick={() => {
                           setShowResults(false);
                           setSearchQuery("");
@@ -207,13 +211,13 @@ export const Header = () => {
                         <img
                           src={video.thumbnail}
                           alt={video.title}
-                          className="w-16 h-12 object-cover rounded"
+                          className="w-12 h-9 md:w-16 md:h-12 object-cover rounded"
                         />
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm text-[#555555] font-medium line-clamp-2">
+                          <p className="text-xs md:text-sm text-[#555555] font-medium line-clamp-2">
                             {video.title}
                           </p>
-                          <p className="text-xs text-[#555555]/70 mt-0.5">
+                          <p className="text-[10px] md:text-xs text-[#555555]/70 mt-0.5">
                             {video.channel_name}
                           </p>
                         </div>
