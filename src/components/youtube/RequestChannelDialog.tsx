@@ -66,7 +66,7 @@ export const RequestChannelDialog = () => {
       <DialogTrigger asChild>
         <Button 
           variant="outline" 
-          className="gap-2 bg-white hover:bg-gray-50"
+          className="gap-2 bg-white hover:bg-gray-50 h-8 md:h-10 text-sm md:text-base px-3 md:px-4"
         >
           <Plus className="h-4 w-4" />
           Request Channel
@@ -111,7 +111,7 @@ export const RequestChannelDialog = () => {
               )}
             />
             <div className="flex justify-end">
-              <Button type="submit">Submit Request</Button>
+              <Button type="submit" className="h-8 md:h-10 text-sm md:text-base">Submit Request</Button>
             </div>
           </form>
         </Form>

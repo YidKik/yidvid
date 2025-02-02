@@ -175,7 +175,7 @@ export default function VideoGrid({ maxVideos = 12, rowSize = 4, isLoading }: Vi
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
             variant="outline"
-            className="w-32 md:w-40 text-sm md:text-base"
+            className="w-28 h-8 md:w-32 md:h-10 text-sm md:text-base"
           >
             See More
           </Button>
@@ -190,7 +190,7 @@ export default function VideoGrid({ maxVideos = 12, rowSize = 4, isLoading }: Vi
                     setCurrentPage(currentPage - 1);
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                   }}
-                  className={`${currentPage === 1 ? 'pointer-events-none opacity-50' : ''} text-sm md:text-base`}
+                  className={`${currentPage === 1 ? 'pointer-events-none opacity-50' : ''} h-8 md:h-10 text-sm md:text-base`}
                 />
               </PaginationItem>
               <PaginationItem>
@@ -199,7 +199,7 @@ export default function VideoGrid({ maxVideos = 12, rowSize = 4, isLoading }: Vi
                     setCurrentPage(currentPage + 1);
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                   }}
-                  className={`${currentPage === totalPages ? 'pointer-events-none opacity-50' : ''} text-sm md:text-base`}
+                  className={`${currentPage === totalPages ? 'pointer-events-none opacity-50' : ''} h-8 md:h-10 text-sm md:text-base`}
                 />
               </PaginationItem>
             </PaginationContent>
