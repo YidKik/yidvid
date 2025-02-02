@@ -1,5 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
+import { Routes, Route } from "react-router-dom";
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { BackButton } from "@/components/navigation/BackButton";
 import { DashboardAnalytics } from "@/components/dashboard/DashboardAnalytics";
@@ -21,7 +22,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 const Dashboard = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("overview");
-  const [selectedPage, setSelectedPage] = useState("dashboard");
+  const [selectedPage, setSelectedPage] = useState("/");
 
   // Check if user is admin
   const { data: profile } = useQuery({
@@ -50,13 +51,14 @@ const Dashboard = () => {
 
   const handleDownloadPDF = async () => {
     try {
-      let element;
-      if (selectedPage === "dashboard") {
-        element = document.getElementById('root');
-      } else {
-        element = document.getElementById(selectedPage);
+      // Navigate to the selected page first
+      if (selectedPage !== window.location.pathname) {
+        navigate(selectedPage);
+        // Wait for the page to load
+        await new Promise(resolve => setTimeout(resolve, 1000));
       }
       
+      const element = document.getElementById('root');
       if (!element) {
         toast.error("Could not find page content");
         return;
@@ -72,9 +74,14 @@ const Dashboard = () => {
       const pdfHeight = (element.offsetHeight * pdfWidth) / element.offsetWidth;
       
       doc.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-      doc.save(`${selectedPage}-snapshot.pdf`);
+      doc.save(`page-snapshot.pdf`);
       
       toast.success("PDF downloaded successfully");
+      
+      // Navigate back to dashboard if we left it
+      if (selectedPage !== '/dashboard') {
+        navigate('/dashboard');
+      }
     } catch (error) {
       console.error('Error generating PDF:', error);
       toast.error("Failed to generate PDF");
@@ -129,12 +136,13 @@ const Dashboard = () => {
               <SelectValue placeholder="Select page to download" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="dashboard">Full Dashboard</SelectItem>
-              <SelectItem value="overview">Overview Section</SelectItem>
-              <SelectItem value="users">Users Section</SelectItem>
-              <SelectItem value="youtube">YouTube Section</SelectItem>
-              <SelectItem value="music">Music Section</SelectItem>
-              <SelectItem value="comments">Comments Section</SelectItem>
+              <SelectItem value="/">Home Page</SelectItem>
+              <SelectItem value="/dashboard">Dashboard</SelectItem>
+              <SelectItem value="/search">Search Page</SelectItem>
+              <SelectItem value="/settings">Settings</SelectItem>
+              <SelectItem value="/video/example">Video Page</SelectItem>
+              <SelectItem value="/channel/example">Channel Page</SelectItem>
+              <SelectItem value="/music/example">Music Page</SelectItem>
             </SelectContent>
           </Select>
         </div>
