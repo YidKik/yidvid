@@ -85,7 +85,7 @@ const MainContent = () => {
                   <VideoGrid 
                     videos={videos} 
                     maxVideos={isMobile ? 6 : 12} 
-                    rowSize={isMobile ? 1 : 4} 
+                    rowSize={isMobile ? 2 : 4} 
                     isLoading={isLoading}
                   />
                 </div>
