@@ -43,7 +43,7 @@ export const Header = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  const { data: notifications, refetch: refetchNotifications, error: notificationsError } = useQuery({
+  const { data: notifications, refetch: refetchNotifications } = useQuery({
     queryKey: ["video-notifications", session?.user?.id],
     queryFn: async () => {
       if (!session?.user?.id) {
@@ -73,16 +73,13 @@ export const Header = () => {
         return notifications || [];
       } catch (error) {
         console.error("Error in notifications query:", error);
-        throw error;
+        toast.error("Failed to fetch notifications. Please try again later.");
+        return [];
       }
     },
     enabled: !!session?.user?.id,
     retry: 3,
     retryDelay: 1000,
-    onError: (error) => {
-      console.error("Notifications query error:", error);
-      toast.error("Failed to fetch notifications. Please try again later.");
-    }
   });
 
   // Mark notifications as read
@@ -134,7 +131,7 @@ export const Header = () => {
     }
   };
 
-  const { data: searchResults, error: searchError } = useQuery({
+  const { data: searchResults } = useQuery({
     queryKey: ["search", debouncedSearch],
     queryFn: async () => {
       if (!debouncedSearch.trim()) return [];
@@ -155,16 +152,13 @@ export const Header = () => {
         return videos || [];
       } catch (error) {
         console.error("Search error:", error);
-        throw error;
+        toast.error("Failed to search videos. Please try again later.");
+        return [];
       }
     },
     enabled: debouncedSearch.length > 0,
     retry: 2,
     staleTime: 1000 * 60,
-    onError: (error) => {
-      console.error("Search query error:", error);
-      toast.error("Failed to search videos. Please try again later.");
-    }
   });
 
   const handleSearch = (e: React.FormEvent) => {
