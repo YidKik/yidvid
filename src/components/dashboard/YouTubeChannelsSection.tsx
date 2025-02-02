@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { AddChannelForm } from "@/components/AddChannelForm";
 import { ChannelSearch } from "@/components/youtube/ChannelSearch";
 import { ChannelList } from "@/components/youtube/ChannelList";
+import { useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ChannelVideosManagement } from "@/components/youtube/ChannelVideosManagement";
 import {
@@ -22,6 +23,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 export const YouTubeChannelsSection = () => {
+  const navigate = useNavigate();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedChannelId, setSelectedChannelId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -31,6 +33,16 @@ export const YouTubeChannelsSection = () => {
   const { data: channels, refetch } = useQuery({
     queryKey: ["youtube-channels", searchQuery],
     queryFn: async () => {
+      // Check if user is authenticated
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError || !session) {
+        console.error("Authentication error:", sessionError);
+        toast.error("Please sign in to access this feature");
+        navigate("/auth");
+        return [];
+      }
+
       let query = supabase
         .from("youtube_channels")
         .select("*")
@@ -44,6 +56,11 @@ export const YouTubeChannelsSection = () => {
 
       if (error) {
         console.error("Error fetching channels:", error);
+        if (error.message.includes("JWT")) {
+          toast.error("Session expired. Please sign in again");
+          navigate("/auth");
+          return [];
+        }
         toast.error("Error fetching channels");
         return [];
       }
