@@ -167,7 +167,7 @@ export const Header = () => {
           />
         </Link>
 
-        <div className="flex-1 flex justify-center px-4">
+        <div className="flex-1 flex justify-center px-2 md:px-4">
           <form onSubmit={handleSearch} className="w-full max-w-lg flex items-center relative group">
             <Input
               type="search"
@@ -222,7 +222,7 @@ export const Header = () => {
           </form>
         </div>
 
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-1 md:space-x-2">
           {session ? (
             <>
               <DropdownMenu>
@@ -230,13 +230,13 @@ export const Header = () => {
                   <Button 
                     variant="ghost" 
                     size="icon" 
-                    className="bg-[#222222] hover:bg-[#333333] text-white relative"
+                    className="bg-[#222222] hover:bg-[#333333] text-white relative h-8 w-8 md:h-10 md:w-10"
                   >
-                    <Bell className="h-5 w-5" />
+                    <Bell className="h-4 w-4 md:h-5 md:w-5" />
                     {notifications && notifications.length > 0 && (
                       <Badge 
                         variant="destructive" 
-                        className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs"
+                        className="absolute -top-2 -right-2 h-4 w-4 md:h-5 md:w-5 flex items-center justify-center p-0 text-[10px] md:text-xs"
                       >
                         {notifications.length}
                       </Badge>
@@ -280,8 +280,12 @@ export const Header = () => {
               </DropdownMenu>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon">
-                    <Settings className="h-5 w-5" />
+                  <Button 
+                    variant="ghost" 
+                    size="icon"
+                    className="h-8 w-8 md:h-10 md:w-10"
+                  >
+                    <Settings className="h-4 w-4 md:h-5 md:w-5" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
@@ -301,7 +305,12 @@ export const Header = () => {
               </DropdownMenu>
             </>
           ) : (
-            <Button onClick={() => setIsAuthOpen(true)}>Login</Button>
+            <Button 
+              onClick={() => setIsAuthOpen(true)}
+              className="h-8 md:h-10"
+            >
+              Login
+            </Button>
           )}
         </div>
       </div>
