@@ -215,7 +215,8 @@ export const Header = () => {
     e.preventDefault();
     if (searchQuery.trim()) {
       setShowResults(false);
-      navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
+      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchQuery("");
     }
   };
 

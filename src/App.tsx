@@ -7,6 +7,7 @@ import ChannelDetails from "@/pages/ChannelDetails";
 import Dashboard from "@/pages/Dashboard";
 import Settings from "@/pages/Settings";
 import MusicDetails from "@/pages/MusicDetails";
+import Search from "@/pages/Search";
 import { ColorProvider } from "@/contexts/ColorContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -32,6 +33,7 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/music/:id" element={<MusicDetails />} />
+          <Route path="/search" element={<Search />} />
         </Routes>
         <Toaster />
         <Sonner />
