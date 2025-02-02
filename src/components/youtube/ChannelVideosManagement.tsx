@@ -54,6 +54,7 @@ export const ChannelVideosManagement = ({ channelId }: ChannelVideosManagementPr
   const handleDeleteVideo = async (videoId: string) => {
     try {
       setIsDeleting(true);
+      console.log("Starting video deletion process for:", videoId);
 
       // First, delete related notifications
       const { error: notificationsError } = await supabase
@@ -61,7 +62,10 @@ export const ChannelVideosManagement = ({ channelId }: ChannelVideosManagementPr
         .delete()
         .eq("video_id", videoId);
 
-      if (notificationsError) throw notificationsError;
+      if (notificationsError) {
+        console.error("Error deleting notifications:", notificationsError);
+        throw notificationsError;
+      }
 
       // Then, delete related reports
       const { error: reportsError } = await supabase
@@ -69,7 +73,10 @@ export const ChannelVideosManagement = ({ channelId }: ChannelVideosManagementPr
         .delete()
         .eq("video_id", videoId);
 
-      if (reportsError) throw reportsError;
+      if (reportsError) {
+        console.error("Error deleting reports:", reportsError);
+        throw reportsError;
+      }
 
       // Delete related comments
       const { error: commentsError } = await supabase
@@ -77,7 +84,10 @@ export const ChannelVideosManagement = ({ channelId }: ChannelVideosManagementPr
         .delete()
         .eq("video_id", videoId);
 
-      if (commentsError) throw commentsError;
+      if (commentsError) {
+        console.error("Error deleting comments:", commentsError);
+        throw commentsError;
+      }
 
       // Delete video history
       const { error: historyError } = await supabase
@@ -85,7 +95,10 @@ export const ChannelVideosManagement = ({ channelId }: ChannelVideosManagementPr
         .delete()
         .eq("video_id", videoId);
 
-      if (historyError) throw historyError;
+      if (historyError) {
+        console.error("Error deleting history:", historyError);
+        throw historyError;
+      }
 
       // Delete video interactions
       const { error: interactionsError } = await supabase
@@ -93,7 +106,10 @@ export const ChannelVideosManagement = ({ channelId }: ChannelVideosManagementPr
         .delete()
         .eq("video_id", videoId);
 
-      if (interactionsError) throw interactionsError;
+      if (interactionsError) {
+        console.error("Error deleting interactions:", interactionsError);
+        throw interactionsError;
+      }
 
       // Finally, delete the video
       const { error: videoError } = await supabase
@@ -101,13 +117,16 @@ export const ChannelVideosManagement = ({ channelId }: ChannelVideosManagementPr
         .delete()
         .eq("id", videoId);
 
-      if (videoError) throw videoError;
+      if (videoError) {
+        console.error("Error deleting video:", videoError);
+        throw videoError;
+      }
 
       toast.success("Video deleted successfully");
       refetch();
     } catch (error: any) {
+      console.error("Error in deletion process:", error);
       toast.error("Error deleting video");
-      console.error("Error deleting video:", error);
     } finally {
       setIsDeleting(false);
       setVideoToDelete(null);
