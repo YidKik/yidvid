@@ -51,31 +51,84 @@ const Dashboard = () => {
 
   const handleDownloadPDF = async () => {
     try {
+      const loadingToast = toast.loading("Preparing PDF download...");
+      
       // Navigate to the selected page first
       if (selectedPage !== window.location.pathname) {
         navigate(selectedPage);
-        // Wait for the page to load
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // For homepage, wait for videos to be fetched
+        if (selectedPage === "/") {
+          // Wait for initial page render
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          
+          // Check if videos are still loading
+          const videoGrid = document.querySelector('.video-grid');
+          if (videoGrid) {
+            // Wait for skeleton loaders to disappear
+            let attempts = 0;
+            while (attempts < 10 && videoGrid.querySelector('.skeleton')) {
+              await new Promise(resolve => setTimeout(resolve, 1000));
+              attempts++;
+            }
+          }
+          
+          // Additional wait to ensure all images are loaded
+          await new Promise(resolve => {
+            const images = document.querySelectorAll('img');
+            let loadedImages = 0;
+            
+            images.forEach(img => {
+              if (img.complete) {
+                loadedImages++;
+              } else {
+                img.addEventListener('load', () => {
+                  loadedImages++;
+                  if (loadedImages === images.length) {
+                    resolve(true);
+                  }
+                });
+              }
+            });
+            
+            if (loadedImages === images.length) {
+              resolve(true);
+            }
+          });
+        } else {
+          // For other pages, wait for general content load
+          await new Promise(resolve => setTimeout(resolve, 2000));
+        }
       }
       
       const element = document.getElementById('root');
       if (!element) {
         toast.error("Could not find page content");
+        toast.dismiss(loadingToast);
         return;
       }
+      
+      // Scroll to top before capture
+      window.scrollTo(0, 0);
+      
+      const canvas = await html2canvas(element, {
+        logging: false,
+        useCORS: true,
+        scrollY: -window.scrollY,
+        windowHeight: element.scrollHeight
+      });
       
       const { jsPDF } = await import('jspdf');
       const doc = new jsPDF();
       
-      const canvas = await html2canvas(element);
       const imgData = canvas.toDataURL('image/png');
-      
       const pdfWidth = doc.internal.pageSize.getWidth();
       const pdfHeight = (element.offsetHeight * pdfWidth) / element.offsetWidth;
       
       doc.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
       doc.save(`page-snapshot.pdf`);
       
+      toast.dismiss(loadingToast);
       toast.success("PDF downloaded successfully");
       
       // Navigate back to dashboard if we left it
