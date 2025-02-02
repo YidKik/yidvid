@@ -45,6 +45,99 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
     return true;
   };
 
+  const handleSignIn = async () => {
+    try {
+      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (signInError) {
+        console.error("Signin error:", signInError);
+        if (signInError.message.includes("Invalid login credentials")) {
+          toast.error("Invalid email or password");
+        } else {
+          toast.error(signInError.message || "Error during sign in");
+        }
+        return;
+      }
+
+      if (signInData?.user) {
+        await queryClient.prefetchQuery({
+          queryKey: ["profile", signInData.user.id],
+          queryFn: async () => {
+            const { data, error } = await supabase
+              .from("profiles")
+              .select("*")
+              .eq("id", signInData.user.id)
+              .single();
+              
+            if (error) throw error;
+            return data;
+          },
+        });
+
+        toast.success("Signed in successfully!");
+        onOpenChange(false);
+        navigate("/");
+      }
+    } catch (error: any) {
+      console.error("Sign in error:", error);
+      toast.error("An error occurred during sign in");
+    }
+  };
+
+  const handleSignUp = async () => {
+    try {
+      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: name,
+          },
+          emailRedirectTo: window.location.origin,
+        },
+      });
+
+      if (signUpError) {
+        console.error("Signup error:", signUpError);
+        if (signUpError.message.includes("User already registered")) {
+          toast.error("This email is already registered. Please sign in instead.");
+          setIsSignUp(false);
+        } else {
+          toast.error(signUpError.message || "Error during signup");
+        }
+        return;
+      }
+
+      if (signUpData?.user) {
+        // Create profile
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .insert({
+            id: signUpData.user.id,
+            email: email,
+            name: name,
+            is_admin: false
+          });
+
+        if (profileError) {
+          console.error("Profile creation error:", profileError);
+          // Even if profile creation fails, the user is created
+          toast.error("Account created but profile setup failed. Please contact support.");
+        } else {
+          toast.success("Account created successfully! Please check your email to confirm your account.");
+        }
+        
+        onOpenChange(false);
+      }
+    } catch (error: any) {
+      console.error("Signup error:", error);
+      toast.error("An error occurred during signup");
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -56,101 +149,10 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
 
     try {
       if (isSignUp) {
-        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            data: {
-              full_name: name,
-            }
-          }
-        });
-
-        if (signUpError) {
-          console.error("Signup error:", signUpError);
-          
-          if (signUpError.message.includes("User already registered")) {
-            toast.error("This email is already registered. Please sign in instead.");
-            setIsSignUp(false);
-          } else if (signUpError.message.includes("Database error saving new user")) {
-            toast.error("There was an issue creating your account. Please try again later.");
-            console.error("Database error during signup:", signUpError);
-          } else if (signUpError.message.includes("rate limit")) {
-            toast.error("Too many signup attempts. Please try again later.");
-          } else {
-            toast.error(signUpError.message || "Error during signup");
-          }
-          return;
-        }
-
-        if (signUpData?.user) {
-          console.log("Signup successful:", signUpData);
-          
-          // Create profile after successful signup
-          const { error: profileError } = await supabase
-            .from('profiles')
-            .insert({
-              id: signUpData.user.id,
-              email: email,
-              name: name,
-              is_admin: false
-            });
-
-          if (profileError) {
-            console.error("Profile creation error:", profileError);
-            toast.error("Account created but profile setup failed. Please contact support.");
-          } else {
-            toast.success("Account created successfully! Please check your email to confirm your account.");
-            onOpenChange(false);
-          }
-        }
+        await handleSignUp();
       } else {
-        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-
-        if (signInError) {
-          console.error("Signin error:", signInError);
-          if (signInError.message.includes("Invalid login credentials")) {
-            toast.error("Invalid email or password");
-          } else if (signInError.message.includes("Email not confirmed")) {
-            toast.error("Please check your email to confirm your account before signing in");
-          } else {
-            toast.error(signInError.message || "Error during sign in");
-          }
-          return;
-        }
-
-        if (signInData?.user) {
-          console.log("Signin successful:", signInData);
-          
-          // Prefetch user profile data
-          await queryClient.prefetchQuery({
-            queryKey: ["profile", signInData.user.id],
-            queryFn: async () => {
-              const { data, error } = await supabase
-                .from("profiles")
-                .select("*")
-                .eq("id", signInData.user.id)
-                .single();
-                
-              if (error) {
-                console.error("Error fetching profile:", error);
-                throw error;
-              }
-              return data;
-            },
-          });
-
-          toast.success("Signed in successfully!");
-          onOpenChange(false);
-          navigate("/");
-        }
+        await handleSignIn();
       }
-    } catch (error: any) {
-      console.error("Auth error:", error);
-      toast.error(error.message || "An error occurred during authentication");
     } finally {
       setIsLoading(false);
     }
