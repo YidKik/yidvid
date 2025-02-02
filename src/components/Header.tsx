@@ -25,15 +25,13 @@ export const Header = () => {
   const [session, setSession] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [showResults, setShowResults] = useState(false);
-  const debouncedSearch = useDebounce(searchQuery, 300);
+  const debouncedSearch = useDebounce(searchQuery, 200);
 
   useEffect(() => {
     const initializeSession = async () => {
       try {
-        // First, clear ALL local storage to ensure no stale data
         localStorage.clear();
         
-        // Get initial session
         const { data: { session: initialSession }, error: sessionError } = await supabase.auth.getSession();
         if (sessionError) {
           console.error("Session error:", sessionError);
@@ -45,7 +43,6 @@ export const Header = () => {
           setSession(initialSession);
         }
 
-        // Set up auth state change listener
         const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
           console.log("Auth state changed:", event);
           
@@ -83,7 +80,6 @@ export const Header = () => {
         };
       } catch (error) {
         console.error("Error initializing session:", error);
-        // Clear everything and show error
         setSession(null);
         localStorage.clear();
         toast.error("There was an error with authentication. Please try logging in again.");
@@ -132,7 +128,6 @@ export const Header = () => {
     retryDelay: 1000,
   });
 
-  // Mark notifications as read
   const markNotificationsAsRead = async () => {
     if (!session?.user?.id || !notifications?.length) return;
 
@@ -146,43 +141,37 @@ export const Header = () => {
       console.error("Error marking notifications as read:", error);
       toast.error("Failed to mark notifications as read");
     } else {
-      // Refetch notifications to update the UI
       refetchNotifications();
     }
   };
 
   const handleLogout = async () => {
     try {
-      // First clear all state and storage
       setSession(null);
       localStorage.clear();
       
-      // Then sign out from Supabase
       const { error } = await supabase.auth.signOut({
-        scope: 'global' // This ensures all sessions are terminated
+        scope: 'global'
       });
       
       if (error) {
         console.error("Error during logout:", error);
-        // Only show error if it's not the common "Session not found" error
         if (error.message !== "Session from session_id claim in JWT does not exist") {
           toast.error("There was an issue logging out");
         }
       }
       
-      // Always navigate and show success
       navigate("/");
       toast.success("Logged out successfully");
       
     } catch (error) {
       console.error("Unexpected error during logout:", error);
-      // Even if there's an error, we want to clear state and redirect
       navigate("/");
     }
   };
 
-  const { data: searchResults } = useQuery({
-    queryKey: ["search", debouncedSearch],
+  const { data: searchResults, isFetching: isSearching } = useQuery({
+    queryKey: ["quick-search", debouncedSearch],
     queryFn: async () => {
       if (!debouncedSearch.trim()) return [];
       
@@ -192,7 +181,7 @@ export const Header = () => {
           .select("id, title, thumbnail, channel_name")
           .or(`title.ilike.%${debouncedSearch}%, channel_name.ilike.%${debouncedSearch}%`)
           .order('created_at', { ascending: false })
-          .limit(50);
+          .limit(10);
 
         if (error) {
           console.error("Error searching videos:", error);
@@ -207,8 +196,9 @@ export const Header = () => {
       }
     },
     enabled: debouncedSearch.length > 0,
-    retry: 2,
-    staleTime: 1000 * 60,
+    staleTime: 1000 * 30,
+    cacheTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
   });
 
   const handleSearch = (e: React.FormEvent) => {
@@ -248,41 +238,52 @@ export const Header = () => {
               onFocus={() => setShowResults(true)}
               className="w-full bg-transparent border-none text-[#555555] placeholder:text-[#555555] focus-visible:ring-0 focus-visible:ring-offset-0 [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden [&::-webkit-search-results-button]:hidden [&::-webkit-search-results-decoration]:hidden"
             />
-            <Search 
-              className="absolute right-2 w-4 h-4 text-[#555555] pointer-events-none" 
-            />
-            {showResults && searchResults && searchResults.length > 0 && (
+            <Button 
+              type="submit"
+              variant="ghost" 
+              size="icon"
+              className="absolute right-2 h-7 w-7"
+            >
+              <Search className="h-4 w-4 text-[#555555]" />
+            </Button>
+            {showResults && (searchResults?.length > 0 || isSearching) && (
               <div 
                 className="absolute top-full left-0 right-0 mt-1 bg-white rounded-md shadow-lg border border-gray-100 overflow-hidden z-50 max-w-[calc(100vw-2rem)] md:max-w-none mx-auto"
                 onMouseDown={(e) => e.preventDefault()}
               >
                 <ScrollArea className="h-[300px] md:h-[400px] overflow-y-auto scrollbar-hide">
                   <div className="p-1">
-                    {searchResults.map((video) => (
-                      <Link
-                        key={video.id}
-                        to={`/video/${video.id}`}
-                        className="flex items-start gap-2 md:gap-3 p-2 md:p-3 hover:bg-gray-50 transition-colors rounded-md"
-                        onClick={() => {
-                          setShowResults(false);
-                          setSearchQuery("");
-                        }}
-                      >
-                        <img
-                          src={video.thumbnail}
-                          alt={video.title}
-                          className="w-12 h-9 md:w-16 md:h-12 object-cover rounded"
-                        />
-                        <div className="flex-1 min-w-0">
-                          <p className="text-xs md:text-sm text-[#555555] font-medium line-clamp-2">
-                            {video.title}
-                          </p>
-                          <p className="text-[10px] md:text-xs text-[#555555]/70 mt-0.5">
-                            {video.channel_name}
-                          </p>
-                        </div>
-                      </Link>
-                    ))}
+                    {isSearching ? (
+                      <div className="flex items-center justify-center p-4 text-sm text-muted-foreground">
+                        Searching...
+                      </div>
+                    ) : (
+                      searchResults?.map((video) => (
+                        <Link
+                          key={video.id}
+                          to={`/video/${video.id}`}
+                          className="flex items-start gap-2 md:gap-3 p-2 md:p-3 hover:bg-gray-50 transition-colors rounded-md"
+                          onClick={() => {
+                            setShowResults(false);
+                            setSearchQuery("");
+                          }}
+                        >
+                          <img
+                            src={video.thumbnail}
+                            alt={video.title}
+                            className="w-12 h-9 md:w-16 md:h-12 object-cover rounded"
+                          />
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs md:text-sm text-[#555555] font-medium line-clamp-2">
+                              {video.title}
+                            </p>
+                            <p className="text-[10px] md:text-xs text-[#555555]/70 mt-0.5">
+                              {video.channel_name}
+                            </p>
+                          </div>
+                        </Link>
+                      ))
+                    )}
                   </div>
                 </ScrollArea>
               </div>
