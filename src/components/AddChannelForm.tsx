@@ -125,10 +125,6 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
       onSuccess?.();
       onClose?.();
 
-      // Wait a bit for videos to be fetched
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000);
     } catch (error: any) {
       console.error("Error in add channel process:", error);
       toast.error(error.message || "An unexpected error occurred");
