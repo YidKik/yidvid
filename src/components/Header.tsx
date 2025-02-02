@@ -176,6 +176,8 @@ export const Header = () => {
       if (!debouncedSearch.trim()) return [];
       
       try {
+        console.log("Starting search query for:", debouncedSearch);
+        
         const { data: videos, error } = await supabase
           .from("youtube_videos")
           .select("id, title, thumbnail, channel_name")
@@ -188,22 +190,23 @@ export const Header = () => {
           throw error;
         }
 
+        console.log("Search results:", videos?.length || 0, "videos found");
         return videos || [];
-      } catch (error) {
+      } catch (error: any) {
         console.error("Search error:", error);
-        // Don't show error toast for network issues as it might be temporary
-        if (error.message !== "Failed to fetch") {
-          toast.error("Failed to search videos. Please try again later.");
+        // Only show error toast for non-network errors
+        if (!error.message?.includes('Failed to fetch')) {
+          toast.error("Search is temporarily unavailable");
         }
         return [];
       }
     },
     enabled: debouncedSearch.length > 0,
-    staleTime: 1000 * 30,
-    gcTime: 1000 * 60 * 5,
+    staleTime: 1000 * 30, // Cache results for 30 seconds
+    gcTime: 1000 * 60 * 5, // Keep unused data for 5 minutes
     refetchOnWindowFocus: false,
-    retry: 3,
-    retryDelay: (attemptIndex) => Math.min(1000 * (2 ** attemptIndex), 10000),
+    retry: 3, // Retry failed requests 3 times
+    retryDelay: (attemptIndex) => Math.min(1000 * (2 ** attemptIndex), 10000), // Exponential backoff
   });
 
   const handleSearch = (e: React.FormEvent) => {
