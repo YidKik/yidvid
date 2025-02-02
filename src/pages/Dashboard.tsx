@@ -14,7 +14,6 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LayoutDashboard, Users, Music, Video, MessageSquare, FileDown } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { toPDF } from "react-to-pdf";
 import { toast } from "sonner";
 
 const Dashboard = () => {
@@ -54,10 +53,23 @@ const Dashboard = () => {
         return;
       }
       
-      await toPDF(element, {
-        filename: 'website-snapshot.pdf',
-        page: { margin: 20 }
-      });
+      const { jsPDF } = await import('jspdf');
+      const doc = new jsPDF();
+      
+      // Get the element's dimensions
+      const { offsetWidth, offsetHeight } = element;
+      
+      // Convert to canvas and then to PDF
+      const canvas = await html2canvas(element);
+      const imgData = canvas.toDataURL('image/png');
+      
+      // Calculate dimensions to fit on PDF
+      const pdfWidth = doc.internal.pageSize.getWidth();
+      const pdfHeight = (offsetHeight * pdfWidth) / offsetWidth;
+      
+      doc.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      doc.save('website-snapshot.pdf');
+      
       toast.success("PDF downloaded successfully");
     } catch (error) {
       console.error('Error generating PDF:', error);
