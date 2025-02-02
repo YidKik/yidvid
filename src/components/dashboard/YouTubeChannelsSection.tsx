@@ -10,6 +10,7 @@ import { ChannelList } from "@/components/youtube/ChannelList";
 import { useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ChannelVideosManagement } from "@/components/youtube/ChannelVideosManagement";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -165,7 +166,7 @@ export const YouTubeChannelsSection = () => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow">
+    <div className="bg-white rounded-lg shadow max-h-[calc(100vh-12rem)]">
       <div className="p-6 border-b">
         <div className="flex flex-col gap-4">
           <div className="flex items-center justify-between">
@@ -197,64 +198,71 @@ export const YouTubeChannelsSection = () => {
           </div>
         </div>
       </div>
-      <div className="flex">
-        <div className="w-1/2 border-r">
-          {channels?.map((channel) => (
-            <div key={channel.id} className="flex items-center justify-between p-4 border-b hover:bg-gray-50">
+      <div className="flex h-[calc(100vh-24rem)]">
+        <ScrollArea className="w-1/2 border-r">
+          <div className="divide-y">
+            {channels?.map((channel) => (
               <div 
-                className="flex items-center gap-4 cursor-pointer flex-1"
-                onClick={() => setSelectedChannelId(channel.channel_id)}
+                key={channel.id} 
+                className="flex items-center justify-between p-4 hover:bg-gray-50"
               >
-                <img 
-                  src={channel.thumbnail_url || '/placeholder.svg'} 
-                  alt={channel.title}
-                  className="w-12 h-12 rounded-full object-cover"
-                />
-                <div>
-                  <h3 className="font-medium">{channel.title}</h3>
-                  <p className="text-sm text-gray-500">{channel.description || 'No description'}</p>
+                <div 
+                  className="flex items-center gap-4 cursor-pointer flex-1"
+                  onClick={() => setSelectedChannelId(channel.channel_id)}
+                >
+                  <img 
+                    src={channel.thumbnail_url || '/placeholder.svg'} 
+                    alt={channel.title}
+                    className="w-12 h-12 rounded-full object-cover flex-shrink-0"
+                  />
+                  <div className="min-w-0 flex-1">
+                    <h3 className="font-medium truncate">{channel.title}</h3>
+                    <p className="text-sm text-gray-500 truncate">
+                      {channel.description || 'No description'}
+                    </p>
+                  </div>
                 </div>
-              </div>
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    disabled={isDeleting}
-                    className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setChannelToDelete(channel.channel_id);
-                    }}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Delete Channel</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      Are you sure you want to delete this channel? This action cannot be undone
-                      and will permanently remove the channel and all its videos for all users.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel onClick={() => setChannelToDelete(null)}>
-                      Cancel
-                    </AlertDialogCancel>
-                    <AlertDialogAction
-                      onClick={() => channelToDelete && handleDeleteChannel(channelToDelete)}
-                      className="bg-destructive hover:bg-destructive/90"
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      disabled={isDeleting}
+                      className="text-destructive hover:text-destructive hover:bg-destructive/10 flex-shrink-0"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setChannelToDelete(channel.channel_id);
+                      }}
                     >
-                      Delete
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </div>
-          ))}
-        </div>
-        <div className="w-1/2 p-4">
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Delete Channel</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Are you sure you want to delete this channel? This action cannot be undone
+                        and will permanently remove the channel and all its videos for all users.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel onClick={() => setChannelToDelete(null)}>
+                        Cancel
+                      </AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() => channelToDelete && handleDeleteChannel(channelToDelete)}
+                        className="bg-destructive hover:bg-destructive/90"
+                      >
+                        Delete
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
+            ))}
+          </div>
+        </ScrollArea>
+        <div className="w-1/2 p-4 overflow-auto">
           {selectedChannelId ? (
             <ChannelVideosManagement channelId={selectedChannelId} />
           ) : (
