@@ -55,14 +55,9 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
     setIsLoading(true);
 
     try {
-      // Test Supabase connection first
-      const { data: connectionTest, error: connectionError } = await supabase.from('profiles').select('count').single();
-      if (connectionError) {
-        console.error("Supabase connection error:", connectionError);
-        toast.error("Unable to connect to the database. Please try again later.");
-        return;
-      }
-      console.log("Supabase connection successful:", connectionTest);
+      // Clear any existing sessions first
+      await supabase.auth.signOut({ scope: 'global' });
+      localStorage.clear();
 
       if (isSignUp) {
         const { data: signUpData, error: signUpError } = await supabase.auth.signUp({

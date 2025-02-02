@@ -19,6 +19,8 @@ export const Header = () => {
   useEffect(() => {
     const initializeSession = async () => {
       try {
+        // Clear any existing session data
+        await supabase.auth.signOut({ scope: 'global' });
         localStorage.clear();
         
         const { data: { session: initialSession }, error: sessionError } = await supabase.auth.getSession();
