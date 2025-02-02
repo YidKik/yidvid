@@ -15,6 +15,46 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
   const [isFetchingChannel, setIsFetchingChannel] = useState(false);
   const [isAddingChannel, setIsAddingChannel] = useState(false);
 
+  const validateChannelInput = (input: string) => {
+    const cleaned = input.trim();
+    
+    // Handle YouTube URLs
+    try {
+      if (cleaned.includes('youtube.com') || cleaned.includes('youtu.be')) {
+        const url = new URL(cleaned);
+        
+        // Handle different URL formats
+        if (url.pathname.includes('/channel/')) {
+          return url.pathname.split('/channel/')[1].split('/')[0];
+        }
+        if (url.pathname.includes('/@')) {
+          return url.pathname.split('/@')[1].split('/')[0];
+        }
+        if (url.pathname.includes('/c/')) {
+          return url.pathname.split('/c/')[1].split('/')[0];
+        }
+        if (url.pathname.includes('/user/')) {
+          return url.pathname.split('/user/')[1].split('/')[0];
+        }
+      }
+      
+      // Handle @username format
+      if (cleaned.startsWith('@')) {
+        return cleaned;
+      }
+      
+      // Handle direct channel IDs
+      if (cleaned.startsWith('UC')) {
+        return cleaned;
+      }
+      
+      return cleaned;
+    } catch (error) {
+      console.error("Error parsing channel input:", error);
+      return cleaned;
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!channelId) {
@@ -22,13 +62,16 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
       return;
     }
 
+    const processedChannelId = validateChannelInput(channelId);
+    console.log("Processing channel ID:", processedChannelId);
+
     setIsFetchingChannel(true);
     try {
       // First check if the channel already exists
       const { data: existingChannel } = await supabase
         .from("youtube_channels")
         .select("title")
-        .eq("channel_id", channelId.trim())
+        .eq("channel_id", processedChannelId)
         .maybeSingle();
 
       if (existingChannel) {
@@ -37,12 +80,16 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
       }
 
       const { data, error } = await supabase.functions.invoke('fetch-youtube-channel', {
-        body: { channelId: channelId.trim() }
+        body: { channelId: processedChannelId }
       });
       
       if (error) {
         console.error("Error fetching channel:", error);
-        toast.error(error.message || "Failed to fetch channel details");
+        if (error.message.includes("404")) {
+          toast.error("Could not find a channel with the provided ID. Please check the URL or ID and try again.");
+        } else {
+          toast.error(error.message || "Failed to fetch channel details");
+        }
         return;
       }
 
