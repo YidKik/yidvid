@@ -43,33 +43,46 @@ export const Header = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  const { data: notifications, refetch: refetchNotifications } = useQuery({
+  const { data: notifications, refetch: refetchNotifications, error: notificationsError } = useQuery({
     queryKey: ["video-notifications", session?.user?.id],
     queryFn: async () => {
-      const { data: notifications, error } = await supabase
-        .from("video_notifications")
-        .select(`
-          *,
-          youtube_videos (
-            title,
-            thumbnail,
-            channel_name
-          )
-        `)
-        .eq("user_id", session?.user?.id)
-        .eq("is_read", false)
-        .order("created_at", { ascending: false });
-
-      if (error) {
-        console.error("Error fetching notifications:", error);
-        toast.error("Failed to fetch notifications");
+      if (!session?.user?.id) {
         return [];
       }
 
-      return notifications || [];
+      try {
+        const { data: notifications, error } = await supabase
+          .from("video_notifications")
+          .select(`
+            *,
+            youtube_videos (
+              title,
+              thumbnail,
+              channel_name
+            )
+          `)
+          .eq("user_id", session.user.id)
+          .eq("is_read", false)
+          .order("created_at", { ascending: false });
+
+        if (error) {
+          console.error("Error fetching notifications:", error);
+          throw error;
+        }
+
+        return notifications || [];
+      } catch (error) {
+        console.error("Error in notifications query:", error);
+        throw error;
+      }
     },
     enabled: !!session?.user?.id,
-    refetchInterval: 30000, // Refetch every 30 seconds
+    retry: 3,
+    retryDelay: 1000,
+    onError: (error) => {
+      console.error("Notifications query error:", error);
+      toast.error("Failed to fetch notifications. Please try again later.");
+    }
   });
 
   // Mark notifications as read
@@ -121,15 +134,12 @@ export const Header = () => {
     }
   };
 
-  const { data: searchResults } = useQuery({
+  const { data: searchResults, error: searchError } = useQuery({
     queryKey: ["search", debouncedSearch],
     queryFn: async () => {
       if (!debouncedSearch.trim()) return [];
       
-      console.log("Searching for:", debouncedSearch);
-      
       try {
-        // Using a more comprehensive search approach
         const { data: videos, error } = await supabase
           .from("youtube_videos")
           .select("id, title, thumbnail, channel_name")
@@ -139,21 +149,22 @@ export const Header = () => {
 
         if (error) {
           console.error("Error searching videos:", error);
-          toast.error("Failed to search videos");
-          return [];
+          throw error;
         }
 
-        console.log("Search results:", videos);
         return videos || [];
       } catch (error) {
-        console.error("Unexpected error during search:", error);
-        toast.error("An unexpected error occurred");
-        return [];
+        console.error("Search error:", error);
+        throw error;
       }
     },
     enabled: debouncedSearch.length > 0,
     retry: 2,
-    staleTime: 1000 * 60, // Cache results for 1 minute
+    staleTime: 1000 * 60,
+    onError: (error) => {
+      console.error("Search query error:", error);
+      toast.error("Failed to search videos. Please try again later.");
+    }
   });
 
   const handleSearch = (e: React.FormEvent) => {
