@@ -15,6 +15,7 @@ import { LayoutDashboard, Users, Music, Video, MessageSquare, FileDown } from "l
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import html2canvas from "html2canvas";
 
 const Dashboard = () => {
   const navigate = useNavigate();
