@@ -52,6 +52,12 @@ export const YouTubeChannelsSection = () => {
     },
   });
 
+  const handleSuccess = () => {
+    setIsDialogOpen(false);
+    refetch();
+    toast.success("Channel added successfully");
+  };
+
   const handleDeleteChannel = async (channelId: string) => {
     try {
       setIsDeleting(true);
