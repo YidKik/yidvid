@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Clock, Eye, Layout } from "lucide-react";
 
 export const UserAnalyticsSection = () => {
-  const { data: analytics } = useQuery({
+  const { data: analytics, isLoading } = useQuery({
     queryKey: ["user-analytics"],
     queryFn: async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -42,16 +42,21 @@ export const UserAnalyticsSection = () => {
       // Get unique channels viewed
       const uniqueChannels = new Set(channelData?.map(d => d.video.channel_id));
 
-      // Calculate total watch time
-      const { data: sessions } = await supabase
+      // Calculate total watch time from user_analytics
+      const { data: sessions, error: sessionsError } = await supabase
         .from("user_analytics")
         .select("*")
-        .eq("user_id", session.user.id);
+        .eq("user_id", session.user.id)
+        .not('session_end', 'is', null);
+
+      if (sessionsError) {
+        console.error("Error fetching sessions:", sessionsError);
+        return null;
+      }
 
       const totalTimeSpent = sessions?.reduce((total, session) => {
-        if (!session.session_end) return total;
         const start = new Date(session.session_start);
-        const end = new Date(session.session_end);
+        const end = new Date(session.session_end!);
         return total + (end.getTime() - start.getTime());
       }, 0) || 0;
 
@@ -61,6 +66,7 @@ export const UserAnalyticsSection = () => {
         uniqueChannelsViewed: uniqueChannels.size,
       };
     },
+    refetchInterval: 30000, // Refetch every 30 seconds for real-time updates
   });
 
   const formatTime = (ms: number) => {
@@ -69,11 +75,28 @@ export const UserAnalyticsSection = () => {
     const hours = Math.floor(minutes / 60);
     const days = Math.floor(hours / 24);
 
-    if (days > 0) return `${days} days`;
-    if (hours > 0) return `${hours} hours`;
-    if (minutes > 0) return `${minutes} minutes`;
-    return `${seconds} seconds`;
+    if (days > 0) return `${days} day${days > 1 ? 's' : ''}`;
+    if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''}`;
+    if (minutes > 0) return `${minutes} minute${minutes > 1 ? 's' : ''}`;
+    return `${seconds} second${seconds !== 1 ? 's' : ''}`;
   };
+
+  if (isLoading) {
+    return (
+      <section className="mb-12">
+        <h2 className="text-2xl font-semibold mb-4">Your Viewing Statistics</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {[1, 2, 3].map((i) => (
+            <Card key={i} className="p-6 flex flex-col items-center text-center animate-pulse">
+              <div className="h-8 w-8 rounded-full bg-gray-200 mb-2" />
+              <div className="h-4 w-24 bg-gray-200 rounded mb-2" />
+              <div className="h-6 w-16 bg-gray-200 rounded" />
+            </Card>
+          ))}
+        </div>
+      </section>
+    );
+  }
 
   if (!analytics) return null;
 
@@ -99,7 +122,7 @@ export const UserAnalyticsSection = () => {
 
         <Card className="p-6 flex flex-col items-center text-center">
           <Layout className="h-8 w-8 mb-2" />
-          <h3 className="text-lg font-medium">Total Channels Viewed</h3>
+          <h3 className="text-lg font-medium">Channels Viewed</h3>
           <p className="text-2xl font-bold mt-2">
             {analytics.uniqueChannelsViewed}
           </p>
