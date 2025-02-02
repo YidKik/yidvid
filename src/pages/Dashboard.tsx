@@ -14,7 +14,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LayoutDashboard, Users, Music, Video, MessageSquare, FileDown } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { generatePDF } from "react-to-pdf";
+import Pdf from "react-to-pdf";
 import { toast } from "sonner";
 
 const Dashboard = () => {
@@ -46,12 +46,9 @@ const Dashboard = () => {
     },
   });
 
-  const handleDownloadPDF = async () => {
+  const handleDownloadPDF = async (targetRef: React.RefObject<HTMLElement>, toPdf: () => void) => {
     try {
-      await generatePDF(() => document.getElementById('root'), {
-        filename: 'website-snapshot.pdf',
-        page: { margin: 20 }
-      });
+      toPdf();
       toast.success("PDF downloaded successfully");
     } catch (error) {
       console.error('Error generating PDF:', error);
@@ -92,15 +89,19 @@ const Dashboard = () => {
     <div className="container mx-auto py-8 space-y-8">
       <div className="flex items-center justify-between">
         <BackButton />
-        <Button
-          onClick={handleDownloadPDF}
-          variant="outline"
-          size="sm"
-          className="flex items-center gap-2"
-        >
-          <FileDown className="h-4 w-4" />
-          Download PDF
-        </Button>
+        <Pdf targetRef={document.getElementById('root')} filename="website-snapshot.pdf" options={{ margin: 20 }}>
+          {({ toPdf, targetRef }) => (
+            <Button
+              onClick={() => handleDownloadPDF(targetRef, toPdf)}
+              variant="outline"
+              size="sm"
+              className="flex items-center gap-2"
+            >
+              <FileDown className="h-4 w-4" />
+              Download PDF
+            </Button>
+          )}
+        </Pdf>
       </div>
       
       <div className="flex items-center justify-between">
