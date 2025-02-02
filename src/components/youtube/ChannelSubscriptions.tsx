@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Youtube, ArrowLeft, ArrowRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -17,10 +17,31 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setIsAuthenticated(!!session);
+    };
+
+    checkAuth();
+
+    // Subscribe to auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setIsAuthenticated(!!session);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
 
   const { data: subscriptions, refetch } = useQuery({
     queryKey: ["channel-subscriptions", userId],
     queryFn: async () => {
+      if (!userId) return [];
+
       console.log("Fetching subscriptions for user:", userId);
       const { data, error } = await supabase
         .from("channel_subscriptions")
@@ -42,7 +63,7 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
       console.log("Fetched subscriptions:", data);
       return data as ChannelSubscription[];
     },
-    enabled: !!userId,
+    enabled: !!userId && isAuthenticated,
   });
 
   const handleUnsubscribe = async (channelId: string) => {
@@ -85,6 +106,14 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
       container.scrollLeft < container.scrollWidth - container.clientWidth - 10
     );
   };
+
+  if (!isAuthenticated) {
+    return (
+      <div className="flex items-center justify-center h-40">
+        <p className="text-muted-foreground">Please sign in to manage your subscriptions.</p>
+      </div>
+    );
+  }
 
   if (!subscriptions) {
     return (
