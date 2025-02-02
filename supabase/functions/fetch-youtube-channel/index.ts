@@ -15,6 +15,8 @@ async function fetchChannelData(channelIdentifier: string, apiKey: string) {
   try {
     if (cleanedIdentifier.includes('youtube.com') || cleanedIdentifier.includes('youtu.be')) {
       const url = new URL(cleanedIdentifier);
+      
+      // Handle different URL formats
       if (url.pathname.includes('/channel/')) {
         cleanedIdentifier = url.pathname.split('/channel/')[1].split('/')[0];
       } else if (url.pathname.includes('/@')) {
