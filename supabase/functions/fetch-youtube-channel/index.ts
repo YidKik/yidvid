@@ -5,49 +5,58 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-function extractChannelId(input: string): string {
-  console.log('[YouTube API] Processing input:', input);
-  const cleaned = input.trim();
+async function fetchChannelData(channelId: string, apiKey: string) {
+  console.log('[YouTube API] Attempting to fetch channel:', channelId);
   
-  // Handle YouTube URLs
-  try {
-    if (cleaned.includes('youtube.com') || cleaned.includes('youtu.be')) {
-      const url = new URL(cleaned);
-      
-      // Handle different URL formats
-      if (url.pathname.includes('/channel/')) {
-        return url.pathname.split('/channel/')[1].split('/')[0];
+  // Try different API endpoints in sequence
+  const endpoints = [
+    // 1. Direct channel ID lookup
+    async () => {
+      if (channelId.startsWith('UC')) {
+        const response = await fetch(
+          `https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&id=${channelId}&key=${apiKey}`
+        );
+        return await response.json();
       }
-      if (url.pathname.includes('/@')) {
-        return url.pathname.split('/@')[1].split('/')[0];
+      return null;
+    },
+    // 2. Search endpoint for handles and custom URLs
+    async () => {
+      const response = await fetch(
+        `https://www.googleapis.com/youtube/v3/search?part=snippet&type=channel&q=${channelId}&key=${apiKey}`
+      );
+      const data = await response.json();
+      if (data.items?.length > 0) {
+        const channelId = data.items[0].id.channelId;
+        const channelResponse = await fetch(
+          `https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&id=${channelId}&key=${apiKey}`
+        );
+        return await channelResponse.json();
       }
-      if (url.pathname.includes('/c/')) {
-        return url.pathname.split('/c/')[1].split('/')[0];
-      }
-      if (url.pathname.includes('/user/')) {
-        return url.pathname.split('/user/')[1].split('/')[0];
-      }
+      return null;
+    },
+    // 3. Legacy username endpoint
+    async () => {
+      const response = await fetch(
+        `https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&forUsername=${channelId}&key=${apiKey}`
+      );
+      return await response.json();
     }
-    
-    // Handle @username format
-    if (cleaned.startsWith('@')) {
-      console.log('[YouTube API] Processing username:', cleaned);
-      return cleaned.substring(1); // Remove @ for API call
+  ];
+
+  for (const endpoint of endpoints) {
+    try {
+      const data = await endpoint();
+      if (data?.items?.length > 0) {
+        console.log('[YouTube API] Successfully found channel via endpoint');
+        return data;
+      }
+    } catch (error) {
+      console.error('[YouTube API] Endpoint error:', error);
     }
-    
-    // Handle direct channel IDs
-    if (cleaned.startsWith('UC')) {
-      console.log('[YouTube API] Using channel ID directly:', cleaned);
-      return cleaned;
-    }
-    
-    // If none of the above, treat as username
-    console.log('[YouTube API] Using input as channel handle:', cleaned);
-    return cleaned;
-  } catch (error) {
-    console.error("[YouTube API] Error parsing channel input:", error);
-    return cleaned;
   }
+
+  throw new Error('Channel not found');
 }
 
 serve(async (req) => {
@@ -78,52 +87,8 @@ serve(async (req) => {
       );
     }
 
-    const processedChannelId = extractChannelId(channelId);
-    console.log('[YouTube API] Processed channel ID:', processedChannelId);
-
-    // Try different API endpoints in sequence
-    let channelData = null;
-
-    // 1. First try search to handle usernames and custom URLs
-    console.log('[YouTube API] Trying search lookup first');
-    const searchResponse = await fetch(
-      `https://www.googleapis.com/youtube/v3/search?part=snippet&type=channel&q=${processedChannelId}&key=${YOUTUBE_API_KEY}`
-    );
-    const searchData = await searchResponse.json();
+    const channelData = await fetchChannelData(channelId, YOUTUBE_API_KEY);
     
-    if (searchData.items?.length > 0) {
-      const channelId = searchData.items[0].id.channelId;
-      console.log('[YouTube API] Found channel via search:', channelId);
-      const response = await fetch(
-        `https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&id=${channelId}&key=${YOUTUBE_API_KEY}`
-      );
-      channelData = await response.json();
-    }
-
-    // 2. If not found, try with direct channel ID
-    if (!channelData && processedChannelId.startsWith('UC')) {
-      console.log('[YouTube API] Trying direct channel ID lookup');
-      const response = await fetch(
-        `https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&id=${processedChannelId}&key=${YOUTUBE_API_KEY}`
-      );
-      const data = await response.json();
-      if (data.items?.length > 0) {
-        channelData = data;
-      }
-    }
-
-    // 3. If still not found, try with legacy username endpoint
-    if (!channelData) {
-      console.log('[YouTube API] Trying username lookup');
-      const response = await fetch(
-        `https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&forUsername=${processedChannelId}&key=${YOUTUBE_API_KEY}`
-      );
-      const data = await response.json();
-      if (data.items?.length > 0) {
-        channelData = data;
-      }
-    }
-
     if (!channelData || !channelData.items || channelData.items.length === 0) {
       console.error('[YouTube API] Channel not found after all attempts');
       return new Response(
