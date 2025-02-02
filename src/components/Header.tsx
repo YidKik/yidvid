@@ -72,11 +72,8 @@ export const Header = () => {
               setSession(currentSession);
               break;
               
-            case 'USER_DELETED':
-              console.log('User deleted');
-              setSession(null);
-              localStorage.clear();
-              navigate('/');
+            case 'PASSWORD_RECOVERY':
+              console.log('Password recovery initiated');
               break;
           }
         });
