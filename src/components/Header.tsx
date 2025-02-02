@@ -242,7 +242,7 @@ export const Header = () => {
               type="submit"
               variant="ghost" 
               size="icon"
-              className="absolute right-2 h-7 w-7"
+              className="absolute right-2 h-7 w-7 bg-gray-100 hover:bg-gray-200"
             >
               <Search className="h-4 w-4 text-[#555555]" />
             </Button>
