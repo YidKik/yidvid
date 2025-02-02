@@ -65,7 +65,7 @@ export const SearchBar = () => {
           setShowResults(true);
         }}
         onFocus={() => setShowResults(true)}
-        className="w-full bg-transparent border-none text-[#555555] placeholder:text-[#555555] focus-visible:ring-primary focus-visible:ring-2 focus-visible:ring-offset-2"
+        className="w-full bg-transparent border-primary ring-1 ring-primary/20 text-[#555555] placeholder:text-[#555555] focus-visible:ring-primary focus-visible:ring-2 focus-visible:ring-offset-2"
       />
       <Button 
         type="submit"
