@@ -6,6 +6,7 @@ import { Header } from "@/components/Header";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Youtube } from "lucide-react";
 import { Link } from "react-router-dom";
+import { BackButton } from "@/components/navigation/BackButton";
 
 const Search = () => {
   const [searchParams] = useSearchParams();
@@ -56,6 +57,7 @@ const Search = () => {
   return (
     <div className="min-h-screen">
       <Header />
+      <BackButton className="z-50" />
       <main className="container mx-auto px-4 py-8">
         <h1 className="mb-6 flex items-baseline gap-2">
           <span className="text-lg text-muted-foreground font-normal">Search results for:</span>
