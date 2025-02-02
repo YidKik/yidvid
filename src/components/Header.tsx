@@ -30,27 +30,48 @@ export const Header = () => {
   useEffect(() => {
     const initializeSession = async () => {
       try {
+        // Clear any stale session data
+        localStorage.removeItem('supabase.auth.token');
+        
         // Get initial session
         const { data: { session: initialSession }, error: sessionError } = await supabase.auth.getSession();
         if (sessionError) {
           console.error("Session error:", sessionError);
           return;
         }
-        setSession(initialSession);
+
+        if (initialSession) {
+          console.log("Initial session loaded");
+          setSession(initialSession);
+        }
 
         // Set up auth state change listener
         const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
           console.log("Auth state changed:", event);
-          if (event === 'TOKEN_REFRESHED') {
-            console.log('Token was refreshed successfully');
+          
+          switch (event) {
+            case 'SIGNED_IN':
+              console.log('User signed in:', currentSession?.user?.email);
+              setSession(currentSession);
+              break;
+              
+            case 'TOKEN_REFRESHED':
+              console.log('Token refreshed successfully');
+              setSession(currentSession);
+              break;
+              
+            case 'SIGNED_OUT':
+              console.log('User signed out');
+              setSession(null);
+              localStorage.clear(); // Clear all local storage
+              navigate('/');
+              break;
+              
+            case 'USER_UPDATED':
+              console.log('User updated');
+              setSession(currentSession);
+              break;
           }
-          if (event === 'SIGNED_OUT') {
-            // Clear any local session data
-            setSession(null);
-            localStorage.removeItem('supabase.auth.token');
-            navigate('/');
-          }
-          setSession(currentSession);
         });
 
         return () => {
@@ -125,7 +146,9 @@ export const Header = () => {
 
   const handleLogout = async () => {
     try {
-      setSession(null); // Clear session state immediately
+      // Clear session state and local storage first
+      setSession(null);
+      localStorage.clear();
       
       const { error } = await supabase.auth.signOut();
       
@@ -135,9 +158,6 @@ export const Header = () => {
           toast.error("There was an issue logging out");
         }
       }
-
-      // Clear any local storage items related to the session
-      localStorage.removeItem('supabase.auth.token');
       
       // Always navigate to home page and show success message
       navigate("/");
