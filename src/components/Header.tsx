@@ -154,11 +154,15 @@ export const Header = () => {
           <img 
             src="https://euincktvsiuztsxcuqfd.supabase.co/storage/v1/object/public/logos/play_button_outline_and_glyph.png" 
             alt="YidKik Logo"
-            className="h-20 w-auto" 
+            className="h-12 w-auto md:h-20" 
             style={{ 
               objectFit: 'contain',
-              minWidth: '80px',
-              maxWidth: '80px'
+              minWidth: '50px',
+              maxWidth: '50px',
+              '@media (min-width: 768px)': {
+                minWidth: '80px',
+                maxWidth: '80px'
+              }
             }}
             onError={(e) => {
               console.error('Logo failed to load:', e);
@@ -230,13 +234,13 @@ export const Header = () => {
                   <Button 
                     variant="ghost" 
                     size="icon" 
-                    className="bg-[#222222] hover:bg-[#333333] text-white relative h-8 w-8 md:h-10 md:w-10"
+                    className="bg-[#222222] hover:bg-[#333333] text-white relative h-7 w-7 md:h-10 md:w-10"
                   >
-                    <Bell className="h-4 w-4 md:h-5 md:w-5" />
+                    <Bell className="h-3.5 w-3.5 md:h-5 md:w-5" />
                     {notifications && notifications.length > 0 && (
                       <Badge 
                         variant="destructive" 
-                        className="absolute -top-2 -right-2 h-4 w-4 md:h-5 md:w-5 flex items-center justify-center p-0 text-[10px] md:text-xs"
+                        className="absolute -top-1.5 -right-1.5 h-3.5 w-3.5 md:h-5 md:w-5 flex items-center justify-center p-0 text-[8px] md:text-xs"
                       >
                         {notifications.length}
                       </Badge>
@@ -283,9 +287,9 @@ export const Header = () => {
                   <Button 
                     variant="ghost" 
                     size="icon"
-                    className="h-8 w-8 md:h-10 md:w-10"
+                    className="h-7 w-7 md:h-10 md:w-10"
                   >
-                    <Settings className="h-4 w-4 md:h-5 md:w-5" />
+                    <Settings className="h-3.5 w-3.5 md:h-5 md:w-5" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
@@ -307,7 +311,7 @@ export const Header = () => {
           ) : (
             <Button 
               onClick={() => setIsAuthOpen(true)}
-              className="h-8 md:h-10"
+              className="h-7 md:h-10 text-xs md:text-sm px-2 md:px-4"
             >
               Login
             </Button>
