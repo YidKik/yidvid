@@ -55,10 +55,6 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
     setIsLoading(true);
 
     try {
-      // Clear any existing sessions first
-      await supabase.auth.signOut({ scope: 'global' });
-      localStorage.clear();
-
       if (isSignUp) {
         const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
           email,
@@ -72,9 +68,13 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
 
         if (signUpError) {
           console.error("Signup error:", signUpError);
+          
+          // Handle specific error cases
           if (signUpError.message.includes("User already registered")) {
             toast.error("This email is already registered. Please sign in instead.");
             setIsSignUp(false);
+          } else if (signUpError.message.includes("rate limit")) {
+            toast.error("Too many signup attempts. Please try again later.");
           } else {
             toast.error(signUpError.message || "Error during signup");
           }
@@ -83,8 +83,26 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
 
         if (signUpData?.user) {
           console.log("Signup successful:", signUpData);
-          toast.success("Account created successfully! Please check your email to confirm your account.");
-          onOpenChange(false);
+          
+          // Ensure profile is created
+          const { error: profileError } = await supabase
+            .from('profiles')
+            .upsert({
+              id: signUpData.user.id,
+              email: email,
+              name: name,
+              is_admin: false
+            }, {
+              onConflict: 'id'
+            });
+
+          if (profileError) {
+            console.error("Profile creation error:", profileError);
+            toast.error("Account created but profile setup failed. Please contact support.");
+          } else {
+            toast.success("Account created successfully! Please check your email to confirm your account.");
+            onOpenChange(false);
+          }
         }
       } else {
         const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
@@ -106,6 +124,7 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
 
         if (signInData?.user) {
           console.log("Signin successful:", signInData);
+          
           // Prefetch user profile data
           await queryClient.prefetchQuery({
             queryKey: ["profile", signInData.user.id],
