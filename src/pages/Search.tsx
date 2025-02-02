@@ -57,8 +57,9 @@ const Search = () => {
     <div className="min-h-screen">
       <Header />
       <main className="container mx-auto px-4 py-8">
-        <h1 className="text-xl md:text-2xl font-bold mb-6">
-          Search results for: {query}
+        <h1 className="mb-6 flex items-baseline gap-2">
+          <span className="text-lg text-muted-foreground font-normal">Search results for:</span>
+          <span className="text-xl font-semibold">{query}</span>
         </h1>
 
         <div className="space-y-12">
