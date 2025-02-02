@@ -13,6 +13,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface ChannelVideosManagementProps {
   channelId: string;
@@ -20,6 +31,7 @@ interface ChannelVideosManagementProps {
 
 export const ChannelVideosManagement = ({ channelId }: ChannelVideosManagementProps) => {
   const [isDeleting, setIsDeleting] = useState(false);
+  const [videoToDelete, setVideoToDelete] = useState<string | null>(null);
 
   const { data: videos, refetch } = useQuery({
     queryKey: ["channel-videos", channelId],
@@ -31,7 +43,7 @@ export const ChannelVideosManagement = ({ channelId }: ChannelVideosManagementPr
         .order("uploaded_at", { ascending: false });
 
       if (error) {
-        toast("Error fetching videos");
+        toast.error("Error fetching videos");
         throw error;
       }
 
@@ -49,9 +61,7 @@ export const ChannelVideosManagement = ({ channelId }: ChannelVideosManagementPr
         .delete()
         .eq("video_id", videoId);
 
-      if (notificationsError) {
-        throw notificationsError;
-      }
+      if (notificationsError) throw notificationsError;
 
       // Then, delete related reports
       const { error: reportsError } = await supabase
@@ -59,9 +69,31 @@ export const ChannelVideosManagement = ({ channelId }: ChannelVideosManagementPr
         .delete()
         .eq("video_id", videoId);
 
-      if (reportsError) {
-        throw reportsError;
-      }
+      if (reportsError) throw reportsError;
+
+      // Delete related comments
+      const { error: commentsError } = await supabase
+        .from("video_comments")
+        .delete()
+        .eq("video_id", videoId);
+
+      if (commentsError) throw commentsError;
+
+      // Delete video history
+      const { error: historyError } = await supabase
+        .from("video_history")
+        .delete()
+        .eq("video_id", videoId);
+
+      if (historyError) throw historyError;
+
+      // Delete video interactions
+      const { error: interactionsError } = await supabase
+        .from("user_video_interactions")
+        .delete()
+        .eq("video_id", videoId);
+
+      if (interactionsError) throw interactionsError;
 
       // Finally, delete the video
       const { error: videoError } = await supabase
@@ -71,13 +103,14 @@ export const ChannelVideosManagement = ({ channelId }: ChannelVideosManagementPr
 
       if (videoError) throw videoError;
 
-      toast("Video deleted successfully");
+      toast.success("Video deleted successfully");
       refetch();
     } catch (error: any) {
-      toast("Error deleting video");
+      toast.error("Error deleting video");
       console.error("Error deleting video:", error);
     } finally {
       setIsDeleting(false);
+      setVideoToDelete(null);
     }
   };
 
@@ -111,15 +144,39 @@ export const ChannelVideosManagement = ({ channelId }: ChannelVideosManagementPr
                   {new Date(video.uploaded_at).toLocaleDateString()}
                 </TableCell>
                 <TableCell>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handleDeleteVideo(video.id)}
-                    disabled={isDeleting}
-                    className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        disabled={isDeleting}
+                        className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                        onClick={() => setVideoToDelete(video.id)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Delete Video</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Are you sure you want to delete this video? This action cannot be undone
+                          and the video will be permanently removed for all users.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel onClick={() => setVideoToDelete(null)}>
+                          Cancel
+                        </AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => videoToDelete && handleDeleteVideo(videoToDelete)}
+                          className="bg-destructive hover:bg-destructive/90"
+                        >
+                          Delete
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </TableCell>
               </TableRow>
             ))}

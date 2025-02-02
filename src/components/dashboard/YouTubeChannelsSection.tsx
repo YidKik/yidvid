@@ -1,20 +1,32 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Plus, Video } from "lucide-react";
+import { Plus, Video, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { AddChannelForm } from "@/components/AddChannelForm";
 import { ChannelSearch } from "@/components/youtube/ChannelSearch";
 import { ChannelList } from "@/components/youtube/ChannelList";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ChannelVideosManagement } from "@/components/youtube/ChannelVideosManagement";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export const YouTubeChannelsSection = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedChannelId, setSelectedChannelId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const { toast } = useToast();
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [channelToDelete, setChannelToDelete] = useState<string | null>(null);
 
   const { data: channels, refetch } = useQuery({
     queryKey: ["youtube-channels", searchQuery],
@@ -32,11 +44,7 @@ export const YouTubeChannelsSection = () => {
 
       if (error) {
         console.error("Error fetching channels:", error);
-        toast({
-          title: "Error fetching channels",
-          description: error.message,
-          variant: "destructive",
-        });
+        toast.error("Error fetching channels");
         return [];
       }
 
@@ -44,15 +52,76 @@ export const YouTubeChannelsSection = () => {
     },
   });
 
-  const handleRemoveChannel = async (channelId: string) => {
+  const handleDeleteChannel = async (channelId: string) => {
     try {
-      const { error: videosError } = await supabase
+      setIsDeleting(true);
+
+      // Get all videos for this channel
+      const { data: videos, error: videosError } = await supabase
         .from("youtube_videos")
-        .delete()
+        .select("id")
         .eq("channel_id", channelId);
 
       if (videosError) throw videosError;
 
+      // Delete all related data for each video
+      for (const video of videos || []) {
+        // Delete notifications
+        await supabase
+          .from("video_notifications")
+          .delete()
+          .eq("video_id", video.id);
+
+        // Delete reports
+        await supabase
+          .from("video_reports")
+          .delete()
+          .eq("video_id", video.id);
+
+        // Delete comments
+        await supabase
+          .from("video_comments")
+          .delete()
+          .eq("video_id", video.id);
+
+        // Delete history
+        await supabase
+          .from("video_history")
+          .delete()
+          .eq("video_id", video.id);
+
+        // Delete interactions
+        await supabase
+          .from("user_video_interactions")
+          .delete()
+          .eq("video_id", video.id);
+      }
+
+      // Delete all videos
+      const { error: deleteVideosError } = await supabase
+        .from("youtube_videos")
+        .delete()
+        .eq("channel_id", channelId);
+
+      if (deleteVideosError) throw deleteVideosError;
+
+      // Delete channel subscriptions
+      const { error: subsError } = await supabase
+        .from("channel_subscriptions")
+        .delete()
+        .eq("channel_id", channelId);
+
+      if (subsError) throw subsError;
+
+      // Delete hidden channels
+      const { error: hiddenError } = await supabase
+        .from("hidden_channels")
+        .delete()
+        .eq("channel_id", channelId);
+
+      if (hiddenError) throw hiddenError;
+
+      // Finally delete the channel
       const { error: channelError } = await supabase
         .from("youtube_channels")
         .delete()
@@ -60,22 +129,16 @@ export const YouTubeChannelsSection = () => {
 
       if (channelError) throw channelError;
 
-      toast({
-        title: "Channel removed",
-        description: "The channel and its videos have been removed from your dashboard.",
-      });
+      toast.success("Channel and all related content deleted successfully");
+      setSelectedChannelId(null);
       refetch();
     } catch (error: any) {
-      toast({
-        title: "Error removing channel",
-        description: error.message,
-        variant: "destructive",
-      });
+      console.error("Error deleting channel:", error);
+      toast.error("Error deleting channel");
+    } finally {
+      setIsDeleting(false);
+      setChannelToDelete(null);
     }
-  };
-
-  const handleSuccess = async () => {
-    await refetch();
   };
 
   return (
@@ -113,11 +176,60 @@ export const YouTubeChannelsSection = () => {
       </div>
       <div className="flex">
         <div className="w-1/2 border-r">
-          <ChannelList 
-            channels={channels || []} 
-            onRemoveChannel={handleRemoveChannel}
-            onManageVideos={(channelId) => setSelectedChannelId(channelId)}
-          />
+          {channels?.map((channel) => (
+            <div key={channel.id} className="flex items-center justify-between p-4 border-b hover:bg-gray-50">
+              <div 
+                className="flex items-center gap-4 cursor-pointer flex-1"
+                onClick={() => setSelectedChannelId(channel.channel_id)}
+              >
+                <img 
+                  src={channel.thumbnail_url || '/placeholder.svg'} 
+                  alt={channel.title}
+                  className="w-12 h-12 rounded-full object-cover"
+                />
+                <div>
+                  <h3 className="font-medium">{channel.title}</h3>
+                  <p className="text-sm text-gray-500">{channel.description || 'No description'}</p>
+                </div>
+              </div>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    disabled={isDeleting}
+                    className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setChannelToDelete(channel.channel_id);
+                    }}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Delete Channel</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Are you sure you want to delete this channel? This action cannot be undone
+                      and will permanently remove the channel and all its videos for all users.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel onClick={() => setChannelToDelete(null)}>
+                      Cancel
+                    </AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={() => channelToDelete && handleDeleteChannel(channelToDelete)}
+                      className="bg-destructive hover:bg-destructive/90"
+                    >
+                      Delete
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
+          ))}
         </div>
         <div className="w-1/2 p-4">
           {selectedChannelId ? (
