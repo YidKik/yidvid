@@ -194,7 +194,6 @@ export const Header = () => {
         return videos || [];
       } catch (error: any) {
         console.error("Search error:", error);
-        // Only show error toast for non-network errors
         if (!error.message?.includes('Failed to fetch')) {
           toast.error("Search is temporarily unavailable");
         }
@@ -202,11 +201,11 @@ export const Header = () => {
       }
     },
     enabled: debouncedSearch.length > 0,
-    staleTime: 1000 * 30, // Cache results for 30 seconds
-    gcTime: 1000 * 60 * 5, // Keep unused data for 5 minutes
+    staleTime: 1000 * 60, // Cache results for 1 minute
+    gcTime: 1000 * 60 * 10, // Keep unused data for 10 minutes
     refetchOnWindowFocus: false,
-    retry: 3, // Retry failed requests 3 times
-    retryDelay: (attemptIndex) => Math.min(1000 * (2 ** attemptIndex), 10000), // Exponential backoff
+    retry: 2, // Reduce retries to make it feel more responsive
+    retryDelay: (attemptIndex) => Math.min(1000 * (2 ** attemptIndex), 5000), // Faster retry with max 5s delay
   });
 
   const handleSearch = (e: React.FormEvent) => {
