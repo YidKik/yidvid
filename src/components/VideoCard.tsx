@@ -54,10 +54,10 @@ export const VideoCard = ({
           </div>
         )}
         <div className="flex-1 min-w-0">
-          <h3 className="font-medium text-sm md:text-youtube-title line-clamp-2 group-hover:text-button-custom">
+          <h3 className={`font-medium ${isMobile ? 'text-xs leading-tight' : 'text-youtube-title'} line-clamp-2 group-hover:text-button-custom`}>
             {title}
           </h3>
-          <p className="text-xs md:text-youtube-small text-muted-foreground mt-0.5 md:mt-1 line-clamp-1">
+          <p className={`${isMobile ? 'text-[10px]' : 'text-youtube-small'} text-muted-foreground mt-0.5 md:mt-1 line-clamp-1`}>
             {channelName}
           </p>
           {!isMobile && (
