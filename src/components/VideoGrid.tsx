@@ -1,18 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { VideoCard } from "./VideoCard";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { VideoGridPagination } from "./video/VideoGridPagination";
 
 interface VideoGridProps {
   videos?: {
@@ -37,15 +30,11 @@ export default function VideoGrid({ maxVideos = 12, rowSize = 4, isLoading }: Vi
   const isMobile = useIsMobile();
   const queryClient = useQueryClient();
 
-  // Prefetch videos as soon as the component mounts
   useEffect(() => {
-    const prefetchVideos = async () => {
-      await queryClient.prefetchQuery({
-        queryKey: ["youtube_videos"],
-        queryFn: fetchVideos,
-      });
-    };
-    prefetchVideos();
+    queryClient.prefetchQuery({
+      queryKey: ["youtube_videos"],
+      queryFn: fetchVideos,
+    });
   }, [queryClient]);
 
   const fetchVideos = async () => {
@@ -55,10 +44,7 @@ export default function VideoGrid({ maxVideos = 12, rowSize = 4, isLoading }: Vi
       .select("*")
       .order("uploaded_at", { ascending: false });
 
-    if (error) {
-      console.error("Error fetching videos:", error);
-      throw error;
-    }
+    if (error) throw error;
 
     console.log(`Fetched ${data?.length || 0} videos`);
     return (data || []).map(video => ({
@@ -76,12 +62,11 @@ export default function VideoGrid({ maxVideos = 12, rowSize = 4, isLoading }: Vi
   const { data: rawVideos, isLoading: loadingVideos, error } = useQuery({
     queryKey: ["youtube_videos"],
     queryFn: fetchVideos,
-    staleTime: 1000 * 60 * 5, // 5 minutes
-    gcTime: 1000 * 60 * 30, // 30 minutes (renamed from cacheTime)
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 30,
     refetchOnWindowFocus: false,
   });
 
-  // Load hidden channels from database
   useEffect(() => {
     const loadHiddenChannels = async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -114,12 +99,10 @@ export default function VideoGrid({ maxVideos = 12, rowSize = 4, isLoading }: Vi
     );
   }
 
-  // Filter out videos from hidden channels
   const filteredVideos = rawVideos ? rawVideos.filter(
     (video) => !hiddenChannels.has(video.channelId)
   ) : [];
 
-  // Get unique channel videos for the first page only if not showing all
   const firstPageVideos = filteredVideos.reduce((acc, current) => {
     const existingVideo = acc.find(video => video.channelId === current.channelId);
     if (!existingVideo) {
@@ -135,8 +118,7 @@ export default function VideoGrid({ maxVideos = 12, rowSize = 4, isLoading }: Vi
     return acc;
   }, [] as VideoGridProps['videos']);
 
-  // Adjust videosPerPage based on mobile view
-  const videosPerPage = isMobile ? 4 : rowSize * 3; // Show 4 videos on mobile
+  const videosPerPage = isMobile ? 4 : rowSize * 3;
 
   const totalPages = Math.ceil(
     (showAll ? filteredVideos.length : firstPageVideos.length) / videosPerPage
@@ -145,7 +127,7 @@ export default function VideoGrid({ maxVideos = 12, rowSize = 4, isLoading }: Vi
   const indexOfFirstVideo = indexOfLastVideo - videosPerPage;
   
   const currentVideos = !showAll
-    ? firstPageVideos.slice(0, isMobile ? 4 : maxVideos) // Show only 4 videos on mobile
+    ? firstPageVideos.slice(0, isMobile ? 4 : maxVideos)
     : filteredVideos.slice(indexOfFirstVideo, indexOfLastVideo);
 
   if (loadingVideos) {
@@ -167,6 +149,17 @@ export default function VideoGrid({ maxVideos = 12, rowSize = 4, isLoading }: Vi
     );
   }
 
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleShowAll = () => {
+    setShowAll(true);
+    setCurrentPage(1);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <div className="space-y-4 md:space-y-6">
       <div className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 max-w-[1600px] mx-auto`}>
@@ -184,46 +177,16 @@ export default function VideoGrid({ maxVideos = 12, rowSize = 4, isLoading }: Vi
         ))}
       </div>
       
-      <div className="flex flex-col items-center gap-3 md:gap-4 mt-6 md:mt-8">
-        {!showAll && filteredVideos.length > (isMobile ? 8 : maxVideos) && (
-          <Button 
-            onClick={() => {
-              setShowAll(true);
-              setCurrentPage(1);
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
-            variant="outline"
-            className="w-28 h-8 md:w-32 md:h-10 text-sm md:text-base"
-          >
-            See More
-          </Button>
-        )}
-        
-        {showAll && totalPages > 1 && (
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious 
-                  onClick={() => {
-                    setCurrentPage(currentPage - 1);
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  }}
-                  className={`${currentPage === 1 ? 'pointer-events-none opacity-50' : ''} h-8 md:h-10 text-sm md:text-base`}
-                />
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationNext 
-                  onClick={() => {
-                    setCurrentPage(currentPage + 1);
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  }}
-                  className={`${currentPage === totalPages ? 'pointer-events-none opacity-50' : ''} h-8 md:h-10 text-sm md:text-base`}
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
-        )}
-      </div>
+      <VideoGridPagination
+        showAll={showAll}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        filteredVideosLength={filteredVideos.length}
+        maxVideos={maxVideos}
+        isMobile={isMobile}
+        onShowAll={handleShowAll}
+        onPageChange={handlePageChange}
+      />
     </div>
   );
 }
