@@ -41,12 +41,12 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
       <h2 className="text-2xl font-bold mb-8 text-accent">Most Viewed Videos</h2>
       <div className="relative">
         <ChevronLeft 
-          className="absolute left-2 top-[40%] -translate-y-1/2 z-10 w-8 h-8 text-primary hover:text-primary/80 cursor-pointer"
+          className="absolute left-0 md:left-2 top-[40%] -translate-y-1/2 z-10 w-8 h-8 text-primary hover:text-primary/80 cursor-pointer"
           onClick={handlePrevious}
           style={{ opacity: currentIndex === 0 ? 0.5 : 1 }}
         />
 
-        <div className={`grid ${isMobile ? 'grid-cols-2 gap-2' : 'grid-cols-4 gap-4'} w-full px-6 md:px-10`}>
+        <div className={`grid ${isMobile ? 'grid-cols-2 gap-2' : 'grid-cols-4 gap-4'} w-full px-8 md:px-10`}>
           {currentVideos.map((video) => (
             <div key={video.id} className={`transition-all duration-300 animate-scaleIn ${isMobile ? 'px-1' : ''}`}>
               <VideoCard {...video} />
@@ -55,7 +55,7 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
         </div>
 
         <ChevronRight 
-          className="absolute right-2 top-[40%] -translate-y-1/2 z-10 w-8 h-8 text-primary hover:text-primary/80 cursor-pointer"
+          className="absolute right-0 md:right-2 top-[40%] -translate-y-1/2 z-10 w-8 h-8 text-primary hover:text-primary/80 cursor-pointer"
           onClick={handleNext}
           style={{ opacity: currentIndex + videosPerPage >= videos.length ? 0.5 : 1 }}
         />
