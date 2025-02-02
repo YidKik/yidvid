@@ -154,20 +154,7 @@ export const Header = () => {
           <img 
             src="https://euincktvsiuztsxcuqfd.supabase.co/storage/v1/object/public/logos/play_button_outline_and_glyph.png" 
             alt="YidKik Logo"
-            className="h-12 w-auto md:h-20" 
-            style={{ 
-              objectFit: 'contain',
-              minWidth: '50px',
-              maxWidth: '50px',
-              minHeight: '50px',
-              maxHeight: '50px',
-              '@media (min-width: 768px)': {
-                minWidth: '80px',
-                maxWidth: '80px',
-                minHeight: '80px',
-                maxHeight: '80px'
-              }
-            }}
+            className="h-12 w-12 md:h-20 md:w-20 object-contain min-h-[50px] min-w-[50px] md:min-h-[80px] md:min-w-[80px] max-h-[50px] max-w-[50px] md:max-h-[80px] md:max-w-[80px]"
             onError={(e) => {
               console.error('Logo failed to load:', e);
               e.currentTarget.style.display = 'none';
