@@ -10,7 +10,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -35,31 +35,50 @@ export default function VideoGrid({ maxVideos = 12, rowSize = 4, isLoading }: Vi
   const [currentPage, setCurrentPage] = useState(1);
   const [hiddenChannels, setHiddenChannels] = useState<Set<string>>(new Set());
   const isMobile = useIsMobile();
+  const queryClient = useQueryClient();
+
+  // Prefetch videos as soon as the component mounts
+  useEffect(() => {
+    const prefetchVideos = async () => {
+      await queryClient.prefetchQuery({
+        queryKey: ["youtube_videos"],
+        queryFn: fetchVideos,
+      });
+    };
+    prefetchVideos();
+  }, [queryClient]);
+
+  const fetchVideos = async () => {
+    console.log("Fetching videos...");
+    const { data, error } = await supabase
+      .from("youtube_videos")
+      .select("*")
+      .order("uploaded_at", { ascending: false });
+
+    if (error) {
+      console.error("Error fetching videos:", error);
+      throw error;
+    }
+
+    console.log(`Fetched ${data?.length || 0} videos`);
+    return (data || []).map(video => ({
+      id: video.id,
+      video_id: video.video_id,
+      title: video.title,
+      thumbnail: video.thumbnail,
+      channelName: video.channel_name,
+      channelId: video.channel_id,
+      views: video.views || 0,
+      uploadedAt: video.uploaded_at
+    }));
+  };
 
   const { data: rawVideos, isLoading: loadingVideos, error } = useQuery({
     queryKey: ["youtube_videos"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("youtube_videos")
-        .select("*")
-        .order("uploaded_at", { ascending: false });
-
-      if (error) {
-        console.error("Error fetching videos:", error);
-        throw error;
-      }
-
-      return (data || []).map(video => ({
-        id: video.id,
-        video_id: video.video_id,
-        title: video.title,
-        thumbnail: video.thumbnail,
-        channelName: video.channel_name,
-        channelId: video.channel_id,
-        views: video.views || 0,
-        uploadedAt: video.uploaded_at
-      }));
-    },
+    queryFn: fetchVideos,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    cacheTime: 1000 * 60 * 30, // 30 minutes
+    refetchOnWindowFocus: false,
   });
 
   // Load hidden channels from database
