@@ -42,28 +42,34 @@ export const ChannelVideosManagement = ({ channelId }: ChannelVideosManagementPr
   const [isDeleting, setIsDeleting] = useState(false);
   const [videoToDelete, setVideoToDelete] = useState<string | null>(null);
 
-  const { data: videos, refetch, isError } = useQuery({
+  const { data: videos, refetch, isError, isLoading } = useQuery({
     queryKey: ["channel-videos", channelId],
     queryFn: async () => {
       console.log("Fetching videos for channel:", channelId);
       
-      const { data, error } = await supabase
-        .from("youtube_videos")
-        .select("*")
-        .eq("channel_id", channelId)
-        .order("uploaded_at", { ascending: false });
+      try {
+        const { data, error } = await supabase
+          .from("youtube_videos")
+          .select("*")
+          .eq("channel_id", channelId)
+          .order("uploaded_at", { ascending: false });
 
-      if (error) {
-        console.error("Error fetching videos:", error);
-        toast.error("Error fetching videos");
-        throw error;
+        if (error) {
+          console.error("Error fetching videos:", error);
+          throw error;
+        }
+
+        console.log("Fetched videos:", data?.length || 0);
+        return data as Video[];
+      } catch (error: any) {
+        console.error("Error in queryFn:", error);
+        throw new Error(error.message || "Failed to fetch videos");
       }
-
-      console.log("Fetched videos:", data?.length || 0);
-      return data as Video[];
     },
-    retry: 3,
+    retry: 1, // Only retry once
     retryDelay: 1000,
+    refetchOnWindowFocus: false,
+    staleTime: 1000 * 60 * 5, // Consider data fresh for 5 minutes
   });
 
   const handleDeleteVideo = async (videoId: string) => {
@@ -148,10 +154,33 @@ export const ChannelVideosManagement = ({ channelId }: ChannelVideosManagementPr
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="p-4 text-center">
+        <p className="text-muted-foreground">Loading videos...</p>
+      </div>
+    );
+  }
+
   if (isError) {
     return (
       <div className="p-4 text-center">
         <p className="text-red-500">Error loading videos. Please try again later.</p>
+        <Button 
+          variant="outline" 
+          className="mt-4"
+          onClick={() => refetch()}
+        >
+          Retry
+        </Button>
+      </div>
+    );
+  }
+
+  if (!videos?.length) {
+    return (
+      <div className="p-4 text-center">
+        <p className="text-muted-foreground">No videos found for this channel.</p>
       </div>
     );
   }
