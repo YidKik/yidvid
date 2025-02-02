@@ -29,13 +29,24 @@ interface ChannelVideosManagementProps {
   channelId: string;
 }
 
+interface Video {
+  id: string;
+  video_id: string;
+  title: string;
+  thumbnail: string;
+  views: number;
+  uploaded_at: string;
+}
+
 export const ChannelVideosManagement = ({ channelId }: ChannelVideosManagementProps) => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [videoToDelete, setVideoToDelete] = useState<string | null>(null);
 
-  const { data: videos, refetch } = useQuery({
+  const { data: videos, refetch, isError } = useQuery({
     queryKey: ["channel-videos", channelId],
     queryFn: async () => {
+      console.log("Fetching videos for channel:", channelId);
+      
       const { data, error } = await supabase
         .from("youtube_videos")
         .select("*")
@@ -43,12 +54,16 @@ export const ChannelVideosManagement = ({ channelId }: ChannelVideosManagementPr
         .order("uploaded_at", { ascending: false });
 
       if (error) {
+        console.error("Error fetching videos:", error);
         toast.error("Error fetching videos");
         throw error;
       }
 
-      return data || [];
+      console.log("Fetched videos:", data?.length || 0);
+      return data as Video[];
     },
+    retry: 3,
+    retryDelay: 1000,
   });
 
   const handleDeleteVideo = async (videoId: string) => {
@@ -56,7 +71,7 @@ export const ChannelVideosManagement = ({ channelId }: ChannelVideosManagementPr
       setIsDeleting(true);
       console.log("Starting video deletion process for:", videoId);
 
-      // First, delete related notifications
+      // Delete related notifications
       const { error: notificationsError } = await supabase
         .from("video_notifications")
         .delete()
@@ -67,7 +82,7 @@ export const ChannelVideosManagement = ({ channelId }: ChannelVideosManagementPr
         throw notificationsError;
       }
 
-      // Then, delete related reports
+      // Delete related reports
       const { error: reportsError } = await supabase
         .from("video_reports")
         .delete()
@@ -132,6 +147,14 @@ export const ChannelVideosManagement = ({ channelId }: ChannelVideosManagementPr
       setVideoToDelete(null);
     }
   };
+
+  if (isError) {
+    return (
+      <div className="p-4 text-center">
+        <p className="text-red-500">Error loading videos. Please try again later.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
