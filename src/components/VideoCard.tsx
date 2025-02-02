@@ -37,6 +37,7 @@ export const VideoCard = ({
           src={thumbnail}
           alt={title}
           className="w-full h-full object-cover"
+          loading="lazy"
         />
       </div>
       <div className="flex gap-2 md:gap-3">
@@ -46,17 +47,18 @@ export const VideoCard = ({
               src={channelThumbnail}
               alt={channelName}
               className="w-full h-full object-cover"
+              loading="lazy"
             />
           </div>
         )}
-        <div>
+        <div className="flex-1 min-w-0">
           <h3 className="font-medium text-sm md:text-youtube-title line-clamp-2 group-hover:text-button-custom">
             {title}
           </h3>
-          <p className="text-xs md:text-youtube-small text-muted-foreground mt-0.5 md:mt-1">
+          <p className="text-xs md:text-youtube-small text-muted-foreground mt-0.5 md:mt-1 line-clamp-1">
             {channelName}
           </p>
-          <div className="text-xs md:text-youtube-small text-muted-foreground flex items-center gap-1">
+          <div className="text-xs md:text-youtube-small text-muted-foreground flex items-center gap-1 flex-wrap">
             {views !== undefined && <span>{formattedViews}</span>}
             {views !== undefined && <span>•</span>}
             <span>{formattedDate}</span>

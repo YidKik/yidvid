@@ -118,7 +118,7 @@ export default function VideoGrid({ maxVideos = 12, rowSize = 4, isLoading }: Vi
   }, [] as VideoGridProps['videos']);
 
   // Adjust videosPerPage based on mobile view
-  const videosPerPage = isMobile ? 6 : rowSize * 3; // Show 6 videos (3 rows x 2 videos) on mobile
+  const videosPerPage = isMobile ? 4 : rowSize * 3; // Show 4 videos on mobile
 
   const totalPages = Math.ceil(
     (showAll ? filteredVideos.length : firstPageVideos.length) / videosPerPage
@@ -127,13 +127,13 @@ export default function VideoGrid({ maxVideos = 12, rowSize = 4, isLoading }: Vi
   const indexOfFirstVideo = indexOfLastVideo - videosPerPage;
   
   const currentVideos = !showAll
-    ? firstPageVideos.slice(0, isMobile ? 6 : maxVideos) // Show only 6 videos on mobile
+    ? firstPageVideos.slice(0, isMobile ? 4 : maxVideos) // Show only 4 videos on mobile
     : filteredVideos.slice(indexOfFirstVideo, indexOfLastVideo);
 
   if (loadingVideos) {
     return (
       <div className={`grid ${isMobile ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4'} gap-3 md:gap-4 max-w-[1600px] mx-auto`}>
-        {Array.from({ length: isMobile ? 6 : maxVideos }).map((_, index) => (
+        {Array.from({ length: isMobile ? 4 : maxVideos }).map((_, index) => (
           <div key={index} className="space-y-2 md:space-y-3">
             <Skeleton className="aspect-video w-full" />
             <div className="flex gap-2 md:gap-3">
@@ -167,7 +167,7 @@ export default function VideoGrid({ maxVideos = 12, rowSize = 4, isLoading }: Vi
       </div>
       
       <div className="flex flex-col items-center gap-3 md:gap-4 mt-6 md:mt-8">
-        {!showAll && filteredVideos.length > (isMobile ? 6 : maxVideos) && (
+        {!showAll && filteredVideos.length > (isMobile ? 4 : maxVideos) && (
           <Button 
             onClick={() => {
               setShowAll(true);

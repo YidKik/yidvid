@@ -7,6 +7,7 @@ import {
   GraduationCap,
   Calendar,
   Menu,
+  X,
 } from "lucide-react";
 import {
   Sidebar as ShadcnSidebar,
@@ -18,7 +19,7 @@ import {
   SidebarMenuButton,
 } from "@/components/ui/sidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const menuGroups = [
@@ -42,15 +43,34 @@ export const Sidebar = () => {
   const [expandedGroup, setExpandedGroup] = useState<number | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  // Close sidebar when clicking outside on mobile
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (isMobile && isMenuOpen) {
+        const sidebar = document.querySelector('.sidebar');
+        if (sidebar && !sidebar.contains(event.target as Node)) {
+          setIsMenuOpen(false);
+        }
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isMobile, isMenuOpen]);
+
   return (
-    <ShadcnSidebar className="border-r border-gray-200 bg-white">
+    <ShadcnSidebar className="border-r border-gray-200 bg-white sidebar">
       <motion.button
         className="fixed top-4 left-4 z-50 p-2 rounded-lg bg-white shadow-md hover:shadow-lg transition-shadow"
         onClick={() => setIsMenuOpen(!isMenuOpen)}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
       >
-        <Menu className="h-5 w-5 text-secondary" />
+        {isMenuOpen ? (
+          <X className="h-5 w-5 text-secondary" />
+        ) : (
+          <Menu className="h-5 w-5 text-secondary" />
+        )}
       </motion.button>
 
       <AnimatePresence>
@@ -60,7 +80,7 @@ export const Sidebar = () => {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.2 }}
-            className="mt-16"
+            className={`mt-16 ${isMobile ? 'fixed inset-y-0 left-0 w-64 bg-white shadow-lg z-40' : ''}`}
           >
             <SidebarContent>
               <SidebarGroup>
@@ -102,7 +122,10 @@ export const Sidebar = () => {
                                   transition={{ delay: index * 0.1 }}
                                 >
                                   <SidebarMenuItem>
-                                    <SidebarMenuButton className="hover:bg-muted py-2 md:py-3 mt-2">
+                                    <SidebarMenuButton 
+                                      className="hover:bg-muted py-2 md:py-3 mt-2"
+                                      onClick={() => isMobile && setIsMenuOpen(false)}
+                                    >
                                       <item.icon className="h-4 w-4 md:h-5 md:w-5 text-secondary" />
                                       <span className="text-secondary text-sm md:text-base">
                                         {item.label}
