@@ -36,7 +36,6 @@ export default function VideoGrid({ maxVideos = 12, rowSize = 4, isLoading }: Vi
   const [hiddenChannels, setHiddenChannels] = useState<Set<string>>(new Set());
   const isMobile = useIsMobile();
 
-  // Fetch videos using React Query
   const { data: rawVideos, isLoading: loadingVideos, error } = useQuery({
     queryKey: ["youtube_videos"],
     queryFn: async () => {
@@ -132,8 +131,8 @@ export default function VideoGrid({ maxVideos = 12, rowSize = 4, isLoading }: Vi
 
   if (loadingVideos) {
     return (
-      <div className={`grid ${isMobile ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4'} gap-3 md:gap-4 max-w-[1600px] mx-auto`}>
-        {Array.from({ length: isMobile ? 4 : maxVideos }).map((_, index) => (
+      <div className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 max-w-[1600px] mx-auto`}>
+        {Array.from({ length: isMobile ? 8 : maxVideos }).map((_, index) => (
           <div key={index} className="space-y-2 md:space-y-3">
             <Skeleton className="aspect-video w-full" />
             <div className="flex gap-2 md:gap-3">
@@ -151,7 +150,7 @@ export default function VideoGrid({ maxVideos = 12, rowSize = 4, isLoading }: Vi
 
   return (
     <div className="space-y-4 md:space-y-6">
-      <div className={`grid ${isMobile ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4'} gap-3 md:gap-4 max-w-[1600px] mx-auto`}>
+      <div className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 max-w-[1600px] mx-auto`}>
         {currentVideos?.map((video) => (
           <VideoCard
             key={video.id}
@@ -167,7 +166,7 @@ export default function VideoGrid({ maxVideos = 12, rowSize = 4, isLoading }: Vi
       </div>
       
       <div className="flex flex-col items-center gap-3 md:gap-4 mt-6 md:mt-8">
-        {!showAll && filteredVideos.length > (isMobile ? 4 : maxVideos) && (
+        {!showAll && filteredVideos.length > (isMobile ? 8 : maxVideos) && (
           <Button 
             onClick={() => {
               setShowAll(true);
