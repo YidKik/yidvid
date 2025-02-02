@@ -82,24 +82,6 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
         }
 
         if (signUpData?.user) {
-          // Ensure profile is created
-          const { error: profileError } = await supabase
-            .from('profiles')
-            .insert([
-              {
-                id: signUpData.user.id,
-                email: email,
-                name: name,
-                is_admin: false
-              }
-            ]);
-
-          if (profileError) {
-            console.error("Profile creation error:", profileError);
-            toast.error("Error creating user profile. Please try again.");
-            return;
-          }
-
           toast.success("Account created successfully! Please check your email to confirm your account.");
           onOpenChange(false);
         }
