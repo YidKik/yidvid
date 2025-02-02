@@ -28,20 +28,42 @@ export const Header = () => {
   const debouncedSearch = useDebounce(searchQuery, 300);
 
   useEffect(() => {
-    // Set up initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-    });
+    const initializeSession = async () => {
+      try {
+        // Get initial session
+        const { data: { session: initialSession }, error: sessionError } = await supabase.auth.getSession();
+        if (sessionError) {
+          console.error("Session error:", sessionError);
+          return;
+        }
+        setSession(initialSession);
 
-    // Listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
+        // Set up auth state change listener
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
+          console.log("Auth state changed:", event);
+          if (event === 'TOKEN_REFRESHED') {
+            console.log('Token was refreshed successfully');
+          }
+          if (event === 'SIGNED_OUT') {
+            // Clear any local session data
+            setSession(null);
+            localStorage.removeItem('supabase.auth.token');
+            navigate('/');
+          }
+          setSession(currentSession);
+        });
 
-    return () => subscription.unsubscribe();
-  }, []);
+        return () => {
+          subscription?.unsubscribe();
+        };
+      } catch (error) {
+        console.error("Error initializing session:", error);
+        toast.error("There was an error with authentication. Please try logging in again.");
+      }
+    };
+
+    initializeSession();
+  }, [navigate]);
 
   const { data: notifications, refetch: refetchNotifications } = useQuery({
     queryKey: ["video-notifications", session?.user?.id],
@@ -103,15 +125,12 @@ export const Header = () => {
 
   const handleLogout = async () => {
     try {
-      // First clear any local session state
-      setSession(null);
+      setSession(null); // Clear session state immediately
       
-      // Attempt to sign out from Supabase
       const { error } = await supabase.auth.signOut();
       
       if (error) {
         console.error("Error during logout:", error);
-        // Only show error toast if it's not the session_not_found error
         if (error.message !== "Session from session_id claim in JWT does not exist") {
           toast.error("There was an issue logging out");
         }
