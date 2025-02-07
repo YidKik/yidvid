@@ -11,10 +11,8 @@ interface AuthFormProps {
 }
 
 export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
-  const [isSignUp, setIsSignUp] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -32,11 +30,6 @@ export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
 
     if (password.length < 6) {
       toast.error("Password must be at least 6 characters long");
-      return false;
-    }
-
-    if (isSignUp && !name) {
-      toast.error("Please enter your name");
       return false;
     }
 
@@ -81,60 +74,6 @@ export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
     }
   };
 
-  const handleSignUp = async () => {
-    try {
-      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            full_name: name,
-          },
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
-        },
-      });
-
-      if (signUpError) {
-        console.error("Signup error:", signUpError);
-        if (signUpError.message.includes("User already registered")) {
-          toast.error("This email is already registered. Please sign in instead.");
-          setIsSignUp(false);
-        } else {
-          toast.error(signUpError.message || "Error during signup");
-        }
-        return;
-      }
-
-      if (signUpData?.user) {
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .insert({
-            id: signUpData.user.id,
-            email: email,
-            name: name,
-            is_admin: false
-          });
-
-        if (profileError) {
-          console.error("Profile creation error:", profileError);
-          if (profileError.code === '23505') {
-            toast.error("An account with this email already exists");
-            setIsSignUp(false);
-          } else {
-            toast.error("Error creating user profile");
-          }
-          return;
-        }
-
-        toast.success("Account created successfully! Please check your email to confirm your account.");
-        onOpenChange(false);
-      }
-    } catch (error: any) {
-      console.error("Signup error:", error);
-      toast.error("An error occurred during signup");
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -145,11 +84,7 @@ export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
     setIsLoading(true);
 
     try {
-      if (isSignUp) {
-        await handleSignUp();
-      } else {
-        await handleSignIn();
-      }
+      await handleSignIn();
     } finally {
       setIsLoading(false);
     }
@@ -157,21 +92,6 @@ export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 mt-4">
-      {isSignUp && (
-        <div className="space-y-2">
-          <Input
-            id="name"
-            type="text"
-            placeholder="Full Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="border border-input rounded-md"
-            required
-            disabled={isLoading}
-            aria-label="Full Name"
-          />
-        </div>
-      )}
       <div className="space-y-2">
         <Input
           id="email"
@@ -204,18 +124,8 @@ export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
         className="w-full bg-primary text-white rounded-md py-2 disabled:opacity-50 disabled:cursor-not-allowed"
         disabled={isLoading}
       >
-        {isLoading ? "Loading..." : (isSignUp ? "Sign Up" : "Sign In")}
+        {isLoading ? "Loading..." : "Sign In"}
       </button>
-      <div className="text-center">
-        <button
-          type="button"
-          onClick={() => setIsSignUp(!isSignUp)}
-          className="text-sm text-primary hover:text-primary/80 transition-colors"
-          disabled={isLoading}
-        >
-          {isSignUp ? "Already have an account? Sign In" : "Need an account? Sign Up"}
-        </button>
-      </div>
     </form>
   );
 };
