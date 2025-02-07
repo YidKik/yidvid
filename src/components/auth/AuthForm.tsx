@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface AuthFormProps {
   onOpenChange: (open: boolean) => void;
@@ -74,7 +75,30 @@ export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSignUp = async () => {
+    try {
+      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+
+      if (signUpError) {
+        console.error("Sign up error:", signUpError);
+        toast.error(signUpError.message || "Error during sign up");
+        return;
+      }
+
+      if (signUpData?.user) {
+        toast.success("Account created successfully! Please check your email to confirm your account.");
+        // Note: The profile will be created automatically by the database trigger
+      }
+    } catch (error: any) {
+      console.error("Sign up error:", error);
+      toast.error("An error occurred during sign up");
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent, mode: 'signin' | 'signup') => {
     e.preventDefault();
     
     if (!validateForm()) {
@@ -84,48 +108,98 @@ export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
     setIsLoading(true);
 
     try {
-      await handleSignIn();
+      if (mode === 'signin') {
+        await handleSignIn();
+      } else {
+        await handleSignUp();
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 mt-4">
-      <div className="space-y-2">
-        <Input
-          id="email"
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="border border-input rounded-md"
-          required
-          disabled={isLoading}
-          aria-label="Email"
-        />
-      </div>
-      <div className="space-y-2">
-        <Input
-          id="password"
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="border border-input rounded-md"
-          required
-          disabled={isLoading}
-          minLength={6}
-          aria-label="Password"
-        />
-      </div>
-      <button
-        type="submit"
-        className="w-full bg-primary text-white rounded-md py-2 disabled:opacity-50 disabled:cursor-not-allowed"
-        disabled={isLoading}
-      >
-        {isLoading ? "Loading..." : "Sign In"}
-      </button>
-    </form>
+    <Tabs defaultValue="signin" className="w-full">
+      <TabsList className="grid w-full grid-cols-2">
+        <TabsTrigger value="signin">Sign In</TabsTrigger>
+        <TabsTrigger value="signup">Sign Up</TabsTrigger>
+      </TabsList>
+      <TabsContent value="signin">
+        <form onSubmit={(e) => handleSubmit(e, 'signin')} className="space-y-4 mt-4">
+          <div className="space-y-2">
+            <Input
+              id="signin-email"
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="border border-input rounded-md"
+              required
+              disabled={isLoading}
+              aria-label="Email"
+            />
+          </div>
+          <div className="space-y-2">
+            <Input
+              id="signin-password"
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="border border-input rounded-md"
+              required
+              disabled={isLoading}
+              minLength={6}
+              aria-label="Password"
+            />
+          </div>
+          <button
+            type="submit"
+            className="w-full bg-primary text-white rounded-md py-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={isLoading}
+          >
+            {isLoading ? "Loading..." : "Sign In"}
+          </button>
+        </form>
+      </TabsContent>
+      <TabsContent value="signup">
+        <form onSubmit={(e) => handleSubmit(e, 'signup')} className="space-y-4 mt-4">
+          <div className="space-y-2">
+            <Input
+              id="signup-email"
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="border border-input rounded-md"
+              required
+              disabled={isLoading}
+              aria-label="Email"
+            />
+          </div>
+          <div className="space-y-2">
+            <Input
+              id="signup-password"
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="border border-input rounded-md"
+              required
+              disabled={isLoading}
+              minLength={6}
+              aria-label="Password"
+            />
+          </div>
+          <button
+            type="submit"
+            className="w-full bg-primary text-white rounded-md py-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={isLoading}
+          >
+            {isLoading ? "Loading..." : "Sign Up"}
+          </button>
+        </form>
+      </TabsContent>
+    </Tabs>
   );
 };
