@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -53,30 +54,28 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
       });
 
       if (signInError) {
-        console.error("Signin error:", signInError);
-        if (signInError.message.includes("Invalid login credentials")) {
-          toast.error("Invalid email or password");
-        } else {
-          toast.error(signInError.message || "Error during sign in");
-        }
+        console.error("Sign in error:", signInError);
+        toast.error(signInError.message || "Error during sign in");
         return;
       }
 
       if (signInData?.user) {
-        await queryClient.prefetchQuery({
-          queryKey: ["profile", signInData.user.id],
-          queryFn: async () => {
-            const { data, error } = await supabase
-              .from("profiles")
-              .select("*")
-              .eq("id", signInData.user.id)
-              .single();
-              
-            if (error) throw error;
-            return data;
-          },
-        });
+        // Fetch profile data
+        const { data: profileData, error: profileError } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", signInData.user.id)
+          .maybeSingle();
 
+        if (profileError) {
+          console.error("Error fetching profile:", profileError);
+          toast.error("Error loading user profile");
+          return;
+        }
+
+        // Update query cache
+        await queryClient.setQueryData(["profile", signInData.user.id], profileData);
+        
         toast.success("Signed in successfully!");
         onOpenChange(false);
         navigate("/");
@@ -96,7 +95,7 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
           data: {
             full_name: name,
           },
-          emailRedirectTo: window.location.origin,
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
         },
       });
 
@@ -124,12 +123,16 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
 
         if (profileError) {
           console.error("Profile creation error:", profileError);
-          // Even if profile creation fails, the user is created
-          toast.error("Account created but profile setup failed. Please contact support.");
-        } else {
-          toast.success("Account created successfully! Please check your email to confirm your account.");
+          if (profileError.code === '23505') { // unique_violation
+            toast.error("An account with this email already exists");
+            setIsSignUp(false);
+          } else {
+            toast.error("Error creating user profile");
+          }
+          return;
         }
-        
+
+        toast.success("Account created successfully! Please check your email to confirm your account.");
         onOpenChange(false);
       }
     } catch (error: any) {
