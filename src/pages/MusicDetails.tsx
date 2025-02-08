@@ -6,17 +6,12 @@ import { Header } from "@/components/Header";
 import { Sidebar } from "@/components/Sidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { BackButton } from "@/components/navigation/BackButton";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Music, Play, Pause } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
-import { Button } from "@/components/ui/button";
-import { useState, useRef, useEffect } from "react";
-import { toast } from "sonner";
+import { Music } from "lucide-react";
+import { YouTubePlayer } from "@/components/music/YouTubePlayer";
+import { TrackInfo } from "@/components/music/TrackInfo";
 
 const MusicDetails = () => {
   const { id } = useParams<{ id: string }>();
-  const [isPlaying, setIsPlaying] = useState(false);
-  const iframeRef = useRef<HTMLIFrameElement>(null);
 
   const { data: track, isLoading } = useQuery({
     queryKey: ['music-track', id],
@@ -50,47 +45,19 @@ const MusicDetails = () => {
     enabled: !!id,
   });
 
-  const handlePlay = () => {
-    if (!track?.audio_url) {
-      toast.error("No audio URL available for this track");
-      return;
-    }
-
-    // Extract video ID from YouTube URL
-    const videoId = track.audio_url.split('v=')[1];
-    if (!videoId) {
-      toast.error("Invalid YouTube URL");
-      return;
-    }
-
-    // Create or update iframe for YouTube embed
-    if (iframeRef.current) {
-      if (!isPlaying) {
-        iframeRef.current.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
-      } else {
-        iframeRef.current.src = '';
+  // Update play count when track starts playing
+  const handlePlayStateChange = async (isPlaying: boolean) => {
+    if (isPlaying && track?.id) {
+      const { error } = await supabase
+        .from('music_tracks')
+        .update({ plays: (track.plays || 0) + 1 })
+        .eq('id', track.id);
+      
+      if (error) {
+        console.error('Error updating play count:', error);
       }
-      setIsPlaying(!isPlaying);
     }
   };
-
-  // Update play count when track starts playing
-  useEffect(() => {
-    if (isPlaying && track?.id) {
-      const updatePlays = async () => {
-        const { error } = await supabase
-          .from('music_tracks')
-          .update({ plays: (track.plays || 0) + 1 })
-          .eq('id', track.id);
-        
-        if (error) {
-          console.error('Error updating play count:', error);
-        }
-      };
-      
-      updatePlays();
-    }
-  }, [isPlaying, track?.id, track?.plays]);
 
   if (isLoading) {
     return (
@@ -147,61 +114,21 @@ const MusicDetails = () => {
               <BackButton />
               <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div className="md:col-span-2">
-                  <div className="aspect-video w-full rounded-lg overflow-hidden bg-black relative">
-                    {isPlaying ? (
-                      <iframe
-                        ref={iframeRef}
-                        className="w-full h-full"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                      />
-                    ) : (
-                      <img
-                        src={track.thumbnail}
-                        alt={track.title}
-                        className="w-full h-full object-cover"
-                      />
-                    )}
-                  </div>
-                  <div className="mt-4 flex items-center gap-4 p-4 bg-muted rounded-lg">
-                    <Button
-                      onClick={handlePlay}
-                      size="icon"
-                      className="w-12 h-12 rounded-full bg-primary hover:bg-primary/90 transition-colors"
-                    >
-                      {isPlaying ? (
-                        <Pause className="w-6 h-6 text-white" />
-                      ) : (
-                        <Play className="w-6 h-6 text-white" />
-                      )}
-                    </Button>
-                    <div className="flex-1">
-                      <h2 className="font-semibold text-lg">{track.title}</h2>
-                      <p className="text-sm text-gray-500">{track.artist_name}</p>
-                    </div>
-                  </div>
+                  <YouTubePlayer
+                    audioUrl={track.audio_url}
+                    thumbnail={track.thumbnail}
+                    title={track.title}
+                    onPlayStateChange={handlePlayStateChange}
+                  />
                 </div>
-                <div className="space-y-6">
-                  <div>
-                    <h1 className="text-2xl font-bold mb-2">{track.title}</h1>
-                    <div className="flex items-center gap-4 mb-4">
-                      <Avatar className="w-12 h-12">
-                        <AvatarImage src={track.music_artists?.thumbnail_url} />
-                        <AvatarFallback>
-                          <Music className="w-6 h-6" />
-                        </AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <h2 className="font-semibold">{track.artist_name}</h2>
-                        <p className="text-sm text-gray-500">
-                          {track.plays} plays
-                        </p>
-                      </div>
-                    </div>
-                    <p className="text-sm text-gray-500">
-                      Uploaded {formatDistanceToNow(new Date(track.uploaded_at), { addSuffix: true })}
-                    </p>
-                  </div>
+                <div>
+                  <TrackInfo
+                    title={track.title}
+                    artistName={track.artist_name}
+                    artistThumbnail={track.music_artists?.thumbnail_url}
+                    plays={track.plays}
+                    uploadedAt={track.uploaded_at}
+                  />
                 </div>
               </div>
             </div>
