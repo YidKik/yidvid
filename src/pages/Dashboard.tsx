@@ -9,6 +9,7 @@ import { ChannelRequestsSection } from "@/components/dashboard/ChannelRequestsSe
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 export default function Dashboard() {
   const { data: session } = useQuery({
@@ -19,10 +20,13 @@ export default function Dashboard() {
     },
   });
 
-  const { data: profile, isLoading: isProfileLoading } = useQuery({
+  const { data: profile, isLoading: isProfileLoading, error: profileError } = useQuery({
     queryKey: ["profile", session?.user?.id],
     queryFn: async () => {
       if (!session?.user?.id) return null;
+      
+      console.log("Fetching profile for user:", session.user.id);
+      
       const { data, error } = await supabase
         .from("profiles")
         .select("*")
@@ -31,8 +35,11 @@ export default function Dashboard() {
 
       if (error) {
         console.error("Error fetching profile:", error);
-        return null;
+        toast.error("Failed to load user profile");
+        throw error;
       }
+
+      console.log("Fetched profile:", data);
       return data;
     },
     enabled: !!session?.user?.id,
@@ -46,13 +53,26 @@ export default function Dashboard() {
     );
   }
 
+  if (profileError) {
+    return (
+      <div className="container mx-auto py-8">
+        <div className="text-center text-red-500">
+          Error loading dashboard. Please try again later.
+        </div>
+      </div>
+    );
+  }
+
+  // Check if user is admin
+  const isAdmin = profile?.is_admin === true;
+
   return (
     <div className="container mx-auto py-8">
       <h1 className="text-3xl font-bold mb-8">Dashboard</h1>
       
       <UserAnalyticsSection />
       
-      {profile?.is_admin && (
+      {isAdmin && (
         <>
           <DashboardAnalytics />
           <UserManagementSection currentUserId={session?.user?.id || ""} />
@@ -61,6 +81,12 @@ export default function Dashboard() {
           <MusicArtistsSection />
           <ChannelRequestsSection />
         </>
+      )}
+
+      {!isAdmin && (
+        <div className="text-center text-gray-500 mt-8">
+          You do not have admin access to view additional dashboard features.
+        </div>
       )}
     </div>
   );
