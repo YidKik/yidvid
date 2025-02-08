@@ -1,3 +1,4 @@
+
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,13 +14,15 @@ import { useState, useRef, useEffect } from "react";
 import { toast } from "sonner";
 
 const MusicDetails = () => {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const [isPlaying, setIsPlaying] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
   const { data: track, isLoading } = useQuery({
     queryKey: ['music-track', id],
     queryFn: async () => {
+      if (!id) throw new Error('No track ID provided');
+      
       const { data, error } = await supabase
         .from('music_tracks')
         .select(`
@@ -44,6 +47,7 @@ const MusicDetails = () => {
       
       return data;
     },
+    enabled: !!id,
   });
 
   const handlePlay = () => {
