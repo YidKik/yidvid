@@ -1,18 +1,14 @@
 
 import { UserAnalyticsSection } from "@/components/analytics/UserAnalyticsSection";
-import { UserManagementSection } from "@/components/dashboard/UserManagementSection";
-import { DashboardAnalytics } from "@/components/dashboard/DashboardAnalytics";
-import { ReportedVideosSection } from "@/components/dashboard/ReportedVideosSection";
-import { CommentsManagementSection } from "@/components/dashboard/CommentsManagementSection";
-import { MusicArtistsSection } from "@/components/dashboard/MusicArtistsSection";
-import { ChannelRequestsSection } from "@/components/dashboard/ChannelRequestsSection";
-import { YouTubeChannelsSection } from "@/components/dashboard/YouTubeChannelsSection";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2 } from "lucide-react";
+import { Loader2, Users, Video, MessageSquare, Tv, Database } from "lucide-react";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
+  const navigate = useNavigate();
   const { data: session } = useQuery({
     queryKey: ["session"],
     queryFn: async () => {
@@ -46,6 +42,26 @@ export default function Dashboard() {
     enabled: !!session?.user?.id,
   });
 
+  const { data: stats } = useQuery({
+    queryKey: ["dashboard-stats"],
+    queryFn: async () => {
+      const [channelsResponse, videosResponse, commentsResponse, usersResponse] = await Promise.all([
+        supabase.from("youtube_channels").select("*", { count: "exact", head: true }),
+        supabase.from("youtube_videos").select("*", { count: "exact", head: true }),
+        supabase.from("comments").select("*", { count: "exact", head: true }),
+        supabase.from("profiles").select("*", { count: "exact", head: true })
+      ]);
+      
+      return {
+        totalChannels: channelsResponse.count || 0,
+        totalVideos: videosResponse.count || 0,
+        totalComments: commentsResponse.count || 0,
+        totalUsers: usersResponse.count || 0
+      };
+    },
+    enabled: profile?.is_admin === true
+  });
+
   if (isProfileLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -67,6 +83,43 @@ export default function Dashboard() {
   // Check if user is admin
   const isAdmin = profile?.is_admin === true;
 
+  const adminCards = [
+    {
+      title: "Channel Management",
+      description: "Add, remove, and manage YouTube channels",
+      icon: <Tv className="h-6 w-6 text-muted-foreground" />,
+      onClick: () => navigate("/admin/channels"),
+      stats: stats?.totalChannels ? `${stats.totalChannels} channels` : undefined
+    },
+    {
+      title: "Comments Management",
+      description: "View and moderate comments",
+      icon: <MessageSquare className="h-6 w-6 text-muted-foreground" />,
+      onClick: () => navigate("/admin/comments"),
+      stats: stats?.totalComments ? `${stats.totalComments} comments` : undefined
+    },
+    {
+      title: "Channel Requests",
+      description: "Review and manage channel requests",
+      icon: <Video className="h-6 w-6 text-muted-foreground" />,
+      onClick: () => navigate("/admin/requests")
+    },
+    {
+      title: "User Management",
+      description: "Manage users and admins",
+      icon: <Users className="h-6 w-6 text-muted-foreground" />,
+      onClick: () => navigate("/admin/users"),
+      stats: stats?.totalUsers ? `${stats.totalUsers} users` : undefined
+    },
+    {
+      title: "Dashboard Analytics",
+      description: "View overall statistics and analytics",
+      icon: <Database className="h-6 w-6 text-muted-foreground" />,
+      onClick: () => navigate("/admin/analytics"),
+      stats: stats?.totalVideos ? `${stats.totalVideos} videos` : undefined
+    }
+  ];
+
   return (
     <div className="container mx-auto py-8 space-y-8">
       <h1 className="text-3xl font-bold mb-8">Dashboard</h1>
@@ -74,15 +127,30 @@ export default function Dashboard() {
       <UserAnalyticsSection />
       
       {isAdmin && (
-        <>
-          <DashboardAnalytics />
-          <YouTubeChannelsSection />
-          <UserManagementSection currentUserId={session?.user?.id || ""} />
-          <ReportedVideosSection />
-          <CommentsManagementSection />
-          <MusicArtistsSection />
-          <ChannelRequestsSection />
-        </>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {adminCards.map((card, index) => (
+            <Card 
+              key={index}
+              className="hover:bg-accent/50 transition-colors cursor-pointer"
+              onClick={card.onClick}
+            >
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  {card.icon}
+                  {card.stats && (
+                    <span className="text-sm text-muted-foreground">{card.stats}</span>
+                  )}
+                </div>
+                <CardTitle className="mt-4">{card.title}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">
+                  {card.description}
+                </p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       )}
 
       {!isAdmin && (
