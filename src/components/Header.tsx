@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -19,10 +20,6 @@ export const Header = () => {
   useEffect(() => {
     const initializeSession = async () => {
       try {
-        // Clear any existing session data
-        await supabase.auth.signOut({ scope: 'global' });
-        localStorage.clear();
-        
         const { data: { session: initialSession }, error: sessionError } = await supabase.auth.getSession();
         if (sessionError) {
           console.error("Session error:", sessionError);
@@ -51,7 +48,6 @@ export const Header = () => {
             case 'SIGNED_OUT':
               console.log('User signed out');
               setSession(null);
-              localStorage.clear();
               navigate('/');
               break;
               
@@ -72,7 +68,6 @@ export const Header = () => {
       } catch (error) {
         console.error("Error initializing session:", error);
         setSession(null);
-        localStorage.clear();
         toast.error("There was an error with authentication. Please try logging in again.");
       }
     };
@@ -97,20 +92,15 @@ export const Header = () => {
 
   const handleLogout = async () => {
     try {
-      setSession(null);
-      localStorage.clear();
-      
-      const { error } = await supabase.auth.signOut({
-        scope: 'global'
-      });
+      const { error } = await supabase.auth.signOut();
       
       if (error) {
         console.error("Error during logout:", error);
-        if (error.message !== "Session from session_id claim in JWT does not exist") {
-          toast.error("There was an issue logging out");
-        }
+        toast.error("There was an issue logging out");
+        return;
       }
       
+      setSession(null);
       navigate("/");
       toast.success("Logged out successfully");
       
