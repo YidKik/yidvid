@@ -48,7 +48,7 @@ export default function Dashboard() {
       const [channelsResponse, videosResponse, commentsResponse, usersResponse] = await Promise.all([
         supabase.from("youtube_channels").select("*", { count: "exact", head: true }),
         supabase.from("youtube_videos").select("*", { count: "exact", head: true }),
-        supabase.from("comments").select("*", { count: "exact", head: true }),
+        supabase.from("video_comments").select("*", { count: "exact", head: true }),
         supabase.from("profiles").select("*", { count: "exact", head: true })
       ]);
       
