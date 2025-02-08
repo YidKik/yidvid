@@ -6,6 +6,7 @@ import { ReportedVideosSection } from "@/components/dashboard/ReportedVideosSect
 import { CommentsManagementSection } from "@/components/dashboard/CommentsManagementSection";
 import { MusicArtistsSection } from "@/components/dashboard/MusicArtistsSection";
 import { ChannelRequestsSection } from "@/components/dashboard/ChannelRequestsSection";
+import { YouTubeChannelsSection } from "@/components/dashboard/YouTubeChannelsSection";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
@@ -67,7 +68,7 @@ export default function Dashboard() {
   const isAdmin = profile?.is_admin === true;
 
   return (
-    <div className="container mx-auto py-8">
+    <div className="container mx-auto py-8 space-y-8">
       <h1 className="text-3xl font-bold mb-8">Dashboard</h1>
       
       <UserAnalyticsSection />
@@ -75,6 +76,7 @@ export default function Dashboard() {
       {isAdmin && (
         <>
           <DashboardAnalytics />
+          <YouTubeChannelsSection />
           <UserManagementSection currentUserId={session?.user?.id || ""} />
           <ReportedVideosSection />
           <CommentsManagementSection />
