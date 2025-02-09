@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
@@ -119,20 +118,20 @@ export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
   };
 
   const switchToSignUp = () => {
-    const signupTrigger = document.querySelector('[data-state="inactive"][value="signup"]') as HTMLButtonElement;
-    if (signupTrigger) signupTrigger.click();
+    const signupTab = document.querySelector('[value="signup"]') as HTMLButtonElement;
+    if (signupTab) signupTab.click();
   };
 
   const switchToSignIn = () => {
-    const signinTrigger = document.querySelector('[data-state="inactive"][value="signin"]') as HTMLButtonElement;
-    if (signinTrigger) signinTrigger.click();  // Fixed: Changed signupTrigger to signinTrigger
+    const signinTab = document.querySelector('[value="signin"]') as HTMLButtonElement;
+    if (signinTab) signinTab.click();
   };
 
   return (
     <Tabs defaultValue="signup" className="w-full max-w-sm mx-auto">
-      <TabsList className="hidden">
-        <TabsTrigger value="signin">Sign In</TabsTrigger>
-        <TabsTrigger value="signup">Sign Up</TabsTrigger>
+      <TabsList className="w-full">
+        <TabsTrigger value="signin" className="w-1/2">Sign In</TabsTrigger>
+        <TabsTrigger value="signup" className="w-1/2">Sign Up</TabsTrigger>
       </TabsList>
       <TabsContent value="signin">
         <form onSubmit={(e) => handleSubmit(e, 'signin')} className="space-y-2 sm:space-y-3">
