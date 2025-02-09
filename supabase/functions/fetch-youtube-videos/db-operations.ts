@@ -1,5 +1,5 @@
 
-import { SupabaseClient } from '@supabase/supabase-js';
+import { SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 export const getChannelsFromDatabase = async (supabaseClient: SupabaseClient) => {
   const { data: channelsData, error: channelsError } = await supabaseClient
@@ -33,4 +33,3 @@ export const storeVideosInDatabase = async (
     }
   }
 };
-
