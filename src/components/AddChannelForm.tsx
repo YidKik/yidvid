@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -131,6 +132,7 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
           title: data.title,
           description: data.description,
           thumbnail_url: data.thumbnailUrl,
+          default_category: data.default_category || 'other'
         });
 
       if (insertError) {
