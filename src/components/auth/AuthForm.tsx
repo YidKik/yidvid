@@ -119,7 +119,7 @@ export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
   };
 
   return (
-    <Tabs defaultValue="signin" className="w-full">
+    <Tabs defaultValue="signup" className="w-full">
       <TabsContent value="signin">
         <form onSubmit={(e) => handleSubmit(e, 'signin')} className="space-y-3">
           <div>
@@ -156,6 +156,16 @@ export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
           >
             {isLoading ? "Loading..." : "Sign In"}
           </button>
+          <p className="text-xs text-center text-gray-500">
+            Don't have an account?{" "}
+            <button
+              type="button"
+              onClick={() => document.querySelector('[value="signup"]')?.click()}
+              className="text-primary hover:underline focus:outline-none"
+            >
+              Sign up
+            </button>
+          </p>
         </form>
       </TabsContent>
       <TabsContent value="signup">
