@@ -5,7 +5,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { CategoryCard } from "./CategoryCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEffect } from "react";
-import { toast } from "sonner";
 
 const categories = [
   { id: 'music', label: 'Music', icon: '🎵' },
@@ -36,7 +35,6 @@ export const CategorySection = () => {
 
   useEffect(() => {
     const processExistingVideos = async () => {
-      const toastId = toast.loading("Categorizing videos...");
       try {
         const { data, error } = await supabase.functions.invoke('categorize-existing-videos', {
           body: {},
@@ -46,19 +44,9 @@ export const CategorySection = () => {
         
         if (data?.results?.length > 0) {
           await refetch();
-          toast.success(`Successfully categorized ${data.results.length} videos`, {
-            id: toastId,
-          });
-        } else {
-          toast.success("All videos are already categorized", {
-            id: toastId,
-          });
         }
       } catch (error) {
         console.error('Error categorizing videos:', error);
-        toast.error("Failed to categorize videos. Please try again later.", {
-          id: toastId,
-        });
       }
     };
 
