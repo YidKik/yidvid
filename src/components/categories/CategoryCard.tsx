@@ -11,13 +11,13 @@ interface CategoryCardProps {
 
 // Color mapping for different categories
 const categoryColors: { [key: string]: { bg: string; border: string; text: string } } = {
-  music: { bg: '#F1F0FB', border: '#ea384c', text: '#333333' },
-  torah: { bg: '#F1F0FB', border: '#ea384c', text: '#333333' },
-  inspiration: { bg: '#F1F0FB', border: '#ea384c', text: '#333333' },
-  podcast: { bg: '#F1F0FB', border: '#ea384c', text: '#333333' },
-  education: { bg: '#F1F0FB', border: '#ea384c', text: '#333333' },
-  entertainment: { bg: '#F1F0FB', border: '#ea384c', text: '#333333' },
-  other: { bg: '#F1F0FB', border: '#ea384c', text: '#333333' },
+  music: { bg: '#FFFFFF', border: '#ea384c', text: '#333333' },
+  torah: { bg: '#FFFFFF', border: '#ea384c', text: '#333333' },
+  inspiration: { bg: '#FFFFFF', border: '#ea384c', text: '#333333' },
+  podcast: { bg: '#FFFFFF', border: '#ea384c', text: '#333333' },
+  education: { bg: '#FFFFFF', border: '#ea384c', text: '#333333' },
+  entertainment: { bg: '#FFFFFF', border: '#ea384c', text: '#333333' },
+  other: { bg: '#FFFFFF', border: '#ea384c', text: '#333333' },
 };
 
 export const CategoryCard = ({ icon, label, count, id }: CategoryCardProps) => {
