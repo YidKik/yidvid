@@ -78,7 +78,7 @@ export const SignUpForm = ({ isLoading, setIsLoading }: SignUpFormProps) => {
           placeholder="Username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          className="h-11 px-4 border-gray-200"
+          className="h-11 px-4 border-gray-200 bg-gray-50/50 focus:bg-white transition-colors"
           required
           disabled={isLoading}
         />
@@ -89,7 +89,7 @@ export const SignUpForm = ({ isLoading, setIsLoading }: SignUpFormProps) => {
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="h-11 px-4 border-gray-200"
+          className="h-11 px-4 border-gray-200 bg-gray-50/50 focus:bg-white transition-colors"
           required
           disabled={isLoading}
         />
@@ -100,7 +100,7 @@ export const SignUpForm = ({ isLoading, setIsLoading }: SignUpFormProps) => {
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="h-11 px-4 border-gray-200"
+          className="h-11 px-4 border-gray-200 bg-gray-50/50 focus:bg-white transition-colors"
           required
           disabled={isLoading}
           minLength={6}
