@@ -19,15 +19,15 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    // Fetch all videos that don't have a category yet
+    // Fetch all videos regardless of category status
     const { data: videos, error: fetchError } = await supabaseClient
       .from('youtube_videos')
       .select('*')
-      .is('category', null)
+      .is('deleted_at', null)
 
     if (fetchError) throw fetchError
 
-    console.log(`Found ${videos?.length || 0} uncategorized videos`)
+    console.log(`Found ${videos?.length || 0} videos to process`)
 
     const openAIApiKey = Deno.env.get('OPENAI_API_KEY')
     if (!openAIApiKey) {
@@ -40,7 +40,7 @@ serve(async (req) => {
       const batch = videos.slice(i, i + batchSize)
       
       const promises = batch.map(async (video) => {
-        const prompt = `Based on this video title: "${video.title}" and description: "${video.description}", 
+        const prompt = `Based on this video title: "${video.title}" and description: "${video.description || ''}", 
         categorize it into exactly ONE of these categories: music, torah, inspiration, podcast, education, entertainment, other.
         Only respond with the category name in lowercase, nothing else.`
 
@@ -90,7 +90,7 @@ serve(async (req) => {
       
       // Add a small delay between batches to avoid rate limiting
       if (i + batchSize < videos.length) {
-        await new Promise(resolve => setTimeout(resolve, 1000))
+        await new Promise(resolve => setTimeout(resolve, 2000))
       }
     }
 

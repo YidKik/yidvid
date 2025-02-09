@@ -18,12 +18,13 @@ const categories = [
 ];
 
 export const CategorySection = () => {
-  const { data: categoryVideos, isLoading } = useQuery({
+  const { data: categoryVideos, isLoading, refetch } = useQuery({
     queryKey: ["category-videos"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("youtube_videos")
         .select("*")
+        .is('deleted_at', null)
         .order("uploaded_at", { ascending: false });
 
       if (error) throw error;
@@ -34,21 +35,21 @@ export const CategorySection = () => {
   useEffect(() => {
     const processExistingVideos = async () => {
       try {
-        const { error } = await supabase.functions.invoke('categorize-existing-videos')
+        toast.loading("Categorizing videos...");
+        const { error } = await supabase.functions.invoke('categorize-existing-videos');
         if (error) throw error;
-        toast.success("All videos have been categorized!")
+        
+        await refetch();
+        toast.success("Videos have been categorized!");
       } catch (error) {
-        console.error('Error categorizing videos:', error)
-        toast.error("Failed to categorize some videos")
+        console.error('Error categorizing videos:', error);
+        toast.error("Failed to categorize videos");
       }
-    }
+    };
 
-    // Check if we have any uncategorized videos
-    const hasUncategorizedVideos = categoryVideos?.some(video => !video.category)
-    if (hasUncategorizedVideos) {
-      processExistingVideos()
-    }
-  }, [categoryVideos])
+    // Run categorization immediately
+    processExistingVideos();
+  }, []); // Only run once when component mounts
 
   if (isLoading) {
     return (
