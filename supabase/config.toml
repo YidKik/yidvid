@@ -12,3 +12,6 @@ verify_jwt = false
 
 [functions.categorize-video]
 verify_jwt = false
+
+[functions.text-to-speech]
+verify_jwt = false
