@@ -9,7 +9,7 @@ export const getPageTitle = (path: string): string => {
   if (segments[0] === '') return `Home | ${APP_NAME}`;
   
   // Map route segments to readable titles
-  const pageTitles: { [key: string]: string } = {
+  const pageTitles: { [key: string]: string | { [key: string]: string } } = {
     'video': 'Video Player',
     'channel': 'Channel Details',
     'dashboard': 'Admin Dashboard',
@@ -45,4 +45,3 @@ export const getPageTitle = (path: string): string => {
   
   return `${baseTitle} | ${APP_NAME}`;
 };
-

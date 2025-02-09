@@ -83,7 +83,7 @@ const VideoDetails = () => {
         .from("youtube_videos")
         .select("*")
         .eq("channel_id", video.channel_id)
-        .neq("video_id", id)
+        .neq("id", video.id) // Changed from video_id to id
         .order("uploaded_at", { ascending: false })
         .limit(12);
 
