@@ -1,4 +1,3 @@
-
 import { Header } from "@/components/Header";
 import VideoGrid from "@/components/VideoGrid";
 import { ChannelsGrid } from "@/components/youtube/ChannelsGrid";
@@ -12,6 +11,7 @@ import { MusicGrid } from "@/components/music/MusicGrid";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { WelcomeAnimation } from "@/components/WelcomeAnimation";
 import { CategorySection } from "@/components/categories/CategorySection";
+import { VideoAssistant } from "@/components/ai/VideoAssistant";
 
 const MainContent = () => {
   const [isMusic, setIsMusic] = useState(false);
@@ -136,6 +136,7 @@ const Index = () => {
       <WelcomeAnimation />
       <MainContent />
       <Auth isOpen={isAuthOpen} onOpenChange={setIsAuthOpen} />
+      <VideoAssistant />
     </div>
   );
 };
