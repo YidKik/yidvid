@@ -18,7 +18,7 @@ interface ChannelCategoryManagementProps {
   onUpdate: () => void;
 }
 
-type VideoCategory = "music" | "torah" | "inspiration" | "podcast" | "education" | "entertainment" | "other";
+type VideoCategory = "music" | "torah" | "inspiration" | "podcast" | "education" | "entertainment" | "other" | "custom";
 
 const categories: { value: VideoCategory; label: string }[] = [
   { value: "music", label: "Music" },
@@ -28,11 +28,12 @@ const categories: { value: VideoCategory; label: string }[] = [
   { value: "education", label: "Education" },
   { value: "entertainment", label: "Entertainment" },
   { value: "other", label: "Other" },
+  { value: "custom", label: "Custom" },
 ];
 
 export function ChannelCategoryManagement({ channels, onUpdate }: ChannelCategoryManagementProps) {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<VideoCategory | "">("");
+  const [selectedCategory, setSelectedCategory] = useState<VideoCategory | null>(null);
 
   const filteredChannels = channels.filter((channel) =>
     channel.title.toLowerCase().includes(searchQuery.toLowerCase())
@@ -69,7 +70,10 @@ export function ChannelCategoryManagement({ channels, onUpdate }: ChannelCategor
           />
         </div>
         <div className="w-full md:w-48">
-          <Select value={selectedCategory} onValueChange={(value: VideoCategory) => setSelectedCategory(value)}>
+          <Select 
+            value={selectedCategory || ""} 
+            onValueChange={(value: VideoCategory) => setSelectedCategory(value)}
+          >
             <SelectTrigger>
               <SelectValue placeholder="Select category" />
             </SelectTrigger>
