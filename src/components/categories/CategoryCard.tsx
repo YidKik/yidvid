@@ -11,13 +11,13 @@ interface CategoryCardProps {
 
 // Color mapping for different categories
 const categoryColors: { [key: string]: { bg: string; border: string; text: string } } = {
-  music: { bg: '#FDE1D3', border: '#F97316', text: '#EA580C' },
-  torah: { bg: '#E5DEFF', border: '#8B5CF6', text: '#6D28D9' },
-  inspiration: { bg: '#D3E4FD', border: '#0EA5E9', text: '#0369A1' },
-  podcast: { bg: '#FFDEE2', border: '#D946EF', text: '#A21CAF' },
-  education: { bg: '#F2FCE2', border: '#84CC16', text: '#4D7C0F' },
-  entertainment: { bg: '#FEF7CD', border: '#EAB308', text: '#CA8A04' },
-  other: { bg: '#FEC6A1', border: '#F97316', text: '#EA580C' },
+  music: { bg: '#9b87f5', border: '#ea384c', text: '#333333' },
+  torah: { bg: '#9b87f5', border: '#ea384c', text: '#333333' },
+  inspiration: { bg: '#9b87f5', border: '#ea384c', text: '#333333' },
+  podcast: { bg: '#9b87f5', border: '#ea384c', text: '#333333' },
+  education: { bg: '#9b87f5', border: '#ea384c', text: '#333333' },
+  entertainment: { bg: '#9b87f5', border: '#ea384c', text: '#333333' },
+  other: { bg: '#9b87f5', border: '#ea384c', text: '#333333' },
 };
 
 export const CategoryCard = ({ icon, label, count, id }: CategoryCardProps) => {
@@ -41,10 +41,10 @@ export const CategoryCard = ({ icon, label, count, id }: CategoryCardProps) => {
         }
       }}
       whileTap={{ scale: 0.98 }}
-      className={`rounded-xl p-4 cursor-pointer transition-all duration-300 h-[120px] relative`}
+      className="rounded-xl p-4 cursor-pointer transition-all duration-300 h-[120px] relative backdrop-blur-sm"
       style={{
         background: colors.bg,
-        border: `1px solid ${colors.border}`,
+        border: `2px solid ${colors.border}`,
       }}
       onClick={handleClick}
     >
@@ -71,7 +71,7 @@ export const CategoryCard = ({ icon, label, count, id }: CategoryCardProps) => {
           >
             {label}
           </h3>
-          <p className="text-sm text-[#8E9196] flex items-center">
+          <p className="text-sm text-gray-700 flex items-center">
             <span className="inline-flex items-center">
               {count} videos
             </span>
