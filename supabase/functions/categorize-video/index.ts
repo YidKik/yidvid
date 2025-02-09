@@ -31,13 +31,19 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
+        model: 'gpt-4',
         messages: [
           { role: 'system', content: 'You are a helpful assistant that categorizes videos. Only respond with the category name.' },
           { role: 'user', content: prompt }
         ],
+        temperature: 0.3,
+        max_tokens: 10
       }),
     })
+
+    if (!response.ok) {
+      throw new Error(`OpenAI API error: ${response.statusText}`)
+    }
 
     const data = await response.json()
     const category = data.choices[0].message.content.trim().toLowerCase()
@@ -53,3 +59,4 @@ serve(async (req) => {
     })
   }
 })
+
