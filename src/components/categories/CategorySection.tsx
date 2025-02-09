@@ -124,43 +124,45 @@ export const CategorySection = () => {
   }
 
   return (
-    <div className="relative max-w-[1200px] mx-auto px-4 md:px-6">
-      <div className="overflow-visible relative">
-        <motion.div
-          className="flex gap-2 md:gap-6"
-          animate={{
-            x: ['0%', '-50%']
-          }}
-          transition={{
-            x: {
-              repeat: Infinity,
-              repeatType: "loop",
-              duration: 180,
-              ease: "linear",
-              repeatDelay: 0
-            }
-          }}
-          style={{
-            width: `${(infiniteCategories.length * 100) / 3}%`
-          }}
-        >
-          {infiniteCategories.map((category, index) => (
-            <div
-              key={`${category.id}-${index}`}
-              className="w-[140px] md:w-[300px] flex-shrink-0 relative"
-            >
-              {viewCounts && viewCounts[category.id] && viewCounts[category.id] > 0 && (
-                <TrendingCategoryBadge count={viewCounts[category.id]} />
-              )}
-              <CategoryCard
-                id={category.id}
-                icon={category.icon}
-                label={category.label}
-                isCustomImage={category.isCustom && !category.is_emoji}
-              />
-            </div>
-          ))}
-        </motion.div>
+    <div className="relative">
+      <div className="max-w-[1200px] mx-auto px-4 md:px-6">
+        <div className="overflow-hidden relative">
+          <motion.div
+            className="flex gap-2 md:gap-6"
+            animate={{
+              x: ['0%', '-50%']
+            }}
+            transition={{
+              x: {
+                repeat: Infinity,
+                repeatType: "loop",
+                duration: 180,
+                ease: "linear",
+                repeatDelay: 0
+              }
+            }}
+            style={{
+              width: `${(infiniteCategories.length * 100) / 3}%`
+            }}
+          >
+            {infiniteCategories.map((category, index) => (
+              <div
+                key={`${category.id}-${index}`}
+                className="w-[140px] md:w-[300px] flex-shrink-0 relative"
+              >
+                {viewCounts && viewCounts[category.id] && viewCounts[category.id] > 0 && (
+                  <TrendingCategoryBadge count={viewCounts[category.id]} />
+                )}
+                <CategoryCard
+                  id={category.id}
+                  icon={category.icon}
+                  label={category.label}
+                  isCustomImage={category.isCustom && !category.is_emoji}
+                />
+              </div>
+            ))}
+          </motion.div>
+        </div>
       </div>
     </div>
   );
