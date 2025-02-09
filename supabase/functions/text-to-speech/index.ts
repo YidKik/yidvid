@@ -4,6 +4,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
 }
 
 // Helper function to implement exponential backoff
@@ -11,12 +12,29 @@ const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 const exponentialBackoff = (attempt: number) => Math.min(1000 * Math.pow(2, attempt), 10000);
 
 serve(async (req) => {
+  // Always return proper CORS headers for OPTIONS requests
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
 
   try {
+    // Validate request method
+    if (req.method !== 'POST') {
+      throw new Error(`Method ${req.method} not allowed`);
+    }
+
+    // Validate content type
+    const contentType = req.headers.get('content-type');
+    if (!contentType?.includes('application/json')) {
+      throw new Error('Content-Type must be application/json');
+    }
+
+    // Parse and validate request body
     const { text } = await req.json();
+    if (!text || typeof text !== 'string') {
+      throw new Error('Invalid or missing text in request body');
+    }
+
     console.log('Starting text-to-speech request with Play.ht...');
     console.log('Input text:', text);
     
@@ -35,40 +53,54 @@ serve(async (req) => {
     while (createAttempts < maxCreateAttempts) {
       console.log(`Attempting to create speech (attempt ${createAttempts + 1}/${maxCreateAttempts})...`);
       
-      createResponse = await fetch(
-        'https://api.play.ht/api/v2/tts',
-        {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${PLAY_HT_API_KEY}`,
-            'X-User-ID': PLAY_HT_USER_ID,
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-          },
-          body: JSON.stringify({
-            text: text,
-            voice: 'larry',
-            quality: 'medium',
-            output_format: 'mp3',
-            speed: 1,
-            sample_rate: 24000,
-          }),
-        }
-      );
+      try {
+        createResponse = await fetch(
+          'https://api.play.ht/api/v2/tts',
+          {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${PLAY_HT_API_KEY}`,
+              'X-User-ID': PLAY_HT_USER_ID,
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+            },
+            body: JSON.stringify({
+              text: text,
+              voice: 'larry',
+              quality: 'medium',
+              output_format: 'mp3',
+              speed: 1,
+              sample_rate: 24000,
+            }),
+          }
+        );
 
-      if (createResponse.status === 429) {
-        // Rate limited - wait with exponential backoff
-        const waitTime = exponentialBackoff(createAttempts);
-        console.log(`Rate limited, waiting ${waitTime}ms before retry...`);
-        await delay(waitTime);
-        createAttempts++;
-      } else if (!createResponse.ok) {
-        const errorData = await createResponse.text();
-        console.error('Failed to create speech. Status:', createResponse.status);
-        console.error('Error response:', errorData);
-        throw new Error(`Failed to create speech: ${createResponse.status} - ${errorData}`);
-      } else {
+        if (!createResponse.ok) {
+          const errorData = await createResponse.text();
+          console.error('Failed to create speech. Status:', createResponse.status);
+          console.error('Error response:', errorData);
+          
+          if (createResponse.status === 429) {
+            const waitTime = exponentialBackoff(createAttempts);
+            console.log(`Rate limited, waiting ${waitTime}ms before retry...`);
+            await delay(waitTime);
+            createAttempts++;
+            continue;
+          }
+          
+          throw new Error(`Failed to create speech: ${createResponse.status} - ${errorData}`);
+        }
+        
         break;
+      } catch (error) {
+        console.error('Error in create speech request:', error);
+        if (createAttempts + 1 < maxCreateAttempts) {
+          const waitTime = exponentialBackoff(createAttempts);
+          await delay(waitTime);
+          createAttempts++;
+          continue;
+        }
+        throw error;
       }
     }
 
@@ -86,10 +118,10 @@ serve(async (req) => {
 
     console.log('Speech generation task created with ID:', id);
 
-    // Poll until the audio is ready with rate limit handling
+    // Poll until the audio is ready
     let audioUrl = null;
     let attempts = 0;
-    const maxAttempts = 60; // Increased from 30 to 60
+    const maxAttempts = 60;
     
     while (!audioUrl && attempts < maxAttempts) {
       console.log(`Checking speech status (attempt ${attempts + 1}/${maxAttempts})...`);
@@ -106,18 +138,18 @@ serve(async (req) => {
           }
         );
 
-        if (checkResponse.status === 429) {
-          // Rate limited - wait with exponential backoff
-          const waitTime = exponentialBackoff(attempts);
-          console.log(`Rate limited, waiting ${waitTime}ms before retry...`);
-          await delay(waitTime);
-          attempts++;
-          continue;
-        }
-
         if (!checkResponse.ok) {
           const errorData = await checkResponse.text();
           console.error('Failed to check speech status:', errorData);
+          
+          if (checkResponse.status === 429) {
+            const waitTime = exponentialBackoff(attempts);
+            console.log(`Rate limited, waiting ${waitTime}ms before retry...`);
+            await delay(waitTime);
+            attempts++;
+            continue;
+          }
+          
           throw new Error(`Failed to check speech status: ${checkResponse.status} - ${errorData}`);
         }
 
@@ -132,17 +164,11 @@ serve(async (req) => {
         }
       } catch (error) {
         console.error('Error checking speech status:', error);
-        if (error.message.includes('Rate limit')) {
-          const waitTime = exponentialBackoff(attempts);
-          console.log(`Rate limited, waiting ${waitTime}ms before retry...`);
-          await delay(waitTime);
-        } else {
-          throw error;
-        }
+        const waitTime = exponentialBackoff(attempts);
+        await delay(waitTime);
       }
 
-      // Standard delay between status checks
-      await delay(3000); // Increased from 2s to 3s
+      await delay(3000);
       attempts++;
     }
 
@@ -158,13 +184,23 @@ serve(async (req) => {
     const maxAudioAttempts = 3;
 
     while (audioAttempts < maxAudioAttempts) {
-      audioResponse = await fetch(audioUrl);
-      if (audioResponse.ok) {
-        break;
+      try {
+        audioResponse = await fetch(audioUrl);
+        if (audioResponse.ok) {
+          break;
+        }
+        console.error(`Failed to fetch audio (attempt ${audioAttempts + 1}/${maxAudioAttempts})`);
+        await delay(1000);
+        audioAttempts++;
+      } catch (error) {
+        console.error(`Error fetching audio (attempt ${audioAttempts + 1}/${maxAudioAttempts}):`, error);
+        if (audioAttempts + 1 < maxAudioAttempts) {
+          await delay(1000);
+          audioAttempts++;
+          continue;
+        }
+        throw error;
       }
-      console.error(`Failed to fetch audio (attempt ${audioAttempts + 1}/${maxAudioAttempts})`);
-      await delay(1000);
-      audioAttempts++;
     }
 
     if (!audioResponse || !audioResponse.ok) {
@@ -180,16 +216,29 @@ serve(async (req) => {
 
     return new Response(
       JSON.stringify({ audioContent: base64Audio }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { 
+        headers: { 
+          ...corsHeaders, 
+          'Content-Type': 'application/json'
+        } 
+      }
     );
+
   } catch (error) {
     console.error('Error in text-to-speech function:', error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ 
+        error: error.message,
+        details: error.stack
+      }),
       { 
         status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        headers: { 
+          ...corsHeaders, 
+          'Content-Type': 'application/json'
+        }
       }
     );
   }
 });
+
