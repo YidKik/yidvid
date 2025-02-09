@@ -7,17 +7,46 @@ const corsHeaders = {
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 }
 
-// Helper function to implement exponential backoff
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-const exponentialBackoff = (attempt: number) => Math.min(1000 * Math.pow(2, attempt), 10000);
+// Helper function to implement exponential backoff with max retries
+async function fetchWithRetry(url: string, options: RequestInit, maxRetries = 3) {
+  let lastError;
+  
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      const response = await fetch(url, options);
+      if (response.ok) return response;
+      
+      const errorText = await response.text();
+      console.error(`Attempt ${attempt + 1} failed:`, {
+        status: response.status,
+        statusText: response.statusText,
+        error: errorText
+      });
+      
+      lastError = new Error(`HTTP error! status: ${response.status} - ${errorText}`);
+    } catch (error) {
+      console.error(`Attempt ${attempt + 1} network error:`, error);
+      lastError = error;
+    }
+    
+    if (attempt < maxRetries - 1) {
+      const delay = Math.min(1000 * Math.pow(2, attempt), 10000);
+      await new Promise(resolve => setTimeout(resolve, delay));
+    }
+  }
+  
+  throw lastError;
+}
 
 serve(async (req) => {
-  // Always return proper CORS headers for OPTIONS requests
+  // Always handle CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
 
   try {
+    console.log('Starting text-to-speech request...');
+    
     // Validate request method
     if (req.method !== 'POST') {
       throw new Error(`Method ${req.method} not allowed`);
@@ -35,7 +64,6 @@ serve(async (req) => {
       throw new Error('Invalid or missing text in request body');
     }
 
-    console.log('Starting text-to-speech request with Play.ht...');
     console.log('Input text:', text);
     
     const PLAY_HT_API_KEY = Deno.env.get('PLAY_HT_API_KEY');
@@ -45,68 +73,28 @@ serve(async (req) => {
       throw new Error('Play.ht credentials not configured');
     }
 
-    // First, create a generation request
-    let createResponse;
-    let createAttempts = 0;
-    const maxCreateAttempts = 5;
-
-    while (createAttempts < maxCreateAttempts) {
-      console.log(`Attempting to create speech (attempt ${createAttempts + 1}/${maxCreateAttempts})...`);
-      
-      try {
-        createResponse = await fetch(
-          'https://api.play.ht/api/v2/tts',
-          {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${PLAY_HT_API_KEY}`,
-              'X-User-ID': PLAY_HT_USER_ID,
-              'Content-Type': 'application/json',
-              'Accept': 'application/json',
-            },
-            body: JSON.stringify({
-              text: text,
-              voice: 'larry',
-              quality: 'medium',
-              output_format: 'mp3',
-              speed: 1,
-              sample_rate: 24000,
-            }),
-          }
-        );
-
-        if (!createResponse.ok) {
-          const errorData = await createResponse.text();
-          console.error('Failed to create speech. Status:', createResponse.status);
-          console.error('Error response:', errorData);
-          
-          if (createResponse.status === 429) {
-            const waitTime = exponentialBackoff(createAttempts);
-            console.log(`Rate limited, waiting ${waitTime}ms before retry...`);
-            await delay(waitTime);
-            createAttempts++;
-            continue;
-          }
-          
-          throw new Error(`Failed to create speech: ${createResponse.status} - ${errorData}`);
-        }
-        
-        break;
-      } catch (error) {
-        console.error('Error in create speech request:', error);
-        if (createAttempts + 1 < maxCreateAttempts) {
-          const waitTime = exponentialBackoff(createAttempts);
-          await delay(waitTime);
-          createAttempts++;
-          continue;
-        }
-        throw error;
+    // Create generation request with retry
+    console.log('Creating speech generation request...');
+    const createResponse = await fetchWithRetry(
+      'https://api.play.ht/api/v2/tts',
+      {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${PLAY_HT_API_KEY}`,
+          'X-User-ID': PLAY_HT_USER_ID,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify({
+          text: text,
+          voice: 'larry',
+          quality: 'medium',
+          output_format: 'mp3',
+          speed: 1,
+          sample_rate: 24000,
+        }),
       }
-    }
-
-    if (!createResponse || !createResponse.ok) {
-      throw new Error('Failed to create speech after maximum retries');
-    }
+    );
 
     const createData = await createResponse.json();
     console.log('Speech generation response:', createData);
@@ -116,99 +104,49 @@ serve(async (req) => {
       throw new Error('No generation ID received from Play.ht');
     }
 
-    console.log('Speech generation task created with ID:', id);
-
-    // Poll until the audio is ready
+    // Poll until the audio is ready with increased timeout
     let audioUrl = null;
     let attempts = 0;
-    const maxAttempts = 60;
+    const maxAttempts = 30;
+    const pollInterval = 2000; // 2 seconds
     
     while (!audioUrl && attempts < maxAttempts) {
       console.log(`Checking speech status (attempt ${attempts + 1}/${maxAttempts})...`);
       
-      try {
-        const checkResponse = await fetch(
-          `https://api.play.ht/api/v2/tts/${id}`,
-          {
-            headers: {
-              'Authorization': `Bearer ${PLAY_HT_API_KEY}`,
-              'X-User-ID': PLAY_HT_USER_ID,
-              'Accept': 'application/json',
-            },
-          }
-        );
-
-        if (!checkResponse.ok) {
-          const errorData = await checkResponse.text();
-          console.error('Failed to check speech status:', errorData);
-          
-          if (checkResponse.status === 429) {
-            const waitTime = exponentialBackoff(attempts);
-            console.log(`Rate limited, waiting ${waitTime}ms before retry...`);
-            await delay(waitTime);
-            attempts++;
-            continue;
-          }
-          
-          throw new Error(`Failed to check speech status: ${checkResponse.status} - ${errorData}`);
+      const checkResponse = await fetchWithRetry(
+        `https://api.play.ht/api/v2/tts/${id}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${PLAY_HT_API_KEY}`,
+            'X-User-ID': PLAY_HT_USER_ID,
+            'Accept': 'application/json',
+          },
         }
+      );
 
-        const status = await checkResponse.json();
-        console.log('Speech status:', status);
-        
-        if (status.converted) {
-          audioUrl = status.url;
-          break;
-        } else if (status.error) {
-          throw new Error(`Speech synthesis failed: ${status.error}`);
-        }
-      } catch (error) {
-        console.error('Error checking speech status:', error);
-        const waitTime = exponentialBackoff(attempts);
-        await delay(waitTime);
+      const status = await checkResponse.json();
+      console.log('Speech status:', status);
+      
+      if (status.converted) {
+        audioUrl = status.url;
+        break;
+      } else if (status.error) {
+        throw new Error(`Speech synthesis failed: ${status.error}`);
       }
 
-      await delay(3000);
       attempts++;
+      if (attempts < maxAttempts) {
+        await new Promise(resolve => setTimeout(resolve, pollInterval));
+      }
     }
 
     if (!audioUrl) {
       throw new Error('Timed out waiting for audio generation');
     }
 
-    console.log('Audio URL received:', audioUrl);
-
-    // Fetch the audio file with retries
-    let audioResponse;
-    let audioAttempts = 0;
-    const maxAudioAttempts = 3;
-
-    while (audioAttempts < maxAudioAttempts) {
-      try {
-        audioResponse = await fetch(audioUrl);
-        if (audioResponse.ok) {
-          break;
-        }
-        console.error(`Failed to fetch audio (attempt ${audioAttempts + 1}/${maxAudioAttempts})`);
-        await delay(1000);
-        audioAttempts++;
-      } catch (error) {
-        console.error(`Error fetching audio (attempt ${audioAttempts + 1}/${maxAudioAttempts}):`, error);
-        if (audioAttempts + 1 < maxAudioAttempts) {
-          await delay(1000);
-          audioAttempts++;
-          continue;
-        }
-        throw error;
-      }
-    }
-
-    if (!audioResponse || !audioResponse.ok) {
-      const errorData = await audioResponse?.text();
-      console.error('Failed to fetch audio:', errorData);
-      throw new Error(`Failed to fetch audio: ${audioResponse?.status} - ${errorData}`);
-    }
-
+    // Fetch the audio file with retry
+    console.log('Fetching generated audio...');
+    const audioResponse = await fetchWithRetry(audioUrl, {});
     const audioBuffer = await audioResponse.arrayBuffer();
     const base64Audio = btoa(String.fromCharCode(...new Uint8Array(audioBuffer)));
 
