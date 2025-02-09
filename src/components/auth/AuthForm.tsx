@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
@@ -118,10 +117,20 @@ export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
     }
   };
 
+  const switchToSignUp = () => {
+    const signupTrigger = document.querySelector('[value="signup"]') as HTMLButtonElement;
+    if (signupTrigger) signupTrigger.click();
+  };
+
+  const switchToSignIn = () => {
+    const signinTrigger = document.querySelector('[value="signin"]') as HTMLButtonElement;
+    if (signinTrigger) signinTrigger.click();
+  };
+
   return (
-    <Tabs defaultValue="signup" className="w-full">
+    <Tabs defaultValue="signup" className="w-full max-w-sm mx-auto">
       <TabsContent value="signin">
-        <form onSubmit={(e) => handleSubmit(e, 'signin')} className="space-y-3">
+        <form onSubmit={(e) => handleSubmit(e, 'signin')} className="space-y-2">
           <div>
             <Input
               id="signin-email"
@@ -129,7 +138,7 @@ export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="border border-input rounded-md h-9"
+              className="border border-input rounded-md h-8"
               required
               disabled={isLoading}
               aria-label="Email"
@@ -142,7 +151,7 @@ export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="border border-input rounded-md h-9"
+              className="border border-input rounded-md h-8"
               required
               disabled={isLoading}
               minLength={6}
@@ -151,7 +160,7 @@ export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
           </div>
           <button
             type="submit"
-            className="w-full bg-primary text-white rounded-md py-1.5 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-primary text-white rounded-md py-1 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={isLoading}
           >
             {isLoading ? "Loading..." : "Sign In"}
@@ -160,7 +169,7 @@ export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
             Don't have an account?{" "}
             <button
               type="button"
-              onClick={() => document.querySelector('[value="signup"]')?.click()}
+              onClick={switchToSignUp}
               className="text-primary hover:underline focus:outline-none"
             >
               Sign up
@@ -169,7 +178,7 @@ export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
         </form>
       </TabsContent>
       <TabsContent value="signup">
-        <form onSubmit={(e) => handleSubmit(e, 'signup')} className="space-y-3">
+        <form onSubmit={(e) => handleSubmit(e, 'signup')} className="space-y-2">
           <div>
             <Input
               id="signup-email"
@@ -177,7 +186,7 @@ export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="border border-input rounded-md h-9"
+              className="border border-input rounded-md h-8"
               required
               disabled={isLoading}
               aria-label="Email"
@@ -190,7 +199,7 @@ export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="border border-input rounded-md h-9"
+              className="border border-input rounded-md h-8"
               required
               disabled={isLoading}
               minLength={6}
@@ -199,7 +208,7 @@ export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
           </div>
           <button
             type="submit"
-            className="w-full bg-primary text-white rounded-md py-1.5 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-primary text-white rounded-md py-1 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={isLoading}
           >
             {isLoading ? "Loading..." : "Sign Up"}
@@ -208,7 +217,7 @@ export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
             Already have an account?{" "}
             <button
               type="button"
-              onClick={() => document.querySelector('[value="signin"]')?.click()}
+              onClick={switchToSignIn}
               className="text-primary hover:underline focus:outline-none"
             >
               Sign in
