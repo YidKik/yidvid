@@ -11,7 +11,7 @@ interface AuthProps {
 const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[325px] p-2 sm:p-3 space-y-1 sm:space-y-2"> {/* Adjusted padding and spacing for mobile */}
+      <DialogContent className="sm:max-w-[400px] p-0 gap-0 border-none bg-white rounded-xl shadow-xl"> {/* Increased width and removed padding */}
         <AuthHeader />
         <AuthForm onOpenChange={onOpenChange} />
       </DialogContent>
@@ -20,3 +20,4 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
 };
 
 export default Auth;
+
