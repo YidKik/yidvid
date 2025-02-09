@@ -30,7 +30,16 @@ export const CategoryCard = ({ icon, label, count, id }: CategoryCardProps) => {
 
   return (
     <motion.div
-      whileHover={{ scale: 1.02, y: -2 }}
+      whileHover={{ 
+        scale: 1.05,
+        y: -8,
+        boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
+        transition: {
+          type: "spring",
+          stiffness: 400,
+          damping: 15
+        }
+      }}
       whileTap={{ scale: 0.98 }}
       className={`rounded-xl p-4 cursor-pointer transition-all duration-300 h-[120px] relative`}
       style={{
@@ -40,7 +49,13 @@ export const CategoryCard = ({ icon, label, count, id }: CategoryCardProps) => {
       onClick={handleClick}
     >
       <div className="flex items-center space-x-3">
-        <span 
+        <motion.span 
+          whileHover={{
+            rotate: [0, -10, 10, -5, 5, 0],
+            transition: {
+              duration: 0.5
+            }
+          }}
           className="text-3xl p-2.5 rounded-lg"
           style={{
             background: `${colors.border}20`,
@@ -48,7 +63,7 @@ export const CategoryCard = ({ icon, label, count, id }: CategoryCardProps) => {
           }}
         >
           {icon}
-        </span>
+        </motion.span>
         <div className="flex-1">
           <h3 
             className="font-semibold text-base mb-1"
