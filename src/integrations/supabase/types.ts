@@ -36,6 +36,45 @@ export type Database = {
         }
         Relationships: []
       }
+      channel_category_mappings: {
+        Row: {
+          category_id: string
+          channel_id: string
+          created_at: string
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          category_id: string
+          channel_id: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+        }
+        Update: {
+          category_id?: string
+          channel_id?: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "channel_category_mappings_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "custom_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "channel_category_mappings_channel_id_fkey"
+            columns: ["channel_id"]
+            isOneToOne: false
+            referencedRelation: "youtube_channels"
+            referencedColumns: ["channel_id"]
+          },
+        ]
+      }
       channel_requests: {
         Row: {
           channel_id: string | null
@@ -411,6 +450,45 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "user_video_interactions_video_id_fkey"
+            columns: ["video_id"]
+            isOneToOne: false
+            referencedRelation: "youtube_videos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      video_category_mappings: {
+        Row: {
+          category_id: string
+          created_at: string
+          id: string
+          updated_at: string
+          video_id: string
+        }
+        Insert: {
+          category_id: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+          video_id: string
+        }
+        Update: {
+          category_id?: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+          video_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "video_category_mappings_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "custom_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "video_category_mappings_video_id_fkey"
             columns: ["video_id"]
             isOneToOne: false
             referencedRelation: "youtube_videos"

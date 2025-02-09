@@ -53,6 +53,36 @@ export const CategorySection = () => {
     },
   });
 
+  const { data: customCategoryVideos } = useQuery({
+    queryKey: ["custom-category-videos"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("video_category_mappings")
+        .select(`
+          category_id,
+          video_id
+        `);
+
+      if (error) throw error;
+      return data || [];
+    },
+  });
+
+  const { data: customCategoryChannels } = useQuery({
+    queryKey: ["custom-category-channels"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("channel_category_mappings")
+        .select(`
+          category_id,
+          channel_id
+        `);
+
+      if (error) throw error;
+      return data || [];
+    },
+  });
+
   useEffect(() => {
     const processExistingVideos = async () => {
       try {
@@ -73,7 +103,14 @@ export const CategorySection = () => {
     processExistingVideos();
   }, []);
 
-  const getCategoryCount = (categoryId: string) => {
+  const getCategoryCount = (categoryId: string, isCustom?: boolean) => {
+    if (isCustom) {
+      // For custom categories, count both directly mapped videos and videos from mapped channels
+      const videoCount = customCategoryVideos?.filter(mapping => mapping.category_id === categoryId).length || 0;
+      const channelIds = customCategoryChannels?.filter(mapping => mapping.category_id === categoryId).map(mapping => mapping.channel_id) || [];
+      const channelVideosCount = categoryVideos?.filter(video => channelIds.includes(video.channel_id)).length || 0;
+      return videoCount + channelVideosCount;
+    }
     return categoryVideos?.filter(video => video.category === categoryId).length || 0;
   };
 
@@ -103,7 +140,9 @@ export const CategorySection = () => {
   }
 
   return (
-    <div className="relative max-w-[1400px] mx-auto px-4 md:px-6">
+    <div className="relative max
+
+-w-[1400px] mx-auto px-4 md:px-6">
       <div className="overflow-visible relative">
         <motion.div
           className="flex gap-2 md:gap-6"
@@ -132,7 +171,7 @@ export const CategorySection = () => {
                 id={category.id}
                 icon={category.icon}
                 label={category.label}
-                count={getCategoryCount(category.id)}
+                count={getCategoryCount(category.id, category.isCustom)}
                 isCustomImage={category.isCustom && !category.is_emoji}
               />
             </div>
