@@ -11,7 +11,7 @@ interface AuthProps {
 const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[325px] p-3 space-y-2"> {/* Reduced width and padding */}
+      <DialogContent className="sm:max-w-[325px] p-2 sm:p-3 space-y-1 sm:space-y-2"> {/* Adjusted padding and spacing for mobile */}
         <AuthHeader />
         <AuthForm onOpenChange={onOpenChange} />
       </DialogContent>

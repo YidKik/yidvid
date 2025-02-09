@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
@@ -130,7 +131,7 @@ export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
   return (
     <Tabs defaultValue="signup" className="w-full max-w-sm mx-auto">
       <TabsContent value="signin">
-        <form onSubmit={(e) => handleSubmit(e, 'signin')} className="space-y-2">
+        <form onSubmit={(e) => handleSubmit(e, 'signin')} className="space-y-2 sm:space-y-3">
           <div>
             <Input
               id="signin-email"
@@ -138,7 +139,7 @@ export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="border border-input rounded-md h-8"
+              className="border border-input rounded-md h-8 sm:h-10 text-xs sm:text-sm"
               required
               disabled={isLoading}
               aria-label="Email"
@@ -151,7 +152,7 @@ export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="border border-input rounded-md h-8"
+              className="border border-input rounded-md h-8 sm:h-10 text-xs sm:text-sm"
               required
               disabled={isLoading}
               minLength={6}
@@ -160,12 +161,12 @@ export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
           </div>
           <button
             type="submit"
-            className="w-full bg-primary text-white rounded-md py-1 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-primary text-white rounded-md py-1.5 sm:py-2 text-xs sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={isLoading}
           >
             {isLoading ? "Loading..." : "Sign In"}
           </button>
-          <p className="text-xs text-center text-gray-500">
+          <p className="text-[10px] sm:text-xs text-center text-gray-500">
             Don't have an account?{" "}
             <button
               type="button"
@@ -178,7 +179,7 @@ export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
         </form>
       </TabsContent>
       <TabsContent value="signup">
-        <form onSubmit={(e) => handleSubmit(e, 'signup')} className="space-y-2">
+        <form onSubmit={(e) => handleSubmit(e, 'signup')} className="space-y-2 sm:space-y-3">
           <div>
             <Input
               id="signup-email"
@@ -186,7 +187,7 @@ export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="border border-input rounded-md h-8"
+              className="border border-input rounded-md h-8 sm:h-10 text-xs sm:text-sm"
               required
               disabled={isLoading}
               aria-label="Email"
@@ -199,7 +200,7 @@ export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="border border-input rounded-md h-8"
+              className="border border-input rounded-md h-8 sm:h-10 text-xs sm:text-sm"
               required
               disabled={isLoading}
               minLength={6}
@@ -208,12 +209,12 @@ export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
           </div>
           <button
             type="submit"
-            className="w-full bg-primary text-white rounded-md py-1 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-primary text-white rounded-md py-1.5 sm:py-2 text-xs sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={isLoading}
           >
             {isLoading ? "Loading..." : "Sign Up"}
           </button>
-          <p className="text-xs text-center text-gray-500">
+          <p className="text-[10px] sm:text-xs text-center text-gray-500">
             Already have an account?{" "}
             <button
               type="button"
