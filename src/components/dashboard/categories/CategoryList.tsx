@@ -1,4 +1,3 @@
-
 import { Card } from "@/components/ui/card";
 import { CustomCategory } from "@/types/custom-categories";
 import { supabase } from "@/integrations/supabase/client";
@@ -49,32 +48,37 @@ export function CategoryList({ categories, onUpdate }: CategoryListProps) {
   });
 
   const handleDeleteCategory = async (id: string) => {
-    try {
-      const categoryToDelete = categories.find(cat => cat.id === id);
-      
-      if (categoryToDelete && !categoryToDelete.is_emoji) {
-        const fileName = categoryToDelete.icon.split('/').pop();
-        if (fileName) {
-          const { error: deleteStorageError } = await supabase.storage
-            .from('category-icons')
-            .remove([fileName]);
+    // Only allow deletion of custom categories (those with UUID format)
+    if (id.length === 36) { // UUID length check
+      try {
+        const categoryToDelete = categories.find(cat => cat.id === id);
+        
+        if (categoryToDelete && !categoryToDelete.is_emoji) {
+          const fileName = categoryToDelete.icon.split('/').pop();
+          if (fileName) {
+            const { error: deleteStorageError } = await supabase.storage
+              .from('category-icons')
+              .remove([fileName]);
 
-          if (deleteStorageError) throw deleteStorageError;
+            if (deleteStorageError) throw deleteStorageError;
+          }
         }
+
+        const { error } = await supabase
+          .from("custom_categories")
+          .delete()
+          .eq("id", id);
+
+        if (error) throw error;
+
+        toast.success("Category deleted successfully");
+        onUpdate();
+      } catch (error) {
+        console.error("Error deleting category:", error);
+        toast.error("Failed to delete category");
       }
-
-      const { error } = await supabase
-        .from("custom_categories")
-        .delete()
-        .eq("id", id);
-
-      if (error) throw error;
-
-      toast.success("Category deleted successfully");
-      onUpdate();
-    } catch (error) {
-      console.error("Error deleting category:", error);
-      toast.error("Failed to delete category");
+    } else {
+      toast.error("Default categories cannot be deleted");
     }
   };
 
