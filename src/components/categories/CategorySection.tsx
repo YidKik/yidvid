@@ -108,17 +108,22 @@ export const CategorySection = () => {
       <h2 className="text-xl md:text-2xl font-bold mb-6 text-center">Browse by Category</h2>
       <div className="relative h-[140px] overflow-hidden">
         <div className="grid grid-cols-3 gap-8 absolute w-full">
-          <AnimatePresence mode="popLayout">
-            {visibleCategories.map((category, index) => (
+          <AnimatePresence initial={false}>
+            {visibleCategories.map((category) => (
               <motion.div
                 key={category.key}
                 initial={{ x: '100%' }}
                 animate={{ x: 0 }}
                 exit={{ x: '-100%' }}
                 transition={{
-                  type: "tween",
                   duration: 3,
                   ease: "linear"
+                }}
+                style={{
+                  position: 'absolute',
+                  width: 'calc(33.333% - 1.33rem)',
+                  left: `${category.position * 33.333}%`,
+                  paddingLeft: category.position > 0 ? '2rem' : 0
                 }}
               >
                 <CategoryCard
