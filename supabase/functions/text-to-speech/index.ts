@@ -89,7 +89,7 @@ serve(async (req) => {
     // Poll until the audio is ready with rate limit handling
     let audioUrl = null;
     let attempts = 0;
-    const maxAttempts = 30;
+    const maxAttempts = 60; // Increased from 30 to 60
     
     while (!audioUrl && attempts < maxAttempts) {
       console.log(`Checking speech status (attempt ${attempts + 1}/${maxAttempts})...`);
@@ -131,6 +131,7 @@ serve(async (req) => {
           throw new Error(`Speech synthesis failed: ${status.error}`);
         }
       } catch (error) {
+        console.error('Error checking speech status:', error);
         if (error.message.includes('Rate limit')) {
           const waitTime = exponentialBackoff(attempts);
           console.log(`Rate limited, waiting ${waitTime}ms before retry...`);
@@ -141,7 +142,7 @@ serve(async (req) => {
       }
 
       // Standard delay between status checks
-      await delay(2000); // Increased from 1s to 2s
+      await delay(3000); // Increased from 2s to 3s
       attempts++;
     }
 
@@ -151,12 +152,25 @@ serve(async (req) => {
 
     console.log('Audio URL received:', audioUrl);
 
-    // Fetch the audio file
-    const audioResponse = await fetch(audioUrl);
-    if (!audioResponse.ok) {
-      const errorData = await audioResponse.text();
+    // Fetch the audio file with retries
+    let audioResponse;
+    let audioAttempts = 0;
+    const maxAudioAttempts = 3;
+
+    while (audioAttempts < maxAudioAttempts) {
+      audioResponse = await fetch(audioUrl);
+      if (audioResponse.ok) {
+        break;
+      }
+      console.error(`Failed to fetch audio (attempt ${audioAttempts + 1}/${maxAudioAttempts})`);
+      await delay(1000);
+      audioAttempts++;
+    }
+
+    if (!audioResponse || !audioResponse.ok) {
+      const errorData = await audioResponse?.text();
       console.error('Failed to fetch audio:', errorData);
-      throw new Error(`Failed to fetch audio: ${audioResponse.status} - ${errorData}`);
+      throw new Error(`Failed to fetch audio: ${audioResponse?.status} - ${errorData}`);
     }
 
     const audioBuffer = await audioResponse.arrayBuffer();
