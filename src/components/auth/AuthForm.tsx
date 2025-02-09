@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
@@ -124,7 +125,7 @@ export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
 
   const switchToSignIn = () => {
     const signinTrigger = document.querySelector('[data-state="inactive"][value="signin"]') as HTMLButtonElement;
-    if (signinTrigger) signupTrigger.click();
+    if (signinTrigger) signinTrigger.click();  // Fixed: Changed signupTrigger to signinTrigger
   };
 
   return (
