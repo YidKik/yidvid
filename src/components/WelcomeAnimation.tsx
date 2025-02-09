@@ -1,6 +1,7 @@
+
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -9,7 +10,6 @@ export const WelcomeAnimation = () => {
   const [show, setShow] = useState(true);
   const [searchParams] = useSearchParams();
   const skipWelcome = searchParams.get("skipWelcome") === "true";
-  const queryClient = useQueryClient();
 
   const { data: session } = useQuery({
     queryKey: ["session"],
@@ -61,8 +61,8 @@ export const WelcomeAnimation = () => {
         uploadedAt: video.uploaded_at
       }));
     },
-    staleTime: 1000 * 60 * 5, // Keep data fresh for 5 minutes
-    gcTime: 1000 * 60 * 30, // Cache data for 30 minutes (renamed from cacheTime)
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 30,
   });
 
   // Prefetch channels data
@@ -89,7 +89,6 @@ export const WelcomeAnimation = () => {
       return;
     }
 
-    // Only hide welcome screen when all data is loaded
     if (!isLoadingVideos && !isLoadingChannels && !isLoadingProfile) {
       const timer = setTimeout(() => {
         setShow(false);
@@ -151,31 +150,42 @@ export const WelcomeAnimation = () => {
               </motion.span>
             </motion.div>
             
-            <motion.div
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{
-                type: "spring",
-                stiffness: 200,
-                damping: 20,
-                delay: 0.7,
-              }}
-              className="relative w-24 h-24 mx-auto mb-6"
-            >
-              <svg
-                viewBox="0 0 24 24"
-                className="w-full h-full text-primary"
-                fill="currentColor"
-              >
-                <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z" />
-              </svg>
+            <div className="relative w-32 h-32 mx-auto mb-8">
               <motion.div
-                initial={{ scale: 1.5, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ delay: 1, duration: 0.5 }}
-                className="absolute inset-0 bg-primary/10 rounded-full"
-              />
-            </motion.div>
+                initial={{ scale: 0.5, opacity: 0 }}
+                animate={{ 
+                  scale: [0.5, 1.1, 1],
+                  opacity: 1,
+                  rotate: [0, 10, 0]
+                }}
+                transition={{
+                  duration: 1,
+                  ease: "easeOut",
+                  times: [0, 0.7, 1],
+                  delay: 0.7
+                }}
+                className="relative w-full h-full"
+              >
+                <img
+                  src="/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png"
+                  alt="YidVid Logo"
+                  className="w-full h-full object-contain"
+                />
+                <motion.div
+                  initial={{ scale: 1.2, opacity: 0 }}
+                  animate={{ 
+                    scale: [1.2, 1],
+                    opacity: [0, 0.2, 0]
+                  }}
+                  transition={{
+                    duration: 1.5,
+                    repeat: Infinity,
+                    repeatType: "reverse"
+                  }}
+                  className="absolute inset-0 bg-primary rounded-full -z-10"
+                />
+              </motion.div>
+            </div>
 
             {(isLoadingVideos || isLoadingChannels || isLoadingProfile) && (
               <motion.p
