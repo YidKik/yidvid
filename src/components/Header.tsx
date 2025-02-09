@@ -118,7 +118,7 @@ export const Header = () => {
           <img 
             src="/lovable-uploads/e425cacb-4c3a-4d81-b4e0-77fcbf10f61c.png" 
             alt="YidVid Logo"
-            className="h-16 w-auto md:h-24 object-contain min-h-[64px] md:min-h-[96px] max-h-[64px] md:max-h-[96px]"
+            className="h-32 w-auto md:h-48 object-contain min-h-[128px] md:min-h-[192px] max-h-[128px] md:max-h-[192px]"
             onError={(e) => {
               console.error('Logo failed to load:', e);
               e.currentTarget.style.display = 'none';
@@ -154,3 +154,4 @@ export const Header = () => {
     </header>
   );
 };
+
