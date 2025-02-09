@@ -800,6 +800,7 @@ export type Database = {
           deleted_at: string | null
           description: string | null
           id: string
+          last_viewed_at: string | null
           thumbnail: string
           title: string
           updated_at: string
@@ -815,6 +816,7 @@ export type Database = {
           deleted_at?: string | null
           description?: string | null
           id?: string
+          last_viewed_at?: string | null
           thumbnail: string
           title: string
           updated_at?: string
@@ -830,6 +832,7 @@ export type Database = {
           deleted_at?: string | null
           description?: string | null
           id?: string
+          last_viewed_at?: string | null
           thumbnail?: string
           title?: string
           updated_at?: string

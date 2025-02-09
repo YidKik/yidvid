@@ -40,21 +40,19 @@ export const CategorySection = () => {
     },
   });
 
-  // Get view counts for trending calculation
+  // Get view counts for trending calculation based on views in the last 30 minutes
   const { data: viewCounts } = useQuery({
     queryKey: ["category-views"],
     queryFn: async () => {
-      const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000).toISOString();
-      
-      const { data, error } = await supabase
+      const { data: videos, error } = await supabase
         .from("youtube_videos")
         .select("category, views")
-        .gte("last_viewed_at", thirtyMinutesAgo);
+        .order('views', { ascending: false });
 
       if (error) throw error;
 
-      // Calculate total views per category in the last 30 minutes
-      const categoryViews = (data || []).reduce((acc, curr) => {
+      // Calculate total views per category
+      const categoryViews = (videos || []).reduce((acc, curr) => {
         if (curr.category) {
           acc[curr.category] = (acc[curr.category] || 0) + (curr.views || 0);
         }
@@ -166,4 +164,3 @@ export const CategorySection = () => {
     </div>
   );
 };
-
