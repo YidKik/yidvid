@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Mic, MicOff } from 'lucide-react';
 import { RealtimeChat } from '@/utils/RealtimeAudio';
+import { supabase } from '@/integrations/supabase/client';
 
 interface VoiceAssistantProps {
   onSpeakingChange: (speaking: boolean) => void;
@@ -13,8 +14,39 @@ export const VoiceAssistant: React.FC<VoiceAssistantProps> = ({ onSpeakingChange
   const [isConnected, setIsConnected] = useState(false);
   const [isListening, setIsListening] = useState(false);
 
+  const playWelcomeMessage = async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke('text-to-speech', {
+        body: { text: "Hi! How can I help you today?" }
+      });
+
+      if (error) {
+        console.error('Error getting welcome message:', error);
+        return;
+      }
+
+      // Convert base64 to audio and play
+      const audioData = atob(data.audioContent);
+      const audioBlob = new Blob([Uint8Array.from(audioData, c => c.charCodeAt(0))], { type: 'audio/mp3' });
+      const audioUrl = URL.createObjectURL(audioBlob);
+      const audio = new Audio(audioUrl);
+      
+      audio.onplay = () => onSpeakingChange(true);
+      audio.onended = () => {
+        onSpeakingChange(false);
+        URL.revokeObjectURL(audioUrl);
+      };
+      
+      await audio.play();
+    } catch (error) {
+      console.error('Error playing welcome message:', error);
+    }
+  };
+
   const startConversation = async () => {
     try {
+      await playWelcomeMessage();
+      
       const chat = new RealtimeChat((message) => {
         console.log('Message received:', message);
         if (message.type === 'response.audio.delta') {
