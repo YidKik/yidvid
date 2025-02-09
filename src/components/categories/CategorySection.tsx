@@ -68,13 +68,15 @@ export const CategorySection = () => {
   }
 
   return (
-    <div className="relative h-[200px] overflow-hidden">
-      <div className="relative w-full">
-        {/* Left fade overlay - significantly increased width and adjusted gradient */}
-        <div className="absolute left-0 top-0 h-full w-[600px] z-10 bg-gradient-to-r from-white from-20% via-white/90 via-40% to-transparent to-100% pointer-events-none" />
+    <div className="relative h-[220px]">
+      <div className="relative w-full h-full">
+        {/* Left fade overlay */}
+        <div className="absolute left-0 top-0 h-full w-[300px] z-10 bg-gradient-to-r from-white via-white/90 to-transparent pointer-events-none" 
+             style={{ background: 'linear-gradient(to right, white 0%, rgba(255, 255, 255, 0.9) 50%, transparent 100%)' }} />
         
-        {/* Right fade overlay - significantly increased width and adjusted gradient */}
-        <div className="absolute right-0 top-0 h-full w-[600px] z-10 bg-gradient-to-l from-white from-20% via-white/90 via-40% to-transparent to-100% pointer-events-none" />
+        {/* Right fade overlay */}
+        <div className="absolute right-0 top-0 h-full w-[300px] z-10 bg-gradient-to-l from-white via-white/90 to-transparent pointer-events-none" 
+             style={{ background: 'linear-gradient(to left, white 0%, rgba(255, 255, 255, 0.9) 50%, transparent 100%)' }} />
         
         <motion.div
           className="flex absolute gap-6"
