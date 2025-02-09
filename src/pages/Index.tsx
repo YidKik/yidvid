@@ -48,7 +48,7 @@ const MainContent = () => {
   return (
     <div className="flex-1">
       <Header />
-      <main className="mt-4 md:mt-8 max-w-[1400px] mx-auto px-4 md:px-6">
+      <main className="mt-16 md:mt-24 max-w-[1400px] mx-auto px-4 md:px-6">
         <div className="mb-44">
           <CategorySection />
         </div>
@@ -139,3 +139,4 @@ const Index = () => {
 };
 
 export default Index;
+
