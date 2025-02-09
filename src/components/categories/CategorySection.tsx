@@ -67,9 +67,9 @@ export const CategorySection = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) => 
-        prevIndex + 3 >= categories.length ? 0 : prevIndex + 3
+        prevIndex + 1 >= categories.length ? 0 : prevIndex + 1
       );
-    }, 6000);
+    }, 3000); // Slower interval for smoother transitions
 
     return () => clearInterval(interval);
   }, []);
@@ -90,11 +90,11 @@ export const CategorySection = () => {
 
   const getVisibleCategories = () => {
     const visibleCategories = [];
-    for (let i = 0; i < 3; i++) {  // Show only 3 cards at a time
+    for (let i = 0; i < 3; i++) {
       const index = (currentIndex + i) % categories.length;
       visibleCategories.push({
         ...categories[index],
-        key: `${categories[index].id}-${Math.random()}`,
+        key: `${categories[index].id}-${currentIndex}-${i}`,
         position: i
       });
     }
@@ -115,8 +115,8 @@ export const CategorySection = () => {
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={{
-                duration: 0.5,
-                ease: "easeInOut"
+                duration: 3, // Slower duration for smoother movement
+                ease: "linear", // Linear easing for constant speed
               }}
             >
               <CategoryCard
@@ -132,4 +132,3 @@ export const CategorySection = () => {
     </div>
   );
 };
-
