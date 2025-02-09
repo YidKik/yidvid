@@ -18,7 +18,7 @@ export const LogoAnimation = () => {
         }}
         className="relative w-full h-full"
       >
-        {/* Main YouTube Logo (dark green circle) */}
+        {/* Main Logo */}
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
@@ -35,59 +35,6 @@ export const LogoAnimation = () => {
             alt="YidVid Logo"
             className="w-full h-full object-contain"
           />
-        </motion.div>
-
-        {/* Play Button (light green) */}
-        <motion.div
-          initial={{ scale: 0, x: -50 }}
-          animate={{ 
-            scale: 1,
-            x: 0,
-          }}
-          transition={{
-            duration: 0.6,
-            type: "spring",
-            stiffness: 300,
-            delay: 1
-          }}
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12"
-        >
-          <svg 
-            viewBox="0 0 24 24" 
-            className="w-full h-full text-primary/80"
-            fill="currentColor"
-          >
-            <path d="M8 5v14l11-7z" />
-          </svg>
-        </motion.div>
-
-        {/* Kippah (yellow part) */}
-        <motion.div
-          initial={{ y: -100, opacity: 0 }}
-          animate={{ 
-            y: 0,
-            opacity: 1,
-          }}
-          transition={{
-            duration: 0.8,
-            type: "spring",
-            bounce: 0.5,
-            delay: 0.8
-          }}
-          className="absolute -top-6 left-1/2 -translate-x-1/2 w-32 h-16"
-        >
-          <svg
-            viewBox="0 0 100 50"
-            className="w-full h-full"
-          >
-            <path
-              d="M10 40 C 30 0, 70 0, 90 40"
-              fill="none"
-              stroke="#FFD700"
-              strokeWidth="8"
-              strokeLinecap="round"
-            />
-          </svg>
         </motion.div>
         
         {/* Pulsing background effect */}
@@ -108,3 +55,4 @@ export const LogoAnimation = () => {
     </div>
   );
 };
+
