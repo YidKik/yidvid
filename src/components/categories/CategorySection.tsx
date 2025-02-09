@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
@@ -123,9 +124,9 @@ export const CategorySection = () => {
   }
 
   return (
-    <div className="relative w-full py-16">
+    <div className="relative w-full py-6">
       <div className="max-w-screen-sm md:max-w-[1600px] mx-auto px-4 md:px-16">
-        <div className="overflow-hidden relative h-[180px] md:h-[200px] pt-8">
+        <div className="overflow-hidden relative h-[180px] md:h-[200px]">
           {/* Left fade gradient - only visible on desktop */}
           <div className="hidden md:block absolute left-0 top-0 w-48 h-full bg-gradient-to-r from-white via-white to-transparent z-10" />
           
@@ -172,3 +173,4 @@ export const CategorySection = () => {
     </div>
   );
 };
+

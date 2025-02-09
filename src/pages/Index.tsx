@@ -1,4 +1,3 @@
-
 import { Header } from "@/components/Header";
 import VideoGrid from "@/components/VideoGrid";
 import { ChannelsGrid } from "@/components/youtube/ChannelsGrid";
@@ -53,8 +52,8 @@ const MainContent = () => {
   return (
     <div className="flex-1">
       <Header />
-      <main className="mt-8 md:mt-12 max-w-[1400px] mx-auto px-4 md:px-6">
-        <div className="flex justify-center w-full mb-8">
+      <main className="mt-4 md:mt-6 max-w-[1400px] mx-auto px-4 md:px-6">
+        <div className="flex justify-center w-full mb-4">
           <div className="relative w-[180px] md:w-[240px] h-8 md:h-12 bg-gray-100 rounded-full p-1 md:p-1.5 cursor-pointer shadow-sm hover:shadow-md transition-shadow"
                onClick={() => setIsMusic(!isMusic)}>
             <div className="relative w-full h-full flex items-center justify-between px-4 md:px-8 text-xs md:text-sm font-medium">
@@ -87,7 +86,7 @@ const MainContent = () => {
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: isMusic ? -20 : 20 }}
           transition={{ duration: 0.3 }}
-          className="mt-8"
+          className="mt-4"
         >
           {!isMusic ? (
             <>
@@ -100,11 +99,11 @@ const MainContent = () => {
                 />
               </div>
               {sortedVideos && sortedVideos.length > 0 && (
-                <div className="mt-8">
+                <div className="mt-6">
                   <MostViewedVideos videos={sortedVideos} />
                 </div>
               )}
-              <div className="channels-grid mt-8">
+              <div className="channels-grid mt-6">
                 <ChannelsGrid />
               </div>
             </>
