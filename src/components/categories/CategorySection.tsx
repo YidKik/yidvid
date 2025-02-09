@@ -68,10 +68,10 @@ export const CategorySection = () => {
   }
 
   return (
-    <div className="relative h-[320px] md:h-[400px]">
-      <div className="w-full overflow-hidden">
+    <div className="relative max-w-[1400px] mx-auto px-4 md:px-6">
+      <div className="overflow-hidden relative">
         <motion.div
-          className="flex absolute gap-6"
+          className="flex gap-6"
           animate={{
             x: ['0%', '-50%']
           }}
@@ -103,7 +103,10 @@ export const CategorySection = () => {
           ))}
         </motion.div>
       </div>
+      
+      {/* Entry/Exit points that match video section width */}
+      <div className="absolute left-0 top-0 h-full w-4 bg-gradient-to-r from-white to-transparent z-10" />
+      <div className="absolute right-0 top-0 h-full w-4 bg-gradient-to-l from-white to-transparent z-10" />
     </div>
   );
 };
-
