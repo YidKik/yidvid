@@ -68,13 +68,13 @@ export const CategorySection = () => {
   }
 
   return (
-    <div className="relative h-[200px] overflow-visible">
+    <div className="relative h-[200px] overflow-hidden">
       <div className="relative w-full">
-        {/* Left fade overlay - significantly increased width and opacity */}
-        <div className="absolute left-0 top-0 h-full w-[400px] z-10 bg-gradient-to-r from-white via-white/95 to-transparent pointer-events-none" />
+        {/* Left fade overlay - significantly increased width and adjusted gradient */}
+        <div className="absolute left-0 top-0 h-full w-[600px] z-10 bg-gradient-to-r from-white from-20% via-white/90 via-40% to-transparent to-100% pointer-events-none" />
         
-        {/* Right fade overlay - significantly increased width and opacity */}
-        <div className="absolute right-0 top-0 h-full w-[400px] z-10 bg-gradient-to-l from-white via-white/95 to-transparent pointer-events-none" />
+        {/* Right fade overlay - significantly increased width and adjusted gradient */}
+        <div className="absolute right-0 top-0 h-full w-[600px] z-10 bg-gradient-to-l from-white from-20% via-white/90 via-40% to-transparent to-100% pointer-events-none" />
         
         <motion.div
           className="flex absolute gap-6"
@@ -112,4 +112,3 @@ export const CategorySection = () => {
     </div>
   );
 };
-
