@@ -12,6 +12,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { YoutubeChannelsTable } from "@/integrations/supabase/types/youtube-channels";
+import { useQuery } from "@tanstack/react-query";
 
 interface ChannelCategoryManagementProps {
   channels: YoutubeChannelsTable['Row'][];
@@ -20,7 +21,7 @@ interface ChannelCategoryManagementProps {
 
 type VideoCategory = "music" | "torah" | "inspiration" | "podcast" | "education" | "entertainment" | "other" | "custom";
 
-const categories: { value: VideoCategory; label: string }[] = [
+const defaultCategories: { value: VideoCategory; label: string }[] = [
   { value: "music", label: "Music" },
   { value: "torah", label: "Torah" },
   { value: "inspiration", label: "Inspiration" },
@@ -33,7 +34,20 @@ const categories: { value: VideoCategory; label: string }[] = [
 
 export function ChannelCategoryManagement({ channels, onUpdate }: ChannelCategoryManagementProps) {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<VideoCategory | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+
+  const { data: customCategories = [] } = useQuery({
+    queryKey: ["custom-categories"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("custom_categories")
+        .select("*")
+        .order("name", { ascending: true });
+
+      if (error) throw error;
+      return data || [];
+    },
+  });
 
   const filteredChannels = channels.filter((channel) =>
     channel.title.toLowerCase().includes(searchQuery.toLowerCase())
@@ -72,15 +86,20 @@ export function ChannelCategoryManagement({ channels, onUpdate }: ChannelCategor
         <div className="w-full md:w-48">
           <Select 
             value={selectedCategory || ""} 
-            onValueChange={(value: VideoCategory) => setSelectedCategory(value)}
+            onValueChange={(value) => setSelectedCategory(value)}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select category" />
             </SelectTrigger>
             <SelectContent>
-              {categories.map((category) => (
+              {defaultCategories.map((category) => (
                 <SelectItem key={category.value} value={category.value}>
                   {category.label}
+                </SelectItem>
+              ))}
+              {customCategories.map((category) => (
+                <SelectItem key={category.id} value={category.id}>
+                  {category.name}
                 </SelectItem>
               ))}
             </SelectContent>
