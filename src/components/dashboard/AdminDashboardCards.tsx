@@ -2,7 +2,7 @@
 import { useNavigate } from "react-router-dom";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Users, Video, MessageSquare, Tv, Database, Film, Mail } from "lucide-react";
+import { Users, Video, MessageSquare, Tv, Database, Film, Mail, Grid3X3 } from "lucide-react";
 import { DashboardStats, AdminNotification } from "@/types/dashboard";
 
 interface AdminDashboardCardsProps {
@@ -28,6 +28,14 @@ export const AdminDashboardCards = ({ stats, notifications }: AdminDashboardCard
       notifications: getNotificationCount("new_channel_request"),
       bgColor: "bg-[#F2FCE2]",
       iconColor: "text-green-600"
+    },
+    {
+      title: "Category Management",
+      description: "Manage video categories",
+      icon: <Grid3X3 className="h-7 w-7" />,
+      onClick: () => navigate("/admin/categories"),
+      bgColor: "bg-[#E8F7FF]",
+      iconColor: "text-blue-600"
     },
     {
       title: "Comments Management",
@@ -129,4 +137,4 @@ export const AdminDashboardCards = ({ stats, notifications }: AdminDashboardCard
       ))}
     </div>
   );
-};
+}
