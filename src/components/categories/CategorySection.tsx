@@ -103,14 +103,6 @@ export const CategorySection = () => {
           ))}
         </motion.div>
       </div>
-
-      {/* Left fade overlay */}
-      <div className="absolute left-0 top-0 h-full w-[300px] z-10 pointer-events-none" 
-           style={{ background: 'linear-gradient(to right, white, white 40%, rgba(255, 255, 255, 0.9) 70%, transparent 100%)' }} />
-      
-      {/* Right fade overlay */}
-      <div className="absolute right-0 top-0 h-full w-[300px] z-10 pointer-events-none" 
-           style={{ background: 'linear-gradient(to left, white, white 40%, rgba(255, 255, 255, 0.9) 70%, transparent 100%)' }} />
     </div>
   );
 };
