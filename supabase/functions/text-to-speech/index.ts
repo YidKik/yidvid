@@ -12,25 +12,33 @@ serve(async (req) => {
   }
 
   try {
-    console.log('Starting text-to-speech request...');
+    const { text } = await req.json();
+    console.log('Starting text-to-speech request with Play.ht...');
     
-    // First, create a speech synthesis task
-    const ASSEMBLY_AI_API_KEY = Deno.env.get('ASSEMBLY_AI_API_KEY');
-    if (!ASSEMBLY_AI_API_KEY) {
-      throw new Error('AssemblyAI API key not configured');
+    const PLAY_HT_API_KEY = Deno.env.get('PLAY_HT_API_KEY');
+    const PLAY_HT_USER_ID = Deno.env.get('PLAY_HT_USER_ID');
+    
+    if (!PLAY_HT_API_KEY || !PLAY_HT_USER_ID) {
+      throw new Error('Play.ht credentials not configured');
     }
 
+    // First, create a generation request
     const createResponse = await fetch(
-      'https://api.assemblyai.com/v3/speech-synthesis',
+      'https://play.ht/api/v2/tts',
       {
         method: 'POST',
         headers: {
-          'Authorization': ASSEMBLY_AI_API_KEY,
+          'Authorization': PLAY_HT_API_KEY,
+          'X-User-ID': PLAY_HT_USER_ID,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          text: "Hi! How can I help you today?",
-          voice: "echo", // Using Echo voice, a friendly and clear voice
+          text: text,
+          voice: 'en-US-JennyNeural',
+          quality: 'draft',
+          output_format: 'mp3',
+          speed: 1,
+          sample_rate: 24000,
         }),
       }
     );
@@ -42,7 +50,7 @@ serve(async (req) => {
     }
 
     const { id } = await createResponse.json();
-    console.log('Speech synthesis task created with ID:', id);
+    console.log('Speech generation task created with ID:', id);
 
     // Poll until the audio is ready
     let audioUrl = null;
@@ -53,10 +61,11 @@ serve(async (req) => {
       console.log(`Checking speech status (attempt ${attempts + 1}/${maxAttempts})...`);
       
       const checkResponse = await fetch(
-        `https://api.assemblyai.com/v3/speech-synthesis/${id}`,
+        `https://play.ht/api/v2/tts/${id}`,
         {
           headers: {
-            'Authorization': ASSEMBLY_AI_API_KEY,
+            'Authorization': PLAY_HT_API_KEY,
+            'X-User-ID': PLAY_HT_USER_ID,
           },
         }
       );
@@ -70,9 +79,9 @@ serve(async (req) => {
       const status = await checkResponse.json();
       console.log('Speech status:', status);
       
-      if (status.status === 'completed') {
-        audioUrl = status.audio_url;
-      } else if (status.status === 'error') {
+      if (status.converted) {
+        audioUrl = status.url;
+      } else if (status.error) {
         throw new Error('Speech synthesis failed');
       } else {
         // Wait a bit before polling again
@@ -115,3 +124,4 @@ serve(async (req) => {
     );
   }
 });
+
