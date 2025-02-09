@@ -11,9 +11,8 @@ export const AuthHeader = () => {
           className="h-16 w-auto mb-4"
         />
         <h2 className="text-xl font-semibold text-gray-800">Welcome to YidVid</h2>
-        <p className="text-sm text-gray-500 mt-1">Your Premier Jewish Video Platform</p>
+        <p className="text-sm text-gray-500 mt-1">Your Premier Jewish Platform</p>
       </div>
     </DialogTitle>
   );
 };
-
