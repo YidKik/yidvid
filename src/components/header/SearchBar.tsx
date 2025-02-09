@@ -68,23 +68,23 @@ export const SearchBar = () => {
           setShowResults(true);
         }}
         onFocus={() => setShowResults(true)}
-        className="w-full bg-transparent border-primary ring-1 ring-primary/20 text-[#555555] placeholder:text-[#555555] focus-visible:ring-primary focus-visible:ring-2 focus-visible:ring-offset-2 h-8 md:h-10 text-xs md:text-sm pr-12 md:pr-14"
+        className="w-full bg-transparent border-primary ring-1 ring-primary/20 text-[#555555] placeholder:text-[#555555] focus-visible:ring-primary focus-visible:ring-2 focus-visible:ring-offset-2 h-7 md:h-10 text-xs md:text-sm pr-10 md:pr-14"
       />
       <Button 
         type="submit"
         variant="ghost" 
         size="icon"
-        className="absolute right-1.5 h-6 w-6 md:h-8 md:w-8 rounded-full bg-gray-100 hover:bg-gray-200"
+        className="absolute right-1 h-5 w-5 md:h-8 md:w-8 rounded-full bg-gray-100 hover:bg-gray-200"
       >
-        <Search className="h-4 w-4 md:h-5 md:w-5 text-[#555555]" />
+        <Search className="h-3 w-3 md:h-5 md:w-5 text-[#555555]" />
       </Button>
       {showResults && (searchResults?.length > 0 || isSearching) && (
         <div 
           className={`absolute top-full left-0 right-0 mt-1 bg-white rounded-md shadow-lg border border-gray-100 overflow-hidden z-50 ${
-            isMobile ? 'fixed left-0 right-0 mx-4 max-h-[40vh]' : 'w-full max-h-[300px]'
+            isMobile ? 'fixed left-0 right-0 mx-2 max-h-[40vh]' : 'w-full max-h-[300px]'
           }`}
           style={{
-            top: isMobile ? '60px' : undefined
+            top: isMobile ? '50px' : undefined
           }}
           onMouseDown={(e) => e.preventDefault()}
         >

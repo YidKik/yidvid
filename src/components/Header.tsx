@@ -113,12 +113,12 @@ export const Header = () => {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
-      <div className="container flex h-14 items-center">
+      <div className="container flex h-12 md:h-14 items-center">
         <Link to="/" className="flex items-center space-x-2">
           <img 
             src="/lovable-uploads/e425cacb-4c3a-4d81-b4e0-77fcbf10f61c.png" 
             alt="YidVid Logo"
-            className="h-32 w-auto md:h-48 object-contain min-h-[128px] md:min-h-[192px] max-h-[128px] md:max-h-[192px]"
+            className="h-16 w-auto md:h-32 object-contain min-h-[64px] md:min-h-[128px] max-h-[64px] md:max-h-[128px]"
             onError={(e) => {
               console.error('Logo failed to load:', e);
               e.currentTarget.style.display = 'none';
@@ -126,11 +126,11 @@ export const Header = () => {
           />
         </Link>
 
-        <div className="flex-1 flex justify-center px-2 md:px-4">
+        <div className="flex-1 flex justify-center px-1 md:px-4">
           <SearchBar />
         </div>
 
-        <div className="flex items-center space-x-1 md:space-x-2">
+        <div className="flex items-center gap-0.5 md:space-x-2">
           <ContactDialog />
           {session ? (
             <>
@@ -143,7 +143,7 @@ export const Header = () => {
           ) : (
             <Button 
               onClick={() => setIsAuthOpen(true)}
-              className="h-7 md:h-10 text-xs md:text-sm px-2 md:px-4"
+              className="h-6 md:h-10 text-xs md:text-sm px-2 md:px-4"
             >
               Login
             </Button>
