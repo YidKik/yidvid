@@ -195,7 +195,14 @@ export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
             {isLoading ? "Loading..." : "Sign Up"}
           </button>
           <p className="text-xs text-center text-gray-500">
-            Already have an account? Sign in
+            Already have an account?{" "}
+            <button
+              type="button"
+              onClick={() => document.querySelector('[value="signin"]')?.click()}
+              className="text-primary hover:underline focus:outline-none"
+            >
+              Sign in
+            </button>
           </p>
         </form>
       </TabsContent>
