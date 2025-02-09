@@ -42,18 +42,18 @@ export const ChannelHeader = ({
       <Button
         variant={isSubscribed ? "default" : "outline"}
         onClick={onSubscribe}
-        className={`h-8 md:h-10 text-sm md:text-base px-3 md:px-4 mb-3 md:mb-4 transition-all duration-200 ${
+        className={`h-7 md:h-9 text-xs md:text-sm px-2.5 md:px-3.5 mb-2 md:mb-3 transition-all duration-200 ${
           isSubscribed ? "bg-primary hover:bg-primary-hover text-white shadow-md" : ""
         }`}
       >
         {isSubscribed ? (
           <>
-            <Check className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1.5 md:mr-2 animate-in" />
+            <Check className="w-3 h-3 md:w-3.5 md:h-3.5 mr-1 md:mr-1.5 animate-in" />
             Subscribed
           </>
         ) : (
           <>
-            <UserPlus className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1.5 md:mr-2" />
+            <UserPlus className="w-3 h-3 md:w-3.5 md:h-3.5 mr-1 md:mr-1.5" />
             Subscribe
           </>
         )}
@@ -65,15 +65,15 @@ export const ChannelHeader = ({
             variant="outline"
             size="sm"
             onClick={onToggleDescription}
-            className="text-xs text-muted-foreground hover:text-foreground transition-colors border-muted-foreground/30 h-6 md:h-7 px-2"
+            className="text-xs text-muted-foreground hover:text-foreground transition-colors border-muted-foreground/30 h-5 md:h-6 px-1.5 md:px-2"
           >
             {showDescription ? (
-              <span className="flex items-center gap-1">
-                Less <ChevronUp className="h-2.5 w-2.5 md:h-3 md:w-3" />
+              <span className="flex items-center gap-0.5">
+                Less <ChevronUp className="h-2 w-2 md:h-2.5 md:w-2.5" />
               </span>
             ) : (
-              <span className="flex items-center gap-1">
-                More <ChevronDown className="h-2.5 w-2.5 md:h-3 md:w-3" />
+              <span className="flex items-center gap-0.5">
+                More <ChevronDown className="h-2 w-2 md:h-2.5 md:w-2.5" />
               </span>
             )}
           </Button>
@@ -87,3 +87,4 @@ export const ChannelHeader = ({
     </div>
   );
 };
+
