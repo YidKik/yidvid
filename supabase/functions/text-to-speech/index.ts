@@ -24,13 +24,14 @@ serve(async (req) => {
 
     // First, create a generation request
     const createResponse = await fetch(
-      'https://play.ht/api/v2/tts',
+      'https://api.play.ht/api/v2/tts',
       {
         method: 'POST',
         headers: {
-          'Authorization': PLAY_HT_API_KEY,
+          'Authorization': `Bearer ${PLAY_HT_API_KEY}`,
           'X-User-ID': PLAY_HT_USER_ID,
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
         },
         body: JSON.stringify({
           text: text,
@@ -61,11 +62,12 @@ serve(async (req) => {
       console.log(`Checking speech status (attempt ${attempts + 1}/${maxAttempts})...`);
       
       const checkResponse = await fetch(
-        `https://play.ht/api/v2/tts/${id}`,
+        `https://api.play.ht/api/v2/tts/${id}`,
         {
           headers: {
-            'Authorization': PLAY_HT_API_KEY,
+            'Authorization': `Bearer ${PLAY_HT_API_KEY}`,
             'X-User-ID': PLAY_HT_USER_ID,
+            'Accept': 'application/json',
           },
         }
       );
