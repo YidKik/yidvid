@@ -13,3 +13,6 @@ verify_jwt = false
 [functions.categorize-video]
 verify_jwt = false
 
+[functions.fetch-youtube-music]
+verify_jwt = false
+
