@@ -68,15 +68,15 @@ export const SearchBar = () => {
           setShowResults(true);
         }}
         onFocus={() => setShowResults(true)}
-        className="w-full bg-transparent border-primary ring-1 ring-primary/20 text-[#555555] placeholder:text-[#555555] focus-visible:ring-primary focus-visible:ring-2 focus-visible:ring-offset-2 h-8 md:h-10 text-xs md:text-sm"
+        className="w-full bg-transparent border-primary ring-1 ring-primary/20 text-[#555555] placeholder:text-[#555555] focus-visible:ring-primary focus-visible:ring-2 focus-visible:ring-offset-2 h-8 md:h-10 text-xs md:text-sm pr-12 md:pr-14"
       />
       <Button 
         type="submit"
         variant="ghost" 
         size="icon"
-        className="absolute right-2 h-5 w-5 md:h-7 md:w-7 rounded-full bg-gray-100 hover:bg-gray-200"
+        className="absolute right-1.5 h-6 w-6 md:h-8 md:w-8 rounded-full bg-gray-100 hover:bg-gray-200"
       >
-        <Search className="h-3 w-3 md:h-4 md:w-4 text-[#555555]" />
+        <Search className="h-4 w-4 md:h-5 md:w-5 text-[#555555]" />
       </Button>
       {showResults && (searchResults?.length > 0 || isSearching) && (
         <div 
@@ -128,3 +128,4 @@ export const SearchBar = () => {
     </form>
   );
 };
+
