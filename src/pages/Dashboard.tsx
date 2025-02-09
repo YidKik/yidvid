@@ -103,7 +103,14 @@ export default function Dashboard() {
 
   return (
     <div className="container mx-auto py-12 space-y-8 px-4">
-      <h1 className="text-4xl font-bold mb-8 text-gray-800">Welcome to Your Dashboard</h1>
+      <div className="flex items-center gap-4 mb-8">
+        <img 
+          src="/lovable-uploads/e425cacb-4c3a-4d81-b4e0-77fcbf10f61c.png" 
+          alt="YidVid Logo"
+          className="h-24 w-auto object-contain"
+        />
+        <h1 className="text-4xl font-bold text-gray-800">Welcome to Your Dashboard</h1>
+      </div>
       
       {isAdmin ? (
         <AdminDashboardCards stats={stats} notifications={notifications} />
