@@ -25,7 +25,7 @@ serve(async (req) => {
       .select('*')
       .is('category', null)
       .is('deleted_at', null)
-      .limit(10) // Process in smaller batches
+      .limit(5) // Reduced batch size to avoid rate limits
 
     if (fetchError) {
       console.error('Error fetching videos:', fetchError)
@@ -47,7 +47,7 @@ serve(async (req) => {
       throw new Error('Missing Gemini API key')
     }
 
-    // Process videos one by one to avoid rate limits
+    // Process videos with longer delays between requests
     const results = []
     for (const video of videos) {
       try {
@@ -56,7 +56,7 @@ serve(async (req) => {
           continue
         }
 
-        const prompt = `Based on this video title: "${video.title}", categorize it into exactly ONE of these categories: music, torah, inspiration, podcast, education, entertainment, other. Only respond with the category name in lowercase, nothing else.`
+        const prompt = `Based on this YouTube video title: "${video.title}", classify it into exactly one of these categories: music, torah, inspiration, podcast, education, entertainment, other. Only respond with a single word from the given categories in lowercase, nothing else.`
 
         const response = await fetch('https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent', {
           method: 'POST',
@@ -71,13 +71,34 @@ serve(async (req) => {
               }]
             }],
             generationConfig: {
-              temperature: 0.1,
+              temperature: 0,
               maxOutputTokens: 5,
-            }
+            },
+            safetySettings: [
+              {
+                category: "HARM_CATEGORY_HARASSMENT",
+                threshold: "BLOCK_NONE"
+              },
+              {
+                category: "HARM_CATEGORY_HATE_SPEECH",
+                threshold: "BLOCK_NONE"
+              },
+              {
+                category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+                threshold: "BLOCK_NONE"
+              },
+              {
+                category: "HARM_CATEGORY_DANGEROUS_CONTENT",
+                threshold: "BLOCK_NONE"
+              }
+            ]
           }),
         })
 
         if (!response.ok) {
+          console.error(`Gemini API error: ${response.status} ${response.statusText}`)
+          const errorText = await response.text()
+          console.error('Error details:', errorText)
           throw new Error(`Gemini API error: ${response.status} ${response.statusText}`)
         }
 
@@ -105,11 +126,13 @@ serve(async (req) => {
         console.log(`Successfully categorized video ${video.id} as ${category}`)
         results.push({ id: video.id, category, success: true })
 
-        // Add a delay between requests to respect rate limits
-        await new Promise(resolve => setTimeout(resolve, 1000))
+        // Add a longer delay between requests (2 seconds)
+        await new Promise(resolve => setTimeout(resolve, 2000))
       } catch (error) {
         console.error(`Error processing video ${video.id}:`, error)
         results.push({ id: video.id, error: error.message, success: false })
+        // Still add delay even on error to maintain rate limiting
+        await new Promise(resolve => setTimeout(resolve, 2000))
       }
     }
 
