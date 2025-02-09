@@ -127,6 +127,9 @@ export const CategorySection = () => {
     <div className="relative w-full py-16">
       <div className="max-w-[1400px] mx-auto px-8 md:px-12">
         <div className="overflow-hidden relative h-[180px] md:h-[200px] pt-8">
+          {/* Left fade gradient */}
+          <div className="absolute left-0 top-0 w-32 h-full bg-gradient-to-r from-white via-white to-transparent z-10" />
+          
           <motion.div
             className="flex gap-4 md:gap-8"
             animate={{
@@ -162,6 +165,9 @@ export const CategorySection = () => {
               </div>
             ))}
           </motion.div>
+
+          {/* Right fade gradient */}
+          <div className="absolute right-0 top-0 w-32 h-full bg-gradient-to-l from-white via-white to-transparent z-10" />
         </div>
       </div>
     </div>
