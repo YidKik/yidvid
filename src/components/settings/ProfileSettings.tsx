@@ -154,9 +154,11 @@ export const ProfileSettings = () => {
           <p className="text-sm text-muted-foreground">
             This name will be displayed across the platform
           </p>
+          <p className="text-xs text-muted-foreground mt-2">
+            User ID: {profile?.id}
+          </p>
         </div>
       </CardContent>
     </Card>
   );
 };
-
