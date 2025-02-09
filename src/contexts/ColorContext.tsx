@@ -1,4 +1,7 @@
-import { createContext, useContext, useEffect, useState } from "react";
+
+'use client';
+
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
