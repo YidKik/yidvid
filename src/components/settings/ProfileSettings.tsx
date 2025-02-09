@@ -19,16 +19,25 @@ export const ProfileSettings = () => {
     queryKey: ["user-profile"],
     queryFn: async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return null;
+      if (!session) {
+        toast.error("Please sign in to view your profile");
+        return null;
+      }
 
+      // Use the from() method instead of direct REST API call
       const { data, error } = await supabase
         .from("profiles")
         .select("*")
         .eq("id", session.user.id)
         .single();
 
-      if (error) throw error;
-      setNewName(data.name || "");
+      if (error) {
+        console.error("Error fetching profile:", error);
+        toast.error("Failed to load profile");
+        throw error;
+      }
+      
+      setNewName(data?.name || "");
       return data;
     },
   });
@@ -46,7 +55,11 @@ export const ProfileSettings = () => {
         .update({ name: newName })
         .eq("id", session.user.id);
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error updating name:", error);
+        toast.error("Failed to update name");
+        throw error;
+      }
 
       toast.success("Name updated successfully");
       queryClient.invalidateQueries({ queryKey: ["user-profile"] });
@@ -76,7 +89,11 @@ export const ProfileSettings = () => {
         .from('profile-pictures')
         .upload(filePath, file);
 
-      if (uploadError) throw uploadError;
+      if (uploadError) {
+        console.error("Error uploading avatar:", uploadError);
+        toast.error("Failed to upload avatar");
+        throw uploadError;
+      }
 
       const { data: { publicUrl } } = supabase.storage
         .from('profile-pictures')
@@ -87,12 +104,16 @@ export const ProfileSettings = () => {
         .update({ avatar_url: publicUrl })
         .eq('id', session.user.id);
 
-      if (updateError) throw updateError;
+      if (updateError) {
+        console.error("Error updating profile:", updateError);
+        toast.error("Failed to update profile with new avatar");
+        throw updateError;
+      }
 
       toast.success("Avatar updated successfully");
       queryClient.invalidateQueries({ queryKey: ["user-profile"] });
     } catch (error) {
-      console.error("Error uploading avatar:", error);
+      console.error("Error in avatar upload process:", error);
       toast.error("Failed to upload avatar");
     } finally {
       setUploading(false);
@@ -165,4 +186,3 @@ export const ProfileSettings = () => {
     </Card>
   );
 };
-
