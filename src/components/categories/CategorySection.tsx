@@ -80,7 +80,7 @@ export const CategorySection = () => {
   }
 
   return (
-    <div className="relative h-[180px] overflow-hidden">
+    <div className="relative h-[180px] overflow-hidden bg-transparent">
       <h2 className="text-xl md:text-2xl font-bold mb-6 text-center">Browse by Category</h2>
       <div className="relative w-full">
         {/* Left fade overlay with increased opacity and width */}
@@ -125,4 +125,3 @@ export const CategorySection = () => {
     </div>
   );
 };
-
