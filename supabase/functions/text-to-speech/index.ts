@@ -6,6 +6,10 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
+// Helper function to implement exponential backoff
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+const exponentialBackoff = (attempt: number) => Math.min(1000 * Math.pow(2, attempt), 10000);
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
@@ -24,32 +28,52 @@ serve(async (req) => {
     }
 
     // First, create a generation request
-    const createResponse = await fetch(
-      'https://api.play.ht/api/v2/tts',
-      {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${PLAY_HT_API_KEY}`,
-          'X-User-ID': PLAY_HT_USER_ID,
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        body: JSON.stringify({
-          text: text,
-          voice: 'larry',  // Using a known valid voice
-          quality: 'medium', // Changed from draft to medium
-          output_format: 'mp3',
-          speed: 1,
-          sample_rate: 24000,
-        }),
-      }
-    );
+    let createResponse;
+    let createAttempts = 0;
+    const maxCreateAttempts = 5;
 
-    if (!createResponse.ok) {
-      const errorData = await createResponse.text();
-      console.error('Failed to create speech. Status:', createResponse.status);
-      console.error('Error response:', errorData);
-      throw new Error(`Failed to create speech: ${createResponse.status} - ${errorData}`);
+    while (createAttempts < maxCreateAttempts) {
+      console.log(`Attempting to create speech (attempt ${createAttempts + 1}/${maxCreateAttempts})...`);
+      
+      createResponse = await fetch(
+        'https://api.play.ht/api/v2/tts',
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${PLAY_HT_API_KEY}`,
+            'X-User-ID': PLAY_HT_USER_ID,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+          body: JSON.stringify({
+            text: text,
+            voice: 'larry',
+            quality: 'medium',
+            output_format: 'mp3',
+            speed: 1,
+            sample_rate: 24000,
+          }),
+        }
+      );
+
+      if (createResponse.status === 429) {
+        // Rate limited - wait with exponential backoff
+        const waitTime = exponentialBackoff(createAttempts);
+        console.log(`Rate limited, waiting ${waitTime}ms before retry...`);
+        await delay(waitTime);
+        createAttempts++;
+      } else if (!createResponse.ok) {
+        const errorData = await createResponse.text();
+        console.error('Failed to create speech. Status:', createResponse.status);
+        console.error('Error response:', errorData);
+        throw new Error(`Failed to create speech: ${createResponse.status} - ${errorData}`);
+      } else {
+        break;
+      }
+    }
+
+    if (!createResponse || !createResponse.ok) {
+      throw new Error('Failed to create speech after maximum retries');
     }
 
     const createData = await createResponse.json();
@@ -62,44 +86,63 @@ serve(async (req) => {
 
     console.log('Speech generation task created with ID:', id);
 
-    // Poll until the audio is ready
+    // Poll until the audio is ready with rate limit handling
     let audioUrl = null;
     let attempts = 0;
-    const maxAttempts = 30; // Increased max attempts
-    const delayMs = 1000; // 1 second delay between attempts
-
+    const maxAttempts = 30;
+    
     while (!audioUrl && attempts < maxAttempts) {
       console.log(`Checking speech status (attempt ${attempts + 1}/${maxAttempts})...`);
       
-      const checkResponse = await fetch(
-        `https://api.play.ht/api/v2/tts/${id}`,
-        {
-          headers: {
-            'Authorization': `Bearer ${PLAY_HT_API_KEY}`,
-            'X-User-ID': PLAY_HT_USER_ID,
-            'Accept': 'application/json',
-          },
+      try {
+        const checkResponse = await fetch(
+          `https://api.play.ht/api/v2/tts/${id}`,
+          {
+            headers: {
+              'Authorization': `Bearer ${PLAY_HT_API_KEY}`,
+              'X-User-ID': PLAY_HT_USER_ID,
+              'Accept': 'application/json',
+            },
+          }
+        );
+
+        if (checkResponse.status === 429) {
+          // Rate limited - wait with exponential backoff
+          const waitTime = exponentialBackoff(attempts);
+          console.log(`Rate limited, waiting ${waitTime}ms before retry...`);
+          await delay(waitTime);
+          attempts++;
+          continue;
         }
-      );
 
-      if (!checkResponse.ok) {
-        const errorData = await checkResponse.text();
-        console.error('Failed to check speech status:', errorData);
-        throw new Error(`Failed to check speech status: ${checkResponse.status} - ${errorData}`);
+        if (!checkResponse.ok) {
+          const errorData = await checkResponse.text();
+          console.error('Failed to check speech status:', errorData);
+          throw new Error(`Failed to check speech status: ${checkResponse.status} - ${errorData}`);
+        }
+
+        const status = await checkResponse.json();
+        console.log('Speech status:', status);
+        
+        if (status.converted) {
+          audioUrl = status.url;
+          break;
+        } else if (status.error) {
+          throw new Error(`Speech synthesis failed: ${status.error}`);
+        }
+      } catch (error) {
+        if (error.message.includes('Rate limit')) {
+          const waitTime = exponentialBackoff(attempts);
+          console.log(`Rate limited, waiting ${waitTime}ms before retry...`);
+          await delay(waitTime);
+        } else {
+          throw error;
+        }
       }
 
-      const status = await checkResponse.json();
-      console.log('Speech status:', status);
-      
-      if (status.converted) {
-        audioUrl = status.url;
-        break;
-      } else if (status.error) {
-        throw new Error(`Speech synthesis failed: ${status.error}`);
-      } else {
-        await new Promise(resolve => setTimeout(resolve, delayMs));
-        attempts++;
-      }
+      // Standard delay between status checks
+      await delay(2000); // Increased from 1s to 2s
+      attempts++;
     }
 
     if (!audioUrl) {
