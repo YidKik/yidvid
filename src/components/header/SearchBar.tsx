@@ -80,11 +80,12 @@ export const SearchBar = () => {
       </Button>
       {showResults && (searchResults?.length > 0 || isSearching) && (
         <div 
-          className={`absolute top-full left-0 right-0 mt-1 bg-white rounded-md shadow-lg border border-gray-100 overflow-hidden z-50 ${
-            isMobile ? 'fixed left-0 right-0 mx-2 max-h-[40vh]' : 'w-full max-h-[300px]'
+          className={`absolute top-full left-0 mt-1 bg-white rounded-md shadow-lg border border-gray-100 overflow-hidden z-50 ${
+            isMobile ? 'w-full' : 'w-full max-h-[300px]'
           }`}
           style={{
-            top: isMobile ? '50px' : undefined
+            top: isMobile ? '35px' : undefined,
+            width: isMobile ? '100%' : undefined
           }}
           onMouseDown={(e) => e.preventDefault()}
         >
@@ -128,3 +129,4 @@ export const SearchBar = () => {
     </form>
   );
 };
+
