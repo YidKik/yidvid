@@ -61,4 +61,3 @@ export const VoiceAssistant: React.FC<VoiceAssistantProps> = ({ onSpeakingChange
     </Button>
   );
 };
-
