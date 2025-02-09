@@ -124,11 +124,11 @@ export const CategorySection = () => {
   }
 
   return (
-    <div className="relative">
+    <div className="relative w-full py-8">
       <div className="max-w-[1200px] mx-auto px-4 md:px-6">
-        <div className="overflow-hidden relative">
+        <div className="overflow-hidden relative h-[180px] md:h-[200px]">
           <motion.div
-            className="flex gap-2 md:gap-6"
+            className="flex gap-4 md:gap-8"
             animate={{
               x: ['0%', '-50%']
             }}
@@ -148,7 +148,7 @@ export const CategorySection = () => {
             {infiniteCategories.map((category, index) => (
               <div
                 key={`${category.id}-${index}`}
-                className="w-[140px] md:w-[300px] flex-shrink-0 relative"
+                className="w-[180px] md:w-[320px] flex-shrink-0 relative"
               >
                 {viewCounts && viewCounts[category.id] && viewCounts[category.id] > 0 && (
                   <TrendingCategoryBadge count={viewCounts[category.id]} />
