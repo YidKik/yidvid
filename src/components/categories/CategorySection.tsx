@@ -7,7 +7,15 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useEffect } from "react";
 import { CustomCategory } from "@/types/custom-categories";
 
-const defaultCategories = [
+interface Category {
+  id: string;
+  label: string;
+  icon: string;
+  isCustom?: boolean;
+  is_emoji?: boolean;
+}
+
+const defaultCategories: Category[] = [
   { id: 'music', label: 'Music', icon: '🎵' },
   { id: 'torah', label: 'Torah', icon: '📖' },
   { id: 'inspiration', label: 'Inspiration', icon: '✨' },
@@ -69,8 +77,8 @@ export const CategorySection = () => {
     return categoryVideos?.filter(video => video.category === categoryId).length || 0;
   };
 
-  // Combine default and custom categories
-  const allCategories = [
+  // Combine default and custom categories with proper typing
+  const allCategories: Category[] = [
     ...defaultCategories,
     ...(customCategories?.map(cat => ({
       id: cat.id,
