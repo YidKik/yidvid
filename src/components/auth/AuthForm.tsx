@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
@@ -196,15 +195,14 @@ export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
           </button>
         </form>
       </TabsContent>
-      <TabsList className="grid w-full grid-cols-2 mt-3">
-        <TabsTrigger value="signin" className="text-xs text-muted-foreground data-[state=active]:text-primary data-[state=active]:underline">
+      <TabsList className="mt-2 flex w-full justify-between bg-transparent p-0">
+        <TabsTrigger value="signin" className="text-xs text-muted-foreground data-[state=active]:text-primary data-[state=active]:font-medium hover:text-primary">
           Already have an account? Sign in
         </TabsTrigger>
-        <TabsTrigger value="signup" className="text-xs text-muted-foreground data-[state=active]:text-primary data-[state=active]:underline">
+        <TabsTrigger value="signup" className="text-xs text-muted-foreground data-[state=active]:text-primary data-[state=active]:font-medium hover:text-primary">
           New here? Sign up
         </TabsTrigger>
       </TabsList>
     </Tabs>
   );
 };
-
