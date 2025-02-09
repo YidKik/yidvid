@@ -2,7 +2,7 @@
 import { useNavigate } from "react-router-dom";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Users, Video, MessageSquare, Tv, Database } from "lucide-react";
+import { Users, Video, MessageSquare, Tv, Database, Film } from "lucide-react";
 import { DashboardStats, AdminNotification } from "@/types/dashboard";
 
 interface AdminDashboardCardsProps {
@@ -66,6 +66,15 @@ export const AdminDashboardCards = ({ stats, notifications }: AdminDashboardCard
       stats: stats?.totalVideos ? `${stats.totalVideos} videos` : undefined,
       bgColor: "bg-[#FFDEE2]",
       iconColor: "text-pink-600"
+    },
+    {
+      title: "Video Management",
+      description: "View and manage all videos on the platform",
+      icon: <Film className="h-7 w-7" />,
+      onClick: () => navigate("/admin/videos"),
+      stats: stats?.totalVideos ? `${stats.totalVideos} videos` : undefined,
+      bgColor: "bg-[#E0F7FF]",
+      iconColor: "text-blue-600"
     }
   ];
 

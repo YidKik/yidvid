@@ -1,4 +1,3 @@
-
 import { Routes, Route, useLocation } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -18,6 +17,7 @@ import CommentsPage from "@/pages/admin/CommentsPage";
 import RequestsPage from "@/pages/admin/RequestsPage";
 import UsersPage from "@/pages/admin/UsersPage";
 import AnalyticsPage from "@/pages/admin/AnalyticsPage";
+import VideosPage from "@/pages/admin/VideosPage";
 
 // Create a client
 const queryClient = new QueryClient({
@@ -34,7 +34,6 @@ function AppRoutes() {
   const location = useLocation();
 
   useEffect(() => {
-    // Update document title based on current route
     document.title = getPageTitle(location.pathname);
   }, [location]);
 
@@ -54,6 +53,7 @@ function AppRoutes() {
       <Route path="/admin/requests" element={<RequestsPage />} />
       <Route path="/admin/users" element={<UsersPage />} />
       <Route path="/admin/analytics" element={<AnalyticsPage />} />
+      <Route path="/admin/videos" element={<VideosPage />} />
     </Routes>
   );
 }

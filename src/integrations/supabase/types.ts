@@ -567,6 +567,7 @@ export type Database = {
           channel_id: string
           channel_name: string
           created_at: string
+          deleted_at: string | null
           description: string | null
           id: string
           thumbnail: string
@@ -580,6 +581,7 @@ export type Database = {
           channel_id: string
           channel_name: string
           created_at?: string
+          deleted_at?: string | null
           description?: string | null
           id?: string
           thumbnail: string
@@ -593,6 +595,7 @@ export type Database = {
           channel_id?: string
           channel_name?: string
           created_at?: string
+          deleted_at?: string | null
           description?: string | null
           id?: string
           thumbnail?: string
