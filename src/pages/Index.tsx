@@ -49,7 +49,7 @@ const MainContent = () => {
     <div className="flex-1">
       <Header />
       <main className="mt-4 md:mt-8 max-w-[1400px] mx-auto px-4 md:px-6">
-        <div className="mb-36">
+        <div className="mb-44">
           <CategorySection />
         </div>
         <div className="w-full py-4 md:py-6">
