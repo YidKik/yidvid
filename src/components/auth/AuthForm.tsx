@@ -1,11 +1,10 @@
-
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import { Tabs, TabsContent } from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface AuthFormProps {
   onOpenChange: (open: boolean) => void;
@@ -119,17 +118,21 @@ export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
   };
 
   const switchToSignUp = () => {
-    const signupTrigger = document.querySelector('[value="signup"]') as HTMLButtonElement;
+    const signupTrigger = document.querySelector('[data-state="inactive"][value="signup"]') as HTMLButtonElement;
     if (signupTrigger) signupTrigger.click();
   };
 
   const switchToSignIn = () => {
-    const signinTrigger = document.querySelector('[value="signin"]') as HTMLButtonElement;
-    if (signinTrigger) signinTrigger.click();
+    const signinTrigger = document.querySelector('[data-state="inactive"][value="signin"]') as HTMLButtonElement;
+    if (signinTrigger) signupTrigger.click();
   };
 
   return (
     <Tabs defaultValue="signup" className="w-full max-w-sm mx-auto">
+      <TabsList className="hidden">
+        <TabsTrigger value="signin">Sign In</TabsTrigger>
+        <TabsTrigger value="signup">Sign Up</TabsTrigger>
+      </TabsList>
       <TabsContent value="signin">
         <form onSubmit={(e) => handleSubmit(e, 'signin')} className="space-y-2 sm:space-y-3">
           <div>
