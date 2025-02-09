@@ -1,3 +1,4 @@
+
 import { Routes, Route, useLocation } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -12,6 +13,11 @@ import { ColorProvider } from "@/contexts/ColorContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { getPageTitle } from "@/utils/pageTitle";
+import ChannelsPage from "@/pages/admin/ChannelsPage";
+import CommentsPage from "@/pages/admin/CommentsPage";
+import RequestsPage from "@/pages/admin/RequestsPage";
+import UsersPage from "@/pages/admin/UsersPage";
+import AnalyticsPage from "@/pages/admin/AnalyticsPage";
 
 // Create a client
 const queryClient = new QueryClient({
@@ -41,6 +47,13 @@ function AppRoutes() {
       <Route path="/settings" element={<Settings />} />
       <Route path="/music/:id" element={<MusicDetails />} />
       <Route path="/search" element={<Search />} />
+      
+      {/* Admin Routes */}
+      <Route path="/admin/channels" element={<ChannelsPage />} />
+      <Route path="/admin/comments" element={<CommentsPage />} />
+      <Route path="/admin/requests" element={<RequestsPage />} />
+      <Route path="/admin/users" element={<UsersPage />} />
+      <Route path="/admin/analytics" element={<AnalyticsPage />} />
     </Routes>
   );
 }
