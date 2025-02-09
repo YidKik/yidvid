@@ -53,8 +53,8 @@ export const CategorySection = () => {
     },
   });
 
-  const { data: customCategoryVideos } = useQuery({
-    queryKey: ["custom-category-videos"],
+  const { data: videoCategoryMappings } = useQuery({
+    queryKey: ["video-category-mappings"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("video_category_mappings")
@@ -68,8 +68,8 @@ export const CategorySection = () => {
     },
   });
 
-  const { data: customCategoryChannels } = useQuery({
-    queryKey: ["custom-category-channels"],
+  const { data: channelCategoryMappings } = useQuery({
+    queryKey: ["channel-category-mappings"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("channel_category_mappings")
@@ -104,17 +104,39 @@ export const CategorySection = () => {
   }, []);
 
   const getCategoryCount = (categoryId: string, isCustom?: boolean) => {
+    if (!categoryVideos) return 0;
+
     if (isCustom) {
-      // For custom categories, count both directly mapped videos and videos from mapped channels
-      const videoCount = customCategoryVideos?.filter(mapping => mapping.category_id === categoryId).length || 0;
-      const channelIds = customCategoryChannels?.filter(mapping => mapping.category_id === categoryId).map(mapping => mapping.channel_id) || [];
-      const channelVideosCount = categoryVideos?.filter(video => channelIds.includes(video.channel_id)).length || 0;
-      return videoCount + channelVideosCount;
+      // For custom categories, get videos directly mapped to this category
+      const directlyMappedVideos = videoCategoryMappings?.filter(
+        mapping => mapping.category_id === categoryId
+      ) || [];
+
+      // Get channels mapped to this category
+      const mappedChannels = channelCategoryMappings?.filter(
+        mapping => mapping.category_id === categoryId
+      ).map(mapping => mapping.channel_id) || [];
+
+      // Count videos from mapped channels
+      const channelVideosCount = categoryVideos.filter(
+        video => mappedChannels.includes(video.channel_id)
+      ).length;
+
+      // Count directly mapped videos (that aren't already counted through channel mapping)
+      const directVideoIds = directlyMappedVideos.map(mapping => mapping.video_id);
+      const directlyMappedCount = categoryVideos.filter(
+        video => directVideoIds.includes(video.id) && 
+        !mappedChannels.includes(video.channel_id)
+      ).length;
+
+      return channelVideosCount + directlyMappedCount;
     }
-    return categoryVideos?.filter(video => video.category === categoryId).length || 0;
+
+    // For default categories, count videos with matching category
+    return categoryVideos.filter(video => video.category === categoryId).length;
   };
 
-  // Combine default and custom categories with proper typing
+  // Combine default and custom categories
   const allCategories: Category[] = [
     ...defaultCategories,
     ...(customCategories?.map(cat => ({
@@ -140,9 +162,7 @@ export const CategorySection = () => {
   }
 
   return (
-    <div className="relative max
-
--w-[1400px] mx-auto px-4 md:px-6">
+    <div className="relative max-w-[1400px] mx-auto px-4 md:px-6">
       <div className="overflow-visible relative">
         <motion.div
           className="flex gap-2 md:gap-6"
