@@ -47,12 +47,15 @@ export const ContactDialog = () => {
 
   const onSubmit = async (data: FormValues) => {
     try {
-      const { error } = await supabase.from("contact_requests").insert({
-        name: data.name,
-        email: data.email,
-        message: data.message,
-        user_id: (await supabase.auth.getUser()).data.user?.id,
-      });
+      const user = await supabase.auth.getUser();
+      const { error } = await supabase
+        .from("contact_requests")
+        .insert({
+          name: data.name,
+          email: data.email,
+          message: data.message,
+          user_id: user.data.user?.id,
+        });
 
       if (error) throw error;
 
