@@ -40,13 +40,14 @@ export const CategorySection = () => {
     },
   });
 
-  // Get view counts for trending calculation based on views in the last 30 minutes
+  // Get view counts for trending calculation based on total views
   const { data: viewCounts } = useQuery({
     queryKey: ["category-views"],
     queryFn: async () => {
       const { data: videos, error } = await supabase
         .from("youtube_videos")
         .select("category, views")
+        .is('deleted_at', null)
         .order('views', { ascending: false });
 
       if (error) throw error;
