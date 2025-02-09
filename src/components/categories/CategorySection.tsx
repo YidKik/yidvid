@@ -82,11 +82,11 @@ export const CategorySection = () => {
   return (
     <div className="relative h-[180px] overflow-hidden">
       <div className="relative w-full">
-        {/* Left fade overlay */}
-        <div className="absolute left-0 top-0 h-full w-48 z-10 bg-gradient-to-r from-white via-white/90 to-transparent" />
+        {/* Left fade overlay - increased width and opacity */}
+        <div className="absolute left-0 top-0 h-full w-72 z-10 bg-gradient-to-r from-white via-white to-transparent" />
         
-        {/* Right fade overlay */}
-        <div className="absolute right-0 top-0 h-full w-48 z-10 bg-gradient-to-l from-white via-white/90 to-transparent" />
+        {/* Right fade overlay - increased width and opacity */}
+        <div className="absolute right-0 top-0 h-full w-72 z-10 bg-gradient-to-l from-white via-white to-transparent" />
         
         <motion.div
           className="flex absolute gap-6"
