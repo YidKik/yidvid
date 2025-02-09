@@ -142,6 +142,30 @@ export type Database = {
         }
         Relationships: []
       }
+      custom_categories: {
+        Row: {
+          created_at: string
+          icon: string
+          id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          icon: string
+          id?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          icon?: string
+          id?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       hidden_channels: {
         Row: {
           channel_id: string
@@ -686,6 +710,7 @@ export type Database = {
         | "education"
         | "entertainment"
         | "other"
+        | "custom"
     }
     CompositeTypes: {
       [_ in never]: never

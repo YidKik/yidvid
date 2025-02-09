@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { BackButton } from "@/components/navigation/BackButton";
 import { VideoCategoryManagement } from "@/components/dashboard/VideoCategoryManagement";
 import { ChannelCategoryManagement } from "@/components/dashboard/ChannelCategoryManagement";
+import { CustomCategoryManagement } from "@/components/dashboard/CustomCategoryManagement";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function CategoriesPage() {
@@ -45,7 +46,24 @@ export default function CategoriesPage() {
     },
   });
 
-  if (videosError || channelsError) {
+  const { data: customCategories, isLoading: categoriesLoading, error: categoriesError, refetch: refetchCategories } = useQuery({
+    queryKey: ["custom-categories"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("custom_categories")
+        .select("*")
+        .order("name", { ascending: true });
+
+      if (error) {
+        console.error("Error fetching custom categories:", error);
+        throw error;
+      }
+
+      return data || [];
+    },
+  });
+
+  if (videosError || channelsError || categoriesError) {
     return (
       <div className="container mx-auto py-8">
         <div className="text-center text-red-500">
@@ -67,6 +85,7 @@ export default function CategoriesPage() {
           <TabsList>
             <TabsTrigger value="videos">Videos</TabsTrigger>
             <TabsTrigger value="channels">Channels</TabsTrigger>
+            <TabsTrigger value="categories">Categories</TabsTrigger>
           </TabsList>
 
           <TabsContent value="videos">
@@ -89,6 +108,19 @@ export default function CategoriesPage() {
                 refetchChannels();
                 refetchVideos();
               }} />
+            )}
+          </TabsContent>
+
+          <TabsContent value="categories">
+            {categoriesLoading ? (
+              <div className="flex justify-center py-8">
+                <Loader2 className="h-8 w-8 animate-spin" />
+              </div>
+            ) : (
+              <CustomCategoryManagement 
+                categories={customCategories || []} 
+                onUpdate={() => refetchCategories()} 
+              />
             )}
           </TabsContent>
         </Tabs>
