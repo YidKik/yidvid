@@ -124,9 +124,9 @@ export const CategorySection = () => {
   }
 
   return (
-    <div className="relative w-full py-8">
-      <div className="max-w-[1200px] mx-auto px-4 md:px-6">
-        <div className="overflow-hidden relative h-[180px] md:h-[200px]">
+    <div className="relative w-full py-16">
+      <div className="max-w-[1400px] mx-auto px-8 md:px-12">
+        <div className="overflow-hidden relative h-[180px] md:h-[200px] pt-8">
           <motion.div
             className="flex gap-4 md:gap-8"
             animate={{
