@@ -45,16 +45,21 @@ export const useComments = () => {
 };
 
 export const CommentsProvider = ({ children }: { children: ReactNode }) => {
-  // First check if user is authenticated and is admin
-  const { data: session } = useQuery({
+  // First check if user is authenticated
+  const { data: session, isLoading: isSessionLoading } = useQuery({
     queryKey: ["session"],
     queryFn: async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (error) {
+        console.error("Session error:", error);
+        return null;
+      }
       return session;
     },
   });
 
-  const { data: profile } = useQuery({
+  // Then check if user is admin
+  const { data: profile, isLoading: isProfileLoading } = useQuery({
     queryKey: ["profile", session?.user?.id],
     queryFn: async () => {
       if (!session?.user?.id) return null;
@@ -65,17 +70,20 @@ export const CommentsProvider = ({ children }: { children: ReactNode }) => {
         .eq("id", session.user.id)
         .maybeSingle();
 
-      if (error) throw error;
+      if (error) {
+        console.error("Profile error:", error);
+        return null;
+      }
       return data;
     },
     enabled: !!session?.user?.id,
   });
 
+  // Only fetch notifications if user is authenticated and is admin
   const { data: notifications, refetch: refetchNotificationsQuery } = useQuery({
     queryKey: ["admin-notifications"],
     queryFn: async () => {
-      if (!profile?.is_admin) {
-        console.log("User is not admin, skipping notifications fetch");
+      if (!session?.user?.id || !profile?.is_admin) {
         return [];
       }
 
@@ -98,14 +106,14 @@ export const CommentsProvider = ({ children }: { children: ReactNode }) => {
 
       return data as AdminNotification[];
     },
-    enabled: !!profile?.is_admin,
+    enabled: !!session?.user?.id && !!profile?.is_admin && !isSessionLoading && !isProfileLoading,
   });
 
+  // Only fetch comments if user is authenticated and is admin
   const { data: comments, refetch: refetchCommentsQuery } = useQuery({
     queryKey: ["all-comments"],
     queryFn: async () => {
-      if (!profile?.is_admin) {
-        console.log("User is not admin, skipping comments fetch");
+      if (!session?.user?.id || !profile?.is_admin) {
         return [];
       }
 
@@ -135,11 +143,11 @@ export const CommentsProvider = ({ children }: { children: ReactNode }) => {
 
       return data as Comment[];
     },
-    enabled: !!profile?.is_admin,
+    enabled: !!session?.user?.id && !!profile?.is_admin && !isSessionLoading && !isProfileLoading,
   });
 
   const handleDeleteComment = async (commentId: string) => {
-    if (!profile?.is_admin) {
+    if (!session?.user?.id || !profile?.is_admin) {
       toast({
         title: "Permission denied",
         description: "Only admins can delete comments",
