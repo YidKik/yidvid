@@ -23,43 +23,76 @@ export const YouTubeChannelsSection = () => {
   const { data: channels, refetch } = useQuery({
     queryKey: ["youtube-channels", searchQuery],
     queryFn: async () => {
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      try {
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
       
-      if (sessionError || !session) {
-        console.error("Authentication error:", sessionError);
-        toast.error("Please sign in to access this feature");
-        navigate("/auth");
-        return [];
-      }
+        if (sessionError) {
+          console.error("Session error:", sessionError);
+          toast.error("Authentication error");
+          navigate("/auth");
+          return [];
+        }
 
-      let query = supabase
-        .from("youtube_channels")
-        .select("*")
-        .order("created_at", { ascending: false });
+        if (!session) {
+          console.log("No active session");
+          toast.error("Please sign in to access this feature");
+          navigate("/auth");
+          return [];
+        }
 
-      if (searchQuery.trim()) {
-        query = query.ilike("title", `%${searchQuery.trim()}%`);
-      }
-
-      const { data, error } = await query;
-
-      if (error) {
-        console.error("Error fetching channels:", error);
-        if (error.message.includes("JWT")) {
+        // Try to refresh the session if it exists but might be expired
+        const { data: { session: refreshedSession }, error: refreshError } = await supabase.auth.refreshSession();
+        
+        if (refreshError || !refreshedSession) {
+          console.error("Session refresh error:", refreshError);
           toast.error("Session expired. Please sign in again");
           navigate("/auth");
           return [];
         }
-        toast.error("Error fetching channels");
+
+        let query = supabase
+          .from("youtube_channels")
+          .select("*")
+          .order("created_at", { ascending: false });
+
+        if (searchQuery.trim()) {
+          query = query.ilike("title", `%${searchQuery.trim()}%`);
+        }
+
+        const { data, error } = await query;
+
+        if (error) {
+          console.error("Error fetching channels:", error);
+          if (error.message.includes("JWT")) {
+            toast.error("Session expired. Please sign in again");
+            navigate("/auth");
+            return [];
+          }
+          toast.error("Error fetching channels");
+          return [];
+        }
+
+        return data || [];
+      } catch (error) {
+        console.error("Unexpected error:", error);
+        toast.error("An unexpected error occurred");
         return [];
       }
-
-      return data || [];
     },
+    retry: 1,
+    refetchOnWindowFocus: false,
   });
 
   const handleDeleteChannel = async (channelId: string) => {
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        toast.error("Please sign in to perform this action");
+        navigate("/auth");
+        return;
+      }
+
       setIsDeleting(true);
       console.log("Starting channel deletion process for:", channelId);
 
