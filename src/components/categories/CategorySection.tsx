@@ -1,4 +1,3 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
@@ -125,10 +124,10 @@ export const CategorySection = () => {
 
   return (
     <div className="relative w-full py-16">
-      <div className="max-w-[1600px] mx-auto px-12 md:px-16">
+      <div className="max-w-screen-sm md:max-w-[1600px] mx-auto px-4 md:px-16">
         <div className="overflow-hidden relative h-[180px] md:h-[200px] pt-8">
-          {/* Left fade gradient */}
-          <div className="absolute left-0 top-0 w-48 h-full bg-gradient-to-r from-white via-white to-transparent z-10" />
+          {/* Left fade gradient - only visible on desktop */}
+          <div className="hidden md:block absolute left-0 top-0 w-48 h-full bg-gradient-to-r from-white via-white to-transparent z-10" />
           
           <motion.div
             className="flex gap-4 md:gap-8"
@@ -151,7 +150,7 @@ export const CategorySection = () => {
             {infiniteCategories.map((category, index) => (
               <div
                 key={`${category.id}-${index}`}
-                className="w-[180px] md:w-[320px] flex-shrink-0 relative"
+                className="w-[140px] md:w-[320px] flex-shrink-0 relative"
               >
                 {viewCounts && viewCounts[category.id] && viewCounts[category.id] > 0 && (
                   <TrendingCategoryBadge count={viewCounts[category.id]} />
@@ -166,11 +165,10 @@ export const CategorySection = () => {
             ))}
           </motion.div>
 
-          {/* Right fade gradient */}
-          <div className="absolute right-0 top-0 w-48 h-full bg-gradient-to-l from-white via-white to-transparent z-10" />
+          {/* Right fade gradient - only visible on desktop */}
+          <div className="hidden md:block absolute right-0 top-0 w-48 h-full bg-gradient-to-l from-white via-white to-transparent z-10" />
         </div>
       </div>
     </div>
   );
 };
-
