@@ -68,34 +68,34 @@ export const NotificationsMenu = ({ session, onMarkAsRead }: NotificationsMenuPr
       </SheetTrigger>
       <SheetContent 
         side="right"
-        className="w-full sm:w-[400px] bg-[#222222] border-[#333333] p-0"
+        className="w-[280px] sm:w-[400px] bg-[#222222] border-[#333333] p-0"
       >
-        <SheetHeader className="p-6 border-b border-[#333333]">
-          <SheetTitle className="text-white text-xl">Notifications</SheetTitle>
+        <SheetHeader className="p-4 sm:p-6 border-b border-[#333333]">
+          <SheetTitle className="text-white text-lg sm:text-xl">Notifications</SheetTitle>
         </SheetHeader>
-        <ScrollArea className="h-[calc(100vh-100px)]">
+        <ScrollArea className="h-[calc(100vh-80px)] sm:h-[calc(100vh-100px)]">
           {notifications && notifications.length > 0 ? (
             <div className="animate-fade-in">
               {notifications.map((notification) => (
                 <div
                   key={notification.id}
-                  className="p-4 hover:bg-[#333333] cursor-pointer transition-colors duration-200 border-b border-[#333333] animate-fade-in"
+                  className="p-3 sm:p-4 hover:bg-[#333333] cursor-pointer transition-colors duration-200 border-b border-[#333333] animate-fade-in"
                   onClick={() => {
                     navigate(`/video/${notification.video_id}`);
                     onMarkAsRead();
                   }}
                 >
-                  <div className="flex items-start gap-3">
+                  <div className="flex items-start gap-2 sm:gap-3">
                     <img
                       src={notification.youtube_videos.thumbnail}
                       alt={notification.youtube_videos.title}
-                      className="w-24 h-16 object-cover rounded"
+                      className="w-16 sm:w-24 h-12 sm:h-16 object-cover rounded"
                     />
                     <div className="flex-1">
-                      <p className="text-sm text-white line-clamp-2 font-medium">
+                      <p className="text-xs sm:text-sm text-white line-clamp-2 font-medium">
                         New video from {notification.youtube_videos.channel_name}
                       </p>
-                      <p className="text-xs text-white/70 mt-1 line-clamp-2">
+                      <p className="text-[10px] sm:text-xs text-white/70 mt-0.5 sm:mt-1 line-clamp-2">
                         {notification.youtube_videos.title}
                       </p>
                     </div>
@@ -104,8 +104,8 @@ export const NotificationsMenu = ({ session, onMarkAsRead }: NotificationsMenuPr
               ))}
             </div>
           ) : (
-            <div className="p-6 text-center text-white/70 animate-fade-in">
-              <p>No new notifications</p>
+            <div className="p-4 sm:p-6 text-center text-white/70 animate-fade-in">
+              <p className="text-sm sm:text-base">No new notifications</p>
             </div>
           )}
         </ScrollArea>
