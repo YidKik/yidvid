@@ -137,4 +137,4 @@ export const AdminDashboardCards = ({ stats, notifications }: AdminDashboardCard
       ))}
     </div>
   );
-}
+};
