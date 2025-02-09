@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
@@ -66,9 +67,9 @@ export const RequestChannelDialog = () => {
       <DialogTrigger asChild>
         <Button 
           variant="outline" 
-          className="gap-2 bg-white hover:bg-gray-50 h-8 md:h-10 text-sm md:text-base px-3 md:px-4"
+          className="flex items-center gap-1.5 bg-white hover:bg-gray-50 h-7 md:h-9 text-xs md:text-sm px-2.5 md:px-3.5 rounded-full shadow-sm border border-gray-200"
         >
-          <Plus className="h-4 w-4" />
+          <Plus className="h-3 w-3 md:h-4 md:w-4" />
           Request Channel
         </Button>
       </DialogTrigger>
