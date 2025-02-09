@@ -3,15 +3,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-
-interface Video {
-  id: string;
-  video_id: string;
-  title: string;
-  thumbnail: string;
-  views: number;
-  uploaded_at: string;
-}
+import { Video } from "@/types/channel-videos";
 
 export const useVideoManagement = (channelId: string) => {
   const [isDeleting, setIsDeleting] = useState(false);

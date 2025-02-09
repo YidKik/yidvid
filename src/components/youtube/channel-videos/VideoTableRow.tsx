@@ -1,22 +1,7 @@
 
 import { TableCell, TableRow } from "@/components/ui/table";
 import { VideoDeleteDialog } from "./VideoDeleteDialog";
-
-interface Video {
-  id: string;
-  video_id: string;
-  title: string;
-  thumbnail: string;
-  views: number;
-  uploaded_at: string;
-}
-
-interface VideoTableRowProps {
-  video: Video;
-  isDeleting: boolean;
-  onDeleteClick: (videoId: string) => void;
-  onCancelDelete: () => void;
-}
+import { Video, VideoTableRowProps } from "@/types/channel-videos";
 
 export const VideoTableRow = ({ 
   video, 

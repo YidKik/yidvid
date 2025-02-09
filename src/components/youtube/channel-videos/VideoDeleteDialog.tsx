@@ -12,12 +12,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
-
-interface VideoDeleteDialogProps {
-  isDeleting: boolean;
-  onDelete: () => void;
-  onCancel: () => void;
-}
+import { VideoDeleteDialogProps } from "@/types/channel-videos";
 
 export const VideoDeleteDialog = ({ isDeleting, onDelete, onCancel }: VideoDeleteDialogProps) => {
   return (
