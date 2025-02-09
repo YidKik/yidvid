@@ -1,4 +1,3 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
@@ -69,7 +68,7 @@ export const CategorySection = () => {
       setCurrentIndex((prevIndex) => 
         prevIndex + 3 >= categories.length ? 0 : prevIndex + 3
       );
-    }, 4000);
+    }, 6000);
 
     return () => clearInterval(interval);
   }, []);
@@ -113,10 +112,10 @@ export const CategorySection = () => {
           className="grid grid-cols-3 gap-4 absolute w-full"
           animate={{ x: "-100%" }}
           transition={{
-            duration: 3,
-            ease: "linear",
+            duration: 4.5,
+            ease: "easeInOut",
             repeat: Infinity,
-            repeatDelay: 1,
+            repeatDelay: 1.5,
           }}
         >
           {currentGroup.map((category, index) => (
@@ -135,10 +134,10 @@ export const CategorySection = () => {
           initial={{ x: "100%" }}
           animate={{ x: "0%" }}
           transition={{
-            duration: 3,
-            ease: "linear",
+            duration: 4.5,
+            ease: "easeInOut",
             repeat: Infinity,
-            repeatDelay: 1,
+            repeatDelay: 1.5,
           }}
         >
           {nextGroup.map((category, index) => (
