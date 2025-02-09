@@ -11,7 +11,6 @@ import { motion } from "framer-motion";
 import { MusicGrid } from "@/components/music/MusicGrid";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { WelcomeAnimation } from "@/components/WelcomeAnimation";
-import { CategorySection } from "@/components/categories/CategorySection";
 
 const MainContent = () => {
   const [isMusic, setIsMusic] = useState(false);
@@ -72,10 +71,6 @@ const MainContent = () => {
               />
             </div>
           </div>
-        </div>
-
-        <div className="mb-16">
-          <CategorySection />
         </div>
 
         <motion.div
