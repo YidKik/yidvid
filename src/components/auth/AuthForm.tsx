@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
@@ -193,6 +194,9 @@ export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
           >
             {isLoading ? "Loading..." : "Sign Up"}
           </button>
+          <p className="text-xs text-center text-gray-500">
+            Already have an account? Sign in
+          </p>
         </form>
       </TabsContent>
       <TabsList className="mt-2 flex w-full justify-between bg-transparent p-0">
