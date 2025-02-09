@@ -8,6 +8,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useDebounce } from "@/hooks/use-debounce";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
 
@@ -16,6 +17,7 @@ export const SearchBar = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [showResults, setShowResults] = useState(false);
   const debouncedSearch = useDebounce(searchQuery, 200);
+  const isMobile = useIsMobile();
 
   const { data: searchResults, isFetching: isSearching } = useQuery({
     queryKey: ["quick-search", debouncedSearch],
@@ -78,16 +80,15 @@ export const SearchBar = () => {
       </Button>
       {showResults && (searchResults?.length > 0 || isSearching) && (
         <div 
-          className="absolute top-full left-0 right-0 mt-1 bg-white rounded-md shadow-lg border border-gray-100 overflow-hidden z-50 w-screen md:w-full fixed md:static md:max-w-none"
+          className={`absolute top-full left-0 right-0 mt-1 bg-white rounded-md shadow-lg border border-gray-100 overflow-hidden z-50 ${
+            isMobile ? 'fixed left-4 right-4 w-auto max-h-[calc(100vh-120px)]' : 'w-full max-h-[400px]'
+          }`}
           style={{
-            left: window.innerWidth < 768 ? '50%' : undefined,
-            transform: window.innerWidth < 768 ? 'translateX(-50%)' : undefined,
-            maxHeight: window.innerWidth < 768 ? 'calc(100vh - 120px)' : '400px',
-            width: window.innerWidth < 768 ? 'calc(100vw - 2rem)' : '100%'
+            top: isMobile ? '60px' : undefined
           }}
           onMouseDown={(e) => e.preventDefault()}
         >
-          <ScrollArea className="h-[300px] md:h-[400px] overflow-y-auto scrollbar-hide">
+          <ScrollArea className={`${isMobile ? 'h-[calc(100vh-140px)]' : 'h-[400px]'} overflow-y-auto scrollbar-hide`}>
             <div className="p-1">
               {isSearching ? (
                 <div className="flex items-center justify-center p-4 text-sm text-muted-foreground">
