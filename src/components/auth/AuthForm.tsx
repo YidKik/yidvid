@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 
 interface AuthFormProps {
   onOpenChange: (open: boolean) => void;
@@ -225,10 +225,6 @@ export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
           </p>
         </form>
       </TabsContent>
-      <TabsList className="mt-2 flex w-full justify-between bg-transparent p-0">
-        <TabsTrigger value="signin" className="text-xs" />
-        <TabsTrigger value="signup" className="text-xs" />
-      </TabsList>
     </Tabs>
   );
 };
