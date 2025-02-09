@@ -81,11 +81,26 @@ export default function CategoriesPage() {
           <h1 className="text-3xl font-bold">Category Management</h1>
         </div>
 
-        <Tabs defaultValue="videos" className="space-y-6">
-          <TabsList>
-            <TabsTrigger value="videos">Videos</TabsTrigger>
-            <TabsTrigger value="channels">Channels</TabsTrigger>
-            <TabsTrigger value="categories">Categories</TabsTrigger>
+        <Tabs defaultValue="videos" className="space-y-8">
+          <TabsList className="bg-muted p-1 rounded-full w-full sm:w-auto flex justify-center gap-2">
+            <TabsTrigger 
+              value="videos" 
+              className="rounded-full px-8 py-2.5 data-[state=active]:shadow-lg transition-all duration-200"
+            >
+              Videos
+            </TabsTrigger>
+            <TabsTrigger 
+              value="channels" 
+              className="rounded-full px-8 py-2.5 data-[state=active]:shadow-lg transition-all duration-200"
+            >
+              Channels
+            </TabsTrigger>
+            <TabsTrigger 
+              value="categories" 
+              className="rounded-full px-8 py-2.5 data-[state=active]:shadow-lg transition-all duration-200"
+            >
+              Categories
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="videos">
@@ -128,3 +143,4 @@ export default function CategoriesPage() {
     </div>
   );
 }
+
