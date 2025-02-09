@@ -1,3 +1,4 @@
+
 import { Settings, LogOut, LayoutDashboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -28,16 +29,16 @@ export const UserMenu = ({ onLogout }: UserMenuProps) => {
           <Settings className="h-3.5 w-3.5 md:h-5 md:w-5" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => navigate("/dashboard")}>
+      <DropdownMenuContent align="end" className="bg-white/95 backdrop-blur-sm border shadow-lg z-50">
+        <DropdownMenuItem onClick={() => navigate("/dashboard")} className="hover:bg-gray-100">
           <LayoutDashboard className="mr-2 h-4 w-4" />
           Dashboard
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => navigate("/settings")}>
+        <DropdownMenuItem onClick={() => navigate("/settings")} className="hover:bg-gray-100">
           <Settings className="mr-2 h-4 w-4" />
           Settings
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={onLogout}>
+        <DropdownMenuItem onClick={onLogout} className="hover:bg-gray-100">
           <LogOut className="mr-2 h-4 w-4" />
           Logout
         </DropdownMenuItem>
