@@ -69,7 +69,7 @@ export const CategorySection = () => {
       setCurrentIndex((prevIndex) => 
         prevIndex + 1 >= categories.length ? 0 : prevIndex + 1
       );
-    }, 3000);
+    }, 6000);
 
     return () => clearInterval(interval);
   }, []);
@@ -90,7 +90,7 @@ export const CategorySection = () => {
 
   const getVisibleCategories = () => {
     const visibleCategories = [];
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 3; i++) {
       const index = (currentIndex + i) % categories.length;
       visibleCategories.push({
         ...categories[index],
@@ -107,7 +107,7 @@ export const CategorySection = () => {
       <h2 className="text-xl md:text-2xl font-bold mb-6 text-center">Browse by Category</h2>
       <div className="relative h-[140px] overflow-hidden">
         <div className="absolute inset-0">
-          <AnimatePresence initial={false}>
+          <AnimatePresence mode="popLayout" initial={false}>
             {visibleCategories.map((category, index) => (
               <motion.div
                 key={category.key}
@@ -115,14 +115,14 @@ export const CategorySection = () => {
                 animate={{ x: '-100%' }}
                 exit={{ x: '-200%' }}
                 transition={{
-                  duration: 15,
+                  duration: 6,
                   ease: "linear",
-                  delay: index * 2.5
+                  delay: 0
                 }}
                 style={{
                   position: 'absolute',
                   width: 'calc(33.333% - 1.33rem)',
-                  left: '100%',
+                  left: `calc(100% + ${index * (33.333 + 4)}%)`,
                 }}
               >
                 <CategoryCard
