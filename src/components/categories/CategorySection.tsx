@@ -83,11 +83,11 @@ export const CategorySection = () => {
     <div className="relative h-[180px] overflow-hidden">
       <h2 className="text-xl md:text-2xl font-bold mb-6 text-center">Browse by Category</h2>
       <div className="relative w-full">
-        {/* Left fade overlay */}
-        <div className="absolute left-0 top-0 h-full w-32 z-10 bg-gradient-to-r from-white via-white to-transparent" />
+        {/* Left fade overlay with increased opacity and width */}
+        <div className="absolute left-0 top-0 h-full w-48 z-10 bg-gradient-to-r from-white via-white to-transparent opacity-90" />
         
-        {/* Right fade overlay */}
-        <div className="absolute right-0 top-0 h-full w-32 z-10 bg-gradient-to-l from-white via-white to-transparent" />
+        {/* Right fade overlay with increased opacity and width */}
+        <div className="absolute right-0 top-0 h-full w-48 z-10 bg-gradient-to-l from-white via-white to-transparent opacity-90" />
         
         <motion.div
           className="flex absolute gap-6"
@@ -98,7 +98,7 @@ export const CategorySection = () => {
             x: {
               repeat: Infinity,
               repeatType: "loop",
-              duration: 90,
+              duration: 180, // Increased duration for slower movement
               ease: "linear",
               repeatDelay: 0
             }
@@ -125,3 +125,4 @@ export const CategorySection = () => {
     </div>
   );
 };
+
