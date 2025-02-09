@@ -33,7 +33,7 @@ export const LogoAnimation = () => {
           <img
             src="/lovable-uploads/b9b6d425-5b4d-44dd-a983-c58a2c096e03.png"
             alt="YouTube Base"
-            className="w-full h-full object-contain"
+            className="w-[85%] h-[85%] object-contain"
           />
         </motion.div>
         
@@ -48,14 +48,23 @@ export const LogoAnimation = () => {
             delay: 0.8
           }}
           className="absolute w-full h-full flex items-start justify-center"
-          style={{ top: "-15%" }}
+          style={{ top: "-5%" }}
         >
           <img
             src="/lovable-uploads/834fcef8-3a58-43fa-939a-47e825a37a8e.png"
             alt="Kippah"
-            className="w-1/2 object-contain"
+            className="w-[35%] object-contain"
           />
         </motion.div>
+
+        {/* Final state reference (invisible but helps maintain proportions) */}
+        <div className="absolute inset-0 flex items-center justify-center opacity-0">
+          <img
+            src="/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png"
+            alt="Reference"
+            className="w-full h-full object-contain"
+          />
+        </div>
         
         {/* Pulsing background effect */}
         <motion.div
