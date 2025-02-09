@@ -1,3 +1,4 @@
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
@@ -47,7 +48,7 @@ serve(async (req) => {
       throw new Error('YouTube API key not configured');
     }
 
-    const fetchChannelVideos = async (channelId: string, pageToken?: string) => {
+    const fetchChannelVideos = async (channelId: string, pageToken?: string): Promise<{ videos: any[], nextPageToken: string | null }> => {
       try {
         // Get channel details
         const channelUrl = `https://www.googleapis.com/youtube/v3/channels?part=contentDetails,snippet&id=${channelId}&key=${apiKey}`;
@@ -92,45 +93,19 @@ serve(async (req) => {
         );
 
         // Process videos with their statistics and categorization
-        const videos = data.items.map(async (item: any) => {
-          const videoData = {
-            video_id: item.snippet.resourceId.videoId,
-            title: item.snippet.title,
-            thumbnail: item.snippet.thumbnails.high?.url || item.snippet.thumbnails.default?.url,
-            channel_id: channelId,
-            channel_name: item.snippet.channelTitle,
-            uploaded_at: item.snippet.publishedAt,
-            views: parseInt(statsMap.get(item.snippet.resourceId.videoId)?.statistics.viewCount || '0'),
-            description: statsMap.get(item.snippet.resourceId.videoId)?.description || null,
-          };
-
-          // Categorize the video
-          try {
-            const categorizationResponse = await fetch(
-              'https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/categorize-video',
-              {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': `Bearer ${Deno.env.get('SUPABASE_ANON_KEY')}`,
-                },
-                body: JSON.stringify({
-                  title: videoData.title,
-                  description: videoData.description,
-                }),
-              }
-            );
-
-            const { category } = await categorizationResponse.json();
-            return { ...videoData, category };
-          } catch (error) {
-            console.error('Error categorizing video:', error);
-            return { ...videoData, category: 'other' };
-          }
-        });
+        const processedVideos = data.items.map((item: any) => ({
+          video_id: item.snippet.resourceId.videoId,
+          title: item.snippet.title,
+          thumbnail: item.snippet.thumbnails.high?.url || item.snippet.thumbnails.default?.url,
+          channel_id: channelId,
+          channel_name: channelTitle,
+          uploaded_at: item.snippet.publishedAt,
+          views: parseInt(statsMap.get(item.snippet.resourceId.videoId)?.statistics.viewCount || '0'),
+          description: statsMap.get(item.snippet.resourceId.videoId)?.description || null,
+        }));
 
         return { 
-          videos,
+          videos: processedVideos,
           nextPageToken: data.nextPageToken || null
         };
       } catch (error) {
@@ -148,18 +123,37 @@ serve(async (req) => {
       const batch = channels.slice(i, i + batchSize);
       console.log(`[YouTube Videos] Processing batch ${i / batchSize + 1} of ${Math.ceil(channels.length / batchSize)}`);
       
-      const batchResults = await Promise.all(batch.map(channelId => fetchChannelVideos(channelId)));
-      results.push(...batchResults.map(r => r.videos).flat());
+      const batchResults = await Promise.all(
+        batch.map(async (channelId) => {
+          let allVideos = [];
+          let nextPageToken = null;
+          
+          do {
+            const { videos, nextPageToken: newPageToken } = await fetchChannelVideos(channelId, nextPageToken);
+            allVideos.push(...videos);
+            nextPageToken = newPageToken;
+            
+            if (nextPageToken) {
+              // Add a small delay between pagination requests
+              await new Promise(resolve => setTimeout(resolve, 1000));
+            }
+          } while (nextPageToken);
+          
+          return allVideos;
+        })
+      );
+      
+      results.push(...batchResults.flat());
       
       if (i + batchSize < channels.length) {
         // Add a small delay between batches to avoid rate limiting
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 2000));
       }
     }
 
-    console.log(`[YouTube Videos] Initial fetch complete. Total videos: ${results.length}`);
+    console.log(`[YouTube Videos] Fetch complete. Total videos: ${results.length}`);
 
-    // Store initial videos in batches
+    // Store videos in batches
     const batchInsertSize = 100;
     for (let i = 0; i < results.length; i += batchInsertSize) {
       const batch = results.slice(i, i + batchInsertSize);
@@ -174,38 +168,6 @@ serve(async (req) => {
         console.error(`[YouTube Videos] Error upserting batch ${Math.floor(i / batchInsertSize) + 1}:`, upsertError);
       }
     }
-
-    // Second phase: Start background task to fetch remaining videos
-    const fetchRemainingVideos = async () => {
-      for (const channelId of channels) {
-        let nextPageToken = null;
-        do {
-          const { videos, nextPageToken: newPageToken } = await fetchChannelVideos(channelId, nextPageToken);
-          
-          if (videos.length > 0) {
-            const { error: upsertError } = await supabaseClient
-              .from('youtube_videos')
-              .upsert(videos, { 
-                onConflict: 'video_id',
-                ignoreDuplicates: false
-              });
-
-            if (upsertError) {
-              console.error(`[YouTube Videos] Error upserting additional videos for channel ${channelId}:`, upsertError);
-            }
-          }
-
-          nextPageToken = newPageToken;
-          
-          // Add delay between requests to avoid rate limiting
-          await new Promise(resolve => setTimeout(resolve, 1000));
-        } while (nextPageToken);
-      }
-      console.log('[YouTube Videos] Background fetch complete');
-    };
-
-    // Start background task
-    EdgeRuntime.waitUntil(fetchRemainingVideos());
 
     return new Response(
       JSON.stringify({ success: true, count: results.length }),
