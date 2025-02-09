@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { SearchBar } from "./header/SearchBar";
 import { NotificationsMenu } from "./header/NotificationsMenu";
 import { UserMenu } from "./header/UserMenu";
+import { ContactDialog } from "./contact/ContactDialog";
 
 export const Header = () => {
   const navigate = useNavigate();
@@ -130,6 +131,7 @@ export const Header = () => {
         </div>
 
         <div className="flex items-center space-x-1 md:space-x-2">
+          <ContactDialog />
           {session ? (
             <>
               <NotificationsMenu 
