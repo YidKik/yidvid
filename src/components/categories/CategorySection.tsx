@@ -1,5 +1,6 @@
 
 import { useQuery } from "@tanstack/react-query";
+import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { CategoryCard } from "./CategoryCard";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -15,6 +16,9 @@ const categories = [
   { id: 'entertainment', label: 'Entertainment', icon: '🎬' },
   { id: 'other', label: 'Other', icon: '📌' },
 ];
+
+// Double the categories array to create a seamless loop
+const infiniteCategories = [...categories, ...categories];
 
 export const CategorySection = () => {
   const { data: categoryVideos, isLoading, refetch } = useQuery({
@@ -70,7 +74,7 @@ export const CategorySection = () => {
     return (
       <div className="grid grid-cols-3 gap-8">
         {[...Array(3)].map((_, i) => (
-          <Skeleton key={i} className="h-[140px] rounded-lg" />
+          <Skeleton key={i} className="h-[120px] rounded-lg" />
         ))}
       </div>
     );
@@ -79,16 +83,38 @@ export const CategorySection = () => {
   return (
     <div className="mt-8 mb-12">
       <h2 className="text-xl md:text-2xl font-bold mb-6 text-center">Browse by Category</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-        {categories.map((category) => (
-          <CategoryCard
-            key={category.id}
-            id={category.id}
-            icon={category.icon}
-            label={category.label}
-            count={getCategoryCount(category.id)}
-          />
-        ))}
+      <div className="relative w-full overflow-hidden h-[120px]">
+        <motion.div
+          className="flex absolute gap-6"
+          animate={{
+            x: [0, -100 * categories.length + '%']
+          }}
+          transition={{
+            x: {
+              repeat: Infinity,
+              repeatType: "loop",
+              duration: 20,
+              ease: "linear"
+            },
+          }}
+          style={{
+            width: `${(infiniteCategories.length * 100) / 3}%`
+          }}
+        >
+          {infiniteCategories.map((category, index) => (
+            <div
+              key={`${category.id}-${index}`}
+              className="w-[300px] flex-shrink-0"
+            >
+              <CategoryCard
+                id={category.id}
+                icon={category.icon}
+                label={category.label}
+                count={getCategoryCount(category.id)}
+              />
+            </div>
+          ))}
+        </motion.div>
       </div>
     </div>
   );
