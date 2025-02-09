@@ -18,7 +18,9 @@ interface VideoCategoryManagementProps {
   onUpdate: () => void;
 }
 
-const categories = [
+type VideoCategory = "music" | "torah" | "inspiration" | "podcast" | "education" | "entertainment" | "other";
+
+const categories: { value: VideoCategory; label: string }[] = [
   { value: "music", label: "Music" },
   { value: "torah", label: "Torah" },
   { value: "inspiration", label: "Inspiration" },
@@ -30,7 +32,7 @@ const categories = [
 
 export function VideoCategoryManagement({ videos, onUpdate }: VideoCategoryManagementProps) {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [selectedCategory, setSelectedCategory] = useState<VideoCategory | "">("");
 
   const filteredVideos = videos.filter((video) =>
     video.title.toLowerCase().includes(searchQuery.toLowerCase())
@@ -65,7 +67,7 @@ export function VideoCategoryManagement({ videos, onUpdate }: VideoCategoryManag
           />
         </div>
         <div className="w-full md:w-48">
-          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+          <Select value={selectedCategory} onValueChange={(value: VideoCategory) => setSelectedCategory(value)}>
             <SelectTrigger>
               <SelectValue placeholder="Select category" />
             </SelectTrigger>

@@ -1,3 +1,4 @@
+
 export interface YoutubeVideosTable {
   Row: {
     channel_id: string;
@@ -10,6 +11,7 @@ export interface YoutubeVideosTable {
     uploaded_at: string;
     video_id: string;
     views: number | null;
+    category?: "music" | "torah" | "inspiration" | "podcast" | "education" | "entertainment" | "other";
   };
   Insert: {
     channel_id: string;
@@ -22,6 +24,7 @@ export interface YoutubeVideosTable {
     uploaded_at: string;
     video_id: string;
     views?: number | null;
+    category?: "music" | "torah" | "inspiration" | "podcast" | "education" | "entertainment" | "other";
   };
   Update: {
     channel_id?: string;
@@ -34,6 +37,7 @@ export interface YoutubeVideosTable {
     uploaded_at?: string;
     video_id?: string;
     views?: number | null;
+    category?: "music" | "torah" | "inspiration" | "podcast" | "education" | "entertainment" | "other";
   };
   Relationships: [
     {
