@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
@@ -125,16 +126,16 @@ export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
   return (
     <Tabs defaultValue="signin" className="w-full">
       <div className="px-8 pt-4">
-        <TabsList className="w-full grid grid-cols-2 h-12 bg-gray-100 p-1.5 rounded-xl gap-3">
+        <TabsList className="w-full grid grid-cols-2 h-12 bg-gray-100/70 p-1.5 rounded-xl gap-3">
           <TabsTrigger 
             value="signin" 
-            className="rounded-lg text-sm font-medium data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all"
+            className="rounded-lg text-sm font-medium text-gray-600 data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-md data-[state=active]:scale-105 data-[state=active]:font-semibold transition-all duration-200 hover:bg-white/50"
           >
             Sign In
           </TabsTrigger>
           <TabsTrigger 
             value="signup"
-            className="rounded-lg text-sm font-medium data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all"
+            className="rounded-lg text-sm font-medium text-gray-600 data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-md data-[state=active]:scale-105 data-[state=active]:font-semibold transition-all duration-200 hover:bg-white/50"
           >
             Sign Up
           </TabsTrigger>
