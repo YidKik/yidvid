@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { CategoryCard } from "./CategoryCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEffect } from "react";
+import { TrendingCategoryBadge } from "./TrendingCategoryBadge";
 
 interface Category {
   id: string;
@@ -37,6 +38,32 @@ export const CategorySection = () => {
       if (error) throw error;
       return data || [];
     },
+  });
+
+  // Get view counts for trending calculation
+  const { data: viewCounts } = useQuery({
+    queryKey: ["category-views"],
+    queryFn: async () => {
+      const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000).toISOString();
+      
+      const { data, error } = await supabase
+        .from("youtube_videos")
+        .select("category, views")
+        .gte("last_viewed_at", thirtyMinutesAgo);
+
+      if (error) throw error;
+
+      // Calculate total views per category in the last 30 minutes
+      const categoryViews = (data || []).reduce((acc, curr) => {
+        if (curr.category) {
+          acc[curr.category] = (acc[curr.category] || 0) + (curr.views || 0);
+        }
+        return acc;
+      }, {} as Record<string, number>);
+
+      return categoryViews;
+    },
+    refetchInterval: 60000, // Refetch every minute
   });
 
   const { data: customCategories, isLoading: categoriesLoading } = useQuery({
@@ -121,8 +148,11 @@ export const CategorySection = () => {
           {infiniteCategories.map((category, index) => (
             <div
               key={`${category.id}-${index}`}
-              className="w-[140px] md:w-[300px] flex-shrink-0"
+              className="w-[140px] md:w-[300px] flex-shrink-0 relative"
             >
+              {viewCounts && viewCounts[category.id] && viewCounts[category.id] > 0 && (
+                <TrendingCategoryBadge count={viewCounts[category.id]} />
+              )}
               <CategoryCard
                 id={category.id}
                 icon={category.icon}
@@ -136,3 +166,4 @@ export const CategorySection = () => {
     </div>
   );
 };
+
