@@ -94,8 +94,7 @@ export const CategorySection = () => {
       const index = (currentIndex + i) % categories.length;
       visibleCategories.push({
         ...categories[index],
-        key: `${categories[index].id}-${currentIndex}-${i}`,
-        position: i
+        key: `${categories[index].id}-${currentIndex}-${i}`
       });
     }
     return visibleCategories;
@@ -107,13 +106,13 @@ export const CategorySection = () => {
     <div className="mt-8 mb-12">
       <h2 className="text-xl md:text-2xl font-bold mb-6 text-center">Browse by Category</h2>
       <div className="relative h-[140px] overflow-hidden">
-        <div className="grid grid-cols-3 gap-8 absolute w-full">
+        <div className="grid grid-cols-3 gap-8">
           <AnimatePresence initial={false}>
-            {visibleCategories.map((category) => (
+            {visibleCategories.map((category, index) => (
               <motion.div
                 key={category.key}
                 initial={{ x: '100%' }}
-                animate={{ x: 0 }}
+                animate={{ x: `${index * -33.333}%` }}
                 exit={{ x: '-100%' }}
                 transition={{
                   duration: 3,
@@ -122,8 +121,7 @@ export const CategorySection = () => {
                 style={{
                   position: 'absolute',
                   width: 'calc(33.333% - 1.33rem)',
-                  left: `${category.position * 33.333}%`,
-                  paddingLeft: category.position > 0 ? '2rem' : 0
+                  left: '100%'
                 }}
               >
                 <CategoryCard
