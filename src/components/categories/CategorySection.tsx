@@ -18,7 +18,7 @@ const categories = [
 ];
 
 export const CategorySection = () => {
-  const [duplicatedCategories, setDuplicatedCategories] = useState([...categories, ...categories, ...categories]);
+  const [currentIndex, setCurrentIndex] = useState(0);
   const { data: categoryVideos, isLoading, refetch } = useQuery({
     queryKey: ["category-videos"],
     queryFn: async () => {
@@ -64,15 +64,12 @@ export const CategorySection = () => {
     processExistingVideos();
   }, []);
 
-  // Vertical scroll effect
   useEffect(() => {
     const interval = setInterval(() => {
-      setDuplicatedCategories(prev => {
-        const firstItem = prev[0];
-        const newArray = [...prev.slice(1), firstItem];
-        return newArray;
-      });
-    }, 3000); // Adjust scroll speed by changing this value
+      setCurrentIndex((prevIndex) => 
+        prevIndex + 1 >= categories.length ? 0 : prevIndex + 1
+      );
+    }, 3000);
 
     return () => clearInterval(interval);
   }, []);
@@ -83,37 +80,37 @@ export const CategorySection = () => {
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 gap-4 p-4">
+      <div className="grid grid-cols-3 gap-4 p-4">
         {[...Array(3)].map((_, i) => (
-          <Skeleton key={i} className="h-40 rounded-lg" />
+          <Skeleton key={i} className="h-[140px] rounded-lg" />
         ))}
       </div>
     );
   }
 
+  const getVisibleCategories = () => {
+    const result = [];
+    for (let i = 0; i < 3; i++) {
+      const index = (currentIndex + i) % categories.length;
+      result.push(categories[index]);
+    }
+    return result;
+  };
+
   return (
-    <section className="py-8 px-4 md:px-6 overflow-hidden">
+    <section className="py-8 px-4 md:px-6">
       <h2 className="text-xl md:text-2xl font-bold mb-6 text-center">Browse by Category</h2>
-      <div className="relative h-[500px] overflow-hidden">
-        <div className="absolute inset-0 flex flex-col gap-4">
-          {duplicatedCategories.map((category, index) => (
+      <div className="relative h-[140px] overflow-hidden">
+        <div className="grid grid-cols-3 gap-4">
+          {getVisibleCategories().map((category, index) => (
             <motion.div
-              key={`${category.id}-${index}`}
+              key={`${category.id}-${currentIndex}-${index}`}
               initial={{ x: "100%", opacity: 0 }}
-              animate={{ 
-                x: 0, 
-                opacity: 1,
-                y: `-${index * 100}%`,
-              }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: "-100%", opacity: 0 }}
               transition={{
-                duration: 0.8,
+                duration: 0.5,
                 ease: "easeInOut",
-              }}
-              className="w-full min-h-[200px]"
-              style={{
-                position: 'absolute',
-                top: 0,
-                transform: `translateY(${index * 200}px)`,
               }}
             >
               <CategoryCard
