@@ -121,6 +121,10 @@ const Settings = () => {
         </section>
 
         <section className="mb-12">
+          <VideoHistorySection />
+        </section>
+
+        <section className="mb-12">
           <h2 className="text-2xl font-semibold mb-4">Channel Subscriptions</h2>
           <Card className="p-6">
             {userId ? (
