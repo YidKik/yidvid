@@ -76,6 +76,7 @@ export const CategorySection = () => {
             transition={{ duration: 0.3, delay: index * 0.1 }}
           >
             <CategoryCard
+              id={category.id}
               icon={category.icon}
               label={category.label}
               count={getCategoryCount(category.id)}

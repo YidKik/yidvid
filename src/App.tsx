@@ -1,3 +1,4 @@
+
 import { Routes, Route, useLocation } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -18,6 +19,7 @@ import RequestsPage from "@/pages/admin/RequestsPage";
 import UsersPage from "@/pages/admin/UsersPage";
 import AnalyticsPage from "@/pages/admin/AnalyticsPage";
 import VideosPage from "@/pages/admin/VideosPage";
+import CategoryVideos from "@/pages/CategoryVideos";
 
 // Create a client
 const queryClient = new QueryClient({
@@ -46,6 +48,7 @@ function AppRoutes() {
       <Route path="/settings" element={<Settings />} />
       <Route path="/music/:id" element={<MusicDetails />} />
       <Route path="/search" element={<Search />} />
+      <Route path="/category/:id" element={<CategoryVideos />} />
       
       {/* Admin Routes */}
       <Route path="/admin/channels" element={<ChannelsPage />} />
