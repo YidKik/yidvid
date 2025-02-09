@@ -42,7 +42,7 @@ serve(async (req) => {
       throw new Error('Play.ht credentials not configured');
     }
 
-    // Create generation request
+    // Create generation request with shorter content
     console.log('Creating speech generation request...');
     const createResponse = await fetch(
       'https://api.play.ht/api/v2/tts',
@@ -55,9 +55,9 @@ serve(async (req) => {
           'Accept': 'application/json',
         },
         body: JSON.stringify({
-          text: text,
+          text: text.slice(0, 500), // Limit text length to avoid timeouts
           voice: 'larry',
-          quality: 'medium',
+          quality: 'draft', // Use draft quality for faster processing
           output_format: 'mp3',
           speed: 1,
           sample_rate: 24000,
@@ -67,6 +67,7 @@ serve(async (req) => {
 
     if (!createResponse.ok) {
       const error = await createResponse.text();
+      console.error('Play.ht creation error:', error);
       throw new Error(`Failed to create speech generation: ${error}`);
     }
 
@@ -78,11 +79,11 @@ serve(async (req) => {
       throw new Error('No generation ID received from Play.ht');
     }
 
-    // Poll until the audio is ready
+    // Poll until the audio is ready with shorter intervals
     let audioUrl = null;
     let attempts = 0;
-    const maxAttempts = 30;
-    const pollInterval = 2000; // 2 seconds
+    const maxAttempts = 15; // Reduce max attempts
+    const pollInterval = 1000; // Poll every second
     
     while (!audioUrl && attempts < maxAttempts) {
       console.log(`Checking speech status (attempt ${attempts + 1}/${maxAttempts})...`);
@@ -100,6 +101,7 @@ serve(async (req) => {
 
       if (!checkResponse.ok) {
         const error = await checkResponse.text();
+        console.error('Play.ht status check error:', error);
         throw new Error(`Failed to check speech status: ${error}`);
       }
 
@@ -110,6 +112,7 @@ serve(async (req) => {
         audioUrl = status.url;
         break;
       } else if (status.error) {
+        console.error('Play.ht conversion error:', status.error);
         throw new Error(`Speech synthesis failed: ${status.error}`);
       }
 
@@ -120,14 +123,16 @@ serve(async (req) => {
     }
 
     if (!audioUrl) {
-      throw new Error('Timed out waiting for audio generation');
+      console.error('Conversion timed out after all attempts');
+      throw new Error('Audio generation timed out. Please try with shorter text.');
     }
 
     // Fetch the audio file
-    console.log('Fetching generated audio...');
+    console.log('Fetching generated audio from:', audioUrl);
     const audioResponse = await fetch(audioUrl);
     
     if (!audioResponse.ok) {
+      console.error('Audio fetch error:', await audioResponse.text());
       throw new Error('Failed to fetch generated audio file');
     }
     
