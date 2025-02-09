@@ -57,8 +57,14 @@ serve(async (req) => {
                 { role: 'system', content: 'You are a helpful assistant that categorizes videos. Only respond with the category name.' },
                 { role: 'user', content: prompt }
               ],
+              temperature: 0.3,
+              max_tokens: 10
             }),
           })
+
+          if (!response.ok) {
+            throw new Error(`OpenAI API error: ${response.statusText}`)
+          }
 
           const data = await response.json()
           const category = data.choices[0].message.content.trim().toLowerCase()
@@ -71,15 +77,16 @@ serve(async (req) => {
 
           if (updateError) throw updateError
 
-          console.log(`Categorized video ${video.id} as ${category}`)
-          return { id: video.id, category }
+          console.log(`Successfully categorized video ${video.id} as ${category}`)
+          return { id: video.id, category, success: true }
         } catch (error) {
           console.error(`Error categorizing video ${video.id}:`, error)
-          return { id: video.id, error }
+          return { id: video.id, error: error.message, success: false }
         }
       })
 
-      await Promise.all(promises)
+      const results = await Promise.all(promises)
+      console.log(`Batch results:`, results)
       
       // Add a small delay between batches to avoid rate limiting
       if (i + batchSize < videos.length) {
