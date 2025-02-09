@@ -106,22 +106,23 @@ export const CategorySection = () => {
     <div className="mt-8 mb-12">
       <h2 className="text-xl md:text-2xl font-bold mb-6 text-center">Browse by Category</h2>
       <div className="relative h-[140px] overflow-hidden">
-        <div className="grid grid-cols-3 gap-8">
+        <div className="absolute inset-0">
           <AnimatePresence initial={false}>
             {visibleCategories.map((category, index) => (
               <motion.div
                 key={category.key}
-                initial={{ x: '100%' }}
-                animate={{ x: `${index * -33.333}%` }}
-                exit={{ x: '-100%' }}
+                initial={{ x: '100vw' }}
+                animate={{ x: '-100vw' }}
+                exit={{ x: '-200vw' }}
                 transition={{
                   duration: 3,
-                  ease: "linear"
+                  ease: "linear",
+                  delay: index * 0.2
                 }}
                 style={{
                   position: 'absolute',
                   width: 'calc(33.333% - 1.33rem)',
-                  left: '100%'
+                  left: `calc(${100 + (index * 33.333)}%)`,
                 }}
               >
                 <CategoryCard
@@ -138,3 +139,4 @@ export const CategorySection = () => {
     </div>
   );
 };
+
