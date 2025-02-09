@@ -17,8 +17,8 @@ const categories = [
   { id: 'other', label: 'Other', icon: '📌' },
 ];
 
-// Double the categories array to create a seamless loop
-const infiniteCategories = [...categories, ...categories];
+// Triple the categories array to ensure smooth looping
+const infiniteCategories = [...categories, ...categories, ...categories];
 
 export const CategorySection = () => {
   const { data: categoryVideos, isLoading, refetch } = useQuery({
@@ -87,13 +87,13 @@ export const CategorySection = () => {
         <motion.div
           className="flex absolute gap-6"
           animate={{
-            x: [0, -100 * categories.length + '%']
+            x: ['0%', '-100%']
           }}
           transition={{
             x: {
               repeat: Infinity,
               repeatType: "loop",
-              duration: 20,
+              duration: 45,
               ease: "linear"
             },
           }}
