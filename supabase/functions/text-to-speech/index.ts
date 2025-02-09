@@ -78,7 +78,7 @@ serve(async (req) => {
       throw new Error('No generation ID received from Play.ht');
     }
 
-    // Poll until the audio is ready with increased timeout
+    // Poll until the audio is ready
     let audioUrl = null;
     let attempts = 0;
     const maxAttempts = 30;
@@ -163,4 +163,3 @@ serve(async (req) => {
     );
   }
 });
-
