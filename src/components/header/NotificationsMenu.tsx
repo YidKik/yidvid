@@ -1,12 +1,15 @@
+
 import { Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -45,8 +48,8 @@ export const NotificationsMenu = ({ session, onMarkAsRead }: NotificationsMenuPr
   });
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
+    <Sheet>
+      <SheetTrigger asChild>
         <Button 
           variant="ghost" 
           size="icon" 
@@ -62,44 +65,52 @@ export const NotificationsMenu = ({ session, onMarkAsRead }: NotificationsMenuPr
             </Badge>
           )}
         </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent 
-        align="end" 
-        className="bg-[#222222] border-[#333333] w-[280px] md:w-[300px] max-h-[60vh] md:max-h-[70vh]"
+      </SheetTrigger>
+      <SheetContent 
+        side="right"
+        className="w-full sm:w-[400px] bg-[#222222] border-[#333333] p-0"
       >
-        <ScrollArea className="h-[250px] md:h-[300px]">
+        <SheetHeader className="p-6 border-b border-[#333333]">
+          <SheetTitle className="text-white text-xl">Notifications</SheetTitle>
+        </SheetHeader>
+        <ScrollArea className="h-[calc(100vh-100px)]">
           {notifications && notifications.length > 0 ? (
-            notifications.map((notification) => (
-              <div
-                key={notification.id}
-                className="p-2 md:p-3 hover:bg-[#333333] cursor-pointer"
-                onClick={() => {
-                  navigate(`/video/${notification.video_id}`);
-                  onMarkAsRead();
-                }}
-              >
-                <div className="flex items-start gap-2">
-                  <img
-                    src={notification.youtube_videos.thumbnail}
-                    alt={notification.youtube_videos.title}
-                    className="w-14 h-10 md:w-16 md:h-12 object-cover rounded"
-                  />
-                  <div>
-                    <p className="text-xs md:text-sm text-white line-clamp-2">
-                      New video from {notification.youtube_videos.channel_name}
-                    </p>
-                    <p className="text-[10px] md:text-xs text-white/70 mt-0.5 line-clamp-1">
-                      {notification.youtube_videos.title}
-                    </p>
+            <div className="animate-fade-in">
+              {notifications.map((notification) => (
+                <div
+                  key={notification.id}
+                  className="p-4 hover:bg-[#333333] cursor-pointer transition-colors duration-200 border-b border-[#333333] animate-fade-in"
+                  onClick={() => {
+                    navigate(`/video/${notification.video_id}`);
+                    onMarkAsRead();
+                  }}
+                >
+                  <div className="flex items-start gap-3">
+                    <img
+                      src={notification.youtube_videos.thumbnail}
+                      alt={notification.youtube_videos.title}
+                      className="w-24 h-16 object-cover rounded"
+                    />
+                    <div className="flex-1">
+                      <p className="text-sm text-white line-clamp-2 font-medium">
+                        New video from {notification.youtube_videos.channel_name}
+                      </p>
+                      <p className="text-xs text-white/70 mt-1 line-clamp-2">
+                        {notification.youtube_videos.title}
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))
+              ))}
+            </div>
           ) : (
-            <p className="text-xs md:text-sm text-white/70 p-3">No new notifications</p>
+            <div className="p-6 text-center text-white/70 animate-fade-in">
+              <p>No new notifications</p>
+            </div>
           )}
         </ScrollArea>
-      </DropdownMenuContent>
-    </DropdownMenu>
+      </SheetContent>
+    </Sheet>
   );
 };
+
