@@ -5,7 +5,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { AdminDashboardCards } from "@/components/dashboard/AdminDashboardCards";
-import { ReportedVideosSection } from "@/components/dashboard/ReportedVideosSection";
 
 export default function Dashboard() {
   const { data: session } = useQuery({
@@ -61,7 +60,6 @@ export default function Dashboard() {
     enabled: profile?.is_admin === true
   });
 
-  // Query for notifications
   const { data: notifications } = useQuery({
     queryKey: ["admin-notifications"],
     queryFn: async () => {
@@ -78,7 +76,7 @@ export default function Dashboard() {
       return notificationsData;
     },
     enabled: profile?.is_admin === true,
-    refetchInterval: 30000, // Refetch every 30 seconds
+    refetchInterval: 30000,
   });
 
   if (isProfileLoading) {
@@ -99,7 +97,6 @@ export default function Dashboard() {
     );
   }
 
-  // Check if user is admin
   const isAdmin = profile?.is_admin === true;
 
   return (
@@ -114,10 +111,7 @@ export default function Dashboard() {
       </div>
       
       {isAdmin ? (
-        <>
-          <AdminDashboardCards stats={stats} notifications={notifications} />
-          <ReportedVideosSection />
-        </>
+        <AdminDashboardCards stats={stats} notifications={notifications} />
       ) : (
         <div className="text-center text-gray-500 mt-8 p-8 bg-gray-50 rounded-lg">
           You do not have admin access to view additional dashboard features.
