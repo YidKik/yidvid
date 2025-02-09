@@ -1,10 +1,9 @@
 
 import { useQuery } from "@tanstack/react-query";
-import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { CategoryCard } from "./CategoryCard";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { toast } from "sonner";
 
 const categories = [
@@ -18,7 +17,6 @@ const categories = [
 ];
 
 export const CategorySection = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
   const { data: categoryVideos, isLoading, refetch } = useQuery({
     queryKey: ["category-videos"],
     queryFn: async () => {
@@ -64,16 +62,6 @@ export const CategorySection = () => {
     processExistingVideos();
   }, []);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentIndex((prevIndex) => 
-        prevIndex + 1 >= categories.length ? 0 : prevIndex + 1
-      );
-    }, 6000);
-
-    return () => clearInterval(interval);
-  }, []);
-
   const getCategoryCount = (categoryId: string) => {
     return categoryVideos?.filter(video => video.category === categoryId).length || 0;
   };
@@ -88,53 +76,19 @@ export const CategorySection = () => {
     );
   }
 
-  const getVisibleCategories = () => {
-    const visibleCategories = [];
-    for (let i = 0; i < 3; i++) {
-      const index = (currentIndex + i) % categories.length;
-      visibleCategories.push({
-        ...categories[index],
-        key: `${categories[index].id}-${currentIndex}-${i}`
-      });
-    }
-    return visibleCategories;
-  };
-
-  const visibleCategories = getVisibleCategories();
-
   return (
     <div className="mt-8 mb-12">
       <h2 className="text-xl md:text-2xl font-bold mb-6 text-center">Browse by Category</h2>
-      <div className="relative h-[140px] overflow-hidden">
-        <div className="absolute inset-0">
-          <AnimatePresence mode="popLayout" initial={false}>
-            {visibleCategories.map((category, index) => (
-              <motion.div
-                key={category.key}
-                initial={{ x: '100%' }}
-                animate={{ x: '-100%' }}
-                exit={{ x: '-200%' }}
-                transition={{
-                  duration: 6,
-                  ease: "linear",
-                  delay: 0
-                }}
-                style={{
-                  position: 'absolute',
-                  width: 'calc(33.333% - 1.33rem)',
-                  left: `calc(100% + ${index * (33.333 + 4)}%)`,
-                }}
-              >
-                <CategoryCard
-                  id={category.id}
-                  icon={category.icon}
-                  label={category.label}
-                  count={getCategoryCount(category.id)}
-                />
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+        {categories.map((category) => (
+          <CategoryCard
+            key={category.id}
+            id={category.id}
+            icon={category.icon}
+            label={category.label}
+            count={getCategoryCount(category.id)}
+          />
+        ))}
       </div>
     </div>
   );
