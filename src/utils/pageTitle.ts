@@ -28,3 +28,4 @@ export const getPageTitle = (path: string): string => {
   
   return `${baseTitle} | ${APP_NAME}`;
 };
+
