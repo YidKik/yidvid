@@ -103,10 +103,10 @@ export const ContactDialog = () => {
         <Button 
           variant="outline" 
           size="sm"
-          className="flex items-center gap-1.5 bg-white hover:bg-gray-50 h-7 md:h-9 text-xs md:text-sm px-2.5 md:px-3.5 rounded-full shadow-sm border border-gray-200"
+          className="flex items-center gap-1.5 bg-white hover:bg-gray-50 h-7 md:h-9 px-2 md:px-3.5 rounded-full shadow-sm border border-gray-200"
         >
-          <MessageSquare className="h-3 w-3 md:h-4 md:w-4" />
-          Contact
+          <MessageSquare className="h-3.5 w-3.5" />
+          <span className="hidden md:inline">Contact</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">
@@ -217,3 +217,4 @@ export const ContactDialog = () => {
     </Dialog>
   );
 };
+
