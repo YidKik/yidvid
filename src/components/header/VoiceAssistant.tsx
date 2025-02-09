@@ -95,25 +95,36 @@ export const VoiceAssistant: React.FC<VoiceAssistantProps> = ({ onSpeakingChange
   };
 
   return (
-    <Button
-      onClick={isConnected ? endConversation : startConversation}
-      variant="ghost"
-      size="icon"
-      className={cn(
-        "relative w-9 h-9 p-2 rounded-full transition-colors",
-        isConnected && "bg-primary/10 hover:bg-primary/20",
-        (isListening || isPlaying) && "animate-pulse"
+    <div className="relative">
+      <Button
+        onClick={isConnected ? endConversation : startConversation}
+        variant="ghost"
+        size="icon"
+        className={cn(
+          "relative w-9 h-9 p-2 rounded-full transition-colors z-10",
+          isConnected && "bg-primary/10 hover:bg-primary/20",
+          (isListening || isPlaying) && "animate-none"
+        )}
+        disabled={isPlaying}
+      >
+        {isConnected ? (
+          <Mic className={cn(
+            "h-5 w-5",
+            (isListening || isPlaying) ? "text-primary" : "text-primary/80"
+          )} />
+        ) : (
+          <MicOff className="h-5 w-5 text-primary/80" />
+        )}
+      </Button>
+      
+      {/* Animated circles */}
+      {(isListening || isPlaying) && (
+        <>
+          <div className="absolute inset-0 rounded-full animate-ping bg-primary/30" />
+          <div className="absolute -inset-2 rounded-full animate-pulse-slow bg-primary/20" />
+          <div className="absolute -inset-4 rounded-full animate-pulse-slower bg-primary/10" />
+        </>
       )}
-      disabled={isPlaying}
-    >
-      {isConnected ? (
-        <Mic className={cn(
-          "h-5 w-5",
-          (isListening || isPlaying) ? "text-primary animate-pulse" : "text-primary/80"
-        )} />
-      ) : (
-        <MicOff className="h-5 w-5 text-primary/80" />
-      )}
-    </Button>
+    </div>
   );
 };

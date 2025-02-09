@@ -37,12 +37,22 @@ export default {
         scaleIn: {
           '0%': { opacity: '0', transform: 'scale(0.95)' },
           '100%': { opacity: '1', transform: 'scale(1)' }
+        },
+        "pulse-slow": {
+          '0%, 100%': { transform: 'scale(1)', opacity: '1' },
+          '50%': { transform: 'scale(1.1)', opacity: '0.5' }
+        },
+        "pulse-slower": {
+          '0%, 100%': { transform: 'scale(1)', opacity: '0.8' },
+          '50%': { transform: 'scale(1.2)', opacity: '0.4' }
         }
       },
       animation: {
         "gentle-fade": "gentle-fade 0.5s ease-in-out forwards",
         "fadeIn": "fadeIn 0.6s ease-out forwards",
-        "scaleIn": "scaleIn 0.6s ease-out forwards"
+        "scaleIn": "scaleIn 0.6s ease-out forwards",
+        "pulse-slow": "pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+        "pulse-slower": "pulse-slower 4s cubic-bezier(0.4, 0, 0.6, 1) infinite"
       },
       colors: {
         border: "hsl(var(--border))",
