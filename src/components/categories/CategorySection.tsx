@@ -108,22 +108,9 @@ export const CategorySection = () => {
           }}
         >
           {infiniteCategories.map((category, index) => (
-            <motion.div
+            <div
               key={`${category.id}-${index}`}
               className="w-[300px] flex-shrink-0"
-              animate={{
-                y: [0, -40, 40, -40, 0]
-              }}
-              transition={{
-                y: {
-                  repeat: Infinity,
-                  repeatType: "loop",
-                  duration: 15,
-                  ease: "easeInOut",
-                  times: [0, 0.25, 0.5, 0.75, 1],
-                  delay: (index * 2) % 15
-                }
-              }}
             >
               <CategoryCard
                 id={category.id}
@@ -131,7 +118,7 @@ export const CategorySection = () => {
                 label={category.label}
                 count={getCategoryCount(category.id)}
               />
-            </motion.div>
+            </div>
           ))}
         </motion.div>
       </div>
