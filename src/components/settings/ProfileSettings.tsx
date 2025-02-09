@@ -24,7 +24,6 @@ export const ProfileSettings = () => {
         return null;
       }
 
-      // Use the from() method instead of direct REST API call
       const { data, error } = await supabase
         .from("profiles")
         .select("*")
@@ -82,8 +81,9 @@ export const ProfileSettings = () => {
         return;
       }
 
-      const fileExt = file.name.split('.').pop();
-      const filePath = `${session.user.id}/${crypto.randomUUID()}.${fileExt}`;
+      // Create a folder with the user's ID to organize uploads
+      const fileName = `${crypto.randomUUID()}-${file.name}`;
+      const filePath = `${session.user.id}/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
         .from('profile-pictures')
@@ -158,7 +158,7 @@ export const ProfileSettings = () => {
               {uploading ? "Uploading..." : "Upload Avatar"}
             </Button>
             <p className="text-sm text-muted-foreground text-center">
-              Your profile picture is private and only visible to you. It will not be shared with other users or displayed publicly.
+              Your profile picture will be visible to you and other users when interacting on the platform.
             </p>
           </div>
         </div>
