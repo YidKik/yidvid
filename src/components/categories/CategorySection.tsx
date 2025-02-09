@@ -17,7 +17,6 @@ const categories = [
   { id: 'other', label: 'Other', icon: '📌' },
 ];
 
-// Multiply the categories array even more times to ensure ultra-smooth looping
 const infiniteCategories = [...categories, ...categories, ...categories, ...categories, ...categories, ...categories];
 
 export const CategorySection = () => {
@@ -81,7 +80,7 @@ export const CategorySection = () => {
   }
 
   return (
-    <div className="mt-8 mb-12">
+    <div className="relative h-[180px] overflow-hidden">
       <h2 className="text-xl md:text-2xl font-bold mb-6 text-center">Browse by Category</h2>
       <div className="relative w-full">
         {/* Left fade overlay */}
@@ -113,7 +112,7 @@ export const CategorySection = () => {
               key={`${category.id}-${index}`}
               className="w-[300px] flex-shrink-0"
               animate={{
-                y: [0, -40, 40, -40, 0]  // Reduced from ±80 to ±40
+                y: [0, -40, 40, -40, 0]
               }}
               transition={{
                 y: {
@@ -122,7 +121,7 @@ export const CategorySection = () => {
                   duration: 15,
                   ease: "easeInOut",
                   times: [0, 0.25, 0.5, 0.75, 1],
-                  delay: (index * 2) % 15 // This creates the sequential wave effect
+                  delay: (index * 2) % 15
                 }
               }}
             >
@@ -139,4 +138,3 @@ export const CategorySection = () => {
     </div>
   );
 };
-

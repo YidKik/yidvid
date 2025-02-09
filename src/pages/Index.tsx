@@ -1,3 +1,4 @@
+
 import { Header } from "@/components/Header";
 import VideoGrid from "@/components/VideoGrid";
 import { ChannelsGrid } from "@/components/youtube/ChannelsGrid";
@@ -42,14 +43,15 @@ const MainContent = () => {
     },
   });
 
-  // Sort videos by views to get most viewed videos
   const sortedVideos = videos ? [...videos].sort((a, b) => (b.views || 0) - (a.views || 0)) : [];
 
   return (
     <div className="flex-1">
       <Header />
       <main className="mt-4 md:mt-8 max-w-[1400px] mx-auto px-4 md:px-6">
-        <CategorySection />
+        <div className="mb-36">
+          <CategorySection />
+        </div>
         <div className="w-full py-4 md:py-6">
           <div className="flex justify-center w-full">
             <div className="relative w-[180px] md:w-[240px] h-8 md:h-12 bg-gray-100 rounded-full p-1 md:p-1.5 cursor-pointer mb-4 md:mb-8 shadow-sm hover:shadow-md transition-shadow"
