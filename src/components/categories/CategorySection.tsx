@@ -113,7 +113,7 @@ export const CategorySection = () => {
               key={`${category.id}-${index}`}
               className="w-[300px] flex-shrink-0"
               animate={{
-                y: [0, -80, 80, -80, 0]
+                y: [0, -40, 40, -40, 0]  // Reduced from ±80 to ±40
               }}
               transition={{
                 y: {
