@@ -108,21 +108,20 @@ export const CategorySection = () => {
       <div className="relative h-[140px] overflow-hidden">
         <div className="absolute inset-0">
           <AnimatePresence initial={false}>
-            {visibleCategories.map((category, index) => (
+            {visibleCategories.map((category) => (
               <motion.div
                 key={category.key}
-                initial={{ x: '100vw' }}
-                animate={{ x: '-100vw' }}
-                exit={{ x: '-200vw' }}
+                initial={{ x: '100%' }}
+                animate={{ x: '-100%' }}
+                exit={{ x: '-100%' }}
                 transition={{
                   duration: 3,
                   ease: "linear",
-                  delay: index * 0.2
                 }}
                 style={{
                   position: 'absolute',
                   width: 'calc(33.333% - 1.33rem)',
-                  left: `calc(${100 + (index * 33.333)}%)`,
+                  left: '100%',
                 }}
               >
                 <CategoryCard
@@ -139,4 +138,3 @@ export const CategorySection = () => {
     </div>
   );
 };
-
