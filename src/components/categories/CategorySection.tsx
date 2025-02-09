@@ -83,7 +83,7 @@ export const CategorySection = () => {
   return (
     <div className="mt-8 mb-12">
       <h2 className="text-xl md:text-2xl font-bold mb-6 text-center">Browse by Category</h2>
-      <div className="relative w-full overflow-hidden h-[180px]">
+      <div className="relative w-full">
         {/* Left fade overlay */}
         <div className="absolute left-0 top-0 h-full w-32 z-10 bg-gradient-to-r from-white via-white to-transparent" />
         
@@ -134,3 +134,4 @@ export const CategorySection = () => {
     </div>
   );
 };
+
