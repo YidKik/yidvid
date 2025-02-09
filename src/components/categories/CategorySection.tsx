@@ -90,11 +90,11 @@ export const CategorySection = () => {
 
   const getVisibleCategories = () => {
     const visibleCategories = [];
-    for (let i = 0; i < 6; i++) {  // Show 6 cards (3 visible + 3 upcoming)
+    for (let i = 0; i < 3; i++) {  // Show only 3 cards at a time
       const index = (currentIndex + i) % categories.length;
       visibleCategories.push({
         ...categories[index],
-        key: `${categories[index].id}-${i}`,
+        key: `${categories[index].id}-${Math.random()}`,
         position: i
       });
     }
@@ -107,20 +107,16 @@ export const CategorySection = () => {
     <div className="mt-8 mb-12">
       <h2 className="text-xl md:text-2xl font-bold mb-6 text-center">Browse by Category</h2>
       <div className="relative h-[140px] overflow-hidden">
-        <div className="absolute w-full">
-          {visibleCategories.map((category) => (
+        <div className="grid grid-cols-3 gap-8 absolute w-full">
+          {visibleCategories.map((category, index) => (
             <motion.div
               key={category.key}
-              className="absolute w-[calc(33.33%-1.33rem)] top-0"
-              initial={{ x: `${(category.position * 33.33) + (category.position * 2)}%` }}
-              animate={{ 
-                x: `${((category.position - 3) * 33.33) + ((category.position - 3) * 2)}%`,
-                opacity: category.position >= 3 ? 1 : 0
-              }}
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '-100%' }}
               transition={{
-                duration: 6,
-                ease: "linear",
-                repeat: 0
+                duration: 0.5,
+                ease: "easeInOut"
               }}
             >
               <CategoryCard
