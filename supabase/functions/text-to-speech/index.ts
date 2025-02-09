@@ -14,6 +14,7 @@ serve(async (req) => {
   try {
     const { text } = await req.json();
     console.log('Starting text-to-speech request with Play.ht...');
+    console.log('Input text:', text);
     
     const PLAY_HT_API_KEY = Deno.env.get('PLAY_HT_API_KEY');
     const PLAY_HT_USER_ID = Deno.env.get('PLAY_HT_USER_ID');
@@ -35,8 +36,8 @@ serve(async (req) => {
         },
         body: JSON.stringify({
           text: text,
-          voice: 'en-US-JennyNeural',
-          quality: 'draft',
+          voice: 'larry',  // Using a known valid voice
+          quality: 'medium', // Changed from draft to medium
           output_format: 'mp3',
           speed: 1,
           sample_rate: 24000,
@@ -45,18 +46,27 @@ serve(async (req) => {
     );
 
     if (!createResponse.ok) {
-      const errorText = await createResponse.text();
-      console.error('Failed to create speech:', errorText);
-      throw new Error(`Failed to create speech: ${createResponse.statusText}`);
+      const errorData = await createResponse.text();
+      console.error('Failed to create speech. Status:', createResponse.status);
+      console.error('Error response:', errorData);
+      throw new Error(`Failed to create speech: ${createResponse.status} - ${errorData}`);
     }
 
-    const { id } = await createResponse.json();
+    const createData = await createResponse.json();
+    console.log('Speech generation response:', createData);
+    
+    const { id } = createData;
+    if (!id) {
+      throw new Error('No generation ID received from Play.ht');
+    }
+
     console.log('Speech generation task created with ID:', id);
 
     // Poll until the audio is ready
     let audioUrl = null;
     let attempts = 0;
-    const maxAttempts = 10;
+    const maxAttempts = 30; // Increased max attempts
+    const delayMs = 1000; // 1 second delay between attempts
 
     while (!audioUrl && attempts < maxAttempts) {
       console.log(`Checking speech status (attempt ${attempts + 1}/${maxAttempts})...`);
@@ -73,9 +83,9 @@ serve(async (req) => {
       );
 
       if (!checkResponse.ok) {
-        const errorText = await checkResponse.text();
-        console.error('Failed to check speech status:', errorText);
-        throw new Error(`Failed to check speech status: ${checkResponse.statusText}`);
+        const errorData = await checkResponse.text();
+        console.error('Failed to check speech status:', errorData);
+        throw new Error(`Failed to check speech status: ${checkResponse.status} - ${errorData}`);
       }
 
       const status = await checkResponse.json();
@@ -83,17 +93,17 @@ serve(async (req) => {
       
       if (status.converted) {
         audioUrl = status.url;
+        break;
       } else if (status.error) {
-        throw new Error('Speech synthesis failed');
+        throw new Error(`Speech synthesis failed: ${status.error}`);
       } else {
-        // Wait a bit before polling again
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, delayMs));
         attempts++;
       }
     }
 
     if (!audioUrl) {
-      throw new Error('Timed out waiting for audio');
+      throw new Error('Timed out waiting for audio generation');
     }
 
     console.log('Audio URL received:', audioUrl);
@@ -101,9 +111,9 @@ serve(async (req) => {
     // Fetch the audio file
     const audioResponse = await fetch(audioUrl);
     if (!audioResponse.ok) {
-      const errorText = await audioResponse.text();
-      console.error('Failed to fetch audio:', errorText);
-      throw new Error(`Failed to fetch audio: ${audioResponse.statusText}`);
+      const errorData = await audioResponse.text();
+      console.error('Failed to fetch audio:', errorData);
+      throw new Error(`Failed to fetch audio: ${audioResponse.status} - ${errorData}`);
     }
 
     const audioBuffer = await audioResponse.arrayBuffer();
@@ -116,7 +126,7 @@ serve(async (req) => {
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (error) {
-    console.error('Error:', error);
+    console.error('Error in text-to-speech function:', error);
     return new Response(
       JSON.stringify({ error: error.message }),
       { 
@@ -126,4 +136,3 @@ serve(async (req) => {
     );
   }
 });
-
