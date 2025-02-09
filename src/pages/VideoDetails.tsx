@@ -1,3 +1,4 @@
+
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -159,7 +160,7 @@ const VideoDetails = () => {
         <div className="lg:col-span-2">
           <VideoPlayer videoId={video.video_id} />
           <div className="flex justify-between items-start mb-4">
-            <h1 className="text-2xl font-bold">{video.title}</h1>
+            <h1 className="text-base md:text-2xl font-bold">{video.title}</h1>
             <ReportVideoDialog videoId={video.id} />
           </div>
           
