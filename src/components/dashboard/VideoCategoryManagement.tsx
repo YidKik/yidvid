@@ -110,7 +110,7 @@ export function VideoCategoryManagement({ videos, onUpdate }: VideoCategoryManag
             <SelectTrigger>
               <SelectValue placeholder="Select category" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-white shadow-lg border rounded-md z-50">
               {defaultCategories.map((category) => (
                 <SelectItem key={category.value} value={category.value}>
                   {category.label}
