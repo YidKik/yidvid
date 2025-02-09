@@ -69,7 +69,7 @@ export const CategorySection = () => {
       setCurrentIndex((prevIndex) => 
         prevIndex + 3 >= categories.length ? 0 : prevIndex + 3
       );
-    }, 5000); // Slower transition interval
+    }, 4000);
 
     return () => clearInterval(interval);
   }, []);
@@ -113,10 +113,10 @@ export const CategorySection = () => {
           className="grid grid-cols-3 gap-4 absolute w-full"
           animate={{ x: "-100%" }}
           transition={{
-            duration: 2,
-            ease: "easeInOut",
+            duration: 3,
+            ease: "linear",
             repeat: Infinity,
-            repeatDelay: 3,
+            repeatDelay: 1,
           }}
         >
           {currentGroup.map((category, index) => (
@@ -135,10 +135,10 @@ export const CategorySection = () => {
           initial={{ x: "100%" }}
           animate={{ x: "0%" }}
           transition={{
-            duration: 2,
-            ease: "easeInOut",
+            duration: 3,
+            ease: "linear",
             repeat: Infinity,
-            repeatDelay: 3,
+            repeatDelay: 1,
           }}
         >
           {nextGroup.map((category, index) => (
