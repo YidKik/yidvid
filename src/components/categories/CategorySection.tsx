@@ -81,7 +81,6 @@ export const CategorySection = () => {
 
   return (
     <div className="relative h-[180px] overflow-hidden bg-transparent">
-      <h2 className="text-xl md:text-2xl font-bold mb-6 text-center">Browse by Category</h2>
       <div className="relative w-full">
         {/* Left fade overlay with increased opacity and width */}
         <div className="absolute left-0 top-0 h-full w-48 z-10 bg-gradient-to-r from-white via-white to-transparent opacity-90" />
@@ -98,7 +97,7 @@ export const CategorySection = () => {
             x: {
               repeat: Infinity,
               repeatType: "loop",
-              duration: 180, // Increased duration for slower movement
+              duration: 180,
               ease: "linear",
               repeatDelay: 0
             }
