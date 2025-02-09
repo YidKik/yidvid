@@ -120,12 +120,8 @@ export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
 
   return (
     <Tabs defaultValue="signin" className="w-full">
-      <TabsList className="grid w-full grid-cols-2">
-        <TabsTrigger value="signin">Sign In</TabsTrigger>
-        <TabsTrigger value="signup">Sign Up</TabsTrigger>
-      </TabsList>
       <TabsContent value="signin">
-        <form onSubmit={(e) => handleSubmit(e, 'signin')} className="space-y-4 mt-4">
+        <form onSubmit={(e) => handleSubmit(e, 'signin')} className="space-y-4">
           <div className="space-y-2">
             <Input
               id="signin-email"
@@ -163,7 +159,7 @@ export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
         </form>
       </TabsContent>
       <TabsContent value="signup">
-        <form onSubmit={(e) => handleSubmit(e, 'signup')} className="space-y-4 mt-4">
+        <form onSubmit={(e) => handleSubmit(e, 'signup')} className="space-y-4">
           <div className="space-y-2">
             <Input
               id="signup-email"
@@ -200,6 +196,14 @@ export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
           </button>
         </form>
       </TabsContent>
+      <TabsList className="grid w-full grid-cols-2 mt-4">
+        <TabsTrigger value="signin" className="text-sm text-muted-foreground data-[state=active]:text-primary data-[state=active]:underline">
+          Already have an account? Sign in
+        </TabsTrigger>
+        <TabsTrigger value="signup" className="text-sm text-muted-foreground data-[state=active]:text-primary data-[state=active]:underline">
+          New here? Sign up
+        </TabsTrigger>
+      </TabsList>
     </Tabs>
   );
 };
