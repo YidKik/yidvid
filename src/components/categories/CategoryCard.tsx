@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 interface CategoryCardProps {
   icon: string;
   label: string;
-  count: number;
   id: string;
   isCustomImage?: boolean;
 }
@@ -20,7 +19,7 @@ const categoryColors: { [key: string]: { bg: string; border: string; text: strin
   other: { bg: '#FFFFFF', border: '#ea384c', text: '#333333' },
 };
 
-export const CategoryCard = ({ icon, label, count, id, isCustomImage = false }: CategoryCardProps) => {
+export const CategoryCard = ({ icon, label, id, isCustomImage = false }: CategoryCardProps) => {
   const navigate = useNavigate();
   const colors = categoryColors[id] || categoryColors.other;
 
@@ -74,16 +73,11 @@ export const CategoryCard = ({ icon, label, count, id, isCustomImage = false }: 
         </motion.span>
         <div className="flex-1">
           <h3 
-            className="font-semibold text-[10px] md:text-base mb-0.5 md:mb-1"
+            className="font-semibold text-[10px] md:text-base"
             style={{ color: colors.text }}
           >
             {label}
           </h3>
-          <p className="text-[8px] md:text-sm text-gray-700 flex items-center">
-            <span className="inline-flex items-center">
-              {count} videos
-            </span>
-          </p>
         </div>
       </div>
     </motion.div>

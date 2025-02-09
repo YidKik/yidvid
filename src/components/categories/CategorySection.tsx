@@ -5,7 +5,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { CategoryCard } from "./CategoryCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEffect } from "react";
-import { CustomCategory } from "@/types/custom-categories";
 
 interface Category {
   id: string;
@@ -26,7 +25,7 @@ const defaultCategories: Category[] = [
 ];
 
 export const CategorySection = () => {
-  const { data: categoryVideos, isLoading: videosLoading, refetch } = useQuery({
+  const { data: categoryVideos, refetch } = useQuery({
     queryKey: ["category-videos"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -53,36 +52,6 @@ export const CategorySection = () => {
     },
   });
 
-  const { data: videoCategoryMappings } = useQuery({
-    queryKey: ["video-category-mappings"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("video_category_mappings")
-        .select(`
-          category_id,
-          video_id
-        `);
-
-      if (error) throw error;
-      return data || [];
-    },
-  });
-
-  const { data: channelCategoryMappings } = useQuery({
-    queryKey: ["channel-category-mappings"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("channel_category_mappings")
-        .select(`
-          category_id,
-          channel_id
-        `);
-
-      if (error) throw error;
-      return data || [];
-    },
-  });
-
   useEffect(() => {
     const processExistingVideos = async () => {
       try {
@@ -103,39 +72,6 @@ export const CategorySection = () => {
     processExistingVideos();
   }, []);
 
-  const getCategoryCount = (categoryId: string, isCustom?: boolean) => {
-    if (!categoryVideos) return 0;
-
-    if (isCustom) {
-      // For custom categories, get videos directly mapped to this category
-      const directlyMappedVideos = videoCategoryMappings?.filter(
-        mapping => mapping.category_id === categoryId
-      ) || [];
-
-      // Get channels mapped to this category
-      const mappedChannels = channelCategoryMappings?.filter(
-        mapping => mapping.category_id === categoryId
-      ).map(mapping => mapping.channel_id) || [];
-
-      // Count videos from mapped channels
-      const channelVideosCount = categoryVideos.filter(
-        video => mappedChannels.includes(video.channel_id)
-      ).length;
-
-      // Count directly mapped videos (that aren't already counted through channel mapping)
-      const directVideoIds = directlyMappedVideos.map(mapping => mapping.video_id);
-      const directlyMappedCount = categoryVideos.filter(
-        video => directVideoIds.includes(video.id) && 
-        !mappedChannels.includes(video.channel_id)
-      ).length;
-
-      return channelVideosCount + directlyMappedCount;
-    }
-
-    // For default categories, count videos with matching category
-    return categoryVideos.filter(video => video.category === categoryId).length;
-  };
-
   // Combine default and custom categories
   const allCategories: Category[] = [
     ...defaultCategories,
@@ -151,7 +87,7 @@ export const CategorySection = () => {
   // Double the categories for the infinite scroll effect
   const infiniteCategories = [...allCategories, ...allCategories, ...allCategories, ...allCategories, ...allCategories, ...allCategories];
 
-  if (videosLoading || categoriesLoading) {
+  if (categoriesLoading) {
     return (
       <div className="grid grid-cols-3 gap-8">
         {[...Array(3)].map((_, i) => (
@@ -191,7 +127,6 @@ export const CategorySection = () => {
                 id={category.id}
                 icon={category.icon}
                 label={category.label}
-                count={getCategoryCount(category.id, category.isCustom)}
                 isCustomImage={category.isCustom && !category.is_emoji}
               />
             </div>
