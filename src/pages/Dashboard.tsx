@@ -86,62 +86,78 @@ export default function Dashboard() {
     {
       title: "Channel Management",
       description: "Add, remove, and manage YouTube channels",
-      icon: <Tv className="h-6 w-6 text-muted-foreground" />,
+      icon: <Tv className="h-7 w-7" />,
       onClick: () => navigate("/admin/channels"),
-      stats: stats?.totalChannels ? `${stats.totalChannels} channels` : undefined
+      stats: stats?.totalChannels ? `${stats.totalChannels} channels` : undefined,
+      bgColor: "bg-[#F2FCE2]",
+      iconColor: "text-green-600"
     },
     {
       title: "Comments Management",
       description: "View and moderate comments",
-      icon: <MessageSquare className="h-6 w-6 text-muted-foreground" />,
+      icon: <MessageSquare className="h-7 w-7" />,
       onClick: () => navigate("/admin/comments"),
-      stats: stats?.totalComments ? `${stats.totalComments} comments` : undefined
+      stats: stats?.totalComments ? `${stats.totalComments} comments` : undefined,
+      bgColor: "bg-[#FEF7CD]",
+      iconColor: "text-yellow-600"
     },
     {
       title: "Channel Requests",
       description: "Review and manage channel requests",
-      icon: <Video className="h-6 w-6 text-muted-foreground" />,
-      onClick: () => navigate("/admin/requests")
+      icon: <Video className="h-7 w-7" />,
+      onClick: () => navigate("/admin/requests"),
+      bgColor: "bg-[#FEC6A1]",
+      iconColor: "text-orange-600"
     },
     {
       title: "User Management",
       description: "Manage users and admins",
-      icon: <Users className="h-6 w-6 text-muted-foreground" />,
+      icon: <Users className="h-7 w-7" />,
       onClick: () => navigate("/admin/users"),
-      stats: stats?.totalUsers ? `${stats.totalUsers} users` : undefined
+      stats: stats?.totalUsers ? `${stats.totalUsers} users` : undefined,
+      bgColor: "bg-[#E5DEFF]",
+      iconColor: "text-purple-600"
     },
     {
       title: "Dashboard Analytics",
       description: "View overall statistics and analytics",
-      icon: <Database className="h-6 w-6 text-muted-foreground" />,
+      icon: <Database className="h-7 w-7" />,
       onClick: () => navigate("/admin/analytics"),
-      stats: stats?.totalVideos ? `${stats.totalVideos} videos` : undefined
+      stats: stats?.totalVideos ? `${stats.totalVideos} videos` : undefined,
+      bgColor: "bg-[#FFDEE2]",
+      iconColor: "text-pink-600"
     }
   ];
 
   return (
-    <div className="container mx-auto py-8 space-y-8">
-      <h1 className="text-3xl font-bold mb-8">Dashboard</h1>
+    <div className="container mx-auto py-12 space-y-8 px-4">
+      <h1 className="text-4xl font-bold mb-8 text-gray-800">Welcome to Your Dashboard</h1>
       
       {isAdmin ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {adminCards.map((card, index) => (
             <Card 
               key={index}
-              className="hover:bg-accent/50 transition-colors cursor-pointer"
+              className={`transform transition-all duration-300 hover:scale-105 cursor-pointer border-none shadow-lg ${card.bgColor}`}
               onClick={card.onClick}
             >
               <CardHeader>
                 <div className="flex items-center justify-between">
-                  {card.icon}
+                  <div className={`p-3 rounded-lg ${card.bgColor} ${card.iconColor}`}>
+                    {card.icon}
+                  </div>
                   {card.stats && (
-                    <span className="text-sm text-muted-foreground">{card.stats}</span>
+                    <span className="text-sm font-medium text-gray-600 bg-white/50 px-3 py-1 rounded-full">
+                      {card.stats}
+                    </span>
                   )}
                 </div>
-                <CardTitle className="mt-4">{card.title}</CardTitle>
+                <CardTitle className="mt-4 text-xl font-semibold text-gray-800">
+                  {card.title}
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-gray-600 font-medium">
                   {card.description}
                 </p>
               </CardContent>
@@ -149,7 +165,7 @@ export default function Dashboard() {
           ))}
         </div>
       ) : (
-        <div className="text-center text-gray-500 mt-8">
+        <div className="text-center text-gray-500 mt-8 p-8 bg-gray-50 rounded-lg">
           You do not have admin access to view additional dashboard features.
         </div>
       )}
