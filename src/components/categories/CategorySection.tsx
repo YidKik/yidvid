@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { CategoryCard } from "./CategoryCard";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useEffect } from "react";
+import { toast } from "sonner";
 
 const categories = [
   { id: 'music', label: 'Music', icon: '🎵' },
@@ -28,6 +30,25 @@ export const CategorySection = () => {
       return data || [];
     },
   });
+
+  useEffect(() => {
+    const processExistingVideos = async () => {
+      try {
+        const { error } = await supabase.functions.invoke('categorize-existing-videos')
+        if (error) throw error;
+        toast.success("All videos have been categorized!")
+      } catch (error) {
+        console.error('Error categorizing videos:', error)
+        toast.error("Failed to categorize some videos")
+      }
+    }
+
+    // Check if we have any uncategorized videos
+    const hasUncategorizedVideos = categoryVideos?.some(video => !video.category)
+    if (hasUncategorizedVideos) {
+      processExistingVideos()
+    }
+  }, [categoryVideos])
 
   if (isLoading) {
     return (
