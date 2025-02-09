@@ -44,7 +44,7 @@ const MainContent = () => {
       }));
     },
     staleTime: 1000 * 60 * 5, // Keep data fresh for 5 minutes
-    cacheTime: 1000 * 60 * 30, // Cache data for 30 minutes
+    gcTime: 1000 * 60 * 30, // Cache data for 30 minutes (renamed from cacheTime)
   });
 
   const sortedVideos = videos ? [...videos].sort((a, b) => (b.views || 0) - (a.views || 0)) : [];

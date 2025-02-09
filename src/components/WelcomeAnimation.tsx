@@ -62,6 +62,8 @@ export const WelcomeAnimation = () => {
         uploadedAt: video.uploaded_at
       }));
     },
+    staleTime: 1000 * 60 * 5, // Keep data fresh for 5 minutes
+    gcTime: 1000 * 60 * 30, // Cache data for 30 minutes (renamed from cacheTime)
   });
 
   // Prefetch channels data
