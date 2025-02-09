@@ -5,8 +5,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { CategoryCard } from "./CategoryCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEffect } from "react";
+import { CustomCategory } from "@/types/custom-categories";
 
-const categories = [
+const defaultCategories = [
   { id: 'music', label: 'Music', icon: '🎵' },
   { id: 'torah', label: 'Torah', icon: '📖' },
   { id: 'inspiration', label: 'Inspiration', icon: '✨' },
@@ -16,10 +17,8 @@ const categories = [
   { id: 'other', label: 'Other', icon: '📌' },
 ];
 
-const infiniteCategories = [...categories, ...categories, ...categories, ...categories, ...categories, ...categories];
-
 export const CategorySection = () => {
-  const { data: categoryVideos, isLoading, refetch } = useQuery({
+  const { data: categoryVideos, isLoading: videosLoading, refetch } = useQuery({
     queryKey: ["category-videos"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -27,6 +26,19 @@ export const CategorySection = () => {
         .select("*")
         .is('deleted_at', null)
         .order("uploaded_at", { ascending: false });
+
+      if (error) throw error;
+      return data || [];
+    },
+  });
+
+  const { data: customCategories, isLoading: categoriesLoading } = useQuery({
+    queryKey: ["custom-categories"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("custom_categories")
+        .select("*")
+        .order("name", { ascending: true });
 
       if (error) throw error;
       return data || [];
@@ -57,7 +69,22 @@ export const CategorySection = () => {
     return categoryVideos?.filter(video => video.category === categoryId).length || 0;
   };
 
-  if (isLoading) {
+  // Combine default and custom categories
+  const allCategories = [
+    ...defaultCategories,
+    ...(customCategories?.map(cat => ({
+      id: cat.id,
+      label: cat.name,
+      icon: cat.icon,
+      isCustom: true,
+      is_emoji: cat.is_emoji
+    })) || [])
+  ];
+
+  // Double the categories for the infinite scroll effect
+  const infiniteCategories = [...allCategories, ...allCategories, ...allCategories, ...allCategories, ...allCategories, ...allCategories];
+
+  if (videosLoading || categoriesLoading) {
     return (
       <div className="grid grid-cols-3 gap-8">
         {[...Array(3)].map((_, i) => (
@@ -98,6 +125,7 @@ export const CategorySection = () => {
                 icon={category.icon}
                 label={category.label}
                 count={getCategoryCount(category.id)}
+                isCustomImage={category.isCustom && !category.is_emoji}
               />
             </div>
           ))}

@@ -7,6 +7,7 @@ interface CategoryCardProps {
   label: string;
   count: number;
   id: string;
+  isCustomImage?: boolean;
 }
 
 const categoryColors: { [key: string]: { bg: string; border: string; text: string } } = {
@@ -19,7 +20,7 @@ const categoryColors: { [key: string]: { bg: string; border: string; text: strin
   other: { bg: '#FFFFFF', border: '#ea384c', text: '#333333' },
 };
 
-export const CategoryCard = ({ icon, label, count, id }: CategoryCardProps) => {
+export const CategoryCard = ({ icon, label, count, id, isCustomImage = false }: CategoryCardProps) => {
   const navigate = useNavigate();
   const colors = categoryColors[id] || categoryColors.other;
 
@@ -61,7 +62,15 @@ export const CategoryCard = ({ icon, label, count, id }: CategoryCardProps) => {
             color: colors.text
           }}
         >
-          {icon}
+          {isCustomImage ? (
+            <img 
+              src={icon} 
+              alt={label}
+              className="w-6 h-6 md:w-8 md:h-8 object-cover rounded"
+            />
+          ) : (
+            icon
+          )}
         </motion.span>
         <div className="flex-1">
           <h3 
@@ -80,4 +89,3 @@ export const CategoryCard = ({ icon, label, count, id }: CategoryCardProps) => {
     </motion.div>
   );
 };
-
