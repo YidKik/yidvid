@@ -74,9 +74,7 @@ const MainContent = () => {
           </div>
         </div>
 
-        <div className="mb-16">
-          <CategorySection />
-        </div>
+        <CategorySection />
 
         <motion.div
           key={isMusic ? "music" : "videos"}
@@ -139,3 +137,4 @@ const Index = () => {
 };
 
 export default Index;
+

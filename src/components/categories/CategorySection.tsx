@@ -68,52 +68,50 @@ export const CategorySection = () => {
   }
 
   return (
-    <div className="relative h-[300px] md:h-[320px]">
-      <div className="relative w-full h-full">
-        {/* Content container with clipping */}
-        <div className="absolute inset-0 overflow-hidden" style={{ margin: '0 300px' }}>
-          <motion.div
-            className="flex absolute gap-6"
-            animate={{
-              x: ['0%', '-50%']
-            }}
-            transition={{
-              x: {
-                repeat: Infinity,
-                repeatType: "loop",
-                duration: 180,
-                ease: "linear",
-                repeatDelay: 0
-              }
-            }}
-            style={{
-              width: `${(infiniteCategories.length * 100) / 3}%`
-            }}
-          >
-            {infiniteCategories.map((category, index) => (
-              <div
-                key={`${category.id}-${index}`}
-                className="w-[300px] flex-shrink-0"
-              >
-                <CategoryCard
-                  id={category.id}
-                  icon={category.icon}
-                  label={category.label}
-                  count={getCategoryCount(category.id)}
-                />
-              </div>
-            ))}
-          </motion.div>
-        </div>
-
-        {/* Left fade overlay */}
-        <div className="absolute left-0 top-0 h-full w-[300px] z-10 pointer-events-none" 
-             style={{ background: 'linear-gradient(to right, white, white 40%, rgba(255, 255, 255, 0.9) 70%, transparent 100%)' }} />
-        
-        {/* Right fade overlay */}
-        <div className="absolute right-0 top-0 h-full w-[300px] z-10 pointer-events-none" 
-             style={{ background: 'linear-gradient(to left, white, white 40%, rgba(255, 255, 255, 0.9) 70%, transparent 100%)' }} />
+    <div className="relative h-[320px] md:h-[400px]">
+      <div className="w-full overflow-hidden">
+        <motion.div
+          className="flex absolute gap-6"
+          animate={{
+            x: ['0%', '-50%']
+          }}
+          transition={{
+            x: {
+              repeat: Infinity,
+              repeatType: "loop",
+              duration: 180,
+              ease: "linear",
+              repeatDelay: 0
+            }
+          }}
+          style={{
+            width: `${(infiniteCategories.length * 100) / 3}%`
+          }}
+        >
+          {infiniteCategories.map((category, index) => (
+            <div
+              key={`${category.id}-${index}`}
+              className="w-[300px] flex-shrink-0"
+            >
+              <CategoryCard
+                id={category.id}
+                icon={category.icon}
+                label={category.label}
+                count={getCategoryCount(category.id)}
+              />
+            </div>
+          ))}
+        </motion.div>
       </div>
+
+      {/* Left fade overlay */}
+      <div className="absolute left-0 top-0 h-full w-[300px] z-10 pointer-events-none" 
+           style={{ background: 'linear-gradient(to right, white, white 40%, rgba(255, 255, 255, 0.9) 70%, transparent 100%)' }} />
+      
+      {/* Right fade overlay */}
+      <div className="absolute right-0 top-0 h-full w-[300px] z-10 pointer-events-none" 
+           style={{ background: 'linear-gradient(to left, white, white 40%, rgba(255, 255, 255, 0.9) 70%, transparent 100%)' }} />
     </div>
   );
 };
+
