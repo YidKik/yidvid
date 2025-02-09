@@ -119,7 +119,7 @@ export const ProfileSettings = () => {
               </AvatarFallback>
             )}
           </Avatar>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col items-center gap-2">
             <Input
               type="file"
               accept="image/*"
@@ -136,6 +136,9 @@ export const ProfileSettings = () => {
               <Upload className="h-4 w-4 mr-2" />
               {uploading ? "Uploading..." : "Upload Avatar"}
             </Button>
+            <p className="text-sm text-muted-foreground text-center">
+              Your profile picture is private and only visible to you. It will not be shared with other users or displayed publicly.
+            </p>
           </div>
         </div>
 
@@ -162,3 +165,4 @@ export const ProfileSettings = () => {
     </Card>
   );
 };
+
