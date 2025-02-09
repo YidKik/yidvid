@@ -13,6 +13,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface NotificationsMenuProps {
   session: any;
@@ -22,7 +23,7 @@ interface NotificationsMenuProps {
 export const NotificationsMenu = ({ session, onMarkAsRead }: NotificationsMenuProps) => {
   const navigate = useNavigate();
 
-  const { data: notifications } = useQuery({
+  const { data: notifications, refetch } = useQuery({
     queryKey: ["video-notifications", session?.user?.id],
     queryFn: async () => {
       if (!session?.user?.id) return [];
@@ -46,6 +47,25 @@ export const NotificationsMenu = ({ session, onMarkAsRead }: NotificationsMenuPr
     },
     enabled: !!session?.user?.id,
   });
+
+  const handleClearAll = async () => {
+    if (!session?.user?.id || !notifications?.length) return;
+
+    const { error } = await supabase
+      .from("video_notifications")
+      .update({ is_read: true })
+      .eq("user_id", session.user.id)
+      .eq("is_read", false);
+
+    if (error) {
+      console.error("Error clearing notifications:", error);
+      toast.error("Failed to clear notifications");
+      return;
+    }
+
+    await refetch();
+    toast.success("All notifications cleared");
+  };
 
   return (
     <Sheet>
@@ -71,7 +91,19 @@ export const NotificationsMenu = ({ session, onMarkAsRead }: NotificationsMenuPr
         className="w-[280px] sm:w-[400px] bg-[#222222] border-[#333333] p-0"
       >
         <SheetHeader className="p-4 sm:p-6 border-b border-[#333333]">
-          <SheetTitle className="text-white text-lg sm:text-xl">Notifications</SheetTitle>
+          <div className="flex items-center justify-between">
+            <SheetTitle className="text-white text-lg sm:text-xl">Notifications</SheetTitle>
+            {notifications && notifications.length > 0 && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleClearAll}
+                className="text-xs md:text-sm text-white hover:text-white hover:bg-[#333333]"
+              >
+                Clear All
+              </Button>
+            )}
+          </div>
         </SheetHeader>
         <ScrollArea className="h-[calc(100vh-80px)] sm:h-[calc(100vh-100px)]">
           {notifications && notifications.length > 0 ? (
@@ -113,4 +145,3 @@ export const NotificationsMenu = ({ session, onMarkAsRead }: NotificationsMenuPr
     </Sheet>
   );
 };
-
