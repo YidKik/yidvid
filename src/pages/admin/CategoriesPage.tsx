@@ -6,9 +6,11 @@ import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { BackButton } from "@/components/navigation/BackButton";
 import { VideoCategoryManagement } from "@/components/dashboard/VideoCategoryManagement";
+import { ChannelCategoryManagement } from "@/components/dashboard/ChannelCategoryManagement";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function CategoriesPage() {
-  const { data: videos, isLoading, error, refetch } = useQuery({
+  const { data: videos, isLoading: videosLoading, error: videosError, refetch: refetchVideos } = useQuery({
     queryKey: ["all-videos"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -26,11 +28,28 @@ export default function CategoriesPage() {
     },
   });
 
-  if (error) {
+  const { data: channels, isLoading: channelsLoading, error: channelsError, refetch: refetchChannels } = useQuery({
+    queryKey: ["all-channels"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("youtube_channels")
+        .select("*")
+        .order("title", { ascending: true });
+
+      if (error) {
+        console.error("Error fetching channels:", error);
+        throw error;
+      }
+
+      return data || [];
+    },
+  });
+
+  if (videosError || channelsError) {
     return (
       <div className="container mx-auto py-8">
         <div className="text-center text-red-500">
-          Error loading videos. Please try again later.
+          Error loading data. Please try again later.
         </div>
       </div>
     );
@@ -44,13 +63,35 @@ export default function CategoriesPage() {
           <h1 className="text-3xl font-bold">Category Management</h1>
         </div>
 
-        {isLoading ? (
-          <div className="flex justify-center py-8">
-            <Loader2 className="h-8 w-8 animate-spin" />
-          </div>
-        ) : (
-          <VideoCategoryManagement videos={videos || []} onUpdate={() => refetch()} />
-        )}
+        <Tabs defaultValue="videos" className="space-y-6">
+          <TabsList>
+            <TabsTrigger value="videos">Videos</TabsTrigger>
+            <TabsTrigger value="channels">Channels</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="videos">
+            {videosLoading ? (
+              <div className="flex justify-center py-8">
+                <Loader2 className="h-8 w-8 animate-spin" />
+              </div>
+            ) : (
+              <VideoCategoryManagement videos={videos || []} onUpdate={() => refetchVideos()} />
+            )}
+          </TabsContent>
+
+          <TabsContent value="channels">
+            {channelsLoading ? (
+              <div className="flex justify-center py-8">
+                <Loader2 className="h-8 w-8 animate-spin" />
+              </div>
+            ) : (
+              <ChannelCategoryManagement channels={channels || []} onUpdate={() => {
+                refetchChannels();
+                refetchVideos();
+              }} />
+            )}
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );

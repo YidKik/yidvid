@@ -572,6 +572,7 @@ export type Database = {
         Row: {
           channel_id: string
           created_at: string
+          default_category: Database["public"]["Enums"]["video_category"] | null
           description: string | null
           id: string
           thumbnail_url: string | null
@@ -581,6 +582,9 @@ export type Database = {
         Insert: {
           channel_id: string
           created_at?: string
+          default_category?:
+            | Database["public"]["Enums"]["video_category"]
+            | null
           description?: string | null
           id?: string
           thumbnail_url?: string | null
@@ -590,6 +594,9 @@ export type Database = {
         Update: {
           channel_id?: string
           created_at?: string
+          default_category?:
+            | Database["public"]["Enums"]["video_category"]
+            | null
           description?: string | null
           id?: string
           thumbnail_url?: string | null
