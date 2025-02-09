@@ -20,6 +20,7 @@ import UsersPage from "@/pages/admin/UsersPage";
 import AnalyticsPage from "@/pages/admin/AnalyticsPage";
 import VideosPage from "@/pages/admin/VideosPage";
 import CategoryVideos from "@/pages/CategoryVideos";
+import ContactRequestsPage from "@/pages/admin/ContactRequestsPage";
 
 // Create a client
 const queryClient = new QueryClient({
@@ -57,6 +58,7 @@ function AppRoutes() {
       <Route path="/admin/users" element={<UsersPage />} />
       <Route path="/admin/analytics" element={<AnalyticsPage />} />
       <Route path="/admin/videos" element={<VideosPage />} />
+      <Route path="/admin/contact-requests" element={<ContactRequestsPage />} />
     </Routes>
   );
 }
