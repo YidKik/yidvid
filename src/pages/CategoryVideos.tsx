@@ -9,7 +9,9 @@ import { ArrowLeft } from "lucide-react";
 import { motion } from "framer-motion";
 import { Skeleton } from "@/components/ui/skeleton";
 
-const categories = {
+type VideoCategory = "music" | "torah" | "inspiration" | "podcast" | "education" | "entertainment" | "other";
+
+const categories: Record<VideoCategory, { label: string; icon: string }> = {
   music: { label: 'Music', icon: '🎵' },
   torah: { label: 'Torah', icon: '📖' },
   inspiration: { label: 'Inspiration', icon: '✨' },
@@ -22,20 +24,23 @@ const categories = {
 const CategoryVideos = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const categoryInfo = categories[id as keyof typeof categories];
+  const categoryInfo = id && categories[id as VideoCategory];
 
   const { data: videos, isLoading } = useQuery({
     queryKey: ["category-videos", id],
     queryFn: async () => {
+      if (!id) throw new Error("Category ID is required");
+      
       const { data, error } = await supabase
         .from("youtube_videos")
         .select("*")
-        .eq("category", id)
+        .eq("category", id as VideoCategory)
         .order("uploaded_at", { ascending: false });
 
       if (error) throw error;
       return data || [];
     },
+    enabled: !!id && !!categoryInfo, // Only run query if we have a valid category
   });
 
   if (!categoryInfo) {
