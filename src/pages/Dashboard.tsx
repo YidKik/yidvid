@@ -1,5 +1,4 @@
 
-import { UserAnalyticsSection } from "@/components/analytics/UserAnalyticsSection";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -124,9 +123,7 @@ export default function Dashboard() {
     <div className="container mx-auto py-8 space-y-8">
       <h1 className="text-3xl font-bold mb-8">Dashboard</h1>
       
-      <UserAnalyticsSection />
-      
-      {isAdmin && (
+      {isAdmin ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {adminCards.map((card, index) => (
             <Card 
@@ -151,9 +148,7 @@ export default function Dashboard() {
             </Card>
           ))}
         </div>
-      )}
-
-      {!isAdmin && (
+      ) : (
         <div className="text-center text-gray-500 mt-8">
           You do not have admin access to view additional dashboard features.
         </div>
