@@ -121,28 +121,28 @@ export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
   return (
     <Tabs defaultValue="signin" className="w-full">
       <TabsContent value="signin">
-        <form onSubmit={(e) => handleSubmit(e, 'signin')} className="space-y-4">
-          <div className="space-y-2">
+        <form onSubmit={(e) => handleSubmit(e, 'signin')} className="space-y-3">
+          <div>
             <Input
               id="signin-email"
               type="email"
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="border border-input rounded-md"
+              className="border border-input rounded-md h-9"
               required
               disabled={isLoading}
               aria-label="Email"
             />
           </div>
-          <div className="space-y-2">
+          <div>
             <Input
               id="signin-password"
               type="password"
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="border border-input rounded-md"
+              className="border border-input rounded-md h-9"
               required
               disabled={isLoading}
               minLength={6}
@@ -151,7 +151,7 @@ export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
           </div>
           <button
             type="submit"
-            className="w-full bg-primary text-white rounded-md py-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-primary text-white rounded-md py-1.5 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={isLoading}
           >
             {isLoading ? "Loading..." : "Sign In"}
@@ -159,28 +159,28 @@ export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
         </form>
       </TabsContent>
       <TabsContent value="signup">
-        <form onSubmit={(e) => handleSubmit(e, 'signup')} className="space-y-4">
-          <div className="space-y-2">
+        <form onSubmit={(e) => handleSubmit(e, 'signup')} className="space-y-3">
+          <div>
             <Input
               id="signup-email"
               type="email"
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="border border-input rounded-md"
+              className="border border-input rounded-md h-9"
               required
               disabled={isLoading}
               aria-label="Email"
             />
           </div>
-          <div className="space-y-2">
+          <div>
             <Input
               id="signup-password"
               type="password"
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="border border-input rounded-md"
+              className="border border-input rounded-md h-9"
               required
               disabled={isLoading}
               minLength={6}
@@ -189,21 +189,22 @@ export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
           </div>
           <button
             type="submit"
-            className="w-full bg-primary text-white rounded-md py-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-primary text-white rounded-md py-1.5 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={isLoading}
           >
             {isLoading ? "Loading..." : "Sign Up"}
           </button>
         </form>
       </TabsContent>
-      <TabsList className="grid w-full grid-cols-2 mt-4">
-        <TabsTrigger value="signin" className="text-sm text-muted-foreground data-[state=active]:text-primary data-[state=active]:underline">
+      <TabsList className="grid w-full grid-cols-2 mt-3">
+        <TabsTrigger value="signin" className="text-xs text-muted-foreground data-[state=active]:text-primary data-[state=active]:underline">
           Already have an account? Sign in
         </TabsTrigger>
-        <TabsTrigger value="signup" className="text-sm text-muted-foreground data-[state=active]:text-primary data-[state=active]:underline">
+        <TabsTrigger value="signup" className="text-xs text-muted-foreground data-[state=active]:text-primary data-[state=active]:underline">
           New here? Sign up
         </TabsTrigger>
       </TabsList>
     </Tabs>
   );
 };
+
