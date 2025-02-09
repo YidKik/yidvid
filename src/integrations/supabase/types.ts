@@ -279,6 +279,44 @@ export type Database = {
           },
         ]
       }
+      music_albums: {
+        Row: {
+          artist_id: string
+          created_at: string
+          id: string
+          release_date: string | null
+          thumbnail: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          artist_id: string
+          created_at?: string
+          id?: string
+          release_date?: string | null
+          thumbnail?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          artist_id?: string
+          created_at?: string
+          id?: string
+          release_date?: string | null
+          thumbnail?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "music_albums_artist_id_fkey"
+            columns: ["artist_id"]
+            isOneToOne: false
+            referencedRelation: "music_artists"
+            referencedColumns: ["artist_id"]
+          },
+        ]
+      }
       music_artists: {
         Row: {
           artist_id: string
@@ -309,8 +347,75 @@ export type Database = {
         }
         Relationships: []
       }
+      music_playlist_tracks: {
+        Row: {
+          created_at: string
+          id: string
+          playlist_id: string | null
+          position: number
+          track_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          playlist_id?: string | null
+          position: number
+          track_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          playlist_id?: string | null
+          position?: number
+          track_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "music_playlist_tracks_playlist_id_fkey"
+            columns: ["playlist_id"]
+            isOneToOne: false
+            referencedRelation: "music_playlists"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "music_playlist_tracks_track_id_fkey"
+            columns: ["track_id"]
+            isOneToOne: false
+            referencedRelation: "music_tracks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      music_playlists: {
+        Row: {
+          created_at: string
+          id: string
+          thumbnail: string | null
+          title: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          thumbnail?: string | null
+          title: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          thumbnail?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       music_tracks: {
         Row: {
+          album_id: string | null
           artist_id: string
           artist_name: string
           audio_url: string | null
@@ -326,6 +431,7 @@ export type Database = {
           uploaded_at: string
         }
         Insert: {
+          album_id?: string | null
           artist_id: string
           artist_name: string
           audio_url?: string | null
@@ -341,6 +447,7 @@ export type Database = {
           uploaded_at: string
         }
         Update: {
+          album_id?: string | null
           artist_id?: string
           artist_name?: string
           audio_url?: string | null
@@ -356,6 +463,13 @@ export type Database = {
           uploaded_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "music_tracks_album_id_fkey"
+            columns: ["album_id"]
+            isOneToOne: false
+            referencedRelation: "music_albums"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "music_tracks_artist_id_fkey"
             columns: ["artist_id"]
