@@ -48,8 +48,8 @@ const MainContent = () => {
   return (
     <div className="flex-1">
       <Header />
-      <main className="mt-16 md:mt-24 max-w-[1400px] mx-auto px-4 md:px-6">
-        <div className="flex justify-center w-full mb-12">
+      <main className="mt-8 md:mt-12 max-w-[1400px] mx-auto px-4 md:px-6">
+        <div className="flex justify-center w-full mb-8">
           <div className="relative w-[180px] md:w-[240px] h-8 md:h-12 bg-gray-100 rounded-full p-1 md:p-1.5 cursor-pointer shadow-sm hover:shadow-md transition-shadow"
                onClick={() => setIsMusic(!isMusic)}>
             <div className="relative w-full h-full flex items-center justify-between px-4 md:px-8 text-xs md:text-sm font-medium">
@@ -74,7 +74,7 @@ const MainContent = () => {
           </div>
         </div>
 
-        <div className="mb-44">
+        <div className="mb-16">
           <CategorySection />
         </div>
 
@@ -84,6 +84,7 @@ const MainContent = () => {
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: isMusic ? -20 : 20 }}
           transition={{ duration: 0.3 }}
+          className="mt-8"
         >
           {!isMusic ? (
             <>
@@ -96,11 +97,11 @@ const MainContent = () => {
                 />
               </div>
               {sortedVideos && sortedVideos.length > 0 && (
-                <div className="mt-8 md:mt-12">
+                <div className="mt-8">
                   <MostViewedVideos videos={sortedVideos} />
                 </div>
               )}
-              <div className="channels-grid mt-8 md:mt-12">
+              <div className="channels-grid mt-8">
                 <ChannelsGrid />
               </div>
             </>
@@ -138,3 +139,4 @@ const Index = () => {
 };
 
 export default Index;
+
