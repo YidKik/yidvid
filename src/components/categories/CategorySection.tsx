@@ -80,7 +80,7 @@ export const CategorySection = () => {
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-3 gap-4 p-4">
+      <div className="grid grid-cols-3 gap-4">
         {[...Array(3)].map((_, i) => (
           <Skeleton key={i} className="h-[140px] rounded-lg" />
         ))}
@@ -106,7 +106,7 @@ export const CategorySection = () => {
   const { currentGroup, nextGroup } = getVisibleCategories();
 
   return (
-    <section className="py-8 px-4 md:px-6">
+    <div className="mt-8 mb-12">
       <h2 className="text-xl md:text-2xl font-bold mb-6 text-center">Browse by Category</h2>
       <div className="relative h-[140px] overflow-hidden">
         <motion.div
@@ -152,6 +152,6 @@ export const CategorySection = () => {
           ))}
         </motion.div>
       </div>
-    </section>
+    </div>
   );
 };
