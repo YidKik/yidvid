@@ -19,7 +19,6 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    // Fetch all videos regardless of category status
     const { data: videos, error: fetchError } = await supabaseClient
       .from('youtube_videos')
       .select('*')
@@ -29,9 +28,9 @@ serve(async (req) => {
 
     console.log(`Found ${videos?.length || 0} videos to process`)
 
-    const openAIApiKey = Deno.env.get('OPENAI_API_KEY')
-    if (!openAIApiKey) {
-      throw new Error('Missing OpenAI API key')
+    const geminiApiKey = Deno.env.get('GEMINI_API_KEY')
+    if (!geminiApiKey) {
+      throw new Error('Missing Gemini API key')
     }
 
     // Process videos in batches to avoid rate limits
@@ -45,29 +44,31 @@ serve(async (req) => {
         Only respond with the category name in lowercase, nothing else.`
 
         try {
-          const response = await fetch('https://api.openai.com/v1/chat/completions', {
+          const response = await fetch('https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent', {
             method: 'POST',
             headers: {
-              'Authorization': `Bearer ${openAIApiKey}`,
               'Content-Type': 'application/json',
+              'x-goog-api-key': geminiApiKey,
             },
             body: JSON.stringify({
-              model: 'gpt-4o-mini',
-              messages: [
-                { role: 'system', content: 'You are a helpful assistant that categorizes videos. Only respond with the category name.' },
-                { role: 'user', content: prompt }
-              ],
-              temperature: 0.3,
-              max_tokens: 10
+              contents: [{
+                parts: [{
+                  text: prompt
+                }]
+              }],
+              generationConfig: {
+                temperature: 0.3,
+                maxOutputTokens: 10,
+              }
             }),
           })
 
           if (!response.ok) {
-            throw new Error(`OpenAI API error: ${response.statusText}`)
+            throw new Error(`Gemini API error: ${response.statusText}`)
           }
 
           const data = await response.json()
-          const category = data.choices[0].message.content.trim().toLowerCase()
+          const category = data.candidates[0].content.parts[0].text.trim().toLowerCase()
 
           // Update the video with its category
           const { error: updateError } = await supabaseClient
