@@ -68,7 +68,7 @@ export const CategorySection = () => {
   }
 
   return (
-    <div className="relative h-[180px] overflow-hidden">
+    <div className="relative h-[200px] overflow-visible">
       <div className="relative w-full">
         {/* Left fade overlay - significantly increased width and opacity */}
         <div className="absolute left-0 top-0 h-full w-[400px] z-10 bg-gradient-to-r from-white via-white/95 to-transparent" />
