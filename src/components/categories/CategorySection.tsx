@@ -18,7 +18,7 @@ const categories = [
 ];
 
 export const CategorySection = () => {
-  const [duplicatedCategories, setDuplicatedCategories] = useState([...categories, ...categories]);
+  const [duplicatedCategories, setDuplicatedCategories] = useState([...categories, ...categories, ...categories]);
   const { data: categoryVideos, isLoading, refetch } = useQuery({
     queryKey: ["category-videos"],
     queryFn: async () => {
@@ -64,7 +64,7 @@ export const CategorySection = () => {
     processExistingVideos();
   }, []);
 
-  // Infinite scroll effect
+  // Vertical scroll effect
   useEffect(() => {
     const interval = setInterval(() => {
       setDuplicatedCategories(prev => {
@@ -72,7 +72,7 @@ export const CategorySection = () => {
         const newArray = [...prev.slice(1), firstItem];
         return newArray;
       });
-    }, 3000); // Adjust speed by changing this value
+    }, 3000); // Adjust scroll speed by changing this value
 
     return () => clearInterval(interval);
   }, []);
@@ -84,8 +84,8 @@ export const CategorySection = () => {
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 gap-4 p-4">
-        {[...Array(4)].map((_, i) => (
-          <Skeleton key={i} className="h-32 rounded-lg" />
+        {[...Array(3)].map((_, i) => (
+          <Skeleton key={i} className="h-40 rounded-lg" />
         ))}
       </div>
     );
@@ -94,20 +94,27 @@ export const CategorySection = () => {
   return (
     <section className="py-8 px-4 md:px-6 overflow-hidden">
       <h2 className="text-xl md:text-2xl font-bold mb-6 text-center">Browse by Category</h2>
-      <div className="relative w-full">
-        <div className="flex flex-col gap-4 max-w-[800px] mx-auto">
+      <div className="relative h-[500px] overflow-hidden">
+        <div className="absolute inset-0 flex flex-col gap-4">
           {duplicatedCategories.map((category, index) => (
             <motion.div
               key={`${category.id}-${index}`}
               initial={{ x: "100%", opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: "-100%", opacity: 0 }}
+              animate={{ 
+                x: 0, 
+                opacity: 1,
+                y: `-${index * 100}%`,
+              }}
               transition={{
                 duration: 0.8,
                 ease: "easeInOut",
-                delay: index * 0.1
               }}
-              className="w-full"
+              className="w-full min-h-[200px]"
+              style={{
+                position: 'absolute',
+                top: 0,
+                transform: `translateY(${index * 200}px)`,
+              }}
             >
               <CategoryCard
                 id={category.id}
