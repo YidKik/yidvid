@@ -81,14 +81,14 @@ export const SearchBar = () => {
       {showResults && (searchResults?.length > 0 || isSearching) && (
         <div 
           className={`absolute top-full left-0 right-0 mt-1 bg-white rounded-md shadow-lg border border-gray-100 overflow-hidden z-50 ${
-            isMobile ? 'fixed left-4 right-4 w-auto max-h-[calc(100vh-120px)]' : 'w-full max-h-[400px]'
+            isMobile ? 'fixed left-4 right-4 max-h-[60vh]' : 'w-full max-h-[400px]'
           }`}
           style={{
             top: isMobile ? '60px' : undefined
           }}
           onMouseDown={(e) => e.preventDefault()}
         >
-          <ScrollArea className={`${isMobile ? 'h-[calc(100vh-140px)]' : 'h-[400px]'} overflow-y-auto scrollbar-hide`}>
+          <ScrollArea className={`${isMobile ? 'h-[50vh]' : 'h-[400px]'} overflow-y-auto scrollbar-hide`}>
             <div className="p-1">
               {isSearching ? (
                 <div className="flex items-center justify-center p-4 text-sm text-muted-foreground">
