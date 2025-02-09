@@ -67,9 +67,9 @@ export const CategorySection = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) => 
-        prevIndex + 1 >= categories.length ? 0 : prevIndex + 1
+        prevIndex + 3 >= categories.length ? 0 : prevIndex + 3
       );
-    }, 3000);
+    }, 5000); // Slower transition interval
 
     return () => clearInterval(interval);
   }, []);
@@ -89,39 +89,68 @@ export const CategorySection = () => {
   }
 
   const getVisibleCategories = () => {
-    const result = [];
+    const currentGroup = [];
+    const nextGroup = [];
+    
     for (let i = 0; i < 3; i++) {
-      const index = (currentIndex + i) % categories.length;
-      result.push(categories[index]);
+      const currentIdx = (currentIndex + i) % categories.length;
+      currentGroup.push(categories[currentIdx]);
+      
+      const nextIdx = (currentIndex + 3 + i) % categories.length;
+      nextGroup.push(categories[nextIdx]);
     }
-    return result;
+    
+    return { currentGroup, nextGroup };
   };
+
+  const { currentGroup, nextGroup } = getVisibleCategories();
 
   return (
     <section className="py-8 px-4 md:px-6">
       <h2 className="text-xl md:text-2xl font-bold mb-6 text-center">Browse by Category</h2>
       <div className="relative h-[140px] overflow-hidden">
-        <div className="grid grid-cols-3 gap-4">
-          {getVisibleCategories().map((category, index) => (
-            <motion.div
-              key={`${category.id}-${currentIndex}-${index}`}
-              initial={{ x: "100%", opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: "-100%", opacity: 0 }}
-              transition={{
-                duration: 0.5,
-                ease: "easeInOut",
-              }}
-            >
-              <CategoryCard
-                id={category.id}
-                icon={category.icon}
-                label={category.label}
-                count={getCategoryCount(category.id)}
-              />
-            </motion.div>
+        <motion.div
+          className="grid grid-cols-3 gap-4 absolute w-full"
+          animate={{ x: "-100%" }}
+          transition={{
+            duration: 2,
+            ease: "easeInOut",
+            repeat: Infinity,
+            repeatDelay: 3,
+          }}
+        >
+          {currentGroup.map((category, index) => (
+            <CategoryCard
+              key={`current-${category.id}-${index}`}
+              id={category.id}
+              icon={category.icon}
+              label={category.label}
+              count={getCategoryCount(category.id)}
+            />
           ))}
-        </div>
+        </motion.div>
+
+        <motion.div
+          className="grid grid-cols-3 gap-4 absolute w-full"
+          initial={{ x: "100%" }}
+          animate={{ x: "0%" }}
+          transition={{
+            duration: 2,
+            ease: "easeInOut",
+            repeat: Infinity,
+            repeatDelay: 3,
+          }}
+        >
+          {nextGroup.map((category, index) => (
+            <CategoryCard
+              key={`next-${category.id}-${index}`}
+              id={category.id}
+              icon={category.icon}
+              label={category.label}
+              count={getCategoryCount(category.id)}
+            />
+          ))}
+        </motion.div>
       </div>
     </section>
   );
