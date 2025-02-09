@@ -69,7 +69,7 @@ export const CategorySection = () => {
 
   return (
     <div className="relative max-w-[1400px] mx-auto px-4 md:px-6">
-      <div className="overflow-hidden relative">
+      <div className="overflow-visible relative">
         <motion.div
           className="flex gap-6"
           animate={{
