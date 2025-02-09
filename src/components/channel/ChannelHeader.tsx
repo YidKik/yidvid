@@ -1,5 +1,5 @@
 
-import { Youtube, ChevronDown, ChevronUp, UserPlus, Check } from "lucide-react";
+import { Youtube, UserPlus, Check } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 
@@ -10,17 +10,13 @@ interface ChannelHeaderProps {
     description?: string;
   };
   isSubscribed: boolean;
-  showDescription: boolean;
   onSubscribe: () => void;
-  onToggleDescription: () => void;
 }
 
 export const ChannelHeader = ({
   channel,
   isSubscribed,
-  showDescription,
   onSubscribe,
-  onToggleDescription,
 }: ChannelHeaderProps) => {
   return (
     <div className="flex flex-col items-center mb-6 md:mb-8">
@@ -60,31 +56,12 @@ export const ChannelHeader = ({
       </Button>
 
       {channel.description && (
-        <div className="flex flex-col items-center">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onToggleDescription}
-            className="text-xs text-muted-foreground hover:text-foreground transition-colors border-muted-foreground/30 h-5 md:h-6 px-1.5 md:px-2"
-          >
-            {showDescription ? (
-              <span className="flex items-center gap-0.5">
-                Less <ChevronUp className="h-2 w-2 md:h-2.5 md:w-2.5" />
-              </span>
-            ) : (
-              <span className="flex items-center gap-0.5">
-                More <ChevronDown className="h-2 w-2 md:h-2.5 md:w-2.5" />
-              </span>
-            )}
-          </Button>
-          {showDescription && (
-            <p className="text-muted-foreground text-xs md:text-sm text-center max-w-2xl mt-2 animate-fade-in">
-              {channel.description}
-            </p>
-          )}
+        <div className="mt-2 opacity-0 animate-[fadeIn_0.6s_ease-out_0.5s_forwards]">
+          <p className="text-muted-foreground text-xs md:text-sm text-center max-w-2xl">
+            {channel.description}
+          </p>
         </div>
       )}
     </div>
   );
 };
-

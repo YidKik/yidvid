@@ -1,7 +1,6 @@
 
 import { useParams } from "react-router-dom";
 import { BackButton } from "@/components/navigation/BackButton";
-import { useState } from "react";
 import { ChannelLoading } from "@/components/channel/ChannelLoading";
 import { ChannelHeader } from "@/components/channel/ChannelHeader";
 import { ChannelVideos } from "@/components/channel/ChannelVideos";
@@ -11,7 +10,6 @@ import { useChannelVideos } from "@/hooks/channel/useChannelVideos";
 
 const ChannelDetails = () => {
   const { id: channelId } = useParams();
-  const [showDescription, setShowDescription] = useState(false);
   
   const { data: channel, isLoading: isLoadingChannel } = useChannelData(channelId);
   const { isSubscribed, handleSubscribe } = useChannelSubscription(channelId);
@@ -43,9 +41,7 @@ const ChannelDetails = () => {
       <ChannelHeader
         channel={channel}
         isSubscribed={isSubscribed}
-        showDescription={showDescription}
         onSubscribe={handleSubscribe}
-        onToggleDescription={() => setShowDescription(!showDescription)}
       />
       <ChannelVideos
         videos={displayedVideos}
