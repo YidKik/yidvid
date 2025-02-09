@@ -14,3 +14,4 @@ export interface AdminNotification {
   created_at: string;
   updated_at: string;
 }
+
