@@ -1,13 +1,16 @@
+
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSearchParams } from "react-router-dom";
+import { toast } from "sonner";
 
 export const WelcomeAnimation = () => {
   const [show, setShow] = useState(true);
   const [searchParams] = useSearchParams();
   const skipWelcome = searchParams.get("skipWelcome") === "true";
+  const queryClient = useQueryClient();
 
   const { data: session } = useQuery({
     queryKey: ["session"],
@@ -17,7 +20,7 @@ export const WelcomeAnimation = () => {
     },
   });
 
-  const { data: profile } = useQuery({
+  const { data: profile, isLoading: isLoadingProfile } = useQuery({
     queryKey: ["profile", session?.user?.id],
     enabled: !!session?.user?.id,
     queryFn: async () => {
@@ -31,18 +34,69 @@ export const WelcomeAnimation = () => {
     },
   });
 
+  // Prefetch videos data
+  const { isLoading: isLoadingVideos, isError } = useQuery({
+    queryKey: ["youtube_videos"],
+    queryFn: async () => {
+      console.log("Prefetching videos during welcome animation...");
+      const { data, error } = await supabase
+        .from("youtube_videos")
+        .select("*")
+        .is('deleted_at', null)
+        .order("uploaded_at", { ascending: false });
+
+      if (error) {
+        console.error("Error fetching videos:", error);
+        toast.error("Failed to load videos");
+        throw error;
+      }
+
+      return (data || []).map(video => ({
+        id: video.id,
+        video_id: video.video_id,
+        title: video.title,
+        thumbnail: video.thumbnail,
+        channelName: video.channel_name,
+        channelId: video.channel_id,
+        views: video.views || 0,
+        uploadedAt: video.uploaded_at
+      }));
+    },
+  });
+
+  // Prefetch channels data
+  const { isLoading: isLoadingChannels } = useQuery({
+    queryKey: ["youtube_channels"],
+    queryFn: async () => {
+      console.log("Prefetching channels during welcome animation...");
+      const { data, error } = await supabase
+        .from("youtube_channels")
+        .select("*");
+
+      if (error) {
+        console.error("Error fetching channels:", error);
+        return [];
+      }
+
+      return data || [];
+    },
+  });
+
   useEffect(() => {
     if (skipWelcome) {
       setShow(false);
       return;
     }
 
-    const timer = setTimeout(() => {
-      setShow(false);
-    }, 3000);
+    // Only hide welcome screen when all data is loaded
+    if (!isLoadingVideos && !isLoadingChannels && !isLoadingProfile) {
+      const timer = setTimeout(() => {
+        setShow(false);
+      }, 3000);
 
-    return () => clearTimeout(timer);
-  }, [skipWelcome]);
+      return () => clearTimeout(timer);
+    }
+  }, [skipWelcome, isLoadingVideos, isLoadingChannels, isLoadingProfile]);
 
   const userName = profile?.name || session?.user?.user_metadata?.full_name || "to YidVid";
 
@@ -121,6 +175,16 @@ export const WelcomeAnimation = () => {
                 className="absolute inset-0 bg-primary/10 rounded-full"
               />
             </motion.div>
+
+            {(isLoadingVideos || isLoadingChannels || isLoadingProfile) && (
+              <motion.p
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                className="text-sm text-muted-foreground mt-4"
+              >
+                Loading content...
+              </motion.p>
+            )}
 
             <motion.p
               initial={{ y: 20, opacity: 0 }}

@@ -20,9 +20,11 @@ const MainContent = () => {
   const { data: videos, isLoading } = useQuery({
     queryKey: ["youtube_videos"],
     queryFn: async () => {
+      console.log("Fetching videos...");
       const { data, error } = await supabase
         .from("youtube_videos")
         .select("*")
+        .is('deleted_at', null)
         .order("uploaded_at", { ascending: false });
 
       if (error) {
@@ -41,6 +43,8 @@ const MainContent = () => {
         uploadedAt: video.uploaded_at
       }));
     },
+    staleTime: 1000 * 60 * 5, // Keep data fresh for 5 minutes
+    cacheTime: 1000 * 60 * 30, // Cache data for 30 minutes
   });
 
   const sortedVideos = videos ? [...videos].sort((a, b) => (b.views || 0) - (a.views || 0)) : [];
@@ -137,4 +141,3 @@ const Index = () => {
 };
 
 export default Index;
-
