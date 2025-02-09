@@ -115,7 +115,7 @@ export const CategorySection = () => {
 
   if (categoriesLoading) {
     return (
-      <div className="grid grid-cols-3 gap-8">
+      <div className="grid grid-cols-3 gap-8 max-w-[1200px] mx-auto px-4 md:px-6">
         {[...Array(3)].map((_, i) => (
           <Skeleton key={i} className="h-[120px] rounded-lg" />
         ))}
@@ -124,7 +124,7 @@ export const CategorySection = () => {
   }
 
   return (
-    <div className="relative max-w-[1400px] mx-auto px-4 md:px-6">
+    <div className="relative max-w-[1200px] mx-auto px-4 md:px-6">
       <div className="overflow-visible relative">
         <motion.div
           className="flex gap-2 md:gap-6"
