@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -10,14 +11,12 @@ import { SearchBar } from "./header/SearchBar";
 import { NotificationsMenu } from "./header/NotificationsMenu";
 import { UserMenu } from "./header/UserMenu";
 import { ContactDialog } from "./contact/ContactDialog";
-import { VoiceAssistant } from "./header/VoiceAssistant";
 
 export const Header = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [session, setSession] = useState(null);
-  const [isAssistantSpeaking, setIsAssistantSpeaking] = useState(false);
 
   useEffect(() => {
     const initializeSession = async () => {
@@ -133,7 +132,6 @@ export const Header = () => {
 
         <div className="flex items-center space-x-1 md:space-x-2">
           <ContactDialog />
-          <VoiceAssistant onSpeakingChange={setIsAssistantSpeaking} />
           {session ? (
             <>
               <NotificationsMenu 
