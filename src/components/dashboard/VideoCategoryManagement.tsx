@@ -29,7 +29,6 @@ const defaultCategories: { value: VideoCategory; label: string }[] = [
   { value: "education", label: "Education" },
   { value: "entertainment", label: "Entertainment" },
   { value: "other", label: "Other" },
-  { value: "custom", label: "Custom" },
 ];
 
 export function VideoCategoryManagement({ videos, onUpdate }: VideoCategoryManagementProps) {
@@ -57,12 +56,32 @@ export function VideoCategoryManagement({ videos, onUpdate }: VideoCategoryManag
     if (!selectedCategory) return;
 
     try {
-      const { error } = await supabase
-        .from("youtube_videos")
-        .update({ category: selectedCategory })
-        .eq("id", videoId);
+      if (defaultCategories.some(cat => cat.value === selectedCategory)) {
+        // Handle default category update
+        const { error } = await supabase
+          .from("youtube_videos")
+          .update({ category: selectedCategory as VideoCategory })
+          .eq("id", videoId);
 
-      if (error) throw error;
+        if (error) throw error;
+      } else {
+        // Handle custom category mapping
+        // First, remove any existing custom category mappings
+        await supabase
+          .from("video_custom_category_mappings")
+          .delete()
+          .eq("video_id", videoId);
+
+        // Then add the new mapping
+        const { error } = await supabase
+          .from("video_custom_category_mappings")
+          .insert({
+            video_id: videoId,
+            category_id: selectedCategory
+          });
+
+        if (error) throw error;
+      }
 
       toast.success("Category updated successfully");
       onUpdate();

@@ -29,7 +29,6 @@ const defaultCategories: { value: VideoCategory; label: string }[] = [
   { value: "education", label: "Education" },
   { value: "entertainment", label: "Entertainment" },
   { value: "other", label: "Other" },
-  { value: "custom", label: "Custom" },
 ];
 
 export function ChannelCategoryManagement({ channels, onUpdate }: ChannelCategoryManagementProps) {
@@ -57,14 +56,34 @@ export function ChannelCategoryManagement({ channels, onUpdate }: ChannelCategor
     if (!selectedCategory) return;
 
     try {
-      const { error } = await supabase
-        .from("youtube_channels")
-        .update({ default_category: selectedCategory })
-        .eq("channel_id", channelId);
+      if (defaultCategories.some(cat => cat.value === selectedCategory)) {
+        // Handle default category update
+        const { error } = await supabase
+          .from("youtube_channels")
+          .update({ default_category: selectedCategory as VideoCategory })
+          .eq("channel_id", channelId);
 
-      if (error) throw error;
+        if (error) throw error;
+      } else {
+        // Handle custom category mapping
+        // First, remove any existing custom category mappings
+        await supabase
+          .from("channel_custom_category_mappings")
+          .delete()
+          .eq("channel_id", channelId);
 
-      toast.success("Channel category updated successfully. All videos in this channel will be updated.");
+        // Then add the new mapping
+        const { error } = await supabase
+          .from("channel_custom_category_mappings")
+          .insert({
+            channel_id: channelId,
+            category_id: selectedCategory
+          });
+
+        if (error) throw error;
+      }
+
+      toast.success("Channel category updated successfully");
       onUpdate();
     } catch (error) {
       console.error("Error updating category:", error);
