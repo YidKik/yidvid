@@ -90,7 +90,7 @@ export const CategorySection = () => {
 
   const getVisibleCategories = () => {
     const visibleCategories = [];
-    for (let i = 0; i < categories.length * 2; i++) {
+    for (let i = 0; i < categories.length; i++) {
       const index = (currentIndex + i) % categories.length;
       visibleCategories.push({
         ...categories[index],
@@ -112,14 +112,18 @@ export const CategorySection = () => {
             <motion.div
               key={category.key}
               className="absolute w-[calc(33.33%-1rem)] top-0"
-              initial={{ x: `${(category.position * 33.33) + ((category.position) * 1.33)}%` }}
+              initial={{ x: `${(category.position * 33.33) + (category.position * 1)}%` }}
               animate={{ 
-                x: `${((category.position - 1) * 33.33) + ((category.position - 1) * 1.33)}%`
+                x: `${((category.position - 1) * 33.33) + ((category.position - 1) * 1)}%`,
+                opacity: category.position === 0 ? 0 : 1
               }}
               transition={{
                 duration: 4.5,
                 ease: "easeInOut",
                 repeat: 0
+              }}
+              style={{
+                marginRight: '1rem'
               }}
             >
               <CategoryCard
