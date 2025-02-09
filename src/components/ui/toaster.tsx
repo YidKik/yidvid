@@ -1,3 +1,4 @@
+
 import { useToast } from "@/hooks/use-toast"
 import {
   Toast,
@@ -15,19 +16,22 @@ export function Toaster() {
     <ToastProvider>
       {toasts.map(function ({ id, title, description, action, ...props }) {
         return (
-          <Toast key={id} {...props}>
+          <Toast key={id} {...props} className="md:max-w-[420px] max-w-[300px]">
             <div className="grid gap-1">
-              {title && <ToastTitle>{title}</ToastTitle>}
+              {title && <ToastTitle className="text-sm">{title}</ToastTitle>}
               {description && (
-                <ToastDescription>{description}</ToastDescription>
+                <ToastDescription className="text-xs">
+                  {description}
+                </ToastDescription>
               )}
             </div>
             {action}
-            <ToastClose />
+            <ToastClose className="h-4 w-4" />
           </Toast>
         )
       })}
-      <ToastViewport />
+      <ToastViewport className="gap-2" />
     </ToastProvider>
   )
 }
+
