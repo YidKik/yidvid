@@ -12,20 +12,13 @@ import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
 import { BackButton } from "@/components/navigation/BackButton";
 import { VideoHistorySection } from "@/components/history/VideoHistorySection";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { useColors } from "@/contexts/ColorContext";
-import { Settings as SettingsIcon, Volume2, Globe, Bell, ArrowLeft } from "lucide-react";
+import { Settings as SettingsIcon, Volume2, Globe, Bell } from "lucide-react";
 import { translations, getTranslation, TranslationKey } from "@/utils/translations";
 import { ChannelSubscriptions } from "@/components/youtube/ChannelSubscriptions";
 import { UserAnalyticsSection } from "@/components/analytics/UserAnalyticsSection";
 import { ChannelPreferences } from "@/components/youtube/ChannelPreferences";
+import { ProfileSettings } from "@/components/settings/ProfileSettings";
+import { useColors } from "@/contexts/ColorContext";
 
 const Settings = () => {
   const navigate = useNavigate();
@@ -256,26 +249,7 @@ const Settings = () => {
       <BackButton />
       <main className="container mx-auto pt-24 px-4 pb-16">
         <section className="mb-12">
-          <Card className="p-6">
-            <h2 className="text-xl font-semibold mb-4">{t('accountInformation')}</h2>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <Label>{t('userId')}</Label>
-                <code className="bg-muted px-2 py-1 rounded">{userId || 'Loading...'}</code>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                This is your unique identifier in the system.
-              </p>
-              <div className="pt-4 border-t flex gap-4">
-                <Button variant="destructive" onClick={handleSignOut}>
-                  {t('signOut')}
-                </Button>
-                <Button variant="destructive">
-                  {t('deleteAccount')}
-                </Button>
-              </div>
-            </div>
-          </Card>
+          <ProfileSettings />
         </section>
 
         <section className="mb-12">
