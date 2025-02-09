@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { AdminDashboardCards } from "@/components/dashboard/AdminDashboardCards";
+import { ReportedVideosSection } from "@/components/dashboard/ReportedVideosSection";
 
 export default function Dashboard() {
   const { data: session } = useQuery({
@@ -113,7 +114,10 @@ export default function Dashboard() {
       </div>
       
       {isAdmin ? (
-        <AdminDashboardCards stats={stats} notifications={notifications} />
+        <>
+          <AdminDashboardCards stats={stats} notifications={notifications} />
+          <ReportedVideosSection />
+        </>
       ) : (
         <div className="text-center text-gray-500 mt-8 p-8 bg-gray-50 rounded-lg">
           You do not have admin access to view additional dashboard features.
@@ -122,4 +126,3 @@ export default function Dashboard() {
     </div>
   );
 }
-
