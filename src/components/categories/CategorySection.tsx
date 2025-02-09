@@ -1,6 +1,6 @@
 
 import { useQuery } from "@tanstack/react-query";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { CategoryCard } from "./CategoryCard";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -69,7 +69,7 @@ export const CategorySection = () => {
       setCurrentIndex((prevIndex) => 
         prevIndex + 1 >= categories.length ? 0 : prevIndex + 1
       );
-    }, 3000); // Slower interval for smoother transitions
+    }, 3000);
 
     return () => clearInterval(interval);
   }, []);
@@ -108,25 +108,28 @@ export const CategorySection = () => {
       <h2 className="text-xl md:text-2xl font-bold mb-6 text-center">Browse by Category</h2>
       <div className="relative h-[140px] overflow-hidden">
         <div className="grid grid-cols-3 gap-8 absolute w-full">
-          {visibleCategories.map((category, index) => (
-            <motion.div
-              key={category.key}
-              initial={{ x: '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '-100%' }}
-              transition={{
-                duration: 3, // Slower duration for smoother movement
-                ease: "linear", // Linear easing for constant speed
-              }}
-            >
-              <CategoryCard
-                id={category.id}
-                icon={category.icon}
-                label={category.label}
-                count={getCategoryCount(category.id)}
-              />
-            </motion.div>
-          ))}
+          <AnimatePresence mode="popLayout">
+            {visibleCategories.map((category, index) => (
+              <motion.div
+                key={category.key}
+                initial={{ x: '100%' }}
+                animate={{ x: 0 }}
+                exit={{ x: '-100%' }}
+                transition={{
+                  type: "tween",
+                  duration: 3,
+                  ease: "linear"
+                }}
+              >
+                <CategoryCard
+                  id={category.id}
+                  icon={category.icon}
+                  label={category.label}
+                  count={getCategoryCount(category.id)}
+                />
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </div>
       </div>
     </div>
