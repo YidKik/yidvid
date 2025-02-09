@@ -78,7 +78,13 @@ export const SearchBar = () => {
       </Button>
       {showResults && (searchResults?.length > 0 || isSearching) && (
         <div 
-          className="absolute top-full left-0 right-0 mt-1 bg-white rounded-md shadow-lg border border-gray-100 overflow-hidden z-50"
+          className="absolute top-full left-0 right-0 mt-1 bg-white rounded-md shadow-lg border border-gray-100 overflow-hidden z-50 w-screen md:w-full fixed md:static md:max-w-none"
+          style={{
+            left: window.innerWidth < 768 ? '50%',
+            transform: window.innerWidth < 768 ? 'translateX(-50%)' : 'none',
+            maxHeight: window.innerWidth < 768 ? 'calc(100vh - 120px)' : '400px',
+            width: window.innerWidth < 768 ? 'calc(100vw - 2rem)' : '100%'
+          }}
           onMouseDown={(e) => e.preventDefault()}
         >
           <ScrollArea className="h-[300px] md:h-[400px] overflow-y-auto scrollbar-hide">
