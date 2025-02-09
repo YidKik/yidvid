@@ -139,14 +139,15 @@ export const ProfileSettings = () => {
           </div>
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="name">Display Name</Label>
+        <div className="space-y-2 bg-[#F1F0FB] p-4 rounded-lg">
+          <Label htmlFor="name" className="text-lg font-semibold">Display Name</Label>
           <div className="flex gap-2">
             <Input
               id="name"
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
               placeholder="Enter your display name"
+              className="bg-white"
             />
             <Button onClick={handleNameUpdate}>Save</Button>
           </div>
@@ -158,3 +159,4 @@ export const ProfileSettings = () => {
     </Card>
   );
 };
+
