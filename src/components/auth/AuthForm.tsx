@@ -196,12 +196,8 @@ export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
         </form>
       </TabsContent>
       <TabsList className="mt-2 flex w-full justify-between bg-transparent p-0">
-        <TabsTrigger value="signin" className="text-xs text-muted-foreground data-[state=active]:text-primary data-[state=active]:font-medium hover:text-primary">
-          Already have an account? Sign in
-        </TabsTrigger>
-        <TabsTrigger value="signup" className="text-xs text-muted-foreground data-[state=active]:text-primary data-[state=active]:font-medium hover:text-primary">
-          New here? Sign up
-        </TabsTrigger>
+        <TabsTrigger value="signin" className="text-xs" />
+        <TabsTrigger value="signup" className="text-xs" />
       </TabsList>
     </Tabs>
   );
