@@ -108,6 +108,7 @@ export type Database = {
       }
       contact_requests: {
         Row: {
+          category: string
           created_at: string
           email: string
           id: string
@@ -118,6 +119,7 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          category?: string
           created_at?: string
           email: string
           id?: string
@@ -128,6 +130,7 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          category?: string
           created_at?: string
           email?: string
           id?: string
