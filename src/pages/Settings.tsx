@@ -1,10 +1,6 @@
+
 import { Header } from "@/components/Header";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { Slider } from "@/components/ui/slider";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
@@ -12,28 +8,17 @@ import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
 import { BackButton } from "@/components/navigation/BackButton";
 import { VideoHistorySection } from "@/components/history/VideoHistorySection";
-import { Settings as SettingsIcon, Volume2, Globe, Bell } from "lucide-react";
-import { translations, getTranslation, TranslationKey } from "@/utils/translations";
 import { ChannelSubscriptions } from "@/components/youtube/ChannelSubscriptions";
 import { UserAnalyticsSection } from "@/components/analytics/UserAnalyticsSection";
 import { ChannelPreferences } from "@/components/youtube/ChannelPreferences";
 import { ProfileSettings } from "@/components/settings/ProfileSettings";
 import { useColors } from "@/contexts/ColorContext";
+import { PlaybackSettings } from "@/components/settings/PlaybackSettings";
+import { LanguageSettings } from "@/components/settings/LanguageSettings";
+import { ColorSettings } from "@/components/settings/ColorSettings";
 
 const Settings = () => {
   const navigate = useNavigate();
-  const [darkMode, setDarkMode] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const savedTheme = localStorage.getItem('theme');
-      if (savedTheme) {
-        return savedTheme === 'dark';
-      }
-      return window.matchMedia('(prefers-color-scheme: dark)').matches;
-    }
-    return false;
-  });
-
-  const [autoplay, setAutoplay] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
   const { colors, updateColors, resetColors } = useColors();
   const [backgroundColor, setBackgroundColor] = useState(colors.backgroundColor);
@@ -43,30 +28,17 @@ const Settings = () => {
 
   const [volume, setVolume] = useState(80);
   const [language, setLanguage] = useState("en");
-  const [subtitles, setSubtitles] = useState(false);
-  const [highContrast, setHighContrast] = useState(false);
+  const [autoplay, setAutoplay] = useState(true);
   const [playbackSpeed, setPlaybackSpeed] = useState("1");
-  const [emailNotifications, setEmailNotifications] = useState(false);
-  const [pushNotifications, setPushNotifications] = useState(false);
-  const [autoHideComments, setAutoHideComments] = useState(false);
-  const [privateAccount, setPrivateAccount] = useState(false);
-  const [dataCollection, setDataCollection] = useState(true);
 
   useEffect(() => {
     localStorage.setItem('settings', JSON.stringify({
       volume,
       language,
-      subtitles,
-      highContrast,
       playbackSpeed,
-      emailNotifications,
-      pushNotifications,
-      autoHideComments,
-      privateAccount,
-      dataCollection,
+      autoplay,
     }));
-  }, [volume, language, subtitles, highContrast, playbackSpeed, emailNotifications, 
-      pushNotifications, autoHideComments, privateAccount, dataCollection]);
+  }, [volume, language, playbackSpeed, autoplay]);
 
   useEffect(() => {
     const savedSettings = localStorage.getItem('settings');
@@ -74,30 +46,10 @@ const Settings = () => {
       const settings = JSON.parse(savedSettings);
       setVolume(settings.volume ?? 80);
       setLanguage(settings.language ?? 'en');
-      setSubtitles(settings.subtitles ?? false);
-      setHighContrast(settings.highContrast ?? false);
       setPlaybackSpeed(settings.playbackSpeed ?? '1');
-      setEmailNotifications(settings.emailNotifications ?? false);
-      setPushNotifications(settings.pushNotifications ?? false);
-      setAutoHideComments(settings.autoHideComments ?? false);
-      setPrivateAccount(settings.privateAccount ?? false);
-      setDataCollection(settings.dataCollection ?? true);
+      setAutoplay(settings.autoplay ?? true);
     }
   }, []);
-
-  const handleSignOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      toast.error("Error signing out");
-    } else {
-      toast.success("Signed out successfully");
-      navigate("/");
-    }
-  };
-
-  const handleDashboardAccess = () => {
-    navigate("/dashboard");
-  };
 
   useEffect(() => {
     setBackgroundColor(colors.backgroundColor);
@@ -132,20 +84,6 @@ const Settings = () => {
     }
   };
 
-  const toggleAdminStatus = async (userId: string, currentStatus: boolean) => {
-    const { error } = await supabase
-      .from('profiles')
-      .update({ is_admin: !currentStatus })
-      .eq('id', userId);
-
-    if (error) {
-      toast.error("Error updating admin status");
-    } else {
-      toast.success(`User ${currentStatus ? 'removed from' : 'made'} admin successfully`);
-      refetchProfiles();
-    }
-  };
-
   const { data: profile } = useQuery({
     queryKey: ["user-profile"],
     queryFn: async () => {
@@ -171,77 +109,6 @@ const Settings = () => {
       return data;
     },
   });
-
-  const { data: profiles, refetch: refetchProfiles } = useQuery({
-    queryKey: ["all-profiles"],
-    queryFn: async () => {
-      if (!profile?.is_admin) return null;
-
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (error) {
-        toast.error("Error fetching profiles");
-        return null;
-      }
-
-      return data;
-    },
-    enabled: !!profile?.is_admin,
-  });
-
-  const handleLanguageChange = async (newLanguage: string) => {
-    try {
-      const { error } = await supabase
-        .from('user_preferences')
-        .upsert({
-          user_id: userId,
-          language: newLanguage
-        });
-
-      if (error) {
-        console.error('Error updating language:', error);
-        toast.error('Failed to update language preference');
-        return;
-      }
-
-      setLanguage(newLanguage);
-      document.documentElement.dir = newLanguage === 'yi' ? 'rtl' : 'ltr';
-      toast.success('Language updated successfully');
-    } catch (error) {
-      console.error('Error updating language:', error);
-      toast.error('Failed to update language preference');
-    }
-  };
-
-  useEffect(() => {
-    const loadUserPreferences = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return;
-
-      const { data, error } = await supabase
-        .from('user_preferences')
-        .select('*')
-        .eq('user_id', session.user.id)
-        .single();
-
-      if (error) {
-        console.error('Error loading preferences:', error);
-        return;
-      }
-
-      if (data) {
-        setLanguage(data.language || 'en');
-        document.documentElement.dir = data.language === 'yi' ? 'rtl' : 'ltr';
-      }
-    };
-
-    loadUserPreferences();
-  }, []);
-
-  const t = (key: TranslationKey) => getTranslation(key);
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: backgroundColor, color: textColor }}>
@@ -271,213 +138,49 @@ const Settings = () => {
           <ChannelPreferences />
         </section>
 
-        <section className="mb-12">
-          <h2 className="text-2xl font-semibold mb-4">{t('accessibility')}</h2>
-          <Card className="p-6 space-y-6">
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="high-contrast">{t('highContrastMode')}</Label>
-                <p className="text-sm text-muted-foreground">
-                  {t('increaseContrast')}
-                </p>
-              </div>
-              <Switch
-                id="high-contrast"
-                checked={highContrast}
-                onCheckedChange={setHighContrast}
-              />
-            </div>
-          </Card>
-        </section>
+        <PlaybackSettings 
+          volume={volume}
+          setVolume={setVolume}
+          autoplay={autoplay}
+          setAutoplay={setAutoplay}
+          playbackSpeed={playbackSpeed}
+          setPlaybackSpeed={setPlaybackSpeed}
+        />
 
-        <section className="mb-12">
-          <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-            <Volume2 className="h-6 w-6" />
-            {t('playbackSettings')}
-          </h2>
-          <Card className="p-6 space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="volume">{t('defaultVolume')} ({volume}%)</Label>
-              <Slider
-                id="volume"
-                min={0}
-                max={100}
-                step={1}
-                value={[volume]}
-                onValueChange={(value) => setVolume(value[0])}
-              />
-            </div>
+        <LanguageSettings 
+          userId={userId}
+          language={language}
+          setLanguage={setLanguage}
+        />
 
-            <div className="space-y-2">
-              <Label htmlFor="playback-speed">{t('defaultPlaybackSpeed')}</Label>
-              <Select value={playbackSpeed} onValueChange={setPlaybackSpeed}>
-                <SelectTrigger className="w-[140px] bg-background border-input">
-                  <SelectValue placeholder="Select speed" />
-                </SelectTrigger>
-                <SelectContent className="bg-background border-2 border-input shadow-lg min-w-[140px]">
-                  <SelectItem value="0.25">0.25x</SelectItem>
-                  <SelectItem value="0.5">0.5x</SelectItem>
-                  <SelectItem value="0.75">0.75x</SelectItem>
-                  <SelectItem value="1">Normal</SelectItem>
-                  <SelectItem value="1.25">1.25x</SelectItem>
-                  <SelectItem value="1.5">1.5x</SelectItem>
-                  <SelectItem value="2">2x</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="autoplay">{t('autoplay')}</Label>
-                <p className="text-sm text-muted-foreground">
-                  {t('autoplayNextVideo')}
-                </p>
-              </div>
-              <Switch
-                id="autoplay"
-                checked={autoplay}
-                onCheckedChange={setAutoplay}
-              />
-            </div>
-          </Card>
-        </section>
-
-        <section className="mb-12">
-          <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-            <Bell className="h-6 w-6" />
-            {t('notificationSettings')}
-          </h2>
-          <Card className="p-6 space-y-6">
-            <div className="bg-muted/50 rounded-lg p-4 mb-4">
-              <p className="text-sm text-muted-foreground italic">
-                🚧 Coming Soon: We're currently working on implementing email and push notifications. Stay tuned for updates! 🚧
-              </p>
-            </div>
-            
-            <div className="flex items-center justify-between opacity-50">
-              <div className="space-y-0.5">
-                <Label htmlFor="email-notifications">{t('emailNotifications')}</Label>
-                <p className="text-sm text-muted-foreground">
-                  {t('receiveUpdates')}
-                </p>
-              </div>
-              <Switch
-                id="email-notifications"
-                checked={emailNotifications}
-                onCheckedChange={setEmailNotifications}
-                disabled
-              />
-            </div>
-
-            <div className="flex items-center justify-between opacity-50">
-              <div className="space-y-0.5">
-                <Label htmlFor="push-notifications">{t('pushNotifications')}</Label>
-                <p className="text-sm text-muted-foreground">
-                  {t('browserNotifications')}
-                </p>
-              </div>
-              <Switch
-                id="push-notifications"
-                checked={pushNotifications}
-                onCheckedChange={setPushNotifications}
-                disabled
-              />
-            </div>
-          </Card>
-        </section>
-
-        <section className="mb-12">
-          <h2 className="text-2xl font-semibold mb-4">{t('customizeColors')}</h2>
-          <Card className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="backgroundColor">{t('backgroundColor')}</Label>
-                  <div className="flex items-center gap-4">
-                    <input
-                      type="color"
-                      id="backgroundColor"
-                      value={backgroundColor}
-                      onChange={(e) => setBackgroundColor(e.target.value)}
-                      className="w-20 h-10 rounded cursor-pointer"
-                    />
-                    <span className="text-sm">{backgroundColor}</span>
-                  </div>
-                </div>
-
-                <div>
-                  <Label htmlFor="textColor">{t('textColor')}</Label>
-                  <div className="flex items-center gap-4">
-                    <input
-                      type="color"
-                      id="textColor"
-                      value={textColor}
-                      onChange={(e) => setTextColor(e.target.value)}
-                      className="w-20 h-10 rounded cursor-pointer"
-                    />
-                    <span className="text-sm">{textColor}</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="buttonColor">{t('buttonColor')}</Label>
-                  <div className="flex items-center gap-4">
-                    <input
-                      type="color"
-                      id="buttonColor"
-                      value={buttonColor}
-                      onChange={(e) => setButtonColor(e.target.value)}
-                      className="w-20 h-10 rounded cursor-pointer"
-                    />
-                    <span className="text-sm">{buttonColor}</span>
-                  </div>
-                </div>
-
-                <div>
-                  <Label htmlFor="otherColors">{t('otherColors')}</Label>
-                  <div className="flex items-center gap-4">
-                    <input
-                      type="color"
-                      id="otherColors"
-                      value={logoColor}
-                      onChange={(e) => setLogoColor(e.target.value)}
-                      className="w-20 h-10 rounded cursor-pointer"
-                    />
-                    <span className="text-sm">{logoColor}</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="col-span-full flex gap-4">
-                <Button onClick={saveColors} variant="default">
-                  {t('saveChanges')}
-                </Button>
-                <Button onClick={resetToDefaults} variant="outline">
-                  {t('resetDefaults')}
-                </Button>
-              </div>
-            </div>
-          </Card>
-        </section>
+        <ColorSettings 
+          backgroundColor={backgroundColor}
+          setBackgroundColor={setBackgroundColor}
+          textColor={textColor}
+          setTextColor={setTextColor}
+          buttonColor={buttonColor}
+          setButtonColor={setButtonColor}
+          logoColor={logoColor}
+          setLogoColor={setLogoColor}
+          saveColors={saveColors}
+          resetToDefaults={resetToDefaults}
+        />
 
         <UserAnalyticsSection />
 
         {profile?.is_admin && (
           <section className="mb-12">
-            <h2 className="text-2xl font-semibold mb-4">{t('adminControls')}</h2>
+            <h2 className="text-2xl font-semibold mb-4">Admin Controls</h2>
             <Card className="p-6">
               <div className="space-y-8">
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label>{t('dashboardAccess')}</Label>
                     <p className="text-sm text-muted-foreground">
-                      {t('manageChannels')}
+                      Access the admin dashboard to manage channels and videos
                     </p>
                   </div>
-                  <Button onClick={handleDashboardAccess}>
-                    {t('openDashboard')}
+                  <Button onClick={() => navigate("/dashboard")}>
+                    Open Dashboard
                   </Button>
                 </div>
               </div>
