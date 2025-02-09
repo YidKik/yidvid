@@ -17,8 +17,8 @@ const categories = [
   { id: 'other', label: 'Other', icon: '📌' },
 ];
 
-// Triple the categories array to ensure smooth looping
-const infiniteCategories = [...categories, ...categories, ...categories];
+// Quadruple the categories array to ensure even smoother looping
+const infiniteCategories = [...categories, ...categories, ...categories, ...categories];
 
 export const CategorySection = () => {
   const { data: categoryVideos, isLoading, refetch } = useQuery({
@@ -93,7 +93,7 @@ export const CategorySection = () => {
             x: {
               repeat: Infinity,
               repeatType: "loop",
-              duration: 45,
+              duration: 60,
               ease: "linear"
             },
           }}
