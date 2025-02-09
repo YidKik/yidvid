@@ -15,8 +15,25 @@ export const getPageTitle = (path: string): string => {
     'dashboard': 'Admin Dashboard',
     'settings': 'User Settings',
     'music': 'Music Player',
-    'search': 'Search Results'
+    'search': 'Search Results',
+    'category': 'Category Videos',
+    'admin': {
+      'channels': 'Manage Channels',
+      'comments': 'Manage Comments',
+      'requests': 'Channel Requests',
+      'users': 'User Management',
+      'analytics': 'Analytics Dashboard',
+      'videos': 'Video Management',
+      'categories': 'Category Management',
+      'contact-requests': 'Contact Requests'
+    }
   };
+  
+  // Handle admin routes specially
+  if (segments[0] === 'admin' && segments[1]) {
+    const adminTitle = pageTitles['admin'][segments[1]];
+    return adminTitle ? `${adminTitle} | ${APP_NAME} Admin` : `Admin | ${APP_NAME}`;
+  }
   
   // Get the base page title
   const baseTitle = pageTitles[segments[0]] || segments[0].charAt(0).toUpperCase() + segments[0].slice(1);
