@@ -68,7 +68,7 @@ export const CategorySection = () => {
   }
 
   return (
-    <div className="relative h-[220px]">
+    <div className="relative h-[300px] md:h-[320px]">
       <div className="relative w-full h-full">
         {/* Content container with clipping */}
         <div className="absolute inset-0 overflow-hidden" style={{ margin: '0 300px' }}>
