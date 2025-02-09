@@ -1,3 +1,4 @@
+
 const APP_NAME = "YidVid";
 
 export const getPageTitle = (path: string): string => {

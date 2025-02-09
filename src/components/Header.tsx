@@ -116,9 +116,9 @@ export const Header = () => {
       <div className="container flex h-14 items-center">
         <Link to="/" className="flex items-center space-x-2">
           <img 
-            src="https://euincktvsiuztsxcuqfd.supabase.co/storage/v1/object/public/logos/play_button_outline_and_glyph.png" 
+            src="/lovable-uploads/e425cacb-4c3a-4d81-b4e0-77fcbf10f61c.png" 
             alt="YidVid Logo"
-            className="h-12 w-12 md:h-20 md:w-20 object-contain min-h-[50px] min-w-[50px] md:min-h-[80px] md:min-w-[80px] max-h-[50px] max-w-[50px] md:max-h-[80px] md:max-w-[80px]"
+            className="h-12 w-auto object-contain min-h-[50px] md:min-h-[80px] max-h-[50px] md:max-h-[80px]"
             onError={(e) => {
               console.error('Logo failed to load:', e);
               e.currentTarget.style.display = 'none';
