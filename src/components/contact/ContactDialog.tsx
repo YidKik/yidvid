@@ -109,10 +109,10 @@ export const ContactDialog = () => {
           <span className="hidden md:inline">Contact</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[500px] bg-[#333333] text-white border-gray-600">
         <DialogHeader>
-          <DialogTitle>Contact Us</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-white">Contact Us</DialogTitle>
+          <DialogDescription className="text-gray-300">
             How can we help you today? Choose a category below and send us your message.
           </DialogDescription>
         </DialogHeader>
@@ -123,7 +123,7 @@ export const ContactDialog = () => {
               name="category"
               render={({ field }) => (
                 <FormItem className="space-y-3">
-                  <FormLabel>Select a Category</FormLabel>
+                  <FormLabel className="text-white">Select a Category</FormLabel>
                   <FormControl>
                     <RadioGroup
                       onValueChange={field.onChange}
@@ -134,8 +134,8 @@ export const ContactDialog = () => {
                         <FormItem key={category.value}>
                           <FormControl>
                             <label
-                              className={`flex items-start space-x-3 space-y-0 rounded-md border p-4 cursor-pointer hover:bg-gray-50 transition-colors ${
-                                field.value === category.value ? 'border-primary' : 'border-gray-200'
+                              className={`flex items-start space-x-3 space-y-0 rounded-md border p-4 cursor-pointer hover:bg-[#444444] transition-colors ${
+                                field.value === category.value ? 'border-primary' : 'border-gray-600'
                               }`}
                             >
                               <RadioGroupItem
@@ -144,10 +144,10 @@ export const ContactDialog = () => {
                                 className="mt-1"
                               />
                               <div className="space-y-1">
-                                <p className="font-medium leading-none">
+                                <p className="font-medium leading-none text-white">
                                   {category.label}
                                 </p>
-                                <p className="text-sm text-muted-foreground">
+                                <p className="text-sm text-gray-300">
                                   {category.description}
                                 </p>
                               </div>
@@ -157,7 +157,7 @@ export const ContactDialog = () => {
                       ))}
                     </RadioGroup>
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-red-400" />
                 </FormItem>
               )}
             />
@@ -167,11 +167,15 @@ export const ContactDialog = () => {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Name</FormLabel>
+                    <FormLabel className="text-white">Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter your name" {...field} />
+                      <Input 
+                        placeholder="Enter your name" 
+                        {...field} 
+                        className="bg-[#444444] border-gray-600 text-white placeholder:text-gray-400"
+                      />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-red-400" />
                   </FormItem>
                 )}
               />
@@ -180,11 +184,16 @@ export const ContactDialog = () => {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel className="text-white">Email</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter your email" type="email" {...field} />
+                      <Input 
+                        placeholder="Enter your email" 
+                        type="email" 
+                        {...field} 
+                        className="bg-[#444444] border-gray-600 text-white placeholder:text-gray-400"
+                      />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-red-400" />
                   </FormItem>
                 )}
               />
@@ -193,21 +202,21 @@ export const ContactDialog = () => {
                 name="message"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Message</FormLabel>
+                    <FormLabel className="text-white">Message</FormLabel>
                     <FormControl>
                       <Textarea 
                         placeholder="What would you like to tell us?" 
-                        className="min-h-[100px]"
+                        className="min-h-[100px] bg-[#444444] border-gray-600 text-white placeholder:text-gray-400"
                         {...field} 
                       />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-red-400" />
                   </FormItem>
                 )}
               />
             </div>
             <div className="flex justify-end">
-              <Button type="submit" className="h-8 md:h-10 text-sm md:text-base">
+              <Button type="submit" className="h-8 md:h-10 text-sm md:text-base bg-primary hover:bg-primary-hover">
                 Send Message
               </Button>
             </div>
