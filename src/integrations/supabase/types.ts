@@ -147,6 +147,7 @@ export type Database = {
           created_at: string
           icon: string
           id: string
+          is_emoji: boolean | null
           name: string
           updated_at: string
         }
@@ -154,6 +155,7 @@ export type Database = {
           created_at?: string
           icon: string
           id?: string
+          is_emoji?: boolean | null
           name: string
           updated_at?: string
         }
@@ -161,6 +163,7 @@ export type Database = {
           created_at?: string
           icon?: string
           id?: string
+          is_emoji?: boolean | null
           name?: string
           updated_at?: string
         }
