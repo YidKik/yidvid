@@ -18,7 +18,7 @@ export const LogoAnimation = () => {
         }}
         className="relative w-full h-full"
       >
-        {/* Main Logo */}
+        {/* Base YouTube Logo */}
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
@@ -31,9 +31,29 @@ export const LogoAnimation = () => {
           className="absolute inset-0 flex items-center justify-center"
         >
           <img
-            src="/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png"
-            alt="YidVid Logo"
+            src="/lovable-uploads/b9b6d425-5b4d-44dd-a983-c58a2c096e03.png"
+            alt="YouTube Base"
             className="w-full h-full object-contain"
+          />
+        </motion.div>
+        
+        {/* Kippah Animation */}
+        <motion.div
+          initial={{ y: -50, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{
+            duration: 0.6,
+            type: "spring",
+            stiffness: 150,
+            delay: 0.8
+          }}
+          className="absolute w-full h-full flex items-start justify-center"
+          style={{ top: "-15%" }}
+        >
+          <img
+            src="/lovable-uploads/834fcef8-3a58-43fa-939a-47e825a37a8e.png"
+            alt="Kippah"
+            className="w-1/2 object-contain"
           />
         </motion.div>
         
@@ -55,4 +75,3 @@ export const LogoAnimation = () => {
     </div>
   );
 };
-
