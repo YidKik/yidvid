@@ -1,3 +1,4 @@
+
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -171,9 +172,9 @@ const ChannelDetails = () => {
       <div className="container mx-auto p-4 mt-16">
         <BackButton />
         <div className="flex flex-col items-center space-y-4">
-          <Skeleton className="h-32 w-32 rounded-full" />
-          <Skeleton className="h-8 w-64" />
-          <Skeleton className="h-4 w-48" />
+          <Skeleton className="h-20 w-20 md:h-32 md:w-32 rounded-full" />
+          <Skeleton className="h-6 w-48 md:h-8 md:w-64" />
+          <Skeleton className="h-4 w-36 md:h-4 md:w-48" />
         </div>
       </div>
     );
@@ -193,36 +194,36 @@ const ChannelDetails = () => {
   return (
     <div className="container mx-auto p-4 mt-16 opacity-0 animate-[fadeIn_0.6s_ease-out_forwards]">
       <BackButton />
-      <div className="flex flex-col items-center mb-8">
-        <Avatar className="w-32 h-32 mb-4 opacity-0 animate-[scaleIn_0.6s_ease-out_0.3s_forwards] group">
+      <div className="flex flex-col items-center mb-6 md:mb-8">
+        <Avatar className="w-20 h-20 md:w-32 md:h-32 mb-3 md:mb-4 opacity-0 animate-[scaleIn_0.6s_ease-out_0.3s_forwards] group">
           <AvatarImage
             src={channel.thumbnail_url}
             alt={channel.title}
             className="object-cover transition-transform duration-300 group-hover:scale-105"
           />
           <AvatarFallback className="bg-primary/10">
-            <Youtube className="w-16 h-16 text-primary" />
+            <Youtube className="w-10 h-10 md:w-16 md:h-16 text-primary" />
           </AvatarFallback>
         </Avatar>
-        <h1 className="text-3xl font-bold text-center mb-2 opacity-0 animate-[fadeIn_0.6s_ease-out_0.4s_forwards]">
+        <h1 className="text-xl md:text-3xl font-bold text-center mb-2 opacity-0 animate-[fadeIn_0.6s_ease-out_0.4s_forwards]">
           {channel.title}
         </h1>
         
         <Button
           variant={isSubscribed ? "default" : "outline"}
           onClick={handleSubscribe}
-          className={`mb-4 transition-all duration-200 ${
+          className={`h-8 md:h-10 text-sm md:text-base px-3 md:px-4 mb-3 md:mb-4 transition-all duration-200 ${
             isSubscribed ? "bg-primary hover:bg-primary-hover text-white shadow-md" : ""
           }`}
         >
           {isSubscribed ? (
             <>
-              <Check className="w-4 h-4 mr-2 animate-in" />
+              <Check className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1.5 md:mr-2 animate-in" />
               Subscribed
             </>
           ) : (
             <>
-              <UserPlus className="w-4 h-4 mr-2" />
+              <UserPlus className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1.5 md:mr-2" />
               Subscribe
             </>
           )}
@@ -234,20 +235,20 @@ const ChannelDetails = () => {
               variant="outline"
               size="sm"
               onClick={() => setShowDescription(!showDescription)}
-              className="text-xs text-muted-foreground hover:text-foreground transition-colors border-muted-foreground/30 h-7 px-2"
+              className="text-xs text-muted-foreground hover:text-foreground transition-colors border-muted-foreground/30 h-6 md:h-7 px-2"
             >
               {showDescription ? (
                 <span className="flex items-center gap-1">
-                  Less <ChevronUp className="h-3 w-3" />
+                  Less <ChevronUp className="h-2.5 w-2.5 md:h-3 md:w-3" />
                 </span>
               ) : (
                 <span className="flex items-center gap-1">
-                  More <ChevronDown className="h-3 w-3" />
+                  More <ChevronDown className="h-2.5 w-2.5 md:h-3 md:w-3" />
                 </span>
               )}
             </Button>
             {showDescription && (
-              <p className="text-muted-foreground text-sm text-center max-w-2xl mt-2 animate-fade-in">
+              <p className="text-muted-foreground text-xs md:text-sm text-center max-w-2xl mt-2 animate-fade-in">
                 {channel.description}
               </p>
             )}
@@ -255,7 +256,7 @@ const ChannelDetails = () => {
         )}
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 md:gap-8">
         {isLoadingInitialVideos ? (
           Array.from({ length: INITIAL_VIDEOS_COUNT }).map((_, index) => (
             <div key={index} className="space-y-2">
@@ -292,8 +293,8 @@ const ChannelDetails = () => {
       </div>
 
       {isLoadingMore && (
-        <div className="flex justify-center mt-8">
-          <p className="text-muted-foreground">Loading more videos...</p>
+        <div className="flex justify-center mt-6 md:mt-8">
+          <p className="text-sm md:text-base text-muted-foreground">Loading more videos...</p>
         </div>
       )}
     </div>
