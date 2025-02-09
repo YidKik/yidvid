@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
@@ -66,7 +67,7 @@ export const CategorySection = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) => 
-        prevIndex + 3 >= categories.length ? 0 : prevIndex + 3
+        prevIndex + 1 >= categories.length ? 0 : prevIndex + 1
       );
     }, 6000);
 
@@ -88,68 +89,48 @@ export const CategorySection = () => {
   }
 
   const getVisibleCategories = () => {
-    const currentGroup = [];
-    const nextGroup = [];
-    
-    for (let i = 0; i < 3; i++) {
-      const currentIdx = (currentIndex + i) % categories.length;
-      currentGroup.push(categories[currentIdx]);
-      
-      const nextIdx = (currentIndex + 3 + i) % categories.length;
-      nextGroup.push(categories[nextIdx]);
+    const visibleCategories = [];
+    for (let i = 0; i < categories.length * 2; i++) {
+      const index = (currentIndex + i) % categories.length;
+      visibleCategories.push({
+        ...categories[index],
+        key: `${categories[index].id}-${i}`,
+        position: i
+      });
     }
-    
-    return { currentGroup, nextGroup };
+    return visibleCategories;
   };
 
-  const { currentGroup, nextGroup } = getVisibleCategories();
+  const visibleCategories = getVisibleCategories();
 
   return (
     <div className="mt-8 mb-12">
       <h2 className="text-xl md:text-2xl font-bold mb-6 text-center">Browse by Category</h2>
       <div className="relative h-[140px] overflow-hidden">
-        <motion.div
-          className="grid grid-cols-3 gap-4 absolute w-full"
-          animate={{ x: "-100%" }}
-          transition={{
-            duration: 4.5,
-            ease: "easeInOut",
-            repeat: Infinity,
-            repeatDelay: 1.5,
-          }}
-        >
-          {currentGroup.map((category, index) => (
-            <CategoryCard
-              key={`current-${category.id}-${index}`}
-              id={category.id}
-              icon={category.icon}
-              label={category.label}
-              count={getCategoryCount(category.id)}
-            />
+        <div className="absolute w-full">
+          {visibleCategories.map((category) => (
+            <motion.div
+              key={category.key}
+              className="absolute w-[calc(33.33%-1rem)] top-0"
+              initial={{ x: `${(category.position * 33.33) + ((category.position) * 1.33)}%` }}
+              animate={{ 
+                x: `${((category.position - 1) * 33.33) + ((category.position - 1) * 1.33)}%`
+              }}
+              transition={{
+                duration: 4.5,
+                ease: "easeInOut",
+                repeat: 0
+              }}
+            >
+              <CategoryCard
+                id={category.id}
+                icon={category.icon}
+                label={category.label}
+                count={getCategoryCount(category.id)}
+              />
+            </motion.div>
           ))}
-        </motion.div>
-
-        <motion.div
-          className="grid grid-cols-3 gap-4 absolute w-full"
-          initial={{ x: "100%" }}
-          animate={{ x: "0%" }}
-          transition={{
-            duration: 4.5,
-            ease: "easeInOut",
-            repeat: Infinity,
-            repeatDelay: 1.5,
-          }}
-        >
-          {nextGroup.map((category, index) => (
-            <CategoryCard
-              key={`next-${category.id}-${index}`}
-              id={category.id}
-              icon={category.icon}
-              label={category.label}
-              count={getCategoryCount(category.id)}
-            />
-          ))}
-        </motion.div>
+        </div>
       </div>
     </div>
   );
