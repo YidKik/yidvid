@@ -90,7 +90,7 @@ export const CategorySection = () => {
 
   const getVisibleCategories = () => {
     const visibleCategories = [];
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 6; i++) {
       const index = (currentIndex + i) % categories.length;
       visibleCategories.push({
         ...categories[index],
@@ -108,15 +108,16 @@ export const CategorySection = () => {
       <div className="relative h-[140px] overflow-hidden">
         <div className="absolute inset-0">
           <AnimatePresence initial={false}>
-            {visibleCategories.map((category) => (
+            {visibleCategories.map((category, index) => (
               <motion.div
                 key={category.key}
                 initial={{ x: '100%' }}
                 animate={{ x: '-100%' }}
-                exit={{ x: '-100%' }}
+                exit={{ x: '-200%' }}
                 transition={{
-                  duration: 3,
+                  duration: 15,
                   ease: "linear",
+                  delay: index * 2.5
                 }}
                 style={{
                   position: 'absolute',
