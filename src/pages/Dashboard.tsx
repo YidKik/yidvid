@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Loader2, Users, Video, MessageSquare, Tv, Database } from "lucide-react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { Badge } from "@/components/ui/badge";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -61,6 +62,31 @@ export default function Dashboard() {
     enabled: profile?.is_admin === true
   });
 
+  // Query for notifications
+  const { data: notifications } = useQuery({
+    queryKey: ["admin-notifications"],
+    queryFn: async () => {
+      const { data: notificationsData, error } = await supabase
+        .from("admin_notifications")
+        .select("*")
+        .eq("is_read", false);
+
+      if (error) {
+        console.error("Error fetching notifications:", error);
+        return [];
+      }
+
+      return notificationsData;
+    },
+    enabled: profile?.is_admin === true,
+    refetchInterval: 30000, // Refetch every 30 seconds
+  });
+
+  // Count notifications by type
+  const getNotificationCount = (type: string) => {
+    return notifications?.filter(n => n.type === type).length || 0;
+  };
+
   if (isProfileLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -89,6 +115,7 @@ export default function Dashboard() {
       icon: <Tv className="h-7 w-7" />,
       onClick: () => navigate("/admin/channels"),
       stats: stats?.totalChannels ? `${stats.totalChannels} channels` : undefined,
+      notifications: getNotificationCount("new_channel_request"),
       bgColor: "bg-[#F2FCE2]",
       iconColor: "text-green-600"
     },
@@ -98,6 +125,7 @@ export default function Dashboard() {
       icon: <MessageSquare className="h-7 w-7" />,
       onClick: () => navigate("/admin/comments"),
       stats: stats?.totalComments ? `${stats.totalComments} comments` : undefined,
+      notifications: getNotificationCount("new_comment"),
       bgColor: "bg-[#FEF7CD]",
       iconColor: "text-yellow-600"
     },
@@ -106,6 +134,7 @@ export default function Dashboard() {
       description: "Review and manage channel requests",
       icon: <Video className="h-7 w-7" />,
       onClick: () => navigate("/admin/requests"),
+      notifications: getNotificationCount("new_channel_request"),
       bgColor: "bg-[#FEC6A1]",
       iconColor: "text-orange-600"
     },
@@ -115,6 +144,7 @@ export default function Dashboard() {
       icon: <Users className="h-7 w-7" />,
       onClick: () => navigate("/admin/users"),
       stats: stats?.totalUsers ? `${stats.totalUsers} users` : undefined,
+      notifications: getNotificationCount("new_user"),
       bgColor: "bg-[#E5DEFF]",
       iconColor: "text-purple-600"
     },
@@ -138,9 +168,19 @@ export default function Dashboard() {
           {adminCards.map((card, index) => (
             <Card 
               key={index}
-              className={`transform transition-all duration-300 hover:scale-105 cursor-pointer border-none shadow-lg ${card.bgColor}`}
+              className={`relative transform transition-all duration-300 hover:scale-105 cursor-pointer border-none shadow-lg ${card.bgColor}`}
               onClick={card.onClick}
             >
+              {card.notifications > 0 && (
+                <div className="absolute -top-2 -right-2 z-10">
+                  <Badge 
+                    variant="destructive"
+                    className="rounded-full px-2.5 py-0.5 text-xs font-semibold"
+                  >
+                    {card.notifications}
+                  </Badge>
+                </div>
+              )}
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div className={`p-3 rounded-lg ${card.bgColor} ${card.iconColor}`}>
