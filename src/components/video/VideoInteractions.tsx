@@ -1,3 +1,4 @@
+
 import { ThumbsUp, UserPlus, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -122,33 +123,33 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
   };
 
   return (
-    <div className="flex gap-4 mb-8">
+    <div className="flex gap-2 md:gap-4 mb-4 md:mb-8">
       <Button
         variant={isLiked ? "default" : "outline"}
         onClick={handleLike}
-        className={`w-32 transition-all duration-200 ${
+        className={`w-24 md:w-32 h-8 md:h-10 text-xs md:text-sm transition-all duration-200 ${
           isLiked ? "bg-primary hover:bg-primary-hover text-white shadow-md" : ""
         }`}
       >
-        <ThumbsUp className={`mr-2 ${isLiked ? "fill-current" : ""}`} />
+        <ThumbsUp className={`w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2 ${isLiked ? "fill-current" : ""}`} />
         {isLiked ? "Liked" : "Like"}
       </Button>
       
       <Button
         variant={isSubscribed ? "default" : "outline"}
         onClick={handleSubscribe}
-        className={`w-32 transition-all duration-200 ${
+        className={`w-24 md:w-32 h-8 md:h-10 text-xs md:text-sm transition-all duration-200 ${
           isSubscribed ? "bg-primary hover:bg-primary-hover text-white shadow-md" : ""
         }`}
       >
         {isSubscribed ? (
           <>
-            <Check className="mr-2 animate-in" />
+            <Check className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2 animate-in" />
             Subscribed
           </>
         ) : (
           <>
-            <UserPlus className="mr-2" />
+            <UserPlus className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" />
             Subscribe
           </>
         )}
