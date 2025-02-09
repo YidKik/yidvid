@@ -1,17 +1,6 @@
 
 project_id = "euincktvsiuztsxcuqfd"
 
-[functions.fetch-youtube-channel]
-verify_jwt = false
-
-[functions.fetch-youtube-videos]
-verify_jwt = false
-
-[functions.categorize-existing-videos]
-verify_jwt = false
-
-[functions.categorize-video]
-verify_jwt = false
-
 [functions.text-to-speech]
 verify_jwt = false
+
