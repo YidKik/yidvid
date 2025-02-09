@@ -48,9 +48,12 @@ export const useChannelSubscription = (channelId: string | undefined) => {
       } else {
         const { error } = await supabase
           .from("channel_subscriptions")
-          .insert({
+          .upsert({ // Using upsert instead of insert to handle duplicates
             channel_id: channelId,
             user_id: session.user.id
+          }, {
+            onConflict: 'user_id,channel_id',
+            ignoreDuplicates: true
           });
 
         if (error) throw error;
