@@ -1,7 +1,7 @@
 
 import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { CommentsProvider } from "./comments/CommentsContext";
+import { CommentsProvider, useComments } from "./comments/CommentsContext";
 import { NotificationsBadge } from "./comments/NotificationsBadge";
 import { CommentsTable } from "./comments/CommentsTable";
 

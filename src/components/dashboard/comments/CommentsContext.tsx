@@ -45,7 +45,7 @@ export const useComments = () => {
 };
 
 export const CommentsProvider = ({ children }: { children: ReactNode }) => {
-  const { data: notifications, refetch: refetchNotifications } = useQuery({
+  const { data: notifications, refetch: refetchNotificationsQuery } = useQuery({
     queryKey: ["admin-notifications"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -68,7 +68,7 @@ export const CommentsProvider = ({ children }: { children: ReactNode }) => {
     },
   });
 
-  const { data: comments, refetch: refetchComments } = useQuery({
+  const { data: comments, refetch: refetchCommentsQuery } = useQuery({
     queryKey: ["all-comments"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -121,6 +121,14 @@ export const CommentsProvider = ({ children }: { children: ReactNode }) => {
         variant: "destructive",
       });
     }
+  };
+
+  const refetchComments = async () => {
+    await refetchCommentsQuery();
+  };
+
+  const refetchNotifications = async () => {
+    await refetchNotificationsQuery();
   };
 
   return (
