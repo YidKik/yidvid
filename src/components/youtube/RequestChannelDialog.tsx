@@ -78,7 +78,10 @@ export const RequestChannelDialog = () => {
         user_id: session.user.id,
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error submitting channel request:", error);
+        throw error;
+      }
 
       toast.success("Channel request submitted successfully!");
       setIsOpen(false);
