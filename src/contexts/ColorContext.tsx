@@ -25,7 +25,7 @@ const DEFAULT_COLORS = {
   logoColor: '#030303',
 };
 
-const ColorContext = createContext<ColorContextType | undefined>(undefined);
+const ColorContext = createContext<ColorContextType | null>(null);
 
 export function ColorProvider({ children }: { children: React.ReactNode }) {
   const [colors, setColors] = useState<ColorPreferences>(DEFAULT_COLORS);
@@ -121,8 +121,14 @@ export function ColorProvider({ children }: { children: React.ReactNode }) {
     await updateColors(DEFAULT_COLORS);
   };
 
+  const value = {
+    colors,
+    updateColors,
+    resetColors
+  };
+
   return (
-    <ColorContext.Provider value={{ colors, updateColors, resetColors }}>
+    <ColorContext.Provider value={value}>
       {children}
     </ColorContext.Provider>
   );
@@ -130,7 +136,7 @@ export function ColorProvider({ children }: { children: React.ReactNode }) {
 
 export function useColors() {
   const context = useContext(ColorContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error('useColors must be used within a ColorProvider');
   }
   return context;
