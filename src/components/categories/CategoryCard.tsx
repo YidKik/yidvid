@@ -9,7 +9,6 @@ interface CategoryCardProps {
   id: string;
 }
 
-// Color mapping for different categories
 const categoryColors: { [key: string]: { bg: string; border: string; text: string } } = {
   music: { bg: '#FFFFFF', border: '#ea384c', text: '#333333' },
   torah: { bg: '#FFFFFF', border: '#ea384c', text: '#333333' },
@@ -41,14 +40,14 @@ export const CategoryCard = ({ icon, label, count, id }: CategoryCardProps) => {
         }
       }}
       whileTap={{ scale: 0.98 }}
-      className="rounded-xl p-4 cursor-pointer transition-all duration-300 h-[120px] relative backdrop-blur-sm"
+      className="rounded-xl p-2 md:p-4 cursor-pointer transition-all duration-300 h-[80px] md:h-[120px] relative backdrop-blur-sm"
       style={{
         background: colors.bg,
         border: `2px solid ${colors.border}`,
       }}
       onClick={handleClick}
     >
-      <div className="flex items-center space-x-3">
+      <div className="flex items-center space-x-2 md:space-x-3">
         <motion.span 
           whileHover={{
             rotate: [0, -10, 10, -5, 5, 0],
@@ -56,7 +55,7 @@ export const CategoryCard = ({ icon, label, count, id }: CategoryCardProps) => {
               duration: 0.5
             }
           }}
-          className="text-3xl p-2.5 rounded-lg"
+          className="text-xl md:text-3xl p-1.5 md:p-2.5 rounded-lg"
           style={{
             background: `${colors.border}20`,
             color: colors.text
@@ -66,12 +65,12 @@ export const CategoryCard = ({ icon, label, count, id }: CategoryCardProps) => {
         </motion.span>
         <div className="flex-1">
           <h3 
-            className="font-semibold text-base mb-1"
+            className="font-semibold text-xs md:text-base mb-0.5 md:mb-1"
             style={{ color: colors.text }}
           >
             {label}
           </h3>
-          <p className="text-sm text-gray-700 flex items-center">
+          <p className="text-[10px] md:text-sm text-gray-700 flex items-center">
             <span className="inline-flex items-center">
               {count} videos
             </span>
@@ -81,4 +80,3 @@ export const CategoryCard = ({ icon, label, count, id }: CategoryCardProps) => {
     </motion.div>
   );
 };
-

@@ -71,7 +71,7 @@ export const CategorySection = () => {
     <div className="relative max-w-[1400px] mx-auto px-4 md:px-6">
       <div className="overflow-visible relative">
         <motion.div
-          className="flex gap-6"
+          className="flex gap-2 md:gap-6"
           animate={{
             x: ['0%', '-50%']
           }}
@@ -91,7 +91,7 @@ export const CategorySection = () => {
           {infiniteCategories.map((category, index) => (
             <div
               key={`${category.id}-${index}`}
-              className="w-[300px] flex-shrink-0"
+              className="w-[180px] md:w-[300px] flex-shrink-0"
             >
               <CategoryCard
                 id={category.id}
