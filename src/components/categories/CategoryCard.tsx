@@ -20,15 +20,22 @@ export const CategoryCard = ({ icon, label, count, id }: CategoryCardProps) => {
     <motion.div
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
-      className="bg-white rounded-lg shadow-md p-4 cursor-pointer hover:shadow-xl transition-all duration-300 transform hover:bg-accent/5 h-[140px]"
+      className="bg-white rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] p-6 cursor-pointer 
+                hover:shadow-[0_8px_30px_rgba(155,135,245,0.3)] transition-all duration-300 
+                transform hover:bg-gradient-to-br from-white via-white to-[#f5f3ff] 
+                border border-[#f5f3ff] h-[140px]"
       onClick={handleClick}
       layout
     >
       <div className="flex items-center space-x-4">
-        <span className="text-4xl">{icon}</span>
+        <span className="text-4xl bg-[#9b87f5]/10 p-2 rounded-lg">{icon}</span>
         <div className="flex-1">
-          <h3 className="font-semibold text-lg mb-1">{label}</h3>
-          <p className="text-sm text-gray-600">{count} videos</p>
+          <h3 className="font-semibold text-lg mb-2 text-[#6E59A5]">{label}</h3>
+          <p className="text-sm text-[#8E9196] flex items-center">
+            <span className="inline-flex items-center">
+              {count} videos
+            </span>
+          </p>
         </div>
       </div>
     </motion.div>
