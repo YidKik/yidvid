@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { CustomCategory } from "@/types/custom-categories";
+import { Card } from "@/components/ui/card";
 
 interface CustomCategoryManagementProps {
   categories: CustomCategory[];
@@ -55,27 +56,31 @@ export function CustomCategoryManagement({ categories, onUpdate }: CustomCategor
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col md:flex-row gap-4">
-        <div className="flex-1">
-          <Input
-            type="text"
-            placeholder="Category name"
-            value={newCategory.name}
-            onChange={(e) => setNewCategory({ ...newCategory, name: e.target.value })}
-          />
+      <Card className="p-6">
+        <h3 className="text-lg font-semibold mb-4">Add New Category</h3>
+        <div className="flex flex-col md:flex-row gap-4">
+          <div className="flex-1">
+            <Input
+              type="text"
+              placeholder="Category name"
+              value={newCategory.name}
+              onChange={(e) => setNewCategory({ ...newCategory, name: e.target.value })}
+            />
+          </div>
+          <div className="flex-1">
+            <Input
+              type="text"
+              placeholder="Category icon (emoji)"
+              value={newCategory.icon}
+              onChange={(e) => setNewCategory({ ...newCategory, icon: e.target.value })}
+            />
+          </div>
+          <Button onClick={handleAddCategory}>Add Category</Button>
         </div>
-        <div className="flex-1">
-          <Input
-            type="text"
-            placeholder="Category icon (emoji)"
-            value={newCategory.icon}
-            onChange={(e) => setNewCategory({ ...newCategory, icon: e.target.value })}
-          />
-        </div>
-        <Button onClick={handleAddCategory}>Add Category</Button>
-      </div>
+      </Card>
 
-      <div className="bg-white rounded-lg shadow">
+      <Card className="p-6">
+        <h3 className="text-lg font-semibold mb-4">Existing Categories</h3>
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
@@ -114,7 +119,7 @@ export function CustomCategoryManagement({ categories, onUpdate }: CustomCategor
             </tbody>
           </table>
         </div>
-      </div>
+      </Card>
     </div>
   );
 }
