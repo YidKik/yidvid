@@ -67,7 +67,7 @@ export const CategorySection = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) => 
-        prevIndex + 1 >= categories.length ? 0 : prevIndex + 1
+        prevIndex + 3 >= categories.length ? 0 : prevIndex + 3
       );
     }, 6000);
 
@@ -80,7 +80,7 @@ export const CategorySection = () => {
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-3 gap-8">
         {[...Array(3)].map((_, i) => (
           <Skeleton key={i} className="h-[140px] rounded-lg" />
         ))}
@@ -90,7 +90,7 @@ export const CategorySection = () => {
 
   const getVisibleCategories = () => {
     const visibleCategories = [];
-    for (let i = 0; i < categories.length; i++) {
+    for (let i = 0; i < 6; i++) {  // Show 6 cards (3 visible + 3 upcoming)
       const index = (currentIndex + i) % categories.length;
       visibleCategories.push({
         ...categories[index],
@@ -111,19 +111,16 @@ export const CategorySection = () => {
           {visibleCategories.map((category) => (
             <motion.div
               key={category.key}
-              className="absolute w-[calc(33.33%-1rem)] top-0"
-              initial={{ x: `${(category.position * 33.33) + (category.position * 1)}%` }}
+              className="absolute w-[calc(33.33%-1.33rem)] top-0"
+              initial={{ x: `${(category.position * 33.33) + (category.position * 2)}%` }}
               animate={{ 
-                x: `${((category.position - 1) * 33.33) + ((category.position - 1) * 1)}%`,
-                opacity: category.position === 0 ? 0 : 1
+                x: `${((category.position - 3) * 33.33) + ((category.position - 3) * 2)}%`,
+                opacity: category.position >= 3 ? 1 : 0
               }}
               transition={{
-                duration: 4.5,
-                ease: "easeInOut",
+                duration: 6,
+                ease: "linear",
                 repeat: 0
-              }}
-              style={{
-                marginRight: '1rem'
               }}
             >
               <CategoryCard
@@ -139,3 +136,4 @@ export const CategorySection = () => {
     </div>
   );
 };
+
