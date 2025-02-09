@@ -52,7 +52,7 @@ serve(async (req) => {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              model: 'gpt-4',
+              model: 'gpt-4o-mini',
               messages: [
                 { role: 'system', content: 'You are a helpful assistant that categorizes videos. Only respond with the category name.' },
                 { role: 'user', content: prompt }
@@ -71,9 +71,9 @@ serve(async (req) => {
 
           // Update the video with its category
           const { error: updateError } = await supabaseClient
-            .from('youtube_videos')
+            .from("youtube_videos")
             .update({ category })
-            .eq('id', video.id)
+            .eq("id", video.id)
 
           if (updateError) throw updateError
 
