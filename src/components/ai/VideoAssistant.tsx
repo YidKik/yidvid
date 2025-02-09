@@ -8,10 +8,17 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 
+// Define the message type for better type safety
+type AssistantMessage = {
+  role: 'user' | 'assistant';
+  content: string;
+  videoId?: string;
+}
+
 export const VideoAssistant = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
-  const [conversation, setConversation] = useState<{ role: 'user' | 'assistant', content: string }[]>([]);
+  const [conversation, setConversation] = useState<AssistantMessage[]>([]);
   const [userInput, setUserInput] = useState("");
   const navigate = useNavigate();
 
@@ -34,15 +41,15 @@ export const VideoAssistant = () => {
     e.preventDefault();
     if (!userInput.trim()) return;
 
-    const newMessage = { role: 'user' as const, content: userInput };
+    const newMessage: AssistantMessage = { role: 'user', content: userInput };
     setConversation([...conversation, newMessage]);
     setUserInput("");
 
     // Simulate AI response with video recommendation
     if (videos && videos.length > 0) {
       const randomVideo = videos[Math.floor(Math.random() * videos.length)];
-      const response = {
-        role: 'assistant' as const,
+      const response: AssistantMessage = {
+        role: 'assistant',
         content: `Based on your interest, I recommend watching "${randomVideo.title}". Would you like to check it out?`,
         videoId: randomVideo.id
       };
@@ -131,7 +138,7 @@ export const VideoAssistant = () => {
                           }`}
                         >
                           {message.content}
-                          {'videoId' in message && (
+                          {message.videoId && (
                             <Button
                               variant="link"
                               className="text-xs mt-1 text-primary-foreground underline"
