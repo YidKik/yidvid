@@ -9,8 +9,9 @@ const corsHeaders = {
 }
 
 serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders })
+    return new Response(null, { headers: corsHeaders });
   }
 
   try {
@@ -29,7 +30,13 @@ serve(async (req) => {
 
     if (fetchError) {
       console.error('Error fetching videos:', fetchError)
-      throw fetchError
+      return new Response(
+        JSON.stringify({ error: fetchError.message }), 
+        { 
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      )
     }
 
     if (!videos || videos.length === 0) {
@@ -44,7 +51,13 @@ serve(async (req) => {
 
     const geminiApiKey = Deno.env.get('GEMINI_API_KEY')
     if (!geminiApiKey) {
-      throw new Error('Missing Gemini API key')
+      return new Response(
+        JSON.stringify({ error: 'Missing Gemini API key' }),
+        { 
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      )
     }
 
     // Process videos with longer delays between requests
