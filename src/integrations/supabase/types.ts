@@ -564,6 +564,7 @@ export type Database = {
       }
       youtube_videos: {
         Row: {
+          category: Database["public"]["Enums"]["video_category"] | null
           channel_id: string
           channel_name: string
           created_at: string
@@ -578,6 +579,7 @@ export type Database = {
           views: number | null
         }
         Insert: {
+          category?: Database["public"]["Enums"]["video_category"] | null
           channel_id: string
           channel_name: string
           created_at?: string
@@ -592,6 +594,7 @@ export type Database = {
           views?: number | null
         }
         Update: {
+          category?: Database["public"]["Enums"]["video_category"] | null
           channel_id?: string
           channel_name?: string
           created_at?: string
@@ -631,6 +634,14 @@ export type Database = {
         | "jazz"
         | "classical"
         | "electronic"
+        | "other"
+      video_category:
+        | "music"
+        | "torah"
+        | "inspiration"
+        | "podcast"
+        | "education"
+        | "entertainment"
         | "other"
     }
     CompositeTypes: {

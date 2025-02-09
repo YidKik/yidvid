@@ -91,17 +91,43 @@ serve(async (req) => {
           }])
         );
 
-        // Process videos with their statistics
-        const videos = data.items.map((item: any) => ({
-          video_id: item.snippet.resourceId.videoId,
-          title: item.snippet.title,
-          thumbnail: item.snippet.thumbnails.high?.url || item.snippet.thumbnails.default?.url,
-          channel_id: channelId,
-          channel_name: item.snippet.channelTitle,
-          uploaded_at: item.snippet.publishedAt,
-          views: parseInt(statsMap.get(item.snippet.resourceId.videoId)?.statistics.viewCount || '0'),
-          description: statsMap.get(item.snippet.resourceId.videoId)?.description || null,
-        }));
+        // Process videos with their statistics and categorization
+        const videos = data.items.map(async (item: any) => {
+          const videoData = {
+            video_id: item.snippet.resourceId.videoId,
+            title: item.snippet.title,
+            thumbnail: item.snippet.thumbnails.high?.url || item.snippet.thumbnails.default?.url,
+            channel_id: channelId,
+            channel_name: item.snippet.channelTitle,
+            uploaded_at: item.snippet.publishedAt,
+            views: parseInt(statsMap.get(item.snippet.resourceId.videoId)?.statistics.viewCount || '0'),
+            description: statsMap.get(item.snippet.resourceId.videoId)?.description || null,
+          };
+
+          // Categorize the video
+          try {
+            const categorizationResponse = await fetch(
+              'https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/categorize-video',
+              {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${Deno.env.get('SUPABASE_ANON_KEY')}`,
+                },
+                body: JSON.stringify({
+                  title: videoData.title,
+                  description: videoData.description,
+                }),
+              }
+            );
+
+            const { category } = await categorizationResponse.json();
+            return { ...videoData, category };
+          } catch (error) {
+            console.error('Error categorizing video:', error);
+            return { ...videoData, category: 'other' };
+          }
+        });
 
         return { 
           videos,

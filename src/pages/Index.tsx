@@ -10,6 +10,7 @@ import { motion } from "framer-motion";
 import { MusicGrid } from "@/components/music/MusicGrid";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { WelcomeAnimation } from "@/components/WelcomeAnimation";
+import { CategorySection } from "@/components/categories/CategorySection";
 
 const MainContent = () => {
   const [isMusic, setIsMusic] = useState(false);
@@ -48,6 +49,7 @@ const MainContent = () => {
     <div className="flex-1">
       <Header />
       <main className="mt-4 md:mt-8 max-w-[1400px] mx-auto px-4 md:px-6">
+        <CategorySection />
         <div className="w-full py-4 md:py-6">
           <div className="flex justify-center w-full">
             <div className="relative w-[180px] md:w-[240px] h-8 md:h-12 bg-gray-100 rounded-full p-1 md:p-1.5 cursor-pointer mb-4 md:mb-8 shadow-sm hover:shadow-md transition-shadow"
