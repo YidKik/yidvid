@@ -897,6 +897,7 @@ export type Database = {
           channel_id: string
           created_at: string
           default_category: Database["public"]["Enums"]["video_category"] | null
+          deleted_at: string | null
           description: string | null
           id: string
           thumbnail_url: string | null
@@ -909,6 +910,7 @@ export type Database = {
           default_category?:
             | Database["public"]["Enums"]["video_category"]
             | null
+          deleted_at?: string | null
           description?: string | null
           id?: string
           thumbnail_url?: string | null
@@ -921,6 +923,7 @@ export type Database = {
           default_category?:
             | Database["public"]["Enums"]["video_category"]
             | null
+          deleted_at?: string | null
           description?: string | null
           id?: string
           thumbnail_url?: string | null
