@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
@@ -22,13 +23,13 @@ export const UserAnalyticsSection = () => {
       }
 
       // Get unique videos viewed
-      const uniqueVideos = new Set(videoHistory?.map(h => h.video_id));
+      const uniqueVideos = new Set(videoHistory?.map(h => h.video_id) || []);
 
       // Get unique channels from video history
       const { data: channelData, error: channelError } = await supabase
         .from("video_history")
         .select(`
-          video:youtube_videos!inner (
+          videos:video_id (
             channel_id
           )
         `)
@@ -40,7 +41,11 @@ export const UserAnalyticsSection = () => {
       }
 
       // Get unique channels viewed
-      const uniqueChannels = new Set(channelData?.map(d => d.video.channel_id));
+      const uniqueChannels = new Set(
+        channelData
+          ?.filter(d => d.videos?.channel_id) // Filter out any null values
+          .map(d => d.videos?.channel_id) || []
+      );
 
       // Calculate total watch time from user_analytics
       const { data: sessions, error: sessionsError } = await supabase
@@ -55,8 +60,9 @@ export const UserAnalyticsSection = () => {
       }
 
       const totalTimeSpent = sessions?.reduce((total, session) => {
+        if (!session.session_end) return total;
         const start = new Date(session.session_start);
-        const end = new Date(session.session_end!);
+        const end = new Date(session.session_end);
         return total + (end.getTime() - start.getTime());
       }, 0) || 0;
 
@@ -73,17 +79,33 @@ export const UserAnalyticsSection = () => {
     const seconds = Math.floor(ms / 1000);
     const minutes = Math.floor(seconds / 60);
     const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
     
-    if (hours === 0) {
-      return `${minutes} minute${minutes !== 1 ? 's' : ''}`;
+    if (days > 0) {
+      const remainingHours = hours % 24;
+      if (remainingHours === 0) {
+        return `${days} day${days !== 1 ? 's' : ''}`;
+      }
+      return `${days} day${days !== 1 ? 's' : ''} ${remainingHours} hour${remainingHours !== 1 ? 's' : ''}`;
     }
     
-    const remainingMinutes = minutes % 60;
-    if (remainingMinutes === 0) {
-      return `${hours} hour${hours !== 1 ? 's' : ''}`;
+    if (hours > 0) {
+      const remainingMinutes = minutes % 60;
+      if (remainingMinutes === 0) {
+        return `${hours} hour${hours !== 1 ? 's' : ''}`;
+      }
+      return `${hours} hour${hours !== 1 ? 's' : ''} ${remainingMinutes} minute${remainingMinutes !== 1 ? 's' : ''}`;
     }
     
-    return `${hours} hour${hours !== 1 ? 's' : ''} ${remainingMinutes} minute${remainingMinutes !== 1 ? 's' : ''}`;
+    if (minutes > 0) {
+      const remainingSeconds = seconds % 60;
+      if (remainingSeconds === 0) {
+        return `${minutes} minute${minutes !== 1 ? 's' : ''}`;
+      }
+      return `${minutes} minute${minutes !== 1 ? 's' : ''} ${remainingSeconds} second${remainingSeconds !== 1 ? 's' : ''}`;
+    }
+    
+    return `${seconds} second${seconds !== 1 ? 's' : ''}`;
   };
 
   if (isLoading) {
