@@ -104,40 +104,41 @@ export const ProfileSection = () => {
   if (!profile) return null;
 
   return (
-    <section className="mb-12 relative">
-      <div className="absolute inset-0 bg-background/80 backdrop-blur-sm z-10 flex items-center justify-center">
-        <Alert variant="default" className="w-[90%] max-w-lg border-muted">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
-            Profile settings are currently unavailable. You can still view and copy your User ID and username below.
-          </AlertDescription>
-        </Alert>
-      </div>
-
+    <section className="mb-12">
       <h2 className="text-2xl font-semibold mb-4">Profile Settings</h2>
       <Card className="p-6">
         <div className="space-y-6">
-          <div className="flex items-center space-x-4">
-            <div className="relative">
-              <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center overflow-hidden">
-                {avatarUrl ? (
-                  <img 
-                    src={avatarUrl} 
-                    alt="Profile" 
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <User className="w-10 h-10 text-muted-foreground" />
-                )}
-              </div>
+          <div className="relative">
+            <div className="absolute inset-0 bg-background/80 backdrop-blur-sm z-10">
+              <Alert variant="default" className="w-[90%] max-w-lg border-muted mx-auto mt-4">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>
+                  Profile settings are currently unavailable.
+                </AlertDescription>
+              </Alert>
             </div>
-            <div className="flex-1">
-              <h3 className="text-lg font-medium">
-                {displayName || username || "Anonymous User"}
-              </h3>
-              <p className="text-sm text-muted-foreground">
-                {profile.email}
-              </p>
+            <div className="flex items-center space-x-4">
+              <div className="relative">
+                <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center overflow-hidden">
+                  {avatarUrl ? (
+                    <img 
+                      src={avatarUrl} 
+                      alt="Profile" 
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <User className="w-10 h-10 text-muted-foreground" />
+                  )}
+                </div>
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg font-medium">
+                  {displayName || username || "Anonymous User"}
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  {profile.email}
+                </p>
+              </div>
             </div>
           </div>
 
