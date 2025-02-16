@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
@@ -33,8 +34,14 @@ export const CategorySection = () => {
       loop: true,
       align: 'start',
       dragFree: true,
+      containScroll: 'trimSnaps'
     },
-    [AutoPlay({ playOnInit: true, delay: 4000 })]
+    [AutoPlay({ 
+      playOnInit: true, 
+      delay: 4000,
+      stopOnInteraction: false,
+      stopOnMouseEnter: true
+    })]
   );
 
   const { data: categoryVideos, refetch } = useQuery({
@@ -134,8 +141,8 @@ export const CategorySection = () => {
         <div className="overflow-hidden relative h-[240px] md:h-[280px]">
           <div className="absolute left-0 top-0 w-24 md:w-48 h-full bg-gradient-to-r from-white via-white to-transparent z-10" />
           
-          <div className="embla" ref={emblaRef}>
-            <div className="flex gap-4 md:gap-8 cursor-grab active:cursor-grabbing">
+          <div className="embla cursor-grab active:cursor-grabbing" ref={emblaRef}>
+            <div className="flex gap-4 md:gap-8">
               {allCategories.map((category, index) => (
                 <div
                   key={`${category.id}-${index}`}
