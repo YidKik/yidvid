@@ -1,5 +1,4 @@
 
-import { Header } from "@/components/Header";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
@@ -14,7 +13,6 @@ import { UserAnalyticsSection } from "@/components/analytics/UserAnalyticsSectio
 import { ChannelPreferences } from "@/components/youtube/ChannelPreferences";
 import { useColors } from "@/contexts/ColorContext";
 import { PlaybackSettings } from "@/components/settings/PlaybackSettings";
-import { LanguageSettings } from "@/components/settings/LanguageSettings";
 import { ColorSettings } from "@/components/settings/ColorSettings";
 
 const Settings = () => {
@@ -133,14 +131,6 @@ const Settings = () => {
           </p>
           <ChannelPreferences />
         </section>
-
-        <LanguageSettings 
-          userId={userId}
-          language={profile?.language || 'en'}
-          setLanguage={(lang) => {
-            // Handle language change
-          }}
-        />
 
         <ColorSettings 
           backgroundColor={backgroundColor}
