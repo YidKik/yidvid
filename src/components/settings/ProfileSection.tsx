@@ -58,7 +58,7 @@ export const ProfileSection = () => {
 
       const updates: Partial<ProfilesTable["Row"]> = {
         display_name: displayName,
-        username: username.trim() || null, // Ensure empty string is saved as null
+        username: username.trim() || null,
         avatar_url: avatarUrl,
         updated_at: new Date().toISOString(),
       };
@@ -78,7 +78,7 @@ export const ProfileSection = () => {
         return;
       }
 
-      await refetch(); // Refresh the profile data
+      await refetch();
       toast.success("Profile updated successfully");
       setIsEditing(false);
     } catch (error) {
@@ -94,6 +94,13 @@ export const ProfileSection = () => {
     }
   };
 
+  const copyUsername = () => {
+    if (profile?.username) {
+      navigator.clipboard.writeText(profile.username);
+      toast.success("Username copied to clipboard");
+    }
+  };
+
   if (!profile) return null;
 
   return (
@@ -102,7 +109,7 @@ export const ProfileSection = () => {
         <Alert variant="default" className="w-[90%] max-w-lg border-muted">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
-            Profile settings are currently unavailable. You can still view your User ID and username below.
+            Profile settings are currently unavailable. You can still view and copy your User ID and username below.
           </AlertDescription>
         </Alert>
       </div>
@@ -158,6 +165,13 @@ export const ProfileSection = () => {
                     {profile.username}
                   </p>
                 </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={copyUsername}
+                >
+                  <Copy className="w-4 h-4" />
+                </Button>
               </div>
             )}
           </div>
@@ -166,4 +180,3 @@ export const ProfileSection = () => {
     </section>
   );
 };
-
