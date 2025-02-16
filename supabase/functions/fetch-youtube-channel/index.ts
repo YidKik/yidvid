@@ -18,17 +18,44 @@ serve(async (req) => {
   }
 
   try {
-    const { channelId } = await req.json();
+    // Add error handling for JSON parsing
+    let body;
+    try {
+      body = await req.json();
+    } catch (e) {
+      console.error("Error parsing request JSON:", e);
+      return new Response(
+        JSON.stringify({ error: "Invalid JSON in request body" }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      );
+    }
+
+    const { channelId } = body;
     console.log("Received request to fetch channel:", channelId);
 
     if (!channelId) {
-      throw new Error("Channel ID is required");
+      return new Response(
+        JSON.stringify({ error: "Channel ID is required" }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      );
     }
 
     const YOUTUBE_API_KEY = Deno.env.get('YOUTUBE_API_KEY');
     if (!YOUTUBE_API_KEY) {
       console.error("YouTube API key not configured");
-      throw new Error("YouTube API key not configured");
+      return new Response(
+        JSON.stringify({ error: "YouTube API key not configured" }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      );
     }
 
     // Clean the channel ID - remove any @ symbol and handle custom URLs
@@ -48,21 +75,50 @@ serve(async (req) => {
 
     console.log("Fetching from YouTube API:", apiUrl.replace(YOUTUBE_API_KEY, 'REDACTED'));
     const response = await fetch(apiUrl);
-    const data = await response.json();
+    
+    // Add error handling for YouTube API response parsing
+    let data;
+    try {
+      data = await response.json();
+    } catch (e) {
+      console.error("Error parsing YouTube API response:", e);
+      return new Response(
+        JSON.stringify({ error: "Invalid response from YouTube API" }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      );
+    }
 
     if (!response.ok) {
       console.error("YouTube API error response:", data);
-      throw new Error(`YouTube API error: ${data.error?.message || 'Unknown error'}`);
+      return new Response(
+        JSON.stringify({ 
+          error: `YouTube API error: ${data.error?.message || 'Unknown error'}`,
+          details: data.error 
+        }),
+        {
+          status: response.status,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      );
     }
 
     let channelData;
     if (cleanChannelId.startsWith('UC')) {
-      channelData = data.items[0];
+      channelData = data.items?.[0];
     } else {
       // If we searched by username, we need to get the first result's channel ID
       if (!data.items || data.items.length === 0) {
         console.error("No channel found for query:", cleanChannelId);
-        throw new Error("Channel not found");
+        return new Response(
+          JSON.stringify({ error: "Channel not found" }),
+          {
+            status: 404,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          }
+        );
       }
       
       console.log("Found channel in search results, fetching details");
@@ -72,19 +128,45 @@ serve(async (req) => {
       const channelResponse = await fetch(
         `https://youtube.googleapis.com/youtube/v3/channels?part=snippet&id=${foundChannelId}&key=${YOUTUBE_API_KEY}`
       );
-      const channelResult = await channelResponse.json();
-      
-      if (!channelResponse.ok) {
-        console.error("Error fetching channel details:", channelResult);
-        throw new Error(`Error fetching channel details: ${channelResult.error?.message || 'Unknown error'}`);
+
+      try {
+        const channelResult = await channelResponse.json();
+        
+        if (!channelResponse.ok) {
+          console.error("Error fetching channel details:", channelResult);
+          return new Response(
+            JSON.stringify({ 
+              error: `Error fetching channel details: ${channelResult.error?.message || 'Unknown error'}` 
+            }),
+            {
+              status: channelResponse.status,
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+            }
+          );
+        }
+        
+        channelData = channelResult.items?.[0];
+      } catch (e) {
+        console.error("Error parsing channel details response:", e);
+        return new Response(
+          JSON.stringify({ error: "Invalid response while fetching channel details" }),
+          {
+            status: 500,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          }
+        );
       }
-      
-      channelData = channelResult.items[0];
     }
 
     if (!channelData) {
       console.error("No channel data found");
-      throw new Error("Channel not found");
+      return new Response(
+        JSON.stringify({ error: "Channel not found" }),
+        {
+          status: 404,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      );
     }
 
     console.log("Successfully fetched channel data for:", channelData.snippet.title);
@@ -97,26 +179,24 @@ serve(async (req) => {
       default_category: 'other'
     };
 
-    return new Response(JSON.stringify(result), {
-      headers: { 
-        ...corsHeaders,
-        'Content-Type': 'application/json'
-      },
-      status: 200,
-    });
+    return new Response(
+      JSON.stringify(result),
+      {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200,
+      }
+    );
 
   } catch (error) {
-    console.error("Error in fetch-youtube-channel function:", error.message);
+    console.error("Error in fetch-youtube-channel function:", error);
     return new Response(
       JSON.stringify({
-        error: error.message || 'An error occurred while fetching the channel',
+        error: error.message || 'An unexpected error occurred while fetching the channel',
+        details: error.stack
       }),
       {
-        headers: { 
-          ...corsHeaders,
-          'Content-Type': 'application/json'
-        },
-        status: error.status || 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 500,
       }
     );
   }
