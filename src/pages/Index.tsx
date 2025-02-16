@@ -98,7 +98,7 @@ const MainContent = () => {
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: isMusic ? -20 : 20 }}
           transition={{ duration: 0.3 }}
-          className="mt-1 md:mt-2"
+          className="mt-4"
         >
           {!isMusic ? (
             <>

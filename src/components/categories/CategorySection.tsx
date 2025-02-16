@@ -1,4 +1,3 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
@@ -6,9 +5,6 @@ import { CategoryCard } from "./CategoryCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEffect } from "react";
 import { TrendingCategoryBadge } from "./TrendingCategoryBadge";
-import useEmblaCarousel from 'embla-carousel-react';
-import { useCallback } from "react";
-import AutoPlay from 'embla-carousel-autoplay';
 
 interface Category {
   id: string;
@@ -29,21 +25,6 @@ const defaultCategories: Category[] = [
 ];
 
 export const CategorySection = () => {
-  const [emblaRef, emblaApi] = useEmblaCarousel(
-    { 
-      loop: true,
-      align: 'start',
-      dragFree: true,
-      containScroll: 'trimSnaps'
-    },
-    [AutoPlay({ 
-      playOnInit: true, 
-      delay: 4000,
-      stopOnInteraction: false,
-      stopOnMouseEnter: true
-    })]
-  );
-
   const { data: categoryVideos, refetch } = useQuery({
     queryKey: ["category-videos"],
     queryFn: async () => {
@@ -58,6 +39,7 @@ export const CategorySection = () => {
     },
   });
 
+  // Get view counts for trending calculation based on total views
   const { data: viewCounts } = useQuery({
     queryKey: ["category-views"],
     queryFn: async () => {
@@ -69,6 +51,7 @@ export const CategorySection = () => {
 
       if (error) throw error;
 
+      // Calculate total views per category
       const categoryViews = (videos || []).reduce((acc, curr) => {
         if (curr.category) {
           acc[curr.category] = (acc[curr.category] || 0) + (curr.views || 0);
@@ -78,7 +61,7 @@ export const CategorySection = () => {
 
       return categoryViews;
     },
-    refetchInterval: 60000,
+    refetchInterval: 60000, // Refetch every minute
   });
 
   const { data: customCategories, isLoading: categoriesLoading } = useQuery({
@@ -114,6 +97,7 @@ export const CategorySection = () => {
     processExistingVideos();
   }, []);
 
+  // Combine default and custom categories
   const allCategories: Category[] = [
     ...defaultCategories,
     ...(customCategories?.map(cat => ({
@@ -125,9 +109,12 @@ export const CategorySection = () => {
     })) || [])
   ];
 
+  // Double the categories for the infinite scroll effect
+  const infiniteCategories = [...allCategories, ...allCategories, ...allCategories, ...allCategories, ...allCategories, ...allCategories];
+
   if (categoriesLoading) {
     return (
-      <div className="grid grid-cols-3 gap-4 max-w-[1400px] mx-auto px-4 md:px-6">
+      <div className="grid grid-cols-3 gap-8 max-w-[1200px] mx-auto px-4 md:px-6">
         {[...Array(3)].map((_, i) => (
           <Skeleton key={i} className="h-[120px] rounded-lg" />
         ))}
@@ -136,48 +123,49 @@ export const CategorySection = () => {
   }
 
   return (
-    <div className="relative w-full mt-4 md:mt-6">
+    <div className="relative w-full py-8">
       <div className="max-w-screen-sm md:max-w-[1400px] mx-auto px-4 md:px-6">
-        <div className="overflow-hidden relative h-[240px] md:h-[280px]">
+        <div className="overflow-hidden relative h-[180px] md:h-[200px]">
+          {/* Left fade gradient */}
           <div className="absolute left-0 top-0 w-24 md:w-48 h-full bg-gradient-to-r from-white via-white to-transparent z-10" />
           
-          <div className="embla cursor-grab active:cursor-grabbing" ref={emblaRef}>
-            <div className="flex gap-4 md:gap-8">
-              {allCategories.map((category, index) => (
-                <div
-                  key={`${category.id}-${index}`}
-                  className="w-[140px] md:w-[320px] flex-shrink-0 relative"
-                >
-                  {viewCounts && viewCounts[category.id] && viewCounts[category.id] > 0 && (
-                    <TrendingCategoryBadge count={viewCounts[category.id]} />
-                  )}
-                  <CategoryCard
-                    id={category.id}
-                    icon={category.icon}
-                    label={category.label}
-                    isCustomImage={category.isCustom && !category.is_emoji}
-                  />
-                </div>
-              ))}
-              {allCategories.map((category, index) => (
-                <div
-                  key={`${category.id}-duplicate-${index}`}
-                  className="w-[140px] md:w-[320px] flex-shrink-0 relative"
-                >
-                  {viewCounts && viewCounts[category.id] && viewCounts[category.id] > 0 && (
-                    <TrendingCategoryBadge count={viewCounts[category.id]} />
-                  )}
-                  <CategoryCard
-                    id={category.id}
-                    icon={category.icon}
-                    label={category.label}
-                    isCustomImage={category.isCustom && !category.is_emoji}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
+          <motion.div
+            className="flex gap-4 md:gap-8"
+            animate={{
+              x: ['0%', '-50%']
+            }}
+            transition={{
+              x: {
+                repeat: Infinity,
+                repeatType: "loop",
+                duration: 180,
+                ease: "linear",
+                repeatDelay: 0
+              }
+            }}
+            style={{
+              width: `${(infiniteCategories.length * 100) / 3}%`
+            }}
+          >
+            {infiniteCategories.map((category, index) => (
+              <div
+                key={`${category.id}-${index}`}
+                className="w-[140px] md:w-[320px] flex-shrink-0 relative"
+              >
+                {viewCounts && viewCounts[category.id] && viewCounts[category.id] > 0 && (
+                  <TrendingCategoryBadge count={viewCounts[category.id]} />
+                )}
+                <CategoryCard
+                  id={category.id}
+                  icon={category.icon}
+                  label={category.label}
+                  isCustomImage={category.isCustom && !category.is_emoji}
+                />
+              </div>
+            ))}
+          </motion.div>
 
+          {/* Right fade gradient */}
           <div className="absolute right-0 top-0 w-24 md:w-48 h-full bg-gradient-to-l from-white via-white to-transparent z-10" />
         </div>
       </div>
