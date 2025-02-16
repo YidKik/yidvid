@@ -40,7 +40,6 @@ export const YouTubeChannelsSection = () => {
           return [];
         }
 
-        // Try to refresh the session if it exists but might be expired
         const { data: { session: refreshedSession }, error: refreshError } = await supabase.auth.refreshSession();
         
         if (refreshError || !refreshedSession) {
@@ -96,16 +95,7 @@ export const YouTubeChannelsSection = () => {
       setIsDeleting(true);
       console.log("Starting channel deletion process for:", channelId);
 
-      const { error: videosError } = await supabase
-        .from("youtube_videos")
-        .delete()
-        .eq("channel_id", channelId);
-
-      if (videosError) {
-        console.error("Error deleting videos:", videosError);
-        throw videosError;
-      }
-
+      // With ON DELETE CASCADE, we only need to delete the channel
       const { error: channelError } = await supabase
         .from("youtube_channels")
         .delete()
@@ -121,7 +111,7 @@ export const YouTubeChannelsSection = () => {
       setSelectedChannelId(null);
     } catch (error: any) {
       console.error("Error in deletion process:", error);
-      toast.error("Error deleting channel");
+      toast.error(error.message || "Error deleting channel");
     } finally {
       setIsDeleting(false);
       setChannelToDelete(null);
