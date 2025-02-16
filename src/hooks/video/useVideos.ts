@@ -51,6 +51,7 @@ export const useVideos = () => {
 
         console.log(`Prefetched ${formattedData.length} videos`);
         queryClient.setQueryData(["youtube_videos"], formattedData);
+        queryClient.setQueryData(["youtube_videos_grid"], formattedData);
       } catch (error) {
         console.error("Error prefetching videos:", error);
       }

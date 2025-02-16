@@ -7,6 +7,7 @@ import { useSearchParams } from "react-router-dom";
 import { LogoAnimation } from "./welcome/LogoAnimation";
 import { WelcomeText } from "./welcome/WelcomeText";
 import { useWelcomeData } from "@/hooks/useWelcomeData";
+import { useVideos } from "@/hooks/video/useVideos";
 import { toast } from "sonner";
 
 export const WelcomeAnimation = () => {
@@ -22,7 +23,8 @@ export const WelcomeAnimation = () => {
     },
   });
 
-  const { isLoading, isError, userName } = useWelcomeData(session);
+  const { isLoading: isWelcomeLoading, isError, userName } = useWelcomeData(session);
+  const { isLoading: isVideosLoading, isFetching: isVideosFetching } = useVideos();
 
   useEffect(() => {
     if (skipWelcome) {
@@ -34,15 +36,16 @@ export const WelcomeAnimation = () => {
       toast.error("Failed to load content. Please refresh the page.");
     }
 
-    if (!isLoading) {
-      // Add a small delay after loading completes for a smoother transition
+    // Only hide welcome animation when both welcome data and videos are loaded
+    if (!isWelcomeLoading && !isVideosLoading && !isVideosFetching) {
+      console.log("All content loaded, hiding welcome animation...");
       const timer = setTimeout(() => {
         setShow(false);
       }, 1000);
 
       return () => clearTimeout(timer);
     }
-  }, [skipWelcome, isLoading, isError]);
+  }, [skipWelcome, isWelcomeLoading, isVideosLoading, isVideosFetching, isError]);
 
   return (
     <AnimatePresence>
@@ -63,7 +66,7 @@ export const WelcomeAnimation = () => {
             <WelcomeText userName={userName} />
             <LogoAnimation />
 
-            {isLoading && (
+            {(isWelcomeLoading || isVideosLoading || isVideosFetching) && (
               <motion.div
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
