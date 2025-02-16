@@ -1,3 +1,4 @@
+
 import { Header } from "@/components/Header";
 import VideoGrid from "@/components/VideoGrid";
 import { ChannelsGrid } from "@/components/youtube/ChannelsGrid";
@@ -12,6 +13,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { WelcomeAnimation } from "@/components/WelcomeAnimation";
 import { CategorySection } from "@/components/categories/CategorySection";
 import { VideoAssistant } from "@/components/ai/VideoAssistant";
+import { toast } from "sonner";
 
 const MainContent = () => {
   const [isMusic, setIsMusic] = useState(false);
@@ -21,30 +23,40 @@ const MainContent = () => {
     queryKey: ["youtube_videos"],
     queryFn: async () => {
       console.log("Fetching videos...");
-      const { data, error } = await supabase
-        .from("youtube_videos")
-        .select("*")
-        .is('deleted_at', null)
-        .order("uploaded_at", { ascending: false });
+      try {
+        const { data, error } = await supabase
+          .from("youtube_videos")
+          .select("*")
+          .is('deleted_at', null)
+          .order("uploaded_at", { ascending: false });
 
-      if (error) {
-        console.error("Error fetching videos:", error);
+        if (error) {
+          console.error("Error fetching videos:", error);
+          toast.error("Failed to load videos");
+          throw error;
+        }
+
+        console.log("Fetched videos count:", data?.length || 0);
+        
+        return (data || []).map(video => ({
+          id: video.id,
+          video_id: video.video_id,
+          title: video.title,
+          thumbnail: video.thumbnail,
+          channelName: video.channel_name,
+          channelId: video.channel_id,
+          views: video.views || 0,
+          uploadedAt: video.uploaded_at
+        }));
+      } catch (error) {
+        console.error("Error in video fetch:", error);
+        toast.error("Failed to load videos");
         throw error;
       }
-
-      return (data || []).map(video => ({
-        id: video.id,
-        video_id: video.video_id,
-        title: video.title,
-        thumbnail: video.thumbnail,
-        channelName: video.channel_name,
-        channelId: video.channel_id,
-        views: video.views || 0,
-        uploadedAt: video.uploaded_at
-      }));
     },
     staleTime: 1000 * 60 * 5, // Keep data fresh for 5 minutes
-    gcTime: 1000 * 60 * 30, // Cache data for 30 minutes (renamed from cacheTime)
+    gcTime: 1000 * 60 * 30, // Cache data for 30 minutes
+    retry: 2, // Retry failed requests up to 2 times
   });
 
   const sortedVideos = videos ? [...videos].sort((a, b) => (b.views || 0) - (a.views || 0)) : [];
@@ -90,22 +102,34 @@ const MainContent = () => {
         >
           {!isMusic ? (
             <>
-              <div className="video-grid">
-                <VideoGrid 
-                  videos={videos} 
-                  maxVideos={isMobile ? 6 : 12} 
-                  rowSize={isMobile ? 2 : 4} 
-                  isLoading={isLoading}
-                />
-              </div>
-              {sortedVideos && sortedVideos.length > 0 && (
-                <div className="mt-6">
-                  <MostViewedVideos videos={sortedVideos} />
+              {isLoading ? (
+                <div className="text-center py-8">
+                  Loading videos...
+                </div>
+              ) : videos && videos.length > 0 ? (
+                <>
+                  <div className="video-grid">
+                    <VideoGrid 
+                      videos={videos} 
+                      maxVideos={isMobile ? 6 : 12} 
+                      rowSize={isMobile ? 2 : 4} 
+                      isLoading={isLoading}
+                    />
+                  </div>
+                  {sortedVideos.length > 0 && (
+                    <div className="mt-6">
+                      <MostViewedVideos videos={sortedVideos} />
+                    </div>
+                  )}
+                  <div className="channels-grid mt-6">
+                    <ChannelsGrid />
+                  </div>
+                </>
+              ) : (
+                <div className="text-center py-8">
+                  No videos found
                 </div>
               )}
-              <div className="channels-grid mt-6">
-                <ChannelsGrid />
-              </div>
             </>
           ) : (
             <div className="min-h-[60vh] md:min-h-[70vh] flex flex-col items-center justify-start pt-12 md:pt-16 relative">
