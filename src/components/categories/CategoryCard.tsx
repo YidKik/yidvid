@@ -31,8 +31,8 @@ export const CategoryCard = ({ icon, label, id, isCustomImage = false }: Categor
     <motion.div
       whileHover={{ 
         scale: 1.02,
-        y: -4,
-        boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1)",
+        y: -2,
+        boxShadow: "0 10px 15px -5px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
         transition: {
           type: "spring",
           stiffness: 400,
@@ -40,14 +40,14 @@ export const CategoryCard = ({ icon, label, id, isCustomImage = false }: Categor
         }
       }}
       whileTap={{ scale: 0.98 }}
-      className="rounded-xl p-2 md:p-4 cursor-pointer transition-all duration-300 h-[60px] md:h-[120px] relative backdrop-blur-sm"
+      className="rounded-lg p-2 md:p-3 cursor-pointer transition-all duration-300 h-[40px] md:h-[60px] relative backdrop-blur-sm"
       style={{
         background: colors.bg,
         border: `2px solid ${colors.border}`,
       }}
       onClick={handleClick}
     >
-      <div className="flex items-center space-x-2 md:space-x-3">
+      <div className="flex items-center space-x-1.5 md:space-x-2">
         <motion.span 
           whileHover={{
             rotate: [0, -10, 10, -5, 5, 0],
@@ -55,7 +55,7 @@ export const CategoryCard = ({ icon, label, id, isCustomImage = false }: Categor
               duration: 0.5
             }
           }}
-          className="text-lg md:text-3xl p-1 md:p-2.5 rounded-lg"
+          className="text-base md:text-xl p-0.5 md:p-1 rounded-lg"
           style={{
             background: `${colors.border}20`,
             color: colors.text
@@ -65,7 +65,7 @@ export const CategoryCard = ({ icon, label, id, isCustomImage = false }: Categor
             <img 
               src={icon} 
               alt={label}
-              className="w-6 h-6 md:w-8 md:h-8 object-cover rounded"
+              className="w-4 h-4 md:w-6 md:h-6 object-cover rounded"
             />
           ) : (
             icon
@@ -73,7 +73,7 @@ export const CategoryCard = ({ icon, label, id, isCustomImage = false }: Categor
         </motion.span>
         <div className="flex-1">
           <h3 
-            className="font-semibold text-[10px] md:text-base"
+            className="font-medium text-[9px] md:text-sm truncate"
             style={{ color: colors.text }}
           >
             {label}
@@ -83,4 +83,3 @@ export const CategoryCard = ({ icon, label, id, isCustomImage = false }: Categor
     </motion.div>
   );
 };
-
