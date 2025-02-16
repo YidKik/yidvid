@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
@@ -109,12 +110,12 @@ export const CategorySection = () => {
     })) || [])
   ];
 
-  // Double the categories for the infinite scroll effect
-  const infiniteCategories = [...allCategories, ...allCategories, ...allCategories, ...allCategories, ...allCategories, ...allCategories];
+  // Multiply categories for a smoother infinite scroll effect
+  const infiniteCategories = [...allCategories, ...allCategories, ...allCategories, ...allCategories, ...allCategories, ...allCategories, ...allCategories, ...allCategories];
 
   if (categoriesLoading) {
     return (
-      <div className="grid grid-cols-3 gap-8 max-w-[1200px] mx-auto px-4 md:px-6">
+      <div className="grid grid-cols-3 gap-8 max-w-[1400px] mx-auto px-4 md:px-6">
         {[...Array(3)].map((_, i) => (
           <Skeleton key={i} className="h-[120px] rounded-lg" />
         ))}
@@ -124,13 +125,13 @@ export const CategorySection = () => {
 
   return (
     <div className="relative w-full py-8">
-      <div className="max-w-screen-sm md:max-w-[1400px] mx-auto px-4 md:px-6">
-        <div className="overflow-hidden relative h-[180px] md:h-[200px]">
+      <div className="max-w-screen-sm md:max-w-[1600px] lg:max-w-[1800px] mx-auto px-4 md:px-16">
+        <div className="overflow-hidden relative h-[180px] md:h-[220px]">
           {/* Left fade gradient */}
-          <div className="absolute left-0 top-0 w-24 md:w-48 h-full bg-gradient-to-r from-white via-white to-transparent z-10" />
+          <div className="absolute left-0 top-0 w-32 md:w-64 h-full bg-gradient-to-r from-white via-white to-transparent z-10" />
           
           <motion.div
-            className="flex gap-4 md:gap-8"
+            className="flex gap-4 md:gap-6 lg:gap-8"
             animate={{
               x: ['0%', '-50%']
             }}
@@ -138,19 +139,19 @@ export const CategorySection = () => {
               x: {
                 repeat: Infinity,
                 repeatType: "loop",
-                duration: 180,
+                duration: 240,
                 ease: "linear",
                 repeatDelay: 0
               }
             }}
             style={{
-              width: `${(infiniteCategories.length * 100) / 3}%`
+              width: `${(infiniteCategories.length * 100) / 2.5}%`
             }}
           >
             {infiniteCategories.map((category, index) => (
               <div
                 key={`${category.id}-${index}`}
-                className="w-[140px] md:w-[320px] flex-shrink-0 relative"
+                className="w-[160px] md:w-[380px] lg:w-[420px] flex-shrink-0 relative"
               >
                 {viewCounts && viewCounts[category.id] && viewCounts[category.id] > 0 && (
                   <TrendingCategoryBadge count={viewCounts[category.id]} />
@@ -166,7 +167,7 @@ export const CategorySection = () => {
           </motion.div>
 
           {/* Right fade gradient */}
-          <div className="absolute right-0 top-0 w-24 md:w-48 h-full bg-gradient-to-l from-white via-white to-transparent z-10" />
+          <div className="absolute right-0 top-0 w-32 md:w-64 h-full bg-gradient-to-l from-white via-white to-transparent z-10" />
         </div>
       </div>
     </div>
