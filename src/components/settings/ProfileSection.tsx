@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
 import { Camera, Copy, User } from "lucide-react";
+import type { ProfilesTable } from "@/integrations/supabase/types/profiles";
 
 export const ProfileSection = () => {
   const [displayName, setDisplayName] = useState("");
@@ -25,7 +26,7 @@ export const ProfileSection = () => {
         .from("profiles")
         .select("*")
         .eq("id", session.user.id)
-        .single();
+        .single<ProfilesTable["Row"]>();
 
       if (error) {
         console.error("Error loading profile:", error);
@@ -49,13 +50,15 @@ export const ProfileSection = () => {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) return;
 
+    const updates: ProfilesTable["Update"] = {
+      display_name: displayName,
+      username: username,
+      avatar_url: avatarUrl,
+    };
+
     const { error } = await supabase
       .from("profiles")
-      .update({
-        display_name: displayName,
-        username: username,
-        avatar_url: avatarUrl,
-      })
+      .update(updates)
       .eq("id", session.user.id);
 
     if (error) {
