@@ -1,7 +1,6 @@
 
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.6';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -21,7 +20,9 @@ serve(async (req) => {
     // Add error handling for JSON parsing
     let body;
     try {
-      body = await req.json();
+      const text = await req.text();
+      console.log("Raw request body:", text);
+      body = JSON.parse(text);
     } catch (e) {
       console.error("Error parsing request JSON:", e);
       return new Response(
