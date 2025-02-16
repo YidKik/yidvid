@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from "react";
+import { type FC, useState, useEffect } from "react";
 import { VideoCard } from "./VideoCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQuery } from "@tanstack/react-query";
@@ -23,7 +23,7 @@ interface VideoGridProps {
   isLoading?: boolean;
 }
 
-export const VideoGrid: React.FC<VideoGridProps> = ({ maxVideos = 12, rowSize = 4, isLoading: parentLoading }) => {
+export const VideoGrid: FC<VideoGridProps> = ({ maxVideos = 12, rowSize = 4, isLoading: parentLoading }) => {
   const [showAll, setShowAll] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [hiddenChannels, setHiddenChannels] = useState<Set<string>>(new Set());
@@ -69,7 +69,6 @@ export const VideoGrid: React.FC<VideoGridProps> = ({ maxVideos = 12, rowSize = 
     gcTime: 1000 * 60 * 30, // Cache data for 30 minutes
   });
 
-  // Load hidden channels from user preferences
   useEffect(() => {
     const loadHiddenChannels = async () => {
       const { data: { session } } = await supabase.auth.getSession();
