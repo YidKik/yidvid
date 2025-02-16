@@ -899,7 +899,9 @@ export type Database = {
           default_category: Database["public"]["Enums"]["video_category"] | null
           deleted_at: string | null
           description: string | null
+          fetch_error: string | null
           id: string
+          last_fetch: string | null
           thumbnail_url: string | null
           title: string
           updated_at: string
@@ -912,7 +914,9 @@ export type Database = {
             | null
           deleted_at?: string | null
           description?: string | null
+          fetch_error?: string | null
           id?: string
+          last_fetch?: string | null
           thumbnail_url?: string | null
           title: string
           updated_at?: string
@@ -925,7 +929,9 @@ export type Database = {
             | null
           deleted_at?: string | null
           description?: string | null
+          fetch_error?: string | null
           id?: string
+          last_fetch?: string | null
           thumbnail_url?: string | null
           title?: string
           updated_at?: string
@@ -996,6 +1002,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      fetch_overdue_channels: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
       trigger_youtube_video_fetch: {
         Args: Record<PropertyKey, never>
         Returns: Json
