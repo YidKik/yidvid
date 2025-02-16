@@ -28,6 +28,7 @@ export const ProfileSection = () => {
         .single();
 
       if (error) {
+        console.error("Error loading profile:", error);
         toast.error("Error loading profile");
         return null;
       }
@@ -58,6 +59,7 @@ export const ProfileSection = () => {
       .eq("id", session.user.id);
 
     if (error) {
+      console.error("Error updating profile:", error);
       if (error.code === '23505') {
         toast.error("Username is already taken");
       } else {

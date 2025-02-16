@@ -6,6 +6,9 @@ export interface ProfilesTable {
     id: string;
     is_admin: boolean | null;
     updated_at: string;
+    display_name: string | null;
+    username: string | null;
+    avatar_url: string | null;
   };
   Insert: {
     created_at?: string;
@@ -13,6 +16,9 @@ export interface ProfilesTable {
     id: string;
     is_admin?: boolean | null;
     updated_at?: string;
+    display_name?: string | null;
+    username?: string | null;
+    avatar_url?: string | null;
   };
   Update: {
     created_at?: string;
@@ -20,6 +26,9 @@ export interface ProfilesTable {
     id?: string;
     is_admin?: boolean | null;
     updated_at?: string;
+    display_name?: string | null;
+    username?: string | null;
+    avatar_url?: string | null;
   };
   Relationships: [];
 }
