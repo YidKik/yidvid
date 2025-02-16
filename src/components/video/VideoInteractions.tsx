@@ -1,9 +1,10 @@
 
 import { ThumbsUp, UserPlus, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/components/ui/use-toast";
+import { useChannelSubscription } from "@/hooks/channel/useChannelSubscription";
 
 interface VideoInteractionsProps {
   videoId: string;
@@ -13,7 +14,30 @@ type InteractionType = 'view' | 'like' | 'dislike' | 'save';
 
 export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
   const [isLiked, setIsLiked] = useState(false);
-  const [isSubscribed, setIsSubscribed] = useState(false);
+  const [channelId, setChannelId] = useState<string | null>(null);
+
+  // Fetch the channel ID for the current video
+  useEffect(() => {
+    const fetchChannelId = async () => {
+      const { data, error } = await supabase
+        .from('youtube_videos')
+        .select('channel_id')
+        .eq('id', videoId)
+        .single();
+
+      if (error) {
+        console.error('Error fetching channel ID:', error);
+        return;
+      }
+
+      setChannelId(data.channel_id);
+    };
+
+    fetchChannelId();
+  }, [videoId]);
+
+  // Use our existing subscription hook
+  const { isSubscribed, handleSubscribe } = useChannelSubscription(channelId);
 
   const handleLike = async () => {
     const { data: { session } } = await supabase.auth.getSession();
@@ -55,68 +79,6 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
       toast({
         title: "Error",
         description: "Failed to like the video",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleSubscribe = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    
-    if (!session) {
-      toast({
-        title: "Authentication required",
-        description: "Please sign in to subscribe to channels",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    try {
-      // Get the channel ID for the current video
-      const { data: videoData, error: videoError } = await supabase
-        .from('youtube_videos')
-        .select('channel_id')
-        .eq('id', videoId)
-        .single();
-
-      if (videoError) throw videoError;
-
-      if (isSubscribed) {
-        // Unsubscribe
-        const { error } = await supabase
-          .from('channel_subscriptions')
-          .delete()
-          .eq('channel_id', videoData.channel_id)
-          .eq('user_id', session.user.id);
-
-        if (error) throw error;
-        setIsSubscribed(false);
-        toast({
-          title: "Success",
-          description: "Unsubscribed from channel",
-        });
-      } else {
-        // Subscribe
-        const { error } = await supabase
-          .from('channel_subscriptions')
-          .insert({
-            channel_id: videoData.channel_id,
-            user_id: session.user.id
-          });
-
-        if (error) throw error;
-        setIsSubscribed(true);
-        toast({
-          title: "Success",
-          description: "Subscribed to channel",
-        });
-      }
-    } catch (error) {
-      console.error('Error managing subscription:', error);
-      toast({
-        title: "Error",
-        description: "Failed to update subscription",
         variant: "destructive",
       });
     }
