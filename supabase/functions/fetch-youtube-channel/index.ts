@@ -11,7 +11,12 @@ const corsHeaders = {
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { 
+      headers: {
+        ...corsHeaders,
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      }
+    });
   }
 
   try {
@@ -80,7 +85,11 @@ serve(async (req) => {
     console.log("Successfully fetched channel data:", result.title);
 
     return new Response(JSON.stringify(result), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { 
+        ...corsHeaders, 
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      },
       status: 200,
     });
 
@@ -91,7 +100,11 @@ serve(async (req) => {
         error: error.message || 'An error occurred while fetching the channel',
       }),
       {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { 
+          ...corsHeaders, 
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        },
         status: error.status || 500,
       }
     );
