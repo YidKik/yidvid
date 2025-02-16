@@ -16,7 +16,6 @@ import { ReportVideoDialog } from "@/components/video/ReportVideoDialog";
 type Comment = VideoCommentsTable["Row"] & {
   profiles: {
     email: string;
-    name: string | null;
   } | null;
 };
 
@@ -83,7 +82,7 @@ const VideoDetails = () => {
         .from("youtube_videos")
         .select("*")
         .eq("channel_id", video.channel_id)
-        .neq("id", video.id) // Changed from video_id to id
+        .neq("id", video.id)
         .order("uploaded_at", { ascending: false })
         .limit(12);
 
@@ -103,8 +102,10 @@ const VideoDetails = () => {
         .select(`
           *,
           profiles (
-            email,
-            name
+            email
+          ),
+          youtube_videos (
+            title
           )
         `)
         .eq("video_id", video.id)

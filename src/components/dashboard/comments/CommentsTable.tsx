@@ -21,7 +21,6 @@ interface Comment {
   video_id: string;
   profiles: {
     email: string;
-    name: string | null;
   } | null;
   youtube_videos: {
     title: string;
@@ -49,7 +48,7 @@ export const CommentsTable = () => {
             <TableRow key={comment.id}>
               <TableCell>{comment.youtube_videos?.title || "Unknown Video"}</TableCell>
               <TableCell>
-                {comment.profiles?.name || comment.profiles?.email || "Anonymous"}
+                {comment.profiles?.email || "Anonymous"}
               </TableCell>
               <TableCell>{comment.content}</TableCell>
               <TableCell>
