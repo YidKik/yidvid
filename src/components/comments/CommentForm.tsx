@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
@@ -54,8 +55,17 @@ export const CommentForm = ({ onSubmit }: CommentFormProps) => {
         placeholder="Write a comment..."
         className="mb-2"
       />
-      <Button type="submit" disabled={isSubmitting}>
+      <Button 
+        type="submit" 
+        disabled={isSubmitting}
+        variant="outline"
+        size="sm"
+        className="group relative rounded-full px-4 py-1.5 text-xs text-muted-foreground hover:bg-muted/50 hover:border-gray-300 transition-all duration-300"
+      >
         {isSubmitting ? "Posting..." : "Post Comment"}
+        <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          Post your comment
+        </span>
       </Button>
     </form>
   );
