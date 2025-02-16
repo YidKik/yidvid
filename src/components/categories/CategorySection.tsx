@@ -124,9 +124,9 @@ export const CategorySection = () => {
   }
 
   return (
-    <div className="relative w-full py-8">
+    <div className="relative w-full py-16 md:py-24">
       <div className="max-w-screen-sm md:max-w-[1400px] mx-auto px-4 md:px-6">
-        <div className="overflow-hidden relative h-[180px] md:h-[200px]">
+        <div className="overflow-hidden relative h-[240px] md:h-[280px]">
           {/* Left fade gradient */}
           <div className="absolute left-0 top-0 w-24 md:w-48 h-full bg-gradient-to-r from-white via-white to-transparent z-10" />
           
