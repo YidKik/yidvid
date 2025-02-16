@@ -18,7 +18,7 @@ export const useWelcomeData = (session: any) => {
     },
   });
 
-  const { isLoading: isLoadingVideos } = useQuery({
+  const { isLoading: isLoadingVideos, isError: isVideosError } = useQuery({
     queryKey: ["youtube_videos"],
     queryFn: async () => {
       console.log("Prefetching videos during welcome animation...");
@@ -47,9 +47,10 @@ export const useWelcomeData = (session: any) => {
     },
     staleTime: 1000 * 60 * 5,
     gcTime: 1000 * 60 * 30,
+    retry: 3,
   });
 
-  const { isLoading: isLoadingChannels } = useQuery({
+  const { isLoading: isLoadingChannels, isError: isChannelsError } = useQuery({
     queryKey: ["youtube_channels"],
     queryFn: async () => {
       console.log("Prefetching channels during welcome animation...");
@@ -69,6 +70,7 @@ export const useWelcomeData = (session: any) => {
   return {
     profile,
     isLoading: isLoadingVideos || isLoadingChannels || isLoadingProfile,
+    isError: isVideosError || isChannelsError,
     userName: profile?.name || session?.user?.user_metadata?.full_name || "to YidVid"
   };
 };

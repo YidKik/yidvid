@@ -7,6 +7,7 @@ import { useSearchParams } from "react-router-dom";
 import { LogoAnimation } from "./welcome/LogoAnimation";
 import { WelcomeText } from "./welcome/WelcomeText";
 import { useWelcomeData } from "@/hooks/useWelcomeData";
+import { toast } from "sonner";
 
 export const WelcomeAnimation = () => {
   const [show, setShow] = useState(true);
@@ -21,7 +22,7 @@ export const WelcomeAnimation = () => {
     },
   });
 
-  const { isLoading, userName } = useWelcomeData(session);
+  const { isLoading, isError, userName } = useWelcomeData(session);
 
   useEffect(() => {
     if (skipWelcome) {
@@ -29,14 +30,19 @@ export const WelcomeAnimation = () => {
       return;
     }
 
+    if (isError) {
+      toast.error("Failed to load content. Please refresh the page.");
+    }
+
     if (!isLoading) {
+      // Add a small delay after loading completes for a smoother transition
       const timer = setTimeout(() => {
         setShow(false);
-      }, 3000);
+      }, 1000);
 
       return () => clearTimeout(timer);
     }
-  }, [skipWelcome, isLoading]);
+  }, [skipWelcome, isLoading, isError]);
 
   return (
     <AnimatePresence>
@@ -58,20 +64,33 @@ export const WelcomeAnimation = () => {
             <LogoAnimation />
 
             {isLoading && (
-              <motion.p
+              <motion.div
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
-                className="text-sm text-muted-foreground mt-4"
+                className="flex flex-col items-center gap-2 mt-4"
               >
-                Loading content...
-              </motion.p>
+                <p className="text-sm text-muted-foreground">Loading content...</p>
+                <div className="w-48 h-1 bg-gray-200 rounded-full overflow-hidden">
+                  <motion.div
+                    className="h-full bg-primary"
+                    animate={{
+                      width: ["0%", "100%"],
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: "linear",
+                    }}
+                  />
+                </div>
+              </motion.div>
             )}
 
             <motion.p
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 1.2 }}
-              className="text-xl text-muted-foreground"
+              className="text-xl text-muted-foreground mt-4"
             >
               Your source for Jewish content
             </motion.p>
