@@ -14,6 +14,7 @@ import { ChannelPreferences } from "@/components/youtube/ChannelPreferences";
 import { useColors } from "@/contexts/ColorContext";
 import { PlaybackSettings } from "@/components/settings/PlaybackSettings";
 import { ColorSettings } from "@/components/settings/ColorSettings";
+import { ProfileSection } from "@/components/settings/ProfileSection";
 
 const Settings = () => {
   const navigate = useNavigate();
@@ -104,6 +105,8 @@ const Settings = () => {
     <div className="min-h-screen" style={{ backgroundColor: backgroundColor, color: textColor }}>
       <BackButton />
       <main className="container mx-auto pt-24 px-4 pb-16">
+        <ProfileSection />
+        
         <PlaybackSettings 
           autoplay={autoplay}
           setAutoplay={setAutoplay}
