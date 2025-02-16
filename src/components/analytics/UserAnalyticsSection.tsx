@@ -43,28 +43,27 @@ export const UserAnalyticsSection = () => {
       // Get unique channels viewed
       const uniqueChannels = new Set(
         channelData
-          ?.filter(d => d.videos?.channel_id) // Filter out any null values
+          ?.filter(d => d.videos?.channel_id)
           .map(d => d.videos?.channel_id) || []
       );
 
-      // Calculate total watch time from user_analytics
-      const { data: sessions, error: sessionsError } = await supabase
+      // Calculate total time spent on website from user_analytics
+      const { data: analyticsData, error: analyticsError } = await supabase
         .from("user_analytics")
-        .select("*")
-        .eq("user_id", session.user.id)
-        .not('session_end', 'is', null);
+        .select("session_start, session_end")
+        .eq("user_id", session.user.id);
 
-      if (sessionsError) {
-        console.error("Error fetching sessions:", sessionsError);
+      if (analyticsError) {
+        console.error("Error fetching analytics:", analyticsError);
         return null;
       }
 
-      const totalTimeSpent = sessions?.reduce((total, session) => {
-        if (!session.session_end) return total;
+      // Calculate total time spent including current session
+      const totalTimeSpent = analyticsData.reduce((total, session) => {
         const start = new Date(session.session_start);
-        const end = new Date(session.session_end);
+        const end = session.session_end ? new Date(session.session_end) : new Date();
         return total + (end.getTime() - start.getTime());
-      }, 0) || 0;
+      }, 0);
 
       return {
         totalTimeSpent,
