@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { VideoCard } from "./VideoCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQuery } from "@tanstack/react-query";
@@ -75,17 +75,21 @@ export const VideoGrid: React.FC<VideoGridProps> = ({ maxVideos = 12, rowSize = 
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
 
-      const { data: hiddenChannelsData, error } = await supabase
-        .from('hidden_channels')
-        .select('channel_id')
-        .eq('user_id', session.user.id);
+      try {
+        const { data: hiddenChannelsData, error } = await supabase
+          .from('hidden_channels')
+          .select('channel_id')
+          .eq('user_id', session.user.id);
 
-      if (error) {
+        if (error) {
+          console.error('Error loading hidden channels:', error);
+          return;
+        }
+
+        setHiddenChannels(new Set(hiddenChannelsData?.map(hc => hc.channel_id) || []));
+      } catch (error) {
         console.error('Error loading hidden channels:', error);
-        return;
       }
-
-      setHiddenChannels(new Set(hiddenChannelsData.map(hc => hc.channel_id)));
     };
 
     loadHiddenChannels();
