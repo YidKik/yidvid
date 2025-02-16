@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { corsHeaders, validateEnvironment, createSupabaseClient } from './utils.ts';
@@ -29,67 +28,81 @@ serve(async (req) => {
 
     console.log('[YouTube Videos] Fetching videos for channels:', channels);
 
-    // Process channels in parallel with a smaller batch size
-    const batchSize = 2; // Process 2 channels at a time to avoid rate limits
+    // Process channels sequentially to better handle rate limits
     const results = [];
     
-    // First phase: Fetch initial 50 videos for each channel
-    for (let i = 0; i < channels.length; i += batchSize) {
-      const batch = channels.slice(i, i + batchSize);
-      console.log(`[YouTube Videos] Processing batch ${i / batchSize + 1} of ${Math.ceil(channels.length / batchSize)}`);
+    for (const channelId of channels) {
+      console.log(`[YouTube Videos] Processing channel: ${channelId}`);
       
-      const batchResults = await Promise.all(
-        batch.map(async (channelId) => {
-          let allVideos = [];
-          let nextPageToken = null;
-          let retryCount = 0;
-          const maxRetries = 3;
+      let allVideos = [];
+      let nextPageToken = null;
+      let retryCount = 0;
+      const maxRetries = 3;
+      
+      // Keep fetching until we have all videos
+      do {
+        try {
+          console.log(`[YouTube Videos] Fetching page ${allVideos.length / 50 + 1} for channel ${channelId}`);
+          const { videos, nextPageToken: newPageToken } = await fetchChannelVideos(channelId, apiKey, nextPageToken);
           
-          do {
-            try {
-              const { videos, nextPageToken: newPageToken } = await fetchChannelVideos(channelId, apiKey, nextPageToken);
-              if (videos.length > 0) {
-                allVideos.push(...videos);
-              }
-              nextPageToken = newPageToken;
-              
-              // Add a delay between pagination requests to avoid rate limiting
-              if (nextPageToken) {
-                await new Promise(resolve => setTimeout(resolve, 1500));
-              }
-            } catch (error) {
-              console.error(`[YouTube Videos] Error fetching videos for channel ${channelId}:`, error);
-              retryCount++;
-              if (retryCount >= maxRetries) {
-                console.error(`[YouTube Videos] Max retries reached for channel ${channelId}`);
-                break;
-              }
-              // Add exponential backoff delay
-              await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, retryCount)));
-            }
-          } while (nextPageToken && retryCount < maxRetries);
+          if (videos.length > 0) {
+            allVideos.push(...videos);
+            console.log(`[YouTube Videos] Retrieved ${videos.length} videos, total for channel now: ${allVideos.length}`);
+          }
           
-          return allVideos;
-        })
-      );
+          nextPageToken = newPageToken;
+          retryCount = 0; // Reset retry count on successful fetch
+          
+          // Add a delay between pagination requests to avoid rate limiting
+          if (nextPageToken) {
+            await new Promise(resolve => setTimeout(resolve, 1500));
+          }
+        } catch (error) {
+          console.error(`[YouTube Videos] Error fetching videos for channel ${channelId}:`, error);
+          retryCount++;
+          
+          if (retryCount >= maxRetries) {
+            console.error(`[YouTube Videos] Max retries reached for channel ${channelId}`);
+            // Update channel with fetch error
+            await supabaseClient
+              .from('youtube_channels')
+              .update({ 
+                fetch_error: error.message,
+                last_fetch: new Date().toISOString()
+              })
+              .eq('channel_id', channelId);
+            break;
+          }
+          
+          // Add exponential backoff delay
+          await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, retryCount)));
+        }
+      } while (nextPageToken && retryCount < maxRetries);
       
-      results.push(...batchResults.flat());
+      if (allVideos.length > 0) {
+        results.push(...allVideos);
+        console.log(`[YouTube Videos] Finished channel ${channelId}. Total videos: ${allVideos.length}`);
+        
+        // Update channel last fetch time and clear any previous errors
+        await supabaseClient
+          .from('youtube_channels')
+          .update({ 
+            fetch_error: null,
+            last_fetch: new Date().toISOString()
+          })
+          .eq('channel_id', channelId);
+        
+        // Store videos in batches as we go
+        await storeVideosInDatabase(supabaseClient, allVideos);
+      }
       
-      if (i + batchSize < channels.length) {
-        // Add a delay between batches to avoid rate limiting
+      // Add a delay between channels to avoid rate limiting
+      if (channels.indexOf(channelId) < channels.length - 1) {
         await new Promise(resolve => setTimeout(resolve, 2000));
       }
     }
 
-    console.log(`[YouTube Videos] Fetch complete. Total videos: ${results.length}`);
-
-    // Store videos in database with better error handling
-    if (results.length > 0) {
-      await storeVideosInDatabase(supabaseClient, results);
-      console.log(`[YouTube Videos] Successfully stored ${results.length} videos in database`);
-    } else {
-      console.log('[YouTube Videos] No new videos to store');
-    }
+    console.log(`[YouTube Videos] Fetch complete. Total videos across all channels: ${results.length}`);
 
     return new Response(
       JSON.stringify({ success: true, count: results.length }),

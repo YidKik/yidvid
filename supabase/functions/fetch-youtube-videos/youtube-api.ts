@@ -48,7 +48,7 @@ export const fetchChannelVideos = async (
     const channelTitle = channelData.items[0].snippet.title;
     console.log(`[YouTube Videos] Fetching videos for channel: ${channelTitle} (${channelId})`);
 
-    // Fetch videos with pagination - increase maxResults to 50 for efficiency
+    // Fetch videos with pagination - maximum of 50 per request (API limit)
     const playlistUrl = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${uploadsPlaylistId}${pageToken ? `&pageToken=${pageToken}` : ''}&key=${apiKey}`;
     const response = await fetch(playlistUrl);
     
@@ -70,7 +70,7 @@ export const fetchChannelVideos = async (
       .map((item: any) => item.snippet.resourceId.videoId)
       .filter(Boolean);
 
-    console.log(`[YouTube Videos] Found ${videoIds.length} videos in playlist for channel ${channelId}`);
+    console.log(`[YouTube Videos] Found ${videoIds.length} videos in current page for channel ${channelId}`);
 
     if (videoIds.length === 0) {
       return { videos: [], nextPageToken: null };
@@ -121,7 +121,7 @@ export const fetchChannelVideos = async (
         };
       });
 
-    console.log(`[YouTube Videos] Successfully processed ${processedVideos.length} videos for channel ${channelId}`);
+    console.log(`[YouTube Videos] Successfully processed ${processedVideos.length} videos for current page`);
 
     return { 
       videos: processedVideos,
