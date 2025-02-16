@@ -15,10 +15,17 @@ interface NameSectionProps {
 
 export const NameSection = ({ initialName, userId }: NameSectionProps) => {
   const [newName, setNewName] = useState(initialName);
+  const [isUpdating, setIsUpdating] = useState(false);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
   const handleNameUpdate = async () => {
+    if (!newName.trim()) {
+      toast.error("Please enter a valid name");
+      return;
+    }
+
+    setIsUpdating(true);
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.user) {
@@ -29,7 +36,10 @@ export const NameSection = ({ initialName, userId }: NameSectionProps) => {
 
       const { error } = await supabase
         .from("profiles")
-        .update({ name: newName })
+        .update({ 
+          name: newName.trim(),
+          updated_at: new Date().toISOString()
+        })
         .eq("id", session.user.id);
 
       if (error) {
@@ -43,6 +53,8 @@ export const NameSection = ({ initialName, userId }: NameSectionProps) => {
     } catch (error) {
       console.error("Error updating name:", error);
       toast.error("Failed to update name");
+    } finally {
+      setIsUpdating(false);
     }
   };
 
@@ -56,8 +68,14 @@ export const NameSection = ({ initialName, userId }: NameSectionProps) => {
           onChange={(e) => setNewName(e.target.value)}
           placeholder="Enter your display name"
           className="bg-white"
+          disabled={isUpdating}
         />
-        <Button onClick={handleNameUpdate}>Save</Button>
+        <Button 
+          onClick={handleNameUpdate} 
+          disabled={isUpdating || newName.trim() === initialName}
+        >
+          {isUpdating ? "Saving..." : "Save"}
+        </Button>
       </div>
       <p className="text-sm text-muted-foreground">
         This name will be displayed across the platform
