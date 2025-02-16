@@ -89,7 +89,10 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
       // Fetch channel details from YouTube API
       console.log("Calling fetch-youtube-channel function with:", processedChannelId);
       const { data, error } = await supabase.functions.invoke('fetch-youtube-channel', {
-        body: { channelId: processedChannelId }
+        body: { channelId: processedChannelId },
+        headers: {
+          'Content-Type': 'application/json',
+        }
       });
       
       if (error) {
