@@ -72,7 +72,7 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
       const { data: existingChannel, error: checkError } = await supabase
         .from("youtube_channels")
         .select("title, channel_id")
-        .or(`channel_id.eq.${processedChannelId},channel_id.ilike.${processedChannelId}`)
+        .eq("channel_id", processedChannelId)
         .maybeSingle();
 
       if (checkError) {
@@ -89,7 +89,7 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
       // Fetch channel details from YouTube API
       console.log("Calling fetch-youtube-channel function with:", processedChannelId);
       const { data, error } = await supabase.functions.invoke('fetch-youtube-channel', {
-        body: { channelId: processedChannelId },
+        body: JSON.stringify({ channelId: processedChannelId }),
         headers: {
           'Content-Type': 'application/json',
         }
