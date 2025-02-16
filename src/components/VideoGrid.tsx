@@ -24,7 +24,7 @@ interface VideoGridProps {
   isLoading?: boolean;
 }
 
-export const VideoGrid = ({ maxVideos = 12, rowSize = 4, isLoading: parentLoading }: VideoGridProps) => {
+export const VideoGrid: React.FC<VideoGridProps> = ({ maxVideos = 12, rowSize = 4, isLoading: parentLoading }) => {
   const [showAll, setShowAll] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [hiddenChannels, setHiddenChannels] = useState<Set<string>>(new Set());
