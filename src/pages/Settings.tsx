@@ -12,7 +12,6 @@ import { VideoHistorySection } from "@/components/history/VideoHistorySection";
 import { ChannelSubscriptions } from "@/components/youtube/ChannelSubscriptions";
 import { UserAnalyticsSection } from "@/components/analytics/UserAnalyticsSection";
 import { ChannelPreferences } from "@/components/youtube/ChannelPreferences";
-import { ProfileSettings } from "@/components/settings/ProfileSettings";
 import { useColors } from "@/contexts/ColorContext";
 import { PlaybackSettings } from "@/components/settings/PlaybackSettings";
 import { LanguageSettings } from "@/components/settings/LanguageSettings";
@@ -26,31 +25,21 @@ const Settings = () => {
   const [textColor, setTextColor] = useState(colors.textColor);
   const [buttonColor, setButtonColor] = useState(colors.buttonColor);
   const [logoColor, setLogoColor] = useState(colors.logoColor);
-
-  const [volume, setVolume] = useState(80);
-  const [language, setLanguage] = useState("en");
   const [autoplay, setAutoplay] = useState(true);
-  const [playbackSpeed, setPlaybackSpeed] = useState("1");
-
-  useEffect(() => {
-    localStorage.setItem('settings', JSON.stringify({
-      volume,
-      language,
-      playbackSpeed,
-      autoplay,
-    }));
-  }, [volume, language, playbackSpeed, autoplay]);
 
   useEffect(() => {
     const savedSettings = localStorage.getItem('settings');
     if (savedSettings) {
       const settings = JSON.parse(savedSettings);
-      setVolume(settings.volume ?? 80);
-      setLanguage(settings.language ?? 'en');
-      setPlaybackSpeed(settings.playbackSpeed ?? '1');
       setAutoplay(settings.autoplay ?? true);
     }
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem('settings', JSON.stringify({
+      autoplay,
+    }));
+  }, [autoplay]);
 
   useEffect(() => {
     setBackgroundColor(colors.backgroundColor);
@@ -64,6 +53,8 @@ const Settings = () => {
       if (!session) {
         navigate("/auth");
         toast.error("Please sign in to access settings");
+      } else {
+        setUserId(session.user.id);
       }
     });
   }, [navigate]);
@@ -113,12 +104,12 @@ const Settings = () => {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: backgroundColor, color: textColor }}>
-      <Header />
       <BackButton />
       <main className="container mx-auto pt-24 px-4 pb-16">
-        <section className="mb-12">
-          <ProfileSettings />
-        </section>
+        <PlaybackSettings 
+          autoplay={autoplay}
+          setAutoplay={setAutoplay}
+        />
 
         <section className="mb-12">
           <VideoHistorySection />
@@ -143,19 +134,12 @@ const Settings = () => {
           <ChannelPreferences />
         </section>
 
-        <PlaybackSettings 
-          volume={volume}
-          setVolume={setVolume}
-          autoplay={autoplay}
-          setAutoplay={setAutoplay}
-          playbackSpeed={playbackSpeed}
-          setPlaybackSpeed={setPlaybackSpeed}
-        />
-
         <LanguageSettings 
           userId={userId}
-          language={language}
-          setLanguage={setLanguage}
+          language={profile?.language || 'en'}
+          setLanguage={(lang) => {
+            // Handle language change
+          }}
         />
 
         <ColorSettings 
