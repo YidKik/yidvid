@@ -116,21 +116,27 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
         <Button
           variant={isSubscribed ? "default" : "outline"}
           onClick={handleSubscribe}
-          className={`w-24 md:w-32 h-8 md:h-10 text-xs md:text-sm transition-all duration-200 ${
-            isSubscribed ? "bg-primary hover:bg-primary-hover text-white shadow-md" : ""
-          }`}
+          className={`relative group rounded-full px-6 py-2 text-xs md:text-sm transition-all duration-300
+            ${isSubscribed 
+              ? "bg-primary border-primary hover:bg-primary/90 text-white shadow-md" 
+              : "hover:bg-primary/10 hover:border-gray-300"
+            }
+          `}
         >
           {isSubscribed ? (
             <>
               <Check className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2 animate-in" />
-              Subscribed
+              <span>Subscribed</span>
             </>
           ) : (
             <>
               <UserPlus className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" />
-              Subscribe
+              <span>Subscribe</span>
             </>
           )}
+          <span className={`absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200`}>
+            {isSubscribed ? "Subscribed" : "Subscribe to channel"}
+          </span>
         </Button>
       </div>
     </>
