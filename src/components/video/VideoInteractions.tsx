@@ -95,14 +95,14 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
           onClick={handleLike}
           className={`group relative rounded-full p-2 md:p-3 hover:bg-primary/10 transition-all duration-300 ${
             isLiked 
-              ? "bg-primary/5 border-primary/20 hover:border-primary/30" 
+              ? "bg-primary border-primary hover:bg-primary/90" 
               : "hover:border-gray-300"
           }`}
         >
           <ThumbsUp 
             className={`w-5 h-5 md:w-6 md:h-6 transition-all duration-300 ${
               isLiked 
-                ? "text-primary fill-primary" 
+                ? "text-white fill-white" 
                 : "group-hover:text-primary"
             }`}
           />
