@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
@@ -130,7 +131,14 @@ export const CategorySection = () => {
           <div className="absolute left-0 top-0 w-24 md:w-48 h-full bg-gradient-to-r from-white via-white to-transparent z-10" />
           
           <motion.div
-            className="flex gap-4 md:gap-8"
+            className="flex gap-4 md:gap-8 cursor-grab active:cursor-grabbing"
+            drag="x"
+            dragConstraints={{
+              left: -(infiniteCategories.length * 340), // Adjust based on card width + gap
+              right: 0
+            }}
+            dragElastic={0.2}
+            dragTransition={{ bounceStiffness: 300, bounceDamping: 20 }}
             animate={{
               x: ['0%', '-50%']
             }}
@@ -146,6 +154,7 @@ export const CategorySection = () => {
             style={{
               width: `${(infiniteCategories.length * 100) / 3}%`
             }}
+            whileTap={{ cursor: "grabbing" }}
           >
             {infiniteCategories.map((category, index) => (
               <div
