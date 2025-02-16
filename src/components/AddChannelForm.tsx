@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -90,8 +89,7 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
       console.log("Calling fetch-youtube-channel function with:", processedChannelId);
       
       const { data, error } = await supabase.functions.invoke('fetch-youtube-channel', {
-        body: JSON.stringify({ channelId: processedChannelId }),
-        headers: { 'Content-Type': 'application/json' }
+        body: { channelId: processedChannelId }
       });
 
       console.log("Response from fetch-youtube-channel:", { data, error });

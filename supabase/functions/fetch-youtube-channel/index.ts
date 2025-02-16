@@ -17,24 +17,16 @@ serve(async (req) => {
   }
 
   try {
-    const YOUTUBE_API_KEY = Deno.env.get('YOUTUBE_API_KEY');
-    if (!YOUTUBE_API_KEY) {
-      console.error("YouTube API key not configured");
-      return new Response(
-        JSON.stringify({ error: "YouTube API key not configured" }),
-        {
-          status: 500,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        }
-      );
-    }
+    // Parse the request body
+    const requestBody = await req.text();
+    console.log("Raw request body:", requestBody);
 
     let body;
     try {
-      body = await req.json();
-      console.log("Parsed request body:", body);
+      body = requestBody ? JSON.parse(requestBody) : {};
     } catch (e) {
-      console.error("Error parsing request body:", e);
+      console.error("Error parsing JSON:", e);
+      console.error("Invalid JSON content:", requestBody);
       return new Response(
         JSON.stringify({ error: "Invalid JSON in request body" }),
         {
@@ -45,13 +37,25 @@ serve(async (req) => {
     }
 
     const { channelId } = body;
-    console.log("Channel ID from request:", channelId);
+    console.log("Received channel ID:", channelId);
 
     if (!channelId) {
       return new Response(
         JSON.stringify({ error: "Channel ID is required" }),
         {
           status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      );
+    }
+
+    const YOUTUBE_API_KEY = Deno.env.get('YOUTUBE_API_KEY');
+    if (!YOUTUBE_API_KEY) {
+      console.error("YouTube API key not configured");
+      return new Response(
+        JSON.stringify({ error: "YouTube API key not configured" }),
+        {
+          status: 500,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         }
       );
@@ -75,10 +79,10 @@ serve(async (req) => {
     console.log("Fetching from YouTube API:", apiUrl.replace(YOUTUBE_API_KEY, 'REDACTED'));
     const response = await fetch(apiUrl);
     
+    // Add error handling for YouTube API response parsing
     let data;
     try {
       data = await response.json();
-      console.log("YouTube API response:", data);
     } catch (e) {
       console.error("Error parsing YouTube API response:", e);
       return new Response(
