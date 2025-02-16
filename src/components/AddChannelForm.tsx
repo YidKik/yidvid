@@ -68,7 +68,7 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
 
     setIsFetchingChannel(true);
     try {
-      // First check if the channel already exists using a more reliable query
+      // First check if the channel already exists
       const { data: existingChannel, error: checkError } = await supabase
         .from("youtube_channels")
         .select("title, channel_id")
@@ -88,12 +88,13 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
 
       // Fetch channel details from YouTube API
       console.log("Calling fetch-youtube-channel function with:", processedChannelId);
-      const requestBody = { channelId: processedChannelId };
-      console.log("Request body:", requestBody);
       
       const { data, error } = await supabase.functions.invoke('fetch-youtube-channel', {
-        body: requestBody
+        body: JSON.stringify({ channelId: processedChannelId }),
+        headers: { 'Content-Type': 'application/json' }
       });
+
+      console.log("Response from fetch-youtube-channel:", { data, error });
       
       if (error) {
         console.error("Error fetching channel:", error);
