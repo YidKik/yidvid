@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { VideoCard } from "./VideoCard";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -163,4 +164,4 @@ export const VideoGrid = ({ maxVideos = 12, rowSize = 4, isLoading: parentLoadin
       />
     </div>
   );
-}
+};
