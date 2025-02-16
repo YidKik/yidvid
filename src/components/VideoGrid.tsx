@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { VideoCard } from "./VideoCard";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -24,7 +23,7 @@ interface VideoGridProps {
   isLoading?: boolean;
 }
 
-export default function VideoGrid({ maxVideos = 12, rowSize = 4, isLoading: parentLoading }: VideoGridProps) {
+export const VideoGrid = ({ maxVideos = 12, rowSize = 4, isLoading: parentLoading }: VideoGridProps) => {
   const [showAll, setShowAll] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [hiddenChannels, setHiddenChannels] = useState<Set<string>>(new Set());
