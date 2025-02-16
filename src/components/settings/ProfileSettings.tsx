@@ -12,7 +12,6 @@ import { useColors } from "@/contexts/ColorContext";
 import { PlaybackSettings } from "@/components/settings/PlaybackSettings";
 import { LanguageSettings } from "@/components/settings/LanguageSettings";
 import { ColorSettings } from "@/components/settings/ColorSettings";
-import { Header } from "@/components/Header";
 import { BackButton } from "@/components/navigation/BackButton";
 
 export const ProfileSettings = () => {
@@ -86,7 +85,6 @@ export const ProfileSettings = () => {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: backgroundColor, color: textColor }}>
-      <Header />
       <BackButton />
       <main className="container mx-auto pt-24 px-4 pb-16">
         <section className="mb-12">
