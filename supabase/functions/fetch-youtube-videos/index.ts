@@ -42,17 +42,32 @@ serve(async (req) => {
         batch.map(async (channelId) => {
           let allVideos = [];
           let nextPageToken = null;
+          let retryCount = 0;
+          const maxRetries = 3;
           
           do {
-            const { videos, nextPageToken: newPageToken } = await fetchChannelVideos(channelId, apiKey, nextPageToken);
-            allVideos.push(...videos);
-            nextPageToken = newPageToken;
-            
-            if (nextPageToken) {
-              // Add a small delay between pagination requests
-              await new Promise(resolve => setTimeout(resolve, 1000));
+            try {
+              const { videos, nextPageToken: newPageToken } = await fetchChannelVideos(channelId, apiKey, nextPageToken);
+              if (videos.length > 0) {
+                allVideos.push(...videos);
+              }
+              nextPageToken = newPageToken;
+              
+              // Add a delay between pagination requests to avoid rate limiting
+              if (nextPageToken) {
+                await new Promise(resolve => setTimeout(resolve, 1500));
+              }
+            } catch (error) {
+              console.error(`[YouTube Videos] Error fetching videos for channel ${channelId}:`, error);
+              retryCount++;
+              if (retryCount >= maxRetries) {
+                console.error(`[YouTube Videos] Max retries reached for channel ${channelId}`);
+                break;
+              }
+              // Add exponential backoff delay
+              await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, retryCount)));
             }
-          } while (nextPageToken);
+          } while (nextPageToken && retryCount < maxRetries);
           
           return allVideos;
         })
@@ -61,15 +76,20 @@ serve(async (req) => {
       results.push(...batchResults.flat());
       
       if (i + batchSize < channels.length) {
-        // Add a small delay between batches to avoid rate limiting
+        // Add a delay between batches to avoid rate limiting
         await new Promise(resolve => setTimeout(resolve, 2000));
       }
     }
 
     console.log(`[YouTube Videos] Fetch complete. Total videos: ${results.length}`);
 
-    // Store videos in database
-    await storeVideosInDatabase(supabaseClient, results);
+    // Store videos in database with better error handling
+    if (results.length > 0) {
+      await storeVideosInDatabase(supabaseClient, results);
+      console.log(`[YouTube Videos] Successfully stored ${results.length} videos in database`);
+    } else {
+      console.log('[YouTube Videos] No new videos to store');
+    }
 
     return new Response(
       JSON.stringify({ success: true, count: results.length }),

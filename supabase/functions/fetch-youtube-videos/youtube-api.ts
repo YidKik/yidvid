@@ -20,56 +20,70 @@ export const fetchChannelVideos = async (
     // Get channel details
     const channelUrl = `https://www.googleapis.com/youtube/v3/channels?part=contentDetails,snippet&id=${channelId}&key=${apiKey}`;
     const channelResponse = await fetch(channelUrl);
+    
+    if (!channelResponse.ok) {
+      throw new Error(`Channel API error: ${channelResponse.status}`);
+    }
+    
     const channelData = await channelResponse.json();
 
-    if (!channelResponse.ok || !channelData.items?.[0]) {
-      console.error(`[YouTube Videos] Error fetching channel ${channelId}:`, channelData);
+    if (!channelData.items?.[0]) {
+      console.error(`[YouTube Videos] No channel found for ID ${channelId}`);
       return { videos: [], nextPageToken: null };
     }
 
     const uploadsPlaylistId = channelData.items[0].contentDetails.relatedPlaylists.uploads;
     const channelTitle = channelData.items[0].snippet.title;
 
-    // Fetch videos with pagination
-    const playlistUrl = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${uploadsPlaylistId}&maxResults=50${pageToken ? `&pageToken=${pageToken}` : ''}&key=${apiKey}`;
+    // Fetch videos with pagination - increase maxResults to 50 for efficiency
+    const playlistUrl = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${uploadsPlaylistId}${pageToken ? `&pageToken=${pageToken}` : ''}&key=${apiKey}`;
     const response = await fetch(playlistUrl);
+    
+    if (!response.ok) {
+      throw new Error(`Playlist API error: ${response.status}`);
+    }
+    
     const data = await response.json();
 
-    if (!response.ok || !data.items) {
-      console.error(`[YouTube Videos] Error fetching videos for channel ${channelId}:`, data);
+    if (!data.items || data.items.length === 0) {
       return { videos: [], nextPageToken: null };
     }
 
     // Get video IDs and fetch statistics in a single batch
-    const videoIds = data.items.map((item: any) => item.snippet.resourceId.videoId);
+    const videoIds = data.items.map((item: any) => item.snippet.resourceId.videoId).filter(Boolean);
     const statsUrl = `https://www.googleapis.com/youtube/v3/videos?part=statistics,snippet&id=${videoIds.join(',')}&key=${apiKey}`;
     const statsResponse = await fetch(statsUrl);
-    const statsData = await statsResponse.json();
-
-    if (!statsResponse.ok || !statsData.items) {
-      console.error('[YouTube Videos] Error fetching video statistics:', statsData);
-      return { videos: [], nextPageToken: null };
+    
+    if (!statsResponse.ok) {
+      throw new Error(`Statistics API error: ${statsResponse.status}`);
     }
+    
+    const statsData = await statsResponse.json();
 
     // Create a map for quick lookup of statistics
     const statsMap = new Map(
-      statsData.items.map((item: any) => [item.id, {
+      statsData.items?.map((item: any) => [item.id, {
         statistics: item.statistics,
         description: item.snippet.description
-      }])
+      }]) || []
     );
 
-    // Process videos with their statistics and categorization
-    const processedVideos = data.items.map((item: any) => ({
-      video_id: item.snippet.resourceId.videoId,
-      title: item.snippet.title,
-      thumbnail: item.snippet.thumbnails.high?.url || item.snippet.thumbnails.default?.url,
-      channel_id: channelId,
-      channel_name: channelTitle,
-      uploaded_at: item.snippet.publishedAt,
-      views: parseInt(statsMap.get(item.snippet.resourceId.videoId)?.statistics.viewCount || '0'),
-      description: statsMap.get(item.snippet.resourceId.videoId)?.description || null,
-    }));
+    // Process videos with their statistics
+    const processedVideos = data.items
+      .filter((item: any) => item.snippet?.resourceId?.videoId) // Filter out any invalid items
+      .map((item: any) => {
+        const stats = statsMap.get(item.snippet.resourceId.videoId);
+        return {
+          video_id: item.snippet.resourceId.videoId,
+          title: item.snippet.title,
+          thumbnail: item.snippet.thumbnails.high?.url || item.snippet.thumbnails.default?.url,
+          channel_id: channelId,
+          channel_name: channelTitle,
+          uploaded_at: item.snippet.publishedAt,
+          views: parseInt(stats?.statistics?.viewCount || '0'),
+          description: stats?.description || null,
+        };
+      });
 
     return { 
       videos: processedVideos,
@@ -77,7 +91,6 @@ export const fetchChannelVideos = async (
     };
   } catch (error) {
     console.error(`[YouTube Videos] Error processing channel ${channelId}:`, error);
-    return { videos: [], nextPageToken: null };
+    throw error; // Re-throw to allow retry logic in the main function
   }
 };
-
