@@ -47,33 +47,42 @@ export const ProfileSection = () => {
   }, [profile]);
 
   const handleSave = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return;
-
-    const updates: ProfilesTable["Update"] = {
-      display_name: displayName,
-      username: username,
-      avatar_url: avatarUrl,
-    };
-
-    const { error } = await supabase
-      .from("profiles")
-      .update(updates)
-      .eq("id", session.user.id);
-
-    if (error) {
-      console.error("Error updating profile:", error);
-      if (error.code === '23505') {
-        toast.error("Username is already taken");
-      } else {
-        toast.error("Error updating profile");
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast.error("You must be logged in to update your profile");
+        return;
       }
-      return;
-    }
 
-    toast.success("Profile updated successfully");
-    setIsEditing(false);
-    refetch();
+      const updates: Partial<ProfilesTable["Row"]> = {
+        display_name: displayName,
+        username: username.trim() || null, // Ensure empty string is saved as null
+        avatar_url: avatarUrl,
+        updated_at: new Date().toISOString(),
+      };
+
+      const { error } = await supabase
+        .from("profiles")
+        .update(updates)
+        .eq("id", session.user.id);
+
+      if (error) {
+        console.error("Error updating profile:", error);
+        if (error.code === '23505') {
+          toast.error("Username is already taken");
+        } else {
+          toast.error("Error updating profile");
+        }
+        return;
+      }
+
+      await refetch(); // Refresh the profile data
+      toast.success("Profile updated successfully");
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Error in handleSave:", error);
+      toast.error("Failed to update profile");
+    }
   };
 
   const copyUserId = () => {
