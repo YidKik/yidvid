@@ -220,6 +220,30 @@ export type Database = {
         }
         Relationships: []
       }
+      cron_job_logs: {
+        Row: {
+          created_at: string
+          id: string
+          job_name: string
+          response: Json | null
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          job_name: string
+          response?: Json | null
+          status: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          job_name?: string
+          response?: Json | null
+          status?: string
+        }
+        Relationships: []
+      }
       custom_categories: {
         Row: {
           created_at: string
@@ -969,7 +993,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      trigger_youtube_video_fetch: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
     }
     Enums: {
       interaction_type_enum: "view" | "like" | "dislike" | "save"
