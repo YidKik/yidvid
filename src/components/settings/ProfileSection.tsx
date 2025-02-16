@@ -8,6 +8,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
 import { Camera, Copy, User } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 import type { ProfilesTable } from "@/integrations/supabase/types/profiles";
 
 export const ProfileSection = () => {
@@ -95,7 +97,16 @@ export const ProfileSection = () => {
   if (!profile) return null;
 
   return (
-    <section className="mb-12">
+    <section className="mb-12 relative">
+      <div className="absolute inset-0 bg-background/80 backdrop-blur-sm z-10 flex items-center justify-center">
+        <Alert variant="default" className="w-[90%] max-w-lg border-muted">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            Profile settings are currently unavailable. You can still view your User ID and username below.
+          </AlertDescription>
+        </Alert>
+      </div>
+
       <h2 className="text-2xl font-semibold mb-4">Profile Settings</h2>
       <Card className="p-6">
         <div className="space-y-6">
@@ -112,19 +123,6 @@ export const ProfileSection = () => {
                   <User className="w-10 h-10 text-muted-foreground" />
                 )}
               </div>
-              {isEditing && (
-                <Button
-                  size="icon"
-                  variant="secondary"
-                  className="absolute -bottom-2 -right-2 rounded-full"
-                  onClick={() => {
-                    // TODO: Implement image upload
-                    toast.info("Image upload coming soon");
-                  }}
-                >
-                  <Camera className="w-4 h-4" />
-                </Button>
-              )}
             </div>
             <div className="flex-1">
               <h3 className="text-lg font-medium">
@@ -134,73 +132,38 @@ export const ProfileSection = () => {
                 {profile.email}
               </p>
             </div>
-            {!isEditing && (
-              <Button
-                variant="outline"
-                onClick={() => setIsEditing(true)}
-              >
-                Edit Profile
-              </Button>
-            )}
           </div>
 
-          {isEditing ? (
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="displayName">Display Name</Label>
-                <Input
-                  id="displayName"
-                  value={displayName}
-                  onChange={(e) => setDisplayName(e.target.value)}
-                  placeholder="Enter your display name"
-                />
+          <div className="mt-4 space-y-4">
+            <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
+              <div>
+                <p className="text-sm font-medium">User ID</p>
+                <p className="text-xs text-muted-foreground">
+                  {profile.id}
+                </p>
               </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="username">Username</Label>
-                <Input
-                  id="username"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  placeholder="Choose a username"
-                />
-              </div>
-
-              <div className="flex space-x-2">
-                <Button onClick={handleSave}>Save Changes</Button>
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setIsEditing(false);
-                    setDisplayName(profile.display_name || "");
-                    setUsername(profile.username || "");
-                  }}
-                >
-                  Cancel
-                </Button>
-              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={copyUserId}
+              >
+                <Copy className="w-4 h-4" />
+              </Button>
             </div>
-          ) : (
-            <div className="mt-4 space-y-4">
+            {profile.username && (
               <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
                 <div>
-                  <p className="text-sm font-medium">User ID</p>
+                  <p className="text-sm font-medium">Username</p>
                   <p className="text-xs text-muted-foreground">
-                    {profile.id}
+                    {profile.username}
                   </p>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={copyUserId}
-                >
-                  <Copy className="w-4 h-4" />
-                </Button>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </Card>
     </section>
   );
 };
+
