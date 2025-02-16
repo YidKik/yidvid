@@ -3,8 +3,8 @@ import { Header } from "@/components/Header";
 import VideoGrid from "@/components/VideoGrid";
 import { ChannelsGrid } from "@/components/youtube/ChannelsGrid";
 import Auth from "@/pages/Auth";
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useState, useEffect } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { MostViewedVideos } from "@/components/video/MostViewedVideos";
 import { motion } from "framer-motion";
@@ -18,12 +18,51 @@ import { toast } from "sonner";
 const MainContent = () => {
   const [isMusic, setIsMusic] = useState(false);
   const isMobile = useIsMobile();
+  const queryClient = useQueryClient();
+
+  // Pre-fetch videos during welcome animation
+  useEffect(() => {
+    const prefetchVideos = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("youtube_videos")
+          .select("*")
+          .is('deleted_at', null)
+          .order("uploaded_at", { ascending: false });
+
+        if (error) throw error;
+        
+        // Manually update the query cache
+        queryClient.setQueryData(["youtube_videos"], data.map(video => ({
+          id: video.id,
+          video_id: video.video_id,
+          title: video.title,
+          thumbnail: video.thumbnail,
+          channelName: video.channel_name,
+          channelId: video.channel_id,
+          views: video.views || 0,
+          uploadedAt: video.uploaded_at
+        })));
+      } catch (error) {
+        console.error("Error prefetching videos:", error);
+      }
+    };
+
+    prefetchVideos();
+  }, [queryClient]);
   
   const { data: videos, isLoading } = useQuery({
     queryKey: ["youtube_videos"],
     queryFn: async () => {
       console.log("Fetching videos...");
       try {
+        // First check if we have cached data
+        const cachedData = queryClient.getQueryData(["youtube_videos"]);
+        if (cachedData) {
+          console.log("Using cached video data");
+          return cachedData;
+        }
+
         const { data, error } = await supabase
           .from("youtube_videos")
           .select("*")
