@@ -14,15 +14,28 @@ import { WelcomeAnimation } from "@/components/WelcomeAnimation";
 import { CategorySection } from "@/components/categories/CategorySection";
 import { VideoAssistant } from "@/components/ai/VideoAssistant";
 import { toast } from "sonner";
+import { YoutubeVideosTable } from "@/integrations/supabase/types/youtube-videos";
+
+interface Video {
+  id: string;
+  video_id: string;
+  title: string;
+  thumbnail: string;
+  channelName: string;
+  channelId: string;
+  views: number;
+  uploadedAt: string | Date;
+}
 
 const MainContent = () => {
   const [isMusic, setIsMusic] = useState(false);
   const isMobile = useIsMobile();
   const queryClient = useQueryClient();
 
-  // Pre-fetch videos during welcome animation
+  // Pre-fetch videos during welcome animation with proper typing
   useEffect(() => {
     const prefetchVideos = async () => {
+      console.log("Starting video prefetch...");
       try {
         const { data, error } = await supabase
           .from("youtube_videos")
@@ -30,10 +43,17 @@ const MainContent = () => {
           .is('deleted_at', null)
           .order("uploaded_at", { ascending: false });
 
-        if (error) throw error;
-        
-        // Manually update the query cache
-        queryClient.setQueryData(["youtube_videos"], data.map(video => ({
+        if (error) {
+          console.error("Error in prefetch:", error);
+          throw error;
+        }
+
+        if (!data) {
+          console.log("No data returned from prefetch");
+          return;
+        }
+
+        const formattedData: Video[] = data.map(video => ({
           id: video.id,
           video_id: video.video_id,
           title: video.title,
@@ -42,7 +62,10 @@ const MainContent = () => {
           channelId: video.channel_id,
           views: video.views || 0,
           uploadedAt: video.uploaded_at
-        })));
+        }));
+
+        console.log(`Prefetched ${formattedData.length} videos`);
+        queryClient.setQueryData(["youtube_videos"], formattedData);
       } catch (error) {
         console.error("Error prefetching videos:", error);
       }
@@ -51,15 +74,15 @@ const MainContent = () => {
     prefetchVideos();
   }, [queryClient]);
   
-  const { data: videos, isLoading } = useQuery({
+  const { data: videos, isLoading } = useQuery<Video[]>({
     queryKey: ["youtube_videos"],
     queryFn: async () => {
-      console.log("Fetching videos...");
+      console.log("Main video fetch starting...");
       try {
         // First check if we have cached data
-        const cachedData = queryClient.getQueryData(["youtube_videos"]);
-        if (cachedData) {
-          console.log("Using cached video data");
+        const cachedData = queryClient.getQueryData<Video[]>(["youtube_videos"]);
+        if (cachedData && cachedData.length > 0) {
+          console.log("Using cached video data:", cachedData.length, "videos");
           return cachedData;
         }
 
@@ -75,9 +98,12 @@ const MainContent = () => {
           throw error;
         }
 
-        console.log("Fetched videos count:", data?.length || 0);
-        
-        return (data || []).map(video => ({
+        if (!data) {
+          console.log("No data returned from main fetch");
+          return [];
+        }
+
+        const formattedData = data.map(video => ({
           id: video.id,
           video_id: video.video_id,
           title: video.title,
@@ -87,6 +113,9 @@ const MainContent = () => {
           views: video.views || 0,
           uploadedAt: video.uploaded_at
         }));
+
+        console.log("Fetched videos count:", formattedData.length);
+        return formattedData;
       } catch (error) {
         console.error("Error in video fetch:", error);
         toast.error("Failed to load videos");
@@ -96,6 +125,7 @@ const MainContent = () => {
     staleTime: 1000 * 60 * 5, // Keep data fresh for 5 minutes
     gcTime: 1000 * 60 * 30, // Cache data for 30 minutes
     retry: 2, // Retry failed requests up to 2 times
+    initialData: [], // Provide empty array as initial data to avoid undefined
   });
 
   const sortedVideos = videos ? [...videos].sort((a, b) => (b.views || 0) - (a.views || 0)) : [];
@@ -141,34 +171,22 @@ const MainContent = () => {
         >
           {!isMusic ? (
             <>
-              {isLoading ? (
-                <div className="text-center py-8">
-                  Loading videos...
-                </div>
-              ) : videos && videos.length > 0 ? (
-                <>
-                  <div className="video-grid">
-                    <VideoGrid 
-                      videos={videos} 
-                      maxVideos={isMobile ? 6 : 12} 
-                      rowSize={isMobile ? 2 : 4} 
-                      isLoading={isLoading}
-                    />
-                  </div>
-                  {sortedVideos.length > 0 && (
-                    <div className="mt-6">
-                      <MostViewedVideos videos={sortedVideos} />
-                    </div>
-                  )}
-                  <div className="channels-grid mt-6">
-                    <ChannelsGrid />
-                  </div>
-                </>
-              ) : (
-                <div className="text-center py-8">
-                  No videos found
+              <div className="video-grid">
+                <VideoGrid 
+                  videos={videos} 
+                  maxVideos={isMobile ? 6 : 12} 
+                  rowSize={isMobile ? 2 : 4} 
+                  isLoading={isLoading}
+                />
+              </div>
+              {sortedVideos.length > 0 && (
+                <div className="mt-6">
+                  <MostViewedVideos videos={sortedVideos} />
                 </div>
               )}
+              <div className="channels-grid mt-6">
+                <ChannelsGrid />
+              </div>
             </>
           ) : (
             <div className="min-h-[60vh] md:min-h-[70vh] flex flex-col items-center justify-start pt-12 md:pt-16 relative">
