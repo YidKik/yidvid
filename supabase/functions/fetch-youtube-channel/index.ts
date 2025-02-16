@@ -29,26 +29,31 @@ serve(async (req) => {
 
     const YOUTUBE_API_KEY = Deno.env.get('YOUTUBE_API_KEY');
     if (!YOUTUBE_API_KEY) {
+      console.error("YouTube API key not configured");
       throw new Error("YouTube API key not configured");
     }
 
-    // Clean the channel ID - remove any @ symbol if present
-    const cleanChannelId = channelId.startsWith('@') ? channelId : channelId;
+    // Clean the channel ID - remove any @ symbol and handle custom URLs
+    const cleanChannelId = channelId.startsWith('@') ? channelId.substring(1) : channelId;
 
     // First try to get channel by custom URL (handle if channelId is a username)
-    let apiUrl = `https://youtube.googleapis.com/youtube/v3/search?part=snippet&q=${cleanChannelId}&type=channel&key=${YOUTUBE_API_KEY}`;
-    
+    let apiUrl;
     if (cleanChannelId.startsWith('UC')) {
       // If it's a channel ID, use channels endpoint directly
       apiUrl = `https://youtube.googleapis.com/youtube/v3/channels?part=snippet&id=${cleanChannelId}&key=${YOUTUBE_API_KEY}`;
+      console.log("Using direct channel ID endpoint");
+    } else {
+      // If it's a username or custom URL, search for the channel
+      apiUrl = `https://youtube.googleapis.com/youtube/v3/search?part=snippet&q=${cleanChannelId}&type=channel&key=${YOUTUBE_API_KEY}`;
+      console.log("Using search endpoint to find channel");
     }
 
-    console.log("Fetching from YouTube API...");
+    console.log("Fetching from YouTube API:", apiUrl.replace(YOUTUBE_API_KEY, 'REDACTED'));
     const response = await fetch(apiUrl);
     const data = await response.json();
 
     if (!response.ok) {
-      console.error("YouTube API error:", data);
+      console.error("YouTube API error response:", data);
       throw new Error(`YouTube API error: ${data.error?.message || 'Unknown error'}`);
     }
 
@@ -58,8 +63,11 @@ serve(async (req) => {
     } else {
       // If we searched by username, we need to get the first result's channel ID
       if (!data.items || data.items.length === 0) {
+        console.error("No channel found for query:", cleanChannelId);
         throw new Error("Channel not found");
       }
+      
+      console.log("Found channel in search results, fetching details");
       const foundChannelId = data.items[0].snippet.channelId;
       
       // Now fetch the actual channel data
@@ -67,13 +75,22 @@ serve(async (req) => {
         `https://youtube.googleapis.com/youtube/v3/channels?part=snippet&id=${foundChannelId}&key=${YOUTUBE_API_KEY}`
       );
       const channelResult = await channelResponse.json();
+      
+      if (!channelResponse.ok) {
+        console.error("Error fetching channel details:", channelResult);
+        throw new Error(`Error fetching channel details: ${channelResult.error?.message || 'Unknown error'}`);
+      }
+      
       channelData = channelResult.items[0];
     }
 
     if (!channelData) {
+      console.error("No channel data found");
       throw new Error("Channel not found");
     }
 
+    console.log("Successfully fetched channel data for:", channelData.snippet.title);
+    
     const result = {
       channelId: channelData.id,
       title: channelData.snippet.title,
@@ -81,8 +98,6 @@ serve(async (req) => {
       thumbnailUrl: channelData.snippet.thumbnails.default.url,
       default_category: 'other'
     };
-
-    console.log("Successfully fetched channel data:", result.title);
 
     return new Response(JSON.stringify(result), {
       headers: { 
