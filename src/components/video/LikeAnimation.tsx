@@ -13,15 +13,13 @@ export const LikeAnimation = ({ isVisible, onComplete }: LikeAnimationProps) => 
 
   useEffect(() => {
     if (isVisible) {
-      // Create multiple icons with random positions
       const newIcons = Array.from({ length: 12 }, (_, i) => ({
         id: i,
-        x: Math.random() * 200 - 100, // Random X position between -100 and 100
-        delay: Math.random() * 0.5, // Random delay for each icon
+        x: Math.random() * 200 - 100,
+        delay: Math.random() * 0.5,
       }));
       setIcons(newIcons);
 
-      // Cleanup animation after it's done
       const timer = setTimeout(() => {
         onComplete();
         setIcons([]);
@@ -57,7 +55,7 @@ export const LikeAnimation = ({ isVisible, onComplete }: LikeAnimationProps) => 
               }}
               className="absolute"
             >
-              <ThumbsUp className="text-black fill-black w-6 h-6" />
+              <ThumbsUp className="text-primary fill-primary w-6 h-6" />
             </motion.div>
           ))}
         </div>
