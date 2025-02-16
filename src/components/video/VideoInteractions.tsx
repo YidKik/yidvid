@@ -89,17 +89,17 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
       <Button
         variant="outline"
         onClick={handleLike}
-        className={`group relative rounded-full p-2 md:p-3 hover:bg-primary/10 transition-all duration-300 ${
+        className={`group relative rounded-full p-2 md:p-3 hover:bg-gray-100 transition-all duration-300 ${
           isLiked 
-            ? "bg-primary/5 border-primary/20 hover:border-primary/30" 
+            ? "bg-gray-50 border-gray-200 hover:border-gray-300" 
             : "hover:border-gray-300"
         }`}
       >
         <ThumbsUp 
           className={`w-5 h-5 md:w-6 md:h-6 transition-all duration-300 ${
             isLiked 
-              ? "text-primary fill-primary" 
-              : "group-hover:text-primary"
+              ? "text-black fill-black" 
+              : "group-hover:text-gray-700"
           }`}
         />
         <span className={`absolute -bottom-8 left-1/2 -translate-x-1/2 text-xs font-medium transition-opacity duration-200 ${
