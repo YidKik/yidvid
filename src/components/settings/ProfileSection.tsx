@@ -76,7 +76,7 @@ export const ProfileSection = () => {
         if (error.code === '23505') {
           toast.error("Username is already taken");
         } else {
-          toast.error("Error updating profile");
+          toast.error("Failed to update welcome name. Please try again.");
         }
         return;
       }
