@@ -1,16 +1,15 @@
 
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
-import { Camera, Copy, User } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import type { ProfilesTable } from "@/integrations/supabase/types/profiles";
+import { ProfileAvatar } from "./profile/ProfileAvatar";
+import { ProfileInfo } from "./profile/ProfileInfo";
+import { WelcomeNameField } from "./profile/WelcomeNameField";
 
 export const ProfileSection = () => {
   const [displayName, setDisplayName] = useState("");
@@ -90,20 +89,6 @@ export const ProfileSection = () => {
     }
   };
 
-  const copyUserId = () => {
-    if (profile?.id) {
-      navigator.clipboard.writeText(profile.id);
-      toast.success("User ID copied to clipboard");
-    }
-  };
-
-  const copyUsername = () => {
-    if (profile?.username) {
-      navigator.clipboard.writeText(profile.username);
-      toast.success("Username copied to clipboard");
-    }
-  };
-
   if (!profile) return null;
 
   return (
@@ -120,84 +105,21 @@ export const ProfileSection = () => {
                 </AlertDescription>
               </Alert>
             </div>
-            <div className="flex items-center space-x-4">
-              <div className="relative">
-                <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center overflow-hidden">
-                  {avatarUrl ? (
-                    <img 
-                      src={avatarUrl} 
-                      alt="Profile" 
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <User className="w-10 h-10 text-muted-foreground" />
-                  )}
-                </div>
-              </div>
-              <div className="flex-1">
-                <h3 className="text-lg font-medium">
-                  {displayName || username || "Anonymous User"}
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  {profile.email}
-                </p>
-              </div>
-            </div>
+            <ProfileAvatar
+              avatarUrl={avatarUrl}
+              displayName={displayName}
+              username={username}
+              profile={profile}
+            />
           </div>
 
-          <div className="mt-4 space-y-4">
-            <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
-              <div>
-                <p className="text-sm font-medium">User ID</p>
-                <p className="text-xs text-muted-foreground">
-                  {profile.id}
-                </p>
-              </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={copyUserId}
-              >
-                <Copy className="w-4 h-4" />
-              </Button>
-            </div>
-            {profile.username && (
-              <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
-                <div>
-                  <p className="text-sm font-medium">Username</p>
-                  <p className="text-xs text-muted-foreground">
-                    {profile.username}
-                  </p>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={copyUsername}
-                >
-                  <Copy className="w-4 h-4" />
-                </Button>
-              </div>
-            )}
-            <div className="p-3 bg-muted rounded-lg">
-              <div className="space-y-2">
-                <Label htmlFor="welcomeName">Welcome Page Name</Label>
-                <div className="flex gap-2">
-                  <Input
-                    id="welcomeName"
-                    value={welcomeName}
-                    onChange={(e) => setWelcomeName(e.target.value)}
-                    placeholder="Enter your welcome page name"
-                  />
-                  <Button onClick={handleSave} variant="secondary">
-                    Save
-                  </Button>
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  This name will be displayed on the welcome page when you visit the site.
-                </p>
-              </div>
-            </div>
-          </div>
+          <ProfileInfo profile={profile} />
+
+          <WelcomeNameField
+            welcomeName={welcomeName}
+            setWelcomeName={setWelcomeName}
+            handleSave={handleSave}
+          />
         </div>
       </Card>
     </section>
