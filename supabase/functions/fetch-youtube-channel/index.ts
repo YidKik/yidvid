@@ -17,14 +17,16 @@ serve(async (req) => {
   }
 
   try {
-    // Add error handling for JSON parsing
+    // Parse the request body
+    const requestBody = await req.text();
+    console.log("Raw request body:", requestBody);
+
     let body;
     try {
-      const text = await req.text();
-      console.log("Raw request body:", text);
-      body = JSON.parse(text);
+      body = requestBody ? JSON.parse(requestBody) : {};
     } catch (e) {
-      console.error("Error parsing request JSON:", e);
+      console.error("Error parsing JSON:", e);
+      console.error("Invalid JSON content:", requestBody);
       return new Response(
         JSON.stringify({ error: "Invalid JSON in request body" }),
         {
@@ -35,7 +37,7 @@ serve(async (req) => {
     }
 
     const { channelId } = body;
-    console.log("Received request to fetch channel:", channelId);
+    console.log("Received channel ID:", channelId);
 
     if (!channelId) {
       return new Response(
