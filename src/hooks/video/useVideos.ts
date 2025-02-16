@@ -23,20 +23,26 @@ export const useVideos = () => {
     queryFn: async () => {
       console.log("Fetching videos...");
       
-      // Get current session
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session) {
-        console.log("No session found, waiting for authentication");
-        return [];
-      }
-
       try {
+        // Get current session
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        
+        if (sessionError) {
+          console.error("Session error:", sessionError);
+          throw sessionError;
+        }
+        
+        if (!session) {
+          console.log("No session found, waiting for authentication");
+          return [];
+        }
+
         const { data, error } = await supabase
           .from("youtube_videos")
           .select("*")
           .is('deleted_at', null)
-          .order("uploaded_at", { ascending: false });
+          .order("uploaded_at", { ascending: false })
+          .throwOnError(); // This will throw on RLS or network errors
 
         if (error) {
           console.error("Error fetching videos:", error);
@@ -65,15 +71,26 @@ export const useVideos = () => {
         queryClient.setQueryData(["youtube_videos_grid"], formattedData);
         
         return formattedData;
-      } catch (error) {
-        console.error("Error in video fetch:", error);
+      } catch (error: any) {
+        // Handle network errors specifically
+        if (error.message === 'Failed to fetch') {
+          console.error('Network error occurred:', error);
+          toast.error('Network error. Please check your connection and try again.');
+        } else {
+          console.error("Error in video fetch:", error);
+          toast.error("There was a problem loading the videos. Please try refreshing the page.");
+        }
         throw error;
       }
     },
-    enabled: true, // Query will run immediately
+    enabled: true,
     staleTime: 1000 * 60 * 5, // Keep data fresh for 5 minutes
     gcTime: 1000 * 60 * 30, // Cache data for 30 minutes
-    retry: 3,
+    retry: (failureCount, error: any) => {
+      // Don't retry on auth errors, but retry up to 3 times on network errors
+      if (error?.status === 401 || error?.status === 403) return false;
+      return failureCount < 3;
+    },
     retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 
@@ -81,7 +98,6 @@ export const useVideos = () => {
   useEffect(() => {
     if (error) {
       console.error("Video fetch error:", error);
-      toast.error("There was a problem loading the videos. Please try refreshing the page.");
     }
   }, [error]);
 
