@@ -6,7 +6,8 @@ export const getChannelsFromDatabase = async (supabaseClient: SupabaseClient) =>
   const { data: channelsData, error: channelsError } = await supabaseClient
     .from('youtube_channels')
     .select('channel_id, title')
-    .is('deleted_at', null);
+    .is('deleted_at', null)
+    .is('fetch_error', null); // Only fetch channels without errors
 
   if (channelsError) {
     console.error('[YouTube Videos] Error fetching channels:', channelsError);
