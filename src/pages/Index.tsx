@@ -98,7 +98,7 @@ const MainContent = () => {
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: isMusic ? -20 : 20 }}
           transition={{ duration: 0.3 }}
-          className="mt-16 md:mt-24"
+          className="mt-8 md:mt-12" {/* Reduced from mt-16 md:mt-24 to mt-8 md:mt-12 */}
         >
           {!isMusic ? (
             <>
