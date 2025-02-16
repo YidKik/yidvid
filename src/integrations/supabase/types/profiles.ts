@@ -1,3 +1,4 @@
+
 export interface ProfilesTable {
   Row: {
     created_at: string;
@@ -5,7 +6,6 @@ export interface ProfilesTable {
     id: string;
     is_admin: boolean | null;
     updated_at: string;
-    name: string | null;
   };
   Insert: {
     created_at?: string;
@@ -13,7 +13,6 @@ export interface ProfilesTable {
     id: string;
     is_admin?: boolean | null;
     updated_at?: string;
-    name?: string | null;
   };
   Update: {
     created_at?: string;
@@ -21,7 +20,6 @@ export interface ProfilesTable {
     id?: string;
     is_admin?: boolean | null;
     updated_at?: string;
-    name?: string | null;
   };
   Relationships: [];
 }

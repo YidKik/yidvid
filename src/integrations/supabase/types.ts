@@ -505,30 +505,24 @@ export type Database = {
       }
       profiles: {
         Row: {
-          avatar_url: string | null
           created_at: string
           email: string
           id: string
           is_admin: boolean | null
-          name: string | null
           updated_at: string
         }
         Insert: {
-          avatar_url?: string | null
           created_at?: string
           email: string
           id: string
           is_admin?: boolean | null
-          name?: string | null
           updated_at?: string
         }
         Update: {
-          avatar_url?: string | null
           created_at?: string
           email?: string
           id?: string
           is_admin?: boolean | null
-          name?: string | null
           updated_at?: string
         }
         Relationships: []
