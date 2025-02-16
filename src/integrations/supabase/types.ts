@@ -513,7 +513,6 @@ export type Database = {
           is_admin: boolean | null
           updated_at: string
           username: string | null
-          welcome_name: string | null
         }
         Insert: {
           avatar_url?: string | null
@@ -524,7 +523,6 @@ export type Database = {
           is_admin?: boolean | null
           updated_at?: string
           username?: string | null
-          welcome_name?: string | null
         }
         Update: {
           avatar_url?: string | null
@@ -535,7 +533,6 @@ export type Database = {
           is_admin?: boolean | null
           updated_at?: string
           username?: string | null
-          welcome_name?: string | null
         }
         Relationships: []
       }
