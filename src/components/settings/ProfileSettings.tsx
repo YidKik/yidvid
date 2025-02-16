@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
@@ -22,31 +21,21 @@ export const ProfileSettings = () => {
   const [textColor, setTextColor] = useState(colors.textColor);
   const [buttonColor, setButtonColor] = useState(colors.buttonColor);
   const [logoColor, setLogoColor] = useState(colors.logoColor);
-
-  const [volume, setVolume] = useState(80);
-  const [language, setLanguage] = useState("en");
   const [autoplay, setAutoplay] = useState(true);
-  const [playbackSpeed, setPlaybackSpeed] = useState("1");
-
-  useEffect(() => {
-    localStorage.setItem('settings', JSON.stringify({
-      volume,
-      language,
-      playbackSpeed,
-      autoplay,
-    }));
-  }, [volume, language, playbackSpeed, autoplay]);
 
   useEffect(() => {
     const savedSettings = localStorage.getItem('settings');
     if (savedSettings) {
       const settings = JSON.parse(savedSettings);
-      setVolume(settings.volume ?? 80);
-      setLanguage(settings.language ?? 'en');
-      setPlaybackSpeed(settings.playbackSpeed ?? '1');
       setAutoplay(settings.autoplay ?? true);
     }
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem('settings', JSON.stringify({
+      autoplay,
+    }));
+  }, [autoplay]);
 
   useEffect(() => {
     setBackgroundColor(colors.backgroundColor);
@@ -87,58 +76,10 @@ export const ProfileSettings = () => {
     <div className="min-h-screen" style={{ backgroundColor: backgroundColor, color: textColor }}>
       <BackButton />
       <main className="container mx-auto pt-24 px-4 pb-16">
-        <section className="mb-12">
-          <VideoHistorySection />
-        </section>
-
-        <section className="mb-12">
-          <h2 className="text-2xl font-semibold mb-4">Channel Subscriptions</h2>
-          <Card className="p-6">
-            {userId ? (
-              <ChannelSubscriptions userId={userId} />
-            ) : (
-              <p className="text-muted-foreground">Please sign in to manage your subscriptions.</p>
-            )}
-          </Card>
-        </section>
-
-        <section className="mb-12">
-          <h2 className="text-2xl font-semibold mb-4">Channel Preferences</h2>
-          <p className="text-muted-foreground mb-4">
-            Choose which channels you want to see in your feed. Hidden channels won't appear in your recommendations or search results.
-          </p>
-          <ChannelPreferences />
-        </section>
-
         <PlaybackSettings 
-          volume={volume}
-          setVolume={setVolume}
           autoplay={autoplay}
           setAutoplay={setAutoplay}
-          playbackSpeed={playbackSpeed}
-          setPlaybackSpeed={setPlaybackSpeed}
         />
-
-        <LanguageSettings 
-          userId={userId}
-          language={language}
-          setLanguage={setLanguage}
-        />
-
-        <ColorSettings 
-          backgroundColor={backgroundColor}
-          setBackgroundColor={setBackgroundColor}
-          textColor={textColor}
-          setTextColor={setTextColor}
-          buttonColor={buttonColor}
-          setButtonColor={setButtonColor}
-          logoColor={logoColor}
-          setLogoColor={setLogoColor}
-          saveColors={saveColors}
-          resetToDefaults={resetToDefaults}
-        />
-
-        <UserAnalyticsSection />
       </main>
     </div>
   );

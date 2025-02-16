@@ -10,6 +10,7 @@ import Settings from "@/pages/Settings";
 import MusicDetails from "@/pages/MusicDetails";
 import Search from "@/pages/Search";
 import { ColorProvider } from "@/contexts/ColorContext";
+import { PlaybackProvider } from "@/contexts/PlaybackContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { getPageTitle } from "@/utils/pageTitle";
@@ -69,13 +70,14 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ColorProvider>
-        <AppRoutes />
-        <Toaster />
-        <Sonner />
+        <PlaybackProvider>
+          <AppRoutes />
+          <Toaster />
+          <Sonner />
+        </PlaybackProvider>
       </ColorProvider>
     </QueryClientProvider>
   );
 }
 
 export default App;
-

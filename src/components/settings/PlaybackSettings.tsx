@@ -6,25 +6,19 @@ import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Volume2 } from "lucide-react";
 import { getTranslation, TranslationKey } from "@/utils/translations";
+import { usePlayback } from "@/contexts/PlaybackContext";
 
 interface PlaybackSettingsProps {
-  volume: number;
-  setVolume: (volume: number) => void;
   autoplay: boolean;
   setAutoplay: (autoplay: boolean) => void;
-  playbackSpeed: string;
-  setPlaybackSpeed: (speed: string) => void;
 }
 
 export const PlaybackSettings = ({
-  volume,
-  setVolume,
   autoplay,
   setAutoplay,
-  playbackSpeed,
-  setPlaybackSpeed,
 }: PlaybackSettingsProps) => {
   const t = (key: TranslationKey) => getTranslation(key);
+  const { volume, playbackSpeed, setVolume, setPlaybackSpeed } = usePlayback();
 
   return (
     <section className="mb-12">
