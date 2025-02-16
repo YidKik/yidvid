@@ -6,6 +6,7 @@ import { CategoryCard } from "./CategoryCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEffect } from "react";
 import { TrendingCategoryBadge } from "./TrendingCategoryBadge";
+import { useColors } from "@/contexts/ColorContext";
 
 interface Category {
   id: string;
@@ -26,6 +27,7 @@ const defaultCategories: Category[] = [
 ];
 
 export const CategorySection = () => {
+  const { colors } = useColors();
   const { data: categoryVideos, refetch } = useQuery({
     queryKey: ["category-videos"],
     queryFn: async () => {
@@ -127,14 +129,19 @@ export const CategorySection = () => {
     <div className="relative w-full py-8">
       <div className="max-w-screen-sm md:max-w-[1400px] mx-auto px-4 md:px-6">
         <div className="overflow-hidden relative h-[180px] md:h-[200px]">
-          {/* Left fade gradient */}
-          <div className="absolute left-0 top-0 w-24 md:w-48 h-full bg-gradient-to-r from-white via-white to-transparent z-10" />
+          {/* Left fade gradient - using custom background color */}
+          <div 
+            className="absolute left-0 top-0 w-24 md:w-48 h-full z-10" 
+            style={{
+              background: `linear-gradient(to right, ${colors.backgroundColor}, ${colors.backgroundColor}00)`
+            }}
+          />
           
           <motion.div
             className="flex gap-4 md:gap-8 cursor-grab active:cursor-grabbing"
             drag="x"
             dragConstraints={{
-              left: -(infiniteCategories.length * 340), // Adjust based on card width + gap
+              left: -(infiniteCategories.length * 340),
               right: 0
             }}
             dragElastic={0.2}
@@ -174,8 +181,13 @@ export const CategorySection = () => {
             ))}
           </motion.div>
 
-          {/* Right fade gradient */}
-          <div className="absolute right-0 top-0 w-24 md:w-48 h-full bg-gradient-to-l from-white via-white to-transparent z-10" />
+          {/* Right fade gradient - using custom background color */}
+          <div 
+            className="absolute right-0 top-0 w-24 md:w-48 h-full z-10"
+            style={{
+              background: `linear-gradient(to left, ${colors.backgroundColor}, ${colors.backgroundColor}00)`
+            }}
+          />
         </div>
       </div>
     </div>
