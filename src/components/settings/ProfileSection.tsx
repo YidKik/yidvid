@@ -16,6 +16,7 @@ export const ProfileSection = () => {
   const [displayName, setDisplayName] = useState("");
   const [username, setUsername] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
+  const [welcomeName, setWelcomeName] = useState("");
   const [isEditing, setIsEditing] = useState(false);
 
   const { data: profile, refetch } = useQuery({
@@ -45,6 +46,7 @@ export const ProfileSection = () => {
       setDisplayName(profile.display_name || "");
       setUsername(profile.username || "");
       setAvatarUrl(profile.avatar_url || "");
+      setWelcomeName(profile.welcome_name || profile.display_name || "");
     }
   }, [profile]);
 
@@ -60,6 +62,7 @@ export const ProfileSection = () => {
         display_name: displayName,
         username: username.trim() || null,
         avatar_url: avatarUrl,
+        welcome_name: welcomeName.trim() || null,
         updated_at: new Date().toISOString(),
       };
 
@@ -175,6 +178,25 @@ export const ProfileSection = () => {
                 </Button>
               </div>
             )}
+            <div className="p-3 bg-muted rounded-lg">
+              <div className="space-y-2">
+                <Label htmlFor="welcomeName">Welcome Page Name</Label>
+                <div className="flex gap-2">
+                  <Input
+                    id="welcomeName"
+                    value={welcomeName}
+                    onChange={(e) => setWelcomeName(e.target.value)}
+                    placeholder="Enter your welcome page name"
+                  />
+                  <Button onClick={handleSave} variant="secondary">
+                    Save
+                  </Button>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  This name will be displayed on the welcome page when you visit the site.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </Card>
