@@ -1,9 +1,9 @@
 
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { useQuery } from "@tanstack/react-query";
+import { useState, useEffect } from "react";
+import { Card } from "@/components/ui/card";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
 import { VideoHistorySection } from "@/components/history/VideoHistorySection";
 import { ChannelSubscriptions } from "@/components/youtube/ChannelSubscriptions";
 import { UserAnalyticsSection } from "@/components/analytics/UserAnalyticsSection";
@@ -12,6 +12,8 @@ import { useColors } from "@/contexts/ColorContext";
 import { PlaybackSettings } from "@/components/settings/PlaybackSettings";
 import { LanguageSettings } from "@/components/settings/LanguageSettings";
 import { ColorSettings } from "@/components/settings/ColorSettings";
+import { Header } from "@/components/Header";
+import { BackButton } from "@/components/navigation/BackButton";
 
 export const ProfileSettings = () => {
   const navigate = useNavigate();
@@ -144,4 +146,4 @@ export const ProfileSettings = () => {
   );
 };
 
-export default Settings;
+export default ProfileSettings;

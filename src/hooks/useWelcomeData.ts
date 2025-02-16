@@ -71,6 +71,6 @@ export const useWelcomeData = (session: any) => {
     profile,
     isLoading: isLoadingVideos || isLoadingChannels || isLoadingProfile,
     isError: isVideosError || isChannelsError,
-    userName: profile?.name || session?.user?.user_metadata?.full_name || "to YidVid"
+    userName: session?.user?.email?.split('@')[0] || "to YidVid"
   };
 };

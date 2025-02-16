@@ -1,4 +1,3 @@
-
 import { createContext, useContext, ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,7 +10,6 @@ interface Comment {
   video_id: string;
   profiles: {
     email: string;
-    name: string | null;
   } | null;
   youtube_videos: {
     title: string;
@@ -122,8 +120,7 @@ export const CommentsProvider = ({ children }: { children: ReactNode }) => {
         .select(`
           *,
           profiles (
-            email,
-            name
+            email
           ),
           youtube_videos (
             title
