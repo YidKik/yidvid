@@ -18,59 +18,21 @@ interface Video {
 export const useVideos = () => {
   const queryClient = useQueryClient();
 
-  useEffect(() => {
-    const prefetchVideos = async () => {
-      console.log("Starting video prefetch...");
-      try {
-        const { data, error } = await supabase
-          .from("youtube_videos")
-          .select("*")
-          .is('deleted_at', null)
-          .order("uploaded_at", { ascending: false });
-
-        if (error) {
-          console.error("Error in prefetch:", error);
-          throw error;
-        }
-
-        if (!data) {
-          console.log("No data returned from prefetch");
-          return;
-        }
-
-        const formattedData: Video[] = data.map(video => ({
-          id: video.id,
-          video_id: video.video_id,
-          title: video.title,
-          thumbnail: video.thumbnail,
-          channelName: video.channel_name,
-          channelId: video.channel_id,
-          views: video.views || 0,
-          uploadedAt: video.uploaded_at
-        }));
-
-        console.log(`Prefetched ${formattedData.length} videos`);
-        queryClient.setQueryData(["youtube_videos"], formattedData);
-        queryClient.setQueryData(["youtube_videos_grid"], formattedData);
-      } catch (error) {
-        console.error("Error prefetching videos:", error);
-      }
-    };
-
-    prefetchVideos();
-  }, [queryClient]);
-
-  return useQuery<Video[]>({
+  // Prefetch the videos during initial load
+  const { data, isLoading, isFetching, error } = useQuery<Video[]>({
     queryKey: ["youtube_videos"],
     queryFn: async () => {
-      console.log("Main video fetch starting...");
-      try {
-        const cachedData = queryClient.getQueryData<Video[]>(["youtube_videos"]);
-        if (cachedData && cachedData.length > 0) {
-          console.log("Using cached video data:", cachedData.length, "videos");
-          return cachedData;
-        }
+      console.log("Fetching videos...");
+      
+      // Get current session
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        console.log("No session found, user needs to authenticate");
+        return [];
+      }
 
+      try {
         const { data, error } = await supabase
           .from("youtube_videos")
           .select("*")
@@ -84,7 +46,7 @@ export const useVideos = () => {
         }
 
         if (!data) {
-          console.log("No data returned from main fetch");
+          console.log("No videos found");
           return [];
         }
 
@@ -99,7 +61,11 @@ export const useVideos = () => {
           uploadedAt: video.uploaded_at
         }));
 
-        console.log("Fetched videos count:", formattedData.length);
+        console.log(`Successfully fetched ${formattedData.length} videos`);
+        
+        // Update both query caches
+        queryClient.setQueryData(["youtube_videos_grid"], formattedData);
+        
         return formattedData;
       } catch (error) {
         console.error("Error in video fetch:", error);
@@ -107,9 +73,24 @@ export const useVideos = () => {
         throw error;
       }
     },
-    staleTime: 1000 * 60 * 5,
-    gcTime: 1000 * 60 * 30,
-    retry: 2,
-    initialData: [],
+    staleTime: 1000 * 60 * 5, // Keep data fresh for 5 minutes
+    gcTime: 1000 * 60 * 30, // Cache data for 30 minutes
+    retry: 3,
+    retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
+
+  // Handle any errors in the query
+  useEffect(() => {
+    if (error) {
+      console.error("Video fetch error:", error);
+      toast.error("There was a problem loading the videos. Please try refreshing the page.");
+    }
+  }, [error]);
+
+  return {
+    data,
+    isLoading,
+    isFetching,
+    error
+  };
 };

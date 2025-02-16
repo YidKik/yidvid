@@ -24,7 +24,7 @@ export const WelcomeAnimation = () => {
   });
 
   const { isLoading: isWelcomeLoading, isError, userName } = useWelcomeData(session);
-  const { isLoading: isVideosLoading, isFetching: isVideosFetching } = useVideos();
+  const { isLoading: isVideosLoading, isFetching: isVideosFetching, error: videosError } = useVideos();
 
   useEffect(() => {
     if (skipWelcome) {
@@ -32,20 +32,21 @@ export const WelcomeAnimation = () => {
       return;
     }
 
-    if (isError) {
+    if (isError || videosError) {
       toast.error("Failed to load content. Please refresh the page.");
+      return;
     }
 
-    // Only hide welcome animation when both welcome data and videos are loaded
+    // Only hide welcome animation when both welcome data and videos are fully loaded
     if (!isWelcomeLoading && !isVideosLoading && !isVideosFetching) {
       console.log("All content loaded, hiding welcome animation...");
       const timer = setTimeout(() => {
         setShow(false);
-      }, 1000);
+      }, 1500); // Increased slightly to ensure smooth transition
 
       return () => clearTimeout(timer);
     }
-  }, [skipWelcome, isWelcomeLoading, isVideosLoading, isVideosFetching, isError]);
+  }, [skipWelcome, isWelcomeLoading, isVideosLoading, isVideosFetching, isError, videosError]);
 
   return (
     <AnimatePresence>
