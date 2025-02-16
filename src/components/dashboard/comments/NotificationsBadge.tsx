@@ -2,7 +2,7 @@
 import { Bell } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { useComments } from "./CommentsContext";
 
 export const NotificationsBadge = () => {
@@ -17,13 +17,11 @@ export const NotificationsBadge = () => {
         .eq("is_read", false);
 
       if (error) throw error;
-      refetchNotifications();
+      await refetchNotifications();
+      toast.success("Notifications marked as read");
     } catch (error: any) {
-      toast({
-        title: "Error",
-        description: "Error marking notifications as read: " + error.message,
-        variant: "destructive",
-      });
+      console.error("Error marking notifications as read:", error);
+      toast.error("Error marking notifications as read: " + error.message);
     }
   };
 
