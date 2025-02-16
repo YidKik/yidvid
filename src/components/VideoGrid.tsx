@@ -1,10 +1,9 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { VideoCard } from "./VideoCard";
 import { Skeleton } from "@/components/ui/skeleton";
-import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { VideoGridPagination } from "./video/VideoGridPagination";
 
@@ -34,6 +33,14 @@ export const VideoGrid: React.FC<VideoGridProps> = ({ maxVideos = 12, rowSize = 
     queryKey: ["youtube_videos_grid"],
     queryFn: async () => {
       console.log("VideoGrid: Fetching videos...");
+      
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        console.log("VideoGrid: No session found");
+        return [];
+      }
+
       const { data, error } = await supabase
         .from("youtube_videos")
         .select("*")
@@ -42,7 +49,6 @@ export const VideoGrid: React.FC<VideoGridProps> = ({ maxVideos = 12, rowSize = 
 
       if (error) {
         console.error("VideoGrid: Error fetching videos:", error);
-        toast.error("Failed to load videos");
         throw error;
       }
 
@@ -58,10 +64,12 @@ export const VideoGrid: React.FC<VideoGridProps> = ({ maxVideos = 12, rowSize = 
         uploadedAt: video.uploaded_at
       }));
     },
+    enabled: true,
     staleTime: 1000 * 60 * 5, // Keep data fresh for 5 minutes
     gcTime: 1000 * 60 * 30, // Cache data for 30 minutes
   });
 
+  // Load hidden channels from user preferences
   useEffect(() => {
     const loadHiddenChannels = async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -74,7 +82,6 @@ export const VideoGrid: React.FC<VideoGridProps> = ({ maxVideos = 12, rowSize = 
 
       if (error) {
         console.error('Error loading hidden channels:', error);
-        toast.error("Failed to load channel preferences");
         return;
       }
 

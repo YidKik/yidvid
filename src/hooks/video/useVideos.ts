@@ -18,7 +18,6 @@ interface Video {
 export const useVideos = () => {
   const queryClient = useQueryClient();
 
-  // Prefetch the videos during initial load
   const { data, isLoading, isFetching, error } = useQuery<Video[]>({
     queryKey: ["youtube_videos"],
     queryFn: async () => {
@@ -28,7 +27,7 @@ export const useVideos = () => {
       const { data: { session } } = await supabase.auth.getSession();
       
       if (!session) {
-        console.log("No session found, user needs to authenticate");
+        console.log("No session found, waiting for authentication");
         return [];
       }
 
@@ -41,7 +40,6 @@ export const useVideos = () => {
 
         if (error) {
           console.error("Error fetching videos:", error);
-          toast.error("Failed to load videos");
           throw error;
         }
 
@@ -69,10 +67,10 @@ export const useVideos = () => {
         return formattedData;
       } catch (error) {
         console.error("Error in video fetch:", error);
-        toast.error("Failed to load videos");
         throw error;
       }
     },
+    enabled: true, // Query will run immediately
     staleTime: 1000 * 60 * 5, // Keep data fresh for 5 minutes
     gcTime: 1000 * 60 * 30, // Cache data for 30 minutes
     retry: 3,
@@ -88,7 +86,7 @@ export const useVideos = () => {
   }, [error]);
 
   return {
-    data,
+    data: data || [],
     isLoading,
     isFetching,
     error
