@@ -129,7 +129,7 @@ export const CategorySection = () => {
     return (
       <div className="grid grid-cols-3 gap-4 max-w-[1400px] mx-auto px-4 md:px-6">
         {[...Array(3)].map((_, i) => (
-          <Skeleton key={i} className="h-[80px] rounded-lg" />
+          <Skeleton key={i} className="h-[120px] rounded-lg" />
         ))}
       </div>
     );
@@ -138,15 +138,15 @@ export const CategorySection = () => {
   return (
     <div className="relative w-full mt-4 md:mt-6">
       <div className="max-w-screen-sm md:max-w-[1400px] mx-auto px-4 md:px-6">
-        <div className="overflow-hidden relative h-[140px] md:h-[160px]">
-          <div className="absolute left-0 top-0 w-16 md:w-32 h-full bg-gradient-to-r from-white via-white to-transparent z-10" />
+        <div className="overflow-hidden relative h-[240px] md:h-[280px]">
+          <div className="absolute left-0 top-0 w-24 md:w-48 h-full bg-gradient-to-r from-white via-white to-transparent z-10" />
           
           <div className="embla cursor-grab active:cursor-grabbing" ref={emblaRef}>
-            <div className="flex gap-3 md:gap-4">
+            <div className="flex gap-4 md:gap-8">
               {allCategories.map((category, index) => (
                 <div
                   key={`${category.id}-${index}`}
-                  className="w-[100px] md:w-[180px] flex-shrink-0 relative"
+                  className="w-[140px] md:w-[320px] flex-shrink-0 relative"
                 >
                   {viewCounts && viewCounts[category.id] && viewCounts[category.id] > 0 && (
                     <TrendingCategoryBadge count={viewCounts[category.id]} />
@@ -162,7 +162,7 @@ export const CategorySection = () => {
               {allCategories.map((category, index) => (
                 <div
                   key={`${category.id}-duplicate-${index}`}
-                  className="w-[100px] md:w-[180px] flex-shrink-0 relative"
+                  className="w-[140px] md:w-[320px] flex-shrink-0 relative"
                 >
                   {viewCounts && viewCounts[category.id] && viewCounts[category.id] > 0 && (
                     <TrendingCategoryBadge count={viewCounts[category.id]} />
@@ -178,7 +178,7 @@ export const CategorySection = () => {
             </div>
           </div>
 
-          <div className="absolute right-0 top-0 w-16 md:w-32 h-full bg-gradient-to-l from-white via-white to-transparent z-10" />
+          <div className="absolute right-0 top-0 w-24 md:w-48 h-full bg-gradient-to-l from-white via-white to-transparent z-10" />
         </div>
       </div>
     </div>
