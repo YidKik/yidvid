@@ -36,6 +36,33 @@ export type Database = {
         }
         Relationships: []
       }
+      api_quota_tracking: {
+        Row: {
+          api_name: string
+          created_at: string | null
+          id: string
+          quota_remaining: number
+          quota_reset_at: string
+          updated_at: string | null
+        }
+        Insert: {
+          api_name: string
+          created_at?: string | null
+          id?: string
+          quota_remaining?: number
+          quota_reset_at: string
+          updated_at?: string | null
+        }
+        Update: {
+          api_name?: string
+          created_at?: string | null
+          id?: string
+          quota_remaining?: number
+          quota_reset_at?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       channel_category_mappings: {
         Row: {
           category_id: string

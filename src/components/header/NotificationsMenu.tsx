@@ -23,33 +23,57 @@ interface NotificationsMenuProps {
 export const NotificationsMenu = ({ session, onMarkAsRead }: NotificationsMenuProps) => {
   const navigate = useNavigate();
 
-  const { data: notifications, refetch, isError, error } = useQuery({
+  const { data: notifications, refetch, isError, error, isLoading } = useQuery({
     queryKey: ["video-notifications", session?.user?.id],
     queryFn: async () => {
       if (!session?.user?.id) return [];
 
-      const { data, error } = await supabase
-        .from("video_notifications")
-        .select(`
-          *,
-          youtube_videos (
-            title,
-            thumbnail,
-            channel_name
-          )
-        `)
-        .eq("user_id", session.user.id)
-        .eq("is_read", false)
-        .order("created_at", { ascending: false });
+      try {
+        // First check the API quota
+        const { data: quotaData, error: quotaError } = await supabase
+          .from('api_quota_tracking')
+          .select('quota_remaining, quota_reset_at')
+          .eq('api_name', 'youtube')
+          .single();
 
-      if (error) {
-        console.error("Error fetching notifications:", error);
+        if (quotaError) {
+          console.error("Error checking API quota:", quotaError);
+        } else if (quotaData && quotaData.quota_remaining <= 0) {
+          const resetTime = new Date(quotaData.quota_reset_at);
+          console.warn(`YouTube API quota exceeded. Resets at ${resetTime.toLocaleString()}`);
+        }
+
+        // Fetch notifications even if quota is exceeded - they'll still work for existing videos
+        const { data, error } = await supabase
+          .from("video_notifications")
+          .select(`
+            *,
+            youtube_videos (
+              title,
+              thumbnail,
+              channel_name
+            )
+          `)
+          .eq("user_id", session.user.id)
+          .eq("is_read", false)
+          .order("created_at", { ascending: false });
+
+        if (error) {
+          console.error("Error fetching notifications:", error);
+          throw error;
+        }
+
+        // Filter out notifications with missing video data
+        return (data || []).filter(n => n.youtube_videos?.title);
+      } catch (error) {
+        console.error("Notifications error:", error);
         throw error;
       }
-      return data || [];
     },
     enabled: !!session?.user?.id,
     retry: 1, // Only retry once to avoid too many failed attempts
+    retryDelay: 1000, // Wait 1 second between retries
+    staleTime: 30000, // Consider data fresh for 30 seconds
     meta: {
       errorMessage: "Unable to load notifications. Please try again later."
     }
@@ -120,7 +144,11 @@ export const NotificationsMenu = ({ session, onMarkAsRead }: NotificationsMenuPr
           </div>
         </SheetHeader>
         <ScrollArea className="h-[calc(100vh-80px)] sm:h-[calc(100vh-100px)]">
-          {isError ? (
+          {isLoading ? (
+            <div className="p-4 sm:p-6 text-center text-white/70 animate-fade-in">
+              <p className="text-sm sm:text-base">Loading notifications...</p>
+            </div>
+          ) : isError ? (
             <div className="p-4 sm:p-6 text-center text-white/70 animate-fade-in">
               <p className="text-sm sm:text-base">Unable to load notifications</p>
               <Button 
