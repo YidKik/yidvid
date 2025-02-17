@@ -108,10 +108,11 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
 
           <div className="relative overflow-hidden min-h-[200px]">
             <div 
-              className={`grid grid-cols-${isMobile ? '2' : '4'} gap-3 md:gap-6 absolute w-full`}
+              className={`grid grid-cols-${isMobile ? '2' : '4'} gap-3 md:gap-6 absolute w-full top-0 left-0`}
               style={{
                 opacity: isTransitioning ? 0 : 1,
-                transition: 'opacity 1.5s ease-in-out'
+                transition: 'opacity 1.5s ease-in-out',
+                pointerEvents: isTransitioning ? 'none' : 'auto'
               }}
             >
               {currentVideos.map((video) => (
@@ -128,10 +129,11 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
 
             {isTransitioning && (
               <div 
-                className={`grid grid-cols-${isMobile ? '2' : '4'} gap-3 md:gap-6 absolute w-full`}
+                className={`grid grid-cols-${isMobile ? '2' : '4'} gap-3 md:gap-6 absolute w-full top-0 left-0`}
                 style={{
                   opacity: isTransitioning ? 1 : 0,
-                  transition: 'opacity 1.5s ease-in-out'
+                  transition: 'opacity 1.5s ease-in-out',
+                  pointerEvents: isTransitioning ? 'auto' : 'none'
                 }}
               >
                 {nextVideos.map((video) => (
