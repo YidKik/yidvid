@@ -31,8 +31,11 @@ export const useVideos = () => {
           .single();
 
         if (quotaData?.quota_remaining <= 0) {
-          console.warn('YouTube API quota exceeded, fetching cached data only');
-          toast.warning("API quota exceeded. Showing cached data until reset.");
+          const resetTime = new Date(quotaData.quota_reset_at);
+          const message = `YouTube API quota exceeded. Service will resume at ${resetTime.toLocaleString()}`;
+          console.warn(message);
+          toast.warning(message);
+          // Still proceed to fetch cached data
         }
 
         const { data, error } = await supabase
@@ -71,9 +74,13 @@ export const useVideos = () => {
       } catch (error: any) {
         console.error("Error details:", error);
 
-        // Handle YouTube API quota exceeded
-        if (error.message?.includes('quota exceeded') || error?.status === 429) {
-          // Try to get cached data
+        // Check if error is from edge function with quota exceeded
+        if (error.message?.includes('status 429') || 
+            error.message?.includes('quota exceeded') || 
+            error?.status === 429) {
+          console.log("Quota exceeded, fetching cached data only");
+          
+          // Get cached data first
           const cachedData = queryClient.getQueryData<Video[]>(["youtube_videos"]);
           if (cachedData?.length) {
             toast.warning('API quota exceeded. Showing cached data.');
@@ -88,7 +95,7 @@ export const useVideos = () => {
             .order("uploaded_at", { ascending: false });
 
           if (dbData) {
-            return dbData.map(video => ({
+            const formattedData = dbData.map(video => ({
               id: video.id,
               video_id: video.video_id,
               title: video.title,
@@ -98,6 +105,9 @@ export const useVideos = () => {
               views: video.views || 0,
               uploadedAt: video.uploaded_at
             }));
+            
+            toast.warning('API quota exceeded. Showing existing videos.');
+            return formattedData;
           }
         }
 
@@ -105,6 +115,7 @@ export const useVideos = () => {
         if (error.message?.includes('Failed to fetch') || error.code === 'ECONNABORTED') {
           console.error('Network error:', error);
           toast.error('Network error. Please check your connection.');
+          
           // Try to get cached data
           const cachedData = queryClient.getQueryData<Video[]>(["youtube_videos"]);
           if (cachedData?.length) {
