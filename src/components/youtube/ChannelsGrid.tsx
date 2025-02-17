@@ -4,7 +4,7 @@ import { Youtube } from "lucide-react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { RequestChannelDialog } from "./RequestChannelDialog";
 import { toast } from "sonner";
 
@@ -75,9 +75,6 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
     retryDelay: 2000, // Fixed 2 second delay between retries
     staleTime: 1000 * 60 * 5, // Consider data fresh for 5 minutes
   });
-
-  // Remove the updateChannels effect as it's causing unnecessary API calls
-  // Videos will be fetched by the cron job instead
 
   if (isLoading) {
     return (
