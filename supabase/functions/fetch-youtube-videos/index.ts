@@ -31,8 +31,6 @@ serve(async (req) => {
     }
 
     const supabase = createClient(supabaseUrl, supabaseKey);
-
-    // Get current time in UTC
     const now = new Date();
     
     // Check quota status

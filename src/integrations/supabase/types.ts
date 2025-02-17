@@ -1092,10 +1092,6 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      calculate_next_midnight_utc: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
       delete_user: {
         Args: Record<PropertyKey, never>
         Returns: undefined
@@ -1103,6 +1099,10 @@ export type Database = {
       fetch_overdue_channels: {
         Args: Record<PropertyKey, never>
         Returns: Json
+      }
+      get_next_midnight_utc: {
+        Args: Record<PropertyKey, never>
+        Returns: string
       }
       trigger_youtube_video_fetch: {
         Args: Record<PropertyKey, never>
