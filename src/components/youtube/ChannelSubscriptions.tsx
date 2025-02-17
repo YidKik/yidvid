@@ -181,15 +181,15 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
               <div 
                 ref={scrollContainerRef}
                 onScroll={handleScroll}
-                className="flex gap-4 pb-4 px-1 overflow-x-auto scrollbar-hide scroll-smooth"
+                className="flex gap-3 pb-4 px-1 overflow-x-auto scrollbar-hide scroll-smooth"
               >
                 {subscriptions.map((subscription) => (
                   <div
                     key={subscription.channel.channel_id}
-                    className="flex-shrink-0 w-[220px] bg-white rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200 group"
+                    className="flex-shrink-0 w-[180px] bg-white rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200 group"
                   >
-                    <div className="p-4 flex flex-col h-[260px]">
-                      <div className="relative mb-3 w-full aspect-square rounded-lg overflow-hidden bg-gray-50 flex items-center justify-center">
+                    <div className="p-3 flex flex-col h-[200px]">
+                      <div className="relative mb-2 w-12 h-12 mx-auto rounded-full overflow-hidden bg-gray-50 flex items-center justify-center">
                         {subscription.channel.thumbnail_url ? (
                           <img
                             src={subscription.channel.thumbnail_url}
@@ -197,21 +197,21 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                           />
                         ) : (
-                          <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-                            <Youtube className="w-8 h-8 text-primary" />
+                          <div className="w-full h-full bg-primary/10 flex items-center justify-center">
+                            <Youtube className="w-6 h-6 text-primary" />
                           </div>
                         )}
                       </div>
-                      <h4 className="font-medium text-gray-900 line-clamp-2 mb-3 flex-grow">
+                      <h4 className="font-medium text-sm text-gray-900 text-center line-clamp-2 mb-2 flex-grow">
                         {subscription.channel.title}
                       </h4>
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => handleUnsubscribe(subscription.channel.channel_id)}
-                        className="w-full text-red-600 hover:text-red-700 hover:bg-red-50 gap-2"
+                        className="w-full text-red-600 hover:text-red-700 hover:bg-red-50 gap-1.5 text-xs"
                       >
-                        <UserMinus className="w-4 h-4" />
+                        <UserMinus className="w-3.5 h-3.5" />
                         Unsubscribe
                       </Button>
                     </div>
@@ -221,9 +221,9 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
             </ScrollArea>
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center py-12 px-4">
-            <Youtube className="w-12 h-12 text-gray-300 mb-4" />
-            <p className="text-muted-foreground text-center">
+          <div className="flex flex-col items-center justify-center py-8 px-4">
+            <Youtube className="w-10 h-10 text-gray-300 mb-3" />
+            <p className="text-muted-foreground text-center text-sm">
               You are not subscribed to any channels yet.
             </p>
           </div>
