@@ -130,16 +130,13 @@ serve(async (req) => {
         }
 
         // Log the start of update
-        const { error: logError } = await supabase
+        await supabase
           .from('youtube_update_logs')
           .insert({
             channel_id: channelId,
             videos_count: 0
-          });
-
-        if (logError) {
-          console.error('Error logging update:', logError);
-        }
+          })
+          .single();
 
         let nextPageToken: string | null = null;
         let allVideos = [];
@@ -175,13 +172,15 @@ serve(async (req) => {
           }
           
           // Update quota after successful API call
-          await supabase
-            .from('api_quota_tracking')
-            .update({ 
-              quota_remaining: currentQuota.quota_remaining - 1,
-              updated_at: now.toISOString()
-            })
-            .eq('api_name', 'youtube');
+          if (currentQuota && currentQuota.quota_remaining > 0) {
+            await supabase
+              .from('api_quota_tracking')
+              .update({ 
+                quota_remaining: currentQuota.quota_remaining - 1,
+                updated_at: now.toISOString()
+              })
+              .eq('api_name', 'youtube');
+          }
           
           allVideos = [...allVideos, ...result.videos];
           nextPageToken = result.nextPageToken;
@@ -190,20 +189,24 @@ serve(async (req) => {
         if (allVideos.length > 0) {
           const storedVideos = await storeVideosInDatabase(supabase, allVideos);
           processedVideos.push(...storedVideos);
+
+          // Update the videos count in youtube_update_logs
+          await supabase
+            .from('youtube_update_logs')
+            .update({ videos_count: allVideos.length })
+            .eq('channel_id', channelId)
+            .single();
         }
 
         // Update channel's last_fetch timestamp
-        const { error: updateError } = await supabase
+        await supabase
           .from('youtube_channels')
           .update({ 
             last_fetch: now.toISOString(),
             fetch_error: null
           })
-          .eq('channel_id', channelId);
-
-        if (updateError) {
-          throw updateError;
-        }
+          .eq('channel_id', channelId)
+          .single();
 
       } catch (error) {
         console.error(`Error processing channel ${channelId}:`, error);
@@ -215,7 +218,8 @@ serve(async (req) => {
           .insert({
             channel_id: channelId,
             error: error.message
-          });
+          })
+          .single();
 
         // Update channel with error
         await supabase
@@ -224,7 +228,8 @@ serve(async (req) => {
             fetch_error: error.message,
             last_fetch: now.toISOString()
           })
-          .eq('channel_id', channelId);
+          .eq('channel_id', channelId)
+          .single();
       }
 
       // Add delay between processing channels
