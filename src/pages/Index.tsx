@@ -47,11 +47,13 @@ const MainContent = () => {
       <main className="mt-2 md:mt-6 mx-auto px-2 md:px-6 max-w-[1400px]">
         <div className={`space-y-3 md:space-y-6 ${isMobile ? 'pb-20' : ''}`}>
           <div className="space-y-3">
-            <ContentToggle 
-              isMusic={isMusic} 
-              onToggle={() => setIsMusic(!isMusic)} 
-            />
-            <CategorySection />
+            <div className="flex flex-col items-center">
+              <ContentToggle 
+                isMusic={isMusic} 
+                onToggle={() => setIsMusic(!isMusic)} 
+              />
+              <CategorySection />
+            </div>
           </div>
 
           <motion.div
