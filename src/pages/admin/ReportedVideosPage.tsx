@@ -16,6 +16,7 @@ import { toast } from "sonner";
 import { ExternalLink, Flag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { useNavigate } from "react-router-dom";
 
 interface VideoReport {
   id: string;
@@ -30,6 +31,7 @@ interface VideoReport {
 
 export default function ReportedVideosPage() {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const { data: reports, isLoading } = useQuery({
     queryKey: ["video-reports"],
@@ -78,8 +80,8 @@ export default function ReportedVideosPage() {
     };
   }, [queryClient]);
 
-  const openVideo = (videoId: string) => {
-    window.open(`/video/${videoId}`, '_blank');
+  const navigateToVideo = (videoId: string) => {
+    navigate(`/video/${videoId}`);
   };
 
   return (
@@ -121,7 +123,7 @@ export default function ReportedVideosPage() {
                     <Button
                       variant="outline"
                       size="icon"
-                      onClick={() => openVideo(report.youtube_videos?.video_id || "")}
+                      onClick={() => navigateToVideo(report.youtube_videos?.video_id || "")}
                     >
                       <ExternalLink className="h-4 w-4" />
                     </Button>
