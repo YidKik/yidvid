@@ -53,10 +53,15 @@ export const useChannelSubscription = (channelId: string | undefined) => {
       } else {
         const { error } = await supabase
           .from("channel_subscriptions")
-          .insert({
-            channel_id: channelId,
-            user_id: session.user.id
-          });
+          .upsert(
+            {
+              channel_id: channelId,
+              user_id: session.user.id
+            },
+            {
+              onConflict: 'user_id,channel_id'
+            }
+          );
 
         if (error) throw error;
         setIsSubscribed(true);
