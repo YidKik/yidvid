@@ -34,12 +34,8 @@ serve(async (req) => {
 
     // Get current time in UTC
     const now = new Date();
-
-    // Calculate next midnight UTC
-    const nextMidnightUTC = new Date(now);
-    nextMidnightUTC.setUTCHours(24, 0, 0, 0);
     
-    // Check and reset quota if needed
+    // Check quota status
     const { data: quotaData, error: quotaError } = await supabase
       .from('api_quota_tracking')
       .select('quota_remaining, quota_reset_at')
@@ -51,43 +47,7 @@ serve(async (req) => {
       throw new Error('Failed to check API quota');
     }
 
-    // Reset quota if we've passed the reset time
-    if (now >= new Date(quotaData.quota_reset_at)) {
-      console.log('Resetting quota. Current time:', now.toISOString());
-      console.log('Next reset time:', nextMidnightUTC.toISOString());
-
-      const { error: resetError } = await supabase
-        .from('api_quota_tracking')
-        .update({ 
-          quota_remaining: 10000,
-          quota_reset_at: nextMidnightUTC.toISOString(),
-          updated_at: now.toISOString()
-        })
-        .eq('api_name', 'youtube');
-
-      if (resetError) {
-        console.error('Error resetting quota:', resetError);
-        throw new Error('Failed to reset API quota');
-      }
-
-      // Fetch updated quota data
-      const { data: updatedQuota, error: updateError } = await supabase
-        .from('api_quota_tracking')
-        .select('quota_remaining, quota_reset_at')
-        .eq('api_name', 'youtube')
-        .single();
-
-      if (updateError) {
-        throw new Error('Failed to fetch updated quota');
-      }
-
-      quotaData.quota_remaining = updatedQuota.quota_remaining;
-      quotaData.quota_reset_at = updatedQuota.quota_reset_at;
-      
-      console.log('Quota reset complete. New quota:', quotaData.quota_remaining);
-      console.log('New reset time:', quotaData.quota_reset_at);
-    }
-
+    // If quota is depleted, return early with reset time
     if (quotaData.quota_remaining <= 0) {
       const resetTime = new Date(quotaData.quota_reset_at);
       console.log('Quota exceeded. Current quota:', quotaData.quota_remaining);
