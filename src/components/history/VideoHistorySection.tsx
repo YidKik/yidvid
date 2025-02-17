@@ -13,6 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export const VideoHistorySection = () => {
   const queryClient = useQueryClient();
@@ -95,33 +96,35 @@ export const VideoHistorySection = () => {
       {history?.length === 0 ? (
         <p className="text-muted-foreground">No watch history found.</p>
       ) : (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Video</TableHead>
-              <TableHead>Channel</TableHead>
-              <TableHead>Watched</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {history?.map((entry) => (
-              <TableRow key={entry.id}>
-                <TableCell>
-                  <Link
-                    to={`/video/${entry.youtube_videos.id}`}
-                    className="text-primary hover:underline"
-                  >
-                    {entry.youtube_videos.title}
-                  </Link>
-                </TableCell>
-                <TableCell>{entry.youtube_videos.channel_name}</TableCell>
-                <TableCell>
-                  {formatDistanceToNow(new Date(entry.watched_at), { addSuffix: true })}
-                </TableCell>
+        <ScrollArea className="h-[400px] rounded-md border">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="sticky top-0 bg-background">Video</TableHead>
+                <TableHead className="sticky top-0 bg-background">Channel</TableHead>
+                <TableHead className="sticky top-0 bg-background">Watched</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {history?.map((entry) => (
+                <TableRow key={entry.id}>
+                  <TableCell>
+                    <Link
+                      to={`/video/${entry.youtube_videos.id}`}
+                      className="text-primary hover:underline"
+                    >
+                      {entry.youtube_videos.title}
+                    </Link>
+                  </TableCell>
+                  <TableCell>{entry.youtube_videos.channel_name}</TableCell>
+                  <TableCell>
+                    {formatDistanceToNow(new Date(entry.watched_at), { addSuffix: true })}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </ScrollArea>
       )}
     </div>
   );
