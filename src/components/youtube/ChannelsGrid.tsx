@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { Youtube } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -47,6 +48,27 @@ export const ChannelsGrid = () => {
       return data || [];
     },
   });
+
+  // Trigger video and thumbnail fetch for channels
+  useEffect(() => {
+    const updateChannels = async () => {
+      if (!channels?.length) return;
+
+      const channelIds = channels.map(channel => channel.channel_id);
+
+      // Fetch videos for channels that haven't been updated recently
+      await supabase.functions.invoke('fetch-youtube-videos', {
+        body: { channels: channelIds }
+      });
+
+      // Update channel thumbnails
+      await supabase.functions.invoke('update-channel-thumbnails', {
+        body: { channels: channelIds }
+      });
+    };
+
+    updateChannels();
+  }, [channels]);
 
   if (isLoading) {
     return (
