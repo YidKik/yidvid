@@ -23,7 +23,7 @@ interface NotificationsMenuProps {
 export const NotificationsMenu = ({ session, onMarkAsRead }: NotificationsMenuProps) => {
   const navigate = useNavigate();
 
-  const { data: notifications, refetch } = useQuery({
+  const { data: notifications, refetch, isError, error } = useQuery({
     queryKey: ["video-notifications", session?.user?.id],
     queryFn: async () => {
       if (!session?.user?.id) return [];
@@ -42,29 +42,38 @@ export const NotificationsMenu = ({ session, onMarkAsRead }: NotificationsMenuPr
         .eq("is_read", false)
         .order("created_at", { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching notifications:", error);
+        throw error;
+      }
       return data || [];
     },
     enabled: !!session?.user?.id,
+    retry: 1, // Only retry once to avoid too many failed attempts
+    onError: (error: any) => {
+      console.error("Notifications error:", error);
+      toast.error("Unable to load notifications. Please try again later.");
+    }
   });
 
   const handleClearAll = async () => {
     if (!session?.user?.id || !notifications?.length) return;
 
-    const { error } = await supabase
-      .from("video_notifications")
-      .update({ is_read: true })
-      .eq("user_id", session.user.id)
-      .eq("is_read", false);
+    try {
+      const { error } = await supabase
+        .from("video_notifications")
+        .update({ is_read: true })
+        .eq("user_id", session.user.id)
+        .eq("is_read", false);
 
-    if (error) {
+      if (error) throw error;
+
+      await refetch();
+      toast.success("All notifications cleared");
+    } catch (error) {
       console.error("Error clearing notifications:", error);
       toast.error("Failed to clear notifications");
-      return;
     }
-
-    await refetch();
-    toast.success("All notifications cleared");
   };
 
   return (
@@ -106,7 +115,19 @@ export const NotificationsMenu = ({ session, onMarkAsRead }: NotificationsMenuPr
           </div>
         </SheetHeader>
         <ScrollArea className="h-[calc(100vh-80px)] sm:h-[calc(100vh-100px)]">
-          {notifications && notifications.length > 0 ? (
+          {isError ? (
+            <div className="p-4 sm:p-6 text-center text-white/70 animate-fade-in">
+              <p className="text-sm sm:text-base">Unable to load notifications</p>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => refetch()}
+                className="mt-2 text-white hover:text-white hover:bg-[#333333]"
+              >
+                Try Again
+              </Button>
+            </div>
+          ) : notifications && notifications.length > 0 ? (
             <div className="animate-fade-in">
               {notifications.map((notification) => (
                 <div
