@@ -1,3 +1,4 @@
+
 import { VideoGrid } from "@/components/VideoGrid";
 import { MostViewedVideos } from "@/components/video/MostViewedVideos";
 import { ChannelsGrid } from "@/components/youtube/ChannelsGrid";
@@ -25,7 +26,7 @@ export const VideoContent = ({ videos, isLoading }: VideoContentProps) => {
   const isMobile = useIsMobile();
   const [showMoreMobile, setShowMoreMobile] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const videosPerPage = 4; // Changed from 6 to 4 (2 columns × 2 rows for mobile)
+  const videosPerPage = 4;
   
   const sortedVideos = videos ? [...videos].sort((a, b) => 
     new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime()
@@ -40,34 +41,34 @@ export const VideoContent = ({ videos, isLoading }: VideoContentProps) => {
 
     return (
       <div className="space-y-4">
-        <VideoGrid
-          videos={displayVideos}
-          maxVideos={displayVideos.length}
-          rowSize={2}
-          isLoading={isLoading}
-          className="px-2"
-        />
-
-        {sortedVideos.length > 4 && (
-          <VideoGridPagination
-            showAll={showMoreMobile}
-            currentPage={currentPage}
-            totalPages={totalPages}
-            filteredVideosLength={sortedVideos.length}
-            maxVideos={4}
-            isMobile={true}
-            onShowAll={() => {
-              setShowMoreMobile(true);
-              setCurrentPage(1);
-            }}
-            onPageChange={(page) => setCurrentPage(page)}
+        <div className="mt-2">
+          <VideoGrid
+            videos={displayVideos}
+            maxVideos={displayVideos.length}
+            rowSize={2}
+            isLoading={isLoading}
+            className="px-2"
           />
-        )}
-        
+
+          {sortedVideos.length > 4 && (
+            <VideoGridPagination
+              showAll={showMoreMobile}
+              currentPage={currentPage}
+              totalPages={totalPages}
+              filteredVideosLength={sortedVideos.length}
+              maxVideos={4}
+              isMobile={true}
+              onShowAll={() => {
+                setShowMoreMobile(true);
+                setCurrentPage(1);
+              }}
+              onPageChange={(page) => setCurrentPage(page)}
+            />
+          )}
+        </div>
+
         {sortedVideos.length > 0 && (
-          <div className="mt-6">
-            <MostViewedVideos videos={sortedVideos} />
-          </div>
+          <MostViewedVideos videos={sortedVideos} />
         )}
         
         <div className="mt-6">
