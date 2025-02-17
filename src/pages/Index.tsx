@@ -1,4 +1,3 @@
-
 import { Header } from "@/components/Header";
 import Auth from "@/pages/Auth";
 import { useState } from "react";
@@ -15,6 +14,7 @@ import { useSessionManager } from "@/hooks/useSessionManager";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { GlobalNotification } from "@/components/notifications/GlobalNotification";
+import { WelcomeOverlay } from "@/components/welcome/WelcomeOverlay";
 
 const MainContent = () => {
   const [isMusic, setIsMusic] = useState(false);
@@ -83,6 +83,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-b from-white to-gray-50">
+      <WelcomeOverlay />
       <WelcomeAnimation />
       <MainContent />
       <Auth isOpen={isAuthOpen} onOpenChange={setIsAuthOpen} />
