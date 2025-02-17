@@ -1,4 +1,3 @@
-
 import { VideoGrid } from "@/components/VideoGrid";
 import { MostViewedVideos } from "@/components/video/MostViewedVideos";
 import { ChannelsGrid } from "@/components/youtube/ChannelsGrid";
@@ -26,7 +25,7 @@ export const VideoContent = ({ videos, isLoading }: VideoContentProps) => {
   const isMobile = useIsMobile();
   const [showMoreMobile, setShowMoreMobile] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const videosPerPage = 6; // 2 columns × 3 rows for mobile
+  const videosPerPage = 4; // Changed from 6 to 4 (2 columns × 2 rows for mobile)
   
   const sortedVideos = videos ? [...videos].sort((a, b) => 
     new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime()
@@ -49,13 +48,13 @@ export const VideoContent = ({ videos, isLoading }: VideoContentProps) => {
           className="px-2"
         />
 
-        {sortedVideos.length > 6 && (
+        {sortedVideos.length > 4 && (
           <VideoGridPagination
             showAll={showMoreMobile}
             currentPage={currentPage}
             totalPages={totalPages}
             filteredVideosLength={sortedVideos.length}
-            maxVideos={6}
+            maxVideos={4}
             isMobile={true}
             onShowAll={() => {
               setShowMoreMobile(true);
@@ -80,8 +79,8 @@ export const VideoContent = ({ videos, isLoading }: VideoContentProps) => {
     );
   }
 
-  // Desktop view
-  const desktopVideos = sortedVideos.slice(0, 12); // Show exactly 12 videos for desktop
+  // Desktop view remains unchanged
+  const desktopVideos = sortedVideos.slice(0, 12);
 
   return (
     <div className="space-y-6">
