@@ -42,47 +42,69 @@ export const useVideos = () => {
         } else {
           // Only try to fetch new videos if we have quota
           try {
-            await supabase.functions.invoke('fetch-youtube-videos');
-          } catch (edgeFunctionError: any) {
-            console.log('Edge function response:', edgeFunctionError);
+            const { data: edgeFunctionData, error: edgeFunctionError } = await supabase.functions.invoke('fetch-youtube-videos');
             
-            // Parse the error body if it's a string
-            let errorBody;
-            try {
-              errorBody = typeof edgeFunctionError.body === 'string' 
-                ? JSON.parse(edgeFunctionError.body)
-                : edgeFunctionError.body;
-            } catch (e) {
-              console.error('Error parsing error body:', e);
+            if (edgeFunctionError) {
+              console.error('Edge function error:', edgeFunctionError);
+              
+              // Parse error response if it's a string
+              let errorBody;
+              try {
+                errorBody = typeof edgeFunctionError.message === 'string' 
+                  ? JSON.parse(edgeFunctionError.message)
+                  : edgeFunctionError;
+              } catch (e) {
+                console.error('Error parsing error message:', e);
+              }
+
+              // Check for quota exceeded error
+              if (edgeFunctionError.status === 429) {
+                const resetTime = errorBody?.quota_reset_at 
+                  ? new Date(errorBody.quota_reset_at)
+                  : null;
+                  
+                if (resetTime) {
+                  const message = `YouTube quota exceeded. Service will resume at ${resetTime.toLocaleString()}`;
+                  console.warn(message);
+                  toast.warning(message);
+                } else {
+                  toast.warning('YouTube API quota exceeded. Please try again later.');
+                }
+              } else {
+                throw edgeFunctionError;
+              }
             }
 
-            // If it's a quota exceeded error, show the reset time
-            if (edgeFunctionError.status === 429 && errorBody?.quota_reset_at) {
-              const resetTime = new Date(errorBody.quota_reset_at);
-              console.warn("YouTube API quota exceeded. Reset time:", resetTime);
-              toast.warning(`YouTube quota exceeded. Service will resume at ${resetTime.toLocaleString()}`);
+            if (edgeFunctionData?.error) {
+              console.error('Edge function response error:', edgeFunctionData.error);
+              throw new Error(edgeFunctionData.error);
+            }
+          } catch (error: any) {
+            console.error('Failed to invoke edge function:', error);
+            if (error.status !== 429) { // Don't throw for quota errors
+              throw error;
             }
           }
         }
 
         // Always fetch from database regardless of edge function result
-        const { data, error } = await supabase
+        const { data: dbData, error: dbError } = await supabase
           .from("youtube_videos")
           .select("*")
           .is('deleted_at', null)
           .order("uploaded_at", { ascending: false });
 
-        if (error) {
-          console.error("Error fetching videos:", error);
-          throw error;
+        if (dbError) {
+          console.error("Error fetching videos:", dbError);
+          throw dbError;
         }
 
-        if (!data) {
+        if (!dbData) {
           console.log("No videos found");
           return [];
         }
 
-        const formattedData = data.map(video => ({
+        const formattedData = dbData.map(video => ({
           id: video.id,
           video_id: video.video_id,
           title: video.title,
