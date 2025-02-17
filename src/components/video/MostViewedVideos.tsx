@@ -19,7 +19,7 @@ interface MostViewedVideosProps {
 export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const isMobile = useIsMobile();
-  const videosPerPage = isMobile ? 2 : 4;
+  const videosPerPage = 2; // Always show 2 videos for consistency
 
   const handleNext = () => {
     setCurrentIndex((prevIndex) => 
@@ -49,7 +49,7 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
           style={{ opacity: currentIndex === 0 ? 0.5 : 1 }}
         />
 
-        <div className="grid grid-cols-2 gap-1 md:grid-cols-4 md:gap-4 w-full px-2 md:px-10">
+        <div className="grid grid-cols-2 gap-1 md:gap-4 w-full px-2 md:px-10">
           {currentVideos.map((video) => (
             <div 
               key={video.id} 
