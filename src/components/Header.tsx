@@ -40,17 +40,17 @@ export const Header = () => {
           <AnimatePresence mode="wait">
             {isMobile && isSearchExpanded ? (
               <motion.div 
-                className="absolute inset-0 flex items-center justify-between px-2 bg-white/95"
+                className="absolute inset-0 flex items-center justify-center px-2 bg-white/95"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.2 }}
               >
                 <motion.div 
-                  className="flex-1 pr-2"
-                  initial={{ width: 0, opacity: 0 }}
-                  animate={{ width: "100%", opacity: 1 }}
-                  exit={{ width: 0, opacity: 0 }}
+                  className="w-full max-w-[80%] mx-auto"
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.8, opacity: 0 }}
                   transition={{ 
                     type: "spring",
                     stiffness: 300,
