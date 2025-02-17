@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,6 +10,8 @@ export const GlobalNotification = () => {
     const stored = sessionStorage.getItem('dismissedNotifications');
     return stored ? JSON.parse(stored) : [];
   });
+
+  const [showNotifications, setShowNotifications] = useState(false);
 
   const { data: session } = useQuery({
     queryKey: ["session"],
@@ -38,6 +39,26 @@ export const GlobalNotification = () => {
     },
     enabled: !!session?.user?.id,
   });
+
+  useEffect(() => {
+    // Wait for both welcome messages to be shown
+    const checkWelcomeStatus = () => {
+      const hasVisitedWelcome = localStorage.getItem('hasVisitedWelcome');
+      const hasSeenInfoNotification = localStorage.getItem('hasSeenInfoNotification');
+
+      if (hasVisitedWelcome && hasSeenInfoNotification) {
+        // Add a small delay before showing admin notifications
+        setTimeout(() => {
+          setShowNotifications(true);
+        }, 1000);
+      } else {
+        // Keep checking until both welcome messages are shown
+        setTimeout(checkWelcomeStatus, 500);
+      }
+    };
+
+    checkWelcomeStatus();
+  }, []);
 
   const { data: notifications, isError } = useQuery({
     queryKey: ["active-notifications"],
@@ -84,7 +105,7 @@ export const GlobalNotification = () => {
     sessionStorage.setItem('dismissedNotifications', JSON.stringify(updatedDismissedIds));
   };
 
-  if (isError || !activeNotifications?.length) return null;
+  if (isError || !activeNotifications?.length || !showNotifications) return null;
 
   return (
     <div className="fixed top-24 left-0 right-0 z-50 p-4 pointer-events-none">
