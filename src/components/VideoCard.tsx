@@ -37,7 +37,7 @@ export const VideoCard = ({
   return (
     <Link to={`/video/${routeId}`} className="block group">
       <div className={cn(
-        "relative rounded-lg overflow-hidden bg-muted shadow-sm hover:shadow-md transition-all duration-300",
+        "relative rounded-lg overflow-hidden bg-muted shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1",
         isMobile ? "aspect-video w-full" : "aspect-video mb-2 md:mb-3"
       )}>
         <img
