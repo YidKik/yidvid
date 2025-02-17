@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -197,6 +196,27 @@ export const ChannelControl = () => {
     toast.success("Channel Control locked");
   };
 
+  const handleDelete = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return;
+
+    const { error } = await supabase
+      .from('parental_locks')
+      .delete()
+      .eq('user_id', session.user.id)
+      .eq('lock_type', 'channel_control');
+
+    if (error) {
+      console.error('Error deleting lock:', error);
+      toast.error("Failed to remove parental control");
+      return;
+    }
+
+    setIsLocked(false);
+    setStoredPin("");
+    setShowLockDialog(false);
+  };
+
   const filteredChannels = channels?.filter(channel =>
     channel.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -289,6 +309,7 @@ export const ChannelControl = () => {
         isOpen={showLockDialog}
         onClose={() => setShowLockDialog(false)}
         onUnlock={handleUnlock}
+        onDelete={handleDelete}
         storedPin={storedPin}
       />
 
