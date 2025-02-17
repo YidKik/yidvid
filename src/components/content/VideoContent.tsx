@@ -26,26 +26,28 @@ export const VideoContent = ({ videos, isLoading }: VideoContentProps) => {
   const sortedVideos = videos ? [...videos].sort((a, b) => (b.views || 0) - (a.views || 0)) : [];
 
   return (
-    <>
-      <div className="video-grid">
+    <div className="space-y-4 md:space-y-6">
+      <div className="video-grid relative">
         <VideoGrid 
           videos={videos} 
-          maxVideos={isMobile ? 6 : 12} 
-          rowSize={isMobile ? 2 : 4} 
+          maxVideos={isMobile ? 4 : 12} 
+          rowSize={isMobile ? 1 : 4} 
           isLoading={isLoading}
         />
       </div>
+      
       {sortedVideos.length > 0 && (
-        <div className="mt-6">
+        <div className="mt-4 md:mt-6">
           <MostViewedVideos videos={sortedVideos} />
         </div>
       )}
-      <div className="channels-grid mt-6">
+      
+      <div className="channels-grid mt-4 md:mt-6">
         <ChannelsGrid onError={(error) => {
           console.error('Channel grid error:', error);
           toast.error('Unable to fetch channels at the moment. Please try again later.');
         }} />
       </div>
-    </>
+    </div>
   );
 };

@@ -1,4 +1,3 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
@@ -6,6 +5,7 @@ import { CategoryCard } from "./CategoryCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEffect } from "react";
 import { useColors } from "@/contexts/ColorContext";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 interface Category {
   id: string;
@@ -27,6 +27,8 @@ const defaultCategories: Category[] = [
 
 export const CategorySection = () => {
   const { colors } = useColors();
+  const isMobile = useIsMobile();
+  
   const { data: categoryVideos, refetch } = useQuery({
     queryKey: ["category-videos"],
     queryFn: async () => {
@@ -74,7 +76,6 @@ export const CategorySection = () => {
     },
   });
 
-  // Combine default and custom categories
   const allCategories: Category[] = [
     ...defaultCategories,
     ...(customCategories?.map(cat => ({
@@ -86,36 +87,34 @@ export const CategorySection = () => {
     })) || [])
   ];
 
-  // Double the categories for the infinite scroll effect
   const infiniteCategories = [...allCategories, ...allCategories, ...allCategories, ...allCategories, ...allCategories, ...allCategories];
 
   if (categoriesLoading) {
     return (
-      <div className="grid grid-cols-3 gap-8 max-w-[1200px] mx-auto px-4 md:px-6">
-        {[...Array(3)].map((_, i) => (
-          <Skeleton key={i} className="h-[120px] rounded-lg" />
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-8 max-w-[1200px] mx-auto px-4 md:px-6">
+        {[...Array(4)].map((_, i) => (
+          <Skeleton key={i} className="h-[100px] md:h-[120px] rounded-lg" />
         ))}
       </div>
     );
   }
 
   return (
-    <div className="relative w-full py-8">
-      <div className="max-w-screen-sm md:max-w-[1400px] mx-auto px-4 md:px-6">
-        <div className="overflow-hidden relative h-[180px] md:h-[200px]">
-          {/* Left fade gradient - using custom background color */}
+    <div className="relative w-full py-4 md:py-8">
+      <div className="max-w-screen-sm md:max-w-[1400px] mx-auto px-3 md:px-6">
+        <div className="overflow-hidden relative h-[140px] md:h-[200px]">
           <div 
-            className="absolute left-0 top-0 w-24 md:w-48 h-full z-10" 
+            className="absolute left-0 top-0 w-12 md:w-48 h-full z-10" 
             style={{
               background: `linear-gradient(to right, ${colors.backgroundColor}, ${colors.backgroundColor}00)`
             }}
           />
           
           <motion.div
-            className="flex gap-4 md:gap-8 cursor-grab active:cursor-grabbing"
+            className="flex gap-2 md:gap-8 cursor-grab active:cursor-grabbing"
             drag="x"
             dragConstraints={{
-              left: -(infiniteCategories.length * 340),
+              left: -(infiniteCategories.length * (isMobile ? 160 : 340)),
               right: 0
             }}
             dragElastic={0.2}
@@ -140,7 +139,7 @@ export const CategorySection = () => {
             {infiniteCategories.map((category, index) => (
               <div
                 key={`${category.id}-${index}`}
-                className="w-[140px] md:w-[320px] flex-shrink-0 relative"
+                className="w-[120px] md:w-[320px] flex-shrink-0 relative"
               >
                 <CategoryCard
                   id={category.id}
@@ -152,9 +151,8 @@ export const CategorySection = () => {
             ))}
           </motion.div>
 
-          {/* Right fade gradient - using custom background color */}
           <div 
-            className="absolute right-0 top-0 w-24 md:w-48 h-full z-10"
+            className="absolute right-0 top-0 w-12 md:w-48 h-full z-10"
             style={{
               background: `linear-gradient(to left, ${colors.backgroundColor}, ${colors.backgroundColor}00)`
             }}
