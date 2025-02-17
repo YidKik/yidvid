@@ -5,7 +5,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { CategoryCard } from "./CategoryCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEffect } from "react";
-import { TrendingCategoryBadge } from "./TrendingCategoryBadge";
 import { useColors } from "@/contexts/ColorContext";
 
 interface Category {
@@ -42,44 +41,6 @@ export const CategorySection = () => {
     },
   });
 
-  // Get view counts for trending calculation based on total views
-  const { data: viewCounts } = useQuery({
-    queryKey: ["category-views"],
-    queryFn: async () => {
-      const { data: videos, error } = await supabase
-        .from("youtube_videos")
-        .select("category, views")
-        .is('deleted_at', null)
-        .order('views', { ascending: false });
-
-      if (error) throw error;
-
-      // Calculate total views per category
-      const categoryViews = (videos || []).reduce((acc, curr) => {
-        if (curr.category) {
-          acc[curr.category] = (acc[curr.category] || 0) + (curr.views || 0);
-        }
-        return acc;
-      }, {} as Record<string, number>);
-
-      return categoryViews;
-    },
-    refetchInterval: 60000, // Refetch every minute
-  });
-
-  const { data: customCategories, isLoading: categoriesLoading } = useQuery({
-    queryKey: ["custom-categories"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("custom_categories")
-        .select("*")
-        .order("name", { ascending: true });
-
-      if (error) throw error;
-      return data || [];
-    },
-  });
-
   useEffect(() => {
     const processExistingVideos = async () => {
       try {
@@ -99,6 +60,19 @@ export const CategorySection = () => {
 
     processExistingVideos();
   }, []);
+
+  const { data: customCategories, isLoading: categoriesLoading } = useQuery({
+    queryKey: ["custom-categories"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("custom_categories")
+        .select("*")
+        .order("name", { ascending: true });
+
+      if (error) throw error;
+      return data || [];
+    },
+  });
 
   // Combine default and custom categories
   const allCategories: Category[] = [
@@ -168,9 +142,6 @@ export const CategorySection = () => {
                 key={`${category.id}-${index}`}
                 className="w-[140px] md:w-[320px] flex-shrink-0 relative"
               >
-                {viewCounts && viewCounts[category.id] && viewCounts[category.id] > 0 && (
-                  <TrendingCategoryBadge count={viewCounts[category.id]} />
-                )}
                 <CategoryCard
                   id={category.id}
                   icon={category.icon}
