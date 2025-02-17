@@ -15,7 +15,6 @@ import { useColors } from "@/contexts/ColorContext";
 import { PlaybackSettings } from "@/components/settings/PlaybackSettings";
 import { ColorSettings } from "@/components/settings/ColorSettings";
 import { ProfileSection } from "@/components/settings/ProfileSection";
-import { LogOut, Trash2 } from "lucide-react";
 
 const Settings = () => {
   const navigate = useNavigate();
@@ -76,41 +75,6 @@ const Settings = () => {
     }
   };
 
-  const handleLogout = async () => {
-    try {
-      const { error } = await supabase.auth.signOut();
-      if (error) {
-        toast.error("Error signing out");
-        return;
-      }
-      navigate("/");
-      toast.success("Signed out successfully");
-    } catch (error) {
-      toast.error("An error occurred while signing out");
-    }
-  };
-
-  const handleDeleteAccount = async () => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete your account? This action cannot be undone."
-    );
-
-    if (confirmDelete) {
-      try {
-        const { error } = await supabase.rpc('delete_user', {});
-        if (error) {
-          toast.error("Error deleting account");
-          return;
-        }
-        await supabase.auth.signOut();
-        navigate("/");
-        toast.success("Account deleted successfully");
-      } catch (error) {
-        toast.error("An error occurred while deleting your account");
-      }
-    }
-  };
-
   const { data: profile } = useQuery({
     queryKey: ["user-profile"],
     queryFn: async () => {
@@ -142,31 +106,6 @@ const Settings = () => {
       <BackButton />
       <main className="container mx-auto pt-24 px-4 pb-16">
         <ProfileSection />
-        
-        <section className="mt-8">
-          <Card className="p-6">
-            <h2 className="text-xl font-semibold mb-6">Account Actions</h2>
-            <div className="space-y-4">
-              <Button
-                onClick={handleLogout}
-                variant="outline"
-                className="w-full flex items-center justify-center gap-2 py-6 text-gray-700 hover:text-gray-900 border-2 hover:border-gray-300 transition-all duration-200"
-              >
-                <LogOut className="h-5 w-5" />
-                <span className="font-medium">Sign Out</span>
-              </Button>
-              
-              <Button
-                onClick={handleDeleteAccount}
-                variant="outline"
-                className="w-full flex items-center justify-center gap-2 py-6 text-red-600 hover:text-red-700 border-2 border-red-200 hover:border-red-300 hover:bg-red-50 transition-all duration-200"
-              >
-                <Trash2 className="h-5 w-5" />
-                <span className="font-medium">Delete Account</span>
-              </Button>
-            </div>
-          </Card>
-        </section>
         
         <PlaybackSettings 
           autoplay={autoplay}
