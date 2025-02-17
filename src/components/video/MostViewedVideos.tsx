@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { VideoCard } from "../VideoCard";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Flame } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 interface MostViewedVideosProps {
@@ -21,7 +21,7 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const isMobile = useIsMobile();
   const videosPerPage = isMobile ? 2 : 4;
-  const AUTO_SLIDE_INTERVAL = 5000; // 5 seconds
+  const AUTO_SLIDE_INTERVAL = 5000;
 
   // Sort videos by view count in descending order
   const sortedVideos = [...videos].sort((a, b) => (b.views || 0) - (a.views || 0));
@@ -59,7 +59,6 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
   const handleManualNavigation = (action: () => void) => {
     setIsAutoPlaying(false);
     action();
-    // Resume auto-playing after 10 seconds of inactivity
     setTimeout(() => setIsAutoPlaying(true), 10000);
   };
 
@@ -68,33 +67,62 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
   if (!sortedVideos.length) return null;
 
   return (
-    <div className="w-full max-w-[1200px] mx-auto px-1 md:px-4 mb-2 md:mb-6">
-      <h2 className="text-sm md:text-lg font-bold mb-1 md:mb-3 text-accent px-1 md:px-0">
-        Most Viewed Videos
-      </h2>
-      <div className="relative">
-        <ChevronLeft 
-          className="absolute left-0 md:left-1 top-[40%] -translate-y-1/2 z-10 w-4 h-4 md:w-5 md:h-5 text-primary hover:text-primary/80 cursor-pointer"
-          onClick={() => handleManualNavigation(handlePrevious)}
-          style={{ opacity: currentIndex === 0 ? 0.5 : 1 }}
-        />
-
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-1 md:gap-4 w-full px-1 md:px-10">
-          {currentVideos.map((video) => (
-            <div 
-              key={video.id} 
-              className="w-full min-w-0 transition-all duration-300 animate-scaleIn"
-            >
-              <VideoCard {...video} />
-            </div>
-          ))}
+    <div className="w-full max-w-[1200px] mx-auto mb-8">
+      <div className="bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 rounded-xl shadow-lg p-4 md:p-6">
+        <div className="flex items-center gap-2 mb-4">
+          <Flame className="w-5 h-5 text-primary animate-pulse" />
+          <h2 className="text-base md:text-xl font-bold text-accent">
+            Trending Now
+          </h2>
         </div>
 
-        <ChevronRight 
-          className="absolute right-0 md:right-1 top-[40%] -translate-y-1/2 z-10 w-4 h-4 md:w-5 md:h-5 text-primary hover:text-primary/80 cursor-pointer"
-          onClick={() => handleManualNavigation(handleNext)}
-          style={{ opacity: currentIndex + videosPerPage >= sortedVideos.length ? 0.5 : 1 }}
-        />
+        <div className="relative px-2 md:px-4">
+          <button
+            onClick={() => handleManualNavigation(handlePrevious)}
+            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 p-2 md:p-3 bg-white/90 hover:bg-white rounded-full shadow-lg transition-all duration-300 group"
+            style={{ opacity: currentIndex === 0 ? 0.5 : 1 }}
+          >
+            <ChevronLeft className="w-4 h-4 md:w-5 md:h-5 text-primary group-hover:scale-110 transition-transform" />
+          </button>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
+            {currentVideos.map((video, index) => (
+              <div 
+                key={video.id} 
+                className="group relative rounded-lg overflow-hidden transition-all duration-300 hover:shadow-xl animate-scaleIn"
+                style={{ 
+                  animationDelay: `${index * 100}ms`,
+                }}
+              >
+                <div className="relative aspect-video">
+                  <VideoCard {...video} />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <button
+            onClick={() => handleManualNavigation(handleNext)}
+            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 p-2 md:p-3 bg-white/90 hover:bg-white rounded-full shadow-lg transition-all duration-300 group"
+            style={{ opacity: currentIndex + videosPerPage >= sortedVideos.length ? 0.5 : 1 }}
+          >
+            <ChevronRight className="w-4 h-4 md:w-5 md:h-5 text-primary group-hover:scale-110 transition-transform" />
+          </button>
+        </div>
+
+        <div className="flex justify-center mt-4 gap-1">
+          {Array.from({ length: Math.ceil(sortedVideos.length / videosPerPage) }).map((_, idx) => (
+            <button
+              key={idx}
+              className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                Math.floor(currentIndex / videosPerPage) === idx 
+                  ? 'bg-primary scale-125' 
+                  : 'bg-primary/20 hover:bg-primary/40'
+              }`}
+              onClick={() => setCurrentIndex(idx * videosPerPage)}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );
