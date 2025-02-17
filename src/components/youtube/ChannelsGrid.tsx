@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { Youtube } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -134,7 +135,7 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
         {visibleChannels.map((channel, index) => (
           <div 
             key={channel.id}
-            className="opacity-0 animate-fadeIn group flex flex-col items-center p-2 md:p-6 rounded-lg bg-card hover:bg-accent/5 transition-all duration-300"
+            className="opacity-0 animate-fadeIn group flex flex-col items-center p-2 md:p-6 rounded-lg bg-[#E5DEFF] hover:bg-[#D6BCFA] transition-all duration-300"
             style={{ 
               animationDelay: `${index * 0.1}s`,
               animationFillMode: 'forwards'
@@ -167,3 +168,4 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
     </div>
   );
 };
+
