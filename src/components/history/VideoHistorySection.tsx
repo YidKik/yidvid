@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { Link } from "react-router-dom";
 
 export const VideoHistorySection = () => {
   const queryClient = useQueryClient();
@@ -29,7 +30,8 @@ export const VideoHistorySection = () => {
           youtube_videos (
             title,
             channel_name,
-            video_id
+            video_id,
+            id
           )
         `)
         .eq("user_id", session.session.user.id)
@@ -105,14 +107,12 @@ export const VideoHistorySection = () => {
             {history?.map((entry) => (
               <TableRow key={entry.id}>
                 <TableCell>
-                  <a
-                    href={`https://youtube.com/watch?v=${entry.youtube_videos.video_id}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <Link
+                    to={`/video/${entry.youtube_videos.id}`}
                     className="text-primary hover:underline"
                   >
                     {entry.youtube_videos.title}
-                  </a>
+                  </Link>
                 </TableCell>
                 <TableCell>{entry.youtube_videos.channel_name}</TableCell>
                 <TableCell>
