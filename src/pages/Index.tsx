@@ -5,7 +5,6 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { WelcomeAnimation } from "@/components/WelcomeAnimation";
 import { CategorySection } from "@/components/categories/CategorySection";
-import { VideoAssistant } from "@/components/ai/VideoAssistant";
 import { ContentToggle } from "@/components/content/ContentToggle";
 import { MusicSection } from "@/components/content/MusicSection";
 import { VideoContent } from "@/components/content/VideoContent";
@@ -53,7 +52,6 @@ const Index = () => {
       <WelcomeAnimation />
       <MainContent />
       <Auth isOpen={isAuthOpen} onOpenChange={setIsAuthOpen} />
-      <VideoAssistant />
     </div>
   );
 };
