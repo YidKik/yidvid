@@ -24,7 +24,7 @@ export const BackButton = ({ className }: BackButtonProps) => {
         className
       )}
     >
-      <ArrowLeft className="h-4 w-4 text-primary group-hover:text-primary/80" />
+      <ArrowLeft className="h-4 w-4 text-black group-hover:h-5 group-hover:w-5 transition-all duration-200" />
     </Button>
   );
 };
