@@ -36,7 +36,7 @@ export const Header = () => {
   return (
     <header className={`sticky top-0 z-50 w-full border-b ${isMobile && isSearchExpanded ? 'bg-white' : 'bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60'}`}>
       <div className="container mx-auto">
-        <div className="flex h-14 items-center px-2 md:px-4 relative">
+        <div className="flex h-10 md:h-14 items-center px-2 md:px-4 relative">
           <AnimatePresence mode="wait">
             {isMobile && isSearchExpanded ? (
               <motion.div 
@@ -109,3 +109,4 @@ export const Header = () => {
     </header>
   );
 };
+
