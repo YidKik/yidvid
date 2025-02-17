@@ -1,4 +1,3 @@
-
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
@@ -10,7 +9,7 @@ import { BackButton } from "@/components/navigation/BackButton";
 import { VideoHistorySection } from "@/components/history/VideoHistorySection";
 import { ChannelSubscriptions } from "@/components/youtube/ChannelSubscriptions";
 import { UserAnalyticsSection } from "@/components/analytics/UserAnalyticsSection";
-import { ChannelPreferences } from "@/components/youtube/ChannelPreferences";
+import { ChannelControl } from "@/components/youtube/ChannelPreferences";
 import { useColors } from "@/contexts/ColorContext";
 import { PlaybackSettings } from "@/components/settings/PlaybackSettings";
 import { ColorSettings } from "@/components/settings/ColorSettings";
@@ -128,11 +127,11 @@ const Settings = () => {
         </section>
 
         <section className="mb-12">
-          <h2 className="text-2xl font-semibold mb-4">Channel Preferences</h2>
+          <h2 className="text-2xl font-semibold mb-4">Channel Control</h2>
           <p className="text-muted-foreground mb-4">
             Choose which channels you want to see in your feed. Hidden channels won't appear in your recommendations or search results.
           </p>
-          <ChannelPreferences />
+          <ChannelControl />
         </section>
 
         <ColorSettings 

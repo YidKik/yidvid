@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,11 +10,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ChannelSearch } from "@/components/youtube/ChannelSearch";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
-export const ChannelPreferences = () => {
+export const ChannelControl = () => {
   const [hiddenChannels, setHiddenChannels] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Load hidden channels from database
   const loadHiddenChannels = async () => {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) return;
@@ -37,7 +35,6 @@ export const ChannelPreferences = () => {
     loadHiddenChannels();
   }, []);
 
-  // Fetch all channels
   const { data: channels, isLoading } = useQuery({
     queryKey: ["youtube-channels"],
     queryFn: async () => {
@@ -68,7 +65,6 @@ export const ChannelPreferences = () => {
 
     try {
       if (isCurrentlyHidden) {
-        // Unhide channel
         const { error } = await supabase
           .from('hidden_channels')
           .delete()
@@ -78,7 +74,6 @@ export const ChannelPreferences = () => {
         if (error) throw error;
         newHiddenChannels.delete(channelId);
       } else {
-        // Hide channel
         const { error } = await supabase
           .from('hidden_channels')
           .insert({
@@ -100,7 +95,6 @@ export const ChannelPreferences = () => {
     }
   };
 
-  // Filter channels based on search query
   const filteredChannels = channels?.filter(channel =>
     channel.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -115,7 +109,7 @@ export const ChannelPreferences = () => {
         <div className="flex items-start gap-4">
           <Shield className="h-6 w-6 text-green-600 flex-shrink-0 mt-1" />
           <div>
-            <h3 className="text-lg font-semibold text-gray-900">Content Control Settings</h3>
+            <h3 className="text-lg font-semibold text-gray-900">Channel Control</h3>
             <p className="text-sm text-gray-600 mt-1">
               Customize your viewing experience by selecting which channels you want to include in your feed. 
               This helps create a safe and personalized environment for you and your family.
