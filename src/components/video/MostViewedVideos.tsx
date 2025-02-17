@@ -21,6 +21,7 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [direction, setDirection] = useState<'left' | 'right'>('left');
+  const [nextVideos, setNextVideos] = useState<typeof videos>([]);
   const isMobile = useIsMobile();
   const videosPerPage = isMobile ? 2 : 4;
   const AUTO_SLIDE_INTERVAL = 5000;
@@ -31,19 +32,25 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
   const handleNext = () => {
     setDirection('left');
     setIsTransitioning(true);
-    setCurrentIndex((prevIndex) => 
-      prevIndex + videosPerPage >= sortedVideos.length ? 0 : prevIndex + videosPerPage
-    );
-    setTimeout(() => setIsTransitioning(false), 600);
+    const nextIndex = currentIndex + videosPerPage >= sortedVideos.length ? 0 : currentIndex + videosPerPage;
+    setNextVideos(sortedVideos.slice(nextIndex, nextIndex + videosPerPage));
+    setTimeout(() => {
+      setCurrentIndex(nextIndex);
+      setIsTransitioning(false);
+    }, 600);
   };
 
   const handlePrevious = () => {
     setDirection('right');
     setIsTransitioning(true);
-    setCurrentIndex((prevIndex) => 
-      prevIndex - videosPerPage < 0 ? Math.max(0, sortedVideos.length - videosPerPage) : prevIndex - videosPerPage
-    );
-    setTimeout(() => setIsTransitioning(false), 600);
+    const nextIndex = currentIndex - videosPerPage < 0 ? 
+      Math.max(0, sortedVideos.length - videosPerPage) : 
+      currentIndex - videosPerPage;
+    setNextVideos(sortedVideos.slice(nextIndex, nextIndex + videosPerPage));
+    setTimeout(() => {
+      setCurrentIndex(nextIndex);
+      setIsTransitioning(false);
+    }, 600);
   };
 
   // Auto-sliding effect
@@ -94,8 +101,9 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
           </button>
 
           <div className="relative overflow-hidden">
+            {/* Current Videos */}
             <div 
-              className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 transition-all duration-600 ease-in-out"
+              className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 transition-all duration-600 ease-in-out absolute w-full"
               style={{
                 transform: isTransitioning 
                   ? `translateX(${direction === 'left' ? '-100%' : '100%'})`
@@ -114,6 +122,28 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
                 </div>
               ))}
             </div>
+
+            {/* Next Videos (sliding in) */}
+            {isTransitioning && (
+              <div 
+                className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 transition-all duration-600 ease-in-out absolute w-full"
+                style={{
+                  transform: `translateX(${direction === 'left' ? '0' : '-200%'})`,
+                  opacity: isTransitioning ? 1 : 0,
+                }}
+              >
+                {nextVideos.map((video) => (
+                  <div 
+                    key={video.id} 
+                    className="group relative rounded-lg overflow-hidden transition-all duration-300 hover:shadow-xl"
+                  >
+                    <div className="relative aspect-video">
+                      <VideoCard {...video} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           <button
