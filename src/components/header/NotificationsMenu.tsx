@@ -13,7 +13,6 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
 
 interface NotificationsMenuProps {
   session: any;
@@ -63,8 +62,7 @@ export const NotificationsMenu = ({ session, onMarkAsRead }: NotificationsMenuPr
           if (quotaData && quotaData.quota_remaining <= 0) {
             const resetTime = new Date(quotaData.quota_reset_at);
             console.warn(`YouTube API quota exceeded. Resets at ${resetTime.toLocaleString()}`);
-            // Show quota warning to user but don't block notifications
-            toast.warning(`YouTube API quota exceeded. Some features may be limited until ${resetTime.toLocaleString()}`);
+            // Removed the toast notification here
           }
         } catch (quotaError) {
           // Don't throw on quota check error - just log it
@@ -106,8 +104,6 @@ export const NotificationsMenu = ({ session, onMarkAsRead }: NotificationsMenuPr
   // Show error toast when query fails, but only once
   if (isError && error) {
     console.error("Notifications error:", error);
-    // We use toast.error which will automatically dedupe messages
-    toast.error("Unable to load notifications. Please try again later.");
   }
 
   const handleClearAll = async () => {
