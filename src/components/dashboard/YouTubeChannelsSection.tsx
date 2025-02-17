@@ -9,6 +9,7 @@ import { ChannelVideosManagement } from "@/components/youtube/ChannelVideosManag
 import { ChannelsHeader } from "./youtube/ChannelsHeader";
 import { ChannelListItem } from "./youtube/ChannelListItem";
 import { ChannelsSearch } from "./youtube/ChannelsSearch";
+import { ChannelVideosFetcher } from "@/components/youtube/ChannelVideosFetcher";
 
 export const YouTubeChannelsSection = () => {
   const navigate = useNavigate();
@@ -121,13 +122,16 @@ export const YouTubeChannelsSection = () => {
   return (
     <div className="bg-white rounded-lg shadow max-h-[calc(100vh-12rem)]">
       <div className="p-6 border-b">
-        <ChannelsHeader
-          isVideoDialogOpen={isVideoDialogOpen}
-          setIsVideoDialogOpen={setIsVideoDialogOpen}
-          isChannelDialogOpen={isChannelDialogOpen}
-          setIsChannelDialogOpen={setIsChannelDialogOpen}
-          refetchChannels={refetch}
-        />
+        <div className="flex items-center justify-between">
+          <ChannelsHeader
+            isVideoDialogOpen={isVideoDialogOpen}
+            setIsVideoDialogOpen={setIsVideoDialogOpen}
+            isChannelDialogOpen={isChannelDialogOpen}
+            setIsChannelDialogOpen={setIsChannelDialogOpen}
+            refetchChannels={refetch}
+          />
+          <ChannelVideosFetcher />
+        </div>
         <div className="mt-4">
           <ChannelsSearch
             searchQuery={searchQuery}
