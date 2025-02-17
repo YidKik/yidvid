@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { NotificationsMenu } from "./NotificationsMenu";
 import { UserMenu } from "./UserMenu";
 import { ContactDialog } from "../contact/ContactDialog";
-import { Search } from "lucide-react";
+import { Search, LogIn, LogOut } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface HeaderActionsProps {
@@ -30,7 +30,7 @@ export const HeaderActions = ({
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
             transition={{ type: "spring", stiffness: 300, damping: 25 }}
-            className="absolute left-1/2 -translate-x-1/2 flex items-center h-14"
+            className="flex items-center gap-2 h-14"
           >
             <Button
               variant="ghost"
@@ -40,6 +40,28 @@ export const HeaderActions = ({
             >
               <Search className="h-4 w-4 text-black" />
             </Button>
+
+            {!session ? (
+              <Button
+                onClick={onAuthOpen}
+                variant="ghost"
+                size="icon"
+                className="hover:bg-gray-100 rounded-full w-8 h-8 p-1.5 flex items-center justify-center"
+              >
+                <LogIn className="h-4 w-4 text-black" />
+              </Button>
+            ) : (
+              <Button
+                onClick={async () => {
+                  await handleLogout();
+                }}
+                variant="ghost"
+                size="icon"
+                className="hover:bg-gray-100 rounded-full w-8 h-8 p-1.5 flex items-center justify-center"
+              >
+                <LogOut className="h-4 w-4 text-black" />
+              </Button>
+            )}
           </motion.div>
         </AnimatePresence>
       ) : !isMobile && (
