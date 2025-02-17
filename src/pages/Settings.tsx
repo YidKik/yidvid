@@ -1,22 +1,20 @@
 
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
 import { BackButton } from "@/components/navigation/BackButton";
-import { VideoHistorySection } from "@/components/history/VideoHistorySection";
-import { ChannelSubscriptions } from "@/components/youtube/ChannelSubscriptions";
-import { UserAnalyticsSection } from "@/components/analytics/UserAnalyticsSection";
-import { ChannelControl } from "@/components/youtube/ChannelPreferences";
 import { useColors } from "@/contexts/ColorContext";
-import { PlaybackSettings } from "@/components/settings/PlaybackSettings";
-import { ColorSettings } from "@/components/settings/ColorSettings";
-import { ProfileSection } from "@/components/settings/ProfileSection";
-import { ContactDialog } from "@/components/contact/ContactDialog";
-import { MessageSquare, Settings as SettingsIcon } from "lucide-react";
+import { Settings as SettingsIcon } from "lucide-react";
+
+// Import new section components
+import { ContentPreferencesSection } from "@/components/settings/sections/ContentPreferencesSection";
+import { ActivitySection } from "@/components/settings/sections/ActivitySection";
+import { AppearanceSection } from "@/components/settings/sections/AppearanceSection";
+import { AdminSection } from "@/components/settings/sections/AdminSection";
+import { SupportSection } from "@/components/settings/sections/SupportSection";
+import { AccountSection } from "@/components/settings/sections/AccountSection";
 
 const Settings = () => {
   const navigate = useNavigate();
@@ -86,8 +84,6 @@ const Settings = () => {
         return null;
       }
 
-      setUserId(session.user.id);
-
       const { data, error } = await supabase
         .from("profiles")
         .select("*")
@@ -113,98 +109,27 @@ const Settings = () => {
         </div>
 
         <div className="space-y-12">
-          {/* Account & Profile Section */}
-          <div className="space-y-8">
-            <h2 className="text-2xl font-semibold text-primary/80">Account & Profile</h2>
-            <ProfileSection />
-          </div>
-
-          {/* Content Preferences */}
-          <div className="space-y-8">
-            <h2 className="text-2xl font-semibold text-primary/80">Content Preferences</h2>
-            
-            <div>
-              <h3 className="text-xl font-semibold mb-4">Channel Subscriptions</h3>
-              {userId ? (
-                <ChannelSubscriptions userId={userId} />
-              ) : (
-                <Card className="p-6">
-                  <p className="text-muted-foreground">Please sign in to manage your subscriptions.</p>
-                </Card>
-              )}
-            </div>
-
-            <div>
-              <h3 className="text-xl font-semibold mb-4">Channel Visibility</h3>
-              <Card className="p-6">
-                <p className="text-muted-foreground mb-4">
-                  Choose which channels you want to see in your feed. Hidden channels won't appear in your recommendations or search results.
-                </p>
-                <ChannelControl />
-              </Card>
-            </div>
-
-            <PlaybackSettings 
-              autoplay={autoplay}
-              setAutoplay={setAutoplay}
-            />
-          </div>
-
-          {/* Activity & History */}
-          <div className="space-y-8">
-            <h2 className="text-2xl font-semibold text-primary/80">Activity & History</h2>
-            <VideoHistorySection />
-            <UserAnalyticsSection />
-          </div>
-
-          {/* Appearance */}
-          <div className="space-y-8">
-            <h2 className="text-2xl font-semibold text-primary/80">Appearance</h2>
-            <ColorSettings 
-              backgroundColor={backgroundColor}
-              setBackgroundColor={setBackgroundColor}
-              textColor={textColor}
-              setTextColor={setTextColor}
-              buttonColor={buttonColor}
-              setButtonColor={setButtonColor}
-              logoColor={logoColor}
-              setLogoColor={setLogoColor}
-              saveColors={saveColors}
-              resetToDefaults={resetToDefaults}
-            />
-          </div>
-
-          {/* Admin Section */}
-          {profile?.is_admin && (
-            <div className="space-y-8">
-              <h2 className="text-2xl font-semibold text-primary/80">Admin Controls</h2>
-              <Card className="p-6">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <p className="text-sm text-muted-foreground">
-                      Access the admin dashboard to manage channels and videos
-                    </p>
-                  </div>
-                  <Button onClick={() => navigate("/dashboard")}>
-                    Open Dashboard
-                  </Button>
-                </div>
-              </Card>
-            </div>
-          )}
-
-          {/* Help & Support */}
-          <div className="space-y-4">
-            <h2 className="text-2xl font-semibold text-primary/80">Help & Support</h2>
-            <Card className="p-6">
-              <div className="flex flex-col items-center text-center space-y-4">
-                <p className="text-muted-foreground">
-                  Need help or have suggestions? We're here to assist you.
-                </p>
-                <ContactDialog />
-              </div>
-            </Card>
-          </div>
+          <AccountSection />
+          <ContentPreferencesSection 
+            userId={userId}
+            autoplay={autoplay}
+            setAutoplay={setAutoplay}
+          />
+          <ActivitySection />
+          <AppearanceSection 
+            backgroundColor={backgroundColor}
+            setBackgroundColor={setBackgroundColor}
+            textColor={textColor}
+            setTextColor={setTextColor}
+            buttonColor={buttonColor}
+            setButtonColor={setButtonColor}
+            logoColor={logoColor}
+            setLogoColor={setLogoColor}
+            saveColors={saveColors}
+            resetToDefaults={resetToDefaults}
+          />
+          <AdminSection isAdmin={!!profile?.is_admin} />
+          <SupportSection />
         </div>
       </main>
     </div>
