@@ -130,7 +130,7 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
                   className="group relative rounded-lg overflow-hidden transition-all duration-300 hover:shadow-xl"
                 >
                   <div className="relative aspect-video">
-                    <VideoCard {...video} />
+                    <VideoCard {...video} hideInfo={isMobile} />
                   </div>
                 </div>
               ))}
@@ -151,7 +151,7 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
                     className="group relative rounded-lg overflow-hidden transition-all duration-300 hover:shadow-xl"
                   >
                     <div className="relative aspect-video">
-                      <VideoCard {...video} />
+                      <VideoCard {...video} hideInfo={isMobile} />
                     </div>
                   </div>
                 ))}
