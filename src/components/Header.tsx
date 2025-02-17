@@ -36,7 +36,7 @@ export const Header = () => {
   return (
     <header className={`sticky top-0 z-50 w-full border-b ${isMobile && isSearchExpanded ? 'bg-white' : 'bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60'}`}>
       <div className="container mx-auto">
-        <div className="flex h-14 items-center justify-between px-2 md:px-4 relative">
+        <div className="flex h-14 items-center px-2 md:px-4 relative">
           <AnimatePresence mode="wait">
             {isMobile && isSearchExpanded ? (
               <motion.div 
@@ -65,26 +65,32 @@ export const Header = () => {
               </motion.div>
             ) : (
               <>
-                <HeaderLogo 
-                  isMobile={isMobile}
-                  isMobileMenuOpen={isMobileMenuOpen}
-                  onMobileMenuToggle={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                />
+                <div className="flex-none">
+                  <HeaderLogo 
+                    isMobile={isMobile}
+                    isMobileMenuOpen={isMobileMenuOpen}
+                    onMobileMenuToggle={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                  />
+                </div>
 
                 {!isMobile && (
-                  <div className="flex-1 max-w-xl mx-4">
-                    <SearchBar />
+                  <div className="flex-1 flex justify-center px-4">
+                    <div className="w-full max-w-xl">
+                      <SearchBar />
+                    </div>
                   </div>
                 )}
 
-                <HeaderActions 
-                  isMobile={isMobile}
-                  isSearchExpanded={isSearchExpanded}
-                  session={session}
-                  onSearchExpand={() => setIsSearchExpanded(true)}
-                  onAuthOpen={() => setIsAuthOpen(true)}
-                  onLogout={handleLogout}
-                />
+                <div className="flex-none">
+                  <HeaderActions 
+                    isMobile={isMobile}
+                    isSearchExpanded={isSearchExpanded}
+                    session={session}
+                    onSearchExpand={() => setIsSearchExpanded(true)}
+                    onAuthOpen={() => setIsAuthOpen(true)}
+                    onLogout={handleLogout}
+                  />
+                </div>
               </>
             )}
           </AnimatePresence>
