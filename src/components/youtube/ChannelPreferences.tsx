@@ -110,7 +110,7 @@ export const ChannelPreferences = () => {
   }
 
   return (
-    <Card className="p-6 bg-[#F2FCE2]">
+    <Card className="p-6 bg-[#F6F6F7]">
       <div className="space-y-6">
         <div className="flex items-start gap-4">
           <Shield className="h-6 w-6 text-green-600 flex-shrink-0 mt-1" />
@@ -123,7 +123,7 @@ export const ChannelPreferences = () => {
           </div>
         </div>
 
-        <Alert className="bg-[#D3E4FD] border-blue-200">
+        <Alert className="bg-[#F1F0FB] border-gray-200">
           <AlertDescription className="text-gray-700">
             Use the toggles below to manage your channel preferences. When a channel is marked as "Allowed", 
             its content will appear in your feed. Channels marked as "Not Allowed" won't show up in your recommendations or search results.
