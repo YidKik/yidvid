@@ -26,7 +26,7 @@ export const CategorySelect = ({ form }: CategorySelectProps) => {
                 <FormItem key={category.value}>
                   <FormControl>
                     <label
-                      className={`flex items-start space-x-2 md:space-x-3 space-y-0 rounded-md border p-2 md:p-3 cursor-pointer hover:bg-[#444444] transition-colors ${
+                      className={`flex items-start h-full space-x-2 md:space-x-3 space-y-0 rounded-md border p-2 md:p-3 cursor-pointer hover:bg-[#444444] transition-colors ${
                         field.value === category.value ? 'border-primary' : 'border-gray-600'
                       }`}
                     >
@@ -35,7 +35,7 @@ export const CategorySelect = ({ form }: CategorySelectProps) => {
                         id={category.value}
                         className="mt-1"
                       />
-                      <div className="space-y-0.5 md:space-y-1">
+                      <div className="flex-1 space-y-0.5 md:space-y-1">
                         <p className="text-xs md:text-base font-medium leading-none text-white">
                           {category.label}
                         </p>
