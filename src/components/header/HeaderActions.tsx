@@ -30,12 +30,13 @@ export const HeaderActions = ({
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
             transition={{ type: "spring", stiffness: 300, damping: 25 }}
+            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
           >
             <Button
               variant="ghost"
               size="icon"
               onClick={onSearchExpand}
-              className="hover:bg-transparent absolute left-1/2 -translate-x-1/2"
+              className="hover:bg-gray-100 rounded-full w-8 h-8 p-1.5 flex items-center justify-center"
             >
               <Search className="h-4 w-4 text-black" />
             </Button>
