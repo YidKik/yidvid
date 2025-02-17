@@ -24,20 +24,32 @@ export const useVideos = () => {
       console.log("Fetching videos...");
       
       try {
-        const { data: quotaData } = await supabase
-          .from('api_quota_tracking')
-          .select('quota_remaining, quota_reset_at')
-          .eq('api_name', 'youtube')
-          .single();
+        // First try to fetch from edge function
+        try {
+          await supabase.functions.invoke('fetch-youtube-videos');
+        } catch (edgeFunctionError: any) {
+          console.log('Edge function response:', edgeFunctionError);
+          
+          // Parse the error body if it's a string
+          let errorBody;
+          try {
+            errorBody = typeof edgeFunctionError.body === 'string' 
+              ? JSON.parse(edgeFunctionError.body)
+              : edgeFunctionError.body;
+          } catch (e) {
+            console.error('Error parsing error body:', e);
+          }
 
-        if (quotaData?.quota_remaining <= 0) {
-          const resetTime = new Date(quotaData.quota_reset_at);
-          const message = `YouTube API quota exceeded. Service will resume at ${resetTime.toLocaleString()}`;
-          console.warn(message);
-          toast.warning(message);
-          // Still proceed to fetch cached data
+          // If it's a quota exceeded error, show the reset time
+          if (edgeFunctionError.status === 429 && errorBody?.quota_reset_at) {
+            const resetTime = new Date(errorBody.quota_reset_at);
+            const message = `YouTube API quota exceeded. Service will resume at ${resetTime.toLocaleString()}`;
+            console.warn(message);
+            toast.warning(message);
+          }
         }
 
+        // Always fetch from database regardless of edge function result
         const { data, error } = await supabase
           .from("youtube_videos")
           .select("*")
@@ -74,20 +86,15 @@ export const useVideos = () => {
       } catch (error: any) {
         console.error("Error details:", error);
 
-        // Check if error is from edge function with quota exceeded
-        if (error.message?.includes('status 429') || 
-            error.message?.includes('quota exceeded') || 
-            error?.status === 429) {
-          console.log("Quota exceeded, fetching cached data only");
-          
-          // Get cached data first
-          const cachedData = queryClient.getQueryData<Video[]>(["youtube_videos"]);
-          if (cachedData?.length) {
-            toast.warning('API quota exceeded. Showing cached data.');
-            return cachedData;
-          }
-          
-          // If no cached data, get from database only
+        // Try to get cached data first
+        const cachedData = queryClient.getQueryData<Video[]>(["youtube_videos"]);
+        if (cachedData?.length) {
+          toast.warning('Error fetching new videos. Showing cached data.');
+          return cachedData;
+        }
+
+        // If no cached data, try to fetch from database directly
+        try {
           const { data: dbData } = await supabase
             .from("youtube_videos")
             .select("*")
@@ -106,25 +113,14 @@ export const useVideos = () => {
               uploadedAt: video.uploaded_at
             }));
             
-            toast.warning('API quota exceeded. Showing existing videos.');
+            toast.warning('Error fetching new videos. Showing existing videos.');
             return formattedData;
           }
+        } catch (dbError) {
+          console.error("Database fetch error:", dbError);
         }
 
-        // Handle network errors
-        if (error.message?.includes('Failed to fetch') || error.code === 'ECONNABORTED') {
-          console.error('Network error:', error);
-          toast.error('Network error. Please check your connection.');
-          
-          // Try to get cached data
-          const cachedData = queryClient.getQueryData<Video[]>(["youtube_videos"]);
-          if (cachedData?.length) {
-            return cachedData;
-          }
-        }
-
-        // General error case
-        console.error("Unexpected error:", error);
+        // If all else fails
         toast.error('Error loading videos. Please try again later.');
         return [];
       }
@@ -143,7 +139,6 @@ export const useVideos = () => {
   useEffect(() => {
     if (error) {
       console.error("Video fetch error:", error);
-      toast.error('Error loading videos. Please try again later.');
     }
   }, [error]);
 
