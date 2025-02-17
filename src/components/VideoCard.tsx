@@ -37,8 +37,8 @@ export const VideoCard = ({
   return (
     <Link to={`/video/${routeId}`} className="block group">
       <div className={cn(
-        "rounded-lg overflow-hidden bg-muted shadow-sm hover:shadow-md transition-all duration-300",
-        isMobile ? "aspect-video w-full" : "mb-2 md:mb-3"
+        "relative rounded-lg overflow-hidden bg-muted shadow-sm hover:shadow-md transition-all duration-300",
+        isMobile ? "aspect-video w-full" : "aspect-video mb-2 md:mb-3"
       )}>
         <img
           src={thumbnail}
@@ -47,9 +47,9 @@ export const VideoCard = ({
           loading="lazy"
         />
       </div>
-      <div className="flex gap-2 md:gap-3 mt-2">
+      <div className="flex gap-2 md:gap-3">
         {channelThumbnail && (
-          <div className="w-7 h-7 md:w-9 md:h-9 rounded-full overflow-hidden flex-shrink-0">
+          <div className="w-7 h-7 md:w-8 md:h-8 rounded-full overflow-hidden flex-shrink-0">
             <img
               src={channelThumbnail}
               alt={channelName}
@@ -66,7 +66,7 @@ export const VideoCard = ({
             {title}
           </h3>
           <p className={cn(
-            "text-muted-foreground mt-0.5 md:mt-1 line-clamp-1",
+            "text-muted-foreground mt-0.5 line-clamp-1",
             isMobile ? "text-xs" : "text-youtube-small"
           )}>
             {channelName}
