@@ -20,7 +20,7 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const isMobile = useIsMobile();
-  const videosPerPage = 2;
+  const videosPerPage = isMobile ? 2 : 3;
   const AUTO_SLIDE_INTERVAL = 5000; // 5 seconds
 
   const handleNext = () => {
@@ -50,7 +50,7 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
         clearInterval(intervalId);
       }
     };
-  }, [isAutoPlaying, currentIndex, videos.length]);
+  }, [isAutoPlaying, currentIndex, videos.length, videosPerPage]);
 
   // Pause auto-sliding when user interacts with navigation
   const handleManualNavigation = (action: () => void) => {
@@ -76,7 +76,7 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
           style={{ opacity: currentIndex === 0 ? 0.5 : 1 }}
         />
 
-        <div className="grid grid-cols-2 gap-2 md:gap-4 w-full px-2 md:px-10">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-4 w-full px-2 md:px-10">
           {currentVideos.map((video) => (
             <div 
               key={video.id} 
