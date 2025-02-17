@@ -50,11 +50,16 @@ export const NotificationsMenu = ({ session, onMarkAsRead }: NotificationsMenuPr
     },
     enabled: !!session?.user?.id,
     retry: 1, // Only retry once to avoid too many failed attempts
-    onError: (error: any) => {
-      console.error("Notifications error:", error);
-      toast.error("Unable to load notifications. Please try again later.");
+    meta: {
+      errorMessage: "Unable to load notifications. Please try again later."
     }
   });
+
+  // Show error toast when query fails
+  if (isError && error) {
+    console.error("Notifications error:", error);
+    toast.error("Unable to load notifications. Please try again later.");
+  }
 
   const handleClearAll = async () => {
     if (!session?.user?.id || !notifications?.length) return;
