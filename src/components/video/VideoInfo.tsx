@@ -58,19 +58,21 @@ export const VideoInfo = ({
           </div>
           
           {description.length > 200 && (
-            <button
-              onClick={() => setIsExpanded(!isExpanded)}
-              className="absolute bottom-0 left-0 right-0 flex items-center justify-center gap-2 py-2 w-full bg-gradient-to-t from-background to-transparent hover:from-muted/80 transition-colors"
-            >
-              <span className="text-xs font-medium">
-                {isExpanded ? "Show less" : "Show more"}
-              </span>
-              {isExpanded ? (
-                <ChevronUp className="h-4 w-4" />
-              ) : (
-                <ChevronDown className="h-4 w-4" />
-              )}
-            </button>
+            <div className="absolute bottom-0 left-0 right-0 pt-6 pb-2 bg-gradient-to-t from-background via-background/95 to-transparent">
+              <button
+                onClick={() => setIsExpanded(!isExpanded)}
+                className="mx-auto flex items-center gap-2 px-4 py-1.5 rounded-full bg-gray-100 hover:bg-gray-200 border border-gray-200 shadow-sm transition-all duration-200 group"
+              >
+                <span className="text-sm font-medium text-gray-700">
+                  {isExpanded ? "Show less" : "Show more"}
+                </span>
+                {isExpanded ? (
+                  <ChevronUp className="h-4 w-4 text-gray-500 group-hover:text-gray-700 transition-colors" />
+                ) : (
+                  <ChevronDown className="h-4 w-4 text-gray-500 group-hover:text-gray-700 transition-colors" />
+                )}
+              </button>
+            </div>
           )}
         </div>
       )}
