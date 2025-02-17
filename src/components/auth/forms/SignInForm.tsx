@@ -28,18 +28,29 @@ export const SignInForm = ({ onOpenChange, isLoading, setIsLoading }: SignInForm
     setIsLoading(true);
 
     try {
+      console.log("Attempting to sign in with email:", email);
+      
       const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
-        email,
-        password,
+        email: email.trim(),
+        password: password.trim(),
       });
 
       if (signInError) {
         console.error("Sign in error:", signInError);
-        toast.error(signInError.message || "Error during sign in");
+        
+        // Provide more specific error messages based on the error
+        if (signInError.message === "Invalid login credentials") {
+          toast.error("Invalid email or password. Please check your credentials and try again.");
+        } else {
+          toast.error(signInError.message || "Error during sign in");
+        }
         return;
       }
 
       if (signInData?.user) {
+        console.log("User signed in successfully:", signInData.user.email);
+        
+        // Fetch user profile after successful sign in
         const { data: profileData, error: profileError } = await supabase
           .from("profiles")
           .select("*")
@@ -52,6 +63,7 @@ export const SignInForm = ({ onOpenChange, isLoading, setIsLoading }: SignInForm
           return;
         }
 
+        // Update profile data in React Query cache
         await queryClient.setQueryData(["profile", signInData.user.id], profileData);
         
         toast.success("Signed in successfully!");
@@ -60,7 +72,7 @@ export const SignInForm = ({ onOpenChange, isLoading, setIsLoading }: SignInForm
       }
     } catch (error: any) {
       console.error("Sign in error:", error);
-      toast.error("An error occurred during sign in");
+      toast.error("An unexpected error occurred during sign in. Please try again.");
     } finally {
       setIsLoading(false);
     }
