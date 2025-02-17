@@ -253,29 +253,35 @@ export const ChannelControl = () => {
           </div>
         </div>
 
-        <Alert className="bg-[#F1F0FB] border-gray-200">
-          <AlertDescription className="text-gray-700">
-            Use the toggles below to manage your channel preferences. When a channel is marked as "Allowed", 
-            its content will appear in your feed. Channels marked as "Not Allowed" won't show up in your recommendations or search results.
-          </AlertDescription>
-        </Alert>
+        <div className={`relative ${isLocked ? 'pointer-events-none' : ''}`}>
+          {isLocked && (
+            <div className="absolute inset-0 bg-white/50 backdrop-blur-[2px] z-10 rounded-lg" />
+          )}
+          
+          <Alert className="bg-[#F1F0FB] border-gray-200">
+            <AlertDescription className="text-gray-700">
+              Use the toggles below to manage your channel preferences. When a channel is marked as "Allowed", 
+              its content will appear in your feed. Channels marked as "Not Allowed" won't show up in your recommendations or search results.
+            </AlertDescription>
+          </Alert>
 
-        <div className="mb-6">
-          <div className="flex items-center gap-2 p-2 bg-white rounded-lg border border-gray-200">
-            <Search className="h-4 w-4 text-gray-500" />
-            <ChannelSearch value={searchQuery} onChange={setSearchQuery} />
+          <div className="mb-6 mt-6">
+            <div className="flex items-center gap-2 p-2 bg-white rounded-lg border border-gray-200">
+              <Search className="h-4 w-4 text-gray-500" />
+              <ChannelSearch value={searchQuery} onChange={setSearchQuery} />
+            </div>
           </div>
-        </div>
 
-        <div className="max-h-[400px] overflow-y-auto scrollbar-hide space-y-3">
-          {filteredChannels?.map((channel) => (
-            <ChannelListItem
-              key={channel.channel_id}
-              channel={channel}
-              isHidden={hiddenChannels.has(channel.channel_id)}
-              onToggle={toggleChannel}
-            />
-          ))}
+          <div className="max-h-[400px] overflow-y-auto scrollbar-hide space-y-3">
+            {filteredChannels?.map((channel) => (
+              <ChannelListItem
+                key={channel.channel_id}
+                channel={channel}
+                isHidden={hiddenChannels.has(channel.channel_id)}
+                onToggle={toggleChannel}
+              />
+            ))}
+          </div>
         </div>
       </div>
 
