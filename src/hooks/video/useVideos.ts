@@ -24,24 +24,7 @@ export const useVideos = () => {
       console.log("Fetching videos...");
       
       try {
-        // First check quota status
-        const { data: quotaData, error: quotaError } = await supabase
-          .from('api_quota_tracking')
-          .select('quota_remaining, quota_reset_at')
-          .eq('api_name', 'youtube')
-          .single();
-
-        if (quotaError) {
-          console.error("Error checking quota:", quotaError);
-        } else if (quotaData && quotaData.quota_remaining <= 0) {
-          const resetTime = new Date(quotaData.quota_reset_at);
-          const message = `YouTube API quota exceeded. Service will resume at ${resetTime.toLocaleString()}`;
-          console.warn(message);
-          toast.warning(message);
-          // Continue to fetch cached videos from database
-        }
-
-        // Always fetch from database regardless of quota status
+        // Always fetch from database first
         const { data: dbData, error: dbError } = await supabase
           .from("youtube_videos")
           .select("*")
@@ -49,16 +32,11 @@ export const useVideos = () => {
           .order("uploaded_at", { ascending: false });
 
         if (dbError) {
-          console.error("Error fetching videos:", dbError);
+          console.error("Error fetching videos from database:", dbError);
           throw dbError;
         }
 
-        if (!dbData) {
-          console.log("No videos found");
-          return [];
-        }
-
-        const formattedData = dbData.map(video => ({
+        const formattedData = (dbData || []).map(video => ({
           id: video.id,
           video_id: video.video_id,
           title: video.title,
@@ -70,49 +48,66 @@ export const useVideos = () => {
         }));
 
         console.log(`Successfully fetched ${formattedData.length} videos from database`);
-        
-        // Only try to fetch new videos if we have quota
+
+        // Check quota before attempting to fetch new videos
+        const { data: quotaData } = await supabase
+          .from('api_quota_tracking')
+          .select('quota_remaining, quota_reset_at')
+          .eq('api_name', 'youtube')
+          .single();
+
+        // If quota is available, try to fetch new videos
         if (!quotaData || quotaData.quota_remaining > 0) {
           try {
             const { error: edgeFunctionError } = await supabase.functions.invoke('fetch-youtube-videos');
             
             if (edgeFunctionError) {
-              // Parse error response if it's a quota exceeded error
+              // Handle quota exceeded error (status 429)
               if (edgeFunctionError.status === 429) {
                 try {
-                  const errorBody = JSON.parse(edgeFunctionError.message);
-                  const resetTime = errorBody?.quota_reset_at 
-                    ? new Date(errorBody.quota_reset_at)
-                    : null;
-                    
-                  if (resetTime) {
-                    const message = `YouTube quota exceeded. Service will resume at ${resetTime.toLocaleString()}`;
-                    console.warn(message);
-                    toast.warning(message);
-                  }
+                  const errorBody = JSON.parse(edgeFunctionError.body);
+                  const resetTime = new Date(errorBody.quota_reset_at);
+                  const message = `YouTube quota exceeded. Service will resume at ${resetTime.toLocaleString()}`;
+                  console.warn(message);
+                  toast.warning(message);
                 } catch (parseError) {
-                  console.error('Error parsing quota error response:', parseError);
+                  console.error('Error parsing quota response:', parseError);
                 }
               } else {
                 console.error('Edge function error:', edgeFunctionError);
+                toast.error('Error fetching new videos');
               }
             }
           } catch (error: any) {
             // Don't throw on quota errors, just log them
             if (error.status === 429) {
               console.warn('YouTube API quota exceeded:', error);
+              try {
+                const errorBody = JSON.parse(error.body);
+                const resetTime = new Date(errorBody.quota_reset_at);
+                toast.warning(`YouTube quota exceeded. Service will resume at ${resetTime.toLocaleString()}`);
+              } catch (parseError) {
+                console.error('Error parsing error response:', parseError);
+              }
             } else {
               console.error('Failed to invoke edge function:', error);
+              toast.error('Error checking for new videos');
             }
           }
+        } else if (quotaData) {
+          // If quota is depleted, show a toast with the reset time
+          const resetTime = new Date(quotaData.quota_reset_at);
+          toast.warning(`YouTube quota exceeded. Service will resume at ${resetTime.toLocaleString()}`);
         }
-        
-        // Cache the data for the video grid
+
+        // Cache the formatted data
         queryClient.setQueryData(["youtube_videos_grid"], formattedData);
         
+        // Always return the database data, even if fetching new videos failed
         return formattedData;
+
       } catch (error: any) {
-        console.error("Error details:", error);
+        console.error("Error fetching videos:", error);
 
         // Try to get cached data first
         const cachedData = queryClient.getQueryData<Video[]>(["youtube_videos"]);
@@ -121,43 +116,16 @@ export const useVideos = () => {
           return cachedData;
         }
 
-        // If no cached data, try to fetch from database directly
-        try {
-          const { data: dbData } = await supabase
-            .from("youtube_videos")
-            .select("*")
-            .is('deleted_at', null)
-            .order("uploaded_at", { ascending: false });
-
-          if (dbData) {
-            const formattedData = dbData.map(video => ({
-              id: video.id,
-              video_id: video.video_id,
-              title: video.title,
-              thumbnail: video.thumbnail,
-              channelName: video.channel_name,
-              channelId: video.channel_id,
-              views: video.views || 0,
-              uploadedAt: video.uploaded_at
-            }));
-            
-            toast.warning('Error fetching new videos. Showing existing videos.');
-            return formattedData;
-          }
-        } catch (dbError) {
-          console.error("Database fetch error:", dbError);
-        }
-
         // If all else fails
         toast.error('Error loading videos. Please try again later.');
-        return [];
+        throw error;
       }
     },
     staleTime: 1000 * 60 * 5, // Keep data fresh for 5 minutes
     gcTime: 1000 * 60 * 30, // Cache data for 30 minutes
     retry: (failureCount, error: any) => {
       // Don't retry on quota exceeded
-      if (error?.status === 429) return false;
+      if (error.status === 429) return false;
       // Retry other errors up to 3 times
       return failureCount < 3;
     },
