@@ -7,9 +7,10 @@ import { supabase } from "@/integrations/supabase/client";
 interface SignUpFormProps {
   isLoading: boolean;
   setIsLoading: (loading: boolean) => void;
+  onOpenChange?: (open: boolean) => void;
 }
 
-export const SignUpForm = ({ isLoading, setIsLoading }: SignUpFormProps) => {
+export const SignUpForm = ({ isLoading, setIsLoading, onOpenChange }: SignUpFormProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
@@ -41,7 +42,10 @@ export const SignUpForm = ({ isLoading, setIsLoading }: SignUpFormProps) => {
       }
 
       if (signUpData?.user) {
-        toast.success("Account created successfully! Please check your email to confirm your account.");
+        toast.success("Account created successfully! You can now sign in.");
+        if (onOpenChange) {
+          onOpenChange(false);
+        }
       }
     } catch (error: any) {
       console.error("Sign up error:", error);
