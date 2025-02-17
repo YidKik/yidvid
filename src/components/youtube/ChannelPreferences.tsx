@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -5,9 +6,10 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Youtube } from "lucide-react";
+import { Youtube, Shield, Search } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ChannelSearch } from "@/components/youtube/ChannelSearch";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export const ChannelPreferences = () => {
   const [hiddenChannels, setHiddenChannels] = useState<Set<string>>(new Set());
@@ -90,7 +92,7 @@ export const ChannelPreferences = () => {
 
       setHiddenChannels(newHiddenChannels);
       toast.success(
-        `Channel ${isCurrentlyHidden ? "unhidden" : "hidden"} successfully`
+        `Channel ${isCurrentlyHidden ? "added to" : "removed from"} your allowed list`
       );
     } catch (error) {
       console.error('Error toggling channel visibility:', error);
@@ -108,45 +110,77 @@ export const ChannelPreferences = () => {
   }
 
   return (
-    <Card className="p-6">
-      <div className="mb-6">
-        <ChannelSearch value={searchQuery} onChange={setSearchQuery} />
-      </div>
-      <div className="max-h-[400px] overflow-y-auto scrollbar-hide space-y-6">
-        {filteredChannels?.map((channel) => (
-          <div
-            key={channel.channel_id}
-            className="flex items-center justify-between p-4 rounded-lg border bg-card"
-          >
-            <div className="flex items-center gap-4">
-              <Avatar className="h-10 w-10">
-                <AvatarImage
-                  src={channel.thumbnail_url}
-                  alt={channel.title}
+    <Card className="p-6 bg-[#F2FCE2]">
+      <div className="space-y-6">
+        <div className="flex items-start gap-4">
+          <Shield className="h-6 w-6 text-green-600 flex-shrink-0 mt-1" />
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900">Content Control Settings</h3>
+            <p className="text-sm text-gray-600 mt-1">
+              Customize your viewing experience by selecting which channels you want to include in your feed. 
+              This helps create a safe and personalized environment for you and your family.
+            </p>
+          </div>
+        </div>
+
+        <Alert className="bg-[#D3E4FD] border-blue-200">
+          <AlertDescription className="text-gray-700">
+            Use the toggles below to manage your channel preferences. When a channel is marked as "Allowed", 
+            its content will appear in your feed. Channels marked as "Not Allowed" won't show up in your recommendations or search results.
+          </AlertDescription>
+        </Alert>
+
+        <div className="mb-6">
+          <div className="flex items-center gap-2 p-2 bg-white rounded-lg border border-gray-200">
+            <Search className="h-4 w-4 text-gray-500" />
+            <ChannelSearch value={searchQuery} onChange={setSearchQuery} />
+          </div>
+        </div>
+
+        <div className="max-h-[400px] overflow-y-auto scrollbar-hide space-y-3">
+          {filteredChannels?.map((channel) => (
+            <div
+              key={channel.channel_id}
+              className="flex items-center justify-between p-4 rounded-lg border border-gray-100 bg-white hover:bg-gray-50 transition-colors"
+            >
+              <div className="flex items-center gap-4">
+                <Avatar className="h-10 w-10 border border-gray-100">
+                  <AvatarImage
+                    src={channel.thumbnail_url}
+                    alt={channel.title}
+                  />
+                  <AvatarFallback>
+                    <Youtube className="h-5 w-5 text-gray-400" />
+                  </AvatarFallback>
+                </Avatar>
+                <div>
+                  <p className="font-medium text-gray-900">{channel.title}</p>
+                  <p className="text-sm text-gray-500 line-clamp-1">
+                    {channel.description || "No description"}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <Switch
+                  id={`channel-${channel.channel_id}`}
+                  checked={!hiddenChannels.has(channel.channel_id)}
+                  onCheckedChange={() => toggleChannel(channel.channel_id)}
+                  className="data-[state=checked]:bg-green-600"
                 />
-                <AvatarFallback>
-                  <Youtube className="h-6 w-6" />
-                </AvatarFallback>
-              </Avatar>
-              <div>
-                <p className="font-medium">{channel.title}</p>
-                <p className="text-sm text-muted-foreground">
-                  {channel.description || "No description"}
-                </p>
+                <Label 
+                  htmlFor={`channel-${channel.channel_id}`}
+                  className={`text-sm font-medium ${
+                    hiddenChannels.has(channel.channel_id) 
+                      ? 'text-red-600' 
+                      : 'text-green-600'
+                  }`}
+                >
+                  {hiddenChannels.has(channel.channel_id) ? "Not Allowed" : "Allowed"}
+                </Label>
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <Switch
-                id={`channel-${channel.channel_id}`}
-                checked={!hiddenChannels.has(channel.channel_id)}
-                onCheckedChange={() => toggleChannel(channel.channel_id)}
-              />
-              <Label htmlFor={`channel-${channel.channel_id}`}>
-                {hiddenChannels.has(channel.channel_id) ? "Hidden" : "Visible"}
-              </Label>
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </Card>
   );
