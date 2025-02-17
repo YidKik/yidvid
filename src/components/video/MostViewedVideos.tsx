@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { VideoCard } from "../VideoCard";
 import { ChevronLeft, ChevronRight, Flame } from "lucide-react";
@@ -58,7 +59,7 @@ export const MostViewedVideos = ({
 
   useEffect(() => {
     let intervalId: NodeJS.Timeout;
-    if (isAutoPlaying && sortedVideos.length > videosPerPage) {
+    if (!isMobile && isAutoPlaying && sortedVideos.length > videosPerPage) {
       intervalId = setInterval(() => {
         handleNext();
       }, AUTO_SLIDE_INTERVAL);
@@ -68,15 +69,13 @@ export const MostViewedVideos = ({
         clearInterval(intervalId);
       }
     };
-  }, [isAutoPlaying, currentIndex, sortedVideos.length, videosPerPage]);
+  }, [isAutoPlaying, currentIndex, sortedVideos.length, videosPerPage, isMobile]);
 
   const handleManualNavigation = (action: () => void) => {
     setIsAutoPlaying(false);
     action();
     setTimeout(() => setIsAutoPlaying(true), 15000);
   };
-
-  const currentVideos = sortedVideos;
 
   if (!sortedVideos.length) return null;
 
@@ -102,12 +101,12 @@ export const MostViewedVideos = ({
             </button>
           )}
 
-          <div className={`relative overflow-x-auto ${isMobile ? 'touch-pan-x' : 'overflow-hidden'} min-h-[120px] md:min-h-[200px]`}>
-            <div className={`${isMobile ? 'flex gap-1.5 pb-2 snap-x snap-mandatory w-full overflow-x-auto' : `grid grid-cols-4 gap-6 absolute w-full top-0 left-0 ${isTransitioning ? 'opacity-0' : 'opacity-100'} transition-opacity duration-1500`}`}>
+          <div className={isMobile ? "overflow-x-auto -mx-1.5 px-1.5" : "relative overflow-hidden min-h-[200px]"}>
+            <div className={isMobile ? "flex gap-2 pb-2 snap-x snap-mandatory" : `grid grid-cols-4 gap-6 absolute w-full top-0 left-0 ${isTransitioning ? 'opacity-0' : 'opacity-100'} transition-opacity duration-1500`}>
               {isMobile ? (
                 sortedVideos.map(video => (
-                  <div key={video.id} className="flex-none w-[calc(50%-3px)] first:ml-0 snap-start">
-                    <div className="group relative rounded-md overflow-hidden transition-all duration-700 hover:shadow-xl">
+                  <div key={video.id} className="flex-none w-[160px] snap-start">
+                    <div className="group relative rounded-md overflow-hidden transition-all duration-300 hover:shadow-lg">
                       <div className="relative aspect-video">
                         <VideoCard {...video} hideInfo={true} />
                       </div>
@@ -115,7 +114,7 @@ export const MostViewedVideos = ({
                   </div>
                 ))
               ) : (
-                currentVideos.slice(currentIndex, currentIndex + videosPerPage).map(video => (
+                sortedVideos.slice(currentIndex, currentIndex + videosPerPage).map(video => (
                   <div key={video.id} className="group relative rounded-lg overflow-hidden transition-all duration-700 hover:shadow-xl">
                     <div className="relative aspect-video">
                       <VideoCard {...video} hideInfo={false} />
