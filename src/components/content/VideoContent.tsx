@@ -28,7 +28,7 @@ export const VideoContent = ({ videos, isLoading }: VideoContentProps) => {
   const isMobile = useIsMobile();
   const [showMoreMobile, setShowMoreMobile] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const videosPerPage = 6; // 2 columns × 3 rows
+  const videosPerPage = 6; // 2 columns × 3 rows for mobile
   
   const sortedVideos = videos ? [...videos].sort((a, b) => 
     new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime()
