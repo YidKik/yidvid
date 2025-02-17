@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { formatDistanceToNow, parseISO } from "date-fns";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -34,7 +35,10 @@ export const VideoCard = ({
 
   return (
     <Link to={`/video/${routeId}`} className="block group">
-      <div className="aspect-video rounded-lg overflow-hidden bg-muted mb-2 md:mb-3 shadow-sm hover:shadow-md transition-all duration-300">
+      <div className={cn(
+        "rounded-lg overflow-hidden bg-muted shadow-sm hover:shadow-md transition-all duration-300",
+        isMobile ? "aspect-video w-full" : "mb-2 md:mb-3"
+      )}>
         <img
           src={thumbnail}
           alt={title}
@@ -42,7 +46,7 @@ export const VideoCard = ({
           loading="lazy"
         />
       </div>
-      <div className="flex gap-2 md:gap-3">
+      <div className="flex gap-2 md:gap-3 mt-2">
         {channelThumbnail && (
           <div className="w-7 h-7 md:w-9 md:h-9 rounded-full overflow-hidden flex-shrink-0">
             <img
@@ -54,13 +58,13 @@ export const VideoCard = ({
           </div>
         )}
         <div className="flex-1 min-w-0">
-          <h3 className={`font-medium ${isMobile ? 'text-xs leading-tight' : 'text-youtube-title'} line-clamp-2 group-hover:text-button-custom`}>
+          <h3 className={`font-medium ${isMobile ? 'text-sm leading-tight' : 'text-youtube-title'} line-clamp-2 group-hover:text-button-custom`}>
             {title}
           </h3>
-          <p className={`${isMobile ? 'text-[10px]' : 'text-youtube-small'} text-muted-foreground mt-0.5 md:mt-1 line-clamp-1`}>
+          <p className={`${isMobile ? 'text-xs' : 'text-youtube-small'} text-muted-foreground mt-0.5 md:mt-1 line-clamp-1`}>
             {channelName}
           </p>
-          <div className="text-[10px] md:text-youtube-small text-muted-foreground flex items-center gap-1 flex-wrap">
+          <div className="text-xs text-muted-foreground flex items-center gap-1 flex-wrap">
             {views !== undefined && <span>{formattedViews}</span>}
             {views !== undefined && <span>•</span>}
             <span>{formattedDate}</span>

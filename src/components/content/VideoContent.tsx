@@ -35,7 +35,7 @@ export const VideoContent = ({ videos, isLoading }: VideoContentProps) => {
 
     return (
       <div className="space-y-4">
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-1 gap-4 px-2">
           {displayVideos.map((video, index) => (
             <div key={video.id} className="w-full">
               <VideoGrid
@@ -69,7 +69,7 @@ export const VideoContent = ({ videos, isLoading }: VideoContentProps) => {
                   .sort((a, b) => (b.views || 0) - (a.views || 0))
                   .slice(0, 3)
                   .map((video) => (
-                    <div key={video.id} className="w-[calc(100vw-140px)] min-w-[240px] flex-shrink-0">
+                    <div key={video.id} className="w-full min-w-[calc(100vw-32px)] flex-shrink-0">
                       <VideoGrid
                         videos={[video]}
                         maxVideos={1}
