@@ -11,7 +11,10 @@ import { useVideos } from "@/hooks/video/useVideos";
 import { toast } from "sonner";
 
 export const WelcomeAnimation = () => {
-  const [show, setShow] = useState(true);
+  const [show, setShow] = useState(() => {
+    // Check if this is the first visit in this session
+    return !sessionStorage.getItem('hasVisited');
+  });
   const [searchParams] = useSearchParams();
   const skipWelcome = searchParams.get("skipWelcome") === "true";
 
@@ -29,6 +32,7 @@ export const WelcomeAnimation = () => {
   useEffect(() => {
     if (skipWelcome) {
       setShow(false);
+      sessionStorage.setItem('hasVisited', 'true');
       return;
     }
 
@@ -38,15 +42,20 @@ export const WelcomeAnimation = () => {
     }
 
     // Only hide welcome animation when both welcome data and videos are fully loaded
-    if (!isWelcomeLoading && !isVideosLoading && !isVideosFetching) {
+    if (!isWelcomeLoading && !isVideosLoading && !isVideosFetching && show) {
       console.log("All content loaded, hiding welcome animation...");
       const timer = setTimeout(() => {
         setShow(false);
-      }, 1500); // Increased slightly to ensure smooth transition
+        // Mark that the user has visited in this session
+        sessionStorage.setItem('hasVisited', 'true');
+      }, 1500);
 
       return () => clearTimeout(timer);
     }
-  }, [skipWelcome, isWelcomeLoading, isVideosLoading, isVideosFetching, isError, videosError]);
+  }, [skipWelcome, isWelcomeLoading, isVideosLoading, isVideosFetching, isError, videosError, show]);
+
+  // If user has already visited in this session, don't show the animation
+  if (!show) return null;
 
   return (
     <AnimatePresence>
