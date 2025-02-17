@@ -49,11 +49,14 @@ serve(async (req) => {
 
     // Reset quota if we've passed the reset time
     if (now >= new Date(quotaData.quota_reset_at)) {
+      const nextResetDate = new Date(now);
+      nextResetDate.setUTCHours(24, 0, 0, 0); // Set to next midnight UTC
+
       const { error: resetError } = await supabase
         .from('api_quota_tracking')
         .update({ 
           quota_remaining: 10000,
-          quota_reset_at: new Date(now.getTime() + 24 * 60 * 60 * 1000),
+          quota_reset_at: nextResetDate.toISOString(),
           updated_at: now.toISOString()
         })
         .eq('api_name', 'youtube');
@@ -62,12 +65,29 @@ serve(async (req) => {
         console.error('Error resetting quota:', resetError);
         throw new Error('Failed to reset API quota');
       }
-    } else if (quotaData.quota_remaining <= 0) {
+
+      // Fetch updated quota data
+      const { data: updatedQuota, error: updateError } = await supabase
+        .from('api_quota_tracking')
+        .select('quota_remaining, quota_reset_at')
+        .eq('api_name', 'youtube')
+        .single();
+
+      if (updateError) {
+        throw new Error('Failed to fetch updated quota');
+      }
+
+      quotaData.quota_remaining = updatedQuota.quota_remaining;
+      quotaData.quota_reset_at = updatedQuota.quota_reset_at;
+    }
+
+    if (quotaData.quota_remaining <= 0) {
+      const resetTime = new Date(quotaData.quota_reset_at);
       return new Response(
         JSON.stringify({
           success: false,
           error: 'YouTube API quota exceeded',
-          message: `Daily quota exceeded. Service will resume at ${new Date(quotaData.quota_reset_at).toLocaleString()}`,
+          message: `Daily quota exceeded. Service will resume at ${resetTime.toLocaleString()} UTC`,
           quota_reset_at: quotaData.quota_reset_at
         }),
         { 
