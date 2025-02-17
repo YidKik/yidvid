@@ -95,7 +95,7 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
         <div className="flex items-center gap-2 mb-4">
           <Flame className="w-5 h-5 text-primary animate-pulse" />
           <h2 className="text-base md:text-xl font-bold text-[#333333]">
-            Trending Now
+            Featured Videos
           </h2>
         </div>
 
