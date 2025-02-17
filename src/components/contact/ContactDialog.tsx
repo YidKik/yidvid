@@ -73,7 +73,7 @@ export const ContactDialog = () => {
             How can we help you today? Choose a category below and send us your message.
           </DialogDescription>
         </DialogHeader>
-        <div className="overflow-y-auto max-h-[calc(100vh-140px)] md:max-h-[500px] p-3 md:p-4">
+        <div className="p-3 md:p-4">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3 md:space-y-4">
               <CategorySelect form={form} />
