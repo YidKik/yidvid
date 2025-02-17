@@ -10,6 +10,7 @@ export interface ProfilesTable {
     username: string | null;
     avatar_url: string | null;
     welcome_name: string | null;
+    name: string | null;
   };
   Insert: {
     created_at?: string;
@@ -21,6 +22,7 @@ export interface ProfilesTable {
     username?: string | null;
     avatar_url?: string | null;
     welcome_name?: string | null;
+    name?: string | null;
   };
   Update: {
     created_at?: string;
@@ -32,6 +34,7 @@ export interface ProfilesTable {
     username?: string | null;
     avatar_url?: string | null;
     welcome_name?: string | null;
+    name?: string | null;
   };
   Relationships: [];
 }
