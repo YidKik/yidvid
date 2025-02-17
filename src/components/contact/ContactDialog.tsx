@@ -66,22 +66,22 @@ export const ContactDialog = () => {
           <MessageSquare className="h-3.5 w-3.5 md:h-5 md:w-5" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="w-[min(calc(100%-2rem),500px)] p-0 bg-[#333333] text-white border-gray-600 rounded-lg mx-auto my-4 overflow-hidden">
-        <DialogHeader className="p-4 md:p-6 border-b border-gray-600">
-          <DialogTitle className="text-lg md:text-xl text-white">Contact Us</DialogTitle>
-          <DialogDescription className="text-sm md:text-base text-gray-300 mt-1">
+      <DialogContent className="w-[min(calc(100%-2rem),400px)] p-0 bg-[#333333] text-white border-gray-600 rounded-lg mx-auto my-2 md:my-4 overflow-hidden">
+        <DialogHeader className="p-3 md:p-6 border-b border-gray-600">
+          <DialogTitle className="text-base md:text-xl text-white">Contact Us</DialogTitle>
+          <DialogDescription className="text-xs md:text-base text-gray-300 mt-1">
             How can we help you today? Choose a category below and send us your message.
           </DialogDescription>
         </DialogHeader>
-        <div className="overflow-y-auto max-h-[calc(100vh-180px)] md:max-h-[600px] p-4 md:p-6">
+        <div className="overflow-y-auto max-h-[calc(100vh-140px)] md:max-h-[600px] p-3 md:p-6">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 md:space-y-6">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3 md:space-y-6">
               <CategorySelect form={form} />
               <ContactFormFields form={form} />
-              <div className="pt-2 md:pt-4">
+              <div className="pt-1 md:pt-4">
                 <Button 
                   type="submit" 
-                  className="w-full h-9 md:h-10 text-sm md:text-base bg-primary hover:bg-primary-hover transition-colors"
+                  className="w-full h-8 md:h-10 text-xs md:text-base bg-primary hover:bg-primary-hover transition-colors"
                 >
                   Send Message
                 </Button>
