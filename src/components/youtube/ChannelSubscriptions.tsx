@@ -1,9 +1,18 @@
+
 import { useState, useRef, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Youtube, ArrowLeft, ArrowRight } from "lucide-react";
+import { Youtube, ArrowLeft, ArrowRight, UserMinus, Bell } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface ChannelSubscription {
   channel: {
@@ -27,7 +36,6 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
 
     checkAuth();
 
-    // Subscribe to auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setIsAuthenticated(!!session);
     });
@@ -109,86 +117,118 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
 
   if (!isAuthenticated) {
     return (
-      <div className="flex items-center justify-center h-40">
-        <p className="text-muted-foreground">Please sign in to manage your subscriptions.</p>
-      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>Channel Subscriptions</CardTitle>
+          <CardDescription>
+            Please sign in to manage your subscriptions.
+          </CardDescription>
+        </CardHeader>
+      </Card>
     );
   }
 
   if (!subscriptions) {
     return (
-      <div className="flex items-center justify-center h-40">
-        <p className="text-muted-foreground">Loading subscriptions...</p>
-      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>Channel Subscriptions</CardTitle>
+          <CardContent className="mt-4">
+            <div className="flex items-center justify-center h-32">
+              <p className="text-muted-foreground">Loading subscriptions...</p>
+            </div>
+          </CardContent>
+        </CardHeader>
+      </Card>
     );
   }
 
   return (
-    <div className="space-y-4">
-      <h3 className="text-lg font-semibold">Channel Subscriptions</h3>
-      {subscriptions && subscriptions.length > 0 ? (
-        <div className="relative">
-          {showLeftArrow && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white/90 shadow-md"
-              onClick={() => scroll('left')}
-            >
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
-          )}
-          {showRightArrow && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white/90 shadow-md"
-              onClick={() => scroll('right')}
-            >
-              <ArrowRight className="h-4 w-4" />
-            </Button>
-          )}
-          <div 
-            ref={scrollContainerRef}
-            onScroll={handleScroll}
-            className="flex overflow-x-auto gap-4 px-2 pb-4 scrollbar-hide scroll-smooth"
-          >
-            {subscriptions.map((subscription) => (
-              <div
-                key={subscription.channel.channel_id}
-                className="flex-shrink-0 w-[200px] p-4 rounded-lg bg-[#F8F8F8] hover:bg-[#F1F1F1] transition-colors relative group flex flex-col h-[280px]"
+    <Card className="w-full">
+      <CardHeader>
+        <CardTitle className="text-2xl font-semibold flex items-center gap-2">
+          <Bell className="w-5 h-5 text-primary" />
+          Channel Subscriptions
+        </CardTitle>
+        <CardDescription>
+          Manage your channel subscriptions and stay updated with your favorite content creators
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        {subscriptions && subscriptions.length > 0 ? (
+          <div className="relative">
+            {showLeftArrow && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white/90 shadow-md rounded-full"
+                onClick={() => scroll('left')}
               >
-                <div className="flex-grow flex flex-col items-center">
-                  {subscription.channel.thumbnail_url ? (
-                    <img
-                      src={subscription.channel.thumbnail_url}
-                      alt={subscription.channel.title}
-                      className="w-20 h-20 rounded-full mx-auto mb-3"
-                    />
-                  ) : (
-                    <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
-                      <Youtube className="w-10 h-10 text-primary" />
+                <ArrowLeft className="h-4 w-4" />
+              </Button>
+            )}
+            {showRightArrow && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white/90 shadow-md rounded-full"
+                onClick={() => scroll('right')}
+              >
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            )}
+            <ScrollArea className="w-full">
+              <div 
+                ref={scrollContainerRef}
+                onScroll={handleScroll}
+                className="flex gap-4 pb-4 px-1 overflow-x-auto scrollbar-hide scroll-smooth"
+              >
+                {subscriptions.map((subscription) => (
+                  <div
+                    key={subscription.channel.channel_id}
+                    className="flex-shrink-0 w-[220px] bg-white rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200 group"
+                  >
+                    <div className="p-4 flex flex-col h-[260px]">
+                      <div className="relative mb-3 w-full aspect-square rounded-lg overflow-hidden bg-gray-50 flex items-center justify-center">
+                        {subscription.channel.thumbnail_url ? (
+                          <img
+                            src={subscription.channel.thumbnail_url}
+                            alt={subscription.channel.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                          />
+                        ) : (
+                          <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                            <Youtube className="w-8 h-8 text-primary" />
+                          </div>
+                        )}
+                      </div>
+                      <h4 className="font-medium text-gray-900 line-clamp-2 mb-3 flex-grow">
+                        {subscription.channel.title}
+                      </h4>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleUnsubscribe(subscription.channel.channel_id)}
+                        className="w-full text-red-600 hover:text-red-700 hover:bg-red-50 gap-2"
+                      >
+                        <UserMinus className="w-4 h-4" />
+                        Unsubscribe
+                      </Button>
                     </div>
-                  )}
-                  <h4 className="text-sm font-medium text-center text-[#333333] line-clamp-2 mb-3">
-                    {subscription.channel.title}
-                  </h4>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleUnsubscribe(subscription.channel.channel_id)}
-                  className="w-full text-destructive hover:text-destructive hover:bg-destructive/10 mt-auto"
-                >
-                  Unsubscribe
-                </Button>
+                  </div>
+                ))}
               </div>
-            ))}
+            </ScrollArea>
           </div>
-        </div>
-      ) : (
-        <p className="text-muted-foreground">You are not subscribed to any channels.</p>
-      )}
-    </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center py-12 px-4">
+            <Youtube className="w-12 h-12 text-gray-300 mb-4" />
+            <p className="text-muted-foreground text-center">
+              You are not subscribed to any channels yet.
+            </p>
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 };
