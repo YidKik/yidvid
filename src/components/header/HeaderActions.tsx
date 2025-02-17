@@ -12,7 +12,7 @@ interface HeaderActionsProps {
   session: any;
   onSearchExpand: () => void;
   onAuthOpen: () => void;
-  onLogout: () => Promise<void>; // Add the onLogout prop
+  onLogout: () => Promise<void>;
 }
 
 export const HeaderActions = ({
@@ -20,11 +20,11 @@ export const HeaderActions = ({
   isSearchExpanded,
   onSearchExpand,
   onAuthOpen,
-  onLogout, // Add onLogout to destructured props
+  onLogout,
   session
 }: HeaderActionsProps) => {
   return (
-    <div className="flex items-center gap-1 md:gap-2">
+    <div className="flex items-center gap-1 md:gap-2 ml-auto"> {/* Added ml-auto here */}
       {isMobile && !isSearchExpanded ? (
         <AnimatePresence>
           <motion.div
