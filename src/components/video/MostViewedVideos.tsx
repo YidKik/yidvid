@@ -35,11 +35,11 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
     );
   };
 
-  // Auto-sliding effect for mobile
+  // Auto-sliding effect (now works on all devices)
   useEffect(() => {
     let intervalId: NodeJS.Timeout;
 
-    if (isMobile && isAutoPlaying && videos.length > videosPerPage) {
+    if (isAutoPlaying && videos.length > videosPerPage) {
       intervalId = setInterval(() => {
         handleNext();
       }, AUTO_SLIDE_INTERVAL);
@@ -50,7 +50,7 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
         clearInterval(intervalId);
       }
     };
-  }, [isMobile, isAutoPlaying, currentIndex, videos.length]);
+  }, [isAutoPlaying, currentIndex, videos.length]);
 
   // Pause auto-sliding when user interacts with navigation
   const handleManualNavigation = (action: () => void) => {
