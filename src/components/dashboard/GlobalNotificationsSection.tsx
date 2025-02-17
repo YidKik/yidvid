@@ -48,15 +48,15 @@ export const GlobalNotificationsSection = () => {
 
   const createNotification = useMutation({
     mutationFn: async () => {
-      const { data: session } = await supabase.auth.getSession();
-      if (!session?.user?.id) throw new Error("Not authenticated");
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (!sessionData?.session?.user?.id) throw new Error("Not authenticated");
 
       const { error } = await supabase.from("global_notifications").insert({
         message,
         type,
         start_date: startDate || new Date().toISOString(),
         end_date: endDate || null,
-        created_by: session.user.id,
+        created_by: sessionData.session.user.id,
       });
 
       if (error) throw error;

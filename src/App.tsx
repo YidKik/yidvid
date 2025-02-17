@@ -1,5 +1,4 @@
-
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation, BrowserRouter } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import Index from "@/pages/Index";
@@ -20,13 +19,13 @@ import CategoriesPage from "@/pages/admin/CategoriesPage";
 import RequestsPage from "@/pages/admin/RequestsPage";
 import ContactRequestsPage from "@/pages/admin/ContactRequestsPage";
 import ReportedVideosPage from "@/pages/admin/ReportedVideosPage";
+import NotificationsPage from "@/pages/admin/NotificationsPage";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ColorProvider } from "@/contexts/ColorContext";
 import { PlaybackProvider } from "@/contexts/PlaybackContext";
 import { useState, useEffect } from "react";
 import { getPageTitle } from "@/utils/pageTitle";
 
-// Create a client
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -70,6 +69,7 @@ function AppRoutes() {
       <Route path="/admin/requests" element={<RequestsPage />} />
       <Route path="/admin/contact-requests" element={<ContactRequestsPage />} />
       <Route path="/admin/reported-videos" element={<ReportedVideosPage />} />
+      <Route path="/admin/notifications" element={<NotificationsPage />} />
     </Routes>
   );
 }
