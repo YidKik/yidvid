@@ -12,6 +12,7 @@ interface HeaderActionsProps {
   session: any;
   onSearchExpand: () => void;
   onAuthOpen: () => void;
+  onLogout: () => Promise<void>; // Add the onLogout prop
 }
 
 export const HeaderActions = ({
@@ -19,6 +20,7 @@ export const HeaderActions = ({
   isSearchExpanded,
   onSearchExpand,
   onAuthOpen,
+  onLogout, // Add onLogout to destructured props
   session
 }: HeaderActionsProps) => {
   return (
@@ -52,9 +54,7 @@ export const HeaderActions = ({
               </Button>
             ) : (
               <Button
-                onClick={async () => {
-                  await handleLogout();
-                }}
+                onClick={onLogout}
                 variant="ghost"
                 size="icon"
                 className="hover:bg-gray-100 rounded-full w-8 h-8 p-1.5 flex items-center justify-center"
@@ -68,7 +68,7 @@ export const HeaderActions = ({
         <>
           <ContactDialog />
           {session && <NotificationsMenu session={session} onMarkAsRead={async () => {}} />}
-          {session && <UserMenu onLogout={async () => {}} />}
+          {session && <UserMenu onLogout={onLogout} />}
         </>
       )}
 
