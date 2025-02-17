@@ -29,9 +29,9 @@ export const VideoContent = ({ videos, isLoading }: VideoContentProps) => {
     <div className="space-y-3 md:space-y-6">
       {isMobile ? (
         <div className="overflow-x-auto scrollbar-hide pb-4">
-          <div className="inline-flex gap-2 px-2 min-w-full">
+          <div className="inline-flex gap-1 px-2 min-w-full">
             {videos?.map((video) => (
-              <div key={video.id} className="w-[calc(50%-4px)] flex-shrink-0 first:ml-0">
+              <div key={video.id} className="w-[calc(50%-2px)] flex-shrink-0 first:ml-0">
                 <VideoGrid
                   videos={[video]}
                   maxVideos={1}
