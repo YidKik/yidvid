@@ -57,9 +57,9 @@ export const VideoContent = ({ videos, isLoading }: VideoContentProps) => {
         <div className="mt-3">
           <h2 className="text-base font-semibold mb-2 px-2">Most Viewed</h2>
           <div className="overflow-x-auto scrollbar-hide">
-            <div className="flex gap-2 px-2 pb-2">
-              {sortedVideos.slice(0, 4).map((video) => (
-                <div key={video.id} className="w-[160px] flex-shrink-0">
+            <div className="flex gap-3 px-2 pb-2">
+              {sortedVideos.slice(0, 3).map((video) => (
+                <div key={video.id} className="w-[calc(100vw-140px)] min-w-[240px] flex-shrink-0">
                   <VideoGrid
                     videos={[video]}
                     maxVideos={1}
