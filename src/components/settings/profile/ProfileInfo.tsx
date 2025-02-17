@@ -24,11 +24,11 @@ export const ProfileInfo = ({ profile }: ProfileInfoProps) => {
   };
 
   return (
-    <div className="mt-4 space-y-4">
-      <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
-        <div>
-          <p className="text-sm font-medium">User ID</p>
-          <p className="text-xs text-muted-foreground">
+    <div className="mt-4 space-y-4 w-full">
+      <div className="flex items-center justify-between p-4 bg-muted rounded-lg min-h-[80px]">
+        <div className="flex-1 mr-4">
+          <p className="text-sm font-medium mb-1">User ID</p>
+          <p className="text-xs text-muted-foreground break-all">
             {profile?.id || "No ID available"}
           </p>
         </div>
@@ -37,16 +37,17 @@ export const ProfileInfo = ({ profile }: ProfileInfoProps) => {
             variant="ghost"
             size="icon"
             onClick={copyUserId}
+            className="h-8 w-8 flex-shrink-0"
           >
-            <Copy className="w-4 h-4" />
+            <Copy className="h-3.5 w-3.5" />
           </Button>
         )}
       </div>
       {profile?.username && (
-        <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
-          <div>
-            <p className="text-sm font-medium">Username</p>
-            <p className="text-xs text-muted-foreground">
+        <div className="flex items-center justify-between p-4 bg-muted rounded-lg">
+          <div className="flex-1 mr-4">
+            <p className="text-sm font-medium mb-1">Username</p>
+            <p className="text-xs text-muted-foreground break-all">
               {profile.username}
             </p>
           </div>
@@ -54,8 +55,9 @@ export const ProfileInfo = ({ profile }: ProfileInfoProps) => {
             variant="ghost"
             size="icon"
             onClick={copyUsername}
+            className="h-8 w-8 flex-shrink-0"
           >
-            <Copy className="w-4 h-4" />
+            <Copy className="h-3.5 w-3.5" />
           </Button>
         </div>
       )}
