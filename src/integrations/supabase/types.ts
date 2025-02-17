@@ -503,6 +503,36 @@ export type Database = {
           },
         ]
       }
+      parental_locks: {
+        Row: {
+          created_at: string
+          id: string
+          is_locked: boolean | null
+          lock_type: Database["public"]["Enums"]["lock_type"]
+          pin: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_locked?: boolean | null
+          lock_type: Database["public"]["Enums"]["lock_type"]
+          pin: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_locked?: boolean | null
+          lock_type?: Database["public"]["Enums"]["lock_type"]
+          pin?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -1046,6 +1076,7 @@ export type Database = {
     }
     Enums: {
       interaction_type_enum: "view" | "like" | "dislike" | "save"
+      lock_type: "channel_control"
       music_genre:
         | "pop"
         | "rock"
