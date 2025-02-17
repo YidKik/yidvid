@@ -84,6 +84,10 @@ export default function ReportedVideosPage() {
     navigate(`/video/${videoId}`);
   };
 
+  const openInNewTab = (videoId: string) => {
+    window.open(`/video/${videoId}`, '_blank');
+  };
+
   return (
     <div className="container mx-auto py-8 px-4">
       <BackButton />
@@ -107,7 +111,7 @@ export default function ReportedVideosPage() {
                 <TableHead>Reporter Email</TableHead>
                 <TableHead>Message</TableHead>
                 <TableHead>Reported</TableHead>
-                <TableHead className="w-[100px]">Actions</TableHead>
+                <TableHead className="w-[160px]">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -120,13 +124,24 @@ export default function ReportedVideosPage() {
                     {formatDistanceToNow(new Date(report.created_at), { addSuffix: true })}
                   </TableCell>
                   <TableCell>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={() => navigateToVideo(report.youtube_videos?.video_id || "")}
-                    >
-                      <ExternalLink className="h-4 w-4" />
-                    </Button>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={() => navigateToVideo(report.youtube_videos?.video_id || "")}
+                        title="View in app"
+                      >
+                        <ExternalLink className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={() => openInNewTab(report.youtube_videos?.video_id || "")}
+                        title="Open in new tab"
+                      >
+                        <ExternalLink className="h-4 w-4 rotate-45" />
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}
