@@ -1,173 +1,22 @@
+
 import { useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
 import { VideoPlayer } from "@/components/video/VideoPlayer";
 import { VideoInfo } from "@/components/video/VideoInfo";
-import { CommentForm } from "@/components/comments/CommentForm";
-import { CommentList } from "@/components/comments/CommentList";
 import { RelatedVideos } from "@/components/video/RelatedVideos";
-import { VideoCommentsTable } from "@/integrations/supabase/types/video-comments";
 import { BackButton } from "@/components/navigation/BackButton";
 import { VideoInteractions } from "@/components/video/VideoInteractions";
 import { ReportVideoDialog } from "@/components/video/ReportVideoDialog";
-import { useEffect } from "react";
-
-type Comment = VideoCommentsTable["Row"] & {
-  profiles: {
-    email: string;
-  } | null;
-};
+import { useVideoQuery } from "@/components/video/details/VideoQuery";
+import { VideoComments } from "@/components/video/details/VideoComments";
+import { useRelatedVideosQuery } from "@/components/video/details/RelatedVideosQuery";
+import { VideoHistory } from "@/components/video/details/VideoHistory";
 
 const VideoDetails = () => {
   const { id } = useParams<{ id: string }>();
+  if (!id) return <div className="p-4">Video ID not provided</div>;
 
-  const { data: video, isLoading: isLoadingVideo } = useQuery({
-    queryKey: ["video", id],
-    queryFn: async () => {
-      if (!id) throw new Error("No video ID provided");
-
-      console.log("Attempting to fetch video with ID:", id);
-
-      // First try to find by video_id
-      const { data: videoByVideoId, error: videoByVideoIdError } = await supabase
-        .from("youtube_videos")
-        .select("*, youtube_channels(thumbnail_url)")
-        .eq("video_id", id)
-        .maybeSingle();
-
-      if (videoByVideoIdError) {
-        console.error("Error fetching video by video_id:", videoByVideoIdError);
-        throw videoByVideoIdError;
-      }
-
-      if (videoByVideoId) {
-        console.log("Found video by video_id:", videoByVideoId);
-        return videoByVideoId;
-      }
-
-      // Check if the id is a valid UUID before querying
-      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-      if (!uuidRegex.test(id)) {
-        throw new Error("Invalid video ID format");
-      }
-
-      // If not found by video_id, try UUID
-      const { data: videoByUuid, error: videoByUuidError } = await supabase
-        .from("youtube_videos")
-        .select("*, youtube_channels(thumbnail_url)")
-        .eq("id", id)
-        .maybeSingle();
-
-      if (videoByUuidError) {
-        console.error("Error fetching video by UUID:", videoByUuidError);
-        throw videoByUuidError;
-      }
-
-      if (!videoByUuid) {
-        throw new Error("Video not found");
-      }
-
-      console.log("Found video by UUID:", videoByUuid);
-      return videoByUuid;
-    },
-    retry: false,
-  });
-
-  // Add video to watch history when it loads
-  useEffect(() => {
-    const addToHistory = async () => {
-      if (!video?.id) return;
-
-      const { data: session } = await supabase.auth.getSession();
-      if (!session?.session?.user) return;
-
-      const { error } = await supabase
-        .from("video_history")
-        .insert({
-          video_id: video.id,
-          user_id: session.session.user.id,
-        });
-
-      if (error) {
-        console.error("Error adding video to history:", error);
-      }
-    };
-
-    addToHistory();
-  }, [video?.id]);
-
-  const { data: channelVideos } = useQuery({
-    queryKey: ["channel-videos", video?.channel_id],
-    enabled: !!video?.channel_id,
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("youtube_videos")
-        .select("*")
-        .eq("channel_id", video.channel_id)
-        .neq("id", video.id)
-        .order("uploaded_at", { ascending: false })
-        .limit(12);
-
-      if (error) throw error;
-      return data;
-    },
-  });
-
-  const { data: comments, refetch: refetchComments } = useQuery({
-    queryKey: ["video-comments", video?.id],
-    enabled: !!video?.id,
-    queryFn: async () => {
-      if (!video?.id) throw new Error("No video UUID available");
-
-      const { data, error } = await supabase
-        .from("video_comments")
-        .select(`
-          *,
-          profiles (
-            email
-          ),
-          youtube_videos (
-            title
-          )
-        `)
-        .eq("video_id", video.id)
-        .order("created_at", { ascending: false });
-
-      if (error) throw error;
-      return data as Comment[];
-    },
-  });
-
-  const handleSubmitComment = async (content: string) => {
-    const session = await supabase.auth.getSession();
-    if (!session.data.session) {
-      toast("Error", {
-        description: "You must be logged in to comment"
-      });
-      return;
-    }
-
-    if (!video?.id) {
-      toast("Error", {
-        description: "Cannot add comment: video not found"
-      });
-      return;
-    }
-
-    const { error } = await supabase.from("video_comments").insert({
-      video_id: video.id,
-      content,
-      user_id: session.data.session.user.id,
-    });
-
-    if (error) {
-      console.error("Error submitting comment:", error);
-      throw error;
-    }
-
-    await refetchComments();
-  };
+  const { data: video, isLoading: isLoadingVideo } = useVideoQuery(id);
+  const { data: channelVideos } = useRelatedVideosQuery(video?.channel_id ?? "", video?.id ?? "");
 
   if (isLoadingVideo) {
     return <div className="p-4">Loading...</div>;
@@ -180,6 +29,8 @@ const VideoDetails = () => {
   return (
     <div className="container mx-auto p-4 mt-16">
       <BackButton />
+      <VideoHistory videoId={video.id} />
+      
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
           <VideoPlayer videoId={video.video_id} />
@@ -190,11 +41,7 @@ const VideoDetails = () => {
           
           <VideoInteractions videoId={video.id} />
           
-          <div className="mt-8">
-            <h2 className="text-xl font-semibold mb-4">Comments</h2>
-            <CommentForm onSubmit={handleSubmitComment} />
-            <CommentList comments={comments} />
-          </div>
+          <VideoComments videoId={video.id} />
 
           <div className="mt-8 border-t pt-8">
             <VideoInfo
