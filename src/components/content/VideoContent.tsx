@@ -1,3 +1,4 @@
+
 import { VideoGrid } from "@/components/VideoGrid";
 import { MostViewedVideos } from "@/components/video/MostViewedVideos";
 import { ChannelsGrid } from "@/components/youtube/ChannelsGrid";
@@ -5,6 +6,7 @@ import { useIsMobile } from "@/hooks/useIsMobile";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { toast } from "sonner";
+import { VideoGridPagination } from "@/components/video/VideoGridPagination";
 
 interface Video {
   id: string;
@@ -25,12 +27,19 @@ interface VideoContentProps {
 export const VideoContent = ({ videos, isLoading }: VideoContentProps) => {
   const isMobile = useIsMobile();
   const [showMoreMobile, setShowMoreMobile] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const videosPerPage = 6; // 2 columns × 3 rows
+  
   const sortedVideos = videos ? [...videos].sort((a, b) => 
     new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime()
   ) : [];
 
   if (isMobile) {
-    const displayVideos = showMoreMobile ? sortedVideos : sortedVideos.slice(0, 6);
+    const totalPages = Math.ceil(sortedVideos.length / videosPerPage);
+    const startIndex = (currentPage - 1) * videosPerPage;
+    const displayVideos = showMoreMobile 
+      ? sortedVideos.slice(startIndex, startIndex + videosPerPage)
+      : sortedVideos.slice(0, videosPerPage);
 
     return (
       <div className="space-y-4">
@@ -42,16 +51,20 @@ export const VideoContent = ({ videos, isLoading }: VideoContentProps) => {
           className="px-2"
         />
 
-        {sortedVideos.length > 6 && !showMoreMobile && (
-          <div className="flex justify-center mt-4">
-            <Button 
-              variant="outline" 
-              onClick={() => setShowMoreMobile(true)}
-              className="w-auto px-4 h-7 text-xs"
-            >
-              See More
-            </Button>
-          </div>
+        {sortedVideos.length > 6 && (
+          <VideoGridPagination
+            showAll={showMoreMobile}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            filteredVideosLength={sortedVideos.length}
+            maxVideos={6}
+            isMobile={true}
+            onShowAll={() => {
+              setShowMoreMobile(true);
+              setCurrentPage(1);
+            }}
+            onPageChange={(page) => setCurrentPage(page)}
+          />
         )}
         
         {sortedVideos.length > 0 && (
