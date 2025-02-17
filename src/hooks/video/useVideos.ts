@@ -38,56 +38,10 @@ export const useVideos = () => {
           const message = `YouTube API quota exceeded. Service will resume at ${resetTime.toLocaleString()}`;
           console.warn(message);
           toast.warning(message);
-          // Continue to fetch cached videos
-        } else {
-          // Only try to fetch new videos if we have quota
-          try {
-            const { data: edgeFunctionData, error: edgeFunctionError } = await supabase.functions.invoke('fetch-youtube-videos');
-            
-            if (edgeFunctionError) {
-              console.error('Edge function error:', edgeFunctionError);
-              
-              // Parse error response if it's a string
-              let errorBody;
-              try {
-                errorBody = typeof edgeFunctionError.message === 'string' 
-                  ? JSON.parse(edgeFunctionError.message)
-                  : edgeFunctionError;
-              } catch (e) {
-                console.error('Error parsing error message:', e);
-              }
-
-              // Check for quota exceeded error
-              if (edgeFunctionError.status === 429) {
-                const resetTime = errorBody?.quota_reset_at 
-                  ? new Date(errorBody.quota_reset_at)
-                  : null;
-                  
-                if (resetTime) {
-                  const message = `YouTube quota exceeded. Service will resume at ${resetTime.toLocaleString()}`;
-                  console.warn(message);
-                  toast.warning(message);
-                } else {
-                  toast.warning('YouTube API quota exceeded. Please try again later.');
-                }
-              } else {
-                throw edgeFunctionError;
-              }
-            }
-
-            if (edgeFunctionData?.error) {
-              console.error('Edge function response error:', edgeFunctionData.error);
-              throw new Error(edgeFunctionData.error);
-            }
-          } catch (error: any) {
-            console.error('Failed to invoke edge function:', error);
-            if (error.status !== 429) { // Don't throw for quota errors
-              throw error;
-            }
-          }
+          // Continue to fetch cached videos from database
         }
 
-        // Always fetch from database regardless of edge function result
+        // Always fetch from database regardless of quota status
         const { data: dbData, error: dbError } = await supabase
           .from("youtube_videos")
           .select("*")
@@ -115,7 +69,39 @@ export const useVideos = () => {
           uploadedAt: video.uploaded_at
         }));
 
-        console.log(`Successfully fetched ${formattedData.length} videos`);
+        console.log(`Successfully fetched ${formattedData.length} videos from database`);
+        
+        // Only try to fetch new videos if we have quota
+        if (!quotaData || quotaData.quota_remaining > 0) {
+          try {
+            const { error: edgeFunctionError } = await supabase.functions.invoke('fetch-youtube-videos');
+            
+            if (edgeFunctionError) {
+              // Parse error response if it's a quota exceeded error
+              if (edgeFunctionError.status === 429) {
+                const errorBody = JSON.parse(edgeFunctionError.message);
+                const resetTime = errorBody?.quota_reset_at 
+                  ? new Date(errorBody.quota_reset_at)
+                  : null;
+                  
+                if (resetTime) {
+                  const message = `YouTube quota exceeded. Service will resume at ${resetTime.toLocaleString()}`;
+                  console.warn(message);
+                  toast.warning(message);
+                }
+              } else {
+                console.error('Edge function error:', edgeFunctionError);
+              }
+            }
+          } catch (error: any) {
+            // Don't throw on quota errors, just log them
+            if (error.status === 429) {
+              console.warn('YouTube API quota exceeded:', error);
+            } else {
+              console.error('Failed to invoke edge function:', error);
+            }
+          }
+        }
         
         // Cache the data for the video grid
         queryClient.setQueryData(["youtube_videos_grid"], formattedData);
