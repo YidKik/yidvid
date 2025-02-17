@@ -8,14 +8,17 @@ import { AdminDashboardCards } from "@/components/dashboard/AdminDashboardCards"
 import { BackButton } from "@/components/navigation/BackButton";
 
 export default function Dashboard() {
-  const { data: session } = useQuery({
+  // First query the session
+  const { data: session, isLoading: isSessionLoading } = useQuery({
     queryKey: ["session"],
     queryFn: async () => {
       const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error("No session found");
       return session;
     },
   });
 
+  // Then query the profile with better error handling
   const { data: profile, isLoading: isProfileLoading, error: profileError } = useQuery({
     queryKey: ["profile", session?.user?.id],
     queryFn: async () => {
@@ -27,7 +30,7 @@ export default function Dashboard() {
         .from("profiles")
         .select("*")
         .eq("id", session.user.id)
-        .maybeSingle();
+        .single();
 
       if (error) {
         console.error("Error fetching profile:", error);
@@ -39,11 +42,14 @@ export default function Dashboard() {
       return data;
     },
     enabled: !!session?.user?.id,
+    retry: 1,
   });
 
-  const { data: stats } = useQuery({
+  // Query dashboard stats only if user is admin
+  const { data: stats, isLoading: isStatsLoading } = useQuery({
     queryKey: ["dashboard-stats"],
     queryFn: async () => {
+      console.log("Fetching dashboard stats...");
       const [channelsResponse, videosResponse, commentsResponse, usersResponse] = await Promise.all([
         supabase.from("youtube_channels").select("*", { count: "exact", head: true }),
         supabase.from("youtube_videos").select("*", { count: "exact", head: true }),
@@ -58,12 +64,15 @@ export default function Dashboard() {
         totalUsers: usersResponse.count || 0
       };
     },
-    enabled: profile?.is_admin === true
+    enabled: profile?.is_admin === true,
+    retry: 1,
   });
 
+  // Query notifications only if user is admin
   const { data: notifications } = useQuery({
     queryKey: ["admin-notifications"],
     queryFn: async () => {
+      console.log("Fetching admin notifications...");
       const { data: notificationsData, error } = await supabase
         .from("admin_notifications")
         .select("*")
@@ -80,7 +89,8 @@ export default function Dashboard() {
     refetchInterval: 30000,
   });
 
-  if (isProfileLoading) {
+  // Show loading state while checking session and profile
+  if (isSessionLoading || isProfileLoading || isStatsLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <Loader2 className="h-8 w-8 animate-spin" />
@@ -88,6 +98,7 @@ export default function Dashboard() {
     );
   }
 
+  // Show error state if profile fetch failed
   if (profileError) {
     return (
       <div className="container mx-auto py-8">
@@ -98,7 +109,9 @@ export default function Dashboard() {
     );
   }
 
+  // Explicitly check admin status
   const isAdmin = profile?.is_admin === true;
+  console.log("Is admin:", isAdmin, "Profile:", profile);
 
   return (
     <div className="container mx-auto py-12 space-y-8 px-4">
@@ -115,9 +128,12 @@ export default function Dashboard() {
       {isAdmin ? (
         <AdminDashboardCards stats={stats} notifications={notifications} />
       ) : (
-        <div className="text-center text-gray-500 mt-8 p-8 bg-gray-50 rounded-lg">
-          You do not have admin access to view additional dashboard features.
-        </div>
+        <Card className="p-8">
+          <div className="text-center text-gray-500">
+            You do not have admin access to view additional dashboard features. 
+            If you believe this is an error, please contact the system administrator.
+          </div>
+        </Card>
       )}
     </div>
   );
