@@ -23,15 +23,18 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
   const videosPerPage = isMobile ? 2 : 4;
   const AUTO_SLIDE_INTERVAL = 5000; // 5 seconds
 
+  // Sort videos by view count in descending order
+  const sortedVideos = [...videos].sort((a, b) => (b.views || 0) - (a.views || 0));
+
   const handleNext = () => {
     setCurrentIndex((prevIndex) => 
-      prevIndex + videosPerPage >= videos.length ? 0 : prevIndex + videosPerPage
+      prevIndex + videosPerPage >= sortedVideos.length ? 0 : prevIndex + videosPerPage
     );
   };
 
   const handlePrevious = () => {
     setCurrentIndex((prevIndex) => 
-      prevIndex - videosPerPage < 0 ? Math.max(0, videos.length - videosPerPage) : prevIndex - videosPerPage
+      prevIndex - videosPerPage < 0 ? Math.max(0, sortedVideos.length - videosPerPage) : prevIndex - videosPerPage
     );
   };
 
@@ -39,7 +42,7 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
   useEffect(() => {
     let intervalId: NodeJS.Timeout;
 
-    if (isAutoPlaying && videos.length > videosPerPage) {
+    if (isAutoPlaying && sortedVideos.length > videosPerPage) {
       intervalId = setInterval(() => {
         handleNext();
       }, AUTO_SLIDE_INTERVAL);
@@ -50,7 +53,7 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
         clearInterval(intervalId);
       }
     };
-  }, [isAutoPlaying, currentIndex, videos.length, videosPerPage]);
+  }, [isAutoPlaying, currentIndex, sortedVideos.length, videosPerPage]);
 
   // Pause auto-sliding when user interacts with navigation
   const handleManualNavigation = (action: () => void) => {
@@ -60,9 +63,9 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
     setTimeout(() => setIsAutoPlaying(true), 10000);
   };
 
-  const currentVideos = videos.slice(currentIndex, currentIndex + videosPerPage);
+  const currentVideos = sortedVideos.slice(currentIndex, currentIndex + videosPerPage);
 
-  if (!videos.length) return null;
+  if (!sortedVideos.length) return null;
 
   return (
     <div className="w-full max-w-[1200px] mx-auto px-1 md:px-4 mb-2 md:mb-6">
@@ -90,7 +93,7 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
         <ChevronRight 
           className="absolute right-0 md:right-1 top-[40%] -translate-y-1/2 z-10 w-4 h-4 md:w-5 md:h-5 text-primary hover:text-primary/80 cursor-pointer"
           onClick={() => handleManualNavigation(handleNext)}
-          style={{ opacity: currentIndex + videosPerPage >= videos.length ? 0.5 : 1 }}
+          style={{ opacity: currentIndex + videosPerPage >= sortedVideos.length ? 0.5 : 1 }}
         />
       </div>
     </div>
