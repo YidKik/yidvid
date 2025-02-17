@@ -1,3 +1,4 @@
+
 import { Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -31,7 +32,7 @@ export const NotificationsMenu = ({ session, onMarkAsRead }: NotificationsMenuPr
       }
 
       try {
-        // Fetch notifications first as they don't depend on quota
+        // Fetch notifications with video details
         const { data: notificationsData, error: notificationsError } = await supabase
           .from("video_notifications")
           .select(`
@@ -49,24 +50,6 @@ export const NotificationsMenu = ({ session, onMarkAsRead }: NotificationsMenuPr
         if (notificationsError) {
           console.error("Error fetching notifications:", notificationsError);
           throw notificationsError;
-        }
-
-        // Check quota status separately - this won't block notifications
-        try {
-          const { data: quotaData } = await supabase
-            .from('api_quota_tracking')
-            .select('quota_remaining, quota_reset_at')
-            .eq('api_name', 'youtube')
-            .single();
-
-          if (quotaData && quotaData.quota_remaining <= 0) {
-            const resetTime = new Date(quotaData.quota_reset_at);
-            console.warn(`YouTube API quota exceeded. Resets at ${resetTime.toLocaleString()}`);
-            // Removed the toast notification here
-          }
-        } catch (quotaError) {
-          // Don't throw on quota check error - just log it
-          console.error("Error checking quota:", quotaError);
         }
 
         // Filter out notifications with missing video data
