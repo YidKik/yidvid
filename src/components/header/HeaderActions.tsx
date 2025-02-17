@@ -1,5 +1,8 @@
 
 import { Button } from "@/components/ui/button";
+import { NotificationsMenu } from "./NotificationsMenu";
+import { UserMenu } from "./UserMenu";
+import { ContactDialog } from "../contact/ContactDialog";
 import { ChevronDown } from "lucide-react";
 
 interface HeaderActionsProps {
@@ -29,6 +32,15 @@ export const HeaderActions = ({
           <ChevronDown className="h-5 w-5 text-gray-600" />
         </Button>
       ) : null}
+
+      {/* Show these icons only on desktop */}
+      {!isMobile && (
+        <>
+          <ContactDialog />
+          {session && <NotificationsMenu session={session} onMarkAsRead={async () => {}} />}
+          {session && <UserMenu onLogout={async () => {}} />}
+        </>
+      )}
 
       {!session && (
         <Button 
