@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { VideoCard } from "../VideoCard";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -18,8 +18,10 @@ interface MostViewedVideosProps {
 
 export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const isMobile = useIsMobile();
-  const videosPerPage = 2; // Always show 2 videos for consistency
+  const videosPerPage = 2;
+  const AUTO_SLIDE_INTERVAL = 5000; // 5 seconds
 
   const handleNext = () => {
     setCurrentIndex((prevIndex) => 
@@ -31,6 +33,31 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
     setCurrentIndex((prevIndex) => 
       prevIndex - videosPerPage < 0 ? Math.max(0, videos.length - videosPerPage) : prevIndex - videosPerPage
     );
+  };
+
+  // Auto-sliding effect for mobile
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout;
+
+    if (isMobile && isAutoPlaying && videos.length > videosPerPage) {
+      intervalId = setInterval(() => {
+        handleNext();
+      }, AUTO_SLIDE_INTERVAL);
+    }
+
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [isMobile, isAutoPlaying, currentIndex, videos.length]);
+
+  // Pause auto-sliding when user interacts with navigation
+  const handleManualNavigation = (action: () => void) => {
+    setIsAutoPlaying(false);
+    action();
+    // Resume auto-playing after 10 seconds of inactivity
+    setTimeout(() => setIsAutoPlaying(true), 10000);
   };
 
   const currentVideos = videos.slice(currentIndex, currentIndex + videosPerPage);
@@ -45,7 +72,7 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
       <div className="relative">
         <ChevronLeft 
           className="absolute left-0 md:left-2 top-[40%] -translate-y-1/2 z-10 w-5 h-5 md:w-8 md:h-8 text-primary hover:text-primary/80 cursor-pointer"
-          onClick={handlePrevious}
+          onClick={() => handleManualNavigation(handlePrevious)}
           style={{ opacity: currentIndex === 0 ? 0.5 : 1 }}
         />
 
@@ -62,7 +89,7 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
 
         <ChevronRight 
           className="absolute right-0 md:right-2 top-[40%] -translate-y-1/2 z-10 w-5 h-5 md:w-8 md:h-8 text-primary hover:text-primary/80 cursor-pointer"
-          onClick={handleNext}
+          onClick={() => handleManualNavigation(handleNext)}
           style={{ opacity: currentIndex + videosPerPage >= videos.length ? 0.5 : 1 }}
         />
       </div>
