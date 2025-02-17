@@ -37,46 +37,46 @@ export const Header = () => {
     <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
       <div className="container mx-auto">
         {/* Main Header Row */}
-        <div className="flex h-14 items-center justify-between px-2 md:px-4">
-          <HeaderLogo 
-            isMobile={isMobile}
-            isMobileMenuOpen={isMobileMenuOpen}
-            onMobileMenuToggle={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          />
+        <div className="flex h-14 items-center justify-between px-2 md:px-4 relative">
+          <AnimatePresence>
+            {isMobile && isSearchExpanded ? (
+              <motion.div 
+                className="absolute inset-0 flex items-center px-2 bg-white/95"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                transition={{ duration: 0.2 }}
+              >
+                <SearchBar 
+                  onClose={() => setIsSearchExpanded(false)}
+                />
+              </motion.div>
+            ) : (
+              <>
+                <HeaderLogo 
+                  isMobile={isMobile}
+                  isMobileMenuOpen={isMobileMenuOpen}
+                  onMobileMenuToggle={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                />
 
-          {/* Desktop Search Bar */}
-          {!isMobile && (
-            <div className="flex-1 max-w-xl mx-4">
-              <SearchBar />
-            </div>
-          )}
+                {/* Desktop Search Bar */}
+                {!isMobile && (
+                  <div className="flex-1 max-w-xl mx-4">
+                    <SearchBar />
+                  </div>
+                )}
 
-          <HeaderActions 
-            isMobile={isMobile}
-            isSearchExpanded={isSearchExpanded}
-            session={session}
-            onSearchExpand={() => setIsSearchExpanded(true)}
-            onAuthOpen={() => setIsAuthOpen(true)}
-          />
+                <HeaderActions 
+                  isMobile={isMobile}
+                  isSearchExpanded={isSearchExpanded}
+                  session={session}
+                  onSearchExpand={() => setIsSearchExpanded(true)}
+                  onAuthOpen={() => setIsAuthOpen(true)}
+                />
+              </>
+            )}
+          </AnimatePresence>
         </div>
-
-        {/* Mobile Search Bar */}
-        <AnimatePresence>
-          {isMobile && isSearchExpanded && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="px-2 py-2 border-t border-gray-100"
-            >
-              <SearchBar 
-                onFocus={() => setIsSearchExpanded(true)}
-                onClose={() => setIsSearchExpanded(false)}
-              />
-            </motion.div>
-          )}
-        </AnimatePresence>
 
         {/* Mobile Menu */}
         <AnimatePresence>

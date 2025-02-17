@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search } from "lucide-react";
@@ -97,14 +96,26 @@ export const SearchBar = ({ onFocus, onClose }: SearchBarProps) => {
         }}
         className="w-full bg-transparent border-primary ring-1 ring-primary/20 text-[#555555] placeholder:text-[#555555] focus-visible:ring-primary focus-visible:ring-2 focus-visible:ring-offset-2 h-7 md:h-10 text-xs md:text-sm pr-10 md:pr-14"
       />
-      <Button 
-        type="submit"
-        variant="ghost" 
-        size="icon"
-        className="absolute right-1 h-5 w-5 md:h-8 md:w-8 rounded-full bg-gray-100 hover:bg-gray-200"
-      >
-        <Search className="h-3 w-3 md:h-5 md:w-5 text-[#555555]" />
-      </Button>
+      {isMobile && onClose ? (
+        <Button 
+          type="button"
+          variant="ghost" 
+          size="icon"
+          onClick={onClose}
+          className="absolute right-1 h-5 w-5 md:h-8 md:w-8 rounded-full bg-gray-100 hover:bg-gray-200"
+        >
+          <Search className="h-3 w-3 md:h-5 md:w-5 text-[#555555]" />
+        </Button>
+      ) : (
+        <Button 
+          type="submit"
+          variant="ghost" 
+          size="icon"
+          className="absolute right-1 h-5 w-5 md:h-8 md:w-8 rounded-full bg-gray-100 hover:bg-gray-200"
+        >
+          <Search className="h-3 w-3 md:h-5 md:w-5 text-[#555555]" />
+        </Button>
+      )}
       {showResults && (hasResults || isSearching) && (
         <div 
           className={`absolute top-full left-0 mt-1 bg-white rounded-md shadow-lg border border-gray-100 overflow-hidden z-50 ${
