@@ -26,6 +26,16 @@ export const useVideos = () => {
       try {
         // First try to fetch from edge function
         try {
+          const { error: quotaError } = await supabase
+            .from('api_quota_tracking')
+            .select('quota_remaining, quota_reset_at')
+            .eq('api_name', 'youtube')
+            .single();
+
+          if (quotaError) {
+            console.error("Error checking quota:", quotaError);
+          }
+
           await supabase.functions.invoke('fetch-youtube-videos');
         } catch (edgeFunctionError: any) {
           console.log('Edge function response:', edgeFunctionError);
@@ -43,8 +53,8 @@ export const useVideos = () => {
           // If it's a quota exceeded error, show the reset time
           if (edgeFunctionError.status === 429 && errorBody?.quota_reset_at) {
             const resetTime = new Date(errorBody.quota_reset_at);
-            const message = `YouTube API quota exceeded. Service will resume at ${resetTime.toLocaleString()}`;
-            console.warn(message);
+            const message = `Service will resume at ${resetTime.toLocaleString()}`;
+            console.warn("YouTube API quota exceeded.", message);
             toast.warning(message);
           }
         }
