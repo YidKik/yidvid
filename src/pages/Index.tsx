@@ -1,3 +1,4 @@
+
 import { Header } from "@/components/Header";
 import Auth from "@/pages/Auth";
 import { useState } from "react";

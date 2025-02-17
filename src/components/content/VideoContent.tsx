@@ -2,7 +2,7 @@
 import { VideoGrid } from "@/components/VideoGrid";
 import { MostViewedVideos } from "@/components/video/MostViewedVideos";
 import { ChannelsGrid } from "@/components/youtube/ChannelsGrid";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/hooks/useIsMobile";
 import { toast } from "sonner";
 
 interface Video {

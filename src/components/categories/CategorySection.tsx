@@ -32,14 +32,19 @@ export const CategorySection = () => {
   const { data: categoryVideos, refetch } = useQuery({
     queryKey: ["category-videos"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("youtube_videos")
-        .select("*")
-        .is('deleted_at', null)
-        .order("uploaded_at", { ascending: false });
+      try {
+        const { data, error } = await supabase
+          .from("youtube_videos")
+          .select("*")
+          .is('deleted_at', null)
+          .order("uploaded_at", { ascending: false });
 
-      if (error) throw error;
-      return data || [];
+        if (error) throw error;
+        return data || [];
+      } catch (error) {
+        console.error('Error fetching videos:', error);
+        return [];
+      }
     },
   });
 
