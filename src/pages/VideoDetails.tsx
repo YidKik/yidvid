@@ -1,4 +1,3 @@
-
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -12,6 +11,7 @@ import { VideoCommentsTable } from "@/integrations/supabase/types/video-comments
 import { BackButton } from "@/components/navigation/BackButton";
 import { VideoInteractions } from "@/components/video/VideoInteractions";
 import { ReportVideoDialog } from "@/components/video/ReportVideoDialog";
+import { useEffect } from "react";
 
 type Comment = VideoCommentsTable["Row"] & {
   profiles: {
@@ -73,6 +73,29 @@ const VideoDetails = () => {
     },
     retry: false,
   });
+
+  // Add video to watch history when it loads
+  useEffect(() => {
+    const addToHistory = async () => {
+      if (!video?.id) return;
+
+      const { data: session } = await supabase.auth.getSession();
+      if (!session?.session?.user) return;
+
+      const { error } = await supabase
+        .from("video_history")
+        .insert({
+          video_id: video.id,
+          user_id: session.session.user.id,
+        });
+
+      if (error) {
+        console.error("Error adding video to history:", error);
+      }
+    };
+
+    addToHistory();
+  }, [video?.id]);
 
   const { data: channelVideos } = useQuery({
     queryKey: ["channel-videos", video?.channel_id],
