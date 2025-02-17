@@ -36,25 +36,32 @@ export const Header = () => {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
       <div className="container mx-auto">
-        {/* Main Header Row */}
         <div className="flex h-14 items-center justify-between px-2 md:px-4 relative">
           <AnimatePresence mode="wait">
             {isMobile && isSearchExpanded ? (
               <motion.div 
-                className="absolute inset-0 flex items-center justify-center px-2 bg-white/95"
-                initial={{ opacity: 0, y: -20, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -20, scale: 0.95 }}
-                transition={{ 
-                  type: "spring",
-                  stiffness: 300,
-                  damping: 25,
-                  duration: 0.3 
-                }}
+                className="absolute inset-0 flex items-center justify-between px-2 bg-white/95"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
               >
-                <SearchBar 
-                  onClose={() => setIsSearchExpanded(false)}
-                />
+                <motion.div 
+                  className="flex-1 pr-2"
+                  initial={{ width: 0, opacity: 0 }}
+                  animate={{ width: "100%", opacity: 1 }}
+                  exit={{ width: 0, opacity: 0 }}
+                  transition={{ 
+                    type: "spring",
+                    stiffness: 300,
+                    damping: 30,
+                    duration: 0.3 
+                  }}
+                >
+                  <SearchBar 
+                    onClose={() => setIsSearchExpanded(false)}
+                  />
+                </motion.div>
               </motion.div>
             ) : (
               <>
@@ -64,7 +71,6 @@ export const Header = () => {
                   onMobileMenuToggle={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 />
 
-                {/* Desktop Search Bar */}
                 {!isMobile && (
                   <div className="flex-1 max-w-xl mx-4">
                     <SearchBar />
@@ -83,7 +89,6 @@ export const Header = () => {
           </AnimatePresence>
         </div>
 
-        {/* Mobile Menu */}
         <AnimatePresence>
           {isMobile && (
             <MobileMenu 
