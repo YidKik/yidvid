@@ -65,18 +65,18 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
   if (!videos.length) return null;
 
   return (
-    <div className="w-full max-w-[1200px] mx-auto px-1 md:px-4 mb-2 md:mb-8">
-      <h2 className="text-sm md:text-xl font-bold mb-1 md:mb-4 text-accent px-1 md:px-0">
+    <div className="w-full max-w-[1000px] mx-auto px-1 md:px-4 mb-2 md:mb-6">
+      <h2 className="text-sm md:text-lg font-bold mb-1 md:mb-3 text-accent px-1 md:px-0">
         Most Viewed Videos
       </h2>
       <div className="relative">
         <ChevronLeft 
-          className="absolute left-0 md:left-1 top-[40%] -translate-y-1/2 z-10 w-4 h-4 md:w-6 md:h-6 text-primary hover:text-primary/80 cursor-pointer"
+          className="absolute left-0 md:left-1 top-[40%] -translate-y-1/2 z-10 w-4 h-4 md:w-5 md:h-5 text-primary hover:text-primary/80 cursor-pointer"
           onClick={() => handleManualNavigation(handlePrevious)}
           style={{ opacity: currentIndex === 0 ? 0.5 : 1 }}
         />
 
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-1 md:gap-2 w-full px-1 md:px-8">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-1 md:gap-6 w-full px-1 md:px-12">
           {currentVideos.map((video) => (
             <div 
               key={video.id} 
@@ -88,7 +88,7 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
         </div>
 
         <ChevronRight 
-          className="absolute right-0 md:right-1 top-[40%] -translate-y-1/2 z-10 w-4 h-4 md:w-6 md:h-6 text-primary hover:text-primary/80 cursor-pointer"
+          className="absolute right-0 md:right-1 top-[40%] -translate-y-1/2 z-10 w-4 h-4 md:w-5 md:h-5 text-primary hover:text-primary/80 cursor-pointer"
           onClick={() => handleManualNavigation(handleNext)}
           style={{ opacity: currentIndex + videosPerPage >= videos.length ? 0.5 : 1 }}
         />
