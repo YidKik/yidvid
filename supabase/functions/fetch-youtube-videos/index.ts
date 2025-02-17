@@ -60,7 +60,7 @@ serve(async (req) => {
         }),
         { 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 429
+          status: 429 // Return 429 Too Many Requests
         }
       );
     }
@@ -81,10 +81,7 @@ serve(async (req) => {
       return new Response(
         JSON.stringify({ message: 'No channels to process' }),
         { 
-          headers: { 
-            ...corsHeaders, 
-            'Content-Type': 'application/json' 
-          },
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
           status: 200
         }
       );
@@ -107,12 +104,21 @@ serve(async (req) => {
           .single();
 
         if (quotaCheckError || (currentQuota && currentQuota.quota_remaining <= 0)) {
-          console.log('YouTube API quota exceeded, stopping further requests');
+          console.log('YouTube API quota exceeded during channel processing');
+          // Update quota to 0 if we hit the limit
+          await supabase
+            .from('api_quota_tracking')
+            .update({ 
+              quota_remaining: 0,
+              updated_at: now.toISOString()
+            })
+            .eq('api_name', 'youtube');
+            
           return new Response(
             JSON.stringify({
               success: false,
               error: 'YouTube API quota exceeded',
-              message: 'Daily quota exceeded. Please try again later.',
+              message: 'Daily quota exceeded during processing. Please try again later.',
               processed: processedVideos.length,
               errors,
               quota_reset_at: quotaData.quota_reset_at
@@ -142,19 +148,8 @@ serve(async (req) => {
         do {
           const result = await fetchChannelVideos(channelId, youtubeApiKey, nextPageToken);
           
-          // Update quota after successful API call
-          if (!result.quotaExceeded) {
-            await supabase
-              .from('api_quota_tracking')
-              .update({ 
-                quota_remaining: currentQuota.quota_remaining - 1,
-                updated_at: now.toISOString()
-              })
-              .eq('api_name', 'youtube');
-            
-            allVideos = [...allVideos, ...result.videos];
-            nextPageToken = result.nextPageToken;
-          } else {
+          if (result.quotaExceeded) {
+            // Update quota tracking to 0
             await supabase
               .from('api_quota_tracking')
               .update({ 
@@ -163,8 +158,34 @@ serve(async (req) => {
               })
               .eq('api_name', 'youtube');
               
-            break;
+            // Return 429 with quota exceeded message
+            return new Response(
+              JSON.stringify({
+                success: false,
+                error: 'YouTube API quota exceeded',
+                message: 'Daily quota exceeded during video fetch.',
+                processed: processedVideos.length,
+                errors,
+                quota_reset_at: quotaData.quota_reset_at
+              }),
+              { 
+                headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+                status: 429
+              }
+            );
           }
+          
+          // Update quota after successful API call
+          await supabase
+            .from('api_quota_tracking')
+            .update({ 
+              quota_remaining: currentQuota.quota_remaining - 1,
+              updated_at: now.toISOString()
+            })
+            .eq('api_name', 'youtube');
+          
+          allVideos = [...allVideos, ...result.videos];
+          nextPageToken = result.nextPageToken;
         } while (nextPageToken);
 
         if (allVideos.length > 0) {
@@ -219,10 +240,7 @@ serve(async (req) => {
         errors: errors.length > 0 ? errors : undefined
       }),
       { 
-        headers: { 
-          ...corsHeaders,
-          'Content-Type': 'application/json'
-        },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200
       }
     );
