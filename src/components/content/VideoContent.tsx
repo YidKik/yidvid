@@ -27,14 +27,31 @@ export const VideoContent = ({ videos, isLoading }: VideoContentProps) => {
 
   return (
     <div className="space-y-3 md:space-y-6">
-      <div className="video-grid relative">
-        <VideoGrid 
-          videos={videos} 
-          maxVideos={isMobile ? 4 : 12} 
-          rowSize={isMobile ? 2 : 4} 
-          isLoading={isLoading}
-        />
-      </div>
+      {isMobile ? (
+        <div className="overflow-x-auto scrollbar-hide pb-4">
+          <div className="inline-flex gap-2 px-2 min-w-full">
+            {videos?.map((video) => (
+              <div key={video.id} className="w-[calc(50%-4px)] flex-shrink-0 first:ml-0">
+                <VideoGrid
+                  videos={[video]}
+                  maxVideos={1}
+                  rowSize={1}
+                  isLoading={isLoading}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <div className="video-grid relative">
+          <VideoGrid 
+            videos={videos} 
+            maxVideos={12} 
+            rowSize={4} 
+            isLoading={isLoading}
+          />
+        </div>
+      )}
       
       {sortedVideos.length > 0 && isMobile && (
         <div className="mt-3">
