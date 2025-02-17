@@ -12,7 +12,12 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
 
-export const SearchBar = () => {
+interface SearchBarProps {
+  onFocus?: () => void;
+  onClose?: () => void;
+}
+
+export const SearchBar = ({ onFocus, onClose }: SearchBarProps) => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [showResults, setShowResults] = useState(false);
@@ -70,6 +75,7 @@ export const SearchBar = () => {
       setShowResults(false);
       navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
       setSearchQuery("");
+      onClose?.();
     }
   };
 
@@ -85,7 +91,10 @@ export const SearchBar = () => {
           setSearchQuery(e.target.value);
           setShowResults(true);
         }}
-        onFocus={() => setShowResults(true)}
+        onFocus={() => {
+          setShowResults(true);
+          onFocus?.();
+        }}
         className="w-full bg-transparent border-primary ring-1 ring-primary/20 text-[#555555] placeholder:text-[#555555] focus-visible:ring-primary focus-visible:ring-2 focus-visible:ring-offset-2 h-7 md:h-10 text-xs md:text-sm pr-10 md:pr-14"
       />
       <Button 
@@ -129,6 +138,7 @@ export const SearchBar = () => {
                           onClick={() => {
                             setShowResults(false);
                             setSearchQuery("");
+                            onClose?.();
                           }}
                         >
                           <img
@@ -158,6 +168,7 @@ export const SearchBar = () => {
                           onClick={() => {
                             setShowResults(false);
                             setSearchQuery("");
+                            onClose?.();
                           }}
                         >
                           <img
