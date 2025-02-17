@@ -32,7 +32,10 @@ serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Check API quota before proceeding
+    // Get current time in UTC
+    const now = new Date();
+
+    // Check and reset quota if needed
     const { data: quotaData, error: quotaError } = await supabase
       .from('api_quota_tracking')
       .select('quota_remaining, quota_reset_at')
@@ -44,13 +47,27 @@ serve(async (req) => {
       throw new Error('Failed to check API quota');
     }
 
-    if (quotaData.quota_remaining <= 0) {
-      const resetTime = new Date(quotaData.quota_reset_at);
+    // Reset quota if we've passed the reset time
+    if (now >= new Date(quotaData.quota_reset_at)) {
+      const { error: resetError } = await supabase
+        .from('api_quota_tracking')
+        .update({ 
+          quota_remaining: 10000,
+          quota_reset_at: new Date(now.getTime() + 24 * 60 * 60 * 1000),
+          updated_at: now.toISOString()
+        })
+        .eq('api_name', 'youtube');
+
+      if (resetError) {
+        console.error('Error resetting quota:', resetError);
+        throw new Error('Failed to reset API quota');
+      }
+    } else if (quotaData.quota_remaining <= 0) {
       return new Response(
         JSON.stringify({
           success: false,
           error: 'YouTube API quota exceeded',
-          message: `Daily quota exceeded. Service will resume at ${resetTime.toLocaleString()}`,
+          message: `Daily quota exceeded. Service will resume at ${new Date(quotaData.quota_reset_at).toLocaleString()}`,
           quota_reset_at: quotaData.quota_reset_at
         }),
         { 
@@ -94,6 +111,30 @@ serve(async (req) => {
       try {
         console.log(`Fetching videos for channel: ${channelId}`);
         
+        // Check current quota before processing channel
+        const { data: currentQuota, error: quotaCheckError } = await supabase
+          .from('api_quota_tracking')
+          .select('quota_remaining')
+          .eq('api_name', 'youtube')
+          .single();
+
+        if (quotaCheckError || currentQuota.quota_remaining <= 0) {
+          console.log('YouTube API quota exceeded, stopping further requests');
+          return new Response(
+            JSON.stringify({
+              success: false,
+              error: 'YouTube API quota exceeded',
+              message: 'Daily quota exceeded. Please try again later.',
+              processed: processedVideos.length,
+              errors
+            }),
+            { 
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+              status: 429
+            }
+          );
+        }
+
         // Log the start of update
         const { error: logError } = await supabase
           .from('youtube_update_logs')
@@ -110,40 +151,6 @@ serve(async (req) => {
         let allVideos = [];
 
         do {
-          // Check quota before each API call
-          const { data: currentQuota, error: quotaCheckError } = await supabase
-            .from('api_quota_tracking')
-            .select('quota_remaining')
-            .eq('api_name', 'youtube')
-            .single();
-
-          if (quotaCheckError || currentQuota.quota_remaining <= 0) {
-            console.log('YouTube API quota exceeded, stopping further requests');
-            
-            // Update channel with quota error
-            await supabase
-              .from('youtube_channels')
-              .update({ 
-                fetch_error: 'YouTube API quota exceeded',
-                last_fetch: new Date().toISOString()
-              })
-              .eq('channel_id', channelId);
-              
-            return new Response(
-              JSON.stringify({
-                success: false,
-                error: 'YouTube API quota exceeded',
-                message: 'Daily quota exceeded. Please try again later.',
-                processed: processedVideos.length,
-                errors
-              }),
-              { 
-                headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-                status: 429
-              }
-            );
-          }
-
           const result = await fetchChannelVideos(channelId, youtubeApiKey, nextPageToken);
           
           // Update quota after successful API call
@@ -152,38 +159,23 @@ serve(async (req) => {
               .from('api_quota_tracking')
               .update({ 
                 quota_remaining: currentQuota.quota_remaining - 1,
-                updated_at: new Date().toISOString()
+                updated_at: now.toISOString()
               })
               .eq('api_name', 'youtube');
-          }
-          
-          // Handle quota exceeded gracefully
-          if (result.quotaExceeded) {
+            
+            allVideos = [...allVideos, ...result.videos];
+            nextPageToken = result.nextPageToken;
+          } else {
             await supabase
               .from('api_quota_tracking')
               .update({ 
                 quota_remaining: 0,
-                updated_at: new Date().toISOString()
+                updated_at: now.toISOString()
               })
               .eq('api_name', 'youtube');
               
-            return new Response(
-              JSON.stringify({
-                success: false,
-                error: 'YouTube API quota exceeded',
-                message: 'Daily quota exceeded. Please try again later.',
-                processed: processedVideos.length,
-                errors
-              }),
-              { 
-                headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-                status: 429
-              }
-            );
+            break;
           }
-          
-          allVideos = [...allVideos, ...result.videos];
-          nextPageToken = result.nextPageToken;
         } while (nextPageToken);
 
         if (allVideos.length > 0) {
@@ -195,7 +187,7 @@ serve(async (req) => {
         const { error: updateError } = await supabase
           .from('youtube_channels')
           .update({ 
-            last_fetch: new Date().toISOString(),
+            last_fetch: now.toISOString(),
             fetch_error: null
           })
           .eq('channel_id', channelId);
@@ -221,7 +213,7 @@ serve(async (req) => {
           .from('youtube_channels')
           .update({ 
             fetch_error: error.message,
-            last_fetch: new Date().toISOString()
+            last_fetch: now.toISOString()
           })
           .eq('channel_id', channelId);
       }
@@ -265,3 +257,4 @@ serve(async (req) => {
     );
   }
 });
+
