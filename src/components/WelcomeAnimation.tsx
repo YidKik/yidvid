@@ -48,6 +48,44 @@ export const WelcomeAnimation = () => {
         setShow(false);
         // Mark that the user has visited in this session
         sessionStorage.setItem('hasVisited', 'true');
+        
+        // Show the information notification after the welcome animation
+        if (!localStorage.getItem('hasSeenInfoNotification')) {
+          const hasVisitedWelcome = localStorage.getItem('hasVisitedWelcome');
+          if (hasVisitedWelcome) {
+            toast.custom((t) => (
+              <motion.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 20 }}
+                className="bg-white rounded-lg shadow-xl p-6 max-w-md mx-auto"
+              >
+                <div className="flex flex-col items-center text-center space-y-4">
+                  <img 
+                    src="/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png" 
+                    alt="YidVid Logo" 
+                    className="w-16 h-16"
+                  />
+                  <h3 className="text-lg font-semibold">Welcome to YidVid!</h3>
+                  <p className="text-sm text-gray-600">
+                    Start exploring our curated collection of Jewish content. Create a free account to unlock all features!
+                  </p>
+                  <button
+                    onClick={() => {
+                      toast.dismiss(t);
+                      localStorage.setItem('hasSeenInfoNotification', 'true');
+                    }}
+                    className="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/90 transition-colors"
+                  >
+                    Got it!
+                  </button>
+                </div>
+              </motion.div>
+            ), {
+              duration: Infinity,
+            });
+          }
+        }
       }, 1500);
 
       return () => clearTimeout(timer);
