@@ -51,20 +51,32 @@ export const UserMenu = ({ onLogout }: UserMenuProps) => {
           <Settings className="h-3.5 w-3.5 md:h-5 md:w-5" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="bg-white/95 backdrop-blur-sm border shadow-lg z-50">
+      <DropdownMenuContent 
+        align="end" 
+        className="w-56 p-2 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 border shadow-lg z-50 animate-in slide-in-from-bottom-2 duration-200"
+      >
         {profile?.is_admin && (
-          <DropdownMenuItem onClick={() => navigate("/dashboard")} className="hover:bg-gray-100">
-            <LayoutDashboard className="mr-2 h-4 w-4" />
-            Dashboard
+          <DropdownMenuItem 
+            onClick={() => navigate("/dashboard")} 
+            className="flex items-center gap-2 p-3 cursor-pointer rounded-md hover:bg-gray-100/80 transition-colors"
+          >
+            <LayoutDashboard className="h-4 w-4" />
+            <span className="text-sm font-medium">Dashboard</span>
           </DropdownMenuItem>
         )}
-        <DropdownMenuItem onClick={() => navigate("/settings")} className="hover:bg-gray-100">
-          <Settings className="mr-2 h-4 w-4" />
-          Settings
+        <DropdownMenuItem 
+          onClick={() => navigate("/settings")} 
+          className="flex items-center gap-2 p-3 cursor-pointer rounded-md hover:bg-gray-100/80 transition-colors"
+        >
+          <Settings className="h-4 w-4" />
+          <span className="text-sm font-medium">Settings</span>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={onLogout} className="hover:bg-gray-100">
-          <LogOut className="mr-2 h-4 w-4" />
-          Logout
+        <DropdownMenuItem 
+          onClick={onLogout}
+          className="flex items-center gap-2 p-3 cursor-pointer rounded-md hover:bg-gray-100/80 text-red-600 hover:text-red-700 transition-colors"
+        >
+          <LogOut className="h-4 w-4" />
+          <span className="text-sm font-medium">Logout</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
