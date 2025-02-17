@@ -79,15 +79,19 @@ export const useVideos = () => {
             if (edgeFunctionError) {
               // Parse error response if it's a quota exceeded error
               if (edgeFunctionError.status === 429) {
-                const errorBody = JSON.parse(edgeFunctionError.message);
-                const resetTime = errorBody?.quota_reset_at 
-                  ? new Date(errorBody.quota_reset_at)
-                  : null;
-                  
-                if (resetTime) {
-                  const message = `YouTube quota exceeded. Service will resume at ${resetTime.toLocaleString()}`;
-                  console.warn(message);
-                  toast.warning(message);
+                try {
+                  const errorBody = JSON.parse(edgeFunctionError.message);
+                  const resetTime = errorBody?.quota_reset_at 
+                    ? new Date(errorBody.quota_reset_at)
+                    : null;
+                    
+                  if (resetTime) {
+                    const message = `YouTube quota exceeded. Service will resume at ${resetTime.toLocaleString()}`;
+                    console.warn(message);
+                    toast.warning(message);
+                  }
+                } catch (parseError) {
+                  console.error('Error parsing quota error response:', parseError);
                 }
               } else {
                 console.error('Edge function error:', edgeFunctionError);
