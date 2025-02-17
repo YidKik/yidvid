@@ -35,6 +35,10 @@ serve(async (req) => {
     // Get current time in UTC
     const now = new Date();
 
+    // Calculate next midnight UTC
+    const nextMidnightUTC = new Date(now);
+    nextMidnightUTC.setUTCHours(24, 0, 0, 0);
+    
     // Check and reset quota if needed
     const { data: quotaData, error: quotaError } = await supabase
       .from('api_quota_tracking')
@@ -49,14 +53,14 @@ serve(async (req) => {
 
     // Reset quota if we've passed the reset time
     if (now >= new Date(quotaData.quota_reset_at)) {
-      const nextResetDate = new Date(now);
-      nextResetDate.setUTCHours(24, 0, 0, 0); // Set to next midnight UTC
+      console.log('Resetting quota. Current time:', now.toISOString());
+      console.log('Next reset time:', nextMidnightUTC.toISOString());
 
       const { error: resetError } = await supabase
         .from('api_quota_tracking')
         .update({ 
           quota_remaining: 10000,
-          quota_reset_at: nextResetDate.toISOString(),
+          quota_reset_at: nextMidnightUTC.toISOString(),
           updated_at: now.toISOString()
         })
         .eq('api_name', 'youtube');
@@ -79,15 +83,21 @@ serve(async (req) => {
 
       quotaData.quota_remaining = updatedQuota.quota_remaining;
       quotaData.quota_reset_at = updatedQuota.quota_reset_at;
+      
+      console.log('Quota reset complete. New quota:', quotaData.quota_remaining);
+      console.log('New reset time:', quotaData.quota_reset_at);
     }
 
     if (quotaData.quota_remaining <= 0) {
       const resetTime = new Date(quotaData.quota_reset_at);
+      console.log('Quota exceeded. Current quota:', quotaData.quota_remaining);
+      console.log('Reset scheduled for:', resetTime.toISOString());
+      
       return new Response(
         JSON.stringify({
           success: false,
           error: 'YouTube API quota exceeded',
-          message: `Daily quota exceeded. Service will resume at ${resetTime.toLocaleString()} UTC`,
+          message: `Daily quota exceeded. Service will resume at ${resetTime.toUTCString()}`,
           quota_reset_at: quotaData.quota_reset_at
         }),
         { 
@@ -277,4 +287,3 @@ serve(async (req) => {
     );
   }
 });
-
