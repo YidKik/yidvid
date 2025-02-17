@@ -27,18 +27,15 @@ export const WelcomeOverlay = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex items-center justify-center"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-white"
         >
-          {/* Blurred backdrop */}
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-md" />
-
           {/* Content */}
           <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.9, opacity: 0 }}
-            transition={{ type: "spring", duration: 0.5 }}
-            className="relative max-w-2xl mx-4 bg-white rounded-xl shadow-2xl overflow-hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+            className="relative w-full max-w-4xl mx-4 bg-white"
           >
             {/* Close button */}
             <button
@@ -55,15 +52,15 @@ export const WelcomeOverlay = () => {
                   src="/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png"
                   alt="YidVid Logo"
                   className="w-24 h-24"
-                  initial={{ y: -20, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
                   transition={{ delay: 0.2 }}
                 />
               </div>
 
               <motion.div
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
                 transition={{ delay: 0.3 }}
                 className="space-y-6 text-center"
               >

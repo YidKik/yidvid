@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
@@ -55,19 +54,19 @@ export const WelcomeAnimation = () => {
           if (hasVisitedWelcome) {
             toast.custom((t) => (
               <motion.div
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 20 }}
-                className="bg-white rounded-lg shadow-xl p-6 max-w-md mx-auto"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 z-50 flex items-center justify-center bg-white"
               >
-                <div className="flex flex-col items-center text-center space-y-4">
+                <div className="flex flex-col items-center text-center space-y-6 max-w-lg mx-4">
                   <img 
                     src="/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png" 
                     alt="YidVid Logo" 
-                    className="w-16 h-16"
+                    className="w-24 h-24"
                   />
-                  <h3 className="text-lg font-semibold">Welcome to YidVid!</h3>
-                  <p className="text-sm text-gray-600">
+                  <h3 className="text-2xl font-semibold">Welcome to YidVid!</h3>
+                  <p className="text-lg text-gray-600">
                     Start exploring our curated collection of Jewish content. Create a free account to unlock all features!
                   </p>
                   <button
@@ -75,7 +74,7 @@ export const WelcomeAnimation = () => {
                       toast.dismiss(t);
                       localStorage.setItem('hasSeenInfoNotification', 'true');
                     }}
-                    className="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/90 transition-colors"
+                    className="bg-primary text-white px-6 py-3 text-lg rounded-md hover:bg-primary/90 transition-colors"
                   >
                     Got it!
                   </button>
@@ -101,13 +100,12 @@ export const WelcomeAnimation = () => {
         <motion.div
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.5 }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-white/80 backdrop-blur-lg"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-white"
         >
           <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.8, opacity: 0 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             transition={{ duration: 0.5 }}
             className="text-center"
           >
@@ -116,8 +114,8 @@ export const WelcomeAnimation = () => {
 
             {(isWelcomeLoading || isVideosLoading || isVideosFetching) && (
               <motion.div
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
                 className="flex flex-col items-center gap-2 mt-4"
               >
                 <p className="text-sm text-muted-foreground">Loading content...</p>
@@ -138,8 +136,8 @@ export const WelcomeAnimation = () => {
             )}
 
             <motion.p
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
               transition={{ delay: 1.2 }}
               className="text-xl text-muted-foreground mt-4"
             >
