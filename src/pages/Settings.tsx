@@ -104,7 +104,7 @@ const Settings = () => {
   });
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: backgroundColor, color: textColor }}>
+    <div className="min-h-screen bg-background text-foreground">
       <BackButton />
       <main className="container mx-auto pt-24 px-4 pb-16 max-w-4xl">
         <div className="mb-8 flex items-center gap-2">
@@ -119,7 +119,7 @@ const Settings = () => {
             <ProfileSection />
           </div>
 
-          {/* Content Preferences - Now with Channel Subscriptions first */}
+          {/* Content Preferences */}
           <div className="space-y-8">
             <h2 className="text-2xl font-semibold text-primary/80">Content Preferences</h2>
             
