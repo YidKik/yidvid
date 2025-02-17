@@ -6,7 +6,11 @@ import { AlertCircle, Info, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export const GlobalNotification = () => {
-  const [dismissedIds, setDismissedIds] = useState<string[]>([]);
+  const [dismissedIds, setDismissedIds] = useState<string[]>(() => {
+    // Get dismissed notifications from session storage
+    const stored = sessionStorage.getItem('dismissedNotifications');
+    return stored ? JSON.parse(stored) : [];
+  });
 
   const { data: session } = useQuery({
     queryKey: ["session"],
@@ -74,7 +78,10 @@ export const GlobalNotification = () => {
   );
 
   const handleDismiss = (id: string) => {
-    setDismissedIds((prev) => [...prev, id]);
+    const updatedDismissedIds = [...dismissedIds, id];
+    setDismissedIds(updatedDismissedIds);
+    // Store dismissed notifications in session storage
+    sessionStorage.setItem('dismissedNotifications', JSON.stringify(updatedDismissedIds));
   };
 
   if (isError || !activeNotifications?.length) return null;
