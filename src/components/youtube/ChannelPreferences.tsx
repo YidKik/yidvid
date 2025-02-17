@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { Youtube, Shield, Search, Lock, Unlock } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -32,7 +33,7 @@ export const ChannelControl = () => {
       .select('pin, is_locked')
       .eq('user_id', session.user.id)
       .eq('lock_type', 'channel_control')
-      .single();
+      .maybeSingle();
 
     if (data) {
       setIsLocked(data.is_locked);
