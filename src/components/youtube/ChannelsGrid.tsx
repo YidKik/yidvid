@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { Youtube } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -34,7 +35,7 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
     loadHiddenChannels();
   }, []);
 
-  const { data: channels, isLoading } = useQuery({
+  const { data: channels, isLoading, error } = useQuery({
     queryKey: ["youtube-channels"],
     queryFn: async () => {
       try {
@@ -56,10 +57,11 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
       }
     },
     retry: (failureCount, error: any) => {
+      // Retry up to 3 times for network errors, only once for other errors
       if (error.message?.includes('Failed to fetch')) return failureCount < 3;
       return failureCount < 1;
     },
-    retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 10000),
+    retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 10000), // Exponential backoff with max 10s
   });
 
   useEffect(() => {
