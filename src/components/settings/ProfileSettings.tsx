@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
@@ -6,7 +7,7 @@ import { toast } from "sonner";
 import { VideoHistorySection } from "@/components/history/VideoHistorySection";
 import { ChannelSubscriptions } from "@/components/youtube/ChannelSubscriptions";
 import { UserAnalyticsSection } from "@/components/analytics/UserAnalyticsSection";
-import { ChannelPreferences } from "@/components/youtube/ChannelPreferences";
+import { ChannelControl } from "@/components/youtube/ChannelPreferences";
 import { useColors } from "@/contexts/ColorContext";
 import { PlaybackSettings } from "@/components/settings/PlaybackSettings";
 import { LanguageSettings } from "@/components/settings/LanguageSettings";
