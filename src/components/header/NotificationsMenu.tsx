@@ -2,18 +2,16 @@
 import { Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "sonner";
 import {
   Sheet,
   SheetContent,
-  SheetHeader,
-  SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { NotificationHeader } from "../notifications/NotificationHeader";
+import { NotificationList } from "../notifications/NotificationList";
 
 interface NotificationsMenuProps {
   session: any;
@@ -21,8 +19,6 @@ interface NotificationsMenuProps {
 }
 
 export const NotificationsMenu = ({ session, onMarkAsRead }: NotificationsMenuProps) => {
-  const navigate = useNavigate();
-
   const { data: notifications, refetch, isError, error, isLoading } = useQuery({
     queryKey: ["video-notifications", session?.user?.id],
     queryFn: async () => {
@@ -32,7 +28,6 @@ export const NotificationsMenu = ({ session, onMarkAsRead }: NotificationsMenuPr
       }
 
       try {
-        // Fetch notifications with video details
         const { data: notificationsData, error: notificationsError } = await supabase
           .from("video_notifications")
           .select(`
@@ -52,7 +47,6 @@ export const NotificationsMenu = ({ session, onMarkAsRead }: NotificationsMenuPr
           throw notificationsError;
         }
 
-        // Filter out notifications with missing video data
         const validNotifications = (notificationsData || []).filter(n => n.youtube_videos?.title);
         
         if (validNotifications.length === 0) {
@@ -61,7 +55,6 @@ export const NotificationsMenu = ({ session, onMarkAsRead }: NotificationsMenuPr
         
         return validNotifications;
       } catch (error: any) {
-        // Add more context to the error
         const enhancedError = new Error(
           `Failed to fetch notifications: ${error.message || 'Unknown error'}`
         );
@@ -71,20 +64,17 @@ export const NotificationsMenu = ({ session, onMarkAsRead }: NotificationsMenuPr
     },
     enabled: !!session?.user?.id,
     retry: (failureCount, error: any) => {
-      // Don't retry on auth errors
       if (error?.status === 401 || error?.status === 403) return false;
-      // Retry up to 3 times on network errors
       return failureCount < 3;
     },
-    retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 10000), // Exponential backoff
-    staleTime: 30000, // Consider data fresh for 30 seconds
-    gcTime: 5 * 60 * 1000, // Keep cache for 5 minutes
+    retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 10000),
+    staleTime: 30000,
+    gcTime: 5 * 60 * 1000,
     meta: {
       errorMessage: "Unable to load notifications. Please try again later."
     }
   });
 
-  // Show error toast when query fails, but only once
   if (isError && error) {
     console.error("Notifications error:", error);
   }
@@ -109,7 +99,6 @@ export const NotificationsMenu = ({ session, onMarkAsRead }: NotificationsMenuPr
     }
   };
 
-  // Render loading state if no session yet
   if (!session?.user?.id) {
     return (
       <Button 
@@ -146,77 +135,17 @@ export const NotificationsMenu = ({ session, onMarkAsRead }: NotificationsMenuPr
         side="right"
         className="w-[240px] sm:w-[400px] bg-[#222222] border-[#333333] p-0"
       >
-        <SheetHeader className="p-2 sm:p-6 border-b border-[#333333]">
-          <div className="flex items-center justify-between">
-            <SheetTitle className="text-sm sm:text-xl text-white">Notifications</SheetTitle>
-            {notifications && notifications.length > 0 && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleClearAll}
-                className="text-[10px] text-white hover:text-white hover:bg-[#333333] h-6 px-2"
-              >
-                Clear All
-              </Button>
-            )}
-          </div>
-        </SheetHeader>
-        <ScrollArea className="h-[calc(100vh-64px)] sm:h-[calc(100vh-100px)]">
-          {isLoading ? (
-            <div className="p-2 sm:p-6 text-center text-white/70 animate-fade-in">
-              <p className="text-xs sm:text-sm">Loading notifications...</p>
-            </div>
-          ) : isError ? (
-            <div className="p-2 sm:p-6 text-center text-white/70 animate-fade-in">
-              <p className="text-xs sm:text-sm">Unable to load notifications</p>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={() => refetch()}
-                className="mt-1 text-white hover:text-white hover:bg-[#333333] h-6 text-[10px]"
-              >
-                Try Again
-              </Button>
-            </div>
-          ) : notifications && notifications.length > 0 ? (
-            <div className="animate-fade-in">
-              {notifications.map((notification) => (
-                <div
-                  key={notification.id}
-                  className="p-1.5 sm:p-4 hover:bg-[#333333] cursor-pointer transition-colors duration-200 border-b border-[#333333] animate-fade-in"
-                  onClick={() => {
-                    navigate(`/video/${notification.video_id}`);
-                    onMarkAsRead();
-                  }}
-                >
-                  <div className="flex items-start gap-1.5">
-                    <img
-                      src={notification.youtube_videos.thumbnail}
-                      alt={notification.youtube_videos.title}
-                      className="w-12 sm:w-24 h-8 sm:h-16 object-cover rounded"
-                      onError={(e) => {
-                        console.error("Failed to load thumbnail");
-                        e.currentTarget.src = "/placeholder.svg";
-                      }}
-                    />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-[10px] sm:text-sm text-white line-clamp-2 font-medium">
-                        New video from {notification.youtube_videos.channel_name}
-                      </p>
-                      <p className="text-[9px] sm:text-xs text-white/70 mt-0.5 line-clamp-1 sm:line-clamp-2">
-                        {notification.youtube_videos.title}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="p-2 sm:p-6 text-center text-white/70 animate-fade-in">
-              <p className="text-xs sm:text-sm">No new notifications</p>
-            </div>
-          )}
-        </ScrollArea>
+        <NotificationHeader 
+          hasNotifications={!!notifications?.length}
+          onClearAll={handleClearAll}
+        />
+        <NotificationList
+          notifications={notifications || []}
+          isLoading={isLoading}
+          isError={isError}
+          onRetry={() => refetch()}
+          onNotificationClick={onMarkAsRead}
+        />
       </SheetContent>
     </Sheet>
   );
