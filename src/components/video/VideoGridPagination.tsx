@@ -46,7 +46,8 @@ export const VideoGridPagination = ({
         variant="outline"
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className="group relative rounded-full p-2 hover:bg-muted/50 hover:border-gray-300 transition-all duration-300"
+        size="icon"
+        className="group relative rounded-full w-10 h-10 hover:bg-muted/50 hover:border-gray-300 transition-all duration-300"
       >
         <ChevronLeft className="h-4 w-4" />
         <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200">
@@ -54,15 +55,12 @@ export const VideoGridPagination = ({
         </span>
       </Button>
       
-      <span className="text-sm text-muted-foreground">
-        Page {currentPage} of {totalPages}
-      </span>
-      
       <Button
         variant="outline"
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className="group relative rounded-full p-2 hover:bg-muted/50 hover:border-gray-300 transition-all duration-300"
+        size="icon"
+        className="group relative rounded-full w-10 h-10 hover:bg-muted/50 hover:border-gray-300 transition-all duration-300"
       >
         <ChevronRight className="h-4 w-4" />
         <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200">
