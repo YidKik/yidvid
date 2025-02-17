@@ -76,19 +76,17 @@ export const ChannelLockDialog = ({ isOpen, onClose, onUnlock, onDelete, storedP
           </div>
           
           {!showDeleteConfirm && (
-            <Alert variant="destructive" className="bg-red-50 border border-red-100">
-              <AlertDescription className="text-sm">
-                <Button 
-                  type="button" 
-                  variant="ghost" 
-                  className="text-red-600 p-0 h-auto font-normal hover:text-red-700 hover:bg-transparent flex items-center gap-2 transition-colors"
-                  onClick={() => setShowDeleteConfirm(true)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                  Remove parental control
-                </Button>
-              </AlertDescription>
-            </Alert>
+            <div className="flex justify-center">
+              <Button 
+                type="button" 
+                variant="outline"
+                onClick={() => setShowDeleteConfirm(true)}
+                className="w-full max-w-sm py-2 px-4 bg-white border-2 border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 flex items-center justify-center gap-2 group"
+              >
+                <Trash2 className="h-4 w-4 text-gray-400 group-hover:text-gray-500 transition-colors" />
+                <span className="font-medium">Remove Parental Control</span>
+              </Button>
+            </div>
           )}
 
           <div className="flex justify-end gap-3 pt-2">
