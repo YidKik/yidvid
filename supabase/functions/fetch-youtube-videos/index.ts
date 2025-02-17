@@ -1,29 +1,53 @@
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import { corsHeaders, validateEnvironment, createSupabaseClient } from './utils.ts';
+import { corsHeaders, validateEnvironment, createSupabaseClient, handleError } from './utils.ts';
 import { fetchChannelVideos } from './youtube-api.ts';
 import { getChannelsFromDatabase, storeVideosInDatabase } from './db-operations.ts';
 
 serve(async (req) => {
+  // Handle CORS preflight
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { 
+      headers: {
+        ...corsHeaders,
+        'Access-Control-Max-Age': '86400', // 24 hours
+      }
+    });
   }
 
   try {
     console.log('[YouTube Videos] Starting video fetch process');
     
+    // Initialize clients and validate environment
     const supabaseClient = createSupabaseClient();
     const apiKey = validateEnvironment();
 
+    // Parse request body for specific channels
     let channels;
     if (req.body) {
-      const body = await req.json();
-      channels = body.channels;
+      try {
+        const body = await req.json();
+        channels = body.channels;
+      } catch (error) {
+        console.error('[YouTube Videos] Error parsing request body:', error);
+      }
     }
 
+    // If no specific channels provided, fetch all channels
     if (!channels || !Array.isArray(channels) || channels.length === 0) {
       console.log('[YouTube Videos] No channels provided, fetching all channels');
       channels = await getChannelsFromDatabase(supabaseClient);
+    }
+
+    if (!channels || channels.length === 0) {
+      return new Response(
+        JSON.stringify({ 
+          success: true, 
+          message: 'No channels to process',
+          count: 0 
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     console.log('[YouTube Videos] Fetching videos for channels:', channels);
@@ -43,7 +67,6 @@ serve(async (req) => {
         // Keep fetching until we have all videos or hit quota
         do {
           try {
-            console.log(`[YouTube Videos] Fetching page ${allVideos.length / 50 + 1} for channel ${channelId}`);
             const { videos, nextPageToken: newPageToken } = await fetchChannelVideos(channelId, apiKey, nextPageToken);
             
             if (videos.length > 0) {
@@ -54,14 +77,13 @@ serve(async (req) => {
             nextPageToken = newPageToken;
             retryCount = 0; // Reset retry count on successful fetch
             
-            // Add a delay between pagination requests to avoid rate limiting
+            // Add a delay between pagination requests
             if (nextPageToken) {
               await new Promise(resolve => setTimeout(resolve, 1500));
             }
           } catch (error) {
             console.error(`[YouTube Videos] Error fetching videos for channel ${channelId}:`, error);
             
-            // If we hit quota, stop gracefully
             if (error.message?.includes('quotaExceeded')) {
               console.log('[YouTube Videos] API quota exceeded, stopping fetch');
               break;
@@ -83,10 +105,8 @@ serve(async (req) => {
           results.push(...allVideos);
           console.log(`[YouTube Videos] Finished channel ${channelId}. Total videos: ${allVideos.length}`);
           
-          // Store videos in batches as we go
+          // Store videos and update channel status
           await storeVideosInDatabase(supabaseClient, allVideos);
-          
-          // Update channel last fetch time and clear any previous errors
           await supabaseClient
             .from("youtube_channels")
             .update({ 
@@ -108,7 +128,7 @@ serve(async (req) => {
           .eq('channel_id', channelId);
       }
       
-      // Add a delay between channels to avoid rate limiting
+      // Add a delay between channels
       if (channels.indexOf(channelId) < channels.length - 1) {
         await new Promise(resolve => setTimeout(resolve, 2000));
       }
@@ -122,17 +142,12 @@ serve(async (req) => {
         count: results.length,
         message: results.length > 0 ? 'Videos fetched successfully' : 'No new videos to fetch'
       }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200
+      }
     );
   } catch (error) {
-    console.error('[YouTube Videos] Error in edge function:', error);
-    return new Response(
-      JSON.stringify({ 
-        success: false, 
-        error: error.message,
-        message: 'An error occurred while fetching videos'
-      }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
-    );
+    return handleError(error);
   }
 });
