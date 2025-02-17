@@ -11,12 +11,16 @@ import { SearchBar } from "./header/SearchBar";
 import { NotificationsMenu } from "./header/NotificationsMenu";
 import { UserMenu } from "./header/UserMenu";
 import { ContactDialog } from "./contact/ContactDialog";
+import { motion, AnimatePresence } from "framer-motion";
+import { ChevronDown, Menu, X } from "lucide-react";
 
 export const Header = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [session, setSession] = useState(null);
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const initializeSession = async () => {
@@ -34,38 +38,24 @@ export const Header = () => {
 
         const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
           console.log("Auth state changed:", event);
-          
           switch (event) {
             case 'SIGNED_IN':
-              console.log('User signed in:', currentSession?.user?.email);
               setSession(currentSession);
               break;
-              
             case 'TOKEN_REFRESHED':
-              console.log('Token refreshed successfully');
               setSession(currentSession);
               break;
-              
             case 'SIGNED_OUT':
-              console.log('User signed out');
               setSession(null);
               navigate('/');
               break;
-              
             case 'USER_UPDATED':
-              console.log('User updated');
               setSession(currentSession);
-              break;
-              
-            case 'PASSWORD_RECOVERY':
-              console.log('Password recovery initiated');
               break;
           }
         });
 
-        return () => {
-          subscription?.unsubscribe();
-        };
+        return () => subscription?.unsubscribe();
       } catch (error) {
         console.error("Error initializing session:", error);
         setSession(null);
@@ -94,17 +84,14 @@ export const Header = () => {
   const handleLogout = async () => {
     try {
       const { error } = await supabase.auth.signOut();
-      
       if (error) {
         console.error("Error during logout:", error);
         toast.error("There was an issue logging out");
         return;
       }
-      
       setSession(null);
       navigate("/");
       toast.success("Logged out successfully");
-      
     } catch (error) {
       console.error("Unexpected error during logout:", error);
       navigate("/");
@@ -113,45 +100,123 @@ export const Header = () => {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
-      <div className="container flex h-12 md:h-14 items-center">
-        <Link to="/" className="flex items-center space-x-2">
-          <img 
-            src="/lovable-uploads/e425cacb-4c3a-4d81-b4e0-77fcbf10f61c.png" 
-            alt="YidVid Logo"
-            className="h-16 w-auto md:h-32 object-contain min-h-[64px] md:min-h-[128px] max-h-[64px] md:max-h-[128px]"
-            onError={(e) => {
-              console.error('Logo failed to load:', e);
-              e.currentTarget.style.display = 'none';
-            }}
-          />
-        </Link>
-
-        <div className="flex-1 flex justify-center px-1 md:px-4">
-          <SearchBar />
-        </div>
-
-        <div className="flex items-center gap-0.5 md:space-x-2">
-          <ContactDialog />
-          {session ? (
-            <>
-              <NotificationsMenu 
-                session={session}
-                onMarkAsRead={markNotificationsAsRead}
+      <div className="container mx-auto">
+        {/* Main Header Row */}
+        <div className="flex h-14 items-center justify-between px-2 md:px-4">
+          <div className="flex items-center gap-2">
+            {isMobile && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="mr-2"
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              >
+                {isMobileMenuOpen ? (
+                  <X className="h-5 w-5 text-gray-600" />
+                ) : (
+                  <Menu className="h-5 w-5 text-gray-600" />
+                )}
+              </Button>
+            )}
+            
+            <Link to="/" className="flex items-center">
+              <img 
+                src="/lovable-uploads/e425cacb-4c3a-4d81-b4e0-77fcbf10f61c.png" 
+                alt="YidVid Logo"
+                className="h-10 w-auto object-contain"
+                onError={(e) => {
+                  console.error('Logo failed to load:', e);
+                  e.currentTarget.style.display = 'none';
+                }}
               />
-              <UserMenu onLogout={handleLogout} />
-            </>
-          ) : (
-            <Button 
-              onClick={() => setIsAuthOpen(true)}
-              className="h-6 md:h-10 text-xs md:text-sm px-2 md:px-4"
-            >
-              Login
-            </Button>
+            </Link>
+          </div>
+
+          {/* Desktop Search Bar */}
+          {!isMobile && (
+            <div className="flex-1 max-w-xl mx-4">
+              <SearchBar />
+            </div>
           )}
+
+          {/* Right Section */}
+          <div className="flex items-center gap-1 md:gap-2">
+            {isMobile && !isSearchExpanded ? (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsSearchExpanded(true)}
+                className="mr-1"
+              >
+                <ChevronDown className="h-5 w-5 text-gray-600" />
+              </Button>
+            ) : null}
+
+            {!isMobile && <ContactDialog />}
+
+            {session ? (
+              <>
+                <NotificationsMenu 
+                  session={session}
+                  onMarkAsRead={markNotificationsAsRead}
+                />
+                <UserMenu onLogout={handleLogout} />
+              </>
+            ) : (
+              <Button 
+                onClick={() => setIsAuthOpen(true)}
+                className="h-8 text-sm px-3"
+                variant="default"
+              >
+                Login
+              </Button>
+            )}
+          </div>
         </div>
+
+        {/* Mobile Search Bar */}
+        <AnimatePresence>
+          {isMobile && isSearchExpanded && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="px-2 py-2 border-t border-gray-100"
+            >
+              <SearchBar 
+                onFocus={() => setIsSearchExpanded(true)}
+                onClose={() => setIsSearchExpanded(false)}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Mobile Menu */}
+        <AnimatePresence>
+          {isMobile && isMobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="border-t border-gray-100"
+            >
+              <nav className="py-2 px-4 space-y-2">
+                <Link 
+                  to="/"
+                  className="flex items-center gap-2 py-2 text-gray-600 hover:text-gray-900"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Home
+                </Link>
+                <ContactDialog />
+                {/* Add more mobile menu items as needed */}
+              </nav>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
       <Auth isOpen={isAuthOpen} onOpenChange={setIsAuthOpen} />
     </header>
   );
 };
-
