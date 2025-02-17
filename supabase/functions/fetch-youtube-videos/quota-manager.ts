@@ -65,7 +65,7 @@ export const createQuotaExceededResponse = (quotaResetAt: string, processedVideo
     }),
     { 
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      status: 429
+      status: 200 // Changed from 429 to 200 to prevent error state
     }
   );
 };
