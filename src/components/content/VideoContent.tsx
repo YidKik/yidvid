@@ -1,4 +1,3 @@
-
 import { VideoGrid } from "@/components/VideoGrid";
 import { MostViewedVideos } from "@/components/video/MostViewedVideos";
 import { ChannelsGrid } from "@/components/youtube/ChannelsGrid";
@@ -48,7 +47,7 @@ export const VideoContent = ({ videos, isLoading }: VideoContentProps) => {
             <Button 
               variant="outline" 
               onClick={() => setShowMoreMobile(true)}
-              className="w-full max-w-[200px] h-9 text-sm"
+              className="w-auto px-4 h-7 text-xs"
             >
               See More
             </Button>
@@ -122,4 +121,3 @@ export const VideoContent = ({ videos, isLoading }: VideoContentProps) => {
     </div>
   );
 };
-
