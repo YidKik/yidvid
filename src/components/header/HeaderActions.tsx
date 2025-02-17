@@ -24,7 +24,7 @@ export const HeaderActions = ({
   session
 }: HeaderActionsProps) => {
   return (
-    <div className="flex items-center gap-1 md:gap-2 ml-auto"> {/* Added ml-auto here */}
+    <div className="flex items-center gap-1 md:gap-2 ml-auto z-10"> {/* Added z-10 to ensure icons stay above logo */}
       {isMobile && !isSearchExpanded ? (
         <AnimatePresence>
           <motion.div
