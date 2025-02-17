@@ -24,25 +24,12 @@ export const useVideos = () => {
       console.log("Fetching videos...");
       
       try {
-        // Get current session
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-        
-        if (sessionError) {
-          console.error("Session error:", sessionError);
-          throw sessionError;
-        }
-        
-        if (!session) {
-          console.log("No session found, waiting for authentication");
-          return [];
-        }
-
         const { data, error } = await supabase
           .from("youtube_videos")
           .select("*")
           .is('deleted_at', null)
           .order("uploaded_at", { ascending: false })
-          .throwOnError(); // This will throw on RLS or network errors
+          .throwOnError();
 
         if (error) {
           console.error("Error fetching videos:", error);

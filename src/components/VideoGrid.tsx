@@ -23,7 +23,7 @@ interface VideoGridProps {
   isLoading?: boolean;
 }
 
-export const VideoGrid: FC<VideoGridProps> = ({ maxVideos = 12, rowSize = 4, isLoading: parentLoading }) => {
+export const VideoGrid: FC<VideoGridProps> = ({ maxVideos = 12, rowSize = 4, isLoading: parentLoading, videos: parentVideos }) => {
   const [showAll, setShowAll] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [hiddenChannels, setHiddenChannels] = useState<Set<string>>(new Set());
@@ -33,13 +33,6 @@ export const VideoGrid: FC<VideoGridProps> = ({ maxVideos = 12, rowSize = 4, isL
     queryKey: ["youtube_videos_grid"],
     queryFn: async () => {
       console.log("VideoGrid: Fetching videos...");
-      
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session) {
-        console.log("VideoGrid: No session found");
-        return [];
-      }
 
       const { data, error } = await supabase
         .from("youtube_videos")
@@ -64,11 +57,12 @@ export const VideoGrid: FC<VideoGridProps> = ({ maxVideos = 12, rowSize = 4, isL
         uploadedAt: video.uploaded_at
       }));
     },
-    enabled: true,
+    enabled: !parentVideos, // Only fetch if no videos are provided as props
     staleTime: 1000 * 60 * 5, // Keep data fresh for 5 minutes
     gcTime: 1000 * 60 * 30, // Cache data for 30 minutes
   });
 
+  // Load hidden channels for logged-in users
   useEffect(() => {
     const loadHiddenChannels = async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -94,6 +88,8 @@ export const VideoGrid: FC<VideoGridProps> = ({ maxVideos = 12, rowSize = 4, isL
     loadHiddenChannels();
   }, []);
 
+  const displayVideos = parentVideos || videos || [];
+
   if (isLoading || parentLoading) {
     return (
       <div className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 max-w-[1600px] mx-auto`}>
@@ -113,9 +109,9 @@ export const VideoGrid: FC<VideoGridProps> = ({ maxVideos = 12, rowSize = 4, isL
     );
   }
 
-  const filteredVideos = videos ? videos.filter(
+  const filteredVideos = displayVideos.filter(
     (video) => !hiddenChannels.has(video.channelId)
-  ) : [];
+  );
 
   const videosPerPage = isMobile ? 4 : rowSize * 3;
   const totalPages = Math.ceil(filteredVideos.length / videosPerPage);
