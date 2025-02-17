@@ -58,31 +58,14 @@ export const useVideos = () => {
 
         // If quota is available, try to fetch new videos
         if (!quotaData || quotaData.quota_remaining > 0) {
-          try {
-            await supabase.functions.invoke('fetch-youtube-videos').catch(error => {
-              // Handle quota exceeded error (status 429)
-              if (error.status === 429) {
-                try {
-                  const errorBody = JSON.parse(error.body);
-                  const resetTime = new Date(errorBody.quota_reset_at);
-                  const message = `YouTube quota exceeded. Service will resume at ${resetTime.toLocaleString()}`;
-                  console.warn(message);
-                  toast.warning(message);
-                } catch (parseError) {
-                  console.error('Error parsing quota response:', parseError);
-                }
-                // Don't throw the error, just log it
-                return;
-              }
-              // For other errors, throw them to be caught by the outer try-catch
-              throw error;
-            });
-          } catch (error: any) {
-            // Only show error toast for non-quota errors
-            if (error.status !== 429) {
-              console.error('Failed to invoke edge function:', error);
-              toast.error('Error checking for new videos');
-            }
+          const { data: response, error: fetchError } = await supabase.functions.invoke('fetch-youtube-videos');
+          
+          if (fetchError) {
+            console.error('Error invoking fetch-youtube-videos:', fetchError);
+          } else if (response && !response.success && response.quota_reset_at) {
+            // Handle quota exceeded response
+            const resetTime = new Date(response.quota_reset_at);
+            toast.warning(`YouTube quota exceeded. Service will resume at ${resetTime.toLocaleString()}`);
           }
         } else if (quotaData) {
           // If quota is depleted, show a toast with the reset time

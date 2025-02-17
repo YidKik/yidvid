@@ -41,7 +41,17 @@ serve(async (req) => {
     if (quotaData.quota_remaining <= 0) {
       console.log('Quota exceeded. Current quota:', quotaData.quota_remaining);
       console.log('Reset scheduled for:', quotaData.quota_reset_at);
-      return createQuotaExceededResponse(quotaData.quota_reset_at);
+      return new Response(
+        JSON.stringify({
+          success: false,
+          message: `Daily quota exceeded. Service will resume at ${new Date(quotaData.quota_reset_at).toUTCString()}`,
+          quota_reset_at: quotaData.quota_reset_at
+        }),
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 200 // Changed from 429 to 200 to prevent error state
+        }
+      );
     }
 
     // Parse request body if present
@@ -58,7 +68,10 @@ serve(async (req) => {
 
     if (channelsToProcess.length === 0) {
       return new Response(
-        JSON.stringify({ message: 'No channels to process' }),
+        JSON.stringify({ 
+          success: true,
+          message: 'No channels to process' 
+        }),
         { 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
           status: 200
@@ -78,14 +91,37 @@ serve(async (req) => {
         // Check current quota before processing channel
         const currentQuota = await checkQuota(supabase);
         if (currentQuota.quota_remaining <= 0) {
-          console.log('YouTube API quota exceeded during channel processing');
-          return createQuotaExceededResponse(quotaData.quota_reset_at, processedVideos, errors);
+          return new Response(
+            JSON.stringify({
+              success: false,
+              message: `Daily quota exceeded. Service will resume at ${new Date(currentQuota.quota_reset_at).toUTCString()}`,
+              processed: processedVideos.length,
+              errors,
+              quota_reset_at: currentQuota.quota_reset_at
+            }),
+            { 
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+              status: 200 // Changed from 429 to 200
+            }
+          );
         }
 
         const result = await processChannel(supabase, channelId, youtubeApiKey, currentQuota, now);
         
         if (result.quotaExceeded) {
-          return createQuotaExceededResponse(quotaData.quota_reset_at, processedVideos, errors);
+          return new Response(
+            JSON.stringify({
+              success: false,
+              message: `Daily quota exceeded. Service will resume at ${new Date(quotaData.quota_reset_at).toUTCString()}`,
+              processed: processedVideos.length,
+              errors,
+              quota_reset_at: quotaData.quota_reset_at
+            }),
+            { 
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+              status: 200 // Changed from 429 to 200
+            }
+          );
         }
         
         if (result.videos) {
