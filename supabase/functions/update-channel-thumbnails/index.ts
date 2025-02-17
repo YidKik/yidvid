@@ -4,39 +4,63 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': '*',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Max-Age': '86400',
 };
 
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response('ok', { headers: corsHeaders });
   }
 
   try {
     const YOUTUBE_API_KEY = Deno.env.get('YOUTUBE_API_KEY');
     if (!YOUTUBE_API_KEY) {
-      throw new Error('YouTube API key not configured');
+      return new Response(
+        JSON.stringify({ error: 'YouTube API key not configured' }),
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 500
+        }
+      );
     }
 
     // Create Supabase client
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+    
+    if (!supabaseUrl || !supabaseServiceKey) {
+      return new Response(
+        JSON.stringify({ error: 'Supabase configuration missing' }),
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 500
+        }
+      );
+    }
+
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    // Parse request body
+    // Parse request body with error handling
     let channels;
     try {
+      if (!req.body) {
+        throw new Error('Request body is empty');
+      }
       const body = await req.json();
       channels = body.channels;
       
-      if (!channels || !Array.isArray(channels)) {
-        throw new Error('Invalid channels data');
+      if (!channels || !Array.isArray(channels) || channels.length === 0) {
+        throw new Error('Invalid or empty channels array');
       }
     } catch (error) {
-      console.error('Error parsing request body:', error);
       return new Response(
-        JSON.stringify({ error: 'Invalid request body' }),
+        JSON.stringify({ 
+          error: 'Invalid request format',
+          details: error.message 
+        }),
         { 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
           status: 400
@@ -44,10 +68,8 @@ serve(async (req) => {
       );
     }
 
-    console.log('Updating thumbnails for channels:', channels);
-
-    // Process channels in batches to avoid rate limits
-    const batchSize = 50; // YouTube API allows up to 50 channels per request
+    // Process channels in smaller batches
+    const batchSize = 25; // Reduced from 50 to avoid timeout issues
     const results = [];
     
     for (let i = 0; i < channels.length; i += batchSize) {
@@ -55,89 +77,80 @@ serve(async (req) => {
       const channelIds = channelBatch.join(',');
       
       try {
-        console.log(`Processing batch ${i / batchSize + 1} of channels:`, channelBatch);
-        
         const response = await fetch(
-          `https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${channelIds}&key=${YOUTUBE_API_KEY}`
+          `https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${channelIds}&key=${YOUTUBE_API_KEY}`,
+          {
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+            },
+          }
         );
 
         if (!response.ok) {
           const errorText = await response.text();
-          console.error('YouTube API error response:', errorText);
-          
-          // If we hit quota, stop but don't throw error
           if (errorText.includes('quotaExceeded')) {
-            console.log('YouTube API quota exceeded, stopping batch processing');
-            break;
+            return new Response(
+              JSON.stringify({ 
+                warning: 'YouTube API quota exceeded',
+                processed: results 
+              }),
+              { 
+                headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+                status: 429
+              }
+            );
           }
-          
           throw new Error(`YouTube API error: ${errorText}`);
         }
 
         const data = await response.json();
         
-        // Update thumbnails in database
         for (const item of data.items || []) {
-          const thumbnailUrl = item.snippet.thumbnails?.default?.url ||
-                              item.snippet.thumbnails?.medium?.url ||
-                              item.snippet.thumbnails?.high?.url;
+          const thumbnailUrl = item.snippet?.thumbnails?.default?.url ||
+                              item.snippet?.thumbnails?.medium?.url ||
+                              item.snippet?.thumbnails?.high?.url;
           
           if (thumbnailUrl) {
-            try {
-              const { error: updateError } = await supabase
-                .from('youtube_channels')
-                .update({ thumbnail_url: thumbnailUrl })
-                .eq('channel_id', item.id);
+            const { error: updateError } = await supabase
+              .from('youtube_channels')
+              .update({ thumbnail_url: thumbnailUrl })
+              .eq('channel_id', item.id);
 
-              if (updateError) {
-                console.error(`Error updating channel ${item.id}:`, updateError);
-              } else {
-                console.log(`Updated thumbnail for channel ${item.id}`);
-                results.push(item.id);
-              }
-            } catch (dbError) {
-              console.error(`Database error for channel ${item.id}:`, dbError);
+            if (!updateError) {
+              results.push(item.id);
             }
           }
         }
 
-        // Add delay between batches to avoid rate limiting
+        // Add delay between batches
         if (i + batchSize < channels.length) {
-          await new Promise(resolve => setTimeout(resolve, 1000));
+          await new Promise(resolve => setTimeout(resolve, 1500));
         }
       } catch (batchError) {
-        console.error(`Error processing batch starting at index ${i}:`, batchError);
-        // Continue with next batch instead of failing completely
+        console.error(`Batch error:`, batchError);
       }
     }
 
     return new Response(
       JSON.stringify({ 
         success: true,
-        message: `Successfully processed ${results.length} channels`,
+        message: `Updated ${results.length} channels`,
         updated_channels: results
       }),
       { 
-        headers: { 
-          ...corsHeaders,
-          'Content-Type': 'application/json'
-        } 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       }
     );
 
   } catch (error) {
-    console.error('Error:', error);
     return new Response(
       JSON.stringify({ 
-        error: error.message,
-        success: false,
-        message: 'An error occurred while updating channel thumbnails'
+        error: error.message || 'Internal server error',
+        success: false
       }),
       { 
-        headers: { 
-          ...corsHeaders,
-          'Content-Type': 'application/json'
-        },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 500
       }
     );
