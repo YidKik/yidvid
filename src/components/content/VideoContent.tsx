@@ -2,7 +2,7 @@
 import { VideoGrid } from "@/components/VideoGrid";
 import { MostViewedVideos } from "@/components/video/MostViewedVideos";
 import { ChannelsGrid } from "@/components/youtube/ChannelsGrid";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/hooks/useIsMobile";
 import { toast } from "sonner";
 
 interface Video {
@@ -43,9 +43,13 @@ export const VideoContent = ({ videos, isLoading }: VideoContentProps) => {
       )}
       
       <div className="channels-grid mt-4 md:mt-6">
-        <ChannelsGrid onError={(error) => {
+        <ChannelsGrid onError={(error: any) => {
           console.error('Channel grid error:', error);
-          toast.error('Unable to fetch channels at the moment. Please try again later.');
+          if (error?.status === 429) {
+            toast.warning('YouTube API quota exceeded. Some content may be temporarily unavailable.');
+          } else {
+            toast.error('Unable to fetch channels. Please try again later.');
+          }
         }} />
       </div>
     </div>
