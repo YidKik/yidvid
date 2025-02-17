@@ -13,7 +13,7 @@ import type { ProfilesTable } from "@/integrations/supabase/types/profiles";
 export const ProfileSection = () => {
   const navigate = useNavigate();
 
-  const { data: profile } = useQuery({
+  const { data: profile, isLoading } = useQuery({
     queryKey: ["user-profile"],
     queryFn: async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -26,7 +26,7 @@ export const ProfileSection = () => {
         .from("profiles")
         .select("*")
         .eq("id", session.user.id)
-        .single();
+        .maybeSingle();
 
       if (error) {
         toast.error("Error fetching profile");
@@ -72,7 +72,33 @@ export const ProfileSection = () => {
     }
   };
 
-  if (!profile) return null;
+  if (isLoading) {
+    return (
+      <section className="mb-8">
+        <Card className="p-6">
+          <div className="animate-pulse flex space-x-4">
+            <div className="w-20 h-20 bg-muted rounded-full"></div>
+            <div className="flex-1 space-y-4 py-1">
+              <div className="h-4 bg-muted rounded w-3/4"></div>
+              <div className="space-y-2">
+                <div className="h-4 bg-muted rounded"></div>
+              </div>
+            </div>
+          </div>
+        </Card>
+      </section>
+    );
+  }
+
+  if (!profile) {
+    return (
+      <section className="mb-8">
+        <Card className="p-6">
+          <p className="text-muted-foreground">Unable to load profile information.</p>
+        </Card>
+      </section>
+    );
+  }
 
   return (
     <section className="mb-8">

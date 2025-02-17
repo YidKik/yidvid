@@ -30,7 +30,7 @@ export const ProfileAvatar = ({ avatarUrl, displayName, username, profile }: Pro
           {displayName || username || "Anonymous User"}
         </h3>
         <p className="text-sm text-muted-foreground">
-          {profile.email}
+          {profile?.email || "No email provided"}
         </p>
       </div>
     </div>

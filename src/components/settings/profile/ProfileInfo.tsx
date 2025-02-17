@@ -29,18 +29,20 @@ export const ProfileInfo = ({ profile }: ProfileInfoProps) => {
         <div>
           <p className="text-sm font-medium">User ID</p>
           <p className="text-xs text-muted-foreground">
-            {profile.id}
+            {profile?.id || "No ID available"}
           </p>
         </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={copyUserId}
-        >
-          <Copy className="w-4 h-4" />
-        </Button>
+        {profile?.id && (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={copyUserId}
+          >
+            <Copy className="w-4 h-4" />
+          </Button>
+        )}
       </div>
-      {profile.username && (
+      {profile?.username && (
         <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
           <div>
             <p className="text-sm font-medium">Username</p>
