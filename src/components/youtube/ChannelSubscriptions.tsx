@@ -25,7 +25,7 @@ interface ChannelSubscription {
 export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
-  const [showRightArrow, setShowRightArrow] = useState(true);
+  const [showRightArrow, setShowRightArrow] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
@@ -43,6 +43,22 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
     return () => {
       subscription.unsubscribe();
     };
+  }, []);
+
+  useEffect(() => {
+    const checkScrollability = () => {
+      const container = scrollContainerRef.current;
+      if (container) {
+        setShowRightArrow(container.scrollWidth > container.clientWidth);
+        setShowLeftArrow(container.scrollLeft > 0);
+      }
+    };
+
+    // Check initially and whenever window resizes
+    checkScrollability();
+    window.addEventListener('resize', checkScrollability);
+
+    return () => window.removeEventListener('resize', checkScrollability);
   }, []);
 
   const { data: subscriptions, refetch } = useQuery({
@@ -111,7 +127,7 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
 
     setShowLeftArrow(container.scrollLeft > 0);
     setShowRightArrow(
-      container.scrollLeft < container.scrollWidth - container.clientWidth - 10
+      container.scrollLeft < (container.scrollWidth - container.clientWidth - 10)
     );
   };
 
