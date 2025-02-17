@@ -47,15 +47,14 @@ serve(async (req) => {
 
     // If quota is depleted, return early with reset time
     if (quotaData && quotaData.quota_remaining <= 0) {
-      const resetTime = new Date(quotaData.quota_reset_at);
       console.log('Quota exceeded. Current quota:', quotaData.quota_remaining);
-      console.log('Reset scheduled for:', resetTime.toISOString());
+      console.log('Reset scheduled for:', quotaData.quota_reset_at);
       
       return new Response(
         JSON.stringify({
           success: false,
           error: 'YouTube API quota exceeded',
-          message: `Daily quota exceeded. Service will resume at ${resetTime.toUTCString()}`,
+          message: `Daily quota exceeded. Service will resume at ${new Date(quotaData.quota_reset_at).toUTCString()}`,
           quota_reset_at: quotaData.quota_reset_at
         }),
         { 
@@ -118,7 +117,7 @@ serve(async (req) => {
             JSON.stringify({
               success: false,
               error: 'YouTube API quota exceeded',
-              message: 'Daily quota exceeded during processing. Please try again later.',
+              message: 'Daily quota exceeded during video fetch.',
               processed: processedVideos.length,
               errors,
               quota_reset_at: quotaData.quota_reset_at
