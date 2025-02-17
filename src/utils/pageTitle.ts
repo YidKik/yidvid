@@ -10,33 +10,38 @@ export const getPageTitle = (path: string): string => {
   
   // Map route segments to readable titles
   const pageTitles: { [key: string]: string | { [key: string]: string } } = {
-    'video': 'Video Player',
-    'channel': 'Channel Details',
-    'dashboard': 'Admin Dashboard',
-    'settings': 'User Settings',
+    'video': 'Watch Video',
+    'channel': 'Channel',
+    'dashboard': 'My Dashboard',
+    'settings': 'Account Settings',
     'music': 'Music Player',
     'search': 'Search Results',
     'category': 'Category Videos',
+    'auth': 'Sign In',
     'admin': {
-      'channels': 'Manage Channels',
-      'comments': 'Manage Comments',
+      'channels': 'Channel Management',
+      'comments': 'Comment Management',
       'requests': 'Channel Requests',
       'users': 'User Management',
       'analytics': 'Analytics Dashboard',
       'videos': 'Video Management',
       'categories': 'Category Management',
-      'contact-requests': 'Contact Requests'
+      'contact-requests': 'Contact Requests',
+      'reported-videos': 'Reported Videos',
+      'notifications': 'Global Notifications'
     }
   };
   
   // Handle admin routes specially
   if (segments[0] === 'admin' && segments[1]) {
-    const adminTitle = pageTitles['admin'][segments[1]];
+    const adminTitle = (pageTitles['admin'] as { [key: string]: string })[segments[1]];
     return adminTitle ? `${adminTitle} | ${APP_NAME} Admin` : `Admin | ${APP_NAME}`;
   }
   
   // Get the base page title
-  const baseTitle = pageTitles[segments[0]] || segments[0].charAt(0).toUpperCase() + segments[0].slice(1);
+  const baseTitle = typeof pageTitles[segments[0]] === 'string' 
+    ? pageTitles[segments[0]] 
+    : segments[0].charAt(0).toUpperCase() + segments[0].slice(1);
   
   // If there's an ID in the URL, try to make the title more descriptive
   if (segments[1]) {

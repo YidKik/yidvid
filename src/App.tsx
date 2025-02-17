@@ -1,6 +1,15 @@
-import { Routes, Route, useLocation, BrowserRouter } from "react-router-dom";
+
+import { Routes, Route, useLocation } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "@/lib/query-client";
+import { ColorProvider } from "@/contexts/ColorContext";
+import { PlaybackProvider } from "@/contexts/PlaybackContext";
+import { useEffect } from "react";
+import { getPageTitle } from "@/utils/pageTitle";
+
+// Main pages
 import Index from "@/pages/Index";
 import Auth from "@/pages/Auth";
 import CategoryVideos from "@/pages/CategoryVideos";
@@ -10,6 +19,8 @@ import Settings from "@/pages/Settings";
 import Search from "@/pages/Search";
 import MusicDetails from "@/pages/MusicDetails";
 import ChannelDetails from "@/pages/ChannelDetails";
+
+// Admin pages
 import AnalyticsPage from "@/pages/admin/AnalyticsPage";
 import VideosPage from "@/pages/admin/VideosPage";
 import ChannelsPage from "@/pages/admin/ChannelsPage";
@@ -20,25 +31,9 @@ import RequestsPage from "@/pages/admin/RequestsPage";
 import ContactRequestsPage from "@/pages/admin/ContactRequestsPage";
 import ReportedVideosPage from "@/pages/admin/ReportedVideosPage";
 import NotificationsPage from "@/pages/admin/NotificationsPage";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ColorProvider } from "@/contexts/ColorContext";
-import { PlaybackProvider } from "@/contexts/PlaybackContext";
-import { useState, useEffect } from "react";
-import { getPageTitle } from "@/utils/pageTitle";
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: 3,
-      staleTime: 1000 * 60 * 5, // 5 minutes
-      refetchOnWindowFocus: true,
-    },
-  },
-});
 
 function AppRoutes() {
   const location = useLocation();
-  const [isAuthOpen, setIsAuthOpen] = useState(false);
 
   useEffect(() => {
     document.title = getPageTitle(location.pathname);
@@ -46,30 +41,32 @@ function AppRoutes() {
 
   return (
     <Routes>
+      {/* Public routes */}
       <Route path="/" element={<Index />} />
-      <Route 
-        path="/auth" 
-        element={<Auth isOpen={isAuthOpen} onOpenChange={setIsAuthOpen} />} 
-      />
+      <Route path="/auth" element={<Auth isOpen={true} onOpenChange={() => {}} />} />
       <Route path="/category/:id" element={<CategoryVideos />} />
       <Route path="/video/:id" element={<VideoDetails />} />
-      <Route path="/dashboard" element={<Dashboard />} />
-      <Route path="/settings" element={<Settings />} />
+      <Route path="/channel/:id" element={<ChannelDetails />} />
       <Route path="/search" element={<Search />} />
       <Route path="/music/:id" element={<MusicDetails />} />
-      <Route path="/channel/:id" element={<ChannelDetails />} />
+      
+      {/* User routes */}
+      <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/settings" element={<Settings />} />
       
       {/* Admin routes */}
-      <Route path="/admin/analytics" element={<AnalyticsPage />} />
-      <Route path="/admin/videos" element={<VideosPage />} />
-      <Route path="/admin/channels" element={<ChannelsPage />} />
-      <Route path="/admin/users" element={<UsersPage />} />
-      <Route path="/admin/comments" element={<CommentsPage />} />
-      <Route path="/admin/categories" element={<CategoriesPage />} />
-      <Route path="/admin/requests" element={<RequestsPage />} />
-      <Route path="/admin/contact-requests" element={<ContactRequestsPage />} />
-      <Route path="/admin/reported-videos" element={<ReportedVideosPage />} />
-      <Route path="/admin/notifications" element={<NotificationsPage />} />
+      <Route path="/admin">
+        <Route path="analytics" element={<AnalyticsPage />} />
+        <Route path="videos" element={<VideosPage />} />
+        <Route path="channels" element={<ChannelsPage />} />
+        <Route path="users" element={<UsersPage />} />
+        <Route path="comments" element={<CommentsPage />} />
+        <Route path="categories" element={<CategoriesPage />} />
+        <Route path="requests" element={<RequestsPage />} />
+        <Route path="contact-requests" element={<ContactRequestsPage />} />
+        <Route path="reported-videos" element={<ReportedVideosPage />} />
+        <Route path="notifications" element={<NotificationsPage />} />
+      </Route>
     </Routes>
   );
 }
