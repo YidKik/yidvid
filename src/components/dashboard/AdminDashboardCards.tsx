@@ -1,9 +1,8 @@
-
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Users, Video, MessageSquare, Tv, Database, Film, Mail, Grid3X3, Flag } from "lucide-react";
+import { Users, Video, MessageSquare, Tv, Database, Film, Mail, Grid3X3, Flag, Bell } from "lucide-react";
 import { DashboardStats, AdminNotification } from "@/types/dashboard";
 
 interface AdminDashboardCardsProps {
@@ -100,6 +99,14 @@ export const AdminDashboardCards = ({ stats, notifications }: AdminDashboardCard
       notifications: getNotificationCount("new_contact_request"),
       bgColor: "bg-[#FFE0FB]",
       iconColor: "text-purple-600"
+    },
+    {
+      title: "Global Notifications",
+      description: "Manage site-wide notifications and announcements",
+      icon: <Bell className="h-7 w-7" />,
+      onClick: () => navigate("/admin/notifications"),
+      bgColor: "bg-[#FFF4E5]",
+      iconColor: "text-orange-600"
     }
   ];
 

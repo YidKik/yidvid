@@ -14,6 +14,7 @@ import { MobileBottomNav } from "@/components/navigation/MobileBottomNav";
 import { useSessionManager } from "@/hooks/useSessionManager";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { GlobalNotification } from "@/components/notifications/GlobalNotification";
 
 const MainContent = () => {
   const [isMusic, setIsMusic] = useState(false);
@@ -39,6 +40,7 @@ const MainContent = () => {
   return (
     <div className="flex-1">
       <Header />
+      <GlobalNotification />
       <main className="mt-2 md:mt-6 mx-auto px-2 md:px-6 max-w-[1400px]">
         <div className={`space-y-3 md:space-y-6 ${isMobile ? 'pb-20' : ''}`}>
           <div className="space-y-3">
