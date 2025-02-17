@@ -20,7 +20,7 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const isMobile = useIsMobile();
-  const videosPerPage = isMobile ? 2 : 3;
+  const videosPerPage = isMobile ? 2 : 4;
   const AUTO_SLIDE_INTERVAL = 5000; // 5 seconds
 
   const handleNext = () => {
@@ -65,7 +65,7 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
   if (!videos.length) return null;
 
   return (
-    <div className="w-full max-w-[1000px] mx-auto px-1 md:px-4 mb-2 md:mb-6">
+    <div className="w-full max-w-[1200px] mx-auto px-1 md:px-4 mb-2 md:mb-6">
       <h2 className="text-sm md:text-lg font-bold mb-1 md:mb-3 text-accent px-1 md:px-0">
         Most Viewed Videos
       </h2>
@@ -76,7 +76,7 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
           style={{ opacity: currentIndex === 0 ? 0.5 : 1 }}
         />
 
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-1 md:gap-6 w-full px-1 md:px-12">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-1 md:gap-4 w-full px-1 md:px-10">
           {currentVideos.map((video) => (
             <div 
               key={video.id} 
