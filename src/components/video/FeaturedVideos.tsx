@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { VideoCard } from "../VideoCard";
 import { useQuery } from "@tanstack/react-query";
@@ -110,11 +111,11 @@ export const FeaturedVideos = ({ videos, onVideoClick }: FeaturedVideosProps) =>
   const displayedVideos = featuredVideos.slice(currentIndex, currentIndex + 2);
 
   return (
-    <div className="w-full max-w-[1800px] mx-auto px-4 mb-12 mt-24">
-      <h2 className="text-2xl font-bold mb-8 text-accent">
+    <div className="w-full max-w-[1800px] mx-auto px-4 mb-6 md:mb-12 mt-6 md:mt-24">
+      <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-8 text-accent">
         {session?.user ? "Recommended Videos" : "Featured Videos"}
       </h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
         {displayedVideos.map((video) => (
           <div 
             key={video.id} 
