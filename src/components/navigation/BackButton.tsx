@@ -21,6 +21,7 @@ export const BackButton = ({ className }: BackButtonProps) => {
         "rounded-full shadow-sm hover:shadow-md",
         "border border-gray-100 bg-white/95 backdrop-blur-sm",
         "group hover:scale-105 active:scale-95",
+        "z-[100]", // Ensure it's above other elements
         className
       )}
     >
