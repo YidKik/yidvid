@@ -51,13 +51,15 @@ serve(async (req) => {
           headers: { 
             ...corsHeaders, 
             'Content-Type': 'application/json' 
-          } 
+          },
+          status: 200
         }
       );
     }
 
     console.log(`Processing ${channelsToProcess.length} channels`);
     const processedVideos = [];
+    const errors = [];
 
     // Process each channel
     for (const channelId of channelsToProcess) {
@@ -81,6 +83,35 @@ serve(async (req) => {
 
         do {
           const result = await fetchChannelVideos(channelId, youtubeApiKey, nextPageToken);
+          
+          // Handle quota exceeded gracefully
+          if (result.quotaExceeded) {
+            console.log('YouTube API quota exceeded, stopping further requests');
+            
+            // Update channel with quota error
+            await supabase
+              .from('youtube_channels')
+              .update({ 
+                fetch_error: 'YouTube API quota exceeded',
+                last_fetch: new Date().toISOString()
+              })
+              .eq('channel_id', channelId);
+              
+            return new Response(
+              JSON.stringify({
+                success: false,
+                error: 'YouTube API quota exceeded',
+                message: 'Daily quota exceeded. Please try again later.',
+                processed: processedVideos.length,
+                errors
+              }),
+              { 
+                headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+                status: 429
+              }
+            );
+          }
+          
           allVideos = [...allVideos, ...result.videos];
           nextPageToken = result.nextPageToken;
         } while (nextPageToken);
@@ -105,6 +136,7 @@ serve(async (req) => {
 
       } catch (error) {
         console.error(`Error processing channel ${channelId}:`, error);
+        errors.push({ channelId, error: error.message });
         
         // Log error in youtube_update_logs
         await supabase
@@ -132,13 +164,15 @@ serve(async (req) => {
       JSON.stringify({ 
         success: true,
         message: 'Channel processing complete',
-        processed: processedVideos.length
+        processed: processedVideos.length,
+        errors: errors.length > 0 ? errors : undefined
       }),
       { 
         headers: { 
           ...corsHeaders,
           'Content-Type': 'application/json'
-        } 
+        },
+        status: 200
       }
     );
 
@@ -148,7 +182,8 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({
         success: false,
-        error: error.message
+        error: error.message,
+        message: 'An error occurred while processing the request'
       }),
       { 
         status: 500,
@@ -160,3 +195,4 @@ serve(async (req) => {
     );
   }
 });
+

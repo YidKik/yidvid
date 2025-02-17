@@ -1,21 +1,15 @@
 
-interface VideoStats {
-  statistics: {
-    viewCount: string;
-  };
-  description: string;
-}
-
-interface FetchChannelVideosResult {
+interface VideoResult {
   videos: any[];
   nextPageToken: string | null;
+  quotaExceeded?: boolean;
 }
 
 export const fetchChannelVideos = async (
   channelId: string, 
   apiKey: string, 
   pageToken?: string
-): Promise<FetchChannelVideosResult> => {
+): Promise<VideoResult> => {
   try {
     // Get channel details
     const channelUrl = `https://www.googleapis.com/youtube/v3/channels?part=contentDetails,snippet,status&id=${channelId}&key=${apiKey}`;
@@ -25,9 +19,9 @@ export const fetchChannelVideos = async (
       const errorText = await channelResponse.text();
       console.error(`[YouTube Videos] Channel API error for ${channelId}:`, errorText);
       
-      // Handle quota exceeded specifically
+      // Check for quota exceeded
       if (errorText.includes('quotaExceeded')) {
-        return { videos: [], nextPageToken: null }; // Return empty result but don't throw
+        return { videos: [], nextPageToken: null, quotaExceeded: true };
       }
       
       throw new Error(`Channel API error: ${channelResponse.status} - ${errorText}`);
@@ -64,9 +58,9 @@ export const fetchChannelVideos = async (
       const errorText = await response.text();
       console.error(`[YouTube Videos] Playlist API error for channel ${channelId}:`, errorText);
       
-      // Handle quota exceeded specifically
+      // Check for quota exceeded
       if (errorText.includes('quotaExceeded')) {
-        return { videos: [], nextPageToken: null }; // Return empty result but don't throw
+        return { videos: [], nextPageToken: null, quotaExceeded: true };
       }
       
       throw new Error(`Playlist API error: ${response.status} - ${errorText}`);
@@ -87,7 +81,7 @@ export const fetchChannelVideos = async (
     console.log(`[YouTube Videos] Found ${videoIds.length} videos in current page for channel ${channelId}`);
 
     if (videoIds.length === 0) {
-      return { videos: [], nextPageToken: null };
+      return { videos: [], nextPageToken: data.nextPageToken || null };
     }
 
     const statsUrl = `https://www.googleapis.com/youtube/v3/videos?part=statistics,snippet&id=${videoIds.join(',')}&key=${apiKey}`;
@@ -97,9 +91,9 @@ export const fetchChannelVideos = async (
       const errorText = await statsResponse.text();
       console.error(`[YouTube Videos] Statistics API error for channel ${channelId}:`, errorText);
       
-      // Handle quota exceeded specifically
+      // Check for quota exceeded
       if (errorText.includes('quotaExceeded')) {
-        return { videos: [], nextPageToken: null }; // Return empty result but don't throw
+        return { videos: [], nextPageToken: null, quotaExceeded: true };
       }
       
       throw new Error(`Statistics API error: ${statsResponse.status} - ${errorText}`);
