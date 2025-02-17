@@ -16,7 +16,7 @@ import { PlaybackSettings } from "@/components/settings/PlaybackSettings";
 import { ColorSettings } from "@/components/settings/ColorSettings";
 import { ProfileSection } from "@/components/settings/ProfileSection";
 import { ContactDialog } from "@/components/contact/ContactDialog";
-import { MessageSquare } from "lucide-react";
+import { MessageSquare, Settings as SettingsIcon } from "lucide-react";
 
 const Settings = () => {
   const navigate = useNavigate();
@@ -106,57 +106,78 @@ const Settings = () => {
   return (
     <div className="min-h-screen" style={{ backgroundColor: backgroundColor, color: textColor }}>
       <BackButton />
-      <main className="container mx-auto pt-24 px-4 pb-16">
-        <ProfileSection />
-        
-        <PlaybackSettings 
-          autoplay={autoplay}
-          setAutoplay={setAutoplay}
-        />
+      <main className="container mx-auto pt-24 px-4 pb-16 max-w-4xl">
+        <div className="mb-8 flex items-center gap-2">
+          <SettingsIcon className="w-8 h-8 text-primary" />
+          <h1 className="text-3xl font-bold">Settings</h1>
+        </div>
 
-        <section className="mb-12">
-          <VideoHistorySection />
-        </section>
+        <div className="space-y-12">
+          {/* Account & Profile Section - Most important personal settings */}
+          <div className="space-y-8">
+            <h2 className="text-2xl font-semibold text-primary/80">Account & Profile</h2>
+            <ProfileSection />
+          </div>
 
-        <section className="mb-12">
-          <h2 className="text-2xl font-semibold mb-4">Channel Subscriptions</h2>
-          <Card className="p-6">
-            {userId ? (
-              <ChannelSubscriptions userId={userId} />
-            ) : (
-              <p className="text-muted-foreground">Please sign in to manage your subscriptions.</p>
-            )}
-          </Card>
-        </section>
+          {/* Content Preferences - Second most important for user experience */}
+          <div className="space-y-8">
+            <h2 className="text-2xl font-semibold text-primary/80">Content Preferences</h2>
+            <PlaybackSettings 
+              autoplay={autoplay}
+              setAutoplay={setAutoplay}
+            />
 
-        <section className="mb-12">
-          <h2 className="text-2xl font-semibold mb-4">Channel Control</h2>
-          <p className="text-muted-foreground mb-4">
-            Choose which channels you want to see in your feed. Hidden channels won't appear in your recommendations or search results.
-          </p>
-          <ChannelControl />
-        </section>
+            <div>
+              <h3 className="text-xl font-semibold mb-4">Channel Subscriptions</h3>
+              {userId ? (
+                <ChannelSubscriptions userId={userId} />
+              ) : (
+                <Card className="p-6">
+                  <p className="text-muted-foreground">Please sign in to manage your subscriptions.</p>
+                </Card>
+              )}
+            </div>
 
-        <ColorSettings 
-          backgroundColor={backgroundColor}
-          setBackgroundColor={setBackgroundColor}
-          textColor={textColor}
-          setTextColor={setTextColor}
-          buttonColor={buttonColor}
-          setButtonColor={setButtonColor}
-          logoColor={logoColor}
-          setLogoColor={setLogoColor}
-          saveColors={saveColors}
-          resetToDefaults={resetToDefaults}
-        />
+            <div>
+              <h3 className="text-xl font-semibold mb-4">Channel Visibility</h3>
+              <Card className="p-6">
+                <p className="text-muted-foreground mb-4">
+                  Choose which channels you want to see in your feed. Hidden channels won't appear in your recommendations or search results.
+                </p>
+                <ChannelControl />
+              </Card>
+            </div>
+          </div>
 
-        <UserAnalyticsSection />
+          {/* Activity & History - User's past interactions */}
+          <div className="space-y-8">
+            <h2 className="text-2xl font-semibold text-primary/80">Activity & History</h2>
+            <VideoHistorySection />
+            <UserAnalyticsSection />
+          </div>
 
-        {profile?.is_admin && (
-          <section className="mb-12">
-            <h2 className="text-2xl font-semibold mb-4">Admin Controls</h2>
-            <Card className="p-6">
-              <div className="space-y-8">
+          {/* Appearance - Visual customization */}
+          <div className="space-y-8">
+            <h2 className="text-2xl font-semibold text-primary/80">Appearance</h2>
+            <ColorSettings 
+              backgroundColor={backgroundColor}
+              setBackgroundColor={setBackgroundColor}
+              textColor={textColor}
+              setTextColor={setTextColor}
+              buttonColor={buttonColor}
+              setButtonColor={setButtonColor}
+              logoColor={logoColor}
+              setLogoColor={setLogoColor}
+              saveColors={saveColors}
+              resetToDefaults={resetToDefaults}
+            />
+          </div>
+
+          {/* Admin Section - Only for admins */}
+          {profile?.is_admin && (
+            <div className="space-y-8">
+              <h2 className="text-2xl font-semibold text-primary/80">Admin Controls</h2>
+              <Card className="p-6">
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
                     <p className="text-sm text-muted-foreground">
@@ -167,14 +188,23 @@ const Settings = () => {
                     Open Dashboard
                   </Button>
                 </div>
+              </Card>
+            </div>
+          )}
+
+          {/* Help & Support - Always at the bottom for easy access */}
+          <div className="space-y-4">
+            <h2 className="text-2xl font-semibold text-primary/80">Help & Support</h2>
+            <Card className="p-6">
+              <div className="flex flex-col items-center text-center space-y-4">
+                <p className="text-muted-foreground">
+                  Need help or have suggestions? We're here to assist you.
+                </p>
+                <ContactDialog />
               </div>
             </Card>
-          </section>
-        )}
-
-        <section className="mt-12 flex justify-center">
-          <ContactDialog />
-        </section>
+          </div>
+        </div>
       </main>
     </div>
   );
