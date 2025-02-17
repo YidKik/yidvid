@@ -15,6 +15,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useState } from "react";
+import { ProfileSection } from "@/components/settings/ProfileSection";
 
 export const AccountSection = () => {
   const navigate = useNavigate();
@@ -51,53 +52,59 @@ export const AccountSection = () => {
   };
 
   return (
-    <section className="mt-8">
-      <h2 className="text-2xl font-semibold text-primary/80 mb-4">Account Actions</h2>
+    <section className="mb-8">
+      <h2 className="text-2xl font-semibold text-primary/80 mb-4">Account</h2>
       <Card className="p-6">
-        <div className="space-y-4">
-          <Button
-            onClick={handleLogout}
-            variant="outline"
-            className="w-full flex items-center justify-center gap-2 py-6 text-gray-700 hover:text-gray-900 border-2 hover:border-gray-300 transition-all duration-200"
-          >
-            <LogOut className="h-5 w-5" />
-            <span className="font-medium">Sign Out</span>
-          </Button>
+        <div className="flex flex-col space-y-6">
+          <ProfileSection />
           
-          <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-            <DialogTrigger asChild>
-              <Button
-                variant="outline"
-                className="w-full flex items-center justify-center gap-2 py-6 text-red-600 hover:text-red-700 border-2 border-red-200 hover:border-red-300 hover:bg-red-50 transition-all duration-200"
-              >
-                <Trash2 className="h-5 w-5" />
-                <span className="font-medium">Delete Account</span>
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Delete Account</DialogTitle>
-                <DialogDescription>
-                  Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently deleted.
-                </DialogDescription>
-              </DialogHeader>
-              <DialogFooter className="flex flex-col sm:flex-row gap-2 sm:gap-0">
+          <div className="flex items-center justify-end gap-2 pt-4 border-t border-gray-100">
+            <Button
+              onClick={handleLogout}
+              variant="outline"
+              size="sm"
+              className="text-gray-600 hover:text-gray-800"
+            >
+              <LogOut className="h-4 w-4 mr-1" />
+              Sign Out
+            </Button>
+            
+            <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+              <DialogTrigger asChild>
                 <Button
-                  variant="ghost"
-                  onClick={() => setIsDeleteDialogOpen(false)}
+                  variant="outline"
+                  size="sm"
+                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
                 >
-                  Cancel
+                  <Trash2 className="h-4 w-4 mr-1" />
+                  Delete Account
                 </Button>
-                <Button
-                  variant="destructive"
-                  onClick={handleDeleteAccount}
-                  className="bg-red-600 hover:bg-red-700"
-                >
-                  Yes, Delete My Account
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Delete Account</DialogTitle>
+                  <DialogDescription>
+                    Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently deleted.
+                  </DialogDescription>
+                </DialogHeader>
+                <DialogFooter className="flex flex-col sm:flex-row gap-2 sm:gap-0">
+                  <Button
+                    variant="ghost"
+                    onClick={() => setIsDeleteDialogOpen(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    onClick={handleDeleteAccount}
+                    className="bg-red-600 hover:bg-red-700"
+                  >
+                    Yes, Delete My Account
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </div>
         </div>
       </Card>
     </section>
