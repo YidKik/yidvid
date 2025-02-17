@@ -38,14 +38,19 @@ export const Header = () => {
       <div className="container mx-auto">
         {/* Main Header Row */}
         <div className="flex h-14 items-center justify-between px-2 md:px-4 relative">
-          <AnimatePresence>
+          <AnimatePresence mode="wait">
             {isMobile && isSearchExpanded ? (
               <motion.div 
                 className="absolute inset-0 flex items-center justify-center px-2 bg-white/95"
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.2 }}
+                initial={{ opacity: 0, y: -20, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -20, scale: 0.95 }}
+                transition={{ 
+                  type: "spring",
+                  stiffness: 300,
+                  damping: 25,
+                  duration: 0.3 
+                }}
               >
                 <SearchBar 
                   onClose={() => setIsSearchExpanded(false)}
