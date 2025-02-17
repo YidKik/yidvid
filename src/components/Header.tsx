@@ -83,6 +83,7 @@ export const Header = () => {
                   session={session}
                   onSearchExpand={() => setIsSearchExpanded(true)}
                   onAuthOpen={() => setIsAuthOpen(true)}
+                  onLogout={handleLogout}
                 />
               </>
             )}
