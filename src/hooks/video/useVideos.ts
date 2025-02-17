@@ -59,24 +59,45 @@ export const useVideos = () => {
         
         return formattedData;
       } catch (error: any) {
-        // Handle network errors specifically
-        if (error.message === 'Failed to fetch') {
+        // Log the full error for debugging
+        console.error("Full error details:", error);
+
+        // Handle fetch errors specifically
+        if (error.message?.includes('Failed to fetch') || error.code === 'ECONNABORTED') {
           console.error('Network error occurred:', error);
           toast.error('Network error. Please check your connection and try again.');
-        } else {
-          console.error("Error in video fetch:", error);
-          toast.error("There was a problem loading the videos. Please try refreshing the page.");
+          return []; // Return empty array instead of throwing
         }
-        throw error;
+
+        // Handle Supabase errors
+        if (error.code?.startsWith('2')) { // Supabase error codes
+          console.error('Database error:', error);
+          toast.error('Database error. Please try again later.');
+          return []; // Return empty array instead of throwing
+        }
+
+        // Handle Edge function errors
+        if (error.message?.includes('Edge Function')) {
+          console.error('Edge function error:', error);
+          toast.error('Unable to fetch new videos at the moment. Showing cached data.');
+          return []; // Return empty array to show cached data
+        }
+
+        console.error("Unexpected error in video fetch:", error);
+        toast.error("There was a problem loading the videos. Please try refreshing the page.");
+        return []; // Return empty array as fallback
       }
     },
     enabled: true,
     staleTime: 1000 * 60 * 5, // Keep data fresh for 5 minutes
     gcTime: 1000 * 60 * 30, // Cache data for 30 minutes
     retry: (failureCount, error: any) => {
-      // Don't retry on auth errors, but retry up to 3 times on network errors
+      // Don't retry on auth errors
       if (error?.status === 401 || error?.status === 403) return false;
-      return failureCount < 3;
+      // Retry up to 3 times on network errors
+      if (error.message?.includes('Failed to fetch')) return failureCount < 3;
+      // Retry once for other errors
+      return failureCount < 1;
     },
     retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 10000),
   });

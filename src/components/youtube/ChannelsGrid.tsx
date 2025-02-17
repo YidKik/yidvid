@@ -1,4 +1,3 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { Youtube } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -7,7 +6,11 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useState, useEffect } from "react";
 import { RequestChannelDialog } from "./RequestChannelDialog";
 
-export const ChannelsGrid = () => {
+interface ChannelsGridProps {
+  onError?: (error: any) => void;
+}
+
+export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
   const [hiddenChannels, setHiddenChannels] = useState<Set<string>>(new Set());
 
   // Load hidden channels
@@ -35,18 +38,29 @@ export const ChannelsGrid = () => {
   const { data: channels, isLoading } = useQuery({
     queryKey: ["youtube-channels"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("youtube_channels")
-        .select("*")
-        .order("title", { ascending: true });
+      try {
+        const { data, error } = await supabase
+          .from("youtube_channels")
+          .select("*")
+          .order("title", { ascending: true });
 
-      if (error) {
-        console.error("Error fetching channels:", error);
-        throw error;
+        if (error) {
+          console.error("Error fetching channels:", error);
+          throw error;
+        }
+        
+        return data || [];
+      } catch (error) {
+        console.error("Channel fetch error:", error);
+        onError?.(error);
+        return []; // Return empty array instead of throwing
       }
-      
-      return data || [];
     },
+    retry: (failureCount, error: any) => {
+      if (error.message?.includes('Failed to fetch')) return failureCount < 3;
+      return failureCount < 1;
+    },
+    retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 
   // Trigger video and thumbnail fetch for channels
@@ -56,15 +70,26 @@ export const ChannelsGrid = () => {
 
       const channelIds = channels.map(channel => channel.channel_id);
 
-      // Fetch videos for channels that haven't been updated recently
-      await supabase.functions.invoke('fetch-youtube-videos', {
-        body: { channels: channelIds }
-      });
+      try {
+        // Fetch videos for channels that haven't been updated recently
+        await supabase.functions.invoke('fetch-youtube-videos', {
+          body: { channels: channelIds }
+        }).catch(error => {
+          console.error('Error fetching videos:', error);
+          // Don't throw - allow the component to continue working
+        });
 
-      // Update channel thumbnails
-      await supabase.functions.invoke('update-channel-thumbnails', {
-        body: { channels: channelIds }
-      });
+        // Update channel thumbnails
+        await supabase.functions.invoke('update-channel-thumbnails', {
+          body: { channels: channelIds }
+        }).catch(error => {
+          console.error('Error updating thumbnails:', error);
+          // Don't throw - allow the component to continue working
+        });
+      } catch (error) {
+        console.error('Error updating channels:', error);
+        onError?.(error);
+      }
     };
 
     updateChannels();

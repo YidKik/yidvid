@@ -3,6 +3,7 @@ import { VideoGrid } from "@/components/VideoGrid";
 import { MostViewedVideos } from "@/components/video/MostViewedVideos";
 import { ChannelsGrid } from "@/components/youtube/ChannelsGrid";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { toast } from "sonner";
 
 interface Video {
   id: string;
@@ -40,7 +41,10 @@ export const VideoContent = ({ videos, isLoading }: VideoContentProps) => {
         </div>
       )}
       <div className="channels-grid mt-6">
-        <ChannelsGrid />
+        <ChannelsGrid onError={(error) => {
+          console.error('Channel grid error:', error);
+          toast.error('Unable to fetch channels at the moment. Please try again later.');
+        }} />
       </div>
     </>
   );
