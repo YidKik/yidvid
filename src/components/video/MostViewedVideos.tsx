@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { VideoCard } from "../VideoCard";
 import { ChevronLeft, ChevronRight, Flame } from "lucide-react";
@@ -39,7 +38,7 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
     setTimeout(() => {
       setCurrentIndex(nextIndex);
       setIsTransitioning(false);
-    }, 600);
+    }, 400);
   };
 
   const handlePrevious = () => {
@@ -54,10 +53,9 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
     setTimeout(() => {
       setCurrentIndex(nextIndex);
       setIsTransitioning(false);
-    }, 600);
+    }, 400);
   };
 
-  // Initialize nextVideos when videos prop changes
   useEffect(() => {
     if (sortedVideos.length) {
       const initialNextIndex = currentIndex + videosPerPage >= sortedVideos.length ? 0 : currentIndex + videosPerPage;
@@ -65,7 +63,6 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
     }
   }, [videos]);
 
-  // Auto-sliding effect
   useEffect(() => {
     let intervalId: NodeJS.Timeout;
 
@@ -82,7 +79,6 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
     };
   }, [isAutoPlaying, currentIndex, sortedVideos.length, videosPerPage]);
 
-  // Pause auto-sliding when user interacts with navigation
   const handleManualNavigation = (action: () => void) => {
     setIsAutoPlaying(false);
     action();
@@ -114,14 +110,14 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
           </button>
 
           <div className="relative overflow-hidden min-h-[200px]">
-            {/* Current Videos */}
             <div 
-              className={`grid grid-cols-${isMobile ? '2' : '4'} gap-3 md:gap-6 transition-all duration-600 ease-in-out absolute w-full`}
+              className={`grid grid-cols-${isMobile ? '2' : '4'} gap-3 md:gap-6 absolute w-full`}
               style={{
                 transform: isTransitioning 
                   ? `translateX(${direction === 'left' ? '-100%' : '100%'})`
                   : 'translateX(0)',
                 opacity: isTransitioning ? 0 : 1,
+                transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
               }}
             >
               {currentVideos.map((video) => (
@@ -136,13 +132,13 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
               ))}
             </div>
 
-            {/* Next Videos (sliding in) */}
             {isTransitioning && (
               <div 
-                className={`grid grid-cols-${isMobile ? '2' : '4'} gap-3 md:gap-6 transition-all duration-600 ease-in-out absolute w-full`}
+                className={`grid grid-cols-${isMobile ? '2' : '4'} gap-3 md:gap-6 absolute w-full`}
                 style={{
                   transform: `translateX(${direction === 'left' ? '0' : '-200%'})`,
                   opacity: isTransitioning ? 1 : 0,
+                  transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
                 }}
               >
                 {nextVideos.map((video) => (
