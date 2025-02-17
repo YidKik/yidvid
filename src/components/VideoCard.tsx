@@ -2,6 +2,7 @@
 import { Link } from "react-router-dom";
 import { formatDistanceToNow, parseISO } from "date-fns";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { cn } from "@/lib/utils";
 
 interface VideoCardProps {
   id: string;
