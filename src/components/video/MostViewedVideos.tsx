@@ -30,6 +30,8 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
   const sortedVideos = [...videos].sort((a, b) => (b.views || 0) - (a.views || 0));
 
   const handleNext = () => {
+    if (!sortedVideos.length) return;
+    
     setDirection('left');
     setIsTransitioning(true);
     const nextIndex = currentIndex + videosPerPage >= sortedVideos.length ? 0 : currentIndex + videosPerPage;
@@ -41,6 +43,8 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
   };
 
   const handlePrevious = () => {
+    if (!sortedVideos.length) return;
+    
     setDirection('right');
     setIsTransitioning(true);
     const nextIndex = currentIndex - videosPerPage < 0 ? 
@@ -52,6 +56,14 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
       setIsTransitioning(false);
     }, 600);
   };
+
+  // Initialize nextVideos when videos prop changes
+  useEffect(() => {
+    if (sortedVideos.length) {
+      const initialNextIndex = currentIndex + videosPerPage >= sortedVideos.length ? 0 : currentIndex + videosPerPage;
+      setNextVideos(sortedVideos.slice(initialNextIndex, initialNextIndex + videosPerPage));
+    }
+  }, [videos]);
 
   // Auto-sliding effect
   useEffect(() => {
@@ -96,14 +108,15 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
             onClick={() => handleManualNavigation(handlePrevious)}
             className="absolute left-0 top-1/2 -translate-y-1/2 z-10 p-2 md:p-3 bg-white/90 hover:bg-white rounded-full shadow-lg transition-all duration-300 group"
             style={{ opacity: currentIndex === 0 ? 0.5 : 1 }}
+            disabled={currentIndex === 0}
           >
             <ChevronLeft className="w-4 h-4 md:w-5 md:h-5 text-[#555555] group-hover:scale-110 transition-transform" />
           </button>
 
-          <div className="relative overflow-hidden">
+          <div className="relative overflow-hidden min-h-[200px]">
             {/* Current Videos */}
             <div 
-              className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 transition-all duration-600 ease-in-out absolute w-full"
+              className={`grid grid-cols-${isMobile ? '2' : '4'} gap-3 md:gap-6 transition-all duration-600 ease-in-out absolute w-full`}
               style={{
                 transform: isTransitioning 
                   ? `translateX(${direction === 'left' ? '-100%' : '100%'})`
@@ -126,7 +139,7 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
             {/* Next Videos (sliding in) */}
             {isTransitioning && (
               <div 
-                className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 transition-all duration-600 ease-in-out absolute w-full"
+                className={`grid grid-cols-${isMobile ? '2' : '4'} gap-3 md:gap-6 transition-all duration-600 ease-in-out absolute w-full`}
                 style={{
                   transform: `translateX(${direction === 'left' ? '0' : '-200%'})`,
                   opacity: isTransitioning ? 1 : 0,
@@ -150,6 +163,7 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
             onClick={() => handleManualNavigation(handleNext)}
             className="absolute right-0 top-1/2 -translate-y-1/2 z-10 p-2 md:p-3 bg-white/90 hover:bg-white rounded-full shadow-lg transition-all duration-300 group"
             style={{ opacity: currentIndex + videosPerPage >= sortedVideos.length ? 0.5 : 1 }}
+            disabled={currentIndex + videosPerPage >= sortedVideos.length}
           >
             <ChevronRight className="w-4 h-4 md:w-5 md:h-5 text-[#555555] group-hover:scale-110 transition-transform" />
           </button>
