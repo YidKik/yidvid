@@ -2,8 +2,9 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { corsHeaders } from './utils.ts';
-import { getChannelsFromDatabase, storeVideosInDatabase } from './db-operations.ts';
-import { fetchChannelVideos } from './youtube-api.ts';
+import { getChannelsFromDatabase } from './db-operations.ts';
+import { checkQuota, createQuotaExceededResponse } from './quota-manager.ts';
+import { processChannel, updateChannelStatus, logChannelUpdate } from './channel-processor.ts';
 
 serve(async (req) => {
   // Handle CORS preflight requests
@@ -34,34 +35,13 @@ serve(async (req) => {
     const now = new Date();
     
     // Check quota status
-    const { data: quotaData, error: quotaError } = await supabase
-      .from('api_quota_tracking')
-      .select('quota_remaining, quota_reset_at')
-      .eq('api_name', 'youtube')
-      .single();
-
-    if (quotaError) {
-      console.error('Error checking quota:', quotaError);
-      throw new Error('Failed to check API quota');
-    }
+    const quotaData = await checkQuota(supabase);
 
     // If quota is depleted, return early with reset time
-    if (quotaData && quotaData.quota_remaining <= 0) {
+    if (quotaData.quota_remaining <= 0) {
       console.log('Quota exceeded. Current quota:', quotaData.quota_remaining);
       console.log('Reset scheduled for:', quotaData.quota_reset_at);
-      
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error: 'YouTube API quota exceeded',
-          message: `Daily quota exceeded. Service will resume at ${new Date(quotaData.quota_reset_at).toUTCString()}`,
-          quota_reset_at: quotaData.quota_reset_at
-        }),
-        { 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 429 // Return 429 Too Many Requests
-        }
-      );
+      return createQuotaExceededResponse(quotaData.quota_reset_at);
     }
 
     // Parse request body if present
@@ -96,140 +76,29 @@ serve(async (req) => {
         console.log(`Fetching videos for channel: ${channelId}`);
         
         // Check current quota before processing channel
-        const { data: currentQuota, error: quotaCheckError } = await supabase
-          .from('api_quota_tracking')
-          .select('quota_remaining')
-          .eq('api_name', 'youtube')
-          .single();
-
-        if (quotaCheckError || (currentQuota && currentQuota.quota_remaining <= 0)) {
+        const currentQuota = await checkQuota(supabase);
+        if (currentQuota.quota_remaining <= 0) {
           console.log('YouTube API quota exceeded during channel processing');
-          // Update quota to 0 if we hit the limit
-          await supabase
-            .from('api_quota_tracking')
-            .update({ 
-              quota_remaining: 0,
-              updated_at: now.toISOString()
-            })
-            .eq('api_name', 'youtube');
-            
-          return new Response(
-            JSON.stringify({
-              success: false,
-              error: 'YouTube API quota exceeded',
-              message: 'Daily quota exceeded during video fetch.',
-              processed: processedVideos.length,
-              errors,
-              quota_reset_at: quotaData.quota_reset_at
-            }),
-            { 
-              headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-              status: 429
-            }
-          );
+          return createQuotaExceededResponse(quotaData.quota_reset_at, processedVideos, errors);
         }
 
-        // Log the start of update
-        await supabase
-          .from('youtube_update_logs')
-          .insert({
-            channel_id: channelId,
-            videos_count: 0
-          })
-          .single();
-
-        let nextPageToken: string | null = null;
-        let allVideos = [];
-
-        do {
-          const result = await fetchChannelVideos(channelId, youtubeApiKey, nextPageToken);
-          
-          if (result.quotaExceeded) {
-            // Update quota tracking to 0
-            await supabase
-              .from('api_quota_tracking')
-              .update({ 
-                quota_remaining: 0,
-                updated_at: now.toISOString()
-              })
-              .eq('api_name', 'youtube');
-              
-            // Return 429 with quota exceeded message
-            return new Response(
-              JSON.stringify({
-                success: false,
-                error: 'YouTube API quota exceeded',
-                message: 'Daily quota exceeded during video fetch.',
-                processed: processedVideos.length,
-                errors,
-                quota_reset_at: quotaData.quota_reset_at
-              }),
-              { 
-                headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-                status: 429
-              }
-            );
-          }
-          
-          // Update quota after successful API call
-          if (currentQuota && currentQuota.quota_remaining > 0) {
-            await supabase
-              .from('api_quota_tracking')
-              .update({ 
-                quota_remaining: currentQuota.quota_remaining - 1,
-                updated_at: now.toISOString()
-              })
-              .eq('api_name', 'youtube');
-          }
-          
-          allVideos = [...allVideos, ...result.videos];
-          nextPageToken = result.nextPageToken;
-        } while (nextPageToken);
-
-        if (allVideos.length > 0) {
-          const storedVideos = await storeVideosInDatabase(supabase, allVideos);
-          processedVideos.push(...storedVideos);
-
-          // Update the videos count in youtube_update_logs
-          await supabase
-            .from('youtube_update_logs')
-            .update({ videos_count: allVideos.length })
-            .eq('channel_id', channelId)
-            .single();
+        const result = await processChannel(supabase, channelId, youtubeApiKey, currentQuota, now);
+        
+        if (result.quotaExceeded) {
+          return createQuotaExceededResponse(quotaData.quota_reset_at, processedVideos, errors);
         }
-
-        // Update channel's last_fetch timestamp
-        await supabase
-          .from('youtube_channels')
-          .update({ 
-            last_fetch: now.toISOString(),
-            fetch_error: null
-          })
-          .eq('channel_id', channelId)
-          .single();
+        
+        if (result.videos) {
+          processedVideos.push(...result.videos);
+        }
 
       } catch (error) {
         console.error(`Error processing channel ${channelId}:`, error);
         errors.push({ channelId, error: error.message });
         
-        // Log error in youtube_update_logs
-        await supabase
-          .from('youtube_update_logs')
-          .insert({
-            channel_id: channelId,
-            error: error.message
-          })
-          .single();
-
-        // Update channel with error
-        await supabase
-          .from('youtube_channels')
-          .update({ 
-            fetch_error: error.message,
-            last_fetch: now.toISOString()
-          })
-          .eq('channel_id', channelId)
-          .single();
+        // Log error and update channel status
+        await logChannelUpdate(supabase, channelId, 0, error.message);
+        await updateChannelStatus(supabase, channelId, now, error.message);
       }
 
       // Add delay between processing channels
