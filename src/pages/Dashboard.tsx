@@ -1,10 +1,11 @@
 
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { AdminDashboardCards } from "@/components/dashboard/AdminDashboardCards";
+import { BackButton } from "@/components/navigation/BackButton";
 
 export default function Dashboard() {
   const { data: session } = useQuery({
@@ -101,6 +102,7 @@ export default function Dashboard() {
 
   return (
     <div className="container mx-auto py-12 space-y-8 px-4">
+      <BackButton />
       <div className="flex items-center gap-4 mb-8">
         <img 
           src="/lovable-uploads/e425cacb-4c3a-4d81-b4e0-77fcbf10f61c.png" 

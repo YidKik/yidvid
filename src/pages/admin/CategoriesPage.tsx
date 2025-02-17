@@ -66,6 +66,7 @@ export default function CategoriesPage() {
   if (videosError || channelsError || categoriesError) {
     return (
       <div className="container mx-auto py-8">
+        <BackButton />
         <div className="text-center text-red-500">
           Error loading data. Please try again later.
         </div>
@@ -143,4 +144,3 @@ export default function CategoriesPage() {
     </div>
   );
 }
-
