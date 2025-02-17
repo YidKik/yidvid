@@ -28,21 +28,18 @@ export const VideoContent = ({ videos, isLoading }: VideoContentProps) => {
   return (
     <div className="space-y-3 md:space-y-6">
       {isMobile ? (
-        <div className="mt-2">
-          <h2 className="text-base font-semibold mb-2 px-2">Latest Videos</h2>
-          <div className="overflow-x-auto scrollbar-hide pb-4">
-            <div className="inline-flex gap-3 px-2 min-w-full">
-              {videos?.map((video) => (
-                <div key={video.id} className="w-[calc(100vw-140px)] min-w-[240px] flex-shrink-0 first:ml-0">
-                  <VideoGrid
-                    videos={[video]}
-                    maxVideos={1}
-                    rowSize={1}
-                    isLoading={isLoading}
-                  />
-                </div>
-              ))}
-            </div>
+        <div className="overflow-x-auto scrollbar-hide pb-4">
+          <div className="inline-flex gap-2 px-2 min-w-full">
+            {videos?.map((video) => (
+              <div key={video.id} className="w-[calc(50%-4px)] flex-shrink-0 first:ml-0">
+                <VideoGrid
+                  videos={[video]}
+                  maxVideos={1}
+                  rowSize={1}
+                  isLoading={isLoading}
+                />
+              </div>
+            ))}
           </div>
         </div>
       ) : (
