@@ -5,7 +5,6 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Users, Video, MessageSquare, Tv, Database, Film, Mail, Grid3X3, Flag } from "lucide-react";
 import { DashboardStats, AdminNotification } from "@/types/dashboard";
-import { ReportedVideosSection } from "./ReportedVideosSection";
 
 interface AdminDashboardCardsProps {
   stats?: DashboardStats;
@@ -14,7 +13,6 @@ interface AdminDashboardCardsProps {
 
 export const AdminDashboardCards = ({ stats, notifications }: AdminDashboardCardsProps) => {
   const navigate = useNavigate();
-  const [isReportedVideosOpen, setIsReportedVideosOpen] = useState(false);
 
   const getNotificationCount = (type: string) => {
     return notifications?.filter(n => n.type === type).length || 0;
@@ -90,7 +88,7 @@ export const AdminDashboardCards = ({ stats, notifications }: AdminDashboardCard
       title: "Reported Videos",
       description: "Review reported videos and take action",
       icon: <Flag className="h-7 w-7" />,
-      onClick: () => setIsReportedVideosOpen(true),
+      onClick: () => navigate("/admin/reported-videos"),
       bgColor: "bg-[#FFE0E0]",
       iconColor: "text-red-600"
     },
@@ -106,51 +104,45 @@ export const AdminDashboardCards = ({ stats, notifications }: AdminDashboardCard
   ];
 
   return (
-    <>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {adminCards.map((card, index) => (
-          <Card 
-            key={index}
-            className={`relative transform transition-all duration-300 hover:scale-105 cursor-pointer border-none shadow-lg ${card.bgColor}`}
-            onClick={card.onClick}
-          >
-            {card.notifications > 0 && (
-              <div className="absolute -top-2 -right-2 z-10">
-                <Badge 
-                  variant="destructive"
-                  className="rounded-full px-2.5 py-0.5 text-xs font-semibold"
-                >
-                  {card.notifications}
-                </Badge>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {adminCards.map((card, index) => (
+        <Card 
+          key={index}
+          className={`relative transform transition-all duration-300 hover:scale-105 cursor-pointer border-none shadow-lg ${card.bgColor}`}
+          onClick={card.onClick}
+        >
+          {card.notifications > 0 && (
+            <div className="absolute -top-2 -right-2 z-10">
+              <Badge 
+                variant="destructive"
+                className="rounded-full px-2.5 py-0.5 text-xs font-semibold"
+              >
+                {card.notifications}
+              </Badge>
+            </div>
+          )}
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div className={`p-3 rounded-lg ${card.bgColor} ${card.iconColor}`}>
+                {card.icon}
               </div>
-            )}
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div className={`p-3 rounded-lg ${card.bgColor} ${card.iconColor}`}>
-                  {card.icon}
-                </div>
-                {card.stats && (
-                  <span className="text-sm font-medium text-gray-600 bg-white/50 px-3 py-1 rounded-full">
-                    {card.stats}
-                  </span>
-                )}
-              </div>
-              <CardTitle className="mt-4 text-xl font-semibold text-gray-800">
-                {card.title}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-gray-600 font-medium">
-                {card.description}
-              </p>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-      <ReportedVideosSection 
-        isOpen={isReportedVideosOpen} 
-        onClose={() => setIsReportedVideosOpen(false)} 
-      />
-    </>
+              {card.stats && (
+                <span className="text-sm font-medium text-gray-600 bg-white/50 px-3 py-1 rounded-full">
+                  {card.stats}
+                </span>
+              )}
+            </div>
+            <CardTitle className="mt-4 text-xl font-semibold text-gray-800">
+              {card.title}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-gray-600 font-medium">
+              {card.description}
+            </p>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
   );
 };
