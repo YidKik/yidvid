@@ -34,13 +34,13 @@ export const Header = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
+    <header className={`sticky top-0 z-50 w-full border-b ${isMobile && isSearchExpanded ? 'bg-white' : 'bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60'}`}>
       <div className="container mx-auto">
         <div className="flex h-14 items-center justify-between px-2 md:px-4 relative">
           <AnimatePresence mode="wait">
             {isMobile && isSearchExpanded ? (
               <motion.div 
-                className="absolute inset-0 flex items-center justify-center px-2 bg-white/95"
+                className="absolute inset-0 flex items-center justify-center px-2 bg-white"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
