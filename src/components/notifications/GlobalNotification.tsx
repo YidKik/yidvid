@@ -8,9 +8,19 @@ import { motion, AnimatePresence } from "framer-motion";
 export const GlobalNotification = () => {
   const [dismissedIds, setDismissedIds] = useState<string[]>([]);
 
-  const { data: notifications } = useQuery({
+  const { data: session } = useQuery({
+    queryKey: ["session"],
+    queryFn: async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      return session;
+    },
+  });
+
+  const { data: notifications, isError } = useQuery({
     queryKey: ["active-notifications"],
     queryFn: async () => {
+      if (!session) return [];
+
       const { data, error } = await supabase
         .from("global_notifications")
         .select("*")
@@ -21,11 +31,12 @@ export const GlobalNotification = () => {
 
       if (error) {
         console.error("Error fetching notifications:", error);
-        return [];
+        throw error;
       }
 
       return data;
     },
+    enabled: !!session,
     refetchInterval: 60000, // Refetch every minute
   });
 
@@ -37,7 +48,7 @@ export const GlobalNotification = () => {
     setDismissedIds((prev) => [...prev, id]);
   };
 
-  if (!activeNotifications?.length) return null;
+  if (!session || isError || !activeNotifications?.length) return null;
 
   return (
     <div className="fixed top-24 left-0 right-0 z-50 p-4 pointer-events-none">
