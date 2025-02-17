@@ -6,7 +6,6 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { VideoGridPagination } from "./video/VideoGridPagination";
-import { toast } from "sonner";
 
 interface VideoGridProps {
   videos?: {
@@ -35,80 +34,32 @@ export const VideoGrid: FC<VideoGridProps> = ({ maxVideos = 12, rowSize = 4, isL
     queryFn: async () => {
       console.log("VideoGrid: Fetching videos...");
 
-      try {
-        // First check quota status
-        const { data: quotaData } = await supabase
-          .from('api_quota_tracking')
-          .select('quota_remaining, quota_reset_at')
-          .eq('api_name', 'youtube')
-          .single();
+      const { data, error } = await supabase
+        .from("youtube_videos")
+        .select("*")
+        .is('deleted_at', null)
+        .order("uploaded_at", { ascending: false });
 
-        if (quotaData?.quota_remaining <= 0) {
-          console.warn('YouTube API quota exceeded, fetching cached data only');
-          toast.warning("API quota exceeded. Showing cached data until reset.");
-        }
-
-        const { data, error } = await supabase
-          .from("youtube_videos")
-          .select("*")
-          .is('deleted_at', null)
-          .order("uploaded_at", { ascending: false });
-
-        if (error) {
-          console.error("VideoGrid: Error fetching videos:", error);
-          throw error;
-        }
-
-        console.log("VideoGrid: Fetched videos count:", data?.length || 0);
-        return (data || []).map(video => ({
-          id: video.id,
-          video_id: video.video_id,
-          title: video.title,
-          thumbnail: video.thumbnail,
-          channelName: video.channel_name,
-          channelId: video.channel_id,
-          views: video.views || 0,
-          uploadedAt: video.uploaded_at
-        }));
-      } catch (error: any) {
-        console.error("Error in queryFn:", error);
-        
-        // If quota exceeded, try to get cached data
-        if (error.message?.includes('quota exceeded') || error?.status === 429) {
-          toast.warning('API quota exceeded. Showing cached data.');
-          
-          const { data: cachedData } = await supabase
-            .from("youtube_videos")
-            .select("*")
-            .is('deleted_at', null)
-            .order("uploaded_at", { ascending: false });
-
-          if (cachedData) {
-            return cachedData.map(video => ({
-              id: video.id,
-              video_id: video.video_id,
-              title: video.title,
-              thumbnail: video.thumbnail,
-              channelName: video.channel_name,
-              channelId: video.channel_id,
-              views: video.views || 0,
-              uploadedAt: video.uploaded_at
-            }));
-          }
-        }
-        
+      if (error) {
+        console.error("VideoGrid: Error fetching videos:", error);
         throw error;
       }
+
+      console.log("VideoGrid: Fetched videos count:", data?.length || 0);
+      return (data || []).map(video => ({
+        id: video.id,
+        video_id: video.video_id,
+        title: video.title,
+        thumbnail: video.thumbnail,
+        channelName: video.channel_name,
+        channelId: video.channel_id,
+        views: video.views || 0,
+        uploadedAt: video.uploaded_at
+      }));
     },
     enabled: !parentVideos,
     staleTime: 1000 * 60 * 5,
     gcTime: 1000 * 60 * 30,
-    retry: (failureCount, error: any) => {
-      // Don't retry on quota exceeded
-      if (error?.status === 429) return false;
-      // Retry other errors up to 3 times
-      return failureCount < 3;
-    },
   });
 
   useEffect(() => {
