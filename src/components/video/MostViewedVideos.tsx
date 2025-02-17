@@ -20,6 +20,7 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [direction, setDirection] = useState<'left' | 'right'>('left');
   const isMobile = useIsMobile();
   const videosPerPage = isMobile ? 2 : 4;
   const AUTO_SLIDE_INTERVAL = 5000;
@@ -28,19 +29,21 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
   const sortedVideos = [...videos].sort((a, b) => (b.views || 0) - (a.views || 0));
 
   const handleNext = () => {
+    setDirection('left');
     setIsTransitioning(true);
     setCurrentIndex((prevIndex) => 
       prevIndex + videosPerPage >= sortedVideos.length ? 0 : prevIndex + videosPerPage
     );
-    setTimeout(() => setIsTransitioning(false), 600); // Match transition duration
+    setTimeout(() => setIsTransitioning(false), 600);
   };
 
   const handlePrevious = () => {
+    setDirection('right');
     setIsTransitioning(true);
     setCurrentIndex((prevIndex) => 
       prevIndex - videosPerPage < 0 ? Math.max(0, sortedVideos.length - videosPerPage) : prevIndex - videosPerPage
     );
-    setTimeout(() => setIsTransitioning(false), 600); // Match transition duration
+    setTimeout(() => setIsTransitioning(false), 600);
   };
 
   // Auto-sliding effect
@@ -90,23 +93,27 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
             <ChevronLeft className="w-4 h-4 md:w-5 md:h-5 text-[#555555] group-hover:scale-110 transition-transform" />
           </button>
 
-          <div 
-            className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 transition-transform duration-600 ease-in-out"
-            style={{
-              transform: isTransitioning ? 'translateX(-100%)' : 'translateX(0)',
-              opacity: isTransitioning ? 0.5 : 1,
-            }}
-          >
-            {currentVideos.map((video) => (
-              <div 
-                key={video.id} 
-                className="group relative rounded-lg overflow-hidden transition-all duration-300 hover:shadow-xl"
-              >
-                <div className="relative aspect-video">
-                  <VideoCard {...video} />
+          <div className="relative overflow-hidden">
+            <div 
+              className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 transition-all duration-600 ease-in-out"
+              style={{
+                transform: isTransitioning 
+                  ? `translateX(${direction === 'left' ? '-100%' : '100%'})`
+                  : 'translateX(0)',
+                opacity: isTransitioning ? 0 : 1,
+              }}
+            >
+              {currentVideos.map((video) => (
+                <div 
+                  key={video.id} 
+                  className="group relative rounded-lg overflow-hidden transition-all duration-300 hover:shadow-xl"
+                >
+                  <div className="relative aspect-video">
+                    <VideoCard {...video} />
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
 
           <button
