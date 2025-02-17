@@ -68,10 +68,10 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
 
   return (
     <div className="w-full max-w-[1200px] mx-auto mb-8">
-      <div className="bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 rounded-xl shadow-lg p-4 md:p-6">
+      <div className="bg-gradient-to-r from-[#F1F1F1] via-[#D3E4FD] to-[#F1F1F1] rounded-xl shadow-lg p-4 md:p-6">
         <div className="flex items-center gap-2 mb-4">
           <Flame className="w-5 h-5 text-primary animate-pulse" />
-          <h2 className="text-base md:text-xl font-bold text-accent">
+          <h2 className="text-base md:text-xl font-bold text-[#333333]">
             Trending Now
           </h2>
         </div>
@@ -82,7 +82,7 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
             className="absolute left-0 top-1/2 -translate-y-1/2 z-10 p-2 md:p-3 bg-white/90 hover:bg-white rounded-full shadow-lg transition-all duration-300 group"
             style={{ opacity: currentIndex === 0 ? 0.5 : 1 }}
           >
-            <ChevronLeft className="w-4 h-4 md:w-5 md:h-5 text-primary group-hover:scale-110 transition-transform" />
+            <ChevronLeft className="w-4 h-4 md:w-5 md:h-5 text-[#555555] group-hover:scale-110 transition-transform" />
           </button>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
@@ -106,7 +106,7 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
             className="absolute right-0 top-1/2 -translate-y-1/2 z-10 p-2 md:p-3 bg-white/90 hover:bg-white rounded-full shadow-lg transition-all duration-300 group"
             style={{ opacity: currentIndex + videosPerPage >= sortedVideos.length ? 0.5 : 1 }}
           >
-            <ChevronRight className="w-4 h-4 md:w-5 md:h-5 text-primary group-hover:scale-110 transition-transform" />
+            <ChevronRight className="w-4 h-4 md:w-5 md:h-5 text-[#555555] group-hover:scale-110 transition-transform" />
           </button>
         </div>
 
@@ -116,8 +116,8 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
               key={idx}
               className={`w-2 h-2 rounded-full transition-all duration-300 ${
                 Math.floor(currentIndex / videosPerPage) === idx 
-                  ? 'bg-primary scale-125' 
-                  : 'bg-primary/20 hover:bg-primary/40'
+                  ? 'bg-[#555555] scale-125' 
+                  : 'bg-[#888888]/20 hover:bg-[#888888]/40'
               }`}
               onClick={() => setCurrentIndex(idx * videosPerPage)}
             />
