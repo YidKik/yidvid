@@ -307,6 +307,7 @@ export type Database = {
           is_active: boolean | null
           message: string
           start_date: string
+          title: string | null
           type: string | null
           updated_at: string
         }
@@ -318,6 +319,7 @@ export type Database = {
           is_active?: boolean | null
           message: string
           start_date?: string
+          title?: string | null
           type?: string | null
           updated_at?: string
         }
@@ -329,6 +331,7 @@ export type Database = {
           is_active?: boolean | null
           message?: string
           start_date?: string
+          title?: string | null
           type?: string | null
           updated_at?: string
         }

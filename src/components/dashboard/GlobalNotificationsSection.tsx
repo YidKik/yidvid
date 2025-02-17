@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -27,6 +26,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 export const GlobalNotificationsSection = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
   const [type, setType] = useState("info");
   const [startDate, setStartDate] = useState("");
@@ -52,6 +52,7 @@ export const GlobalNotificationsSection = () => {
       if (!sessionData?.session?.user?.id) throw new Error("Not authenticated");
 
       const { error } = await supabase.from("global_notifications").insert({
+        title,
         message,
         type,
         start_date: startDate || new Date().toISOString(),
@@ -73,29 +74,8 @@ export const GlobalNotificationsSection = () => {
     },
   });
 
-  const toggleNotification = useMutation({
-    mutationFn: async (id: string) => {
-      const notification = notifications?.find((n) => n.id === id);
-      if (!notification) return;
-
-      const { error } = await supabase
-        .from("global_notifications")
-        .update({ is_active: !notification.is_active })
-        .eq("id", id);
-
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["global-notifications"] });
-      toast.success("Notification updated successfully");
-    },
-    onError: (error) => {
-      console.error("Error updating notification:", error);
-      toast.error("Failed to update notification");
-    },
-  });
-
   const resetForm = () => {
+    setTitle("");
     setMessage("");
     setType("info");
     setStartDate("");
@@ -126,6 +106,15 @@ export const GlobalNotificationsSection = () => {
             <DialogTitle>Create New Notification</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="title">Title (Optional)</Label>
+              <Input
+                id="title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Enter notification title"
+              />
+            </div>
             <div className="space-y-2">
               <Label htmlFor="message">Message</Label>
               <Input

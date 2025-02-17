@@ -51,7 +51,7 @@ export const GlobalNotification = () => {
             className="pointer-events-auto max-w-3xl mx-auto mb-3"
           >
             <div
-              className={`rounded-xl p-4 shadow-lg flex items-center justify-between border ${
+              className={`rounded-xl p-4 shadow-lg border ${
                 notification.type === "error"
                   ? "bg-[#FFF5F5] text-red-700 border-red-100"
                   : notification.type === "warning"
@@ -59,26 +59,37 @@ export const GlobalNotification = () => {
                   : "bg-[#F0F9FF] text-blue-700 border-blue-100"
               }`}
             >
-              <div className="flex items-center gap-3">
-                {notification.type === "error" ? (
-                  <AlertCircle className="w-5 h-5 flex-shrink-0" />
-                ) : (
-                  <Info className="w-5 h-5 flex-shrink-0" />
-                )}
-                <p className="text-sm font-medium leading-5">{notification.message}</p>
+              <div className="flex items-start justify-between">
+                <div className="flex items-start gap-3">
+                  {notification.type === "error" ? (
+                    <AlertCircle className="w-5 h-5 flex-shrink-0 mt-1" />
+                  ) : (
+                    <Info className="w-5 h-5 flex-shrink-0 mt-1" />
+                  )}
+                  <div className="space-y-1">
+                    {notification.title && (
+                      <h3 className="text-base font-bold leading-6">
+                        {notification.title}
+                      </h3>
+                    )}
+                    <p className="text-sm font-medium leading-5">
+                      {notification.message}
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => handleDismiss(notification.id)}
+                  className={`p-1.5 rounded-full transition-colors ${
+                    notification.type === "error"
+                      ? "hover:bg-red-50"
+                      : notification.type === "warning"
+                      ? "hover:bg-yellow-50"
+                      : "hover:bg-blue-50"
+                  }`}
+                >
+                  <X className="w-4 h-4" />
+                </button>
               </div>
-              <button
-                onClick={() => handleDismiss(notification.id)}
-                className={`p-1.5 rounded-full transition-colors ${
-                  notification.type === "error"
-                    ? "hover:bg-red-50"
-                    : notification.type === "warning"
-                    ? "hover:bg-yellow-50"
-                    : "hover:bg-blue-50"
-                }`}
-              >
-                <X className="w-4 h-4" />
-              </button>
             </div>
           </motion.div>
         ))}
