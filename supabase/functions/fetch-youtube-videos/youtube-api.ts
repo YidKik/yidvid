@@ -22,7 +22,15 @@ export const fetchChannelVideos = async (
     const channelResponse = await fetch(channelUrl);
     
     if (!channelResponse.ok) {
-      throw new Error(`Channel API error: ${channelResponse.status} - ${await channelResponse.text()}`);
+      const errorText = await channelResponse.text();
+      console.error(`[YouTube Videos] Channel API error for ${channelId}:`, errorText);
+      
+      // Handle quota exceeded specifically
+      if (errorText.includes('quotaExceeded')) {
+        return { videos: [], nextPageToken: null }; // Return empty result but don't throw
+      }
+      
+      throw new Error(`Channel API error: ${channelResponse.status} - ${errorText}`);
     }
     
     const channelData = await channelResponse.json();
@@ -55,6 +63,12 @@ export const fetchChannelVideos = async (
     if (!response.ok) {
       const errorText = await response.text();
       console.error(`[YouTube Videos] Playlist API error for channel ${channelId}:`, errorText);
+      
+      // Handle quota exceeded specifically
+      if (errorText.includes('quotaExceeded')) {
+        return { videos: [], nextPageToken: null }; // Return empty result but don't throw
+      }
+      
       throw new Error(`Playlist API error: ${response.status} - ${errorText}`);
     }
     
@@ -82,6 +96,12 @@ export const fetchChannelVideos = async (
     if (!statsResponse.ok) {
       const errorText = await statsResponse.text();
       console.error(`[YouTube Videos] Statistics API error for channel ${channelId}:`, errorText);
+      
+      // Handle quota exceeded specifically
+      if (errorText.includes('quotaExceeded')) {
+        return { videos: [], nextPageToken: null }; // Return empty result but don't throw
+      }
+      
       throw new Error(`Statistics API error: ${statsResponse.status} - ${errorText}`);
     }
     
@@ -129,6 +149,7 @@ export const fetchChannelVideos = async (
     };
   } catch (error) {
     console.error(`[YouTube Videos] Error processing channel ${channelId}:`, error);
-    throw error; // Re-throw to allow retry logic in the main function
+    // Return empty result instead of throwing to prevent cascade failures
+    return { videos: [], nextPageToken: null };
   }
 };
