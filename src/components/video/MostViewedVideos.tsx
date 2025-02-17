@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { VideoCard } from "../VideoCard";
 import { ChevronLeft, ChevronRight, Flame } from "lucide-react";
@@ -25,7 +26,6 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
   const videosPerPage = isMobile ? 2 : 4;
   const AUTO_SLIDE_INTERVAL = 5000;
 
-  // Sort videos by view count in descending order
   const sortedVideos = [...videos].sort((a, b) => (b.views || 0) - (a.views || 0));
 
   const handleNext = () => {
@@ -38,7 +38,7 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
     setTimeout(() => {
       setCurrentIndex(nextIndex);
       setIsTransitioning(false);
-    }, 400);
+    }, 800); // Increased from 400 to 800 for smoother transition
   };
 
   const handlePrevious = () => {
@@ -53,7 +53,7 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
     setTimeout(() => {
       setCurrentIndex(nextIndex);
       setIsTransitioning(false);
-    }, 400);
+    }, 800); // Increased from 400 to 800 for smoother transition
   };
 
   useEffect(() => {
@@ -117,13 +117,13 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
                   ? `translateX(${direction === 'left' ? '-100%' : '100%'})`
                   : 'translateX(0)',
                 opacity: isTransitioning ? 0 : 1,
-                transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
+                transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)' // Changed from 0.4s to 0.8s and easing
               }}
             >
               {currentVideos.map((video) => (
                 <div 
                   key={video.id} 
-                  className="group relative rounded-lg overflow-hidden transition-all duration-300 hover:shadow-xl"
+                  className="group relative rounded-lg overflow-hidden transition-all duration-500 hover:shadow-xl"
                 >
                   <div className="relative aspect-video">
                     <VideoCard {...video} hideInfo={isMobile} />
@@ -138,13 +138,13 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
                 style={{
                   transform: `translateX(${direction === 'left' ? '0' : '-200%'})`,
                   opacity: isTransitioning ? 1 : 0,
-                  transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
+                  transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)' // Changed from 0.4s to 0.8s and easing
                 }}
               >
                 {nextVideos.map((video) => (
                   <div 
                     key={video.id} 
-                    className="group relative rounded-lg overflow-hidden transition-all duration-300 hover:shadow-xl"
+                    className="group relative rounded-lg overflow-hidden transition-all duration-500 hover:shadow-xl"
                   >
                     <div className="relative aspect-video">
                       <VideoCard {...video} hideInfo={isMobile} />
@@ -169,7 +169,7 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
           {Array.from({ length: Math.ceil(sortedVideos.length / videosPerPage) }).map((_, idx) => (
             <button
               key={idx}
-              className={`w-2 h-2 rounded-full transition-all duration-300 ${
+              className={`w-2 h-2 rounded-full transition-all duration-500 ${
                 Math.floor(currentIndex / videosPerPage) === idx 
                   ? 'bg-[#555555] scale-125' 
                   : 'bg-[#888888]/20 hover:bg-[#888888]/40'
