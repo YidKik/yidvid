@@ -16,11 +16,28 @@ export const GlobalNotification = () => {
     },
   });
 
+  const { data: profile } = useQuery({
+    queryKey: ["user-profile", session?.user?.id],
+    queryFn: async () => {
+      if (!session?.user?.id) return null;
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("is_admin")
+        .eq("id", session.user.id)
+        .single();
+
+      if (error) {
+        console.error("Error fetching profile:", error);
+        return null;
+      }
+      return data;
+    },
+    enabled: !!session?.user?.id,
+  });
+
   const { data: notifications, isError } = useQuery({
     queryKey: ["active-notifications"],
     queryFn: async () => {
-      if (!session) return [];
-
       const { data, error } = await supabase
         .from("global_notifications")
         .select("*")
@@ -34,9 +51,21 @@ export const GlobalNotification = () => {
         throw error;
       }
 
+      // Always include admin rights notification if user is admin
+      if (profile?.is_admin) {
+        const adminNotification = {
+          id: "admin-rights",
+          type: "info",
+          title: "Admin Access",
+          message: "You have administrator rights on this platform. Access the admin dashboard through the settings menu.",
+          is_active: true,
+        };
+        return [adminNotification, ...(data || [])];
+      }
+
       return data;
     },
-    enabled: !!session,
+    enabled: true,
     refetchInterval: 60000, // Refetch every minute
   });
 
@@ -48,7 +77,7 @@ export const GlobalNotification = () => {
     setDismissedIds((prev) => [...prev, id]);
   };
 
-  if (!session || isError || !activeNotifications?.length) return null;
+  if (isError || !activeNotifications?.length) return null;
 
   return (
     <div className="fixed top-24 left-0 right-0 z-50 p-4 pointer-events-none">
