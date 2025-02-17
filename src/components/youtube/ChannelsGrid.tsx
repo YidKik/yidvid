@@ -7,6 +7,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useState } from "react";
 import { RequestChannelDialog } from "./RequestChannelDialog";
 import { toast } from "sonner";
+import { useDebounce } from "@/hooks/use-debounce";
 
 interface ChannelsGridProps {
   onError?: (error: any) => void;
@@ -14,52 +15,57 @@ interface ChannelsGridProps {
 
 export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
   const [hiddenChannels, setHiddenChannels] = useState<Set<string>>(new Set());
-
-  // Load hidden channels
+  
+  // Load session with proper caching
   const { data: session } = useQuery({
     queryKey: ["auth-session"],
     queryFn: async () => {
-      const { data } = await supabase.auth.getSession();
-      return data.session;
+      try {
+        const { data, error } = await supabase.auth.getSession();
+        if (error) throw error;
+        return data.session;
+      } catch (error) {
+        console.error("Session fetch error:", error);
+        return null;
+      }
     },
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
   });
 
-  useQuery({
+  // Load hidden channels with error handling
+  const { data: hiddenChannelsData } = useQuery({
     queryKey: ["hidden-channels", session?.user?.id],
     enabled: !!session?.user?.id,
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('hidden_channels')
-        .select('channel_id')
-        .eq('user_id', session!.user.id);
+      try {
+        const { data, error } = await supabase
+          .from('hidden_channels')
+          .select('channel_id')
+          .eq('user_id', session!.user.id);
 
-      if (error) {
+        if (error) throw error;
+        setHiddenChannels(new Set(data.map(hc => hc.channel_id)));
+        return data;
+      } catch (error) {
         console.error('Error loading hidden channels:', error);
         return [];
       }
-
-      setHiddenChannels(new Set(data.map(hc => hc.channel_id)));
-      return data;
     },
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
   });
 
-  // Fetch channels
+  // Fetch channels with improved error handling and caching
   const { data: channels, isLoading, error } = useQuery({
     queryKey: ["youtube-channels"],
     queryFn: async () => {
       try {
-        console.log("Fetching channels...");
         const { data, error } = await supabase
           .from("youtube_channels")
           .select("*")
           .is("deleted_at", null)
           .order("title", { ascending: true });
 
-        if (error) {
-          console.error("Error fetching channels:", error);
-          throw error;
-        }
-        
+        if (error) throw error;
         return data || [];
       } catch (error: any) {
         console.error("Channel fetch error:", error);
@@ -69,11 +75,13 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
       }
     },
     retry: (failureCount, error: any) => {
+      // Only retry network errors, max 2 times
       if (error.message?.includes('Failed to fetch')) return failureCount < 2;
-      return failureCount < 1;
+      return false;
     },
     retryDelay: 2000, // Fixed 2 second delay between retries
     staleTime: 1000 * 60 * 5, // Consider data fresh for 5 minutes
+    refetchOnWindowFocus: false, // Prevent unnecessary refetches
   });
 
   if (isLoading) {
