@@ -42,14 +42,13 @@ const MainContent = () => {
       <Header />
       <GlobalNotification />
       <main className="mt-2 md:mt-6 mx-auto px-2 md:px-6 max-w-[1400px]">
-        <div className={`space-y-3 md:space-y-6 ${isMobile ? 'pb-20' : ''}`}>
-          <div className="space-y-3">
-            <ContentToggle 
-              isMusic={isMusic} 
-              onToggle={() => setIsMusic(!isMusic)} 
-            />
-            <CategorySection />
-          </div>
+        <div className={`space-y-8 md:space-y-12 ${isMobile ? 'pb-20' : ''}`}>
+          <ContentToggle 
+            isMusic={isMusic} 
+            onToggle={() => setIsMusic(!isMusic)} 
+          />
+          
+          <CategorySection />
 
           <motion.div
             key={isMusic ? "music" : "videos"}
