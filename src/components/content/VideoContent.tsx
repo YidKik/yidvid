@@ -28,8 +28,8 @@ export const VideoContent = ({ videos, isLoading }: VideoContentProps) => {
   return (
     <div className="space-y-3 md:space-y-6">
       {isMobile ? (
-        <div className="pb-4">
-          <div className="grid grid-cols-2 gap-1 px-2">
+        <div>
+          <div className="grid grid-cols-2 gap-0.5">
             {videos?.slice(0, 4).map((video) => (
               <div key={video.id}>
                 <VideoGrid
