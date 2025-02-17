@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { NotificationsMenu } from "./NotificationsMenu";
 import { UserMenu } from "./UserMenu";
 import { ContactDialog } from "../contact/ContactDialog";
-import { ChevronDown } from "lucide-react";
+import { Search } from "lucide-react";
 
 interface HeaderActionsProps {
   isMobile: boolean;
@@ -22,19 +22,16 @@ export const HeaderActions = ({
 }: HeaderActionsProps) => {
   return (
     <div className="flex items-center gap-1 md:gap-2">
-      {isMobile && !isSearchExpanded ? (
+      {isMobile ? (
         <Button
           variant="ghost"
           size="icon"
           onClick={onSearchExpand}
           className="mr-1"
         >
-          <ChevronDown className="h-5 w-5 text-gray-600" />
+          <Search className="h-5 w-5 text-gray-600" />
         </Button>
-      ) : null}
-
-      {/* Show these icons only on desktop */}
-      {!isMobile && (
+      ) : (
         <>
           <ContactDialog />
           {session && <NotificationsMenu session={session} onMarkAsRead={async () => {}} />}
@@ -42,7 +39,7 @@ export const HeaderActions = ({
         </>
       )}
 
-      {!session && (
+      {!session && !isMobile && (
         <Button 
           onClick={onAuthOpen}
           className="h-8 text-sm px-3"
