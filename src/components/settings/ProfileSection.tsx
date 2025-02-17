@@ -97,7 +97,11 @@ export const ProfileSection = () => {
       <Card className="p-6">
         <div className="space-y-6">
           <div className="relative">
-            <div className="absolute inset-0 bg-background/80 backdrop-blur-sm z-10">
+            {/* Show only User ID section clearly */}
+            <ProfileInfo profile={profile} />
+
+            {/* Blur everything else with an overlay */}
+            <div className="absolute inset-0 bg-background/80 backdrop-blur-sm z-10 mt-[84px]">
               <Alert variant="default" className="w-[90%] max-w-lg border-muted mx-auto mt-4">
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>
@@ -105,21 +109,22 @@ export const ProfileSection = () => {
                 </AlertDescription>
               </Alert>
             </div>
-            <ProfileAvatar
-              avatarUrl={avatarUrl}
-              displayName={displayName}
-              username={username}
-              profile={profile}
-            />
+
+            <div className="filter blur-[2px]">
+              <ProfileAvatar
+                avatarUrl={avatarUrl}
+                displayName={displayName}
+                username={username}
+                profile={profile}
+              />
+
+              <WelcomeNameField
+                welcomeName={welcomeName}
+                setWelcomeName={setWelcomeName}
+                handleSave={handleSave}
+              />
+            </div>
           </div>
-
-          <ProfileInfo profile={profile} />
-
-          <WelcomeNameField
-            welcomeName={welcomeName}
-            setWelcomeName={setWelcomeName}
-            handleSave={handleSave}
-          />
         </div>
       </Card>
     </section>
