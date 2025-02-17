@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
 
 interface SignUpFormProps {
   isLoading: boolean;
@@ -14,6 +15,7 @@ export const SignUpForm = ({ isLoading, setIsLoading, onOpenChange }: SignUpForm
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
+  const navigate = useNavigate();
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,10 +44,23 @@ export const SignUpForm = ({ isLoading, setIsLoading, onOpenChange }: SignUpForm
       }
 
       if (signUpData?.user) {
-        toast.success("Account created successfully! You can now sign in.");
+        // Directly sign in after successful signup
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+          email,
+          password
+        });
+
+        if (signInError) {
+          console.error("Auto sign-in error:", signInError);
+          toast.error("Account created but couldn't sign in automatically. Please sign in manually.");
+          return;
+        }
+
+        toast.success("Welcome to the platform!");
         if (onOpenChange) {
           onOpenChange(false);
         }
+        navigate("/");
       }
     } catch (error: any) {
       console.error("Sign up error:", error);
