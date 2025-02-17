@@ -101,129 +101,132 @@ export const ContactDialog = () => {
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button 
-          variant="outline" 
-          size="sm"
-          className="flex items-center gap-1.5 bg-white hover:bg-gray-50 h-7 md:h-9 px-2 md:px-3.5 rounded-full shadow-sm border border-gray-200"
+          variant="ghost" 
+          size="icon"
+          className="h-7 w-7 md:h-10 md:w-10"
         >
-          <MessageSquare className="h-3.5 w-3.5" />
-          <span className="hidden md:inline">Contact</span>
+          <MessageSquare className="h-3.5 w-3.5 md:h-5 md:w-5" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[500px] bg-[#333333] text-white border-gray-600">
-        <DialogHeader>
-          <DialogTitle className="text-white">Contact Us</DialogTitle>
-          <DialogDescription className="text-gray-300">
+      <DialogContent className="w-[min(calc(100%-2rem),500px)] p-0 bg-[#333333] text-white border-gray-600 rounded-lg mx-auto my-4 overflow-hidden">
+        <DialogHeader className="p-4 md:p-6 border-b border-gray-600">
+          <DialogTitle className="text-lg md:text-xl text-white">Contact Us</DialogTitle>
+          <DialogDescription className="text-sm md:text-base text-gray-300 mt-1">
             How can we help you today? Choose a category below and send us your message.
           </DialogDescription>
         </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <FormField
-              control={form.control}
-              name="category"
-              render={({ field }) => (
-                <FormItem className="space-y-3">
-                  <FormLabel className="text-white">Select a Category</FormLabel>
-                  <FormControl>
-                    <RadioGroup
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      className="grid grid-cols-1 md:grid-cols-2 gap-4"
-                    >
-                      {categoryOptions.map((category) => (
-                        <FormItem key={category.value}>
-                          <FormControl>
-                            <label
-                              className={`flex items-start space-x-3 space-y-0 rounded-md border p-4 cursor-pointer hover:bg-[#444444] transition-colors ${
-                                field.value === category.value ? 'border-primary' : 'border-gray-600'
-                              }`}
-                            >
-                              <RadioGroupItem
-                                value={category.value}
-                                id={category.value}
-                                className="mt-1"
-                              />
-                              <div className="space-y-1">
-                                <p className="font-medium leading-none text-white">
-                                  {category.label}
-                                </p>
-                                <p className="text-sm text-gray-300">
-                                  {category.description}
-                                </p>
-                              </div>
-                            </label>
-                          </FormControl>
-                        </FormItem>
-                      ))}
-                    </RadioGroup>
-                  </FormControl>
-                  <FormMessage className="text-red-400" />
-                </FormItem>
-              )}
-            />
-            <div className="grid gap-4">
+        <div className="overflow-y-auto max-h-[calc(100vh-180px)] md:max-h-[600px] p-4 md:p-6">
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 md:space-y-6">
               <FormField
                 control={form.control}
-                name="name"
+                name="category"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-white">Name</FormLabel>
+                  <FormItem className="space-y-3">
+                    <FormLabel className="text-sm md:text-base text-white">Select a Category</FormLabel>
                     <FormControl>
-                      <Input 
-                        placeholder="Enter your name" 
-                        {...field} 
-                        className="bg-[#444444] border-gray-600 text-white placeholder:text-gray-400"
-                      />
+                      <RadioGroup
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        className="grid grid-cols-1 gap-3"
+                      >
+                        {categoryOptions.map((category) => (
+                          <FormItem key={category.value}>
+                            <FormControl>
+                              <label
+                                className={`flex items-start space-x-3 space-y-0 rounded-md border p-3 cursor-pointer hover:bg-[#444444] transition-colors ${
+                                  field.value === category.value ? 'border-primary' : 'border-gray-600'
+                                }`}
+                              >
+                                <RadioGroupItem
+                                  value={category.value}
+                                  id={category.value}
+                                  className="mt-1"
+                                />
+                                <div className="space-y-1">
+                                  <p className="text-sm md:text-base font-medium leading-none text-white">
+                                    {category.label}
+                                  </p>
+                                  <p className="text-xs md:text-sm text-gray-300">
+                                    {category.description}
+                                  </p>
+                                </div>
+                              </label>
+                            </FormControl>
+                          </FormItem>
+                        ))}
+                      </RadioGroup>
                     </FormControl>
-                    <FormMessage className="text-red-400" />
+                    <FormMessage className="text-xs md:text-sm text-red-400" />
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-white">Email</FormLabel>
-                    <FormControl>
-                      <Input 
-                        placeholder="Enter your email" 
-                        type="email" 
-                        {...field} 
-                        className="bg-[#444444] border-gray-600 text-white placeholder:text-gray-400"
-                      />
-                    </FormControl>
-                    <FormMessage className="text-red-400" />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="message"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-white">Message</FormLabel>
-                    <FormControl>
-                      <Textarea 
-                        placeholder="What would you like to tell us?" 
-                        className="min-h-[100px] bg-[#444444] border-gray-600 text-white placeholder:text-gray-400"
-                        {...field} 
-                      />
-                    </FormControl>
-                    <FormMessage className="text-red-400" />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div className="flex justify-end">
-              <Button type="submit" className="h-8 md:h-10 text-sm md:text-base bg-primary hover:bg-primary-hover">
-                Send Message
-              </Button>
-            </div>
-          </form>
-        </Form>
+              <div className="space-y-3 md:space-y-4">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm md:text-base text-white">Name</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="Enter your name" 
+                          {...field} 
+                          className="bg-[#444444] border-gray-600 text-white placeholder:text-gray-400 h-9 md:h-10 text-sm md:text-base"
+                        />
+                      </FormControl>
+                      <FormMessage className="text-xs md:text-sm text-red-400" />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm md:text-base text-white">Email</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="Enter your email" 
+                          type="email" 
+                          {...field} 
+                          className="bg-[#444444] border-gray-600 text-white placeholder:text-gray-400 h-9 md:h-10 text-sm md:text-base"
+                        />
+                      </FormControl>
+                      <FormMessage className="text-xs md:text-sm text-red-400" />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="message"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm md:text-base text-white">Message</FormLabel>
+                      <FormControl>
+                        <Textarea 
+                          placeholder="What would you like to tell us?" 
+                          className="min-h-[80px] md:min-h-[100px] bg-[#444444] border-gray-600 text-white placeholder:text-gray-400 text-sm md:text-base resize-none"
+                          {...field} 
+                        />
+                      </FormControl>
+                      <FormMessage className="text-xs md:text-sm text-red-400" />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="pt-2 md:pt-4">
+                <Button 
+                  type="submit" 
+                  className="w-full h-9 md:h-10 text-sm md:text-base bg-primary hover:bg-primary-hover transition-colors"
+                >
+                  Send Message
+                </Button>
+              </div>
+            </form>
+          </Form>
+        </div>
       </DialogContent>
     </Dialog>
   );
 };
-
