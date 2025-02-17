@@ -24,38 +24,44 @@ export const useVideos = () => {
       console.log("Fetching videos...");
       
       try {
-        // First try to fetch from edge function
-        try {
-          const { error: quotaError } = await supabase
-            .from('api_quota_tracking')
-            .select('quota_remaining, quota_reset_at')
-            .eq('api_name', 'youtube')
-            .single();
+        // First check quota status
+        const { data: quotaData, error: quotaError } = await supabase
+          .from('api_quota_tracking')
+          .select('quota_remaining, quota_reset_at')
+          .eq('api_name', 'youtube')
+          .single();
 
-          if (quotaError) {
-            console.error("Error checking quota:", quotaError);
-          }
-
-          await supabase.functions.invoke('fetch-youtube-videos');
-        } catch (edgeFunctionError: any) {
-          console.log('Edge function response:', edgeFunctionError);
-          
-          // Parse the error body if it's a string
-          let errorBody;
+        if (quotaError) {
+          console.error("Error checking quota:", quotaError);
+        } else if (quotaData && quotaData.quota_remaining <= 0) {
+          const resetTime = new Date(quotaData.quota_reset_at);
+          const message = `YouTube API quota exceeded. Service will resume at ${resetTime.toLocaleString()}`;
+          console.warn(message);
+          toast.warning(message);
+          // Continue to fetch cached videos
+        } else {
+          // Only try to fetch new videos if we have quota
           try {
-            errorBody = typeof edgeFunctionError.body === 'string' 
-              ? JSON.parse(edgeFunctionError.body)
-              : edgeFunctionError.body;
-          } catch (e) {
-            console.error('Error parsing error body:', e);
-          }
+            await supabase.functions.invoke('fetch-youtube-videos');
+          } catch (edgeFunctionError: any) {
+            console.log('Edge function response:', edgeFunctionError);
+            
+            // Parse the error body if it's a string
+            let errorBody;
+            try {
+              errorBody = typeof edgeFunctionError.body === 'string' 
+                ? JSON.parse(edgeFunctionError.body)
+                : edgeFunctionError.body;
+            } catch (e) {
+              console.error('Error parsing error body:', e);
+            }
 
-          // If it's a quota exceeded error, show the reset time
-          if (edgeFunctionError.status === 429 && errorBody?.quota_reset_at) {
-            const resetTime = new Date(errorBody.quota_reset_at);
-            const message = `Service will resume at ${resetTime.toLocaleString()}`;
-            console.warn("YouTube API quota exceeded.", message);
-            toast.warning(message);
+            // If it's a quota exceeded error, show the reset time
+            if (edgeFunctionError.status === 429 && errorBody?.quota_reset_at) {
+              const resetTime = new Date(errorBody.quota_reset_at);
+              console.warn("YouTube API quota exceeded. Reset time:", resetTime);
+              toast.warning(`YouTube quota exceeded. Service will resume at ${resetTime.toLocaleString()}`);
+            }
           }
         }
 
