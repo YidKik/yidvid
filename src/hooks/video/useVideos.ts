@@ -32,14 +32,14 @@ export const useVideos = () => {
 
         if (quotaData?.quota_remaining <= 0) {
           console.warn('YouTube API quota exceeded, fetching cached data only');
+          toast.warning("API quota exceeded. Showing cached data until reset.");
         }
 
         const { data, error } = await supabase
           .from("youtube_videos")
           .select("*")
           .is('deleted_at', null)
-          .order("uploaded_at", { ascending: false })
-          .throwOnError();
+          .order("uploaded_at", { ascending: false });
 
         if (error) {
           console.error("Error fetching videos:", error);
@@ -63,21 +63,56 @@ export const useVideos = () => {
         }));
 
         console.log(`Successfully fetched ${formattedData.length} videos`);
+        
+        // Cache the data for the video grid
         queryClient.setQueryData(["youtube_videos_grid"], formattedData);
         
         return formattedData;
       } catch (error: any) {
+        console.error("Error details:", error);
+
+        // Handle YouTube API quota exceeded
         if (error.message?.includes('quota exceeded') || error?.status === 429) {
-          toast.warning('YouTube API quota exceeded. Showing cached data.');
-          return [];
+          // Try to get cached data
+          const cachedData = queryClient.getQueryData<Video[]>(["youtube_videos"]);
+          if (cachedData?.length) {
+            toast.warning('API quota exceeded. Showing cached data.');
+            return cachedData;
+          }
+          
+          // If no cached data, get from database only
+          const { data: dbData } = await supabase
+            .from("youtube_videos")
+            .select("*")
+            .is('deleted_at', null)
+            .order("uploaded_at", { ascending: false });
+
+          if (dbData) {
+            return dbData.map(video => ({
+              id: video.id,
+              video_id: video.video_id,
+              title: video.title,
+              thumbnail: video.thumbnail,
+              channelName: video.channel_name,
+              channelId: video.channel_id,
+              views: video.views || 0,
+              uploadedAt: video.uploaded_at
+            }));
+          }
         }
 
+        // Handle network errors
         if (error.message?.includes('Failed to fetch') || error.code === 'ECONNABORTED') {
           console.error('Network error:', error);
           toast.error('Network error. Please check your connection.');
-          return [];
+          // Try to get cached data
+          const cachedData = queryClient.getQueryData<Video[]>(["youtube_videos"]);
+          if (cachedData?.length) {
+            return cachedData;
+          }
         }
 
+        // General error case
         console.error("Unexpected error:", error);
         toast.error('Error loading videos. Please try again later.');
         return [];
@@ -85,12 +120,19 @@ export const useVideos = () => {
     },
     staleTime: 1000 * 60 * 5, // Keep data fresh for 5 minutes
     gcTime: 1000 * 60 * 30, // Cache data for 30 minutes
+    retry: (failureCount, error: any) => {
+      // Don't retry on quota exceeded
+      if (error?.status === 429) return false;
+      // Retry other errors up to 3 times
+      return failureCount < 3;
+    },
+    retryDelay: (attemptIndex) => Math.min(1000 * (2 ** attemptIndex), 30000), // Exponential backoff
   });
 
-  // Handle any errors in the query
   useEffect(() => {
     if (error) {
       console.error("Video fetch error:", error);
+      toast.error('Error loading videos. Please try again later.');
     }
   }, [error]);
 
