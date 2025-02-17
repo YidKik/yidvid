@@ -37,7 +37,7 @@ export const HeaderActions = ({
               onClick={onSearchExpand}
               className="hover:bg-transparent absolute left-1/2 -translate-x-1/2"
             >
-              <Search className="h-5 w-5 text-[#ea384c]" />
+              <Search className="h-5 w-5 text-black" />
             </Button>
           </motion.div>
         </AnimatePresence>
