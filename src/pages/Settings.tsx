@@ -15,6 +15,8 @@ import { useColors } from "@/contexts/ColorContext";
 import { PlaybackSettings } from "@/components/settings/PlaybackSettings";
 import { ColorSettings } from "@/components/settings/ColorSettings";
 import { ProfileSection } from "@/components/settings/ProfileSection";
+import { ContactDialog } from "@/components/contact/ContactDialog";
+import { MessageSquare } from "lucide-react";
 
 const Settings = () => {
   const navigate = useNavigate();
@@ -169,6 +171,10 @@ const Settings = () => {
             </Card>
           </section>
         )}
+
+        <section className="mt-12 flex justify-center">
+          <ContactDialog />
+        </section>
       </main>
     </div>
   );
