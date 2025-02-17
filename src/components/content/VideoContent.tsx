@@ -35,18 +35,13 @@ export const VideoContent = ({ videos, isLoading }: VideoContentProps) => {
 
     return (
       <div className="space-y-4">
-        <div className="grid grid-cols-1 gap-4 px-2">
-          {displayVideos.map((video, index) => (
-            <div key={video.id} className="w-full">
-              <VideoGrid
-                videos={[video]}
-                maxVideos={1}
-                rowSize={1}
-                isLoading={isLoading}
-              />
-            </div>
-          ))}
-        </div>
+        <VideoGrid
+          videos={displayVideos}
+          maxVideos={displayVideos.length}
+          rowSize={2}
+          isLoading={isLoading}
+          className="px-2"
+        />
 
         {sortedVideos.length > 6 && !showMoreMobile && (
           <div className="flex justify-center mt-4">
@@ -69,7 +64,7 @@ export const VideoContent = ({ videos, isLoading }: VideoContentProps) => {
                   .sort((a, b) => (b.views || 0) - (a.views || 0))
                   .slice(0, 3)
                   .map((video) => (
-                    <div key={video.id} className="w-full min-w-[calc(100vw-32px)] flex-shrink-0">
+                    <div key={video.id} className="w-full min-w-[calc(50vw-24px)] flex-shrink-0">
                       <VideoGrid
                         videos={[video]}
                         maxVideos={1}
@@ -127,3 +122,4 @@ export const VideoContent = ({ videos, isLoading }: VideoContentProps) => {
     </div>
   );
 };
+
