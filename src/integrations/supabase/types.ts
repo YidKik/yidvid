@@ -947,6 +947,30 @@ export type Database = {
         }
         Relationships: []
       }
+      youtube_update_logs: {
+        Row: {
+          channel_id: string
+          created_at: string
+          error: string | null
+          id: string
+          videos_count: number | null
+        }
+        Insert: {
+          channel_id: string
+          created_at?: string
+          error?: string | null
+          id?: string
+          videos_count?: number | null
+        }
+        Update: {
+          channel_id?: string
+          created_at?: string
+          error?: string | null
+          id?: string
+          videos_count?: number | null
+        }
+        Relationships: []
+      }
       youtube_videos: {
         Row: {
           category: Database["public"]["Enums"]["video_category"] | null
