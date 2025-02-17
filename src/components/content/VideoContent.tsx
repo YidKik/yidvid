@@ -3,7 +3,6 @@ import { VideoGrid } from "@/components/VideoGrid";
 import { MostViewedVideos } from "@/components/video/MostViewedVideos";
 import { ChannelsGrid } from "@/components/youtube/ChannelsGrid";
 import { useIsMobile } from "@/hooks/useIsMobile";
-import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { toast } from "sonner";
 import { VideoGridPagination } from "@/components/video/VideoGridPagination";
@@ -104,14 +103,18 @@ export const VideoContent = ({ videos, isLoading }: VideoContentProps) => {
     );
   }
 
+  // Desktop view
+  const desktopVideos = sortedVideos.slice(0, 12); // Ensure exactly 12 videos for 3 rows of 4
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-[1400px] mx-auto">
       <div className="video-grid relative">
         <VideoGrid 
-          videos={videos} 
-          maxVideos={12} 
-          rowSize={4} 
+          videos={desktopVideos}
+          maxVideos={12}
+          rowSize={4}
           isLoading={isLoading}
+          className="grid-cols-4"
         />
       </div>
       
