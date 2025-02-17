@@ -113,20 +113,16 @@ const Settings = () => {
         </div>
 
         <div className="space-y-12">
-          {/* Account & Profile Section - Most important personal settings */}
+          {/* Account & Profile Section */}
           <div className="space-y-8">
             <h2 className="text-2xl font-semibold text-primary/80">Account & Profile</h2>
             <ProfileSection />
           </div>
 
-          {/* Content Preferences - Second most important for user experience */}
+          {/* Content Preferences - Now with Channel Subscriptions first */}
           <div className="space-y-8">
             <h2 className="text-2xl font-semibold text-primary/80">Content Preferences</h2>
-            <PlaybackSettings 
-              autoplay={autoplay}
-              setAutoplay={setAutoplay}
-            />
-
+            
             <div>
               <h3 className="text-xl font-semibold mb-4">Channel Subscriptions</h3>
               {userId ? (
@@ -147,16 +143,21 @@ const Settings = () => {
                 <ChannelControl />
               </Card>
             </div>
+
+            <PlaybackSettings 
+              autoplay={autoplay}
+              setAutoplay={setAutoplay}
+            />
           </div>
 
-          {/* Activity & History - User's past interactions */}
+          {/* Activity & History */}
           <div className="space-y-8">
             <h2 className="text-2xl font-semibold text-primary/80">Activity & History</h2>
             <VideoHistorySection />
             <UserAnalyticsSection />
           </div>
 
-          {/* Appearance - Visual customization */}
+          {/* Appearance */}
           <div className="space-y-8">
             <h2 className="text-2xl font-semibold text-primary/80">Appearance</h2>
             <ColorSettings 
@@ -173,7 +174,7 @@ const Settings = () => {
             />
           </div>
 
-          {/* Admin Section - Only for admins */}
+          {/* Admin Section */}
           {profile?.is_admin && (
             <div className="space-y-8">
               <h2 className="text-2xl font-semibold text-primary/80">Admin Controls</h2>
@@ -192,7 +193,7 @@ const Settings = () => {
             </div>
           )}
 
-          {/* Help & Support - Always at the bottom for easy access */}
+          {/* Help & Support */}
           <div className="space-y-4">
             <h2 className="text-2xl font-semibold text-primary/80">Help & Support</h2>
             <Card className="p-6">
