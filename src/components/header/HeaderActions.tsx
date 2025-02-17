@@ -27,9 +27,9 @@ export const HeaderActions = ({
           variant="ghost"
           size="icon"
           onClick={onSearchExpand}
-          className="mr-1"
+          className="hover:bg-transparent"
         >
-          <Search className="h-5 w-5 text-gray-600" />
+          <Search className="h-5 w-5 text-[#ea384c]" />
         </Button>
       ) : (
         <>
