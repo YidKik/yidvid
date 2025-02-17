@@ -119,7 +119,10 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Channel Subscriptions</CardTitle>
+          <CardTitle className="text-2xl font-semibold flex items-center gap-2">
+            <Bell className="w-5 h-5 text-primary" />
+            Channel Subscriptions
+          </CardTitle>
           <CardDescription>
             Please sign in to manage your subscriptions.
           </CardDescription>
@@ -132,12 +135,11 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Channel Subscriptions</CardTitle>
-          <CardContent className="mt-4">
-            <div className="flex items-center justify-center h-32">
-              <p className="text-muted-foreground">Loading subscriptions...</p>
-            </div>
-          </CardContent>
+          <CardTitle className="text-2xl font-semibold flex items-center gap-2">
+            <Bell className="w-5 h-5 text-primary" />
+            Channel Subscriptions
+          </CardTitle>
+          <CardDescription>Loading subscriptions...</CardDescription>
         </CardHeader>
       </Card>
     );
