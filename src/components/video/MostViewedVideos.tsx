@@ -76,7 +76,7 @@ export const MostViewedVideos = ({
     setTimeout(() => setIsAutoPlaying(true), 15000);
   };
 
-  const currentVideos = sortedVideos.slice(currentIndex, currentIndex + videosPerPage);
+  const currentVideos = sortedVideos;
 
   if (!sortedVideos.length) return null;
 
@@ -90,45 +90,47 @@ export const MostViewedVideos = ({
         </div>
 
         <div className="relative px-0.5 md:px-4">
-          <button onClick={() => handleManualNavigation(handlePrevious)} 
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 p-0.5 md:p-3 bg-white/90 hover:bg-white rounded-full shadow-sm md:shadow-lg transition-all duration-500 group" 
-            style={{
-              opacity: currentIndex === 0 ? 0.5 : 1
-            }} 
-            disabled={currentIndex === 0}
-          >
-            <ChevronLeft className="w-2.5 h-2.5 md:w-5 md:h-5 text-[#555555] group-hover:scale-110 transition-transform duration-500" />
-          </button>
-
-          <div className="relative overflow-hidden min-h-[120px] md:min-h-[200px]">
-            <div className={`grid grid-cols-${isMobile ? '2' : '4'} gap-1.5 md:gap-6 absolute w-full top-0 left-0`} 
+          {!isMobile && (
+            <button onClick={() => handleManualNavigation(handlePrevious)} 
+              className="absolute left-0 top-1/2 -translate-y-1/2 z-10 p-3 bg-white/90 hover:bg-white rounded-full shadow-lg transition-all duration-500 group" 
               style={{
-                opacity: isTransitioning ? 0 : 1,
-                transition: 'opacity 1.5s ease-in-out',
-                pointerEvents: isTransitioning ? 'none' : 'auto'
-              }}
+                opacity: currentIndex === 0 ? 0.5 : 1
+              }} 
+              disabled={currentIndex === 0}
             >
-              {currentVideos.map(video => (
-                <div key={video.id} className="group relative rounded-md md:rounded-lg overflow-hidden transition-all duration-700 hover:shadow-xl">
-                  <div className="relative aspect-video">
-                    <VideoCard {...video} hideInfo={isMobile} />
+              <ChevronLeft className="w-5 h-5 text-[#555555] group-hover:scale-110 transition-transform duration-500" />
+            </button>
+          )}
+
+          <div className={`relative overflow-x-auto ${isMobile ? 'touch-pan-x' : 'overflow-hidden'} min-h-[120px] md:min-h-[200px]`}>
+            <div className={`${isMobile ? 'flex gap-1.5 pb-2 snap-x snap-mandatory w-full overflow-x-auto' : `grid grid-cols-4 gap-6 absolute w-full top-0 left-0 ${isTransitioning ? 'opacity-0' : 'opacity-100'} transition-opacity duration-1500`}`}>
+              {isMobile ? (
+                sortedVideos.map(video => (
+                  <div key={video.id} className="flex-none w-[calc(50%-3px)] first:ml-0 snap-start">
+                    <div className="group relative rounded-md overflow-hidden transition-all duration-700 hover:shadow-xl">
+                      <div className="relative aspect-video">
+                        <VideoCard {...video} hideInfo={true} />
+                      </div>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))
+              ) : (
+                currentVideos.slice(currentIndex, currentIndex + videosPerPage).map(video => (
+                  <div key={video.id} className="group relative rounded-lg overflow-hidden transition-all duration-700 hover:shadow-xl">
+                    <div className="relative aspect-video">
+                      <VideoCard {...video} hideInfo={false} />
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
 
-            {isTransitioning && (
-              <div className={`grid grid-cols-${isMobile ? '2' : '4'} gap-1.5 md:gap-6 absolute w-full top-0 left-0`} 
-                style={{
-                  opacity: isTransitioning ? 1 : 0,
-                  transition: 'opacity 1.5s ease-in-out',
-                  pointerEvents: isTransitioning ? 'auto' : 'none'
-                }}
-              >
+            {!isMobile && isTransitioning && (
+              <div className="grid grid-cols-4 gap-6 absolute w-full top-0 left-0 opacity-100 transition-opacity duration-1500">
                 {nextVideos.map(video => (
-                  <div key={video.id} className="group relative rounded-md md:rounded-lg overflow-hidden transition-all duration-700 hover:shadow-xl">
+                  <div key={video.id} className="group relative rounded-lg overflow-hidden transition-all duration-700 hover:shadow-xl">
                     <div className="relative aspect-video">
-                      <VideoCard {...video} hideInfo={isMobile} />
+                      <VideoCard {...video} hideInfo={false} />
                     </div>
                   </div>
                 ))}
@@ -136,32 +138,36 @@ export const MostViewedVideos = ({
             )}
           </div>
 
-          <button onClick={() => handleManualNavigation(handleNext)} 
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 p-0.5 md:p-3 bg-white/90 hover:bg-white rounded-full shadow-sm md:shadow-lg transition-all duration-500 group" 
-            style={{
-              opacity: currentIndex + videosPerPage >= sortedVideos.length ? 0.5 : 1
-            }} 
-            disabled={currentIndex + videosPerPage >= sortedVideos.length}
-          >
-            <ChevronRight className="w-2.5 h-2.5 md:w-5 md:h-5 text-[#555555] group-hover:scale-110 transition-transform duration-500" />
-          </button>
+          {!isMobile && (
+            <button onClick={() => handleManualNavigation(handleNext)} 
+              className="absolute right-0 top-1/2 -translate-y-1/2 z-10 p-3 bg-white/90 hover:bg-white rounded-full shadow-lg transition-all duration-500 group" 
+              style={{
+                opacity: currentIndex + videosPerPage >= sortedVideos.length ? 0.5 : 1
+              }} 
+              disabled={currentIndex + videosPerPage >= sortedVideos.length}
+            >
+              <ChevronRight className="w-5 h-5 text-[#555555] group-hover:scale-110 transition-transform duration-500" />
+            </button>
+          )}
         </div>
 
-        <div className="flex justify-center mt-1.5 md:mt-4 gap-1">
-          {Array.from({
-            length: Math.ceil(sortedVideos.length / videosPerPage)
-          }).map((_, idx) => (
-            <button 
-              key={idx} 
-              className={`w-1 h-1 md:w-2 md:h-2 rounded-full transition-all duration-700 ${
-                Math.floor(currentIndex / videosPerPage) === idx 
-                  ? 'bg-[#555555] scale-125' 
-                  : 'bg-[#888888]/20 hover:bg-[#888888]/40'
-              }`} 
-              onClick={() => setCurrentIndex(idx * videosPerPage)} 
-            />
-          ))}
-        </div>
+        {!isMobile && (
+          <div className="flex justify-center mt-4 gap-1">
+            {Array.from({
+              length: Math.ceil(sortedVideos.length / videosPerPage)
+            }).map((_, idx) => (
+              <button 
+                key={idx} 
+                className={`w-2 h-2 rounded-full transition-all duration-700 ${
+                  Math.floor(currentIndex / videosPerPage) === idx 
+                    ? 'bg-[#555555] scale-125' 
+                    : 'bg-[#888888]/20 hover:bg-[#888888]/40'
+                }`} 
+                onClick={() => setCurrentIndex(idx * videosPerPage)} 
+              />
+            ))}
+          </div>
+        )}
       </div>
     </div>;
 };
