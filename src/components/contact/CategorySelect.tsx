@@ -20,7 +20,7 @@ export const CategorySelect = ({ form }: CategorySelectProps) => {
             <RadioGroup
               onValueChange={field.onChange}
               defaultValue={field.value}
-              className="grid grid-cols-1 gap-2 md:gap-3"
+              className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3"
             >
               {categoryOptions.map((category) => (
                 <FormItem key={category.value}>
