@@ -1,3 +1,4 @@
+
 import { type FC, useState, useEffect } from "react";
 import { VideoCard } from "./VideoCard";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -113,11 +114,11 @@ export const VideoGrid: FC<VideoGridProps> = ({ maxVideos = 12, rowSize = 4, isL
 
   if (isLoading || parentLoading) {
     return (
-      <div className={`grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4 md:gap-4 max-w-[1600px] mx-auto`}>
+      <div className={`grid grid-cols-2 gap-1 md:grid-cols-3 lg:grid-cols-4 md:gap-4 max-w-[1600px] mx-auto px-0.5 md:px-0`}>
         {Array.from({ length: isMobile ? 4 : maxVideos }).map((_, index) => (
-          <div key={index} className="space-y-2">
+          <div key={index} className="space-y-1 md:space-y-2">
             <Skeleton className="aspect-video w-full" />
-            <div className="flex gap-2">
+            <div className="flex gap-1 md:gap-2">
               <Skeleton className="h-8 w-8 rounded-full" />
               <div className="space-y-1 flex-1">
                 <Skeleton className="h-3 w-full" />
@@ -139,8 +140,8 @@ export const VideoGrid: FC<VideoGridProps> = ({ maxVideos = 12, rowSize = 4, isL
   }
 
   return (
-    <div className="space-y-3 md:space-y-6">
-      <div className={`grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4 md:gap-4 max-w-[1600px] mx-auto`}>
+    <div className="space-y-2 md:space-y-6">
+      <div className={`grid grid-cols-2 gap-1 md:grid-cols-3 lg:grid-cols-4 md:gap-4 max-w-[1600px] mx-auto px-0.5 md:px-0`}>
         {currentVideos?.map((video) => (
           <div 
             key={video.id} 

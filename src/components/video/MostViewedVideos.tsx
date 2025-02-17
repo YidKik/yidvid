@@ -38,8 +38,8 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
   if (!videos.length) return null;
 
   return (
-    <div className="w-full max-w-[1600px] mx-auto px-2 md:px-4 mb-6 md:mb-12">
-      <h2 className="text-lg md:text-2xl font-bold mb-3 md:mb-8 text-accent">Most Viewed Videos</h2>
+    <div className="w-full max-w-[1600px] mx-auto px-0.5 md:px-4 mb-4 md:mb-12">
+      <h2 className="text-lg md:text-2xl font-bold mb-2 md:mb-8 text-accent px-1 md:px-0">Most Viewed Videos</h2>
       <div className="relative">
         <ChevronLeft 
           className="absolute left-0 md:left-2 top-[40%] -translate-y-1/2 z-10 w-6 h-6 md:w-8 md:h-8 text-primary hover:text-primary/80 cursor-pointer"
@@ -47,9 +47,9 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
           style={{ opacity: currentIndex === 0 ? 0.5 : 1 }}
         />
 
-        <div className={`grid ${isMobile ? 'grid-cols-2 gap-2' : 'grid-cols-4 gap-4'} w-full px-6 md:px-10`}>
+        <div className={`grid ${isMobile ? 'grid-cols-2 gap-1' : 'grid-cols-4 gap-4'} w-full px-4 md:px-10`}>
           {currentVideos.map((video) => (
-            <div key={video.id} className={`transition-all duration-300 animate-scaleIn ${isMobile ? 'px-1' : ''}`}>
+            <div key={video.id} className="transition-all duration-300 animate-scaleIn">
               <VideoCard {...video} />
             </div>
           ))}
