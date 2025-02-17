@@ -9,12 +9,32 @@ import { ContentToggle } from "@/components/content/ContentToggle";
 import { MusicSection } from "@/components/content/MusicSection";
 import { VideoContent } from "@/components/content/VideoContent";
 import { useVideos } from "@/hooks/video/useVideos";
-import { useIsMobile } from "@/hooks/useIsMobile";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { MobileBottomNav } from "@/components/navigation/MobileBottomNav";
+import { useSessionManager } from "@/hooks/useSessionManager";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const MainContent = () => {
   const [isMusic, setIsMusic] = useState(false);
   const { data: videos, isLoading } = useVideos();
   const isMobile = useIsMobile();
+  const { session, handleLogout } = useSessionManager();
+
+  const markNotificationsAsRead = async () => {
+    if (!session?.user?.id) return;
+
+    const { error } = await supabase
+      .from("video_notifications")
+      .update({ is_read: true })
+      .eq("user_id", session.user.id)
+      .eq("is_read", false);
+
+    if (error) {
+      console.error("Error marking notifications as read:", error);
+      toast.error("Failed to mark notifications as read");
+    }
+  };
 
   return (
     <div className="flex-1">
@@ -45,6 +65,13 @@ const MainContent = () => {
           </motion.div>
         </div>
       </main>
+      {isMobile && (
+        <MobileBottomNav 
+          session={session}
+          onMarkNotificationsAsRead={markNotificationsAsRead}
+          onLogout={handleLogout}
+        />
+      )}
     </div>
   );
 };

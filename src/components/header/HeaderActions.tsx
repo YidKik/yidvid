@@ -1,8 +1,5 @@
 
 import { Button } from "@/components/ui/button";
-import { NotificationsMenu } from "./NotificationsMenu";
-import { UserMenu } from "./UserMenu";
-import { ContactDialog } from "../contact/ContactDialog";
 import { ChevronDown } from "lucide-react";
 
 interface HeaderActionsProps {
@@ -10,19 +7,15 @@ interface HeaderActionsProps {
   isSearchExpanded: boolean;
   session: any;
   onSearchExpand: () => void;
-  onMarkNotificationsAsRead: () => Promise<void>;
-  onLogout: () => Promise<void>;
   onAuthOpen: () => void;
 }
 
 export const HeaderActions = ({
   isMobile,
   isSearchExpanded,
-  session,
   onSearchExpand,
-  onMarkNotificationsAsRead,
-  onLogout,
-  onAuthOpen
+  onAuthOpen,
+  session
 }: HeaderActionsProps) => {
   return (
     <div className="flex items-center gap-1 md:gap-2">
@@ -37,17 +30,7 @@ export const HeaderActions = ({
         </Button>
       ) : null}
 
-      {!isMobile && <ContactDialog />}
-
-      {session ? (
-        <>
-          <NotificationsMenu 
-            session={session}
-            onMarkAsRead={onMarkNotificationsAsRead}
-          />
-          <UserMenu onLogout={onLogout} />
-        </>
-      ) : (
+      {!session && (
         <Button 
           onClick={onAuthOpen}
           className="h-8 text-sm px-3"
