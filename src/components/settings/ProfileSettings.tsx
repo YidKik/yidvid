@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
@@ -57,23 +58,6 @@ export const ProfileSettings = () => {
     });
   }, [navigate]);
 
-  const resetToDefaults = async () => {
-    await resetColors();
-  };
-
-  const saveColors = async () => {
-    try {
-      await updateColors({
-        backgroundColor,
-        textColor,
-        buttonColor,
-        logoColor,
-      });
-    } catch (error) {
-      console.error('Error in saveColors:', error);
-    }
-  };
-
   const handleLogout = async () => {
     try {
       const { error } = await supabase.auth.signOut();
@@ -95,7 +79,7 @@ export const ProfileSettings = () => {
 
     if (confirmDelete) {
       try {
-        const { error } = await supabase.rpc('delete_user');
+        const { error } = await supabase.rpc('delete_user', {});
         if (error) {
           toast.error("Error deleting account");
           return;

@@ -1065,6 +1065,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      delete_user: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       fetch_overdue_channels: {
         Args: Record<PropertyKey, never>
         Returns: Json
