@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
@@ -37,6 +38,7 @@ export const WelcomeAnimation = () => {
 
     if (isError || videosError) {
       toast.error("Failed to load content. Please refresh the page.");
+      setShow(false);
       return;
     }
 
@@ -91,22 +93,28 @@ export const WelcomeAnimation = () => {
     }
   }, [skipWelcome, isWelcomeLoading, isVideosLoading, isVideosFetching, isError, videosError, show]);
 
-  // If user has already visited in this session, don't show the animation
+  // If user has already visited in this session or show is false, don't render anything
   if (!show) return null;
 
   return (
-    <AnimatePresence>
+    <AnimatePresence mode="wait" onExitComplete={() => setShow(false)}>
       {show && (
         <motion.div
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
           className="fixed inset-0 z-50 flex items-center justify-center bg-white"
+          onAnimationComplete={() => {
+            if (!show) {
+              document.body.style.overflow = 'auto';
+            }
+          }}
         >
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.3 }}
             className="text-center"
           >
             <WelcomeText userName={userName} />
