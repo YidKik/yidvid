@@ -2,18 +2,15 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Youtube, Shield, Search, Lock, Unlock } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ChannelSearch } from "@/components/youtube/ChannelSearch";
+import { Shield, Search, Lock, Unlock } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { ChannelSearch } from "@/components/youtube/ChannelSearch";
 import { ChannelLockDialog } from "./ChannelLockDialog";
+import { ChannelListItem } from "./ChannelListItem";
+import { SetPinDialog } from "./SetPinDialog";
 
 export const ChannelControl = () => {
   const [hiddenChannels, setHiddenChannels] = useState<Set<string>>(new Set());
@@ -272,51 +269,16 @@ export const ChannelControl = () => {
 
         <div className="max-h-[400px] overflow-y-auto scrollbar-hide space-y-3">
           {filteredChannels?.map((channel) => (
-            <div
+            <ChannelListItem
               key={channel.channel_id}
-              className="flex items-center justify-between p-4 rounded-lg border border-gray-100 bg-white hover:bg-gray-50 transition-colors"
-            >
-              <div className="flex items-center gap-4">
-                <Avatar className="h-10 w-10 border border-gray-100">
-                  <AvatarImage
-                    src={channel.thumbnail_url}
-                    alt={channel.title}
-                  />
-                  <AvatarFallback>
-                    <Youtube className="h-5 w-5 text-gray-400" />
-                  </AvatarFallback>
-                </Avatar>
-                <div>
-                  <p className="font-medium text-gray-900">{channel.title}</p>
-                  <p className="text-sm text-gray-500 line-clamp-1">
-                    {channel.description || "No description"}
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <Switch
-                  id={`channel-${channel.channel_id}`}
-                  checked={!hiddenChannels.has(channel.channel_id)}
-                  onCheckedChange={() => toggleChannel(channel.channel_id)}
-                  className="data-[state=checked]:bg-green-600"
-                />
-                <Label 
-                  htmlFor={`channel-${channel.channel_id}`}
-                  className={`text-sm font-medium ${
-                    hiddenChannels.has(channel.channel_id) 
-                      ? 'text-red-600' 
-                      : 'text-green-600'
-                  }`}
-                >
-                  {hiddenChannels.has(channel.channel_id) ? "Not Allowed" : "Allowed"}
-                </Label>
-              </div>
-            </div>
+              channel={channel}
+              isHidden={hiddenChannels.has(channel.channel_id)}
+              onToggle={toggleChannel}
+            />
           ))}
         </div>
       </div>
 
-      {/* PIN Entry Dialog */}
       <ChannelLockDialog 
         isOpen={showLockDialog}
         onClose={() => setShowLockDialog(false)}
@@ -324,42 +286,13 @@ export const ChannelControl = () => {
         storedPin={storedPin}
       />
 
-      {/* Set PIN Dialog */}
-      <Dialog open={showSetPinDialog} onOpenChange={setShowSetPinDialog}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Lock className="w-5 h-5" />
-              Set Parental Control PIN
-            </DialogTitle>
-            <DialogDescription>
-              Create a 6-digit PIN to lock the Channel Control settings.
-            </DialogDescription>
-          </DialogHeader>
-          <form onSubmit={handleSetPin} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="setPin">PIN</Label>
-              <Input
-                id="setPin"
-                type="password"
-                maxLength={6}
-                value={pin}
-                onChange={(e) => setPin(e.target.value)}
-                placeholder="Enter 6-digit PIN"
-                className="text-center text-lg tracking-widest"
-              />
-            </div>
-            <div className="flex justify-end gap-2">
-              <Button type="button" variant="outline" onClick={() => setShowSetPinDialog(false)}>
-                Cancel
-              </Button>
-              <Button type="submit">
-                Set PIN
-              </Button>
-            </div>
-          </form>
-        </DialogContent>
-      </Dialog>
+      <SetPinDialog
+        isOpen={showSetPinDialog}
+        onClose={() => setShowSetPinDialog(false)}
+        onSetPin={handleSetPin}
+        pin={pin}
+        onPinChange={setPin}
+      />
     </Card>
   );
 };
