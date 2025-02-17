@@ -20,31 +20,28 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [direction, setDirection] = useState<'left' | 'right'>('left');
   const [nextVideos, setNextVideos] = useState<typeof videos>([]);
   const isMobile = useIsMobile();
   const videosPerPage = isMobile ? 2 : 4;
-  const AUTO_SLIDE_INTERVAL = 8000; // Increased from 5000 to 8000ms for a more relaxed pace
+  const AUTO_SLIDE_INTERVAL = 8000;
 
   const sortedVideos = [...videos].sort((a, b) => (b.views || 0) - (a.views || 0));
 
   const handleNext = () => {
     if (!sortedVideos.length) return;
     
-    setDirection('left');
     setIsTransitioning(true);
     const nextIndex = currentIndex + videosPerPage >= sortedVideos.length ? 0 : currentIndex + videosPerPage;
     setNextVideos(sortedVideos.slice(nextIndex, nextIndex + videosPerPage));
     setTimeout(() => {
       setCurrentIndex(nextIndex);
       setIsTransitioning(false);
-    }, 1200); // Increased from 800 to 1200ms for smoother transition
+    }, 1500);
   };
 
   const handlePrevious = () => {
     if (!sortedVideos.length) return;
     
-    setDirection('right');
     setIsTransitioning(true);
     const nextIndex = currentIndex - videosPerPage < 0 ? 
       Math.max(0, sortedVideos.length - videosPerPage) : 
@@ -53,7 +50,7 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
     setTimeout(() => {
       setCurrentIndex(nextIndex);
       setIsTransitioning(false);
-    }, 1200); // Increased from 800 to 1200ms for smoother transition
+    }, 1500);
   };
 
   useEffect(() => {
@@ -82,7 +79,7 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
   const handleManualNavigation = (action: () => void) => {
     setIsAutoPlaying(false);
     action();
-    setTimeout(() => setIsAutoPlaying(true), 15000); // Increased from 10000 to 15000ms
+    setTimeout(() => setIsAutoPlaying(true), 15000);
   };
 
   const currentVideos = sortedVideos.slice(currentIndex, currentIndex + videosPerPage);
@@ -113,11 +110,8 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
             <div 
               className={`grid grid-cols-${isMobile ? '2' : '4'} gap-3 md:gap-6 absolute w-full`}
               style={{
-                transform: isTransitioning 
-                  ? `translateX(${direction === 'left' ? '-100%' : '100%'})`
-                  : 'translateX(0)',
                 opacity: isTransitioning ? 0 : 1,
-                transition: 'all 1.2s cubic-bezier(0.4, 0, 0.2, 1)' // Changed from 0.8s to 1.2s and using a smoother easing
+                transition: 'opacity 1.5s ease-in-out'
               }}
             >
               {currentVideos.map((video) => (
@@ -136,9 +130,8 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
               <div 
                 className={`grid grid-cols-${isMobile ? '2' : '4'} gap-3 md:gap-6 absolute w-full`}
                 style={{
-                  transform: `translateX(${direction === 'left' ? '0' : '-200%'})`,
                   opacity: isTransitioning ? 1 : 0,
-                  transition: 'all 1.2s cubic-bezier(0.4, 0, 0.2, 1)' // Changed from 0.8s to 1.2s and using a smoother easing
+                  transition: 'opacity 1.5s ease-in-out'
                 }}
               >
                 {nextVideos.map((video) => (
