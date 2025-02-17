@@ -27,15 +27,20 @@ export const WelcomeOverlay = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-white"
+          className="fixed inset-0 z-50 flex items-center justify-center"
+          onClick={handleClose} // Close when clicking the backdrop
         >
+          {/* Blur overlay */}
+          <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" />
+          
           {/* Content */}
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
-            className="relative w-full max-w-4xl mx-4 bg-white"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.2 }}
+            className="relative w-full max-w-4xl mx-4 bg-white rounded-xl shadow-2xl"
+            onClick={(e) => e.stopPropagation()} // Prevent closing when clicking content
           >
             {/* Close button */}
             <button
