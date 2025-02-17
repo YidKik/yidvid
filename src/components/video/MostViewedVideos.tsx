@@ -49,11 +49,11 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
           style={{ opacity: currentIndex === 0 ? 0.5 : 1 }}
         />
 
-        <div className="grid grid-cols-2 gap-1 md:gap-4 w-full px-2 md:px-10">
+        <div className="grid grid-cols-2 gap-x-1 gap-y-2 md:gap-4 w-full px-2 md:px-10">
           {currentVideos.map((video) => (
             <div 
               key={video.id} 
-              className="w-full transition-all duration-300 animate-scaleIn"
+              className="w-full min-w-0 transition-all duration-300 animate-scaleIn"
             >
               <VideoCard {...video} />
             </div>
