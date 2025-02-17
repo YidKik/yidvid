@@ -40,7 +40,7 @@ export const GlobalNotification = () => {
   if (!activeNotifications?.length) return null;
 
   return (
-    <div className="fixed top-16 left-0 right-0 z-50 p-4 pointer-events-none">
+    <div className="fixed top-24 left-0 right-0 z-50 p-4 pointer-events-none">
       <AnimatePresence>
         {activeNotifications.map((notification) => (
           <motion.div
@@ -48,28 +48,34 @@ export const GlobalNotification = () => {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="pointer-events-auto max-w-2xl mx-auto mb-2"
+            className="pointer-events-auto max-w-3xl mx-auto mb-3"
           >
             <div
-              className={`rounded-lg p-4 shadow-lg flex items-center justify-between ${
+              className={`rounded-xl p-4 shadow-lg flex items-center justify-between border ${
                 notification.type === "error"
-                  ? "bg-red-50 text-red-800"
+                  ? "bg-[#FFF5F5] text-red-700 border-red-100"
                   : notification.type === "warning"
-                  ? "bg-yellow-50 text-yellow-800"
-                  : "bg-blue-50 text-blue-800"
+                  ? "bg-[#FFFBEB] text-yellow-700 border-yellow-100"
+                  : "bg-[#F0F9FF] text-blue-700 border-blue-100"
               }`}
             >
               <div className="flex items-center gap-3">
                 {notification.type === "error" ? (
-                  <AlertCircle className="w-5 h-5" />
+                  <AlertCircle className="w-5 h-5 flex-shrink-0" />
                 ) : (
-                  <Info className="w-5 h-5" />
+                  <Info className="w-5 h-5 flex-shrink-0" />
                 )}
-                <p>{notification.message}</p>
+                <p className="text-sm font-medium leading-5">{notification.message}</p>
               </div>
               <button
                 onClick={() => handleDismiss(notification.id)}
-                className="p-1 hover:bg-black/5 rounded-full transition-colors"
+                className={`p-1.5 rounded-full transition-colors ${
+                  notification.type === "error"
+                    ? "hover:bg-red-50"
+                    : notification.type === "warning"
+                    ? "hover:bg-yellow-50"
+                    : "hover:bg-blue-50"
+                }`}
               >
                 <X className="w-4 h-4" />
               </button>
