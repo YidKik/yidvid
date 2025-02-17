@@ -59,12 +59,7 @@ export const useVideos = () => {
         // If quota is available, try to fetch new videos
         if (!quotaData || quotaData.quota_remaining > 0) {
           try {
-            await supabase.functions.invoke('fetch-youtube-videos', {
-              options: {
-                // Set a longer timeout for the function call
-                timeout: 30000
-              }
-            }).catch(error => {
+            await supabase.functions.invoke('fetch-youtube-videos').catch(error => {
               // Handle quota exceeded error (status 429)
               if (error.status === 429) {
                 try {
