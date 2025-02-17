@@ -24,7 +24,7 @@ export const HeaderActions = ({
   session
 }: HeaderActionsProps) => {
   return (
-    <div className="flex items-center gap-1 md:gap-2 ml-auto z-10"> {/* Added z-10 to ensure icons stay above logo */}
+    <div className="flex items-center gap-1 md:gap-2 absolute right-2 top-1/2 -translate-y-1/2 z-10">
       {isMobile && !isSearchExpanded ? (
         <AnimatePresence>
           <motion.div
@@ -32,7 +32,7 @@ export const HeaderActions = ({
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
             transition={{ type: "spring", stiffness: 300, damping: 25 }}
-            className="flex items-center gap-2 h-14"
+            className="flex items-center gap-2"
           >
             <Button
               variant="ghost"
