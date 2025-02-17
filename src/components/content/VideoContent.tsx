@@ -104,10 +104,10 @@ export const VideoContent = ({ videos, isLoading }: VideoContentProps) => {
   }
 
   // Desktop view
-  const desktopVideos = sortedVideos.slice(0, 12); // Ensure exactly 12 videos for 3 rows of 4
+  const desktopVideos = sortedVideos.slice(0, 12); // Show exactly 12 videos for desktop
 
   return (
-    <div className="space-y-6 max-w-[1400px] mx-auto">
+    <div className="space-y-6">
       <div className="video-grid relative">
         <VideoGrid 
           videos={desktopVideos}
