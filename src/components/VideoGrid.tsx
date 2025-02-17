@@ -1,5 +1,5 @@
 
-import { type FC, useState } from "react";
+import { type FC, useState, useEffect } from "react";
 import { VideoCard } from "./VideoCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQuery } from "@tanstack/react-query";
@@ -89,26 +89,6 @@ export const VideoGrid: FC<VideoGridProps> = ({ maxVideos = 12, rowSize = 4, isL
   }, []);
 
   const displayVideos = parentVideos || videos || [];
-
-  if (isLoading || parentLoading) {
-    return (
-      <div className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 max-w-[1600px] mx-auto`}>
-        {Array.from({ length: isMobile ? 4 : maxVideos }).map((_, index) => (
-          <div key={index} className="space-y-2 md:space-y-3">
-            <Skeleton className="aspect-video w-full" />
-            <div className="flex gap-2 md:gap-3">
-              <Skeleton className="h-8 w-8 md:h-10 md:w-10 rounded-full" />
-              <div className="space-y-1 md:space-y-2 flex-1">
-                <Skeleton className="h-3 md:h-4 w-full" />
-                <Skeleton className="h-3 md:h-4 w-3/4" />
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-  }
-
   const filteredVideos = displayVideos.filter(
     (video) => !hiddenChannels.has(video.channelId)
   );
@@ -132,6 +112,25 @@ export const VideoGrid: FC<VideoGridProps> = ({ maxVideos = 12, rowSize = 4, isL
     setCurrentPage(1);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  if (isLoading || parentLoading) {
+    return (
+      <div className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 max-w-[1600px] mx-auto`}>
+        {Array.from({ length: isMobile ? 4 : maxVideos }).map((_, index) => (
+          <div key={index} className="space-y-2 md:space-y-3">
+            <Skeleton className="aspect-video w-full" />
+            <div className="flex gap-2 md:gap-3">
+              <Skeleton className="h-8 w-8 md:h-10 md:w-10 rounded-full" />
+              <div className="space-y-1 md:space-y-2 flex-1">
+                <Skeleton className="h-3 md:h-4 w-full" />
+                <Skeleton className="h-3 md:h-4 w-3/4" />
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
 
   if (filteredVideos.length === 0) {
     return (
