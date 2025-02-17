@@ -58,6 +58,23 @@ export const ProfileSettings = () => {
     });
   }, [navigate]);
 
+  const resetToDefaults = async () => {
+    await resetColors();
+  };
+
+  const saveColors = async () => {
+    try {
+      await updateColors({
+        backgroundColor,
+        textColor,
+        buttonColor,
+        logoColor,
+      });
+    } catch (error) {
+      console.error('Error in saveColors:', error);
+    }
+  };
+
   const handleLogout = async () => {
     try {
       const { error } = await supabase.auth.signOut();
@@ -100,6 +117,19 @@ export const ProfileSettings = () => {
         <PlaybackSettings 
           autoplay={autoplay}
           setAutoplay={setAutoplay}
+        />
+
+        <ColorSettings
+          backgroundColor={backgroundColor}
+          textColor={textColor}
+          buttonColor={buttonColor}
+          logoColor={logoColor}
+          setBackgroundColor={setBackgroundColor}
+          setTextColor={setTextColor}
+          setButtonColor={setButtonColor}
+          setLogoColor={setLogoColor}
+          resetToDefaults={resetToDefaults}
+          saveColors={saveColors}
         />
 
         <section className="mt-8">
