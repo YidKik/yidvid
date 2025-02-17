@@ -1,4 +1,3 @@
-
 import { Header } from "@/components/Header";
 import Auth from "@/pages/Auth";
 import { useState } from "react";
@@ -9,7 +8,7 @@ import { ContentToggle } from "@/components/content/ContentToggle";
 import { MusicSection } from "@/components/content/MusicSection";
 import { VideoContent } from "@/components/content/VideoContent";
 import { useVideos } from "@/hooks/video/useVideos";
-import { useIsMobile } from "@/hooks/useIsMobile";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const MainContent = () => {
   const [isMusic, setIsMusic] = useState(false);
