@@ -26,19 +26,19 @@ export const VideoContent = ({ videos, isLoading }: VideoContentProps) => {
   const isMobile = useIsMobile();
   const [showMoreMobile, setShowMoreMobile] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const videosPerPage = 4;
+  const videosPerPage = isMobile ? 4 : 12;
   
   const sortedVideos = videos ? [...videos].sort((a, b) => 
     new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime()
   ) : [];
 
-  if (isMobile) {
-    const totalPages = Math.ceil(sortedVideos.length / videosPerPage);
-    const startIndex = (currentPage - 1) * videosPerPage;
-    const displayVideos = showMoreMobile 
-      ? sortedVideos.slice(startIndex, startIndex + videosPerPage)
-      : sortedVideos.slice(0, videosPerPage);
+  const totalPages = Math.ceil(sortedVideos.length / videosPerPage);
+  const startIndex = (currentPage - 1) * videosPerPage;
+  const displayVideos = isMobile && !showMoreMobile 
+    ? sortedVideos.slice(0, videosPerPage)
+    : sortedVideos.slice(startIndex, startIndex + videosPerPage);
 
+  if (isMobile) {
     return (
       <div className="space-y-4">
         <div className="mt-2">
@@ -80,19 +80,29 @@ export const VideoContent = ({ videos, isLoading }: VideoContentProps) => {
     );
   }
 
-  // Desktop view remains unchanged
-  const desktopVideos = sortedVideos.slice(0, 12);
-
+  // Desktop view
   return (
     <div className="space-y-6">
       <div className="video-grid relative">
         <VideoGrid 
-          videos={desktopVideos}
-          maxVideos={12}
+          videos={displayVideos}
+          maxVideos={videosPerPage}
           rowSize={4}
           isLoading={isLoading}
           className="grid-cols-4"
         />
+        
+        {sortedVideos.length > videosPerPage && (
+          <VideoGridPagination
+            showAll={true}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            filteredVideosLength={sortedVideos.length}
+            maxVideos={videosPerPage}
+            onShowAll={() => setCurrentPage(1)}
+            onPageChange={setCurrentPage}
+          />
+        )}
       </div>
       
       {sortedVideos.length > 0 && (

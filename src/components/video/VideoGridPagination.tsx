@@ -1,11 +1,6 @@
+
 import { Button } from "@/components/ui/button";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface VideoGridPaginationProps {
   showAll: boolean;
@@ -13,7 +8,7 @@ interface VideoGridPaginationProps {
   totalPages: number;
   filteredVideosLength: number;
   maxVideos: number;
-  isMobile: boolean;
+  isMobile?: boolean;
   onShowAll: () => void;
   onPageChange: (page: number) => void;
 }
@@ -24,40 +19,56 @@ export const VideoGridPagination = ({
   totalPages,
   filteredVideosLength,
   maxVideos,
-  isMobile,
+  isMobile = false,
   onShowAll,
   onPageChange,
 }: VideoGridPaginationProps) => {
-  return (
-    <div className="flex flex-col items-center gap-3 md:gap-4 mt-6 md:mt-8">
-      {!showAll && filteredVideosLength > (isMobile ? 8 : maxVideos) && (
+  if (!showAll) {
+    return (
+      <div className="flex justify-center mt-8">
         <Button 
+          variant="outline" 
           onClick={onShowAll}
-          variant="outline"
-          className="w-28 h-8 md:w-32 md:h-10 text-sm md:text-base"
+          className="group relative rounded-full px-6 py-2 text-sm text-muted-foreground hover:bg-muted/50 hover:border-gray-300 transition-all duration-300"
         >
           See More
+          <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+            View more videos
+          </span>
         </Button>
-      )}
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex justify-center items-center gap-4 mt-8">
+      <Button
+        variant="outline"
+        onClick={() => onPageChange(currentPage - 1)}
+        disabled={currentPage === 1}
+        className="group relative rounded-full p-2 hover:bg-muted/50 hover:border-gray-300 transition-all duration-300"
+      >
+        <ChevronLeft className="h-4 w-4" />
+        <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          Previous page
+        </span>
+      </Button>
       
-      {showAll && totalPages > 1 && (
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious 
-                onClick={() => onPageChange(currentPage - 1)}
-                className={`${currentPage === 1 ? 'pointer-events-none opacity-50' : ''} h-8 md:h-10 text-sm md:text-base`}
-              />
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationNext 
-                onClick={() => onPageChange(currentPage + 1)}
-                className={`${currentPage === totalPages ? 'pointer-events-none opacity-50' : ''} h-8 md:h-10 text-sm md:text-base`}
-              />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-      )}
+      <span className="text-sm text-muted-foreground">
+        Page {currentPage} of {totalPages}
+      </span>
+      
+      <Button
+        variant="outline"
+        onClick={() => onPageChange(currentPage + 1)}
+        disabled={currentPage === totalPages}
+        className="group relative rounded-full p-2 hover:bg-muted/50 hover:border-gray-300 transition-all duration-300"
+      >
+        <ChevronRight className="h-4 w-4" />
+        <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          Next page
+        </span>
+      </Button>
     </div>
   );
 };
