@@ -30,19 +30,39 @@ export const VideoContent = ({ videos, isLoading }: VideoContentProps) => {
       <div className="video-grid relative">
         <VideoGrid 
           videos={videos} 
-          maxVideos={isMobile ? 4 : 12} 
-          rowSize={isMobile ? 1 : 4} 
+          maxVideos={isMobile ? 6 : 12} 
+          rowSize={isMobile ? 2 : 4} 
           isLoading={isLoading}
         />
       </div>
       
-      {sortedVideos.length > 0 && (
-        <div className="mt-4 md:mt-6">
+      {sortedVideos.length > 0 && isMobile && (
+        <div className="mt-6 px-2">
+          <h2 className="text-lg font-semibold mb-4">Most Viewed</h2>
+          <div className="overflow-x-auto -mx-2 px-2 scrollbar-hide">
+            <div className="flex space-x-4 pb-4">
+              {sortedVideos.slice(0, 4).map((video) => (
+                <div key={video.id} className="w-[280px] flex-shrink-0">
+                  <VideoGrid
+                    videos={[video]}
+                    maxVideos={1}
+                    rowSize={1}
+                    isLoading={false}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {sortedVideos.length > 0 && !isMobile && (
+        <div className="mt-8">
           <MostViewedVideos videos={sortedVideos} />
         </div>
       )}
       
-      <div className="channels-grid mt-4 md:mt-6">
+      <div className={`${isMobile ? 'mt-6 px-2' : 'mt-8'}`}>
         <ChannelsGrid onError={(error: any) => {
           console.error('Channel grid error:', error);
           if (error?.status === 429) {

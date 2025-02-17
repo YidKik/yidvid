@@ -1,10 +1,10 @@
 
-import { type FC, useState, useEffect } from "react";
+import { type FC, useState } from "react";
 import { VideoCard } from "./VideoCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/hooks/useIsMobile";
 import { VideoGridPagination } from "./video/VideoGridPagination";
 
 interface VideoGridProps {
@@ -57,9 +57,9 @@ export const VideoGrid: FC<VideoGridProps> = ({ maxVideos = 12, rowSize = 4, isL
         uploadedAt: video.uploaded_at
       }));
     },
-    enabled: !parentVideos, // Only fetch if no videos are provided as props
-    staleTime: 1000 * 60 * 5, // Keep data fresh for 5 minutes
-    gcTime: 1000 * 60 * 30, // Cache data for 30 minutes
+    enabled: !parentVideos,
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 30,
   });
 
   // Load hidden channels for logged-in users
@@ -143,18 +143,26 @@ export const VideoGrid: FC<VideoGridProps> = ({ maxVideos = 12, rowSize = 4, isL
 
   return (
     <div className="space-y-4 md:space-y-6">
-      <div className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 max-w-[1600px] mx-auto`}>
+      <div className={`grid ${
+        isMobile 
+          ? 'grid-cols-2 gap-3' 
+          : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'
+      } max-w-[1600px] mx-auto`}>
         {currentVideos?.map((video) => (
-          <VideoCard
-            key={video.id}
-            id={video.video_id}
-            uuid={video.id}
-            title={video.title}
-            thumbnail={video.thumbnail}
-            channelName={video.channelName}
-            views={video.views}
-            uploadedAt={video.uploadedAt}
-          />
+          <div 
+            key={video.id} 
+            className="transform transition-transform duration-200 hover:scale-102 hover:shadow-lg rounded-lg overflow-hidden"
+          >
+            <VideoCard
+              id={video.video_id}
+              uuid={video.id}
+              title={video.title}
+              thumbnail={video.thumbnail}
+              channelName={video.channelName}
+              views={video.views}
+              uploadedAt={video.uploadedAt}
+            />
+          </div>
         ))}
       </div>
       
