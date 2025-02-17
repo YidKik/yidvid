@@ -27,6 +27,11 @@ export const useChannelSubscription = (channelId: string | undefined) => {
   };
 
   const handleSubscribe = async () => {
+    if (!channelId) {
+      console.error("No channel ID provided");
+      return;
+    }
+
     const { data: { session } } = await supabase.auth.getSession();
     
     if (!session) {
@@ -48,19 +53,16 @@ export const useChannelSubscription = (channelId: string | undefined) => {
       } else {
         const { error } = await supabase
           .from("channel_subscriptions")
-          .upsert({ // Using upsert instead of insert to handle duplicates
+          .insert({
             channel_id: channelId,
             user_id: session.user.id
-          }, {
-            onConflict: 'user_id,channel_id',
-            ignoreDuplicates: true
           });
 
         if (error) throw error;
         setIsSubscribed(true);
         toast.success("Subscribed to channel");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error managing subscription:", error);
       toast.error("Failed to update subscription");
     }
