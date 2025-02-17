@@ -1,4 +1,3 @@
-
 import { type FC, useState, useEffect } from "react";
 import { VideoCard } from "./VideoCard";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -62,7 +61,6 @@ export const VideoGrid: FC<VideoGridProps> = ({ maxVideos = 12, rowSize = 4, isL
     gcTime: 1000 * 60 * 30,
   });
 
-  // Load hidden channels for logged-in users
   useEffect(() => {
     const loadHiddenChannels = async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -115,15 +113,15 @@ export const VideoGrid: FC<VideoGridProps> = ({ maxVideos = 12, rowSize = 4, isL
 
   if (isLoading || parentLoading) {
     return (
-      <div className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 max-w-[1600px] mx-auto`}>
+      <div className={`grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4 md:gap-4 max-w-[1600px] mx-auto`}>
         {Array.from({ length: isMobile ? 4 : maxVideos }).map((_, index) => (
-          <div key={index} className="space-y-2 md:space-y-3">
+          <div key={index} className="space-y-2">
             <Skeleton className="aspect-video w-full" />
-            <div className="flex gap-2 md:gap-3">
-              <Skeleton className="h-8 w-8 md:h-10 md:w-10 rounded-full" />
-              <div className="space-y-1 md:space-y-2 flex-1">
-                <Skeleton className="h-3 md:h-4 w-full" />
-                <Skeleton className="h-3 md:h-4 w-3/4" />
+            <div className="flex gap-2">
+              <Skeleton className="h-8 w-8 rounded-full" />
+              <div className="space-y-1 flex-1">
+                <Skeleton className="h-3 w-full" />
+                <Skeleton className="h-3 w-3/4" />
               </div>
             </div>
           </div>
@@ -141,12 +139,8 @@ export const VideoGrid: FC<VideoGridProps> = ({ maxVideos = 12, rowSize = 4, isL
   }
 
   return (
-    <div className="space-y-4 md:space-y-6">
-      <div className={`grid ${
-        isMobile 
-          ? 'grid-cols-2 gap-3' 
-          : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'
-      } max-w-[1600px] mx-auto`}>
+    <div className="space-y-3 md:space-y-6">
+      <div className={`grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4 md:gap-4 max-w-[1600px] mx-auto`}>
         {currentVideos?.map((video) => (
           <div 
             key={video.id} 
