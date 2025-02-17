@@ -30,7 +30,7 @@ export const HeaderActions = ({
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
             transition={{ type: "spring", stiffness: 300, damping: 25 }}
-            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+            className="absolute left-1/2 -translate-x-1/2 flex items-center h-14"
           >
             <Button
               variant="ghost"
