@@ -156,7 +156,7 @@ export const NotificationsMenu = ({ session, onMarkAsRead }: NotificationsMenuPr
           {notifications && notifications.length > 0 && (
             <Badge 
               variant="destructive" 
-              className="absolute -top-1.5 -right-1.5 h-3.5 w-3.5 md:h-5 md:w-5 flex items-center justify-center p-0 text-[8px] md:text-xs"
+              className="absolute -top-1 -right-1 h-3 w-3 md:h-5 md:w-5 flex items-center justify-center p-0 text-[8px] md:text-xs"
             >
               {notifications.length}
             </Badge>
@@ -165,36 +165,36 @@ export const NotificationsMenu = ({ session, onMarkAsRead }: NotificationsMenuPr
       </SheetTrigger>
       <SheetContent 
         side="right"
-        className="w-[280px] sm:w-[400px] bg-[#222222] border-[#333333] p-0"
+        className="w-[240px] sm:w-[400px] bg-[#222222] border-[#333333] p-0"
       >
-        <SheetHeader className="p-3 sm:p-6 border-b border-[#333333]">
+        <SheetHeader className="p-2 sm:p-6 border-b border-[#333333]">
           <div className="flex items-center justify-between">
-            <SheetTitle className="text-base sm:text-xl text-white">Notifications</SheetTitle>
+            <SheetTitle className="text-sm sm:text-xl text-white">Notifications</SheetTitle>
             {notifications && notifications.length > 0 && (
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={handleClearAll}
-                className="text-xs text-white hover:text-white hover:bg-[#333333] h-7 px-2"
+                className="text-[10px] text-white hover:text-white hover:bg-[#333333] h-6 px-2"
               >
                 Clear All
               </Button>
             )}
           </div>
         </SheetHeader>
-        <ScrollArea className="h-[calc(100vh-80px)] sm:h-[calc(100vh-100px)]">
+        <ScrollArea className="h-[calc(100vh-64px)] sm:h-[calc(100vh-100px)]">
           {isLoading ? (
-            <div className="p-3 sm:p-6 text-center text-white/70 animate-fade-in">
-              <p className="text-sm">Loading notifications...</p>
+            <div className="p-2 sm:p-6 text-center text-white/70 animate-fade-in">
+              <p className="text-xs sm:text-sm">Loading notifications...</p>
             </div>
           ) : isError ? (
-            <div className="p-3 sm:p-6 text-center text-white/70 animate-fade-in">
-              <p className="text-sm">Unable to load notifications</p>
+            <div className="p-2 sm:p-6 text-center text-white/70 animate-fade-in">
+              <p className="text-xs sm:text-sm">Unable to load notifications</p>
               <Button 
                 variant="ghost" 
                 size="sm" 
                 onClick={() => refetch()}
-                className="mt-2 text-white hover:text-white hover:bg-[#333333] h-7"
+                className="mt-1 text-white hover:text-white hover:bg-[#333333] h-6 text-[10px]"
               >
                 Try Again
               </Button>
@@ -204,27 +204,27 @@ export const NotificationsMenu = ({ session, onMarkAsRead }: NotificationsMenuPr
               {notifications.map((notification) => (
                 <div
                   key={notification.id}
-                  className="p-2 sm:p-4 hover:bg-[#333333] cursor-pointer transition-colors duration-200 border-b border-[#333333] animate-fade-in"
+                  className="p-1.5 sm:p-4 hover:bg-[#333333] cursor-pointer transition-colors duration-200 border-b border-[#333333] animate-fade-in"
                   onClick={() => {
                     navigate(`/video/${notification.video_id}`);
                     onMarkAsRead();
                   }}
                 >
-                  <div className="flex items-start gap-2">
+                  <div className="flex items-start gap-1.5">
                     <img
                       src={notification.youtube_videos.thumbnail}
                       alt={notification.youtube_videos.title}
-                      className="w-14 sm:w-24 h-10 sm:h-16 object-cover rounded"
+                      className="w-12 sm:w-24 h-8 sm:h-16 object-cover rounded"
                       onError={(e) => {
                         console.error("Failed to load thumbnail");
                         e.currentTarget.src = "/placeholder.svg";
                       }}
                     />
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs sm:text-sm text-white line-clamp-2 font-medium">
+                      <p className="text-[10px] sm:text-sm text-white line-clamp-2 font-medium">
                         New video from {notification.youtube_videos.channel_name}
                       </p>
-                      <p className="text-[10px] sm:text-xs text-white/70 mt-0.5 line-clamp-2">
+                      <p className="text-[9px] sm:text-xs text-white/70 mt-0.5 line-clamp-1 sm:line-clamp-2">
                         {notification.youtube_videos.title}
                       </p>
                     </div>
@@ -233,8 +233,8 @@ export const NotificationsMenu = ({ session, onMarkAsRead }: NotificationsMenuPr
               ))}
             </div>
           ) : (
-            <div className="p-3 sm:p-6 text-center text-white/70 animate-fade-in">
-              <p className="text-sm">No new notifications</p>
+            <div className="p-2 sm:p-6 text-center text-white/70 animate-fade-in">
+              <p className="text-xs sm:text-sm">No new notifications</p>
             </div>
           )}
         </ScrollArea>
