@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useState, useEffect } from "react";
 import { RequestChannelDialog } from "./RequestChannelDialog";
+import { toast } from "sonner";
 
 interface ChannelsGridProps {
   onError?: (error: any) => void;
@@ -14,34 +15,44 @@ interface ChannelsGridProps {
 export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
   const [hiddenChannels, setHiddenChannels] = useState<Set<string>>(new Set());
 
-  useEffect(() => {
-    const loadHiddenChannels = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return;
+  // Load hidden channels
+  const { data: session } = useQuery({
+    queryKey: ["auth-session"],
+    queryFn: async () => {
+      const { data } = await supabase.auth.getSession();
+      return data.session;
+    },
+  });
 
-      const { data: hiddenChannelsData, error } = await supabase
+  useQuery({
+    queryKey: ["hidden-channels", session?.user?.id],
+    enabled: !!session?.user?.id,
+    queryFn: async () => {
+      const { data, error } = await supabase
         .from('hidden_channels')
         .select('channel_id')
-        .eq('user_id', session.user.id);
+        .eq('user_id', session!.user.id);
 
       if (error) {
         console.error('Error loading hidden channels:', error);
-        return;
+        return [];
       }
 
-      setHiddenChannels(new Set(hiddenChannelsData.map(hc => hc.channel_id)));
-    };
+      setHiddenChannels(new Set(data.map(hc => hc.channel_id)));
+      return data;
+    },
+  });
 
-    loadHiddenChannels();
-  }, []);
-
+  // Fetch channels
   const { data: channels, isLoading, error } = useQuery({
     queryKey: ["youtube-channels"],
     queryFn: async () => {
       try {
+        console.log("Fetching channels...");
         const { data, error } = await supabase
           .from("youtube_channels")
           .select("*")
+          .is("deleted_at", null)
           .order("title", { ascending: true });
 
         if (error) {
@@ -50,46 +61,23 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
         }
         
         return data || [];
-      } catch (error) {
+      } catch (error: any) {
         console.error("Channel fetch error:", error);
+        toast.error("Failed to load channels. Please try again later.");
         onError?.(error);
         return []; // Return empty array instead of throwing
       }
     },
     retry: (failureCount, error: any) => {
-      // Retry up to 3 times for network errors, only once for other errors
-      if (error.message?.includes('Failed to fetch')) return failureCount < 3;
+      if (error.message?.includes('Failed to fetch')) return failureCount < 2;
       return failureCount < 1;
     },
-    retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 10000), // Exponential backoff with max 10s
+    retryDelay: 2000, // Fixed 2 second delay between retries
+    staleTime: 1000 * 60 * 5, // Consider data fresh for 5 minutes
   });
 
-  useEffect(() => {
-    const updateChannels = async () => {
-      if (!channels?.length) return;
-
-      const channelIds = channels.map(channel => channel.channel_id);
-
-      try {
-        await supabase.functions.invoke('fetch-youtube-videos', {
-          body: { channels: channelIds }
-        }).catch(error => {
-          console.error('Error fetching videos:', error);
-        });
-
-        await supabase.functions.invoke('update-channel-thumbnails', {
-          body: { channels: channelIds }
-        }).catch(error => {
-          console.error('Error updating thumbnails:', error);
-        });
-      } catch (error) {
-        console.error('Error updating channels:', error);
-        onError?.(error);
-      }
-    };
-
-    updateChannels();
-  }, [channels]);
+  // Remove the updateChannels effect as it's causing unnecessary API calls
+  // Videos will be fetched by the cron job instead
 
   if (isLoading) {
     return (
