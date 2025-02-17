@@ -24,7 +24,7 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
   const [nextVideos, setNextVideos] = useState<typeof videos>([]);
   const isMobile = useIsMobile();
   const videosPerPage = isMobile ? 2 : 4;
-  const AUTO_SLIDE_INTERVAL = 5000;
+  const AUTO_SLIDE_INTERVAL = 8000; // Increased from 5000 to 8000ms for a more relaxed pace
 
   const sortedVideos = [...videos].sort((a, b) => (b.views || 0) - (a.views || 0));
 
@@ -38,7 +38,7 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
     setTimeout(() => {
       setCurrentIndex(nextIndex);
       setIsTransitioning(false);
-    }, 800); // Increased from 400 to 800 for smoother transition
+    }, 1200); // Increased from 800 to 1200ms for smoother transition
   };
 
   const handlePrevious = () => {
@@ -53,7 +53,7 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
     setTimeout(() => {
       setCurrentIndex(nextIndex);
       setIsTransitioning(false);
-    }, 800); // Increased from 400 to 800 for smoother transition
+    }, 1200); // Increased from 800 to 1200ms for smoother transition
   };
 
   useEffect(() => {
@@ -82,7 +82,7 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
   const handleManualNavigation = (action: () => void) => {
     setIsAutoPlaying(false);
     action();
-    setTimeout(() => setIsAutoPlaying(true), 10000);
+    setTimeout(() => setIsAutoPlaying(true), 15000); // Increased from 10000 to 15000ms
   };
 
   const currentVideos = sortedVideos.slice(currentIndex, currentIndex + videosPerPage);
@@ -102,11 +102,11 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
         <div className="relative px-2 md:px-4">
           <button
             onClick={() => handleManualNavigation(handlePrevious)}
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 p-2 md:p-3 bg-white/90 hover:bg-white rounded-full shadow-lg transition-all duration-300 group"
+            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 p-2 md:p-3 bg-white/90 hover:bg-white rounded-full shadow-lg transition-all duration-500 group"
             style={{ opacity: currentIndex === 0 ? 0.5 : 1 }}
             disabled={currentIndex === 0}
           >
-            <ChevronLeft className="w-4 h-4 md:w-5 md:h-5 text-[#555555] group-hover:scale-110 transition-transform" />
+            <ChevronLeft className="w-4 h-4 md:w-5 md:h-5 text-[#555555] group-hover:scale-110 transition-transform duration-500" />
           </button>
 
           <div className="relative overflow-hidden min-h-[200px]">
@@ -117,13 +117,13 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
                   ? `translateX(${direction === 'left' ? '-100%' : '100%'})`
                   : 'translateX(0)',
                 opacity: isTransitioning ? 0 : 1,
-                transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)' // Changed from 0.4s to 0.8s and easing
+                transition: 'all 1.2s cubic-bezier(0.4, 0, 0.2, 1)' // Changed from 0.8s to 1.2s and using a smoother easing
               }}
             >
               {currentVideos.map((video) => (
                 <div 
                   key={video.id} 
-                  className="group relative rounded-lg overflow-hidden transition-all duration-500 hover:shadow-xl"
+                  className="group relative rounded-lg overflow-hidden transition-all duration-700 hover:shadow-xl"
                 >
                   <div className="relative aspect-video">
                     <VideoCard {...video} hideInfo={isMobile} />
@@ -138,13 +138,13 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
                 style={{
                   transform: `translateX(${direction === 'left' ? '0' : '-200%'})`,
                   opacity: isTransitioning ? 1 : 0,
-                  transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)' // Changed from 0.4s to 0.8s and easing
+                  transition: 'all 1.2s cubic-bezier(0.4, 0, 0.2, 1)' // Changed from 0.8s to 1.2s and using a smoother easing
                 }}
               >
                 {nextVideos.map((video) => (
                   <div 
                     key={video.id} 
-                    className="group relative rounded-lg overflow-hidden transition-all duration-500 hover:shadow-xl"
+                    className="group relative rounded-lg overflow-hidden transition-all duration-700 hover:shadow-xl"
                   >
                     <div className="relative aspect-video">
                       <VideoCard {...video} hideInfo={isMobile} />
@@ -157,11 +157,11 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
 
           <button
             onClick={() => handleManualNavigation(handleNext)}
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 p-2 md:p-3 bg-white/90 hover:bg-white rounded-full shadow-lg transition-all duration-300 group"
+            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 p-2 md:p-3 bg-white/90 hover:bg-white rounded-full shadow-lg transition-all duration-500 group"
             style={{ opacity: currentIndex + videosPerPage >= sortedVideos.length ? 0.5 : 1 }}
             disabled={currentIndex + videosPerPage >= sortedVideos.length}
           >
-            <ChevronRight className="w-4 h-4 md:w-5 md:h-5 text-[#555555] group-hover:scale-110 transition-transform" />
+            <ChevronRight className="w-4 h-4 md:w-5 md:h-5 text-[#555555] group-hover:scale-110 transition-transform duration-500" />
           </button>
         </div>
 
@@ -169,7 +169,7 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
           {Array.from({ length: Math.ceil(sortedVideos.length / videosPerPage) }).map((_, idx) => (
             <button
               key={idx}
-              className={`w-2 h-2 rounded-full transition-all duration-500 ${
+              className={`w-2 h-2 rounded-full transition-all duration-700 ${
                 Math.floor(currentIndex / videosPerPage) === idx 
                   ? 'bg-[#555555] scale-125' 
                   : 'bg-[#888888]/20 hover:bg-[#888888]/40'
