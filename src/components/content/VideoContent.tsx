@@ -40,18 +40,18 @@ export const VideoContent = ({ videos, isLoading }: VideoContentProps) => {
 
   if (isMobile) {
     return (
-      <div className="space-y-6">
-        <div className="mt-4">
+      <div className="space-y-4">
+        <div className="mt-2">
           <VideoGrid
             videos={displayVideos}
             maxVideos={displayVideos.length}
             rowSize={1}
             isLoading={isLoading}
-            className="px-4 space-y-6"
+            className="px-3 space-y-4"
           />
 
           {sortedVideos.length > 4 && (
-            <div className="px-4">
+            <div className="px-3">
               <VideoGridPagination
                 showAll={showMoreMobile}
                 currentPage={currentPage}
@@ -70,12 +70,12 @@ export const VideoContent = ({ videos, isLoading }: VideoContentProps) => {
         </div>
 
         {sortedVideos.length > 0 && (
-          <div className="mt-8 px-4">
+          <div className="mt-6 px-3">
             <MostViewedVideos videos={sortedVideos} />
           </div>
         )}
         
-        <div className="mt-8 px-4">
+        <div className="mt-6 px-3">
           <ChannelsGrid onError={() => {
             console.error('Channel grid error');
           }} />
@@ -86,7 +86,7 @@ export const VideoContent = ({ videos, isLoading }: VideoContentProps) => {
 
   // Desktop view
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {sortedVideos.length > 0 && (
         <div>
           <MostViewedVideos videos={sortedVideos} />
@@ -99,7 +99,7 @@ export const VideoContent = ({ videos, isLoading }: VideoContentProps) => {
           maxVideos={videosPerPage}
           rowSize={4}
           isLoading={isLoading}
-          className="grid-cols-4"
+          className="grid-cols-4 gap-4"
         />
         
         {sortedVideos.length > videosPerPage && (
@@ -115,7 +115,7 @@ export const VideoContent = ({ videos, isLoading }: VideoContentProps) => {
         )}
       </div>
       
-      <div className="mt-8">
+      <div className="mt-6">
         <ChannelsGrid onError={() => {
           console.error('Channel grid error');
         }} />
