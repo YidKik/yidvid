@@ -28,7 +28,7 @@ export const HeaderActions = ({
 }: HeaderActionsProps) => {
   if (isMobile && !isSearchExpanded) {
     return (
-      <div className="flex items-center gap-1.5 ml-auto pr-2">
+      <div className="flex items-center gap-1.5 justify-end w-full">
         <Button
           variant="ghost"
           size="icon"
