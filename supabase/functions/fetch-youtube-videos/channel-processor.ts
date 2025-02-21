@@ -1,80 +1,143 @@
 
 import { SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import { fetchChannelVideos } from './youtube-api.ts';
-import { storeVideosInDatabase } from './db-operations.ts';
-import { updateQuota, setQuotaExceeded, QuotaData } from './quota-manager.ts';
 
-export const logChannelUpdate = async (
+export const processChannel = async (
   supabase: SupabaseClient,
   channelId: string,
-  videosCount: number | null = 0,
-  error: string | null = null
+  apiKey: string,
+  quotaData: any,
+  now: Date
 ) => {
-  await supabase
-    .from('youtube_update_logs')
-    .insert({
+  console.log(`[Channel Processor] Processing channel: ${channelId}`);
+
+  try {
+    // Fetch channel details first
+    const channelUrl = `https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${channelId}&key=${apiKey}`;
+    const channelResponse = await fetch(channelUrl);
+    const channelData = await channelResponse.json();
+
+    if (!channelData.items?.[0]) {
+      throw new Error('Channel not found');
+    }
+
+    const channel = channelData.items[0];
+    
+    // Fetch all videos for the channel without date restriction
+    const videos = await fetchAllVideosForChannel(channelId, apiKey, quotaData);
+    console.log(`[Channel Processor] Found ${videos.length} total videos for channel ${channelId}`);
+
+    // Format videos for database
+    const formattedVideos = videos.map(video => ({
+      video_id: video.id,
+      title: video.snippet.title,
+      description: video.snippet.description,
+      thumbnail: video.snippet.thumbnails.high?.url || video.snippet.thumbnails.default?.url,
       channel_id: channelId,
-      videos_count: videosCount,
-      error
-    })
-    .single();
+      channel_name: channel.snippet.title,
+      uploaded_at: video.snippet.publishedAt,
+      views: video.statistics?.viewCount ? parseInt(video.statistics.viewCount) : 0
+    }));
+
+    // Store videos in database
+    const { data: storedVideos, error: storeError } = await supabase
+      .from('youtube_videos')
+      .upsert(
+        formattedVideos,
+        { 
+          onConflict: 'video_id',
+          ignoreDuplicates: false 
+        }
+      );
+
+    if (storeError) {
+      throw storeError;
+    }
+
+    // Update channel's last fetch time
+    await updateChannelStatus(supabase, channelId, now);
+    await logChannelUpdate(supabase, channelId, videos.length);
+
+    return {
+      videos: formattedVideos,
+      quotaExceeded: false
+    };
+
+  } catch (error) {
+    console.error(`[Channel Processor] Error processing channel ${channelId}:`, error);
+    throw error;
+  }
+};
+
+const fetchAllVideosForChannel = async (channelId: string, apiKey: string, quotaData: any) => {
+  let allVideos = [];
+  let pageToken = '';
+  const maxResults = 50; // Maximum allowed by YouTube API
+  
+  do {
+    if (quotaData.quota_remaining <= 0) {
+      console.log('[Channel Processor] Quota exceeded during video fetch');
+      return allVideos;
+    }
+
+    const videosUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channelId}&maxResults=${maxResults}&order=date&type=video&key=${apiKey}${pageToken ? `&pageToken=${pageToken}` : ''}`;
+    const videosResponse = await fetch(videosUrl);
+    const videosData = await videosResponse.json();
+
+    if (!videosData.items) {
+      break;
+    }
+
+    // Fetch additional video details (including view counts)
+    const videoIds = videosData.items.map((item: any) => item.id.videoId).join(',');
+    const detailsUrl = `https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&id=${videoIds}&key=${apiKey}`;
+    const detailsResponse = await fetch(detailsUrl);
+    const detailsData = await detailsResponse.json();
+
+    allVideos.push(...(detailsData.items || []));
+    pageToken = videosData.nextPageToken;
+
+    // Add delay between requests to avoid rate limiting
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+  } while (pageToken);
+
+  return allVideos;
 };
 
 export const updateChannelStatus = async (
   supabase: SupabaseClient,
   channelId: string,
-  now: Date,
-  error: string | null = null
+  timestamp: Date,
+  error?: string
 ) => {
-  await supabase
+  const { error: updateError } = await supabase
     .from('youtube_channels')
-    .update({ 
-      last_fetch: now.toISOString(),
-      fetch_error: error
+    .update({
+      last_fetch: timestamp.toISOString(),
+      fetch_error: error || null
     })
-    .eq('channel_id', channelId)
-    .single();
+    .eq('channel_id', channelId);
+
+  if (updateError) {
+    console.error(`[Channel Processor] Error updating channel status:`, updateError);
+  }
 };
 
-export const processChannel = async (
+export const logChannelUpdate = async (
   supabase: SupabaseClient,
   channelId: string,
-  youtubeApiKey: string,
-  quotaData: QuotaData,
-  now: Date
+  videosCount: number,
+  error?: string
 ) => {
-  let nextPageToken: string | null = null;
-  let allVideos = [];
-  
-  // Log the start of update
-  await logChannelUpdate(supabase, channelId);
+  const { error: logError } = await supabase
+    .from('youtube_update_logs')
+    .insert({
+      channel_id: channelId,
+      videos_count: videosCount,
+      error: error
+    });
 
-  do {
-    const result = await fetchChannelVideos(channelId, youtubeApiKey, nextPageToken);
-    
-    if (result.quotaExceeded) {
-      await setQuotaExceeded(supabase, now);
-      return { quotaExceeded: true };
-    }
-    
-    // Update quota after successful API call
-    await updateQuota(supabase, quotaData.quota_remaining, now);
-    
-    allVideos = [...allVideos, ...result.videos];
-    nextPageToken = result.nextPageToken;
-  } while (nextPageToken);
-
-  if (allVideos.length > 0) {
-    const storedVideos = await storeVideosInDatabase(supabase, allVideos);
-    
-    // Update the videos count in youtube_update_logs
-    await logChannelUpdate(supabase, channelId, allVideos.length);
-    
-    // Update channel's last_fetch timestamp
-    await updateChannelStatus(supabase, channelId, now);
-    
-    return { videos: storedVideos, quotaExceeded: false };
+  if (logError) {
+    console.error(`[Channel Processor] Error logging channel update:`, logError);
   }
-
-  return { videos: [], quotaExceeded: false };
 };
