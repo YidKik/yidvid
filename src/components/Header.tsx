@@ -89,6 +89,7 @@ export const Header = () => {
                     onSearchExpand={() => setIsSearchExpanded(true)}
                     onAuthOpen={() => setIsAuthOpen(true)}
                     onLogout={handleLogout}
+                    onMarkNotificationsAsRead={markNotificationsAsRead}
                   />
                 </div>
               </>
@@ -109,4 +110,3 @@ export const Header = () => {
     </header>
   );
 };
-

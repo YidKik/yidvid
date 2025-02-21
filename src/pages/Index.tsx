@@ -10,7 +10,6 @@ import { MusicSection } from "@/components/content/MusicSection";
 import { VideoContent } from "@/components/content/VideoContent";
 import { useVideos } from "@/hooks/video/useVideos";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { MobileBottomNav } from "@/components/navigation/MobileBottomNav";
 import { useSessionManager } from "@/hooks/useSessionManager";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -45,7 +44,7 @@ const MainContent = () => {
       <Header />
       <GlobalNotification />
       <main className="mt-0 mx-auto px-2 md:px-6 max-w-[1400px]">
-        <div className={`space-y-2 md:space-y-4 ${isMobile ? 'pb-20' : ''}`}>
+        <div className={`space-y-2 md:space-y-4`}>
           <div className="space-y-2">
             <div className="flex flex-col items-center">
               <ContentToggle 
@@ -72,13 +71,6 @@ const MainContent = () => {
           </motion.div>
         </div>
       </main>
-      {isMobile && (
-        <MobileBottomNav 
-          session={session}
-          onMarkNotificationsAsRead={markNotificationsAsRead}
-          onLogout={handleLogout}
-        />
-      )}
     </div>
   );
 };
