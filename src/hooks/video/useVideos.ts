@@ -25,7 +25,8 @@ export const useVideos = () => {
       
       try {
         // First fetch existing videos from database
-        const { data: dbData, error: dbError } = await supabase
+        let videosData = [];
+        const { data: initialData, error: dbError } = await supabase
           .from("youtube_videos")
           .select("*")
           .is('deleted_at', null)
@@ -35,6 +36,8 @@ export const useVideos = () => {
           console.error("Error fetching videos from database:", dbError);
           throw dbError;
         }
+
+        videosData = initialData || [];
 
         // Get channels to process
         const { data: channels, error: channelError } = await supabase
@@ -70,7 +73,7 @@ export const useVideos = () => {
               .order("uploaded_at", { ascending: false });
 
             if (!updateError && updatedData) {
-              dbData = updatedData;
+              videosData = updatedData;
             }
           } else if (response?.quota_reset_at) {
             const resetTime = new Date(response.quota_reset_at);
@@ -82,7 +85,7 @@ export const useVideos = () => {
         }
 
         // Format and return the data we have
-        const formattedData = (dbData || []).map(video => ({
+        const formattedData = videosData.map(video => ({
           id: video.id,
           video_id: video.video_id,
           title: video.title,
