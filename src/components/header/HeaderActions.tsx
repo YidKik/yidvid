@@ -28,20 +28,20 @@ export const HeaderActions = ({
 }: HeaderActionsProps) => {
   if (isMobile && !isSearchExpanded) {
     return (
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1.5 ml-auto">
         {session && (
           <>
             <NotificationsMenu 
               session={session} 
               onMarkAsRead={onMarkNotificationsAsRead}
             />
-            <Separator orientation="vertical" className="h-6 bg-gray-200/60" />
+            <Separator orientation="vertical" className="h-5 bg-gray-200/60" />
           </>
         )}
         
         <ContactDialog />
         
-        <Separator orientation="vertical" className="h-6 bg-gray-200/60" />
+        <Separator orientation="vertical" className="h-5 bg-gray-200/60" />
         
         {session ? (
           <UserMenu onLogout={onLogout} />
@@ -50,9 +50,9 @@ export const HeaderActions = ({
             onClick={onAuthOpen}
             variant="ghost"
             size="icon"
-            className="h-7 w-7 hover:bg-gray-100 rounded-full"
+            className="h-6 w-6 hover:bg-gray-100 rounded-full"
           >
-            <LogIn className="h-3.5 w-3.5 text-gray-600" />
+            <LogIn className="h-3 w-3 text-gray-600" />
           </Button>
         )}
         
@@ -60,9 +60,9 @@ export const HeaderActions = ({
           variant="ghost"
           size="icon"
           onClick={onSearchExpand}
-          className="h-7 w-7 hover:bg-gray-100 rounded-full"
+          className="h-6 w-6 hover:bg-gray-100 rounded-full"
         >
-          <Search className="h-3.5 w-3.5 text-gray-600" />
+          <Search className="h-3 w-3 text-gray-600" />
         </Button>
       </div>
     );
@@ -70,7 +70,7 @@ export const HeaderActions = ({
 
   if (!isMobile) {
     return (
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 ml-auto">
         <ContactDialog />
         {session && <NotificationsMenu session={session} onMarkAsRead={onMarkNotificationsAsRead} />}
         {session ? (
