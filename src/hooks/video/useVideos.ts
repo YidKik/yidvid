@@ -24,9 +24,25 @@ export const useVideos = () => {
       console.log("Fetching videos...");
       
       try {
-        // First trigger an immediate fetch of new videos
+        // First get all channel IDs
+        const { data: channels, error: channelError } = await supabase
+          .from("youtube_channels")
+          .select("channel_id")
+          .is("deleted_at", null);
+
+        if (channelError) {
+          throw channelError;
+        }
+
+        const channelIds = channels?.map(c => c.channel_id) || [];
+        console.log(`Found ${channelIds.length} channels to process`);
+
+        // Force fetch videos for all channels
         const { data: response, error: fetchError } = await supabase.functions.invoke('fetch-youtube-videos', {
-          body: { forceUpdate: true }
+          body: { 
+            channels: channelIds,
+            forceUpdate: true
+          }
         });
         
         if (fetchError) {
@@ -42,7 +58,7 @@ export const useVideos = () => {
           toast.success(`Successfully processed ${response.processed} channels, found ${response.newVideos} new videos`);
         }
 
-        // Always fetch from database after attempting to get new videos
+        // Now fetch all videos from database
         const { data: dbData, error: dbError } = await supabase
           .from("youtube_videos")
           .select("*")
@@ -87,7 +103,7 @@ export const useVideos = () => {
         throw error;
       }
     },
-    staleTime: 1000 * 60 * 5, // Keep data fresh for 5 minutes
+    staleTime: 0, // Always fetch fresh data
     gcTime: 1000 * 60 * 30, // Cache data for 30 minutes
     retry: (failureCount, error: any) => {
       // Don't retry on quota exceeded
@@ -104,7 +120,7 @@ export const useVideos = () => {
     }
   }, [error]);
 
-  // Force an immediate refetch
+  // Force an immediate refetch when the component mounts
   useEffect(() => {
     refetch();
   }, [refetch]);
