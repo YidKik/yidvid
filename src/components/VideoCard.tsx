@@ -37,7 +37,7 @@ export const VideoCard = ({
   const routeId = uuid || id;
 
   return (
-    <Link to={`/video/${routeId}`} className="block group">
+    <Link to={`/video/${routeId}`} className="block group w-full">
       <div className={cn(
         "relative rounded-lg overflow-hidden bg-muted shadow-sm hover:shadow-md transition-all duration-300",
         isMobile ? "aspect-video w-full mb-2" : "aspect-video mb-2"
@@ -50,7 +50,7 @@ export const VideoCard = ({
         />
       </div>
       {!hideInfo && (
-        <div className="flex gap-2">
+        <div className="flex gap-2 w-full">
           {channelThumbnail && (
             <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
               <img
@@ -61,7 +61,7 @@ export const VideoCard = ({
               />
             </div>
           )}
-          <div className="flex-1 min-w-0">
+          <div className="flex-1 min-w-0 overflow-hidden">
             <h3 className="font-medium line-clamp-2 text-xs leading-4">
               {title}
             </h3>
