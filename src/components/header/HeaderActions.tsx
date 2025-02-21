@@ -28,21 +28,16 @@ export const HeaderActions = ({
 }: HeaderActionsProps) => {
   if (isMobile && !isSearchExpanded) {
     return (
-      <div className="flex items-center gap-1.5 ml-auto">
-        {session && (
-          <>
-            <NotificationsMenu 
-              session={session} 
-              onMarkAsRead={onMarkNotificationsAsRead}
-            />
-            <Separator orientation="vertical" className="h-5 bg-gray-200/60" />
-          </>
-        )}
-        
-        <ContactDialog />
-        
-        <Separator orientation="vertical" className="h-5 bg-gray-200/60" />
-        
+      <div className="flex items-center gap-1.5 justify-end w-full">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onSearchExpand}
+          className="h-6 w-6 hover:bg-gray-100 rounded-full"
+        >
+          <Search className="h-3 w-3 text-gray-600" />
+        </Button>
+
         {session ? (
           <UserMenu onLogout={onLogout} />
         ) : (
@@ -56,14 +51,14 @@ export const HeaderActions = ({
           </Button>
         )}
         
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={onSearchExpand}
-          className="h-6 w-6 hover:bg-gray-100 rounded-full"
-        >
-          <Search className="h-3 w-3 text-gray-600" />
-        </Button>
+        <ContactDialog />
+        
+        {session && (
+          <NotificationsMenu 
+            session={session} 
+            onMarkAsRead={onMarkNotificationsAsRead}
+          />
+        )}
       </div>
     );
   }
