@@ -1,45 +1,63 @@
 
-import { SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2';
-
-export const checkAndUpdateQuota = async (
-  supabase: SupabaseClient,
-  cost: number = 1
-): Promise<{ canProceed: boolean; quotaData: any }> => {
+export const checkAndUpdateQuota = async (supabaseClient: any) => {
   try {
-    // Get current quota status
-    const { data: quotaData, error: quotaError } = await supabase
+    // First try to get the current quota status
+    const { data: quotaData, error: quotaError } = await supabaseClient
       .from('api_quota_tracking')
       .select('*')
+      .eq('api_name', 'youtube')
       .single();
 
     if (quotaError) {
-      console.error('Error fetching quota data:', quotaError);
+      console.error('Error checking quota:', quotaError);
       throw quotaError;
     }
 
+    if (!quotaData) {
+      // If no quota record exists, create one
+      const { data: newQuota, error: insertError } = await supabaseClient
+        .from('api_quota_tracking')
+        .insert([{
+          api_name: 'youtube',
+          quota_limit: 10000,
+          quota_remaining: 10000,
+          quota_reset_at: new Date(new Date().setHours(24, 0, 0, 0)).toISOString(),
+          last_reset: new Date().toISOString()
+        }])
+        .select()
+        .single();
+
+      if (insertError) {
+        console.error('Error creating quota record:', insertError);
+        throw insertError;
+      }
+
+      return {
+        canProceed: true,
+        quotaData: newQuota
+      };
+    }
+
+    // Check if we need to reset the quota
     const now = new Date();
     const resetTime = new Date(quotaData.quota_reset_at);
 
-    // Force reset if we're past the reset time
-    if (now > resetTime) {
-      console.log('Resetting quota as current time is past reset time');
-      console.log('Current time:', now.toISOString());
-      console.log('Reset time was:', resetTime.toISOString());
-
-      // Update quota and reset time
-      const { data: updatedQuota, error: updateError } = await supabase
+    if (now >= resetTime) {
+      // Reset the quota
+      const { data: updatedQuota, error: updateError } = await supabaseClient
         .from('api_quota_tracking')
         .update({
-          quota_remaining: 10000,
-          quota_reset_at: new Date(now.getTime() + (24 * 60 * 60 * 1000)).toISOString(),
-          last_reset: now.toISOString()
+          quota_remaining: quotaData.quota_limit,
+          quota_reset_at: new Date(new Date().setHours(24, 0, 0, 0)).toISOString(),
+          last_reset: now.toISOString(),
+          updated_at: now.toISOString()
         })
-        .eq('id', quotaData.id)
+        .eq('api_name', 'youtube')
         .select()
         .single();
 
       if (updateError) {
-        console.error('Error updating quota:', updateError);
+        console.error('Error resetting quota:', updateError);
         throw updateError;
       }
 
@@ -49,51 +67,44 @@ export const checkAndUpdateQuota = async (
       };
     }
 
-    // Check if we have enough quota
-    const hasQuota = quotaData.quota_remaining >= cost;
-
-    if (hasQuota) {
-      // Deduct quota
-      const { data: updatedQuota, error: updateError } = await supabase
-        .from('api_quota_tracking')
-        .update({
-          quota_remaining: quotaData.quota_remaining - cost
-        })
-        .eq('id', quotaData.id)
-        .select()
-        .single();
-
-      if (updateError) {
-        console.error('Error updating quota:', updateError);
-        throw updateError;
-      }
-
+    // Check if we have remaining quota
+    if (quotaData.quota_remaining <= 0) {
       return {
-        canProceed: true,
-        quotaData: updatedQuota
+        canProceed: false,
+        quotaData
       };
     }
 
     return {
-      canProceed: false,
+      canProceed: true,
       quotaData
     };
   } catch (error) {
-    console.error('Error in quota management:', error);
+    console.error('Error in checkAndUpdateQuota:', error);
     throw error;
   }
 };
 
-export const getQuotaStatus = async (supabase: SupabaseClient) => {
-  const { data, error } = await supabase
-    .from('api_quota_tracking')
-    .select('*')
-    .single();
+export const decrementQuota = async (supabaseClient: any, amount = 1) => {
+  try {
+    const { data, error } = await supabaseClient
+      .from('api_quota_tracking')
+      .update({
+        quota_remaining: supabaseClient.rpc('decrement', { x: amount }),
+        updated_at: new Date().toISOString()
+      })
+      .eq('api_name', 'youtube')
+      .select()
+      .single();
 
-  if (error) {
-    console.error('Error getting quota status:', error);
+    if (error) {
+      console.error('Error decrementing quota:', error);
+      throw error;
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Error in decrementQuota:', error);
     throw error;
   }
-
-  return data;
 };
