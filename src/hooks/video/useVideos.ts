@@ -18,13 +18,31 @@ interface Video {
 export const useVideos = () => {
   const queryClient = useQueryClient();
 
-  const { data, isLoading, isFetching, error } = useQuery<Video[]>({
+  const { data, isLoading, isFetching, error, refetch } = useQuery<Video[]>({
     queryKey: ["youtube_videos"],
     queryFn: async () => {
       console.log("Fetching videos...");
       
       try {
-        // Always fetch from database first
+        // First trigger an immediate fetch of new videos
+        const { data: response, error: fetchError } = await supabase.functions.invoke('fetch-youtube-videos', {
+          body: { forceUpdate: true }
+        });
+        
+        if (fetchError) {
+          console.error('Error invoking fetch-youtube-videos:', fetchError);
+          toast.error('Error fetching new videos');
+        } else if (response && !response.success) {
+          console.error('Fetch videos response error:', response);
+          if (response.quota_reset_at) {
+            const resetTime = new Date(response.quota_reset_at);
+            toast.warning(`YouTube quota exceeded. Service will resume at ${resetTime.toLocaleString()}`);
+          }
+        } else if (response?.success) {
+          toast.success(`Successfully processed ${response.processed} channels, found ${response.newVideos} new videos`);
+        }
+
+        // Always fetch from database after attempting to get new videos
         const { data: dbData, error: dbError } = await supabase
           .from("youtube_videos")
           .select("*")
@@ -49,34 +67,9 @@ export const useVideos = () => {
 
         console.log(`Successfully fetched ${formattedData.length} videos from database`);
 
-        // Check quota before attempting to fetch new videos
-        const { data: quotaData } = await supabase
-          .from('api_quota_tracking')
-          .select('quota_remaining, quota_reset_at')
-          .eq('api_name', 'youtube')
-          .single();
-
-        // If quota is available, try to fetch new videos
-        if (!quotaData || quotaData.quota_remaining > 0) {
-          const { data: response, error: fetchError } = await supabase.functions.invoke('fetch-youtube-videos');
-          
-          if (fetchError) {
-            console.error('Error invoking fetch-youtube-videos:', fetchError);
-          } else if (response && !response.success && response.quota_reset_at) {
-            // Handle quota exceeded response
-            const resetTime = new Date(response.quota_reset_at);
-            toast.warning(`YouTube quota exceeded. Service will resume at ${resetTime.toLocaleString()}`);
-          }
-        } else if (quotaData) {
-          // If quota is depleted, show a toast with the reset time
-          const resetTime = new Date(quotaData.quota_reset_at);
-          toast.warning(`YouTube quota exceeded. Service will resume at ${resetTime.toLocaleString()}`);
-        }
-
         // Cache the formatted data
         queryClient.setQueryData(["youtube_videos_grid"], formattedData);
         
-        // Always return the database data, even if fetching new videos failed
         return formattedData;
 
       } catch (error: any) {
@@ -111,10 +104,16 @@ export const useVideos = () => {
     }
   }, [error]);
 
+  // Force an immediate refetch
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
+
   return {
     data: data || [],
     isLoading,
     isFetching,
-    error
+    error,
+    refetch
   };
 };
