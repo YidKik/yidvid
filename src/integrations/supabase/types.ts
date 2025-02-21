@@ -41,6 +41,7 @@ export type Database = {
           api_name: string
           created_at: string | null
           id: string
+          last_reset: string
           quota_remaining: number
           quota_reset_at: string
           updated_at: string | null
@@ -49,6 +50,7 @@ export type Database = {
           api_name: string
           created_at?: string | null
           id?: string
+          last_reset?: string
           quota_remaining?: number
           quota_reset_at: string
           updated_at?: string | null
@@ -57,6 +59,7 @@ export type Database = {
           api_name?: string
           created_at?: string | null
           id?: string
+          last_reset?: string
           quota_remaining?: number
           quota_reset_at?: string
           updated_at?: string | null
