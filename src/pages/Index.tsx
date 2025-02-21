@@ -44,9 +44,9 @@ const MainContent = () => {
     <div className="flex-1">
       <Header />
       <GlobalNotification />
-      <main className="mt-2 md:mt-6 mx-auto px-2 md:px-6 max-w-[1400px]">
-        <div className={`space-y-3 md:space-y-6 ${isMobile ? 'pb-20' : ''}`}>
-          <div className="space-y-3">
+      <main className="mt-0 mx-auto px-2 md:px-6 max-w-[1400px]">
+        <div className={`space-y-2 md:space-y-4 ${isMobile ? 'pb-20' : ''}`}>
+          <div className="space-y-2">
             <div className="flex flex-col items-center">
               <ContentToggle 
                 isMusic={isMusic} 
@@ -62,7 +62,7 @@ const MainContent = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.3 }}
-            className={isMobile ? 'mt-2' : ''}
+            className={isMobile ? 'mt-0' : ''}
           >
             {!isMusic ? (
               <VideoContent videos={videos} isLoading={isLoading} />
