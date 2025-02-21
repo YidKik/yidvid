@@ -68,10 +68,12 @@ export const VideoCard = ({
             <p className="text-muted-foreground text-[11px] mt-0.5 truncate">
               {channelName}
             </p>
-            <div className="text-[11px] text-muted-foreground flex items-center gap-1 mt-0.5">
-              {views !== undefined && <span>{formattedViews}</span>}
+            <div className="text-[10px] text-muted-foreground flex items-center space-x-1 mt-0.5 truncate">
+              {views !== undefined && (
+                <span className="truncate">{formattedViews}</span>
+              )}
               {views !== undefined && <span>•</span>}
-              <span>{formattedDate}</span>
+              <span className="truncate">{formattedDate}</span>
             </div>
           </div>
         </div>
