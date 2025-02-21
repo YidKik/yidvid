@@ -22,7 +22,17 @@ serve(async (req) => {
 
     const apiKey = Deno.env.get('YOUTUBE_API_KEY');
     if (!apiKey) {
-      throw new Error('YouTube API key not configured');
+      console.error('YouTube API key not found');
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: 'YouTube API key not configured'
+        }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 500
+        }
+      );
     }
 
     // Check quota before processing
@@ -40,7 +50,7 @@ serve(async (req) => {
         }),
         {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 429
+          status: 200 // Changed to 200 to prevent client retries
         }
       );
     }
@@ -92,7 +102,7 @@ serve(async (req) => {
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 500
+        status: 200 // Changed to 200 to prevent client retries
       }
     );
   }

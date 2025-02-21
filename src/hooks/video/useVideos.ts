@@ -24,41 +24,7 @@ export const useVideos = () => {
       console.log("Fetching videos...");
       
       try {
-        // First get all channel IDs
-        const { data: channels, error: channelError } = await supabase
-          .from("youtube_channels")
-          .select("channel_id")
-          .is("deleted_at", null);
-
-        if (channelError) {
-          throw channelError;
-        }
-
-        const channelIds = channels?.map(c => c.channel_id) || [];
-        console.log(`Found ${channelIds.length} channels to process`);
-
-        // Force fetch videos for all channels
-        const { data: response, error: fetchError } = await supabase.functions.invoke('fetch-youtube-videos', {
-          body: { 
-            channels: channelIds,
-            forceUpdate: true
-          }
-        });
-        
-        if (fetchError) {
-          console.error('Error invoking fetch-youtube-videos:', fetchError);
-          toast.error('Error fetching new videos');
-        } else if (response && !response.success) {
-          console.error('Fetch videos response error:', response);
-          if (response.quota_reset_at) {
-            const resetTime = new Date(response.quota_reset_at);
-            toast.warning(`YouTube quota exceeded. Service will resume at ${resetTime.toLocaleString()}`);
-          }
-        } else if (response?.success) {
-          toast.success(`Successfully processed ${response.processed} channels, found ${response.newVideos} new videos`);
-        }
-
-        // Now fetch all videos from database
+        // First fetch existing videos from database
         const { data: dbData, error: dbError } = await supabase
           .from("youtube_videos")
           .select("*")
@@ -70,6 +36,52 @@ export const useVideos = () => {
           throw dbError;
         }
 
+        // Get channels to process
+        const { data: channels, error: channelError } = await supabase
+          .from("youtube_channels")
+          .select("channel_id")
+          .is("deleted_at", null);
+
+        if (channelError) {
+          console.error("Error fetching channels:", channelError);
+          throw channelError;
+        }
+
+        const channelIds = channels?.map(c => c.channel_id) || [];
+        console.log(`Found ${channelIds.length} channels to process`);
+
+        // Try to fetch new videos
+        try {
+          const { data: response } = await supabase.functions.invoke('fetch-youtube-videos', {
+            body: { 
+              channels: channelIds,
+              forceUpdate: true
+            }
+          });
+
+          if (response?.success) {
+            toast.success(`Successfully processed ${response.processed} channels, found ${response.newVideos} new videos`);
+            
+            // Refetch videos from database after successful update
+            const { data: updatedData, error: updateError } = await supabase
+              .from("youtube_videos")
+              .select("*")
+              .is('deleted_at', null)
+              .order("uploaded_at", { ascending: false });
+
+            if (!updateError && updatedData) {
+              dbData = updatedData;
+            }
+          } else if (response?.quota_reset_at) {
+            const resetTime = new Date(response.quota_reset_at);
+            toast.warning(`YouTube quota exceeded. Service will resume at ${resetTime.toLocaleString()}`);
+          }
+        } catch (fetchError) {
+          console.error('Error fetching new videos:', fetchError);
+          toast.error('Could not fetch new videos, showing existing data');
+        }
+
+        // Format and return the data we have
         const formattedData = (dbData || []).map(video => ({
           id: video.id,
           video_id: video.video_id,
@@ -81,7 +93,7 @@ export const useVideos = () => {
           uploadedAt: video.uploaded_at
         }));
 
-        console.log(`Successfully fetched ${formattedData.length} videos from database`);
+        console.log(`Successfully processed ${formattedData.length} videos`);
 
         // Cache the formatted data
         queryClient.setQueryData(["youtube_videos_grid"], formattedData);
@@ -89,12 +101,12 @@ export const useVideos = () => {
         return formattedData;
 
       } catch (error: any) {
-        console.error("Error fetching videos:", error);
+        console.error("Error in video fetching process:", error);
 
         // Try to get cached data first
         const cachedData = queryClient.getQueryData<Video[]>(["youtube_videos"]);
         if (cachedData?.length) {
-          toast.warning('Error fetching new videos. Showing cached data.');
+          toast.warning('Error fetching videos. Showing cached data.');
           return cachedData;
         }
 
@@ -113,12 +125,6 @@ export const useVideos = () => {
     },
     retryDelay: (attemptIndex) => Math.min(1000 * (2 ** attemptIndex), 30000), // Exponential backoff
   });
-
-  useEffect(() => {
-    if (error) {
-      console.error("Video fetch error:", error);
-    }
-  }, [error]);
 
   // Force an immediate refetch when the component mounts
   useEffect(() => {
