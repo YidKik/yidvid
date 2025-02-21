@@ -98,28 +98,28 @@ export const CategorySection = () => {
     return (
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-8 max-w-[1200px] mx-auto px-4 md:px-6">
         {[...Array(4)].map((_, i) => (
-          <Skeleton key={i} className="h-[100px] md:h-[120px] rounded-lg" />
+          <Skeleton key={i} className="h-[120px] md:h-[140px] rounded-xl" />
         ))}
       </div>
     );
   }
 
   return (
-    <div className="relative w-full py-4 md:py-8">
-      <div className="max-w-screen-sm md:max-w-[1400px] mx-auto px-3 md:px-6">
-        <div className="overflow-hidden relative h-[140px] md:h-[200px]">
+    <div className="relative w-full py-6 md:py-8">
+      <div className="max-w-screen-sm md:max-w-[1400px] mx-auto px-4 md:px-6">
+        <div className="overflow-hidden relative h-[160px] md:h-[200px]">
           <div 
-            className="absolute left-0 top-0 w-12 md:w-48 h-full z-10" 
+            className="absolute left-0 top-0 w-16 md:w-48 h-full z-10" 
             style={{
               background: `linear-gradient(to right, ${colors.backgroundColor}, ${colors.backgroundColor}00)`
             }}
           />
           
           <motion.div
-            className="flex gap-2 md:gap-8 cursor-grab active:cursor-grabbing"
+            className="flex gap-3 md:gap-8 cursor-grab active:cursor-grabbing"
             drag="x"
             dragConstraints={{
-              left: -(infiniteCategories.length * (isMobile ? 160 : 340)),
+              left: -(infiniteCategories.length * (isMobile ? 180 : 340)),
               right: 0
             }}
             dragElastic={0.2}
@@ -144,7 +144,7 @@ export const CategorySection = () => {
             {infiniteCategories.map((category, index) => (
               <div
                 key={`${category.id}-${index}`}
-                className="w-[120px] md:w-[320px] flex-shrink-0 relative"
+                className="w-[140px] md:w-[320px] flex-shrink-0 relative"
               >
                 <CategoryCard
                   id={category.id}
@@ -157,7 +157,7 @@ export const CategorySection = () => {
           </motion.div>
 
           <div 
-            className="absolute right-0 top-0 w-12 md:w-48 h-full z-10"
+            className="absolute right-0 top-0 w-16 md:w-48 h-full z-10"
             style={{
               background: `linear-gradient(to left, ${colors.backgroundColor}, ${colors.backgroundColor}00)`
             }}

@@ -40,38 +40,40 @@ export const VideoContent = ({ videos, isLoading }: VideoContentProps) => {
 
   if (isMobile) {
     return (
-      <div className="space-y-4">
-        <div className="mt-2">
+      <div className="space-y-6">
+        <div className="mt-4">
+          {sortedVideos.length > 0 && (
+            <MostViewedVideos videos={sortedVideos} />
+          )}
+          
           <VideoGrid
             videos={displayVideos}
             maxVideos={displayVideos.length}
-            rowSize={2}
+            rowSize={1}
             isLoading={isLoading}
-            className="px-2"
+            className="px-4 space-y-6"
           />
 
           {sortedVideos.length > 4 && (
-            <VideoGridPagination
-              showAll={showMoreMobile}
-              currentPage={currentPage}
-              totalPages={totalPages}
-              filteredVideosLength={sortedVideos.length}
-              maxVideos={4}
-              isMobile={true}
-              onShowAll={() => {
-                setShowMoreMobile(true);
-                setCurrentPage(1);
-              }}
-              onPageChange={(page) => setCurrentPage(page)}
-            />
+            <div className="px-4">
+              <VideoGridPagination
+                showAll={showMoreMobile}
+                currentPage={currentPage}
+                totalPages={totalPages}
+                filteredVideosLength={sortedVideos.length}
+                maxVideos={4}
+                isMobile={true}
+                onShowAll={() => {
+                  setShowMoreMobile(true);
+                  setCurrentPage(1);
+                }}
+                onPageChange={(page) => setCurrentPage(page)}
+              />
+            </div>
           )}
         </div>
-
-        {sortedVideos.length > 0 && (
-          <MostViewedVideos videos={sortedVideos} />
-        )}
         
-        <div className="mt-6">
+        <div className="mt-8 px-4">
           <ChannelsGrid onError={() => {
             console.error('Channel grid error');
           }} />
@@ -82,7 +84,7 @@ export const VideoContent = ({ videos, isLoading }: VideoContentProps) => {
 
   // Desktop view
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div className="video-grid relative">
         <VideoGrid 
           videos={displayVideos}

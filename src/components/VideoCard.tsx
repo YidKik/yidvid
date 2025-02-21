@@ -39,8 +39,8 @@ export const VideoCard = ({
   return (
     <Link to={`/video/${routeId}`} className="block group">
       <div className={cn(
-        "relative rounded-lg overflow-hidden bg-muted shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1",
-        isMobile ? "aspect-video w-full" : "aspect-video mb-2 md:mb-3"
+        "relative rounded-xl overflow-hidden bg-muted shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1",
+        isMobile ? "aspect-video w-full mb-3" : "aspect-video mb-3"
       )}>
         <img
           src={thumbnail}
@@ -50,9 +50,9 @@ export const VideoCard = ({
         />
       </div>
       {!hideInfo && (
-        <div className="flex gap-2 md:gap-3">
+        <div className="flex gap-3 px-1">
           {channelThumbnail && (
-            <div className="w-7 h-7 md:w-8 md:h-8 rounded-full overflow-hidden flex-shrink-0">
+            <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 border-2 border-gray-100">
               <img
                 src={channelThumbnail}
                 alt={channelName}
@@ -63,18 +63,18 @@ export const VideoCard = ({
           )}
           <div className="flex-1 min-w-0">
             <h3 className={cn(
-              "font-medium line-clamp-2 group-hover:text-button-custom",
-              isMobile ? "text-sm leading-tight" : "text-youtube-title"
+              "font-medium line-clamp-2 group-hover:text-primary transition-colors duration-200",
+              isMobile ? "text-base leading-snug mb-1" : "text-youtube-title"
             )}>
               {title}
             </h3>
             <p className={cn(
-              "text-muted-foreground mt-0.5 line-clamp-1",
-              isMobile ? "text-xs" : "text-youtube-small"
+              "text-muted-foreground line-clamp-1 font-medium",
+              isMobile ? "text-sm" : "text-youtube-small"
             )}>
               {channelName}
             </p>
-            <div className="text-xs text-muted-foreground flex items-center gap-1 flex-wrap">
+            <div className="text-sm text-muted-foreground flex items-center gap-1.5 flex-wrap mt-1">
               {views !== undefined && <span>{formattedViews}</span>}
               {views !== undefined && <span>•</span>}
               <span>{formattedDate}</span>
