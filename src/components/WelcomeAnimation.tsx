@@ -12,9 +12,9 @@ import { toast } from "sonner";
 
 export const WelcomeAnimation = () => {
   const [show, setShow] = useState(() => {
-    // Check if this is the first visit in this session
     return !sessionStorage.getItem('hasVisited');
   });
+  const [infoShown, setInfoShown] = useState(false);
   const [searchParams] = useSearchParams();
   const skipWelcome = searchParams.get("skipWelcome") === "true";
 
@@ -30,74 +30,79 @@ export const WelcomeAnimation = () => {
   const { isLoading: isVideosLoading, isFetching: isVideosFetching, error: videosError } = useVideos();
 
   useEffect(() => {
-    if (skipWelcome) {
+    if (skipWelcome || isError || videosError) {
       setShow(false);
       sessionStorage.setItem('hasVisited', 'true');
       return;
     }
 
-    if (isError || videosError) {
-      toast.error("Failed to load content. Please refresh the page.");
-      setShow(false);
-      return;
-    }
-
-    // Only hide welcome animation when both welcome data and videos are fully loaded
     if (!isWelcomeLoading && !isVideosLoading && !isVideosFetching && show) {
-      console.log("All content loaded, hiding welcome animation...");
+      console.log("All content loaded, preparing to hide welcome animation...");
       const timer = setTimeout(() => {
         setShow(false);
-        // Mark that the user has visited in this session
         sessionStorage.setItem('hasVisited', 'true');
         
-        // Show the information notification after the welcome animation
-        if (!localStorage.getItem('hasSeenInfoNotification')) {
+        // Show the information notification after a delay
+        if (!localStorage.getItem('hasSeenInfoNotification') && !infoShown) {
           const hasVisitedWelcome = localStorage.getItem('hasVisitedWelcome');
           if (hasVisitedWelcome) {
-            toast.custom((t) => (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="fixed inset-0 z-50 flex items-center justify-center bg-white"
-              >
-                <div className="flex flex-col items-center text-center space-y-6 max-w-lg mx-4">
-                  <img 
-                    src="/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png" 
-                    alt="YidVid Logo" 
-                    className="w-24 h-24"
-                  />
-                  <h3 className="text-2xl font-semibold">Welcome to YidVid!</h3>
-                  <p className="text-lg text-gray-600">
-                    Start exploring our curated collection of Jewish content. Create a free account to unlock all features!
-                  </p>
-                  <button
-                    onClick={() => {
-                      toast.dismiss(t);
-                      localStorage.setItem('hasSeenInfoNotification', 'true');
-                    }}
-                    className="bg-primary text-white px-6 py-3 text-lg rounded-md hover:bg-primary/90 transition-colors"
-                  >
-                    Got it!
-                  </button>
-                </div>
-              </motion.div>
-            ), {
-              duration: Infinity,
-            });
+            setInfoShown(true);
+            const infoTimer = setTimeout(() => {
+              toast.custom((t) => (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="bg-white rounded-lg shadow-lg p-6 max-w-lg mx-auto"
+                >
+                  <div className="flex flex-col items-center text-center space-y-6">
+                    <img 
+                      src="/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png" 
+                      alt="YidVid Logo" 
+                      className="w-24 h-24"
+                    />
+                    <h3 className="text-2xl font-semibold">Welcome to YidVid!</h3>
+                    <p className="text-lg text-gray-600">
+                      Start exploring our curated collection of Jewish content. Create a free account to unlock all features!
+                    </p>
+                    <button
+                      onClick={() => {
+                        toast.dismiss(t);
+                        localStorage.setItem('hasSeenInfoNotification', 'true');
+                      }}
+                      className="bg-primary text-white px-6 py-3 text-lg rounded-md hover:bg-primary/90 transition-colors"
+                    >
+                      Got it!
+                    </button>
+                  </div>
+                </motion.div>
+              ), {
+                duration: 10000, // Reduced from Infinity to 10 seconds
+                onAutoClose: () => {
+                  localStorage.setItem('hasSeenInfoNotification', 'true');
+                }
+              });
+            }, 500);
+            return () => clearTimeout(infoTimer);
           }
         }
       }, 1500);
 
       return () => clearTimeout(timer);
     }
-  }, [skipWelcome, isWelcomeLoading, isVideosLoading, isVideosFetching, isError, videosError, show]);
+  }, [skipWelcome, isWelcomeLoading, isVideosLoading, isVideosFetching, isError, videosError, show, infoShown]);
 
-  // If user has already visited in this session or show is false, don't render anything
+  // Cleanup function to ensure body overflow is restored
+  useEffect(() => {
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, []);
+
   if (!show) return null;
 
   return (
-    <AnimatePresence mode="wait" onExitComplete={() => setShow(false)}>
+    <AnimatePresence mode="wait">
       {show && (
         <motion.div
           initial={{ opacity: 1 }}
@@ -124,6 +129,7 @@ export const WelcomeAnimation = () => {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
                 className="flex flex-col items-center gap-2 mt-4"
               >
                 <p className="text-sm text-muted-foreground">Loading content...</p>
@@ -146,6 +152,7 @@ export const WelcomeAnimation = () => {
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
               transition={{ delay: 1.2 }}
               className="text-xl text-muted-foreground mt-4"
             >
