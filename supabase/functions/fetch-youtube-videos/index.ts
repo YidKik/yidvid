@@ -1,198 +1,98 @@
 
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import { corsHeaders } from './utils.ts';
-import { getChannelsFromDatabase } from './db-operations.ts';
-import { checkQuota, createQuotaExceededResponse } from './quota-manager.ts';
-import { processChannel, updateChannelStatus, logChannelUpdate } from './channel-processor.ts';
+import { processChannel } from './channel-processor.ts';
+import { checkAndUpdateQuota } from './quota-manager.ts';
+
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+};
 
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response(null, {
-      headers: {
-        ...corsHeaders,
-        'Access-Control-Max-Age': '86400',
-      },
-    });
+    return new Response('ok', { headers: corsHeaders });
   }
 
   try {
-    // Initialize Supabase client
-    const supabaseUrl = Deno.env.get('SUPABASE_URL');
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
-    const youtubeApiKey = Deno.env.get('YOUTUBE_API_KEY');
-    
-    if (!supabaseUrl || !supabaseKey) {
-      throw new Error('Missing Supabase configuration');
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    );
+
+    const apiKey = Deno.env.get('YOUTUBE_API_KEY');
+    if (!apiKey) {
+      throw new Error('YouTube API key not configured');
     }
 
-    if (!youtubeApiKey) {
-      throw new Error('Missing YouTube API configuration');
-    }
+    // Check quota before processing
+    console.log('Checking quota status...');
+    const { canProceed, quotaData } = await checkAndUpdateQuota(supabaseClient);
 
-    const supabase = createClient(supabaseUrl, supabaseKey);
-    const now = new Date();
-    
-    // Check quota status
-    const quotaData = await checkQuota(supabase);
-
-    // If quota is depleted, return early with reset time
-    if (quotaData.quota_remaining <= 0) {
-      console.log('Quota exceeded. Current quota:', quotaData.quota_remaining);
-      console.log('Reset scheduled for:', quotaData.quota_reset_at);
-      
-      // Log the failed attempt
-      await supabase
-        .from('video_fetch_logs')
-        .insert({
-          channels_processed: 0,
-          videos_found: 0,
-          error: 'Quota exceeded',
-          quota_remaining: quotaData.quota_remaining
-        });
-
-      return createQuotaExceededResponse(quotaData.quota_reset_at);
-    }
-
-    // Parse request body if present
-    let channelsToProcess = [];
-    if (req.body) {
-      const body = await req.json().catch(() => ({}));
-      channelsToProcess = body.channels || [];
-    }
-
-    // If no specific channels provided, get all active channels
-    if (channelsToProcess.length === 0) {
-      channelsToProcess = await getChannelsFromDatabase(supabase);
-    }
-
-    if (channelsToProcess.length === 0) {
-      console.log('No channels to process');
+    if (!canProceed) {
+      console.log('Quota exceeded, returning error response');
       return new Response(
-        JSON.stringify({ 
-          success: true,
-          message: 'No channels to process' 
+        JSON.stringify({
+          success: false,
+          error: 'YouTube API quota exceeded',
+          message: `Daily quota exceeded. Service will resume at ${new Date(quotaData.quota_reset_at).toUTCString()}`,
+          quota_reset_at: quotaData.quota_reset_at
         }),
-        { 
+        {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 200
+          status: 429
         }
       );
     }
 
-    console.log(`Processing ${channelsToProcess.length} channels`);
-    const processedVideos = [];
-    const errors = [];
-    let totalNewVideos = 0;
+    const { channels = [], forceUpdate = false } = await req.json();
+    const now = new Date();
+    
+    console.log(`Processing ${channels.length} channels with forceUpdate=${forceUpdate}`);
 
-    // Process each channel
-    for (const channelId of channelsToProcess) {
+    const results = [];
+    let newVideosCount = 0;
+
+    for (const channelId of channels) {
       try {
-        console.log(`Fetching videos for channel: ${channelId}`);
-        
-        // Check current quota before processing channel
-        const currentQuota = await checkQuota(supabase);
-        if (currentQuota.quota_remaining <= 0) {
-          // Log the partial completion
-          await supabase
-            .from('video_fetch_logs')
-            .insert({
-              channels_processed: processedVideos.length,
-              videos_found: totalNewVideos,
-              error: 'Quota exceeded during processing',
-              quota_remaining: 0
-            });
-
-          return createQuotaExceededResponse(currentQuota.quota_reset_at);
-        }
-
-        const result = await processChannel(supabase, channelId, youtubeApiKey, currentQuota, now);
-        
-        if (result.quotaExceeded) {
-          // Log the partial completion
-          await supabase
-            .from('video_fetch_logs')
-            .insert({
-              channels_processed: processedVideos.length,
-              videos_found: totalNewVideos,
-              error: 'Quota exceeded during channel processing',
-              quota_remaining: 0
-            });
-
-          return createQuotaExceededResponse(quotaData.quota_reset_at);
-        }
-        
-        if (result.videos) {
-          processedVideos.push(...result.videos);
-          totalNewVideos += result.videos.length;
-        }
-
+        const result = await processChannel(
+          supabaseClient,
+          channelId,
+          apiKey,
+          quotaData,
+          now
+        );
+        results.push({ channelId, success: true, videos: result.videos.length });
+        newVideosCount += result.videos.length;
       } catch (error) {
         console.error(`Error processing channel ${channelId}:`, error);
-        errors.push({ channelId, error: error.message });
-        
-        // Log error and update channel status
-        await logChannelUpdate(supabase, channelId, 0, error.message);
-        await updateChannelStatus(supabase, channelId, now, error.message);
+        results.push({ channelId, success: false, error: error.message });
       }
-
-      // Add delay between processing channels
-      await new Promise(resolve => setTimeout(resolve, 1000));
     }
 
-    // Log the successful completion
-    await supabase
-      .from('video_fetch_logs')
-      .insert({
-        channels_processed: processedVideos.length,
-        videos_found: totalNewVideos,
-        quota_remaining: (await checkQuota(supabase)).quota_remaining
-      });
-
     return new Response(
-      JSON.stringify({ 
+      JSON.stringify({
         success: true,
-        message: 'Channel processing complete',
-        processed: processedVideos.length,
-        newVideos: totalNewVideos,
-        errors: errors.length > 0 ? errors : undefined
+        processed: channels.length,
+        newVideos: newVideosCount,
+        results
       }),
-      { 
+      {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200
       }
     );
 
   } catch (error) {
-    console.error('Error:', error);
-    
-    // Log the error
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-    );
-    
-    await supabase
-      .from('video_fetch_logs')
-      .insert({
-        error: error.message,
-        channels_processed: 0,
-        videos_found: 0
-      });
-    
+    console.error('Error in fetch-youtube-videos function:', error);
     return new Response(
       JSON.stringify({
         success: false,
-        error: error.message,
-        message: 'An error occurred while processing the request'
+        error: error.message
       }),
-      { 
-        status: 500,
-        headers: {
-          ...corsHeaders,
-          'Content-Type': 'application/json'
-        }
+      {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 500
       }
     );
   }
