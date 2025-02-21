@@ -870,6 +870,33 @@ export type Database = {
           },
         ]
       }
+      video_fetch_logs: {
+        Row: {
+          channels_processed: number | null
+          error: string | null
+          fetch_time: string
+          id: string
+          quota_remaining: number | null
+          videos_found: number | null
+        }
+        Insert: {
+          channels_processed?: number | null
+          error?: string | null
+          fetch_time?: string
+          id?: string
+          quota_remaining?: number | null
+          videos_found?: number | null
+        }
+        Update: {
+          channels_processed?: number | null
+          error?: string | null
+          fetch_time?: string
+          id?: string
+          quota_remaining?: number | null
+          videos_found?: number | null
+        }
+        Relationships: []
+      }
       video_history: {
         Row: {
           created_at: string

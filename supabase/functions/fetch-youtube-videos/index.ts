@@ -41,17 +41,18 @@ serve(async (req) => {
     if (quotaData.quota_remaining <= 0) {
       console.log('Quota exceeded. Current quota:', quotaData.quota_remaining);
       console.log('Reset scheduled for:', quotaData.quota_reset_at);
-      return new Response(
-        JSON.stringify({
-          success: false,
-          message: `Daily quota exceeded. Service will resume at ${new Date(quotaData.quota_reset_at).toUTCString()}`,
-          quota_reset_at: quotaData.quota_reset_at
-        }),
-        { 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 200 // Changed from 429 to 200 to prevent error state
-        }
-      );
+      
+      // Log the failed attempt
+      await supabase
+        .from('video_fetch_logs')
+        .insert({
+          channels_processed: 0,
+          videos_found: 0,
+          error: 'Quota exceeded',
+          quota_remaining: quotaData.quota_remaining
+        });
+
+      return createQuotaExceededResponse(quotaData.quota_reset_at);
     }
 
     // Parse request body if present
@@ -67,6 +68,7 @@ serve(async (req) => {
     }
 
     if (channelsToProcess.length === 0) {
+      console.log('No channels to process');
       return new Response(
         JSON.stringify({ 
           success: true,
@@ -82,6 +84,7 @@ serve(async (req) => {
     console.log(`Processing ${channelsToProcess.length} channels`);
     const processedVideos = [];
     const errors = [];
+    let totalNewVideos = 0;
 
     // Process each channel
     for (const channelId of channelsToProcess) {
@@ -91,41 +94,38 @@ serve(async (req) => {
         // Check current quota before processing channel
         const currentQuota = await checkQuota(supabase);
         if (currentQuota.quota_remaining <= 0) {
-          return new Response(
-            JSON.stringify({
-              success: false,
-              message: `Daily quota exceeded. Service will resume at ${new Date(currentQuota.quota_reset_at).toUTCString()}`,
-              processed: processedVideos.length,
-              errors,
-              quota_reset_at: currentQuota.quota_reset_at
-            }),
-            { 
-              headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-              status: 200 // Changed from 429 to 200
-            }
-          );
+          // Log the partial completion
+          await supabase
+            .from('video_fetch_logs')
+            .insert({
+              channels_processed: processedVideos.length,
+              videos_found: totalNewVideos,
+              error: 'Quota exceeded during processing',
+              quota_remaining: 0
+            });
+
+          return createQuotaExceededResponse(currentQuota.quota_reset_at);
         }
 
         const result = await processChannel(supabase, channelId, youtubeApiKey, currentQuota, now);
         
         if (result.quotaExceeded) {
-          return new Response(
-            JSON.stringify({
-              success: false,
-              message: `Daily quota exceeded. Service will resume at ${new Date(quotaData.quota_reset_at).toUTCString()}`,
-              processed: processedVideos.length,
-              errors,
-              quota_reset_at: quotaData.quota_reset_at
-            }),
-            { 
-              headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-              status: 200 // Changed from 429 to 200
-            }
-          );
+          // Log the partial completion
+          await supabase
+            .from('video_fetch_logs')
+            .insert({
+              channels_processed: processedVideos.length,
+              videos_found: totalNewVideos,
+              error: 'Quota exceeded during channel processing',
+              quota_remaining: 0
+            });
+
+          return createQuotaExceededResponse(quotaData.quota_reset_at);
         }
         
         if (result.videos) {
           processedVideos.push(...result.videos);
+          totalNewVideos += result.videos.length;
         }
 
       } catch (error) {
@@ -141,11 +141,21 @@ serve(async (req) => {
       await new Promise(resolve => setTimeout(resolve, 1000));
     }
 
+    // Log the successful completion
+    await supabase
+      .from('video_fetch_logs')
+      .insert({
+        channels_processed: processedVideos.length,
+        videos_found: totalNewVideos,
+        quota_remaining: (await checkQuota(supabase)).quota_remaining
+      });
+
     return new Response(
       JSON.stringify({ 
         success: true,
         message: 'Channel processing complete',
         processed: processedVideos.length,
+        newVideos: totalNewVideos,
         errors: errors.length > 0 ? errors : undefined
       }),
       { 
@@ -156,6 +166,20 @@ serve(async (req) => {
 
   } catch (error) {
     console.error('Error:', error);
+    
+    // Log the error
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    );
+    
+    await supabase
+      .from('video_fetch_logs')
+      .insert({
+        error: error.message,
+        channels_processed: 0,
+        videos_found: 0
+      });
     
     return new Response(
       JSON.stringify({
