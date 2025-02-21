@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search } from "lucide-react";
@@ -94,7 +95,7 @@ export const SearchBar = ({ onFocus, onClose }: SearchBarProps) => {
           setShowResults(true);
           onFocus?.();
         }}
-        className="w-full bg-transparent border-primary ring-1 ring-primary/20 text-[#555555] placeholder:text-[#555555] focus-visible:ring-primary focus-visible:ring-2 focus-visible:ring-offset-2 h-7 md:h-10 text-xs md:text-sm pr-10 md:pr-14"
+        className="w-full bg-transparent border-primary ring-1 ring-primary/20 text-[#555555] placeholder:text-[#555555] focus-visible:ring-primary focus-visible:ring-1 focus-visible:ring-offset-0 h-7 md:h-10 text-xs md:text-sm pr-10 md:pr-14"
       />
       {isMobile && onClose ? (
         <Button 
