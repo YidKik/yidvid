@@ -65,7 +65,7 @@ export const VideoCard = ({
             <h3 className="font-medium line-clamp-2 text-xs leading-4">
               {title}
             </h3>
-            <p className="text-muted-foreground text-xs mt-0.5">
+            <p className="text-muted-foreground text-[11px] mt-0.5 truncate">
               {channelName}
             </p>
             <div className="text-[11px] text-muted-foreground flex items-center gap-1 mt-0.5">
