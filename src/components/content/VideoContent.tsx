@@ -42,10 +42,6 @@ export const VideoContent = ({ videos, isLoading }: VideoContentProps) => {
     return (
       <div className="space-y-6">
         <div className="mt-4">
-          {sortedVideos.length > 0 && (
-            <MostViewedVideos videos={sortedVideos} />
-          )}
-          
           <VideoGrid
             videos={displayVideos}
             maxVideos={displayVideos.length}
@@ -72,6 +68,12 @@ export const VideoContent = ({ videos, isLoading }: VideoContentProps) => {
             </div>
           )}
         </div>
+
+        {sortedVideos.length > 0 && (
+          <div className="mt-8 px-4">
+            <MostViewedVideos videos={sortedVideos} />
+          </div>
+        )}
         
         <div className="mt-8 px-4">
           <ChannelsGrid onError={() => {
@@ -85,6 +87,12 @@ export const VideoContent = ({ videos, isLoading }: VideoContentProps) => {
   // Desktop view
   return (
     <div className="space-y-8">
+      {sortedVideos.length > 0 && (
+        <div>
+          <MostViewedVideos videos={sortedVideos} />
+        </div>
+      )}
+
       <div className="video-grid relative">
         <VideoGrid 
           videos={displayVideos}
@@ -106,12 +114,6 @@ export const VideoContent = ({ videos, isLoading }: VideoContentProps) => {
           />
         )}
       </div>
-      
-      {sortedVideos.length > 0 && (
-        <div className="mt-8">
-          <MostViewedVideos videos={sortedVideos} />
-        </div>
-      )}
       
       <div className="mt-8">
         <ChannelsGrid onError={() => {
