@@ -29,8 +29,7 @@ export const VideoContent = ({ videos, isLoading }: VideoContentProps) => {
   const videosPerPage = isMobile ? 4 : 12;
   
   const sortedVideos = videos ? [...videos]
-    .sort((a, b) => new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime())
-    .filter((_, index) => index !== 0) : [];  // Temporarily filter out the first video
+    .sort((a, b) => new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime()) : [];
 
   const totalPages = Math.ceil(sortedVideos.length / videosPerPage);
   const startIndex = (currentPage - 1) * videosPerPage;
