@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { LayoutConfig, SpacingProperty, VisibilityDevice } from "./layout/types";
 import { SectionCard } from "./layout/SectionCard";
+import { LivePreview } from "./layout/LivePreview";
 
 export const LayoutCustomizer = () => {
   const [sections, setSections] = useState<LayoutConfig[]>([]);
@@ -80,6 +81,15 @@ export const LayoutCustomizer = () => {
       const order = parseInt(value);
       if (isNaN(order)) return;
 
+      // Update local state first for immediate feedback
+      setSections(currentSections => 
+        currentSections.map(section => 
+          section.id === sectionId 
+            ? { ...section, [`${type}_order`]: order }
+            : section
+        )
+      );
+
       const { error } = await supabase
         .from('layout_configurations')
         .update({
@@ -90,10 +100,11 @@ export const LayoutCustomizer = () => {
       if (error) throw error;
 
       toast.success('Order updated successfully');
-      loadLayoutConfig();
+      loadLayoutConfig(); // Refresh to ensure consistency
     } catch (error) {
       console.error('Error updating order:', error);
       toast.error('Failed to update order');
+      loadLayoutConfig(); // Revert to server state on error
     }
   };
 
@@ -101,6 +112,15 @@ export const LayoutCustomizer = () => {
     try {
       const section = sections.find(s => s.id === sectionId);
       if (!section) return;
+
+      // Update local state first
+      setSections(currentSections => 
+        currentSections.map(s => 
+          s.id === sectionId 
+            ? { ...s, spacing: { ...s.spacing, [property]: value } }
+            : s
+        )
+      );
 
       const { error } = await supabase
         .from('layout_configurations')
@@ -119,6 +139,7 @@ export const LayoutCustomizer = () => {
     } catch (error) {
       console.error('Error updating spacing:', error);
       toast.error('Failed to update spacing');
+      loadLayoutConfig();
     }
   };
 
@@ -126,6 +147,15 @@ export const LayoutCustomizer = () => {
     try {
       const section = sections.find(s => s.id === sectionId);
       if (!section) return;
+
+      // Update local state first
+      setSections(currentSections => 
+        currentSections.map(s => 
+          s.id === sectionId 
+            ? { ...s, visibility: { ...s.visibility, [device]: !s.visibility[device] } }
+            : s
+        )
+      );
 
       const { error } = await supabase
         .from('layout_configurations')
@@ -144,6 +174,7 @@ export const LayoutCustomizer = () => {
     } catch (error) {
       console.error('Error updating visibility:', error);
       toast.error('Failed to update visibility');
+      loadLayoutConfig();
     }
   };
 
@@ -165,21 +196,34 @@ export const LayoutCustomizer = () => {
   }
 
   return (
-    <div className="space-y-6 p-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">Layout Customization</h2>
+    <div className="flex gap-6 h-[calc(100vh-4rem)]">
+      {/* Controls Panel */}
+      <div className="w-1/2 overflow-y-auto p-6 border-r">
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-bold">Layout Customization</h2>
+          </div>
+
+          <div className="grid gap-6">
+            {sections.map((section) => (
+              <SectionCard
+                key={section.id}
+                section={section}
+                onOrderChange={handleOrderChange}
+                onSpacingChange={handleSpacingChange}
+                onVisibilityChange={handleVisibilityChange}
+              />
+            ))}
+          </div>
+        </div>
       </div>
 
-      <div className="grid gap-6">
-        {sections.map((section) => (
-          <SectionCard
-            key={section.id}
-            section={section}
-            onOrderChange={handleOrderChange}
-            onSpacingChange={handleSpacingChange}
-            onVisibilityChange={handleVisibilityChange}
-          />
-        ))}
+      {/* Live Preview Panel */}
+      <div className="w-1/2 overflow-y-auto bg-gray-50 p-6">
+        <div className="sticky top-0 bg-white p-4 shadow-sm mb-6 rounded-lg">
+          <h2 className="text-xl font-semibold">Live Preview</h2>
+        </div>
+        <LivePreview sections={sections} />
       </div>
     </div>
   );
