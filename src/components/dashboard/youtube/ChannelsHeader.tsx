@@ -24,7 +24,6 @@ export const ChannelsHeader = ({
   const handleSuccess = () => {
     setIsChannelDialogOpen(false);
     refetchChannels();
-    toast.success("Channel added successfully");
   };
 
   return (
