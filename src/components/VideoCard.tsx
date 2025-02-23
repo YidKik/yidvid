@@ -40,7 +40,7 @@ export const VideoCard = ({
     <Link to={`/video/${routeId}`} className="block group w-full">
       <div className={cn(
         "relative rounded-lg overflow-hidden bg-muted shadow-sm hover:shadow-md transition-all duration-300",
-        isMobile ? "aspect-video w-full mb-2" : "aspect-video mb-2"
+        isMobile ? "aspect-video w-full mb-1" : "aspect-video mb-2"
       )}>
         <img
           src={thumbnail}
@@ -67,14 +67,20 @@ export const VideoCard = ({
           <div className="flex-1 min-w-0 overflow-hidden">
             <h3 className={cn(
               "font-medium line-clamp-2",
-              isMobile ? "text-xs leading-4" : "text-sm leading-5"
+              isMobile ? "text-[11px] leading-[14px]" : "text-sm leading-5"
             )}>
               {title}
             </h3>
-            <p className="text-muted-foreground text-[11px] mt-0.5 truncate">
+            <p className={cn(
+              "text-muted-foreground truncate",
+              isMobile ? "text-[9px] mt-0.5" : "text-[11px] mt-0.5"
+            )}>
               {channelName}
             </p>
-            <div className="text-[10px] text-muted-foreground flex items-center space-x-1 mt-0.5 truncate">
+            <div className={cn(
+              "text-muted-foreground flex items-center space-x-1 truncate",
+              isMobile ? "text-[8px] mt-0.5" : "text-[10px] mt-0.5"
+            )}>
               {views !== undefined && (
                 <span className="truncate">{formattedViews}</span>
               )}
