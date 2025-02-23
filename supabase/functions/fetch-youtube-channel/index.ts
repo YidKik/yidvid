@@ -7,91 +7,87 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-type YouTubeResponse = {
-  items: Array<{
-    id: string;
-    snippet: {
-      title: string;
-      description: string;
-      thumbnails: {
-        default?: { url: string };
-      };
-    };
-  }>;
-};
-
 serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { 
+      headers: corsHeaders,
+      status: 200 
+    });
   }
 
   try {
     const YOUTUBE_API_KEY = Deno.env.get('YOUTUBE_API_KEY');
-    const { channelId } = await req.json();
-
     if (!YOUTUBE_API_KEY) {
-      throw new Error('Missing YouTube API key configuration');
+      throw new Error('Missing YouTube API key');
     }
 
+    const { channelId } = await req.json();
     if (!channelId) {
       throw new Error('Channel ID is required');
     }
 
-    // Clean the channel ID
-    const cleanId = channelId.trim()
-      .replace(/^@/, '')  // Remove @ symbol
-      .replace(/^(https?:\/\/)?(www\.)?youtube\.com\/(channel\/|c\/|@)?/, '')  // Remove URL parts
-      .replace(/\/?$/, '');  // Remove trailing slash
-
-    // First attempt: Direct channel lookup
-    console.log('Attempting direct channel lookup for:', cleanId);
-    const directUrl = `https://youtube.googleapis.com/youtube/v3/channels?part=snippet&id=${cleanId}&key=${YOUTUBE_API_KEY}`;
-    let response = await fetch(directUrl, {
-      headers: {
-        'Accept': 'application/json',
-        'Referer': 'https://lovable.dev'
-      }
-    });
-
-    let data: YouTubeResponse = await response.json();
-
-    // If direct lookup fails, try search
-    if (!data.items?.length) {
-      console.log('Direct lookup failed, trying search for:', cleanId);
-      const searchUrl = `https://youtube.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(cleanId)}&type=channel&key=${YOUTUBE_API_KEY}`;
-      response = await fetch(searchUrl, {
-        headers: {
-          'Accept': 'application/json',
-          'Referer': 'https://lovable.dev'
+    // Clean and validate the channel ID/URL
+    let cleanId = channelId.trim();
+    
+    // Handle URLs
+    if (cleanId.includes('youtube.com') || cleanId.includes('youtu.be')) {
+      try {
+        const url = new URL(cleanId);
+        if (url.pathname.includes('/channel/')) {
+          cleanId = url.pathname.split('/channel/')[1].split('/')[0];
+        } else if (url.pathname.includes('/@')) {
+          cleanId = url.pathname.split('/@')[1].split('/')[0];
+        } else if (url.pathname.includes('/c/')) {
+          cleanId = url.pathname.split('/c/')[1].split('/')[0];
         }
-      });
+      } catch (e) {
+        console.error('Error parsing URL:', e);
+      }
+    }
+    
+    // Remove @ symbol if present
+    cleanId = cleanId.replace(/^@/, '');
 
-      const searchData: YouTubeResponse = await response.json();
+    const apiUrl = `https://youtube.googleapis.com/youtube/v3/channels?part=snippet&id=${cleanId}&key=${YOUTUBE_API_KEY}`;
+    
+    const response = await fetch(apiUrl);
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error?.message || 'Failed to fetch channel data');
+    }
+
+    if (!data.items?.length) {
+      // Try searching by username/handle
+      const searchUrl = `https://youtube.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(cleanId)}&type=channel&key=${YOUTUBE_API_KEY}`;
+      const searchResponse = await fetch(searchUrl);
+      const searchData = await searchResponse.json();
+
+      if (!searchResponse.ok) {
+        throw new Error(searchData.error?.message || 'Failed to search for channel');
+      }
 
       if (!searchData.items?.length) {
         throw new Error('Channel not found');
       }
 
-      // Get full channel details
-      const foundId = searchData.items[0].id;
-      response = await fetch(
-        `https://youtube.googleapis.com/youtube/v3/channels?part=snippet&id=${foundId}&key=${YOUTUBE_API_KEY}`,
-        {
-          headers: {
-            'Accept': 'application/json',
-            'Referer': 'https://lovable.dev'
-          }
-        }
+      // Get channel details using the found channel ID
+      const foundChannelId = searchData.items[0].id.channelId;
+      const channelResponse = await fetch(
+        `https://youtube.googleapis.com/youtube/v3/channels?part=snippet&id=${foundChannelId}&key=${YOUTUBE_API_KEY}`
       );
-      data = await response.json();
-    }
+      const channelData = await channelResponse.json();
 
-    if (!data.items?.length) {
-      throw new Error('Could not retrieve channel details');
+      if (!channelResponse.ok || !channelData.items?.length) {
+        throw new Error('Could not fetch channel details');
+      }
+
+      data.items = channelData.items;
     }
 
     const channel = data.items[0];
-    const channelData = {
+    const channelInfo = {
       channelId: channel.id,
       title: channel.snippet.title,
       description: channel.snippet.description || '',
@@ -99,41 +95,52 @@ serve(async (req) => {
       default_category: 'other'
     };
 
-    console.log('Successfully retrieved channel:', channelData);
+    // Store in database
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+    
+    if (!supabaseUrl || !supabaseKey) {
+      throw new Error('Missing database configuration');
+    }
 
-    // Add channel directly to database from here to ensure atomic operation
-    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    const { error: insertError } = await supabase
+    const { error: dbError } = await supabase
       .from('youtube_channels')
-      .insert([channelData]);
+      .insert([channelInfo]);
 
-    if (insertError) {
-      if (insertError.code === '23505') {
+    if (dbError) {
+      console.error('Database error:', dbError);
+      if (dbError.code === '23505') {
         throw new Error('This channel has already been added');
       }
-      throw new Error('Failed to add channel to database');
+      throw new Error('Failed to save channel');
     }
 
     return new Response(
-      JSON.stringify(channelData),
+      JSON.stringify(channelInfo),
       { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { 
+          ...corsHeaders,
+          'Content-Type': 'application/json'
+        },
         status: 200 
       }
     );
 
   } catch (error) {
-    console.error('Error in fetch-youtube-channel:', error);
+    console.error('Edge function error:', error);
     
-    const message = error.message || 'An unexpected error occurred';
     return new Response(
-      JSON.stringify({ error: message }),
+      JSON.stringify({
+        error: error.message || 'An unexpected error occurred'
+      }),
       { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: error.status || 400
+        headers: { 
+          ...corsHeaders,
+          'Content-Type': 'application/json'
+        },
+        status: 400
       }
     );
   }
