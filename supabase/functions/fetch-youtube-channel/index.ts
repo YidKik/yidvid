@@ -8,10 +8,18 @@ interface YouTubeApiResponse {
     snippet: {
       title: string;
       description: string;
+      customUrl?: string;
+      publishedAt: string;
       thumbnails: {
         default: {
           url: string;
+          width: number;
+          height: number;
         };
+      };
+      localized?: {
+        title: string;
+        description: string;
       };
     };
   }>;
@@ -56,7 +64,7 @@ Deno.serve(async (req) => {
 
     if (!response.ok) {
       console.error('YouTube API error:', data)
-      throw new Error(`YouTube API error: ${data}`)
+      throw new Error(`YouTube API error: ${response.statusText}`)
     }
 
     if (!data.items || data.items.length === 0) {
@@ -74,7 +82,7 @@ Deno.serve(async (req) => {
     )
 
     // Check if channel already exists
-    const { data: existingChannel } = await supabaseClient
+    const { data: existingChannel, error: checkError } = await supabaseClient
       .from('youtube_channels')
       .select('channel_id')
       .eq('channel_id', channel.id)
@@ -85,22 +93,25 @@ Deno.serve(async (req) => {
     }
 
     // Insert the new channel
-    const { error: insertError } = await supabaseClient
+    const { data: insertedChannel, error: insertError } = await supabaseClient
       .from('youtube_channels')
       .insert({
         channel_id: channel.id,
         title: channel.snippet.title,
-        description: channel.snippet.description,
+        description: channel.snippet.description || '',
         thumbnail_url: channel.snippet.thumbnails.default.url,
+        default_category: 'other' // Set default category
       })
+      .select()
+      .single()
 
     if (insertError) {
       console.error('Error inserting channel:', insertError)
-      throw insertError
+      throw new Error('Failed to add channel to database')
     }
 
     return new Response(
-      JSON.stringify(channel),
+      JSON.stringify(insertedChannel),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,
