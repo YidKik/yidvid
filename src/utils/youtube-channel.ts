@@ -24,27 +24,16 @@ export const checkAdminStatus = async () => {
 export const addChannel = async (channelInput: string) => {
   await checkAdminStatus();
 
-  // Extract channel ID from URL or handle
-  let channelId = channelInput.trim();
-  
-  // Handle YouTube URLs
-  if (channelId.includes('youtube.com')) {
-    const urlMatch = channelId.match(/(?:\/channel\/|\/c\/|@)([\w-]+)/);
-    if (urlMatch) {
-      channelId = urlMatch[1];
-    }
-  }
-  
-  // Remove @ symbol if it's a handle
-  channelId = channelId.replace(/^@/, '');
-
+  console.log('Adding channel:', channelInput);
   const { data, error } = await supabase.functions.invoke('fetch-youtube-channel', {
-    body: { channelId }
+    body: { channelId: channelInput }
   });
 
-  if (error) {
-    throw error;
+  if (error || !data) {
+    console.error('Error from edge function:', error);
+    throw new Error(error?.message || 'Failed to add channel');
   }
 
+  console.log('Channel added successfully:', data);
   return data;
 };
