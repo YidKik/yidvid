@@ -1,96 +1,82 @@
 
-import "https://deno.land/x/xhr@0.1.0/mod.ts";
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-
-const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+import { HfInference } from 'https://esm.sh/@huggingface/inference@2.3.2'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+}
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: corsHeaders })
   }
 
   try {
-    const { title, description, thumbnail } = await req.json();
-    console.log('Analyzing video content:', { title, description });
+    const { title, description, thumbnail } = await req.json()
+    console.log('Analyzing content:', { title, description })
 
-    // First analyze text content
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${openAIApiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        messages: [
-          {
-            role: 'system',
-            content: 'You are a content moderator. Analyze the video title and description to determine if it contains or references inappropriate content or mentions women/ladies. Respond with only "APPROVED" or "REJECTED" followed by a brief reason.'
-          },
-          {
-            role: 'user',
-            content: `Title: ${title}\nDescription: ${description}`
-          }
-        ],
-      }),
-    });
+    const hf = new HfInference(Deno.env.get('HUGGING_FACE_ACCESS_TOKEN'))
 
-    const textAnalysis = await response.json();
-    const moderationResult = textAnalysis.choices[0].message.content;
+    // Analyze text content (title and description)
+    const textAnalysis = await hf.textClassification({
+      model: 'michellejieli/inappropriate_text_classifier',
+      inputs: `${title}\n${description}`,
+    })
 
-    // Also analyze the thumbnail image if provided
-    let imageAnalysisResult = "APPROVED";
+    // Also analyze for women/ladies mentions
+    const womenMentions = (title + description).toLowerCase().includes('women') || 
+                         (title + description).toLowerCase().includes('lady') ||
+                         (title + description).toLowerCase().includes('ladies') ||
+                         (title + description).toLowerCase().includes('female')
+
+    // For image analysis, we'll use a pre-trained model
+    let imageAnalysis = null
     if (thumbnail) {
-      const imageResponse = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${openAIApiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'gpt-4o-mini',
-          messages: [
-            {
-              role: 'system',
-              content: 'You are a content moderator. Analyze this image and determine if it contains women or inappropriate content. Respond with only "APPROVED" or "REJECTED" followed by a brief reason.'
-            },
-            {
-              role: 'user',
-              content: [
-                {
-                  type: 'image_url',
-                  image_url: thumbnail
-                }
-              ]
-            }
-          ],
-        }),
-      });
-
-      const imageAnalysis = await imageResponse.json();
-      imageAnalysisResult = imageAnalysis.choices[0].message.content;
+      try {
+        const imageClassification = await hf.imageClassification({
+          model: 'Falconsai/nsfw_image_detection',  // Safe for work classifier
+          data: await (await fetch(thumbnail)).blob(),
+        })
+        imageAnalysis = imageClassification
+      } catch (error) {
+        console.error('Error analyzing image:', error)
+        // Continue without image analysis if it fails
+      }
     }
 
-    const isApproved = moderationResult.startsWith('APPROVED') && imageAnalysisResult.startsWith('APPROVED');
+    // Determine if content is appropriate
+    const isTextSafe = textAnalysis[0].label === 'appropriate' && !womenMentions
+    const isImageSafe = !imageAnalysis || 
+                       (imageAnalysis[0].label === 'safe' && 
+                        imageAnalysis[0].score > 0.7)
 
-    return new Response(JSON.stringify({
+    const isApproved = isTextSafe && isImageSafe
+
+    // Prepare detailed response
+    const response = {
       approved: isApproved,
-      textAnalysis: moderationResult,
-      imageAnalysis: imageAnalysisResult
-    }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+      textAnalysis: {
+        appropriate: textAnalysis[0].label === 'appropriate',
+        noWomenMentions: !womenMentions,
+        score: textAnalysis[0].score
+      },
+      imageAnalysis: imageAnalysis ? {
+        appropriate: imageAnalysis[0].label === 'safe',
+        score: imageAnalysis[0].score
+      } : 'No image analysis performed'
+    }
 
+    console.log('Analysis result:', response)
+
+    return new Response(JSON.stringify(response), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    })
   } catch (error) {
-    console.error('Error in analyze-video-content:', error);
+    console.error('Error in analyze-video-content:', error)
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    })
   }
-});
+})
