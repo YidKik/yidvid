@@ -114,7 +114,11 @@ export const fetchChannelDetails = async (processedChannelId: string) => {
     return data;
   } catch (error: any) {
     console.error("Error in fetchChannelDetails:", error);
-    throw error;
+    // Include more details in the error message
+    const errorMessage = error.message || "An unexpected error occurred";
+    const details = error.details || error.stack || '';
+    console.error("Full error details:", { message: errorMessage, details });
+    throw new Error(`Failed to fetch channel: ${errorMessage}`);
   }
 };
 

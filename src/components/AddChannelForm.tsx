@@ -43,6 +43,7 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
 
       // Step 3: Fetch channel details
       const channelDetails = await fetchChannelDetails(processedChannelId);
+      console.log("Fetched channel details:", channelDetails);
 
       // Step 4: Add channel to database
       setIsAddingChannel(true);
@@ -56,7 +57,10 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
 
     } catch (error: any) {
       console.error("Error in add channel process:", error);
-      toast.error(error.message || "An unexpected error occurred");
+      const errorMessage = error.message || "An unexpected error occurred";
+      const details = error.details || '';
+      console.error("Full error details:", { message: errorMessage, details });
+      toast.error(errorMessage);
     } finally {
       setIsFetchingChannel(false);
       setIsAddingChannel(false);
