@@ -2,6 +2,14 @@
 import { useState, useEffect } from 'react';
 import { LayoutConfig } from './types';
 import { cn } from "@/lib/utils";
+import { Header } from "@/components/Header";
+import { CategorySection } from "@/components/categories/CategorySection";
+import { ContentToggle } from "@/components/content/ContentToggle";
+import { MusicSection } from "@/components/content/MusicSection";
+import { VideoContent } from "@/components/content/VideoContent";
+import { useVideos } from "@/hooks/video/useVideos";
+import { useIsMobile } from "@/hooks/useIsMobile";
+import { GlobalNotification } from "@/components/notifications/GlobalNotification";
 
 interface LivePreviewProps {
   sections: LayoutConfig[];
@@ -11,6 +19,8 @@ interface LivePreviewProps {
 
 export const LivePreview = ({ sections, onSelectSection, selectedSectionId }: LivePreviewProps) => {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [isMusic, setIsMusic] = useState(false);
+  const { data: videos, isLoading } = useVideos();
 
   useEffect(() => {
     const handleResize = () => {
@@ -25,97 +35,62 @@ export const LivePreview = ({ sections, onSelectSection, selectedSectionId }: Li
     isMobile ? a.mobile_order - b.mobile_order : a.desktop_order - b.desktop_order
   );
 
+  const getSectionContent = (sectionName: string) => {
+    switch (sectionName) {
+      case 'Header Navigation':
+        return <Header />;
+      case 'Categories':
+        return <CategorySection />;
+      case 'Content Toggle':
+        return <ContentToggle isMusic={isMusic} onToggle={() => setIsMusic(!isMusic)} />;
+      case 'Video Content':
+        return !isMusic ? <VideoContent videos={videos || []} isLoading={isLoading} /> : null;
+      case 'Music Content':
+        return isMusic ? <MusicSection /> : null;
+      case 'Notifications':
+        return <GlobalNotification />;
+      default:
+        return null;
+    }
+  };
+
   return (
-    <div className="space-y-4">
-      {sortedSections.map(section => {
-        if ((isMobile && !section.visibility.mobile) || 
-            (!isMobile && !section.visibility.desktop)) {
-          return null;
-        }
+    <div className="min-h-screen w-full bg-gradient-to-b from-white to-gray-50">
+      <div className="space-y-4">
+        {sortedSections.map(section => {
+          if ((isMobile && !section.visibility.mobile) || 
+              (!isMobile && !section.visibility.desktop)) {
+            return null;
+          }
 
-        return (
-          <div
-            key={section.id}
-            onClick={() => onSelectSection(section.id)}
-            className={cn(
-              "relative rounded-lg transition-all cursor-pointer",
-              section.spacing.marginTop,
-              section.spacing.marginBottom,
-              section.spacing.padding,
-              selectedSectionId === section.id && "ring-2 ring-primary ring-offset-2"
-            )}
-          >
-            {/* Section Content Preview */}
-            <div className="min-h-[100px]">
-              {/* Example content based on section type */}
-              {section.name === 'Header Navigation' && (
-                <nav className="flex justify-between items-center bg-white p-4">
-                  <div className="text-xl font-bold">Logo</div>
-                  <div className="flex gap-4">
-                    <span>Home</span>
-                    <span>About</span>
-                    <span>Contact</span>
-                  </div>
-                </nav>
-              )}
-              
-              {section.name === 'Featured Content' && (
-                <div className="bg-gray-100 p-6 rounded-lg">
-                  <h2 className="text-2xl font-bold mb-4">Featured Content</h2>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-white p-4 rounded shadow">Featured Item 1</div>
-                    <div className="bg-white p-4 rounded shadow">Featured Item 2</div>
-                  </div>
-                </div>
-              )}
-
-              {section.name === 'Categories Section' && (
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="bg-blue-100 p-4 rounded">Category 1</div>
-                  <div className="bg-green-100 p-4 rounded">Category 2</div>
-                  <div className="bg-yellow-100 p-4 rounded">Category 3</div>
-                </div>
-              )}
-
-              {section.name === 'Latest Videos' && (
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="bg-gray-200 aspect-video rounded"></div>
-                  <div className="bg-gray-200 aspect-video rounded"></div>
-                  <div className="bg-gray-200 aspect-video rounded"></div>
-                </div>
-              )}
-
-              {section.name === 'Traffic Control' && (
-                <div className="bg-yellow-50 border border-yellow-200 p-4 rounded-lg">
-                  <h3 className="font-semibold text-yellow-800">Traffic Status</h3>
-                  <div className="mt-2 grid grid-cols-2 gap-4">
-                    <div className="bg-green-100 p-2 rounded">Low Traffic</div>
-                    <div className="bg-red-100 p-2 rounded">High Traffic</div>
-                  </div>
-                </div>
-              )}
-
-              {section.name === 'Footer' && (
-                <footer className="bg-gray-800 text-white p-6 rounded-lg">
-                  <div className="grid grid-cols-3 gap-8">
-                    <div>About Us</div>
-                    <div>Links</div>
-                    <div>Contact</div>
-                  </div>
-                </footer>
-              )}
-            </div>
-
-            {/* Selection Overlay */}
-            <div 
+          return (
+            <div
+              key={section.id}
+              onClick={() => onSelectSection(section.id)}
               className={cn(
-                "absolute inset-0 border-2 border-dashed pointer-events-none transition-opacity",
-                selectedSectionId === section.id ? "border-primary opacity-100" : "border-transparent opacity-0 hover:opacity-50"
+                "relative transition-all cursor-pointer",
+                section.spacing.marginTop,
+                section.spacing.marginBottom,
+                section.spacing.padding,
+                selectedSectionId === section.id && "ring-2 ring-primary ring-offset-2"
               )}
-            />
-          </div>
-        );
-      })}
+            >
+              {/* Section Content */}
+              <div className="min-h-[50px]">
+                {getSectionContent(section.name)}
+              </div>
+
+              {/* Selection Overlay */}
+              <div 
+                className={cn(
+                  "absolute inset-0 border-2 border-dashed pointer-events-none transition-opacity",
+                  selectedSectionId === section.id ? "border-primary opacity-100" : "border-transparent opacity-0 hover:opacity-50"
+                )}
+              />
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 };
