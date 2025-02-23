@@ -110,6 +110,21 @@ Deno.serve(async (req) => {
       throw new Error('Failed to add channel to database')
     }
 
+    // After successful channel insertion, trigger video fetch
+    console.log('Fetching videos for new channel...')
+    const { error: videoFetchError } = await supabaseClient.functions.invoke('fetch-youtube-videos', {
+      body: { 
+        channels: [channel.id],
+        forceUpdate: true
+      }
+    })
+
+    if (videoFetchError) {
+      console.error('Error fetching videos:', videoFetchError)
+      // Don't throw here, we still want to return the channel data
+      // Just log the error since the channel was successfully added
+    }
+
     return new Response(
       JSON.stringify(insertedChannel),
       {
