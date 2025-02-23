@@ -1,9 +1,11 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import type { YoutubeChannelsTable } from "@/integrations/supabase/types/youtube-channels";
 
 interface AddChannelFormProps {
   onClose?: () => void;
@@ -67,11 +69,31 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
 
     setIsFetchingChannel(true);
     try {
-      // First check if the channel already exists
+      // First check if admin
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError || !session?.user?.id) {
+        toast.error("You must be signed in to add channels");
+        return;
+      }
+
+      const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("is_admin")
+        .eq("id", session.user.id)
+        .single();
+
+      if (profileError || !profile?.is_admin) {
+        toast.error("You don't have permission to add channels");
+        return;
+      }
+
+      // Check if channel already exists
       const { data: existingChannel, error: checkError } = await supabase
         .from("youtube_channels")
         .select("title, channel_id")
         .eq("channel_id", processedChannelId)
+        .is("deleted_at", null)
         .maybeSingle();
 
       if (checkError) {
@@ -109,34 +131,19 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
         return;
       }
 
-      // Double-check for duplicates one more time before inserting
-      const { data: finalCheck, error: finalCheckError } = await supabase
-        .from("youtube_channels")
-        .select("title")
-        .eq("channel_id", data.channelId)
-        .maybeSingle();
-
-      if (finalCheckError) {
-        console.error("Error in final duplicate check:", finalCheckError);
-        toast.error("Failed to verify channel uniqueness");
-        return;
-      }
-
-      if (finalCheck) {
-        toast.error("This channel has already been added to your dashboard");
-        return;
-      }
-
       setIsAddingChannel(true);
+
+      const channelData: YoutubeChannelsTable["Insert"] = {
+        channel_id: data.channelId,
+        title: data.title,
+        description: data.description,
+        thumbnail_url: data.thumbnailUrl,
+        default_category: data.default_category || 'other'
+      };
+
       const { error: insertError } = await supabase
         .from("youtube_channels")
-        .insert({
-          channel_id: data.channelId,
-          title: data.title,
-          description: data.description,
-          thumbnail_url: data.thumbnailUrl,
-          default_category: data.default_category || 'other'
-        });
+        .insert(channelData);
 
       if (insertError) {
         console.error("Error adding channel:", insertError);
