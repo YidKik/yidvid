@@ -1,26 +1,7 @@
-
 import { useState, useEffect } from 'react';
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { LayoutConfig, SpacingProperty, VisibilityDevice } from "./types";
-
-interface LayoutData {
-  id: string;
-  name: string;
-  mobile_order: number;
-  desktop_order: number;
-  spacing: {
-    marginTop: string;
-    marginBottom: string;
-    padding: string;
-  } | null;
-  visibility: {
-    mobile: boolean;
-    desktop: boolean;
-  } | null;
-  created_at: string;
-  updated_at: string;
-}
+import { LayoutConfig, LayoutConfigResponse, SpacingProperty, VisibilityDevice } from "./types";
 
 export const useLayoutConfig = () => {
   const [sections, setSections] = useState<LayoutConfig[]>([]);
@@ -39,19 +20,19 @@ export const useLayoutConfig = () => {
         throw error;
       }
       
-      const transformedData: LayoutConfig[] = (data as LayoutData[] || []).map(section => ({
+      const transformedData: LayoutConfig[] = (data as LayoutConfigResponse[] || []).map(section => ({
         id: section.id,
         name: section.name,
         mobile_order: section.mobile_order,
         desktop_order: section.desktop_order,
-        spacing: {
-          marginTop: section.spacing?.marginTop || 'mt-0',
-          marginBottom: section.spacing?.marginBottom || 'mb-0',
-          padding: section.spacing?.padding || 'p-0'
+        spacing: section.spacing || {
+          marginTop: 'mt-0',
+          marginBottom: 'mb-0',
+          padding: 'p-0'
         },
-        visibility: {
-          mobile: section.visibility?.mobile ?? true,
-          desktop: section.visibility?.desktop ?? true
+        visibility: section.visibility || {
+          mobile: true,
+          desktop: true
         },
         created_at: section.created_at,
         updated_at: section.updated_at
