@@ -12,7 +12,8 @@ serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { 
-      headers: corsHeaders
+      headers: corsHeaders,
+      status: 200
     });
   }
 
@@ -79,6 +80,36 @@ serve(async (req) => {
     console.log("Fetching from YouTube API:", apiUrl.replace(YOUTUBE_API_KEY, 'REDACTED'));
     const response = await fetch(apiUrl);
     
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("YouTube API error response:", errorData);
+
+      // Handle quota exceeded error specifically
+      if (errorData.error?.message?.includes("quota")) {
+        return new Response(
+          JSON.stringify({ 
+            error: "YouTube API quota exceeded. Please try again later.",
+            quota_exceeded: true
+          }),
+          {
+            status: 429,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          }
+        );
+      }
+
+      return new Response(
+        JSON.stringify({ 
+          error: `YouTube API error: ${errorData.error?.message || 'Unknown error'}`,
+          details: errorData.error 
+        }),
+        {
+          status: response.status,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      );
+    }
+    
     // Add error handling for YouTube API response parsing
     let data;
     try {
@@ -89,20 +120,6 @@ serve(async (req) => {
         JSON.stringify({ error: "Invalid response from YouTube API" }),
         {
           status: 500,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        }
-      );
-    }
-
-    if (!response.ok) {
-      console.error("YouTube API error response:", data);
-      return new Response(
-        JSON.stringify({ 
-          error: `YouTube API error: ${data.error?.message || 'Unknown error'}`,
-          details: data.error 
-        }),
-        {
-          status: response.status,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         }
       );
@@ -125,29 +142,29 @@ serve(async (req) => {
       }
       
       console.log("Found channel in search results, fetching details");
-      const foundChannelId = data.items[0].snippet.channelId;
+      const foundChannelId = data.items[0].id.channelId;
       
       // Now fetch the actual channel data
       const channelResponse = await fetch(
         `https://youtube.googleapis.com/youtube/v3/channels?part=snippet&id=${foundChannelId}&key=${YOUTUBE_API_KEY}`
       );
 
+      if (!channelResponse.ok) {
+        const channelError = await channelResponse.json();
+        console.error("Error fetching channel details:", channelError);
+        return new Response(
+          JSON.stringify({ 
+            error: `Error fetching channel details: ${channelError.error?.message || 'Unknown error'}` 
+          }),
+          {
+            status: channelResponse.status,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          }
+        );
+      }
+
       try {
         const channelResult = await channelResponse.json();
-        
-        if (!channelResponse.ok) {
-          console.error("Error fetching channel details:", channelResult);
-          return new Response(
-            JSON.stringify({ 
-              error: `Error fetching channel details: ${channelResult.error?.message || 'Unknown error'}` 
-            }),
-            {
-              status: channelResponse.status,
-              headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-            }
-          );
-        }
-        
         channelData = channelResult.items?.[0];
       } catch (e) {
         console.error("Error parsing channel details response:", e);
