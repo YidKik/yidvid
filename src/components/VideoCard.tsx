@@ -66,20 +66,20 @@ export const VideoCard = ({
           )}
           <div className="flex-1 min-w-0 overflow-hidden">
             <h3 className={cn(
-              "font-medium line-clamp-2",
-              isMobile ? "text-[11px] leading-[13px] mb-0" : "text-sm leading-5"
+              "font-medium line-clamp-2 text-[#030303]",
+              isMobile ? "text-[13px] leading-[18px] mb-0.5 font-roboto" : "text-sm leading-5"
             )}>
               {title}
             </h3>
             <p className={cn(
-              "text-muted-foreground truncate",
-              isMobile ? "text-[9px] mt-0" : "text-[11px] mt-0.5"
+              "text-muted-foreground truncate font-roboto",
+              isMobile ? "text-[12px] mt-0" : "text-[11px] mt-0.5"
             )}>
               {channelName}
             </p>
             <div className={cn(
-              "text-muted-foreground flex items-center space-x-1 truncate",
-              isMobile ? "text-[8px] mt-0" : "text-[10px] mt-0.5"
+              "text-muted-foreground flex items-center space-x-1 truncate font-roboto",
+              isMobile ? "text-[12px] mt-0.5" : "text-[10px] mt-0.5"
             )}>
               {views !== undefined && (
                 <span className="truncate">{formattedViews}</span>
