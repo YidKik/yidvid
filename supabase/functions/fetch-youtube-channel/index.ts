@@ -1,251 +1,149 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.38.4'
+import { corsHeaders } from '../_shared/cors.ts'
 
-async function validateYouTubeApiKey(apiKey: string) {
-  try {
-    // Make a minimal API call to test the key
-    const testUrl = `https://www.googleapis.com/youtube/v3/channels?part=snippet&id=UC_x5XG1OV2P6uZZ5FSM9Ttw&key=${apiKey}`;
-    const response = await fetch(testUrl);
-    const data = await response.json();
-    
-    if (data.error?.code === 403) {
-      console.error('API Key error:', data.error.message);
-      return false;
-    }
-    
-    return true;
-  } catch (error) {
-    console.error('API Key validation error:', error);
-    return false;
-  }
+interface YouTubeApiResponse {
+  items: Array<{
+    id: string;
+    snippet: {
+      title: string;
+      description: string;
+      thumbnails: {
+        default: {
+          url: string;
+        };
+      };
+    };
+  }>;
 }
 
-const extractYouTubeId = (input: string): string => {
-  console.log('Extracting ID from input:', input);
-  
-  // Handle channel URLs with /channel/
-  if (input.includes('youtube.com/channel/')) {
-    const match = input.match(/youtube\.com\/channel\/([\w-]+)/);
-    if (match && match[1]) {
-      console.log('Extracted channel ID:', match[1]);
-      return match[1];
-    }
-  }
-  
-  // Handle channel URLs with /@
-  if (input.includes('youtube.com/@')) {
-    const match = input.match(/youtube\.com\/@([\w-]+)/);
-    if (match && match[1]) {
-      console.log('Extracted username:', match[1]);
-      return match[1];
-    }
-  }
-  
-  // Handle @username format
-  if (input.startsWith('@')) {
-    const username = input.substring(1);
-    console.log('Extracted username from @:', username);
-    return username;
-  }
-  
-  // Handle custom channel URLs
-  if (input.includes('youtube.com/c/')) {
-    const match = input.match(/youtube\.com\/c\/([\w-]+)/);
-    if (match && match[1]) {
-      console.log('Extracted custom URL:', match[1]);
-      return match[1];
-    }
-  }
-  
-  console.log('Using raw input as ID:', input);
-  return input.trim();
-};
-
-serve(async (req) => {
-  // Handle CORS
+Deno.serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: corsHeaders })
   }
 
   try {
-    const { channelId } = await req.json();
-    console.log('Raw input received:', channelId);
-    
+    const { channelId } = await req.json()
+    console.log('Received request for channel:', channelId)
+
     if (!channelId) {
-      throw new Error('Channel ID is required');
+      throw new Error('Channel ID is required')
     }
 
-    const YOUTUBE_API_KEY = Deno.env.get('YOUTUBE_API_KEY');
+    const YOUTUBE_API_KEY = Deno.env.get('YOUTUBE_API_KEY')
     if (!YOUTUBE_API_KEY) {
-      throw new Error('YouTube API key not configured');
+      console.error('YouTube API key not found')
+      throw new Error('YouTube API key not configured')
     }
 
-    // Validate API key first
-    console.log('Validating YouTube API key...');
-    const isValidKey = await validateYouTubeApiKey(YOUTUBE_API_KEY);
-    if (!isValidKey) {
-      throw new Error('Invalid or restricted YouTube API key. Please check API key configuration.');
+    // Extract channel ID from URL or handle
+    const extractedId = extractChannelIdentifier(channelId)
+    console.log('Extracted channel identifier:', extractedId)
+
+    // First try to get channel by handle
+    let apiUrl = `https://youtube.googleapis.com/youtube/v3/channels?part=snippet&key=${YOUTUBE_API_KEY}`
+    if (extractedId.startsWith('@')) {
+      apiUrl += `&forHandle=${extractedId.substring(1)}`
+    } else {
+      // Try as channel ID
+      apiUrl += `&id=${extractedId}`
     }
 
-    const processedId = extractYouTubeId(channelId);
-    console.log('Processed channel ID:', processedId);
+    console.log('Making YouTube API request...')
+    const response = await fetch(apiUrl)
+    const data: YouTubeApiResponse = await response.json()
 
-    // First try direct channel lookup
-    console.log('Attempting direct channel lookup...');
-    let apiUrl = `https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${processedId}&key=${YOUTUBE_API_KEY}`;
-    let response = await fetch(apiUrl);
-    let data = await response.json();
-    
-    if (data.error) {
-      console.error('YouTube API error:', data.error);
-      throw new Error(`YouTube API error: ${data.error.message}`);
-    }
-    
-    console.log('Direct lookup response:', data);
-
-    // If not found by ID, try searching by username
-    if (!data.items?.length) {
-      console.log('No direct match found, trying search...');
-      apiUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=channel&q=${processedId}&key=${YOUTUBE_API_KEY}`;
-      response = await fetch(apiUrl);
-      data = await response.json();
-      
-      if (data.error) {
-        console.error('Search API error:', data.error);
-        throw new Error(`YouTube search API error: ${data.error.message}`);
-      }
-      
-      console.log('Search response:', data);
-
-      if (!data.items?.length) {
-        throw new Error('Channel not found. Please verify the channel ID or URL.');
-      }
-
-      // Get full channel details using the found channel ID
-      const foundChannelId = data.items[0].id.channelId;
-      console.log('Found channel ID:', foundChannelId);
-      
-      apiUrl = `https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${foundChannelId}&key=${YOUTUBE_API_KEY}`;
-      response = await fetch(apiUrl);
-      data = await response.json();
-      
-      if (data.error) {
-        console.error('Channel details API error:', data.error);
-        throw new Error(`YouTube API error: ${data.error.message}`);
-      }
-      
-      console.log('Channel details:', data);
+    if (!response.ok) {
+      console.error('YouTube API error:', data)
+      throw new Error(`YouTube API error: ${data}`)
     }
 
-    if (!data.items?.[0]) {
-      throw new Error('Could not retrieve channel information');
+    if (!data.items || data.items.length === 0) {
+      console.error('No channel found:', data)
+      throw new Error('Channel not found')
     }
 
-    const channel = data.items[0];
-    console.log('Successfully found channel:', channel.snippet.title);
+    const channel = data.items[0]
+    console.log('Channel data received:', channel)
 
-    // Before inserting the channel, analyze recent videos
-    const videosUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channel.id}&order=date&maxResults=5&type=video&key=${YOUTUBE_API_KEY}`;
-    const videosResponse = await fetch(videosUrl);
-    const videosData = await videosResponse.json();
+    // Connect to Supabase
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    )
 
-    if (videosData.error) {
-      console.error('Error fetching videos:', videosData.error);
-      throw new Error('Failed to analyze channel content');
-    }
-
-    // Analyze each video's content
-    for (const item of videosData.items || []) {
-      const { data: analysisResult } = await fetch('https://euincktvsiuztsxcuqfd.functions.supabase.co/analyze-video-content', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${Deno.env.get('SUPABASE_ANON_KEY')}`,
-        },
-        body: JSON.stringify({
-          title: item.snippet.title,
-          description: item.snippet.description,
-          thumbnail: item.snippet.thumbnails?.high?.url
-        })
-      }).then(res => res.json());
-
-      if (!analysisResult.approved) {
-        console.log('Content moderation failed:', analysisResult);
-        throw new Error('Channel contains inappropriate content or references to women');
-      }
-    }
-
-    // Initialize Supabase client
-    const supabaseUrl = Deno.env.get('SUPABASE_URL');
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
-    
-    if (!supabaseUrl || !supabaseKey) {
-      throw new Error('Database configuration missing');
-    }
-
-    const supabase = createClient(supabaseUrl, supabaseKey);
-
-    // Prepare channel data
-    const channelInfo = {
-      channel_id: channel.id,
-      title: channel.snippet.title,
-      description: channel.snippet.description || '',
-      thumbnail_url: channel.snippet.thumbnails?.default?.url || '',
-      default_category: 'other'
-    };
-
-    // Check for existing channel
-    const { data: existingChannel } = await supabase
+    // Check if channel already exists
+    const { data: existingChannel } = await supabaseClient
       .from('youtube_channels')
       .select('channel_id')
       .eq('channel_id', channel.id)
-      .single();
+      .single()
 
     if (existingChannel) {
-      throw new Error('This channel has already been added');
+      throw new Error('This channel has already been added')
     }
 
-    // Insert channel
-    const { error: insertError } = await supabase
+    // Insert the new channel
+    const { error: insertError } = await supabaseClient
       .from('youtube_channels')
-      .insert([channelInfo]);
+      .insert({
+        channel_id: channel.id,
+        title: channel.snippet.title,
+        description: channel.snippet.description,
+        thumbnail_url: channel.snippet.thumbnails.default.url,
+      })
 
     if (insertError) {
-      console.error('Database insertion error:', insertError);
-      throw new Error('Failed to save channel to database');
+      console.error('Error inserting channel:', insertError)
+      throw insertError
     }
 
-    console.log('Successfully added channel to database:', channelInfo.title);
-
     return new Response(
-      JSON.stringify(channelInfo),
-      { 
-        headers: { 
-          ...corsHeaders,
-          'Content-Type': 'application/json'
-        }
-      }
-    );
+      JSON.stringify(channel),
+      {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200,
+      },
+    )
 
   } catch (error) {
-    console.error('Function error:', error);
+    console.error('Error in fetch-youtube-channel:', error)
     return new Response(
-      JSON.stringify({ 
-        error: error.message || 'An unexpected error occurred',
-        details: error.toString()
-      }),
-      { 
-        headers: { 
-          ...corsHeaders, 
-          'Content-Type': 'application/json'
-        },
-        status: 400
-      }
-    );
+      JSON.stringify({ error: error.message }),
+      {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 400,
+      },
+    )
   }
-});
+})
+
+function extractChannelIdentifier(input: string): string {
+  let channelId = input.trim()
+  
+  // Handle full URLs
+  if (channelId.includes('youtube.com/')) {
+    // Handle various URL formats
+    const urlPatterns = [
+      /youtube\.com\/(?:channel|c)\/([^/?&]+)/,  // Standard channel URLs
+      /youtube\.com\/(@[\w-]+)/,                 // Handle URLs
+      /youtube\.com\/user\/([^/?&]+)/            // Legacy username URLs
+    ]
+
+    for (const pattern of urlPatterns) {
+      const match = channelId.match(pattern)
+      if (match && match[1]) {
+        return match[1]
+      }
+    }
+  }
+
+  // Handle direct channel IDs or handles
+  if (channelId.startsWith('UC') || channelId.startsWith('@')) {
+    return channelId
+  }
+
+  // If no patterns match, return the input as-is
+  return channelId
+}
