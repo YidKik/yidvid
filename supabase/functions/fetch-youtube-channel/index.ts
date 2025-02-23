@@ -7,6 +7,31 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+const extractYouTubeId = (input: string): string => {
+  // Handle video URLs that might be pasted
+  if (input.includes('youtu.be/') || input.includes('youtube.com/watch')) {
+    const videoMatch = input.match(/(?:youtu\.be\/|youtube\.com\/watch\?v=)([\w-]+)/);
+    if (videoMatch && videoMatch[1]) {
+      return videoMatch[1];
+    }
+  }
+  
+  // Handle channel URLs
+  if (input.includes('youtube.com/')) {
+    const channelMatch = input.match(/(?:youtube\.com\/(?:channel\/|c\/|@))([\w-]+)/);
+    if (channelMatch && channelMatch[1]) {
+      return channelMatch[1];
+    }
+  }
+  
+  // Handle @username format
+  if (input.startsWith('@')) {
+    return input.substring(1);
+  }
+  
+  return input.trim();
+};
+
 serve(async (req) => {
   // Handle CORS
   if (req.method === 'OPTIONS') {
@@ -14,41 +39,45 @@ serve(async (req) => {
   }
 
   try {
-    // Parse request body
     const { channelId } = await req.json();
-    console.log('Received request for channel:', channelId);
+    console.log('Raw input received:', channelId);
     
     if (!channelId) {
       throw new Error('Channel ID is required');
     }
 
-    // Get YouTube API key
+    const processedId = extractYouTubeId(channelId);
+    console.log('Processed channel ID:', processedId);
+
     const YOUTUBE_API_KEY = Deno.env.get('YOUTUBE_API_KEY');
     if (!YOUTUBE_API_KEY) {
       throw new Error('YouTube API key not configured');
     }
 
-    // First try direct channel lookup
-    let apiUrl = `https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${channelId}&key=${YOUTUBE_API_KEY}`;
+    // First try to find by channel ID
+    let apiUrl = `https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${processedId}&key=${YOUTUBE_API_KEY}`;
     let response = await fetch(apiUrl);
     let data = await response.json();
+    console.log('Direct channel lookup response:', data);
 
-    // If no results, try searching by username
+    // If not found, try searching
     if (!data.items?.length) {
-      console.log('No direct match, trying search...');
-      apiUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=channel&q=${channelId}&key=${YOUTUBE_API_KEY}`;
+      console.log('No direct match, trying channel search...');
+      apiUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=channel&q=${processedId}&key=${YOUTUBE_API_KEY}`;
       response = await fetch(apiUrl);
       data = await response.json();
+      console.log('Channel search response:', data);
 
       if (!data.items?.length) {
-        throw new Error('Channel not found');
+        throw new Error('Channel not found. Please check the channel ID or URL.');
       }
 
-      // Get full channel data for the first result
-      const actualChannelId = data.items[0].id.channelId;
-      apiUrl = `https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${actualChannelId}&key=${YOUTUBE_API_KEY}`;
+      // Get the actual channel ID from search results
+      const foundChannelId = data.items[0].id.channelId;
+      apiUrl = `https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${foundChannelId}&key=${YOUTUBE_API_KEY}`;
       response = await fetch(apiUrl);
       data = await response.json();
+      console.log('Found channel details:', data);
     }
 
     if (!data.items?.[0]) {
@@ -56,9 +85,6 @@ serve(async (req) => {
     }
 
     const channel = data.items[0];
-    console.log('Found channel:', channel.snippet.title);
-
-    // Prepare channel data
     const channelInfo = {
       channel_id: channel.id,
       title: channel.snippet.title,
@@ -77,7 +103,7 @@ serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Double-check for existing channel
+    // Check for existing channel
     const { data: existingChannel } = await supabase
       .from('youtube_channels')
       .select('channel_id')
@@ -88,7 +114,7 @@ serve(async (req) => {
       throw new Error('This channel has already been added');
     }
 
-    // Insert new channel
+    // Insert channel
     const { error: insertError } = await supabase
       .from('youtube_channels')
       .insert([channelInfo]);
@@ -98,9 +124,6 @@ serve(async (req) => {
       throw new Error('Failed to save channel to database');
     }
 
-    console.log('Successfully added channel to database:', channelInfo.title);
-
-    // Return success response
     return new Response(
       JSON.stringify(channelInfo),
       { 
