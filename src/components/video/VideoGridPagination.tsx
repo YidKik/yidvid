@@ -30,10 +30,9 @@ export const VideoGridPagination = ({
         <Button 
           variant="outline" 
           onClick={onShowAll}
-          className={cn(
-            "group relative rounded-full text-muted-foreground hover:bg-muted/50 hover:border-gray-300 transition-all duration-300",
+          className={`group relative rounded-full text-muted-foreground hover:bg-muted/50 hover:border-gray-300 transition-all duration-300 ${
             isMobile ? "text-[11px] px-3 py-1" : "text-xs px-4 py-1.5"
-          )}
+          }`}
         >
           See More
           <span className="absolute -bottom-5 left-1/2 -translate-x-1/2 text-[10px] font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200">
