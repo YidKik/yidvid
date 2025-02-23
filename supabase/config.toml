@@ -4,5 +4,8 @@ project_id = "euincktvsiuztsxcuqfd"
 [functions.fetch-youtube-channel]
 verify_jwt = false
 
+[functions.fetch-youtube-videos]
+verify_jwt = false
+
 [functions.update-channel-thumbnails]
 verify_jwt = false
