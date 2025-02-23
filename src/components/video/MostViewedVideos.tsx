@@ -93,10 +93,10 @@ export const MostViewedVideos = ({
             <button 
               onClick={() => handleManualNavigation(handlePrevious)}
               disabled={isTransitioning}
-              className={`absolute left-0 top-1/2 -translate-y-1/2 z-10 p-1.5 bg-white/90 hover:bg-white rounded-full shadow-lg transition-all duration-300 ${isTransitioning ? 'opacity-50 cursor-not-allowed' : ''}`}
+              className={`absolute left-0 top-1/2 -translate-y-1/2 z-10 p-2 md:p-3 bg-white/90 hover:bg-white rounded-full shadow-lg transition-all duration-300 ${isTransitioning ? 'opacity-50 cursor-not-allowed' : ''}`}
               aria-label="Previous videos"
             >
-              <ChevronLeft className="w-3 h-3 md:w-4 md:h-4 text-[#555555]" />
+              <ChevronLeft className="w-4 h-4 md:w-5 md:h-5 text-[#555555]" />
             </button>
           )}
 
@@ -117,10 +117,10 @@ export const MostViewedVideos = ({
             <button 
               onClick={() => handleManualNavigation(handleNext)}
               disabled={isTransitioning}
-              className={`absolute right-0 top-1/2 -translate-y-1/2 z-10 p-1.5 bg-white/90 hover:bg-white rounded-full shadow-lg transition-all duration-300 ${isTransitioning ? 'opacity-50 cursor-not-allowed' : ''}`}
+              className={`absolute right-0 top-1/2 -translate-y-1/2 z-10 p-2 md:p-3 bg-white/90 hover:bg-white rounded-full shadow-lg transition-all duration-300 ${isTransitioning ? 'opacity-50 cursor-not-allowed' : ''}`}
               aria-label="Next videos"
             >
-              <ChevronRight className="w-3 h-3 md:w-4 md:h-4 text-[#555555]" />
+              <ChevronRight className="w-4 h-4 md:w-5 md:h-5 text-[#555555]" />
             </button>
           )}
         </div>
