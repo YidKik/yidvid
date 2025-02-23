@@ -17,6 +17,7 @@ import { GlobalNotification } from "@/components/notifications/GlobalNotificatio
 import { WelcomeOverlay } from "@/components/welcome/WelcomeOverlay";
 import { getPageTitle, DEFAULT_META_DESCRIPTION, DEFAULT_META_KEYWORDS, DEFAULT_META_IMAGE } from "@/utils/pageTitle";
 import { Helmet } from "react-helmet";
+import { HeroParallax } from "@/components/blocks/hero-parallax";
 
 const MainContent = () => {
   const [isMusic, setIsMusic] = useState(false);
@@ -39,38 +40,48 @@ const MainContent = () => {
     }
   };
 
+  // Transform videos data for the hero section
+  const heroVideos = videos?.slice(0, 15).map(video => ({
+    id: video.id,
+    title: video.title,
+    thumbnail: video.thumbnail,
+  })) || [];
+
   return (
     <div className="flex-1">
       <Header />
       <GlobalNotification />
-      <main className="mt-0 mx-auto px-2 md:px-6 max-w-[1400px]">
-        <div className={`space-y-2 md:space-y-4`}>
-          <div className="space-y-2">
-            <div className="flex flex-col items-center">
-              <ContentToggle 
-                isMusic={isMusic} 
-                onToggle={() => setIsMusic(!isMusic)} 
-              />
-              <CategorySection />
+      <div className="relative">
+        <HeroParallax products={heroVideos} />
+        <main className="mt-0 mx-auto px-2 md:px-6 max-w-[1400px]">
+          <div className={`space-y-2 md:space-y-4`}>
+            <div className="space-y-2">
+              <div className="flex flex-col items-center">
+                <ContentToggle 
+                  isMusic={isMusic} 
+                  onToggle={() => setIsMusic(!isMusic)} 
+                />
+                <CategorySection />
+              </div>
             </div>
-          </div>
 
-          <motion.div
-            key={isMusic ? "music" : "videos"}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.3 }}
-            className={isMobile ? 'mt-2' : ''}
-          >
-            {!isMusic ? (
-              <VideoContent videos={videos} isLoading={isLoading} />
-            ) : (
-              <MusicSection />
-            )}
-          </motion.div>
-        </div>
-      </main>
+            <motion.div
+              key={isMusic ? "music" : "videos"}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3 }}
+              className={isMobile ? 'mt-2' : ''}
+            >
+              {!isMusic ? (
+                <VideoContent videos={videos} isLoading={isLoading} />
+              ) : (
+                <MusicSection />
+              )}
+            </motion.div>
+          </div>
+        </main>
+      </div>
     </div>
   );
 };
