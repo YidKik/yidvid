@@ -112,6 +112,8 @@ Deno.serve(async (req) => {
     // After successful channel insertion, trigger video fetch
     console.log('Fetching videos for new channel...')
     
+    const ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY')
+    
     // Make a direct fetch call to the edge function with proper headers
     const edgeResponse = await fetch(
       `${Deno.env.get('SUPABASE_URL')}/functions/v1/fetch-youtube-videos`,
@@ -120,6 +122,7 @@ Deno.serve(async (req) => {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`,
+          'apikey': ANON_KEY || '', // Add the apikey header
         },
         body: JSON.stringify({
           channels: [channel.id],
@@ -131,6 +134,9 @@ Deno.serve(async (req) => {
     if (!edgeResponse.ok) {
       const errorText = await edgeResponse.text();
       console.error('Error fetching videos:', errorText);
+      // Log more details about the request
+      console.log('Request URL:', `${Deno.env.get('SUPABASE_URL')}/functions/v1/fetch-youtube-videos`);
+      console.log('Channel ID:', channel.id);
     } else {
       const result = await edgeResponse.json();
       console.log('Videos fetch result:', result);
