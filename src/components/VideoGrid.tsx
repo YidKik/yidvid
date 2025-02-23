@@ -62,3 +62,6 @@ export const VideoGrid = ({
       )}
     </div>
   );
+};
+
+export default VideoGrid;
