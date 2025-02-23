@@ -28,6 +28,19 @@ export const HeroParallax = ({
   const ySecond = useTransform(scrollYProgress, [0, 1], ["0%", "25%"]);
   const yThird = useTransform(scrollYProgress, [0, 1], ["0%", "35%"]);
 
+  // Transform rotations based on scroll
+  const rotateFirst = useTransform(scrollYProgress, [0, 0.2], [-35, 0]);
+  const rotateSecond = useTransform(scrollYProgress, [0, 0.2], [-25, 0]);
+  const rotateThird = useTransform(scrollYProgress, [0, 0.2], [-15, 0]);
+
+  // Transform scale based on scroll
+  const scaleFirst = useTransform(scrollYProgress, [0, 0.2], [0.8, 1]);
+  const scaleSecond = useTransform(scrollYProgress, [0, 0.2], [0.85, 1]);
+  const scaleThird = useTransform(scrollYProgress, [0, 0.2], [0.9, 1]);
+
+  // Transform opacity based on scroll
+  const opacity = useTransform(scrollYProgress, [0, 0.2], [0.5, 1]);
+
   return (
     <div
       ref={ref}
@@ -35,24 +48,39 @@ export const HeroParallax = ({
     >
       <Header />
       <motion.div
-        style={{ y: yFirst }}
-        className="relative mt-80 flex space-x-4 justify-center"
+        style={{ 
+          y: yFirst,
+          rotateX: rotateFirst,
+          scale: scaleFirst,
+          opacity
+        }}
+        className="relative mt-80 flex space-x-4 justify-center origin-top"
       >
         {firstRow.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}
       </motion.div>
       <motion.div
-        style={{ y: ySecond }}
-        className="relative mt-4 flex space-x-4 justify-center"
+        style={{ 
+          y: ySecond,
+          rotateX: rotateSecond,
+          scale: scaleSecond,
+          opacity
+        }}
+        className="relative mt-4 flex space-x-4 justify-center origin-top"
       >
         {secondRow.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}
       </motion.div>
       <motion.div
-        style={{ y: yThird }}
-        className="relative mt-4 flex space-x-4 justify-center"
+        style={{ 
+          y: yThird,
+          rotateX: rotateThird,
+          scale: scaleThird,
+          opacity
+        }}
+        className="relative mt-4 flex space-x-4 justify-center origin-top"
       >
         {thirdRow.map((product) => (
           <ProductCard key={product.id} product={product} />
