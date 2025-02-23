@@ -68,10 +68,13 @@ export const addChannel = async (channelInput: string) => {
       throw new Error('This channel has already been added');
     }
 
-    // Call edge function to add channel
+    // Call edge function to add channel with proper authorization
     console.log('Calling edge function to fetch channel data...');
     const { data, error } = await supabase.functions.invoke('fetch-youtube-channel', {
-      body: { channelId }
+      body: { channelId },
+      headers: {
+        Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
+      }
     });
 
     if (error) {
