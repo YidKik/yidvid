@@ -3,13 +3,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { ChannelInput } from "@/components/youtube/ChannelInput";
-import {
-  validateChannelInput,
-  checkAdminStatus,
-  checkExistingChannel,
-  fetchChannelDetails,
-  addChannelToDatabase
-} from "@/utils/youtube-channel";
+import { addChannel } from "@/utils/youtube-channel";
 
 interface AddChannelFormProps {
   onClose?: () => void;
@@ -18,52 +12,29 @@ interface AddChannelFormProps {
 
 export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
   const [channelId, setChannelId] = useState("");
-  const [isFetchingChannel, setIsFetchingChannel] = useState(false);
-  const [isAddingChannel, setIsAddingChannel] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
     if (!channelId.trim()) {
       toast.error("Please enter a channel ID or URL");
       return;
     }
 
-    setIsFetchingChannel(true);
-    setIsAddingChannel(false);
+    setIsLoading(true);
 
     try {
-      const processedChannelId = validateChannelInput(channelId);
-      console.log("Processing channel ID:", processedChannelId);
-
-      // Step 1: Check admin status
-      await checkAdminStatus();
-
-      // Step 2: Check for existing channel
-      await checkExistingChannel(processedChannelId);
-
-      // Step 3: Fetch channel details
-      const channelDetails = await fetchChannelDetails(processedChannelId);
-      console.log("Fetched channel details:", channelDetails);
-
-      // Step 4: Add channel to database
-      setIsAddingChannel(true);
-      const channelTitle = await addChannelToDatabase(channelDetails);
-
-      // Success!
-      toast.success(`Successfully added ${channelTitle}`);
+      const result = await addChannel(channelId);
+      toast.success(`Successfully added ${result.title}`);
       setChannelId("");
       onSuccess?.();
       onClose?.();
-
     } catch (error: any) {
-      console.error("Error in add channel process:", error);
-      const errorMessage = error.message || "An unexpected error occurred";
-      const details = error.details || '';
-      console.error("Full error details:", { message: errorMessage, details });
-      toast.error(errorMessage);
+      console.error("Error adding channel:", error);
+      toast.error(error.message || "Failed to add channel");
     } finally {
-      setIsFetchingChannel(false);
-      setIsAddingChannel(false);
+      setIsLoading(false);
     }
   };
 
@@ -72,14 +43,14 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
       <ChannelInput
         value={channelId}
         onChange={setChannelId}
-        disabled={isFetchingChannel || isAddingChannel}
+        disabled={isLoading}
       />
       <Button 
         type="submit" 
-        disabled={isFetchingChannel || isAddingChannel}
+        disabled={isLoading}
         className="w-full"
       >
-        {isFetchingChannel ? "Fetching..." : isAddingChannel ? "Adding..." : "Add Channel"}
+        {isLoading ? "Adding Channel..." : "Add Channel"}
       </Button>
     </form>
   );
