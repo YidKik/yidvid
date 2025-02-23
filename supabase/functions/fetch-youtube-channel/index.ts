@@ -30,15 +30,30 @@ serve(async (req) => {
     }
 
     // First try to get channel by ID
-    const channelUrl = `https://youtube.googleapis.com/youtube/v3/channels?part=snippet,statistics&id=${channelId}&key=${YOUTUBE_API_KEY}`;
+    const channelUrl = new URL('https://youtube.googleapis.com/youtube/v3/channels');
+    channelUrl.searchParams.append('part', 'snippet,statistics');
+    channelUrl.searchParams.append('id', channelId);
+    channelUrl.searchParams.append('key', YOUTUBE_API_KEY);
+
+    console.log("Fetching channel from URL:", channelUrl.toString());
+    
     let response = await fetch(channelUrl);
     let data = await response.json();
+    console.log("Initial API response:", data);
 
     // If no results, try searching by custom URL/username
     if (!data.items?.length) {
-      const searchUrl = `https://youtube.googleapis.com/youtube/v3/search?part=snippet&q=${channelId}&type=channel&key=${YOUTUBE_API_KEY}`;
+      console.log("No channel found by ID, trying search...");
+      const searchUrl = new URL('https://youtube.googleapis.com/youtube/v3/search');
+      searchUrl.searchParams.append('part', 'snippet');
+      searchUrl.searchParams.append('q', channelId);
+      searchUrl.searchParams.append('type', 'channel');
+      searchUrl.searchParams.append('key', YOUTUBE_API_KEY);
+
+      console.log("Searching channel with URL:", searchUrl.toString());
       response = await fetch(searchUrl);
       data = await response.json();
+      console.log("Search API response:", data);
 
       if (!data.items?.length) {
         throw new Error("Channel not found");
@@ -46,8 +61,12 @@ serve(async (req) => {
 
       // Get full channel details using the found channel ID
       const foundChannelId = data.items[0].snippet.channelId;
-      response = await fetch(`https://youtube.googleapis.com/youtube/v3/channels?part=snippet,statistics&id=${foundChannelId}&key=${YOUTUBE_API_KEY}`);
+      channelUrl.searchParams.set('id', foundChannelId);
+      
+      console.log("Fetching full channel details for:", foundChannelId);
+      response = await fetch(channelUrl);
       data = await response.json();
+      console.log("Final API response:", data);
     }
 
     if (!data.items?.length) {
@@ -58,12 +77,12 @@ serve(async (req) => {
     const channelData = {
       channelId: channel.id,
       title: channel.snippet.title,
-      description: channel.snippet.description,
-      thumbnailUrl: channel.snippet.thumbnails.default?.url,
+      description: channel.snippet.description || '',
+      thumbnailUrl: channel.snippet.thumbnails?.default?.url || '',
       default_category: 'other'
     };
 
-    console.log("Successfully fetched channel:", channelData.title);
+    console.log("Successfully processed channel data:", channelData);
 
     return new Response(
       JSON.stringify(channelData),
@@ -79,29 +98,29 @@ serve(async (req) => {
   } catch (error) {
     console.error("Error in edge function:", error);
     
-    // Check for specific YouTube API errors
-    if (error.response?.error?.message) {
-      return new Response(
-        JSON.stringify({ 
-          error: "YouTube API error", 
-          details: error.response.error.message 
-        }),
-        { 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 400 
-        }
-      );
+    let status = 500;
+    let message = error.message || "An unexpected error occurred";
+    
+    // YouTube API specific error handling
+    if (error.response?.error) {
+      status = error.response.error.code || 400;
+      message = error.response.error.message || message;
+      
+      if (message.includes("quota")) {
+        message = "YouTube API quota exceeded. Please try again later.";
+      } else if (message.includes("403")) {
+        message = "Access to YouTube API denied. Please check API key configuration.";
+      }
     }
 
-    // Return a structured error response
     return new Response(
       JSON.stringify({ 
-        error: error.message || "An unexpected error occurred",
-        details: error.stack
+        error: message,
+        details: error.stack || ''
       }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: error.status || 500 
+        status 
       }
     );
   }
