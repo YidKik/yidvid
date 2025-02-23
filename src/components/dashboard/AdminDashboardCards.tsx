@@ -1,8 +1,8 @@
+
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Users, Video, MessageSquare, Tv, Database, Film, Mail, Grid3X3, Flag, Bell } from "lucide-react";
+import { Users, Video, MessageSquare, Tv, Database, Film, Mail, Grid3X3, Flag, Bell, LayoutDashboard } from "lucide-react";
 import { DashboardStats, AdminNotification } from "@/types/dashboard";
 
 interface AdminDashboardCardsProps {
@@ -45,6 +45,14 @@ export const AdminDashboardCards = ({ stats, notifications }: AdminDashboardCard
       notifications: getNotificationCount("new_comment"),
       bgColor: "bg-[#FEF7CD]",
       iconColor: "text-yellow-600"
+    },
+    {
+      title: "Layout Customization",
+      description: "Customize website layout and sections",
+      icon: <LayoutDashboard className="h-7 w-7" />,
+      onClick: () => navigate("/admin/layout"),
+      bgColor: "bg-[#E2F5EA]",
+      iconColor: "text-emerald-600"
     },
     {
       title: "Channel Requests",
