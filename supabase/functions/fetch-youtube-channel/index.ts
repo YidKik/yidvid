@@ -13,9 +13,8 @@ serve(async (req) => {
   }
 
   try {
-    let { channelId } = await req.json();
-    console.log('Received channel input:', channelId);
-
+    const { channelId } = await req.json();
+    
     if (!channelId) {
       throw new Error('Channel ID is required');
     }
@@ -25,60 +24,16 @@ serve(async (req) => {
       throw new Error('YouTube API key not configured');
     }
 
-    // Clean up channel ID
-    channelId = channelId.trim();
-    
-    // Handle different URL formats
-    if (channelId.includes('youtube.com')) {
-      const urlPatterns = [
-        /(?:\/channel\/)([^\/\s?]+)/,  // /channel/ID
-        /(?:\/c\/)([^\/\s?]+)/,        // /c/name
-        /(?:\/@)([^\/\s?]+)/           // @handle
-      ];
-
-      for (const pattern of urlPatterns) {
-        const match = channelId.match(pattern);
-        if (match && match[1]) {
-          channelId = match[1];
-          break;
-        }
-      }
-    }
-
-    // Remove @ if it's a handle
-    channelId = channelId.replace(/^@/, '');
-    console.log('Processed channel ID:', channelId);
-
-    // First try to get channel directly
-    let apiUrl = `https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${channelId}&key=${YOUTUBE_API_KEY}`;
-    let response = await fetch(apiUrl);
-    let data = await response.json();
-
-    // If no results, try searching by username/handle
-    if (!data.items?.length) {
-      console.log('No direct match, trying search...');
-      apiUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=channel&q=${channelId}&key=${YOUTUBE_API_KEY}`;
-      response = await fetch(apiUrl);
-      data = await response.json();
-
-      if (!data.items?.length) {
-        throw new Error('Channel not found');
-      }
-
-      // Get the actual channel data
-      const foundChannelId = data.items[0].id.channelId;
-      apiUrl = `https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${foundChannelId}&key=${YOUTUBE_API_KEY}`;
-      response = await fetch(apiUrl);
-      data = await response.json();
-    }
+    // Get channel info from YouTube
+    const apiUrl = `https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${channelId}&key=${YOUTUBE_API_KEY}`;
+    const response = await fetch(apiUrl);
+    const data = await response.json();
 
     if (!data.items?.[0]) {
-      throw new Error('Could not retrieve channel information');
+      throw new Error('Channel not found');
     }
 
     const channel = data.items[0];
-    console.log('Found channel:', channel.snippet.title);
-
     const channelInfo = {
       channel_id: channel.id,
       title: channel.snippet.title,
@@ -87,6 +42,7 @@ serve(async (req) => {
       default_category: 'other'
     };
 
+    // Save to database
     const supabaseUrl = Deno.env.get('SUPABASE_URL');
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
     
@@ -95,39 +51,26 @@ serve(async (req) => {
     }
 
     const supabase = createClient(supabaseUrl, supabaseKey);
-    
-    // Check if channel already exists
-    const { data: existingChannel } = await supabase
-      .from('youtube_channels')
-      .select('channel_id')
-      .eq('channel_id', channel.id)
-      .maybeSingle();
 
-    if (existingChannel) {
-      throw new Error('This channel has already been added');
-    }
-
-    // Insert new channel
     const { error: insertError } = await supabase
       .from('youtube_channels')
       .insert([channelInfo]);
 
     if (insertError) {
-      console.error('Database insertion error:', insertError);
       throw new Error('Failed to save channel to database');
     }
 
-    console.log('Successfully added channel:', channelInfo.title);
     return new Response(
       JSON.stringify(channelInfo),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
   } catch (error) {
-    console.error('Function error:', error);
     return new Response(
       JSON.stringify({ error: error.message || 'An unexpected error occurred' }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, 
+        status: 400 
+      }
     );
   }
 });

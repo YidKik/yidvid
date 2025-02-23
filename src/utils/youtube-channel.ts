@@ -21,19 +21,46 @@ export const checkAdminStatus = async () => {
   return true;
 };
 
+export const extractChannelId = (input: string): string => {
+  let channelId = input.trim();
+  
+  if (channelId.includes('youtube.com')) {
+    // Handle channel URLs
+    const urlMatch = channelId.match(/(?:channel\/|c\/|@)([\w-]+)/);
+    if (urlMatch && urlMatch[1]) {
+      channelId = urlMatch[1];
+    }
+  }
+  
+  // Remove @ from handles
+  channelId = channelId.replace(/^@/, '');
+  
+  return channelId;
+};
+
 export const addChannel = async (channelInput: string) => {
   await checkAdminStatus();
+  
+  const channelId = extractChannelId(channelInput);
+  
+  // Check if channel already exists
+  const { data: existingChannel } = await supabase
+    .from('youtube_channels')
+    .select('channel_id')
+    .eq('channel_id', channelId)
+    .single();
 
-  console.log('Adding channel:', channelInput);
-  const { data, error } = await supabase.functions.invoke('fetch-youtube-channel', {
-    body: { channelId: channelInput }
-  });
-
-  if (error || !data) {
-    console.error('Error from edge function:', error);
-    throw new Error(error?.message || 'Failed to add channel');
+  if (existingChannel) {
+    throw new Error('This channel has already been added');
   }
 
-  console.log('Channel added successfully:', data);
+  const { data, error } = await supabase.functions.invoke('fetch-youtube-channel', {
+    body: { channelId }
+  });
+
+  if (error) {
+    throw error;
+  }
+
   return data;
 };
