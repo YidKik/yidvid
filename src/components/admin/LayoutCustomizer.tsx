@@ -26,18 +26,44 @@ export const LayoutCustomizer = () => {
       }
       
       // Transform the raw data to ensure proper typing
-      const transformedData: LayoutConfig[] = (data || []).map(section => ({
-        ...section,
-        spacing: section.spacing || {
+      const transformedData: LayoutConfig[] = (data || []).map(section => {
+        // Ensure spacing has the correct structure
+        const defaultSpacing = {
           marginTop: 'mt-0',
           marginBottom: 'mb-0',
           padding: 'p-0'
-        },
-        visibility: section.visibility || {
+        };
+
+        const rawSpacing = section.spacing as any;
+        const spacing = {
+          marginTop: typeof rawSpacing?.marginTop === 'string' ? rawSpacing.marginTop : defaultSpacing.marginTop,
+          marginBottom: typeof rawSpacing?.marginBottom === 'string' ? rawSpacing.marginBottom : defaultSpacing.marginBottom,
+          padding: typeof rawSpacing?.padding === 'string' ? rawSpacing.padding : defaultSpacing.padding
+        };
+
+        // Ensure visibility has the correct structure
+        const defaultVisibility = {
           mobile: true,
           desktop: true
-        }
-      }));
+        };
+
+        const rawVisibility = section.visibility as any;
+        const visibility = {
+          mobile: typeof rawVisibility?.mobile === 'boolean' ? rawVisibility.mobile : defaultVisibility.mobile,
+          desktop: typeof rawVisibility?.desktop === 'boolean' ? rawVisibility.desktop : defaultVisibility.desktop
+        };
+
+        return {
+          id: section.id,
+          name: section.name,
+          mobile_order: section.mobile_order,
+          desktop_order: section.desktop_order,
+          spacing,
+          visibility,
+          created_at: section.created_at,
+          updated_at: section.updated_at
+        };
+      });
 
       setSections(transformedData);
       console.log('Loaded sections:', transformedData); // Debug log
