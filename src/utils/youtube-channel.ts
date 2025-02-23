@@ -2,6 +2,9 @@
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
+// Define the anon key as a constant since it's already in the client file
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1aW5ja3R2c2l1enRzeGN1cWZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY0ODgzNzcsImV4cCI6MjA1MjA2NDM3N30.zbReqHoAR33QoCi_wqNp8AtNofTX3JebM7jvjFAWbMg";
+
 export const checkAdminStatus = async () => {
   const { data: { session } } = await supabase.auth.getSession();
   
@@ -71,12 +74,13 @@ export const addChannel = async (channelInput: string) => {
     // Get the current session's access token
     const { data: { session } } = await supabase.auth.getSession();
 
-    // Call edge function to add channel with proper authorization
+    // Call edge function to add channel with proper authorization and API key
     console.log('Calling edge function to fetch channel data...');
     const { data, error } = await supabase.functions.invoke('fetch-youtube-channel', {
       body: { channelId },
       headers: {
-        Authorization: `Bearer ${session?.access_token}`
+        Authorization: `Bearer ${session?.access_token}`,
+        apikey: SUPABASE_ANON_KEY
       }
     });
 
