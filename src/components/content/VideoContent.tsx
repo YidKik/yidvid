@@ -41,7 +41,7 @@ export const VideoContent = ({ videos, isLoading }: VideoContentProps) => {
   if (isMobile) {
     return (
       <div className="space-y-4">
-        <div className="mt-2">
+        <div className="mt-0"> {/* Removed mt-2 to move content up */}
           <VideoGrid
             videos={displayVideos}
             maxVideos={displayVideos.length}
@@ -51,7 +51,7 @@ export const VideoContent = ({ videos, isLoading }: VideoContentProps) => {
           />
 
           {sortedVideos.length > 4 && (
-            <div className="px-2 mt-4">
+            <div className="px-2 mt-3"> {/* Reduced mt-4 to mt-3 for tighter spacing */}
               <VideoGridPagination
                 showAll={showMoreMobile}
                 currentPage={currentPage}
@@ -69,13 +69,11 @@ export const VideoContent = ({ videos, isLoading }: VideoContentProps) => {
           )}
         </div>
 
-        {sortedVideos.length > 0 && (
-          <div className="mt-6 px-2">
-            <MostViewedVideos videos={sortedVideos} />
-          </div>
-        )}
+        <div className="mt-4"> {/* Reduced mt-6 to mt-4 */}
+          <MostViewedVideos videos={sortedVideos} />
+        </div>
         
-        <div className="mt-6 px-2 pb-20">
+        <div className="mt-4 px-2 pb-20"> {/* Reduced mt-6 to mt-4 */}
           <ChannelsGrid onError={() => {
             console.error('Channel grid error');
           }} />
