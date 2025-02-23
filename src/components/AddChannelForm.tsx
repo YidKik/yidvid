@@ -42,7 +42,7 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
       
       // Handle @username format
       if (cleaned.startsWith('@')) {
-        return cleaned;
+        return cleaned.substring(1); // Remove @ symbol
       }
       
       // Handle direct channel IDs
@@ -57,6 +57,97 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
     }
   };
 
+  const checkAdminStatus = async () => {
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    
+    if (sessionError || !session?.user?.id) {
+      throw new Error("You must be signed in to add channels");
+    }
+
+    const { data: profile, error: profileError } = await supabase
+      .from("profiles")
+      .select("is_admin")
+      .eq("id", session.user.id)
+      .single();
+
+    if (profileError || !profile?.is_admin) {
+      throw new Error("You don't have permission to add channels");
+    }
+
+    return true;
+  };
+
+  const checkExistingChannel = async (processedChannelId: string) => {
+    const { data: existingChannel, error: checkError } = await supabase
+      .from("youtube_channels")
+      .select("title, channel_id")
+      .eq("channel_id", processedChannelId)
+      .is("deleted_at", null)
+      .maybeSingle();
+
+    if (checkError) {
+      console.error("Error checking existing channel:", checkError);
+      throw new Error("Failed to check if channel exists");
+    }
+
+    if (existingChannel) {
+      throw new Error(`Channel "${existingChannel.title}" has already been added`);
+    }
+  };
+
+  const fetchChannelDetails = async (processedChannelId: string) => {
+    console.log("Calling fetch-youtube-channel function with:", processedChannelId);
+    
+    const { data, error } = await supabase.functions.invoke('fetch-youtube-channel', {
+      body: { channelId: processedChannelId }
+    });
+
+    console.log("Response from fetch-youtube-channel:", { data, error });
+    
+    if (error) {
+      console.error("Error fetching channel:", error);
+      // Parse error message
+      if (error.message?.includes("quota")) {
+        throw new Error("YouTube API quota exceeded. Please try again later.");
+      } else if (error.message?.includes("404")) {
+        throw new Error("Could not find a channel with the provided ID. Please check the URL or ID and try again.");
+      } else {
+        throw new Error(error.message || "Failed to fetch channel details");
+      }
+    }
+
+    if (!data) {
+      throw new Error("Could not find a channel with the provided ID");
+    }
+
+    return data;
+  };
+
+  const addChannelToDatabase = async (data: any) => {
+    const channelData: YoutubeChannelsTable["Insert"] = {
+      channel_id: data.channelId,
+      title: data.title,
+      description: data.description,
+      thumbnail_url: data.thumbnailUrl,
+      default_category: data.default_category || 'other'
+    };
+
+    const { error: insertError } = await supabase
+      .from("youtube_channels")
+      .insert(channelData);
+
+    if (insertError) {
+      console.error("Error adding channel:", insertError);
+      if (insertError.code === '23505') {
+        throw new Error("This channel has already been added to your dashboard");
+      } else {
+        throw new Error("Failed to add the channel");
+      }
+    }
+
+    return data.title;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!channelId) {
@@ -64,98 +155,28 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
       return;
     }
 
-    const processedChannelId = validateChannelInput(channelId);
-    console.log("Processing channel ID:", processedChannelId);
-
     setIsFetchingChannel(true);
+    setIsAddingChannel(false);
+
     try {
-      // First check if admin
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      
-      if (sessionError || !session?.user?.id) {
-        toast.error("You must be signed in to add channels");
-        return;
-      }
+      const processedChannelId = validateChannelInput(channelId);
+      console.log("Processing channel ID:", processedChannelId);
 
-      const { data: profile, error: profileError } = await supabase
-        .from("profiles")
-        .select("is_admin")
-        .eq("id", session.user.id)
-        .single();
+      // Step 1: Check admin status
+      await checkAdminStatus();
 
-      if (profileError || !profile?.is_admin) {
-        toast.error("You don't have permission to add channels");
-        return;
-      }
+      // Step 2: Check for existing channel
+      await checkExistingChannel(processedChannelId);
 
-      // Check if channel already exists
-      const { data: existingChannel, error: checkError } = await supabase
-        .from("youtube_channels")
-        .select("title, channel_id")
-        .eq("channel_id", processedChannelId)
-        .is("deleted_at", null)
-        .maybeSingle();
+      // Step 3: Fetch channel details
+      const channelDetails = await fetchChannelDetails(processedChannelId);
 
-      if (checkError) {
-        console.error("Error checking existing channel:", checkError);
-        toast.error("Failed to check if channel exists");
-        return;
-      }
-
-      if (existingChannel) {
-        toast.error(`Channel "${existingChannel.title}" has already been added to your dashboard`);
-        return;
-      }
-
-      // Fetch channel details from YouTube API
-      console.log("Calling fetch-youtube-channel function with:", processedChannelId);
-      
-      const { data, error } = await supabase.functions.invoke('fetch-youtube-channel', {
-        body: { channelId: processedChannelId }
-      });
-
-      console.log("Response from fetch-youtube-channel:", { data, error });
-      
-      if (error) {
-        console.error("Error fetching channel:", error);
-        if (error.message.includes("404")) {
-          toast.error("Could not find a channel with the provided ID. Please check the URL or ID and try again.");
-        } else {
-          toast.error(error.message || "Failed to fetch channel details");
-        }
-        return;
-      }
-
-      if (!data) {
-        toast.error("Could not find a channel with the provided ID");
-        return;
-      }
-
+      // Step 4: Add channel to database
       setIsAddingChannel(true);
+      const channelTitle = await addChannelToDatabase(channelDetails);
 
-      const channelData: YoutubeChannelsTable["Insert"] = {
-        channel_id: data.channelId,
-        title: data.title,
-        description: data.description,
-        thumbnail_url: data.thumbnailUrl,
-        default_category: data.default_category || 'other'
-      };
-
-      const { error: insertError } = await supabase
-        .from("youtube_channels")
-        .insert(channelData);
-
-      if (insertError) {
-        console.error("Error adding channel:", insertError);
-        if (insertError.code === '23505') {
-          toast.error("This channel has already been added to your dashboard");
-        } else {
-          toast.error("Failed to add the channel");
-        }
-        return;
-      }
-
-      toast.success(`Successfully added ${data.title}`);
+      // Success!
+      toast.success(`Successfully added ${channelTitle}`);
       setChannelId("");
       onSuccess?.();
       onClose?.();
