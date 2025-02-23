@@ -18,6 +18,30 @@ interface Video {
 export const useVideos = () => {
   const queryClient = useQueryClient();
 
+  // Set up real-time subscription
+  useEffect(() => {
+    const channel = supabase
+      .channel('youtube_videos_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'youtube_videos'
+        },
+        (payload) => {
+          console.log('Real-time update received:', payload);
+          // Invalidate and refetch when we get a real-time update
+          queryClient.invalidateQueries({ queryKey: ["youtube_videos"] });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [queryClient]);
+
   const { data, isLoading, isFetching, error, refetch } = useQuery<Video[]>({
     queryKey: ["youtube_videos"],
     queryFn: async () => {
@@ -97,10 +121,6 @@ export const useVideos = () => {
         }));
 
         console.log(`Successfully processed ${formattedData.length} videos`);
-
-        // Cache the formatted data
-        queryClient.setQueryData(["youtube_videos_grid"], formattedData);
-        
         return formattedData;
 
       } catch (error: any) {
@@ -118,7 +138,8 @@ export const useVideos = () => {
         throw error;
       }
     },
-    staleTime: 0, // Always fetch fresh data
+    refetchInterval: 30000, // Refetch every 30 seconds
+    staleTime: 25000, // Consider data stale after 25 seconds
     gcTime: 1000 * 60 * 30, // Cache data for 30 minutes
     retry: (failureCount, error: any) => {
       // Don't retry on quota exceeded
@@ -128,11 +149,6 @@ export const useVideos = () => {
     },
     retryDelay: (attemptIndex) => Math.min(1000 * (2 ** attemptIndex), 30000), // Exponential backoff
   });
-
-  // Force an immediate refetch when the component mounts
-  useEffect(() => {
-    refetch();
-  }, [refetch]);
 
   return {
     data: data || [],
