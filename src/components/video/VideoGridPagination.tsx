@@ -55,9 +55,9 @@ export const VideoGridPagination = ({
         }`}
       >
         <ChevronLeft className={isMobile ? "h-3 w-3" : "h-4 w-4"} />
-        <span className={`absolute left-1/2 -translate-x-1/2 text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200 ${
-          isMobile ? "-bottom-4 text-[8px]" : "-bottom-6"
-        }`}>
+        <span className={`absolute left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap ${
+          isMobile ? "-bottom-3 text-[7px]" : "-bottom-6 text-xs"
+        } font-medium`}>
           Previous page
         </span>
       </Button>
@@ -72,9 +72,9 @@ export const VideoGridPagination = ({
         }`}
       >
         <ChevronRight className={isMobile ? "h-3 w-3" : "h-4 w-4"} />
-        <span className={`absolute left-1/2 -translate-x-1/2 text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200 ${
-          isMobile ? "-bottom-4 text-[8px]" : "-bottom-6"
-        }`}>
+        <span className={`absolute left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap ${
+          isMobile ? "-bottom-3 text-[7px]" : "-bottom-6 text-xs"
+        } font-medium`}>
           Next page
         </span>
       </Button>
