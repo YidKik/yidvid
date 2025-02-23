@@ -50,8 +50,11 @@ export const VideoCard = ({
         />
       </div>
       {!hideInfo && (
-        <div className="flex gap-2 w-full">
-          {channelThumbnail && (
+        <div className={cn(
+          "flex gap-2 w-full",
+          isMobile && "flex-col gap-0.5"
+        )}>
+          {channelThumbnail && !isMobile && (
             <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
               <img
                 src={channelThumbnail}
@@ -62,7 +65,10 @@ export const VideoCard = ({
             </div>
           )}
           <div className="flex-1 min-w-0 overflow-hidden">
-            <h3 className="font-medium line-clamp-2 text-xs leading-4">
+            <h3 className={cn(
+              "font-medium line-clamp-2",
+              isMobile ? "text-xs leading-4" : "text-sm leading-5"
+            )}>
               {title}
             </h3>
             <p className="text-muted-foreground text-[11px] mt-0.5 truncate">

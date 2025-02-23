@@ -45,13 +45,13 @@ export const VideoContent = ({ videos, isLoading }: VideoContentProps) => {
           <VideoGrid
             videos={displayVideos}
             maxVideos={displayVideos.length}
-            rowSize={1}
+            rowSize={2}
             isLoading={isLoading}
-            className="px-3 space-y-4"
+            className="grid-cols-2 gap-3 px-2"
           />
 
           {sortedVideos.length > 4 && (
-            <div className="px-3">
+            <div className="px-2 mt-4">
               <VideoGridPagination
                 showAll={showMoreMobile}
                 currentPage={currentPage}
@@ -70,12 +70,12 @@ export const VideoContent = ({ videos, isLoading }: VideoContentProps) => {
         </div>
 
         {sortedVideos.length > 0 && (
-          <div className="mt-6 px-3">
+          <div className="mt-6 px-2">
             <MostViewedVideos videos={sortedVideos} />
           </div>
         )}
         
-        <div className="mt-6 px-3">
+        <div className="mt-6 px-2 pb-20">
           <ChannelsGrid onError={() => {
             console.error('Channel grid error');
           }} />

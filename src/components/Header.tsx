@@ -34,9 +34,9 @@ export const Header = () => {
   };
 
   return (
-    <header className={`sticky top-0 z-50 w-full border-b ${isMobile && isSearchExpanded ? 'bg-white' : 'bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60'}`}>
+    <header className={`sticky top-0 z-50 w-full border-b ${isMobile ? 'h-14 bg-white' : 'bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60'}`}>
       <div className="container mx-auto px-0">
-        <div className="flex h-10 md:h-14 items-center relative">
+        <div className="flex h-14 items-center relative">
           <AnimatePresence mode="wait">
             {isMobile && isSearchExpanded ? (
               <motion.div 
@@ -47,7 +47,7 @@ export const Header = () => {
                 transition={{ duration: 0.2 }}
               >
                 <motion.div 
-                  className="w-full max-w-[80%] mx-auto"
+                  className="w-full max-w-[90%] mx-auto"
                   initial={{ scale: 0.8, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   exit={{ scale: 0.8, opacity: 0 }}
@@ -65,7 +65,7 @@ export const Header = () => {
               </motion.div>
             ) : (
               <>
-                <div className="flex-none">
+                <div className="flex-none pl-2">
                   <HeaderLogo 
                     isMobile={isMobile}
                     isMobileMenuOpen={isMobileMenuOpen}
@@ -81,7 +81,7 @@ export const Header = () => {
                   </div>
                 )}
 
-                <div className="flex-none">
+                <div className="flex-none pr-2">
                   <HeaderActions 
                     isMobile={isMobile}
                     isSearchExpanded={isSearchExpanded}
