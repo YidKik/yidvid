@@ -105,21 +105,21 @@ export const CategorySection = () => {
   }
 
   return (
-    <div className="relative w-full py-6 md:py-8">
-      <div className="max-w-screen-sm md:max-w-[1400px] mx-auto px-4 md:px-6">
-        <div className="overflow-hidden relative h-[160px] md:h-[200px]">
+    <div className="relative w-full py-2 md:py-8">
+      <div className="max-w-screen-sm md:max-w-[1400px] mx-auto px-2 md:px-6">
+        <div className="overflow-hidden relative h-[80px] md:h-[200px]">
           <div 
-            className="absolute left-0 top-0 w-16 md:w-48 h-full z-10" 
+            className="absolute left-0 top-0 w-8 md:w-48 h-full z-10" 
             style={{
               background: `linear-gradient(to right, ${colors.backgroundColor}, ${colors.backgroundColor}00)`
             }}
           />
           
           <motion.div
-            className="flex gap-3 md:gap-8 cursor-grab active:cursor-grabbing"
+            className="flex gap-2 md:gap-8 cursor-grab active:cursor-grabbing"
             drag="x"
             dragConstraints={{
-              left: -(infiniteCategories.length * (isMobile ? 180 : 340)),
+              left: -(infiniteCategories.length * (isMobile ? 120 : 340)),
               right: 0
             }}
             dragElastic={0.2}
@@ -144,7 +144,7 @@ export const CategorySection = () => {
             {infiniteCategories.map((category, index) => (
               <div
                 key={`${category.id}-${index}`}
-                className="w-[140px] md:w-[320px] flex-shrink-0 relative"
+                className="w-[100px] md:w-[320px] flex-shrink-0 relative"
               >
                 <CategoryCard
                   id={category.id}
@@ -157,7 +157,7 @@ export const CategorySection = () => {
           </motion.div>
 
           <div 
-            className="absolute right-0 top-0 w-16 md:w-48 h-full z-10"
+            className="absolute right-0 top-0 w-8 md:w-48 h-full z-10"
             style={{
               background: `linear-gradient(to left, ${colors.backgroundColor}, ${colors.backgroundColor}00)`
             }}

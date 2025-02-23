@@ -51,7 +51,7 @@ const MainContent = () => {
                 isMusic={isMusic} 
                 onToggle={() => setIsMusic(!isMusic)} 
               />
-              {!isMobile && <CategorySection />}
+              <CategorySection />
             </div>
           </div>
 
@@ -61,7 +61,7 @@ const MainContent = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.3 }}
-            className={isMobile ? 'mt-0' : ''}
+            className={isMobile ? 'mt-2' : ''}
           >
             {!isMusic ? (
               <VideoContent videos={videos} isLoading={isLoading} />
