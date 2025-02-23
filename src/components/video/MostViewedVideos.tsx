@@ -24,9 +24,13 @@ export const MostViewedVideos = ({
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [nextVideos, setNextVideos] = useState<typeof videos>([]);
   const isMobile = useIsMobile();
-  const videosPerPage = isMobile ? 2 : 4; // Changed to show 2 videos on mobile
+  const videosPerPage = isMobile ? 2 : 4;
   const AUTO_SLIDE_INTERVAL = 8000;
-  const sortedVideos = [...videos].sort((a, b) => (b.views || 0) - (a.views || 0));
+  
+  // Sort videos by views in descending order and take only top 10
+  const sortedVideos = [...videos]
+    .sort((a, b) => (b.views || 0) - (a.views || 0))
+    .slice(0, 10);
 
   const handleNext = () => {
     if (!sortedVideos.length) return;
@@ -86,7 +90,7 @@ export const MostViewedVideos = ({
       <div className="bg-gradient-to-r from-[#F1F1F1] via-[#D3E4FD] to-[#F1F1F1] rounded-lg md:rounded-xl shadow-sm md:shadow-lg p-1.5 md:p-6">
         <div className="flex items-center gap-1.5 mb-1.5 md:mb-4 px-0.5 md:px-0">
           <h2 className="text-xs md:text-xl font-bold text-[#333333]">
-            Featured Videos
+            Most Watched
           </h2>
         </div>
 
