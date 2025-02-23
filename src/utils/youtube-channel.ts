@@ -68,12 +68,17 @@ export const addChannel = async (channelInput: string) => {
       throw new Error('This channel has already been added');
     }
 
-    // Call edge function to add channel with proper authorization
+    // Get the current session's access token and anon key
+    const { data: { session } } = await supabase.auth.getSession();
+    const anonKey = supabase.supabaseKey;
+
+    // Call edge function to add channel with proper authorization and API key
     console.log('Calling edge function to fetch channel data...');
     const { data, error } = await supabase.functions.invoke('fetch-youtube-channel', {
       body: { channelId },
       headers: {
-        Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
+        Authorization: `Bearer ${session?.access_token}`,
+        apikey: anonKey // Add the anon key as the apikey header
       }
     });
 
