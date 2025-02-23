@@ -38,7 +38,6 @@ export const MostViewedVideos = ({
     const nextIndex = currentIndex + videosPerPage >= sortedVideos.length ? 0 : currentIndex + videosPerPage;
     setCurrentIndex(nextIndex);
     
-    // Reset transition state after a short delay
     setTimeout(() => {
       setIsTransitioning(false);
     }, 300);
@@ -51,7 +50,6 @@ export const MostViewedVideos = ({
     const nextIndex = currentIndex - videosPerPage < 0 ? Math.max(0, sortedVideos.length - videosPerPage) : currentIndex - videosPerPage;
     setCurrentIndex(nextIndex);
     
-    // Reset transition state after a short delay
     setTimeout(() => {
       setIsTransitioning(false);
     }, 300);
@@ -90,7 +88,7 @@ export const MostViewedVideos = ({
           </h2>
         </div>
 
-        <div className="relative px-0.5 md:px-4">
+        <div className="relative px-0.5 md:px-4 overflow-hidden">
           {currentIndex > 0 && (
             <button 
               onClick={() => handleManualNavigation(handlePrevious)}
@@ -102,8 +100,13 @@ export const MostViewedVideos = ({
             </button>
           )}
 
-          <div className={`${isMobile ? "grid grid-cols-2 gap-3" : "grid grid-cols-4 gap-4"} transition-all duration-300 transform ${isTransitioning ? 'scale-95 opacity-80' : 'scale-100 opacity-100'}`}>
-            {displayVideos.map(video => (
+          <div 
+            className={`${isMobile ? "grid grid-cols-2 gap-3" : "grid grid-cols-4 gap-4"} transition-transform duration-300 ease-in-out`}
+            style={{
+              transform: `translateX(-${currentIndex * (isMobile ? 50 : 25)}%)`,
+            }}
+          >
+            {sortedVideos.map(video => (
               <div key={video.id} className="w-full">
                 <VideoCard {...video} hideInfo={true} />
               </div>
