@@ -40,7 +40,7 @@ export const VideoCard = ({
     <Link to={`/video/${routeId}`} className="block group w-full">
       <div className={cn(
         "relative rounded-lg overflow-hidden bg-muted shadow-sm hover:shadow-md transition-all duration-300",
-        isMobile ? "aspect-video w-full mb-0.5" : "aspect-video mb-2"
+        isMobile ? "aspect-video w-full mb-0" : "aspect-video mb-2"
       )}>
         <img
           src={thumbnail}
