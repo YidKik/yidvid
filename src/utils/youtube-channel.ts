@@ -2,55 +2,49 @@
 import { supabase } from "@/integrations/supabase/client";
 
 export const checkAdminStatus = async () => {
-  try {
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-    
-    if (sessionError || !session?.user?.id) {
-      throw new Error("You must be signed in to add channels");
-    }
-
-    const { data: profile, error: profileError } = await supabase
-      .from("profiles")
-      .select("is_admin")
-      .eq("id", session.user.id)
-      .single();
-
-    if (profileError) {
-      console.error("Error checking admin status:", profileError);
-      throw new Error("Could not verify admin status");
-    }
-
-    if (!profile?.is_admin) {
-      throw new Error("You don't have permission to add channels");
-    }
-
-    return true;
-  } catch (error) {
-    console.error("Admin check error:", error);
-    throw error;
+  const { data: { session } } = await supabase.auth.getSession();
+  
+  if (!session?.user?.id) {
+    throw new Error("You must be signed in to add channels");
   }
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("is_admin")
+    .eq("id", session.user.id)
+    .single();
+
+  if (!profile?.is_admin) {
+    throw new Error("You don't have permission to add channels");
+  }
+
+  return true;
 };
 
-export const addChannel = async (channelId: string) => {
-  try {
-    await checkAdminStatus();
-    
-    const { data, error } = await supabase.functions.invoke('fetch-youtube-channel', {
-      body: { channelId: channelId.trim() }
-    });
+export const addChannel = async (channelInput: string) => {
+  await checkAdminStatus();
 
-    if (error) {
-      console.error("Edge function error:", error);
-      throw new Error(error.message || "Failed to add channel");
+  // Extract channel ID from URL or handle
+  let channelId = channelInput.trim();
+  
+  // Handle YouTube URLs
+  if (channelId.includes('youtube.com')) {
+    const urlMatch = channelId.match(/(?:\/channel\/|\/c\/|@)([\w-]+)/);
+    if (urlMatch) {
+      channelId = urlMatch[1];
     }
+  }
+  
+  // Remove @ symbol if it's a handle
+  channelId = channelId.replace(/^@/, '');
 
-    if (!data) {
-      throw new Error("No response from server");
-    }
+  const { data, error } = await supabase.functions.invoke('fetch-youtube-channel', {
+    body: { channelId }
+  });
 
-    return data;
-  } catch (error) {
-    console.error("Channel addition error:", error);
+  if (error) {
     throw error;
   }
+
+  return data;
 };
