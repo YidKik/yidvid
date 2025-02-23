@@ -112,17 +112,27 @@ Deno.serve(async (req) => {
 
     // After successful channel insertion, trigger video fetch
     console.log('Fetching videos for new channel...')
-    const { error: videoFetchError } = await supabaseClient.functions.invoke('fetch-youtube-videos', {
-      body: { 
-        channels: [channel.id],
-        forceUpdate: true
+    
+    // Make a direct fetch call to the edge function with proper headers
+    const edgeResponse = await fetch(
+      `${Deno.env.get('SUPABASE_URL')}/functions/v1/fetch-youtube-videos`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${Deno.env.get('SUPABASE_ANON_KEY')}`,
+        },
+        body: JSON.stringify({
+          channels: [channel.id],
+          forceUpdate: true
+        })
       }
-    })
+    );
 
-    if (videoFetchError) {
-      console.error('Error fetching videos:', videoFetchError)
-      // Don't throw here, we still want to return the channel data
-      // Just log the error since the channel was successfully added
+    if (!edgeResponse.ok) {
+      console.error('Error fetching videos:', await edgeResponse.text());
+    } else {
+      console.log('Videos fetch initiated successfully');
     }
 
     return new Response(
