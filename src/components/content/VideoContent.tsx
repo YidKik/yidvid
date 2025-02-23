@@ -5,6 +5,8 @@ import { ChannelsGrid } from "@/components/youtube/ChannelsGrid";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { useState } from "react";
 import { VideoGridPagination } from "@/components/video/VideoGridPagination";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 
 interface Video {
   id: string;
@@ -44,6 +46,14 @@ export const VideoContent = ({ videos, isLoading }: VideoContentProps) => {
   if (isMobile) {
     return (
       <div className="space-y-4 -mt-2">
+        <Alert className="mb-4 mx-2">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>We're Aware of Video Loading Issues</AlertTitle>
+          <AlertDescription>
+            We're currently experiencing some technical difficulties with video fetching. Our team is working to resolve this as quickly as possible. Thank you for your patience.
+          </AlertDescription>
+        </Alert>
+
         <div>
           <VideoGrid
             videos={displayVideos}
@@ -88,6 +98,14 @@ export const VideoContent = ({ videos, isLoading }: VideoContentProps) => {
   // Desktop view
   return (
     <div className="space-y-6">
+      <Alert className="mb-4">
+        <AlertCircle className="h-4 w-4" />
+        <AlertTitle>We're Aware of Video Loading Issues</AlertTitle>
+        <AlertDescription>
+          We're currently experiencing some technical difficulties with video fetching. Our team is working to resolve this as quickly as possible. Thank you for your patience.
+        </AlertDescription>
+      </Alert>
+
       <div className="video-grid relative">
         <VideoGrid 
           videos={displayVideos}
