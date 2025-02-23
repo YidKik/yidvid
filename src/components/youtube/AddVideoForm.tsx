@@ -34,6 +34,21 @@ export const AddVideoForm = ({ onClose, onSuccess }: AddVideoFormProps) => {
         return;
       }
 
+      // First analyze the video content
+      const { data: analysisResult, error: analysisError } = await supabase.functions.invoke('analyze-video-content', {
+        body: {
+          title: values.title,
+          description: `Channel: ${values.channelName}`,
+          thumbnail: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`
+        }
+      });
+
+      if (analysisError || !analysisResult?.approved) {
+        console.error("Content moderation failed:", analysisError || analysisResult);
+        toast.error("Video content does not meet community guidelines");
+        return;
+      }
+
       // First, check if channel exists
       const { data: channel, error: channelError } = await supabase
         .from("youtube_channels")

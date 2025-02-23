@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
@@ -149,6 +148,37 @@ serve(async (req) => {
 
     const channel = data.items[0];
     console.log('Successfully found channel:', channel.snippet.title);
+
+    // Before inserting the channel, analyze recent videos
+    const videosUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channel.id}&order=date&maxResults=5&type=video&key=${YOUTUBE_API_KEY}`;
+    const videosResponse = await fetch(videosUrl);
+    const videosData = await videosResponse.json();
+
+    if (videosData.error) {
+      console.error('Error fetching videos:', videosData.error);
+      throw new Error('Failed to analyze channel content');
+    }
+
+    // Analyze each video's content
+    for (const item of videosData.items || []) {
+      const { data: analysisResult } = await fetch('https://euincktvsiuztsxcuqfd.functions.supabase.co/analyze-video-content', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${Deno.env.get('SUPABASE_ANON_KEY')}`,
+        },
+        body: JSON.stringify({
+          title: item.snippet.title,
+          description: item.snippet.description,
+          thumbnail: item.snippet.thumbnails?.high?.url
+        })
+      }).then(res => res.json());
+
+      if (!analysisResult.approved) {
+        console.log('Content moderation failed:', analysisResult);
+        throw new Error('Channel contains inappropriate content or references to women');
+      }
+    }
 
     // Initialize Supabase client
     const supabaseUrl = Deno.env.get('SUPABASE_URL');
