@@ -1,30 +1,9 @@
 
 import { useState, useEffect } from 'react';
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-
-interface LayoutConfig {
-  id: string;
-  name: string;
-  mobile_order: number;
-  desktop_order: number;
-  spacing: {
-    marginTop: string;
-    marginBottom: string;
-    padding: string;
-  };
-  visibility: {
-    mobile: boolean;
-    desktop: boolean;
-  };
-  created_at: string;
-  updated_at: string;
-}
+import { LayoutConfig, SpacingProperty, VisibilityDevice } from "./layout/types";
+import { SectionCard } from "./layout/SectionCard";
 
 export const LayoutCustomizer = () => {
   const [sections, setSections] = useState<LayoutConfig[]>([]);
@@ -42,7 +21,15 @@ export const LayoutCustomizer = () => {
         .order('mobile_order', { ascending: true });
 
       if (error) throw error;
-      setSections(data || []);
+      
+      // Transform the JSON data to match our LayoutConfig type
+      const transformedData = (data || []).map(section => ({
+        ...section,
+        spacing: section.spacing as LayoutConfig['spacing'],
+        visibility: section.visibility as LayoutConfig['visibility']
+      }));
+
+      setSections(transformedData);
     } catch (error) {
       console.error('Error loading layout config:', error);
       toast.error('Failed to load layout configuration');
@@ -77,7 +64,7 @@ export const LayoutCustomizer = () => {
     });
   };
 
-  const handleSpacingChange = (sectionId: string, property: keyof LayoutConfig['spacing'], value: string) => {
+  const handleSpacingChange = (sectionId: string, property: SpacingProperty, value: string) => {
     const section = sections.find(s => s.id === sectionId);
     if (!section) return;
 
@@ -89,7 +76,7 @@ export const LayoutCustomizer = () => {
     });
   };
 
-  const handleVisibilityChange = (sectionId: string, device: keyof LayoutConfig['visibility']) => {
+  const handleVisibilityChange = (sectionId: string, device: VisibilityDevice) => {
     const section = sections.find(s => s.id === sectionId);
     if (!section) return;
 
@@ -113,91 +100,13 @@ export const LayoutCustomizer = () => {
 
       <div className="grid gap-6">
         {sections.map((section) => (
-          <Card key={section.id} className="p-6">
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">{section.name}</h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Mobile Order</Label>
-                  <Input 
-                    type="number" 
-                    value={section.mobile_order}
-                    onChange={(e) => handleOrderChange(section.id, 'mobile', e.target.value)}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Desktop Order</Label>
-                  <Input 
-                    type="number" 
-                    value={section.desktop_order}
-                    onChange={(e) => handleOrderChange(section.id, 'desktop', e.target.value)}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Top Margin</Label>
-                  <Select 
-                    onValueChange={(value) => handleSpacingChange(section.id, 'marginTop', value)} 
-                    defaultValue={section.spacing.marginTop}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select margin" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectItem value="0">None</SelectItem>
-                        <SelectItem value="mt-2">Small</SelectItem>
-                        <SelectItem value="mt-4">Medium</SelectItem>
-                        <SelectItem value="mt-6">Large</SelectItem>
-                        <SelectItem value="mt-8">Extra Large</SelectItem>
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Bottom Margin</Label>
-                  <Select 
-                    onValueChange={(value) => handleSpacingChange(section.id, 'marginBottom', value)}
-                    defaultValue={section.spacing.marginBottom}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select margin" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectItem value="0">None</SelectItem>
-                        <SelectItem value="mb-2">Small</SelectItem>
-                        <SelectItem value="mb-4">Medium</SelectItem>
-                        <SelectItem value="mb-6">Large</SelectItem>
-                        <SelectItem value="mb-8">Extra Large</SelectItem>
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="col-span-2">
-                  <Label>Visibility</Label>
-                  <div className="flex gap-4 mt-2">
-                    <Button
-                      variant={section.visibility.mobile ? "default" : "outline"}
-                      onClick={() => handleVisibilityChange(section.id, 'mobile')}
-                    >
-                      Show on Mobile
-                    </Button>
-                    <Button
-                      variant={section.visibility.desktop ? "default" : "outline"}
-                      onClick={() => handleVisibilityChange(section.id, 'desktop')}
-                    >
-                      Show on Desktop
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </Card>
+          <SectionCard
+            key={section.id}
+            section={section}
+            onOrderChange={handleOrderChange}
+            onSpacingChange={handleSpacingChange}
+            onVisibilityChange={handleVisibilityChange}
+          />
         ))}
       </div>
     </div>
