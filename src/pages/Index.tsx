@@ -17,12 +17,30 @@ import { GlobalNotification } from "@/components/notifications/GlobalNotificatio
 import { WelcomeOverlay } from "@/components/welcome/WelcomeOverlay";
 import { getPageTitle, DEFAULT_META_DESCRIPTION, DEFAULT_META_KEYWORDS, DEFAULT_META_IMAGE } from "@/utils/pageTitle";
 import { Helmet } from "react-helmet";
+import { MostViewedVideos } from "@/components/video/MostViewedVideos";
+import { useQuery } from "@tanstack/react-query";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Youtube } from "lucide-react";
 
 const MainContent = () => {
   const [isMusic, setIsMusic] = useState(false);
   const { data: videos, isLoading } = useVideos();
   const isMobile = useIsMobile();
   const { session, handleLogout } = useSessionManager();
+
+  // Fetch channels
+  const { data: channels } = useQuery({
+    queryKey: ["youtube_channels"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("youtube_channels")
+        .select("*")
+        .is("deleted_at", null);
+      
+      if (error) throw error;
+      return data || [];
+    }
+  });
 
   const markNotificationsAsRead = async () => {
     if (!session?.user?.id) return;
@@ -44,7 +62,7 @@ const MainContent = () => {
       <Header />
       <GlobalNotification />
       <main className="mt-0 mx-auto px-2 md:px-6 max-w-[1400px]">
-        <div className={`space-y-2 md:space-y-4`}>
+        <div className={`space-y-4 md:space-y-8`}>
           <div className="space-y-2">
             <div className="flex flex-col items-center">
               <ContentToggle 
@@ -54,6 +72,10 @@ const MainContent = () => {
               <CategorySection />
             </div>
           </div>
+
+          {!isMusic && videos && videos.length > 0 && (
+            <MostViewedVideos videos={videos} />
+          )}
 
           <motion.div
             key={isMusic ? "music" : "videos"}
@@ -69,6 +91,30 @@ const MainContent = () => {
               <MusicSection />
             )}
           </motion.div>
+
+          {/* Channels Section */}
+          {channels && channels.length > 0 && (
+            <div className="mt-8 pb-8">
+              <h2 className="text-xl font-semibold mb-4 px-4">Featured Channels</h2>
+              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4 px-4">
+                {channels.map((channel) => (
+                  <div key={channel.id} className="flex flex-col items-center">
+                    <Avatar className="w-16 h-16 md:w-20 md:h-20">
+                      <AvatarImage
+                        src={channel.thumbnail_url}
+                        alt={channel.title}
+                        className="object-cover"
+                      />
+                      <AvatarFallback>
+                        <Youtube className="w-8 h-8 text-muted-foreground" />
+                      </AvatarFallback>
+                    </Avatar>
+                    <p className="mt-2 text-sm text-center line-clamp-2">{channel.title}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </main>
     </div>
