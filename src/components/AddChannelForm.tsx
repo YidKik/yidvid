@@ -17,7 +17,8 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!channelId.trim()) {
+    const trimmedId = channelId.trim();
+    if (!trimmedId) {
       toast.error("Please enter a channel ID or URL");
       return;
     }
@@ -25,13 +26,16 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
     setIsLoading(true);
 
     try {
-      const result = await addChannel(channelId);
-      toast.success(`Successfully added ${result.title}`);
+      console.log("Submitting channel ID:", trimmedId);
+      const result = await addChannel(trimmedId);
+      console.log("Add channel result:", result);
+      
+      toast.success("Channel added successfully!");
       setChannelId("");
       onSuccess?.();
       onClose?.();
     } catch (error: any) {
-      console.error("Error adding channel:", error);
+      console.error("Error in form submission:", error);
       toast.error(error.message || "Failed to add channel");
     } finally {
       setIsLoading(false);

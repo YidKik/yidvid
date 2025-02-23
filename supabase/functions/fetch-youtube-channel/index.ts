@@ -8,103 +8,82 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response(null, { 
-      headers: corsHeaders,
-      status: 200 
-    });
+    return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const YOUTUBE_API_KEY = Deno.env.get('YOUTUBE_API_KEY');
-    if (!YOUTUBE_API_KEY) {
-      throw new Error('Missing YouTube API key');
-    }
+    let { channelId } = await req.json();
+    console.log('Received channel ID:', channelId);
 
-    const { channelId } = await req.json();
     if (!channelId) {
       throw new Error('Channel ID is required');
     }
 
-    // Clean and validate the channel ID/URL
-    let cleanId = channelId.trim();
-    
-    // Handle URLs
-    if (cleanId.includes('youtube.com') || cleanId.includes('youtu.be')) {
-      try {
-        const url = new URL(cleanId);
-        if (url.pathname.includes('/channel/')) {
-          cleanId = url.pathname.split('/channel/')[1].split('/')[0];
-        } else if (url.pathname.includes('/@')) {
-          cleanId = url.pathname.split('/@')[1].split('/')[0];
-        } else if (url.pathname.includes('/c/')) {
-          cleanId = url.pathname.split('/c/')[1].split('/')[0];
-        }
-      } catch (e) {
-        console.error('Error parsing URL:', e);
+    // Extract channel ID from URL if needed
+    if (channelId.includes('youtube.com')) {
+      const match = channelId.match(/(?:\/channel\/|\/c\/|@)([\w-]+)/);
+      if (match) {
+        channelId = match[1];
       }
     }
     
-    // Remove @ symbol if present
-    cleanId = cleanId.replace(/^@/, '');
+    // Remove @ if present
+    channelId = channelId.replace(/^@/, '');
+    console.log('Processed channel ID:', channelId);
 
-    const apiUrl = `https://youtube.googleapis.com/youtube/v3/channels?part=snippet&id=${cleanId}&key=${YOUTUBE_API_KEY}`;
-    
-    const response = await fetch(apiUrl);
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.error?.message || 'Failed to fetch channel data');
+    const YOUTUBE_API_KEY = Deno.env.get('YOUTUBE_API_KEY');
+    if (!YOUTUBE_API_KEY) {
+      throw new Error('YouTube API key not configured');
     }
 
+    // Try to get channel by ID first
+    let apiUrl = `https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${channelId}&key=${YOUTUBE_API_KEY}`;
+    console.log('Fetching from:', apiUrl);
+    
+    let response = await fetch(apiUrl);
+    let data = await response.json();
+    console.log('API Response:', data);
+
+    // If no results, try searching
     if (!data.items?.length) {
-      // Try searching by username/handle
-      const searchUrl = `https://youtube.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(cleanId)}&type=channel&key=${YOUTUBE_API_KEY}`;
-      const searchResponse = await fetch(searchUrl);
-      const searchData = await searchResponse.json();
-
-      if (!searchResponse.ok) {
-        throw new Error(searchData.error?.message || 'Failed to search for channel');
-      }
-
-      if (!searchData.items?.length) {
+      console.log('No direct match, trying search...');
+      apiUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${channelId}&type=channel&key=${YOUTUBE_API_KEY}`;
+      response = await fetch(apiUrl);
+      data = await response.json();
+      
+      if (!data.items?.length) {
         throw new Error('Channel not found');
       }
 
-      // Get channel details using the found channel ID
-      const foundChannelId = searchData.items[0].id.channelId;
-      const channelResponse = await fetch(
-        `https://youtube.googleapis.com/youtube/v3/channels?part=snippet&id=${foundChannelId}&key=${YOUTUBE_API_KEY}`
-      );
-      const channelData = await channelResponse.json();
+      channelId = data.items[0].id.channelId;
+      apiUrl = `https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${channelId}&key=${YOUTUBE_API_KEY}`;
+      response = await fetch(apiUrl);
+      data = await response.json();
+    }
 
-      if (!channelResponse.ok || !channelData.items?.length) {
-        throw new Error('Could not fetch channel details');
-      }
-
-      data.items = channelData.items;
+    if (!data.items?.[0]) {
+      throw new Error('Could not find channel');
     }
 
     const channel = data.items[0];
     const channelInfo = {
-      channelId: channel.id,
+      channel_id: channel.id,
       title: channel.snippet.title,
       description: channel.snippet.description || '',
-      thumbnailUrl: channel.snippet.thumbnails?.default?.url || '',
+      thumbnail_url: channel.snippet.thumbnails?.default?.url || '',
       default_category: 'other'
     };
 
-    // Store in database
+    // Insert into database
     const supabaseUrl = Deno.env.get('SUPABASE_URL');
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
     
     if (!supabaseUrl || !supabaseKey) {
-      throw new Error('Missing database configuration');
+      throw new Error('Database configuration missing');
     }
 
     const supabase = createClient(supabaseUrl, supabaseKey);
-
     const { error: dbError } = await supabase
       .from('youtube_channels')
       .insert([channelInfo]);
@@ -114,7 +93,7 @@ serve(async (req) => {
       if (dbError.code === '23505') {
         throw new Error('This channel has already been added');
       }
-      throw new Error('Failed to save channel');
+      throw new Error('Failed to save channel to database');
     }
 
     return new Response(
@@ -129,17 +108,12 @@ serve(async (req) => {
     );
 
   } catch (error) {
-    console.error('Edge function error:', error);
+    console.error('Function error:', error);
     
     return new Response(
-      JSON.stringify({
-        error: error.message || 'An unexpected error occurred'
-      }),
+      JSON.stringify({ error: error.message || 'An unexpected error occurred' }),
       { 
-        headers: { 
-          ...corsHeaders,
-          'Content-Type': 'application/json'
-        },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 400
       }
     );
