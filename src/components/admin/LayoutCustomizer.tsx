@@ -3,7 +3,24 @@ import { useState, useEffect } from 'react';
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { LayoutConfig, SpacingProperty, VisibilityDevice } from "./layout/types";
-import { SectionCard } from "./layout/SectionCard";
+
+interface RawLayoutConfig {
+  id: string;
+  name: string;
+  mobile_order: number;
+  desktop_order: number;
+  spacing: {
+    marginTop: string;
+    marginBottom: string;
+    padding: string;
+  } | null;
+  visibility: {
+    mobile: boolean;
+    desktop: boolean;
+  } | null;
+  created_at: string;
+  updated_at: string;
+}
 
 export const LayoutCustomizer = () => {
   const [sections, setSections] = useState<LayoutConfig[]>([]);
@@ -22,11 +39,18 @@ export const LayoutCustomizer = () => {
 
       if (error) throw error;
       
-      // Transform the JSON data to match our LayoutConfig type
-      const transformedData = (data || []).map(section => ({
+      // Transform the raw data to ensure proper typing
+      const transformedData: LayoutConfig[] = (data as RawLayoutConfig[] || []).map(section => ({
         ...section,
-        spacing: section.spacing as LayoutConfig['spacing'],
-        visibility: section.visibility as LayoutConfig['visibility']
+        spacing: section.spacing || {
+          marginTop: 'mt-0',
+          marginBottom: 'mb-0',
+          padding: 'p-0'
+        },
+        visibility: section.visibility || {
+          mobile: true,
+          desktop: true
+        }
       }));
 
       setSections(transformedData);
