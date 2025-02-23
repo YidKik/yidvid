@@ -1,4 +1,3 @@
-
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.38.4'
 import { corsHeaders } from '../_shared/cors.ts'
 
@@ -120,7 +119,7 @@ Deno.serve(async (req) => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${Deno.env.get('SUPABASE_ANON_KEY')}`,
+          'Authorization': `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`,
         },
         body: JSON.stringify({
           channels: [channel.id],
@@ -130,9 +129,11 @@ Deno.serve(async (req) => {
     );
 
     if (!edgeResponse.ok) {
-      console.error('Error fetching videos:', await edgeResponse.text());
+      const errorText = await edgeResponse.text();
+      console.error('Error fetching videos:', errorText);
     } else {
-      console.log('Videos fetch initiated successfully');
+      const result = await edgeResponse.json();
+      console.log('Videos fetch result:', result);
     }
 
     return new Response(

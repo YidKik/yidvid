@@ -1,139 +1,144 @@
 
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.38.4'
+import { corsHeaders } from '../_shared/cors.ts'
+import { fetchYouTubeVideos, validateYouTubeResponse } from '../_shared/youtube-api.ts'
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
-
-serve(async (req) => {
-  // Handle CORS preflight requests
+Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
-    return new Response(null, { 
-      headers: corsHeaders,
-      status: 200
-    });
-  }
-
-  const YOUTUBE_API_KEY = Deno.env.get('YOUTUBE_API_KEY');
-  if (!YOUTUBE_API_KEY) {
-    console.error("No YouTube API key found");
-    return new Response(
-      JSON.stringify({ error: "YouTube API key not configured" }),
-      { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 500 
-      }
-    );
+    return new Response(null, { headers: corsHeaders })
   }
 
   try {
-    const { channels = [], forceUpdate = false } = await req.json();
-    console.log("Processing channels:", channels, "Force update:", forceUpdate);
+    const { channels, forceUpdate = false } = await req.json()
+    console.log('Request received for channels:', channels, 'forceUpdate:', forceUpdate)
 
-    if (!channels.length) {
-      return new Response(
-        JSON.stringify({ error: "No channels provided" }),
-        { 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 400 
-        }
-      );
+    if (!Array.isArray(channels) || channels.length === 0) {
+      throw new Error('No channels provided')
     }
 
-    let processedChannels = 0;
-    let newVideos = 0;
-    const errors = [];
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    )
+
+    let processedVideos = 0
+    const results = []
 
     for (const channelId of channels) {
       try {
-        const url = `https://youtube.googleapis.com/youtube/v3/search?part=snippet&channelId=${channelId}&maxResults=50&order=date&type=video&key=${YOUTUBE_API_KEY}`;
-        const response = await fetch(url);
+        console.log(`Processing channel: ${channelId}`)
         
-        if (!response.ok) {
-          const error = await response.json();
-          console.error(`Error fetching videos for channel ${channelId}:`, error);
-          
-          if (error.error?.message?.includes('quota')) {
-            return new Response(
-              JSON.stringify({ error: "YouTube API quota exceeded", quota_exceeded: true }),
-              { 
-                headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-                status: 429 
-              }
-            );
+        // Check if we should update this channel
+        if (!forceUpdate) {
+          const { data: lastFetch } = await supabase
+            .from('youtube_channels')
+            .select('last_fetch')
+            .eq('channel_id', channelId)
+            .single()
+
+          if (lastFetch?.last_fetch) {
+            const lastFetchDate = new Date(lastFetch.last_fetch)
+            const hoursSinceLastFetch = (Date.now() - lastFetchDate.getTime()) / (1000 * 60 * 60)
+            
+            if (hoursSinceLastFetch < 24) {
+              console.log(`Channel ${channelId} was fetched less than 24 hours ago, skipping`)
+              continue
+            }
           }
-          
-          errors.push(`Failed to fetch videos for channel ${channelId}: ${error.error?.message || 'Unknown error'}`);
-          continue;
         }
 
-        const data = await response.json();
-        const videos = data.items || [];
+        let pageToken: string | undefined = undefined
+        let totalVideos = 0
+        
+        do {
+          const data = await fetchYouTubeVideos(channelId, pageToken)
+          validateYouTubeResponse(data)
+          
+          const videos = data.items.map((item: any) => ({
+            video_id: item.id.videoId,
+            channel_id: channelId,
+            title: item.snippet.title,
+            description: item.snippet.description,
+            thumbnail: item.snippet.thumbnails.high?.url || item.snippet.thumbnails.default.url,
+            channel_name: item.snippet.channelTitle,
+            uploaded_at: item.snippet.publishedAt
+          }))
 
-        // Filter out upcoming live streams and only include published videos
-        const publishedVideos = videos.filter(video => {
-          const liveBroadcastContent = video.snippet?.liveBroadcastContent;
-          // Only include videos that are not upcoming or live
-          return liveBroadcastContent === 'none';
-        });
-
-        if (publishedVideos.length > 0) {
-          const supabase = createClient(
-            Deno.env.get('SUPABASE_URL') ?? '',
-            Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-          );
-
-          for (const video of publishedVideos) {
-            const videoData = {
-              video_id: video.id.videoId,
-              title: video.snippet.title,
-              description: video.snippet.description,
-              thumbnail: video.snippet.thumbnails.high?.url || video.snippet.thumbnails.default?.url,
-              channel_id: video.snippet.channelId,
-              channel_name: video.snippet.channelTitle,
-              uploaded_at: video.snippet.publishedAt
-            };
-
-            const { error: insertError } = await supabase
+          if (videos.length > 0) {
+            const { error } = await supabase
               .from('youtube_videos')
-              .insert(videoData)
-              .onConflict('video_id')
-              .ignore();
+              .upsert(videos, { 
+                onConflict: 'video_id',
+                ignoreDuplicates: true 
+              })
 
-            if (!insertError) newVideos++;
+            if (error) {
+              console.error(`Error inserting videos for channel ${channelId}:`, error)
+              throw error
+            }
+
+            totalVideos += videos.length
+            processedVideos += videos.length
           }
-        }
 
-        processedChannels++;
+          pageToken = data.nextPageToken
+        } while (pageToken)
+
+        // Update channel's last_fetch timestamp
+        await supabase
+          .from('youtube_channels')
+          .update({ 
+            last_fetch: new Date().toISOString(),
+            fetch_error: null
+          })
+          .eq('channel_id', channelId)
+
+        results.push({
+          channelId,
+          success: true,
+          videosAdded: totalVideos
+        })
+
+        console.log(`Successfully processed channel ${channelId}, added ${totalVideos} videos`)
+
       } catch (error) {
-        console.error(`Error processing channel ${channelId}:`, error);
-        errors.push(`Error processing channel ${channelId}: ${error.message}`);
+        console.error(`Error processing channel ${channelId}:`, error)
+        
+        // Update channel with error information
+        await supabase
+          .from('youtube_channels')
+          .update({ 
+            fetch_error: error.message,
+            last_fetch: new Date().toISOString()
+          })
+          .eq('channel_id', channelId)
+
+        results.push({
+          channelId,
+          success: false,
+          error: error.message
+        })
       }
     }
 
     return new Response(
       JSON.stringify({
         success: true,
-        processed: processedChannels,
-        newVideos,
-        errors: errors.length ? errors : undefined
+        processed: channels.length,
+        videosAdded: processedVideos,
+        results
       }),
-      { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200 
-      }
-    );
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
 
   } catch (error) {
-    console.error("Error processing request:", error);
+    console.error('Error in fetch-youtube-videos:', error)
     return new Response(
-      JSON.stringify({ error: "Failed to process request", details: error.message }),
+      JSON.stringify({ success: false, error: error.message }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 500 
+        status: 400
       }
-    );
+    )
   }
-});
+})
