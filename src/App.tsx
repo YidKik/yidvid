@@ -31,6 +31,7 @@ import RequestsPage from "@/pages/admin/RequestsPage";
 import ContactRequestsPage from "@/pages/admin/ContactRequestsPage";
 import ReportedVideosPage from "@/pages/admin/ReportedVideosPage";
 import NotificationsPage from "@/pages/admin/NotificationsPage";
+import LayoutCustomizationPage from "@/pages/admin/LayoutCustomizationPage";
 
 function AppRoutes() {
   const location = useLocation();
@@ -66,6 +67,7 @@ function AppRoutes() {
         <Route path="contact-requests" element={<ContactRequestsPage />} />
         <Route path="reported-videos" element={<ReportedVideosPage />} />
         <Route path="notifications" element={<NotificationsPage />} />
+        <Route path="layout" element={<LayoutCustomizationPage />} />
       </Route>
     </Routes>
   );
