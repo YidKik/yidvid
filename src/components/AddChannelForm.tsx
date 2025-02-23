@@ -23,15 +23,18 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
     }
 
     setIsLoading(true);
+    toast.loading("Adding channel...");
 
     try {
       await addChannel(channelId);
+      toast.dismiss();
       toast.success("Channel added successfully!");
       setChannelId("");
       onSuccess?.();
       onClose?.();
     } catch (error: any) {
       console.error("Error adding channel:", error);
+      toast.dismiss();
       toast.error(error.message || "Failed to add channel");
     } finally {
       setIsLoading(false);
@@ -40,11 +43,16 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <ChannelInput
-        value={channelId}
-        onChange={setChannelId}
-        disabled={isLoading}
-      />
+      <div className="space-y-2">
+        <ChannelInput
+          value={channelId}
+          onChange={setChannelId}
+          disabled={isLoading}
+        />
+        <p className="text-sm text-muted-foreground">
+          Enter a YouTube channel URL (e.g., https://www.youtube.com/@channelname) or channel handle (e.g., @channelname)
+        </p>
+      </div>
       <Button 
         type="submit" 
         disabled={isLoading}

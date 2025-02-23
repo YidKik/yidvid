@@ -1,5 +1,6 @@
 
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 export const checkAdminStatus = async () => {
   const { data: { session } } = await supabase.auth.getSession();
@@ -26,9 +27,10 @@ export const extractChannelId = (input: string): string => {
   
   // Handle full URLs
   if (channelId.includes('youtube.com/')) {
-    const urlMatch = channelId.match(/(?:youtube\.com\/(?:channel\/|c\/|user\/|@))([\w-]+)/);
-    if (urlMatch && urlMatch[1]) {
-      channelId = urlMatch[1];
+    // Handle channel URLs
+    const channelMatch = channelId.match(/youtube\.com\/(?:channel\/|c\/|@)([\w-]+)/);
+    if (channelMatch && channelMatch[1]) {
+      channelId = channelMatch[1];
     }
   } else if (channelId.startsWith('@')) {
     // Handle @username format
@@ -44,32 +46,44 @@ export const addChannel = async (channelInput: string) => {
     await checkAdminStatus();
     
     const channelId = extractChannelId(channelInput);
-    console.log('Processed channel ID:', channelId);
+    console.log('Attempting to add channel with ID:', channelId);
     
     if (!channelId) {
-      throw new Error('Invalid channel ID or URL');
+      throw new Error('Please enter a valid channel ID or URL');
     }
     
     // Check if channel already exists
-    const { data: existingChannel } = await supabase
+    const { data: existingChannel, error: checkError } = await supabase
       .from('youtube_channels')
       .select('channel_id')
       .eq('channel_id', channelId)
       .single();
+
+    if (checkError && checkError.code !== 'PGRST116') { // PGRST116 is "not found" which is what we want
+      console.error('Error checking existing channel:', checkError);
+      throw new Error('Error checking if channel exists');
+    }
 
     if (existingChannel) {
       throw new Error('This channel has already been added');
     }
 
     // Call edge function to add channel
-    console.log('Calling edge function with channelId:', channelId);
+    console.log('Calling edge function to fetch channel data...');
     const { data, error } = await supabase.functions.invoke('fetch-youtube-channel', {
       body: { channelId }
     });
 
     if (error) {
       console.error('Edge function error:', error);
-      throw error;
+      const errorMessage = error.message || 'Failed to add channel';
+      // If the error message contains a JSON string, try to parse it
+      try {
+        const parsedError = JSON.parse(errorMessage);
+        throw new Error(parsedError.error || errorMessage);
+      } catch {
+        throw new Error(errorMessage);
+      }
     }
 
     if (!data) {
@@ -81,6 +95,8 @@ export const addChannel = async (channelInput: string) => {
 
   } catch (error: any) {
     console.error('Error in addChannel:', error);
-    throw error;
+    // If the error is from the edge function, it might be wrapped in a message property
+    const errorMessage = error.message || error.toString();
+    throw new Error(errorMessage);
   }
 };
