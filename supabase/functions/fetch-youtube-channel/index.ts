@@ -18,6 +18,39 @@ serve(async (req) => {
   }
 
   try {
+    // First, verify API key is available
+    const YOUTUBE_API_KEY = Deno.env.get('YOUTUBE_API_KEY');
+    if (!YOUTUBE_API_KEY) {
+      console.error("YouTube API key is not configured");
+      return new Response(
+        JSON.stringify({ error: "YouTube API key is not configured in the environment" }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      );
+    }
+
+    // Test YouTube API key with a simple request
+    const testUrl = `https://youtube.googleapis.com/youtube/v3/channels?part=snippet&id=UC_x5XG1OV2P6uZZ5FSM9Ttw&key=${YOUTUBE_API_KEY}`;
+    console.log("Testing YouTube API key with a simple request");
+    
+    const testResponse = await fetch(testUrl);
+    if (!testResponse.ok) {
+      const errorData = await testResponse.json();
+      console.error("YouTube API key validation failed:", errorData);
+      return new Response(
+        JSON.stringify({ 
+          error: "YouTube API key validation failed",
+          details: errorData.error || 'Unknown error'
+        }),
+        {
+          status: testResponse.status,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      );
+    }
+
     // Parse the request body
     const requestBody = await req.text();
     console.log("Raw request body:", requestBody);
@@ -27,7 +60,6 @@ serve(async (req) => {
       body = requestBody ? JSON.parse(requestBody) : {};
     } catch (e) {
       console.error("Error parsing JSON:", e);
-      console.error("Invalid JSON content:", requestBody);
       return new Response(
         JSON.stringify({ error: "Invalid JSON in request body" }),
         {
@@ -38,25 +70,13 @@ serve(async (req) => {
     }
 
     const { channelId } = body;
-    console.log("Received channel ID:", channelId);
+    console.log("Processing channel ID:", channelId);
 
     if (!channelId) {
       return new Response(
         JSON.stringify({ error: "Channel ID is required" }),
         {
           status: 400,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        }
-      );
-    }
-
-    const YOUTUBE_API_KEY = Deno.env.get('YOUTUBE_API_KEY');
-    if (!YOUTUBE_API_KEY) {
-      console.error("YouTube API key not configured");
-      return new Response(
-        JSON.stringify({ error: "YouTube API key not configured" }),
-        {
-          status: 500,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         }
       );
@@ -77,14 +97,14 @@ serve(async (req) => {
       console.log("Using search endpoint to find channel");
     }
 
-    console.log("Fetching from YouTube API:", apiUrl.replace(YOUTUBE_API_KEY, 'REDACTED'));
+    console.log("Making YouTube API request");
     const response = await fetch(apiUrl);
+    console.log("YouTube API response status:", response.status);
     
     if (!response.ok) {
       const errorData = await response.json();
       console.error("YouTube API error response:", errorData);
 
-      // Handle quota exceeded error specifically
       if (errorData.error?.message?.includes("quota")) {
         return new Response(
           JSON.stringify({ 
@@ -110,10 +130,10 @@ serve(async (req) => {
       );
     }
     
-    // Add error handling for YouTube API response parsing
     let data;
     try {
       data = await response.json();
+      console.log("YouTube API response data:", JSON.stringify(data, null, 2));
     } catch (e) {
       console.error("Error parsing YouTube API response:", e);
       return new Response(
@@ -129,7 +149,6 @@ serve(async (req) => {
     if (cleanChannelId.startsWith('UC')) {
       channelData = data.items?.[0];
     } else {
-      // If we searched by username, we need to get the first result's channel ID
       if (!data.items || data.items.length === 0) {
         console.error("No channel found for query:", cleanChannelId);
         return new Response(
@@ -144,7 +163,6 @@ serve(async (req) => {
       console.log("Found channel in search results, fetching details");
       const foundChannelId = data.items[0].id.channelId;
       
-      // Now fetch the actual channel data
       const channelResponse = await fetch(
         `https://youtube.googleapis.com/youtube/v3/channels?part=snippet&id=${foundChannelId}&key=${YOUTUBE_API_KEY}`
       );
@@ -163,19 +181,9 @@ serve(async (req) => {
         );
       }
 
-      try {
-        const channelResult = await channelResponse.json();
-        channelData = channelResult.items?.[0];
-      } catch (e) {
-        console.error("Error parsing channel details response:", e);
-        return new Response(
-          JSON.stringify({ error: "Invalid response while fetching channel details" }),
-          {
-            status: 500,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-          }
-        );
-      }
+      const channelResult = await channelResponse.json();
+      console.log("Channel details response:", JSON.stringify(channelResult, null, 2));
+      channelData = channelResult.items?.[0];
     }
 
     if (!channelData) {
@@ -208,11 +216,12 @@ serve(async (req) => {
     );
 
   } catch (error) {
-    console.error("Error in fetch-youtube-channel function:", error);
+    console.error("Unexpected error in fetch-youtube-channel function:", error);
     return new Response(
       JSON.stringify({
-        error: error.message || 'An unexpected error occurred while fetching the channel',
-        details: error.stack
+        error: "An unexpected error occurred while fetching the channel",
+        details: error.message,
+        stack: error.stack
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
