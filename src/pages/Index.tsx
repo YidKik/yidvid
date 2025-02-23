@@ -51,7 +51,7 @@ const MainContent = () => {
                 isMusic={isMusic} 
                 onToggle={() => setIsMusic(!isMusic)} 
               />
-              <CategorySection />
+              {!isMobile && <CategorySection />}
             </div>
           </div>
 
