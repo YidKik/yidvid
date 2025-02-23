@@ -37,9 +37,12 @@ export const VideoCard = ({
   const routeId = uuid || id;
 
   return (
-    <Link to={`/video/${routeId}`} className="block group w-full">
+    <Link 
+      to={`/video/${routeId}`} 
+      className="block group w-full transition-transform duration-300 hover:-translate-y-1"
+    >
       <div className={cn(
-        "relative rounded-lg overflow-hidden bg-muted shadow-sm hover:shadow-md transition-all duration-300",
+        "relative rounded-lg overflow-hidden bg-muted shadow-sm transition-all duration-300 group-hover:shadow-md",
         isMobile ? "aspect-video w-full mb-0" : "aspect-video mb-2"
       )}>
         <img
@@ -66,7 +69,7 @@ export const VideoCard = ({
           )}
           <div className="flex-1 min-w-0 overflow-hidden">
             <h3 className={cn(
-              "font-medium line-clamp-2 text-[#030303]",
+              "font-medium line-clamp-2 text-[#030303] group-hover:text-primary transition-colors duration-300",
               isMobile ? "text-[11px] leading-[13px] mb-0.5 font-roboto" : "text-sm leading-5"
             )}>
               {title}
