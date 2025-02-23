@@ -1,3 +1,4 @@
+
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.38.4'
 import { corsHeaders } from '../_shared/cors.ts'
 
@@ -62,7 +63,7 @@ Deno.serve(async (req) => {
     const data: YouTubeApiResponse = await response.json()
 
     if (!response.ok) {
-      console.error('YouTube API error:', data)
+      console.error('YouTube API error response:', data)
       throw new Error(`YouTube API error: ${response.statusText}`)
     }
 
@@ -112,34 +113,38 @@ Deno.serve(async (req) => {
     // After successful channel insertion, trigger video fetch
     console.log('Fetching videos for new channel...')
     
-    const ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY')
-    
-    // Make a direct fetch call to the edge function with proper headers
-    const edgeResponse = await fetch(
-      `${Deno.env.get('SUPABASE_URL')}/functions/v1/fetch-youtube-videos`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`,
-          'apikey': ANON_KEY || '', // Add the apikey header
-        },
-        body: JSON.stringify({
-          channels: [channel.id],
-          forceUpdate: true
-        })
-      }
-    );
+    // Fetch videos for the new channel
+    try {
+      const videosFetchResponse = await fetch(
+        `${Deno.env.get('SUPABASE_URL')}/functions/v1/fetch-youtube-videos`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`,
+          },
+          body: JSON.stringify({
+            channels: [channel.id],
+            forceUpdate: true
+          })
+        }
+      );
 
-    if (!edgeResponse.ok) {
-      const errorText = await edgeResponse.text();
-      console.error('Error fetching videos:', errorText);
-      // Log more details about the request
-      console.log('Request URL:', `${Deno.env.get('SUPABASE_URL')}/functions/v1/fetch-youtube-videos`);
-      console.log('Channel ID:', channel.id);
-    } else {
-      const result = await edgeResponse.json();
-      console.log('Videos fetch result:', result);
+      if (!videosFetchResponse.ok) {
+        const errorText = await videosFetchResponse.text();
+        console.error('Error fetching videos:', errorText);
+        // Log the request details for debugging
+        console.log('Videos fetch request details:', {
+          url: `${Deno.env.get('SUPABASE_URL')}/functions/v1/fetch-youtube-videos`,
+          channelId: channel.id
+        });
+      } else {
+        const result = await videosFetchResponse.json();
+        console.log('Videos fetch successful:', result);
+      }
+    } catch (videoFetchError) {
+      console.error('Error in video fetch process:', videoFetchError);
+      // We don't throw here as we still want to return the channel data
     }
 
     return new Response(
