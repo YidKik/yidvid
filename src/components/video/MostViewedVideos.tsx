@@ -22,7 +22,6 @@ export const MostViewedVideos = ({
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [nextVideos, setNextVideos] = useState<typeof videos>([]);
   const isMobile = useIsMobile();
   const videosPerPage = isMobile ? 2 : 4;
   const AUTO_SLIDE_INTERVAL = 8000;
@@ -33,33 +32,30 @@ export const MostViewedVideos = ({
     .slice(0, 10);
 
   const handleNext = () => {
-    if (!sortedVideos.length) return;
+    if (!sortedVideos.length || isTransitioning) return;
+    
     setIsTransitioning(true);
     const nextIndex = currentIndex + videosPerPage >= sortedVideos.length ? 0 : currentIndex + videosPerPage;
-    setNextVideos(sortedVideos.slice(nextIndex, nextIndex + videosPerPage));
+    setCurrentIndex(nextIndex);
+    
+    // Reset transition state after a short delay
     setTimeout(() => {
-      setCurrentIndex(nextIndex);
       setIsTransitioning(false);
-    }, 1500);
+    }, 300);
   };
 
   const handlePrevious = () => {
-    if (!sortedVideos.length) return;
+    if (!sortedVideos.length || isTransitioning) return;
+    
     setIsTransitioning(true);
     const nextIndex = currentIndex - videosPerPage < 0 ? Math.max(0, sortedVideos.length - videosPerPage) : currentIndex - videosPerPage;
-    setNextVideos(sortedVideos.slice(nextIndex, nextIndex + videosPerPage));
+    setCurrentIndex(nextIndex);
+    
+    // Reset transition state after a short delay
     setTimeout(() => {
-      setCurrentIndex(nextIndex);
       setIsTransitioning(false);
-    }, 1500);
+    }, 300);
   };
-
-  useEffect(() => {
-    if (sortedVideos.length) {
-      const initialNextIndex = currentIndex + videosPerPage >= sortedVideos.length ? 0 : currentIndex + videosPerPage;
-      setNextVideos(sortedVideos.slice(initialNextIndex, initialNextIndex + videosPerPage));
-    }
-  }, [videos]);
 
   useEffect(() => {
     let intervalId: NodeJS.Timeout;
@@ -97,15 +93,16 @@ export const MostViewedVideos = ({
         <div className="relative px-0.5 md:px-4">
           {currentIndex > 0 && (
             <button 
-              onClick={() => handleManualNavigation(handlePrevious)} 
-              className="absolute left-0 top-1/2 -translate-y-1/2 z-10 p-1.5 bg-white/90 hover:bg-white rounded-full shadow-lg transition-all duration-500 group"
+              onClick={() => handleManualNavigation(handlePrevious)}
+              disabled={isTransitioning}
+              className={`absolute left-0 top-1/2 -translate-y-1/2 z-10 p-1.5 bg-white/90 hover:bg-white rounded-full shadow-lg transition-all duration-300 ${isTransitioning ? 'opacity-50 cursor-not-allowed' : ''}`}
               aria-label="Previous videos"
             >
               <ChevronLeft className="w-3 h-3 md:w-4 md:h-4 text-[#555555]" />
             </button>
           )}
 
-          <div className={isMobile ? "grid grid-cols-2 gap-3" : "grid grid-cols-4 gap-4"}>
+          <div className={`${isMobile ? "grid grid-cols-2 gap-3" : "grid grid-cols-4 gap-4"} transition-all duration-300 transform ${isTransitioning ? 'scale-95 opacity-80' : 'scale-100 opacity-100'}`}>
             {displayVideos.map(video => (
               <div key={video.id} className="w-full">
                 <VideoCard {...video} hideInfo={true} />
@@ -116,7 +113,8 @@ export const MostViewedVideos = ({
           {currentIndex + videosPerPage < sortedVideos.length && (
             <button 
               onClick={() => handleManualNavigation(handleNext)}
-              className="absolute right-0 top-1/2 -translate-y-1/2 z-10 p-1.5 bg-white/90 hover:bg-white rounded-full shadow-lg transition-all duration-500 group"
+              disabled={isTransitioning}
+              className={`absolute right-0 top-1/2 -translate-y-1/2 z-10 p-1.5 bg-white/90 hover:bg-white rounded-full shadow-lg transition-all duration-300 ${isTransitioning ? 'opacity-50 cursor-not-allowed' : ''}`}
               aria-label="Next videos"
             >
               <ChevronRight className="w-3 h-3 md:w-4 md:h-4 text-[#555555]" />
