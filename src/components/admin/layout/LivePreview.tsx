@@ -18,7 +18,7 @@ interface LivePreviewProps {
 }
 
 export const LivePreview = ({ sections, onSelectSection, selectedSectionId }: LivePreviewProps) => {
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [isMobile, setIsMobile] = useState(false);
   const [isMusic, setIsMusic] = useState(false);
   const { data: videos, isLoading } = useVideos();
 
@@ -27,6 +27,7 @@ export const LivePreview = ({ sections, onSelectSection, selectedSectionId }: Li
       setIsMobile(window.innerWidth < 768);
     };
 
+    handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
@@ -38,7 +39,11 @@ export const LivePreview = ({ sections, onSelectSection, selectedSectionId }: Li
   const getSectionContent = (sectionName: string) => {
     switch (sectionName) {
       case 'Header Navigation':
-        return <Header />;
+        return (
+          <div className="w-full">
+            <Header />
+          </div>
+        );
       case 'Categories':
         return <CategorySection />;
       case 'Content Toggle':
@@ -63,12 +68,15 @@ export const LivePreview = ({ sections, onSelectSection, selectedSectionId }: Li
             return null;
           }
 
+          const sectionContent = getSectionContent(section.name);
+          if (!sectionContent) return null;
+
           return (
             <div
               key={section.id}
               onClick={() => onSelectSection(section.id)}
               className={cn(
-                "relative transition-all cursor-pointer",
+                "relative transition-all cursor-pointer w-full",
                 section.spacing.marginTop,
                 section.spacing.marginBottom,
                 section.spacing.padding,
@@ -76,8 +84,8 @@ export const LivePreview = ({ sections, onSelectSection, selectedSectionId }: Li
               )}
             >
               {/* Section Content */}
-              <div className="min-h-[50px]">
-                {getSectionContent(section.name)}
+              <div className="w-full">
+                {sectionContent}
               </div>
 
               {/* Selection Overlay */}
