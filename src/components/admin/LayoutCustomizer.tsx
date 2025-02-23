@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { LayoutConfig, SpacingProperty, VisibilityDevice } from "./layout/types";
+import { SectionCard } from "./layout/SectionCard";
 
 interface RawLayoutConfig {
   id: string;
