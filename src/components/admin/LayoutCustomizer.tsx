@@ -8,11 +8,11 @@ import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
-interface SectionConfig {
+interface LayoutConfig {
   id: string;
   name: string;
-  mobileOrder: number;
-  desktopOrder: number;
+  mobile_order: number;
+  desktop_order: number;
   spacing: {
     marginTop: string;
     marginBottom: string;
@@ -22,10 +22,12 @@ interface SectionConfig {
     mobile: boolean;
     desktop: boolean;
   };
+  created_at: string;
+  updated_at: string;
 }
 
 export const LayoutCustomizer = () => {
-  const [sections, setSections] = useState<SectionConfig[]>([]);
+  const [sections, setSections] = useState<LayoutConfig[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -37,10 +39,9 @@ export const LayoutCustomizer = () => {
       const { data, error } = await supabase
         .from('layout_configurations')
         .select('*')
-        .order('mobileOrder', { ascending: true });
+        .order('mobile_order', { ascending: true });
 
       if (error) throw error;
-
       setSections(data || []);
     } catch (error) {
       console.error('Error loading layout config:', error);
@@ -50,7 +51,7 @@ export const LayoutCustomizer = () => {
     }
   };
 
-  const updateSection = async (sectionId: string, updates: Partial<SectionConfig>) => {
+  const updateSection = async (sectionId: string, updates: Partial<Omit<LayoutConfig, 'id' | 'created_at' | 'updated_at'>>) => {
     try {
       const { error } = await supabase
         .from('layout_configurations')
@@ -72,11 +73,11 @@ export const LayoutCustomizer = () => {
     if (isNaN(order)) return;
 
     updateSection(sectionId, {
-      [type === 'mobile' ? 'mobileOrder' : 'desktopOrder']: order
-    } as Partial<SectionConfig>);
+      [type === 'mobile' ? 'mobile_order' : 'desktop_order']: order
+    });
   };
 
-  const handleSpacingChange = (sectionId: string, property: keyof SectionConfig['spacing'], value: string) => {
+  const handleSpacingChange = (sectionId: string, property: keyof LayoutConfig['spacing'], value: string) => {
     const section = sections.find(s => s.id === sectionId);
     if (!section) return;
 
@@ -88,7 +89,7 @@ export const LayoutCustomizer = () => {
     });
   };
 
-  const handleVisibilityChange = (sectionId: string, device: keyof SectionConfig['visibility']) => {
+  const handleVisibilityChange = (sectionId: string, device: keyof LayoutConfig['visibility']) => {
     const section = sections.find(s => s.id === sectionId);
     if (!section) return;
 
@@ -121,7 +122,7 @@ export const LayoutCustomizer = () => {
                   <Label>Mobile Order</Label>
                   <Input 
                     type="number" 
-                    value={section.mobileOrder}
+                    value={section.mobile_order}
                     onChange={(e) => handleOrderChange(section.id, 'mobile', e.target.value)}
                   />
                 </div>
@@ -130,7 +131,7 @@ export const LayoutCustomizer = () => {
                   <Label>Desktop Order</Label>
                   <Input 
                     type="number" 
-                    value={section.desktopOrder}
+                    value={section.desktop_order}
                     onChange={(e) => handleOrderChange(section.id, 'desktop', e.target.value)}
                   />
                 </div>

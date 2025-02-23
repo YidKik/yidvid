@@ -380,6 +380,39 @@ export type Database = {
           },
         ]
       }
+      layout_configurations: {
+        Row: {
+          created_at: string
+          desktop_order: number
+          id: string
+          mobile_order: number
+          name: string
+          spacing: Json
+          updated_at: string
+          visibility: Json
+        }
+        Insert: {
+          created_at?: string
+          desktop_order?: number
+          id?: string
+          mobile_order?: number
+          name: string
+          spacing?: Json
+          updated_at?: string
+          visibility?: Json
+        }
+        Update: {
+          created_at?: string
+          desktop_order?: number
+          id?: string
+          mobile_order?: number
+          name?: string
+          spacing?: Json
+          updated_at?: string
+          visibility?: Json
+        }
+        Relationships: []
+      }
       music_albums: {
         Row: {
           artist_id: string
