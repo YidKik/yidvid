@@ -40,14 +40,14 @@ export const CategoryCard = ({ icon, label, id, isCustomImage = false }: Categor
         }
       }}
       whileTap={{ scale: 0.98 }}
-      className="rounded-xl p-2 md:p-4 cursor-pointer transition-all duration-300 h-[60px] md:h-[120px] relative backdrop-blur-sm"
+      className="rounded-xl p-2 md:p-4 cursor-pointer transition-all duration-300 h-[80px] md:h-[120px] relative backdrop-blur-sm"
       style={{
         background: colors.bg,
         border: `2px solid ${colors.border}`,
       }}
       onClick={handleClick}
     >
-      <div className="flex items-center space-x-2 md:space-x-3">
+      <div className="flex flex-col md:flex-row items-center md:space-x-3 h-full">
         <motion.span 
           whileHover={{
             rotate: [0, -10, 10, -5, 5, 0],
@@ -55,7 +55,7 @@ export const CategoryCard = ({ icon, label, id, isCustomImage = false }: Categor
               duration: 0.5
             }
           }}
-          className="text-lg md:text-3xl p-1 md:p-2.5 rounded-lg"
+          className="text-base md:text-3xl p-1 md:p-2.5 rounded-lg mb-1 md:mb-0"
           style={{
             background: `${colors.border}20`,
             color: colors.text
@@ -65,15 +65,15 @@ export const CategoryCard = ({ icon, label, id, isCustomImage = false }: Categor
             <img 
               src={icon} 
               alt={label}
-              className="w-6 h-6 md:w-8 md:h-8 object-cover rounded"
+              className="w-5 h-5 md:w-8 md:h-8 object-cover rounded"
             />
           ) : (
             icon
           )}
         </motion.span>
-        <div className="flex-1">
+        <div className="flex-1 text-center md:text-left">
           <h3 
-            className="font-semibold text-[10px] md:text-base"
+            className="font-medium text-[11px] leading-tight md:text-base line-clamp-2 md:line-clamp-1"
             style={{ color: colors.text }}
           >
             {label}
@@ -83,4 +83,3 @@ export const CategoryCard = ({ icon, label, id, isCustomImage = false }: Categor
     </motion.div>
   );
 };
-
