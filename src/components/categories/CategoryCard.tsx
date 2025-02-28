@@ -43,6 +43,25 @@ export const CategoryCard = ({ icon, label, id, isCustomImage = false }: Categor
     return simpleIcons[iconEmoji] || simpleIcons['default'];
   };
 
+  // Animation variants for the line animation effect
+  const lineVariants = {
+    initial: (custom: number) => ({
+      height: custom,
+      opacity: 0.6,
+    }),
+    animate: (custom: number) => ({
+      height: [custom, custom * 1.5, custom],
+      opacity: [0.6, 1, 0.6],
+      transition: {
+        duration: 2,
+        repeat: Infinity,
+        repeatType: "reverse" as const,
+        ease: "easeInOut",
+        delay: custom * 0.05,
+      },
+    }),
+  };
+
   return (
     <motion.div
       whileHover={{ 
@@ -95,20 +114,38 @@ export const CategoryCard = ({ icon, label, id, isCustomImage = false }: Categor
           </h3>
         </div>
         
-        {/* New decorative design for right side */}
+        {/* Animated decorative lines for right side */}
         <div className="flex flex-col items-center justify-center h-full">
           <div className="flex space-x-1 md:space-x-2">
-            <div 
-              className="h-[20px] md:h-[30px] w-[2px] md:w-[3px] rounded-full" 
-              style={{ background: `linear-gradient(to bottom, ${categoryColors.border}22, ${categoryColors.border}88)` }}
+            <motion.div 
+              custom={20}
+              variants={lineVariants}
+              initial="initial"
+              animate="animate"
+              className="w-[2px] md:w-[3px] rounded-full" 
+              style={{ 
+                background: `linear-gradient(to bottom, ${categoryColors.border}22, ${categoryColors.border}88)` 
+              }}
             />
-            <div 
-              className="h-[30px] md:h-[50px] w-[2px] md:w-[3px] rounded-full" 
-              style={{ background: `linear-gradient(to bottom, ${categoryColors.border}44, ${categoryColors.border})` }}
+            <motion.div 
+              custom={30}
+              variants={lineVariants}
+              initial="initial"
+              animate="animate"
+              className="w-[2px] md:w-[3px] rounded-full" 
+              style={{ 
+                background: `linear-gradient(to bottom, ${categoryColors.border}44, ${categoryColors.border})` 
+              }}
             />
-            <div 
-              className="h-[20px] md:h-[30px] w-[2px] md:w-[3px] rounded-full" 
-              style={{ background: `linear-gradient(to bottom, ${categoryColors.border}22, ${categoryColors.border}88)` }}
+            <motion.div 
+              custom={20}
+              variants={lineVariants}
+              initial="initial"
+              animate="animate"
+              className="w-[2px] md:w-[3px] rounded-full" 
+              style={{ 
+                background: `linear-gradient(to bottom, ${categoryColors.border}22, ${categoryColors.border}88)` 
+              }}
             />
           </div>
         </div>
