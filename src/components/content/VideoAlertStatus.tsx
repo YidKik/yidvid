@@ -54,7 +54,13 @@ export const VideoAlertStatus = ({
               "Some videos might not be loading correctly. We're working on it." : 
               "Some YouTube videos might not be loading correctly. Our team is working to resolve this as quickly as possible."
           )}
-          <div className="text-xs opacity-80 mt-1">Last successful update: {lastUpdateTime}</div>
+          <div className="text-xs opacity-80 mt-1">
+            Last successful update: {lastUpdateTime}
+          </div>
+          <div className="text-xs opacity-80 mt-1">
+            <strong>Important:</strong> We're aware that video fetching is currently slow and not all videos are being retrieved. 
+            Our team is actively working to resolve these issues. Thank you for your patience.
+          </div>
         </div>
         
         {refetch && (
