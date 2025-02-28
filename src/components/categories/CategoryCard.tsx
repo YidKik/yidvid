@@ -62,6 +62,24 @@ export const CategoryCard = ({ icon, label, id, isCustomImage = false }: Categor
     }),
   };
 
+  // Animation variants for the icon
+  const iconVariants = {
+    initial: { 
+      scale: 1,
+      opacity: 0.9
+    },
+    animate: {
+      scale: [1, 1.1, 1],
+      opacity: [0.9, 1, 0.9],
+      transition: {
+        duration: 3,
+        repeat: Infinity,
+        repeatType: "reverse" as const,
+        ease: "easeInOut",
+      }
+    }
+  };
+
   return (
     <motion.div
       whileHover={{ 
@@ -84,28 +102,35 @@ export const CategoryCard = ({ icon, label, id, isCustomImage = false }: Categor
     >
       <div className="flex items-center h-full px-1">
         <div className="flex items-center gap-2 flex-1">
-          <motion.span 
-            whileHover={{
-              rotate: [0, -10, 10, -5, 5, 0],
-              transition: {
-                duration: 0.5
-              }
-            }}
-            className="text-base md:text-2xl p-1 md:p-2 rounded-lg"
-            style={{
-              background: categoryColors.iconBg,
-            }}
+          <motion.div 
+            initial="initial"
+            animate="animate"
+            variants={iconVariants}
+            className="flex items-center justify-center"
           >
-            {isCustomImage ? (
-              <img 
-                src={icon} 
-                alt={label}
-                className="w-4 h-4 md:w-6 md:h-6 object-cover rounded"
-              />
-            ) : (
-              getSimpleIcon(icon)
-            )}
-          </motion.span>
+            <motion.span 
+              whileHover={{
+                rotate: [0, -10, 10, -5, 5, 0],
+                transition: {
+                  duration: 0.5
+                }
+              }}
+              className="text-base md:text-2xl p-1 md:p-2 rounded-lg"
+              style={{
+                background: categoryColors.iconBg,
+              }}
+            >
+              {isCustomImage ? (
+                <img 
+                  src={icon} 
+                  alt={label}
+                  className="w-4 h-4 md:w-6 md:h-6 object-cover rounded"
+                />
+              ) : (
+                getSimpleIcon(icon)
+              )}
+            </motion.span>
+          </motion.div>
           <h3 
             className="font-medium text-[10px] leading-tight md:text-sm line-clamp-2 max-w-[60px] md:max-w-[120px]"
             style={{ color: categoryColors.text }}
