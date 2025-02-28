@@ -106,8 +106,8 @@ export const CategorySection = () => {
   }
 
   return (
-    <div className="relative w-full py-1 md:py-2">
-      <div className="max-w-screen-sm md:max-w-[1400px] mx-auto px-2 md:px-6">
+    <div className="relative w-full py-1 md:py-2 flex justify-center">
+      <div className="w-full max-w-screen-sm md:max-w-[1400px] mx-auto px-2 md:px-6">
         <div className="overflow-hidden relative h-[65px] md:h-[150px]">
           <div 
             className="absolute left-0 top-0 w-8 md:w-48 h-full z-10" 
