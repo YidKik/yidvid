@@ -7,6 +7,25 @@ import { useDebounce } from "@/hooks/use-debounce";
 import { toast } from "sonner";
 import { queryClient } from "@/lib/query-client";
 
+// Define interfaces for the search results
+export interface SearchVideo {
+  id: string;
+  title: string;
+  thumbnail: string;
+  channel_name: string;
+}
+
+export interface SearchChannel {
+  channel_id: string;
+  title: string;
+  thumbnail_url: string;
+}
+
+export interface SearchResults {
+  videos: SearchVideo[];
+  channels: SearchChannel[];
+}
+
 export const useSearch = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
@@ -14,11 +33,11 @@ export const useSearch = () => {
   const debouncedSearch = useDebounce(searchQuery, 200);
 
   // Check cache before making a new request
-  const getSearchFromCache = (query: string) => {
-    return queryClient.getQueryData(["quick-search", query]);
+  const getSearchFromCache = (query: string): SearchResults | undefined => {
+    return queryClient.getQueryData<SearchResults>(["quick-search", query]);
   };
 
-  const { data: searchResults, isFetching: isSearching } = useQuery({
+  const { data: searchResults, isFetching: isSearching } = useQuery<SearchResults>({
     queryKey: ["quick-search", debouncedSearch],
     queryFn: async () => {
       if (!debouncedSearch.trim()) return { videos: [], channels: [] };
@@ -49,7 +68,7 @@ export const useSearch = () => {
 
         if (channelsError) throw channelsError;
 
-        const result = {
+        const result: SearchResults = {
           videos: videos || [],
           channels: channels || []
         };

@@ -2,11 +2,12 @@
 import { Link } from "react-router-dom";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { SearchVideo, SearchChannel } from "./useSearch";
 
 interface SearchResultsProps {
   isSearching: boolean;
-  videos: any[];
-  channels: any[];
+  videos: SearchVideo[];
+  channels: SearchChannel[];
   onResultClick: () => void;
   showResults: boolean;
 }
@@ -61,7 +62,7 @@ export const SearchResults = ({
 };
 
 interface ChannelResultsProps {
-  channels: any[];
+  channels: SearchChannel[];
   onResultClick: () => void;
 }
 
@@ -95,7 +96,7 @@ const ChannelResults = ({ channels, onResultClick }: ChannelResultsProps) => {
 };
 
 interface VideoResultsProps {
-  videos: any[];
+  videos: SearchVideo[];
   onResultClick: () => void;
 }
 

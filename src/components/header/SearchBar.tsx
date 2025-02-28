@@ -1,7 +1,7 @@
 
 import { SearchInput } from "./search/SearchInput";
 import { SearchResults } from "./search/SearchResults";
-import { useSearch } from "./search/useSearch";
+import { useSearch, SearchResults as SearchResultsType } from "./search/useSearch";
 
 interface SearchBarProps {
   onFocus?: () => void;
@@ -22,8 +22,8 @@ export const SearchBar = ({ onFocus, onClose }: SearchBarProps) => {
   } = useSearch();
   
   const hasResults = 
-    (searchResults?.videos?.length || 0) + 
-    (searchResults?.channels?.length || 0) > 0;
+    ((searchResults?.videos?.length || 0) + 
+    (searchResults?.channels?.length || 0)) > 0;
 
   // Handle the callback to parent component if needed
   const onSearchFocus = () => {
