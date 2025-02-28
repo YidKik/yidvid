@@ -3,6 +3,7 @@ import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useState } from "react";
 
 interface SearchInputProps {
   searchQuery: string;
@@ -20,6 +21,16 @@ export const SearchInput = ({
   onClose
 }: SearchInputProps) => {
   const isMobile = useIsMobile();
+  const [isFocused, setIsFocused] = useState(false);
+
+  const handleFocus = () => {
+    setIsFocused(true);
+    onSearchFocus();
+  };
+
+  const handleBlur = () => {
+    setIsFocused(false);
+  };
 
   return (
     <form onSubmit={onSearch} className="w-full max-w-lg flex items-center relative group">
@@ -29,9 +40,11 @@ export const SearchInput = ({
           placeholder="Search videos and channels..."
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
-          onFocus={onSearchFocus}
-          className="w-full bg-transparent z-10 relative border-primary text-[#555555] placeholder:text-[#555555] focus-visible:ring-primary focus-visible:ring-1 focus-visible:ring-offset-0 h-7 md:h-10 text-xs md:text-sm pr-10 md:pr-14"
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          className="w-full bg-transparent z-10 relative border-none text-[#555555] placeholder:text-[#555555] focus-visible:ring-primary focus-visible:ring-1 focus-visible:ring-offset-0 h-7 md:h-10 text-xs md:text-sm pr-10 md:pr-14"
         />
+        <div className={`animated-border ${isFocused ? 'opacity-100' : 'opacity-0'}`}></div>
       </div>
       {isMobile && onClose ? (
         <Button 

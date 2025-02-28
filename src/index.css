@@ -106,8 +106,31 @@ body {
   color: #606060 !important;
 }
 
-/* Animated search border */
+/* Default thin red outline for search bar */
+.search-animated-border {
+  position: relative;
+  border-radius: 0.5rem;
+}
+
 .search-animated-border::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 0.5rem;
+  border: 1px solid #ea384c;
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* Animated search border - only appears on focus */
+.search-animated-border input:focus ~ .animated-border {
+  opacity: 1;
+}
+
+.search-animated-border .animated-border {
   content: '';
   position: absolute;
   top: 0;
@@ -126,6 +149,8 @@ body {
   animation: search-outline 4s linear infinite;
   pointer-events: none;
   z-index: 5;
+  opacity: 0;
+  transition: opacity 0.2s ease;
 }
 
 @keyframes search-outline {
