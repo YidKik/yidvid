@@ -43,16 +43,14 @@ const MainContent = () => {
     <div className="flex-1">
       <Header />
       <GlobalNotification />
-      <main className="mt-0 mx-auto px-2 md:px-6 max-w-[1400px]">
-        <div className={`space-y-2 md:space-y-4`}>
-          <div className="space-y-2">
-            <div className="flex flex-col items-center">
-              <ContentToggle 
-                isMusic={isMusic} 
-                onToggle={() => setIsMusic(!isMusic)} 
-              />
-              <CategorySection />
-            </div>
+      <main className="mt-4 mx-auto px-2 md:px-6 max-w-[1400px]">
+        <div className="space-y-2 md:space-y-4">
+          <div className="space-y-0">
+            <ContentToggle 
+              isMusic={isMusic} 
+              onToggle={() => setIsMusic(!isMusic)} 
+            />
+            <CategorySection />
           </div>
 
           <motion.div
@@ -61,7 +59,7 @@ const MainContent = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.3 }}
-            className={isMobile ? 'mt-2' : ''}
+            className={isMobile ? 'mt-2' : 'mt-4'}
           >
             {!isMusic ? (
               <VideoContent 

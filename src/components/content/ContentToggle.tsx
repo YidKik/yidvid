@@ -11,7 +11,7 @@ export const ContentToggle = ({ isMusic, onToggle }: ContentToggleProps) => {
   const isMobile = useIsMobile();
 
   return (
-    <div className="flex justify-center w-full mb-4">
+    <div className="flex justify-center w-full mb-2 md:mb-4 mt-2 md:mt-4">
       <div 
         className="relative w-[160px] md:w-[240px] h-10 md:h-12 bg-white rounded-full p-1 md:p-1.5 cursor-pointer shadow-md hover:shadow-lg transition-all duration-200"
         onClick={onToggle}
