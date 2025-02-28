@@ -50,16 +50,11 @@ export const VideoGridPagination = ({
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
         size="icon"
-        className={`group relative rounded-full hover:bg-muted/50 hover:border-gray-300 transition-all duration-300 ${
+        className={`rounded-full hover:bg-muted/50 hover:border-gray-300 transition-all duration-300 ${
           isMobile ? "w-7 h-7" : "w-10 h-10"
         }`}
       >
         <ChevronLeft className={isMobile ? "h-3 w-3" : "h-4 w-4"} />
-        <span className={`absolute left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap ${
-          isMobile ? "-bottom-3 text-[7px]" : "-bottom-6 text-xs"
-        } font-medium`}>
-          Previous page
-        </span>
       </Button>
       
       <Button
@@ -67,16 +62,11 @@ export const VideoGridPagination = ({
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
         size="icon"
-        className={`group relative rounded-full hover:bg-muted/50 hover:border-gray-300 transition-all duration-300 ${
+        className={`rounded-full hover:bg-muted/50 hover:border-gray-300 transition-all duration-300 ${
           isMobile ? "w-7 h-7" : "w-10 h-10"
         }`}
       >
         <ChevronRight className={isMobile ? "h-3 w-3" : "h-4 w-4"} />
-        <span className={`absolute left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap ${
-          isMobile ? "-bottom-3 text-[7px]" : "-bottom-6 text-xs"
-        } font-medium`}>
-          Next page
-        </span>
       </Button>
     </div>
   );
