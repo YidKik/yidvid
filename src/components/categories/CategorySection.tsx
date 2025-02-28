@@ -145,7 +145,7 @@ export const CategorySection = () => {
             {infiniteCategories.map((category, index) => (
               <div
                 key={`${category.id}-${index}`}
-                className="w-[110px] md:w-[280px] flex-shrink-0 relative"
+                className="w-[95px] md:w-[220px] flex-shrink-0 relative"
               >
                 <CategoryCard
                   id={category.id}
