@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -46,6 +47,14 @@ export default {
         "pulse-slower": {
           '0%, 100%': { transform: 'scale(1)', opacity: '0.8' },
           '50%': { transform: 'scale(1.2)', opacity: '0.4' }
+        },
+        "search-outline": {
+          "0%": { 
+            "background-position": "0% 0%"
+          },
+          "100%": {
+            "background-position": "300% 0%"
+          }
         }
       },
       animation: {
@@ -53,7 +62,8 @@ export default {
         "fadeIn": "fadeIn 0.6s ease-out forwards",
         "scaleIn": "scaleIn 0.6s ease-out forwards",
         "pulse-slow": "pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",
-        "pulse-slower": "pulse-slower 4s cubic-bezier(0.4, 0, 0.6, 1) infinite"
+        "pulse-slower": "pulse-slower 4s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+        "search-outline": "search-outline 4s linear infinite"
       },
       colors: {
         border: "hsl(var(--border))",
