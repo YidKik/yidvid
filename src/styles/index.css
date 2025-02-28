@@ -1,0 +1,12 @@
+
+/* Import theme variables */
+@import './theme.css';
+
+/* Import global styles */
+@import './globals.css';
+
+/* Import animations */
+@import './animations.css';
+
+/* Import component-specific styles */
+@import './components/search.css';

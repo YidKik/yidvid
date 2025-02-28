@@ -1,0 +1,75 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+/* Global styles */
+body {
+  background-color: var(--background-custom, #FFFFFF);
+  color: var(--text-custom, #030303);
+}
+
+/* Global button styles */
+button, 
+.button-custom,
+.btn,
+[type='button'],
+[type='reset'],
+[type='submit'] {
+  background-color: var(--button-custom) !important;
+  color: white !important;
+  transition: filter 0.2s ease-in-out !important;
+}
+
+button:hover, 
+.button-custom:hover,
+.btn:hover,
+[type='button']:hover,
+[type='reset']:hover,
+[type='submit']:hover {
+  filter: brightness(90%) !important;
+}
+
+/* Global logo styles */
+.logo-custom, h1.logo-custom {
+  color: var(--logo-custom);
+}
+
+/* Global link and text hover styles */
+a:hover,
+.hover-text:hover {
+  color: var(--button-custom) !important;
+  transition: color 0.2s ease-in-out;
+}
+
+/* Video title hover effect */
+.text-youtube-title:hover {
+  color: var(--button-custom) !important;
+}
+
+/* Add custom color classes */
+.bg-custom {
+  background-color: var(--background-custom);
+}
+
+.text-custom {
+  color: var(--text-custom);
+}
+
+.button-custom {
+  background-color: var(--button-custom);
+}
+
+.logo-custom {
+  color: var(--logo-custom);
+}

@@ -1,0 +1,9 @@
+
+@keyframes search-outline {
+  0% { background-position: 0% 0; }
+  100% { background-position: 300% 0; }
+}
+
+.animate-search-outline {
+  animation: search-outline 4s linear infinite;
+}
