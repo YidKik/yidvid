@@ -1,7 +1,7 @@
 
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { Music, BookOpen, Sparkles, Mic, GraduationCap, Film, PlusCircle } from "lucide-react";
+import { Music, BookOpen, Sparkles, Mic, GraduationCap, Film, PlusCircle, Tag, Heart, Star, Zap, Clock, Award, Bookmark } from "lucide-react";
 
 interface CategoryCardProps {
   icon: string;
@@ -27,8 +27,16 @@ const simpleIcons: Record<string, React.ReactNode> = {
   '📚': <GraduationCap size={20} strokeWidth={1.5} color="white" />,
   '🎬': <Film size={20} strokeWidth={1.5} color="white" />,
   '📌': <PlusCircle size={20} strokeWidth={1.5} color="white" />,
+  // Additional icons for custom categories
+  '😄': <Heart size={20} strokeWidth={1.5} color="white" />,
+  '🤣': <Star size={20} strokeWidth={1.5} color="white" />,
+  '🔥': <Zap size={20} strokeWidth={1.5} color="white" />,
+  '⏰': <Clock size={20} strokeWidth={1.5} color="white" />,
+  '🏆': <Award size={20} strokeWidth={1.5} color="white" />,
+  '🔖': <Bookmark size={20} strokeWidth={1.5} color="white" />,
+  '🏷️': <Tag size={20} strokeWidth={1.5} color="white" />,
   // Fallback
-  'default': <PlusCircle size={20} strokeWidth={1.5} color="white" />
+  'default': <Tag size={20} strokeWidth={1.5} color="white" />
 };
 
 export const CategoryCard = ({ icon, label, id, isCustomImage = false }: CategoryCardProps) => {
@@ -121,11 +129,8 @@ export const CategoryCard = ({ icon, label, id, isCustomImage = false }: Categor
               }}
             >
               {isCustomImage ? (
-                <img 
-                  src={icon} 
-                  alt={label}
-                  className="w-4 h-4 md:w-6 md:h-6 object-cover rounded"
-                />
+                // Replace custom image with appropriate outline icon
+                <Tag size={20} strokeWidth={1.5} color="white" />
               ) : (
                 getSimpleIcon(icon)
               )}

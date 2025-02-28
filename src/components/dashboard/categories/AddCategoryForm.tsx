@@ -7,10 +7,33 @@ import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { 
+  Music, BookOpen, Sparkles, Mic, GraduationCap, 
+  Film, PlusCircle, Tag, Heart, Star, Zap, Clock,
+  Award, Bookmark
+} from "lucide-react";
 
 interface AddCategoryFormProps {
   onSuccess: () => void;
 }
+
+// Simple emoji to icon mapping
+const emojiIcons = [
+  { emoji: '🎵', icon: <Music size={20} strokeWidth={1.5} /> },
+  { emoji: '📖', icon: <BookOpen size={20} strokeWidth={1.5} /> },
+  { emoji: '✨', icon: <Sparkles size={20} strokeWidth={1.5} /> },
+  { emoji: '🎙️', icon: <Mic size={20} strokeWidth={1.5} /> },
+  { emoji: '📚', icon: <GraduationCap size={20} strokeWidth={1.5} /> },
+  { emoji: '🎬', icon: <Film size={20} strokeWidth={1.5} /> },
+  { emoji: '📌', icon: <PlusCircle size={20} strokeWidth={1.5} /> },
+  { emoji: '😄', icon: <Heart size={20} strokeWidth={1.5} /> },
+  { emoji: '🤣', icon: <Star size={20} strokeWidth={1.5} /> },
+  { emoji: '🔥', icon: <Zap size={20} strokeWidth={1.5} /> },
+  { emoji: '⏰', icon: <Clock size={20} strokeWidth={1.5} /> },
+  { emoji: '🏆', icon: <Award size={20} strokeWidth={1.5} /> },
+  { emoji: '🔖', icon: <Bookmark size={20} strokeWidth={1.5} /> },
+  { emoji: '🏷️', icon: <Tag size={20} strokeWidth={1.5} /> },
+];
 
 export function AddCategoryForm({ onSuccess }: AddCategoryFormProps) {
   const [newCategory, setNewCategory] = useState({ 
@@ -92,6 +115,22 @@ export function AddCategoryForm({ onSuccess }: AddCategoryFormProps) {
           <Label htmlFor="icon-type">Use Emoji</Label>
         </div>
         
+        {newCategory.is_emoji && (
+          <div className="grid grid-cols-7 gap-2 p-2 border rounded-md">
+            {emojiIcons.map((item, index) => (
+              <div
+                key={index}
+                className={`p-2 rounded-md cursor-pointer hover:bg-gray-100 flex items-center justify-center ${
+                  newCategory.icon === item.emoji ? 'bg-gray-200' : ''
+                }`}
+                onClick={() => setNewCategory({ ...newCategory, icon: item.emoji })}
+              >
+                {item.emoji}
+              </div>
+            ))}
+          </div>
+        )}
+        
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1">
             <Input
@@ -113,6 +152,7 @@ export function AddCategoryForm({ onSuccess }: AddCategoryFormProps) {
             </div>
           ) : (
             <div className="flex-1">
+              <p className="text-sm text-gray-500 mb-2">Note: Custom images will be displayed as outline icons.</p>
               <Input
                 type="file"
                 accept="image/*"
