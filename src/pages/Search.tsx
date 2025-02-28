@@ -1,3 +1,4 @@
+
 import { useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -20,7 +21,8 @@ const Search = () => {
       const { data, error } = await supabase
         .from("youtube_videos")
         .select("*")
-        .or(`title.ilike.%${query}%, channel_name.ilike.%${query}%`)
+        .filter('deleted_at', 'is', null)
+        .or(`title.ilike.%${query}%,channel_name.ilike.%${query}%`)
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -31,6 +33,8 @@ const Search = () => {
       return data || [];
     },
     enabled: query.length > 0,
+    staleTime: 1000 * 60 * 5, // Cache search results for 5 minutes
+    gcTime: 1000 * 60 * 15,   // Keep them in cache for 15 minutes
   });
 
   const { data: channels, isLoading: isLoadingChannels } = useQuery({
@@ -41,7 +45,7 @@ const Search = () => {
       const { data, error } = await supabase
         .from("youtube_channels")
         .select("*")
-        .or(`title.ilike.%${query}%, description.ilike.%${query}%`)
+        .or(`title.ilike.%${query}%,description.ilike.%${query}%`)
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -52,6 +56,8 @@ const Search = () => {
       return data || [];
     },
     enabled: query.length > 0,
+    staleTime: 1000 * 60 * 5, // Cache search results for 5 minutes
+    gcTime: 1000 * 60 * 15,   // Keep them in cache for 15 minutes
   });
 
   return (

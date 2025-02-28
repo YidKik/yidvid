@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useDebounce } from "@/hooks/use-debounce";
 import { toast } from "sonner";
+import { queryClient } from "@/lib/query-client";
 
 export const useSearch = () => {
   const navigate = useNavigate();
@@ -12,37 +13,48 @@ export const useSearch = () => {
   const [showResults, setShowResults] = useState(false);
   const debouncedSearch = useDebounce(searchQuery, 200);
 
+  // Check cache before making a new request
+  const getSearchFromCache = (query: string) => {
+    return queryClient.getQueryData(["quick-search", query]);
+  };
+
   const { data: searchResults, isFetching: isSearching } = useQuery({
     queryKey: ["quick-search", debouncedSearch],
     queryFn: async () => {
       if (!debouncedSearch.trim()) return { videos: [], channels: [] };
       
+      // Check if we have a cached result
+      const cachedResult = getSearchFromCache(debouncedSearch);
+      if (cachedResult) return cachedResult;
+      
       try {
-        // Fetch videos
+        // Optimize the search query by using more specific conditions
+        // and adding limits earlier in the query to reduce processing
         const { data: videos, error: videosError } = await supabase
           .from("youtube_videos")
           .select("id, title, thumbnail, channel_name")
-          .or(`title.ilike.%${debouncedSearch}%, channel_name.ilike.%${debouncedSearch}%`)
-          .is('deleted_at', null)
+          .filter('deleted_at', 'is', null)
+          .or(`title.ilike.%${debouncedSearch}%,channel_name.ilike.%${debouncedSearch}%`)
           .order('created_at', { ascending: false })
           .limit(5);
 
         if (videosError) throw videosError;
 
-        // Fetch channels
         const { data: channels, error: channelsError } = await supabase
           .from("youtube_channels")
           .select("channel_id, title, thumbnail_url")
-          .or(`title.ilike.%${debouncedSearch}%, description.ilike.%${debouncedSearch}%`)
+          .or(`title.ilike.%${debouncedSearch}%,description.ilike.%${debouncedSearch}%`)
           .order('created_at', { ascending: false })
           .limit(3);
 
         if (channelsError) throw channelsError;
 
-        return {
+        const result = {
           videos: videos || [],
           channels: channels || []
         };
+        
+        return result;
       } catch (error: any) {
         console.error("Search error:", error);
         if (!error.message?.includes('Failed to fetch')) {
@@ -52,8 +64,8 @@ export const useSearch = () => {
       }
     },
     enabled: debouncedSearch.length > 0,
-    staleTime: 1000 * 60,
-    gcTime: 1000 * 60 * 10,
+    staleTime: 1000 * 60 * 5, // Increase stale time to 5 minutes for longer caching
+    gcTime: 1000 * 60 * 15,   // Increase garbage collection time to 15 minutes
     refetchOnWindowFocus: false,
   });
 
