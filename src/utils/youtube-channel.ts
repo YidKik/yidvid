@@ -83,7 +83,7 @@ export const addChannel = async (channelInput: string) => {
 
     // Call edge function to add channel with proper authorization and API key
     console.log('Calling edge function to fetch channel data...');
-    const { data, error, status } = await supabase.functions.invoke('fetch-youtube-channel', {
+    const { data, error } = await supabase.functions.invoke('fetch-youtube-channel', {
       body: { channelId },
       headers: {
         Authorization: `Bearer ${session.access_token}`,
@@ -94,8 +94,8 @@ export const addChannel = async (channelInput: string) => {
     if (error) {
       console.error('Edge function error:', error);
       
-      // Handle specific quota exceeded error
-      if (error.message?.includes('quota') || error.toString().includes('quota') || status === 403) {
+      // Handle specific quota exceeded error by checking the error message content
+      if (error.message?.includes('quota') || error.toString().includes('quota')) {
         throw new Error('YouTube API quota exceeded. Please try again tomorrow when the quota resets.');
       }
       
