@@ -32,6 +32,7 @@ export const VideoContent = ({ videos, isLoading, refetch, lastSuccessfulFetch, 
   const isMobile = useIsMobile();
   const [showMoreMobile, setShowMoreMobile] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const videosPerPage = isMobile ? 4 : 12;
   
   // Get ID of the first video before sorting
@@ -52,7 +53,15 @@ export const VideoContent = ({ videos, isLoading, refetch, lastSuccessfulFetch, 
     setCurrentPage(1);
   }, [videos?.length]);
 
-  const showAlert = fetchAttempts > 1 || videos.length === 0;
+  const handleRefresh = async () => {
+    if (refetch) {
+      setIsRefreshing(true);
+      await refetch();
+      setTimeout(() => setIsRefreshing(false), 1000);
+    }
+  };
+
+  const showAlert = fetchAttempts > 1 || videos.length === 0 || isRefreshing;
   const lastUpdateTime = lastSuccessfulFetch ? 
     new Intl.DateTimeFormat('en-US', { 
       dateStyle: 'short', 
@@ -67,7 +76,9 @@ export const VideoContent = ({ videos, isLoading, refetch, lastSuccessfulFetch, 
             <AlertCircle className="h-4 w-4" />
             <AlertTitle>Video Loading Status</AlertTitle>
             <AlertDescription className="flex flex-col gap-2">
-              {fetchAttempts > 3 ? (
+              {isRefreshing ? (
+                "Checking for new videos... Please wait."
+              ) : fetchAttempts > 3 ? (
                 "We're experiencing technical difficulties with video fetching. We'll keep trying automatically."
               ) : (
                 "Some videos might not be loading correctly. We're working on it."
@@ -78,11 +89,11 @@ export const VideoContent = ({ videos, isLoading, refetch, lastSuccessfulFetch, 
                   size="sm" 
                   variant="outline" 
                   className="w-full mt-1 gap-2"
-                  onClick={() => refetch()}
-                  disabled={isLoading}
+                  onClick={handleRefresh}
+                  disabled={isLoading || isRefreshing}
                 >
-                  <RefreshCw className="h-3 w-3" />
-                  Refresh Videos
+                  <RefreshCw className={`h-3 w-3 ${isRefreshing ? "animate-spin" : ""}`} />
+                  {isRefreshing ? "Refreshing..." : "Refresh Videos"}
                 </Button>
               )}
             </AlertDescription>
@@ -94,7 +105,7 @@ export const VideoContent = ({ videos, isLoading, refetch, lastSuccessfulFetch, 
             videos={displayVideos}
             maxVideos={displayVideos.length}
             rowSize={2}
-            isLoading={isLoading}
+            isLoading={isLoading || isRefreshing}
             className="grid-cols-2 gap-3 px-2"
           />
 
@@ -139,7 +150,9 @@ export const VideoContent = ({ videos, isLoading, refetch, lastSuccessfulFetch, 
           <AlertTitle>Video Loading Status</AlertTitle>
           <AlertDescription className="flex items-center justify-between">
             <div>
-              {fetchAttempts > 3 ? (
+              {isRefreshing ? (
+                "Checking for new videos across all channels... This may take a moment."
+              ) : fetchAttempts > 3 ? (
                 "We're experiencing technical difficulties with our YouTube video fetching service. We'll keep trying automatically."
               ) : (
                 "Some YouTube videos might not be loading correctly. Our team is working to resolve this as quickly as possible."
@@ -152,11 +165,11 @@ export const VideoContent = ({ videos, isLoading, refetch, lastSuccessfulFetch, 
                 size="sm" 
                 variant="outline" 
                 className="ml-4 whitespace-nowrap gap-2"
-                onClick={() => refetch()}
-                disabled={isLoading}
+                onClick={handleRefresh}
+                disabled={isLoading || isRefreshing}
               >
-                <RefreshCw className="h-3 w-3" />
-                Refresh Videos
+                <RefreshCw className={`h-3 w-3 ${isRefreshing ? "animate-spin" : ""}`} />
+                {isRefreshing ? "Refreshing..." : "Refresh Videos"}
               </Button>
             )}
           </AlertDescription>
@@ -168,7 +181,7 @@ export const VideoContent = ({ videos, isLoading, refetch, lastSuccessfulFetch, 
           videos={displayVideos}
           maxVideos={videosPerPage}
           rowSize={4}
-          isLoading={isLoading}
+          isLoading={isLoading || isRefreshing}
           className="grid-cols-4 gap-4"
         />
         

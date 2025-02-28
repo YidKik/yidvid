@@ -117,7 +117,8 @@ export const useVideos = () => {
 
       // Check if we have recent video data or need to fetch fresh data
       const shouldFetchNewVideos = lastSuccessfulFetch === null || 
-                                 (Date.now() - lastSuccessfulFetch.getTime() > 3600000); // 1 hour
+                                 (Date.now() - lastSuccessfulFetch.getTime() > 3600000) || // 1 hour
+                                 fetchAttempts > 0; // Also fetch if we've had previous attempts
 
       if (channelIds.length > 0 && shouldFetchNewVideos) {
         // Check quota before making requests
@@ -132,9 +133,9 @@ export const useVideos = () => {
             const { data: response, error: fetchError } = await supabase.functions.invoke('fetch-youtube-videos', {
               body: { 
                 channels: channelIds,
-                forceUpdate: fetchAttempts > 2  // Force update if we've had multiple attempts
-              },
-              // Remove the timeout property as it's not supported in the current version
+                forceUpdate: fetchAttempts > 2, // Force update if we've had multiple attempts
+                fullScan: true // Add parameter to force full scan of channels for missed videos
+              }
             });
 
             if (fetchError) {

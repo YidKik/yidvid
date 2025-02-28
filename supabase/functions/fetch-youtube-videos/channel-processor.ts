@@ -1,143 +1,121 @@
 
-import { SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.23.0";
 
-export const processChannel = async (
-  supabase: SupabaseClient,
-  channelId: string,
-  apiKey: string,
-  quotaData: any,
-  now: Date
-) => {
-  console.log(`[Channel Processor] Processing channel: ${channelId}`);
+const SUPABASE_URL = Deno.env.get("SUPABASE_URL") || "";
+const SUPABASE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+interface YouTubeVideo {
+  id: {
+    videoId: string;
+  };
+  snippet: {
+    publishedAt: string;
+    title: string;
+    description: string;
+    thumbnails: {
+      high: {
+        url: string;
+      };
+    };
+    channelId: string;
+    channelTitle: string;
+  };
+}
+
+export async function processChannel(channelId: string, videos: YouTubeVideo[]) {
+  console.log(`Processing ${videos.length} videos for channel ${channelId}`);
+  let newVideos = 0;
+  let errors = 0;
 
   try {
-    // Fetch channel details first
-    const channelUrl = `https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${channelId}&key=${apiKey}`;
-    const channelResponse = await fetch(channelUrl);
-    const channelData = await channelResponse.json();
+    // Get channel details
+    const { data: channelData, error: channelError } = await supabase
+      .from("youtube_channels")
+      .select("title, default_category")
+      .eq("channel_id", channelId)
+      .single();
 
-    if (!channelData.items?.[0]) {
-      throw new Error('Channel not found');
+    if (channelError) {
+      console.error(`Error fetching channel details for ${channelId}:`, channelError);
+      // Don't return, continue with processing
     }
 
-    const channel = channelData.items[0];
-    
-    // Fetch all videos for the channel without date restriction
-    const videos = await fetchAllVideosForChannel(channelId, apiKey, quotaData);
-    console.log(`[Channel Processor] Found ${videos.length} total videos for channel ${channelId}`);
+    // Get existing videos for this channel
+    const { data: existingVideos, error: videosError } = await supabase
+      .from("youtube_videos")
+      .select("video_id")
+      .eq("channel_id", channelId)
+      .is("deleted_at", null);
 
-    // Format videos for database
-    const formattedVideos = videos.map(video => ({
-      video_id: video.id,
-      title: video.snippet.title,
-      description: video.snippet.description,
-      thumbnail: video.snippet.thumbnails.high?.url || video.snippet.thumbnails.default?.url,
-      channel_id: channelId,
-      channel_name: channel.snippet.title,
-      uploaded_at: video.snippet.publishedAt,
-      views: video.statistics?.viewCount ? parseInt(video.statistics.viewCount) : 0
-    }));
+    if (videosError) {
+      console.error(`Error fetching existing videos for ${channelId}:`, videosError);
+      return { success: false, error: videosError.message, newVideos: 0 };
+    }
 
-    // Store videos in database
-    const { data: storedVideos, error: storeError } = await supabase
-      .from('youtube_videos')
-      .upsert(
-        formattedVideos,
-        { 
-          onConflict: 'video_id',
-          ignoreDuplicates: false 
+    // Create a set of existing video IDs for faster lookup
+    const existingVideoIds = new Set(existingVideos?.map(v => v.video_id) || []);
+
+    // Process each video
+    for (const video of videos) {
+      const videoId = video.id.videoId;
+      
+      // Skip if we already have this video
+      if (existingVideoIds.has(videoId)) {
+        continue;
+      }
+
+      try {
+        // Insert the new video
+        const { error: insertError } = await supabase
+          .from("youtube_videos")
+          .insert({
+            video_id: videoId,
+            title: video.snippet.title,
+            description: video.snippet.description || "",
+            thumbnail: video.snippet.thumbnails.high.url,
+            channel_id: video.snippet.channelId,
+            channel_name: video.snippet.channelTitle,
+            uploaded_at: video.snippet.publishedAt,
+            category: channelData?.default_category || "other",
+          });
+
+        if (insertError) {
+          console.error(`Error inserting video ${videoId}:`, insertError);
+          errors++;
+        } else {
+          newVideos++;
+          console.log(`Added new video: ${videoId} - ${video.snippet.title}`);
         }
-      );
-
-    if (storeError) {
-      throw storeError;
+      } catch (error) {
+        console.error(`Error processing video ${videoId}:`, error);
+        errors++;
+      }
     }
 
-    // Update channel's last fetch time
-    await updateChannelStatus(supabase, channelId, now);
-    await logChannelUpdate(supabase, channelId, videos.length);
+    // Update channel last_fetch timestamp
+    const { error: updateError } = await supabase
+      .from("youtube_channels")
+      .update({ last_fetch: new Date().toISOString() })
+      .eq("channel_id", channelId);
 
-    return {
-      videos: formattedVideos,
-      quotaExceeded: false
-    };
+    if (updateError) {
+      console.error(`Error updating last_fetch for channel ${channelId}:`, updateError);
+    }
 
+    // Log the result
+    await supabase
+      .from("youtube_update_logs")
+      .insert({
+        channel_id: channelId,
+        videos_count: newVideos,
+        error: errors > 0 ? `${errors} errors occurred` : null,
+      });
+
+    return { success: true, newVideos, errors };
   } catch (error) {
-    console.error(`[Channel Processor] Error processing channel ${channelId}:`, error);
-    throw error;
+    console.error(`Error in processChannel for ${channelId}:`, error);
+    return { success: false, error: error.message, newVideos };
   }
-};
-
-const fetchAllVideosForChannel = async (channelId: string, apiKey: string, quotaData: any) => {
-  let allVideos = [];
-  let pageToken = '';
-  const maxResults = 50; // Maximum allowed by YouTube API
-  
-  do {
-    if (quotaData.quota_remaining <= 0) {
-      console.log('[Channel Processor] Quota exceeded during video fetch');
-      return allVideos;
-    }
-
-    const videosUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channelId}&maxResults=${maxResults}&order=date&type=video&key=${apiKey}${pageToken ? `&pageToken=${pageToken}` : ''}`;
-    const videosResponse = await fetch(videosUrl);
-    const videosData = await videosResponse.json();
-
-    if (!videosData.items) {
-      break;
-    }
-
-    // Fetch additional video details (including view counts)
-    const videoIds = videosData.items.map((item: any) => item.id.videoId).join(',');
-    const detailsUrl = `https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&id=${videoIds}&key=${apiKey}`;
-    const detailsResponse = await fetch(detailsUrl);
-    const detailsData = await detailsResponse.json();
-
-    allVideos.push(...(detailsData.items || []));
-    pageToken = videosData.nextPageToken;
-
-    // Add delay between requests to avoid rate limiting
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
-  } while (pageToken);
-
-  return allVideos;
-};
-
-export const updateChannelStatus = async (
-  supabase: SupabaseClient,
-  channelId: string,
-  timestamp: Date,
-  error?: string
-) => {
-  const { error: updateError } = await supabase
-    .from('youtube_channels')
-    .update({
-      last_fetch: timestamp.toISOString(),
-      fetch_error: error || null
-    })
-    .eq('channel_id', channelId);
-
-  if (updateError) {
-    console.error(`[Channel Processor] Error updating channel status:`, updateError);
-  }
-};
-
-export const logChannelUpdate = async (
-  supabase: SupabaseClient,
-  channelId: string,
-  videosCount: number,
-  error?: string
-) => {
-  const { error: logError } = await supabase
-    .from('youtube_update_logs')
-    .insert({
-      channel_id: channelId,
-      videos_count: videosCount,
-      error: error
-    });
-
-  if (logError) {
-    console.error(`[Channel Processor] Error logging channel update:`, logError);
-  }
-};
+}
