@@ -134,7 +134,7 @@ export const useVideos = () => {
                 channels: channelIds,
                 forceUpdate: fetchAttempts > 2  // Force update if we've had multiple attempts
               },
-              timeout: 25000  // Increase timeout to 25 seconds
+              // Remove the timeout property as it's not supported in the current version
             });
 
             if (fetchError) {
