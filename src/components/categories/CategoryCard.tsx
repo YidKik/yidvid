@@ -63,37 +63,48 @@ export const CategoryCard = ({ icon, label, id, isCustomImage = false }: Categor
       }}
       onClick={handleClick}
     >
-      <div className="flex flex-col md:flex-row items-center md:space-x-2 h-full">
-        <motion.span 
-          whileHover={{
-            rotate: [0, -10, 10, -5, 5, 0],
-            transition: {
-              duration: 0.5
-            }
-          }}
-          className="text-base md:text-2xl p-1 md:p-2 rounded-lg mb-1 md:mb-0"
-          style={{
-            background: categoryColors.iconBg, // Red background for icons
-          }}
-        >
-          {isCustomImage ? (
-            <img 
-              src={icon} 
-              alt={label}
-              className="w-4 h-4 md:w-6 md:h-6 object-cover rounded"
-            />
-          ) : (
-            // Use the simple icon from our mapping instead of emoji
-            getSimpleIcon(icon)
-          )}
-        </motion.span>
-        <div className="flex-1 text-center md:text-left">
+      <div className="flex items-center justify-between h-full px-1">
+        <div className="flex items-center gap-2">
+          <motion.span 
+            whileHover={{
+              rotate: [0, -10, 10, -5, 5, 0],
+              transition: {
+                duration: 0.5
+              }
+            }}
+            className="text-base md:text-2xl p-1 md:p-2 rounded-lg"
+            style={{
+              background: categoryColors.iconBg,
+            }}
+          >
+            {isCustomImage ? (
+              <img 
+                src={icon} 
+                alt={label}
+                className="w-4 h-4 md:w-6 md:h-6 object-cover rounded"
+              />
+            ) : (
+              getSimpleIcon(icon)
+            )}
+          </motion.span>
           <h3 
-            className="font-medium text-[10px] leading-tight md:text-sm line-clamp-2 md:line-clamp-1"
+            className="font-medium text-[10px] leading-tight md:text-sm line-clamp-2 max-w-[60px] md:max-w-[120px]"
             style={{ color: categoryColors.text }}
           >
             {label}
           </h3>
+        </div>
+        
+        {/* Add decorative elements on the right side */}
+        <div className="hidden md:flex flex-col items-end justify-between h-full py-1">
+          <div className="w-2 h-2 rounded-full bg-gray-200"></div>
+          <div className="h-8 w-[3px] rounded-full bg-gray-100"></div>
+          <div className="w-2 h-2 rounded-full bg-gray-200"></div>
+        </div>
+        
+        {/* Mobile decorative element */}
+        <div className="md:hidden flex items-center">
+          <div className="h-[20px] w-[2px] rounded-full bg-gray-100"></div>
         </div>
       </div>
     </motion.div>

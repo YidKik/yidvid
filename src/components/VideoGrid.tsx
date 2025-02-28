@@ -36,7 +36,7 @@ export const VideoGrid = ({
   return (
     <div className={cn(
       "grid",
-      isMobile ? "grid-cols-2 gap-x-2 gap-y-2" : `grid-cols-${rowSize} gap-4`,
+      isMobile ? "grid-cols-2 gap-x-2 gap-y-3" : `grid-cols-${rowSize} gap-4`,
       className
     )}>
       {loading ? (

@@ -117,7 +117,7 @@ export const CategorySection = () => {
           />
           
           <motion.div
-            className="flex gap-2 md:gap-6 cursor-grab active:cursor-grabbing"
+            className="flex gap-2 md:gap-4 cursor-grab active:cursor-grabbing"
             drag="x"
             dragConstraints={{
               left: -(infiniteCategories.length * (isMobile ? 100 : 300)),
@@ -145,7 +145,7 @@ export const CategorySection = () => {
             {infiniteCategories.map((category, index) => (
               <div
                 key={`${category.id}-${index}`}
-                className="w-[100px] md:w-[280px] flex-shrink-0 relative"
+                className="w-[110px] md:w-[280px] flex-shrink-0 relative"
               >
                 <CategoryCard
                   id={category.id}
