@@ -58,12 +58,25 @@
   transition: opacity 0.2s ease;
 }
 
-/* Show animation outline on focus, but keep the regular outline too */
+/* Show animation outline on focus, hide the default outline */
+.search-animated-border input:focus {
+  outline: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  ring-offset: none !important;
+  ring: none !important;
+}
+
+/* Hide regular outline on focus and show only animation */
 .search-animated-border input:focus ~ .animated-border {
   opacity: 1;
 }
 
-/* Keep the regular outline always visible */
+.search-animated-border input:focus ~ .search-animated-border::before {
+  opacity: 0;
+}
+
+/* Hide the regular outline when input is focused */
 .search-animated-border input:focus + .search-animated-border::before {
-  opacity: 1;
+  opacity: 0;
 }
