@@ -8,20 +8,10 @@ import { VideoGridPagination } from "@/components/video/VideoGridPagination";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
-interface Video {
-  id: string;
-  video_id: string;
-  title: string;
-  thumbnail: string;
-  channelName: string;
-  channelId: string;
-  views: number;
-  uploadedAt: string | Date;
-}
+import { VideoData } from "@/hooks/video/useVideoFetcher";
 
 interface VideoContentProps {
-  videos: Video[];
+  videos: VideoData[];
   isLoading: boolean;
   refetch?: () => void;
   lastSuccessfulFetch?: Date | null;
