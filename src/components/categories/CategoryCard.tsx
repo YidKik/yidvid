@@ -46,9 +46,9 @@ export const CategoryCard = ({ icon, label, id, isCustomImage = false }: Categor
   return (
     <motion.div
       whileHover={{ 
-        scale: 1.02,
-        y: -4,
         boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1)",
+        borderColor: "#d6293d",
+        y: -4,
         transition: {
           type: "spring",
           stiffness: 400,
