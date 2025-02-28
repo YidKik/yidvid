@@ -1,7 +1,7 @@
 
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { RefreshCw } from "lucide-react";
+import { formatDistanceToNow } from "date-fns";
 
 interface VideoAlertStatusProps {
   isRefreshing: boolean;
@@ -20,62 +20,62 @@ export const VideoAlertStatus = ({
   isLoading,
   isMobile = false
 }: VideoAlertStatusProps) => {
-  const showAlert = fetchAttempts > 1 || isRefreshing;
-  const lastUpdateTime = lastSuccessfulFetch ? 
-    new Intl.DateTimeFormat('en-US', { 
-      dateStyle: 'short', 
-      timeStyle: 'short' 
-    }).format(lastSuccessfulFetch) : 'No recent update';
-
-  const handleRefresh = async () => {
-    if (refetch) {
-      await refetch();
+  if (isLoading) return null;
+  
+  const getStatusText = () => {
+    if (!lastSuccessfulFetch) {
+      if (fetchAttempts > 3) {
+        return "We're having trouble loading videos. Please try again later.";
+      }
+      return "Loading videos...";
     }
+
+    const timeAgo = formatDistanceToNow(new Date(lastSuccessfulFetch), { addSuffix: true });
+    
+    if (fetchAttempts > 3) {
+      return `Last updated ${timeAgo}. We're having trouble fetching new videos.`;
+    }
+    
+    return `Videos updated ${timeAgo}`;
   };
 
-  if (!showAlert) return null;
+  const statusText = getStatusText();
 
-  return (
-    <Alert className={`mb-4 ${isMobile ? 'mx-2' : ''}`} variant={fetchAttempts > 3 ? "destructive" : "default"}>
-      <AlertCircle className="h-4 w-4" />
-      <AlertTitle>Video Loading Status</AlertTitle>
-      <AlertDescription className={isMobile ? "flex flex-col gap-2" : "flex items-center justify-between"}>
-        <div>
-          {isRefreshing ? (
-            isMobile ? 
-              "Checking for new videos... Please wait." : 
-              "Checking for new videos across all channels... This may take a moment."
-          ) : fetchAttempts > 3 ? (
-            isMobile ? 
-              "We're experiencing technical difficulties with video fetching. We'll keep trying automatically." : 
-              "We're experiencing technical difficulties with our YouTube video fetching service. We'll keep trying automatically."
-          ) : (
-            isMobile ? 
-              "Some videos might not be loading correctly. We're working on it." : 
-              "Some YouTube videos might not be loading correctly. Our team is working to resolve this as quickly as possible."
-          )}
-          <div className="text-xs opacity-80 mt-1">
-            Last successful update: {lastUpdateTime}
-          </div>
-          <div className="text-xs opacity-80 mt-1">
-            <strong>Important:</strong> We're aware that video fetching is currently slow and not all videos are being retrieved. 
-            Our team is actively working to resolve these issues. Thank you for your patience.
-          </div>
-        </div>
-        
+  if (isMobile) {
+    return (
+      <div className="flex items-center justify-between px-4 py-1 mb-1 text-xs text-muted-foreground">
+        <span>{statusText}</span>
         {refetch && (
-          <Button 
-            size="sm" 
-            variant="outline" 
-            className={`${isMobile ? "w-full mt-1" : "ml-4 whitespace-nowrap"} gap-2`}
-            onClick={handleRefresh}
-            disabled={isLoading || isRefreshing}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7"
+            onClick={refetch}
+            disabled={isRefreshing}
           >
-            <RefreshCw className={`h-3 w-3 ${isRefreshing ? "animate-spin" : ""}`} />
-            {isRefreshing ? "Refreshing..." : "Refresh Videos"}
+            <RefreshCw className={`h-3 w-3 ${isRefreshing ? 'animate-spin' : ''}`} />
+            <span className="sr-only">Refresh videos</span>
           </Button>
         )}
-      </AlertDescription>
-    </Alert>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex items-center justify-between px-4 py-2 text-sm text-muted-foreground border-b">
+      <span>{statusText}</span>
+      {refetch && (
+        <Button
+          variant="ghost"
+          size="sm"
+          className="gap-2"
+          onClick={refetch}
+          disabled={isRefreshing}
+        >
+          <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+          <span>Refresh</span>
+        </Button>
+      )}
+    </div>
   );
 };
