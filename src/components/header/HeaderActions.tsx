@@ -28,7 +28,7 @@ export const HeaderActions = ({
 }: HeaderActionsProps) => {
   if (isMobile && !isSearchExpanded) {
     return (
-      <div className="flex items-center gap-1.5 absolute right-0 top-1/2 -translate-y-1/2 mr-0">
+      <div className="flex items-center gap-1.5 absolute right-0 top-1/2 -translate-y-1/2 mr-2">
         <Button
           variant="ghost"
           size="icon"
@@ -38,6 +38,15 @@ export const HeaderActions = ({
           <Search className="h-3 w-3 text-gray-600" />
         </Button>
 
+        {session && (
+          <NotificationsMenu 
+            session={session} 
+            onMarkAsRead={onMarkNotificationsAsRead}
+          />
+        )}
+        
+        <ContactDialog />
+        
         {session ? (
           <UserMenu onLogout={onLogout} />
         ) : (
@@ -50,24 +59,15 @@ export const HeaderActions = ({
             <LogIn className="h-3 w-3 text-gray-600" />
           </Button>
         )}
-        
-        <ContactDialog />
-        
-        {session && (
-          <NotificationsMenu 
-            session={session} 
-            onMarkAsRead={onMarkNotificationsAsRead}
-          />
-        )}
       </div>
     );
   }
 
   if (!isMobile) {
     return (
-      <div className="flex items-center gap-2 ml-auto">
-        <ContactDialog />
+      <div className="flex items-center gap-3 ml-auto">
         {session && <NotificationsMenu session={session} onMarkAsRead={onMarkNotificationsAsRead} />}
+        <ContactDialog />
         {session ? (
           <UserMenu onLogout={onLogout} />
         ) : (

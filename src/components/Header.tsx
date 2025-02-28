@@ -74,14 +74,14 @@ export const Header = () => {
                 </div>
 
                 {!isMobile && (
-                  <div className="flex-1 flex justify-center items-center absolute left-1/2 transform -translate-x-1/2 w-full max-w-xl">
+                  <div className="flex-1 flex justify-center items-center max-w-xl mx-auto">
                     <div className="w-full max-w-xl">
                       <SearchBar />
                     </div>
                   </div>
                 )}
 
-                <div className="flex-none pr-2">
+                <div className="flex-none pr-4">
                   <HeaderActions 
                     isMobile={isMobile}
                     isSearchExpanded={isSearchExpanded}
