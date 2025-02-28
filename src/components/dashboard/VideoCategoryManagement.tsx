@@ -34,6 +34,7 @@ const defaultCategories: { value: VideoCategory; label: string }[] = [
 export function VideoCategoryManagement({ videos, onUpdate }: VideoCategoryManagementProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   const { data: customCategories = [] } = useQuery({
     queryKey: ["custom-categories"],
@@ -48,12 +49,31 @@ export function VideoCategoryManagement({ videos, onUpdate }: VideoCategoryManag
     },
   });
 
+  const { data: channels = [] } = useQuery({
+    queryKey: ["youtube-channels"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("youtube_channels")
+        .select("channel_id, default_category")
+        .is("deleted_at", null);
+
+      if (error) throw error;
+      return data || [];
+    },
+  });
+
   const filteredVideos = videos.filter((video) =>
     video.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const getChannelCategory = (channelId: string) => {
+    const channel = channels.find(c => c.channel_id === channelId);
+    return channel?.default_category || "none";
+  };
+
   const handleUpdateCategory = async (videoId: string) => {
     if (!selectedCategory) return;
+    setIsUpdating(true);
 
     try {
       if (defaultCategories.some(cat => cat.value === selectedCategory)) {
@@ -83,11 +103,13 @@ export function VideoCategoryManagement({ videos, onUpdate }: VideoCategoryManag
         if (error) throw error;
       }
 
-      toast.success("Category updated successfully");
+      toast.success("Video category updated successfully");
       onUpdate();
     } catch (error) {
       console.error("Error updating category:", error);
       toast.error("Failed to update category");
+    } finally {
+      setIsUpdating(false);
     }
   };
 
@@ -138,6 +160,9 @@ export function VideoCategoryManagement({ videos, onUpdate }: VideoCategoryManag
                   Title
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Channel Category
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Current Category
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -161,17 +186,27 @@ export function VideoCategoryManagement({ videos, onUpdate }: VideoCategoryManag
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100">
+                      {getChannelCategory(video.channel_id)}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100">
                       {video.category || "No category"}
                     </span>
+                    {video.category !== getChannelCategory(video.channel_id) && video.category && getChannelCategory(video.channel_id) !== "none" && (
+                      <span className="ml-2 text-xs text-amber-600">
+                        (Overridden)
+                      </span>
+                    )}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => handleUpdateCategory(video.id)}
-                      disabled={!selectedCategory}
+                      disabled={!selectedCategory || isUpdating}
                     >
-                      Update Category
+                      {isUpdating ? "Updating..." : "Update Category"}
                     </Button>
                   </td>
                 </tr>

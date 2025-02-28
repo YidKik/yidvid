@@ -24,24 +24,97 @@ const categories: Record<VideoCategory, { label: string; icon: string }> = {
 const CategoryVideos = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const categoryInfo = id && categories[id as VideoCategory];
+  
+  // First check if it's a standard category
+  const standardCategoryInfo = id && Object.keys(categories).includes(id) 
+    ? categories[id as VideoCategory] 
+    : null;
 
+  // If not a standard category, check if it's a custom category
+  const { data: customCategoryInfo, isLoading: isCustomCategoryLoading } = useQuery({
+    queryKey: ["custom-category", id],
+    queryFn: async () => {
+      if (!id || standardCategoryInfo) return null;
+      
+      const { data, error } = await supabase
+        .from("custom_categories")
+        .select("*")
+        .eq("id", id)
+        .single();
+
+      if (error) {
+        console.error("Error fetching custom category:", error);
+        return null;
+      }
+      
+      return data ? { label: data.name, icon: data.icon, is_emoji: data.is_emoji } : null;
+    },
+    enabled: !!id && !standardCategoryInfo,
+  });
+
+  // Determine the category information
+  const categoryInfo = standardCategoryInfo || customCategoryInfo;
+
+  // Fetch videos for the category
   const { data: videos, isLoading } = useQuery({
     queryKey: ["category-videos", id],
     queryFn: async () => {
       if (!id) throw new Error("Category ID is required");
       
-      const { data, error } = await supabase
-        .from("youtube_videos")
-        .select("*")
-        .eq("category", id as VideoCategory)
-        .order("uploaded_at", { ascending: false });
+      // For standard categories, fetch directly
+      if (standardCategoryInfo) {
+        const { data, error } = await supabase
+          .from("youtube_videos")
+          .select("*")
+          .eq("category", id as VideoCategory)
+          .is("deleted_at", null)
+          .order("uploaded_at", { ascending: false });
 
-      if (error) throw error;
-      return data || [];
+        if (error) throw error;
+        return data || [];
+      } 
+      // For custom categories, join with mappings
+      else if (customCategoryInfo) {
+        const { data, error } = await supabase
+          .from("video_custom_category_mappings")
+          .select(`
+            video_id,
+            youtube_videos!inner(*)
+          `)
+          .eq("category_id", id)
+          .is("youtube_videos.deleted_at", null)
+          .order("youtube_videos.uploaded_at", { ascending: false });
+
+        if (error) throw error;
+        return data?.map(item => item.youtube_videos) || [];
+      }
+      
+      return [];
     },
     enabled: !!id && !!categoryInfo, // Only run query if we have a valid category
   });
+
+  if (isCustomCategoryLoading || isLoading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <div className="max-w-7xl mx-auto px-4 py-8">
+          <Button variant="ghost" onClick={() => navigate(-1)} className="mb-6">
+            <ArrowLeft className="mr-2 h-4 w-4" /> Back
+          </Button>
+          <div className="text-center mb-8">
+            <Skeleton className="h-8 w-40 mx-auto" />
+            <Skeleton className="h-5 w-20 mx-auto mt-2" />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {[...Array(8)].map((_, i) => (
+              <Skeleton key={i} className="h-[300px] rounded-lg" />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (!categoryInfo) {
     return (
@@ -79,13 +152,7 @@ const CategoryVideos = () => {
           </motion.div>
         </div>
 
-        {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {[...Array(8)].map((_, i) => (
-              <Skeleton key={i} className="h-[300px] rounded-lg" />
-            ))}
-          </div>
-        ) : videos && videos.length > 0 ? (
+        {videos && videos.length > 0 ? (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

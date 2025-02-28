@@ -34,6 +34,7 @@ const defaultCategories: { value: VideoCategory; label: string }[] = [
 export function ChannelCategoryManagement({ channels, onUpdate }: ChannelCategoryManagementProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   const { data: customCategories = [] } = useQuery({
     queryKey: ["custom-categories"],
@@ -54,16 +55,21 @@ export function ChannelCategoryManagement({ channels, onUpdate }: ChannelCategor
 
   const handleUpdateCategory = async (channelId: string) => {
     if (!selectedCategory) return;
+    setIsUpdating(true);
 
     try {
       if (defaultCategories.some(cat => cat.value === selectedCategory)) {
         // Handle default category update
+        // 1. Update the channel's default category
         const { error } = await supabase
           .from("youtube_channels")
           .update({ default_category: selectedCategory as VideoCategory })
           .eq("channel_id", channelId);
 
         if (error) throw error;
+        
+        // 2. Update all existing videos from this channel to match the channel's category
+        // Note: This will be automatically handled by the database trigger we'll create
       } else {
         // Handle custom category mapping
         // First, remove any existing custom category mappings
@@ -81,6 +87,38 @@ export function ChannelCategoryManagement({ channels, onUpdate }: ChannelCategor
           });
 
         if (error) throw error;
+
+        // Update videos with custom category mapping
+        // First, remove any existing video custom category mappings for videos of this channel
+        const { data: channelVideos } = await supabase
+          .from("youtube_videos")
+          .select("id")
+          .eq("channel_id", channelId)
+          .is("deleted_at", null);
+          
+        if (channelVideos && channelVideos.length > 0) {
+          const videoIds = channelVideos.map(video => video.id);
+          
+          // Delete any existing mappings for these videos
+          await supabase
+            .from("video_custom_category_mappings")
+            .delete()
+            .in("video_id", videoIds);
+          
+          // Create new mappings for all videos
+          const newMappings = videoIds.map(videoId => ({
+            video_id: videoId,
+            category_id: selectedCategory
+          }));
+          
+          if (newMappings.length > 0) {
+            const { error: mappingError } = await supabase
+              .from("video_custom_category_mappings")
+              .insert(newMappings);
+              
+            if (mappingError) throw mappingError;
+          }
+        }
       }
 
       toast.success("Channel category updated successfully");
@@ -88,6 +126,8 @@ export function ChannelCategoryManagement({ channels, onUpdate }: ChannelCategor
     } catch (error) {
       console.error("Error updating category:", error);
       toast.error("Failed to update category");
+    } finally {
+      setIsUpdating(false);
     }
   };
 
@@ -168,9 +208,9 @@ export function ChannelCategoryManagement({ channels, onUpdate }: ChannelCategor
                       variant="outline"
                       size="sm"
                       onClick={() => handleUpdateCategory(channel.channel_id)}
-                      disabled={!selectedCategory}
+                      disabled={!selectedCategory || isUpdating}
                     >
-                      Update Category
+                      {isUpdating ? "Updating..." : "Update Category"}
                     </Button>
                   </td>
                 </tr>
