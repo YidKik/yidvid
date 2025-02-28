@@ -63,8 +63,8 @@ export const CategoryCard = ({ icon, label, id, isCustomImage = false }: Categor
       }}
       onClick={handleClick}
     >
-      <div className="flex items-center justify-between h-full px-1">
-        <div className="flex items-center gap-2">
+      <div className="flex items-center h-full px-1">
+        <div className="flex items-center gap-2 flex-1">
           <motion.span 
             whileHover={{
               rotate: [0, -10, 10, -5, 5, 0],
@@ -95,16 +95,22 @@ export const CategoryCard = ({ icon, label, id, isCustomImage = false }: Categor
           </h3>
         </div>
         
-        {/* Add decorative elements on the right side */}
-        <div className="hidden md:flex flex-col items-end justify-between h-full py-1">
-          <div className="w-2 h-2 rounded-full bg-gray-200"></div>
-          <div className="h-8 w-[3px] rounded-full bg-gray-100"></div>
-          <div className="w-2 h-2 rounded-full bg-gray-200"></div>
-        </div>
-        
-        {/* Mobile decorative element */}
-        <div className="md:hidden flex items-center">
-          <div className="h-[20px] w-[2px] rounded-full bg-gray-100"></div>
+        {/* New decorative design for right side */}
+        <div className="flex flex-col items-center justify-center h-full">
+          <div className="flex space-x-1 md:space-x-2">
+            <div 
+              className="h-[20px] md:h-[30px] w-[2px] md:w-[3px] rounded-full" 
+              style={{ background: `linear-gradient(to bottom, ${categoryColors.border}22, ${categoryColors.border}88)` }}
+            />
+            <div 
+              className="h-[30px] md:h-[50px] w-[2px] md:w-[3px] rounded-full" 
+              style={{ background: `linear-gradient(to bottom, ${categoryColors.border}44, ${categoryColors.border})` }}
+            />
+            <div 
+              className="h-[20px] md:h-[30px] w-[2px] md:w-[3px] rounded-full" 
+              style={{ background: `linear-gradient(to bottom, ${categoryColors.border}22, ${categoryColors.border}88)` }}
+            />
+          </div>
         </div>
       </div>
     </motion.div>
