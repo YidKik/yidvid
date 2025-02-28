@@ -126,10 +126,6 @@ body {
 }
 
 /* Animated search border - only appears on focus */
-.search-animated-border input:focus ~ .animated-border {
-  opacity: 1;
-}
-
 .search-animated-border .animated-border {
   content: '';
   position: absolute;
@@ -148,9 +144,19 @@ body {
   mask-composite: exclude;
   animation: search-outline 4s linear infinite;
   pointer-events: none;
-  z-index: 5;
+  z-index: 6;
   opacity: 0;
   transition: opacity 0.2s ease;
+}
+
+/* Show animation outline on focus, but keep the regular outline too */
+.search-animated-border input:focus ~ .animated-border {
+  opacity: 1;
+}
+
+/* Keep the regular outline always visible */
+.search-animated-border input:focus + .search-animated-border::before {
+  opacity: 1;
 }
 
 @keyframes search-outline {
