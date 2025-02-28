@@ -57,7 +57,7 @@ export const extractChannelId = (input: string): string => {
     }
   } else if (channelId.startsWith('@')) {
     // Handle @username format
-    channelId = channelId.substring(1);
+    return channelId; // Return including @ symbol for the edge function
   }
   
   return channelId;
@@ -75,22 +75,6 @@ export const addChannel = async (channelInput: string) => {
       throw new Error('Please enter a valid channel ID or URL');
     }
     
-    // Check if channel already exists
-    const { data: existingChannel, error: checkError } = await supabase
-      .from('youtube_channels')
-      .select('channel_id')
-      .eq('channel_id', channelId)
-      .maybeSingle();
-
-    if (checkError) {
-      console.error('Error checking existing channel:', checkError);
-      throw new Error('Error checking if channel exists');
-    }
-
-    if (existingChannel) {
-      throw new Error('This channel has already been added');
-    }
-
     // Get the current session's access token
     const { data: { session } } = await supabase.auth.getSession();
     if (!session?.access_token) {
@@ -109,7 +93,14 @@ export const addChannel = async (channelInput: string) => {
 
     if (error) {
       console.error('Edge function error:', error);
-      throw new Error(error.message || 'Failed to add channel');
+      
+      // Extract the actual error message if possible
+      let errorMessage = error.message;
+      if (typeof error === 'object' && error && 'message' in error) {
+        errorMessage = error.message;
+      }
+      
+      throw new Error(errorMessage || 'Failed to add channel');
     }
 
     if (!data) {

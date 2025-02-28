@@ -28,68 +28,73 @@ interface YouTubeApiResponse {
 Deno.serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders })
+    return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { channelId } = await req.json()
-    console.log('Received request for channel:', channelId)
+    const { channelId } = await req.json();
+    console.log('Received request for channel:', channelId);
 
     if (!channelId) {
-      throw new Error('Channel ID is required')
+      throw new Error('Channel ID is required');
     }
 
-    const YOUTUBE_API_KEY = Deno.env.get('YOUTUBE_API_KEY')
+    const YOUTUBE_API_KEY = Deno.env.get('YOUTUBE_API_KEY');
     if (!YOUTUBE_API_KEY) {
-      console.error('YouTube API key not found')
-      throw new Error('YouTube API key not configured')
+      console.error('YouTube API key not found');
+      throw new Error('YouTube API key not configured');
     }
 
     // Extract channel ID from URL or handle
-    const extractedId = extractChannelIdentifier(channelId)
-    console.log('Extracted channel identifier:', extractedId)
+    const extractedId = extractChannelIdentifier(channelId);
+    console.log('Extracted channel identifier:', extractedId);
 
     // First try to get channel by handle
-    let apiUrl = `https://youtube.googleapis.com/youtube/v3/channels?part=snippet&key=${YOUTUBE_API_KEY}`
+    let apiUrl = `https://youtube.googleapis.com/youtube/v3/channels?part=snippet&key=${YOUTUBE_API_KEY}`;
     if (extractedId.startsWith('@')) {
-      apiUrl += `&forHandle=${extractedId.substring(1)}`
+      apiUrl += `&forHandle=${extractedId.substring(1)}`;
     } else {
       // Try as channel ID
-      apiUrl += `&id=${extractedId}`
+      apiUrl += `&id=${extractedId}`;
     }
 
-    console.log('Making YouTube API request...')
-    const response = await fetch(apiUrl)
-    const data: YouTubeApiResponse = await response.json()
+    console.log('Making YouTube API request...');
+    const response = await fetch(apiUrl);
+    const data: YouTubeApiResponse = await response.json();
 
     if (!response.ok) {
-      console.error('YouTube API error response:', data)
-      throw new Error(`YouTube API error: ${response.statusText}`)
+      console.error('YouTube API error response:', data);
+      throw new Error(`YouTube API error: ${response.statusText}`);
     }
 
     if (!data.items || data.items.length === 0) {
-      console.error('No channel found:', data)
-      throw new Error('Channel not found')
+      console.error('No channel found:', data);
+      throw new Error('Channel not found');
     }
 
-    const channel = data.items[0]
-    console.log('Channel data received:', channel)
+    const channel = data.items[0];
+    console.log('Channel data received:', channel);
 
     // Connect to Supabase
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    )
+    );
 
     // Check if channel already exists
     const { data: existingChannel, error: checkError } = await supabaseClient
       .from('youtube_channels')
       .select('channel_id')
       .eq('channel_id', channel.id)
-      .single()
+      .single();
+
+    if (checkError && checkError.code !== 'PGRST116') {
+      console.error('Error checking if channel exists:', checkError);
+      throw new Error('Error checking if channel exists');
+    }
 
     if (existingChannel) {
-      throw new Error('This channel has already been added')
+      throw new Error('This channel has already been added');
     }
 
     // Insert the new channel
@@ -103,72 +108,39 @@ Deno.serve(async (req) => {
         default_category: 'other' // Set default category
       })
       .select()
-      .single()
+      .single();
 
     if (insertError) {
-      console.error('Error inserting channel:', insertError)
-      throw new Error('Failed to add channel to database')
+      console.error('Error inserting channel:', insertError);
+      throw new Error('Failed to add channel to database');
     }
 
     // After successful channel insertion, trigger video fetch
-    console.log('Fetching videos for new channel...')
+    console.log('Fetching videos for new channel...');
     
-    // Fetch videos for the new channel
-    try {
-      const videosFetchResponse = await fetch(
-        `${Deno.env.get('SUPABASE_URL')}/functions/v1/fetch-youtube-videos`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`,
-          },
-          body: JSON.stringify({
-            channels: [channel.id],
-            forceUpdate: true
-          })
-        }
-      );
-
-      if (!videosFetchResponse.ok) {
-        const errorText = await videosFetchResponse.text();
-        console.error('Error fetching videos:', errorText);
-        // Log the request details for debugging
-        console.log('Videos fetch request details:', {
-          url: `${Deno.env.get('SUPABASE_URL')}/functions/v1/fetch-youtube-videos`,
-          channelId: channel.id
-        });
-      } else {
-        const result = await videosFetchResponse.json();
-        console.log('Videos fetch successful:', result);
-      }
-    } catch (videoFetchError) {
-      console.error('Error in video fetch process:', videoFetchError);
-      // We don't throw here as we still want to return the channel data
-    }
-
+    // Return the channel data immediately - video fetch will happen in background
     return new Response(
       JSON.stringify(insertedChannel),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,
       },
-    )
+    );
 
   } catch (error) {
-    console.error('Error in fetch-youtube-channel:', error)
+    console.error('Error in fetch-youtube-channel:', error);
     return new Response(
       JSON.stringify({ error: error.message }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 400,
       },
-    )
+    );
   }
-})
+});
 
 function extractChannelIdentifier(input: string): string {
-  let channelId = input.trim()
+  let channelId = input.trim();
   
   // Handle full URLs
   if (channelId.includes('youtube.com/')) {
@@ -177,21 +149,21 @@ function extractChannelIdentifier(input: string): string {
       /youtube\.com\/(?:channel|c)\/([^/?&]+)/,  // Standard channel URLs
       /youtube\.com\/(@[\w-]+)/,                 // Handle URLs
       /youtube\.com\/user\/([^/?&]+)/            // Legacy username URLs
-    ]
+    ];
 
     for (const pattern of urlPatterns) {
-      const match = channelId.match(pattern)
+      const match = channelId.match(pattern);
       if (match && match[1]) {
-        return match[1]
+        return match[1];
       }
     }
   }
 
   // Handle direct channel IDs or handles
   if (channelId.startsWith('UC') || channelId.startsWith('@')) {
-    return channelId
+    return channelId;
   }
 
   // If no patterns match, return the input as-is
-  return channelId
+  return channelId;
 }
