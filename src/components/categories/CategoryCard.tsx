@@ -1,7 +1,7 @@
 
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { Music, BookOpen, Sparkles, Mic, GraduationCap, Film, PlusCircle, Tag, Heart, Star, Zap, Clock, Award, Bookmark } from "lucide-react";
+import { Music, BookOpen, Sparkles, Mic, GraduationCap, Film, PlusCircle, Tag, Heart, Star, Zap, Clock, Award, Bookmark, Smile } from "lucide-react";
 
 interface CategoryCardProps {
   icon: string;
@@ -28,7 +28,7 @@ const simpleIcons: Record<string, React.ReactNode> = {
   '🎬': <Film size={20} strokeWidth={1.5} color="white" />,
   '📌': <PlusCircle size={20} strokeWidth={1.5} color="white" />,
   // Additional icons for custom categories
-  '😄': <Heart size={20} strokeWidth={1.5} color="white" />,
+  '😄': <Smile size={20} strokeWidth={1.5} color="white" />, // Changed to Smile icon for funny category
   '🤣': <Star size={20} strokeWidth={1.5} color="white" />,
   '🔥': <Zap size={20} strokeWidth={1.5} color="white" />,
   '⏰': <Clock size={20} strokeWidth={1.5} color="white" />,

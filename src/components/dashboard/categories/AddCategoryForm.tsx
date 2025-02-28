@@ -10,7 +10,7 @@ import { toast } from "sonner";
 import { 
   Music, BookOpen, Sparkles, Mic, GraduationCap, 
   Film, PlusCircle, Tag, Heart, Star, Zap, Clock,
-  Award, Bookmark
+  Award, Bookmark, Smile
 } from "lucide-react";
 
 interface AddCategoryFormProps {
@@ -26,7 +26,7 @@ const emojiIcons = [
   { emoji: '📚', icon: <GraduationCap size={20} strokeWidth={1.5} /> },
   { emoji: '🎬', icon: <Film size={20} strokeWidth={1.5} /> },
   { emoji: '📌', icon: <PlusCircle size={20} strokeWidth={1.5} /> },
-  { emoji: '😄', icon: <Heart size={20} strokeWidth={1.5} /> },
+  { emoji: '😄', icon: <Smile size={20} strokeWidth={1.5} /> }, // Changed to Smile for funny
   { emoji: '🤣', icon: <Star size={20} strokeWidth={1.5} /> },
   { emoji: '🔥', icon: <Zap size={20} strokeWidth={1.5} /> },
   { emoji: '⏰', icon: <Clock size={20} strokeWidth={1.5} /> },
