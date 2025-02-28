@@ -1,6 +1,7 @@
 
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { Circle, Square, Triangle, Star, Heart, Bookmark, Check, X, Plus, Minus } from "lucide-react";
 
 interface CategoryCardProps {
   icon: string;
@@ -17,11 +18,29 @@ const categoryColors = {
   iconBg: '#ea384c'
 };
 
+// Simple icon mapping
+const simpleIcons: Record<string, React.ReactNode> = {
+  '🎵': <Circle strokeWidth={1} fill="white" />,
+  '📖': <Square strokeWidth={1} fill="white" />,
+  '✨': <Star strokeWidth={1} fill="white" />,
+  '🎙️': <Triangle strokeWidth={1} fill="white" />,
+  '📚': <Bookmark strokeWidth={1} fill="white" />,
+  '🎬': <Heart strokeWidth={1} fill="white" />,
+  '📌': <Plus strokeWidth={1} fill="white" />,
+  // Fallback
+  'default': <Circle strokeWidth={1} fill="white" />
+};
+
 export const CategoryCard = ({ icon, label, id, isCustomImage = false }: CategoryCardProps) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
     navigate(`/category/${id}`);
+  };
+
+  // Get the simple icon or use default if not found
+  const getSimpleIcon = (iconEmoji: string) => {
+    return simpleIcons[iconEmoji] || simpleIcons['default'];
   };
 
   return (
@@ -64,16 +83,8 @@ export const CategoryCard = ({ icon, label, id, isCustomImage = false }: Categor
               className="w-5 h-5 md:w-8 md:h-8 object-cover rounded"
             />
           ) : (
-            <span 
-              className="text-white" 
-              style={{ 
-                color: 'transparent',  // Make the icon transparent/white
-                WebkitTextStroke: '1px black', // Black outline for icons (Webkit)
-                textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000' // Black outline fallback
-              }}
-            >
-              {icon}
-            </span>
+            // Use the simple icon from our mapping instead of emoji
+            getSimpleIcon(icon)
           )}
         </motion.span>
         <div className="flex-1 text-center md:text-left">
