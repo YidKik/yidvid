@@ -55,7 +55,6 @@ export const CategoryCard = ({ icon, label, id, isCustomImage = false }: Categor
           className="text-base md:text-3xl p-1 md:p-2.5 rounded-lg mb-1 md:mb-0"
           style={{
             background: categoryColors.iconBg, // Red background for icons
-            color: 'white' // White fill
           }}
         >
           {isCustomImage ? (
@@ -65,10 +64,14 @@ export const CategoryCard = ({ icon, label, id, isCustomImage = false }: Categor
               className="w-5 h-5 md:w-8 md:h-8 object-cover rounded"
             />
           ) : (
-            <span className="text-white" style={{ 
-              WebkitTextStroke: '1px black', // Black outline for icons (Webkit)
-              textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000' // Black outline fallback
-            }}>
+            <span 
+              className="text-white" 
+              style={{ 
+                color: 'transparent',  // Make the icon transparent/white
+                WebkitTextStroke: '1px black', // Black outline for icons (Webkit)
+                textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000' // Black outline fallback
+              }}
+            >
               {icon}
             </span>
           )}
