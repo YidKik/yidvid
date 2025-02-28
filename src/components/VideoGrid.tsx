@@ -36,7 +36,7 @@ export const VideoGrid = ({
   return (
     <div className={cn(
       "grid",
-      isMobile ? "grid-cols-2 gap-x-2 gap-y-0" : `grid-cols-${rowSize} gap-4`,
+      isMobile ? "grid-cols-2 gap-x-2 gap-y-2" : `grid-cols-${rowSize} gap-4`,
       className
     )}>
       {loading ? (
@@ -53,7 +53,7 @@ export const VideoGrid = ({
             key={video.id}
             className={cn(
               "w-full flex flex-col",
-              isMobile && "mb-1"
+              isMobile && "mb-2"
             )}
           >
             <VideoCard {...video} />

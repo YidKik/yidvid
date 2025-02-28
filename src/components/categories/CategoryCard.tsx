@@ -20,15 +20,15 @@ const categoryColors = {
 
 // More representative icon mapping with outline-only style
 const simpleIcons: Record<string, React.ReactNode> = {
-  '🎵': <Music size={24} strokeWidth={1.5} color="white" />,
-  '📖': <BookOpen size={24} strokeWidth={1.5} color="white" />,
-  '✨': <Sparkles size={24} strokeWidth={1.5} color="white" />,
-  '🎙️': <Mic size={24} strokeWidth={1.5} color="white" />,
-  '📚': <GraduationCap size={24} strokeWidth={1.5} color="white" />,
-  '🎬': <Film size={24} strokeWidth={1.5} color="white" />,
-  '📌': <PlusCircle size={24} strokeWidth={1.5} color="white" />,
+  '🎵': <Music size={20} strokeWidth={1.5} color="white" />,
+  '📖': <BookOpen size={20} strokeWidth={1.5} color="white" />,
+  '✨': <Sparkles size={20} strokeWidth={1.5} color="white" />,
+  '🎙️': <Mic size={20} strokeWidth={1.5} color="white" />,
+  '📚': <GraduationCap size={20} strokeWidth={1.5} color="white" />,
+  '🎬': <Film size={20} strokeWidth={1.5} color="white" />,
+  '📌': <PlusCircle size={20} strokeWidth={1.5} color="white" />,
   // Fallback
-  'default': <PlusCircle size={24} strokeWidth={1.5} color="white" />
+  'default': <PlusCircle size={20} strokeWidth={1.5} color="white" />
 };
 
 export const CategoryCard = ({ icon, label, id, isCustomImage = false }: CategoryCardProps) => {
@@ -56,14 +56,14 @@ export const CategoryCard = ({ icon, label, id, isCustomImage = false }: Categor
         }
       }}
       whileTap={{ scale: 0.98 }}
-      className="rounded-xl p-2 md:p-4 cursor-pointer transition-all duration-300 h-[80px] md:h-[120px] relative backdrop-blur-sm"
+      className="rounded-xl p-2 md:p-3 cursor-pointer transition-all duration-300 h-[65px] md:h-[90px] relative backdrop-blur-sm"
       style={{
         background: categoryColors.bg,
-        border: `2px solid ${categoryColors.border}`,
+        border: `1.5px solid ${categoryColors.border}`,
       }}
       onClick={handleClick}
     >
-      <div className="flex flex-col md:flex-row items-center md:space-x-3 h-full">
+      <div className="flex flex-col md:flex-row items-center md:space-x-2 h-full">
         <motion.span 
           whileHover={{
             rotate: [0, -10, 10, -5, 5, 0],
@@ -71,7 +71,7 @@ export const CategoryCard = ({ icon, label, id, isCustomImage = false }: Categor
               duration: 0.5
             }
           }}
-          className="text-base md:text-3xl p-1 md:p-2.5 rounded-lg mb-1 md:mb-0"
+          className="text-base md:text-2xl p-1 md:p-2 rounded-lg mb-1 md:mb-0"
           style={{
             background: categoryColors.iconBg, // Red background for icons
           }}
@@ -80,7 +80,7 @@ export const CategoryCard = ({ icon, label, id, isCustomImage = false }: Categor
             <img 
               src={icon} 
               alt={label}
-              className="w-5 h-5 md:w-8 md:h-8 object-cover rounded"
+              className="w-4 h-4 md:w-6 md:h-6 object-cover rounded"
             />
           ) : (
             // Use the simple icon from our mapping instead of emoji
@@ -89,7 +89,7 @@ export const CategoryCard = ({ icon, label, id, isCustomImage = false }: Categor
         </motion.span>
         <div className="flex-1 text-center md:text-left">
           <h3 
-            className="font-medium text-[11px] leading-tight md:text-base line-clamp-2 md:line-clamp-1"
+            className="font-medium text-[10px] leading-tight md:text-sm line-clamp-2 md:line-clamp-1"
             style={{ color: categoryColors.text }}
           >
             {label}
