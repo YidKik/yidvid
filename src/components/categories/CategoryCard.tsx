@@ -18,17 +18,17 @@ const categoryColors = {
   iconBg: '#ea384c'
 };
 
-// More representative icon mapping
+// More representative icon mapping with outline-only style
 const simpleIcons: Record<string, React.ReactNode> = {
-  '🎵': <Music strokeWidth={1} fill="white" />,
-  '📖': <BookOpen strokeWidth={1} fill="white" />,
-  '✨': <Sparkles strokeWidth={1} fill="white" />,
-  '🎙️': <Mic strokeWidth={1} fill="white" />,
-  '📚': <GraduationCap strokeWidth={1} fill="white" />,
-  '🎬': <Film strokeWidth={1} fill="white" />,
-  '📌': <PlusCircle strokeWidth={1} fill="white" />,
+  '🎵': <Music size={24} strokeWidth={1.5} color="white" />,
+  '📖': <BookOpen size={24} strokeWidth={1.5} color="white" />,
+  '✨': <Sparkles size={24} strokeWidth={1.5} color="white" />,
+  '🎙️': <Mic size={24} strokeWidth={1.5} color="white" />,
+  '📚': <GraduationCap size={24} strokeWidth={1.5} color="white" />,
+  '🎬': <Film size={24} strokeWidth={1.5} color="white" />,
+  '📌': <PlusCircle size={24} strokeWidth={1.5} color="white" />,
   // Fallback
-  'default': <PlusCircle strokeWidth={1} fill="white" />
+  'default': <PlusCircle size={24} strokeWidth={1.5} color="white" />
 };
 
 export const CategoryCard = ({ icon, label, id, isCustomImage = false }: CategoryCardProps) => {
