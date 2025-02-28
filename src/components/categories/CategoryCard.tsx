@@ -1,7 +1,7 @@
 
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { Circle, Square, Triangle, Star, Heart, Bookmark, Check, X, Plus, Minus } from "lucide-react";
+import { Music, BookOpen, Sparkles, Mic, GraduationCap, Film, PlusCircle } from "lucide-react";
 
 interface CategoryCardProps {
   icon: string;
@@ -18,17 +18,17 @@ const categoryColors = {
   iconBg: '#ea384c'
 };
 
-// Simple icon mapping
+// More representative icon mapping
 const simpleIcons: Record<string, React.ReactNode> = {
-  '🎵': <Circle strokeWidth={1} fill="white" />,
-  '📖': <Square strokeWidth={1} fill="white" />,
-  '✨': <Star strokeWidth={1} fill="white" />,
-  '🎙️': <Triangle strokeWidth={1} fill="white" />,
-  '📚': <Bookmark strokeWidth={1} fill="white" />,
-  '🎬': <Heart strokeWidth={1} fill="white" />,
-  '📌': <Plus strokeWidth={1} fill="white" />,
+  '🎵': <Music strokeWidth={1} fill="white" />,
+  '📖': <BookOpen strokeWidth={1} fill="white" />,
+  '✨': <Sparkles strokeWidth={1} fill="white" />,
+  '🎙️': <Mic strokeWidth={1} fill="white" />,
+  '📚': <GraduationCap strokeWidth={1} fill="white" />,
+  '🎬': <Film strokeWidth={1} fill="white" />,
+  '📌': <PlusCircle strokeWidth={1} fill="white" />,
   // Fallback
-  'default': <Circle strokeWidth={1} fill="white" />
+  'default': <PlusCircle strokeWidth={1} fill="white" />
 };
 
 export const CategoryCard = ({ icon, label, id, isCustomImage = false }: CategoryCardProps) => {
