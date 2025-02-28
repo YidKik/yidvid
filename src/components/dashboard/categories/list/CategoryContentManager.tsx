@@ -7,6 +7,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { CustomCategory } from "@/types/custom-categories";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface CategoryContentManagerProps {
   category: CustomCategory | null;
@@ -54,6 +55,16 @@ export function CategoryContentManager({
     },
   });
 
+  const handleSaveWithNotification = async () => {
+    try {
+      await onSave(selectedVideos, selectedChannels);
+      toast.success("Category content updated. New videos from these channels will automatically be added to this category.");
+    } catch (error) {
+      console.error("Error saving category content:", error);
+      toast.error("Failed to update category content");
+    }
+  };
+
   if (!category) return null;
 
   return (
@@ -68,6 +79,9 @@ export function CategoryContentManager({
             <TabsTrigger value="channels" className="flex-1">Channels</TabsTrigger>
           </TabsList>
           <TabsContent value="videos">
+            <div className="mb-2 text-sm text-gray-500">
+              Manually select individual videos for this category. Videos from channels assigned to this category will be added automatically.
+            </div>
             <ScrollArea className="h-[400px] w-full border rounded-md p-4">
               <div className="space-y-4">
                 {videos?.map((video) => (
@@ -93,6 +107,9 @@ export function CategoryContentManager({
             </ScrollArea>
           </TabsContent>
           <TabsContent value="channels">
+            <div className="mb-2 text-sm text-gray-500">
+              Assigning channels will automatically add all existing and future videos from these channels to this category.
+            </div>
             <ScrollArea className="h-[400px] w-full border rounded-md p-4">
               <div className="space-y-4">
                 {channels?.map((channel) => (
@@ -121,7 +138,7 @@ export function CategoryContentManager({
           <Button variant="outline" onClick={onClose}>
             Cancel
           </Button>
-          <Button onClick={() => onSave(selectedVideos, selectedChannels)}>
+          <Button onClick={handleSaveWithNotification}>
             Save Changes
           </Button>
         </div>

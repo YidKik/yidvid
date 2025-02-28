@@ -45,6 +45,18 @@ export const useVideoManagement = (channelId: string) => {
           throw error;
         }
 
+        // Get the channel's custom category mappings
+        const { data: channelCategories, error: categoriesError } = await supabase
+          .from("channel_custom_category_mappings")
+          .select("category_id")
+          .eq("channel_id", channelId);
+        
+        if (categoriesError) {
+          console.warn("Could not fetch channel custom categories:", categoriesError);
+        } else {
+          console.log("Channel has custom categories:", channelCategories?.length || 0);
+        }
+
         console.log("Fetched videos:", data?.length || 0);
         return data as Video[];
       } catch (error: any) {
@@ -92,6 +104,17 @@ export const useVideoManagement = (channelId: string) => {
       if (quotaData?.quota_remaining <= 0) {
         toast.error("Cannot delete video: YouTube API quota exceeded");
         return;
+      }
+
+      // Delete video custom category mappings first
+      const { error: categoryMappingsError } = await supabase
+        .from("video_custom_category_mappings")
+        .delete()
+        .eq("video_id", videoId);
+
+      if (categoryMappingsError) {
+        console.error("Error deleting category mappings:", categoryMappingsError);
+        throw categoryMappingsError;
       }
 
       const { error: notificationsError } = await supabase

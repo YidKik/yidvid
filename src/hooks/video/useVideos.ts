@@ -36,8 +36,27 @@ export const useVideos = () => {
       )
       .subscribe();
 
+    // Also subscribe to category mapping changes
+    const categoryMappingChannel = supabase
+      .channel('category_mapping_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'video_custom_category_mappings'
+        },
+        (payload) => {
+          console.log('Category mapping changed:', payload);
+          queryClient.invalidateQueries({ queryKey: ["youtube_videos"] });
+          queryClient.invalidateQueries({ queryKey: ["category-videos"] });
+        }
+      )
+      .subscribe();
+
     return () => {
       supabase.removeChannel(channel);
+      supabase.removeChannel(categoryMappingChannel);
     };
   }, [queryClient]);
 

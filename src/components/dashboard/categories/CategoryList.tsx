@@ -1,3 +1,4 @@
+
 import { Card } from "@/components/ui/card";
 import { CustomCategory } from "@/types/custom-categories";
 import { supabase } from "@/integrations/supabase/client";
@@ -22,7 +23,7 @@ export function CategoryList({ categories, onUpdate }: CategoryListProps) {
     queryFn: async () => {
       if (!selectedCategory) return [];
       const { data, error } = await supabase
-        .from("video_category_mappings")
+        .from("video_custom_category_mappings")
         .select("video_id")
         .eq("category_id", selectedCategory.id);
 
@@ -37,7 +38,7 @@ export function CategoryList({ categories, onUpdate }: CategoryListProps) {
     queryFn: async () => {
       if (!selectedCategory) return [];
       const { data, error } = await supabase
-        .from("channel_category_mappings")
+        .from("channel_custom_category_mappings")
         .select("channel_id")
         .eq("category_id", selectedCategory.id);
 
@@ -64,6 +65,22 @@ export function CategoryList({ categories, onUpdate }: CategoryListProps) {
           }
         }
 
+        // First delete all video and channel mappings
+        const { error: videoMappingsError } = await supabase
+          .from("video_custom_category_mappings")
+          .delete()
+          .eq("category_id", id);
+
+        if (videoMappingsError) throw videoMappingsError;
+
+        const { error: channelMappingsError } = await supabase
+          .from("channel_custom_category_mappings")
+          .delete()
+          .eq("category_id", id);
+
+        if (channelMappingsError) throw channelMappingsError;
+
+        // Then delete the category itself
         const { error } = await supabase
           .from("custom_categories")
           .delete()
@@ -94,7 +111,7 @@ export function CategoryList({ categories, onUpdate }: CategoryListProps) {
     try {
       // Handle videos
       const { error: deleteVideoError } = await supabase
-        .from("video_category_mappings")
+        .from("video_custom_category_mappings")
         .delete()
         .eq("category_id", selectedCategory.id);
 
@@ -102,7 +119,7 @@ export function CategoryList({ categories, onUpdate }: CategoryListProps) {
 
       if (selectedVideos.length > 0) {
         const { error: insertVideoError } = await supabase
-          .from("video_category_mappings")
+          .from("video_custom_category_mappings")
           .insert(
             selectedVideos.map(videoId => ({
               video_id: videoId,
@@ -115,7 +132,7 @@ export function CategoryList({ categories, onUpdate }: CategoryListProps) {
 
       // Handle channels
       const { error: deleteChannelError } = await supabase
-        .from("channel_category_mappings")
+        .from("channel_custom_category_mappings")
         .delete()
         .eq("category_id", selectedCategory.id);
 
@@ -123,7 +140,7 @@ export function CategoryList({ categories, onUpdate }: CategoryListProps) {
 
       if (selectedChannels.length > 0) {
         const { error: insertChannelError } = await supabase
-          .from("channel_category_mappings")
+          .from("channel_custom_category_mappings")
           .insert(
             selectedChannels.map(channelId => ({
               channel_id: channelId,
