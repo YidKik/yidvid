@@ -10,12 +10,12 @@ interface CategoryCardProps {
   isCustomImage?: boolean;
 }
 
-// Using the primary color for all categories
+// Using cool, neutral colors for a "cold" aesthetic
 const categoryColors = {
   bg: '#FFFFFF',
-  border: '#ea384c',
-  text: '#333333',
-  iconBg: '#ea384c'
+  border: '#8E9196', // Neutral gray border
+  text: '#403E43',   // Charcoal gray text
+  iconBg: '#33C3F0'  // Sky blue background for icons
 };
 
 // More representative icon mapping with outline-only style
@@ -46,8 +46,8 @@ export const CategoryCard = ({ icon, label, id, isCustomImage = false }: Categor
   return (
     <motion.div
       whileHover={{ 
-        boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1)",
-        borderColor: "#d6293d",
+        boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05)",
+        borderColor: "#33C3F0",
         y: -4,
         transition: {
           type: "spring",
@@ -95,16 +95,14 @@ export const CategoryCard = ({ icon, label, id, isCustomImage = false }: Categor
           </h3>
         </div>
         
-        {/* Add decorative elements on the right side */}
-        <div className="hidden md:flex flex-col items-end justify-between h-full py-1">
-          <div className="w-2 h-2 rounded-full bg-gray-200"></div>
-          <div className="h-8 w-[3px] rounded-full bg-gray-100"></div>
-          <div className="w-2 h-2 rounded-full bg-gray-200"></div>
+        {/* Minimal decorative elements with a cold aesthetic */}
+        <div className="hidden md:block h-full w-8">
+          <div className="h-full w-[1px] mx-auto bg-gradient-to-b from-transparent via-[#C8C8C9] to-transparent"></div>
         </div>
         
-        {/* Mobile decorative element */}
+        {/* Mobile decorative element - simple dot */}
         <div className="md:hidden flex items-center">
-          <div className="h-[20px] w-[2px] rounded-full bg-gray-100"></div>
+          <div className="h-2 w-2 rounded-full bg-[#aaadb0]"></div>
         </div>
       </div>
     </motion.div>
