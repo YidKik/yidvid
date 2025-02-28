@@ -1,28 +1,42 @@
 
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
 
 // Define the anon key as a constant since it's already in the client file
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1aW5ja3R2c2l1enRzeGN1cWZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY0ODgzNzcsImV4cCI6MjA1MjA2NDM3N30.zbReqHoAR33QoCi_wqNp8AtNofTX3JebM7jvjFAWbMg";
 
 export const checkAdminStatus = async () => {
-  const { data: { session } } = await supabase.auth.getSession();
-  
-  if (!session?.user?.id) {
-    throw new Error("You must be signed in to add channels");
+  try {
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    
+    if (sessionError) {
+      console.error("Session error:", sessionError);
+      throw new Error("Authentication error. Please try signing in again.");
+    }
+    
+    if (!session?.user?.id) {
+      throw new Error("You must be signed in to add channels");
+    }
+
+    const { data: profile, error: profileError } = await supabase
+      .from("profiles")
+      .select("is_admin")
+      .eq("id", session.user.id)
+      .single();
+
+    if (profileError) {
+      console.error("Profile fetch error:", profileError);
+      throw new Error("Error fetching user profile");
+    }
+
+    if (!profile?.is_admin) {
+      throw new Error("You don't have permission to add channels");
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Admin check error:", error);
+    throw error;
   }
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("is_admin")
-    .eq("id", session.user.id)
-    .single();
-
-  if (!profile?.is_admin) {
-    throw new Error("You don't have permission to add channels");
-  }
-
-  return true;
 };
 
 export const extractChannelId = (input: string): string => {
@@ -30,10 +44,16 @@ export const extractChannelId = (input: string): string => {
   
   // Handle full URLs
   if (channelId.includes('youtube.com/')) {
-    // Handle channel URLs
-    const channelMatch = channelId.match(/youtube\.com\/(?:channel\/|c\/|@)([\w-]+)/);
+    // Handle channel URLs with channel ID
+    const channelMatch = channelId.match(/youtube\.com\/(?:channel\/)([\w-]+)/);
     if (channelMatch && channelMatch[1]) {
-      channelId = channelMatch[1];
+      return channelMatch[1];
+    }
+    
+    // Handle custom URLs
+    const customUrlMatch = channelId.match(/youtube\.com\/(?:c\/|@)([\w-]+)/);
+    if (customUrlMatch && customUrlMatch[1]) {
+      return customUrlMatch[1];
     }
   } else if (channelId.startsWith('@')) {
     // Handle @username format
@@ -60,9 +80,9 @@ export const addChannel = async (channelInput: string) => {
       .from('youtube_channels')
       .select('channel_id')
       .eq('channel_id', channelId)
-      .single();
+      .maybeSingle();
 
-    if (checkError && checkError.code !== 'PGRST116') { // PGRST116 is "not found" which is what we want
+    if (checkError) {
       console.error('Error checking existing channel:', checkError);
       throw new Error('Error checking if channel exists');
     }
@@ -73,27 +93,23 @@ export const addChannel = async (channelInput: string) => {
 
     // Get the current session's access token
     const { data: { session } } = await supabase.auth.getSession();
+    if (!session?.access_token) {
+      throw new Error('Authentication error. Please sign in again.');
+    }
 
     // Call edge function to add channel with proper authorization and API key
     console.log('Calling edge function to fetch channel data...');
     const { data, error } = await supabase.functions.invoke('fetch-youtube-channel', {
       body: { channelId },
       headers: {
-        Authorization: `Bearer ${session?.access_token}`,
+        Authorization: `Bearer ${session.access_token}`,
         apikey: SUPABASE_ANON_KEY
       }
     });
 
     if (error) {
       console.error('Edge function error:', error);
-      const errorMessage = error.message || 'Failed to add channel';
-      // If the error message contains a JSON string, try to parse it
-      try {
-        const parsedError = JSON.parse(errorMessage);
-        throw new Error(parsedError.error || errorMessage);
-      } catch {
-        throw new Error(errorMessage);
-      }
+      throw new Error(error.message || 'Failed to add channel');
     }
 
     if (!data) {
@@ -105,8 +121,6 @@ export const addChannel = async (channelInput: string) => {
 
   } catch (error: any) {
     console.error('Error in addChannel:', error);
-    // If the error is from the edge function, it might be wrapped in a message property
-    const errorMessage = error.message || error.toString();
-    throw new Error(errorMessage);
+    throw error;
   }
 };

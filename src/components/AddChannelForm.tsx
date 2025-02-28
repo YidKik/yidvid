@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/use-toast";
 import { ChannelInput } from "@/components/youtube/ChannelInput";
 import { addChannel } from "@/utils/youtube-channel";
 
@@ -18,24 +18,41 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
     e.preventDefault();
     
     if (!channelId.trim()) {
-      toast.error("Please enter a channel ID or URL");
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Please enter a channel ID or URL"
+      });
       return;
     }
 
     setIsLoading(true);
-    toast.loading("Adding channel...");
-
+    
     try {
+      toast({
+        title: "Adding channel...",
+        description: "Please wait while we process your request."
+      });
+
       await addChannel(channelId);
-      toast.dismiss();
-      toast.success("Channel added successfully!");
+      
+      toast({
+        title: "Success",
+        description: "Channel added successfully!",
+        variant: "default"
+      });
+      
       setChannelId("");
       onSuccess?.();
       onClose?.();
     } catch (error: any) {
       console.error("Error adding channel:", error);
-      toast.dismiss();
-      toast.error(error.message || "Failed to add channel");
+      
+      toast({
+        variant: "destructive",
+        title: "Failed to add channel",
+        description: error.message || "There was a problem adding the channel. Please try again."
+      });
     } finally {
       setIsLoading(false);
     }
