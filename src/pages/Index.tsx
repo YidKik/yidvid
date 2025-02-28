@@ -20,7 +20,7 @@ import { Helmet } from "react-helmet";
 
 const MainContent = () => {
   const [isMusic, setIsMusic] = useState(false);
-  const { data: videos, isLoading } = useVideos();
+  const { data: videos, isLoading, refetch, lastSuccessfulFetch, fetchAttempts } = useVideos();
   const isMobile = useIsMobile();
   const { session } = useSessionManager();
 
@@ -64,7 +64,13 @@ const MainContent = () => {
             className={isMobile ? 'mt-2' : ''}
           >
             {!isMusic ? (
-              <VideoContent videos={videos} isLoading={isLoading} />
+              <VideoContent 
+                videos={videos} 
+                isLoading={isLoading} 
+                refetch={refetch}
+                lastSuccessfulFetch={lastSuccessfulFetch}
+                fetchAttempts={fetchAttempts}
+              />
             ) : (
               <MusicSection />
             )}

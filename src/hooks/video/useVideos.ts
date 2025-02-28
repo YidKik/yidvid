@@ -1,7 +1,7 @@
 
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 interface Video {
@@ -17,6 +17,8 @@ interface Video {
 
 export const useVideos = () => {
   const queryClient = useQueryClient();
+  const [fetchAttempts, setFetchAttempts] = useState(0);
+  const [lastSuccessfulFetch, setLastSuccessfulFetch] = useState<Date | null>(null);
 
   // Set up real-time subscription
   useEffect(() => {
@@ -60,6 +62,26 @@ export const useVideos = () => {
     };
   }, [queryClient]);
 
+  const checkApiQuota = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("api_quota_tracking")
+        .select("*")
+        .eq("api_name", "youtube")
+        .single();
+
+      if (error) {
+        console.error("Error checking API quota:", error);
+        return null;
+      }
+
+      return data;
+    } catch (err) {
+      console.error("Failed to check API quota:", err);
+      return null;
+    }
+  };
+
   const fetchAllVideos = async () => {
     console.log("Starting video fetch process...");
     
@@ -93,49 +115,68 @@ export const useVideos = () => {
       const channelIds = channels?.map(c => c.channel_id) || [];
       console.log(`Found ${channelIds.length} channels to process`);
 
-      if (channelIds.length > 0) {
-        // Trigger edge function to fetch new videos
-        const { data: response, error: fetchError } = await supabase.functions.invoke('fetch-youtube-videos', {
-          body: { 
-            channels: channelIds,
-            forceUpdate: true
-          }
-        });
+      // Check if we have recent video data or need to fetch fresh data
+      const shouldFetchNewVideos = lastSuccessfulFetch === null || 
+                                 (Date.now() - lastSuccessfulFetch.getTime() > 3600000); // 1 hour
 
-        if (fetchError) {
-          console.error('Error invoking fetch-youtube-videos:', fetchError);
-          throw fetchError;
-        }
-
-        console.log('Fetch response:', response);
-
-        if (response?.success) {
-          toast.success(`Successfully processed ${response.processed} channels, found ${response.newVideos} new videos`);
-          
-          // Refetch videos after successful update
-          const { data: updatedData, error: updateError } = await supabase
-            .from("youtube_videos")
-            .select("*")
-            .is('deleted_at', null)
-            .order("uploaded_at", { ascending: false });
-
-          if (updateError) {
-            console.error('Error fetching updated videos:', updateError);
-            throw updateError;
-          }
-
-          if (updatedData) {
-            videosData = updatedData;
-          }
-        } else if (response?.quota_reset_at) {
-          const resetTime = new Date(response.quota_reset_at);
+      if (channelIds.length > 0 && shouldFetchNewVideos) {
+        // Check quota before making requests
+        const quotaInfo = await checkApiQuota();
+        
+        if (quotaInfo && quotaInfo.quota_remaining <= 0) {
+          const resetTime = new Date(quotaInfo.quota_reset_at);
           toast.warning(`YouTube quota exceeded. Service will resume at ${resetTime.toLocaleString()}`);
         } else {
-          console.warn('Unexpected response from fetch-youtube-videos:', response);
+          try {
+            // Trigger edge function to fetch new videos
+            const { data: response, error: fetchError } = await supabase.functions.invoke('fetch-youtube-videos', {
+              body: { 
+                channels: channelIds,
+                forceUpdate: fetchAttempts > 2  // Force update if we've had multiple attempts
+              },
+              timeout: 25000  // Increase timeout to 25 seconds
+            });
+
+            if (fetchError) {
+              console.error('Error invoking fetch-youtube-videos:', fetchError);
+              setFetchAttempts(prev => prev + 1);
+              
+              // Continue with existing data rather than failing completely
+              console.log('Using existing video data due to fetch error');
+            } else {
+              console.log('Fetch response:', response);
+              setFetchAttempts(0);
+              setLastSuccessfulFetch(new Date());
+
+              if (response?.success) {
+                toast.success(`Successfully processed ${response.processed} channels, found ${response.newVideos} new videos`);
+                
+                // Refetch videos after successful update
+                const { data: updatedData, error: updateError } = await supabase
+                  .from("youtube_videos")
+                  .select("*")
+                  .is('deleted_at', null)
+                  .order("uploaded_at", { ascending: false });
+
+                if (updateError) {
+                  console.error('Error fetching updated videos:', updateError);
+                } else if (updatedData) {
+                  videosData = updatedData;
+                }
+              } else if (response?.quota_reset_at) {
+                const resetTime = new Date(response.quota_reset_at);
+                toast.warning(`YouTube quota exceeded. Service will resume at ${resetTime.toLocaleString()}`);
+              }
+            }
+          } catch (invocationError) {
+            console.error('Failed to invoke function:', invocationError);
+            setFetchAttempts(prev => prev + 1);
+            // Continue with existing data
+          }
         }
       }
 
-      // Format and return the data
+      // Format and return the data, even if the fetch failed
       const formattedData = videosData.map(video => ({
         id: video.id,
         video_id: video.video_id,
@@ -160,7 +201,7 @@ export const useVideos = () => {
   const { data, isLoading, isFetching, error, refetch } = useQuery<Video[]>({
     queryKey: ["youtube_videos"],
     queryFn: fetchAllVideos,
-    refetchInterval: 30000, // Refetch every 30 seconds
+    refetchInterval: fetchAttempts > 3 ? 60000 : 30000, // Adjust refetch interval based on failure count
     staleTime: 25000, // Consider data stale after 25 seconds
     gcTime: 1000 * 60 * 30, // Cache data for 30 minutes
     retry: (failureCount, error: any) => {
@@ -182,6 +223,8 @@ export const useVideos = () => {
     isLoading,
     isFetching,
     error,
-    refetch
+    refetch,
+    lastSuccessfulFetch,
+    fetchAttempts
   };
 };
