@@ -54,31 +54,31 @@ export const WelcomeAnimation = () => {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="bg-white rounded-lg shadow-lg p-4 max-w-lg mx-auto"
+                  className={`bg-white rounded-lg shadow-lg ${isMobile ? 'p-2 max-w-[85%] mx-auto' : 'p-4 max-w-lg mx-auto'}`}
                 >
-                  <div className="flex flex-col items-center text-center space-y-4">
+                  <div className="flex flex-col items-center text-center space-y-2">
                     <img 
                       src="/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png" 
                       alt="YidVid Logo" 
-                      className={isMobile ? "w-16 h-16" : "w-24 h-24"}
+                      className={isMobile ? "w-10 h-10" : "w-24 h-24"}
                     />
-                    <h3 className={isMobile ? "text-lg font-semibold" : "text-2xl font-semibold"}>Welcome to YidVid!</h3>
-                    <p className={isMobile ? "text-sm text-gray-600" : "text-lg text-gray-600"}>
-                      {isMobile ? "Create a free account to unlock all features!" : "Start exploring our curated collection of Jewish content. Create a free account to unlock all features!"}
+                    <h3 className={isMobile ? "text-sm font-semibold" : "text-2xl font-semibold"}>Welcome to YidVid!</h3>
+                    <p className={isMobile ? "text-xs text-gray-600 leading-tight" : "text-lg text-gray-600"}>
+                      {isMobile ? "Create account to unlock all features!" : "Start exploring our curated collection of Jewish content. Create a free account to unlock all features!"}
                     </p>
                     <button
                       onClick={() => {
                         toast.dismiss(t);
                         localStorage.setItem('hasSeenInfoNotification', 'true');
                       }}
-                      className={`bg-primary text-white px-4 ${isMobile ? "py-2 text-sm" : "py-3 text-lg"} rounded-md hover:bg-primary/90 transition-colors`}
+                      className={`bg-primary text-white ${isMobile ? "px-3 py-1 text-xs" : "px-4 py-3 text-lg"} rounded-md hover:bg-primary/90 transition-colors`}
                     >
                       Got it!
                     </button>
                   </div>
                 </motion.div>
               ), {
-                duration: 8000,
+                duration: 6000,
                 onAutoClose: () => {
                   localStorage.setItem('hasSeenInfoNotification', 'true');
                 }
