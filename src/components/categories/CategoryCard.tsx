@@ -111,7 +111,7 @@ export const CategoryCard = ({ icon, label, id, isCustomImage = false }: Categor
         }
       }}
       whileTap={{ scale: 0.98 }}
-      className={`rounded-xl p-1 md:p-3 cursor-pointer transition-all duration-300 ${isMobile ? 'h-[60px]' : 'h-[90px]'} relative backdrop-blur-sm`}
+      className={`rounded-xl p-1 md:p-3 cursor-pointer transition-all duration-300 ${isMobile ? 'h-[65px]' : 'h-[90px]'} relative backdrop-blur-sm`}
       style={{
         background: categoryColors.bg,
         border: `1.5px solid ${categoryColors.border}`,
@@ -147,7 +147,7 @@ export const CategoryCard = ({ icon, label, id, isCustomImage = false }: Categor
             </motion.span>
           </motion.div>
           <h3 
-            className={`font-medium text-[9px] leading-tight md:text-sm line-clamp-2 ${isMobile ? 'max-w-[80px]' : 'max-w-[120px]'}`}
+            className={`font-medium text-[10px] leading-tight md:text-sm line-clamp-2 ${isMobile ? 'max-w-[85px]' : 'max-w-[120px]'}`}
             style={{ color: categoryColors.text }}
           >
             {label}

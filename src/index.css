@@ -23,7 +23,7 @@
   
   /* Category card optimization */
   .category-card-mobile {
-    height: 60px !important;
+    height: 65px !important;
     padding: 0.25rem !important;
   }
   
@@ -32,8 +32,8 @@
   }
   
   .category-card-mobile .label {
-    font-size: 0.7rem;
-    line-height: 1.1;
-    max-width: 80px;
+    font-size: 0.75rem;
+    line-height: 1.2;
+    max-width: 85px;
   }
 }
