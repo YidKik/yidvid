@@ -15,7 +15,6 @@ interface ChannelsGridProps {
 
 export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
   const { hiddenChannels } = useHiddenChannels();
-  const [fallbackChannels, setFallbackChannels] = useState<Channel[]>([]);
   const { 
     fetchChannelsDirectly, 
     manuallyFetchedChannels, 
@@ -44,49 +43,26 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
   // Immediate fetch on mount
   useEffect(() => {
     console.log("ChannelsGrid mounted, attempting to fetch channels");
-    // Try both methods to increase chances of success
     refetch().catch(err => {
       console.error("Error fetching channels on mount:", err);
       if (onError) onError(err);
     });
-    
-    // Emergency fallback - create more sample channels
-    if (!channels?.length && !manuallyFetchedChannels?.length && fetchAttempts > 1) {
-      const timer = setTimeout(() => {
-        console.log("Creating fallback channels as emergency measure");
-        const fallbackData = [];
-        for (let i = 1; i <= 12; i++) {
-          fallbackData.push({
-            id: `fallback-${i}`,
-            channel_id: `fallback-${i}`,
-            title: `Channel ${i} - Fallback Data`,
-            thumbnail_url: null
-          });
-        }
-        setFallbackChannels(fallbackData);
-        setIsLoading(false);
-      }, 2000);
-      
-      return () => clearTimeout(timer);
-    }
-    
-    return () => {};
-  }, [fetchAttempts]);
+  }, []);
 
   // Update loading state based on data
   useEffect(() => {
-    if (channels?.length || manuallyFetchedChannels?.length || fallbackChannels?.length) {
+    if (channels?.length || manuallyFetchedChannels?.length) {
       setIsLoading(false);
     }
-  }, [channels, manuallyFetchedChannels, fallbackChannels]);
+  }, [channels, manuallyFetchedChannels]);
 
   // Early return for skeleton if really loading and no data is available
-  if (isLoading && isChannelsLoading && !fallbackChannels.length && !manuallyFetchedChannels.length) {
+  if (isLoading && isChannelsLoading && !manuallyFetchedChannels.length) {
     return <ChannelsGridSkeleton />;
   }
 
   // Choose the best available data source - prioritize real data
-  const displayChannels = channels || manuallyFetchedChannels || fallbackChannels;
+  const displayChannels = channels || manuallyFetchedChannels || [];
   
   // Log what we're actually rendering
   console.log("Rendering ChannelsGrid with", displayChannels?.length || 0, "channels");
@@ -109,7 +85,7 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
         <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 md:gap-4">
           {visibleChannels.map((channel, index) => (
             <ChannelCard
-              key={channel.id || `fallback-${index}`}
+              key={channel.id || `channel-${index}`}
               id={channel.id}
               channel_id={channel.channel_id}
               title={channel.title}

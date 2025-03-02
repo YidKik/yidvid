@@ -112,7 +112,7 @@ export const useVideoFetcher = (): VideoFetcherResult => {
         }
       }
 
-      // Return the data we have
+      // Return the actual data from the database, not sample data
       return formatVideoData(videosData);
     } catch (error: any) {
       console.error("Error in video fetching process:", error);

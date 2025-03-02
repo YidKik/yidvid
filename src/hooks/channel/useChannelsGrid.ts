@@ -16,25 +16,6 @@ export const useChannelsGrid = () => {
   const [fetchError, setFetchError] = useState<any>(null);
   const [fetchAttempts, setFetchAttempts] = useState(0);
 
-  // Generate sample channels with more variety
-  const getSampleChannels = (count: number = 10): Channel[] => {
-    console.log(`Using ${count} sample channels as fallback`);
-    const sampleChannels = [];
-    
-    for (let i = 1; i <= count; i++) {
-      sampleChannels.push({
-        id: `sample-${i}`,
-        channel_id: `sample-channel-${i}`,
-        title: `Sample Channel ${i}`,
-        thumbnail_url: null
-      });
-    }
-    
-    setManuallyFetchedChannels(sampleChannels);
-    setIsLoading(false);
-    return sampleChannels;
-  };
-
   const fetchChannelsDirectly = async (): Promise<Channel[]> => {
     try {
       console.log("Fetching YouTube channels (attempt " + (fetchAttempts + 1) + ")");
@@ -50,7 +31,7 @@ export const useChannelsGrid = () => {
       if (error) {
         console.error("Channel fetch error:", error);
         setFetchError(error);
-        return getSampleChannels();
+        return [];
       }
       
       console.log(`Successfully fetched ${data?.length || 0} channels`);
@@ -62,19 +43,18 @@ export const useChannelsGrid = () => {
         return data;
       }
       
-      // If no data was returned, return sample channels
-      return getSampleChannels();
+      // If no data was returned, return empty array
+      return [];
     } catch (error: any) {
       console.error("Channel fetch error:", error);
-      return getSampleChannels();
+      return [];
     }
   };
 
   // Try to fetch channels once on component mount
   useEffect(() => {
     fetchChannelsDirectly().catch(() => {
-      // Fallback to sample channels
-      getSampleChannels();
+      console.error("Failed to fetch channels");
     });
   }, []);
 
