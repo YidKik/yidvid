@@ -25,17 +25,41 @@ export const getUserDevice = (user: ProfilesTable["Row"]) => {
 
 export const updateUsername = async (userId: string, newUsername: string) => {
   try {
-    // Update the username in the profiles table instead of users table
+    console.log(`Attempting to update username for user ${userId} to ${newUsername}`);
+    
+    // First, check if the current user is an admin
+    const { data: currentUser, error: currentUserError } = await supabase
+      .from("profiles")
+      .select("is_admin")
+      .eq("id", await supabase.auth.getUser().then(res => res.data.user?.id || ''))
+      .single();
+
+    if (currentUserError) {
+      console.error("Error checking admin status:", currentUserError);
+      return { success: false, error: `Admin check failed: ${currentUserError.message}` };
+    }
+
+    if (!currentUser?.is_admin) {
+      console.error("Permission denied: User is not an admin");
+      return { success: false, error: "Only admins can update usernames" };
+    }
+
+    // Now update the profile
     const { data, error } = await supabase
       .from("profiles")
       .update({ username: newUsername })
       .eq("id", userId)
       .select();
     
-    if (error) throw error;
+    if (error) {
+      console.error("Error updating username in profiles table:", error);
+      return { success: false, error: error.message };
+    }
+
+    console.log("Username updated successfully:", data);
     return { success: true, data };
   } catch (error: any) {
-    console.error("Error updating username:", error.message);
+    console.error("Unexpected error updating username:", error);
     return { success: false, error: error.message };
   }
 };

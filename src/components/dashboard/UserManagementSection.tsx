@@ -24,12 +24,14 @@ export const UserManagementSection = ({ currentUserId }: { currentUserId: string
   const { data: users, refetch: refetchUsers, isLoading } = useQuery({
     queryKey: ["all-users"],
     queryFn: async () => {
+      console.log("Fetching all users...");
       const { data, error } = await supabase
         .from("profiles")
         .select("*")
         .order("created_at", { ascending: false });
 
       if (error) {
+        console.error("Error fetching users:", error);
         toast({
           title: "Error fetching users",
           description: error.message,
@@ -38,12 +40,14 @@ export const UserManagementSection = ({ currentUserId }: { currentUserId: string
         return [];
       }
 
+      console.log("Fetched users:", data);
       return data;
     },
   });
 
   const toggleAdminStatus = async (userId: string, currentStatus: boolean) => {
     try {
+      // Check if current user is an admin first
       const { data: currentUser, error: currentUserError } = await supabase
         .from("profiles")
         .select("is_admin")
@@ -61,6 +65,8 @@ export const UserManagementSection = ({ currentUserId }: { currentUserId: string
         return;
       }
 
+      console.log(`Toggling admin status for user ${userId} from ${currentStatus} to ${!currentStatus}`);
+      
       const { error: updateError } = await supabase
         .from("profiles")
         .update({ is_admin: !currentStatus })
@@ -73,8 +79,10 @@ export const UserManagementSection = ({ currentUserId }: { currentUserId: string
         description: `User has been ${currentStatus ? "removed from" : "made"} admin.`,
       });
       
+      // Refresh the user list to reflect the changes
       refetchUsers();
     } catch (error: any) {
+      console.error("Error updating admin status:", error);
       toast({
         title: "Error updating admin status",
         description: error.message,
@@ -85,6 +93,7 @@ export const UserManagementSection = ({ currentUserId }: { currentUserId: string
 
   const handleAddAdmin = async () => {
     try {
+      // Check if current user is an admin
       const { data: currentUser, error: currentUserError } = await supabase
         .from("profiles")
         .select("is_admin")
@@ -102,6 +111,8 @@ export const UserManagementSection = ({ currentUserId }: { currentUserId: string
         return;
       }
 
+      console.log(`Looking for user with email: ${newAdminEmail}`);
+      
       const { data: userData, error: userError } = await supabase
         .from("profiles")
         .select("*")
@@ -119,6 +130,8 @@ export const UserManagementSection = ({ currentUserId }: { currentUserId: string
         return;
       }
 
+      console.log(`Making user an admin: ${userData.email}`);
+      
       const { error: updateError } = await supabase
         .from("profiles")
         .update({ is_admin: true })
@@ -135,6 +148,7 @@ export const UserManagementSection = ({ currentUserId }: { currentUserId: string
       setShowAddAdminDialog(false);
       refetchUsers();
     } catch (error: any) {
+      console.error("Error adding admin:", error);
       toast({
         title: "Error adding admin",
         description: error.message,
@@ -203,6 +217,7 @@ export const UserManagementSection = ({ currentUserId }: { currentUserId: string
                     adminUsers={adminUsers} 
                     currentUserId={currentUserId}
                     toggleAdminStatus={toggleAdminStatus}
+                    refreshUsers={refetchUsers}
                   />
                 )}
               </div>
@@ -212,6 +227,7 @@ export const UserManagementSection = ({ currentUserId }: { currentUserId: string
                 <RegularUsersTable 
                   regularUsers={regularUsers} 
                   toggleAdminStatus={toggleAdminStatus}
+                  refreshUsers={refetchUsers}
                 />
               </div>
             </>

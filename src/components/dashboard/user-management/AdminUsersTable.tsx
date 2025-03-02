@@ -20,16 +20,19 @@ interface AdminUsersTableProps {
   adminUsers: ProfilesTable["Row"][];
   currentUserId: string;
   toggleAdminStatus: (userId: string, currentStatus: boolean) => Promise<void>;
+  refreshUsers?: () => void;
 }
 
 export const AdminUsersTable = ({
   adminUsers,
   currentUserId,
-  toggleAdminStatus
+  toggleAdminStatus,
+  refreshUsers
 }: AdminUsersTableProps) => {
   const { toast } = useToast();
   const [editingUserId, setEditingUserId] = useState<string | null>(null);
   const [usernameInput, setUsernameInput] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   const handleEditStart = (user: ProfilesTable["Row"]) => {
     setEditingUserId(user.id);
@@ -50,20 +53,37 @@ export const AdminUsersTable = ({
       return;
     }
     
-    const result = await updateUsername(userId, usernameInput);
+    setIsSubmitting(true);
     
-    if (result.success) {
+    try {
+      const result = await updateUsername(userId, usernameInput);
+      
+      if (result.success) {
+        toast({
+          title: "Username updated successfully",
+          description: `The user's username has been updated to "${usernameInput}"`,
+        });
+        setEditingUserId(null);
+        // Refresh the user list to show updated data
+        if (refreshUsers) {
+          refreshUsers();
+        }
+      } else {
+        toast({
+          title: "Failed to update username",
+          description: result.error,
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Error in handleEditSave:", error);
       toast({
-        title: "Username updated successfully",
-        description: `The user's username has been updated to "${usernameInput}"`,
-      });
-      setEditingUserId(null);
-    } else {
-      toast({
-        title: "Failed to update username",
-        description: result.error,
+        title: "An unexpected error occurred",
+        description: "Please try again later",
         variant: "destructive",
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -98,6 +118,7 @@ export const AdminUsersTable = ({
                           onChange={(e) => setUsernameInput(e.target.value)}
                           className="h-8 w-[150px]"
                           autoFocus
+                          disabled={isSubmitting}
                         />
                         <div className="flex items-center">
                           <Button
@@ -105,6 +126,7 @@ export const AdminUsersTable = ({
                             size="icon"
                             onClick={() => handleEditSave(user.id)}
                             className="h-7 w-7"
+                            disabled={isSubmitting}
                           >
                             <Check className="h-4 w-4 text-green-600" />
                           </Button>
@@ -113,6 +135,7 @@ export const AdminUsersTable = ({
                             size="icon"
                             onClick={handleEditCancel}
                             className="h-7 w-7"
+                            disabled={isSubmitting}
                           >
                             <X className="h-4 w-4 text-red-600" />
                           </Button>
