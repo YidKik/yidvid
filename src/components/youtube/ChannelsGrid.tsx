@@ -73,7 +73,7 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
         return data || [];
       } catch (error: any) {
         console.error("Channel fetch error:", error);
-        onError?.(error);
+        if (onError) onError(error);
         return []; // Return empty array instead of throwing
       }
     },
@@ -85,9 +85,8 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
     retryDelay: 2000, // Fixed 2 second delay between retries
     staleTime: 1000 * 60 * 5, // Consider data fresh for 5 minutes
     refetchOnWindowFocus: false, // Prevent unnecessary refetches
-    // Silent failure - don't show errors to users
-    onError: (error) => {
-      console.error("Channels fetch error handled silently:", error);
+    meta: {
+      errorMessage: "Channels fetch error handled silently"
     }
   });
 

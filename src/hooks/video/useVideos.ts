@@ -43,11 +43,8 @@ export const useVideos = (): UseVideosResult => {
     retryDelay: (attemptIndex) => Math.min(1000 * (2 ** attemptIndex), 60000), // Exponential backoff with higher max
     // Don't use error boundary for this query
     meta: {
-      errorMessage: "Failed to load videos"
-    },
-    // Silent failure - don't show errors to users in toasts
-    onError: (error) => {
-      console.error("Video fetch error handled silently:", error);
+      errorMessage: "Failed to load videos",
+      suppressToasts: true
     }
   });
 

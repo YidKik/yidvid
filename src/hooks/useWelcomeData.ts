@@ -29,11 +29,8 @@ export const useWelcomeData = (session: any) => {
     retry: 1,
     // Don't trigger error boundaries for this query
     meta: {
-      errorMessage: "Failed to load profile"
-    },
-    // Provide a fallback on error
-    onError: (error) => {
-      console.error("Profile fetch error handled silently:", error);
+      errorMessage: "Failed to load profile",
+      suppressToasts: true
     }
   });
 
@@ -72,8 +69,9 @@ export const useWelcomeData = (session: any) => {
     gcTime: 1000 * 60 * 30,
     retry: 1,
     // Silent failure - don't show errors to users
-    onError: (error) => {
-      console.error("Videos fetch error handled silently:", error);
+    meta: {
+      errorMessage: "Videos fetch error handled silently",
+      suppressToasts: true
     }
   });
 
@@ -100,8 +98,9 @@ export const useWelcomeData = (session: any) => {
     },
     retry: 1,
     // Silent failure - don't show errors to users
-    onError: (error) => {
-      console.error("Channels fetch error handled silently:", error);
+    meta: {
+      errorMessage: "Channels fetch error handled silently",
+      suppressToasts: true
     }
   });
 
