@@ -47,10 +47,10 @@ export const useVideos = (): UseVideosResult => {
       return failureCount < 3;
     },
     retryDelay: 1000, // Shorter retry delay to get data faster
-    // Error handling
+    // Error handling - SUPPRESS error toasts
     meta: {
       errorMessage: "Failed to load videos",
-      suppressToasts: false // Show error toasts for better user feedback
+      suppressToasts: true // Don't show error toasts for better user experience
     },
     // Always fetch fresh data on mount
     refetchOnMount: true,
@@ -94,14 +94,14 @@ export const useVideos = (): UseVideosResult => {
   // Handle manual refresh with force option
   const handleForceRefetch = async () => {
     try {
-      toast.info("Forcing refresh of all videos...");
+      // Silently force refresh without showing toast about forcing refresh
       setRetryCount(prev => prev + 1);
       const freshData = await forceRefetch();
       console.log(`Force refetch completed, got ${freshData.length} videos`);
       return freshData;
     } catch (err) {
       console.error("Error in force refetch:", err);
-      toast.error("Failed to refresh videos. Please try again later.");
+      // Don't show error toast
       return [];
     }
   };

@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { checkApiQuota } from "../useApiQuota";
 import { toast } from "sonner";
@@ -31,11 +32,7 @@ export const fetchNewVideosFromEdgeFunction = async (
         console.error('Error invoking fetch-youtube-videos:', fetchError);
         setFetchAttempts(prev => prev + 1);
         
-        // Don't show error toast if it's a network error, as this is likely a temporary issue
-        if (!fetchError.message?.includes('Failed to fetch')) {
-          toast.error("Failed to connect to video service. Using cached data.");
-        }
-        
+        // Don't show any error toasts
         return { success: false, message: fetchError.message };
       }
       
@@ -49,7 +46,8 @@ export const fetchNewVideosFromEdgeFunction = async (
         if (response.newVideos > 0) {
           toast.success(`Found ${response.newVideos} new videos!`);
         } else {
-          toast.info("You're up to date! No new videos found.");
+          // Don't show "no new videos" toast
+          console.log("No new videos found");
         }
         
         return { success: true };
@@ -57,10 +55,11 @@ export const fetchNewVideosFromEdgeFunction = async (
         const resetTime = new Date(response.quota_reset_at);
         const message = `YouTube quota limited. Full service will resume at ${resetTime.toLocaleString()}`;
         console.log(message);
-        toast.warning(message);
+        // Don't show quota warning toast
         return { success: false, message };
       } else if (response?.message) {
-        toast.error(response.message);
+        // Don't show error toast
+        console.error(response.message);
         return { success: false, message: response.message };
       }
     } catch (edgeError) {
@@ -128,9 +127,7 @@ export const tryFetchNewVideos = async (
       }
     } else {
       console.log('Using cached video data due to quota limitations');
-      if (!highPriority) {
-        toast.warning('YouTube API quota limited. Using cached video data.');
-      }
+      // Don't show quota warning toast
     }
     
     return existingData;

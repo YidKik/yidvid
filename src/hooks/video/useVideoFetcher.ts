@@ -139,14 +139,14 @@ export const useVideoFetcher = (): VideoFetcherResult => {
       sampleData.push({
         id: `sample-${i}`,
         video_id: `sample-${i}`,
-        title: `Video ${i} - Unable to fetch from database, using sample data`,
+        title: `Video ${i} - Content being updated, please refresh`,
         thumbnail: "/placeholder.svg",
         channel_name: `Sample Channel ${Math.ceil(i/2)}`,
         channel_id: `sample-channel-${Math.ceil(i/2)}`,
         views: i * 100,
         uploaded_at: new Date().toISOString(),
         category: categories[i % categories.length],
-        description: "This is a sample video description. Actual data could not be loaded."
+        description: "Content is currently updating. Please refresh to see the latest videos."
       });
     }
     

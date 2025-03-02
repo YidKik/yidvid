@@ -25,7 +25,7 @@ export const useChannelVideos = (channelId: string) => {
             const resetTime = new Date(quotaData.quota_reset_at);
             const message = `YouTube API quota exceeded. Service will resume at ${resetTime.toLocaleString()}`;
             console.warn(message);
-            toast.warning(message);
+            // Don't show quota toast
           }
         } catch (error) {
           console.warn("Error checking quota:", error);
@@ -52,7 +52,7 @@ export const useChannelVideos = (channelId: string) => {
         if (error.message?.includes('quota exceeded')) {
           const enhancedError = new Error('Daily YouTube API quota exceeded. Only cached videos are available.');
           console.error(enhancedError);
-          toast.error(enhancedError.message);
+          // Don't show quota toast
           // Return empty array instead of throwing
           return [];
         }

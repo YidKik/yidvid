@@ -37,7 +37,7 @@ export const VideoContent = ({
         toast.success("Content refreshed");
       } catch (error) {
         console.error("Error during manual refetch:", error);
-        toast.error("Failed to refresh content");
+        // Don't show error toast
       } finally {
         setTimeout(() => setIsRefreshing(false), 1000);
       }
@@ -53,7 +53,7 @@ export const VideoContent = ({
         toast.success("Content completely refreshed with latest data");
       } catch (error) {
         console.error("Error during force refetch:", error);
-        toast.error("Failed to refresh content");
+        // Don't show error toast
       } finally {
         setTimeout(() => setIsRefreshing(false), 1000);
       }
@@ -94,7 +94,7 @@ export const VideoContent = ({
       <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
         <AlertCircle className="h-12 w-12 text-orange-500 mb-4" />
         <h3 className="text-lg font-semibold mb-2">No videos available</h3>
-        <p className="text-muted-foreground mb-6">We couldn't find any videos. Please try refreshing.</p>
+        <p className="text-muted-foreground mb-6">We're getting your videos ready. Please try refreshing.</p>
         <Button 
           onClick={handleForceRefetch} 
           disabled={isRefreshing}
