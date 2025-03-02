@@ -128,7 +128,7 @@ const Settings = () => {
             saveColors={saveColors}
             resetToDefaults={resetToDefaults}
           />
-          <AdminSection isAdmin={!!profile?.is_admin} />
+          <AdminSection userId={userId} />
           <SupportSection />
         </div>
       </main>
