@@ -1,4 +1,3 @@
-
 import { Header } from "@/components/Header";
 import Auth from "@/pages/Auth";
 import { useState, useEffect } from "react";
@@ -16,7 +15,6 @@ import { GlobalNotification } from "@/components/notifications/GlobalNotificatio
 import { WelcomeOverlay } from "@/components/welcome/WelcomeOverlay";
 import { getPageTitle, DEFAULT_META_DESCRIPTION, DEFAULT_META_KEYWORDS, DEFAULT_META_IMAGE } from "@/utils/pageTitle";
 import { Helmet } from "react-helmet";
-import { FetchingIssueAlert } from "@/components/notifications/FetchingIssueAlert";
 import { toast } from "sonner";
 
 const MainContent = () => {
@@ -37,7 +35,6 @@ const MainContent = () => {
 
       if (error) {
         console.error("Error marking notifications as read:", error);
-        // Don't show toast for policy recursion errors that we expect to happen during RLS implementation
         if (!error.message.includes("recursion") && !error.message.includes("policy")) {
           toast.error("Failed to mark notifications as read");
         }
@@ -47,14 +44,12 @@ const MainContent = () => {
     }
   };
 
-  // Mark notifications as read when component mounts
   useEffect(() => {
     if (session?.user?.id) {
       markNotificationsAsRead();
     }
   }, [session?.user?.id]);
 
-  // Debug log to track data availability
   useEffect(() => {
     console.log(`Main content rendering with ${videos?.length || 0} videos, isLoading: ${isLoading}`);
     
@@ -67,7 +62,6 @@ const MainContent = () => {
     }
   }, [videos, isLoading, error]);
 
-  // Force a refetch if no videos are loaded
   useEffect(() => {
     if (!isLoading && (!videos || videos.length === 0)) {
       console.log("No videos loaded, triggering a refetch");
@@ -92,8 +86,6 @@ const MainContent = () => {
             />
             <CategorySection />
           </div>
-
-          {!isMusic && <FetchingIssueAlert />}
 
           <motion.div
             key={isMusic ? "music" : "videos"}
