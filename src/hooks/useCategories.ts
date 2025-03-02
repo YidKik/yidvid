@@ -72,7 +72,7 @@ export const useCategories = (): UseCategories => {
     })) || [])
   ];
 
-  // Use fewer repetitions for better performance
+  // Create infiniteCategories by repeating the allCategories array to create a continuous scrolling effect
   const infiniteCategories = [...allCategories, ...allCategories, ...allCategories];
 
   return {
