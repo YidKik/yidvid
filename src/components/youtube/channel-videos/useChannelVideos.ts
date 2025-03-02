@@ -12,21 +12,25 @@ export const useChannelVideos = (channelId: string) => {
       console.log("Fetching videos for channel:", channelId);
       
       try {
-        // First check quota status
-        const { data: quotaData, error: quotaError } = await supabase
-          .from('api_quota_tracking')
-          .select('quota_remaining, quota_reset_at')
-          .eq('api_name', 'youtube')
-          .single();
+        // First check quota status, but don't throw if it fails
+        try {
+          const { data: quotaData, error: quotaError } = await supabase
+            .from('api_quota_tracking')
+            .select('quota_remaining, quota_reset_at')
+            .eq('api_name', 'youtube')
+            .single();
 
-        if (quotaError) {
-          console.warn("Could not check quota status:", quotaError);
-        } else if (quotaData && quotaData.quota_remaining <= 0) {
-          const resetTime = new Date(quotaData.quota_reset_at);
-          const message = `YouTube API quota exceeded. Service will resume at ${resetTime.toLocaleString()}`;
-          console.warn(message);
-          toast.warning(message);
-          // Still proceed to fetch cached videos
+          if (quotaError) {
+            console.warn("Could not check quota status:", quotaError);
+          } else if (quotaData && quotaData.quota_remaining <= 0) {
+            const resetTime = new Date(quotaData.quota_reset_at);
+            const message = `YouTube API quota exceeded. Service will resume at ${resetTime.toLocaleString()}`;
+            console.warn(message);
+            toast.warning(message);
+          }
+        } catch (error) {
+          console.warn("Error checking quota:", error);
+          // Continue execution - this is non-critical
         }
 
         // Fetch videos from our database (these are cached)
@@ -42,16 +46,21 @@ export const useChannelVideos = (channelId: string) => {
           throw error;
         }
 
-        // Get the channel's custom category mappings
-        const { data: channelCategories, error: categoriesError } = await supabase
-          .from("channel_custom_category_mappings")
-          .select("category_id")
-          .eq("channel_id", channelId);
-        
-        if (categoriesError) {
-          console.warn("Could not fetch channel custom categories:", categoriesError);
-        } else {
-          console.log("Channel has custom categories:", channelCategories?.length || 0);
+        // Try to get the channel's custom category mappings
+        try {
+          const { data: channelCategories, error: categoriesError } = await supabase
+            .from("channel_custom_category_mappings")
+            .select("category_id")
+            .eq("channel_id", channelId);
+          
+          if (categoriesError) {
+            console.warn("Could not fetch channel custom categories:", categoriesError);
+          } else {
+            console.log("Channel has custom categories:", channelCategories?.length || 0);
+          }
+        } catch (error) {
+          console.warn("Error checking custom categories:", error);
+          // Continue execution - this is non-critical
         }
 
         console.log("Fetched videos:", data?.length || 0);

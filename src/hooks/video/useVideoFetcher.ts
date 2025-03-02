@@ -34,34 +34,51 @@ export const useVideoFetcher = (): VideoFetcherResult => {
     console.log("Starting video fetch process...");
     
     try {
-      // First fetch existing videos from database
-      const videosData = await fetchVideosFromDatabase();
-      
-      // If we already have videos, set successful fetch even if the next part fails
-      if (videosData.length > 0) {
-        setLastSuccessfulFetch(new Date());
-        setFetchAttempts(0);
+      // First fetch existing videos from database - this is the most important part
+      // so even if other parts fail, we want this data
+      let videosData: any[] = [];
+      try {
+        videosData = await fetchVideosFromDatabase();
+        
+        // If we already have videos, set successful fetch even if the next part fails
+        if (videosData.length > 0) {
+          setLastSuccessfulFetch(new Date());
+          setFetchAttempts(0);
+        }
+      } catch (error) {
+        console.error("Error fetching videos from database:", error);
+        // We'll continue anyway to try other operations
       }
 
-      // Get all active channels
-      const channels = await fetchActiveChannels();
-      const channelIds = channels?.map(c => c.channel_id) || [];
-      console.log(`Found ${channelIds.length} channels to process`);
+      // Try to get active channels, but don't fail the whole operation if this fails
+      let channelIds: string[] = [];
+      try {
+        const channels = await fetchActiveChannels();
+        channelIds = channels?.map(c => c.channel_id) || [];
+        console.log(`Found ${channelIds.length} channels to process`);
+      } catch (error) {
+        console.error("Error fetching channels:", error);
+        // Continue with what we have
+      }
 
       // Check if we should fetch new videos
       const shouldFetchNewVideos = shouldFetchNew();
       
       if (channelIds.length > 0 && shouldFetchNewVideos) {
         // Try to fetch new videos if quota allows
-        await tryFetchNewVideos(channelIds, videosData);
+        try {
+          await tryFetchNewVideos(channelIds, videosData);
+        } catch (error) {
+          console.error("Error in tryFetchNewVideos:", error);
+          // Continue with what we have
+        }
       }
 
-      // Return formatted data
+      // Return what we have, even if it's an empty array
       return formatVideoData(videosData);
-
     } catch (error: any) {
       console.error("Error in video fetching process:", error);
-      // For any errors, return what we already have
+      // For any errors, return an empty array rather than failing completely
       return [];
     }
   };
@@ -118,20 +135,26 @@ export const useVideoFetcher = (): VideoFetcherResult => {
   // Try to fetch new videos if quota allows
   const tryFetchNewVideos = async (channelIds: string[], existingData: any[]) => {
     try {
-      const quotaInfo = await checkApiQuota();
-      
-      // Only proceed if we have at least 20% of daily quota remaining (2000 units)
-      if (!quotaInfo || quotaInfo.quota_remaining < 2000) {
-        console.log('Using cached video data due to quota limitations');
-        return existingData;
+      let quotaInfo = null;
+      try {
+        quotaInfo = await checkApiQuota();
+      } catch (error) {
+        console.warn("Could not check quota:", error);
+        // Continue anyway, but with caution
       }
       
-      // Call edge function to fetch new videos
-      const result = await fetchNewVideosFromEdgeFunction(channelIds);
-      
-      if (result.success) {
-        // Refetch videos after successful update
-        return await fetchUpdatedVideosAfterSync();
+      // Only proceed if we have at least 20% of daily quota remaining (2000 units)
+      // or if we couldn't check quota (null)
+      if (quotaInfo === null || quotaInfo.quota_remaining >= 2000) {
+        // Call edge function to fetch new videos
+        const result = await fetchNewVideosFromEdgeFunction(channelIds);
+        
+        if (result.success) {
+          // Refetch videos after successful update
+          return await fetchUpdatedVideosAfterSync();
+        }
+      } else {
+        console.log('Using cached video data due to quota limitations');
       }
       
       return existingData;

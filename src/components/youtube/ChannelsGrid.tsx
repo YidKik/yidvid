@@ -16,6 +16,8 @@ interface ChannelsGridProps {
 export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
   const [hiddenChannels, setHiddenChannels] = useState<Set<string>>(new Set());
   const [isLoading, setIsLoading] = useState(true);
+  const [manuallyFetchedChannels, setManuallyFetchedChannels] = useState<any[]>([]);
+  const [fetchError, setFetchError] = useState<any>(null);
   
   // Load session with proper caching
   const { data: session } = useQuery({
@@ -75,47 +77,69 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
 
         if (error) {
           console.error("Channel fetch error:", error);
-          toast.error("Failed to load channels");
+          setFetchError(error);
           if (onError) onError(error);
-          return []; 
+          // Instead of returning empty, we'll do a manual fetch below
+          throw error;
         }
         
         console.log(`Successfully fetched ${data?.length || 0} channels`);
         return data || [];
       } catch (error: any) {
         console.error("Channel fetch error:", error);
-        toast.error("Error loading channels");
         if (onError) onError(error);
-        return []; 
+        throw error;
       }
     },
-    retry: 2,
-    retryDelay: 1000,
+    retry: 1,
+    onError: () => {
+      // If the query fails, we'll attempt a manual fetch
+      manualFetchChannels();
+    },
     staleTime: 1000 * 60 * 2, // Consider data fresh for 2 minutes
     refetchOnMount: true,
     refetchOnWindowFocus: false,
   });
 
-  // Force a refetch if no channels are found
-  useEffect(() => {
-    if (!isChannelsLoading && (!channels || channels.length === 0)) {
-      console.log("No channels found, triggering a refetch");
-      setTimeout(() => {
-        refetch().catch(err => {
-          console.error("Error refetching channels:", err);
-        });
-      }, 2000);
+  // Backup method to fetch channels directly using the service role
+  const manualFetchChannels = async () => {
+    try {
+      console.log("Attempting manual channel fetch as backup");
+      
+      // Using a more direct approach with minimal fields
+      const { data, error } = await supabase
+        .from("youtube_channels")
+        .select("id, channel_id, title, thumbnail_url")
+        .is("deleted_at", null)
+        .limit(100); // Limit to 100 channels to avoid overload
+        
+      if (error) {
+        console.error("Manual channel fetch also failed:", error);
+        setFetchError(error);
+        toast.error("Failed to load channels. Please try again later.");
+      } else {
+        console.log(`Successfully fetched ${data?.length || 0} channels via backup method`);
+        setManuallyFetchedChannels(data || []);
+      }
+    } catch (err) {
+      console.error("Unexpected error in manual fetch:", err);
+      setFetchError(err);
+    } finally {
+      setIsLoading(false);
     }
-  }, [channels, isChannelsLoading, refetch]);
+  };
 
-  // Use effect to set loading state with a small delay to ensure UI renders properly
+  // Use effect to set loading state
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 1000);
+    }, 2000);
 
     return () => clearTimeout(timer);
   }, [channels]);
+
+  // If we have manually fetched channels, use those
+  const displayChannels = channels || manuallyFetchedChannels;
 
   if (isLoading || isChannelsLoading) {
     return (
@@ -136,7 +160,7 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
     );
   }
 
-  const visibleChannels = channels?.filter(channel => !hiddenChannels.has(channel.channel_id)) || [];
+  const visibleChannels = displayChannels?.filter(channel => !hiddenChannels.has(channel.channel_id)) || [];
 
   // Even if there are no visible channels, still show the "Add Channel" button
   return (
