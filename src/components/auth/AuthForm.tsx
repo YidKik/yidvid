@@ -15,8 +15,8 @@ export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
   
   return (
     <Tabs defaultValue="signin" className="w-full">
-      <div className={`px-3 ${isMobile ? 'pt-2' : 'px-8 pt-6'}`}>
-        <TabsList className="w-full grid grid-cols-2 h-10 bg-gray-50/80 p-1 rounded-lg gap-2">
+      <div className={`px-2 ${isMobile ? 'pt-1' : 'px-8 pt-6'}`}>
+        <TabsList className="w-full grid grid-cols-2 h-8 bg-gray-50/80 p-1 rounded-lg gap-1">
           <TabsTrigger 
             value="signin" 
             className="rounded-md text-xs font-medium text-gray-600 data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-md data-[state=active]:scale-105 data-[state=active]:font-semibold transition-all duration-300 hover:bg-white/80"
@@ -32,7 +32,7 @@ export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
         </TabsList>
       </div>
 
-      <div className={`${isMobile ? 'p-3 pt-2 pb-4' : 'p-8 pt-6'}`}>
+      <div className={`${isMobile ? 'p-2 pt-1 pb-3' : 'p-8 pt-6'}`}>
         <TabsContent value="signin" className="mt-0">
           <SignInForm 
             onOpenChange={onOpenChange}

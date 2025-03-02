@@ -90,14 +90,14 @@ export const SignUpForm = ({ isLoading, setIsLoading, onOpenChange }: SignUpForm
   };
 
   return (
-    <form onSubmit={handleSignUp} className="space-y-4">
+    <form onSubmit={handleSignUp} className="space-y-3">
       <div className="space-y-2">
         <Input
           type="text"
           placeholder="Username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          className="h-12 px-4 border-gray-200 bg-gray-50/50 focus:bg-white transition-all duration-300 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary"
+          className="h-10 px-3 border-gray-200 bg-gray-50/50 focus:bg-white transition-all duration-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm"
           required
           disabled={isLoading}
         />
@@ -108,7 +108,7 @@ export const SignUpForm = ({ isLoading, setIsLoading, onOpenChange }: SignUpForm
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="h-12 px-4 border-gray-200 bg-gray-50/50 focus:bg-white transition-all duration-300 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary"
+          className="h-10 px-3 border-gray-200 bg-gray-50/50 focus:bg-white transition-all duration-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm"
           required
           disabled={isLoading}
         />
@@ -119,7 +119,7 @@ export const SignUpForm = ({ isLoading, setIsLoading, onOpenChange }: SignUpForm
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="h-12 px-4 border-gray-200 bg-gray-50/50 focus:bg-white transition-all duration-300 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary"
+          className="h-10 px-3 border-gray-200 bg-gray-50/50 focus:bg-white transition-all duration-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm"
           required
           disabled={isLoading}
           minLength={6}
@@ -127,7 +127,7 @@ export const SignUpForm = ({ isLoading, setIsLoading, onOpenChange }: SignUpForm
       </div>
       <button
         type="submit"
-        className="w-full h-12 bg-primary text-white rounded-xl font-medium hover:opacity-90 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02] active:scale-[0.98] disabled:hover:scale-100 shadow-md hover:shadow-lg"
+        className="w-full h-10 bg-primary text-white rounded-lg text-sm font-medium hover:opacity-90 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02] active:scale-[0.98] disabled:hover:scale-100 shadow-md hover:shadow-lg"
         disabled={isLoading}
       >
         {isLoading ? "Creating Account..." : "Create Account"}
