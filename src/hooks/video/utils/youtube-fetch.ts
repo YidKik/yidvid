@@ -10,18 +10,19 @@ export const fetchNewVideosFromEdgeFunction = async (
   channelIds: string[], 
   fetchAttempts: number,
   setFetchAttempts: (value: number | ((prev: number) => number)) => void,
-  setLastSuccessfulFetch: (value: Date | null) => void
+  setLastSuccessfulFetch: (value: Date | null) => void,
+  highPriority: boolean = false
 ): Promise<{ success: boolean; message?: string }> => {
   try {
-    console.log("Calling edge function to fetch new videos...");
+    console.log(`Calling edge function to fetch new videos with ${highPriority ? 'HIGH' : 'normal'} priority...`);
     
     const { data: response, error: fetchError } = await supabase.functions.invoke('fetch-youtube-videos', {
       body: { 
         channels: channelIds,
-        forceUpdate: fetchAttempts > 2, // Force update if we've had multiple attempts
-        quotaConservative: true, // Flag to indicate conservative quota usage
-        prioritizeRecent: true, // Flag to prioritize recently active channels
-        maxChannelsPerRun: 5 // Limit the number of channels processed in a single run
+        forceUpdate: fetchAttempts > 1 || highPriority, // Force update if attempts > 1 or high priority
+        quotaConservative: !highPriority, // Don't be conservative with quota if high priority
+        prioritizeRecent: true, // Always prioritize recently active channels
+        maxChannelsPerRun: highPriority ? 10 : 5 // Process more channels if high priority
       }
     });
 
@@ -71,10 +72,11 @@ export const tryFetchNewVideos = async (
   existingData: any[],
   fetchAttempts: number,
   setFetchAttempts: (value: number | ((prev: number) => number)) => void,
-  setLastSuccessfulFetch: (value: Date | null) => void
+  setLastSuccessfulFetch: (value: Date | null) => void,
+  highPriority: boolean = false
 ): Promise<any[]> => {
   try {
-    console.log("Trying to fetch new videos...");
+    console.log(`Trying to fetch new videos with ${highPriority ? 'HIGH' : 'normal'} priority...`);
     
     let quotaInfo = null;
     try {
@@ -85,15 +87,18 @@ export const tryFetchNewVideos = async (
       // Continue anyway, but with caution
     }
     
-    // Only proceed if we have at least 10% of daily quota remaining (1000 units)
-    // or if we couldn't check quota (null)
-    if (quotaInfo === null || quotaInfo.quota_remaining >= 1000) {
+    // Be more aggressive with quota if high priority, otherwise be conservative
+    const minQuotaRequired = highPriority ? 500 : 1000;
+    
+    // Only proceed if we have sufficient quota remaining or if we couldn't check quota
+    if (quotaInfo === null || quotaInfo.quota_remaining >= minQuotaRequired || highPriority) {
       // Call edge function to fetch new videos
       const result = await fetchNewVideosFromEdgeFunction(
         channelIds, 
         fetchAttempts,
         setFetchAttempts,
-        setLastSuccessfulFetch
+        setLastSuccessfulFetch,
+        highPriority
       );
       
       if (result.success) {
@@ -111,7 +116,9 @@ export const tryFetchNewVideos = async (
       }
     } else {
       console.log('Using cached video data due to quota limitations');
-      toast.warning('YouTube API quota limited. Using cached video data.');
+      if (!highPriority) {
+        toast.warning('YouTube API quota limited. Using cached video data.');
+      }
     }
     
     return existingData;

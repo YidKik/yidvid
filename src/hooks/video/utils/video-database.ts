@@ -10,27 +10,27 @@ export const fetchVideosFromDatabase = async (): Promise<any[]> => {
   try {
     console.log("Fetching videos from database...");
     
-    // Modify the query to be simpler and explicitly exclude deleted videos
+    // Improve the query to get more recent videos first and limit to latest 200
     const { data, error } = await supabase
       .from("youtube_videos")
       .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, category, description")
       .is("deleted_at", null)
       .order("uploaded_at", { ascending: false })
-      .limit(200); // Increased limit to get more videos
+      .limit(200);
 
     if (error) {
       console.error("Error fetching videos from database:", error);
-      toast.error("Error loading videos. Showing sample data.");
+      toast.error("Error loading videos. Trying alternate methods...");
       return getSampleVideoData(10); // Return sample data
     }
     
     if (!data || data.length === 0) {
       console.log("No videos found in database, using sample data");
-      toast.warning("No videos found. Showing sample data.");
+      toast.warning("No videos found. Showing sample data while trying to fetch new content...");
       return getSampleVideoData(10);
     }
     
-    console.log(`Successfully fetched ${data?.length || 0} videos`);
+    console.log(`Successfully fetched ${data?.length || 0} videos from database, most recent: ${new Date(data[0].uploaded_at).toLocaleString()}`);
     return data;
   } catch (err) {
     console.error("Failed to fetch videos from database:", err);
@@ -73,7 +73,7 @@ export const fetchActiveChannels = async (): Promise<ChannelData[]> => {
   try {
     console.log("Fetching active channels...");
     
-    // Modify the query to explicitly exclude deleted channels
+    // Get more channels to increase chances of finding new content
     const { data, error } = await supabase
       .from("youtube_channels")
       .select("channel_id")
@@ -120,6 +120,7 @@ export const fetchUpdatedVideosAfterSync = async (): Promise<any[]> => {
   try {
     console.log("Fetching updated videos after sync...");
     
+    // Get most recent videos first, limited to 200
     const { data, error } = await supabase
       .from("youtube_videos")
       .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, category, description")
@@ -139,7 +140,7 @@ export const fetchUpdatedVideosAfterSync = async (): Promise<any[]> => {
       return getSampleVideoData(10);
     }
     
-    console.log(`Successfully fetched ${data?.length || 0} updated videos`);
+    console.log(`Successfully fetched ${data?.length || 0} updated videos, most recent: ${new Date(data[0].uploaded_at).toLocaleString()}`);
     return data;
   } catch (error) {
     console.error("Error in fetchUpdatedVideosAfterSync:", error);

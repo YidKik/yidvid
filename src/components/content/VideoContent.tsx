@@ -69,15 +69,24 @@ export const VideoContent = ({
     } else {
       console.log(`Rendering VideoContent with ${videos?.length || 0} videos`);
       if (videos?.length > 0) {
-        console.log("First video:", videos[0]);
+        const mostRecent = new Date(videos[0].uploadedAt);
+        console.log(`Most recent video: ${mostRecent.toLocaleString()}`);
       }
     }
   }, [videos, isLoading]);
 
-  // Display a message if no videos and last fetch was more than a day ago
-  const showForceFetchButton = lastSuccessfulFetch && 
-    (new Date().getTime() - new Date(lastSuccessfulFetch).getTime() > 86400000) && // More than 24 hours
-    forceRefetch;
+  // Always show force fetch button and trigger automatic refresh if stale
+  useEffect(() => {
+    if (lastSuccessfulFetch && 
+        (new Date().getTime() - new Date(lastSuccessfulFetch).getTime() > 86400000) && // More than 24 hours
+        forceRefetch && !isRefreshing) {
+      console.log("Content is stale (>24 hours). Triggering automatic refresh...");
+      handleForceRefetch();
+    }
+  }, [lastSuccessfulFetch, forceRefetch, isRefreshing]);
+
+  // Always show force fetch button
+  const showForceFetchButton = forceRefetch !== undefined;
 
   if (isMobile) {
     return (
@@ -92,7 +101,7 @@ export const VideoContent = ({
               className="flex items-center gap-1"
             >
               <RefreshCw className={`h-3 w-3 ${isRefreshing ? 'animate-spin' : ''}`} /> 
-              Force Refresh
+              Refresh Videos
             </Button>
           </div>
         )}
@@ -122,7 +131,7 @@ export const VideoContent = ({
             className="flex items-center gap-1"
           >
             <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} /> 
-            Force Refresh All Videos
+            Refresh All Videos
           </Button>
         </div>
       )}
