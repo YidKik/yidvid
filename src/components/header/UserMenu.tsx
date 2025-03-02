@@ -1,10 +1,11 @@
 
-import { Settings, LogOut, LayoutDashboard } from "lucide-react";
+import { Settings, LogOut, LayoutDashboard, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useNavigate } from "react-router-dom";
@@ -84,34 +85,40 @@ export const UserMenu = ({ onLogout }: UserMenuProps) => {
         <Button 
           variant="ghost" 
           size="icon"
-          className="h-10 w-10"
+          className="h-10 w-10 rounded-full hover:bg-gray-100"
         >
-          <Settings className="h-5 w-5" />
+          <Settings className="h-5 w-5 text-gray-700" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent 
         align="end" 
-        className="w-56 p-2 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 border shadow-lg z-50 animate-in slide-in-from-bottom-2 duration-200"
+        alignOffset={0}
+        sideOffset={8}
+        className="w-56 p-2 bg-white rounded-lg shadow-lg border border-gray-100"
       >
         {isAdmin && (
-          <DropdownMenuItem 
-            onClick={() => navigate("/dashboard")} 
-            className="flex items-center gap-2 p-3 cursor-pointer rounded-md hover:bg-gray-100/80 transition-colors"
-          >
-            <LayoutDashboard className="h-4 w-4" />
-            <span className="text-sm font-medium">Dashboard</span>
-          </DropdownMenuItem>
+          <>
+            <DropdownMenuItem 
+              onClick={() => navigate("/dashboard")} 
+              className="flex items-center gap-2 p-3 cursor-pointer rounded-md hover:bg-gray-50 transition-colors"
+            >
+              <LayoutDashboard className="h-4 w-4 text-gray-600" />
+              <span className="text-sm font-medium text-gray-700">Dashboard</span>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator className="my-1 bg-gray-100" />
+          </>
         )}
         <DropdownMenuItem 
           onClick={() => navigate("/settings")} 
-          className="flex items-center gap-2 p-3 cursor-pointer rounded-md hover:bg-gray-100/80 transition-colors"
+          className="flex items-center gap-2 p-3 cursor-pointer rounded-md hover:bg-gray-50 transition-colors"
         >
-          <Settings className="h-4 w-4" />
-          <span className="text-sm font-medium">Settings</span>
+          <Settings className="h-4 w-4 text-gray-600" />
+          <span className="text-sm font-medium text-gray-700">Settings</span>
         </DropdownMenuItem>
+        <DropdownMenuSeparator className="my-1 bg-gray-100" />
         <DropdownMenuItem 
           onClick={onLogout}
-          className="flex items-center gap-2 p-3 cursor-pointer rounded-md hover:bg-gray-100/80 text-red-600 hover:text-red-700 transition-colors"
+          className="flex items-center gap-2 p-3 cursor-pointer rounded-md hover:bg-red-50 text-red-600 hover:text-red-700 transition-colors"
         >
           <LogOut className="h-4 w-4" />
           <span className="text-sm font-medium">Logout</span>
