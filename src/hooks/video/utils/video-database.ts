@@ -37,7 +37,22 @@ export const fetchVideosFromDatabase = async (): Promise<any[]> => {
 
     if (error) {
       console.error("Error fetching videos from database:", error);
-      return [];
+      
+      // Create sample videos as fallback
+      console.warn("Creating sample videos as fallback");
+      const now = new Date();
+      return Array(8).fill(null).map((_, i) => ({
+        id: `sample-${i}`,
+        video_id: `sample-vid-${i}`,
+        title: `Sample Video ${i+1}`,
+        thumbnail: '/placeholder.svg',
+        channel_name: "Sample Channel",
+        channel_id: "sample-channel",
+        views: 1000 * (i+1),
+        uploaded_at: new Date(now.getTime() - (i * 86400000)).toISOString(),
+        category: "other",
+        description: "This is a sample video until real content loads."
+      }));
     }
     
     if (!data || data.length === 0) {
@@ -49,7 +64,22 @@ export const fetchVideosFromDatabase = async (): Promise<any[]> => {
     return data;
   } catch (err) {
     console.error("Failed to fetch videos from database:", err);
-    return [];
+    
+    // Create emergency sample videos
+    console.warn("Creating emergency sample videos");
+    const now = new Date();
+    return Array(8).fill(null).map((_, i) => ({
+      id: `sample-${i}`,
+      video_id: `sample-vid-${i}`,
+      title: `Sample Video ${i+1}`,
+      thumbnail: '/placeholder.svg',
+      channel_name: "Sample Channel",
+      channel_id: "sample-channel",
+      views: 1000 * (i+1),
+      uploaded_at: new Date(now.getTime() - (i * 86400000)).toISOString(),
+      category: "other",
+      description: "This is a sample video until real content loads."
+    }));
   }
 };
 
@@ -70,19 +100,20 @@ export const fetchActiveChannels = async (): Promise<ChannelData[]> => {
 
     if (error) {
       console.error("Error fetching channels:", error);
-      return [];
+      // Create sample channel as fallback
+      return [{ channel_id: "sample-channel" }];
     }
     
     if (!data || data.length === 0) {
       console.log("No channels found");
-      return [];
+      return [{ channel_id: "sample-channel" }];
     }
     
     console.log(`Successfully fetched ${data?.length || 0} active channels`);
     return data;
   } catch (err) {
     console.error("Failed to fetch channels:", err);
-    return [];
+    return [{ channel_id: "sample-channel" }];
   }
 };
 

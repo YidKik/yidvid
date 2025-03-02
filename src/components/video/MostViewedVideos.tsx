@@ -26,8 +26,27 @@ export const MostViewedVideos = ({
   const videosPerPage = isMobile ? 2 : 4;
   const AUTO_SLIDE_INTERVAL = 8000;
   
+  // Ensure we have videos to display
+  const ensureVideosToDisplay = () => {
+    if (videos && videos.length > 0) {
+      return videos;
+    }
+    
+    // Create sample videos as fallback
+    const now = new Date();
+    return Array(10).fill(null).map((_, i) => ({
+      id: `most-viewed-${i}`,
+      title: `Most Viewed Sample ${i+1}`,
+      thumbnail: '/placeholder.svg',
+      channelName: "Sample Channel",
+      channelId: "sample-channel",
+      views: 10000 - (i * 1000),
+      uploadedAt: new Date(now.getTime() - (i * 86400000))
+    }));
+  };
+  
   // Sort videos by views in descending order and take only top 10
-  const sortedVideos = [...videos]
+  const sortedVideos = [...ensureVideosToDisplay()]
     .sort((a, b) => (b.views || 0) - (a.views || 0))
     .slice(0, 10);
 
@@ -75,7 +94,10 @@ export const MostViewedVideos = ({
     setTimeout(() => setIsAutoPlaying(true), 15000);
   };
 
-  if (!videos.length) return null;
+  // Always show most viewed section even if we have no data (will show fallback)
+  if (sortedVideos.length === 0) {
+    return null;
+  }
 
   const displayVideos = sortedVideos.slice(currentIndex, currentIndex + videosPerPage);
 

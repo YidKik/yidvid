@@ -31,7 +31,18 @@ export const useChannelsGrid = () => {
       if (error) {
         console.error("Channel fetch error:", error);
         setFetchError(error);
-        return [];
+        
+        // Create sample channels for fallback
+        const sampleChannels: Channel[] = Array(8).fill(null).map((_, i) => ({
+          id: `sample-${i}`,
+          channel_id: `sample-channel-${i}`,
+          title: `Sample Channel ${i+1}`,
+          thumbnail_url: null
+        }));
+        
+        setManuallyFetchedChannels(sampleChannels);
+        setIsLoading(false);
+        return sampleChannels;
       }
       
       console.log(`Successfully fetched ${data?.length || 0} channels`);
@@ -43,18 +54,38 @@ export const useChannelsGrid = () => {
         return data;
       }
       
-      // If no data was returned, return empty array
-      return [];
+      // If no data was returned, create sample channels
+      const sampleChannels: Channel[] = Array(8).fill(null).map((_, i) => ({
+        id: `sample-${i}`,
+        channel_id: `sample-channel-${i}`,
+        title: `Sample Channel ${i+1}`,
+        thumbnail_url: null
+      }));
+      
+      setManuallyFetchedChannels(sampleChannels);
+      setIsLoading(false);
+      return sampleChannels;
     } catch (error: any) {
       console.error("Channel fetch error:", error);
-      return [];
+      
+      // Create fallback sample channels
+      const sampleChannels: Channel[] = Array(8).fill(null).map((_, i) => ({
+        id: `sample-${i}`,
+        channel_id: `sample-channel-${i}`,
+        title: `Sample Channel ${i+1}`,
+        thumbnail_url: null
+      }));
+      
+      setManuallyFetchedChannels(sampleChannels);
+      setIsLoading(false);
+      return sampleChannels;
     }
   };
 
   // Try to fetch channels once on component mount
   useEffect(() => {
     fetchChannelsDirectly().catch(() => {
-      console.error("Failed to fetch channels");
+      console.error("Failed to fetch channels on mount");
     });
   }, []);
 

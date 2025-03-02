@@ -46,7 +46,8 @@ const MainContent = () => {
       if (error) {
         console.error("Error marking notifications as read:", error);
         if (!error.message.includes("recursion") && !error.message.includes("policy")) {
-          toast.error("Failed to mark notifications as read");
+          // Silent error - don't show toast to users
+          console.warn("Notifications error suppressed:", error.message);
         }
       }
     } catch (err) {

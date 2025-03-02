@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { formatDistanceToNow, parseISO } from "date-fns";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
+import { useEffect } from "react";
 
 interface VideoCardProps {
   id: string;
@@ -32,6 +33,13 @@ export const VideoCard = ({
   hideInfo = false,
 }: VideoCardProps) => {
   const isMobile = useIsMobile();
+  
+  // Handle thumbnail errors by logging
+  useEffect(() => {
+    if (!thumbnail || thumbnail === '/placeholder.svg') {
+      console.warn(`VideoCard ${id} is using a placeholder thumbnail`);
+    }
+  }, [thumbnail, id]);
   
   // Handle date formatting more safely
   const formattedDate = (() => {
