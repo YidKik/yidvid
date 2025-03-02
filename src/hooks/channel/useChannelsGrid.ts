@@ -31,7 +31,14 @@ export const useChannelsGrid = () => {
         
         // Try a fallback approach immediately
         await manualFetchChannels();
-        return manuallyFetchedChannels;
+        
+        // If we have manually fetched channels, return those
+        if (manuallyFetchedChannels.length > 0) {
+          return manuallyFetchedChannels;
+        }
+        
+        // If both main and fallback fetches fail, return sample data
+        return getSampleChannels();
       }
       
       console.log(`Successfully fetched ${data?.length || 0} channels`);
@@ -39,14 +46,31 @@ export const useChannelsGrid = () => {
       // If we got channels, update our state
       if (data && data.length > 0) {
         setManuallyFetchedChannels(data);
+        return data;
       }
       
-      return data || [];
+      // If no data was returned, try the fallback method
+      await manualFetchChannels();
+      
+      // If fallback method succeeded, return those channels
+      if (manuallyFetchedChannels.length > 0) {
+        return manuallyFetchedChannels;
+      }
+      
+      // Last resort - return sample channels
+      return getSampleChannels();
     } catch (error: any) {
       console.error("Channel fetch error:", error);
       // Try fallback method
       await manualFetchChannels();
-      return manuallyFetchedChannels;
+      
+      // If fallback method succeeded, return those channels
+      if (manuallyFetchedChannels.length > 0) {
+        return manuallyFetchedChannels;
+      }
+      
+      // Last resort - return sample channels
+      return getSampleChannels();
     } finally {
       setIsLoading(false);
     }
@@ -66,16 +90,42 @@ export const useChannelsGrid = () => {
       if (error) {
         console.error("Manual channel fetch also failed:", error);
         setFetchError(error);
-      } else {
-        console.log(`Successfully fetched ${data?.length || 0} channels via backup method`);
-        setManuallyFetchedChannels(data || []);
+        return;
       }
+      
+      console.log(`Successfully fetched ${data?.length || 0} channels via backup method`);
+      setManuallyFetchedChannels(data || []);
     } catch (err) {
       console.error("Unexpected error in manual fetch:", err);
       setFetchError(err);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Generate sample channels as a last resort
+  const getSampleChannels = (): Channel[] => {
+    console.log("Using sample channels as fallback");
+    return [
+      {
+        id: "sample-1",
+        channel_id: "sample-channel-1",
+        title: "Sample Channel 1 - DB Error",
+        thumbnail_url: null
+      },
+      {
+        id: "sample-2",
+        channel_id: "sample-channel-2",
+        title: "Sample Channel 2 - DB Error",
+        thumbnail_url: null
+      },
+      {
+        id: "sample-3",
+        channel_id: "sample-channel-3",
+        title: "Sample Channel 3 - DB Error",
+        thumbnail_url: null
+      }
+    ];
   };
 
   // Try to fetch channels once on component mount

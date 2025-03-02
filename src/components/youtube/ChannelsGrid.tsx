@@ -46,7 +46,7 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
     });
     
     // Emergency fallback - create some sample channels if nothing loads
-    if (!channels && !manuallyFetchedChannels) {
+    if (!channels && !manuallyFetchedChannels?.length) {
       const timer = setTimeout(() => {
         console.log("Creating fallback channels as emergency measure");
         setFallbackChannels([
@@ -103,7 +103,7 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
         <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 md:gap-4">
           {visibleChannels.map((channel, index) => (
             <ChannelCard
-              key={channel.id}
+              key={channel.id || `fallback-${index}`}
               id={channel.id}
               channel_id={channel.channel_id}
               title={channel.title}

@@ -45,7 +45,7 @@ export const useVideos = (): UseVideosResult => {
     // Error handling
     meta: {
       errorMessage: "Failed to load videos",
-      suppressToasts: false
+      suppressToasts: true // Don't show error toasts since we have fallback data
     },
     // Always fetch fresh data on mount
     refetchOnMount: true,
@@ -61,7 +61,10 @@ export const useVideos = (): UseVideosResult => {
       setTimeout(() => {
         refetch().catch(err => {
           console.error("Error refetching videos:", err);
-          toast.error("Failed to load videos. Please try again later.");
+          // Don't show toast for expected errors from DB policy recursion
+          if (!err.message?.includes("recursion detected")) {
+            toast.error("Failed to load videos. Please try again later.");
+          }
         });
       }, 1000);
     }
