@@ -88,7 +88,9 @@ export const UserMenu = ({ onLogout }: UserMenuProps) => {
       </DropdownMenuTrigger>
       <DropdownMenuContent 
         align="end" 
+        side="bottom"
         sideOffset={5}
+        alignOffset={0}
         className="w-56 p-2 bg-white rounded-lg shadow-lg border border-gray-100"
       >
         {isAdmin && (
