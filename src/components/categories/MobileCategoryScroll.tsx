@@ -17,40 +17,13 @@ export const MobileCategoryScroll: React.FC<MobileCategoryScrollProps> = ({
 }) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  // Manual scroll function for mobile touch sliding
-  const handleDragStart = (e: React.TouchEvent) => {
-    if (!scrollContainerRef.current) return;
-    
-    const container = scrollContainerRef.current;
-    const startX = e.touches[0].clientX;
-    let lastX = startX;
-    let isDragging = true;
-    
-    const handleTouchMove = (e: TouchEvent) => {
-      if (!isDragging || !container) return;
-      const currentX = e.touches[0].clientX;
-      const diff = lastX - currentX;
-      container.scrollLeft += diff;
-      lastX = currentX;
-    };
-    
-    const handleTouchEnd = () => {
-      isDragging = false;
-      document.removeEventListener('touchmove', handleTouchMove);
-      document.removeEventListener('touchend', handleTouchEnd);
-    };
-    
-    document.addEventListener('touchmove', handleTouchMove, { passive: true });
-    document.addEventListener('touchend', handleTouchEnd);
-  };
-
   // Auto-scroll animation for mobile - continuous right-to-left scrolling
   useEffect(() => {
     if (!scrollContainerRef.current) return;
     
     let animationFrameId: number;
     let isPaused = false;
-    const scrollSpeed = 0.7; // Adjusted for better visual flow
+    const scrollSpeed = 0.5; // Adjusted for better visual flow
     const container = scrollContainerRef.current;
     
     const scroll = () => {
@@ -79,7 +52,7 @@ export const MobileCategoryScroll: React.FC<MobileCategoryScrollProps> = ({
       setTimeout(() => {
         isPaused = false;
         animationFrameId = requestAnimationFrame(scroll);
-      }, 1000); // Small delay before resuming
+      }, 2000); // Small delay before resuming
     };
     
     container.addEventListener('touchstart', pauseAnimation);
@@ -98,7 +71,6 @@ export const MobileCategoryScroll: React.FC<MobileCategoryScrollProps> = ({
     <div 
       ref={scrollContainerRef}
       className="flex gap-2 overflow-x-auto touch-pan-x scrollbar-hide"
-      onTouchStart={handleDragStart}
       style={{ 
         WebkitOverflowScrolling: 'touch',
         scrollBehavior: 'smooth'
