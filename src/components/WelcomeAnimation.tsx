@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
@@ -9,6 +8,7 @@ import { WelcomeText } from "./welcome/WelcomeText";
 import { useWelcomeData } from "@/hooks/useWelcomeData";
 import { useVideos } from "@/hooks/video/useVideos";
 import { toast } from "sonner";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export const WelcomeAnimation = () => {
   const [show, setShow] = useState(() => {
@@ -17,6 +17,7 @@ export const WelcomeAnimation = () => {
   const [infoShown, setInfoShown] = useState(false);
   const [searchParams] = useSearchParams();
   const skipWelcome = searchParams.get("skipWelcome") === "true";
+  const isMobile = useIsMobile();
 
   const { data: session } = useQuery({
     queryKey: ["session"],
@@ -53,31 +54,31 @@ export const WelcomeAnimation = () => {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="bg-white rounded-lg shadow-lg p-6 max-w-lg mx-auto"
+                  className="bg-white rounded-lg shadow-lg p-4 max-w-lg mx-auto"
                 >
-                  <div className="flex flex-col items-center text-center space-y-6">
+                  <div className="flex flex-col items-center text-center space-y-4">
                     <img 
                       src="/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png" 
                       alt="YidVid Logo" 
-                      className="w-24 h-24"
+                      className={isMobile ? "w-16 h-16" : "w-24 h-24"}
                     />
-                    <h3 className="text-2xl font-semibold">Welcome to YidVid!</h3>
-                    <p className="text-lg text-gray-600">
-                      Start exploring our curated collection of Jewish content. Create a free account to unlock all features!
+                    <h3 className={isMobile ? "text-lg font-semibold" : "text-2xl font-semibold"}>Welcome to YidVid!</h3>
+                    <p className={isMobile ? "text-sm text-gray-600" : "text-lg text-gray-600"}>
+                      {isMobile ? "Create a free account to unlock all features!" : "Start exploring our curated collection of Jewish content. Create a free account to unlock all features!"}
                     </p>
                     <button
                       onClick={() => {
                         toast.dismiss(t);
                         localStorage.setItem('hasSeenInfoNotification', 'true');
                       }}
-                      className="bg-primary text-white px-6 py-3 text-lg rounded-md hover:bg-primary/90 transition-colors"
+                      className={`bg-primary text-white px-4 ${isMobile ? "py-2 text-sm" : "py-3 text-lg"} rounded-md hover:bg-primary/90 transition-colors`}
                     >
                       Got it!
                     </button>
                   </div>
                 </motion.div>
               ), {
-                duration: 10000, // Reduced from Infinity to 10 seconds
+                duration: 8000,
                 onAutoClose: () => {
                   localStorage.setItem('hasSeenInfoNotification', 'true');
                 }
@@ -90,9 +91,8 @@ export const WelcomeAnimation = () => {
 
       return () => clearTimeout(timer);
     }
-  }, [skipWelcome, isWelcomeLoading, isVideosLoading, isVideosFetching, isError, videosError, show, infoShown]);
+  }, [skipWelcome, isWelcomeLoading, isVideosLoading, isVideosFetching, isError, videosError, show, infoShown, isMobile]);
 
-  // Cleanup function to ensure body overflow is restored
   useEffect(() => {
     return () => {
       document.body.style.overflow = 'auto';

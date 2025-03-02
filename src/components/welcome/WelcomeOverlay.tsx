@@ -42,7 +42,7 @@ export const WelcomeOverlay = () => {
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.2 }}
             className={`relative w-full mx-4 bg-white rounded-xl shadow-2xl ${
-              isMobile ? 'max-w-[95%] max-h-[90vh] overflow-y-auto' : 'max-w-4xl'
+              isMobile ? 'max-w-[90%] max-h-[80vh] overflow-y-auto' : 'max-w-4xl'
             }`}
             onClick={(e) => e.stopPropagation()}
           >
@@ -55,12 +55,12 @@ export const WelcomeOverlay = () => {
             </button>
 
             {/* Logo and content */}
-            <div className={`${isMobile ? 'p-4' : 'p-8'}`}>
-              <div className="flex justify-center mb-4">
+            <div className={`${isMobile ? 'p-3' : 'p-8'}`}>
+              <div className="flex justify-center mb-2">
                 <motion.img
                   src="/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png"
                   alt="YidVid Logo"
-                  className={`${isMobile ? 'w-16 h-16' : 'w-24 h-24'}`}
+                  className={`${isMobile ? 'w-12 h-12' : 'w-24 h-24'}`}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.2 }}
@@ -71,62 +71,96 @@ export const WelcomeOverlay = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.3 }}
-                className="space-y-4 text-center"
+                className="space-y-3 text-center"
               >
-                <h2 className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold text-gray-900`}>
+                <h2 className={`${isMobile ? 'text-lg' : 'text-2xl'} font-bold text-gray-900`}>
                   Welcome to YidVid!
                 </h2>
                 
-                <p className={`${isMobile ? 'text-sm' : 'text-base'} text-gray-600`}>
-                  Your one-stop platform for discovering and enjoying Jewish content
+                <p className={`${isMobile ? 'text-xs' : 'text-base'} text-gray-600`}>
+                  Your one-stop platform for Jewish content
                 </p>
 
-                <div className={`space-y-3 text-left ${isMobile ? 'text-sm' : 'text-base'}`}>
-                  <div className="space-y-2">
-                    <h3 className="font-semibold text-gray-800">What YidVid Offers:</h3>
-                    <ul className="space-y-1.5 text-gray-600">
-                      <li className="flex items-center gap-2">
-                        <span className="w-1.5 h-1.5 bg-primary rounded-full"></span>
-                        Access to curated Jewish content from trusted sources
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <span className="w-1.5 h-1.5 bg-primary rounded-full"></span>
-                        Free to use - no subscription required
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <span className="w-1.5 h-1.5 bg-primary rounded-full"></span>
-                        Browse videos without an account
-                      </li>
-                    </ul>
-                  </div>
+                <div className={`space-y-2 text-left ${isMobile ? 'text-xs' : 'text-base'}`}>
+                  {isMobile ? (
+                    <>
+                      <div className="space-y-1">
+                        <h3 className="font-semibold text-gray-800 text-xs">What YidVid Offers:</h3>
+                        <ul className="space-y-1 text-gray-600">
+                          <li className="flex items-center gap-1.5">
+                            <span className="w-1 h-1 bg-primary rounded-full"></span>
+                            Free Jewish content
+                          </li>
+                          <li className="flex items-center gap-1.5">
+                            <span className="w-1 h-1 bg-primary rounded-full"></span>
+                            No subscription needed
+                          </li>
+                        </ul>
+                      </div>
 
-                  <div className="space-y-2">
-                    <h3 className="font-semibold text-gray-800">With a Free Account:</h3>
-                    <ul className="space-y-1.5 text-gray-600">
-                      <li className="flex items-center gap-2">
-                        <span className="w-1.5 h-1.5 bg-primary rounded-full"></span>
-                        Save favorite videos and create playlists
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <span className="w-1.5 h-1.5 bg-primary rounded-full"></span>
-                        Comment and interact with the community
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <span className="w-1.5 h-1.5 bg-primary rounded-full"></span>
-                        Personalized content recommendations
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <span className="w-1.5 h-1.5 bg-primary rounded-full"></span>
-                        Track your watch history
-                      </li>
-                    </ul>
-                  </div>
+                      <div className="space-y-1">
+                        <h3 className="font-semibold text-gray-800 text-xs">With an Account:</h3>
+                        <ul className="space-y-1 text-gray-600">
+                          <li className="flex items-center gap-1.5">
+                            <span className="w-1 h-1 bg-primary rounded-full"></span>
+                            Save favorites
+                          </li>
+                          <li className="flex items-center gap-1.5">
+                            <span className="w-1 h-1 bg-primary rounded-full"></span>
+                            Personalized content
+                          </li>
+                        </ul>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="space-y-2">
+                        <h3 className="font-semibold text-gray-800">What YidVid Offers:</h3>
+                        <ul className="space-y-1.5 text-gray-600">
+                          <li className="flex items-center gap-2">
+                            <span className="w-1.5 h-1.5 bg-primary rounded-full"></span>
+                            Access to curated Jewish content from trusted sources
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <span className="w-1.5 h-1.5 bg-primary rounded-full"></span>
+                            Free to use - no subscription required
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <span className="w-1.5 h-1.5 bg-primary rounded-full"></span>
+                            Browse videos without an account
+                          </li>
+                        </ul>
+                      </div>
+
+                      <div className="space-y-2">
+                        <h3 className="font-semibold text-gray-800">With a Free Account:</h3>
+                        <ul className="space-y-1.5 text-gray-600">
+                          <li className="flex items-center gap-2">
+                            <span className="w-1.5 h-1.5 bg-primary rounded-full"></span>
+                            Save favorite videos and create playlists
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <span className="w-1.5 h-1.5 bg-primary rounded-full"></span>
+                            Comment and interact with the community
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <span className="w-1.5 h-1.5 bg-primary rounded-full"></span>
+                            Personalized content recommendations
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <span className="w-1.5 h-1.5 bg-primary rounded-full"></span>
+                            Track your watch history
+                          </li>
+                        </ul>
+                      </div>
+                    </>
+                  )}
                 </div>
 
                 <div className="pt-2">
                   <Button
                     onClick={handleClose}
-                    className={`w-full py-2 ${isMobile ? 'text-base' : 'py-6 text-lg'}`}
+                    className={`w-full ${isMobile ? 'text-sm py-1.5' : 'py-6 text-lg'}`}
                   >
                     Start Exploring
                   </Button>
