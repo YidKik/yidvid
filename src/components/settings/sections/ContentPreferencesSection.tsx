@@ -32,12 +32,12 @@ export const ContentPreferencesSection = ({
 
       <div>
         <h3 className="text-xl font-semibold mb-4">Channel Visibility</h3>
-        <Card className="p-6">
-          <p className="text-muted-foreground mb-4">
+        <div className="p-0">
+          <p className="text-muted-foreground mb-4 text-sm">
             Choose which channels you want to see in your feed. Hidden channels won't appear in your recommendations or search results.
           </p>
           <ChannelControl />
-        </Card>
+        </div>
       </div>
 
       <PlaybackSettings 

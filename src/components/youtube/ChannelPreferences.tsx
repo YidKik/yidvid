@@ -226,48 +226,47 @@ export const ChannelControl = () => {
   }
 
   return (
-    <Card className="p-6 bg-[#F6F6F7]">
-      <div className="space-y-6">
-        <div className="flex items-start justify-between">
-          <div className="flex items-start gap-4">
-            <Shield className="h-6 w-6 text-green-600 flex-shrink-0 mt-1" />
+    <Card className="p-4 md:p-6 bg-[#F6F6F7]">
+      <div className="space-y-4 md:space-y-6">
+        <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+          <div className="flex flex-col md:flex-row md:items-start gap-3">
+            <Shield className="h-6 w-6 text-green-600 flex-shrink-0" />
             <div>
               <h3 className="text-lg font-semibold text-gray-900">Channel Control</h3>
               <p className="text-sm text-gray-600 mt-1">
-                Customize your viewing experience by selecting which channels you want to include in your feed. 
-                This helps create a safe and personalized environment for you and your family.
+                Customize your viewing experience by selecting which channels you want to include in your feed.
               </p>
             </div>
           </div>
-          <div>
+          <div className="w-full md:w-auto">
             {storedPin ? (
               isLocked ? (
                 <Button 
                   variant="outline" 
                   onClick={() => setShowLockDialog(true)}
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 w-full md:w-auto justify-center"
                 >
                   <Lock className="h-4 w-4" />
-                  Unlock Controls
+                  <span>Unlock Controls</span>
                 </Button>
               ) : (
                 <Button 
                   variant="outline" 
                   onClick={handleLock}
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 w-full md:w-auto justify-center"
                 >
                   <Unlock className="h-4 w-4" />
-                  Lock Controls
+                  <span>Lock Controls</span>
                 </Button>
               )
             ) : (
               <Button 
                 variant="outline" 
                 onClick={() => setShowSetPinDialog(true)}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 w-full md:w-auto justify-center"
               >
                 <Lock className="h-4 w-4" />
-                Set Parental Lock
+                <span>Set Parental Lock</span>
               </Button>
             )}
           </div>
@@ -278,21 +277,21 @@ export const ChannelControl = () => {
             <div className="absolute inset-0 bg-white/50 backdrop-blur-[2px] z-10 rounded-lg" />
           )}
           
-          <Alert className="bg-[#F1F0FB] border-gray-200">
+          <Alert className="bg-[#F1F0FB] border-gray-200 text-sm">
             <AlertDescription className="text-gray-700">
               Use the toggles below to manage your channel preferences. When a channel is marked as "Allowed", 
-              its content will appear in your feed. Channels marked as "Not Allowed" won't show up in your recommendations or search results.
+              its content will appear in your feed.
             </AlertDescription>
           </Alert>
 
-          <div className="mb-6 mt-6">
+          <div className="my-4">
             <div className="flex items-center gap-2 p-2 bg-white rounded-lg border border-gray-200">
               <Search className="h-4 w-4 text-gray-500" />
               <ChannelSearch value={searchQuery} onChange={setSearchQuery} />
             </div>
           </div>
 
-          <div className="max-h-[400px] overflow-y-auto scrollbar-hide space-y-3">
+          <div className="max-h-[350px] overflow-y-auto scrollbar-hide space-y-2">
             {filteredChannels?.map((channel) => (
               <ChannelListItem
                 key={channel.channel_id}
