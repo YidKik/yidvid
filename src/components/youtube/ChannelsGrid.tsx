@@ -34,6 +34,10 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
     gcTime: 10 * 60 * 1000,   // 10 minutes
     refetchOnMount: true,
     refetchOnWindowFocus: false,
+    meta: {
+      errorMessage: "Failed to load channels",
+      suppressToasts: true
+    },
   });
 
   // Use effect to ensure we have data to display
@@ -96,7 +100,7 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
           }
         ]);
         setIsLoading(false);
-      }, 3000);
+      }, 1000); // Reduced from 3000 to load faster
       
       return () => clearTimeout(timer);
     }
@@ -111,7 +115,8 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
     }
   }, [channels, manuallyFetchedChannels, fallbackChannels]);
 
-  if (isLoading && isChannelsLoading && !fallbackChannels.length) {
+  // Early return for skeleton if really loading and no data is available
+  if (isLoading && isChannelsLoading && !fallbackChannels.length && !manuallyFetchedChannels.length) {
     return <ChannelsGridSkeleton />;
   }
 

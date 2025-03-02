@@ -36,8 +36,10 @@ export const useVideos = (): UseVideosResult => {
     staleTime: 25 * 60 * 1000, // Consider data stale after 25 minutes
     gcTime: 1000 * 60 * 60, // Cache data for 60 minutes
     retry: (failureCount, error: any) => {
-      // Only retry once for recursion errors
-      if (error?.message?.includes('recursion detected')) return failureCount < 1;
+      // Don't retry on recursion errors - immediately use fallback
+      if (error?.message?.includes('recursion detected')) return false;
+      // Only retry once for other policy errors
+      if (error?.message?.includes('policy')) return failureCount < 1;
       // Don't retry on quota exceeded
       if (error?.status === 429) return false;
       // Retry other errors up to 2 times
@@ -66,7 +68,7 @@ export const useVideos = (): UseVideosResult => {
           refetch().catch(err => {
             console.error("Error refetching videos:", err);
             // Don't show toast for expected errors
-            if (!err.message?.includes("recursion detected")) {
+            if (!err.message?.includes("recursion detected") && !err.message?.includes("policy")) {
               toast.error("Failed to load videos. Please try again later.");
             }
           });
