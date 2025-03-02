@@ -9,6 +9,12 @@
   --search-background: #F2F2F2;
   --search-text: #606060;
   --search-border: #E5E5E5;
+  --auth-background: #FFFFFF;
+  --auth-text: #2D3748;
+  --auth-primary: #8B5CF6;
+  --auth-secondary: #F5F3FF;
+  --auth-border: #E9ECEF;
+  --auth-input-bg: #F8F9FA;
 
   --card: 0 0% 100%;
   --card-foreground: 222.2 84% 4.9%;

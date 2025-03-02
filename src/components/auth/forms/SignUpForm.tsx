@@ -103,8 +103,8 @@ export const SignUpForm = ({ isLoading, setIsLoading, onOpenChange }: SignUpForm
           className={`${isMobile 
             ? 'h-10 text-sm' 
             : 'h-12 text-base'} 
-            px-4 border-gray-200 bg-gray-50/30 focus:bg-white transition-all duration-300 
-            rounded-lg focus:ring-2 focus:ring-purple-400/30 focus:border-purple-400 shadow-sm`}
+            px-4 border-[#E9ECEF] bg-[#F8F9FA] focus:bg-white transition-all duration-300 
+            rounded-lg focus:ring-2 focus:ring-purple-400/30 focus:border-purple-400 shadow-sm text-gray-800`}
           required
           disabled={isLoading}
         />
@@ -118,8 +118,8 @@ export const SignUpForm = ({ isLoading, setIsLoading, onOpenChange }: SignUpForm
           className={`${isMobile 
             ? 'h-10 text-sm' 
             : 'h-12 text-base'} 
-            px-4 border-gray-200 bg-gray-50/30 focus:bg-white transition-all duration-300 
-            rounded-lg focus:ring-2 focus:ring-purple-400/30 focus:border-purple-400 shadow-sm`}
+            px-4 border-[#E9ECEF] bg-[#F8F9FA] focus:bg-white transition-all duration-300 
+            rounded-lg focus:ring-2 focus:ring-purple-400/30 focus:border-purple-400 shadow-sm text-gray-800`}
           required
           disabled={isLoading}
         />
@@ -133,8 +133,8 @@ export const SignUpForm = ({ isLoading, setIsLoading, onOpenChange }: SignUpForm
           className={`${isMobile 
             ? 'h-10 text-sm' 
             : 'h-12 text-base'} 
-            px-4 border-gray-200 bg-gray-50/30 focus:bg-white transition-all duration-300 
-            rounded-lg focus:ring-2 focus:ring-purple-400/30 focus:border-purple-400 shadow-sm`}
+            px-4 border-[#E9ECEF] bg-[#F8F9FA] focus:bg-white transition-all duration-300 
+            rounded-lg focus:ring-2 focus:ring-purple-400/30 focus:border-purple-400 shadow-sm text-gray-800`}
           required
           disabled={isLoading}
           minLength={6}
@@ -146,7 +146,7 @@ export const SignUpForm = ({ isLoading, setIsLoading, onOpenChange }: SignUpForm
         className={`w-full ${isMobile 
           ? 'h-10 text-sm py-0' 
           : 'h-12 text-base py-0'} 
-          mt-2 border-purple-500/50 bg-white text-purple-700 hover:bg-purple-50 hover:border-purple-500
+          mt-2 border-purple-500 bg-white text-[#8B5CF6] hover:bg-purple-50 hover:border-purple-500
           rounded-lg font-medium transition-all duration-300 disabled:opacity-50 
           disabled:cursor-not-allowed hover:scale-[1.02] active:scale-[0.98] 
           disabled:hover:scale-100 shadow-sm hover:shadow-md`}
