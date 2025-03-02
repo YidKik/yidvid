@@ -75,6 +75,11 @@ export const useVideoFetcher = (): VideoFetcherResult => {
         }
       }
 
+      // Return formatted data when we have it, don't wait for edge function
+      if (videosData.length > 0) {
+        return formatVideoData(videosData);
+      }
+
       // Try to get active channels, but don't fail the whole operation if this fails
       let channelIds: string[] = [];
       try {

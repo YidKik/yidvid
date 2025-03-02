@@ -28,7 +28,7 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
   const { data: channels, error, isLoading: isChannelsLoading, refetch } = useQuery({
     queryKey: ["youtube-channels"],
     queryFn: fetchChannelsDirectly,
-    retry: 1,
+    retry: 3, // Increase retries to 3
     retryDelay: 1000,
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000,   // 10 minutes
