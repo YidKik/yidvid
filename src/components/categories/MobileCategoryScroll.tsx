@@ -44,13 +44,13 @@ export const MobileCategoryScroll: React.FC<MobileCategoryScrollProps> = ({
     document.addEventListener('touchend', handleTouchEnd);
   };
 
-  // Auto-scroll animation for mobile - updated for continuous right-to-left scrolling
+  // Auto-scroll animation for mobile - continuous right-to-left scrolling
   useEffect(() => {
     if (!scrollContainerRef.current) return;
     
     let animationFrameId: number;
     let isPaused = false;
-    const scrollSpeed = 0.5; // Adjusted for smoother scrolling
+    const scrollSpeed = 0.5; // Slightly faster for better visual flow
     const container = scrollContainerRef.current;
     
     const scroll = () => {
@@ -66,6 +66,7 @@ export const MobileCategoryScroll: React.FC<MobileCategoryScrollProps> = ({
       animationFrameId = requestAnimationFrame(scroll);
     };
     
+    // Start the animation immediately
     animationFrameId = requestAnimationFrame(scroll);
     
     // Pause animation on touch
