@@ -1,6 +1,7 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import { VideoData, ChannelData } from "../types/video-fetcher";
+import { toast } from "sonner";
 
 /**
  * Fetch all videos from the database with improved error handling
@@ -12,18 +13,20 @@ export const fetchVideosFromDatabase = async (): Promise<any[]> => {
     // Modify the query to be simpler and explicitly exclude deleted videos
     const { data, error } = await supabase
       .from("youtube_videos")
-      .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at")
+      .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, category, description")
       .is("deleted_at", null)
       .order("uploaded_at", { ascending: false })
-      .limit(100); // Increased limit to get more videos
+      .limit(200); // Increased limit to get more videos
 
     if (error) {
       console.error("Error fetching videos from database:", error);
+      toast.error("Error loading videos. Showing sample data.");
       return getSampleVideoData(10); // Return sample data
     }
     
     if (!data || data.length === 0) {
       console.log("No videos found in database, using sample data");
+      toast.warning("No videos found. Showing sample data.");
       return getSampleVideoData(10);
     }
     
@@ -31,6 +34,7 @@ export const fetchVideosFromDatabase = async (): Promise<any[]> => {
     return data;
   } catch (err) {
     console.error("Failed to fetch videos from database:", err);
+    toast.error("Error loading videos. Showing sample data.");
     return getSampleVideoData(10);
   }
 };
@@ -42,6 +46,8 @@ const getSampleVideoData = (count: number = 6): any[] => {
   console.log(`Using ${count} sample video items as fallback`);
   const sampleData = [];
   
+  const categories = ["music", "torah", "inspiration", "podcast", "education", "entertainment"];
+  
   for (let i = 1; i <= count; i++) {
     sampleData.push({
       id: `sample-${i}`,
@@ -51,7 +57,9 @@ const getSampleVideoData = (count: number = 6): any[] => {
       channel_name: `Sample Channel ${Math.ceil(i/2)}`,
       channel_id: `sample-channel-${Math.ceil(i/2)}`,
       views: i * 100,
-      uploaded_at: new Date().toISOString()
+      uploaded_at: new Date().toISOString(),
+      category: categories[i % categories.length],
+      description: "This is a sample video description. Actual data could not be loaded."
     });
   }
   
@@ -70,6 +78,7 @@ export const fetchActiveChannels = async (): Promise<ChannelData[]> => {
       .from("youtube_channels")
       .select("channel_id")
       .is("deleted_at", null)
+      .order("updated_at", { ascending: false })
       .limit(50);
 
     if (error) {
@@ -113,18 +122,20 @@ export const fetchUpdatedVideosAfterSync = async (): Promise<any[]> => {
     
     const { data, error } = await supabase
       .from("youtube_videos")
-      .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at")
+      .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, category, description")
       .is("deleted_at", null)
       .order("uploaded_at", { ascending: false })
-      .limit(100);
+      .limit(200);
 
     if (error) {
       console.error('Error fetching updated videos:', error);
+      toast.error("Error refreshing videos. Showing cached data.");
       return getSampleVideoData(10);
     }
     
     if (!data || data.length === 0) {
       console.log("No updated videos found, using sample data");
+      toast.warning("No videos found. Showing sample data.");
       return getSampleVideoData(10);
     }
     
@@ -143,11 +154,13 @@ export const formatVideoData = (videosData: any[]): VideoData[] => {
   return videosData.map(video => ({
     id: video.id,
     video_id: video.video_id,
-    title: video.title,
+    title: video.title || "Untitled Video",
     thumbnail: video.thumbnail || '/placeholder.svg',
-    channelName: video.channel_name,
-    channelId: video.channel_id,
+    channelName: video.channel_name || "Unknown Channel",
+    channelId: video.channel_id || "unknown-channel",
     views: video.views || 0,
-    uploadedAt: video.uploaded_at
+    uploadedAt: video.uploaded_at || new Date().toISOString(),
+    category: video.category || null,
+    description: video.description || null
   }));
 };

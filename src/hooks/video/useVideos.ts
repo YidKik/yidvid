@@ -11,6 +11,7 @@ export interface UseVideosResult {
   isFetching: boolean;
   error: Error | null;
   refetch: () => Promise<any>;
+  forceRefetch: () => Promise<any>;
   lastSuccessfulFetch: Date | null;
   fetchAttempts: number;
 }
@@ -22,6 +23,7 @@ export const useVideos = (): UseVideosResult => {
   // Initialize the video fetcher with more reliable error handling
   const {
     fetchAllVideos,
+    forceRefetch,
     fetchAttempts,
     lastSuccessfulFetch,
     setFetchAttempts
@@ -31,11 +33,15 @@ export const useVideos = (): UseVideosResult => {
   const { data, isLoading, isFetching, error, refetch } = useQuery<VideoData[]>({
     queryKey: ["youtube_videos"],
     queryFn: fetchAllVideos,
-    refetchInterval: 30 * 60 * 1000, // Always refetch every 30 minutes
-    staleTime: 10 * 60 * 1000, // Consider data stale after 10 minutes
-    gcTime: 60 * 60 * 1000, // Cache data for 60 minutes
-    retry: (failureCount) => {
-      // Always retry at least once, regardless of error type
+    refetchInterval: 15 * 60 * 1000, // Refetch every 15 minutes
+    staleTime: 5 * 60 * 1000, // Consider data stale after 5 minutes
+    gcTime: 30 * 60 * 1000, // Cache data for 30 minutes
+    retry: (failureCount, error: any) => {
+      // Don't retry quota errors
+      if (error?.message?.includes('quota')) return false;
+      // Retry network errors up to 3 times
+      if (error?.message?.includes('network') || error?.message?.includes('fetch')) return failureCount < 3;
+      // Retry once for other errors
       return failureCount < 2;
     },
     retryDelay: 1000, // Shorter retry delay to get data faster
@@ -72,12 +78,27 @@ export const useVideos = (): UseVideosResult => {
     }
   }, [data, refetch]);
 
+  // Handle manual refresh with force option
+  const handleForceRefetch = async () => {
+    try {
+      toast.info("Forcing refresh of all videos...");
+      const freshData = await forceRefetch();
+      console.log(`Force refetch completed, got ${freshData.length} videos`);
+      return freshData;
+    } catch (err) {
+      console.error("Error in force refetch:", err);
+      toast.error("Failed to refresh videos. Please try again later.");
+      return [];
+    }
+  };
+
   return {
     data: data || [],
     isLoading,
     isFetching,
     error,
     refetch,
+    forceRefetch: handleForceRefetch,
     lastSuccessfulFetch,
     fetchAttempts
   };

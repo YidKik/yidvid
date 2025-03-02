@@ -15,9 +15,9 @@ export const useVideoFetcher = (): VideoFetcherResult => {
 
   // Check if we should fetch new videos
   const shouldFetchNew = () => {
-    // Only fetch every 12 hours automatically (43200000 ms)
+    // Only fetch every 4 hours automatically (14400000 ms)
     return lastSuccessfulFetch === null || 
-           (Date.now() - lastSuccessfulFetch.getTime() > 43200000) || // 12 hours
+           (Date.now() - lastSuccessfulFetch.getTime() > 14400000) || // 4 hours
            fetchAttempts > 0; // Also fetch if we've had previous attempts
   };
 
@@ -33,7 +33,9 @@ export const useVideoFetcher = (): VideoFetcherResult => {
         // If we already have videos, set successful fetch even if the next part fails
         if (videosData.length > 0) {
           setLastSuccessfulFetch(new Date());
-          setFetchAttempts(0);
+          console.log(`Successfully fetched ${videosData.length} videos from database`);
+        } else {
+          console.warn("No videos found in database, will try to fetch new ones");
         }
       } catch (error) {
         console.error("Error fetching videos from database:", error);
@@ -53,17 +55,23 @@ export const useVideoFetcher = (): VideoFetcherResult => {
 
       // Check if we should fetch new videos
       const shouldFetchNewVideos = shouldFetchNew();
+      console.log(`Should fetch new videos: ${shouldFetchNewVideos}`);
       
       if (channelIds.length > 0 && shouldFetchNewVideos) {
         // Try to fetch new videos if quota allows
         try {
-          await tryFetchNewVideos(
+          const updatedVideos = await tryFetchNewVideos(
             channelIds,
             videosData,
             fetchAttempts,
             setFetchAttempts,
             setLastSuccessfulFetch
           );
+          
+          if (updatedVideos && updatedVideos.length > 0) {
+            videosData = updatedVideos;
+            console.log(`Updated videos with fresh data, now have ${videosData.length} videos`);
+          }
         } catch (error) {
           console.error("Error in tryFetchNewVideos:", error);
           // Continue with what we have
@@ -81,8 +89,14 @@ export const useVideoFetcher = (): VideoFetcherResult => {
     }
   };
 
+  const forceRefetch = async (): Promise<VideoData[]> => {
+    setFetchAttempts(prev => prev + 1);
+    return fetchAllVideos();
+  };
+
   return {
     fetchAllVideos,
+    forceRefetch,
     fetchAttempts,
     lastSuccessfulFetch,
     setFetchAttempts,

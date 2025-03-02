@@ -11,6 +11,7 @@ interface MobileVideoViewProps {
   isLoading: boolean;
   isRefreshing: boolean;
   refetch?: () => Promise<any>;
+  forceRefetch?: () => Promise<any>;
   lastSuccessfulFetch?: Date | null;
   fetchAttempts?: number;
 }

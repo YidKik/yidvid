@@ -1,138 +1,135 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { corsHeaders } from "../_shared/cors.ts";
+import { checkQuota, updateQuotaUsage } from "./quota-manager.ts";
 import { processChannel } from "./channel-processor.ts";
-import { decrementQuota, getQuotaInfo, resetQuotaIfNeeded } from "./quota-manager.ts";
-import { fetchChannelVideos } from "./youtube-api.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.23.0";
-
-// Set up CORS headers
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
-
-const SUPABASE_URL = Deno.env.get("SUPABASE_URL") || "";
-const SUPABASE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
-
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-
-interface RequestBody {
-  channels?: string[];
-  forceUpdate?: boolean;
-  fullScan?: boolean;
-}
+import { getChannelDetails, getRecentVideos } from "./youtube-api.ts";
 
 serve(async (req) => {
-  // Handle CORS preflight requests
+  // Handle CORS
   if (req.method === "OPTIONS") {
-    return new Response(null, {
-      headers: corsHeaders,
-    });
+    return new Response("ok", { headers: corsHeaders });
   }
 
   try {
-    console.log("Starting fetch-youtube-videos function");
+    const { channels = [], forceUpdate = false, quotaConservative = false, prioritizeRecent = false, maxChannelsPerRun = 10 } = await req.json();
     
-    // Reset quota if needed
-    await resetQuotaIfNeeded();
+    // Check if we have quota remaining before starting
+    const { quota_remaining, quota_reset_at } = await checkQuota();
     
-    // Check quota first
-    const quotaInfo = await getQuotaInfo();
-    if (quotaInfo.quotaRemaining <= 0) {
-      console.log("YouTube API quota exceeded. Current remaining:", quotaInfo.quotaRemaining);
+    if (quota_remaining <= 0) {
+      console.log(`YouTube API quota exceeded. Retry after ${quota_reset_at}`);
       return new Response(
         JSON.stringify({
           success: false,
-          message: "YouTube API quota exceeded",
-          quota_reset_at: quotaInfo.quotaResetAt,
+          message: "YouTube API quota exceeded.",
+          quota_reset_at
         }),
-        {
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-          status: 429,
-        }
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    // Parse request body
-    let requestBody: RequestBody = {};
-    if (req.method === "POST") {
-      requestBody = await req.json();
+    // Calculate how many channels we can process based on available quota
+    // Each channel costs ~10-15 units to process (1 for channel info, ~10 for videos)
+    const estimatedQuotaPerChannel = quotaConservative ? 20 : 15;
+    const maxChannelsBasedOnQuota = Math.floor(quota_remaining / estimatedQuotaPerChannel);
+    const channelsToProcess = Math.min(
+      maxChannelsBasedOnQuota, 
+      maxChannelsPerRun,
+      channels.length
+    );
+
+    console.log(`Processing ${channelsToProcess} channels out of ${channels.length} requested`);
+    
+    if (channelsToProcess <= 0) {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          message: "Not enough quota to process any channels",
+          quota_remaining,
+          quota_reset_at
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
 
-    const channelIds = requestBody.channels || [];
-    const forceUpdate = requestBody.forceUpdate || false;
-    const fullScan = requestBody.fullScan || false;
+    // Only process the number of channels we can handle
+    const channelsSubset = channels.slice(0, channelsToProcess);
     
-    console.log(`Processing ${channelIds.length} channels, forceUpdate: ${forceUpdate}, fullScan: ${fullScan}`);
-
-    let processedCount = 0;
+    // Process channels in parallel with concurrency limit
+    const results = [];
     let newVideosCount = 0;
-    const maxQuotaToUse = Math.min(quotaInfo.quotaRemaining, 5000); // Use at most 5000 quota points
+    let processedCount = 0;
     let quotaUsed = 0;
-    
-    // Process channels in batches to manage quota better
-    const batchSize = 5;
-    for (let i = 0; i < channelIds.length; i += batchSize) {
-      const batch = channelIds.slice(i, i + batchSize);
-      const batchPromises = batch.map(async (channelId) => {
-        try {
-          console.log(`Processing channel: ${channelId}`);
-          
-          // For fullScan we use a longer lookback period to catch missed videos
-          let maxResults = fullScan ? 50 : 10;
-          let publishedAfter = fullScan 
-            ? new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) // 30 days ago for full scan 
-            : new Date(Date.now() - 7 * 24 * 60 * 60 * 1000); // 7 days ago for regular updates
-            
-          const videos = await fetchChannelVideos(channelId, maxResults, publishedAfter.toISOString());
-          
-          // Decrement quota - each channel fetch costs 1 quota unit
-          await decrementQuota(1);
-          quotaUsed += 1;
-          
-          // Process videos for this channel
-          const result = await processChannel(channelId, videos);
-          
-          processedCount++;
-          newVideosCount += result.newVideos;
-          
-          return result;
-        } catch (error) {
-          console.error(`Error processing channel ${channelId}:`, error);
-          return { success: false, error: error.message, channelId };
+
+    // If prioritizing recent, sort the channels by last update time
+    if (prioritizeRecent) {
+      // We'll prioritize by just using the first N channels
+      // since they were likely sorted by recent activity already
+      console.log("Prioritizing most recently active channels");
+    }
+
+    // Process channels sequentially to better manage quota
+    for (const channelId of channelsSubset) {
+      try {
+        // First get channel details (1 quota unit)
+        const channelDetails = await getChannelDetails(channelId);
+        quotaUsed += 1;
+        
+        if (!channelDetails) {
+          results.push({
+            channelId,
+            success: false,
+            message: "Channel not found"
+          });
+          continue;
         }
-      });
-      
-      // Wait for batch to complete
-      await Promise.all(batchPromises);
-      
-      // Check if we're approaching quota limit
-      if (quotaUsed >= maxQuotaToUse) {
-        console.log(`Stopping early: used ${quotaUsed} of ${maxQuotaToUse} allocated quota`);
-        break;
+        
+        // Then get videos (typically ~5-10 quota units)
+        const { videos, quotaUsedForVideos } = await getRecentVideos(channelId, forceUpdate);
+        quotaUsed += quotaUsedForVideos;
+        
+        // Process and store the videos
+        const processResult = await processChannel(channelId, channelDetails, videos);
+        
+        processedCount++;
+        newVideosCount += processResult.newVideos || 0;
+        
+        results.push({
+          channelId,
+          success: true,
+          newVideos: processResult.newVideos,
+          totalVideos: videos.length
+        });
+        
+        // If we're being quota conservative, check after each channel
+        if (quotaConservative && quota_remaining - quotaUsed < estimatedQuotaPerChannel) {
+          console.log("Stopping early to conserve quota");
+          break;
+        }
+      } catch (error) {
+        console.error(`Error processing channel ${channelId}:`, error);
+        results.push({
+          channelId,
+          success: false,
+          message: error.message
+        });
       }
     }
 
-    // Update quota tracking in DB
-    await supabase
-      .from("video_fetch_logs")
-      .insert({
-        videos_found: newVideosCount,
-        channels_processed: processedCount,
-        quota_remaining: quotaInfo.quotaRemaining - quotaUsed,
-      });
+    // Update used quota
+    await updateQuotaUsage(quotaUsed);
 
-    // Return success response
     return new Response(
       JSON.stringify({
         success: true,
         processed: processedCount,
         newVideos: newVideosCount,
-        quotaRemaining: quotaInfo.quotaRemaining - quotaUsed,
+        results,
+        quotaUsed,
+        quotaRemaining: quota_remaining - quotaUsed
       }),
-      {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
+      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {
     console.error("Error in fetch-youtube-videos:", error);
@@ -140,12 +137,9 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({
         success: false,
-        error: error.message || "Unknown error occurred",
+        message: error.message || "An unexpected error occurred"
       }),
-      {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 500,
-      }
+      { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 }
     );
   }
 });

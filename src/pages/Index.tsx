@@ -1,3 +1,4 @@
+
 import { Header } from "@/components/Header";
 import Auth from "@/pages/Auth";
 import { useState, useEffect } from "react";
@@ -19,7 +20,16 @@ import { toast } from "sonner";
 
 const MainContent = () => {
   const [isMusic, setIsMusic] = useState(false);
-  const { data: videos, isLoading, refetch, lastSuccessfulFetch, fetchAttempts, error } = useVideos();
+  const { 
+    data: videos, 
+    isLoading, 
+    refetch, 
+    forceRefetch,
+    lastSuccessfulFetch, 
+    fetchAttempts, 
+    error 
+  } = useVideos();
+  
   const isMobile = useIsMobile();
   const { session } = useSessionManager();
 
@@ -100,6 +110,7 @@ const MainContent = () => {
                 videos={videos || []} 
                 isLoading={isLoading} 
                 refetch={refetch}
+                forceRefetch={forceRefetch}
                 lastSuccessfulFetch={lastSuccessfulFetch}
                 fetchAttempts={fetchAttempts}
               />
