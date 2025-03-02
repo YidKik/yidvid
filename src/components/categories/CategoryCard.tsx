@@ -58,6 +58,20 @@ export const CategoryCard = ({ icon, label, id, isCustomImage = false }: Categor
     });
   };
 
+  // Adjust font size for long words
+  const getAdjustedFontSize = (text: string) => {
+    if (!isMobile) return {};
+    
+    // Reduce font size for long category names
+    if (text === "Entertainment" || text.length > 11) {
+      return { fontSize: '9px', letterSpacing: '-0.02em' };
+    } else if (text.length > 8) {
+      return { fontSize: '10px', letterSpacing: '-0.01em' };
+    }
+    
+    return {};
+  };
+
   // Animation variants for the line animation effect - adjusted for mobile
   const lineVariants = {
     initial: (custom: number) => ({
@@ -149,7 +163,8 @@ export const CategoryCard = ({ icon, label, id, isCustomImage = false }: Categor
             style={{ 
               color: categoryColors.text,
               textShadow: '0 0 1px rgba(255,255,255,0.5)',
-              fontWeight: 600
+              fontWeight: 600,
+              ...getAdjustedFontSize(label)
             }}
           >
             {label}
