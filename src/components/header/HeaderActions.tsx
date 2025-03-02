@@ -15,6 +15,7 @@ interface HeaderActionsProps {
   onAuthOpen: () => void;
   onLogout: () => Promise<void>;
   onMarkNotificationsAsRead: () => Promise<void>;
+  onSettingsClick?: () => void;
 }
 
 export const HeaderActions = ({
@@ -24,7 +25,8 @@ export const HeaderActions = ({
   onAuthOpen,
   onLogout,
   session,
-  onMarkNotificationsAsRead
+  onMarkNotificationsAsRead,
+  onSettingsClick
 }: HeaderActionsProps) => {
   if (isMobile && !isSearchExpanded) {
     return (
@@ -48,7 +50,9 @@ export const HeaderActions = ({
         <ContactDialog />
         
         {session ? (
-          <UserMenu onLogout={onLogout} />
+          <div onClick={onSettingsClick}>
+            <UserMenu onLogout={onLogout} />
+          </div>
         ) : (
           <Button
             onClick={onAuthOpen}
@@ -69,7 +73,9 @@ export const HeaderActions = ({
         {session && <NotificationsMenu session={session} onMarkAsRead={onMarkNotificationsAsRead} />}
         <ContactDialog />
         {session ? (
-          <UserMenu onLogout={onLogout} />
+          <div onClick={onSettingsClick}>
+            <UserMenu onLogout={onLogout} />
+          </div>
         ) : (
           <Button 
             onClick={onAuthOpen}

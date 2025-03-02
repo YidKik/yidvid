@@ -10,6 +10,7 @@ import { useSessionManager } from "@/hooks/useSessionManager";
 import { AnimatePresence, motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const Header = () => {
   const isMobile = useIsMobile();
@@ -17,6 +18,7 @@ export const Header = () => {
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { session, handleLogout } = useSessionManager();
+  const queryClient = useQueryClient();
 
   const markNotificationsAsRead = async () => {
     if (!session?.user?.id) return;
@@ -30,6 +32,13 @@ export const Header = () => {
     if (error) {
       console.error("Error marking notifications as read:", error);
       toast.error("Failed to mark notifications as read");
+    }
+  };
+
+  const handleSettingsClick = () => {
+    // Force refresh the user-profile data when settings menu is opened
+    if (session?.user?.id) {
+      queryClient.invalidateQueries({ queryKey: ["user-profile"] });
     }
   };
 
@@ -90,6 +99,7 @@ export const Header = () => {
                     onAuthOpen={() => setIsAuthOpen(true)}
                     onLogout={handleLogout}
                     onMarkNotificationsAsRead={markNotificationsAsRead}
+                    onSettingsClick={handleSettingsClick}
                   />
                 </div>
               </>
