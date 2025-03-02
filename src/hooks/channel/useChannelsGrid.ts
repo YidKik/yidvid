@@ -41,17 +41,23 @@ export const useChannelsGrid = () => {
       setFetchAttempts(prev => prev + 1);
       
       // Try different approaches depending on previous failures
-      let query = supabase.from("youtube_channels");
+      let query;
       
       if (fetchAttempts > 1) {
         // For second+ attempts, use a very simple query
-        query = query.select("id, channel_id, title, thumbnail_url").limit(50);
+        query = await supabase
+          .from("youtube_channels")
+          .select("id, channel_id, title, thumbnail_url")
+          .limit(50);
       } else {
         // First attempt, try normal query
-        query = query.select("id, channel_id, title, thumbnail_url").limit(50);
+        query = await supabase
+          .from("youtube_channels")
+          .select("id, channel_id, title, thumbnail_url")
+          .limit(50);
       }
 
-      const { data, error } = await query;
+      const { data, error } = query;
 
       if (error) {
         console.error("Channel fetch error:", error);
