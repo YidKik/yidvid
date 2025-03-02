@@ -1,9 +1,10 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { CategoryCard } from "./CategoryCard";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useColors } from "@/contexts/ColorContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -28,6 +29,7 @@ const defaultCategories: Category[] = [
 export const CategorySection = () => {
   const { colors } = useColors();
   const isMobile = useIsMobile();
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   
   const { data: categoryVideos, refetch } = useQuery({
     queryKey: ["category-videos"],
@@ -92,7 +94,35 @@ export const CategorySection = () => {
     })) || [])
   ];
 
-  const infiniteCategories = [...allCategories, ...allCategories, ...allCategories, ...allCategories, ...allCategories, ...allCategories];
+  // Use fewer repetitions for better performance
+  const infiniteCategories = [...allCategories, ...allCategories, ...allCategories];
+
+  // Manual scroll function for mobile touch sliding
+  const handleDragStart = (e: React.TouchEvent) => {
+    if (!scrollContainerRef.current || !isMobile) return;
+    
+    const container = scrollContainerRef.current;
+    const startX = e.touches[0].clientX;
+    let lastX = startX;
+    let isDragging = true;
+    
+    const handleTouchMove = (e: TouchEvent) => {
+      if (!isDragging || !container) return;
+      const currentX = e.touches[0].clientX;
+      const diff = lastX - currentX;
+      container.scrollLeft += diff;
+      lastX = currentX;
+    };
+    
+    const handleTouchEnd = () => {
+      isDragging = false;
+      document.removeEventListener('touchmove', handleTouchMove);
+      document.removeEventListener('touchend', handleTouchEnd);
+    };
+    
+    document.addEventListener('touchmove', handleTouchMove, { passive: true });
+    document.addEventListener('touchend', handleTouchEnd);
+  };
 
   if (categoriesLoading) {
     return (
@@ -115,46 +145,69 @@ export const CategorySection = () => {
             }}
           />
           
-          <motion.div
-            className="flex gap-2 md:gap-4 cursor-grab active:cursor-grabbing"
-            drag="x"
-            dragConstraints={{
-              left: -(infiniteCategories.length * (isMobile ? 85 : 300)),
-              right: 0
-            }}
-            dragElastic={0.2}
-            dragTransition={{ bounceStiffness: 300, bounceDamping: 20 }}
-            animate={{
-              x: isMobile ? undefined : ['0%', '-50%']
-            }}
-            transition={{
-              x: {
-                repeat: Infinity,
-                repeatType: "loop",
-                duration: 180,
-                ease: "linear",
-                repeatDelay: 0
-              }
-            }}
-            style={{
-              width: `${(infiniteCategories.length * 100) / 3}%`
-            }}
-            whileTap={{ cursor: "grabbing" }}
-          >
-            {infiniteCategories.map((category, index) => (
-              <div
-                key={`${category.id}-${index}`}
-                className={`${isMobile ? 'w-[100px]' : 'w-[95px] md:w-[220px]'} flex-shrink-0 relative`}
-              >
-                <CategoryCard
-                  id={category.id}
-                  icon={category.icon}
-                  label={category.label}
-                  isCustomImage={category.isCustom && !category.is_emoji}
-                />
-              </div>
-            ))}
-          </motion.div>
+          {isMobile ? (
+            <div 
+              ref={scrollContainerRef}
+              className="flex gap-2 overflow-x-auto touch-pan-x scrollbar-hide"
+              onTouchStart={handleDragStart}
+              style={{ WebkitOverflowScrolling: 'touch' }}
+            >
+              {infiniteCategories.map((category, index) => (
+                <div
+                  key={`${category.id}-${index}`}
+                  className="flex-shrink-0 w-[100px] relative"
+                >
+                  <CategoryCard
+                    id={category.id}
+                    icon={category.icon}
+                    label={category.label}
+                    isCustomImage={category.isCustom && !category.is_emoji}
+                  />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <motion.div
+              className="flex gap-2 md:gap-4 cursor-grab active:cursor-grabbing"
+              drag="x"
+              dragConstraints={{
+                left: -(infiniteCategories.length * (isMobile ? 85 : 300)),
+                right: 0
+              }}
+              dragElastic={0.2}
+              dragTransition={{ bounceStiffness: 300, bounceDamping: 20 }}
+              animate={{
+                x: ['0%', '-50%']
+              }}
+              transition={{
+                x: {
+                  repeat: Infinity,
+                  repeatType: "loop",
+                  duration: 180,
+                  ease: "linear",
+                  repeatDelay: 0
+                }
+              }}
+              style={{
+                width: `${(infiniteCategories.length * 100) / 3}%`
+              }}
+              whileTap={{ cursor: "grabbing" }}
+            >
+              {infiniteCategories.map((category, index) => (
+                <div
+                  key={`${category.id}-${index}`}
+                  className="w-[95px] md:w-[220px] flex-shrink-0 relative"
+                >
+                  <CategoryCard
+                    id={category.id}
+                    icon={category.icon}
+                    label={category.label}
+                    isCustomImage={category.isCustom && !category.is_emoji}
+                  />
+                </div>
+              ))}
+            </motion.div>
+          )}
 
           <div 
             className={`absolute right-0 top-0 ${isMobile ? 'w-4' : 'w-8 md:w-48'} h-full z-10`}
