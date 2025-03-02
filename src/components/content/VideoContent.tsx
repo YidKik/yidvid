@@ -1,9 +1,10 @@
 
 import { useIsMobile } from "@/hooks/useIsMobile";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { MobileVideoView } from "./MobileVideoView";
 import { DesktopVideoView } from "./DesktopVideoView";
 import { VideoData } from "@/hooks/video/useVideoFetcher";
+import { toast } from "sonner";
 
 interface VideoContentProps {
   videos: VideoData[];
@@ -29,8 +30,10 @@ export const VideoContent = ({
       setIsRefreshing(true);
       try {
         await refetch();
+        toast.success("Content refreshed");
       } catch (error) {
         console.error("Error during manual refetch:", error);
+        toast.error("Failed to refresh content");
       } finally {
         setTimeout(() => setIsRefreshing(false), 1000);
       }
@@ -38,14 +41,19 @@ export const VideoContent = ({
     }
   };
 
-  // Use useEffect to log the received data for debugging
-  const isEmpty = !videos || videos.length === 0;
-  
-  if (isEmpty && !isLoading) {
-    console.log("No videos data available, displaying empty state");
-  } else {
-    console.log(`Rendering VideoContent with ${videos?.length || 0} videos`);
-  }
+  // Log data for debugging
+  useEffect(() => {
+    const isEmpty = !videos || videos.length === 0;
+    
+    if (isEmpty && !isLoading) {
+      console.log("No videos data available, displaying empty state");
+    } else {
+      console.log(`Rendering VideoContent with ${videos?.length || 0} videos`);
+      if (videos?.length > 0) {
+        console.log("First video:", videos[0]);
+      }
+    }
+  }, [videos, isLoading]);
 
   if (isMobile) {
     return (

@@ -21,7 +21,7 @@ import { toast } from "sonner";
 
 const MainContent = () => {
   const [isMusic, setIsMusic] = useState(false);
-  const { data: videos, isLoading, refetch, lastSuccessfulFetch, fetchAttempts } = useVideos();
+  const { data: videos, isLoading, refetch, lastSuccessfulFetch, fetchAttempts, error } = useVideos();
   const isMobile = useIsMobile();
   const { session } = useSessionManager();
 
@@ -57,7 +57,27 @@ const MainContent = () => {
   // Debug log to track data availability
   useEffect(() => {
     console.log(`Main content rendering with ${videos?.length || 0} videos, isLoading: ${isLoading}`);
-  }, [videos, isLoading]);
+    
+    if (error) {
+      console.error("Error loading videos:", error);
+    }
+    
+    if (videos?.length > 0) {
+      console.log("First video sample:", videos[0]);
+    }
+  }, [videos, isLoading, error]);
+
+  // Force a refetch if no videos are loaded
+  useEffect(() => {
+    if (!isLoading && (!videos || videos.length === 0)) {
+      console.log("No videos loaded, triggering a refetch");
+      setTimeout(() => {
+        refetch().catch(err => {
+          console.error("Error refetching videos:", err);
+        });
+      }, 2000);
+    }
+  }, [videos, isLoading, refetch]);
 
   return (
     <div className="flex-1">

@@ -30,8 +30,8 @@ export const VideoGrid = ({
   className,
 }: VideoGridProps) => {
   const isMobile = useIsMobile();
-  const loading = isLoading || !videos;
-  const displayVideos = videos?.slice(0, maxVideos);
+  const loading = isLoading || !videos || videos.length === 0;
+  const displayVideos = videos?.slice(0, maxVideos) || [];
 
   return (
     <div className={cn(

@@ -7,6 +7,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useState, useEffect } from "react";
 import { RequestChannelDialog } from "./RequestChannelDialog";
 import { useDebounce } from "@/hooks/use-debounce";
+import { toast } from "sonner";
 
 interface ChannelsGridProps {
   onError?: (error: any) => void;
@@ -59,10 +60,12 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
   });
 
   // Fetch channels with improved error handling and caching
-  const { data: channels, error } = useQuery({
+  const { data: channels, error, isLoading: isChannelsLoading, refetch } = useQuery({
     queryKey: ["youtube-channels"],
     queryFn: async () => {
       try {
+        console.log("Fetching YouTube channels");
+        
         // Only select necessary fields to avoid potential recursion issues
         const { data, error } = await supabase
           .from("youtube_channels")
@@ -72,30 +75,38 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
 
         if (error) {
           console.error("Channel fetch error:", error);
+          toast.error("Failed to load channels");
           if (onError) onError(error);
-          return []; // Return empty array instead of throwing
+          return []; 
         }
         
+        console.log(`Successfully fetched ${data?.length || 0} channels`);
         return data || [];
       } catch (error: any) {
         console.error("Channel fetch error:", error);
+        toast.error("Error loading channels");
         if (onError) onError(error);
-        return []; // Return empty array instead of throwing
+        return []; 
       }
     },
-    retry: (failureCount, error: any) => {
-      // Only retry network errors, max 2 times
-      if (error?.message?.includes('Failed to fetch')) return failureCount < 2;
-      return false;
-    },
-    retryDelay: 2000, // Fixed 2 second delay between retries
-    staleTime: 1000 * 60 * 5, // Consider data fresh for 5 minutes
-    refetchOnWindowFocus: false, // Prevent unnecessary refetches
-    meta: {
-      errorMessage: "Channels fetch error handled silently",
-      suppressToasts: true
-    }
+    retry: 2,
+    retryDelay: 1000,
+    staleTime: 1000 * 60 * 2, // Consider data fresh for 2 minutes
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
   });
+
+  // Force a refetch if no channels are found
+  useEffect(() => {
+    if (!isChannelsLoading && (!channels || channels.length === 0)) {
+      console.log("No channels found, triggering a refetch");
+      setTimeout(() => {
+        refetch().catch(err => {
+          console.error("Error refetching channels:", err);
+        });
+      }, 2000);
+    }
+  }, [channels, isChannelsLoading, refetch]);
 
   // Use effect to set loading state with a small delay to ensure UI renders properly
   useEffect(() => {
@@ -106,7 +117,7 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
     return () => clearTimeout(timer);
   }, [channels]);
 
-  if (isLoading) {
+  if (isLoading || isChannelsLoading) {
     return (
       <div className="w-full max-w-[1600px] mx-auto px-3 md:px-4">
         <div className="flex items-center justify-between mb-3 md:mb-8">
@@ -135,7 +146,7 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
         <RequestChannelDialog />
       </div>
       
-      {visibleChannels.length === 0 ? (
+      {!visibleChannels || visibleChannels.length === 0 ? (
         <div className="bg-[#F5F5F5] rounded-lg p-6 text-center">
           <Youtube className="w-12 h-12 text-primary mx-auto mb-4" />
           <p className="text-lg font-medium mb-2">No channels available yet</p>
