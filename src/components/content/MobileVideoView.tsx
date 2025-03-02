@@ -38,7 +38,7 @@ export const MobileVideoView = ({
   });
 
   return (
-    <div className="space-y-4 -mt-2 pt-6">
+    <div className="space-y-4 -mt-2 pt-8">
       <div>
         <VideoGrid
           videos={displayVideos}

@@ -50,7 +50,7 @@ export const MobileCategoryScroll: React.FC<MobileCategoryScrollProps> = ({
     
     let animationFrameId: number;
     let isPaused = false;
-    const scrollSpeed = 0.5; // Slightly faster for better visual flow
+    const scrollSpeed = 0.7; // Adjusted for better visual flow
     const container = scrollContainerRef.current;
     
     const scroll = () => {
@@ -74,7 +74,7 @@ export const MobileCategoryScroll: React.FC<MobileCategoryScrollProps> = ({
       isPaused = true;
     };
     
-    // Resume animation when touch ends
+    // Resume animation after touch ends with a small delay
     const resumeAnimation = () => {
       setTimeout(() => {
         isPaused = false;
