@@ -1,3 +1,4 @@
+
 import { Settings, LogOut, LayoutDashboard, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -87,7 +88,7 @@ export const UserMenu = ({ onLogout }: UserMenuProps) => {
       </DropdownMenuTrigger>
       <DropdownMenuContent 
         align="end" 
-        sideOffset={0}
+        sideOffset={5}
         className="w-56 p-2 bg-white rounded-lg shadow-lg border border-gray-100"
       >
         {isAdmin && (
