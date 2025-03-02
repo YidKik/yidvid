@@ -1,3 +1,4 @@
+
 import React from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
@@ -144,8 +145,12 @@ export const CategoryCard = ({ icon, label, id, isCustomImage = false }: Categor
             </motion.span>
           </motion.div>
           <h3 
-            className={`font-medium text-[10px] leading-tight md:text-sm line-clamp-2 ${isMobile ? 'max-w-[85px]' : 'max-w-[120px]'}`}
-            style={{ color: categoryColors.text }}
+            className={`font-medium text-[11px] leading-tight md:text-sm tracking-tight line-clamp-2 ${isMobile ? 'max-w-[85px]' : 'max-w-[120px]'}`}
+            style={{ 
+              color: categoryColors.text,
+              textShadow: '0 0 1px rgba(255,255,255,0.5)',
+              fontWeight: 600
+            }}
           >
             {label}
           </h3>
