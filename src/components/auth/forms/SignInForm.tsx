@@ -139,25 +139,33 @@ export const SignInForm = ({ onOpenChange, isLoading, setIsLoading }: SignInForm
   };
 
   return (
-    <form onSubmit={handleSignIn} className={`space-y-${isMobile ? '2' : '4'}`}>
-      <div className="space-y-1.5">
+    <form onSubmit={handleSignIn} className={`space-y-${isMobile ? '3' : '4'}`}>
+      <div className="space-y-2">
         <Input
           type="email"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className={`${isMobile ? 'h-9 text-xs' : 'h-12 text-base'} px-3 border-gray-200 bg-gray-50/50 focus:bg-white transition-all duration-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary`}
+          className={`${isMobile 
+            ? 'h-10 text-sm' 
+            : 'h-12 text-base'} 
+            px-4 border-gray-200 bg-gray-50/30 focus:bg-white transition-all duration-300 
+            rounded-lg focus:ring-2 focus:ring-purple-400/30 focus:border-purple-400 shadow-sm`}
           required
           disabled={isLoading}
         />
       </div>
-      <div className="space-y-1.5">
+      <div className="space-y-2">
         <Input
           type="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className={`${isMobile ? 'h-9 text-xs' : 'h-12 text-base'} px-3 border-gray-200 bg-gray-50/50 focus:bg-white transition-all duration-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary`}
+          className={`${isMobile 
+            ? 'h-10 text-sm' 
+            : 'h-12 text-base'} 
+            px-4 border-gray-200 bg-gray-50/30 focus:bg-white transition-all duration-300 
+            rounded-lg focus:ring-2 focus:ring-purple-400/30 focus:border-purple-400 shadow-sm`}
           required
           disabled={isLoading}
           minLength={6}
@@ -165,14 +173,19 @@ export const SignInForm = ({ onOpenChange, isLoading, setIsLoading }: SignInForm
       </div>
       
       {loginError && (
-        <div className={`${isMobile ? 'text-xs' : 'text-sm'} text-red-500 font-medium p-2 bg-red-50 rounded-lg`}>
+        <div className={`${isMobile ? 'text-xs' : 'text-sm'} text-red-500 font-medium p-2 bg-red-50 rounded-lg border border-red-100`}>
           {loginError}
         </div>
       )}
       
       <Button
         type="submit"
-        className={`w-full ${isMobile ? 'h-8 text-xs py-0' : 'h-12 text-base py-0'} mt-2 bg-primary text-white rounded-lg font-medium hover:opacity-90 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02] active:scale-[0.98] disabled:hover:scale-100 shadow-md hover:shadow-lg`}
+        className={`w-full ${isMobile 
+          ? 'h-10 text-sm py-0' 
+          : 'h-12 text-base py-0'} 
+          mt-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium
+          transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed 
+          hover:scale-[1.02] active:scale-[0.98] disabled:hover:scale-100 shadow-md hover:shadow-lg`}
         disabled={isLoading}
       >
         {isLoading ? "Signing in..." : "Sign In"}
