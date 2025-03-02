@@ -17,28 +17,28 @@ export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
     <Tabs defaultValue="signin" className="w-full">
       <div className={`${isMobile ? 'px-4 pt-3' : 'px-16 pt-8'} bg-white`}>
         <TabsList className={`w-full grid grid-cols-2 ${isMobile 
-          ? 'h-10 bg-gray-100 p-1 rounded-lg gap-1.5 shadow-sm' 
+          ? 'h-9 bg-[#E5DEFF] p-1 rounded-lg gap-1 shadow-none' 
           : 'h-12 bg-[#F5F3FF] p-1 rounded-xl gap-4 shadow-sm'}`}
         >
           <TabsTrigger 
             value="signin" 
             className={`rounded-md ${isMobile 
-              ? 'text-xs font-medium py-1.5' 
+              ? 'text-xs font-medium py-1 transition-all' 
               : 'text-base font-medium py-1'} 
               text-gray-700 data-[state=active]:bg-white data-[state=active]:text-[#8B5CF6] 
-              data-[state=active]:shadow-md data-[state=active]:scale-105 data-[state=active]:font-semibold 
-              transition-all duration-300 hover:bg-white/80`}
+              data-[state=active]:shadow-md data-[state=active]:scale-[1.02] data-[state=active]:font-semibold 
+              transition-all duration-200 hover:bg-white/80`}
           >
             Sign In
           </TabsTrigger>
           <TabsTrigger 
             value="signup"
             className={`rounded-md ${isMobile 
-              ? 'text-xs font-medium py-1.5' 
+              ? 'text-xs font-medium py-1 transition-all' 
               : 'text-base font-medium py-1'} 
               text-gray-700 data-[state=active]:bg-white data-[state=active]:text-[#8B5CF6] 
-              data-[state=active]:shadow-md data-[state=active]:scale-105 data-[state=active]:font-semibold 
-              transition-all duration-300 hover:bg-white/80`}
+              data-[state=active]:shadow-md data-[state=active]:scale-[1.02] data-[state=active]:font-semibold 
+              transition-all duration-200 hover:bg-white/80`}
           >
             Sign Up
           </TabsTrigger>
