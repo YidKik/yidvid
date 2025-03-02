@@ -47,13 +47,23 @@ SELECT cron.schedule(
 );
 
 -- Schedule the video fetch function
--- Changed from */15 to 0 */6 to run every 6 hours instead of every 15 minutes
+-- Changed to run only twice daily, at 6 AM and 6 PM UTC
 SELECT cron.schedule(
     'fetch-youtube-videos',
-    '0 */6 * * *',  -- At minute 0 past every 6th hour
+    '0 6,18 * * *',  -- At 6 AM and 6 PM UTC
     $$
     -- Call the trigger_youtube_video_fetch function which handles quota management
     SELECT public.trigger_youtube_video_fetch();
+    $$
+);
+
+-- Add new schedule for fetching videos from recently active channels
+SELECT cron.schedule(
+    'fetch-active-channels',
+    '0 12 * * *',  -- At 12 PM UTC daily
+    $$
+    -- Fetch only from most active channels
+    SELECT public.fetch_active_channels();
     $$
 );
 
@@ -86,3 +96,45 @@ WITH CHECK (true);
 CREATE POLICY "Allow view cron_job_logs" ON public.cron_job_logs
 FOR SELECT TO postgres, anon, authenticated, service_role
 USING (true);
+
+-- Create function to fetch videos only from recently active channels
+CREATE OR REPLACE FUNCTION public.fetch_active_channels()
+RETURNS json
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+  result json;
+  active_channels text[];
+BEGIN
+  -- Get the most recently updated channels (limit to 3 to conserve quota)
+  SELECT ARRAY(
+    SELECT channel_id 
+    FROM youtube_channels 
+    WHERE deleted_at IS NULL
+    ORDER BY updated_at DESC 
+    LIMIT 3
+  ) INTO active_channels;
+  
+  -- Call the edge function with only the active channels
+  SELECT INTO result
+    net.http_post(
+      url:='https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/fetch-youtube-videos',
+      headers:=jsonb_build_object(
+        'Content-Type', 'application/json',
+        'Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1aW5ja3R2c2l1enRzeGN1cWZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY0ODgzNzcsImV4cCI6MjA1MjA2NDM3N30.zbReqHoAR33QoCi_wqNp8AtNofTX3JebM7jvjFAWbMg'
+      ),
+      body:=jsonb_build_object(
+        'channels', active_channels,
+        'prioritizeRecent', true,
+        'quotaConservative', true
+      )
+    );
+  
+  -- Log the execution
+  INSERT INTO public.cron_job_logs (job_name, status, response)
+  VALUES ('fetch-active-channels', 'completed', result);
+  
+  RETURN result;
+END;
+$$;

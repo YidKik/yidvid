@@ -64,26 +64,38 @@ export const useVideoFetcher = (): VideoFetcherResult => {
       const channelIds = channels?.map(c => c.channel_id) || [];
       console.log(`Found ${channelIds.length} channels to process`);
 
-      // Check if we have recent video data or need to fetch fresh data
+      // Check if we should fetch new videos - much more conservative time window
+      // Only fetch every 12 hours automatically (43200000 ms) 
       const shouldFetchNewVideos = lastSuccessfulFetch === null || 
-                               (Date.now() - lastSuccessfulFetch.getTime() > 3600000) || // 1 hour
-                               fetchAttempts > 0; // Also fetch if we've had previous attempts
+                              (Date.now() - lastSuccessfulFetch.getTime() > 43200000) || // 12 hours
+                              fetchAttempts > 0; // Also fetch if we've had previous attempts
 
       if (channelIds.length > 0 && shouldFetchNewVideos) {
         // Check quota before making requests
         const quotaInfo = await checkApiQuota();
         
-        if (quotaInfo && quotaInfo.quota_remaining <= 0) {
-          const resetTime = new Date(quotaInfo.quota_reset_at);
-          toast.warning(`YouTube quota exceeded. Service will resume at ${resetTime.toLocaleString()}`);
+        // Only proceed if we have at least 20% of daily quota remaining (2000 units)
+        if (!quotaInfo || quotaInfo.quota_remaining < 2000) {
+          const resetTime = quotaInfo ? new Date(quotaInfo.quota_reset_at) : new Date();
+          
+          if (quotaInfo && quotaInfo.quota_remaining <= 0) {
+            toast.warning(`YouTube quota exceeded. Service will resume at ${resetTime.toLocaleString()}`);
+          } else {
+            toast.warning(`Low YouTube API quota remaining (${quotaInfo?.quota_remaining || 0} units). Limiting API requests until reset at ${resetTime.toLocaleString()}`);
+          }
+          
+          // Still continue with existing cached data
+          console.log('Using cached video data due to quota limitations');
         } else {
           try {
-            // Trigger edge function to fetch new videos
+            // Trigger edge function to fetch new videos but with optimization flags
             const { data: response, error: fetchError } = await supabase.functions.invoke('fetch-youtube-videos', {
               body: { 
                 channels: channelIds,
                 forceUpdate: fetchAttempts > 2, // Force update if we've had multiple attempts
-                fullScan: true // Add parameter to force full scan of channels for missed videos
+                quotaConservative: true, // New flag to indicate conservative quota usage
+                prioritizeRecent: true, // New flag to prioritize recently active channels
+                maxChannelsPerRun: 5 // Limit the number of channels processed in a single run
               }
             });
 
@@ -115,7 +127,7 @@ export const useVideoFetcher = (): VideoFetcherResult => {
                 }
               } else if (response?.quota_reset_at) {
                 const resetTime = new Date(response.quota_reset_at);
-                toast.warning(`YouTube quota exceeded. Service will resume at ${resetTime.toLocaleString()}`);
+                toast.warning(`YouTube quota limited. Full service will resume at ${resetTime.toLocaleString()}`);
               }
             }
           } catch (invocationError) {
