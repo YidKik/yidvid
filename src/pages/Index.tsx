@@ -1,4 +1,3 @@
-
 import { Header } from "@/components/Header";
 import Auth from "@/pages/Auth";
 import { useState, useEffect } from "react";
@@ -69,8 +68,6 @@ const MainContent = () => {
                 videos={videos} 
                 isLoading={isLoading} 
                 refetch={refetch}
-                lastSuccessfulFetch={lastSuccessfulFetch}
-                fetchAttempts={fetchAttempts}
               />
             ) : (
               <MusicSection />
