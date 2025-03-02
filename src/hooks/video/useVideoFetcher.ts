@@ -35,7 +35,6 @@ export const useVideoFetcher = (): VideoFetcherResult => {
     
     try {
       // First fetch existing videos from database - this is the most important part
-      // so even if other parts fail, we want this data
       let videosData: any[] = [];
       try {
         videosData = await fetchVideosFromDatabase();
@@ -78,6 +77,8 @@ export const useVideoFetcher = (): VideoFetcherResult => {
       return formatVideoData(videosData);
     } catch (error: any) {
       console.error("Error in video fetching process:", error);
+      // For any errors, increase the fetch attempts counter
+      setFetchAttempts(prev => prev + 1);
       // For any errors, return an empty array rather than failing completely
       return [];
     }
@@ -86,6 +87,7 @@ export const useVideoFetcher = (): VideoFetcherResult => {
   // Helper to fetch videos from database
   const fetchVideosFromDatabase = async () => {
     try {
+      // Adding null checking for the response to avoid crashes
       const { data: initialData, error: dbError } = await supabase
         .from("youtube_videos")
         .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at")

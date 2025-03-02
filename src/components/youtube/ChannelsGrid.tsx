@@ -19,40 +19,28 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
   const [manuallyFetchedChannels, setManuallyFetchedChannels] = useState<any[]>([]);
   const [fetchError, setFetchError] = useState<any>(null);
   
-  // Load session with proper caching
-  const { data: session } = useQuery({
-    queryKey: ["auth-session"],
-    queryFn: async () => {
-      try {
-        const { data, error } = await supabase.auth.getSession();
-        if (error) throw error;
-        return data.session;
-      } catch (error) {
-        console.error("Session fetch error:", error);
-        return null;
-      }
-    },
-    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
-  });
-
-  // Load hidden channels with error handling
+  // Load hidden channels with fallback
   const { data: hiddenChannelsData } = useQuery({
-    queryKey: ["hidden-channels", session?.user?.id],
-    enabled: !!session?.user?.id,
+    queryKey: ["hidden-channels"],
     queryFn: async () => {
       try {
-        const { data, error } = await supabase
-          .from('hidden_channels')
-          .select('channel_id')
-          .eq('user_id', session!.user.id);
-
-        if (error) {
-          console.error('Error loading hidden channels:', error);
-          return [];
-        }
+        const { data: session } = await supabase.auth.getSession();
         
-        setHiddenChannels(new Set(data.map(hc => hc.channel_id)));
-        return data;
+        if (session?.user?.id) {
+          const { data, error } = await supabase
+            .from('hidden_channels')
+            .select('channel_id')
+            .eq('user_id', session.user.id);
+
+          if (error) {
+            console.error('Error loading hidden channels:', error);
+            return [];
+          }
+          
+          setHiddenChannels(new Set(data.map(hc => hc.channel_id)));
+          return data;
+        }
+        return [];
       } catch (error) {
         console.error('Error loading hidden channels:', error);
         return [];
@@ -87,22 +75,18 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
       } catch (error: any) {
         console.error("Channel fetch error:", error);
         if (onError) onError(error);
-        throw error;
+        // Don't throw here - try manual fetch instead
+        await manualFetchChannels();
+        return [];
       }
     },
-    retry: 1,
-    meta: {
-      onError: () => {
-        // If the query fails, we'll attempt a manual fetch
-        manualFetchChannels();
-      }
-    },
+    retry: 0, // Don't retry automatically
     staleTime: 0, // Don't cache to always get fresh channels
     refetchOnMount: true,
     refetchOnWindowFocus: false,
   });
 
-  // Backup method to fetch channels directly using the service role
+  // Backup method to fetch channels directly
   const manualFetchChannels = async () => {
     try {
       console.log("Attempting manual channel fetch as backup");
@@ -130,11 +114,12 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
     }
   };
 
-  // Use effect to set loading state
+  // Use effect to set loading state and ensure we try fetching right away
   useEffect(() => {
     // Force immediate fetch on mount
     refetch().catch(err => {
       console.error("Error fetching channels on mount:", err);
+      manualFetchChannels();
     });
     
     const timer = setTimeout(() => {
