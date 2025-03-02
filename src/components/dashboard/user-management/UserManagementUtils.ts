@@ -25,6 +25,7 @@ export const getUserDevice = (user: ProfilesTable["Row"]) => {
 
 export const updateUsername = async (userId: string, newUsername: string) => {
   try {
+    // Update the username in the profiles table instead of users table
     const { data, error } = await supabase
       .from("profiles")
       .update({ username: newUsername })
