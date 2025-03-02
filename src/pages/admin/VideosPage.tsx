@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -54,6 +53,7 @@ export default function VideosPage() {
       refetch();
     } catch (error) {
       console.error("Error deleting video:", error);
+      // Keep this toast since it's admin functionality
       toast.error("Failed to delete video");
     } finally {
       setIsDeleting(false);

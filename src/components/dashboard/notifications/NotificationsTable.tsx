@@ -48,7 +48,7 @@ export const NotificationsTable = ({ notifications, isLoading }: NotificationsTa
     },
     onError: (error) => {
       console.error("Error toggling notification:", error);
-      toast.error("Failed to update notification status");
+      // Removed toast error as this is admin functionality
     },
   });
 
