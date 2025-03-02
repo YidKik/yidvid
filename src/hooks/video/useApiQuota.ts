@@ -26,7 +26,21 @@ export const checkApiQuota = async (): Promise<QuotaInfo | null> => {
       return null;
     }
 
-    return data;
+    // Make sure all required properties are present
+    if (!data) return null;
+
+    // Ensure we have all the required fields for QuotaInfo
+    // Explicitly map database record to QuotaInfo interface
+    const quotaInfo: QuotaInfo = {
+      api_name: data.api_name,
+      quota_limit: data.quota_limit || 10000, // Use default if missing
+      quota_remaining: data.quota_remaining,
+      quota_reset_at: data.quota_reset_at,
+      last_reset: data.last_reset,
+      updated_at: data.updated_at
+    };
+
+    return quotaInfo;
   } catch (err) {
     console.error("Failed to check API quota:", err);
     return null;
