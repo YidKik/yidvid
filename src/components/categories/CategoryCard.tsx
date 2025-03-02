@@ -51,7 +51,7 @@ export const CategoryCard = ({ icon, label, id, isCustomImage = false }: Categor
 
   // Get the simple icon or use default if not found
   const getSimpleIcon = (iconEmoji: string) => {
-    const iconSize = isMobile ? 16 : 20;
+    const iconSize = isMobile ? 14 : 20;
     const IconComponent = simpleIcons[iconEmoji] || simpleIcons['default'];
     
     // Clone the icon element with the new size
@@ -111,7 +111,7 @@ export const CategoryCard = ({ icon, label, id, isCustomImage = false }: Categor
         }
       }}
       whileTap={{ scale: 0.98 }}
-      className={`rounded-xl p-1 md:p-3 cursor-pointer transition-all duration-300 ${isMobile ? 'h-[65px]' : 'h-[90px]'} relative backdrop-blur-sm`}
+      className={`rounded-xl p-1 md:p-3 cursor-pointer transition-all duration-300 ${isMobile ? 'h-[50px]' : 'h-[90px]'} relative backdrop-blur-sm`}
       style={{
         background: categoryColors.bg,
         border: `1.5px solid ${categoryColors.border}`,
@@ -140,7 +140,7 @@ export const CategoryCard = ({ icon, label, id, isCustomImage = false }: Categor
             >
               {isCustomImage ? (
                 // Replace custom image with appropriate outline icon
-                <Tag size={isMobile ? 14 : 20} strokeWidth={1.5} color="white" />
+                <Tag size={isMobile ? 12 : 20} strokeWidth={1.5} color="white" />
               ) : (
                 getSimpleIcon(icon)
               )}
@@ -154,41 +154,43 @@ export const CategoryCard = ({ icon, label, id, isCustomImage = false }: Categor
           </h3>
         </div>
         
-        {/* Animated decorative lines for right side */}
-        <div className="flex flex-col items-center justify-center h-full">
-          <div className="flex space-x-1 md:space-x-2">
-            <motion.div 
-              custom={isMobile ? 15 : 20}
-              variants={lineVariants}
-              initial="initial"
-              animate="animate"
-              className={`w-[1px] md:w-[3px] rounded-full`}
-              style={{ 
-                background: `linear-gradient(to bottom, ${categoryColors.border}22, ${categoryColors.border}88)` 
-              }}
-            />
-            <motion.div 
-              custom={isMobile ? 20 : 30}
-              variants={lineVariants}
-              initial="initial"
-              animate="animate"
-              className={`w-[1px] md:w-[3px] rounded-full`}
-              style={{ 
-                background: `linear-gradient(to bottom, ${categoryColors.border}44, ${categoryColors.border})` 
-              }}
-            />
-            <motion.div 
-              custom={isMobile ? 15 : 20}
-              variants={lineVariants}
-              initial="initial"
-              animate="animate"
-              className={`w-[1px] md:w-[3px] rounded-full`}
-              style={{ 
-                background: `linear-gradient(to bottom, ${categoryColors.border}22, ${categoryColors.border}88)` 
-              }}
-            />
+        {/* Animated decorative lines for right side - only show on desktop */}
+        {!isMobile && (
+          <div className="flex flex-col items-center justify-center h-full">
+            <div className="flex space-x-1 md:space-x-2">
+              <motion.div 
+                custom={isMobile ? 15 : 20}
+                variants={lineVariants}
+                initial="initial"
+                animate="animate"
+                className={`w-[1px] md:w-[3px] rounded-full`}
+                style={{ 
+                  background: `linear-gradient(to bottom, ${categoryColors.border}22, ${categoryColors.border}88)` 
+                }}
+              />
+              <motion.div 
+                custom={isMobile ? 20 : 30}
+                variants={lineVariants}
+                initial="initial"
+                animate="animate"
+                className={`w-[1px] md:w-[3px] rounded-full`}
+                style={{ 
+                  background: `linear-gradient(to bottom, ${categoryColors.border}44, ${categoryColors.border})` 
+                }}
+              />
+              <motion.div 
+                custom={isMobile ? 15 : 20}
+                variants={lineVariants}
+                initial="initial"
+                animate="animate"
+                className={`w-[1px] md:w-[3px] rounded-full`}
+                style={{ 
+                  background: `linear-gradient(to bottom, ${categoryColors.border}22, ${categoryColors.border}88)` 
+                }}
+              />
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </motion.div>
   );
