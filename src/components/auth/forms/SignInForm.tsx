@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
@@ -14,6 +15,7 @@ interface SignInFormProps {
 export const SignInForm = ({ onOpenChange, isLoading, setIsLoading }: SignInFormProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loginError, setLoginError] = useState("");
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
@@ -24,6 +26,7 @@ export const SignInForm = ({ onOpenChange, isLoading, setIsLoading }: SignInForm
       return;
     }
 
+    setLoginError("");
     setIsLoading(true);
 
     try {
@@ -39,19 +42,38 @@ export const SignInForm = ({ onOpenChange, isLoading, setIsLoading }: SignInForm
         
         // Provide more specific error messages based on the error
         if (signInError.message === "Invalid login credentials") {
-          toast.error("Invalid email or password. Please check your credentials and try again.");
+          setLoginError("Invalid email or password. Please check your credentials and try again.");
         } else {
-          toast.error(signInError.message || "Error during sign in");
+          setLoginError(signInError.message || "Error during sign in");
         }
+        // Don't show toast error for login issues - show in the form instead
         return;
       }
 
       if (signInData?.user) {
         console.log("User signed in successfully:", signInData.user.email);
         
-        // Instead of immediately fetching the profile, we'll just invalidate the cache
-        // to trigger a clean fetch when needed
-        queryClient.invalidateQueries({ queryKey: ["profile", signInData.user.id] });
+        // Clean up all previous profile data and prepare to fetch fresh data
+        queryClient.removeQueries({ queryKey: ["profile"] });
+        
+        // Pre-fetch user profile in background
+        queryClient.prefetchQuery({
+          queryKey: ["profile", signInData.user.id],
+          queryFn: async () => {
+            try {
+              const { data } = await supabase
+                .from("profiles")
+                .select("*")
+                .eq("id", signInData.user.id)
+                .maybeSingle();
+              return data;
+            } catch (err) {
+              console.error("Error prefetching profile:", err);
+              return null;
+            }
+          },
+          retry: 2,
+        });
         
         toast.success("Signed in successfully!");
         onOpenChange(false);
@@ -59,7 +81,7 @@ export const SignInForm = ({ onOpenChange, isLoading, setIsLoading }: SignInForm
       }
     } catch (error: any) {
       console.error("Sign in error:", error);
-      toast.error("An unexpected error occurred during sign in. Please try again.");
+      setLoginError("An unexpected error occurred during sign in. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -67,17 +89,17 @@ export const SignInForm = ({ onOpenChange, isLoading, setIsLoading }: SignInForm
 
   const validateForm = () => {
     if (!email || !password) {
-      toast.error("Please fill in all required fields");
+      setLoginError("Please fill in all required fields");
       return false;
     }
     
     if (!email.includes('@')) {
-      toast.error("Please enter a valid email address");
+      setLoginError("Please enter a valid email address");
       return false;
     }
 
     if (password.length < 6) {
-      toast.error("Password must be at least 6 characters long");
+      setLoginError("Password must be at least 6 characters long");
       return false;
     }
 
@@ -109,6 +131,13 @@ export const SignInForm = ({ onOpenChange, isLoading, setIsLoading }: SignInForm
           minLength={6}
         />
       </div>
+      
+      {loginError && (
+        <div className="text-sm text-red-500 font-medium p-2 bg-red-50 rounded-lg">
+          {loginError}
+        </div>
+      )}
+      
       <button
         type="submit"
         className="w-full h-12 bg-primary text-white rounded-xl font-medium hover:opacity-90 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02] active:scale-[0.98] disabled:hover:scale-100 shadow-md hover:shadow-lg"

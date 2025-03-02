@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
 export const useWelcomeData = (session: any) => {
-  const { data: profile, isLoading: isLoadingProfile } = useQuery({
+  const { data: profile, isLoading: isLoadingProfile, error: profileError } = useQuery({
     queryKey: ["profile", session?.user?.id],
     enabled: !!session?.user?.id,
     queryFn: async () => {
@@ -27,6 +27,12 @@ export const useWelcomeData = (session: any) => {
       }
     },
     retry: 1,
+    // Don't trigger error states for this query to prevent UI errors
+    useErrorBoundary: false,
+    // Provide a fallback on error
+    onError: (error) => {
+      console.error("Profile fetch error handled silently:", error);
+    }
   });
 
   const { isLoading: isLoadingVideos, isError: isVideosError } = useQuery({
@@ -88,16 +94,17 @@ export const useWelcomeData = (session: any) => {
     retry: 1,
   });
 
+  // Create a fallback username if profile fetch fails
   const userName = profile?.welcome_name || 
                   profile?.display_name || 
                   profile?.name || 
-                  session?.user?.email?.split('@')[0] || 
-                  "to YidVid";
+                  (session?.user?.email ? session.user.email.split('@')[0] : "to YidVid");
 
   return {
     profile,
     isLoading: isLoadingVideos || isLoadingChannels || isLoadingProfile,
     isError: isVideosError || isChannelsError,
+    profileError,
     userName
   };
 };

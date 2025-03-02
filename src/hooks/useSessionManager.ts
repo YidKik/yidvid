@@ -13,7 +13,9 @@ export const useSessionManager = () => {
   useEffect(() => {
     const initializeSession = async () => {
       try {
+        // Get initial session
         const { data: { session: initialSession }, error: sessionError } = await supabase.auth.getSession();
+        
         if (sessionError) {
           console.error("Session error:", sessionError);
           return;
@@ -22,27 +24,62 @@ export const useSessionManager = () => {
         if (initialSession) {
           console.log("Initial session loaded:", initialSession.user?.email);
           setSession(initialSession);
+          
+          // Pre-fetch profile data to warm up the cache
+          if (initialSession.user?.id) {
+            queryClient.prefetchQuery({
+              queryKey: ["profile", initialSession.user.id],
+              queryFn: async () => {
+                const { data } = await supabase
+                  .from("profiles")
+                  .select("*")
+                  .eq("id", initialSession.user.id)
+                  .maybeSingle();
+                return data;
+              },
+              // Silent failure - don't show errors to users
+              retry: 1,
+            });
+          }
         }
 
+        // Set up auth state change listener
         const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
           console.log("Auth state changed:", event);
+          
           switch (event) {
             case 'SIGNED_IN':
               setSession(currentSession);
-              // Invalidate profile query to ensure fresh data
+              
+              // Clear previous user data from cache before fetching new data
               if (currentSession?.user?.id) {
-                queryClient.invalidateQueries({ queryKey: ["profile", currentSession.user.id] });
+                queryClient.removeQueries({ queryKey: ["profile"] });
+                queryClient.prefetchQuery({
+                  queryKey: ["profile", currentSession.user.id],
+                  queryFn: async () => {
+                    const { data } = await supabase
+                      .from("profiles")
+                      .select("*")
+                      .eq("id", currentSession.user.id)
+                      .maybeSingle();
+                    return data;
+                  },
+                  retry: 1,
+                });
               }
               break;
+              
             case 'TOKEN_REFRESHED':
               setSession(currentSession);
               break;
+              
             case 'SIGNED_OUT':
               setSession(null);
               // Clear all user-related queries from cache
               queryClient.clear();
               navigate('/');
               break;
+              
             case 'USER_UPDATED':
               setSession(currentSession);
               // Invalidate profile query after user update
