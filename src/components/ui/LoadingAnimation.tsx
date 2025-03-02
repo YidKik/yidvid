@@ -16,28 +16,28 @@ export const LoadingAnimation = ({
   className,
   text
 }: LoadingAnimationProps) => {
-  // Size configurations
+  // Size configurations - adjusted for better proportions
   const sizeMap = {
     small: {
-      container: "h-12 w-12",
-      circle: 5,
-      gap: 2,
+      container: "h-10 w-10", // Smaller overall container
+      circle: 4, // Smaller orbital dots
+      gap: 1.8, // Reduced orbital radius
       fontSize: "text-xs",
-      logoSize: "h-6 w-6"
+      logoSize: "h-6 w-6" // Logo size maintained
     },
     medium: {
-      container: "h-16 w-16",
-      circle: 6,
-      gap: 3,
+      container: "h-14 w-14", // Smaller overall container
+      circle: 5, // Smaller orbital dots
+      gap: 2.5, // Reduced orbital radius
       fontSize: "text-sm",
-      logoSize: "h-8 w-8"
+      logoSize: "h-9 w-9" // Increased logo size
     },
     large: {
-      container: "h-24 w-24",
-      circle: 9,
-      gap: 4,
+      container: "h-20 w-20", // Smaller overall container
+      circle: 6, // Smaller orbital dots
+      gap: 3.5, // Reduced orbital radius
       fontSize: "text-base",
-      logoSize: "h-12 w-12"
+      logoSize: "h-14 w-14" // Increased logo size
     }
   };
 
@@ -80,12 +80,12 @@ export const LoadingAnimation = ({
     })
   };
 
-  // Logo pulsing animation
+  // Logo pulsing animation - removed rotation, just gentle pulse
   const logoVariants = {
-    initial: { scale: 0.9, opacity: 0.8 },
+    initial: { scale: 0.95, opacity: 0.9 },
     animate: {
-      scale: [0.9, 1.1, 0.9],
-      opacity: [0.8, 1, 0.8],
+      scale: [0.95, 1.05, 0.95],
+      opacity: [0.9, 1, 0.9],
       transition: {
         duration: 2.5,
         repeat: Infinity,
@@ -129,12 +129,12 @@ export const LoadingAnimation = ({
         variants={containerVariants}
         animate="animate"
       >
-        {/* Center logo instead of pulse circle */}
+        {/* Center logo - larger size and no rotation */}
         <motion.div
           className="absolute z-10 rounded-full bg-white flex items-center justify-center overflow-hidden"
           style={{
-            width: selectedSize.circle * 2.5,
-            height: selectedSize.circle * 2.5,
+            width: selectedSize.circle * 3.2, // Larger center for logo
+            height: selectedSize.circle * 3.2, // Larger center for logo
           }}
           variants={logoVariants}
           initial="initial"
@@ -160,7 +160,7 @@ export const LoadingAnimation = ({
           />
         </motion.div>
 
-        {/* Orbital circles */}
+        {/* Orbital circles - smaller and closer to center */}
         {orbitalPositions.map((pos, index) => {
           const radians = (pos.angle * Math.PI) / 180;
           const x = Math.cos(radians) * selectedSize.gap;
