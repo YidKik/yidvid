@@ -38,8 +38,8 @@ export const useVideos = (): UseVideosResult => {
     retry: (failureCount, error: any) => {
       // Don't retry on quota exceeded
       if (error?.status === 429) return false;
-      // Retry other errors up to 2 times only
-      return failureCount < 2;
+      // Retry other errors up to 3 times
+      return failureCount < 3;
     },
     retryDelay: (attemptIndex) => Math.min(1000 * (2 ** attemptIndex), 30000), // Exponential backoff with 30s max
     // Error handling
@@ -69,6 +69,7 @@ export const useVideos = (): UseVideosResult => {
   
   // Force an immediate fetch when mounted, but only once
   useEffect(() => {
+    console.log("useVideos mounted, triggering initial fetch");
     const shouldFetchFresh = !lastSuccessfulFetch || 
                              (Date.now() - lastSuccessfulFetch.getTime() > 6 * 60 * 60 * 1000);
     

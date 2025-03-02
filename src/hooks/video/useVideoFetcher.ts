@@ -3,6 +3,7 @@ import { useState } from "react";
 import { VideoData, VideoFetcherResult } from "./types/video-fetcher";
 import { fetchVideosFromDatabase, fetchActiveChannels, formatVideoData } from "./utils/video-database";
 import { tryFetchNewVideos } from "./utils/youtube-fetch";
+import { supabase } from "@/integrations/supabase/client";
 
 /**
  * Hook with functionality to fetch all videos from the database

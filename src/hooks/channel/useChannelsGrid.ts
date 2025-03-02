@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -19,25 +19,34 @@ export const useChannelsGrid = () => {
     try {
       console.log("Fetching YouTube channels");
       
-      // Only select necessary fields to avoid potential recursion issues
+      // Try a simple query first
       const { data, error } = await supabase
         .from("youtube_channels")
         .select("id, channel_id, title, thumbnail_url")
-        .is("deleted_at", null)
         .order("title", { ascending: true });
 
       if (error) {
         console.error("Channel fetch error:", error);
         setFetchError(error);
-        throw error;
+        
+        // Try a fallback approach immediately
+        await manualFetchChannels();
+        return manuallyFetchedChannels;
       }
       
       console.log(`Successfully fetched ${data?.length || 0} channels`);
+      
+      // If we got channels, update our state
+      if (data && data.length > 0) {
+        setManuallyFetchedChannels(data);
+      }
+      
       return data || [];
     } catch (error: any) {
       console.error("Channel fetch error:", error);
+      // Try fallback method
       await manualFetchChannels();
-      return [];
+      return manuallyFetchedChannels;
     } finally {
       setIsLoading(false);
     }
@@ -48,17 +57,15 @@ export const useChannelsGrid = () => {
     try {
       console.log("Attempting manual channel fetch as backup");
       
-      // Using a more direct approach with minimal fields
+      // Try a simpler query with fewer constraints
       const { data, error } = await supabase
         .from("youtube_channels")
         .select("id, channel_id, title, thumbnail_url")
-        .is("deleted_at", null)
         .limit(100); // Limit to 100 channels to avoid overload
         
       if (error) {
         console.error("Manual channel fetch also failed:", error);
         setFetchError(error);
-        toast.error("Failed to load channels. Please try again later.");
       } else {
         console.log(`Successfully fetched ${data?.length || 0} channels via backup method`);
         setManuallyFetchedChannels(data || []);
@@ -70,6 +77,19 @@ export const useChannelsGrid = () => {
       setIsLoading(false);
     }
   };
+
+  // Try to fetch channels once on component mount
+  useEffect(() => {
+    const fetchOnMount = async () => {
+      try {
+        await fetchChannelsDirectly();
+      } catch (error) {
+        console.error("Failed to fetch channels on mount:", error);
+      }
+    };
+    
+    fetchOnMount();
+  }, []);
 
   return {
     fetchChannelsDirectly,

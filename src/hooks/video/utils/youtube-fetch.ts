@@ -12,6 +12,8 @@ export const fetchNewVideosFromEdgeFunction = async (
   setLastSuccessfulFetch: (value: Date | null) => void
 ): Promise<{ success: boolean }> => {
   try {
+    console.log("Calling edge function to fetch new videos...");
+    
     const { data: response, error: fetchError } = await supabase.functions.invoke('fetch-youtube-videos', {
       body: { 
         channels: channelIds,
@@ -58,6 +60,8 @@ export const tryFetchNewVideos = async (
   setLastSuccessfulFetch: (value: Date | null) => void
 ): Promise<any[]> => {
   try {
+    console.log("Trying to fetch new videos...");
+    
     let quotaInfo = null;
     try {
       quotaInfo = await checkApiQuota();
@@ -78,6 +82,7 @@ export const tryFetchNewVideos = async (
       );
       
       if (result.success) {
+        console.log("Successfully fetched new videos, updating data...");
         // Refetch videos after successful update
         const updatedVideos = await import('./video-database').then(module => module.fetchUpdatedVideosAfterSync());
         return updatedVideos;
