@@ -47,9 +47,10 @@ SELECT cron.schedule(
 );
 
 -- Schedule the video fetch function
+-- Changed from */15 to 0 */6 to run every 6 hours instead of every 15 minutes
 SELECT cron.schedule(
     'fetch-youtube-videos',
-    '*/15 * * * *',
+    '0 */6 * * *',  -- At minute 0 past every 6th hour
     $$
     -- Call the trigger_youtube_video_fetch function which handles quota management
     SELECT public.trigger_youtube_video_fetch();

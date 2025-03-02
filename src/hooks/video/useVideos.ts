@@ -30,8 +30,9 @@ export const useVideos = (): UseVideosResult => {
   const { data, isLoading, isFetching, error, refetch } = useQuery<VideoData[]>({
     queryKey: ["youtube_videos"],
     queryFn: fetchAllVideos,
-    refetchInterval: fetchAttempts > 3 ? 60000 : 30000, // Adjust refetch interval based on failure count
-    staleTime: 25000, // Consider data stale after 25 seconds
+    // Significantly reduced refetch intervals to conserve API quota
+    refetchInterval: fetchAttempts > 3 ? 15 * 60 * 1000 : 5 * 60 * 1000, // 15 minutes if errors, 5 minutes normally
+    staleTime: 4 * 60 * 1000, // Consider data stale after 4 minutes
     gcTime: 1000 * 60 * 30, // Cache data for 30 minutes
     retry: (failureCount, error: any) => {
       // Don't retry on quota exceeded

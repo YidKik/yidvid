@@ -47,8 +47,8 @@ export const VideoAlertStatus = ({
               "Checking for new videos across all channels... This may take a moment."
           ) : fetchAttempts > 3 ? (
             isMobile ? 
-              "We're experiencing technical difficulties with video fetching. We'll keep trying automatically." : 
-              "We're experiencing technical difficulties with our video fetching service. We'll keep trying automatically."
+              "We're experiencing technical difficulties with video fetching. We'll try again in a few hours." : 
+              "We're experiencing technical difficulties with our video fetching service. We'll try again automatically in a few hours."
           ) : (
             isMobile ? 
               "Some videos might not be loading correctly. We're working on it." : 
@@ -58,8 +58,8 @@ export const VideoAlertStatus = ({
             Last successful update: {lastUpdateTime}
           </div>
           <div className="text-xs opacity-80 mt-1">
-            <strong>Important:</strong> We're aware that video fetching is currently slow and not all videos are being retrieved. 
-            Our team is actively working to resolve these issues. Thank you for your patience.
+            <strong>Note:</strong> To conserve resources, new videos are fetched only a few times per day rather than continuously. 
+            Manual refresh is available if you're looking for specific new content.
           </div>
         </div>
         
