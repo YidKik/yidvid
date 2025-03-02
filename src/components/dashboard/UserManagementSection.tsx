@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { 
@@ -69,7 +68,6 @@ export const UserManagementSection = ({ currentUserId }: { currentUserId: string
 
   const toggleAdminStatus = async (userId: string, currentStatus: boolean) => {
     try {
-      // First check if the current user is an admin
       const { data: currentUser, error: currentUserError } = await supabase
         .from("profiles")
         .select("is_admin")
@@ -87,7 +85,6 @@ export const UserManagementSection = ({ currentUserId }: { currentUserId: string
         return;
       }
 
-      // Update the user's admin status
       const { error: updateError } = await supabase
         .from("profiles")
         .update({ is_admin: !currentStatus })
@@ -112,7 +109,6 @@ export const UserManagementSection = ({ currentUserId }: { currentUserId: string
 
   const handleAddAdmin = async () => {
     try {
-      // First check if the current user is an admin
       const { data: currentUser, error: currentUserError } = await supabase
         .from("profiles")
         .select("is_admin")
@@ -130,7 +126,6 @@ export const UserManagementSection = ({ currentUserId }: { currentUserId: string
         return;
       }
 
-      // Check if the user exists
       const { data: userData, error: userError } = await supabase
         .from("profiles")
         .select("*")
@@ -148,7 +143,6 @@ export const UserManagementSection = ({ currentUserId }: { currentUserId: string
         return;
       }
 
-      // Make the user an admin
       const { error: updateError } = await supabase
         .from("profiles")
         .update({ is_admin: true })
@@ -173,7 +167,6 @@ export const UserManagementSection = ({ currentUserId }: { currentUserId: string
     }
   };
 
-  // Helper function to format date
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return new Intl.DateTimeFormat('en-US', {
@@ -185,13 +178,13 @@ export const UserManagementSection = ({ currentUserId }: { currentUserId: string
     }).format(date);
   };
 
-  // Filter users based on search query
   const filteredUsers = users?.filter(user => {
     if (!searchQuery) return true;
     
     const query = searchQuery.toLowerCase();
     return (
       user.email?.toLowerCase().includes(query) ||
+      user.username?.toLowerCase().includes(query) ||
       user.name?.toLowerCase().includes(query) ||
       user.display_name?.toLowerCase().includes(query)
     );
@@ -200,10 +193,11 @@ export const UserManagementSection = ({ currentUserId }: { currentUserId: string
   const adminUsers = filteredUsers.filter(user => user.is_admin);
   const regularUsers = filteredUsers.filter(user => !user.is_admin);
 
-  // Mock function to determine user device (in a real app, you'd get this from analytics or user agent)
+  const getUserDisplayName = (user: ProfilesTable["Row"]) => {
+    return user.username || user.display_name || user.name || 'Unnamed User';
+  };
+
   const getUserDevice = (user: ProfilesTable["Row"]) => {
-    // This is a mock implementation - in real application you would get this from user analytics
-    // For this example, we'll consider even user IDs as desktop users and odd as mobile
     const lastChar = user.id.charAt(user.id.length - 1);
     const numValue = parseInt(lastChar, 16);
     return numValue % 2 === 0 ? "desktop" : "mobile";
@@ -240,7 +234,6 @@ export const UserManagementSection = ({ currentUserId }: { currentUserId: string
             </div>
           ) : (
             <>
-              {/* Admin Users Section */}
               <div className="mb-8">
                 <div 
                   className="flex items-center gap-2 mb-4 cursor-pointer hover:text-primary"
@@ -276,7 +269,7 @@ export const UserManagementSection = ({ currentUserId }: { currentUserId: string
                                 <div className="flex flex-col">
                                   <div className="flex items-center gap-2">
                                     <User className="h-4 w-4 text-muted-foreground" />
-                                    <span>{user.display_name || user.name || 'Unnamed User'}</span>
+                                    <span>{getUserDisplayName(user)}</span>
                                   </div>
                                   <span className="text-sm text-muted-foreground">{user.email}</span>
                                 </div>
@@ -327,7 +320,6 @@ export const UserManagementSection = ({ currentUserId }: { currentUserId: string
                 )}
               </div>
 
-              {/* Regular Users Section */}
               <div>
                 <h3 className="text-lg font-semibold mb-4">Regular Users ({regularUsers.length})</h3>
                 <div className="bg-white rounded-md border shadow-sm overflow-hidden">
@@ -355,7 +347,7 @@ export const UserManagementSection = ({ currentUserId }: { currentUserId: string
                               <div className="flex flex-col">
                                 <div className="flex items-center gap-2">
                                   <User className="h-4 w-4 text-muted-foreground" />
-                                  <span>{user.display_name || user.name || 'Unnamed User'}</span>
+                                  <span>{getUserDisplayName(user)}</span>
                                 </div>
                                 <span className="text-sm text-muted-foreground">{user.email}</span>
                               </div>
