@@ -12,21 +12,24 @@ export const FetchingIssueAlert = ({ onRefresh }: FetchingIssueAlertProps) => {
   const isMobile = useIsMobile();
   
   return (
-    <Alert variant="destructive" className="mb-4 mt-2 bg-orange-50 border-orange-200 text-orange-800">
-      <AlertCircle className="h-4 w-4 text-orange-600" />
+    <Alert 
+      variant="destructive" 
+      className="mb-3 mt-1 bg-white border border-black text-black text-xs max-w-full shadow-sm"
+    >
+      <AlertCircle className="h-3.5 w-3.5 text-black" />
       <div className="flex flex-col md:flex-row md:items-center justify-between w-full">
-        <div>
-          <AlertTitle className="text-orange-600 text-sm font-semibold">
+        <div className="flex-1 min-w-0">
+          <AlertTitle className="text-black text-xs font-semibold">
             {isMobile ? "Note" : "Attention"}
           </AlertTitle>
-          <AlertDescription className={isMobile ? "alert-compact-text" : "text-xs md:text-sm"}>
+          <AlertDescription className={`text-black ${isMobile ? "alert-compact-text text-xs" : "text-xs"}`}>
             {isMobile ? "Videos may take a moment to load." : "Some videos may take a moment to appear. We're working on it!"}
           </AlertDescription>
         </div>
         {onRefresh && (
           <Button 
             variant="outline" 
-            className="mt-2 md:mt-0 bg-white hover:bg-orange-100 text-orange-600 border-orange-200 text-xs px-3 py-1 h-auto"
+            className="mt-1 md:mt-0 md:ml-2 bg-white hover:bg-gray-100 text-black border-black text-xs px-2 py-0.5 h-auto"
             onClick={onRefresh}
           >
             Refresh
