@@ -25,24 +25,54 @@ export const useVideoFetcher = (): VideoFetcherResult => {
   };
 
   const fetchAllVideos = async (): Promise<VideoData[]> => {
-    console.log("Starting video fetch process with high priority...");
+    console.log("Starting video fetch process with highest priority...");
     
     try {
-      // First fetch existing videos from database - this is the most important part
+      // First try direct database query with error handling
       let videosData: any[] = [];
       try {
-        videosData = await fetchVideosFromDatabase();
-        
-        // If we already have videos, set successful fetch even if the next part fails
-        if (videosData.length > 0) {
-          setLastSuccessfulFetch(new Date());
-          console.log(`Successfully fetched ${videosData.length} videos from database`);
-        } else {
-          console.warn("No videos found in database, will try to fetch new ones with high priority");
+        // Try direct query first to bypass RLS issues
+        const { data, error } = await supabase
+          .from("youtube_videos")
+          .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, category, description")
+          .is("deleted_at", null)
+          .order("uploaded_at", { ascending: false })
+          .limit(200);
+          
+        if (error) {
+          console.error("Direct database query error:", error);
+          throw error;
         }
-      } catch (error) {
-        console.error("Error fetching videos from database:", error);
-        // We'll continue anyway to try other operations
+        
+        if (data && data.length > 0) {
+          videosData = data;
+          setLastSuccessfulFetch(new Date());
+          console.log(`Successfully fetched ${videosData.length} videos directly from database`);
+        } else {
+          console.warn("No videos found in direct database query");
+          // Fall through to next approach
+        }
+      } catch (directError) {
+        console.error("Error in direct video fetch:", directError);
+        // Continue to next approach
+      }
+      
+      // If direct query failed, try fetchVideosFromDatabase with additional fallbacks
+      if (videosData.length === 0) {
+        try {
+          videosData = await fetchVideosFromDatabase();
+          
+          // If we already have videos, set successful fetch even if the next part fails
+          if (videosData.length > 0) {
+            setLastSuccessfulFetch(new Date());
+            console.log(`Successfully fetched ${videosData.length} videos from database`);
+          } else {
+            console.warn("No videos found in database, will try to fetch new ones with high priority");
+          }
+        } catch (error) {
+          console.error("Error fetching videos from database:", error);
+          // We'll continue anyway and use sample data if needed
+        }
       }
 
       // Try to get active channels, but don't fail the whole operation if this fails
@@ -82,15 +112,45 @@ export const useVideoFetcher = (): VideoFetcherResult => {
         }
       }
 
-      // Return what we have, even if it's an empty array
+      // Ensure we always return something even if it's sample data
+      if (!videosData || videosData.length === 0) {
+        console.warn("No videos data available, returning sample data");
+        videosData = getSampleVideoData(20);
+      }
+
+      // Return what we have, even if it's sample data
       return formatVideoData(videosData);
     } catch (error: any) {
       console.error("Error in video fetching process:", error);
       // For any errors, increase the fetch attempts counter
       setFetchAttempts(prev => prev + 1);
-      // For any errors, return an empty array rather than failing completely
-      return [];
+      // Generate sample data as a fallback
+      return formatVideoData(getSampleVideoData(20));
     }
+  };
+
+  const getSampleVideoData = (count: number): any[] => {
+    console.log(`Generating ${count} sample video items as fallback`);
+    const sampleData = [];
+    
+    const categories = ["music", "torah", "inspiration", "podcast", "education", "entertainment"];
+    
+    for (let i = 1; i <= count; i++) {
+      sampleData.push({
+        id: `sample-${i}`,
+        video_id: `sample-${i}`,
+        title: `Video ${i} - Unable to fetch from database, using sample data`,
+        thumbnail: "/placeholder.svg",
+        channel_name: `Sample Channel ${Math.ceil(i/2)}`,
+        channel_id: `sample-channel-${Math.ceil(i/2)}`,
+        views: i * 100,
+        uploaded_at: new Date().toISOString(),
+        category: categories[i % categories.length],
+        description: "This is a sample video description. Actual data could not be loaded."
+      });
+    }
+    
+    return sampleData;
   };
 
   const forceRefetch = async (): Promise<VideoData[]> => {

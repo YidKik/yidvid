@@ -1,6 +1,6 @@
 
 import { useQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useVideoRealtime } from "./useVideoRealtime";
 import { useVideoFetcher, VideoData } from "./useVideoFetcher";
 import { toast } from "sonner";
@@ -17,6 +17,8 @@ export interface UseVideosResult {
 }
 
 export const useVideos = (): UseVideosResult => {
+  const [retryCount, setRetryCount] = useState(0);
+  
   // Set up real-time subscription for video changes
   useVideoRealtime();
 
@@ -31,10 +33,10 @@ export const useVideos = (): UseVideosResult => {
 
   // Set up React Query with more aggressive refetching strategy
   const { data, isLoading, isFetching, error, refetch } = useQuery<VideoData[]>({
-    queryKey: ["youtube_videos"],
+    queryKey: ["youtube_videos", retryCount], // Add retryCount to force refetch
     queryFn: fetchAllVideos,
-    refetchInterval: 10 * 60 * 1000, // Refetch every 10 minutes (more aggressive)
-    staleTime: 2 * 60 * 1000, // Consider data stale after 2 minutes (more aggressive)
+    refetchInterval: 5 * 60 * 1000, // Refetch every 5 minutes (more aggressive)
+    staleTime: 1 * 60 * 1000, // Consider data stale after 1 minute (more aggressive)
     gcTime: 30 * 60 * 1000, // Cache data for 30 minutes
     retry: (failureCount, error: any) => {
       // Don't retry quota errors
@@ -65,6 +67,8 @@ export const useVideos = (): UseVideosResult => {
         console.log("Retrying fetch after initial error");
         refetch().catch(retryErr => {
           console.error("Error in retry fetch:", retryErr);
+          // If still failing, increment retry counter to force a new query
+          setRetryCount(prev => prev + 1);
         });
       }, 2000);
     });
@@ -80,6 +84,8 @@ export const useVideos = (): UseVideosResult => {
       setTimeout(() => {
         forceRefetch().catch(err => {
           console.error("Error force refetching videos:", err);
+          // If still failing, increment retry counter
+          setRetryCount(prev => prev + 1);
         });
       }, 1000);
     }
@@ -89,6 +95,7 @@ export const useVideos = (): UseVideosResult => {
   const handleForceRefetch = async () => {
     try {
       toast.info("Forcing refresh of all videos...");
+      setRetryCount(prev => prev + 1);
       const freshData = await forceRefetch();
       console.log(`Force refetch completed, got ${freshData.length} videos`);
       return freshData;

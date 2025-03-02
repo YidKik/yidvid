@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { checkApiQuota } from "../useApiQuota";
 import { toast } from "sonner";
@@ -16,45 +15,58 @@ export const fetchNewVideosFromEdgeFunction = async (
   try {
     console.log(`Calling edge function to fetch new videos with ${highPriority ? 'HIGH' : 'normal'} priority...`);
     
-    const { data: response, error: fetchError } = await supabase.functions.invoke('fetch-youtube-videos', {
-      body: { 
-        channels: channelIds,
-        forceUpdate: fetchAttempts > 1 || highPriority, // Force update if attempts > 1 or high priority
-        quotaConservative: !highPriority, // Don't be conservative with quota if high priority
-        prioritizeRecent: true, // Always prioritize recently active channels
-        maxChannelsPerRun: highPriority ? 10 : 5 // Process more channels if high priority
-      }
-    });
+    // Catch edge function connection errors
+    try {
+      const { data: response, error: fetchError } = await supabase.functions.invoke('fetch-youtube-videos', {
+        body: { 
+          channels: channelIds,
+          forceUpdate: fetchAttempts > 1 || highPriority, // Force update if attempts > 1 or high priority
+          quotaConservative: !highPriority, // Don't be conservative with quota if high priority
+          prioritizeRecent: true, // Always prioritize recently active channels
+          maxChannelsPerRun: highPriority ? 10 : 5 // Process more channels if high priority
+        }
+      });
 
-    if (fetchError) {
-      console.error('Error invoking fetch-youtube-videos:', fetchError);
-      setFetchAttempts(prev => prev + 1);
-      return { success: false, message: fetchError.message };
-    }
-    
-    console.log('Fetch response:', response);
-    
-    if (response?.success) {
-      console.log(`Successfully processed ${response.processed} channels, found ${response.newVideos} new videos`);
-      setFetchAttempts(0);
-      setLastSuccessfulFetch(new Date());
-      
-      if (response.newVideos > 0) {
-        toast.success(`Found ${response.newVideos} new videos!`);
-      } else {
-        toast.info("You're up to date! No new videos found.");
+      if (fetchError) {
+        console.error('Error invoking fetch-youtube-videos:', fetchError);
+        setFetchAttempts(prev => prev + 1);
+        
+        // Don't show error toast if it's a network error, as this is likely a temporary issue
+        if (!fetchError.message?.includes('Failed to fetch')) {
+          toast.error("Failed to connect to video service. Using cached data.");
+        }
+        
+        return { success: false, message: fetchError.message };
       }
       
-      return { success: true };
-    } else if (response?.quota_reset_at) {
-      const resetTime = new Date(response.quota_reset_at);
-      const message = `YouTube quota limited. Full service will resume at ${resetTime.toLocaleString()}`;
-      console.log(message);
-      toast.warning(message);
-      return { success: false, message };
-    } else if (response?.message) {
-      toast.error(response.message);
-      return { success: false, message: response.message };
+      console.log('Fetch response:', response);
+      
+      if (response?.success) {
+        console.log(`Successfully processed ${response.processed} channels, found ${response.newVideos} new videos`);
+        setFetchAttempts(0);
+        setLastSuccessfulFetch(new Date());
+        
+        if (response.newVideos > 0) {
+          toast.success(`Found ${response.newVideos} new videos!`);
+        } else {
+          toast.info("You're up to date! No new videos found.");
+        }
+        
+        return { success: true };
+      } else if (response?.quota_reset_at) {
+        const resetTime = new Date(response.quota_reset_at);
+        const message = `YouTube quota limited. Full service will resume at ${resetTime.toLocaleString()}`;
+        console.log(message);
+        toast.warning(message);
+        return { success: false, message };
+      } else if (response?.message) {
+        toast.error(response.message);
+        return { success: false, message: response.message };
+      }
+    } catch (edgeError) {
+      console.error("Edge function connection error:", edgeError);
+      // Don't show a toast for connection errors
+      return { success: false, message: "Connection error with video service" };
     }
     
     return { success: false, message: "Unknown error fetching videos" };

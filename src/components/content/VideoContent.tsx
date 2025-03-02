@@ -6,7 +6,7 @@ import { DesktopVideoView } from "./DesktopVideoView";
 import { VideoData } from "@/hooks/video/useVideoFetcher";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { RefreshCw } from "lucide-react";
+import { RefreshCw, AlertCircle } from "lucide-react";
 
 interface VideoContentProps {
   videos: VideoData[];
@@ -87,6 +87,25 @@ export const VideoContent = ({
 
   // Always show force fetch button
   const showForceFetchButton = forceRefetch !== undefined;
+
+  // Show empty state with refresh button if no videos
+  if ((!videos || videos.length === 0) && !isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
+        <AlertCircle className="h-12 w-12 text-orange-500 mb-4" />
+        <h3 className="text-lg font-semibold mb-2">No videos available</h3>
+        <p className="text-muted-foreground mb-6">We couldn't find any videos. Please try refreshing.</p>
+        <Button 
+          onClick={handleForceRefetch} 
+          disabled={isRefreshing}
+          className="flex items-center gap-2"
+        >
+          <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+          Refresh All Videos
+        </Button>
+      </div>
+    );
+  }
 
   if (isMobile) {
     return (
