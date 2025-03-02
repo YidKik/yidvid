@@ -3,7 +3,6 @@ import { VideoGrid } from "@/components/VideoGrid";
 import { VideoGridPagination } from "@/components/video/VideoGridPagination";
 import { MostViewedVideos } from "@/components/video/MostViewedVideos";
 import { ChannelsGrid } from "@/components/youtube/ChannelsGrid";
-import { VideoAlertStatus } from "./VideoAlertStatus";
 import { VideoData } from "@/hooks/video/useVideoFetcher";
 import { useState, useEffect } from "react";
 
@@ -12,17 +11,15 @@ interface DesktopVideoViewProps {
   isLoading: boolean;
   isRefreshing: boolean;
   refetch?: () => Promise<any>;
-  lastSuccessfulFetch: Date | null;
-  fetchAttempts: number;
+  lastSuccessfulFetch?: Date | null;
+  fetchAttempts?: number;
 }
 
 export const DesktopVideoView = ({
   videos,
   isLoading,
   isRefreshing,
-  refetch,
-  lastSuccessfulFetch,
-  fetchAttempts
+  refetch
 }: DesktopVideoViewProps) => {
   const [currentPage, setCurrentPage] = useState(1);
   const videosPerPage = 12;
@@ -45,14 +42,6 @@ export const DesktopVideoView = ({
 
   return (
     <div className="space-y-6">
-      <VideoAlertStatus
-        isRefreshing={isRefreshing}
-        fetchAttempts={fetchAttempts}
-        lastSuccessfulFetch={lastSuccessfulFetch}
-        refetch={refetch}
-        isLoading={isLoading}
-      />
-
       <div className="video-grid relative">
         <VideoGrid 
           videos={displayVideos}

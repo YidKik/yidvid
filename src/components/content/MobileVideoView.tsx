@@ -3,7 +3,6 @@ import { VideoGrid } from "@/components/VideoGrid";
 import { VideoGridPagination } from "@/components/video/VideoGridPagination";
 import { MostViewedVideos } from "@/components/video/MostViewedVideos";
 import { ChannelsGrid } from "@/components/youtube/ChannelsGrid";
-import { VideoAlertStatus } from "./VideoAlertStatus";
 import { VideoData } from "@/hooks/video/useVideoFetcher";
 import { useState } from "react";
 
@@ -12,17 +11,15 @@ interface MobileVideoViewProps {
   isLoading: boolean;
   isRefreshing: boolean;
   refetch?: () => Promise<any>;
-  lastSuccessfulFetch: Date | null;
-  fetchAttempts: number;
+  lastSuccessfulFetch?: Date | null;
+  fetchAttempts?: number;
 }
 
 export const MobileVideoView = ({
   videos,
   isLoading,
   isRefreshing,
-  refetch,
-  lastSuccessfulFetch,
-  fetchAttempts
+  refetch
 }: MobileVideoViewProps) => {
   const [showMoreMobile, setShowMoreMobile] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -42,15 +39,6 @@ export const MobileVideoView = ({
 
   return (
     <div className="space-y-4 -mt-2">
-      <VideoAlertStatus
-        isRefreshing={isRefreshing}
-        fetchAttempts={fetchAttempts}
-        lastSuccessfulFetch={lastSuccessfulFetch}
-        refetch={refetch}
-        isLoading={isLoading}
-        isMobile={true}
-      />
-
       <div>
         <VideoGrid
           videos={displayVideos}

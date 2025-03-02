@@ -37,6 +37,8 @@ export const VideoContent = ({
         isLoading={isLoading}
         isRefreshing={isRefreshing}
         refetch={handleRefetch}
+        lastSuccessfulFetch={null}
+        fetchAttempts={0}
       />
     );
   }
@@ -48,6 +50,8 @@ export const VideoContent = ({
       isLoading={isLoading}
       isRefreshing={isRefreshing}
       refetch={handleRefetch}
+      lastSuccessfulFetch={null}
+      fetchAttempts={0}
     />
   );
 };
