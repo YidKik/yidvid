@@ -37,7 +37,7 @@ export const useWelcomeData = (session: any) => {
     }
   });
 
-  const { isLoading: isLoadingVideos, isError: isVideosError } = useQuery({
+  const { data: videos, isLoading: isLoadingVideos, isError: isVideosError } = useQuery({
     queryKey: ["youtube_videos"],
     queryFn: async () => {
       console.log("Prefetching videos during welcome animation...");
@@ -50,7 +50,7 @@ export const useWelcomeData = (session: any) => {
 
         if (error) {
           console.error("Error fetching videos:", error);
-          throw error;
+          return [];
         }
 
         return (data || []).map(video => ({
@@ -71,16 +71,21 @@ export const useWelcomeData = (session: any) => {
     staleTime: 1000 * 60 * 5,
     gcTime: 1000 * 60 * 30,
     retry: 1,
+    // Silent failure - don't show errors to users
+    onError: (error) => {
+      console.error("Videos fetch error handled silently:", error);
+    }
   });
 
-  const { isLoading: isLoadingChannels, isError: isChannelsError } = useQuery({
+  const { data: channels, isLoading: isLoadingChannels, isError: isChannelsError } = useQuery({
     queryKey: ["youtube_channels"],
     queryFn: async () => {
       console.log("Prefetching channels during welcome animation...");
       try {
         const { data, error } = await supabase
           .from("youtube_channels")
-          .select("*");
+          .select("*")
+          .is("deleted_at", null);
 
         if (error) {
           console.error("Error fetching channels:", error);
@@ -94,6 +99,10 @@ export const useWelcomeData = (session: any) => {
       }
     },
     retry: 1,
+    // Silent failure - don't show errors to users
+    onError: (error) => {
+      console.error("Channels fetch error handled silently:", error);
+    }
   });
 
   // Create a fallback username if profile fetch fails
@@ -104,6 +113,8 @@ export const useWelcomeData = (session: any) => {
 
   return {
     profile,
+    channels,
+    videos,
     isLoading: isLoadingVideos || isLoadingChannels || isLoadingProfile,
     isError: isVideosError || isChannelsError,
     profileError,

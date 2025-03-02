@@ -1,7 +1,6 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
-import { toast } from "sonner";
 import { checkApiQuota } from "./useApiQuota";
 
 export interface VideoData {
@@ -33,10 +32,10 @@ export const useVideoFetcher = (): VideoFetcherResult => {
 
   const fetchAllVideos = async (): Promise<VideoData[]> => {
     console.log("Starting video fetch process...");
+    let videosData = [];
     
     try {
       // First fetch existing videos from database
-      let videosData = [];
       const { data: initialData, error: dbError } = await supabase
         .from("youtube_videos")
         .select("*")
@@ -45,10 +44,16 @@ export const useVideoFetcher = (): VideoFetcherResult => {
 
       if (dbError) {
         console.error("Error fetching videos from database:", dbError);
-        throw dbError;
+        // Don't throw, continue with empty array
+      } else {
+        videosData = initialData || [];
       }
 
-      videosData = initialData || [];
+      // If we already have videos, set successful fetch even if the next part fails
+      if (videosData.length > 0) {
+        setLastSuccessfulFetch(new Date());
+        setFetchAttempts(0);
+      }
 
       // Get all active channels
       const { data: channels, error: channelError } = await supabase
@@ -58,7 +63,7 @@ export const useVideoFetcher = (): VideoFetcherResult => {
 
       if (channelError) {
         console.error("Error fetching channels:", channelError);
-        throw channelError;
+        // Don't throw, continue with what we have
       }
 
       const channelIds = channels?.map(c => c.channel_id) || [];
@@ -77,14 +82,6 @@ export const useVideoFetcher = (): VideoFetcherResult => {
         // Only proceed if we have at least 20% of daily quota remaining (2000 units)
         if (!quotaInfo || quotaInfo.quota_remaining < 2000) {
           const resetTime = quotaInfo ? new Date(quotaInfo.quota_reset_at) : new Date();
-          
-          if (quotaInfo && quotaInfo.quota_remaining <= 0) {
-            toast.warning(`YouTube quota exceeded. Service will resume at ${resetTime.toLocaleString()}`);
-          } else {
-            toast.warning(`Low YouTube API quota remaining (${quotaInfo?.quota_remaining || 0} units). Limiting API requests until reset at ${resetTime.toLocaleString()}`);
-          }
-          
-          // Still continue with existing cached data
           console.log('Using cached video data due to quota limitations');
         } else {
           try {
@@ -107,11 +104,9 @@ export const useVideoFetcher = (): VideoFetcherResult => {
               console.log('Using existing video data due to fetch error');
             } else {
               console.log('Fetch response:', response);
-              setFetchAttempts(0);
-              setLastSuccessfulFetch(new Date());
-
+              
               if (response?.success) {
-                toast.success(`Successfully processed ${response.processed} channels, found ${response.newVideos} new videos`);
+                console.log(`Successfully processed ${response.processed} channels, found ${response.newVideos} new videos`);
                 
                 // Refetch videos after successful update
                 const { data: updatedData, error: updateError } = await supabase
@@ -125,9 +120,12 @@ export const useVideoFetcher = (): VideoFetcherResult => {
                 } else if (updatedData) {
                   videosData = updatedData;
                 }
+                
+                setFetchAttempts(0);
+                setLastSuccessfulFetch(new Date());
               } else if (response?.quota_reset_at) {
                 const resetTime = new Date(response.quota_reset_at);
-                toast.warning(`YouTube quota limited. Full service will resume at ${resetTime.toLocaleString()}`);
+                console.log(`YouTube quota limited. Full service will resume at ${resetTime.toLocaleString()}`);
               }
             }
           } catch (invocationError) {
@@ -155,8 +153,21 @@ export const useVideoFetcher = (): VideoFetcherResult => {
 
     } catch (error: any) {
       console.error("Error in video fetching process:", error);
-      toast.error('Error loading videos. Please try again later.');
-      throw error;
+      // For any errors, return what we already have instead of throwing
+      if (videosData.length > 0) {
+        return videosData.map(video => ({
+          id: video.id,
+          video_id: video.video_id,
+          title: video.title,
+          thumbnail: video.thumbnail,
+          channelName: video.channel_name,
+          channelId: video.channel_id,
+          views: video.views || 0,
+          uploadedAt: video.uploaded_at
+        }));
+      }
+      
+      return [];
     }
   };
 

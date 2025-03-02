@@ -1,3 +1,4 @@
+
 import { Header } from "@/components/Header";
 import Auth from "@/pages/Auth";
 import { useState, useEffect } from "react";
@@ -11,7 +12,6 @@ import { useVideos } from "@/hooks/video/useVideos";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useSessionManager } from "@/hooks/useSessionManager";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
 import { GlobalNotification } from "@/components/notifications/GlobalNotification";
 import { WelcomeOverlay } from "@/components/welcome/WelcomeOverlay";
 import { getPageTitle, DEFAULT_META_DESCRIPTION, DEFAULT_META_KEYWORDS, DEFAULT_META_IMAGE } from "@/utils/pageTitle";
@@ -27,17 +27,27 @@ const MainContent = () => {
   const markNotificationsAsRead = async () => {
     if (!session?.user?.id) return;
 
-    const { error } = await supabase
-      .from("video_notifications")
-      .update({ is_read: true })
-      .eq("user_id", session.user.id)
-      .eq("is_read", false);
+    try {
+      const { error } = await supabase
+        .from("video_notifications")
+        .update({ is_read: true })
+        .eq("user_id", session.user.id)
+        .eq("is_read", false);
 
-    if (error) {
-      console.error("Error marking notifications as read:", error);
-      toast.error("Failed to mark notifications as read");
+      if (error) {
+        console.error("Error marking notifications as read:", error);
+      }
+    } catch (err) {
+      console.error("Unexpected error marking notifications as read:", err);
     }
   };
+
+  // Mark notifications as read when component mounts
+  useEffect(() => {
+    if (session?.user?.id) {
+      markNotificationsAsRead();
+    }
+  }, [session?.user?.id]);
 
   return (
     <div className="flex-1">
@@ -68,6 +78,8 @@ const MainContent = () => {
                 videos={videos} 
                 isLoading={isLoading} 
                 refetch={refetch}
+                lastSuccessfulFetch={lastSuccessfulFetch}
+                fetchAttempts={fetchAttempts}
               />
             ) : (
               <MusicSection />

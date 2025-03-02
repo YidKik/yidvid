@@ -16,7 +16,9 @@ interface VideoContentProps {
 export const VideoContent = ({ 
   videos, 
   isLoading, 
-  refetch
+  refetch,
+  lastSuccessfulFetch,
+  fetchAttempts
 }: VideoContentProps) => {
   const isMobile = useIsMobile();
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -37,8 +39,8 @@ export const VideoContent = ({
         isLoading={isLoading}
         isRefreshing={isRefreshing}
         refetch={handleRefetch}
-        lastSuccessfulFetch={null}
-        fetchAttempts={0}
+        lastSuccessfulFetch={lastSuccessfulFetch}
+        fetchAttempts={fetchAttempts || 0}
       />
     );
   }
@@ -50,8 +52,8 @@ export const VideoContent = ({
       isLoading={isLoading}
       isRefreshing={isRefreshing}
       refetch={handleRefetch}
-      lastSuccessfulFetch={null}
-      fetchAttempts={0}
+      lastSuccessfulFetch={lastSuccessfulFetch}
+      fetchAttempts={fetchAttempts || 0}
     />
   );
 };
