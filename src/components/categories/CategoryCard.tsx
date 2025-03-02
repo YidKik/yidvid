@@ -1,4 +1,5 @@
 
+import React from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Music, BookOpen, Sparkles, Mic, GraduationCap, Film, PlusCircle, Tag, Heart, Star, Zap, Clock, Award, Bookmark, Smile } from "lucide-react";
