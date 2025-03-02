@@ -2,6 +2,7 @@
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Music, BookOpen, Sparkles, Mic, GraduationCap, Film, PlusCircle, Tag, Heart, Star, Zap, Clock, Award, Bookmark, Smile } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface CategoryCardProps {
   icon: string;
@@ -41,6 +42,7 @@ const simpleIcons: Record<string, React.ReactNode> = {
 
 export const CategoryCard = ({ icon, label, id, isCustomImage = false }: CategoryCardProps) => {
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   const handleClick = () => {
     navigate(`/category/${id}`);
@@ -48,17 +50,25 @@ export const CategoryCard = ({ icon, label, id, isCustomImage = false }: Categor
 
   // Get the simple icon or use default if not found
   const getSimpleIcon = (iconEmoji: string) => {
-    return simpleIcons[iconEmoji] || simpleIcons['default'];
+    const iconSize = isMobile ? 16 : 20;
+    const IconComponent = simpleIcons[iconEmoji] || simpleIcons['default'];
+    
+    // Clone the icon element with the new size
+    return React.cloneElement(IconComponent as React.ReactElement, { 
+      size: iconSize 
+    });
   };
 
-  // Animation variants for the line animation effect
+  // Animation variants for the line animation effect - adjusted for mobile
   const lineVariants = {
     initial: (custom: number) => ({
-      height: custom,
+      height: isMobile ? custom * 0.7 : custom,
       opacity: 0.6,
     }),
     animate: (custom: number) => ({
-      height: [custom, custom * 1.5, custom],
+      height: isMobile ? 
+        [custom * 0.7, custom * 0.9, custom * 0.7] : 
+        [custom, custom * 1.5, custom],
       opacity: [0.6, 1, 0.6],
       transition: {
         duration: 2,
@@ -70,17 +80,17 @@ export const CategoryCard = ({ icon, label, id, isCustomImage = false }: Categor
     }),
   };
 
-  // Animation variants for the icon
+  // Animation variants for the icon - adjusted for mobile
   const iconVariants = {
     initial: { 
       scale: 1,
       opacity: 0.9
     },
     animate: {
-      scale: [1, 1.1, 1],
+      scale: isMobile ? [1, 1.05, 1] : [1, 1.1, 1],
       opacity: [0.9, 1, 0.9],
       transition: {
-        duration: 3,
+        duration: isMobile ? 2 : 3,
         repeat: Infinity,
         repeatType: "reverse" as const,
         ease: "easeInOut",
@@ -93,7 +103,6 @@ export const CategoryCard = ({ icon, label, id, isCustomImage = false }: Categor
       whileHover={{ 
         boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1)",
         borderColor: "#d6293d",
-        // Removed the y: -4 to eliminate the rising effect
         transition: {
           type: "spring",
           stiffness: 400,
@@ -101,7 +110,7 @@ export const CategoryCard = ({ icon, label, id, isCustomImage = false }: Categor
         }
       }}
       whileTap={{ scale: 0.98 }}
-      className="rounded-xl p-2 md:p-3 cursor-pointer transition-all duration-300 h-[65px] md:h-[90px] relative backdrop-blur-sm"
+      className={`rounded-xl p-1 md:p-3 cursor-pointer transition-all duration-300 ${isMobile ? 'h-[58px]' : 'h-[90px]'} relative backdrop-blur-sm`}
       style={{
         background: categoryColors.bg,
         border: `1.5px solid ${categoryColors.border}`,
@@ -109,7 +118,7 @@ export const CategoryCard = ({ icon, label, id, isCustomImage = false }: Categor
       onClick={handleClick}
     >
       <div className="flex items-center h-full px-1">
-        <div className="flex items-center gap-2 flex-1">
+        <div className="flex items-center gap-1 md:gap-2 flex-1">
           <motion.div 
             initial="initial"
             animate="animate"
@@ -118,26 +127,26 @@ export const CategoryCard = ({ icon, label, id, isCustomImage = false }: Categor
           >
             <motion.span 
               whileHover={{
-                rotate: [0, -10, 10, -5, 5, 0],
+                rotate: [0, -5, 5, -3, 3, 0],
                 transition: {
-                  duration: 0.5
+                  duration: 0.3
                 }
               }}
-              className="text-base md:text-2xl p-1 md:p-2 rounded-lg"
+              className={`text-base md:text-2xl ${isMobile ? 'p-1' : 'p-1 md:p-2'} rounded-lg`}
               style={{
                 background: categoryColors.iconBg,
               }}
             >
               {isCustomImage ? (
                 // Replace custom image with appropriate outline icon
-                <Tag size={20} strokeWidth={1.5} color="white" />
+                <Tag size={isMobile ? 14 : 20} strokeWidth={1.5} color="white" />
               ) : (
                 getSimpleIcon(icon)
               )}
             </motion.span>
           </motion.div>
           <h3 
-            className="font-medium text-[10px] leading-tight md:text-sm line-clamp-2 max-w-[60px] md:max-w-[120px]"
+            className={`font-medium text-[9px] leading-tight md:text-sm line-clamp-2 ${isMobile ? 'max-w-[55px]' : 'max-w-[120px]'}`}
             style={{ color: categoryColors.text }}
           >
             {label}
@@ -148,31 +157,31 @@ export const CategoryCard = ({ icon, label, id, isCustomImage = false }: Categor
         <div className="flex flex-col items-center justify-center h-full">
           <div className="flex space-x-1 md:space-x-2">
             <motion.div 
-              custom={20}
+              custom={isMobile ? 15 : 20}
               variants={lineVariants}
               initial="initial"
               animate="animate"
-              className="w-[2px] md:w-[3px] rounded-full" 
+              className={`w-[1px] md:w-[3px] rounded-full`}
               style={{ 
                 background: `linear-gradient(to bottom, ${categoryColors.border}22, ${categoryColors.border}88)` 
               }}
             />
             <motion.div 
-              custom={30}
+              custom={isMobile ? 20 : 30}
               variants={lineVariants}
               initial="initial"
               animate="animate"
-              className="w-[2px] md:w-[3px] rounded-full" 
+              className={`w-[1px] md:w-[3px] rounded-full`}
               style={{ 
                 background: `linear-gradient(to bottom, ${categoryColors.border}44, ${categoryColors.border})` 
               }}
             />
             <motion.div 
-              custom={20}
+              custom={isMobile ? 15 : 20}
               variants={lineVariants}
               initial="initial"
               animate="animate"
-              className="w-[2px] md:w-[3px] rounded-full" 
+              className={`w-[1px] md:w-[3px] rounded-full`}
               style={{ 
                 background: `linear-gradient(to bottom, ${categoryColors.border}22, ${categoryColors.border}88)` 
               }}

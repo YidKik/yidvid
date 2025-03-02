@@ -99,7 +99,7 @@ export const CategorySection = () => {
     return (
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-8 max-w-[1200px] mx-auto px-4 md:px-6">
         {[...Array(4)].map((_, i) => (
-          <Skeleton key={i} className="h-[65px] md:h-[90px] rounded-xl" />
+          <Skeleton key={i} className={`${isMobile ? 'h-[58px]' : 'h-[90px]'} rounded-xl`} />
         ))}
       </div>
     );
@@ -108,9 +108,9 @@ export const CategorySection = () => {
   return (
     <div className="relative w-full py-1 md:py-2 flex justify-center">
       <div className="w-full max-w-screen-sm md:max-w-[1400px] mx-auto px-2 md:px-6">
-        <div className="overflow-hidden relative h-[65px] md:h-[150px]">
+        <div className="overflow-hidden relative h-[58px] md:h-[150px]">
           <div 
-            className="absolute left-0 top-0 w-8 md:w-48 h-full z-10" 
+            className={`absolute left-0 top-0 ${isMobile ? 'w-4' : 'w-8 md:w-48'} h-full z-10`}
             style={{
               background: `linear-gradient(to right, ${colors.backgroundColor}, ${colors.backgroundColor}00)`
             }}
@@ -120,7 +120,7 @@ export const CategorySection = () => {
             className="flex gap-2 md:gap-4 cursor-grab active:cursor-grabbing"
             drag="x"
             dragConstraints={{
-              left: -(infiniteCategories.length * (isMobile ? 100 : 300)),
+              left: -(infiniteCategories.length * (isMobile ? 75 : 300)),
               right: 0
             }}
             dragElastic={0.2}
@@ -132,7 +132,7 @@ export const CategorySection = () => {
               x: {
                 repeat: Infinity,
                 repeatType: "loop",
-                duration: 180,
+                duration: isMobile ? 120 : 180,
                 ease: "linear",
                 repeatDelay: 0
               }
@@ -145,7 +145,7 @@ export const CategorySection = () => {
             {infiniteCategories.map((category, index) => (
               <div
                 key={`${category.id}-${index}`}
-                className="w-[95px] md:w-[220px] flex-shrink-0 relative"
+                className={`${isMobile ? 'w-[75px]' : 'w-[95px] md:w-[220px]'} flex-shrink-0 relative`}
               >
                 <CategoryCard
                   id={category.id}
@@ -158,7 +158,7 @@ export const CategorySection = () => {
           </motion.div>
 
           <div 
-            className="absolute right-0 top-0 w-8 md:w-48 h-full z-10"
+            className={`absolute right-0 top-0 ${isMobile ? 'w-4' : 'w-8 md:w-48'} h-full z-10`}
             style={{
               background: `linear-gradient(to left, ${colors.backgroundColor}, ${colors.backgroundColor}00)`
             }}
