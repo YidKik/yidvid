@@ -6,8 +6,12 @@ import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { AdminDashboardCards } from "@/components/dashboard/AdminDashboardCards";
 import { BackButton } from "@/components/navigation/BackButton";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
+  const navigate = useNavigate();
+
   // First query the session
   const { data: session, isLoading: isSessionLoading } = useQuery({
     queryKey: ["session"],
@@ -24,7 +28,7 @@ export default function Dashboard() {
     queryFn: async () => {
       if (!session?.user?.id) return null;
       
-      console.log("Fetching profile for user:", session.user.id);
+      console.log("Dashboard: Fetching profile for user:", session.user.id);
       
       const { data, error } = await supabase
         .from("profiles")
@@ -38,12 +42,23 @@ export default function Dashboard() {
         throw error;
       }
 
-      console.log("Fetched profile:", data);
+      console.log("Dashboard: Fetched profile:", data);
       return data;
     },
     enabled: !!session?.user?.id,
     retry: 1,
   });
+
+  // Redirect non-admin users
+  useEffect(() => {
+    if (!isProfileLoading && !isSessionLoading && profile !== undefined) {
+      if (profile?.is_admin !== true) {
+        console.log("User is not an admin, redirecting to home", profile);
+        toast.error("You do not have access to the dashboard");
+        navigate("/");
+      }
+    }
+  }, [profile, isProfileLoading, isSessionLoading, navigate]);
 
   // Query dashboard stats only if user is admin
   const { data: stats, isLoading: isStatsLoading } = useQuery({

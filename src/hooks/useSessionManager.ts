@@ -31,14 +31,47 @@ export const useSessionManager = () => {
               queryKey: ["profile", initialSession.user.id],
               queryFn: async () => {
                 try {
-                  const { data } = await supabase
+                  const { data, error } = await supabase
                     .from("profiles")
                     .select("*")
                     .eq("id", initialSession.user.id)
                     .maybeSingle();
+                  
+                  if (error) {
+                    console.error("Error prefetching profile:", error);
+                    return null;
+                  }
+                  
+                  console.log("Prefetched profile data:", data);
                   return data;
                 } catch (err) {
                   console.error("Error prefetching profile:", err);
+                  return null;
+                }
+              },
+              retry: 1,
+            });
+            
+            // Also prefetch for user-profile (used in UserMenu)
+            queryClient.prefetchQuery({
+              queryKey: ["user-profile"],
+              queryFn: async () => {
+                try {
+                  const { data, error } = await supabase
+                    .from("profiles")
+                    .select("is_admin")
+                    .eq("id", initialSession.user.id)
+                    .single();
+                  
+                  if (error) {
+                    console.error("Error prefetching user profile:", error);
+                    return null;
+                  }
+                  
+                  console.log("Prefetched user profile (admin status):", data);
+                  return data;
+                } catch (err) {
+                  console.error("Error prefetching user profile:", err);
                   return null;
                 }
               },
@@ -58,18 +91,54 @@ export const useSessionManager = () => {
               // Clear previous user data from cache before fetching new data
               if (currentSession?.user?.id) {
                 queryClient.removeQueries({ queryKey: ["profile"] });
+                queryClient.removeQueries({ queryKey: ["user-profile"] });
+                
+                // Fetch new profile data
                 queryClient.prefetchQuery({
                   queryKey: ["profile", currentSession.user.id],
                   queryFn: async () => {
                     try {
-                      const { data } = await supabase
+                      const { data, error } = await supabase
                         .from("profiles")
                         .select("*")
                         .eq("id", currentSession.user.id)
                         .maybeSingle();
+                      
+                      if (error) {
+                        console.error("Error prefetching profile:", error);
+                        return null;
+                      }
+                      
+                      console.log("Prefetched profile data after sign in:", data);
                       return data;
                     } catch (err) {
                       console.error("Error prefetching profile:", err);
+                      return null;
+                    }
+                  },
+                  retry: 1,
+                });
+                
+                // Also prefetch for user-profile (used in UserMenu)
+                queryClient.prefetchQuery({
+                  queryKey: ["user-profile"],
+                  queryFn: async () => {
+                    try {
+                      const { data, error } = await supabase
+                        .from("profiles")
+                        .select("is_admin")
+                        .eq("id", currentSession.user.id)
+                        .single();
+                      
+                      if (error) {
+                        console.error("Error prefetching user profile:", error);
+                        return null;
+                      }
+                      
+                      console.log("Prefetched user profile (admin status) after sign in:", data);
+                      return data;
+                    } catch (err) {
+                      console.error("Error prefetching user profile:", err);
                       return null;
                     }
                   },
@@ -94,6 +163,7 @@ export const useSessionManager = () => {
               // Invalidate profile query after user update
               if (currentSession?.user?.id) {
                 queryClient.invalidateQueries({ queryKey: ["profile", currentSession.user.id] });
+                queryClient.invalidateQueries({ queryKey: ["user-profile"] });
               }
               break;
           }

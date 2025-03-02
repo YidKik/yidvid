@@ -21,26 +21,41 @@ export const UserMenu = ({ onLogout }: UserMenuProps) => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
 
-  const { data: profile } = useQuery({
+  const { data: profile, isLoading } = useQuery({
     queryKey: ["user-profile"],
     queryFn: async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.user?.id) return null;
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session?.user?.id) {
+          console.log("No session found for user profile");
+          return null;
+        }
 
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("is_admin")
-        .eq("id", session.user.id)
-        .single();
+        console.log("Fetching profile for UserMenu, user ID:", session.user.id);
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("is_admin")
+          .eq("id", session.user.id)
+          .single();
 
-      if (error) {
-        console.error("Error fetching profile:", error);
+        if (error) {
+          console.error("Error fetching profile:", error);
+          return null;
+        }
+
+        console.log("UserMenu profile data:", data);
+        return data;
+      } catch (err) {
+        console.error("Error in user-profile query:", err);
         return null;
       }
-
-      return data;
-    }
+    },
+    retry: 2,
+    refetchOnWindowFocus: false,
   });
+
+  console.log("UserMenu profile state:", { profile, isLoading });
+  const isAdmin = profile?.is_admin === true;
 
   if (isMobile) {
     return (
@@ -70,7 +85,7 @@ export const UserMenu = ({ onLogout }: UserMenuProps) => {
         align="end" 
         className="w-56 p-2 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 border shadow-lg z-50 animate-in slide-in-from-bottom-2 duration-200"
       >
-        {profile?.is_admin && (
+        {isAdmin && (
           <DropdownMenuItem 
             onClick={() => navigate("/dashboard")} 
             className="flex items-center gap-2 p-3 cursor-pointer rounded-md hover:bg-gray-100/80 transition-colors"

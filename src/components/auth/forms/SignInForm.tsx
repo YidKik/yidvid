@@ -55,20 +55,54 @@ export const SignInForm = ({ onOpenChange, isLoading, setIsLoading }: SignInForm
         
         // Clean up all previous profile data and prepare to fetch fresh data
         queryClient.removeQueries({ queryKey: ["profile"] });
+        queryClient.removeQueries({ queryKey: ["user-profile"] });
         
-        // Pre-fetch user profile in background
+        // Pre-fetch user profile in background - admin status will be part of this
         queryClient.prefetchQuery({
           queryKey: ["profile", signInData.user.id],
           queryFn: async () => {
             try {
-              const { data } = await supabase
+              const { data, error } = await supabase
                 .from("profiles")
                 .select("*")
                 .eq("id", signInData.user.id)
                 .maybeSingle();
+                
+              if (error) {
+                console.error("Error prefetching profile:", error);
+                return null;
+              }
+              
+              console.log("Prefetched profile after sign in:", data);
               return data;
             } catch (err) {
               console.error("Error prefetching profile:", err);
+              return null;
+            }
+          },
+          retry: 2,
+        });
+        
+        // Also prefetch for user-profile (used in UserMenu)
+        queryClient.prefetchQuery({
+          queryKey: ["user-profile"],
+          queryFn: async () => {
+            try {
+              const { data, error } = await supabase
+                .from("profiles")
+                .select("is_admin")
+                .eq("id", signInData.user.id)
+                .single();
+                
+              if (error) {
+                console.error("Error prefetching user-profile:", error);
+                return null;
+              }
+              
+              console.log("Prefetched user-profile after sign in:", data);
+              return data;
+            } catch (err) {
+              console.error("Error prefetching user-profile:", err);
               return null;
             }
           },

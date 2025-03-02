@@ -20,6 +20,7 @@ export const useWelcomeData = (session: any) => {
           return null;
         }
         
+        console.log("Fetched profile data:", data);
         return data;
       } catch (err) {
         console.error("Unexpected error fetching profile:", err);
