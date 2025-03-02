@@ -31,3 +31,27 @@
 .animate-spin-slow {
   animation: spin 3s linear infinite;
 }
+
+@keyframes orbital-pulse {
+  0%, 100% { 
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+  50% { 
+    transform: scale(1.2);
+    opacity: 1;
+  }
+}
+
+.animate-orbital-pulse {
+  animation: orbital-pulse 2s ease-in-out infinite;
+}
+
+@keyframes orbit {
+  0% { transform: rotate(0deg) translateX(12px) rotate(0deg); }
+  100% { transform: rotate(360deg) translateX(12px) rotate(-360deg); }
+}
+
+.animate-orbit {
+  animation: orbit 4s linear infinite;
+}

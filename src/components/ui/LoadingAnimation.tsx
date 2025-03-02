@@ -16,76 +16,146 @@ export const LoadingAnimation = ({
   className,
   text
 }: LoadingAnimationProps) => {
-  // Map sizes to pixel values
+  // Size configurations
   const sizeMap = {
     small: {
       container: "h-12 w-12",
       circle: 5,
-      gap: 2
+      gap: 2,
+      fontSize: "text-xs"
     },
     medium: {
       container: "h-16 w-16",
       circle: 6,
-      gap: 3
+      gap: 3,
+      fontSize: "text-sm"
     },
     large: {
       container: "h-24 w-24",
-      circle: 8,
-      gap: 4
+      circle: 9,
+      gap: 4,
+      fontSize: "text-base"
     }
   };
 
-  // Map colors to Tailwind classes
+  // Color configurations - using gradients for more depth
   const colorMap = {
-    primary: "bg-primary",
-    secondary: "bg-secondary",
-    accent: "bg-accent",
-    muted: "bg-muted-foreground"
+    primary: "from-primary to-primary/80",
+    secondary: "from-secondary to-secondary/80",
+    accent: "from-accent to-accent/80",
+    muted: "from-muted-foreground to-muted-foreground/50"
   };
 
   const selectedSize = sizeMap[size];
-  const circleColor = colorMap[color];
+  const selectedColor = colorMap[color];
 
-  // Animation variants
-  const circleVariants = {
-    initial: { scale: 0.7, opacity: 0.5 },
-    animate: { 
-      scale: 1, 
-      opacity: 1,
+  // Container animation
+  const containerVariants = {
+    animate: {
+      rotate: 360,
       transition: {
-        duration: 0.4,
-        yoyo: Infinity,
-        ease: "easeInOut"
+        duration: 8,
+        ease: "linear",
+        repeat: Infinity
       }
     }
   };
 
+  // Circle animation with staggered delays for orbital effect
+  const circleVariants = {
+    initial: { scale: 0.8, opacity: 0.5 },
+    animate: (i: number) => ({
+      scale: [0.8, 1.2, 0.8],
+      opacity: [0.5, 1, 0.5],
+      transition: {
+        duration: 2,
+        repeat: Infinity,
+        repeatType: "reverse" as const,
+        ease: "easeInOut",
+        delay: i * 0.2, // Staggered delay based on index
+      }
+    })
+  };
+
+  // Text fade-in animation
+  const textVariants = {
+    initial: { opacity: 0, y: 5 },
+    animate: { 
+      opacity: 1, 
+      y: 0,
+      transition: {
+        duration: 0.6,
+        delay: 0.3
+      }
+    }
+  };
+
+  // Create dots in orbital positions
+  const orbitalPositions = [
+    { angle: 0, delay: 0 },
+    { angle: 45, delay: 0.1 },
+    { angle: 90, delay: 0.2 },
+    { angle: 135, delay: 0.3 },
+    { angle: 180, delay: 0.4 },
+    { angle: 225, delay: 0.5 },
+    { angle: 270, delay: 0.6 },
+    { angle: 315, delay: 0.7 }
+  ];
+
   return (
     <div className={cn("flex flex-col items-center justify-center", className)}>
       <motion.div
-        className={cn("relative flex items-center justify-center", selectedSize.container)}
+        className={cn(
+          "relative flex items-center justify-center",
+          selectedSize.container
+        )}
+        variants={containerVariants}
+        animate="animate"
       >
-        {[...Array(4)].map((_, index) => {
-          const angle = index * (Math.PI / 2); // 90-degree spacing (4 circles)
-          const x = Math.cos(angle) * selectedSize.gap;
-          const y = Math.sin(angle) * selectedSize.gap;
+        {/* Center pulse circle */}
+        <motion.div
+          className={cn(
+            "absolute rounded-full bg-gradient-to-r z-10",
+            selectedColor
+          )}
+          style={{
+            width: selectedSize.circle * 1.5,
+            height: selectedSize.circle * 1.5,
+          }}
+          animate={{
+            scale: [1, 1.2, 1],
+            opacity: [0.7, 1, 0.7],
+          }}
+          transition={{
+            duration: 2,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        />
+
+        {/* Orbital circles */}
+        {orbitalPositions.map((pos, index) => {
+          const radians = (pos.angle * Math.PI) / 180;
+          const x = Math.cos(radians) * selectedSize.gap;
+          const y = Math.sin(radians) * selectedSize.gap;
 
           return (
             <motion.div
               key={index}
-              className={cn("absolute rounded-full", circleColor)}
+              className={cn(
+                "absolute rounded-full bg-gradient-to-r",
+                selectedColor
+              )}
               style={{
                 width: selectedSize.circle,
                 height: selectedSize.circle,
                 x: `${x}rem`,
                 y: `${y}rem`,
               }}
+              custom={index}
               variants={circleVariants}
               initial="initial"
               animate="animate"
-              transition={{
-                delay: index * 0.1, // Staggered animation
-              }}
             />
           );
         })}
@@ -93,10 +163,13 @@ export const LoadingAnimation = ({
       
       {text && (
         <motion.div 
-          className="mt-4 text-center text-muted-foreground text-sm"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
+          className={cn(
+            "mt-4 text-center text-muted-foreground", 
+            selectedSize.fontSize
+          )}
+          variants={textVariants}
+          initial="initial"
+          animate="animate"
         >
           {text}
         </motion.div>
