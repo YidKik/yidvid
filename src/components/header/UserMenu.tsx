@@ -52,10 +52,17 @@ export const UserMenu = ({ onLogout }: UserMenuProps) => {
     },
     retry: 2,
     refetchOnWindowFocus: false,
+    refetchOnMount: true,
+    staleTime: 10000, // 10 seconds
+    meta: {
+      errorMessage: "Failed to fetch user profile",
+    },
   });
 
   console.log("UserMenu profile state:", { profile, isLoading });
+  // Explicitly check if is_admin is true (strict equality)
   const isAdmin = profile?.is_admin === true;
+  console.log("Is admin user:", isAdmin);
 
   if (isMobile) {
     return (
