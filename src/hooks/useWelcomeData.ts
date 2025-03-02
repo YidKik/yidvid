@@ -11,7 +11,7 @@ export const useWelcomeData = (session: any) => {
         console.log("Fetching profile for user ID:", session?.user?.id);
         const { data, error } = await supabase
           .from("profiles")
-          .select("*")
+          .select("id, name, display_name, welcome_name, is_admin, avatar_url")
           .eq("id", session?.user?.id)
           .maybeSingle();
         
@@ -42,7 +42,7 @@ export const useWelcomeData = (session: any) => {
       try {
         const { data, error } = await supabase
           .from("youtube_videos")
-          .select("*")
+          .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at")
           .is('deleted_at', null)
           .order("uploaded_at", { ascending: false });
 
@@ -83,7 +83,7 @@ export const useWelcomeData = (session: any) => {
       try {
         const { data, error } = await supabase
           .from("youtube_channels")
-          .select("*")
+          .select("id, channel_id, title, thumbnail_url, description")
           .is("deleted_at", null);
 
         if (error) {

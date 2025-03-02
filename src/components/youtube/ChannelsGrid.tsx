@@ -43,7 +43,11 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
           .select('channel_id')
           .eq('user_id', session!.user.id);
 
-        if (error) throw error;
+        if (error) {
+          console.error('Error loading hidden channels:', error);
+          return [];
+        }
+        
         setHiddenChannels(new Set(data.map(hc => hc.channel_id)));
         return data;
       } catch (error) {
@@ -59,14 +63,16 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
     queryKey: ["youtube-channels"],
     queryFn: async () => {
       try {
+        // Only select necessary fields to avoid potential recursion issues
         const { data, error } = await supabase
           .from("youtube_channels")
-          .select("*")
+          .select("id, channel_id, title, thumbnail_url")
           .is("deleted_at", null)
           .order("title", { ascending: true });
 
         if (error) {
           console.error("Channel fetch error:", error);
+          if (onError) onError(error);
           return []; // Return empty array instead of throwing
         }
         
@@ -86,7 +92,8 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
     staleTime: 1000 * 60 * 5, // Consider data fresh for 5 minutes
     refetchOnWindowFocus: false, // Prevent unnecessary refetches
     meta: {
-      errorMessage: "Channels fetch error handled silently"
+      errorMessage: "Channels fetch error handled silently",
+      suppressToasts: true
     }
   });
 

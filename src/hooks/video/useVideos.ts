@@ -48,6 +48,14 @@ export const useVideos = (): UseVideosResult => {
     }
   });
 
+  // Force a fetch when there's no data
+  useEffect(() => {
+    if (!data || data.length === 0) {
+      console.log("No video data available, forcing refetch");
+      refetch();
+    }
+  }, [data, refetch]);
+  
   // Force an immediate fetch when mounted, but only once
   useEffect(() => {
     // We'll only force a fresh fetch if it's been more than 6 hours since last fetch
@@ -55,6 +63,7 @@ export const useVideos = (): UseVideosResult => {
                              (Date.now() - lastSuccessfulFetch.getTime() > 6 * 60 * 60 * 1000);
     
     if (shouldFetchFresh) {
+      console.log("Fetching fresh video data on mount");
       refetch();
     }
   }, [refetch, lastSuccessfulFetch]);

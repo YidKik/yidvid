@@ -17,6 +17,7 @@ import { WelcomeOverlay } from "@/components/welcome/WelcomeOverlay";
 import { getPageTitle, DEFAULT_META_DESCRIPTION, DEFAULT_META_KEYWORDS, DEFAULT_META_IMAGE } from "@/utils/pageTitle";
 import { Helmet } from "react-helmet";
 import { FetchingIssueAlert } from "@/components/notifications/FetchingIssueAlert";
+import { toast } from "sonner";
 
 const MainContent = () => {
   const [isMusic, setIsMusic] = useState(false);
@@ -36,6 +37,10 @@ const MainContent = () => {
 
       if (error) {
         console.error("Error marking notifications as read:", error);
+        // Don't show toast for policy recursion errors that we expect to happen during RLS implementation
+        if (!error.message.includes("recursion") && !error.message.includes("policy")) {
+          toast.error("Failed to mark notifications as read");
+        }
       }
     } catch (err) {
       console.error("Unexpected error marking notifications as read:", err);
@@ -48,6 +53,11 @@ const MainContent = () => {
       markNotificationsAsRead();
     }
   }, [session?.user?.id]);
+
+  // Debug log to track data availability
+  useEffect(() => {
+    console.log(`Main content rendering with ${videos?.length || 0} videos, isLoading: ${isLoading}`);
+  }, [videos, isLoading]);
 
   return (
     <div className="flex-1">
@@ -75,7 +85,7 @@ const MainContent = () => {
           >
             {!isMusic ? (
               <VideoContent 
-                videos={videos} 
+                videos={videos || []} 
                 isLoading={isLoading} 
                 refetch={refetch}
                 lastSuccessfulFetch={lastSuccessfulFetch}
