@@ -15,11 +15,10 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent 
-        className={`p-0 gap-0 border-none bg-white/95 backdrop-blur-sm shadow-2xl
-          ${isMobile 
-            ? 'w-[85%] max-w-[320px] max-h-[75vh] overflow-auto rounded-lg scale-90' 
-            : 'sm:max-w-[450px] rounded-2xl'
-          }`}
+        className={`p-0 gap-0 border-none ${isMobile 
+          ? 'bg-white/95 backdrop-blur-sm w-[85%] max-w-[320px] max-h-[75vh] overflow-auto rounded-lg scale-90 shadow-2xl' 
+          : 'sm:max-w-[550px] bg-white shadow-xl border-0 rounded-2xl overflow-hidden'
+        }`}
       > 
         <AuthHeader />
         <AuthForm onOpenChange={onOpenChange} />
