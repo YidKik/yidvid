@@ -79,10 +79,11 @@ export const HeaderActions = ({
         ) : (
           <Button 
             onClick={onAuthOpen}
-            className="h-8 text-sm px-3"
-            variant="default"
+            className="h-10 w-10 p-0 rounded-full"
+            variant="ghost"
+            size="icon"
           >
-            Login
+            <LogIn className="h-5 w-5 text-gray-600" />
           </Button>
         )}
       </div>
