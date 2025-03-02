@@ -1,10 +1,11 @@
-
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { Button } from "@/components/ui/button";
 
 interface SignInFormProps {
   onOpenChange: (open: boolean) => void;
@@ -18,6 +19,7 @@ export const SignInForm = ({ onOpenChange, isLoading, setIsLoading }: SignInForm
   const [loginError, setLoginError] = useState("");
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,24 +42,20 @@ export const SignInForm = ({ onOpenChange, isLoading, setIsLoading }: SignInForm
       if (signInError) {
         console.error("Sign in error:", signInError);
         
-        // Provide more specific error messages based on the error
         if (signInError.message === "Invalid login credentials") {
           setLoginError("Invalid email or password. Please check your credentials and try again.");
         } else {
           setLoginError(signInError.message || "Error during sign in");
         }
-        // Don't show toast error for login issues - show in the form instead
         return;
       }
 
       if (signInData?.user) {
         console.log("User signed in successfully:", signInData.user.email);
         
-        // Clean up all previous profile data and prepare to fetch fresh data
         queryClient.removeQueries({ queryKey: ["profile"] });
         queryClient.removeQueries({ queryKey: ["user-profile"] });
         
-        // Pre-fetch user profile in background - admin status will be part of this
         queryClient.prefetchQuery({
           queryKey: ["profile", signInData.user.id],
           queryFn: async () => {
@@ -83,7 +81,6 @@ export const SignInForm = ({ onOpenChange, isLoading, setIsLoading }: SignInForm
           retry: 2,
         });
         
-        // Also prefetch for user-profile (used in UserMenu)
         queryClient.prefetchQuery({
           queryKey: ["user-profile"],
           queryFn: async () => {
@@ -141,25 +138,25 @@ export const SignInForm = ({ onOpenChange, isLoading, setIsLoading }: SignInForm
   };
 
   return (
-    <form onSubmit={handleSignIn} className="space-y-3">
-      <div className="space-y-2">
+    <form onSubmit={handleSignIn} className="space-y-2">
+      <div className="space-y-1.5">
         <Input
           type="email"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="h-10 px-3 border-gray-200 bg-gray-50/50 focus:bg-white transition-all duration-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm"
+          className={`${isMobile ? 'h-9 text-xs' : 'h-10 text-sm'} px-3 border-gray-200 bg-gray-50/50 focus:bg-white transition-all duration-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary`}
           required
           disabled={isLoading}
         />
       </div>
-      <div className="space-y-2">
+      <div className="space-y-1.5">
         <Input
           type="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="h-10 px-3 border-gray-200 bg-gray-50/50 focus:bg-white transition-all duration-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm"
+          className={`${isMobile ? 'h-9 text-xs' : 'h-10 text-sm'} px-3 border-gray-200 bg-gray-50/50 focus:bg-white transition-all duration-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary`}
           required
           disabled={isLoading}
           minLength={6}
@@ -167,18 +164,18 @@ export const SignInForm = ({ onOpenChange, isLoading, setIsLoading }: SignInForm
       </div>
       
       {loginError && (
-        <div className="text-xs text-red-500 font-medium p-1.5 bg-red-50 rounded-lg">
+        <div className="text-xs text-red-500 font-medium p-1 bg-red-50 rounded-lg">
           {loginError}
         </div>
       )}
       
-      <button
+      <Button
         type="submit"
-        className="w-full h-10 bg-primary text-white rounded-lg text-sm font-medium hover:opacity-90 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02] active:scale-[0.98] disabled:hover:scale-100 shadow-md hover:shadow-lg"
+        className={`w-full ${isMobile ? 'h-8 text-xs py-0' : 'h-10 text-sm'} bg-primary text-white rounded-lg font-medium hover:opacity-90 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02] active:scale-[0.98] disabled:hover:scale-100 shadow-md hover:shadow-lg`}
         disabled={isLoading}
       >
         {isLoading ? "Signing in..." : "Sign In"}
-      </button>
+      </Button>
     </form>
   );
 };
