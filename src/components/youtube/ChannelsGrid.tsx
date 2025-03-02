@@ -24,7 +24,8 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
     queryKey: ["hidden-channels"],
     queryFn: async () => {
       try {
-        const { data: session } = await supabase.auth.getSession();
+        const { data } = await supabase.auth.getSession();
+        const session = data.session;
         
         if (session?.user?.id) {
           const { data, error } = await supabase
