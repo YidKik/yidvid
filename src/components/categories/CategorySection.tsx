@@ -99,7 +99,7 @@ export const CategorySection = () => {
     return (
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-8 max-w-[1200px] mx-auto px-4 md:px-6">
         {[...Array(4)].map((_, i) => (
-          <Skeleton key={i} className={`${isMobile ? 'h-[50px]' : 'h-[90px]'} rounded-xl`} />
+          <Skeleton key={i} className={`${isMobile ? 'h-[60px]' : 'h-[90px]'} rounded-xl`} />
         ))}
       </div>
     );
@@ -108,7 +108,7 @@ export const CategorySection = () => {
   return (
     <div className="relative w-full py-1 md:py-2 flex justify-center">
       <div className="w-full max-w-screen-sm md:max-w-[1400px] mx-auto px-2 md:px-6">
-        <div className="overflow-hidden relative h-[50px] md:h-[150px]">
+        <div className="overflow-hidden relative h-[60px] md:h-[150px]">
           <div 
             className={`absolute left-0 top-0 ${isMobile ? 'w-4' : 'w-8 md:w-48'} h-full z-10`}
             style={{
@@ -145,7 +145,7 @@ export const CategorySection = () => {
             {infiniteCategories.map((category, index) => (
               <div
                 key={`${category.id}-${index}`}
-                className={`${isMobile ? 'w-[80px]' : 'w-[95px] md:w-[220px]'} flex-shrink-0 relative`}
+                className={`${isMobile ? 'w-[90px]' : 'w-[95px] md:w-[220px]'} flex-shrink-0 relative`}
               >
                 <CategoryCard
                   id={category.id}
