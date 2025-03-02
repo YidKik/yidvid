@@ -4,7 +4,7 @@ import { VideoGridPagination } from "@/components/video/VideoGridPagination";
 import { MostViewedVideos } from "@/components/video/MostViewedVideos";
 import { ChannelsGrid } from "@/components/youtube/ChannelsGrid";
 import { VideoData } from "@/hooks/video/useVideoFetcher";
-import { useState, useEffect } from "react";
+import { useVideoPagination } from "@/hooks/video/useVideoPagination";
 
 interface DesktopVideoViewProps {
   videos: VideoData[];
@@ -21,24 +21,18 @@ export const DesktopVideoView = ({
   isRefreshing,
   refetch
 }: DesktopVideoViewProps) => {
-  const [currentPage, setCurrentPage] = useState(1);
   const videosPerPage = 12;
   
-  // Get ID of the first video before sorting
-  const firstVideoId = videos?.[0]?.id;
-  
-  const sortedVideos = videos ? [...videos]
-    .sort((a, b) => new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime())
-    .filter(video => video.id !== firstVideoId) : [];
-
-  const totalPages = Math.ceil(sortedVideos.length / videosPerPage);
-  const startIndex = (currentPage - 1) * videosPerPage;
-  const displayVideos = sortedVideos.slice(startIndex, startIndex + videosPerPage);
-
-  // Reset to first page when videos change
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [videos?.length]);
+  const {
+    sortedVideos,
+    displayVideos,
+    currentPage,
+    totalPages,
+    setCurrentPage
+  } = useVideoPagination({
+    videos,
+    videosPerPage
+  });
 
   return (
     <div className="space-y-6">

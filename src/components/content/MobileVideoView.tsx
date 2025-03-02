@@ -4,7 +4,7 @@ import { VideoGridPagination } from "@/components/video/VideoGridPagination";
 import { MostViewedVideos } from "@/components/video/MostViewedVideos";
 import { ChannelsGrid } from "@/components/youtube/ChannelsGrid";
 import { VideoData } from "@/hooks/video/useVideoFetcher";
-import { useState } from "react";
+import { useVideoPagination } from "@/hooks/video/useVideoPagination";
 
 interface MobileVideoViewProps {
   videos: VideoData[];
@@ -21,21 +21,21 @@ export const MobileVideoView = ({
   isRefreshing,
   refetch
 }: MobileVideoViewProps) => {
-  const [showMoreMobile, setShowMoreMobile] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
   const videosPerPage = 4;
-
-  // Get ID of the first video before sorting
-  const firstVideoId = videos?.[0]?.id;
   
-  const sortedVideos = videos ? [...videos]
-    .sort((a, b) => new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime())
-    .filter(video => video.id !== firstVideoId) : [];
-
-  const totalPages = Math.ceil(sortedVideos.length / videosPerPage);
-  const displayVideos = !showMoreMobile 
-    ? sortedVideos.slice(0, videosPerPage)
-    : sortedVideos.slice((currentPage - 1) * videosPerPage, currentPage * videosPerPage);
+  const {
+    sortedVideos,
+    displayVideos,
+    currentPage,
+    totalPages,
+    setCurrentPage,
+    showMoreMobile,
+    setShowMoreMobile
+  } = useVideoPagination({
+    videos,
+    videosPerPage,
+    isMobile: true
+  });
 
   return (
     <div className="space-y-4 -mt-2">
