@@ -7,6 +7,7 @@ import { useChannelsGrid, Channel } from "@/hooks/channel/useChannelsGrid";
 import { ChannelsGridSkeleton } from "./grid/ChannelsGridSkeleton";
 import { EmptyChannelsState } from "./grid/EmptyChannelsState";
 import { ChannelCard } from "./grid/ChannelCard";
+import { toast } from "sonner";
 
 interface ChannelsGridProps {
   onError?: (error: any) => void;
@@ -23,49 +24,74 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
     fetchError 
   } = useChannelsGrid();
 
-  // Fetch channels with improved error handling and caching
+  // Fetch channels with improved error handling
   const { data: channels, error, isLoading: isChannelsLoading, refetch } = useQuery({
     queryKey: ["youtube-channels"],
     queryFn: fetchChannelsDirectly,
     retry: 1,
     retryDelay: 1000,
-    staleTime: 60000,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000,   // 10 minutes
     refetchOnMount: true,
     refetchOnWindowFocus: false,
   });
 
-  // Use effect to set loading state and ensure we try fetching right away
+  // Use effect to ensure we have data to display
   useEffect(() => {
     console.log("ChannelsGrid mounted, attempting to fetch channels");
     
-    // Force immediate fetch on mount
-    refetch().catch(err => {
-      console.error("Error fetching channels on mount:", err);
-      
-      if (onError) onError(err);
-    });
+    // Force immediate fetch on mount but only if we don't have data yet
+    if (!channels?.length && !manuallyFetchedChannels?.length) {
+      refetch().catch(err => {
+        console.error("Error fetching channels on mount:", err);
+        if (onError) onError(err);
+        
+        // If error contains recursion, show a toast
+        if (err?.message?.includes('recursion detected')) {
+          toast.error("Database policy error detected. Using sample data.");
+        }
+      });
+    }
     
     // Emergency fallback - create some sample channels if nothing loads
-    if (!channels && !manuallyFetchedChannels?.length) {
+    if (!channels?.length && !manuallyFetchedChannels?.length) {
       const timer = setTimeout(() => {
         console.log("Creating fallback channels as emergency measure");
         setFallbackChannels([
           {
             id: "fallback-1",
             channel_id: "fallback-1",
-            title: "Sample Channel 1",
+            title: "Sample Channel 1 - Fallback",
             thumbnail_url: null
           },
           {
             id: "fallback-2",
             channel_id: "fallback-2",
-            title: "Sample Channel 2",
+            title: "Sample Channel 2 - Fallback",
             thumbnail_url: null
           },
           {
             id: "fallback-3",
             channel_id: "fallback-3",
-            title: "Sample Channel 3",
+            title: "Sample Channel 3 - Fallback",
+            thumbnail_url: null
+          },
+          {
+            id: "fallback-4",
+            channel_id: "fallback-4",
+            title: "Sample Channel 4 - Fallback",
+            thumbnail_url: null
+          },
+          {
+            id: "fallback-5",
+            channel_id: "fallback-5",
+            title: "Sample Channel 5 - Fallback",
+            thumbnail_url: null
+          },
+          {
+            id: "fallback-6",
+            channel_id: "fallback-6",
+            title: "Sample Channel 6 - Fallback",
             thumbnail_url: null
           }
         ]);
@@ -78,7 +104,14 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
     return () => {};
   }, []);
 
-  if (isLoading || isChannelsLoading) {
+  // Update loading state based on data
+  useEffect(() => {
+    if (channels?.length || manuallyFetchedChannels?.length || fallbackChannels?.length) {
+      setIsLoading(false);
+    }
+  }, [channels, manuallyFetchedChannels, fallbackChannels]);
+
+  if (isLoading && isChannelsLoading && !fallbackChannels.length) {
     return <ChannelsGridSkeleton />;
   }
 

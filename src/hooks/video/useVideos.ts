@@ -27,7 +27,7 @@ export const useVideos = (): UseVideosResult => {
     setFetchAttempts
   } = useVideoFetcher();
 
-  // Set up the React Query
+  // Set up the React Query with more robust error handling
   const { data, isLoading, isFetching, error, refetch } = useQuery<VideoData[]>({
     queryKey: ["youtube_videos"],
     queryFn: fetchAllVideos,
@@ -36,12 +36,14 @@ export const useVideos = (): UseVideosResult => {
     staleTime: 25 * 60 * 1000, // Consider data stale after 25 minutes
     gcTime: 1000 * 60 * 60, // Cache data for 60 minutes
     retry: (failureCount, error: any) => {
+      // Only retry once for recursion errors
+      if (error?.message?.includes('recursion detected')) return failureCount < 1;
       // Don't retry on quota exceeded
       if (error?.status === 429) return false;
-      // Retry other errors up to 3 times
-      return failureCount < 3;
+      // Retry other errors up to 2 times
+      return failureCount < 2;
     },
-    retryDelay: (attemptIndex) => Math.min(1000 * (2 ** attemptIndex), 30000), // Exponential backoff with 30s max
+    retryDelay: (attemptIndex) => Math.min(1000 * (2 ** attemptIndex), 10000), // Shorter backoff
     // Error handling
     meta: {
       errorMessage: "Failed to load videos",
@@ -52,31 +54,35 @@ export const useVideos = (): UseVideosResult => {
     refetchOnWindowFocus: false
   });
 
-  // Force a fetch when there's no data
+  // Force a fetch when there's no data, but only try once
   useEffect(() => {
     console.log("useVideos data:", data?.length || 0, "videos");
     
     if (!data || data.length === 0) {
       console.log("No video data available, triggering refetch");
-      setTimeout(() => {
-        refetch().catch(err => {
-          console.error("Error refetching videos:", err);
-          // Don't show toast for expected errors from DB policy recursion
-          if (!err.message?.includes("recursion detected")) {
-            toast.error("Failed to load videos. Please try again later.");
-          }
-        });
-      }, 1000);
+      // Only try once to avoid infinite loops with RLS policy issues
+      if (fetchAttempts < 2) {
+        setTimeout(() => {
+          refetch().catch(err => {
+            console.error("Error refetching videos:", err);
+            // Don't show toast for expected errors
+            if (!err.message?.includes("recursion detected")) {
+              toast.error("Failed to load videos. Please try again later.");
+            }
+          });
+        }, 1000);
+      } else {
+        console.log("Not retrying due to previous fetch attempts:", fetchAttempts);
+      }
     }
-  }, [data, refetch]);
+  }, [data, refetch, fetchAttempts]);
   
   // Force an immediate fetch when mounted, but only once
   useEffect(() => {
     console.log("useVideos mounted, triggering initial fetch");
-    const shouldFetchFresh = !lastSuccessfulFetch || 
-                             (Date.now() - lastSuccessfulFetch.getTime() > 6 * 60 * 60 * 1000);
-    
-    if (shouldFetchFresh) {
+    // Only fetch fresh if we haven't done so recently
+    if (!lastSuccessfulFetch || 
+        (Date.now() - lastSuccessfulFetch.getTime() > 6 * 60 * 60 * 1000)) {
       console.log("Fetching fresh video data on mount");
       refetch().catch(err => {
         console.error("Error fetching videos on mount:", err);
