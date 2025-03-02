@@ -52,6 +52,25 @@ export const getPageTitle = (path: string): string => {
   return `${baseTitle} | ${APP_NAME}`;
 };
 
+// Enhanced SEO metadata
 export const DEFAULT_META_DESCRIPTION = APP_DESCRIPTION;
 export const DEFAULT_META_KEYWORDS = "Jewish videos, Jewish content, Torah videos, Jewish music, Jewish lectures, Jewish education, Jewish media";
 export const DEFAULT_META_IMAGE = "/og-image.png";
+
+// New SEO utility functions
+export const getSEOConfig = (path: string, customConfig?: {
+  title?: string;
+  description?: string;
+  keywords?: string;
+  image?: string;
+}) => {
+  return {
+    title: customConfig?.title || getPageTitle(path),
+    description: customConfig?.description || DEFAULT_META_DESCRIPTION,
+    keywords: customConfig?.keywords || DEFAULT_META_KEYWORDS,
+    image: customConfig?.image || DEFAULT_META_IMAGE,
+    url: window.location.href,
+    siteName: APP_NAME,
+    type: path.includes('video/') ? 'video.other' : 'website'
+  };
+};

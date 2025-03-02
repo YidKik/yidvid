@@ -8,6 +8,7 @@ import { ColorProvider } from "@/contexts/ColorContext";
 import { PlaybackProvider } from "@/contexts/PlaybackContext";
 import { useEffect } from "react";
 import { getPageTitle } from "@/utils/pageTitle";
+import { Helmet } from "react-helmet";
 
 // Main pages
 import Index from "@/pages/Index";
@@ -41,35 +42,40 @@ function AppRoutes() {
   }, [location]);
 
   return (
-    <Routes>
-      {/* Public routes */}
-      <Route path="/" element={<Index />} />
-      <Route path="/auth" element={<Auth isOpen={true} onOpenChange={() => {}} />} />
-      <Route path="/category/:id" element={<CategoryVideos />} />
-      <Route path="/video/:id" element={<VideoDetails />} />
-      <Route path="/channel/:id" element={<ChannelDetails />} />
-      <Route path="/search" element={<Search />} />
-      <Route path="/music/:id" element={<MusicDetails />} />
-      
-      {/* User routes */}
-      <Route path="/dashboard" element={<Dashboard />} />
-      <Route path="/settings" element={<Settings />} />
-      
-      {/* Admin routes */}
-      <Route path="/admin">
-        <Route path="analytics" element={<AnalyticsPage />} />
-        <Route path="videos" element={<VideosPage />} />
-        <Route path="channels" element={<ChannelsPage />} />
-        <Route path="users" element={<UsersPage />} />
-        <Route path="comments" element={<CommentsPage />} />
-        <Route path="categories" element={<CategoriesPage />} />
-        <Route path="requests" element={<RequestsPage />} />
-        <Route path="contact-requests" element={<ContactRequestsPage />} />
-        <Route path="reported-videos" element={<ReportedVideosPage />} />
-        <Route path="notifications" element={<NotificationsPage />} />
-        <Route path="layout" element={<LayoutCustomizationPage />} />
-      </Route>
-    </Routes>
+    <>
+      <Helmet>
+        <title>{getPageTitle(location.pathname)}</title>
+      </Helmet>
+      <Routes>
+        {/* Public routes */}
+        <Route path="/" element={<Index />} />
+        <Route path="/auth" element={<Auth isOpen={true} onOpenChange={() => {}} />} />
+        <Route path="/category/:id" element={<CategoryVideos />} />
+        <Route path="/video/:id" element={<VideoDetails />} />
+        <Route path="/channel/:id" element={<ChannelDetails />} />
+        <Route path="/search" element={<Search />} />
+        <Route path="/music/:id" element={<MusicDetails />} />
+        
+        {/* User routes */}
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/settings" element={<Settings />} />
+        
+        {/* Admin routes */}
+        <Route path="/admin">
+          <Route path="analytics" element={<AnalyticsPage />} />
+          <Route path="videos" element={<VideosPage />} />
+          <Route path="channels" element={<ChannelsPage />} />
+          <Route path="users" element={<UsersPage />} />
+          <Route path="comments" element={<CommentsPage />} />
+          <Route path="categories" element={<CategoriesPage />} />
+          <Route path="requests" element={<RequestsPage />} />
+          <Route path="contact-requests" element={<ContactRequestsPage />} />
+          <Route path="reported-videos" element={<ReportedVideosPage />} />
+          <Route path="notifications" element={<NotificationsPage />} />
+          <Route path="layout" element={<LayoutCustomizationPage />} />
+        </Route>
+      </Routes>
+    </>
   );
 }
 
