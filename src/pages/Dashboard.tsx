@@ -14,39 +14,51 @@ export default function Dashboard() {
 
   // First query the session
   const { data: session, isLoading: isSessionLoading } = useQuery({
-    queryKey: ["session"],
+    queryKey: ["dashboard-session"],
     queryFn: async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) throw new Error("No session found");
-      return session;
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) throw new Error("No session found");
+        return session;
+      } catch (error) {
+        console.error("Session error:", error);
+        throw error;
+      }
     },
+    retry: 1,
   });
 
   // Then query the profile with better error handling
   const { data: profile, isLoading: isProfileLoading, error: profileError } = useQuery({
-    queryKey: ["profile", session?.user?.id],
+    queryKey: ["dashboard-profile", session?.user?.id],
     queryFn: async () => {
       if (!session?.user?.id) return null;
       
       console.log("Dashboard: Fetching profile for user:", session.user.id);
       
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", session.user.id)
-        .single();
+      try {
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", session.user.id)
+          .single();
 
-      if (error) {
-        console.error("Error fetching profile:", error);
-        toast.error("Failed to load user profile");
+        if (error) {
+          console.error("Error fetching profile:", error);
+          toast.error("Failed to load user profile");
+          throw error;
+        }
+
+        console.log("Dashboard: Fetched profile:", data);
+        return data;
+      } catch (error) {
+        console.error("Profile fetch error:", error);
         throw error;
       }
-
-      console.log("Dashboard: Fetched profile:", data);
-      return data;
     },
     enabled: !!session?.user?.id,
     retry: 1,
+    staleTime: 0, // Don't cache this query
   });
 
   // Redirect non-admin users
@@ -65,22 +77,33 @@ export default function Dashboard() {
     queryKey: ["dashboard-stats"],
     queryFn: async () => {
       console.log("Fetching dashboard stats...");
-      const [channelsResponse, videosResponse, commentsResponse, usersResponse] = await Promise.all([
-        supabase.from("youtube_channels").select("*", { count: "exact", head: true }),
-        supabase.from("youtube_videos").select("*", { count: "exact", head: true }),
-        supabase.from("video_comments").select("*", { count: "exact", head: true }),
-        supabase.from("profiles").select("*", { count: "exact", head: true })
-      ]);
-      
-      return {
-        totalChannels: channelsResponse.count || 0,
-        totalVideos: videosResponse.count || 0,
-        totalComments: commentsResponse.count || 0,
-        totalUsers: usersResponse.count || 0
-      };
+      try {
+        const [channelsResponse, videosResponse, commentsResponse, usersResponse] = await Promise.all([
+          supabase.from("youtube_channels").select("*", { count: "exact", head: true }),
+          supabase.from("youtube_videos").select("*", { count: "exact", head: true }),
+          supabase.from("video_comments").select("*", { count: "exact", head: true }),
+          supabase.from("profiles").select("*", { count: "exact", head: true })
+        ]);
+        
+        return {
+          totalChannels: channelsResponse.count || 0,
+          totalVideos: videosResponse.count || 0,
+          totalComments: commentsResponse.count || 0,
+          totalUsers: usersResponse.count || 0
+        };
+      } catch (error) {
+        console.error("Stats fetch error:", error);
+        return {
+          totalChannels: 0,
+          totalVideos: 0,
+          totalComments: 0,
+          totalUsers: 0
+        };
+      }
     },
     enabled: profile?.is_admin === true,
     retry: 1,
+    staleTime: 0, // Don't cache this query
   });
 
   // Query notifications only if user is admin
@@ -88,20 +111,26 @@ export default function Dashboard() {
     queryKey: ["admin-notifications"],
     queryFn: async () => {
       console.log("Fetching admin notifications...");
-      const { data: notificationsData, error } = await supabase
-        .from("admin_notifications")
-        .select("*")
-        .eq("is_read", false);
+      try {
+        const { data: notificationsData, error } = await supabase
+          .from("admin_notifications")
+          .select("*")
+          .eq("is_read", false);
 
-      if (error) {
-        console.error("Error fetching notifications:", error);
+        if (error) {
+          console.error("Error fetching notifications:", error);
+          return [];
+        }
+
+        return notificationsData;
+      } catch (error) {
+        console.error("Notifications fetch error:", error);
         return [];
       }
-
-      return notificationsData;
     },
     enabled: profile?.is_admin === true,
     refetchInterval: 30000,
+    staleTime: 0, // Don't cache this query
   });
 
   // Show loading state while checking session and profile

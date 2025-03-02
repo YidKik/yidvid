@@ -79,7 +79,6 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
           console.error("Channel fetch error:", error);
           setFetchError(error);
           if (onError) onError(error);
-          // Instead of returning empty, we'll do a manual fetch below
           throw error;
         }
         
@@ -98,7 +97,7 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
         manualFetchChannels();
       }
     },
-    staleTime: 1000 * 60 * 2, // Consider data fresh for 2 minutes
+    staleTime: 0, // Don't cache to always get fresh channels
     refetchOnMount: true,
     refetchOnWindowFocus: false,
   });
@@ -133,12 +132,17 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
 
   // Use effect to set loading state
   useEffect(() => {
+    // Force immediate fetch on mount
+    refetch().catch(err => {
+      console.error("Error fetching channels on mount:", err);
+    });
+    
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 2000);
 
     return () => clearTimeout(timer);
-  }, [channels]);
+  }, []);
 
   // If we have manually fetched channels, use those
   const displayChannels = channels || manuallyFetchedChannels;

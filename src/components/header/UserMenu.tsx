@@ -21,10 +21,12 @@ export const UserMenu = ({ onLogout }: UserMenuProps) => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
 
+  // Fetch user profile to determine admin status
   const { data: profile, isLoading } = useQuery({
     queryKey: ["user-profile"],
     queryFn: async () => {
       try {
+        // Get current session
         const { data: { session } } = await supabase.auth.getSession();
         if (!session?.user?.id) {
           console.log("No session found for user profile");
@@ -32,6 +34,8 @@ export const UserMenu = ({ onLogout }: UserMenuProps) => {
         }
 
         console.log("Fetching profile for UserMenu, user ID:", session.user.id);
+        
+        // Get profile with admin status
         const { data, error } = await supabase
           .from("profiles")
           .select("is_admin")
@@ -52,14 +56,11 @@ export const UserMenu = ({ onLogout }: UserMenuProps) => {
     },
     retry: 2,
     refetchOnWindowFocus: false,
-    refetchOnMount: true,
-    staleTime: 10000, // 10 seconds
-    meta: {
-      errorMessage: "Failed to fetch user profile",
-    },
+    staleTime: 0, // Don't cache this query to always get fresh admin status
   });
 
   console.log("UserMenu profile state:", { profile, isLoading });
+  
   // Explicitly check if is_admin is true (strict equality)
   const isAdmin = profile?.is_admin === true;
   console.log("Is admin user:", isAdmin);

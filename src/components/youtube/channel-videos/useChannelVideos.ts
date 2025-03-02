@@ -2,7 +2,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Video } from "@/types/channel-videos";
-import { checkApiQuota } from "@/hooks/video/useApiQuota";
 import { toast } from "sonner";
 
 export const useChannelVideos = (channelId: string) => {
@@ -46,23 +45,6 @@ export const useChannelVideos = (channelId: string) => {
           throw error;
         }
 
-        // Try to get the channel's custom category mappings
-        try {
-          const { data: channelCategories, error: categoriesError } = await supabase
-            .from("channel_custom_category_mappings")
-            .select("category_id")
-            .eq("channel_id", channelId);
-          
-          if (categoriesError) {
-            console.warn("Could not fetch channel custom categories:", categoriesError);
-          } else {
-            console.log("Channel has custom categories:", channelCategories?.length || 0);
-          }
-        } catch (error) {
-          console.warn("Error checking custom categories:", error);
-          // Continue execution - this is non-critical
-        }
-
         console.log("Fetched videos:", data?.length || 0);
         return data as Video[];
       } catch (error: any) {
@@ -88,7 +70,7 @@ export const useChannelVideos = (channelId: string) => {
       return failureCount < 1;
     },
     retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 10000), // Exponential backoff
-    staleTime: 1000 * 60 * 5, // Consider data fresh for 5 minutes
+    staleTime: 0, // Always get fresh data
     gcTime: 1000 * 60 * 30, // Cache for 30 minutes
     refetchOnWindowFocus: false,
   });
