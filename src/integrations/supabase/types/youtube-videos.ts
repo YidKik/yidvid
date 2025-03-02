@@ -11,7 +11,7 @@ export interface YoutubeVideosTable {
     uploaded_at: string;
     video_id: string;
     views: number | null;
-    category?: "music" | "torah" | "inspiration" | "podcast" | "education" | "entertainment" | "other" | "custom";
+    category?: "music" | "torah" | "inspiration" | "podcast" | "education" | "entertainment" | "other" | "custom" | null;
     deleted_at?: string | null;
     description?: string | null;
     last_viewed_at?: string | null;
@@ -27,7 +27,7 @@ export interface YoutubeVideosTable {
     uploaded_at: string;
     video_id: string;
     views?: number | null;
-    category?: "music" | "torah" | "inspiration" | "podcast" | "education" | "entertainment" | "other" | "custom";
+    category?: "music" | "torah" | "inspiration" | "podcast" | "education" | "entertainment" | "other" | "custom" | null;
     deleted_at?: string | null;
     description?: string | null;
     last_viewed_at?: string | null;
@@ -43,7 +43,7 @@ export interface YoutubeVideosTable {
     uploaded_at?: string;
     video_id?: string;
     views?: number | null;
-    category?: "music" | "torah" | "inspiration" | "podcast" | "education" | "entertainment" | "other" | "custom";
+    category?: "music" | "torah" | "inspiration" | "podcast" | "education" | "entertainment" | "other" | "custom" | null;
     deleted_at?: string | null;
     description?: string | null;
     last_viewed_at?: string | null;

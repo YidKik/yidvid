@@ -10,7 +10,7 @@ interface Video {
   thumbnail: string;
   channelName: string;
   channelId: string;
-  views: number;
+  views: number | null;
   uploadedAt: string | Date;
 }
 
@@ -32,6 +32,8 @@ export const VideoGrid = ({
   const isMobile = useIsMobile();
   const loading = isLoading || !videos || videos.length === 0;
   const displayVideos = videos?.slice(0, maxVideos) || [];
+  
+  const gridCols = isMobile ? "grid-cols-2" : `grid-cols-${rowSize}`;
 
   return (
     <div className={cn(
@@ -50,13 +52,22 @@ export const VideoGrid = ({
       ) : (
         displayVideos.map((video) => (
           <div 
-            key={video.id}
+            key={video.id || `video-${Math.random()}`}
             className={cn(
               "w-full flex flex-col",
               isMobile && "mb-2"
             )}
           >
-            <VideoCard {...video} />
+            <VideoCard 
+              id={video.id}
+              video_id={video.video_id}
+              title={video.title || "Untitled Video"}
+              thumbnail={video.thumbnail || "/placeholder.svg"}
+              channelName={video.channelName || "Unknown Channel"}
+              channelId={video.channelId}
+              views={video.views || 0}
+              uploadedAt={video.uploadedAt}
+            />
           </div>
         ))
       )}

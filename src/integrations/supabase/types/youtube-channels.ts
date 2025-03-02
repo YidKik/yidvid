@@ -9,7 +9,7 @@ export interface YoutubeChannelsTable {
     title: string;
     updated_at: string;
     deleted_at?: string | null;
-    default_category?: "music" | "torah" | "inspiration" | "podcast" | "education" | "entertainment" | "other" | "custom";
+    default_category?: "music" | "torah" | "inspiration" | "podcast" | "education" | "entertainment" | "other" | "custom" | null;
     fetch_error?: string | null;
     last_fetch?: string | null;
   };
@@ -22,7 +22,7 @@ export interface YoutubeChannelsTable {
     title: string;
     updated_at?: string;
     deleted_at?: string | null;
-    default_category?: "music" | "torah" | "inspiration" | "podcast" | "education" | "entertainment" | "other" | "custom";
+    default_category?: "music" | "torah" | "inspiration" | "podcast" | "education" | "entertainment" | "other" | "custom" | null;
     fetch_error?: string | null;
     last_fetch?: string | null;
   };
@@ -35,7 +35,7 @@ export interface YoutubeChannelsTable {
     title?: string;
     updated_at?: string;
     deleted_at?: string | null;
-    default_category?: "music" | "torah" | "inspiration" | "podcast" | "education" | "entertainment" | "other" | "custom";
+    default_category?: "music" | "torah" | "inspiration" | "podcast" | "education" | "entertainment" | "other" | "custom" | null;
     fetch_error?: string | null;
     last_fetch?: string | null;
   };

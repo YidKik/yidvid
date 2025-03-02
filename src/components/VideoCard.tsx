@@ -7,12 +7,13 @@ import { cn } from "@/lib/utils";
 interface VideoCardProps {
   id: string;
   uuid?: string;
+  video_id?: string;
   title: string;
   thumbnail: string;
   channelName: string;
   channelThumbnail?: string;
   channelId?: string;
-  views?: number;
+  views?: number | null;
   uploadedAt: string | Date;
   hideInfo?: boolean;
 }
@@ -20,10 +21,12 @@ interface VideoCardProps {
 export const VideoCard = ({
   id,
   uuid,
+  video_id,
   title,
   thumbnail,
   channelName,
   channelThumbnail,
+  channelId,
   views,
   uploadedAt,
   hideInfo = false,
@@ -35,17 +38,18 @@ export const VideoCard = ({
     try {
       if (typeof uploadedAt === 'string') {
         return formatDistanceToNow(parseISO(uploadedAt), { addSuffix: true });
-      } else {
+      } else if (uploadedAt instanceof Date) {
         return formatDistanceToNow(uploadedAt, { addSuffix: true });
       }
+      return "recently";
     } catch (error) {
-      console.error("Date formatting error:", error);
+      console.error("Date formatting error:", error, uploadedAt);
       return "recently";
     }
   })();
 
-  const formattedViews = views ? `${views.toLocaleString()} views` : '';
-  const routeId = uuid || id;
+  const formattedViews = views ? `${views.toLocaleString()} views` : 'No views';
+  const routeId = uuid || video_id || id;
 
   // Safely handle potentially missing thumbnail URL
   const thumbnailUrl = thumbnail || "/placeholder.svg";
@@ -94,13 +98,13 @@ export const VideoCard = ({
               "font-medium line-clamp-2 text-[#030303] transition-all duration-500 ease-in-out group-hover:text-[#ea384c]",
               isMobile ? "text-[11px] leading-[13px] mb-0.5 font-roboto" : "text-sm leading-5"
             )}>
-              {title}
+              {title || "Untitled Video"}
             </h3>
             <p className={cn(
               "text-muted-foreground truncate font-roboto",
               isMobile ? "text-[9px] mt-0" : "text-[11px] mt-0.5"
             )}>
-              {channelName}
+              {channelName || "Unknown Channel"}
             </p>
             <div className={cn(
               "text-muted-foreground flex items-center space-x-1 truncate font-roboto",
