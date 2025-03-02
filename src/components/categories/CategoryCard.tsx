@@ -108,7 +108,7 @@ export const CategoryCard = ({ icon, label, id, isCustomImage = false }: Categor
         }
       }}
       whileTap={{ scale: 0.98 }}
-      className={`rounded-xl p-1 md:p-3 cursor-pointer transition-all duration-300 ${isMobile ? 'h-[58px]' : 'h-[90px]'} relative backdrop-blur-sm`}
+      className={`rounded-xl p-1 md:p-3 cursor-pointer transition-all duration-300 ${isMobile ? 'h-[55px]' : 'h-[90px]'} relative backdrop-blur-sm`}
       style={{
         background: categoryColors.bg,
         border: `1.5px solid ${categoryColors.border}`,
