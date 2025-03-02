@@ -92,9 +92,11 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
       }
     },
     retry: 1,
-    onError: () => {
-      // If the query fails, we'll attempt a manual fetch
-      manualFetchChannels();
+    meta: {
+      onError: () => {
+        // If the query fails, we'll attempt a manual fetch
+        manualFetchChannels();
+      }
     },
     staleTime: 1000 * 60 * 2, // Consider data fresh for 2 minutes
     refetchOnMount: true,
