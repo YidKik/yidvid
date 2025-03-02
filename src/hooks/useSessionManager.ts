@@ -30,14 +30,18 @@ export const useSessionManager = () => {
             queryClient.prefetchQuery({
               queryKey: ["profile", initialSession.user.id],
               queryFn: async () => {
-                const { data } = await supabase
-                  .from("profiles")
-                  .select("*")
-                  .eq("id", initialSession.user.id)
-                  .maybeSingle();
-                return data;
+                try {
+                  const { data } = await supabase
+                    .from("profiles")
+                    .select("*")
+                    .eq("id", initialSession.user.id)
+                    .maybeSingle();
+                  return data;
+                } catch (err) {
+                  console.error("Error prefetching profile:", err);
+                  return null;
+                }
               },
-              // Silent failure - don't show errors to users
               retry: 1,
             });
           }
@@ -57,12 +61,17 @@ export const useSessionManager = () => {
                 queryClient.prefetchQuery({
                   queryKey: ["profile", currentSession.user.id],
                   queryFn: async () => {
-                    const { data } = await supabase
-                      .from("profiles")
-                      .select("*")
-                      .eq("id", currentSession.user.id)
-                      .maybeSingle();
-                    return data;
+                    try {
+                      const { data } = await supabase
+                        .from("profiles")
+                        .select("*")
+                        .eq("id", currentSession.user.id)
+                        .maybeSingle();
+                      return data;
+                    } catch (err) {
+                      console.error("Error prefetching profile:", err);
+                      return null;
+                    }
                   },
                   retry: 1,
                 });

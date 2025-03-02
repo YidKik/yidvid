@@ -27,8 +27,10 @@ export const useWelcomeData = (session: any) => {
       }
     },
     retry: 1,
-    // Don't trigger error states for this query to prevent UI errors
-    useErrorBoundary: false,
+    // Don't trigger error boundaries for this query
+    meta: {
+      errorMessage: "Failed to load profile"
+    },
     // Provide a fallback on error
     onError: (error) => {
       console.error("Profile fetch error handled silently:", error);
