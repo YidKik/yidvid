@@ -37,7 +37,6 @@ export const VideoContent = ({
         toast.success("Content refreshed");
       } catch (error) {
         console.error("Error during manual refetch:", error);
-        // Don't show error toast
       } finally {
         setTimeout(() => setIsRefreshing(false), 1000);
       }
@@ -53,7 +52,6 @@ export const VideoContent = ({
         toast.success("Content completely refreshed with latest data");
       } catch (error) {
         console.error("Error during force refetch:", error);
-        // Don't show error toast
       } finally {
         setTimeout(() => setIsRefreshing(false), 1000);
       }

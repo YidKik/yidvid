@@ -101,7 +101,6 @@ export const useVideos = (): UseVideosResult => {
       return freshData;
     } catch (err) {
       console.error("Error in force refetch:", err);
-      // Don't show error toast
       return [];
     }
   };

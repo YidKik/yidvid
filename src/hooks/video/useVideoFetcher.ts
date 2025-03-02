@@ -71,7 +71,7 @@ export const useVideoFetcher = (): VideoFetcherResult => {
           }
         } catch (error) {
           console.error("Error fetching videos from database:", error);
-          // We'll continue anyway and use sample data if needed
+          // Continue to fetch with edge function
         }
       }
 
@@ -112,45 +112,15 @@ export const useVideoFetcher = (): VideoFetcherResult => {
         }
       }
 
-      // Ensure we always return something even if it's sample data
-      if (!videosData || videosData.length === 0) {
-        console.warn("No videos data available, returning sample data");
-        videosData = getSampleVideoData(20);
-      }
-
-      // Return what we have, even if it's sample data
+      // Return the data we have
       return formatVideoData(videosData);
     } catch (error: any) {
       console.error("Error in video fetching process:", error);
       // For any errors, increase the fetch attempts counter
       setFetchAttempts(prev => prev + 1);
-      // Generate sample data as a fallback
-      return formatVideoData(getSampleVideoData(20));
+      // Return an empty array instead of sample data
+      return [];
     }
-  };
-
-  const getSampleVideoData = (count: number): any[] => {
-    console.log(`Generating ${count} sample video items as fallback`);
-    const sampleData = [];
-    
-    const categories = ["music", "torah", "inspiration", "podcast", "education", "entertainment"];
-    
-    for (let i = 1; i <= count; i++) {
-      sampleData.push({
-        id: `sample-${i}`,
-        video_id: `sample-${i}`,
-        title: `Video ${i} - Content being updated, please refresh`,
-        thumbnail: "/placeholder.svg",
-        channel_name: `Sample Channel ${Math.ceil(i/2)}`,
-        channel_id: `sample-channel-${Math.ceil(i/2)}`,
-        views: i * 100,
-        uploaded_at: new Date().toISOString(),
-        category: categories[i % categories.length],
-        description: "Content is currently updating. Please refresh to see the latest videos."
-      });
-    }
-    
-    return sampleData;
   };
 
   const forceRefetch = async (): Promise<VideoData[]> => {

@@ -31,8 +31,6 @@ export const fetchNewVideosFromEdgeFunction = async (
       if (fetchError) {
         console.error('Error invoking fetch-youtube-videos:', fetchError);
         setFetchAttempts(prev => prev + 1);
-        
-        // Don't show any error toasts
         return { success: false, message: fetchError.message };
       }
       
@@ -46,7 +44,6 @@ export const fetchNewVideosFromEdgeFunction = async (
         if (response.newVideos > 0) {
           toast.success(`Found ${response.newVideos} new videos!`);
         } else {
-          // Don't show "no new videos" toast
           console.log("No new videos found");
         }
         
@@ -55,16 +52,13 @@ export const fetchNewVideosFromEdgeFunction = async (
         const resetTime = new Date(response.quota_reset_at);
         const message = `YouTube quota limited. Full service will resume at ${resetTime.toLocaleString()}`;
         console.log(message);
-        // Don't show quota warning toast
         return { success: false, message };
       } else if (response?.message) {
-        // Don't show error toast
         console.error(response.message);
         return { success: false, message: response.message };
       }
     } catch (edgeError) {
       console.error("Edge function connection error:", edgeError);
-      // Don't show a toast for connection errors
       return { success: false, message: "Connection error with video service" };
     }
     
@@ -127,7 +121,6 @@ export const tryFetchNewVideos = async (
       }
     } else {
       console.log('Using cached video data due to quota limitations');
-      // Don't show quota warning toast
     }
     
     return existingData;
