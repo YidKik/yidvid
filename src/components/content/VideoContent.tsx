@@ -5,8 +5,7 @@ import { MobileVideoView } from "./MobileVideoView";
 import { DesktopVideoView } from "./DesktopVideoView";
 import { VideoData } from "@/hooks/video/useVideoFetcher";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
-import { RefreshCw, AlertCircle } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 
 interface VideoContentProps {
   videos: VideoData[];
@@ -83,24 +82,13 @@ export const VideoContent = ({
     }
   }, [lastSuccessfulFetch, forceRefetch, isRefreshing]);
 
-  // Always show force fetch button
-  const showForceFetchButton = forceRefetch !== undefined;
-
-  // Show empty state with refresh button if no videos
+  // Show empty state without refresh button if no videos
   if ((!videos || videos.length === 0) && !isLoading) {
     return (
       <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
         <AlertCircle className="h-12 w-12 text-orange-500 mb-4" />
         <h3 className="text-lg font-semibold mb-2">No videos available</h3>
-        <p className="text-muted-foreground mb-6">We're getting your videos ready. Please try refreshing.</p>
-        <Button 
-          onClick={handleForceRefetch} 
-          disabled={isRefreshing}
-          className="flex items-center gap-2"
-        >
-          <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-          Refresh All Videos
-        </Button>
+        <p className="text-muted-foreground mb-6">We're getting your videos ready. Please check back later.</p>
       </div>
     );
   }
@@ -108,20 +96,6 @@ export const VideoContent = ({
   if (isMobile) {
     return (
       <div>
-        {showForceFetchButton && (
-          <div className="flex justify-center mb-4">
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={handleForceRefetch} 
-              disabled={isRefreshing} 
-              className="flex items-center gap-1"
-            >
-              <RefreshCw className={`h-3 w-3 ${isRefreshing ? 'animate-spin' : ''}`} /> 
-              Refresh Videos
-            </Button>
-          </div>
-        )}
         <MobileVideoView
           videos={videos || []}
           isLoading={isLoading}
@@ -138,20 +112,6 @@ export const VideoContent = ({
   // Desktop view
   return (
     <div>
-      {showForceFetchButton && (
-        <div className="flex justify-end mb-4">
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={handleForceRefetch} 
-            disabled={isRefreshing} 
-            className="flex items-center gap-1"
-          >
-            <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} /> 
-            Refresh All Videos
-          </Button>
-        </div>
-      )}
       <DesktopVideoView
         videos={videos || []}
         isLoading={isLoading}
