@@ -9,16 +9,17 @@ export const fetchVideosFromDatabase = async (): Promise<any[]> => {
   try {
     console.log("Fetching videos from database...");
     
-    // Always try a direct query first - simple query to bypass policy issues
+    // Modify the query to be simpler and explicitly exclude deleted videos
     const { data, error } = await supabase
       .from("youtube_videos")
       .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at")
+      .is("deleted_at", null)
       .order("uploaded_at", { ascending: false })
       .limit(100); // Increased limit to get more videos
 
     if (error) {
       console.error("Error fetching videos from database:", error);
-      return getSampleVideoData(10); // Return more sample data
+      return getSampleVideoData(10); // Return sample data
     }
     
     if (!data || data.length === 0) {
@@ -64,11 +65,12 @@ export const fetchActiveChannels = async (): Promise<ChannelData[]> => {
   try {
     console.log("Fetching active channels...");
     
-    // Try a simple query to avoid policy recursion issues
+    // Modify the query to explicitly exclude deleted channels
     const { data, error } = await supabase
       .from("youtube_channels")
       .select("channel_id")
-      .limit(50); // Increased limit to get more channels
+      .is("deleted_at", null)
+      .limit(50);
 
     if (error) {
       console.error("Error fetching channels:", error);
@@ -112,8 +114,9 @@ export const fetchUpdatedVideosAfterSync = async (): Promise<any[]> => {
     const { data, error } = await supabase
       .from("youtube_videos")
       .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at")
+      .is("deleted_at", null)
       .order("uploaded_at", { ascending: false })
-      .limit(100); // Increased limit for more content
+      .limit(100);
 
     if (error) {
       console.error('Error fetching updated videos:', error);

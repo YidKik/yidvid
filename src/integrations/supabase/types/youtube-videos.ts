@@ -13,6 +13,8 @@ export interface YoutubeVideosTable {
     views: number | null;
     category?: "music" | "torah" | "inspiration" | "podcast" | "education" | "entertainment" | "other" | "custom";
     deleted_at?: string | null;
+    description?: string | null;
+    last_viewed_at?: string | null;
   };
   Insert: {
     channel_id: string;
@@ -27,6 +29,8 @@ export interface YoutubeVideosTable {
     views?: number | null;
     category?: "music" | "torah" | "inspiration" | "podcast" | "education" | "entertainment" | "other" | "custom";
     deleted_at?: string | null;
+    description?: string | null;
+    last_viewed_at?: string | null;
   };
   Update: {
     channel_id?: string;
@@ -41,6 +45,8 @@ export interface YoutubeVideosTable {
     views?: number | null;
     category?: "music" | "torah" | "inspiration" | "podcast" | "education" | "entertainment" | "other" | "custom";
     deleted_at?: string | null;
+    description?: string | null;
+    last_viewed_at?: string | null;
   };
   Relationships: [
     {

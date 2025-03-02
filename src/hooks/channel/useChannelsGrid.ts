@@ -40,24 +40,12 @@ export const useChannelsGrid = () => {
       console.log("Fetching YouTube channels (attempt " + (fetchAttempts + 1) + ")");
       setFetchAttempts(prev => prev + 1);
       
-      // Try different approaches depending on previous failures
-      let query;
-      
-      if (fetchAttempts > 1) {
-        // For second+ attempts, use a very simple query
-        query = await supabase
-          .from("youtube_channels")
-          .select("id, channel_id, title, thumbnail_url")
-          .limit(50);
-      } else {
-        // First attempt, try normal query
-        query = await supabase
-          .from("youtube_channels")
-          .select("id, channel_id, title, thumbnail_url")
-          .limit(50);
-      }
-
-      const { data, error } = query;
+      // Explicitly exclude deleted channels
+      const { data, error } = await supabase
+        .from("youtube_channels")
+        .select("id, channel_id, title, thumbnail_url")
+        .is("deleted_at", null)
+        .limit(50);
 
       if (error) {
         console.error("Channel fetch error:", error);

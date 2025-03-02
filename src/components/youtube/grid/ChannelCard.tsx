@@ -25,14 +25,17 @@ export const ChannelCard = ({ id, channel_id, title, thumbnail_url, index }: Cha
         className="block mb-2 md:mb-4"
       >
         <Avatar className="w-12 h-12 md:w-24 md:h-24 transition-transform duration-300 group-hover:scale-110 cursor-pointer">
-          <AvatarImage
-            src={thumbnail_url || ''}
-            alt={title}
-            className="object-cover"
-          />
-          <AvatarFallback className="bg-primary/10">
-            <Youtube className="w-6 h-6 md:w-12 md:h-12 text-primary" />
-          </AvatarFallback>
+          {thumbnail_url ? (
+            <AvatarImage
+              src={thumbnail_url}
+              alt={title}
+              className="object-cover"
+            />
+          ) : (
+            <AvatarFallback className="bg-primary/10">
+              <Youtube className="w-6 h-6 md:w-12 md:h-12 text-primary" />
+            </AvatarFallback>
+          )}
         </Avatar>
       </Link>
       <Link 

@@ -29,12 +29,26 @@ export const VideoCard = ({
   hideInfo = false,
 }: VideoCardProps) => {
   const isMobile = useIsMobile();
-  const formattedDate = typeof uploadedAt === 'string' 
-    ? formatDistanceToNow(parseISO(uploadedAt), { addSuffix: true })
-    : formatDistanceToNow(uploadedAt, { addSuffix: true });
+  
+  // Handle date formatting more safely
+  const formattedDate = (() => {
+    try {
+      if (typeof uploadedAt === 'string') {
+        return formatDistanceToNow(parseISO(uploadedAt), { addSuffix: true });
+      } else {
+        return formatDistanceToNow(uploadedAt, { addSuffix: true });
+      }
+    } catch (error) {
+      console.error("Date formatting error:", error);
+      return "recently";
+    }
+  })();
 
   const formattedViews = views ? `${views.toLocaleString()} views` : '';
   const routeId = uuid || id;
+
+  // Safely handle potentially missing thumbnail URL
+  const thumbnailUrl = thumbnail || "/placeholder.svg";
 
   return (
     <Link 
@@ -46,10 +60,14 @@ export const VideoCard = ({
         isMobile ? "aspect-video w-full mb-0" : "aspect-video mb-2"
       )}>
         <img
-          src={thumbnail}
+          src={thumbnailUrl}
           alt={title}
           className="w-full h-full object-cover"
           loading="lazy"
+          onError={(e) => {
+            // Fallback to placeholder if image fails to load
+            (e.target as HTMLImageElement).src = "/placeholder.svg";
+          }}
         />
       </div>
       {!hideInfo && (
@@ -64,6 +82,10 @@ export const VideoCard = ({
                 alt={channelName}
                 className="w-full h-full object-cover"
                 loading="lazy"
+                onError={(e) => {
+                  // Fallback to placeholder if image fails to load
+                  (e.target as HTMLImageElement).src = "/placeholder.svg";
+                }}
               />
             </div>
           )}
