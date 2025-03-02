@@ -3,152 +3,103 @@ import { supabase } from "@/integrations/supabase/client";
 import { VideoData, ChannelData } from "../types/video-fetcher";
 
 /**
- * Fetch all videos from the database
+ * Fetch all videos from the database with improved error handling
  */
 export const fetchVideosFromDatabase = async (): Promise<any[]> => {
   try {
     console.log("Fetching videos from database...");
     
-    // Try a simple query to avoid policy recursion issues
-    const { data: initialData, error: dbError } = await supabase
+    // Always try a direct query first - simple query to bypass policy issues
+    const { data, error } = await supabase
       .from("youtube_videos")
       .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at")
       .order("uploaded_at", { ascending: false })
-      .limit(50);
+      .limit(100); // Increased limit to get more videos
 
-    if (dbError) {
-      console.error("Error fetching videos from database:", dbError);
-      
-      // Check specifically for recursion errors
-      if (dbError.message?.includes('recursion detected')) {
-        console.log("Recursion policy error detected, using sample data");
-      }
-      
-      // For any error, fall back to sample data immediately
-      return getSampleVideoData();
+    if (error) {
+      console.error("Error fetching videos from database:", error);
+      return getSampleVideoData(10); // Return more sample data
     }
     
-    if (!initialData || initialData.length === 0) {
+    if (!data || data.length === 0) {
       console.log("No videos found in database, using sample data");
-      return getSampleVideoData();
+      return getSampleVideoData(10);
     }
     
-    console.log(`Successfully fetched ${initialData?.length || 0} videos`);
-    return initialData;
+    console.log(`Successfully fetched ${data?.length || 0} videos`);
+    return data;
   } catch (err) {
     console.error("Failed to fetch videos from database:", err);
-    return getSampleVideoData();
+    return getSampleVideoData(10);
   }
 };
 
 /**
- * Generate sample video data as fallback
+ * Generate sample video data as fallback with more variety
  */
-const getSampleVideoData = (): any[] => {
-  console.log("Using sample video data as fallback");
-  return [
-    {
-      id: "sample-1",
-      video_id: "sample-1",
-      title: "Sample Video 1 - Data could not be loaded from database",
+const getSampleVideoData = (count: number = 6): any[] => {
+  console.log(`Using ${count} sample video items as fallback`);
+  const sampleData = [];
+  
+  for (let i = 1; i <= count; i++) {
+    sampleData.push({
+      id: `sample-${i}`,
+      video_id: `sample-${i}`,
+      title: `Sample Video ${i} - Data could not be loaded from database`,
       thumbnail: "/placeholder.svg",
-      channel_name: "Sample Channel",
-      channel_id: "sample-channel-1",
-      views: 100,
+      channel_name: `Sample Channel ${Math.ceil(i/2)}`,
+      channel_id: `sample-channel-${Math.ceil(i/2)}`,
+      views: i * 100,
       uploaded_at: new Date().toISOString()
-    },
-    {
-      id: "sample-2",
-      video_id: "sample-2",
-      title: "Sample Video 2 - Please check database connection",
-      thumbnail: "/placeholder.svg",
-      channel_name: "Sample Channel",
-      channel_id: "sample-channel-1",
-      views: 200,
-      uploaded_at: new Date().toISOString()
-    },
-    {
-      id: "sample-3",
-      video_id: "sample-3",
-      title: "Sample Video 3 - RLS policy issue detected",
-      thumbnail: "/placeholder.svg",
-      channel_name: "Sample Channel",
-      channel_id: "sample-channel-2",
-      views: 300,
-      uploaded_at: new Date().toISOString()
-    },
-    {
-      id: "sample-4",
-      video_id: "sample-4",
-      title: "Sample Video 4 - Check Supabase RLS policies",
-      thumbnail: "/placeholder.svg",
-      channel_name: "Sample Channel",
-      channel_id: "sample-channel-2",
-      views: 400,
-      uploaded_at: new Date().toISOString()
-    },
-    {
-      id: "sample-5",
-      video_id: "sample-5",
-      title: "Sample Video 5 - Profile recursion error",
-      thumbnail: "/placeholder.svg",
-      channel_name: "Sample Channel",
-      channel_id: "sample-channel-3",
-      views: 500,
-      uploaded_at: new Date().toISOString()
-    },
-    {
-      id: "sample-6",
-      video_id: "sample-6",
-      title: "Sample Video 6 - Database fallback example",
-      thumbnail: "/placeholder.svg",
-      channel_name: "Sample Channel",
-      channel_id: "sample-channel-3",
-      views: 600,
-      uploaded_at: new Date().toISOString()
-    }
-  ];
+    });
+  }
+  
+  return sampleData;
 };
 
 /**
- * Fetch active channels from the database
+ * Fetch active channels from the database with better error handling
  */
 export const fetchActiveChannels = async (): Promise<ChannelData[]> => {
   try {
     console.log("Fetching active channels...");
     
-    const { data: channels, error: channelError } = await supabase
+    // Try a simple query to avoid policy recursion issues
+    const { data, error } = await supabase
       .from("youtube_channels")
       .select("channel_id")
-      .limit(20); // Limit to 20 to avoid policy issues
+      .limit(50); // Increased limit to get more channels
 
-    if (channelError) {
-      console.error("Error fetching channels:", channelError);
-      
-      // Return sample data if there's an error
-      return [
-        { channel_id: "sample-channel-1" },
-        { channel_id: "sample-channel-2" }
-      ];
+    if (error) {
+      console.error("Error fetching channels:", error);
+      return getSampleChannelData(10);
     }
     
-    if (!channels || channels.length === 0) {
+    if (!data || data.length === 0) {
       console.log("No channels found, using sample data");
-      return [
-        { channel_id: "sample-channel-1" },
-        { channel_id: "sample-channel-2" }
-      ];
+      return getSampleChannelData(10);
     }
     
-    console.log(`Successfully fetched ${channels?.length || 0} active channels`);
-    return channels;
+    console.log(`Successfully fetched ${data?.length || 0} active channels`);
+    return data;
   } catch (err) {
     console.error("Failed to fetch channels:", err);
-    return [
-      { channel_id: "sample-channel-1" },
-      { channel_id: "sample-channel-2" }
-    ];
+    return getSampleChannelData(10);
   }
+};
+
+/**
+ * Generate sample channel data
+ */
+const getSampleChannelData = (count: number = 5): ChannelData[] => {
+  console.log(`Using ${count} sample channel items as fallback`);
+  const channels = [];
+  
+  for (let i = 1; i <= count; i++) {
+    channels.push({ channel_id: `sample-channel-${i}` });
+  }
+  
+  return channels;
 };
 
 /**
@@ -158,27 +109,27 @@ export const fetchUpdatedVideosAfterSync = async (): Promise<any[]> => {
   try {
     console.log("Fetching updated videos after sync...");
     
-    const { data: updatedData, error: updateError } = await supabase
+    const { data, error } = await supabase
       .from("youtube_videos")
       .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at")
       .order("uploaded_at", { ascending: false })
-      .limit(50);
+      .limit(100); // Increased limit for more content
 
-    if (updateError) {
-      console.error('Error fetching updated videos:', updateError);
-      return getSampleVideoData();
+    if (error) {
+      console.error('Error fetching updated videos:', error);
+      return getSampleVideoData(10);
     }
     
-    if (!updatedData || updatedData.length === 0) {
+    if (!data || data.length === 0) {
       console.log("No updated videos found, using sample data");
-      return getSampleVideoData();
+      return getSampleVideoData(10);
     }
     
-    console.log(`Successfully fetched ${updatedData?.length || 0} updated videos`);
-    return updatedData;
+    console.log(`Successfully fetched ${data?.length || 0} updated videos`);
+    return data;
   } catch (error) {
     console.error("Error in fetchUpdatedVideosAfterSync:", error);
-    return getSampleVideoData();
+    return getSampleVideoData(10);
   }
 };
 

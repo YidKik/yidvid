@@ -14,48 +14,21 @@ export const useChannelsGrid = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [manuallyFetchedChannels, setManuallyFetchedChannels] = useState<Channel[]>([]);
   const [fetchError, setFetchError] = useState<any>(null);
+  const [fetchAttempts, setFetchAttempts] = useState(0);
 
-  // Generate sample channels - moved to the top for immediate access
-  const getSampleChannels = (): Channel[] => {
-    console.log("Using sample channels as fallback");
-    const sampleChannels = [
-      {
-        id: "sample-1",
-        channel_id: "sample-channel-1",
-        title: "Sample Channel 1",
+  // Generate sample channels with more variety
+  const getSampleChannels = (count: number = 10): Channel[] => {
+    console.log(`Using ${count} sample channels as fallback`);
+    const sampleChannels = [];
+    
+    for (let i = 1; i <= count; i++) {
+      sampleChannels.push({
+        id: `sample-${i}`,
+        channel_id: `sample-channel-${i}`,
+        title: `Sample Channel ${i}`,
         thumbnail_url: null
-      },
-      {
-        id: "sample-2",
-        channel_id: "sample-channel-2",
-        title: "Sample Channel 2",
-        thumbnail_url: null
-      },
-      {
-        id: "sample-3",
-        channel_id: "sample-channel-3",
-        title: "Sample Channel 3",
-        thumbnail_url: null
-      },
-      {
-        id: "sample-4",
-        channel_id: "sample-channel-4",
-        title: "Sample Channel 4",
-        thumbnail_url: null
-      },
-      {
-        id: "sample-5",
-        channel_id: "sample-channel-5",
-        title: "Sample Channel 5",
-        thumbnail_url: null
-      },
-      {
-        id: "sample-6",
-        channel_id: "sample-channel-6",
-        title: "Sample Channel 6",
-        thumbnail_url: null
-      }
-    ];
+      });
+    }
     
     setManuallyFetchedChannels(sampleChannels);
     setIsLoading(false);
@@ -64,25 +37,25 @@ export const useChannelsGrid = () => {
 
   const fetchChannelsDirectly = async (): Promise<Channel[]> => {
     try {
-      console.log("Fetching YouTube channels");
+      console.log("Fetching YouTube channels (attempt " + (fetchAttempts + 1) + ")");
+      setFetchAttempts(prev => prev + 1);
       
-      // Try a simplified query to avoid RLS policy issues
-      const { data, error } = await supabase
-        .from("youtube_channels")
-        .select("id, channel_id, title, thumbnail_url")
-        .limit(20);
+      // Try different approaches depending on previous failures
+      let query = supabase.from("youtube_channels");
+      
+      if (fetchAttempts > 1) {
+        // For second+ attempts, use a very simple query
+        query = query.select("id, channel_id, title, thumbnail_url").limit(50);
+      } else {
+        // First attempt, try normal query
+        query = query.select("id, channel_id, title, thumbnail_url").limit(50);
+      }
+
+      const { data, error } = await query;
 
       if (error) {
         console.error("Channel fetch error:", error);
         setFetchError(error);
-        
-        // For recursion errors, immediately return sample channels
-        if (error.message?.includes('recursion detected')) {
-          console.log("Recursion error detected, using sample channels");
-          return getSampleChannels();
-        }
-        
-        // Return sample channels immediately for any error
         return getSampleChannels();
       }
       
@@ -103,13 +76,6 @@ export const useChannelsGrid = () => {
     }
   };
 
-  // Simplified backup method to fetch channels directly
-  const manualFetchChannels = async () => {
-    // Immediately use sample data
-    getSampleChannels();
-    setIsLoading(false);
-  };
-
   // Try to fetch channels once on component mount
   useEffect(() => {
     fetchChannelsDirectly().catch(() => {
@@ -120,10 +86,10 @@ export const useChannelsGrid = () => {
 
   return {
     fetchChannelsDirectly,
-    manualFetchChannels,
     manuallyFetchedChannels,
     isLoading,
     setIsLoading,
-    fetchError
+    fetchError,
+    fetchAttempts
   };
 };

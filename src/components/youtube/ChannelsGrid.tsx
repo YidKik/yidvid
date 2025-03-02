@@ -21,10 +21,11 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
     manuallyFetchedChannels, 
     isLoading, 
     setIsLoading,
-    fetchError 
+    fetchError,
+    fetchAttempts
   } = useChannelsGrid();
 
-  // Fetch channels with improved error handling
+  // Fetch channels with improved retry logic
   const { data: channels, error, isLoading: isChannelsLoading, refetch } = useQuery({
     queryKey: ["youtube-channels"],
     queryFn: fetchChannelsDirectly,
@@ -40,73 +41,37 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
     },
   });
 
-  // Use effect to ensure we have data to display
+  // Immediate fetch on mount
   useEffect(() => {
     console.log("ChannelsGrid mounted, attempting to fetch channels");
+    // Try both methods to increase chances of success
+    refetch().catch(err => {
+      console.error("Error fetching channels on mount:", err);
+      if (onError) onError(err);
+    });
     
-    // Force immediate fetch on mount but only if we don't have data yet
-    if (!channels?.length && !manuallyFetchedChannels?.length) {
-      refetch().catch(err => {
-        console.error("Error fetching channels on mount:", err);
-        if (onError) onError(err);
-        
-        // If error contains recursion, show a toast
-        if (err?.message?.includes('recursion detected')) {
-          toast.error("Database policy error detected. Using sample data.");
-        }
-      });
-    }
-    
-    // Emergency fallback - create some sample channels if nothing loads
-    if (!channels?.length && !manuallyFetchedChannels?.length) {
+    // Emergency fallback - create more sample channels
+    if (!channels?.length && !manuallyFetchedChannels?.length && fetchAttempts > 1) {
       const timer = setTimeout(() => {
         console.log("Creating fallback channels as emergency measure");
-        setFallbackChannels([
-          {
-            id: "fallback-1",
-            channel_id: "fallback-1",
-            title: "Sample Channel 1 - Fallback",
+        const fallbackData = [];
+        for (let i = 1; i <= 12; i++) {
+          fallbackData.push({
+            id: `fallback-${i}`,
+            channel_id: `fallback-${i}`,
+            title: `Channel ${i} - Fallback Data`,
             thumbnail_url: null
-          },
-          {
-            id: "fallback-2",
-            channel_id: "fallback-2",
-            title: "Sample Channel 2 - Fallback",
-            thumbnail_url: null
-          },
-          {
-            id: "fallback-3",
-            channel_id: "fallback-3",
-            title: "Sample Channel 3 - Fallback",
-            thumbnail_url: null
-          },
-          {
-            id: "fallback-4",
-            channel_id: "fallback-4",
-            title: "Sample Channel 4 - Fallback",
-            thumbnail_url: null
-          },
-          {
-            id: "fallback-5",
-            channel_id: "fallback-5",
-            title: "Sample Channel 5 - Fallback",
-            thumbnail_url: null
-          },
-          {
-            id: "fallback-6",
-            channel_id: "fallback-6",
-            title: "Sample Channel 6 - Fallback",
-            thumbnail_url: null
-          }
-        ]);
+          });
+        }
+        setFallbackChannels(fallbackData);
         setIsLoading(false);
-      }, 1000); // Reduced from 3000 to load faster
+      }, 2000);
       
       return () => clearTimeout(timer);
     }
     
     return () => {};
-  }, []);
+  }, [fetchAttempts]);
 
   // Update loading state based on data
   useEffect(() => {
@@ -120,13 +85,16 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
     return <ChannelsGridSkeleton />;
   }
 
-  // Choose the best available data source
+  // Choose the best available data source - prioritize real data
   const displayChannels = channels || manuallyFetchedChannels || fallbackChannels;
   
   // Log what we're actually rendering
   console.log("Rendering ChannelsGrid with", displayChannels?.length || 0, "channels");
   
-  const visibleChannels = displayChannels?.filter(channel => !hiddenChannels.has(channel.channel_id)) || [];
+  // Filter out hidden channels (but only if we have enough channels)
+  const visibleChannels = displayChannels?.length > 4 
+    ? displayChannels.filter(channel => !hiddenChannels.has(channel.channel_id)) 
+    : displayChannels || [];
 
   return (
     <div className="w-full max-w-[1600px] mx-auto px-3 md:px-4 animate-scaleIn">

@@ -19,7 +19,7 @@ export const useVideos = (): UseVideosResult => {
   // Set up real-time subscription for video changes
   useVideoRealtime();
 
-  // Initialize the video fetcher 
+  // Initialize the video fetcher with more reliable error handling
   const {
     fetchAllVideos,
     fetchAttempts,
@@ -27,25 +27,18 @@ export const useVideos = (): UseVideosResult => {
     setFetchAttempts
   } = useVideoFetcher();
 
-  // Set up the React Query with more robust error handling
+  // Set up React Query with more robust error handling and retry strategy
   const { data, isLoading, isFetching, error, refetch } = useQuery<VideoData[]>({
     queryKey: ["youtube_videos"],
     queryFn: fetchAllVideos,
-    // Refetch intervals 
-    refetchInterval: fetchAttempts > 3 ? 60 * 60 * 1000 : 30 * 60 * 1000, // 60 minutes if errors, 30 minutes normally
-    staleTime: 25 * 60 * 1000, // Consider data stale after 25 minutes
-    gcTime: 1000 * 60 * 60, // Cache data for 60 minutes
-    retry: (failureCount, error: any) => {
-      // Don't retry on recursion errors - immediately use fallback
-      if (error?.message?.includes('recursion detected')) return false;
-      // Only retry once for other policy errors
-      if (error?.message?.includes('policy')) return failureCount < 1;
-      // Don't retry on quota exceeded
-      if (error?.status === 429) return false;
-      // Retry other errors up to 2 times
+    refetchInterval: 30 * 60 * 1000, // Always refetch every 30 minutes
+    staleTime: 10 * 60 * 1000, // Consider data stale after 10 minutes
+    gcTime: 60 * 60 * 1000, // Cache data for 60 minutes
+    retry: (failureCount) => {
+      // Always retry at least once, regardless of error type
       return failureCount < 2;
     },
-    retryDelay: (attemptIndex) => Math.min(1000 * (2 ** attemptIndex), 10000), // Shorter backoff
+    retryDelay: 1000, // Shorter retry delay to get data faster
     // Error handling
     meta: {
       errorMessage: "Failed to load videos",
@@ -56,41 +49,28 @@ export const useVideos = (): UseVideosResult => {
     refetchOnWindowFocus: false
   });
 
-  // Force a fetch when there's no data, but only try once
+  // Force an immediate fetch when mounted
   useEffect(() => {
-    console.log("useVideos data:", data?.length || 0, "videos");
+    console.log("useVideos mounted, triggering immediate fetch");
+    refetch().catch(err => {
+      console.error("Error in initial video fetch:", err);
+    });
+  }, []);
+
+  // Log data for debugging
+  useEffect(() => {
+    console.log(`useVideos: ${data?.length || 0} videos available`);
     
     if (!data || data.length === 0) {
       console.log("No video data available, triggering refetch");
-      // Only try once to avoid infinite loops with RLS policy issues
-      if (fetchAttempts < 2) {
-        setTimeout(() => {
-          refetch().catch(err => {
-            console.error("Error refetching videos:", err);
-            // Don't show toast for expected errors
-            if (!err.message?.includes("recursion detected") && !err.message?.includes("policy")) {
-              toast.error("Failed to load videos. Please try again later.");
-            }
-          });
-        }, 1000);
-      } else {
-        console.log("Not retrying due to previous fetch attempts:", fetchAttempts);
-      }
+      // Try to fetch again if we have no data
+      setTimeout(() => {
+        refetch().catch(err => {
+          console.error("Error refetching videos:", err);
+        });
+      }, 1000);
     }
-  }, [data, refetch, fetchAttempts]);
-  
-  // Force an immediate fetch when mounted, but only once
-  useEffect(() => {
-    console.log("useVideos mounted, triggering initial fetch");
-    // Only fetch fresh if we haven't done so recently
-    if (!lastSuccessfulFetch || 
-        (Date.now() - lastSuccessfulFetch.getTime() > 6 * 60 * 60 * 1000)) {
-      console.log("Fetching fresh video data on mount");
-      refetch().catch(err => {
-        console.error("Error fetching videos on mount:", err);
-      });
-    }
-  }, []);
+  }, [data, refetch]);
 
   return {
     data: data || [],
