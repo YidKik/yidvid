@@ -1,6 +1,6 @@
 
 import { VideoCard } from "@/components/VideoCard";
-import { Skeleton } from "@/components/ui/skeleton";
+import { LoadingAnimation } from "@/components/ui/LoadingAnimation";
 
 interface ChannelVideosProps {
   videos: any[];
@@ -19,16 +19,12 @@ export const ChannelVideos = ({
 }: ChannelVideosProps) => {
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 md:gap-8">
-        {Array.from({ length: initialCount }).map((_, index) => (
-          <div key={index} className="space-y-2">
-            <Skeleton className="w-full aspect-video rounded-lg" />
-            <div className="space-y-2">
-              <Skeleton className="h-4 w-3/4" />
-              <Skeleton className="h-4 w-1/2" />
-            </div>
-          </div>
-        ))}
+      <div className="flex items-center justify-center min-h-[400px]">
+        <LoadingAnimation
+          size="medium"
+          color="accent"
+          text="Loading channel videos..."
+        />
       </div>
     );
   }
@@ -60,7 +56,7 @@ export const ChannelVideos = ({
       </div>
       {isLoadingMore && (
         <div className="flex justify-center mt-6 md:mt-8">
-          <p className="text-sm md:text-base text-muted-foreground">Loading more videos...</p>
+          <LoadingAnimation size="small" color="muted" />
         </div>
       )}
     </>
