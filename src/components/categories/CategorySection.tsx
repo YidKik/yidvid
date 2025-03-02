@@ -124,6 +124,53 @@ export const CategorySection = () => {
     document.addEventListener('touchend', handleTouchEnd);
   };
 
+  // Auto-scroll animation for mobile
+  useEffect(() => {
+    if (!scrollContainerRef.current || !isMobile) return;
+    
+    let animationFrameId: number;
+    let scrollPosition = 0;
+    const scrollSpeed = 1; // Adjust speed as needed
+    const container = scrollContainerRef.current;
+    
+    const scroll = () => {
+      if (!container) return;
+      
+      scrollPosition += scrollSpeed;
+      
+      // Reset when reaching the end to create infinite scroll effect
+      if (scrollPosition >= container.scrollWidth / 2) {
+        scrollPosition = 0;
+      }
+      
+      container.scrollLeft = scrollPosition;
+      animationFrameId = requestAnimationFrame(scroll);
+    };
+    
+    animationFrameId = requestAnimationFrame(scroll);
+    
+    // Pause animation on touch
+    const pauseAnimation = () => {
+      cancelAnimationFrame(animationFrameId);
+    };
+    
+    // Resume animation when touch ends
+    const resumeAnimation = () => {
+      animationFrameId = requestAnimationFrame(scroll);
+    };
+    
+    container.addEventListener('touchstart', pauseAnimation);
+    container.addEventListener('touchend', resumeAnimation);
+    
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+      if (container) {
+        container.removeEventListener('touchstart', pauseAnimation);
+        container.removeEventListener('touchend', resumeAnimation);
+      }
+    };
+  }, [isMobile]);
+
   if (categoriesLoading) {
     return (
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-8 max-w-[1200px] mx-auto px-4 md:px-6">

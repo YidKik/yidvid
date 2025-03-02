@@ -51,9 +51,17 @@
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
+    scroll-behavior: smooth;
   }
   
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
+  }
+  
+  /* Auto-scrolling container */
+  .auto-scroll-container {
+    scroll-behavior: smooth;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 }
