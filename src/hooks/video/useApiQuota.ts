@@ -29,11 +29,11 @@ export const checkApiQuota = async (): Promise<QuotaInfo | null> => {
     // Make sure all required properties are present
     if (!data) return null;
 
-    // Ensure we have all the required fields for QuotaInfo
+    // Ensure we have all the required fields for QuotaInfo interface
     // Explicitly map database record to QuotaInfo interface
     const quotaInfo: QuotaInfo = {
       api_name: data.api_name,
-      quota_limit: data.quota_limit ?? 10000, // Use default if property doesn't exist
+      quota_limit: 10000, // Default value since it doesn't exist in the database response
       quota_remaining: data.quota_remaining,
       quota_reset_at: data.quota_reset_at,
       last_reset: data.last_reset,
