@@ -22,19 +22,22 @@ export const LoadingAnimation = ({
       container: "h-12 w-12",
       circle: 5,
       gap: 2,
-      fontSize: "text-xs"
+      fontSize: "text-xs",
+      logoSize: "h-6 w-6"
     },
     medium: {
       container: "h-16 w-16",
       circle: 6,
       gap: 3,
-      fontSize: "text-sm"
+      fontSize: "text-sm",
+      logoSize: "h-8 w-8"
     },
     large: {
       container: "h-24 w-24",
       circle: 9,
       gap: 4,
-      fontSize: "text-base"
+      fontSize: "text-base",
+      logoSize: "h-12 w-12"
     }
   };
 
@@ -77,6 +80,20 @@ export const LoadingAnimation = ({
     })
   };
 
+  // Logo pulsing animation
+  const logoVariants = {
+    initial: { scale: 0.9, opacity: 0.8 },
+    animate: {
+      scale: [0.9, 1.1, 0.9],
+      opacity: [0.8, 1, 0.8],
+      transition: {
+        duration: 2.5,
+        repeat: Infinity,
+        ease: "easeInOut"
+      }
+    }
+  };
+
   // Text fade-in animation
   const textVariants = {
     initial: { opacity: 0, y: 5 },
@@ -112,26 +129,36 @@ export const LoadingAnimation = ({
         variants={containerVariants}
         animate="animate"
       >
-        {/* Center pulse circle */}
+        {/* Center logo instead of pulse circle */}
         <motion.div
-          className={cn(
-            "absolute rounded-full bg-gradient-to-r z-10",
-            selectedColor
-          )}
+          className="absolute z-10 rounded-full bg-white flex items-center justify-center overflow-hidden"
           style={{
-            width: selectedSize.circle * 1.5,
-            height: selectedSize.circle * 1.5,
+            width: selectedSize.circle * 2.5,
+            height: selectedSize.circle * 2.5,
           }}
-          animate={{
-            scale: [1, 1.2, 1],
-            opacity: [0.7, 1, 0.7],
-          }}
-          transition={{
-            duration: 2,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-        />
+          variants={logoVariants}
+          initial="initial"
+          animate="animate"
+        >
+          <img 
+            src="/lovable-uploads/e425cacb-4c3a-4d81-b4e0-77fcbf10f61c.png" 
+            alt="Site Logo"
+            className={cn("object-contain", selectedSize.logoSize)}
+            onError={(e) => {
+              console.error('Logo failed to load:', e);
+              // Fallback to a colored circle if logo fails to load
+              const target = e.currentTarget.parentElement;
+              if (target) {
+                target.innerHTML = '';
+                target.className = cn(
+                  target.className,
+                  "bg-gradient-to-r",
+                  selectedColor
+                );
+              }
+            }}
+          />
+        </motion.div>
 
         {/* Orbital circles */}
         {orbitalPositions.map((pos, index) => {
