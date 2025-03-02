@@ -1,4 +1,3 @@
-
 import { Settings, LogOut, LayoutDashboard, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -22,12 +21,10 @@ export const UserMenu = ({ onLogout }: UserMenuProps) => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
 
-  // Fetch user profile to determine admin status
   const { data: profile, isLoading } = useQuery({
     queryKey: ["user-profile"],
     queryFn: async () => {
       try {
-        // Get current session
         const { data: { session } } = await supabase.auth.getSession();
         if (!session?.user?.id) {
           console.log("No session found for user profile");
@@ -36,7 +33,6 @@ export const UserMenu = ({ onLogout }: UserMenuProps) => {
 
         console.log("Fetching profile for UserMenu, user ID:", session.user.id);
         
-        // Get profile with admin status
         const { data, error } = await supabase
           .from("profiles")
           .select("is_admin")
@@ -57,12 +53,11 @@ export const UserMenu = ({ onLogout }: UserMenuProps) => {
     },
     retry: 2,
     refetchOnWindowFocus: false,
-    staleTime: 0, // Don't cache this query to always get fresh admin status
+    staleTime: 0,
   });
 
   console.log("UserMenu profile state:", { profile, isLoading });
   
-  // Explicitly check if is_admin is true (strict equality)
   const isAdmin = profile?.is_admin === true;
   console.log("Is admin user:", isAdmin);
 
@@ -85,15 +80,14 @@ export const UserMenu = ({ onLogout }: UserMenuProps) => {
         <Button 
           variant="ghost" 
           size="icon"
-          className="h-10 w-10 rounded-full hover:bg-gray-100"
+          className="h-10 w-10"
         >
-          <Settings className="h-5 w-5 text-gray-700" />
+          <Settings className="h-5 w-5" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent 
         align="end" 
-        alignOffset={0}
-        sideOffset={8}
+        sideOffset={0}
         className="w-56 p-2 bg-white rounded-lg shadow-lg border border-gray-100"
       >
         {isAdmin && (
