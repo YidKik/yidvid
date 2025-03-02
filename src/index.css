@@ -1,2 +1,13 @@
 
 @import './styles/index.css';
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .alert-compact-text {
+    font-size: 0.75rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+}
