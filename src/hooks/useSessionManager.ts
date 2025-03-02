@@ -3,10 +3,12 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const useSessionManager = () => {
   const navigate = useNavigate();
   const [session, setSession] = useState(null);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     const initializeSession = async () => {
@@ -27,16 +29,26 @@ export const useSessionManager = () => {
           switch (event) {
             case 'SIGNED_IN':
               setSession(currentSession);
+              // Invalidate profile query to ensure fresh data
+              if (currentSession?.user?.id) {
+                queryClient.invalidateQueries({ queryKey: ["profile", currentSession.user.id] });
+              }
               break;
             case 'TOKEN_REFRESHED':
               setSession(currentSession);
               break;
             case 'SIGNED_OUT':
               setSession(null);
+              // Clear all user-related queries from cache
+              queryClient.clear();
               navigate('/');
               break;
             case 'USER_UPDATED':
               setSession(currentSession);
+              // Invalidate profile query after user update
+              if (currentSession?.user?.id) {
+                queryClient.invalidateQueries({ queryKey: ["profile", currentSession.user.id] });
+              }
               break;
           }
         });
@@ -45,22 +57,22 @@ export const useSessionManager = () => {
       } catch (error) {
         console.error("Error initializing session:", error);
         setSession(null);
-        toast.error("There was an error with authentication. Please try logging in again.");
       }
     };
 
     initializeSession();
-  }, [navigate]);
+  }, [navigate, queryClient]);
 
   const handleLogout = async () => {
     try {
       const { error } = await supabase.auth.signOut();
       if (error) {
         console.error("Error during logout:", error);
-        toast.error("There was an issue logging out");
         return;
       }
       setSession(null);
+      // Clear all query cache on logout
+      queryClient.clear();
       navigate("/");
       toast.success("Logged out successfully");
     } catch (error) {

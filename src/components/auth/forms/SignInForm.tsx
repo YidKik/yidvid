@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
@@ -50,21 +49,9 @@ export const SignInForm = ({ onOpenChange, isLoading, setIsLoading }: SignInForm
       if (signInData?.user) {
         console.log("User signed in successfully:", signInData.user.email);
         
-        // Fetch user profile after successful sign in
-        const { data: profileData, error: profileError } = await supabase
-          .from("profiles")
-          .select("*")
-          .eq("id", signInData.user.id)
-          .maybeSingle();
-
-        if (profileError) {
-          console.error("Error fetching profile:", profileError);
-          toast.error("Error loading user profile");
-          return;
-        }
-
-        // Update profile data in React Query cache
-        await queryClient.setQueryData(["profile", signInData.user.id], profileData);
+        // Instead of immediately fetching the profile, we'll just invalidate the cache
+        // to trigger a clean fetch when needed
+        queryClient.invalidateQueries({ queryKey: ["profile", signInData.user.id] });
         
         toast.success("Signed in successfully!");
         onOpenChange(false);
