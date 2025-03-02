@@ -29,12 +29,12 @@ export const ChannelControl = () => {
   } = useChannelControl();
 
   if (isLoading) {
-    return <div>Loading channels...</div>;
+    return <div className="text-sm md:text-base">Loading channels...</div>;
   }
 
   return (
-    <Card className="p-4 md:p-6 bg-[#F6F6F7]">
-      <div className="space-y-4 md:space-y-6">
+    <Card className="p-3 md:p-6 bg-[#F6F6F7]">
+      <div className="space-y-3 md:space-y-6">
         <ChannelControlHeader 
           isLocked={isLocked}
           storedPin={storedPin}
