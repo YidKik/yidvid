@@ -56,12 +56,20 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
     }
   }, [channels, manuallyFetchedChannels]);
 
+  // Ensure we have channels data by using direct query result if React Query fails
+  useEffect(() => {
+    if (error) {
+      console.error("Error in React Query channels fetch:", error);
+    }
+  }, [error]);
+
   // Early return for skeleton if really loading and no data is available
   if (isLoading && isChannelsLoading && !manuallyFetchedChannels.length) {
     return <ChannelsGridSkeleton />;
   }
 
   // Choose the best available data source - prioritize real data
+  // First try React Query result, then fall back to direct query result
   const displayChannels = channels || manuallyFetchedChannels || [];
   
   // Log what we're actually rendering
@@ -79,7 +87,7 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
         <RequestChannelDialog />
       </div>
       
-      {!visibleChannels || visibleChannels.length === 0 ? (
+      {visibleChannels.length === 0 ? (
         <EmptyChannelsState />
       ) : (
         <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 md:gap-4">

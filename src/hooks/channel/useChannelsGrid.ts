@@ -21,7 +21,7 @@ export const useChannelsGrid = () => {
       console.log("Fetching YouTube channels (attempt " + (fetchAttempts + 1) + ")");
       setFetchAttempts(prev => prev + 1);
       
-      // Explicitly exclude deleted channels
+      // Explicitly exclude deleted channels and ensure a successful query
       const { data, error } = await supabase
         .from("youtube_channels")
         .select("id, channel_id, title, thumbnail_url")
@@ -31,6 +31,19 @@ export const useChannelsGrid = () => {
       if (error) {
         console.error("Channel fetch error:", error);
         setFetchError(error);
+        
+        // Try a simpler query in case the first one failed
+        const simpleQuery = await supabase
+          .from("youtube_channels")
+          .select("id, channel_id, title, thumbnail_url")
+          .limit(50);
+          
+        if (!simpleQuery.error && simpleQuery.data && simpleQuery.data.length > 0) {
+          console.log(`Recovered with simple query: ${simpleQuery.data.length} channels`);
+          setManuallyFetchedChannels(simpleQuery.data);
+          setIsLoading(false);
+          return simpleQuery.data;
+        }
         
         // Create sample channels for fallback
         const sampleChannels: Channel[] = Array(8).fill(null).map((_, i) => ({
@@ -47,14 +60,13 @@ export const useChannelsGrid = () => {
       
       console.log(`Successfully fetched ${data?.length || 0} channels`);
       
-      // If we got channels, update our state
       if (data && data.length > 0) {
         setManuallyFetchedChannels(data);
         setIsLoading(false);
         return data;
       }
       
-      // If no data was returned, create sample channels
+      // Fallback if no data but no error either
       const sampleChannels: Channel[] = Array(8).fill(null).map((_, i) => ({
         id: `sample-${i}`,
         channel_id: `sample-channel-${i}`,

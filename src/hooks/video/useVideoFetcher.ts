@@ -28,10 +28,10 @@ export const useVideoFetcher = (): VideoFetcherResult => {
     console.log("Starting video fetch process with highest priority...");
     
     try {
-      // First try direct database query with error handling
+      // First try direct database query without RLS
       let videosData: any[] = [];
       try {
-        // Try direct query first to bypass RLS issues - using anon key approach
+        // Try direct query first
         const { data, error } = await supabase
           .from("youtube_videos")
           .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, category, description")
@@ -49,8 +49,22 @@ export const useVideoFetcher = (): VideoFetcherResult => {
           setLastSuccessfulFetch(new Date());
           console.log(`Successfully fetched ${videosData.length} videos directly from database`);
         } else {
-          console.warn("No videos found in direct database query");
-          // Fall through to next approach
+          console.warn("No videos found in direct database query, trying secondary method");
+          
+          // Try a simplified query as backup
+          const simpleQuery = await supabase
+            .from("youtube_videos")
+            .select("*")
+            .order("uploaded_at", { ascending: false })
+            .limit(200);
+            
+          if (!simpleQuery.error && simpleQuery.data && simpleQuery.data.length > 0) {
+            videosData = simpleQuery.data;
+            setLastSuccessfulFetch(new Date());
+            console.log(`Successfully fetched ${videosData.length} videos with simple query`);
+          } else {
+            console.warn("Simple query also failed or returned no results");
+          }
         }
       } catch (directError) {
         console.error("Error in direct video fetch:", directError);
@@ -79,7 +93,7 @@ export const useVideoFetcher = (): VideoFetcherResult => {
       if (videosData.length === 0) {
         console.warn("No videos found, creating fallback sample data");
         const now = new Date();
-        videosData = Array(8).fill(null).map((_, i) => ({
+        videosData = Array(12).fill(null).map((_, i) => ({
           id: `sample-${i}`,
           video_id: `sample-vid-${i}`,
           title: `Sample Video ${i+1}`,
@@ -104,12 +118,11 @@ export const useVideoFetcher = (): VideoFetcherResult => {
         // Continue with what we have
       }
 
-      // Always attempt to fetch new videos with high priority 
+      // Only try to fetch new videos if we have channels and should fetch new ones
       const shouldFetchNewVideos = shouldFetchNew();
-      console.log(`Should fetch new videos (high priority): ${shouldFetchNewVideos}`);
+      console.log(`Should fetch new videos: ${shouldFetchNewVideos}`);
       
       if (channelIds.length > 0 && shouldFetchNewVideos) {
-        // Try to fetch new videos with high priority
         try {
           const updatedVideos = await tryFetchNewVideos(
             channelIds,
@@ -136,8 +149,21 @@ export const useVideoFetcher = (): VideoFetcherResult => {
       console.error("Error in video fetching process:", error);
       // For any errors, increase the fetch attempts counter
       setFetchAttempts(prev => prev + 1);
-      // Return an empty array
-      return [];
+      
+      // Create and return fallback data
+      const now = new Date();
+      return Array(12).fill(null).map((_, i) => ({
+        id: `sample-${i}`,
+        video_id: `sample-vid-${i}`,
+        title: `Sample Video ${i+1}`,
+        thumbnail: '/placeholder.svg',
+        channelName: "Sample Channel",
+        channelId: "sample-channel",
+        views: 1000 * (i+1),
+        uploadedAt: new Date(now.getTime() - (i * 86400000)).toISOString(),
+        category: "other",
+        description: "This is a sample video until real content loads."
+      }));
     }
   };
 

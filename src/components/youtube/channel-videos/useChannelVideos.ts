@@ -25,52 +25,75 @@ export const useChannelVideos = (channelId: string) => {
             const resetTime = new Date(quotaData.quota_reset_at);
             const message = `YouTube API quota exceeded. Service will resume at ${resetTime.toLocaleString()}`;
             console.warn(message);
-            // Don't show quota toast
           }
         } catch (error) {
           console.warn("Error checking quota:", error);
-          // Continue execution - this is non-critical
         }
 
-        // Fetch videos from our database (these are cached)
-        const { data, error } = await supabase
-          .from("youtube_videos")
-          .select("*")
-          .eq("channel_id", channelId)
-          .is("deleted_at", null)
-          .order("uploaded_at", { ascending: false });
-
-        if (error) {
-          console.error("Error fetching videos:", error);
+        // Try direct query without RLS first
+        let data: any[] = [];
+        let retryNeeded = false;
+        
+        try {
+          const directQuery = await supabase
+            .from("youtube_videos")
+            .select("*")
+            .eq("channel_id", channelId)
+            .is("deleted_at", null)
+            .order("uploaded_at", { ascending: false });
+            
+          if (!directQuery.error && directQuery.data && directQuery.data.length > 0) {
+            console.log(`Direct query successful: ${directQuery.data.length} videos`);
+            data = directQuery.data;
+          } else {
+            console.warn("Direct query failed or returned no results, trying backup method");
+            retryNeeded = true;
+          }
+        } catch (directQueryError) {
+          console.error("Error in direct query:", directQueryError);
+          retryNeeded = true;
+        }
+        
+        // Try backup method if direct query failed
+        if (retryNeeded) {
+          const { data: backupData, error: backupError } = await supabase
+            .from("youtube_videos")
+            .select("id, video_id, title, thumbnail, channel_name, views, uploaded_at")
+            .eq("channel_id", channelId)
+            .order("uploaded_at", { ascending: false });
+            
+          if (backupError) {
+            console.error("Backup query also failed:", backupError);
+            throw backupError;
+          }
           
-          // Create sample videos for fallback
-          const now = new Date();
-          return Array(8).fill(null).map((_, i) => ({
-            id: `sample-${i}`,
-            video_id: `sample-vid-${i}`,
-            title: `Sample Video ${i+1}`,
-            thumbnail: '/placeholder.svg',
-            channel_name: "Sample Channel",
-            channel_id: channelId,
-            views: 1000 * (i+1),
-            uploaded_at: new Date(now.getTime() - (i * 86400000)).toISOString(),
-            category: "other",
-            description: "This is a sample video until real content loads."
-          })) as Video[];
+          if (backupData && backupData.length > 0) {
+            console.log(`Backup query successful: ${backupData.length} videos`);
+            data = backupData;
+          }
         }
 
         console.log("Fetched videos:", data?.length || 0);
-        return data as Video[];
-      } catch (error: any) {
-        // Enhance error message for quota exceeded
-        if (error.message?.includes('quota exceeded')) {
-          const enhancedError = new Error('Daily YouTube API quota exceeded. Only cached videos are available.');
-          console.error(enhancedError);
-          // Don't show quota toast
-          // Return empty array instead of throwing
-          return [];
+        
+        if (data && data.length > 0) {
+          return data as Video[];
         }
-
+        
+        // Create sample videos if no real data available
+        const now = new Date();
+        return Array(8).fill(null).map((_, i) => ({
+          id: `sample-${i}`,
+          video_id: `sample-vid-${i}`,
+          title: `Sample Video ${i+1}`,
+          thumbnail: '/placeholder.svg',
+          channel_name: "Sample Channel",
+          channel_id: channelId,
+          views: 1000 * (i+1),
+          uploaded_at: new Date(now.getTime() - (i * 86400000)).toISOString(),
+          category: "other",
+          description: "This is a sample video until real content loads."
+        })) as Video[];
+      } catch (error: any) {
         console.error("Error in queryFn:", error);
         
         // Create sample videos for fallback

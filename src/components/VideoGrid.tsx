@@ -78,7 +78,7 @@ export const VideoGrid = ({
     );
   }
 
-  // If we have no videos to display but we're not loading, show sample videos
+  // Always use the provided videos if available, only use sample videos if absolutely necessary
   const videosToDisplay = displayVideos.length > 0 
     ? displayVideos 
     : createSampleVideos();
