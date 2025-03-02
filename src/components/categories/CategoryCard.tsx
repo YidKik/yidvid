@@ -1,4 +1,3 @@
-
 import React from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
@@ -29,7 +28,6 @@ const simpleIcons: Record<string, React.ReactNode> = {
   '📚': <GraduationCap size={20} strokeWidth={1.5} color="white" />,
   '🎬': <Film size={20} strokeWidth={1.5} color="white" />,
   '📌': <PlusCircle size={20} strokeWidth={1.5} color="white" />,
-  // Additional icons for custom categories
   '😄': <Smile size={20} strokeWidth={1.5} color="white" />, // Changed to Smile icon for funny category
   '🤣': <Star size={20} strokeWidth={1.5} color="white" />,
   '🔥': <Zap size={20} strokeWidth={1.5} color="white" />,
@@ -37,7 +35,6 @@ const simpleIcons: Record<string, React.ReactNode> = {
   '🏆': <Award size={20} strokeWidth={1.5} color="white" />,
   '🔖': <Bookmark size={20} strokeWidth={1.5} color="white" />,
   '🏷️': <Tag size={20} strokeWidth={1.5} color="white" />,
-  // Fallback
   'default': <Tag size={20} strokeWidth={1.5} color="white" />
 };
 
@@ -111,7 +108,7 @@ export const CategoryCard = ({ icon, label, id, isCustomImage = false }: Categor
         }
       }}
       whileTap={{ scale: 0.98 }}
-      className={`rounded-xl p-1 md:p-3 cursor-pointer transition-all duration-300 ${isMobile ? 'h-[65px]' : 'h-[90px]'} relative backdrop-blur-sm`}
+      className={`rounded-xl p-1 md:p-3 cursor-pointer transition-all duration-300 ${isMobile ? 'h-[58px]' : 'h-[90px]'} relative backdrop-blur-sm`}
       style={{
         background: categoryColors.bg,
         border: `1.5px solid ${categoryColors.border}`,
