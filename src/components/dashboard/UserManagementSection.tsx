@@ -1,42 +1,18 @@
+
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { 
-  Shield, 
-  Plus, 
-  ChevronDown, 
-  ChevronUp, 
-  User,
-  UserCheck,
-  UserX,
-  Computer,
-  Smartphone,
-  Clock
-} from "lucide-react";
+import { Plus, ChevronDown, ChevronUp } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { ProfilesTable } from "@/integrations/supabase/types/profiles";
 import { FetchingIssueAlert } from "@/components/notifications/FetchingIssueAlert";
+import { AdminUsersTable } from "./user-management/AdminUsersTable";
+import { RegularUsersTable } from "./user-management/RegularUsersTable";
+import { AddAdminDialog } from "./user-management/AddAdminDialog";
+import { formatDate, getUserDisplayName, getUserDevice } from "./user-management/UserManagementUtils";
 
 export const UserManagementSection = ({ currentUserId }: { currentUserId: string }) => {
   const { toast } = useToast();
@@ -167,17 +143,6 @@ export const UserManagementSection = ({ currentUserId }: { currentUserId: string
     }
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat('en-US', {
-      year: 'numeric', 
-      month: 'short', 
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    }).format(date);
-  };
-
   const filteredUsers = users?.filter(user => {
     if (!searchQuery) return true;
     
@@ -192,16 +157,6 @@ export const UserManagementSection = ({ currentUserId }: { currentUserId: string
 
   const adminUsers = filteredUsers.filter(user => user.is_admin);
   const regularUsers = filteredUsers.filter(user => !user.is_admin);
-
-  const getUserDisplayName = (user: ProfilesTable["Row"]) => {
-    return user.username || user.display_name || user.name || 'Unnamed User';
-  };
-
-  const getUserDevice = (user: ProfilesTable["Row"]) => {
-    const lastChar = user.id.charAt(user.id.length - 1);
-    const numValue = parseInt(lastChar, 16);
-    return numValue % 2 === 0 ? "desktop" : "mobile";
-  };
 
   return (
     <div className="space-y-6">
@@ -244,190 +199,33 @@ export const UserManagementSection = ({ currentUserId }: { currentUserId: string
                 </div>
                 
                 {isExpanded && (
-                  <div className="bg-white rounded-md border shadow-sm overflow-hidden">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead className="w-[250px]">User</TableHead>
-                          <TableHead>Role</TableHead>
-                          <TableHead>Device</TableHead>
-                          <TableHead>Joined</TableHead>
-                          <TableHead className="w-[100px]">Actions</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {adminUsers.length === 0 ? (
-                          <TableRow>
-                            <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
-                              No admin users found
-                            </TableCell>
-                          </TableRow>
-                        ) : (
-                          adminUsers.map((user) => (
-                            <TableRow key={user.id}>
-                              <TableCell className="font-medium">
-                                <div className="flex flex-col">
-                                  <div className="flex items-center gap-2">
-                                    <User className="h-4 w-4 text-muted-foreground" />
-                                    <span>{getUserDisplayName(user)}</span>
-                                  </div>
-                                  <span className="text-sm text-muted-foreground">{user.email}</span>
-                                </div>
-                              </TableCell>
-                              <TableCell>
-                                <Badge className="bg-primary hover:bg-primary/90 flex items-center gap-1 w-fit">
-                                  <Shield className="h-3 w-3" />
-                                  Admin
-                                </Badge>
-                              </TableCell>
-                              <TableCell>
-                                {getUserDevice(user) === "desktop" ? (
-                                  <div className="flex items-center gap-1">
-                                    <Computer className="h-4 w-4 text-muted-foreground" />
-                                    <span>Desktop</span>
-                                  </div>
-                                ) : (
-                                  <div className="flex items-center gap-1">
-                                    <Smartphone className="h-4 w-4 text-muted-foreground" />
-                                    <span>Mobile</span>
-                                  </div>
-                                )}
-                              </TableCell>
-                              <TableCell>
-                                <div className="flex items-center gap-1">
-                                  <Clock className="h-4 w-4 text-muted-foreground" />
-                                  <span>{formatDate(user.created_at)}</span>
-                                </div>
-                              </TableCell>
-                              <TableCell>
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => toggleAdminStatus(user.id, !!user.is_admin)}
-                                  disabled={user.id === currentUserId}
-                                  className="flex items-center gap-1"
-                                >
-                                  <UserX className="h-3 w-3" />
-                                  Remove Admin
-                                </Button>
-                              </TableCell>
-                            </TableRow>
-                          ))
-                        )}
-                      </TableBody>
-                    </Table>
-                  </div>
+                  <AdminUsersTable 
+                    adminUsers={adminUsers} 
+                    currentUserId={currentUserId}
+                    toggleAdminStatus={toggleAdminStatus}
+                  />
                 )}
               </div>
 
               <div>
                 <h3 className="text-lg font-semibold mb-4">Regular Users ({regularUsers.length})</h3>
-                <div className="bg-white rounded-md border shadow-sm overflow-hidden">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead className="w-[250px]">User</TableHead>
-                        <TableHead>Role</TableHead>
-                        <TableHead>Device</TableHead>
-                        <TableHead>Joined</TableHead>
-                        <TableHead className="w-[100px]">Actions</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {regularUsers.length === 0 ? (
-                        <TableRow>
-                          <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
-                            No regular users found
-                          </TableCell>
-                        </TableRow>
-                      ) : (
-                        regularUsers.map((user) => (
-                          <TableRow key={user.id}>
-                            <TableCell className="font-medium">
-                              <div className="flex flex-col">
-                                <div className="flex items-center gap-2">
-                                  <User className="h-4 w-4 text-muted-foreground" />
-                                  <span>{getUserDisplayName(user)}</span>
-                                </div>
-                                <span className="text-sm text-muted-foreground">{user.email}</span>
-                              </div>
-                            </TableCell>
-                            <TableCell>
-                              <Badge variant="outline" className="flex items-center gap-1 w-fit">
-                                <User className="h-3 w-3" />
-                                User
-                              </Badge>
-                            </TableCell>
-                            <TableCell>
-                              {getUserDevice(user) === "desktop" ? (
-                                <div className="flex items-center gap-1">
-                                  <Computer className="h-4 w-4 text-muted-foreground" />
-                                  <span>Desktop</span>
-                                </div>
-                              ) : (
-                                <div className="flex items-center gap-1">
-                                  <Smartphone className="h-4 w-4 text-muted-foreground" />
-                                  <span>Mobile</span>
-                                </div>
-                              )}
-                            </TableCell>
-                            <TableCell>
-                              <div className="flex items-center gap-1">
-                                <Clock className="h-4 w-4 text-muted-foreground" />
-                                <span>{formatDate(user.created_at)}</span>
-                              </div>
-                            </TableCell>
-                            <TableCell>
-                              <Button
-                                variant="default"
-                                size="sm"
-                                onClick={() => toggleAdminStatus(user.id, !!user.is_admin)}
-                                className="flex items-center gap-1"
-                              >
-                                <UserCheck className="h-3 w-3" />
-                                Make Admin
-                              </Button>
-                            </TableCell>
-                          </TableRow>
-                        ))
-                      )}
-                    </TableBody>
-                  </Table>
-                </div>
+                <RegularUsersTable 
+                  regularUsers={regularUsers} 
+                  toggleAdminStatus={toggleAdminStatus}
+                />
               </div>
             </>
           )}
         </CardContent>
       </Card>
 
-      <Dialog open={showAddAdminDialog} onOpenChange={setShowAddAdminDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Add New Admin</DialogTitle>
-            <DialogDescription>
-              Enter the email address of the user you want to make an admin. The user must already have an account.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email Address</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="user@example.com"
-                value={newAdminEmail}
-                onChange={(e) => setNewAdminEmail(e.target.value)}
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowAddAdminDialog(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleAddAdmin}>Add Admin</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <AddAdminDialog 
+        showAddAdminDialog={showAddAdminDialog} 
+        setShowAddAdminDialog={setShowAddAdminDialog}
+        newAdminEmail={newAdminEmail}
+        setNewAdminEmail={setNewAdminEmail}
+        handleAddAdmin={handleAddAdmin}
+      />
     </div>
   );
 };
