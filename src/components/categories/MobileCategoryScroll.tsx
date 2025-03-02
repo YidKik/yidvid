@@ -44,26 +44,25 @@ export const MobileCategoryScroll: React.FC<MobileCategoryScrollProps> = ({
     document.addEventListener('touchend', handleTouchEnd);
   };
 
-  // Auto-scroll animation for mobile
+  // Auto-scroll animation for mobile - updated for continuous right-to-left scrolling
   useEffect(() => {
     if (!scrollContainerRef.current) return;
     
     let animationFrameId: number;
-    let scrollPosition = 0;
-    const scrollSpeed = 1; // Adjust speed as needed
+    let isPaused = false;
+    const scrollSpeed = 0.5; // Adjusted for smoother scrolling
     const container = scrollContainerRef.current;
     
     const scroll = () => {
-      if (!container) return;
+      if (!container || isPaused) return;
       
-      scrollPosition += scrollSpeed;
+      container.scrollLeft += scrollSpeed;
       
       // Reset when reaching the end to create infinite scroll effect
-      if (scrollPosition >= container.scrollWidth / 2) {
-        scrollPosition = 0;
+      if (container.scrollLeft >= container.scrollWidth / 2) {
+        container.scrollLeft = 0;
       }
       
-      container.scrollLeft = scrollPosition;
       animationFrameId = requestAnimationFrame(scroll);
     };
     
@@ -71,12 +70,15 @@ export const MobileCategoryScroll: React.FC<MobileCategoryScrollProps> = ({
     
     // Pause animation on touch
     const pauseAnimation = () => {
-      cancelAnimationFrame(animationFrameId);
+      isPaused = true;
     };
     
     // Resume animation when touch ends
     const resumeAnimation = () => {
-      animationFrameId = requestAnimationFrame(scroll);
+      setTimeout(() => {
+        isPaused = false;
+        animationFrameId = requestAnimationFrame(scroll);
+      }, 1000); // Small delay before resuming
     };
     
     container.addEventListener('touchstart', pauseAnimation);
@@ -96,7 +98,10 @@ export const MobileCategoryScroll: React.FC<MobileCategoryScrollProps> = ({
       ref={scrollContainerRef}
       className="flex gap-2 overflow-x-auto touch-pan-x scrollbar-hide"
       onTouchStart={handleDragStart}
-      style={{ WebkitOverflowScrolling: 'touch' }}
+      style={{ 
+        WebkitOverflowScrolling: 'touch',
+        scrollBehavior: 'smooth'
+      }}
     >
       {infiniteCategories.map((category, index) => (
         <div
