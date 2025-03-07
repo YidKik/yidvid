@@ -6,7 +6,7 @@ import { SearchBar } from "./header/SearchBar";
 import { HeaderLogo } from "./header/HeaderLogo";
 import { HeaderActions } from "./header/HeaderActions";
 import { MobileMenu } from "./header/MobileMenu";
-import { useSessionManager } from "@/hooks/useSessionManager";
+import { useAuth } from "@/hooks/useAuth";
 import { AnimatePresence, motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -17,7 +17,7 @@ export const Header = () => {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { session, handleLogout } = useSessionManager();
+  const { session, handleLogout } = useAuth();
   const queryClient = useQueryClient();
 
   const markNotificationsAsRead = async () => {

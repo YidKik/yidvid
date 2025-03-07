@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { LogOut, Trash2 } from "lucide-react";
@@ -20,11 +19,12 @@ import {
 } from "@/components/ui/dialog";
 import { useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useAuth } from "@/hooks/useAuth";
 
 export const ProfileSection = () => {
   const navigate = useNavigate();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const { handleLogout, isLoggingOut } = useAuth();
 
   const { data: profile, isLoading, error } = useQuery({
     queryKey: ["user-profile"],

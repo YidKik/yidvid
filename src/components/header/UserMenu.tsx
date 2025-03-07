@@ -13,6 +13,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useAuth } from "@/hooks/useAuth";
 
 interface UserMenuProps {
   onLogout: () => Promise<void>;
@@ -21,6 +22,7 @@ interface UserMenuProps {
 export const UserMenu = ({ onLogout }: UserMenuProps) => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const { isLoggingOut } = useAuth();
 
   const { data: profile, isLoading } = useQuery({
     queryKey: ["user-profile"],

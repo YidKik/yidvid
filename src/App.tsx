@@ -6,6 +6,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "@/lib/query-client";
 import { ColorProvider } from "@/contexts/ColorContext";
 import { PlaybackProvider } from "@/contexts/PlaybackContext";
+import { SessionProvider } from "@/contexts/SessionContext";
 import { useEffect } from "react";
 import { getPageTitle } from "@/utils/pageTitle";
 import { Helmet } from "react-helmet";
@@ -82,13 +83,15 @@ function AppRoutes() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <ColorProvider>
-        <PlaybackProvider>
-          <AppRoutes />
-          <Toaster />
-          <Sonner />
-        </PlaybackProvider>
-      </ColorProvider>
+      <SessionProvider>
+        <ColorProvider>
+          <PlaybackProvider>
+            <AppRoutes />
+            <Toaster />
+            <Sonner />
+          </PlaybackProvider>
+        </ColorProvider>
+      </SessionProvider>
     </QueryClientProvider>
   );
 }
