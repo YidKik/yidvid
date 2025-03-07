@@ -1,7 +1,11 @@
 
 import { useState } from "react";
 import { VideoData, VideoFetcherResult } from "./types/video-fetcher";
-import { fetchVideosFromDatabase, fetchActiveChannels, formatVideoData } from "./utils/video-database";
+import { 
+  fetchVideosFromDatabase, 
+  fetchActiveChannels, 
+  formatVideoData 
+} from "./utils/database";
 import { tryFetchNewVideos } from "./utils/youtube-fetch";
 import { supabase } from "@/integrations/supabase/client";
 
