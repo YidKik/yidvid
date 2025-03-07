@@ -78,7 +78,7 @@ export const VideoGrid = ({
     );
   }
 
-  // Always use the provided videos if available, only use sample videos if absolutely necessary
+  // Only use sample videos if absolutely necessary and we have no real videos
   const videosToDisplay = displayVideos.length > 0 
     ? displayVideos 
     : createSampleVideos();

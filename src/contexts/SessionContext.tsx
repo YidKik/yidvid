@@ -57,10 +57,11 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
         case 'SIGNED_IN':
           setSession(currentSession);
           
-          // Clear previous user data from cache before fetching new data
+          // Don't clear previous queries as this might cause flickering and showing sample data
           if (currentSession?.user?.id) {
-            queryClient.removeQueries({ queryKey: ["profile"] });
-            queryClient.removeQueries({ queryKey: ["user-profile"] });
+            // Only invalidate user-specific queries
+            queryClient.invalidateQueries({ queryKey: ["profile"] });
+            queryClient.invalidateQueries({ queryKey: ["user-profile"] });
             
             // Fetch new profile data
             prefetchUserData(currentSession, queryClient);
@@ -73,8 +74,10 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
           
         case 'SIGNED_OUT':
           setSession(null);
-          // Clear all user-related queries from cache
-          queryClient.clear();
+          // Instead of clearing everything, just invalidate user-specific queries
+          queryClient.invalidateQueries({ queryKey: ["profile"] });
+          queryClient.invalidateQueries({ queryKey: ["user-profile"] });
+          queryClient.invalidateQueries({ queryKey: ["user-video-interactions"] });
           break;
           
         case 'USER_UPDATED':

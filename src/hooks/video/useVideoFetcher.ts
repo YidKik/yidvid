@@ -28,10 +28,11 @@ export const useVideoFetcher = (): VideoFetcherResult => {
     console.log("Starting video fetch process with highest priority...");
     
     try {
-      // First try direct database query without RLS
+      // First try direct database query with anon key
       let videosData: any[] = [];
+      
       try {
-        // Try direct query first
+        // Try direct query first without requiring authentication
         const { data, error } = await supabase
           .from("youtube_videos")
           .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, category, description")
@@ -41,30 +42,13 @@ export const useVideoFetcher = (): VideoFetcherResult => {
           
         if (error) {
           console.error("Direct database query error:", error);
-          throw error;
-        }
-        
-        if (data && data.length > 0) {
+          // Continue to next approach if this fails
+        } else if (data && data.length > 0) {
           videosData = data;
           setLastSuccessfulFetch(new Date());
           console.log(`Successfully fetched ${videosData.length} videos directly from database`);
         } else {
           console.warn("No videos found in direct database query, trying secondary method");
-          
-          // Try a simplified query as backup
-          const simpleQuery = await supabase
-            .from("youtube_videos")
-            .select("*")
-            .order("uploaded_at", { ascending: false })
-            .limit(200);
-            
-          if (!simpleQuery.error && simpleQuery.data && simpleQuery.data.length > 0) {
-            videosData = simpleQuery.data;
-            setLastSuccessfulFetch(new Date());
-            console.log(`Successfully fetched ${videosData.length} videos with simple query`);
-          } else {
-            console.warn("Simple query also failed or returned no results");
-          }
         }
       } catch (directError) {
         console.error("Error in direct video fetch:", directError);
@@ -89,7 +73,7 @@ export const useVideoFetcher = (): VideoFetcherResult => {
         }
       }
 
-      // If we still have no videos, create sample data as fallback
+      // If we still have no videos, only then create sample data as fallback
       if (videosData.length === 0) {
         console.warn("No videos found, creating fallback sample data");
         const now = new Date();
@@ -150,7 +134,7 @@ export const useVideoFetcher = (): VideoFetcherResult => {
       // For any errors, increase the fetch attempts counter
       setFetchAttempts(prev => prev + 1);
       
-      // Create and return fallback data
+      // Create and return fallback data only if we have no real data
       const now = new Date();
       return Array(12).fill(null).map((_, i) => ({
         id: `sample-${i}`,

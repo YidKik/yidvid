@@ -74,13 +74,19 @@ export const VideoContent = ({
 
   // Always show force fetch button and trigger automatic refresh if stale
   useEffect(() => {
-    if (lastSuccessfulFetch && 
+    if (!videos || videos.length === 0 || 
+        videos[0].id.toString().startsWith('sample')) {
+      console.log("No real videos detected, triggering force refresh...");
+      if (forceRefetch && !isRefreshing) {
+        handleForceRefetch();
+      }
+    } else if (lastSuccessfulFetch && 
         (new Date().getTime() - new Date(lastSuccessfulFetch).getTime() > 86400000) && // More than 24 hours
         forceRefetch && !isRefreshing) {
       console.log("Content is stale (>24 hours). Triggering automatic refresh...");
       handleForceRefetch();
     }
-  }, [lastSuccessfulFetch, forceRefetch, isRefreshing]);
+  }, [videos, lastSuccessfulFetch, forceRefetch, isRefreshing]);
 
   // Create sample videos for fallback if needed
   const createSampleVideos = (): VideoData[] => {
@@ -99,9 +105,12 @@ export const VideoContent = ({
     }));
   };
 
-  // Ensure we have videos to display
+  // Only use sample videos if we absolutely have no real data
   const displayVideos = videos?.length ? videos : createSampleVideos();
 
+  // If we have sample videos but our refetch isn't in progress, show button to retry
+  const hasOnlySampleVideos = videos?.length > 0 && videos[0].id.toString().startsWith('sample');
+  
   // Only show empty state if explicitly requested
   const showEmptyState = false;
 
@@ -111,6 +120,14 @@ export const VideoContent = ({
         <AlertCircle className="h-12 w-12 text-orange-500 mb-4" />
         <h3 className="text-lg font-semibold mb-2">No videos available</h3>
         <p className="text-muted-foreground mb-6">We're getting your videos ready. Please check back later.</p>
+        {!isRefreshing && (
+          <button 
+            onClick={handleForceRefetch}
+            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+          >
+            Refresh Content
+          </button>
+        )}
       </div>
     );
   }
@@ -127,6 +144,17 @@ export const VideoContent = ({
           lastSuccessfulFetch={lastSuccessfulFetch}
           fetchAttempts={fetchAttempts || 0}
         />
+        
+        {hasOnlySampleVideos && !isRefreshing && (
+          <div className="flex justify-center mt-4 mb-6">
+            <button 
+              onClick={handleForceRefetch}
+              className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+            >
+              Load Real Content
+            </button>
+          </div>
+        )}
       </div>
     );
   }
@@ -143,6 +171,17 @@ export const VideoContent = ({
         lastSuccessfulFetch={lastSuccessfulFetch}
         fetchAttempts={fetchAttempts || 0}
       />
+      
+      {hasOnlySampleVideos && !isRefreshing && (
+        <div className="flex justify-center mt-6 mb-8">
+          <button 
+            onClick={handleForceRefetch}
+            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+          >
+            Load Real Content
+          </button>
+        </div>
+      )}
     </div>
   );
 };
