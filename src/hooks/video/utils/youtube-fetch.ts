@@ -2,6 +2,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import { checkApiQuota } from "../useApiQuota";
 import { toast } from "sonner";
+import { fetchUpdatedVideosAfterSync } from "./database";
 
 /**
  * Call edge function to fetch new videos
@@ -110,7 +111,7 @@ export const tryFetchNewVideos = async (
         console.log("Successfully fetched new videos, updating data...");
         // Refetch videos after successful update
         try {
-          const updatedVideos = await import('./video-database').then(module => module.fetchUpdatedVideosAfterSync());
+          const updatedVideos = await fetchUpdatedVideosAfterSync();
           return updatedVideos;
         } catch (error) {
           console.error("Error fetching updated videos:", error);
