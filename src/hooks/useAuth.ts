@@ -15,10 +15,16 @@ export const useAuth = () => {
   const handleLogout = async () => {
     try {
       setIsLoggingOut(true);
+      
+      // Capture existing content data before logout
+      const videosData = queryClient.getQueryData(["youtube_videos"]);
+      const channelsData = queryClient.getQueryData(["youtube_channels"]);
+      
       const { error } = await supabase.auth.signOut();
       if (error) {
         console.error("Error during logout:", error);
         toast.error("Error during logout: " + error.message);
+        setIsLoggingOut(false);
         return;
       }
       
@@ -26,6 +32,17 @@ export const useAuth = () => {
       queryClient.invalidateQueries({ queryKey: ["profile"] });
       queryClient.invalidateQueries({ queryKey: ["user-profile"] });
       queryClient.invalidateQueries({ queryKey: ["user-video-interactions"] });
+      
+      // Restore content data
+      if (videosData) {
+        console.log("Restoring videos data after logout");
+        queryClient.setQueryData(["youtube_videos"], videosData);
+      }
+      
+      if (channelsData) {
+        console.log("Restoring channels data after logout");
+        queryClient.setQueryData(["youtube_channels"], channelsData);
+      }
       
       navigate("/");
       toast.success("Logged out successfully");

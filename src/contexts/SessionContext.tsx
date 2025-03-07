@@ -57,8 +57,7 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
         case 'SIGNED_IN':
           setSession(currentSession);
           
-          // IMPORTANT: Do not reset existing query cache on login
-          // This ensures videos and channels data persists
+          // IMPORTANT: Preserve existing content data
           if (currentSession?.user?.id) {
             // Only invalidate user-specific queries
             queryClient.invalidateQueries({ queryKey: ["profile"] });
@@ -66,6 +65,20 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
             
             // Fetch new profile data
             prefetchUserData(currentSession, queryClient);
+          }
+          
+          // Explicitly preserve content
+          const videosData = queryClient.getQueryData(["youtube_videos"]);
+          const channelsData = queryClient.getQueryData(["youtube_channels"]);
+          
+          if (videosData) {
+            console.log("Preserving existing videos data during sign in");
+            queryClient.setQueryData(["youtube_videos"], videosData);
+          }
+          
+          if (channelsData) {
+            console.log("Preserving existing channels data during sign in");
+            queryClient.setQueryData(["youtube_channels"], channelsData);
           }
           break;
           
@@ -79,6 +92,9 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
           queryClient.invalidateQueries({ queryKey: ["profile"] });
           queryClient.invalidateQueries({ queryKey: ["user-profile"] });
           queryClient.invalidateQueries({ queryKey: ["user-video-interactions"] });
+          
+          // Do NOT invalidate content queries like "youtube_videos" or "youtube_channels"
+          console.log("Preserving content data during sign out");
           break;
           
         case 'USER_UPDATED':

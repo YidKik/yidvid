@@ -31,56 +31,79 @@ export const useVideos = (): UseVideosResult => {
     setFetchAttempts
   } = useVideoFetcher();
 
+  // Helper to check if videos are real or sample data
+  const hasRealVideos = (videos: VideoData[] | undefined): boolean => {
+    if (!videos || videos.length === 0) return false;
+    
+    return videos.some(v => 
+      !v.id.toString().includes('sample') && 
+      v.channelName !== "Sample Channel" &&
+      !v.video_id.includes('sample')
+    );
+  };
+
   // Set up React Query with more aggressive refetching strategy
   const { data, isLoading, isFetching, error, refetch } = useQuery<VideoData[]>({
     queryKey: ["youtube_videos", retryCount], // Add retryCount to force refetch
     queryFn: fetchAllVideos,
-    refetchInterval: 5 * 60 * 1000, // Refetch every 5 minutes (more aggressive)
-    staleTime: 1 * 60 * 1000, // Consider data stale after 1 minute (more aggressive)
+    refetchInterval: 5 * 60 * 1000, // Refetch every 5 minutes
+    staleTime: 1 * 60 * 1000, // Consider data stale after 1 minute
     gcTime: 30 * 60 * 1000, // Cache data for 30 minutes
     retry: (failureCount, error: any) => {
       // Don't retry quota errors
       if (error?.message?.includes('quota')) return false;
-      // Retry network errors up to 5 times (more retries)
+      // Retry network errors up to 5 times
       if (error?.message?.includes('network') || error?.message?.includes('fetch')) return failureCount < 5;
       // Retry twice for other errors
       return failureCount < 3;
     },
-    retryDelay: 1000, // Shorter retry delay to get data faster
-    // Error handling - SUPPRESS error toasts
+    retryDelay: 1000, // Shorter retry delay
     meta: {
       errorMessage: "Failed to load videos",
-      suppressToasts: true // Don't show error toasts for better user experience
+      suppressToasts: true // Don't show error toasts
     },
-    // Always fetch fresh data on mount
-    refetchOnMount: true,
-    refetchOnWindowFocus: true // Refetch when window gets focus
+    // Always fetch fresh data on mount only if we don't have real data
+    refetchOnMount: (query) => {
+      const existingData = query.state.data as VideoData[] | undefined;
+      // Only refetch if we don't have real videos
+      return !hasRealVideos(existingData);
+    },
+    refetchOnWindowFocus: false // Don't refetch on window focus
   });
 
   // Force an immediate fetch when mounted and retry more aggressively if it fails
   useEffect(() => {
-    console.log("useVideos mounted, triggering immediate fetch");
-    refetch().catch(err => {
-      console.error("Error in initial video fetch:", err);
-      // Retry after short delay
-      setTimeout(() => {
-        console.log("Retrying fetch after initial error");
-        refetch().catch(retryErr => {
-          console.error("Error in retry fetch:", retryErr);
-          // If still failing, increment retry counter to force a new query
-          setRetryCount(prev => prev + 1);
-        });
-      }, 2000);
-    });
+    console.log("useVideos mounted, checking cached data");
+    
+    // Only refetch if we don't have real videos
+    if (!hasRealVideos(data)) {
+      console.log("No real videos in cache, triggering fetch");
+      refetch().catch(err => {
+        console.error("Error in initial video fetch:", err);
+        
+        // Retry after short delay
+        setTimeout(() => {
+          console.log("Retrying fetch after initial error");
+          refetch().catch(retryErr => {
+            console.error("Error in retry fetch:", retryErr);
+            // If still failing, increment retry counter to force a new query
+            setRetryCount(prev => prev + 1);
+          });
+        }, 2000);
+      });
+    } else {
+      console.log(`Using ${data.length} cached real videos`);
+    }
   }, []);
 
   // Log data for debugging and try to fetch again if no data
   useEffect(() => {
     console.log(`useVideos: ${data?.length || 0} videos available`);
     
-    if (!data || data.length === 0) {
-      console.log("No video data available, triggering forced refetch");
-      // Try to force fetch if we have no data
+    if (!hasRealVideos(data)) {
+      console.log("No real video data available, triggering forced refetch");
+      
+      // Try to force fetch if we have no real data, with delay to prevent race conditions
       setTimeout(() => {
         forceRefetch().catch(err => {
           console.error("Error force refetching videos:", err);
@@ -89,7 +112,7 @@ export const useVideos = (): UseVideosResult => {
         });
       }, 1000);
     }
-  }, [data, refetch, forceRefetch]);
+  }, [data, forceRefetch]);
 
   // Handle manual refresh with force option
   const handleForceRefetch = async () => {
@@ -123,7 +146,7 @@ export const useVideos = (): UseVideosResult => {
   };
 
   // Always ensure we have some data to display
-  const ensuredData = data?.length ? data : createSampleVideos();
+  const ensuredData = hasRealVideos(data) ? data : (data?.length ? data : createSampleVideos());
 
   return {
     data: ensuredData,

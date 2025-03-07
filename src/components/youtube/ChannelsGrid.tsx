@@ -8,6 +8,7 @@ import { ChannelsGridSkeleton } from "./grid/ChannelsGridSkeleton";
 import { EmptyChannelsState } from "./grid/EmptyChannelsState";
 import { ChannelCard } from "./grid/ChannelCard";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 interface ChannelsGridProps {
   onError?: (error: any) => void;
@@ -23,15 +24,48 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
     fetchError,
     fetchAttempts
   } = useChannelsGrid();
+  
+  // Try to fetch directly from database first for faster loading
+  const fetchChannelsFromDB = async () => {
+    try {
+      console.log("Direct database fetch for channels...");
+      const { data, error } = await supabase
+        .from("youtube_channels")
+        .select("id, channel_id, title, thumbnail_url")
+        .is("deleted_at", null)
+        .limit(50);
+        
+      if (error) {
+        console.error("Direct DB fetch error:", error);
+        return null;
+      }
+      
+      if (data && data.length > 0) {
+        console.log(`Successfully fetched ${data.length} channels directly from DB`);
+        return data;
+      }
+      
+      return null;
+    } catch (err) {
+      console.error("Error in direct DB fetch:", err);
+      return null;
+    }
+  };
 
   // Fetch channels with improved retry logic
   const { data: channels, error, isLoading: isChannelsLoading, refetch } = useQuery({
-    queryKey: ["youtube-channels"],
-    queryFn: fetchChannelsDirectly,
-    retry: 3, // Increase retries to 3
+    queryKey: ["youtube_channels"],
+    queryFn: async () => {
+      const dbChannels = await fetchChannelsFromDB();
+      if (dbChannels && dbChannels.length > 0) {
+        return dbChannels;
+      }
+      return fetchChannelsDirectly();
+    },
+    retry: 3,
     retryDelay: 1000,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    gcTime: 10 * 60 * 1000,   // 10 minutes
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
     refetchOnMount: true,
     refetchOnWindowFocus: false,
     meta: {
@@ -56,24 +90,47 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
     }
   }, [channels, manuallyFetchedChannels]);
 
-  // Ensure we have channels data by using direct query result if React Query fails
-  useEffect(() => {
-    if (error) {
-      console.error("Error in React Query channels fetch:", error);
-    }
-  }, [error]);
-
   // Early return for skeleton if really loading and no data is available
   if (isLoading && isChannelsLoading && !manuallyFetchedChannels.length) {
     return <ChannelsGridSkeleton />;
   }
 
   // Choose the best available data source - prioritize real data
-  // First try React Query result, then fall back to direct query result
-  const displayChannels = channels || manuallyFetchedChannels || [];
+  const hasRealData = channels?.some(c => 
+    c.title && !c.title.includes("Sample Channel") && 
+    !c.channel_id?.includes("sample")
+  );
   
-  // Log what we're actually rendering
-  console.log("Rendering ChannelsGrid with", displayChannels?.length || 0, "channels");
+  const hasManualRealData = manuallyFetchedChannels?.some(c => 
+    c.title && !c.title.includes("Sample Channel") && 
+    !c.channel_id?.includes("sample")
+  );
+  
+  // Use the best data available
+  let displayChannels: Channel[] = [];
+  
+  if (hasRealData && channels?.length) {
+    displayChannels = channels;
+    console.log("Using real channels data from query:", channels.length);
+  } else if (hasManualRealData && manuallyFetchedChannels?.length) {
+    displayChannels = manuallyFetchedChannels;
+    console.log("Using manually fetched real channels data:", manuallyFetchedChannels.length);
+  } else if (channels?.length) {
+    displayChannels = channels;
+    console.log("Using query channels data (might be sample):", channels.length);
+  } else if (manuallyFetchedChannels?.length) {
+    displayChannels = manuallyFetchedChannels;
+    console.log("Using manually fetched channels data (might be sample):", manuallyFetchedChannels.length);
+  } else {
+    // Create sample data as last resort
+    console.log("Creating sample channels as fallback");
+    displayChannels = Array(8).fill(null).map((_, i) => ({
+      id: `sample-${i}`,
+      channel_id: `sample-channel-${i}`,
+      title: `Sample Channel ${i+1}`,
+      thumbnail_url: null
+    }));
+  }
   
   // Filter out hidden channels (but only if we have enough channels)
   const visibleChannels = displayChannels?.length > 4 
