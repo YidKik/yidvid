@@ -79,11 +79,11 @@ export const HeaderActions = ({
         ) : (
           <Button 
             onClick={onAuthOpen}
-            className="h-10 w-10 p-0 rounded-full"
+            className="bg-[#222222] hover:bg-[#333333] text-white relative h-10 w-10 rounded-full"
             variant="ghost"
             size="icon"
           >
-            <LogIn className="h-5 w-5 text-gray-600" />
+            <LogIn className="h-5 w-5" />
           </Button>
         )}
       </div>
