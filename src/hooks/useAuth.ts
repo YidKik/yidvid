@@ -22,8 +22,11 @@ export const useAuth = () => {
         return;
       }
       
-      // Clear all query cache on logout
-      queryClient.clear();
+      // Only invalidate user-specific queries, not content
+      queryClient.invalidateQueries({ queryKey: ["profile"] });
+      queryClient.invalidateQueries({ queryKey: ["user-profile"] });
+      queryClient.invalidateQueries({ queryKey: ["user-video-interactions"] });
+      
       navigate("/");
       toast.success("Logged out successfully");
     } catch (error) {

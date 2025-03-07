@@ -79,9 +79,11 @@ export const VideoGrid = ({
   }
 
   // Only use sample videos if absolutely necessary and we have no real videos
-  const videosToDisplay = displayVideos.length > 0 
-    ? displayVideos 
-    : createSampleVideos();
+  // Check if videos are sample videos by looking at the ID
+  const hasRealVideos = displayVideos.some(v => !v.id.toString().startsWith('sample'));
+  const videosToDisplay = hasRealVideos ? 
+    displayVideos : 
+    (displayVideos.length > 0 ? displayVideos : createSampleVideos());
 
   return (
     <div className={cn(

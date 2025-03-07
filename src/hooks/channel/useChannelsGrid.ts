@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -30,6 +31,7 @@ export const useChannelsGrid = () => {
         console.error("Channel fetch error:", error);
         setFetchError(error);
         
+        // Try without the deleted_at filter which might cause RLS issues
         const simpleQuery = await supabase
           .from("youtube_channels")
           .select("id, channel_id, title, thumbnail_url")
@@ -42,6 +44,7 @@ export const useChannelsGrid = () => {
           return simpleQuery.data;
         }
         
+        // Try with a more minimal query as last resort
         const minimalQuery = await supabase
           .from("youtube_channels")
           .select("id, channel_id, title, thumbnail_url")
@@ -54,6 +57,7 @@ export const useChannelsGrid = () => {
           return minimalQuery.data;
         }
         
+        // Only use sample data as final fallback
         const sampleChannels: Channel[] = Array(8).fill(null).map((_, i) => ({
           id: `sample-${i}`,
           channel_id: `sample-channel-${i}`,
@@ -74,6 +78,7 @@ export const useChannelsGrid = () => {
         return data;
       }
       
+      // Try another approach if first query returned empty
       const backupQuery = await supabase
         .from("youtube_channels")
         .select("*")
@@ -86,6 +91,7 @@ export const useChannelsGrid = () => {
         return backupQuery.data;
       }
       
+      // Last resort: sample data
       const sampleChannels: Channel[] = Array(8).fill(null).map((_, i) => ({
         id: `sample-${i}`,
         channel_id: `sample-channel-${i}`,
@@ -99,6 +105,7 @@ export const useChannelsGrid = () => {
     } catch (error: any) {
       console.error("Channel fetch error:", error);
       
+      // Final attempt with a different approach
       try {
         const finalAttempt = await supabase
           .from("youtube_channels")
@@ -115,6 +122,7 @@ export const useChannelsGrid = () => {
         console.error("Final channel attempt also failed:", e);
       }
       
+      // Last resort: sample data
       const sampleChannels: Channel[] = Array(8).fill(null).map((_, i) => ({
         id: `sample-${i}`,
         channel_id: `sample-channel-${i}`,

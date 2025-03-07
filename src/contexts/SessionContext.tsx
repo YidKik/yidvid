@@ -57,7 +57,8 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
         case 'SIGNED_IN':
           setSession(currentSession);
           
-          // Don't clear previous queries as this might cause flickering and showing sample data
+          // IMPORTANT: Do not reset existing query cache on login
+          // This ensures videos and channels data persists
           if (currentSession?.user?.id) {
             // Only invalidate user-specific queries
             queryClient.invalidateQueries({ queryKey: ["profile"] });
@@ -74,7 +75,7 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
           
         case 'SIGNED_OUT':
           setSession(null);
-          // Instead of clearing everything, just invalidate user-specific queries
+          // IMPORTANT: Only invalidate user-specific queries, not content
           queryClient.invalidateQueries({ queryKey: ["profile"] });
           queryClient.invalidateQueries({ queryKey: ["user-profile"] });
           queryClient.invalidateQueries({ queryKey: ["user-video-interactions"] });
