@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
 import { SignInFormField } from "./SignInFormField";
@@ -32,7 +32,7 @@ export const SignInForm = ({ onOpenChange, isLoading, setIsLoading }: SignInForm
   };
 
   // Watch for changes in our internal loading state
-  React.useEffect(() => {
+  useEffect(() => {
     handleIsLoadingChange(isSigningIn);
   }, [isSigningIn]);
 

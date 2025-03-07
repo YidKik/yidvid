@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { LogOut, Trash2 } from "lucide-react";
@@ -52,25 +53,6 @@ export const ProfileSection = () => {
       errorBoundary: false
     }
   });
-
-  const handleLogout = async () => {
-    try {
-      setIsLoggingOut(true);
-      const { error } = await supabase.auth.signOut();
-      if (error) {
-        console.error("Error signing out:", error);
-        toast.error("Error signing out: " + error.message);
-        return;
-      }
-      navigate("/");
-      toast.success("Signed out successfully");
-    } catch (error: any) {
-      console.error("An error occurred while signing out:", error);
-      toast.error("An error occurred while signing out");
-    } finally {
-      setIsLoggingOut(false);
-    }
-  };
 
   const handleDeleteAccount = async () => {
     try {
