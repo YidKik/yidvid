@@ -48,6 +48,7 @@ export const SignInForm = ({ onOpenChange, isLoading, setIsLoading }: SignInForm
         } else {
           setLoginError(signInError.message || "Error during sign in");
         }
+        setIsLoading(false);
         return;
       }
 
@@ -57,55 +58,67 @@ export const SignInForm = ({ onOpenChange, isLoading, setIsLoading }: SignInForm
         queryClient.removeQueries({ queryKey: ["profile"] });
         queryClient.removeQueries({ queryKey: ["user-profile"] });
         
-        queryClient.prefetchQuery({
-          queryKey: ["profile", signInData.user.id],
-          queryFn: async () => {
-            try {
-              const { data, error } = await supabase
-                .from("profiles")
-                .select("*")
-                .eq("id", signInData.user.id)
-                .maybeSingle();
+        // Set the session first, then try to prefetch profiles in the background
+        try {
+          queryClient.prefetchQuery({
+            queryKey: ["profile", signInData.user.id],
+            queryFn: async () => {
+              try {
+                const { data, error } = await supabase
+                  .from("profiles")
+                  .select("*")
+                  .eq("id", signInData.user.id)
+                  .maybeSingle();
+                  
+                if (error) {
+                  console.error("Error prefetching profile:", error);
+                  return null;
+                }
                 
-              if (error) {
-                console.error("Error prefetching profile:", error);
+                console.log("Prefetched profile after sign in:", data);
+                return data;
+              } catch (err) {
+                console.error("Error prefetching profile:", err);
                 return null;
               }
-              
-              console.log("Prefetched profile after sign in:", data);
-              return data;
-            } catch (err) {
-              console.error("Error prefetching profile:", err);
-              return null;
+            },
+            retry: 1,
+            meta: {
+              errorBoundary: false
             }
-          },
-          retry: 2,
-        });
-        
-        queryClient.prefetchQuery({
-          queryKey: ["user-profile"],
-          queryFn: async () => {
-            try {
-              const { data, error } = await supabase
-                .from("profiles")
-                .select("is_admin")
-                .eq("id", signInData.user.id)
-                .single();
+          });
+          
+          queryClient.prefetchQuery({
+            queryKey: ["user-profile"],
+            queryFn: async () => {
+              try {
+                const { data, error } = await supabase
+                  .from("profiles")
+                  .select("is_admin")
+                  .eq("id", signInData.user.id)
+                  .single();
+                  
+                if (error) {
+                  console.error("Error prefetching user-profile:", error);
+                  return null;
+                }
                 
-              if (error) {
-                console.error("Error prefetching user-profile:", error);
+                console.log("Prefetched user-profile after sign in:", data);
+                return data;
+              } catch (err) {
+                console.error("Error prefetching user-profile:", err);
                 return null;
               }
-              
-              console.log("Prefetched user-profile after sign in:", data);
-              return data;
-            } catch (err) {
-              console.error("Error prefetching user-profile:", err);
-              return null;
+            },
+            retry: 1,
+            meta: {
+              errorBoundary: false
             }
-          },
-          retry: 2,
-        });
+          });
+        } catch (err) {
+          console.error("Failed to prefetch profile data:", err);
+          // Don't block authentication if profile fetching fails
+        }
         
         toast.success("Signed in successfully!");
         onOpenChange(false);

@@ -1,5 +1,5 @@
 
-import { Settings, LogOut, LayoutDashboard, User } from "lucide-react";
+import { Settings, LogOut, LayoutDashboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -55,6 +55,9 @@ export const UserMenu = ({ onLogout }: UserMenuProps) => {
     retry: 2,
     refetchOnWindowFocus: false,
     staleTime: 0,
+    meta: {
+      errorBoundary: false
+    }
   });
 
   console.log("UserMenu profile state:", { profile, isLoading });

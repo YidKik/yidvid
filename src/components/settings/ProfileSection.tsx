@@ -19,12 +19,14 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useState } from "react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export const ProfileSection = () => {
   const navigate = useNavigate();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  const { data: profile, isLoading } = useQuery({
+  const { data: profile, isLoading, error } = useQuery({
     queryKey: ["user-profile"],
     queryFn: async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -46,19 +48,27 @@ export const ProfileSection = () => {
 
       return data as ProfilesTable["Row"];
     },
+    meta: {
+      errorBoundary: false
+    }
   });
 
   const handleLogout = async () => {
     try {
+      setIsLoggingOut(true);
       const { error } = await supabase.auth.signOut();
       if (error) {
-        toast.error("Error signing out");
+        console.error("Error signing out:", error);
+        toast.error("Error signing out: " + error.message);
         return;
       }
       navigate("/");
       toast.success("Signed out successfully");
-    } catch (error) {
+    } catch (error: any) {
+      console.error("An error occurred while signing out:", error);
       toast.error("An error occurred while signing out");
+    } finally {
+      setIsLoggingOut(false);
     }
   };
 
@@ -96,6 +106,20 @@ export const ProfileSection = () => {
     );
   }
 
+  if (error) {
+    return (
+      <section className="mb-8">
+        <Card className="p-6">
+          <Alert variant="destructive">
+            <AlertDescription>
+              There was an error loading your profile information. Please try refreshing the page.
+            </AlertDescription>
+          </Alert>
+        </Card>
+      </section>
+    );
+  }
+
   if (!profile) {
     return (
       <section className="mb-8">
@@ -124,9 +148,10 @@ export const ProfileSection = () => {
               onClick={handleLogout}
               variant="outline"
               className="flex items-center justify-center gap-2"
+              disabled={isLoggingOut}
             >
               <LogOut className="h-4 w-4" />
-              <span>Sign Out</span>
+              <span>{isLoggingOut ? "Signing Out..." : "Sign Out"}</span>
             </Button>
             
             <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>

@@ -25,7 +25,7 @@ export const useSessionManager = () => {
           console.log("Initial session loaded:", initialSession.user?.email);
           setSession(initialSession);
           
-          // Pre-fetch profile data to warm up the cache
+          // Pre-fetch profile data to warm up the cache, but with error handling
           if (initialSession.user?.id) {
             queryClient.prefetchQuery({
               queryKey: ["profile", initialSession.user.id],
@@ -50,6 +50,10 @@ export const useSessionManager = () => {
                 }
               },
               retry: 1,
+              // Don't fail on error
+              meta: {
+                errorBoundary: false
+              }
             });
             
             // Also prefetch for user-profile (used in UserMenu)
@@ -76,6 +80,10 @@ export const useSessionManager = () => {
                 }
               },
               retry: 1,
+              // Don't fail on error
+              meta: {
+                errorBoundary: false
+              }
             });
           }
         }
@@ -117,6 +125,10 @@ export const useSessionManager = () => {
                     }
                   },
                   retry: 1,
+                  // Don't fail on error
+                  meta: {
+                    errorBoundary: false
+                  }
                 });
                 
                 // Also prefetch for user-profile (used in UserMenu)
@@ -143,6 +155,10 @@ export const useSessionManager = () => {
                     }
                   },
                   retry: 1,
+                  // Don't fail on error
+                  meta: {
+                    errorBoundary: false
+                  }
                 });
               }
               break;
@@ -184,6 +200,7 @@ export const useSessionManager = () => {
       const { error } = await supabase.auth.signOut();
       if (error) {
         console.error("Error during logout:", error);
+        toast.error("Error during logout: " + error.message);
         return;
       }
       setSession(null);
@@ -193,6 +210,7 @@ export const useSessionManager = () => {
       toast.success("Logged out successfully");
     } catch (error) {
       console.error("Unexpected error during logout:", error);
+      toast.error("Unexpected error during logout");
       navigate("/");
     }
   };
