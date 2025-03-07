@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -21,7 +20,6 @@ export const useChannelsGrid = () => {
       console.log("Fetching YouTube channels (attempt " + (fetchAttempts + 1) + ")");
       setFetchAttempts(prev => prev + 1);
       
-      // Explicitly exclude deleted channels without relying on RLS
       const { data, error } = await supabase
         .from("youtube_channels")
         .select("id, channel_id, title, thumbnail_url")
@@ -32,7 +30,6 @@ export const useChannelsGrid = () => {
         console.error("Channel fetch error:", error);
         setFetchError(error);
         
-        // Try a simpler query in case the first one failed
         const simpleQuery = await supabase
           .from("youtube_channels")
           .select("id, channel_id, title, thumbnail_url")
@@ -45,24 +42,18 @@ export const useChannelsGrid = () => {
           return simpleQuery.data;
         }
         
-        // Try a minimal query as last resort
         const minimalQuery = await supabase
           .from("youtube_channels")
-          .select("id, channel_id, title")
+          .select("id, channel_id, title, thumbnail_url")
           .limit(20);
           
         if (!minimalQuery.error && minimalQuery.data && minimalQuery.data.length > 0) {
           console.log(`Retrieved ${minimalQuery.data.length} channels with minimal data`);
-          const enhancedData = minimalQuery.data.map(channel => ({
-            ...channel,
-            thumbnail_url: channel.thumbnail_url || null
-          }));
-          setManuallyFetchedChannels(enhancedData);
+          setManuallyFetchedChannels(minimalQuery.data);
           setIsLoading(false);
-          return enhancedData;
+          return minimalQuery.data;
         }
         
-        // Create sample channels for fallback only if nothing else worked
         const sampleChannels: Channel[] = Array(8).fill(null).map((_, i) => ({
           id: `sample-${i}`,
           channel_id: `sample-channel-${i}`,
@@ -83,7 +74,6 @@ export const useChannelsGrid = () => {
         return data;
       }
       
-      // Try another query approach if no data
       const backupQuery = await supabase
         .from("youtube_channels")
         .select("*")
@@ -96,7 +86,6 @@ export const useChannelsGrid = () => {
         return backupQuery.data;
       }
       
-      // Fallback if no data but no error either
       const sampleChannels: Channel[] = Array(8).fill(null).map((_, i) => ({
         id: `sample-${i}`,
         channel_id: `sample-channel-${i}`,
@@ -110,7 +99,6 @@ export const useChannelsGrid = () => {
     } catch (error: any) {
       console.error("Channel fetch error:", error);
       
-      // Try one last simple query
       try {
         const finalAttempt = await supabase
           .from("youtube_channels")
@@ -127,7 +115,6 @@ export const useChannelsGrid = () => {
         console.error("Final channel attempt also failed:", e);
       }
       
-      // Create fallback sample channels
       const sampleChannels: Channel[] = Array(8).fill(null).map((_, i) => ({
         id: `sample-${i}`,
         channel_id: `sample-channel-${i}`,
@@ -141,7 +128,6 @@ export const useChannelsGrid = () => {
     }
   };
 
-  // Try to fetch channels once on component mount
   useEffect(() => {
     fetchChannelsDirectly().catch(() => {
       console.error("Failed to fetch channels on mount");
