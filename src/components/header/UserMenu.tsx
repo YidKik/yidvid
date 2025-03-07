@@ -121,9 +121,10 @@ export const UserMenu = ({ onLogout }: UserMenuProps) => {
         <DropdownMenuItem 
           onClick={onLogout}
           className="flex items-center gap-2 p-3 cursor-pointer rounded-md hover:bg-red-50 text-red-600 hover:text-red-700 transition-colors"
+          disabled={isLoggingOut}
         >
           <LogOut className="h-4 w-4" />
-          <span className="text-sm font-medium">Logout</span>
+          <span className="text-sm font-medium">{isLoggingOut ? "Logging out..." : "Logout"}</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
