@@ -28,7 +28,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
       position="bottom-right"
       visibleToasts={3}
       closeButton={false}
-      toastDeduplication={true} // Enable deduplication of toasts
+      // The toastDeduplication property is not supported by Sonner, removing it
       {...props}
     />
   )
