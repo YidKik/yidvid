@@ -27,7 +27,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
       }}
       richColors
       expand={false}
-      position="top-right"
+      position="bottom-right"
       visibleToasts={3}
       // Group similar toasts without using the 'group' prop, as it's not recognized
       {...props}
