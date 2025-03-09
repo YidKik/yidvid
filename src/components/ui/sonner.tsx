@@ -21,14 +21,13 @@ const Toaster = ({ ...props }: ToasterProps) => {
           cancelButton:
             "group-[.toast]:bg-gray-100 group-[.toast]:text-gray-600",
         },
-        // Prevent duplicate toast notifications by using id
-        closeButton: true,
         duration: 5000, // 5 seconds duration
       }}
       richColors={false}
       expand={false}
       position="bottom-right"
       visibleToasts={3}
+      closeButton={false}
       {...props}
     />
   )

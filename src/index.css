@@ -1,3 +1,4 @@
+
 @import './styles/index.css';
 
 /* Mobile optimizations */
@@ -18,7 +19,7 @@
     --toast-font-size: 0.75rem !important;
     transform: scale(0.9) !important;
     transform-origin: bottom right !important;
-    animation: toast-enter 0.4s cubic-bezier(0.21, 1.02, 0.73, 1) !important;
+    animation: simple-fade-in 0.3s ease-in-out !important;
   }
   
   /* Category card optimization */
@@ -99,32 +100,32 @@
   
   /* Toast animations for desktop */
   [data-sonner-toast] {
-    animation: toast-enter 0.4s cubic-bezier(0.21, 1.02, 0.73, 1) !important;
+    animation: simple-fade-in 0.3s ease-in-out !important;
   }
   
   [data-sonner-toast][data-removing="true"] {
-    animation: toast-exit 0.3s cubic-bezier(0.06, 0.71, 0.55, 1) forwards !important;
+    animation: simple-fade-out 0.3s ease-in-out forwards !important;
   }
   
-  @keyframes toast-enter {
+  @keyframes simple-fade-in {
     from {
       opacity: 0;
-      transform: translate3d(0, 20px, 0) scale(0.9);
+      transform: translate3d(0, 10px, 0);
     }
     to {
       opacity: 1;
-      transform: translate3d(0, 0, 0) scale(1);
+      transform: translate3d(0, 0, 0);
     }
   }
   
-  @keyframes toast-exit {
+  @keyframes simple-fade-out {
     from {
       opacity: 1;
-      transform: translate3d(0, 0, 0) scale(1);
+      transform: translate3d(0, 0, 0);
     }
     to {
       opacity: 0;
-      transform: translate3d(0, 20px, 0) scale(0.9);
+      transform: translate3d(0, 10px, 0);
     }
   }
 }
