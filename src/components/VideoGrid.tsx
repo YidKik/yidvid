@@ -73,7 +73,7 @@ export const VideoGrid = ({
       )}>
         <LoadingAnimation
           size={isMobile ? "small" : "medium"}
-          color="accent"
+          color="primary"
           text="Loading videos..."
         />
       </div>

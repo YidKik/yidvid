@@ -1,56 +1,23 @@
 
 import { MotionProps } from "framer-motion";
 
-// Helper function to generate orbital positions
-export const generateOrbitalPositions = (count = 8) => {
-  return Array.from({ length: count }).map((_, index) => {
-    const angle = (index * 360) / count;
-    const delay = index * 0.1;
-    return { angle, delay };
-  });
-};
-
 export const useLoadingAnimations = () => {
-  // Container animation (orbit rotation)
-  const containerVariants = {
-    animate: {
+  // Spinner animation
+  const spinnerVariants = {
+    initial: { 
+      opacity: 0,
+      rotate: 0 
+    },
+    animate: (index: number = 0) => ({
+      opacity: 1,
       rotate: 360,
       transition: {
-        duration: 8,
+        duration: 1.2,
         ease: "linear",
-        repeat: Infinity
-      }
-    }
-  };
-
-  // Circle animation with staggered delays for orbital effect
-  const circleVariants = {
-    initial: { scale: 0.8, opacity: 0.5 },
-    animate: (i: number) => ({
-      scale: [0.8, 1.2, 0.8],
-      opacity: [0.5, 1, 0.5],
-      transition: {
-        duration: 2,
         repeat: Infinity,
-        repeatType: "reverse" as const,
-        ease: "easeInOut",
-        delay: i * 0.2, // Staggered delay based on index
+        delay: index * 0.2
       }
     })
-  };
-
-  // Logo pulsing animation - gentle pulse without rotation
-  const logoVariants = {
-    initial: { scale: 0.95, opacity: 0.9 },
-    animate: {
-      scale: [0.95, 1.05, 0.95],
-      opacity: [0.9, 1, 0.9],
-      transition: {
-        duration: 2.5,
-        repeat: Infinity,
-        ease: "easeInOut"
-      }
-    }
   };
 
   // Text fade-in animation
@@ -67,45 +34,45 @@ export const useLoadingAnimations = () => {
   };
 
   return {
-    containerVariants,
-    circleVariants,
-    logoVariants,
-    textVariants,
-    orbitalPositions: generateOrbitalPositions()
+    spinnerVariants,
+    textVariants
   };
 };
 
 // Size configuration for different loading sizes
 export const loadingSizeConfig = {
   small: {
-    container: "h-10 w-10", // Smaller overall container
-    circle: 4, // Smaller orbital dots
-    gap: 1.8, // Reduced orbital radius
-    fontSize: "text-xs",
-    logoSize: "h-6 w-6" // Logo size maintained
+    container: "h-8 w-8",
+    spinner: "h-8 w-8", 
+    innerSpinner: "h-6 w-6",
+    centerDot: "h-3 w-3",
+    fontSize: "text-xs mt-2",
+    logoSize: "h-3 w-3"
   },
   medium: {
-    container: "h-14 w-14", // Smaller overall container
-    circle: 5, // Smaller orbital dots
-    gap: 2.5, // Reduced orbital radius
+    container: "h-12 w-12",
+    spinner: "h-12 w-12",
+    innerSpinner: "h-9 w-9",
+    centerDot: "h-5 w-5 flex items-center justify-center",
     fontSize: "text-sm",
-    logoSize: "h-9 w-9" // Increased logo size
+    logoSize: "h-4 w-4"
   },
   large: {
-    container: "h-20 w-20", // Smaller overall container
-    circle: 6, // Smaller orbital dots
-    gap: 3.5, // Reduced orbital radius
+    container: "h-20 w-20",
+    spinner: "h-20 w-20",
+    innerSpinner: "h-16 w-16",
+    centerDot: "h-8 w-8 flex items-center justify-center",
     fontSize: "text-base",
-    logoSize: "h-14 w-14" // Increased logo size
+    logoSize: "h-6 w-6"
   }
 };
 
 // Color configuration for different themes
 export const loadingColorConfig = {
-  primary: "from-primary to-primary/80",
-  secondary: "from-secondary to-secondary/80",
-  accent: "from-accent to-accent/80",
-  muted: "from-muted-foreground to-muted-foreground/50"
+  primary: "primary",
+  secondary: "secondary",
+  accent: "accent",
+  muted: "muted-foreground"
 };
 
 export type LoadingSize = keyof typeof loadingSizeConfig;

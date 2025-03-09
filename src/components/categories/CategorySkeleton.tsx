@@ -10,7 +10,7 @@ export const CategorySkeleton: React.FC = () => {
     <div className="flex justify-center items-center h-[100px] md:h-[150px]">
       <LoadingAnimation 
         size={isMobile ? "small" : "medium"} 
-        color="accent" 
+        color="primary" 
         text="Loading categories..." 
       />
     </div>

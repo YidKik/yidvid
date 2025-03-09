@@ -9,7 +9,7 @@ export const ChannelLoading = () => {
       <div className="flex flex-col items-center justify-center min-h-[300px]">
         <LoadingAnimation 
           size="large" 
-          color="accent"
+          color="primary"
           text="Loading channel..." 
         />
       </div>

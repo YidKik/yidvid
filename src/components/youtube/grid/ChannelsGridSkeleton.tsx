@@ -7,7 +7,7 @@ export const ChannelsGridSkeleton = () => {
       <div className="flex flex-col items-center">
         <LoadingAnimation 
           size="medium" 
-          color="accent" 
+          color="primary" 
           text="Loading channels..."
         />
       </div>

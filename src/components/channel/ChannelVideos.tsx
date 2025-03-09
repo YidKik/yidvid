@@ -22,7 +22,7 @@ export const ChannelVideos = ({
       <div className="flex items-center justify-center min-h-[400px]">
         <LoadingAnimation
           size="medium"
-          color="accent"
+          color="primary"
           text="Loading channel videos..."
         />
       </div>

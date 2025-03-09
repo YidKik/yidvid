@@ -55,13 +55,13 @@ export default {
             "background-position": "300% 0%"
           }
         },
-        "orbit-spin": {
+        "spin": {
           "0%": { transform: "rotate(0deg)" },
           "100%": { transform: "rotate(360deg)" }
         },
-        "orbital-pulse": {
-          "0%, 100%": { transform: "scale(0.8)", opacity: "0.5" },
-          "50%": { transform: "scale(1.2)", opacity: "1" }
+        "bounce-small": {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-10%)" }
         }
       },
       animation: {
@@ -71,8 +71,9 @@ export default {
         "pulse-slow": "pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",
         "pulse-slower": "pulse-slower 4s cubic-bezier(0.4, 0, 0.6, 1) infinite",
         "search-outline": "search-outline 4s linear infinite",
-        "orbit-spin": "orbit-spin 8s linear infinite",
-        "orbital-pulse": "orbital-pulse 2s ease-in-out infinite"
+        "spin": "spin 1.2s linear infinite",
+        "spin-slow": "spin 2s linear infinite",
+        "bounce-small": "bounce-small 1.5s ease-in-out infinite"
       },
       colors: {
         border: "hsl(var(--border))",
