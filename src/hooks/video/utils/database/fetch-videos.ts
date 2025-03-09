@@ -36,16 +36,30 @@ export const fetchVideosFromDatabase = async (): Promise<any[]> => {
     
     // Try with a more simplified query if the first one failed
     try {
+      // Try with public access that doesn't require auth
       const { data, error } = await supabase
         .from("youtube_videos")
         .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at")
-        .is("deleted_at", null)
         .order("uploaded_at", { ascending: false })
-        .limit(16); // Reduced to focus on essential content
+        .limit(16);
 
       if (error) {
-        console.error("Error fetching videos from database:", error);
-        throw error;
+        console.error("Error fetching videos with simplified query:", error);
+        // Try an even more basic query without filters
+        const { data: basicData, error: basicError } = await supabase
+          .from("youtube_videos")
+          .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at")
+          .limit(12);
+          
+        if (basicError) {
+          console.error("Error with basic query:", basicError);
+          throw basicError;
+        }
+        
+        if (basicData && basicData.length > 0) {
+          console.log(`Got ${basicData.length} videos with basic query`);
+          return basicData;
+        }
       }
       
       if (data && data.length > 0) {

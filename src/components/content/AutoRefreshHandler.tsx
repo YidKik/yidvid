@@ -1,6 +1,7 @@
 
 import { useEffect } from "react";
 import { VideoData } from "@/hooks/video/types/video-fetcher";
+import { toast } from "sonner";
 
 interface AutoRefreshHandlerProps {
   videos: VideoData[];
@@ -17,28 +18,32 @@ export const AutoRefreshHandler: React.FC<AutoRefreshHandlerProps> = ({
 }) => {
   // Always show force fetch button and trigger automatic refresh if stale
   useEffect(() => {
+    // Check if we have only sample videos (not real ones)
+    const hasOnlySampleVideos = videos.length > 0 && 
+      videos.every(v => v.id.toString().includes('sample') || v.video_id.includes('sample'));
+    
     // Only trigger if we have missing data and not already refreshing
-    if (!isRefreshing && (!videos || videos.length === 0 || 
-        videos[0].id.toString().startsWith('sample'))) {
+    if (!isRefreshing && (videos.length === 0 || hasOnlySampleVideos)) {
       console.log("No real videos detected, triggering force refresh...");
       if (forceRefetch) {
         // Add a small delay to avoid interfering with initial page load
         setTimeout(() => {
           forceRefetch().catch(error => {
             console.error("Failed to force refresh videos:", error);
+            toast.error("Failed to refresh content. Please try again later.");
           });
-        }, 500); // Reduced from 1500ms to 500ms for faster load
+        }, 300); // Reduced from 500ms to 300ms for faster load
       }
     } else if (!isRefreshing && lastSuccessfulFetch && 
-        (new Date().getTime() - new Date(lastSuccessfulFetch).getTime() > 3600000) && // More than 1 hour (reduced from 24 hours)
+        (new Date().getTime() - new Date(lastSuccessfulFetch).getTime() > 1800000) && // More than 30 minutes (reduced from 1 hour)
         forceRefetch) {
-      console.log("Content is stale (>1 hour). Triggering automatic refresh...");
+      console.log("Content is stale (>30 minutes). Triggering automatic refresh...");
       // Add a small delay to avoid interfering with initial page load
       setTimeout(() => {
         forceRefetch().catch(error => {
           console.error("Failed to refresh stale content:", error);
         });
-      }, 1000); // Reduced from 1500ms to 1000ms
+      }, 500); // Reduced from 1000ms to 500ms
     }
   }, [videos, lastSuccessfulFetch, forceRefetch, isRefreshing]);
   

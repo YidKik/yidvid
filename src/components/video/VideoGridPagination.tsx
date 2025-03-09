@@ -57,6 +57,10 @@ export const VideoGridPagination = ({
         <ChevronLeft className={isMobile ? "h-3 w-3" : "h-4 w-4"} />
       </Button>
       
+      <div className="text-sm text-muted-foreground">
+        {currentPage} / {totalPages}
+      </div>
+      
       <Button
         variant="outline"
         onClick={() => onPageChange(currentPage + 1)}

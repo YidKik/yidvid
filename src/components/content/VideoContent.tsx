@@ -45,25 +45,30 @@ export const VideoContent = ({
   // Log data for debugging - using shorter format
   useEffect(() => {
     const isEmpty = !videos || videos.length === 0;
+    const hasSampleOnly = hasOnlySampleVideos(videos);
     
     if (isEmpty && !isLoading) {
       console.log("No videos data available, displaying empty state");
     } else {
-      console.log(`Rendering VideoContent with ${videos?.length || 0} videos`);
+      console.log(`Rendering VideoContent with ${videos?.length || 0} videos (sample only: ${hasSampleOnly})`);
       if (videos?.length > 0) {
         const mostRecent = new Date(videos[0].uploadedAt);
         console.log(`Most recent video: ${mostRecent.toLocaleString()}`);
       }
     }
-  }, [videos, isLoading]);
+  }, [videos, isLoading, hasOnlySampleVideos]);
 
   // Automatically try to fetch real content once if we only have sample videos
   useEffect(() => {
     if (!isLoading && !isRefreshing && hasOnlySampleVideos(videos) && !hasAttemptedRefresh && forceRefetch) {
       setHasAttemptedRefresh(true);
       console.log("Only sample videos detected, attempting to fetch real content");
-      forceRefetch().catch(err => {
+      toast.info("Loading real content...");
+      forceRefetch().then(() => {
+        toast.success("Content refreshed successfully");
+      }).catch(err => {
         console.error("Error force fetching:", err);
+        toast.error("Failed to load real content. Using samples for now.");
       });
     }
   }, [videos, isLoading, isRefreshing, hasOnlySampleVideos, hasAttemptedRefresh, forceRefetch]);

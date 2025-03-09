@@ -22,7 +22,8 @@ export const DesktopVideoView = ({
   videos,
   isLoading,
   isRefreshing,
-  refetch
+  refetch,
+  forceRefetch
 }: DesktopVideoViewProps) => {
   const videosPerPage = 12;
   const location = useLocation();
@@ -63,7 +64,7 @@ export const DesktopVideoView = ({
           className="grid-cols-4 gap-4"
         />
         
-        {sortedVideos.length > videosPerPage && (
+        {sortedVideos.length > 0 && (
           <VideoGridPagination
             showAll={true}
             currentPage={currentPage}
@@ -91,7 +92,7 @@ export const DesktopVideoView = ({
       {!hasRealVideos && !isLoading && !isRefreshing && !isMainPage && (
         <div className="flex justify-center mt-6">
           <button 
-            onClick={() => refetch && refetch()}
+            onClick={() => forceRefetch && forceRefetch()}
             className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
           >
             Refresh Content
