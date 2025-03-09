@@ -44,7 +44,7 @@ export const VideoGrid = ({
   useEffect(() => {
     console.log(`VideoGrid rendering with ${displayVideos.length} videos, isLoading: ${isLoading}`);
     if (displayVideos.length > 0) {
-      console.log("First video sample:", displayVideos[0]);
+      console.log("First video sample title:", displayVideos[0].title);
     } else if (!isLoading) {
       console.warn("VideoGrid has no videos to display");
     }
@@ -52,6 +52,14 @@ export const VideoGrid = ({
   
   // Dynamically determine grid columns based on rowSize and mobile status
   const gridCols = isMobile ? "grid-cols-2" : `grid-cols-${rowSize}`;
+  
+  // Better check for real videos vs sample videos
+  const hasRealVideos = displayVideos.some(v => 
+    !v.id.toString().includes('sample') && 
+    !v.video_id.includes('sample') &&
+    v.channelName !== "Sample Channel" &&
+    v.title !== "Sample Video 1"
+  );
   
   // Create sample videos as fallback if needed
   const createSampleVideos = () => {
@@ -93,14 +101,7 @@ export const VideoGrid = ({
     );
   }
 
-  // More aggressive check for real videos vs sample videos
-  const hasRealVideos = displayVideos.some(v => 
-    !v.id.toString().includes('sample') && 
-    v.title !== "Sample Video 1" &&
-    v.channelName !== "Sample Channel"
-  );
-  
-  // Only use sample videos if we have absolutely no real videos
+  // Use real videos if we have them, otherwise use sample videos
   const videosToDisplay = hasRealVideos ? displayVideos : createSampleVideos();
 
   return (

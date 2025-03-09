@@ -10,6 +10,7 @@ import { ChannelCard } from "./grid/ChannelCard";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useLocation } from "react-router-dom";
+import { useSession } from "@/contexts/SessionContext";
 
 interface ChannelsGridProps {
   onError?: (error: any) => void;
@@ -19,6 +20,7 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
   const { hiddenChannels } = useHiddenChannels();
   const location = useLocation();
   const isMainPage = location.pathname === "/";
+  const { session } = useSession();
   
   const { 
     fetchChannelsDirectly, 
@@ -64,7 +66,29 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
       if (dbChannels && dbChannels.length > 0) {
         return dbChannels;
       }
-      return fetchChannelsDirectly();
+      
+      // Fall back to the manual fetch function
+      const manualData = await fetchChannelsDirectly();
+      if (manualData && manualData.length > 0) {
+        return manualData;
+      }
+      
+      // If all else fails, try one more direct query with minimal fields
+      try {
+        const lastAttempt = await supabase
+          .from("youtube_channels")
+          .select("id, channel_id, title, thumbnail_url")
+          .limit(30);
+          
+        if (!lastAttempt.error && lastAttempt.data?.length > 0) {
+          return lastAttempt.data;
+        }
+      } catch (e) {
+        console.error("Final attempt also failed:", e);
+      }
+      
+      // If we get here, we need sample data
+      return createSampleChannels();
     },
     retry: 3,
     retryDelay: 1000,
@@ -80,19 +104,19 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
 
   // Immediate fetch on mount
   useEffect(() => {
-    console.log("ChannelsGrid mounted, attempting to fetch channels");
+    console.log(`ChannelsGrid mounted, user authenticated: ${!!session}, attempting to fetch channels`);
     refetch().catch(err => {
       console.error("Error fetching channels on mount:", err);
       if (onError) onError(err);
     });
-  }, []);
+  }, [session, refetch, onError]);
 
   // Update loading state based on data
   useEffect(() => {
     if (channels?.length || manuallyFetchedChannels?.length) {
       setIsLoading(false);
     }
-  }, [channels, manuallyFetchedChannels]);
+  }, [channels, manuallyFetchedChannels, setIsLoading]);
 
   // Create sample data as last resort
   const createSampleChannels = (): Channel[] => {
@@ -104,23 +128,24 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
     }));
   };
   
-  // Choose the best available data source - prioritize real data
-  const hasRealData = channels?.some(c => 
-    c.title && !c.title.includes("Sample Channel") && 
-    !c.channel_id?.includes("sample")
-  );
+  // Check if we have real data (not samples)
+  const hasRealChannels = (data?: Channel[]) => {
+    if (!data || data.length === 0) return false;
+    return data.some(c => 
+      !c.id.toString().includes('sample') && 
+      !c.channel_id.includes('sample') &&
+      c.title !== "Sample Channel 1"
+    );
+  };
   
-  const hasManualRealData = manuallyFetchedChannels?.some(c => 
-    c.title && !c.title.includes("Sample Channel") && 
-    !c.channel_id?.includes("sample")
-  );
-  
-  // Use the best data available
+  // Find the best data source to display
   let displayChannels: Channel[] = [];
   
-  if (hasRealData && channels?.length) {
-    displayChannels = channels;
-  } else if (hasManualRealData && manuallyFetchedChannels?.length) {
+  if (hasRealChannels(channels)) {
+    console.log("Using real channels data from react-query cache");
+    displayChannels = channels || [];
+  } else if (hasRealChannels(manuallyFetchedChannels)) {
+    console.log("Using real channels data from manual fetch");
     displayChannels = manuallyFetchedChannels;
   } else if (channels?.length) {
     displayChannels = channels;
@@ -131,12 +156,21 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
     displayChannels = createSampleChannels();
   }
   
+  // Log for debugging
+  useEffect(() => {
+    if (hasRealChannels(displayChannels)) {
+      console.log(`Displaying ${displayChannels.length} REAL channels`);
+    } else {
+      console.log(`Displaying ${displayChannels.length} SAMPLE channels`);
+    }
+  }, [displayChannels]);
+  
   // Filter out hidden channels (but only if we have enough channels)
   const visibleChannels = displayChannels?.length > 4 
     ? displayChannels.filter(channel => !hiddenChannels.has(channel.channel_id)) 
     : displayChannels || [];
 
-  // Skip loading animation on main page by using instant data
+  // Skip loading animation on main page
   const showSkeleton = isLoading && isChannelsLoading && !manuallyFetchedChannels.length && !isMainPage;
 
   if (showSkeleton) {

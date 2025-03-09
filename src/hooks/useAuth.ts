@@ -16,9 +16,15 @@ export const useAuth = () => {
     try {
       setIsLoggingOut(true);
       
-      // IMPORTANT: Capture existing content data before logout
+      // Save important content data before logout
       const videosData = queryClient.getQueryData(["youtube_videos"]);
       const channelsData = queryClient.getQueryData(["youtube_channels"]);
+      
+      // Track if we had real content before logout
+      const hadRealVideos = Array.isArray(videosData) && videosData.length > 0;
+      const hadRealChannels = Array.isArray(channelsData) && channelsData.length > 0;
+      
+      console.log(`Before logout: Had ${videosData ? 'video data' : 'NO video data'}, Had ${channelsData ? 'channel data' : 'NO channel data'}`);
       
       const { error } = await supabase.auth.signOut();
       if (error) {
@@ -28,20 +34,28 @@ export const useAuth = () => {
         return;
       }
       
-      // Only invalidate user-specific queries, not content
+      // First invalidate only user-specific queries
       queryClient.invalidateQueries({ queryKey: ["profile"] });
       queryClient.invalidateQueries({ queryKey: ["user-profile"] });
       queryClient.invalidateQueries({ queryKey: ["user-video-interactions"] });
       
-      // IMPORTANT: Restore content data
-      if (videosData) {
-        console.log("Restoring videos data after logout");
+      // Then restore content data if it existed
+      if (hadRealVideos && videosData) {
+        console.log("Restoring videos data after logout", Array.isArray(videosData) ? videosData.length : 0);
         queryClient.setQueryData(["youtube_videos"], videosData);
+      } else {
+        // If we didn't have data, invalidate to trigger a fresh fetch
+        console.log("No videos to restore, invalidating to trigger fetch");
+        queryClient.invalidateQueries({ queryKey: ["youtube_videos"] });
       }
       
-      if (channelsData) {
-        console.log("Restoring channels data after logout");
+      if (hadRealChannels && channelsData) {
+        console.log("Restoring channels data after logout", Array.isArray(channelsData) ? channelsData.length : 0);
         queryClient.setQueryData(["youtube_channels"], channelsData);
+      } else {
+        // If we didn't have data, invalidate to trigger a fresh fetch
+        console.log("No channels to restore, invalidating to trigger fetch");
+        queryClient.invalidateQueries({ queryKey: ["youtube_channels"] });
       }
       
       navigate("/");

@@ -6,6 +6,7 @@ import { ChannelsGrid } from "@/components/youtube/ChannelsGrid";
 import { VideoData } from "@/hooks/video/useVideoFetcher";
 import { useVideoPagination } from "@/hooks/video/useVideoPagination";
 import { useLocation } from "react-router-dom";
+import { useEffect } from "react";
 
 interface DesktopVideoViewProps {
   videos: VideoData[];
@@ -38,11 +39,18 @@ export const DesktopVideoView = ({
     videosPerPage
   });
 
-  // Check if we have real videos (not samples)
+  // More thorough check if we have real videos (not samples)
   const hasRealVideos = videos.some(video => 
     !video.id.toString().includes('sample') && 
-    video.channelName !== "Sample Channel"
+    !video.video_id.includes('sample') &&
+    video.channelName !== "Sample Channel" &&
+    video.title !== "Sample Video 1"
   );
+
+  // Log for debugging
+  useEffect(() => {
+    console.log(`DesktopVideoView: ${videos.length} videos, hasRealVideos: ${hasRealVideos}, isLoading: ${isLoading}, isRefreshing: ${isRefreshing}`);
+  }, [videos, hasRealVideos, isLoading, isRefreshing]);
 
   return (
     <div className="space-y-6">
@@ -83,7 +91,7 @@ export const DesktopVideoView = ({
       {!hasRealVideos && !isLoading && !isRefreshing && !isMainPage && (
         <div className="flex justify-center mt-6">
           <button 
-            onClick={refetch}
+            onClick={() => refetch && refetch()}
             className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
           >
             Refresh Content
