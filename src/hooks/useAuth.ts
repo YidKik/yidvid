@@ -16,7 +16,7 @@ export const useAuth = () => {
     try {
       setIsLoggingOut(true);
       
-      // Capture existing content data before logout
+      // IMPORTANT: Capture existing content data before logout
       const videosData = queryClient.getQueryData(["youtube_videos"]);
       const channelsData = queryClient.getQueryData(["youtube_channels"]);
       
@@ -33,7 +33,7 @@ export const useAuth = () => {
       queryClient.invalidateQueries({ queryKey: ["user-profile"] });
       queryClient.invalidateQueries({ queryKey: ["user-video-interactions"] });
       
-      // Restore content data
+      // IMPORTANT: Restore content data
       if (videosData) {
         console.log("Restoring videos data after logout");
         queryClient.setQueryData(["youtube_videos"], videosData);

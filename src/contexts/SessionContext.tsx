@@ -53,6 +53,10 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
       console.log("Auth state changed:", event);
       
+      // IMPORTANT: Save existing content data before any auth state changes
+      const existingVideos = queryClient.getQueryData(["youtube_videos"]);
+      const existingChannels = queryClient.getQueryData(["youtube_channels"]);
+      
       switch (event) {
         case 'SIGNED_IN':
           setSession(currentSession);
@@ -67,18 +71,21 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
             prefetchUserData(currentSession, queryClient);
           }
           
-          // Explicitly preserve content
-          const videosData = queryClient.getQueryData(["youtube_videos"]);
-          const channelsData = queryClient.getQueryData(["youtube_channels"]);
-          
-          if (videosData) {
+          // Always restore content data
+          if (existingVideos) {
             console.log("Preserving existing videos data during sign in");
-            queryClient.setQueryData(["youtube_videos"], videosData);
+            queryClient.setQueryData(["youtube_videos"], existingVideos);
+          } else {
+            // Force a refresh of videos if we don't have any
+            queryClient.invalidateQueries({ queryKey: ["youtube_videos"] });
           }
           
-          if (channelsData) {
+          if (existingChannels) {
             console.log("Preserving existing channels data during sign in");
-            queryClient.setQueryData(["youtube_channels"], channelsData);
+            queryClient.setQueryData(["youtube_channels"], existingChannels);
+          } else {
+            // Force a refresh of channels if we don't have any
+            queryClient.invalidateQueries({ queryKey: ["youtube_channels"] });
           }
           break;
           
@@ -93,8 +100,17 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
           queryClient.invalidateQueries({ queryKey: ["user-profile"] });
           queryClient.invalidateQueries({ queryKey: ["user-video-interactions"] });
           
-          // Do NOT invalidate content queries like "youtube_videos" or "youtube_channels"
-          console.log("Preserving content data during sign out");
+          // IMPORTANT: Do NOT invalidate content queries like "youtube_videos" or "youtube_channels"
+          // This ensures anonymous users still have content to view
+          if (existingVideos) {
+            console.log("Preserving videos data during sign out");
+            queryClient.setQueryData(["youtube_videos"], existingVideos);
+          }
+          
+          if (existingChannels) {
+            console.log("Preserving channels data during sign out");
+            queryClient.setQueryData(["youtube_channels"], existingChannels);
+          }
           break;
           
         case 'USER_UPDATED':

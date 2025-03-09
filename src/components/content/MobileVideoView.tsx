@@ -21,7 +21,8 @@ export const MobileVideoView = ({
   videos,
   isLoading,
   isRefreshing,
-  refetch
+  refetch,
+  forceRefetch
 }: MobileVideoViewProps) => {
   const videosPerPage = 4;
   const location = useLocation();
@@ -40,6 +41,12 @@ export const MobileVideoView = ({
     videosPerPage,
     isMobile: true
   });
+
+  // Check if we have real videos (not samples)
+  const hasRealVideos = videos.some(video => 
+    !video.id.toString().includes('sample') && 
+    video.channelName !== "Sample Channel"
+  );
 
   return (
     <div className="space-y-4 -mt-2 pt-8">
@@ -80,6 +87,17 @@ export const MobileVideoView = ({
           console.error('Channel grid error');
         }} />
       </div>
+
+      {!hasRealVideos && !isLoading && !isRefreshing && !isMainPage && (
+        <div className="flex justify-center mt-4 mb-6">
+          <button 
+            onClick={forceRefetch}
+            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+          >
+            Refresh Content
+          </button>
+        </div>
+      )}
     </div>
   );
 };

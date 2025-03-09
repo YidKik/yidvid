@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useVideoRealtime } from "./useVideoRealtime";
 import { useVideoFetcher, VideoData } from "./useVideoFetcher";
 import { toast } from "sonner";
+import { useLocation } from "react-router-dom";
 
 export interface UseVideosResult {
   data: VideoData[];
@@ -18,6 +19,8 @@ export interface UseVideosResult {
 
 export const useVideos = (): UseVideosResult => {
   const [retryCount, setRetryCount] = useState(0);
+  const location = useLocation();
+  const isMainPage = location.pathname === "/";
   
   // Set up real-time subscription for video changes
   useVideoRealtime();
@@ -100,7 +103,7 @@ export const useVideos = (): UseVideosResult => {
   useEffect(() => {
     console.log(`useVideos: ${data?.length || 0} videos available`);
     
-    if (!hasRealVideos(data)) {
+    if (!hasRealVideos(data) && !isMainPage) {
       console.log("No real video data available, triggering forced refetch");
       
       // Try to force fetch if we have no real data, with delay to prevent race conditions
@@ -112,7 +115,7 @@ export const useVideos = (): UseVideosResult => {
         });
       }, 1000);
     }
-  }, [data, forceRefetch]);
+  }, [data, forceRefetch, isMainPage]);
 
   // Handle manual refresh with force option
   const handleForceRefetch = async () => {

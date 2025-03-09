@@ -9,6 +9,7 @@ import { EmptyChannelsState } from "./grid/EmptyChannelsState";
 import { ChannelCard } from "./grid/ChannelCard";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { useLocation } from "react-router-dom";
 
 interface ChannelsGridProps {
   onError?: (error: any) => void;
@@ -16,6 +17,9 @@ interface ChannelsGridProps {
 
 export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
   const { hiddenChannels } = useHiddenChannels();
+  const location = useLocation();
+  const isMainPage = location.pathname === "/";
+  
   const { 
     fetchChannelsDirectly, 
     manuallyFetchedChannels, 
@@ -133,7 +137,11 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
     : displayChannels || [];
 
   // Skip loading animation on main page by using instant data
-  const showSkeleton = isLoading && isChannelsLoading && !manuallyFetchedChannels.length;
+  const showSkeleton = isLoading && isChannelsLoading && !manuallyFetchedChannels.length && !isMainPage;
+
+  if (showSkeleton) {
+    return <ChannelsGridSkeleton />;
+  }
 
   return (
     <div className="w-full max-w-[1600px] mx-auto px-3 md:px-4 animate-scaleIn">

@@ -38,6 +38,12 @@ export const DesktopVideoView = ({
     videosPerPage
   });
 
+  // Check if we have real videos (not samples)
+  const hasRealVideos = videos.some(video => 
+    !video.id.toString().includes('sample') && 
+    video.channelName !== "Sample Channel"
+  );
+
   return (
     <div className="space-y-6">
       <div className="video-grid relative">
@@ -73,6 +79,17 @@ export const DesktopVideoView = ({
           console.error('Channel grid error');
         }} />
       </div>
+
+      {!hasRealVideos && !isLoading && !isRefreshing && !isMainPage && (
+        <div className="flex justify-center mt-6">
+          <button 
+            onClick={refetch}
+            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+          >
+            Refresh Content
+          </button>
+        </div>
+      )}
     </div>
   );
 };
