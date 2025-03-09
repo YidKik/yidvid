@@ -1,6 +1,6 @@
 
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useVideoRealtime } from "./useVideoRealtime";
 import { useVideoFetcher, VideoData } from "./useVideoFetcher";
 import { toast } from "sonner";
@@ -21,6 +21,7 @@ export const useVideos = (): UseVideosResult => {
   const [retryCount, setRetryCount] = useState(0);
   const location = useLocation();
   const isMainPage = location.pathname === "/";
+  const toastShownRef = useRef(false);
   
   // Set up real-time subscription for video changes
   useVideoRealtime();
@@ -77,6 +78,7 @@ export const useVideos = (): UseVideosResult => {
   // Force an immediate fetch when mounted and retry more aggressively if it fails
   useEffect(() => {
     console.log("useVideos mounted, checking cached data");
+    toastShownRef.current = false;
     
     // Only refetch if we don't have real videos
     if (!hasRealVideos(data)) {
@@ -120,6 +122,9 @@ export const useVideos = (): UseVideosResult => {
   // Handle manual refresh with force option
   const handleForceRefetch = async () => {
     try {
+      // Reset toast flag when manually refreshing
+      toastShownRef.current = false;
+      
       // Silently force refresh without showing toast about forcing refresh
       setRetryCount(prev => prev + 1);
       const freshData = await forceRefetch();

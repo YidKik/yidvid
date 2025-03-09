@@ -31,7 +31,7 @@ export const EditCommentDialog = ({ comment, onClose }: EditCommentDialogProps) 
   const handleEditComment = async () => {
     if (!comment) return;
     if (!editedContent.trim()) {
-      toast.error("Comment cannot be empty");
+      toast.error("Comment cannot be empty", { id: "edit-comment-empty" });
       return;
     }
 
@@ -44,14 +44,14 @@ export const EditCommentDialog = ({ comment, onClose }: EditCommentDialogProps) 
 
       if (error) throw error;
 
-      toast.success("Comment updated successfully");
+      toast.success("Comment updated successfully", { id: "comment-updated" });
       onClose();
       
       await refetchComments();
       await refetchNotifications();
     } catch (error: any) {
       console.error("Error updating comment:", error);
-      toast.error("Error updating comment: " + error.message);
+      toast.error("Error updating comment: " + error.message, { id: "comment-update-error" });
     } finally {
       setIsSubmitting(false);
     }

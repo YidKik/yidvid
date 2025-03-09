@@ -43,7 +43,8 @@ export const fetchNewVideosFromEdgeFunction = async (
         setLastSuccessfulFetch(new Date());
         
         if (response.newVideos > 0) {
-          toast.success(`Found ${response.newVideos} new videos!`);
+          // Use a unique ID to prevent duplicate toasts
+          toast.success(`Found ${response.newVideos} new videos!`, { id: 'new-videos-found' });
         } else {
           console.log("No new videos found");
         }

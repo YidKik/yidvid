@@ -29,8 +29,8 @@ const Toaster = ({ ...props }: ToasterProps) => {
       expand={false}
       position="top-right"
       visibleToasts={3}
-      // Prevent duplicate notifications by grouping similar toasts
-      toastGrouping
+      // Group similar toasts to prevent duplicates
+      group
       {...props}
     />
   )

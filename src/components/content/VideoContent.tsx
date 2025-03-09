@@ -1,6 +1,6 @@
 
 import { useIsMobile } from "@/hooks/useIsMobile";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { MobileVideoView } from "./MobileVideoView";
 import { DesktopVideoView } from "./DesktopVideoView";
 import { VideoData } from "@/hooks/video/useVideoFetcher";
@@ -26,14 +26,17 @@ export const VideoContent = ({
 }: VideoContentProps) => {
   const isMobile = useIsMobile();
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const refreshToastIdRef = useRef<string | null>(null);
   
   const handleRefetch = async () => {
-    if (refetch) {
+    if (refetch && !isRefreshing) {
       console.log("Manual refresh triggered");
       setIsRefreshing(true);
+      
       try {
         await refetch();
-        toast.success("Content refreshed");
+        // Use a unique ID for the toast to prevent duplicates
+        toast.success("Content refreshed", { id: "content-refreshed" });
       } catch (error) {
         console.error("Error during manual refetch:", error);
       } finally {
@@ -43,12 +46,22 @@ export const VideoContent = ({
   };
 
   const handleForceRefetch = async () => {
-    if (forceRefetch) {
+    if (forceRefetch && !isRefreshing) {
       console.log("Force refresh triggered");
       setIsRefreshing(true);
+      
+      // Clear any previous refresh toast
+      if (refreshToastIdRef.current) {
+        toast.dismiss(refreshToastIdRef.current);
+      }
+      
       try {
         await forceRefetch();
-        toast.success("Content completely refreshed with latest data");
+        // Use a unique ID for the toast to prevent duplicates
+        refreshToastIdRef.current = "content-completely-refreshed";
+        toast.success("Content completely refreshed with latest data", { 
+          id: refreshToastIdRef.current 
+        });
       } catch (error) {
         console.error("Error during force refetch:", error);
       } finally {

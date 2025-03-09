@@ -1,7 +1,7 @@
 
 import { Header } from "@/components/Header";
 import Auth from "@/pages/Auth";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { WelcomeAnimation } from "@/components/WelcomeAnimation";
 import { CategorySection } from "@/components/categories/CategorySection";
@@ -32,10 +32,12 @@ const MainContent = () => {
   
   const isMobile = useIsMobile();
   const { session } = useSessionManager();
+  const notificationsProcessedRef = useRef(false);
 
   const markNotificationsAsRead = async () => {
-    if (!session?.user?.id) return;
+    if (!session?.user?.id || notificationsProcessedRef.current) return;
 
+    notificationsProcessedRef.current = true;
     try {
       const { error } = await supabase
         .from("video_notifications")
@@ -60,6 +62,13 @@ const MainContent = () => {
       markNotificationsAsRead();
     }
   }, [session?.user?.id]);
+
+  // Reset the notifications flag when the component unmounts
+  useEffect(() => {
+    return () => {
+      notificationsProcessedRef.current = false;
+    };
+  }, []);
 
   useEffect(() => {
     console.log(`Main content rendering with ${videos?.length || 0} videos, isLoading: ${isLoading}`);
