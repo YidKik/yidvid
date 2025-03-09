@@ -39,27 +39,6 @@ export const SiteDisclaimerBanner = () => {
               We're actively enhancing your experience with improvements to site layout, content filtering, and our video fetching system.
             </p>
             
-            <div className="mt-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-gray-400 hover:text-white hover:bg-gray-800/50 px-2 h-8 text-xs flex items-center gap-1 rounded-full"
-                onClick={() => setIsExpanded(!isExpanded)}
-              >
-                {isExpanded ? (
-                  <>
-                    <span>Show less</span>
-                    <ChevronUp className="h-3.5 w-3.5" />
-                  </>
-                ) : (
-                  <>
-                    <span>Learn more</span>
-                    <ChevronDown className="h-3.5 w-3.5" />
-                  </>
-                )}
-              </Button>
-            </div>
-            
             <AnimatePresence>
               {isExpanded && (
                 <motion.div
@@ -90,11 +69,29 @@ export const SiteDisclaimerBanner = () => {
               )}
             </AnimatePresence>
             
-            <div className="mt-3 flex justify-end">
+            <div className="mt-3 flex justify-end gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-white bg-black/50 hover:bg-black/70 backdrop-blur-sm border border-gray-700 px-4 h-8 text-xs rounded-full shadow-sm"
+                onClick={() => setIsExpanded(!isExpanded)}
+              >
+                {isExpanded ? (
+                  <>
+                    <span>Show less</span>
+                    <ChevronUp className="h-3.5 w-3.5 ml-1" />
+                  </>
+                ) : (
+                  <>
+                    <span>Learn more</span>
+                    <ChevronDown className="h-3.5 w-3.5 ml-1" />
+                  </>
+                )}
+              </Button>
               <Button
                 variant="outline"
                 size="sm"
-                className="text-xs h-7 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 border-none text-white rounded-full shadow-sm"
+                className="text-xs h-8 px-4 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 border-none text-white rounded-full shadow-sm backdrop-blur-sm"
                 onClick={handleDismiss}
               >
                 Got it, thanks!
