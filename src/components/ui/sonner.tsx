@@ -21,7 +21,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
           cancelButton:
             "group-[.toast]:bg-gray-100 group-[.toast]:text-gray-600",
         },
-        duration: 5000, // 5 seconds duration
+        duration: 4000, // 4 seconds duration
       }}
       richColors={false}
       expand={false}

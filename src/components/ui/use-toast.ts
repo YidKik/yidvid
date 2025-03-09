@@ -15,6 +15,7 @@ const toast = {
     toast.activeToasts.add(id);
     sonnerToast.success(message, {
       ...options,
+      duration: options?.duration || 4000, // Default to 4 seconds
       onDismiss: () => {
         toast.activeToasts.delete(id);
         options?.onDismiss?.();
@@ -30,6 +31,7 @@ const toast = {
     toast.activeToasts.add(id);
     sonnerToast.error(message, {
       ...options,
+      duration: options?.duration || 4000, // Default to 4 seconds
       onDismiss: () => {
         toast.activeToasts.delete(id);
         options?.onDismiss?.();
@@ -45,6 +47,7 @@ const toast = {
     toast.activeToasts.add(id);
     sonnerToast.info(message, {
       ...options,
+      duration: options?.duration || 4000, // Default to 4 seconds
       onDismiss: () => {
         toast.activeToasts.delete(id);
         options?.onDismiss?.();
@@ -60,6 +63,7 @@ const toast = {
     toast.activeToasts.add(id);
     sonnerToast.warning(message, {
       ...options,
+      duration: options?.duration || 4000, // Default to 4 seconds
       onDismiss: () => {
         toast.activeToasts.delete(id);
         options?.onDismiss?.();
@@ -81,6 +85,7 @@ const toast = {
     toast.activeToasts.add(id);
     sonnerToast.promise(promise, {
       ...options,
+      duration: options?.duration || 4000, // Default to 4 seconds
       finally: () => {
         toast.activeToasts.delete(id);
         options?.finally?.();

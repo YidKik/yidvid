@@ -1,5 +1,4 @@
 
-
 @import './styles/index.css';
 
 /* Mobile optimizations */
@@ -20,7 +19,11 @@
     --toast-font-size: 0.75rem !important;
     transform: scale(0.9) !important;
     transform-origin: bottom right !important;
-    animation: simple-fade-in 0.3s ease-in-out !important;
+    animation: toast-enter 0.4s cubic-bezier(0.21, 1.02, 0.73, 1) forwards !important;
+  }
+  
+  [data-sonner-toast][data-removing="true"] {
+    animation: toast-exit 0.4s cubic-bezier(0.06, 0.71, 0.55, 1) forwards !important;
   }
   
   /* Category card optimization */
@@ -101,32 +104,32 @@
   
   /* Toast animations for desktop */
   [data-sonner-toast] {
-    animation: simple-fade-in 0.3s ease-in-out !important;
+    animation: toast-enter 0.4s cubic-bezier(0.21, 1.02, 0.73, 1) forwards !important;
   }
   
   [data-sonner-toast][data-removing="true"] {
-    animation: simple-fade-out 0.3s ease-in-out forwards !important;
+    animation: toast-exit 0.4s cubic-bezier(0.06, 0.71, 0.55, 1) forwards !important;
   }
   
-  @keyframes simple-fade-in {
+  @keyframes toast-enter {
     from {
       opacity: 0;
-      transform: translate3d(0, 10px, 0);
+      transform: translate3d(0, 20px, 0) scale(0.9);
     }
     to {
       opacity: 1;
-      transform: translate3d(0, 0, 0);
+      transform: translate3d(0, 0, 0) scale(1);
     }
   }
   
-  @keyframes simple-fade-out {
+  @keyframes toast-exit {
     from {
       opacity: 1;
-      transform: translate3d(0, 0, 0);
+      transform: translate3d(0, 0, 0) scale(1);
     }
     to {
       opacity: 0;
-      transform: translate3d(0, 10px, 0);
+      transform: translate3d(0, 20px, 0) scale(0.9);
     }
   }
 }
