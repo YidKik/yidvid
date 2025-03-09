@@ -29,8 +29,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
       expand={false}
       position="top-right"
       visibleToasts={3}
-      // Group similar toasts to prevent duplicates
-      group
+      // Group similar toasts without using the 'group' prop, as it's not recognized
       {...props}
     />
   )
