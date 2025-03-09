@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { VideoCard } from "./VideoCard";
 import { LoadingAnimation } from "@/components/ui/LoadingAnimation";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useLocation } from "react-router-dom";
 
 interface Video {
@@ -36,9 +36,13 @@ export const VideoGrid = ({
   const location = useLocation();
   const isMainPage = location.pathname === "/";
   
+  // Memoize videos to prevent unnecessary re-renders
+  const displayVideos = useMemo(() => {
+    return videos?.slice(0, maxVideos) || [];
+  }, [videos, maxVideos]);
+  
   // Check if we're really loading or have no videos
   const loading = isLoading || !videos || videos.length === 0;
-  const displayVideos = videos?.slice(0, maxVideos) || [];
   
   // Log for debugging
   useEffect(() => {
@@ -76,6 +80,7 @@ export const VideoGrid = ({
     }));
   };
 
+  // On main page, use a simpler loading indicator or none at all
   if (loading && !isMainPage) {
     return (
       <div className={cn(

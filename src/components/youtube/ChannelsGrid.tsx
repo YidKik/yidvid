@@ -14,15 +14,15 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
   const isMainPage = location.pathname === "/";
 
   return (
-    <div className="w-full max-w-[1600px] mx-auto px-3 md:px-4 animate-scaleIn">
-      <div className="flex items-center justify-between mb-3 md:mb-8">
+    <div className="w-full max-w-[1600px] mx-auto px-3 md:px-4 animate-in fade-in duration-300">
+      <div className="flex items-center justify-between mb-3 md:mb-6">
         <h2 className="text-base md:text-2xl font-bold text-accent">View All Channels</h2>
         <RequestChannelDialog />
       </div>
       
       <ChannelDataProvider onError={onError}>
         {({ displayChannels, isLoading }) => {
-          // Skip loading animation on main page
+          // Show skeleton only when explicitly loading and not on main page
           const showSkeleton = isLoading && !isMainPage;
 
           if (showSkeleton) {

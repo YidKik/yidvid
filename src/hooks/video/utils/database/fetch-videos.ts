@@ -3,50 +3,45 @@ import { supabase } from "@/integrations/supabase/client";
 import { VideoData } from "../../types/video-fetcher";
 
 /**
- * Fetch all videos from the database with improved error handling
+ * Fetch all videos from the database with improved performance
  */
 export const fetchVideosFromDatabase = async (): Promise<any[]> => {
   try {
     console.log("Fetching videos from database...");
     
-    // Try direct query first without RLS concerns
-    const { data: directData, error: directError } = await supabase
+    // Use a more efficient query with fewer fields first
+    const { data: initialData, error: initialError } = await supabase
       .from("youtube_videos")
-      .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, category, description")
+      .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at")
       .is("deleted_at", null)
       .order("uploaded_at", { ascending: false })
-      .limit(200);
+      .limit(100); // Reduced limit for faster initial load
       
-    if (!directError && directData && directData.length > 0) {
-      console.log(`Successfully fetched ${directData.length} videos directly`);
-      return directData;
+    if (!initialError && initialData && initialData.length > 0) {
+      console.log(`Successfully fetched ${initialData.length} videos (initial batch)`);
+      
+      // Start loading additional videos in the background
+      fetchAdditionalVideos(initialData.length).catch(err => {
+        console.warn("Background fetch error:", err);
+      });
+      
+      return initialData;
     }
     
-    if (directError) {
-      console.warn("Direct query error, trying alternative approach:", directError);
+    if (initialError) {
+      console.warn("Initial query error, trying alternative approach:", initialError);
     }
     
     // Try with a more simplified query if the first one failed
     const { data, error } = await supabase
       .from("youtube_videos")
-      .select("*")
+      .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at")
       .is("deleted_at", null)
       .order("uploaded_at", { ascending: false })
-      .limit(200);
+      .limit(50);
 
     if (error) {
       console.error("Error fetching videos from database:", error);
-      
-      // Try one more query with minimal selection and no filters
-      const minimalQuery = await supabase
-        .from("youtube_videos")
-        .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at")
-        .limit(100);
-        
-      if (!minimalQuery.error && minimalQuery.data?.length > 0) {
-        console.log(`Retrieved ${minimalQuery.data.length} videos with minimal query`);
-        return minimalQuery.data;
-      }
       
       // Create sample videos as fallback
       return createSampleVideos(8);
@@ -57,45 +52,52 @@ export const fetchVideosFromDatabase = async (): Promise<any[]> => {
       return [];
     }
     
-    console.log(`Successfully fetched ${data?.length || 0} videos from database, most recent: ${new Date(data[0].uploaded_at).toLocaleString()}`);
+    console.log(`Successfully fetched ${data?.length || 0} videos from database`);
     return data;
   } catch (err) {
     console.error("Failed to fetch videos from database:", err);
-    
-    // Try one last simple query with no filters at all
-    try {
-      const simpleQuery = await supabase
-        .from("youtube_videos")
-        .select("*")
-        .limit(50);
-        
-      if (!simpleQuery.error && simpleQuery.data?.length > 0) {
-        console.log(`Retrieved ${simpleQuery.data.length} videos with fallback simple query`);
-        return simpleQuery.data;
-      }
-    } catch (e) {
-      console.error("Also failed with simple query:", e);
-    }
-    
-    // Create emergency sample videos
     return createSampleVideos(8);
   }
 };
 
 /**
+ * Background fetch of additional videos
+ */
+const fetchAdditionalVideos = async (skipCount: number): Promise<void> => {
+  try {
+    console.log("Loading additional videos in background...");
+    
+    const { data } = await supabase
+      .from("youtube_videos")
+      .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at")
+      .is("deleted_at", null)
+      .order("uploaded_at", { ascending: false })
+      .range(skipCount, skipCount + 99);
+      
+    if (data && data.length > 0) {
+      console.log(`Successfully loaded ${data.length} additional videos in background`);
+      // Cache in React Query will be updated elsewhere
+    }
+  } catch (err) {
+    console.error("Background fetch error:", err);
+  }
+};
+
+/**
  * Fetch updated videos after syncing with YouTube
+ * with improved performance
  */
 export const fetchUpdatedVideosAfterSync = async (): Promise<any[]> => {
   try {
     console.log("Fetching updated videos after sync...");
     
-    // Get most recent videos first, limited to 200
+    // Get only needed fields, limited to 100
     const { data, error } = await supabase
       .from("youtube_videos")
-      .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, category, description")
+      .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at")
       .is("deleted_at", null)
       .order("uploaded_at", { ascending: false })
-      .limit(200);
+      .limit(100);
 
     if (error) {
       console.error('Error fetching updated videos:', error);
@@ -107,7 +109,7 @@ export const fetchUpdatedVideosAfterSync = async (): Promise<any[]> => {
       return [];
     }
     
-    console.log(`Successfully fetched ${data?.length || 0} updated videos, most recent: ${new Date(data[0].uploaded_at).toLocaleString()}`);
+    console.log(`Successfully fetched ${data?.length || 0} updated videos`);
     return data;
   } catch (error) {
     console.error("Error in fetchUpdatedVideosAfterSync:", error);

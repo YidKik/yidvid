@@ -5,40 +5,69 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 const INITIAL_VIDEOS_COUNT = 6;
+const FETCH_TIMEOUT = 5000; // 5 seconds timeout
 
 export const useChannelVideos = (channelId: string | undefined) => {
   const [displayedVideos, setDisplayedVideos] = useState<any[]>([]);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
+  // Use a more efficient query with timeout and better caching
   const { data: initialVideos, isLoading: isLoadingInitialVideos } = useQuery({
     queryKey: ["initial-channel-videos", channelId],
     queryFn: async () => {
       if (!channelId) throw new Error("Channel ID is required");
 
       console.log("Fetching initial videos for channel:", channelId);
+      
+      // Create a timeout promise to abort long-running requests
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error("Request timeout")), FETCH_TIMEOUT)
+      );
+      
+      // Create the actual fetch promise
+      const fetchPromise = async () => {
+        const { data, error } = await supabase
+          .from("youtube_videos")
+          .select("*")
+          .eq("channel_id", channelId)
+          .is("deleted_at", null)
+          .order("uploaded_at", { ascending: false })
+          .limit(INITIAL_VIDEOS_COUNT);
 
-      const { data, error } = await supabase
-        .from("youtube_videos")
-        .select("*")
-        .eq("channel_id", channelId)
-        .is("deleted_at", null)
-        .order("uploaded_at", { ascending: false })
-        .limit(INITIAL_VIDEOS_COUNT);
+        if (error) {
+          console.error("Error fetching initial videos:", error);
+          throw error;
+        }
 
-      if (error) {
-        console.error("Error fetching initial videos:", error);
-        toast.error("Failed to load videos");
-        throw error;
+        console.log(`Successfully fetched ${data?.length || 0} initial videos`);
+        return data || [];
+      };
+      
+      // Race the fetch against the timeout
+      try {
+        return await Promise.race([fetchPromise(), timeoutPromise]) as any[];
+      } catch (error) {
+        console.error("Error or timeout in initial fetch:", error);
+        // On timeout or error, try a simpler query
+        const { data } = await supabase
+          .from("youtube_videos")
+          .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at")
+          .eq("channel_id", channelId)
+          .is("deleted_at", null)
+          .order("uploaded_at", { ascending: false })
+          .limit(INITIAL_VIDEOS_COUNT);
+          
+        return data || [];
       }
-
-      console.log(`Successfully fetched ${data?.length || 0} initial videos`);
-      return data || [];
     },
     retry: 1,
     refetchOnWindowFocus: false,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
   });
 
-  const { data: allVideos } = useQuery({
+  // Only fetch all videos if we have initial videos
+  const { data: allVideos, isFetching: isFetchingAll } = useQuery({
     queryKey: ["all-channel-videos", channelId],
     queryFn: async () => {
       if (!channelId) throw new Error("Channel ID is required");
@@ -63,8 +92,11 @@ export const useChannelVideos = (channelId: string | undefined) => {
     enabled: !!channelId && !!initialVideos && initialVideos.length > 0,
     retry: 1,
     refetchOnWindowFocus: false,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
   });
 
+  // Set displayed videos immediately from initial fetch
   useEffect(() => {
     if (initialVideos?.length) {
       setDisplayedVideos(initialVideos);
@@ -75,20 +107,20 @@ export const useChannelVideos = (channelId: string | undefined) => {
     }
   }, [initialVideos, channelId]);
 
+  // Load more videos with a small delay to prevent UI blocking
   useEffect(() => {
-    if (allVideos && allVideos.length > INITIAL_VIDEOS_COUNT) {
+    if (allVideos && allVideos.length > INITIAL_VIDEOS_COUNT && !isFetchingAll) {
       setIsLoadingMore(true);
-      console.log("Loading more videos...");
       
       const timer = setTimeout(() => {
         setDisplayedVideos(allVideos);
         setIsLoadingMore(false);
         console.log("All videos loaded:", allVideos.length);
-      }, 500);
+      }, 300); // Shorter delay
       
       return () => clearTimeout(timer);
     }
-  }, [allVideos]);
+  }, [allVideos, isFetchingAll]);
 
   return {
     displayedVideos,
