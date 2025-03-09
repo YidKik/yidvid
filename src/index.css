@@ -134,41 +134,39 @@
   }
 }
 
-/* Enhanced Video Title Styling */
+/* YouTube-style Video Title Styling */
 .video-title {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  font-weight: 600;
-  letter-spacing: -0.01em;
+  font-family: 'Roboto', 'Arial', sans-serif;
+  font-weight: 500;
+  letter-spacing: 0;
   color: #030303;
+  line-height: 1.4;
 }
 
 .video-channel-name {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  font-weight: 500;
+  font-family: 'Roboto', 'Arial', sans-serif;
+  font-weight: 400;
   color: #606060;
 }
 
 .video-meta-text {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  font-weight: 500;
+  font-family: 'Roboto', 'Arial', sans-serif;
+  font-weight: 400;
   color: #606060;
 }
 
 /* Additional font improvements for desktop */
 @media (min-width: 768px) {
   .video-title {
-    font-size: 0.95rem;
-    line-height: 1.3;
-    font-weight: 600;
+    font-size: 0.875rem;
+    line-height: 1.25;
   }
   
   .video-channel-name {
-    font-size: 0.85rem;
-    font-weight: 500;
+    font-size: 0.8125rem;
   }
   
   .video-meta-text {
-    font-size: 0.75rem;
-    font-weight: 500;
+    font-size: 0.8125rem;
   }
 }

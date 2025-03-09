@@ -19,12 +19,12 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
+        sans: ['Roboto', 'Arial', 'sans-serif'],
         display: ['Playfair Display', 'serif'],
       },
       fontSize: {
-        'youtube-title': ['16px', '22px'],
-        'youtube-small': ['14px', '20px'],
+        'youtube-title': ['14px', '20px'],
+        'youtube-small': ['13px', '18px'],
       },
       keyframes: {
         "gentle-fade": {

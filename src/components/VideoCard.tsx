@@ -67,10 +67,10 @@ export const VideoCard = ({
   return (
     <Link 
       to={`/video/${routeId}`} 
-      className="block group w-full transition-all ease-in-out duration-500"
+      className="block group w-full transition-all ease-in-out duration-300"
     >
       <div className={cn(
-        "relative rounded-lg overflow-hidden bg-muted shadow-sm transition-all duration-500 ease-in-out transform group-hover:-translate-y-2 group-hover:shadow-lg",
+        "relative rounded-lg overflow-hidden bg-muted shadow-sm transition-all duration-300 ease-in-out transform group-hover:-translate-y-1 group-hover:shadow-md",
         isMobile ? "aspect-video w-full mb-0" : "aspect-video mb-2"
       )}>
         <img
@@ -114,7 +114,7 @@ export const VideoCard = ({
           isMobile && "flex-col gap-0"
         )}>
           {channelThumbnail && !isMobile && (
-            <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
+            <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 mt-1">
               <img
                 src={channelThumbnail}
                 alt={channelName}
@@ -129,26 +129,26 @@ export const VideoCard = ({
           )}
           <div className="flex-1 min-w-0 overflow-hidden">
             <h3 className={cn(
-              "video-title line-clamp-2 text-[#030303] transition-all duration-500 ease-in-out group-hover:text-[#ea384c]",
-              isMobile ? "text-[11px] leading-[14px] mb-0.5 font-semibold" : "text-sm leading-5 font-semibold"
+              "video-title line-clamp-2 text-[#030303] transition-colors duration-300 ease-in-out group-hover:text-primary",
+              isMobile ? "text-[10px] leading-[13px] mb-0.5" : "text-sm leading-5"
             )}>
               {title || "Untitled Video"}
             </h3>
             <p className={cn(
               "text-muted-foreground truncate video-channel-name",
-              isMobile ? "text-[9px] mt-0 font-medium" : "text-[11px] mt-0.5 font-medium"
+              isMobile ? "text-[8px] mt-0" : "text-xs mt-0.5"
             )}>
               {channelName || "Unknown Channel"}
             </p>
             <div className={cn(
               "text-muted-foreground flex items-center space-x-1 truncate video-meta-text",
-              isMobile ? "text-[9px] mt-0.5" : "text-[10px] mt-0.5"
+              isMobile ? "text-[8px] mt-0.5" : "text-xs mt-0.5"
             )}>
               {views !== undefined && (
-                <span className="truncate font-medium">{formattedViews}</span>
+                <span className="truncate">{formattedViews}</span>
               )}
               {views !== undefined && <span>•</span>}
-              <span className="truncate font-medium">{formattedDate}</span>
+              <span className="truncate">{formattedDate}</span>
             </div>
           </div>
         </div>
