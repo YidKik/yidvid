@@ -1,6 +1,7 @@
 
 import { VideoCard } from "@/components/VideoCard";
 import { LoadingAnimation } from "@/components/ui/LoadingAnimation";
+import { useLocation } from "react-router-dom";
 
 interface ChannelVideosProps {
   videos: any[];
@@ -17,7 +18,10 @@ export const ChannelVideos = ({
   initialCount,
   isLoadingMore,
 }: ChannelVideosProps) => {
-  if (isLoading) {
+  const location = useLocation();
+  const isMainPage = location.pathname === "/";
+
+  if (isLoading && !isMainPage) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <LoadingAnimation
@@ -54,7 +58,7 @@ export const ChannelVideos = ({
           </div>
         ))}
       </div>
-      {isLoadingMore && (
+      {isLoadingMore && !isMainPage && (
         <div className="flex justify-center mt-6 md:mt-8">
           <LoadingAnimation size="small" color="muted" />
         </div>

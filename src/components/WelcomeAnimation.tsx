@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
@@ -125,29 +126,27 @@ export const WelcomeAnimation = () => {
             <WelcomeText userName={userName} />
             <LogoAnimation />
 
-            {(isWelcomeLoading || isVideosLoading || isVideosFetching) && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="flex flex-col items-center gap-2 mt-4"
-              >
-                <p className="text-sm text-muted-foreground">Loading content...</p>
-                <div className="w-48 h-1 bg-gray-200 rounded-full overflow-hidden">
-                  <motion.div
-                    className="h-full bg-primary"
-                    animate={{
-                      width: ["0%", "100%"],
-                    }}
-                    transition={{
-                      duration: 2,
-                      repeat: Infinity,
-                      ease: "linear",
-                    }}
-                  />
-                </div>
-              </motion.div>
-            )}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="flex flex-col items-center gap-2 mt-4"
+            >
+              <p className="text-sm text-muted-foreground">Loading content...</p>
+              <div className="w-48 h-1 bg-gray-200 rounded-full overflow-hidden">
+                <motion.div
+                  className="h-full bg-primary"
+                  animate={{
+                    width: ["0%", "100%"],
+                  }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    ease: "linear",
+                  }}
+                />
+              </div>
+            </motion.div>
 
             <motion.p
               initial={{ opacity: 0 }}
