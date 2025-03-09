@@ -1,4 +1,3 @@
-
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { VideoCard } from "./VideoCard";
@@ -57,7 +56,7 @@ export const VideoGrid = ({
       id: `sample-${i}`,
       video_id: `sample-vid-${i}`,
       title: `Sample Video ${i+1}`,
-      thumbnail: '/lovable-uploads/e425cacb-4c3a-4d81-b4e0-77fcbf10f61c.png',
+      thumbnail: '/lovable-uploads/2df6b540-f798-4831-8fcc-255a55486aa0.png',
       channelName: "Sample Channel",
       channelId: "sample-channel",
       views: 1000 * (i+1),
@@ -108,7 +107,7 @@ export const VideoGrid = ({
             id={video.id}
             video_id={video.video_id}
             title={video.title || "Untitled Video"}
-            thumbnail={video.thumbnail || "/lovable-uploads/e425cacb-4c3a-4d81-b4e0-77fcbf10f61c.png"}
+            thumbnail={video.thumbnail || "/lovable-uploads/2df6b540-f798-4831-8fcc-255a55486aa0.png"}
             channelName={video.channelName || "Unknown Channel"}
             channelId={video.channelId}
             views={video.views || 0}

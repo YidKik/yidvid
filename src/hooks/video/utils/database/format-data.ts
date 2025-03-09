@@ -9,7 +9,7 @@ export const formatVideoData = (videosData: any[]): VideoData[] => {
     id: video.id,
     video_id: video.video_id,
     title: video.title || "Untitled Video",
-    thumbnail: video.thumbnail || '/lovable-uploads/e425cacb-4c3a-4d81-b4e0-77fcbf10f61c.png',
+    thumbnail: video.thumbnail || '/lovable-uploads/2df6b540-f798-4831-8fcc-255a55486aa0.png',
     channelName: video.channel_name || "Unknown Channel",
     channelId: video.channel_id || "unknown-channel",
     views: video.views || 0,
