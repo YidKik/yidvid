@@ -5,6 +5,7 @@ import { MostViewedVideos } from "@/components/video/MostViewedVideos";
 import { ChannelsGrid } from "@/components/youtube/ChannelsGrid";
 import { VideoData } from "@/hooks/video/useVideoFetcher";
 import { useVideoPagination } from "@/hooks/video/useVideoPagination";
+import { useLocation } from "react-router-dom";
 
 interface DesktopVideoViewProps {
   videos: VideoData[];
@@ -23,6 +24,8 @@ export const DesktopVideoView = ({
   refetch
 }: DesktopVideoViewProps) => {
   const videosPerPage = 12;
+  const location = useLocation();
+  const isMainPage = location.pathname === "/";
   
   const {
     sortedVideos,

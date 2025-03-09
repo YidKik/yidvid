@@ -4,6 +4,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { VideoCard } from "./VideoCard";
 import { LoadingAnimation } from "@/components/ui/LoadingAnimation";
 import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 interface Video {
   id: string;
@@ -32,6 +33,8 @@ export const VideoGrid = ({
   className,
 }: VideoGridProps) => {
   const isMobile = useIsMobile();
+  const location = useLocation();
+  const isMainPage = location.pathname === "/";
   
   // Check if we're really loading or have no videos
   const loading = isLoading || !videos || videos.length === 0;
@@ -65,7 +68,7 @@ export const VideoGrid = ({
     }));
   };
 
-  if (loading) {
+  if (loading && !isMainPage) {
     return (
       <div className={cn(
         "flex items-center justify-center",
@@ -77,6 +80,16 @@ export const VideoGrid = ({
           text="Loading videos..."
         />
       </div>
+    );
+  }
+
+  // If on main page and loading, just render an empty div with appropriate height
+  if (loading && isMainPage) {
+    return (
+      <div className={cn(
+        "flex items-center justify-center",
+        isMobile ? "min-h-[200px]" : "min-h-[400px]"
+      )}></div>
     );
   }
 

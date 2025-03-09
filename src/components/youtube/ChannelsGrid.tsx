@@ -90,11 +90,16 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
     }
   }, [channels, manuallyFetchedChannels]);
 
-  // Early return for skeleton if really loading and no data is available
-  if (isLoading && isChannelsLoading && !manuallyFetchedChannels.length) {
-    return <ChannelsGridSkeleton />;
-  }
-
+  // Create sample data as last resort
+  const createSampleChannels = (): Channel[] => {
+    return Array(8).fill(null).map((_, i) => ({
+      id: `sample-${i}`,
+      channel_id: `sample-channel-${i}`,
+      title: `Sample Channel ${i+1}`,
+      thumbnail_url: null
+    }));
+  };
+  
   // Choose the best available data source - prioritize real data
   const hasRealData = channels?.some(c => 
     c.title && !c.title.includes("Sample Channel") && 
@@ -111,31 +116,24 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
   
   if (hasRealData && channels?.length) {
     displayChannels = channels;
-    console.log("Using real channels data from query:", channels.length);
   } else if (hasManualRealData && manuallyFetchedChannels?.length) {
     displayChannels = manuallyFetchedChannels;
-    console.log("Using manually fetched real channels data:", manuallyFetchedChannels.length);
   } else if (channels?.length) {
     displayChannels = channels;
-    console.log("Using query channels data (might be sample):", channels.length);
   } else if (manuallyFetchedChannels?.length) {
     displayChannels = manuallyFetchedChannels;
-    console.log("Using manually fetched channels data (might be sample):", manuallyFetchedChannels.length);
   } else {
-    // Create sample data as last resort
-    console.log("Creating sample channels as fallback");
-    displayChannels = Array(8).fill(null).map((_, i) => ({
-      id: `sample-${i}`,
-      channel_id: `sample-channel-${i}`,
-      title: `Sample Channel ${i+1}`,
-      thumbnail_url: null
-    }));
+    // Use sample channels as fallback
+    displayChannels = createSampleChannels();
   }
   
   // Filter out hidden channels (but only if we have enough channels)
   const visibleChannels = displayChannels?.length > 4 
     ? displayChannels.filter(channel => !hiddenChannels.has(channel.channel_id)) 
     : displayChannels || [];
+
+  // Skip loading animation on main page by using instant data
+  const showSkeleton = isLoading && isChannelsLoading && !manuallyFetchedChannels.length;
 
   return (
     <div className="w-full max-w-[1600px] mx-auto px-3 md:px-4 animate-scaleIn">

@@ -7,10 +7,14 @@ import { MobileCategoryScroll } from "./MobileCategoryScroll";
 import { CategorySkeleton } from "./CategorySkeleton";
 import { useCategories } from "@/hooks/useCategories";
 import { supabase } from "@/integrations/supabase/client";
+import { useLocation } from "react-router-dom";
 
 export const CategorySection = () => {
   const { colors } = useColors();
   const isMobile = useIsMobile();
+  const location = useLocation();
+  const isMainPage = location.pathname === "/";
+  
   const { 
     infiniteCategories, 
     categoriesLoading, 
@@ -37,8 +41,13 @@ export const CategorySection = () => {
     processExistingVideos();
   }, [refetchVideos]);
 
-  if (categoriesLoading) {
+  if (categoriesLoading && !isMainPage) {
     return <CategorySkeleton />;
+  }
+
+  // On main page, don't show loading skeleton
+  if (categoriesLoading && isMainPage) {
+    return null;
   }
 
   return (
