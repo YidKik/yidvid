@@ -15,7 +15,7 @@ import { GlobalNotification } from "@/components/notifications/GlobalNotificatio
 import { WelcomeOverlay } from "@/components/welcome/WelcomeOverlay";
 import { getPageTitle, DEFAULT_META_DESCRIPTION, DEFAULT_META_KEYWORDS, DEFAULT_META_IMAGE } from "@/utils/pageTitle";
 import { Helmet } from "react-helmet";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/use-toast";
 
 const MainContent = () => {
   const [isMusic, setIsMusic] = useState(false);

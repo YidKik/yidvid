@@ -28,6 +28,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
       position="bottom-right"
       visibleToasts={3}
       closeButton={false}
+      toastDeduplication={true} // Enable deduplication of toasts
       {...props}
     />
   )
