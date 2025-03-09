@@ -12,7 +12,7 @@ export const HeaderLogo = ({ isMobile }: HeaderLogoProps) => {
     <div className="flex items-center absolute left-0 top-1/2 -translate-y-1/2 ml-0 pl-0">
       <Link to="/" className="flex items-center">
         <img 
-          src="/lovable-uploads/2df6b540-f798-4831-8fcc-255a55486aa0.png" 
+          src="/lovable-uploads/e425cacb-4c3a-4d81-b4e0-77fcbf10f61c.png" 
           alt="YidVid Logo"
           className={`object-contain ${isMobile ? 'h-[110px] w-[110px]' : 'h-36 w-auto'}`}
           onError={(e) => {

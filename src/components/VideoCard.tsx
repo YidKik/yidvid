@@ -60,10 +60,9 @@ export const VideoCard = ({
   const routeId = uuid || video_id || id;
 
   // Safely handle potentially missing thumbnail URL
-  // Use new logo instead of site logo
   const thumbnailUrl = thumbnail && thumbnail !== '/placeholder.svg' 
     ? thumbnail 
-    : "/lovable-uploads/2df6b540-f798-4831-8fcc-255a55486aa0.png";
+    : "/placeholder.svg";
 
   return (
     <Link 
@@ -80,8 +79,32 @@ export const VideoCard = ({
           className="w-full h-full object-cover"
           loading="lazy"
           onError={(e) => {
-            // Fallback to new logo if image fails to load
-            (e.target as HTMLImageElement).src = "/lovable-uploads/2df6b540-f798-4831-8fcc-255a55486aa0.png";
+            // Show placeholder with centered small logo
+            (e.target as HTMLImageElement).src = "/placeholder.svg";
+            
+            // Create a container for the thumbnail with logo
+            const imgElement = e.target as HTMLImageElement;
+            const parent = imgElement.parentElement;
+            
+            if (parent) {
+              // Remove any previously created logo overlay
+              const existingOverlay = parent.querySelector('.thumbnail-logo-overlay');
+              if (existingOverlay) existingOverlay.remove();
+              
+              // Create the logo overlay
+              const logoOverlay = document.createElement('div');
+              logoOverlay.className = 'thumbnail-logo-overlay absolute inset-0 flex items-center justify-center';
+              
+              // Create the logo image
+              const logoImg = document.createElement('img');
+              logoImg.src = "/lovable-uploads/2df6b540-f798-4831-8fcc-255a55486aa0.png";
+              logoImg.alt = "Site Logo";
+              logoImg.className = 'w-12 h-12 opacity-70'; // Smaller centered logo
+              
+              // Append elements
+              logoOverlay.appendChild(logoImg);
+              parent.appendChild(logoOverlay);
+            }
           }}
         />
       </div>
