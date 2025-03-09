@@ -23,7 +23,6 @@ const Toaster = ({ ...props }: ToasterProps) => {
         },
         // Prevent duplicate toast notifications
         closeButton: true,
-        dismissible: true,
         duration: 5000,
       }}
       {...props}
