@@ -12,7 +12,7 @@ serve(async (req) => {
   }
 
   try {
-    const { channels = [], forceUpdate = false, quotaConservative = false, prioritizeRecent = false, maxChannelsPerRun = 10 } = await req.json();
+    const { channels = [], forceUpdate = false, quotaConservative = false, prioritizeRecent = true, maxChannelsPerRun = 20 } = await req.json();
     
     // Check if we have quota remaining before starting
     const { quota_remaining, quota_reset_at } = await checkQuota();
@@ -30,8 +30,8 @@ serve(async (req) => {
     }
 
     // Calculate how many channels we can process based on available quota
-    // Each channel costs ~10-15 units to process (1 for channel info, ~10 for videos)
-    const estimatedQuotaPerChannel = quotaConservative ? 20 : 15;
+    // Use a more conservative quota estimate to avoid exceeding quota
+    const estimatedQuotaPerChannel = quotaConservative ? 15 : 10;
     const maxChannelsBasedOnQuota = Math.floor(quota_remaining / estimatedQuotaPerChannel);
     const channelsToProcess = Math.min(
       maxChannelsBasedOnQuota, 
@@ -62,12 +62,8 @@ serve(async (req) => {
     let processedCount = 0;
     let quotaUsed = 0;
 
-    // If prioritizing recent, sort the channels by last update time
-    if (prioritizeRecent) {
-      // We'll prioritize by just using the first N channels
-      // since they were likely sorted by recent activity already
-      console.log("Prioritizing most recently active channels");
-    }
+    // Always prioritize by most recently active to get newest content first
+    console.log("Prioritizing most recently active channels");
 
     // Process channels sequentially to better manage quota
     for (const channelId of channelsSubset) {

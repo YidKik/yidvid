@@ -13,7 +13,7 @@ interface UseInitialVideoLoadProps {
 }
 
 /**
- * Hook to handle initial data loading and refreshing
+ * Hook to handle initial data loading and refreshing with optimized performance
  */
 export const useInitialVideoLoad = ({
   data,
@@ -23,14 +23,16 @@ export const useInitialVideoLoad = ({
   triggerRetry,
   setIsRefreshing
 }: UseInitialVideoLoadProps) => {
-  // Refresh once when mounted or data is empty
+  // Optimize refresh logic to reduce unnecessary refreshes
   useEffect(() => {
+    // Only refresh if we have no data or only sample data
     const refreshNeeded = !isLoading && (!data || data.length === 0 || !hasRealVideos(data));
     
     if (refreshNeeded) {
       console.log("Initial data load needed - triggering refresh");
       if (setIsRefreshing) setIsRefreshing(true);
       
+      // Use a shorter timeout for faster initial load
       const timer = setTimeout(() => {
         forceRefetch()
           .then(() => {
@@ -42,34 +44,14 @@ export const useInitialVideoLoad = ({
             triggerRetry();
             if (setIsRefreshing) setIsRefreshing(false);
           });
-      }, 1500);
+      }, 500); // Reduced from 1500ms to 500ms for faster initial load
       
       return () => clearTimeout(timer);
     }
   }, [isLoading, data]);
 
-  // Periodically check if the data still contains sample videos
-  useEffect(() => {
-    if (!data || isLoading) return;
-    
-    // Only refresh if we still have sample videos
-    if (!hasRealVideos(data)) {
-      const timer = setTimeout(() => {
-        console.log("Still have sample videos - trying another refresh");
-        if (setIsRefreshing) setIsRefreshing(true);
-        
-        refetch()
-          .then(() => {
-            if (setIsRefreshing) setIsRefreshing(false);
-          })
-          .catch(() => {
-            if (setIsRefreshing) setIsRefreshing(false);
-          });
-      }, 5000);
-      
-      return () => clearTimeout(timer);
-    }
-  }, [data, isLoading]);
+  // Remove the second effect that was checking for sample videos again
+  // as it was causing duplicate refresh attempts
 
   return null;
 };

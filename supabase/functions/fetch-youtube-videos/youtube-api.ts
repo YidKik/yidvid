@@ -11,7 +11,12 @@ export async function fetchChannelVideos(
   try {
     // Get channel details
     const channelUrl = `https://www.googleapis.com/youtube/v3/channels?part=contentDetails,snippet,status&id=${channelId}&key=${apiKey}`;
-    const channelResponse = await fetch(channelUrl);
+    const channelResponse = await fetch(channelUrl, {
+      headers: {
+        'Accept': 'application/json',
+        'Referer': 'https://yidvid.com' // Set a valid referer to avoid blocked requests
+      }
+    });
     
     if (!channelResponse.ok) {
       const errorText = await channelResponse.text();
@@ -51,7 +56,12 @@ export async function fetchChannelVideos(
 
     // Fetch videos with pagination - maximum of 50 per request (API limit)
     const playlistUrl = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${uploadsPlaylistId}&key=${apiKey}`;
-    const response = await fetch(playlistUrl);
+    const response = await fetch(playlistUrl, {
+      headers: {
+        'Accept': 'application/json',
+        'Referer': 'https://yidvid.com' // Set a valid referer to avoid blocked requests
+      }
+    });
     
     if (!response.ok) {
       const errorText = await response.text();
@@ -74,7 +84,7 @@ export async function fetchChannelVideos(
 
     // Get video IDs and fetch statistics in a single batch
     const videoIds = data.items
-      .map((item: any) => item.snippet.resourceId.videoId)
+      .map((item: any) => item.snippet?.resourceId?.videoId)
       .filter(Boolean);
 
     console.log(`[YouTube Videos] Found ${videoIds.length} videos in current page for channel ${channelId}`);
@@ -84,7 +94,12 @@ export async function fetchChannelVideos(
     }
 
     const statsUrl = `https://www.googleapis.com/youtube/v3/videos?part=statistics,snippet&id=${videoIds.join(',')}&key=${apiKey}`;
-    const statsResponse = await fetch(statsUrl);
+    const statsResponse = await fetch(statsUrl, {
+      headers: {
+        'Accept': 'application/json',
+        'Referer': 'https://yidvid.com' // Set a valid referer to avoid blocked requests
+      }
+    });
     
     if (!statsResponse.ok) {
       const errorText = await statsResponse.text();

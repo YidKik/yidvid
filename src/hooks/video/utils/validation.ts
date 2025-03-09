@@ -3,26 +3,33 @@ import { VideoData } from "../types/video-fetcher";
 
 /**
  * Check if the array of videos contains real videos (not samples)
+ * with improved performance
  */
 export const hasRealVideos = (videos?: VideoData[] | null): boolean => {
   if (!videos || videos.length === 0) return false;
   
-  // Check a few videos to determine if they're real
-  const realVideoCount = videos.filter(video => 
-    !video.id.toString().includes('sample') && 
-    !video.video_id.includes('sample') &&
-    video.channelName !== "Sample Channel" &&
-    video.title !== "Sample Video 1"
-  ).length;
+  // Check just the first few videos to determine if they're real (more efficient)
+  const sampleCount = Math.min(5, videos.length);
+  for (let i = 0; i < sampleCount; i++) {
+    const video = videos[i];
+    if (!video.id.toString().includes('sample') && 
+        !video.video_id.includes('sample') &&
+        video.channelName !== "Sample Channel") {
+      return true; // Found at least one real video
+    }
+  }
   
-  return realVideoCount > 0;
+  return false;
 };
 
 /**
- * Create sample videos for fallback display
+ * Create sample videos for fallback display with better performance
  */
 export const createSampleVideos = (count = 12): VideoData[] => {
   const now = new Date();
+  // Pre-calculate the base time once
+  const baseTime = now.getTime();
+  
   return Array(count).fill(null).map((_, i) => ({
     id: `sample-${i}`,
     video_id: `sample-vid-${i}`,
@@ -31,7 +38,7 @@ export const createSampleVideos = (count = 12): VideoData[] => {
     channelName: "Sample Channel",
     channelId: "sample-channel",
     views: 1000 * (i+1),
-    uploadedAt: new Date(now.getTime() - (i * 86400000)).toISOString(),
+    uploadedAt: new Date(baseTime - (i * 86400000)).toISOString(),
     category: "other",
     description: "This is a sample video until real content loads."
   }));
