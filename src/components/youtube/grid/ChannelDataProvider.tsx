@@ -24,11 +24,35 @@ export const ChannelDataProvider = ({ children, onError }: ChannelDataProviderPr
   
   const { createSampleChannels, hasRealChannels } = useSampleChannels();
   const [displayChannels, setDisplayChannels] = useState<Channel[]>([]);
+  const [lastAuthEvent, setLastAuthEvent] = useState<string | null>(null);
+
+  // Add auth state change listener to refetch on auth changes
+  useEffect(() => {
+    const { data: authListener } = supabase.auth.onAuthStateChange((event) => {
+      console.log("Auth state changed in ChannelDataProvider:", event);
+      setLastAuthEvent(event);
+      
+      // Immediately refetch on auth state change
+      if (event === 'SIGNED_IN' || event === 'SIGNED_OUT' || event === 'TOKEN_REFRESHED') {
+        console.log("Auth event triggered refetch of channels");
+        setIsLoading(true);
+        refetch().catch(error => {
+          console.error("Error refetching channels after auth change:", error);
+        });
+      }
+    });
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, []);
 
   // Try to fetch directly from database first for faster loading
   const fetchChannelsFromDB = async () => {
     try {
       console.log("Direct database fetch for channels...");
+      
+      // First try with the normal query
       const { data, error } = await supabase
         .from("youtube_channels")
         .select("id, channel_id, title, thumbnail_url")
@@ -37,6 +61,17 @@ export const ChannelDataProvider = ({ children, onError }: ChannelDataProviderPr
         
       if (error) {
         console.error("Direct DB fetch error:", error);
+        
+        // Try a simplified query without the deleted_at filter
+        const simplifiedQuery = await supabase
+          .from("youtube_channels")
+          .select("id, channel_id, title, thumbnail_url")
+          .limit(50);
+          
+        if (!simplifiedQuery.error && simplifiedQuery.data?.length > 0) {
+          return simplifiedQuery.data;
+        }
+        
         return null;
       }
       
@@ -54,7 +89,7 @@ export const ChannelDataProvider = ({ children, onError }: ChannelDataProviderPr
 
   // Fetch channels with improved retry logic
   const { data: channels, error, isLoading: isChannelsLoading, refetch } = useQuery({
-    queryKey: ["youtube_channels"],
+    queryKey: ["youtube_channels", lastAuthEvent],
     queryFn: async () => {
       const dbChannels = await fetchChannelsFromDB();
       if (dbChannels && dbChannels.length > 0) {

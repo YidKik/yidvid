@@ -16,7 +16,9 @@ export const useWelcomeData = (session: any) => {
           .maybeSingle();
         
         if (error) {
-          console.error("Error fetching profile:", error);
+          if (!error.message.includes("recursion") && !error.message.includes("policy")) {
+            console.error("Error fetching profile:", error);
+          }
           return null;
         }
         
@@ -36,10 +38,11 @@ export const useWelcomeData = (session: any) => {
   });
 
   const { data: videos, isLoading: isLoadingVideos, isError: isVideosError } = useQuery({
-    queryKey: ["youtube_videos"],
+    queryKey: ["welcome_youtube_videos"],
     queryFn: async () => {
       console.log("Prefetching videos during welcome animation...");
       try {
+        // First try the full query
         const { data, error } = await supabase
           .from("youtube_videos")
           .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at")
@@ -48,6 +51,29 @@ export const useWelcomeData = (session: any) => {
 
         if (error) {
           console.error("Error fetching videos:", error);
+          
+          // If permission denied or policy error, try more basic query
+          if (error.message.includes("permission") || error.message.includes("policy") || error.message.includes("recursion")) {
+            const basicQuery = await supabase
+              .from("youtube_videos")
+              .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at")
+              .order("uploaded_at", { ascending: false })
+              .limit(50);
+              
+            if (!basicQuery.error && basicQuery.data?.length > 0) {
+              return basicQuery.data.map(video => ({
+                id: video.id,
+                video_id: video.video_id,
+                title: video.title,
+                thumbnail: video.thumbnail,
+                channelName: video.channel_name,
+                channelId: video.channel_id,
+                views: video.views || 0,
+                uploadedAt: video.uploaded_at
+              }));
+            }
+          }
+          
           return [];
         }
 
@@ -77,10 +103,11 @@ export const useWelcomeData = (session: any) => {
   });
 
   const { data: channels, isLoading: isLoadingChannels, isError: isChannelsError } = useQuery({
-    queryKey: ["youtube_channels"],
+    queryKey: ["welcome_youtube_channels"],
     queryFn: async () => {
       console.log("Prefetching channels during welcome animation...");
       try {
+        // First try the full query
         const { data, error } = await supabase
           .from("youtube_channels")
           .select("id, channel_id, title, thumbnail_url, description")
@@ -88,6 +115,19 @@ export const useWelcomeData = (session: any) => {
 
         if (error) {
           console.error("Error fetching channels:", error);
+          
+          // If permission denied or policy error, try more basic query
+          if (error.message.includes("permission") || error.message.includes("policy") || error.message.includes("recursion")) {
+            const basicQuery = await supabase
+              .from("youtube_channels")
+              .select("id, channel_id, title, thumbnail_url")
+              .limit(50);
+              
+            if (!basicQuery.error && basicQuery.data?.length > 0) {
+              return basicQuery.data;
+            }
+          }
+          
           return [];
         }
 

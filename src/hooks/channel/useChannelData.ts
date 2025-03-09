@@ -17,7 +17,25 @@ export const useChannelData = (channelId: string | undefined) => {
 
       if (error) {
         console.error("Error fetching channel:", error);
-        toast.error("Failed to load channel details", { id: "channel-load-error" });
+        
+        // Don't show toast for data access errors or RLS errors
+        if (!error.message.includes("recursion") && 
+            !error.message.includes("policy") && 
+            !error.message.includes("permission")) {
+          toast.error("Failed to load channel details", { id: "channel-load-error" });
+        }
+        
+        // Try a simplified query for public data access
+        const { data: basicData, error: basicError } = await supabase
+          .from("youtube_channels")
+          .select("channel_id, title, thumbnail_url")
+          .eq("channel_id", channelId)
+          .maybeSingle();
+          
+        if (!basicError && basicData) {
+          return basicData;
+        }
+        
         throw error;
       }
 
@@ -28,5 +46,10 @@ export const useChannelData = (channelId: string | undefined) => {
 
       return data;
     },
+    retry: 1,
+    refetchOnWindowFocus: false,
+    meta: {
+      suppressToasts: true
+    }
   });
 };

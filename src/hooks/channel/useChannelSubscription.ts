@@ -5,7 +5,24 @@ import { toast } from "sonner";
 
 export const useChannelSubscription = (channelId: string | undefined) => {
   const [isSubscribed, setIsSubscribed] = useState(false);
+  const [isCheckingSubscription, setIsCheckingSubscription] = useState(false);
 
+  // Use this effect to monitor auth state changes and recheck subscription
+  useEffect(() => {
+    const { data: authListener } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+        checkSubscription();
+      } else if (event === 'SIGNED_OUT') {
+        setIsSubscribed(false);
+      }
+    });
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, []);
+
+  // Use separate effect for initial check and channelId changes
   useEffect(() => {
     if (channelId) {
       checkSubscription();
@@ -13,17 +30,34 @@ export const useChannelSubscription = (channelId: string | undefined) => {
   }, [channelId]);
 
   const checkSubscription = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return;
+    if (!channelId || isCheckingSubscription) return;
+    
+    try {
+      setIsCheckingSubscription(true);
+      
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        setIsSubscribed(false);
+        return;
+      }
 
-    const { data: subscription } = await supabase
-      .from("channel_subscriptions")
-      .select("*")
-      .eq("channel_id", channelId)
-      .eq("user_id", session.user.id)
-      .maybeSingle();
+      const { data: subscription, error } = await supabase
+        .from("channel_subscriptions")
+        .select("*")
+        .eq("channel_id", channelId)
+        .eq("user_id", session.user.id)
+        .maybeSingle();
+        
+      if (error && !error.message.includes("policy")) {
+        console.error("Error checking subscription:", error);
+      }
 
-    setIsSubscribed(!!subscription);
+      setIsSubscribed(!!subscription);
+    } catch (err) {
+      console.error("Failed to check subscription status:", err);
+    } finally {
+      setIsCheckingSubscription(false);
+    }
   };
 
   const handleSubscribe = async () => {

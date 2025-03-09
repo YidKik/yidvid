@@ -5,6 +5,7 @@ import { useVideoRealtime } from "./useVideoRealtime";
 import { useVideoFetcher, VideoData } from "./useVideoFetcher";
 import { toast } from "sonner";
 import { useLocation } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 
 export interface UseVideosResult {
   data: VideoData[];
@@ -19,6 +20,7 @@ export interface UseVideosResult {
 
 export const useVideos = (): UseVideosResult => {
   const [retryCount, setRetryCount] = useState(0);
+  const [authState, setAuthState] = useState<string | null>(null);
   const location = useLocation();
   const isMainPage = location.pathname === "/";
   const toastShownRef = useRef(false);
@@ -35,6 +37,36 @@ export const useVideos = (): UseVideosResult => {
     setFetchAttempts
   } = useVideoFetcher();
 
+  // Add auth state change listener to refetch on auth changes
+  useEffect(() => {
+    const { data: authListener } = supabase.auth.onAuthStateChange((event) => {
+      console.log("Auth state changed in useVideos:", event);
+      setAuthState(event);
+      
+      if (event === 'SIGNED_IN') {
+        console.log("User signed in, triggering video refetch");
+        setTimeout(() => {
+          forceRefetch().catch(err => {
+            console.error("Error force refetching after sign in:", err);
+          });
+        }, 1000); // Small delay to ensure auth is complete
+      }
+      
+      if (event === 'SIGNED_OUT') {
+        console.log("User signed out, triggering video refetch");
+        setTimeout(() => {
+          forceRefetch().catch(err => {
+            console.error("Error force refetching after sign out:", err);
+          });
+        }, 1000); // Small delay to ensure auth is complete
+      }
+    });
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, [forceRefetch]);
+
   // Helper to check if videos are real or sample data
   const hasRealVideos = (videos: VideoData[] | undefined): boolean => {
     if (!videos || videos.length === 0) return false;
@@ -48,7 +80,8 @@ export const useVideos = (): UseVideosResult => {
 
   // Set up React Query with more aggressive refetching strategy
   const { data, isLoading, isFetching, error, refetch } = useQuery<VideoData[]>({
-    queryKey: ["youtube_videos", retryCount], // Add retryCount to force refetch
+    // Include authState in the query key to force refetch on auth state changes
+    queryKey: ["youtube_videos", retryCount, authState], 
     queryFn: fetchAllVideos,
     refetchInterval: 5 * 60 * 1000, // Refetch every 5 minutes
     staleTime: 1 * 60 * 1000, // Consider data stale after 1 minute
@@ -56,6 +89,13 @@ export const useVideos = (): UseVideosResult => {
     retry: (failureCount, error: any) => {
       // Don't retry quota errors
       if (error?.message?.includes('quota')) return false;
+      // Don't retry permissions errors from Row Level Security
+      if (error?.message?.includes('recursion') || 
+          error?.message?.includes('policy') || 
+          error?.message?.includes('permission')) {
+        console.log("Not retrying RLS/permission error");
+        return false;
+      }
       // Retry network errors up to 5 times
       if (error?.message?.includes('network') || error?.message?.includes('fetch')) return failureCount < 5;
       // Retry twice for other errors
@@ -106,7 +146,7 @@ export const useVideos = (): UseVideosResult => {
     console.log(`useVideos: ${data?.length || 0} videos available`);
     
     if (!hasRealVideos(data) && !isMainPage) {
-      console.log("No real video data available, triggering forced refetch");
+      console.log("No real video data available, triggering forced refetch...");
       
       // Try to force fetch if we have no real data, with delay to prevent race conditions
       setTimeout(() => {

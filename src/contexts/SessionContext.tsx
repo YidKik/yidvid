@@ -30,25 +30,45 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
     
     // Log what we're preserving
     if (videosData) {
-      console.log("Preserving videos data, count:", Array.isArray(videosData) ? videosData.length : 'unknown');
+      console.log("Preserving videos data during auth change, count:", Array.isArray(videosData) ? videosData.length : 'unknown');
     }
     
     if (channelsData) {
-      console.log("Preserving channels data, count:", Array.isArray(channelsData) ? channelsData.length : 'unknown');
+      console.log("Preserving channels data during auth change, count:", Array.isArray(channelsData) ? channelsData.length : 'unknown');
     }
     
     // Return a function that will restore this data
     return () => {
       if (videosData) {
-        console.log("Restoring videos data, count:", Array.isArray(videosData) ? videosData.length : 'unknown');
+        console.log("Restoring videos data after auth change, count:", Array.isArray(videosData) ? videosData.length : 'unknown');
         queryClient.setQueryData(["youtube_videos"], videosData);
       }
       
       if (channelsData) {
-        console.log("Restoring channels data, count:", Array.isArray(channelsData) ? channelsData.length : 'unknown');
+        console.log("Restoring channels data after auth change, count:", Array.isArray(channelsData) ? channelsData.length : 'unknown');
         queryClient.setQueryData(["youtube_channels"], channelsData);
       }
     };
+  };
+
+  // Function to ensure we have fresh content after auth changes
+  const refreshContentAfterDelay = (delay = 2000) => {
+    setTimeout(() => {
+      console.log("Refreshing content data after auth state change");
+      
+      // Invalidate only content-related queries
+      queryClient.invalidateQueries({ queryKey: ["youtube_videos"] });
+      queryClient.invalidateQueries({ queryKey: ["youtube_channels"] });
+      
+      // Force immediate refresh if we have no data
+      if (!queryClient.getQueryData(["youtube_videos"])) {
+        queryClient.fetchQuery({ queryKey: ["youtube_videos"] });
+      }
+      
+      if (!queryClient.getQueryData(["youtube_channels"])) {
+        queryClient.fetchQuery({ queryKey: ["youtube_channels"] });
+      }
+    }, delay);
   };
 
   useEffect(() => {
@@ -109,6 +129,9 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
           
           // Restore content data to ensure it's not lost during sign in
           restoreContent();
+          
+          // Refresh content after a short delay
+          refreshContentAfterDelay();
           break;
           
         case 'TOKEN_REFRESHED':
@@ -126,16 +149,8 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
           // Restore content data
           restoreContent();
           
-          // Force a refresh of content data after sign out if no data exists
-          if (!queryClient.getQueryData(["youtube_videos"])) {
-            console.log("No videos data after sign out, forcing refresh");
-            queryClient.invalidateQueries({ queryKey: ["youtube_videos"] });
-          }
-          
-          if (!queryClient.getQueryData(["youtube_channels"])) {
-            console.log("No channels data after sign out, forcing refresh");
-            queryClient.invalidateQueries({ queryKey: ["youtube_channels"] });
-          }
+          // Force a refresh of content data after sign out with a delay
+          refreshContentAfterDelay();
           break;
           
         case 'USER_UPDATED':
@@ -178,7 +193,9 @@ function prefetchUserData(session: Session, queryClient: any) {
           .maybeSingle();
         
         if (error) {
-          console.error("Error prefetching profile:", error);
+          if (!error.message.includes("recursion") && !error.message.includes("policy")) {
+            console.error("Error prefetching profile:", error);
+          }
           return null;
         }
         
@@ -190,7 +207,8 @@ function prefetchUserData(session: Session, queryClient: any) {
     },
     retry: 1,
     meta: {
-      errorBoundary: false
+      errorBoundary: false,
+      suppressToasts: true
     }
   });
   
@@ -206,7 +224,9 @@ function prefetchUserData(session: Session, queryClient: any) {
           .single();
         
         if (error) {
-          console.error("Error prefetching user profile:", error);
+          if (!error.message.includes("recursion") && !error.message.includes("policy")) {
+            console.error("Error prefetching user profile:", error);
+          }
           return null;
         }
         
@@ -218,12 +238,13 @@ function prefetchUserData(session: Session, queryClient: any) {
     },
     retry: 1,
     meta: {
-      errorBoundary: false
+      errorBoundary: false,
+      suppressToasts: true
     }
   });
 }
 
-// New function to immediately fetch content data on app initialization
+// Function to immediately fetch content data on app initialization
 function fetchInitialContent(queryClient: any) {
   console.log("Prefetching initial content data for all users");
   
@@ -241,6 +262,22 @@ function fetchInitialContent(queryClient: any) {
           
         if (error) {
           console.error("Error prefetching videos:", error);
+          
+          // If permission denied or policy error, try more basic query
+          if (error.message.includes("permission") || error.message.includes("policy") || error.message.includes("recursion")) {
+            console.log("Trying simplified video query after permission error");
+            const basicQuery = await supabase
+              .from("youtube_videos")
+              .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at")
+              .order("uploaded_at", { ascending: false })
+              .limit(50);
+              
+            if (!basicQuery.error && basicQuery.data?.length > 0) {
+              console.log(`Received ${basicQuery.data.length} videos from simplified query`);
+              return basicQuery.data;
+            }
+          }
+          
           return [];
         }
         
@@ -267,6 +304,21 @@ function fetchInitialContent(queryClient: any) {
           
         if (error) {
           console.error("Error prefetching channels:", error);
+          
+          // If permission denied or policy error, try more basic query
+          if (error.message.includes("permission") || error.message.includes("policy") || error.message.includes("recursion")) {
+            console.log("Trying simplified channel query after permission error");
+            const basicQuery = await supabase
+              .from("youtube_channels")
+              .select("id, channel_id, title, thumbnail_url")
+              .limit(50);
+              
+            if (!basicQuery.error && basicQuery.data?.length > 0) {
+              console.log(`Received ${basicQuery.data.length} channels from simplified query`);
+              return basicQuery.data;
+            }
+          }
+          
           return [];
         }
         
