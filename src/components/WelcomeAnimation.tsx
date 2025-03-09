@@ -80,6 +80,7 @@ export const WelcomeAnimation = () => {
                 </motion.div>
               ), {
                 duration: 6000,
+                id: "welcome-info-notification",
                 onAutoClose: () => {
                   localStorage.setItem('hasSeenInfoNotification', 'true');
                 }

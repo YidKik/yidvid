@@ -17,12 +17,12 @@ export const useChannelData = (channelId: string | undefined) => {
 
       if (error) {
         console.error("Error fetching channel:", error);
-        toast.error("Failed to load channel details");
+        toast.error("Failed to load channel details", { id: "channel-load-error" });
         throw error;
       }
 
       if (!data) {
-        toast.error("Channel not found");
+        toast.error("Channel not found", { id: "channel-not-found" });
         throw new Error("Channel not found");
       }
 

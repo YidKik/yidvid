@@ -21,15 +21,14 @@ const Toaster = ({ ...props }: ToasterProps) => {
           cancelButton:
             "group-[.toast]:bg-muted group-[.toast]:text-muted-foreground",
         },
-        // Prevent duplicate toast notifications
+        // Prevent duplicate toast notifications by using id
         closeButton: true,
-        duration: 5000,
+        duration: 5000, // 5 seconds duration
       }}
       richColors
       expand={false}
       position="bottom-right"
       visibleToasts={3}
-      // Group similar toasts without using the 'group' prop, as it's not recognized
       {...props}
     />
   )

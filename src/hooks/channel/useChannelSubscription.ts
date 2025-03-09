@@ -35,7 +35,7 @@ export const useChannelSubscription = (channelId: string | undefined) => {
     const { data: { session } } = await supabase.auth.getSession();
     
     if (!session) {
-      toast.error("Please sign in to subscribe to channels");
+      toast.error("Please sign in to subscribe to channels", { id: "signin-required" });
       return;
     }
 
@@ -49,7 +49,7 @@ export const useChannelSubscription = (channelId: string | undefined) => {
 
         if (error) throw error;
         setIsSubscribed(false);
-        toast.success("Unsubscribed from channel");
+        toast.success("Unsubscribed from channel", { id: `unsubscribe-${channelId}` });
       } else {
         const { error } = await supabase
           .from("channel_subscriptions")
@@ -60,11 +60,11 @@ export const useChannelSubscription = (channelId: string | undefined) => {
 
         if (error) throw error;
         setIsSubscribed(true);
-        toast.success("Subscribed to channel");
+        toast.success("Subscribed to channel", { id: `subscribe-${channelId}` });
       }
     } catch (error: any) {
       console.error("Error managing subscription:", error);
-      toast.error("Failed to update subscription");
+      toast.error("Failed to update subscription", { id: "subscription-error" });
     }
   };
 

@@ -1,4 +1,3 @@
-
 import { Header } from "@/components/Header";
 import Auth from "@/pages/Auth";
 import { useState, useEffect, useRef } from "react";
@@ -63,7 +62,6 @@ const MainContent = () => {
     }
   }, [session?.user?.id]);
 
-  // Reset the notifications flag when the component unmounts
   useEffect(() => {
     return () => {
       notificationsProcessedRef.current = false;
