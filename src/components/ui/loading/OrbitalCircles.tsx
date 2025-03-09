@@ -24,8 +24,8 @@ export const OrbitalCircles: React.FC<OrbitalCirclesProps> = ({
     <>
       {orbitalPositions.map((pos, index) => {
         const radians = (pos.angle * Math.PI) / 180;
-        const x = Math.cos(radians) * selectedSize.gap;
-        const y = Math.sin(radians) * selectedSize.gap;
+        const x = Math.cos(radians) * parseFloat(selectedSize.gap);
+        const y = Math.sin(radians) * parseFloat(selectedSize.gap);
 
         return (
           <motion.div
@@ -37,8 +37,8 @@ export const OrbitalCircles: React.FC<OrbitalCirclesProps> = ({
             style={{
               width: selectedSize.circle,
               height: selectedSize.circle,
-              x: `${x}rem`,
-              y: `${y}rem`,
+              x: `${x}px`,
+              y: `${y}px`,
             }}
             custom={index}
             variants={circleVariants}

@@ -47,7 +47,9 @@ export const loadingSizeConfig = {
     innerSpinner: "h-6 w-6",
     centerDot: "h-3 w-3",
     fontSize: "text-xs mt-2",
-    logoSize: "h-3 w-3"
+    logoSize: "h-3 w-3",
+    circle: "0.5rem", // Add circle size for OrbitalCircles and CenterLogo
+    gap: "1.5rem"      // Add gap for OrbitalCircles
   },
   medium: {
     container: "h-12 w-12",
@@ -55,7 +57,9 @@ export const loadingSizeConfig = {
     innerSpinner: "h-9 w-9",
     centerDot: "h-5 w-5 flex items-center justify-center",
     fontSize: "text-sm",
-    logoSize: "h-4 w-4"
+    logoSize: "h-4 w-4",
+    circle: "0.75rem", // Add circle size for OrbitalCircles and CenterLogo
+    gap: "2.5rem"      // Add gap for OrbitalCircles
   },
   large: {
     container: "h-20 w-20",
@@ -63,7 +67,9 @@ export const loadingSizeConfig = {
     innerSpinner: "h-16 w-16",
     centerDot: "h-8 w-8 flex items-center justify-center",
     fontSize: "text-base",
-    logoSize: "h-6 w-6"
+    logoSize: "h-6 w-6",
+    circle: "1rem",    // Add circle size for OrbitalCircles and CenterLogo
+    gap: "3.5rem"      // Add gap for OrbitalCircles
   }
 };
 

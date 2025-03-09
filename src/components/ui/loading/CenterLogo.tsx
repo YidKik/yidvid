@@ -17,13 +17,14 @@ export const CenterLogo: React.FC<CenterLogoProps> = ({
 }) => {
   const selectedSize = loadingSizeConfig[size];
   const selectedColor = loadingColorConfig[color];
-
+  const circleSizeNum = parseFloat(selectedSize.circle);
+  
   return (
     <motion.div
       className="absolute z-10 rounded-full bg-white flex items-center justify-center overflow-hidden"
       style={{
-        width: selectedSize.circle * 3.2, // Larger center for logo
-        height: selectedSize.circle * 3.2, // Larger center for logo
+        width: `${circleSizeNum * 3.2}rem`, // Larger center for logo
+        height: `${circleSizeNum * 3.2}rem`, // Larger center for logo
       }}
       variants={logoVariants}
       initial="initial"
