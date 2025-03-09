@@ -7,7 +7,6 @@ import { VideoData } from "@/hooks/video/types/video-fetcher";
 import { useRefetchControl } from "@/hooks/video/useRefetchControl";
 import { useSampleVideos } from "@/hooks/video/useSampleVideos";
 import { AutoRefreshHandler } from "./AutoRefreshHandler";
-import { LoadRealContentButton } from "./LoadRealContentButton";
 import { VideoEmptyState } from "./VideoEmptyState";
 
 interface VideoContentProps {
@@ -57,9 +56,6 @@ export const VideoContent = ({
   // Only use sample videos if we absolutely have no real data
   const displayVideos = videos?.length ? videos : createSampleVideos();
   
-  // Check if we have sample videos
-  const hasSampleVideosOnly = hasOnlySampleVideos(videos);
-  
   // Only show empty state if explicitly requested
   const showEmptyState = false;
 
@@ -105,12 +101,7 @@ export const VideoContent = ({
         />
       )}
       
-      {/* Button to load real content if we only have sample videos */}
-      <LoadRealContentButton
-        hasOnlySampleVideos={hasSampleVideosOnly}
-        isRefreshing={isRefreshing}
-        onForceRefetch={handleForceRefetch}
-      />
+      {/* LoadRealContentButton has been removed */}
     </div>
   );
 };
