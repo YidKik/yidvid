@@ -1,8 +1,7 @@
 
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { VideoData } from "./types/video-fetcher";
 import { hasRealVideos } from "./utils/validation";
-import { useLocation } from "react-router-dom";
 
 interface UseInitialVideoLoadProps {
   data: VideoData[] | undefined;
@@ -10,67 +9,67 @@ interface UseInitialVideoLoadProps {
   refetch: () => Promise<any>;
   forceRefetch: () => Promise<any>;
   triggerRetry: () => void;
+  setIsRefreshing?: (value: boolean) => void;
 }
 
 /**
- * Hook to handle initial video loading and refreshing
+ * Hook to handle initial data loading and refreshing
  */
 export const useInitialVideoLoad = ({
   data,
   isLoading,
   refetch,
   forceRefetch,
-  triggerRetry
+  triggerRetry,
+  setIsRefreshing
 }: UseInitialVideoLoadProps) => {
-  const toastShownRef = useRef(false);
-  const location = useLocation();
-  const isMainPage = location.pathname === "/";
-
-  // Force an immediate fetch when mounted and retry more aggressively if it fails
+  // Refresh once when mounted or data is empty
   useEffect(() => {
-    console.log("useVideos mounted, checking cached data");
-    toastShownRef.current = false;
+    const refreshNeeded = !isLoading && (!data || data.length === 0 || !hasRealVideos(data));
     
-    // Only refetch if we don't have real videos
-    if (!hasRealVideos(data)) {
-      console.log("No real videos in cache, triggering fetch");
-      refetch().catch(err => {
-        console.error("Error in initial video fetch:", err);
-        
-        // Retry after short delay
-        setTimeout(() => {
-          console.log("Retrying fetch after initial error");
-          refetch().catch(retryErr => {
-            console.error("Error in retry fetch:", retryErr);
-            // If still failing, increment retry counter to force a new query
-            triggerRetry();
-          });
-        }, 1000); // Reduced from 2000ms to 1000ms
-      });
-    } else {
-      console.log(`Using ${data?.length || 0} cached real videos`);
-    }
-  }, []);
-
-  // Log data for debugging and try to fetch again if no data
-  useEffect(() => {
-    console.log(`useVideos: ${data?.length || 0} videos available`);
-    
-    if (!hasRealVideos(data) && !isMainPage) {
-      console.log("No real video data available, triggering forced refetch...");
+    if (refreshNeeded) {
+      console.log("Initial data load needed - triggering refresh");
+      if (setIsRefreshing) setIsRefreshing(true);
       
-      // Try to force fetch if we have no real data, with delay to prevent race conditions
-      setTimeout(() => {
-        forceRefetch().catch(err => {
-          console.error("Error force refetching videos:", err);
-          // If still failing, increment retry counter
-          triggerRetry();
-        });
-      }, 800); // Reduced from 1000ms to 800ms
+      const timer = setTimeout(() => {
+        forceRefetch()
+          .then(() => {
+            console.log("Force refetch completed");
+            if (setIsRefreshing) setIsRefreshing(false);
+          })
+          .catch(err => {
+            console.error("Error in force refetch:", err);
+            triggerRetry();
+            if (setIsRefreshing) setIsRefreshing(false);
+          });
+      }, 1500);
+      
+      return () => clearTimeout(timer);
     }
-  }, [data, forceRefetch, isMainPage]);
+  }, [isLoading, data]);
 
-  return {
-    refreshInitiated: true
-  };
+  // Periodically check if the data still contains sample videos
+  useEffect(() => {
+    if (!data || isLoading) return;
+    
+    // Only refresh if we still have sample videos
+    if (!hasRealVideos(data)) {
+      const timer = setTimeout(() => {
+        console.log("Still have sample videos - trying another refresh");
+        if (setIsRefreshing) setIsRefreshing(true);
+        
+        refetch()
+          .then(() => {
+            if (setIsRefreshing) setIsRefreshing(false);
+          })
+          .catch(() => {
+            if (setIsRefreshing) setIsRefreshing(false);
+          });
+      }, 5000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [data, isLoading]);
+
+  return null;
 };

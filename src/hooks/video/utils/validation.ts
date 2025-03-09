@@ -2,24 +2,28 @@
 import { VideoData } from "../types/video-fetcher";
 
 /**
- * Check if videos are real or sample data
+ * Check if the array of videos contains real videos (not samples)
  */
-export const hasRealVideos = (videos: VideoData[] | undefined): boolean => {
+export const hasRealVideos = (videos?: VideoData[] | null): boolean => {
   if (!videos || videos.length === 0) return false;
   
-  return videos.some(v => 
-    !v.id.toString().includes('sample') && 
-    v.channelName !== "Sample Channel" &&
-    !v.video_id.includes('sample')
-  );
+  // Check a few videos to determine if they're real
+  const realVideoCount = videos.filter(video => 
+    !video.id.toString().includes('sample') && 
+    !video.video_id.includes('sample') &&
+    video.channelName !== "Sample Channel" &&
+    video.title !== "Sample Video 1"
+  ).length;
+  
+  return realVideoCount > 0;
 };
 
 /**
- * Create sample videos for fallback if needed
+ * Create sample videos for fallback display
  */
-export const createSampleVideos = (): VideoData[] => {
+export const createSampleVideos = (count = 12): VideoData[] => {
   const now = new Date();
-  return Array(12).fill(null).map((_, i) => ({
+  return Array(count).fill(null).map((_, i) => ({
     id: `sample-${i}`,
     video_id: `sample-vid-${i}`,
     title: `Sample Video ${i+1}`,
@@ -31,4 +35,14 @@ export const createSampleVideos = (): VideoData[] => {
     category: "other",
     description: "This is a sample video until real content loads."
   }));
+};
+
+/**
+ * Format views for display
+ */
+export const formatVideoViews = (views: number): string => {
+  if (views === 0) return "No views";
+  if (views < 1000) return `${views} views`;
+  if (views < 1000000) return `${(views / 1000).toFixed(1)}K views`;
+  return `${(views / 1000000).toFixed(1)}M views`;
 };

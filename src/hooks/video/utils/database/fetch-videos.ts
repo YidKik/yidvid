@@ -10,15 +10,19 @@ export const fetchVideosFromDatabase = async (): Promise<any[]> => {
     console.log("Fetching videos from database with high priority...");
     
     // Try a direct query with more fields but limited to most recent videos
+    // Include the join with youtube_channels to get thumbnail URLs
     const { data: directData, error: directError } = await supabase
       .from("youtube_videos")
-      .select("*")
+      .select(`
+        *,
+        youtube_channels(thumbnail_url)
+      `)
       .is("deleted_at", null)
       .order("uploaded_at", { ascending: false })
-      .limit(24);
+      .limit(100);  // Increased limit to show more videos
       
     if (!directError && directData && directData.length > 0) {
-      console.log(`Successfully fetched ${directData.length} videos directly`);
+      console.log(`Successfully fetched ${directData.length} videos directly with channel data`);
       return directData;
     }
     
@@ -29,10 +33,13 @@ export const fetchVideosFromDatabase = async (): Promise<any[]> => {
     // Use a more efficient query with fewer fields as backup
     const { data: initialData, error: initialError } = await supabase
       .from("youtube_videos")
-      .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at")
+      .select(`
+        id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, category, description,
+        youtube_channels(thumbnail_url)
+      `)
       .is("deleted_at", null)
       .order("uploaded_at", { ascending: false })
-      .limit(24);
+      .limit(50);
       
     if (!initialError && initialData && initialData.length > 0) {
       console.log(`Successfully fetched ${initialData.length} videos (initial batch)`);
@@ -48,17 +55,17 @@ export const fetchVideosFromDatabase = async (): Promise<any[]> => {
       // Try with public access that doesn't require auth
       const { data, error } = await supabase
         .from("youtube_videos")
-        .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at")
+        .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, category, description")
         .order("uploaded_at", { ascending: false })
-        .limit(24);
+        .limit(50);
 
       if (error) {
         console.error("Error fetching videos with simplified query:", error);
         // Try an even more basic query without filters
         const { data: basicData, error: basicError } = await supabase
           .from("youtube_videos")
-          .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at")
-          .limit(16);
+          .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, category, description")
+          .limit(30);
           
         if (basicError) {
           console.error("Error with basic query:", basicError);
@@ -90,29 +97,6 @@ export const fetchVideosFromDatabase = async (): Promise<any[]> => {
 };
 
 /**
- * Background fetch of additional videos
- */
-const fetchAdditionalVideos = async (skipCount: number): Promise<void> => {
-  try {
-    console.log("Loading additional videos in background...");
-    
-    const { data } = await supabase
-      .from("youtube_videos")
-      .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at")
-      .is("deleted_at", null)
-      .order("uploaded_at", { ascending: false })
-      .range(skipCount, skipCount + 24);
-      
-    if (data && data.length > 0) {
-      console.log(`Successfully loaded ${data.length} additional videos in background`);
-      // Cache in React Query will be updated elsewhere
-    }
-  } catch (err) {
-    console.error("Background fetch error:", err);
-  }
-};
-
-/**
  * Fetch updated videos after syncing with YouTube
  * with improved performance
  */
@@ -120,13 +104,16 @@ export const fetchUpdatedVideosAfterSync = async (): Promise<any[]> => {
   try {
     console.log("Fetching updated videos after sync...");
     
-    // Get only needed fields, optimized number
+    // Get only needed fields, optimized number, with channel data
     const { data, error } = await supabase
       .from("youtube_videos")
-      .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, category, description")
+      .select(`
+        id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, category, description,
+        youtube_channels(thumbnail_url)
+      `)
       .is("deleted_at", null)
       .order("uploaded_at", { ascending: false })
-      .limit(24);
+      .limit(100);  // Increased limit to get more videos
 
     if (error) {
       console.error('Error fetching updated videos:', error);

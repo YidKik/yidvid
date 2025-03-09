@@ -11,6 +11,7 @@ export interface UseVideosResult {
   data: VideoData[];
   isLoading: boolean;
   isFetching: boolean;
+  isRefreshing: boolean;
   error: Error | null;
   refetch: () => Promise<any>;
   forceRefetch: () => Promise<any>;
@@ -20,6 +21,7 @@ export interface UseVideosResult {
 
 export const useVideos = (): UseVideosResult => {
   const [authState, setAuthState] = useState<string | null>(null);
+  const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
   
   // Set up real-time subscription for video changes
   useVideoRealtime();
@@ -34,7 +36,7 @@ export const useVideos = (): UseVideosResult => {
   } = useVideoFetcher();
 
   // Set up auth state listener to trigger refreshes on login/logout
-  useAuthStateListener(forceRefetch);
+  useAuthStateListener(setAuthState);
 
   // Set up React Query for videos
   const { 
@@ -57,7 +59,8 @@ export const useVideos = (): UseVideosResult => {
     isLoading,
     refetch,
     forceRefetch: handleForceRefetch,
-    triggerRetry
+    triggerRetry,
+    setIsRefreshing
   });
 
   // Always ensure we have some data to display
@@ -67,6 +70,7 @@ export const useVideos = (): UseVideosResult => {
     data: ensuredData,
     isLoading,
     isFetching,
+    isRefreshing,
     error,
     refetch,
     forceRefetch: handleForceRefetch,

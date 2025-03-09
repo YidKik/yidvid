@@ -6,25 +6,7 @@ const SUPABASE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-interface YouTubeVideo {
-  id: {
-    videoId: string;
-  };
-  snippet: {
-    publishedAt: string;
-    title: string;
-    description: string;
-    thumbnails: {
-      high: {
-        url: string;
-      };
-    };
-    channelId: string;
-    channelTitle: string;
-  };
-}
-
-export async function processChannel(channelId: string, videos: YouTubeVideo[]) {
+export async function processChannel(channelId: string, videos: any[]) {
   console.log(`Processing ${videos.length} videos for channel ${channelId}`);
   let newVideos = 0;
   let errors = 0;
@@ -59,7 +41,7 @@ export async function processChannel(channelId: string, videos: YouTubeVideo[]) 
 
     // Process each video
     for (const video of videos) {
-      const videoId = video.id.videoId;
+      const videoId = video.video_id;
       
       // Skip if we already have this video
       if (existingVideoIds.has(videoId)) {
@@ -72,12 +54,13 @@ export async function processChannel(channelId: string, videos: YouTubeVideo[]) 
           .from("youtube_videos")
           .insert({
             video_id: videoId,
-            title: video.snippet.title,
-            description: video.snippet.description || "",
-            thumbnail: video.snippet.thumbnails.high.url,
-            channel_id: video.snippet.channelId,
-            channel_name: video.snippet.channelTitle,
-            uploaded_at: video.snippet.publishedAt,
+            title: video.title,
+            description: video.description || "",
+            thumbnail: video.thumbnail,
+            channel_id: video.channel_id,
+            channel_name: video.channel_name,
+            uploaded_at: video.uploaded_at,
+            views: video.views || 0,
             category: channelData?.default_category || "other",
           });
 
@@ -86,7 +69,7 @@ export async function processChannel(channelId: string, videos: YouTubeVideo[]) 
           errors++;
         } else {
           newVideos++;
-          console.log(`Added new video: ${videoId} - ${video.snippet.title}`);
+          console.log(`Added new video: ${videoId} - ${video.title}`);
         }
       } catch (error) {
         console.error(`Error processing video ${videoId}:`, error);

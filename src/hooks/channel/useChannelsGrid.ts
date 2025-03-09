@@ -28,10 +28,10 @@ export const useChannelsGrid = () => {
       const isAuthenticated = !!sessionStatus.data.session;
       console.log(`User authentication status: ${isAuthenticated ? 'LOGGED IN' : 'NOT LOGGED IN'}`);
       
-      // Try to fetch channels - works for both authenticated and anonymous users
+      // Try to fetch channels with thumbnail URL first
       const { data, error } = await supabase
         .from("youtube_channels")
-        .select("id, channel_id, title, thumbnail_url")
+        .select("id, channel_id, title, thumbnail_url, description")
         .is("deleted_at", null)
         .limit(50);
 
@@ -42,7 +42,7 @@ export const useChannelsGrid = () => {
         // Try without the deleted_at filter which might cause RLS issues
         const simpleQuery = await supabase
           .from("youtube_channels")
-          .select("id, channel_id, title, thumbnail_url")
+          .select("id, channel_id, title, thumbnail_url, description")
           .limit(50);
           
         if (!simpleQuery.error && simpleQuery.data && simpleQuery.data.length > 0) {
@@ -56,7 +56,7 @@ export const useChannelsGrid = () => {
         const minimalQuery = await supabase
           .from("youtube_channels")
           .select("id, channel_id, title, thumbnail_url")
-          .limit(20);
+          .limit(30);
           
         if (!minimalQuery.error && minimalQuery.data && minimalQuery.data.length > 0) {
           console.log(`Retrieved ${minimalQuery.data.length} channels with minimal data`);
@@ -84,7 +84,7 @@ export const useChannelsGrid = () => {
       const backupQuery = await supabase
         .from("youtube_channels")
         .select("*")
-        .limit(30);
+        .limit(50);
         
       if (!backupQuery.error && backupQuery.data && backupQuery.data.length > 0) {
         console.log(`Retrieved ${backupQuery.data.length} channels with backup query`);
@@ -106,7 +106,7 @@ export const useChannelsGrid = () => {
         const finalAttempt = await supabase
           .from("youtube_channels")
           .select("*")
-          .limit(15);
+          .limit(30);
           
         if (!finalAttempt.error && finalAttempt.data?.length > 0) {
           console.log(`Final attempt retrieved ${finalAttempt.data.length} channels`);
@@ -126,7 +126,7 @@ export const useChannelsGrid = () => {
     }
   };
   
-  // Create sample channels as a fallback
+  // Create sample channels as a fallback - only used when all else fails
   const createSampleChannels = (): Channel[] => {
     return Array(8).fill(null).map((_, i) => ({
       id: `sample-${i}`,

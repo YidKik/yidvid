@@ -3,7 +3,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { corsHeaders } from "../_shared/cors.ts";
 import { checkQuota, updateQuotaUsage } from "./quota-manager.ts";
 import { processChannel } from "./channel-processor.ts";
-import { getChannelDetails, getRecentVideos } from "./youtube-api.ts";
+import { fetchChannelVideos } from "./youtube-api.ts";
 
 serve(async (req) => {
   // Handle CORS
@@ -72,25 +72,28 @@ serve(async (req) => {
     // Process channels sequentially to better manage quota
     for (const channelId of channelsSubset) {
       try {
-        // First get channel details (1 quota unit)
-        const channelDetails = await getChannelDetails(channelId);
-        quotaUsed += 1;
+        // Fetch channel videos
+        const { videos, quotaExceeded } = await fetchChannelVideos(channelId, Deno.env.get("YOUTUBE_API_KEY") || "");
         
-        if (!channelDetails) {
+        if (quotaExceeded) {
+          console.log("YouTube API quota exceeded during fetch");
+          break;
+        }
+        
+        // Track quota usage - each video request uses about 1 unit
+        quotaUsed += videos.length > 0 ? (1 + Math.ceil(videos.length / 50)) : 1;
+        
+        if (!videos || videos.length === 0) {
           results.push({
             channelId,
             success: false,
-            message: "Channel not found"
+            message: "No videos found or channel not found"
           });
           continue;
         }
         
-        // Then get videos (typically ~5-10 quota units)
-        const { videos, quotaUsedForVideos } = await getRecentVideos(channelId, forceUpdate);
-        quotaUsed += quotaUsedForVideos;
-        
         // Process and store the videos
-        const processResult = await processChannel(channelId, channelDetails, videos);
+        const processResult = await processChannel(channelId, videos);
         
         processedCount++;
         newVideosCount += processResult.newVideos || 0;

@@ -4,8 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
-const INITIAL_VIDEOS_COUNT = 6;
-const FETCH_TIMEOUT = 5000; // 5 seconds timeout
+const INITIAL_VIDEOS_COUNT = 12; // Increased from 6
+const FETCH_TIMEOUT = 8000; // 8 seconds timeout (increased)
 
 export const useChannelVideos = (channelId: string | undefined) => {
   const [displayedVideos, setDisplayedVideos] = useState<any[]>([]);
@@ -28,7 +28,10 @@ export const useChannelVideos = (channelId: string | undefined) => {
       const fetchPromise = async () => {
         const { data, error } = await supabase
           .from("youtube_videos")
-          .select("*")
+          .select(`
+            *,
+            youtube_channels(thumbnail_url)
+          `)
           .eq("channel_id", channelId)
           .is("deleted_at", null)
           .order("uploaded_at", { ascending: false })
@@ -51,7 +54,7 @@ export const useChannelVideos = (channelId: string | undefined) => {
         // On timeout or error, try a simpler query
         const { data } = await supabase
           .from("youtube_videos")
-          .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at")
+          .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, category, description")
           .eq("channel_id", channelId)
           .is("deleted_at", null)
           .order("uploaded_at", { ascending: false })
@@ -60,7 +63,7 @@ export const useChannelVideos = (channelId: string | undefined) => {
         return data || [];
       }
     },
-    retry: 1,
+    retry: 2, // Increased retries
     refetchOnWindowFocus: false,
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
@@ -76,10 +79,14 @@ export const useChannelVideos = (channelId: string | undefined) => {
 
       const { data, error } = await supabase
         .from("youtube_videos")
-        .select("*")
+        .select(`
+          *,
+          youtube_channels(thumbnail_url)
+        `)
         .eq("channel_id", channelId)
         .is("deleted_at", null)
-        .order("uploaded_at", { ascending: false });
+        .order("uploaded_at", { ascending: false })
+        .limit(100); // Increased from unlimited to a large but limited number for performance
 
       if (error) {
         console.error("Error fetching all videos:", error);
@@ -90,7 +97,7 @@ export const useChannelVideos = (channelId: string | undefined) => {
       return data || [];
     },
     enabled: !!channelId && !!initialVideos && initialVideos.length > 0,
-    retry: 1,
+    retry: 2, // Increased retries
     refetchOnWindowFocus: false,
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes

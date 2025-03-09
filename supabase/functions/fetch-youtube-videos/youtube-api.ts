@@ -1,15 +1,13 @@
 
 interface VideoResult {
   videos: any[];
-  nextPageToken: string | null;
   quotaExceeded?: boolean;
 }
 
-export const fetchChannelVideos = async (
+export async function fetchChannelVideos(
   channelId: string, 
-  apiKey: string, 
-  pageToken?: string
-): Promise<VideoResult> => {
+  apiKey: string
+): Promise<VideoResult> {
   try {
     // Get channel details
     const channelUrl = `https://www.googleapis.com/youtube/v3/channels?part=contentDetails,snippet,status&id=${channelId}&key=${apiKey}`;
@@ -21,7 +19,7 @@ export const fetchChannelVideos = async (
       
       // Check for quota exceeded
       if (errorText.includes('quotaExceeded')) {
-        return { videos: [], nextPageToken: null, quotaExceeded: true };
+        return { videos: [], quotaExceeded: true };
       }
       
       throw new Error(`Channel API error: ${channelResponse.status} - ${errorText}`);
@@ -31,27 +29,28 @@ export const fetchChannelVideos = async (
 
     if (!channelData.items?.[0]) {
       console.error(`[YouTube Videos] No channel found for ID ${channelId}`);
-      return { videos: [], nextPageToken: null };
+      return { videos: [] };
     }
 
     // Check if channel is active and public
     const channelStatus = channelData.items[0].status;
     if (channelStatus?.privacyStatus === 'private') {
       console.error(`[YouTube Videos] Channel ${channelId} is private`);
-      return { videos: [], nextPageToken: null };
+      return { videos: [] };
     }
 
     const uploadsPlaylistId = channelData.items[0].contentDetails?.relatedPlaylists?.uploads;
     if (!uploadsPlaylistId) {
       console.error(`[YouTube Videos] No uploads playlist found for channel ${channelId}`);
-      return { videos: [], nextPageToken: null };
+      return { videos: [] };
     }
 
     const channelTitle = channelData.items[0].snippet.title;
+    const channelThumbnail = channelData.items[0].snippet.thumbnails?.default?.url || null;
     console.log(`[YouTube Videos] Fetching videos for channel: ${channelTitle} (${channelId})`);
 
     // Fetch videos with pagination - maximum of 50 per request (API limit)
-    const playlistUrl = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${uploadsPlaylistId}${pageToken ? `&pageToken=${pageToken}` : ''}&key=${apiKey}`;
+    const playlistUrl = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${uploadsPlaylistId}&key=${apiKey}`;
     const response = await fetch(playlistUrl);
     
     if (!response.ok) {
@@ -60,7 +59,7 @@ export const fetchChannelVideos = async (
       
       // Check for quota exceeded
       if (errorText.includes('quotaExceeded')) {
-        return { videos: [], nextPageToken: null, quotaExceeded: true };
+        return { videos: [], quotaExceeded: true };
       }
       
       throw new Error(`Playlist API error: ${response.status} - ${errorText}`);
@@ -70,7 +69,7 @@ export const fetchChannelVideos = async (
 
     if (!data.items || data.items.length === 0) {
       console.log(`[YouTube Videos] No videos found in playlist for channel ${channelId}`);
-      return { videos: [], nextPageToken: null };
+      return { videos: [] };
     }
 
     // Get video IDs and fetch statistics in a single batch
@@ -81,7 +80,7 @@ export const fetchChannelVideos = async (
     console.log(`[YouTube Videos] Found ${videoIds.length} videos in current page for channel ${channelId}`);
 
     if (videoIds.length === 0) {
-      return { videos: [], nextPageToken: data.nextPageToken || null };
+      return { videos: [] };
     }
 
     const statsUrl = `https://www.googleapis.com/youtube/v3/videos?part=statistics,snippet&id=${videoIds.join(',')}&key=${apiKey}`;
@@ -93,7 +92,7 @@ export const fetchChannelVideos = async (
       
       // Check for quota exceeded
       if (errorText.includes('quotaExceeded')) {
-        return { videos: [], nextPageToken: null, quotaExceeded: true };
+        return { videos: [], quotaExceeded: true };
       }
       
       throw new Error(`Statistics API error: ${statsResponse.status} - ${errorText}`);
@@ -137,13 +136,10 @@ export const fetchChannelVideos = async (
 
     console.log(`[YouTube Videos] Successfully processed ${processedVideos.length} videos for current page`);
 
-    return { 
-      videos: processedVideos,
-      nextPageToken: data.nextPageToken || null
-    };
+    return { videos: processedVideos };
   } catch (error) {
     console.error(`[YouTube Videos] Error processing channel ${channelId}:`, error);
     // Return empty result instead of throwing to prevent cascade failures
-    return { videos: [], nextPageToken: null };
+    return { videos: [] };
   }
-};
+}
