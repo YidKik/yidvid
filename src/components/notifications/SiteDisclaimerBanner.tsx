@@ -27,23 +27,23 @@ export const SiteDisclaimerBanner = () => {
   }
 
   return (
-    <Card className="mx-auto max-w-5xl mb-4 bg-gradient-to-r from-blue-50 to-purple-50 border border-purple-100 shadow-sm">
+    <Card className="mx-auto max-w-5xl mb-4 bg-gradient-to-r from-yellow-50 to-orange-50 border border-amber-200 shadow-sm rounded-xl overflow-hidden">
       <div className="p-4">
         <div className="flex items-start gap-3">
-          <AlertCircle className="h-5 w-5 text-blue-500 flex-shrink-0 mt-0.5" />
+          <AlertCircle className="h-5 w-5 text-amber-500 flex-shrink-0 mt-0.5" />
           <div className="flex-1">
-            <h3 className="text-sm font-medium text-blue-900 mb-1">
-              Welcome to our beta release
+            <h3 className="text-sm font-medium text-amber-800 mb-1">
+              Welcome to our beta release! 🎉
             </h3>
-            <p className="text-sm text-blue-700">
-              We're actively improving the site layout, content filtering, and video fetching system. Thank you for your patience as we enhance your experience.
+            <p className="text-sm text-amber-700">
+              We're actively enhancing your experience with improvements to site layout, content filtering, and our video fetching system.
             </p>
             
             <div className="mt-2">
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-blue-600 hover:text-blue-800 hover:bg-blue-100/50 px-2 h-8 text-xs flex items-center gap-1"
+                className="text-amber-600 hover:text-amber-800 hover:bg-amber-100/50 px-2 h-8 text-xs flex items-center gap-1 rounded-full"
                 onClick={() => setIsExpanded(!isExpanded)}
               >
                 {isExpanded ? (
@@ -69,7 +69,7 @@ export const SiteDisclaimerBanner = () => {
                   transition={{ duration: 0.3 }}
                   className="overflow-hidden"
                 >
-                  <div className="pt-2 pb-1 text-xs space-y-2 text-blue-800">
+                  <div className="pt-2 pb-1 text-xs space-y-2 text-amber-800 bg-amber-50/50 p-3 rounded-lg mt-2">
                     <p>
                       <strong>Site Layout:</strong> We're optimizing the interface for both desktop and mobile to ensure a seamless experience across all devices.
                     </p>
@@ -94,10 +94,10 @@ export const SiteDisclaimerBanner = () => {
               <Button
                 variant="outline"
                 size="sm"
-                className="text-xs h-7 bg-white hover:bg-blue-50 border-blue-200 text-blue-600"
+                className="text-xs h-7 bg-gradient-to-r from-amber-400 to-orange-400 hover:from-amber-500 hover:to-orange-500 border-none text-white rounded-full shadow-sm"
                 onClick={handleDismiss}
               >
-                Got it
+                Got it, thanks!
               </Button>
             </div>
           </div>
