@@ -24,26 +24,26 @@ export const AutoRefreshHandler: React.FC<AutoRefreshHandlerProps> = ({
     
     // Only trigger if we have missing data and not already refreshing
     if (!isRefreshing && (videos.length === 0 || hasOnlySampleVideos)) {
-      console.log("No real videos detected, triggering force refresh...");
+      console.log("No real videos detected, triggering immediate force refresh...");
       if (forceRefetch) {
-        // Add a small delay to avoid interfering with initial page load
+        // Shorter delay to fetch real content faster
         setTimeout(() => {
           forceRefetch().catch(error => {
             console.error("Failed to force refresh videos:", error);
             toast.error("Failed to refresh content. Please try again later.");
           });
-        }, 300); // Reduced from 500ms to 300ms for faster load
+        }, 100); // Reduced from 300ms to 100ms for faster load
       }
     } else if (!isRefreshing && lastSuccessfulFetch && 
-        (new Date().getTime() - new Date(lastSuccessfulFetch).getTime() > 1800000) && // More than 30 minutes (reduced from 1 hour)
+        (new Date().getTime() - new Date(lastSuccessfulFetch).getTime() > 900000) && // More than 15 minutes (reduced from 30 minutes)
         forceRefetch) {
-      console.log("Content is stale (>30 minutes). Triggering automatic refresh...");
+      console.log("Content is stale (>15 minutes). Triggering automatic refresh...");
       // Add a small delay to avoid interfering with initial page load
       setTimeout(() => {
         forceRefetch().catch(error => {
           console.error("Failed to refresh stale content:", error);
         });
-      }, 500); // Reduced from 1000ms to 500ms
+      }, 200); // Reduced from 500ms to 200ms
     }
   }, [videos, lastSuccessfulFetch, forceRefetch, isRefreshing]);
   

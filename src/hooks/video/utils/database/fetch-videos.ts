@@ -7,26 +7,35 @@ import { VideoData } from "../../types/video-fetcher";
  */
 export const fetchVideosFromDatabase = async (): Promise<any[]> => {
   try {
-    console.log("Fetching videos from database...");
+    console.log("Fetching videos from database with high priority...");
     
-    // Use a more efficient query with fewer fields first
+    // Try a direct query with more fields but limited to most recent videos
+    const { data: directData, error: directError } = await supabase
+      .from("youtube_videos")
+      .select("*")
+      .is("deleted_at", null)
+      .order("uploaded_at", { ascending: false })
+      .limit(24);
+      
+    if (!directError && directData && directData.length > 0) {
+      console.log(`Successfully fetched ${directData.length} videos directly`);
+      return directData;
+    }
+    
+    if (directError) {
+      console.warn("Direct query failed, trying alternative approach:", directError);
+    }
+    
+    // Use a more efficient query with fewer fields as backup
     const { data: initialData, error: initialError } = await supabase
       .from("youtube_videos")
       .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at")
       .is("deleted_at", null)
       .order("uploaded_at", { ascending: false })
-      .limit(24); // Increased from 50 to 24 for better display
+      .limit(24);
       
     if (!initialError && initialData && initialData.length > 0) {
       console.log(`Successfully fetched ${initialData.length} videos (initial batch)`);
-      
-      // Start loading additional videos in the background with lower priority
-      setTimeout(() => {
-        fetchAdditionalVideos(initialData.length).catch(err => {
-          console.warn("Background fetch error:", err);
-        });
-      }, 2000); // Delay background loading to prioritize main page display
-      
       return initialData;
     }
     
@@ -34,14 +43,14 @@ export const fetchVideosFromDatabase = async (): Promise<any[]> => {
       console.warn("Initial query error, trying alternative approach:", initialError);
     }
     
-    // Try with a more simplified query if the first one failed
+    // Try with a more simplified query if the first ones failed
     try {
       // Try with public access that doesn't require auth
       const { data, error } = await supabase
         .from("youtube_videos")
         .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at")
         .order("uploaded_at", { ascending: false })
-        .limit(16);
+        .limit(24);
 
       if (error) {
         console.error("Error fetching videos with simplified query:", error);
@@ -49,7 +58,7 @@ export const fetchVideosFromDatabase = async (): Promise<any[]> => {
         const { data: basicData, error: basicError } = await supabase
           .from("youtube_videos")
           .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at")
-          .limit(12);
+          .limit(16);
           
         if (basicError) {
           console.error("Error with basic query:", basicError);

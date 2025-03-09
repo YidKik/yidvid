@@ -19,13 +19,8 @@ export const useVideoFetcher = (): VideoFetcherResult => {
 
   // Check if we should fetch new videos - more aggressive timeframe
   const shouldFetchNew = () => {
-    // Fetch new videos if:
-    // 1. We've never fetched successfully
-    // 2. It's been more than 2 hours since last fetch (reduced from 4 hours)
-    // 3. We've had previous fetch attempts 
-    return lastSuccessfulFetch === null || 
-           (Date.now() - lastSuccessfulFetch.getTime() > 7200000) || // 2 hours
-           fetchAttempts > 0;
+    // Always fetch new videos when using this hook
+    return true;
   };
 
   const fetchAllVideos = async (): Promise<VideoData[]> => {
@@ -39,7 +34,7 @@ export const useVideoFetcher = (): VideoFetcherResult => {
         // Try direct query first without requiring authentication
         const { data, error } = await supabase
           .from("youtube_videos")
-          .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, category, description")
+          .select("*")
           .is('deleted_at', null)
           .order("uploaded_at", { ascending: false })
           .limit(200);
@@ -77,24 +72,6 @@ export const useVideoFetcher = (): VideoFetcherResult => {
         }
       }
 
-      // If we still have no videos, only then create sample data as fallback
-      if (videosData.length === 0) {
-        console.warn("No videos found, creating fallback sample data");
-        const now = new Date();
-        videosData = Array(12).fill(null).map((_, i) => ({
-          id: `sample-${i}`,
-          video_id: `sample-vid-${i}`,
-          title: `Sample Video ${i+1}`,
-          thumbnail: '/placeholder.svg',
-          channel_name: "Sample Channel",
-          channel_id: "sample-channel",
-          views: 1000 * (i+1),
-          uploaded_at: new Date(now.getTime() - (i * 86400000)).toISOString(),
-          category: "other",
-          description: "This is a sample video until real content loads."
-        }));
-      }
-
       // Try to get active channels, but don't fail the whole operation if this fails
       let channelIds: string[] = [];
       try {
@@ -106,11 +83,8 @@ export const useVideoFetcher = (): VideoFetcherResult => {
         // Continue with what we have
       }
 
-      // Only try to fetch new videos if we have channels and should fetch new ones
-      const shouldFetchNewVideos = shouldFetchNew();
-      console.log(`Should fetch new videos: ${shouldFetchNewVideos}`);
-      
-      if (channelIds.length > 0 && shouldFetchNewVideos) {
+      // Always try to fetch new videos if we have channels
+      if (channelIds.length > 0) {
         try {
           const updatedVideos = await tryFetchNewVideos(
             channelIds,
@@ -129,6 +103,24 @@ export const useVideoFetcher = (): VideoFetcherResult => {
           console.error("Error in tryFetchNewVideos:", error);
           // Continue with what we have
         }
+      }
+
+      // If we still have no videos, only then create sample data as fallback
+      if (videosData.length === 0) {
+        console.warn("No videos found, creating fallback sample data");
+        const now = new Date();
+        videosData = Array(12).fill(null).map((_, i) => ({
+          id: `sample-${i}`,
+          video_id: `sample-vid-${i}`,
+          title: `Sample Video ${i+1}`,
+          thumbnail: '/placeholder.svg',
+          channel_name: "Sample Channel",
+          channel_id: "sample-channel",
+          views: 1000 * (i+1),
+          uploaded_at: new Date(now.getTime() - (i * 86400000)).toISOString(),
+          category: "other",
+          description: "This is a sample video until real content loads."
+        }));
       }
 
       // Return the data we got

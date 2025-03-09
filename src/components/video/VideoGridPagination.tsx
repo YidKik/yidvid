@@ -44,7 +44,7 @@ export const VideoGridPagination = ({
   }
 
   return (
-    <div className={`flex justify-center items-center gap-4 ${isMobile ? 'mt-4' : 'mt-8'}`}>
+    <div className={`flex justify-center items-center gap-6 ${isMobile ? 'mt-4' : 'mt-8'}`}>
       <Button
         variant="outline"
         onClick={() => onPageChange(currentPage - 1)}
@@ -53,13 +53,10 @@ export const VideoGridPagination = ({
         className={`rounded-full hover:bg-muted/50 hover:border-gray-300 transition-all duration-300 ${
           isMobile ? "w-7 h-7" : "w-10 h-10"
         }`}
+        aria-label="Previous page"
       >
         <ChevronLeft className={isMobile ? "h-3 w-3" : "h-4 w-4"} />
       </Button>
-      
-      <div className="text-sm text-muted-foreground">
-        {currentPage} / {totalPages}
-      </div>
       
       <Button
         variant="outline"
@@ -69,6 +66,7 @@ export const VideoGridPagination = ({
         className={`rounded-full hover:bg-muted/50 hover:border-gray-300 transition-all duration-300 ${
           isMobile ? "w-7 h-7" : "w-10 h-10"
         }`}
+        aria-label="Next page"
       >
         <ChevronRight className={isMobile ? "h-3 w-3" : "h-4 w-4"} />
       </Button>
