@@ -57,7 +57,7 @@ export const VideoGrid = ({
       id: `sample-${i}`,
       video_id: `sample-vid-${i}`,
       title: `Sample Video ${i+1}`,
-      thumbnail: '/placeholder.svg',
+      thumbnail: '/lovable-uploads/e425cacb-4c3a-4d81-b4e0-77fcbf10f61c.png',
       channelName: "Sample Channel",
       channelId: "sample-channel",
       views: 1000 * (i+1),
@@ -108,7 +108,7 @@ export const VideoGrid = ({
             id={video.id}
             video_id={video.video_id}
             title={video.title || "Untitled Video"}
-            thumbnail={video.thumbnail || "/placeholder.svg"}
+            thumbnail={video.thumbnail || "/lovable-uploads/e425cacb-4c3a-4d81-b4e0-77fcbf10f61c.png"}
             channelName={video.channelName || "Unknown Channel"}
             channelId={video.channelId}
             views={video.views || 0}

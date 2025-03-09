@@ -33,7 +33,7 @@ export const NotificationItem = ({ notification, onNotificationClick }: Notifica
           className="w-12 sm:w-24 h-8 sm:h-16 object-cover rounded"
           onError={(e) => {
             console.error("Failed to load thumbnail");
-            e.currentTarget.src = "/placeholder.svg";
+            e.currentTarget.src = "/lovable-uploads/e425cacb-4c3a-4d81-b4e0-77fcbf10f61c.png";
           }}
         />
         <div className="flex-1 min-w-0">

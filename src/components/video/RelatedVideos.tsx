@@ -1,3 +1,4 @@
+
 import { VideoCard } from "../VideoCard";
 
 interface Video {
@@ -26,6 +27,7 @@ export const RelatedVideos = ({ videos }: RelatedVideosProps) => {
               {...video}
               channelName={video.channel_name}
               uploadedAt={video.uploaded_at}
+              thumbnail={video.thumbnail || "/lovable-uploads/e425cacb-4c3a-4d81-b4e0-77fcbf10f61c.png"}
             />
           ))}
         </div>

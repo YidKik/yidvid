@@ -17,7 +17,7 @@ export const HeaderLogo = ({ isMobile }: HeaderLogoProps) => {
           className={`object-contain ${isMobile ? 'h-[110px] w-[110px]' : 'h-36 w-auto'}`}
           onError={(e) => {
             console.error('Logo failed to load:', e);
-            e.currentTarget.src = 'none';
+            e.currentTarget.src = '/favicon.ico';
           }}
         />
       </Link>

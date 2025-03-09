@@ -31,19 +31,28 @@ export const ChannelCard = ({ id, channel_id, title, thumbnail_url, index }: Cha
               alt={title}
               className="object-cover"
               onError={(e) => {
-                // If image fails to load, show fallback
+                // If image fails to load, show site logo
                 e.currentTarget.style.display = 'none';
-                e.currentTarget.parentElement?.querySelector('.fallback')?.classList.remove('hidden');
+                const fallback = e.currentTarget.parentElement?.querySelector('.fallback');
+                if (fallback) fallback.classList.remove('hidden');
               }}
             />
           ) : (
             <AvatarFallback className="bg-primary/10">
-              <Youtube className="w-6 h-6 md:w-12 md:h-12 text-primary" />
+              <img 
+                src="/lovable-uploads/e425cacb-4c3a-4d81-b4e0-77fcbf10f61c.png" 
+                alt="Channel Logo"
+                className="w-8 h-8 md:w-16 md:h-16 object-contain"
+              />
             </AvatarFallback>
           )}
           <div className="fallback hidden">
             <AvatarFallback className="bg-primary/10">
-              <Youtube className="w-6 h-6 md:w-12 md:h-12 text-primary" />
+              <img 
+                src="/lovable-uploads/e425cacb-4c3a-4d81-b4e0-77fcbf10f61c.png" 
+                alt="Channel Logo"
+                className="w-8 h-8 md:w-16 md:h-16 object-contain"
+              />
             </AvatarFallback>
           </div>
         </Avatar>

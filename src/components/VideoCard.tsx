@@ -60,7 +60,10 @@ export const VideoCard = ({
   const routeId = uuid || video_id || id;
 
   // Safely handle potentially missing thumbnail URL
-  const thumbnailUrl = thumbnail || "/placeholder.svg";
+  // Use site logo instead of generic placeholder
+  const thumbnailUrl = thumbnail && thumbnail !== '/placeholder.svg' 
+    ? thumbnail 
+    : "/lovable-uploads/e425cacb-4c3a-4d81-b4e0-77fcbf10f61c.png";
 
   return (
     <Link 
@@ -77,8 +80,8 @@ export const VideoCard = ({
           className="w-full h-full object-cover"
           loading="lazy"
           onError={(e) => {
-            // Fallback to placeholder if image fails to load
-            (e.target as HTMLImageElement).src = "/placeholder.svg";
+            // Fallback to site logo if image fails to load
+            (e.target as HTMLImageElement).src = "/lovable-uploads/e425cacb-4c3a-4d81-b4e0-77fcbf10f61c.png";
           }}
         />
       </div>
