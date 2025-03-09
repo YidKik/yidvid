@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { ChannelInput } from "@/components/youtube/ChannelInput";
 import { addChannel } from "@/utils/youtube-channel";
 import { AlertCircle } from "lucide-react";
@@ -24,29 +24,18 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
     setIsQuotaExceeded(false);
     
     if (!channelId.trim()) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Please enter a channel ID or URL"
-      });
+      toast.error("Please enter a channel ID or URL");
       return;
     }
 
     setIsLoading(true);
     
     try {
-      toast({
-        title: "Adding channel...",
-        description: "Please wait while we process your request."
-      });
+      toast.loading("Adding channel...");
 
       const result = await addChannel(channelId);
       
-      toast({
-        title: "Success",
-        description: "Channel added successfully!",
-        variant: "default"
-      });
+      toast.success("Channel added successfully!");
       
       setChannelId("");
       onSuccess?.();
@@ -70,11 +59,7 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
       
       setErrorMessage(message);
       
-      toast({
-        variant: "destructive",
-        title: "Failed to add channel",
-        description: message
-      });
+      toast.error(message);
     } finally {
       setIsLoading(false);
     }

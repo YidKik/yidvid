@@ -3,7 +3,7 @@ import { ThumbsUp, UserPlus, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { useChannelSubscription } from "@/hooks/channel/useChannelSubscription";
 import { LikeAnimation } from "./LikeAnimation";
 
@@ -43,11 +43,7 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
     const { data: { session } } = await supabase.auth.getSession();
     
     if (!session) {
-      toast({
-        title: "Authentication required",
-        description: "Please sign in to like videos",
-        variant: "destructive",
-      });
+      toast.error("Please sign in to like videos");
       return;
     }
 
@@ -69,17 +65,10 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
 
       setIsLiked(true);
       setShowAnimation(true);
-      toast({
-        title: "Success",
-        description: "Video liked successfully",
-      });
+      toast.success("Video liked successfully");
     } catch (error) {
       console.error('Error liking video:', error);
-      toast({
-        title: "Error",
-        description: "Failed to like the video",
-        variant: "destructive",
-      });
+      toast.error("Failed to like the video");
     }
   };
 

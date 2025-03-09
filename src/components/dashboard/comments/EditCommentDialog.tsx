@@ -3,7 +3,7 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import {
   Dialog,
   DialogContent,
@@ -38,20 +38,13 @@ export const EditCommentDialog = ({ comment, onClose }: EditCommentDialogProps) 
 
       if (error) throw error;
 
-      toast({
-        title: "Success",
-        description: "Comment updated successfully",
-      });
+      toast.success("Comment updated successfully");
       onClose();
       
       await refetchComments();
       await refetchNotifications();
     } catch (error: any) {
-      toast({
-        title: "Error",
-        description: "Error updating comment: " + error.message,
-        variant: "destructive",
-      });
+      toast.error("Error updating comment: " + error.message);
     }
   };
 

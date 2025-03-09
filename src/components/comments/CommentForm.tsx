@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
 interface CommentFormProps {
@@ -12,18 +12,13 @@ interface CommentFormProps {
 export const CommentForm = ({ onSubmit }: CommentFormProps) => {
   const [comment, setComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     const session = await supabase.auth.getSession();
     if (!session.data.session) {
-      toast({
-        title: "Error",
-        description: "You must be logged in to comment",
-        variant: "destructive",
-      });
+      toast.error("You must be logged in to comment");
       return;
     }
 
@@ -31,17 +26,10 @@ export const CommentForm = ({ onSubmit }: CommentFormProps) => {
     try {
       await onSubmit(comment);
       setComment("");
-      toast({
-        title: "Success",
-        description: "Comment posted successfully",
-      });
+      toast.success("Comment posted successfully");
     } catch (error) {
       console.error("Error posting comment:", error);
-      toast({
-        title: "Error",
-        description: "Failed to post comment. Please try again.",
-        variant: "destructive",
-      });
+      toast.error("Failed to post comment. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
