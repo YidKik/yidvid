@@ -37,7 +37,7 @@ export const fetchVideosFromDatabase = async (): Promise<any[]> => {
     if (error) {
       console.error("Error fetching videos from database:", error);
       
-      // Try one more query with minimal selection
+      // Try one more query with minimal selection and no filters
       const minimalQuery = await supabase
         .from("youtube_videos")
         .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at")
@@ -62,7 +62,7 @@ export const fetchVideosFromDatabase = async (): Promise<any[]> => {
   } catch (err) {
     console.error("Failed to fetch videos from database:", err);
     
-    // Try one last simple query
+    // Try one last simple query with no filters at all
     try {
       const simpleQuery = await supabase
         .from("youtube_videos")

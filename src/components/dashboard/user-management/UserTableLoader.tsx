@@ -1,8 +1,10 @@
 
+import { Loader2 } from "lucide-react";
+
 export const UserTableLoader = () => {
   return (
     <div className="flex justify-center p-8">
-      <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full"></div>
+      <Loader2 className="h-8 w-8 animate-spin text-primary" />
     </div>
   );
 };

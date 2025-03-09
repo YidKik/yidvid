@@ -28,6 +28,15 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
     const videosData = queryClient.getQueryData(["youtube_videos"]);
     const channelsData = queryClient.getQueryData(["youtube_channels"]);
     
+    // Log what we're preserving
+    if (videosData) {
+      console.log("Preserving videos data, count:", Array.isArray(videosData) ? videosData.length : 'unknown');
+    }
+    
+    if (channelsData) {
+      console.log("Preserving channels data, count:", Array.isArray(channelsData) ? channelsData.length : 'unknown');
+    }
+    
     // Return a function that will restore this data
     return () => {
       if (videosData) {

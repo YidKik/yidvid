@@ -102,9 +102,9 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
     },
   });
 
-  // Immediate fetch on mount
+  // Immediate fetch on mount and also when auth state changes
   useEffect(() => {
-    console.log(`ChannelsGrid mounted, user authenticated: ${!!session}, attempting to fetch channels`);
+    console.log(`ChannelsGrid mounted or auth changed, user authenticated: ${!!session}, attempting to fetch channels`);
     refetch().catch(err => {
       console.error("Error fetching channels on mount:", err);
       if (onError) onError(err);
