@@ -34,7 +34,19 @@ export const useVideoFetcher = (): VideoFetcherResult => {
         // Try direct query first without requiring authentication
         const { data, error } = await supabase
           .from("youtube_videos")
-          .select("*")
+          .select(`
+            id, 
+            video_id, 
+            title, 
+            thumbnail, 
+            channel_name, 
+            channel_id, 
+            views, 
+            uploaded_at, 
+            category, 
+            description,
+            youtube_channels(thumbnail_url)
+          `)
           .is('deleted_at', null)
           .order("uploaded_at", { ascending: false })
           .limit(200);

@@ -56,7 +56,11 @@ export const VideoCard = ({
     }
   })();
 
-  const formattedViews = views ? `${views.toLocaleString()} views` : 'No views';
+  // Format views to show actual count or default to 'No views' only if views is explicitly null/undefined
+  const formattedViews = views !== undefined && views !== null
+    ? `${Number(views).toLocaleString()} views` 
+    : 'No views';
+    
   const routeId = uuid || video_id || id;
 
   // Safely handle potentially missing thumbnail URL
@@ -144,10 +148,8 @@ export const VideoCard = ({
               "text-muted-foreground flex items-center space-x-1 truncate video-meta-text",
               isMobile ? "text-[8px] mt-0.5" : "text-xs mt-0.5"
             )}>
-              {views !== undefined && (
-                <span className="truncate">{formattedViews}</span>
-              )}
-              {views !== undefined && <span>•</span>}
+              <span className="truncate">{formattedViews}</span>
+              <span>•</span>
               <span className="truncate">{formattedDate}</span>
             </div>
           </div>

@@ -12,9 +12,10 @@ export const formatVideoData = (videosData: any[]): VideoData[] => {
     thumbnail: video.thumbnail || '/placeholder.svg',
     channelName: video.channel_name || "Unknown Channel",
     channelId: video.channel_id || "unknown-channel",
-    views: video.views || 0,
+    views: typeof video.views === 'number' ? video.views : 0,
     uploadedAt: video.uploaded_at || new Date().toISOString(),
     category: video.category || null,
-    description: video.description || null
+    description: video.description || null,
+    channelThumbnail: video.youtube_channels?.thumbnail_url || null
   }));
 };
