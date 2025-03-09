@@ -1,5 +1,7 @@
 
 import React from "react";
+import { Button } from "@/components/ui/button";
+import { RefreshCcw } from "lucide-react";
 
 interface RefreshContentButtonProps {
   onClick: () => void;
@@ -13,11 +15,12 @@ export const RefreshContentButton: React.FC<RefreshContentButtonProps> = ({
   className = ""
 }) => {
   return (
-    <button 
+    <Button 
       onClick={onClick}
-      className={`px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors ${className}`}
+      className={`px-4 py-2 bg-gradient-to-r from-gray-900 to-black hover:from-gray-800 hover:to-gray-900 text-white border border-gray-700 rounded-md shadow-md transition-all duration-300 ${className}`}
     >
+      <RefreshCcw className="mr-2 h-4 w-4" />
       {label}
-    </button>
+    </Button>
   );
 };
