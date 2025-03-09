@@ -38,7 +38,17 @@ export const VideoGrid = ({
   
   // Memoize videos to prevent unnecessary re-renders
   const displayVideos = useMemo(() => {
-    return videos?.slice(0, maxVideos) || [];
+    // Ensure we have valid videos to display (filter out invalid entries)
+    if (!videos || videos.length === 0) {
+      return [];
+    }
+    
+    // Ensure all videos have required properties
+    const filteredVideos = videos.filter(v => 
+      v && v.title && v.video_id && (v.thumbnail || v.id.includes('sample'))
+    );
+    
+    return filteredVideos.slice(0, maxVideos);
   }, [videos, maxVideos]);
   
   // Check if we're really loading or have no videos
@@ -80,7 +90,12 @@ export const VideoGrid = ({
     }));
   };
 
-  // On main page, use a simpler loading indicator or none at all
+  // Always show some content even when loading on main page
+  const videosToDisplay = displayVideos.length > 0 
+    ? displayVideos 
+    : (hasRealVideos ? displayVideos : createSampleVideos());
+
+  // On main page, use a simpler loading indicator
   if (loading && !isMainPage) {
     return (
       <div className={cn(
@@ -95,19 +110,6 @@ export const VideoGrid = ({
       </div>
     );
   }
-
-  // If on main page and loading, just render an empty div with appropriate height
-  if (loading && isMainPage) {
-    return (
-      <div className={cn(
-        "flex items-center justify-center",
-        isMobile ? "min-h-[200px]" : "min-h-[400px]"
-      )}></div>
-    );
-  }
-
-  // Use real videos if we have them, otherwise use sample videos
-  const videosToDisplay = hasRealVideos ? displayVideos : createSampleVideos();
 
   return (
     <div className={cn(

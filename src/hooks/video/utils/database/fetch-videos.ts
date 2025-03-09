@@ -15,7 +15,7 @@ export const fetchVideosFromDatabase = async (): Promise<any[]> => {
       .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at")
       .is("deleted_at", null)
       .order("uploaded_at", { ascending: false })
-      .limit(50); // Reduced from 100 to 50 for faster initial load
+      .limit(24); // Increased from 50 to 24 for better display
       
     if (!initialError && initialData && initialData.length > 0) {
       console.log(`Successfully fetched ${initialData.length} videos (initial batch)`);
@@ -35,30 +35,34 @@ export const fetchVideosFromDatabase = async (): Promise<any[]> => {
     }
     
     // Try with a more simplified query if the first one failed
-    const { data, error } = await supabase
-      .from("youtube_videos")
-      .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at")
-      .is("deleted_at", null)
-      .order("uploaded_at", { ascending: false })
-      .limit(30); // Reduced from 50 to 30
+    try {
+      const { data, error } = await supabase
+        .from("youtube_videos")
+        .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at")
+        .is("deleted_at", null)
+        .order("uploaded_at", { ascending: false })
+        .limit(16); // Reduced to focus on essential content
 
-    if (error) {
-      console.error("Error fetching videos from database:", error);
+      if (error) {
+        console.error("Error fetching videos from database:", error);
+        throw error;
+      }
       
-      // Create sample videos as fallback
-      return createSampleVideos(8);
+      if (data && data.length > 0) {
+        console.log(`Successfully fetched ${data.length} videos from simplified query`);
+        return data;
+      }
+      
+      console.log("No videos found in database with simplified query");
+    } catch (simplifiedError) {
+      console.error("Error in simplified fetch:", simplifiedError);
     }
     
-    if (!data || data.length === 0) {
-      console.log("No videos found in database");
-      return [];
-    }
-    
-    console.log(`Successfully fetched ${data?.length || 0} videos from database`);
-    return data;
+    // If all database queries fail, create sample videos
+    return createSampleVideos(12);
   } catch (err) {
     console.error("Failed to fetch videos from database:", err);
-    return createSampleVideos(8);
+    return createSampleVideos(12);
   }
 };
 
@@ -74,7 +78,7 @@ const fetchAdditionalVideos = async (skipCount: number): Promise<void> => {
       .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at")
       .is("deleted_at", null)
       .order("uploaded_at", { ascending: false })
-      .range(skipCount, skipCount + 49); // Reduced range from 99 to 49
+      .range(skipCount, skipCount + 24);
       
     if (data && data.length > 0) {
       console.log(`Successfully loaded ${data.length} additional videos in background`);
@@ -93,13 +97,13 @@ export const fetchUpdatedVideosAfterSync = async (): Promise<any[]> => {
   try {
     console.log("Fetching updated videos after sync...");
     
-    // Get only needed fields, limited to 50 (reduced from 100)
+    // Get only needed fields, optimized number
     const { data, error } = await supabase
       .from("youtube_videos")
-      .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at")
+      .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, category, description")
       .is("deleted_at", null)
       .order("uploaded_at", { ascending: false })
-      .limit(50);
+      .limit(24);
 
     if (error) {
       console.error('Error fetching updated videos:', error);

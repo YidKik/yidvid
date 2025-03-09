@@ -24,17 +24,21 @@ export const AutoRefreshHandler: React.FC<AutoRefreshHandlerProps> = ({
       if (forceRefetch) {
         // Add a small delay to avoid interfering with initial page load
         setTimeout(() => {
-          forceRefetch();
-        }, 1500);
+          forceRefetch().catch(error => {
+            console.error("Failed to force refresh videos:", error);
+          });
+        }, 500); // Reduced from 1500ms to 500ms for faster load
       }
     } else if (!isRefreshing && lastSuccessfulFetch && 
-        (new Date().getTime() - new Date(lastSuccessfulFetch).getTime() > 86400000) && // More than 24 hours
+        (new Date().getTime() - new Date(lastSuccessfulFetch).getTime() > 3600000) && // More than 1 hour (reduced from 24 hours)
         forceRefetch) {
-      console.log("Content is stale (>24 hours). Triggering automatic refresh...");
+      console.log("Content is stale (>1 hour). Triggering automatic refresh...");
       // Add a small delay to avoid interfering with initial page load
       setTimeout(() => {
-        forceRefetch();
-      }, 1500);
+        forceRefetch().catch(error => {
+          console.error("Failed to refresh stale content:", error);
+        });
+      }, 1000); // Reduced from 1500ms to 1000ms
     }
   }, [videos, lastSuccessfulFetch, forceRefetch, isRefreshing]);
   

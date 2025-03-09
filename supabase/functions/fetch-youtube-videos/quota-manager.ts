@@ -1,87 +1,94 @@
 
-import { supabase } from './db-operations.ts';
+import { createClient } from '@supabase/supabase-js';
 
-export interface QuotaInfo {
-  quota_limit: number;
-  quota_remaining: number;
-  quota_reset_at: string;
-  last_reset: string;
-}
+// Supabase client for server-side operations
+const SUPABASE_URL = Deno.env.get('SUPABASE_URL') || '';
+const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
+const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
-export const getQuotaInfo = async (): Promise<QuotaInfo | null> => {
+/**
+ * Checks the current YouTube API quota status
+ */
+export async function checkQuota() {
   try {
+    // Default quota values if we can't fetch them
+    let quotaRemaining = 5000; // Conservative default
+    let quotaResetAt = new Date();
+    quotaResetAt.setDate(quotaResetAt.getDate() + 1); // Reset tomorrow by default
+    
+    // Get current quota from database
     const { data, error } = await supabase
       .from('api_quota_tracking')
-      .select('*')
+      .select('quota_remaining, quota_reset_at')
       .eq('api_name', 'youtube')
       .single();
-
+    
     if (error) {
-      console.error('Error fetching quota info:', error);
-      return null;
+      console.error('Error checking quota:', error.message);
+    } else if (data) {
+      quotaRemaining = data.quota_remaining;
+      quotaResetAt = new Date(data.quota_reset_at);
+      
+      // If we're past reset time, reset the quota
+      if (new Date() >= quotaResetAt) {
+        quotaRemaining = 10000; // YouTube's daily quota
+        quotaResetAt = new Date();
+        quotaResetAt.setDate(quotaResetAt.getDate() + 1);
+        
+        // Update the reset quota
+        await supabase
+          .from('api_quota_tracking')
+          .update({
+            quota_remaining: quotaRemaining,
+            quota_reset_at: quotaResetAt.toISOString()
+          })
+          .eq('api_name', 'youtube');
+      }
     }
-
+    
     return {
-      quota_limit: data.quota_limit,
-      quota_remaining: data.quota_remaining,
-      quota_reset_at: data.quota_reset_at,
-      last_reset: data.last_reset
+      quota_remaining: quotaRemaining,
+      quota_reset_at: quotaResetAt.toISOString()
     };
-  } catch (error) {
-    console.error('Unexpected error in getQuotaInfo:', error);
-    return null;
+  } catch (err) {
+    console.error('Error in checkQuota:', err);
+    // Return conservative defaults
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return {
+      quota_remaining: 1000,
+      quota_reset_at: tomorrow.toISOString()
+    };
   }
-};
+}
 
-export const updateQuotaRemaining = async (used: number): Promise<boolean> => {
+/**
+ * Updates the used quota in the database
+ */
+export async function updateQuotaUsage(usedQuota: number) {
   try {
-    const { data: current, error: fetchError } = await supabase
+    const { data, error } = await supabase
       .from('api_quota_tracking')
       .select('quota_remaining')
       .eq('api_name', 'youtube')
       .single();
-
-    if (fetchError) {
-      console.error('Error fetching current quota:', fetchError);
-      return false;
+    
+    if (error) {
+      console.error('Error getting current quota:', error.message);
+      return;
     }
-
-    const newRemaining = Math.max(0, current.quota_remaining - used);
+    
+    const remainingQuota = Math.max(0, data.quota_remaining - usedQuota);
     
     const { error: updateError } = await supabase
       .from('api_quota_tracking')
-      .update({ 
-        quota_remaining: newRemaining,
-        updated_at: new Date().toISOString()
-      })
+      .update({ quota_remaining: remainingQuota })
       .eq('api_name', 'youtube');
-
+    
     if (updateError) {
-      console.error('Error updating quota:', updateError);
-      return false;
+      console.error('Error updating quota:', updateError.message);
     }
-
-    return true;
-  } catch (error) {
-    console.error('Unexpected error in updateQuotaRemaining:', error);
-    return false;
-  }
-};
-
-export const recordFetchAttempt = async (
-  channelsProcessed: number,
-  videosFound: number,
-  error?: string,
-  quotaRemaining?: number
-): Promise<void> => {
-  try {
-    await supabase.from('video_fetch_logs').insert({
-      channels_processed: channelsProcessed,
-      videos_found: videosFound,
-      error: error,
-      quota_remaining: quotaRemaining
-    });
   } catch (err) {
-    console.error('Error recording fetch attempt:', err);
+    console.error('Error in updateQuotaUsage:', err);
   }
-};
+}

@@ -8,6 +8,7 @@ import { useRefetchControl } from "@/hooks/video/useRefetchControl";
 import { useSampleVideos } from "@/hooks/video/useSampleVideos";
 import { AutoRefreshHandler } from "./AutoRefreshHandler";
 import { VideoEmptyState } from "./VideoEmptyState";
+import { toast } from "sonner";
 
 interface VideoContentProps {
   videos: VideoData[];
@@ -38,6 +39,9 @@ export const VideoContent = ({
     hasOnlySampleVideos 
   } = useSampleVideos();
 
+  // State to track if we've already attempted a refresh
+  const [hasAttemptedRefresh, setHasAttemptedRefresh] = useState(false);
+
   // Log data for debugging - using shorter format
   useEffect(() => {
     const isEmpty = !videos || videos.length === 0;
@@ -52,6 +56,17 @@ export const VideoContent = ({
       }
     }
   }, [videos, isLoading]);
+
+  // Automatically try to fetch real content once if we only have sample videos
+  useEffect(() => {
+    if (!isLoading && !isRefreshing && hasOnlySampleVideos(videos) && !hasAttemptedRefresh && forceRefetch) {
+      setHasAttemptedRefresh(true);
+      console.log("Only sample videos detected, attempting to fetch real content");
+      forceRefetch().catch(err => {
+        console.error("Error force fetching:", err);
+      });
+    }
+  }, [videos, isLoading, isRefreshing, hasOnlySampleVideos, hasAttemptedRefresh, forceRefetch]);
 
   // Only use sample videos if we absolutely have no real data
   const displayVideos = videos?.length ? videos : createSampleVideos();
@@ -100,8 +115,6 @@ export const VideoContent = ({
           fetchAttempts={fetchAttempts || 0}
         />
       )}
-      
-      {/* LoadRealContentButton has been removed */}
     </div>
   );
 };
