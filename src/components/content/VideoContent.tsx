@@ -1,11 +1,14 @@
 
 import { useIsMobile } from "@/hooks/useIsMobile";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { MobileVideoView } from "./MobileVideoView";
 import { DesktopVideoView } from "./DesktopVideoView";
-import { VideoData } from "@/hooks/video/useVideoFetcher";
-import { toast } from "sonner";
-import { AlertCircle } from "lucide-react";
+import { VideoData } from "@/hooks/video/types/video-fetcher";
+import { useRefetchControl } from "@/hooks/video/useRefetchControl";
+import { useSampleVideos } from "@/hooks/video/useSampleVideos";
+import { AutoRefreshHandler } from "./AutoRefreshHandler";
+import { LoadRealContentButton } from "./LoadRealContentButton";
+import { VideoEmptyState } from "./VideoEmptyState";
 
 interface VideoContentProps {
   videos: VideoData[];
@@ -25,50 +28,16 @@ export const VideoContent = ({
   fetchAttempts
 }: VideoContentProps) => {
   const isMobile = useIsMobile();
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const refreshToastIdRef = useRef<string | null>(null);
+  const { 
+    isRefreshing, 
+    handleRefetch, 
+    handleForceRefetch 
+  } = useRefetchControl({ refetch, forceRefetch });
   
-  const handleRefetch = async () => {
-    if (refetch && !isRefreshing) {
-      console.log("Manual refresh triggered");
-      setIsRefreshing(true);
-      
-      try {
-        await refetch();
-        // Use a unique ID for the toast to prevent duplicates
-        toast.success("Content refreshed", { id: "content-refreshed" });
-      } catch (error) {
-        console.error("Error during manual refetch:", error);
-      } finally {
-        setTimeout(() => setIsRefreshing(false), 1000);
-      }
-    }
-  };
-
-  const handleForceRefetch = async () => {
-    if (forceRefetch && !isRefreshing) {
-      console.log("Force refresh triggered");
-      setIsRefreshing(true);
-      
-      // Clear any previous refresh toast
-      if (refreshToastIdRef.current) {
-        toast.dismiss(refreshToastIdRef.current);
-      }
-      
-      try {
-        await forceRefetch();
-        // Use a unique ID for the toast to prevent duplicates
-        refreshToastIdRef.current = "content-completely-refreshed";
-        toast.success("Content completely refreshed with latest data", { 
-          id: refreshToastIdRef.current 
-        });
-      } catch (error) {
-        console.error("Error during force refetch:", error);
-      } finally {
-        setTimeout(() => setIsRefreshing(false), 1000);
-      }
-    }
-  };
+  const { 
+    createSampleVideos,
+    hasOnlySampleVideos 
+  } = useSampleVideos();
 
   // Log data for debugging
   useEffect(() => {
@@ -85,69 +54,36 @@ export const VideoContent = ({
     }
   }, [videos, isLoading]);
 
-  // Always show force fetch button and trigger automatic refresh if stale
-  useEffect(() => {
-    if (!videos || videos.length === 0 || 
-        videos[0].id.toString().startsWith('sample')) {
-      console.log("No real videos detected, triggering force refresh...");
-      if (forceRefetch && !isRefreshing) {
-        handleForceRefetch();
-      }
-    } else if (lastSuccessfulFetch && 
-        (new Date().getTime() - new Date(lastSuccessfulFetch).getTime() > 86400000) && // More than 24 hours
-        forceRefetch && !isRefreshing) {
-      console.log("Content is stale (>24 hours). Triggering automatic refresh...");
-      handleForceRefetch();
-    }
-  }, [videos, lastSuccessfulFetch, forceRefetch, isRefreshing]);
-
-  // Create sample videos for fallback if needed
-  const createSampleVideos = (): VideoData[] => {
-    const now = new Date();
-    return Array(12).fill(null).map((_, i) => ({
-      id: `sample-${i}`,
-      video_id: `sample-vid-${i}`,
-      title: `Sample Video ${i+1}`,
-      thumbnail: '/placeholder.svg',
-      channelName: "Sample Channel",
-      channelId: "sample-channel",
-      views: 1000 * (i+1),
-      uploadedAt: new Date(now.getTime() - (i * 86400000)).toISOString(),
-      category: "other",
-      description: "This is a sample video until real content loads."
-    }));
-  };
-
   // Only use sample videos if we absolutely have no real data
   const displayVideos = videos?.length ? videos : createSampleVideos();
-
-  // If we have sample videos but our refetch isn't in progress, show button to retry
-  const hasOnlySampleVideos = videos?.length > 0 && videos[0].id.toString().startsWith('sample');
+  
+  // Check if we have sample videos
+  const hasSampleVideosOnly = hasOnlySampleVideos(videos);
   
   // Only show empty state if explicitly requested
   const showEmptyState = false;
 
   if (showEmptyState && (!videos || videos.length === 0) && !isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
-        <AlertCircle className="h-12 w-12 text-orange-500 mb-4" />
-        <h3 className="text-lg font-semibold mb-2">No videos available</h3>
-        <p className="text-muted-foreground mb-6">We're getting your videos ready. Please check back later.</p>
-        {!isRefreshing && (
-          <button 
-            onClick={handleForceRefetch}
-            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
-          >
-            Refresh Content
-          </button>
-        )}
-      </div>
+      <VideoEmptyState 
+        onRefresh={handleForceRefetch}
+        isRefreshing={isRefreshing}
+      />
     );
   }
 
-  if (isMobile) {
-    return (
-      <div>
+  return (
+    <div>
+      {/* Component to handle automatic refresh of stale content */}
+      <AutoRefreshHandler
+        videos={displayVideos}
+        isRefreshing={isRefreshing}
+        lastSuccessfulFetch={lastSuccessfulFetch}
+        forceRefetch={forceRefetch}
+      />
+      
+      {/* Responsive video view based on device */}
+      {isMobile ? (
         <MobileVideoView
           videos={displayVideos}
           isLoading={isLoading}
@@ -157,44 +93,24 @@ export const VideoContent = ({
           lastSuccessfulFetch={lastSuccessfulFetch}
           fetchAttempts={fetchAttempts || 0}
         />
-        
-        {hasOnlySampleVideos && !isRefreshing && (
-          <div className="flex justify-center mt-4 mb-6">
-            <button 
-              onClick={handleForceRefetch}
-              className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
-            >
-              Load Real Content
-            </button>
-          </div>
-        )}
-      </div>
-    );
-  }
-
-  // Desktop view
-  return (
-    <div>
-      <DesktopVideoView
-        videos={displayVideos}
-        isLoading={isLoading}
-        isRefreshing={isRefreshing}
-        refetch={handleRefetch}
-        forceRefetch={handleForceRefetch}
-        lastSuccessfulFetch={lastSuccessfulFetch}
-        fetchAttempts={fetchAttempts || 0}
-      />
-      
-      {hasOnlySampleVideos && !isRefreshing && (
-        <div className="flex justify-center mt-6 mb-8">
-          <button 
-            onClick={handleForceRefetch}
-            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
-          >
-            Load Real Content
-          </button>
-        </div>
+      ) : (
+        <DesktopVideoView
+          videos={displayVideos}
+          isLoading={isLoading}
+          isRefreshing={isRefreshing}
+          refetch={handleRefetch}
+          forceRefetch={handleForceRefetch}
+          lastSuccessfulFetch={lastSuccessfulFetch}
+          fetchAttempts={fetchAttempts || 0}
+        />
       )}
+      
+      {/* Button to load real content if we only have sample videos */}
+      <LoadRealContentButton
+        hasOnlySampleVideos={hasSampleVideosOnly}
+        isRefreshing={isRefreshing}
+        onForceRefetch={handleForceRefetch}
+      />
     </div>
   );
 };
