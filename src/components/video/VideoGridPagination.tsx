@@ -24,6 +24,7 @@ export const VideoGridPagination = ({
   onShowAll,
   onPageChange,
 }: VideoGridPaginationProps) => {
+  // If not showing all, display the "See More" button
   if (!showAll) {
     return (
       <div className={`flex justify-center ${isMobile ? 'mt-1' : 'mt-8'}`}>
@@ -43,8 +44,9 @@ export const VideoGridPagination = ({
     );
   }
 
+  // For pagination display
   return (
-    <div className={`flex justify-center items-center gap-6 ${isMobile ? 'mt-4' : 'mt-8'}`}>
+    <div className={`flex items-center justify-center gap-6 ${isMobile ? 'mt-4' : 'mt-8'}`}>
       <Button
         variant="outline"
         onClick={() => onPageChange(currentPage - 1)}
@@ -57,6 +59,10 @@ export const VideoGridPagination = ({
       >
         <ChevronLeft className={isMobile ? "h-3 w-3" : "h-4 w-4"} />
       </Button>
+      
+      <div className="flex items-center text-sm text-muted-foreground">
+        Page {currentPage} of {totalPages}
+      </div>
       
       <Button
         variant="outline"

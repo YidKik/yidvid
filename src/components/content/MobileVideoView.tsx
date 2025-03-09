@@ -54,7 +54,8 @@ export const MobileVideoView = ({
   // Log for debugging
   useEffect(() => {
     console.log(`MobileVideoView: ${videos.length} videos, hasRealVideos: ${hasRealVideos}, isLoading: ${isLoading}, isRefreshing: ${isRefreshing}`);
-  }, [videos, hasRealVideos, isLoading, isRefreshing]);
+    console.log(`Pagination: currentPage ${currentPage} of ${totalPages}, showing ${displayVideos.length} videos`);
+  }, [videos, hasRealVideos, isLoading, isRefreshing, currentPage, totalPages, displayVideos.length]);
 
   return (
     <div className="space-y-4 -mt-2 pt-8">

@@ -22,7 +22,7 @@ export const useVideoPagination = ({
   });
   
   // Calculate total pages based on number of videos and videos per page
-  const totalPages = Math.ceil(sortedVideos.length / videosPerPage);
+  const totalPages = Math.max(1, Math.ceil(sortedVideos.length / videosPerPage));
   
   // Get the videos to display on the current page
   const displayVideos = sortedVideos.slice(
@@ -30,10 +30,17 @@ export const useVideoPagination = ({
     currentPage * videosPerPage
   );
   
-  // Reset to first page when videos change
+  // Reset to first page when videos array changes or its length changes
   useEffect(() => {
     setCurrentPage(1);
   }, [videos?.length]);
+  
+  // Ensure current page is valid when totalPages changes
+  useEffect(() => {
+    if (currentPage > totalPages && totalPages > 0) {
+      setCurrentPage(totalPages);
+    }
+  }, [totalPages, currentPage]);
   
   // If on mobile and the "show more" button hasn't been clicked,
   // only show a limited number of videos (e.g., 4)
@@ -41,12 +48,19 @@ export const useVideoPagination = ({
     ? sortedVideos.slice(0, 4)
     : displayVideos;
   
+  // Handle page change with validation
+  const handlePageChange = (page: number) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
+  
   return {
     sortedVideos,
     displayVideos: isMobile ? mobileDisplayVideos : displayVideos,
     currentPage,
     totalPages,
-    setCurrentPage,
+    setCurrentPage: handlePageChange,
     showMoreMobile,
     setShowMoreMobile
   };
