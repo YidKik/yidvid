@@ -38,7 +38,7 @@ export const VideoContent = ({
     hasOnlySampleVideos 
   } = useSampleVideos();
 
-  // Log data for debugging
+  // Log data for debugging - using shorter format
   useEffect(() => {
     const isEmpty = !videos || videos.length === 0;
     

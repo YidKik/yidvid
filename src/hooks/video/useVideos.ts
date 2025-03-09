@@ -96,12 +96,12 @@ export const useVideos = (): UseVideosResult => {
         console.log("Not retrying RLS/permission error");
         return false;
       }
-      // Retry network errors up to 5 times
-      if (error?.message?.includes('network') || error?.message?.includes('fetch')) return failureCount < 5;
-      // Retry twice for other errors
-      return failureCount < 3;
+      // Retry network errors up to 3 times (reduced from 5)
+      if (error?.message?.includes('network') || error?.message?.includes('fetch')) return failureCount < 3;
+      // Only retry once for other errors (reduced from 3)
+      return failureCount < 2;
     },
-    retryDelay: 1000, // Shorter retry delay
+    retryDelay: 500, // Reduced from 1000ms to 500ms
     meta: {
       errorMessage: "Failed to load videos",
       suppressToasts: true // Don't show error toasts
@@ -134,7 +134,7 @@ export const useVideos = (): UseVideosResult => {
             // If still failing, increment retry counter to force a new query
             setRetryCount(prev => prev + 1);
           });
-        }, 2000);
+        }, 1000); // Reduced from 2000ms to 1000ms
       });
     } else {
       console.log(`Using ${data.length} cached real videos`);
@@ -155,7 +155,7 @@ export const useVideos = (): UseVideosResult => {
           // If still failing, increment retry counter
           setRetryCount(prev => prev + 1);
         });
-      }, 1000);
+      }, 800); // Reduced from 1000ms to 800ms
     }
   }, [data, forceRefetch, isMainPage]);
 

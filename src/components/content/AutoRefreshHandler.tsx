@@ -17,17 +17,24 @@ export const AutoRefreshHandler: React.FC<AutoRefreshHandlerProps> = ({
 }) => {
   // Always show force fetch button and trigger automatic refresh if stale
   useEffect(() => {
-    if (!videos || videos.length === 0 || 
-        videos[0].id.toString().startsWith('sample')) {
+    // Only trigger if we have missing data and not already refreshing
+    if (!isRefreshing && (!videos || videos.length === 0 || 
+        videos[0].id.toString().startsWith('sample'))) {
       console.log("No real videos detected, triggering force refresh...");
-      if (forceRefetch && !isRefreshing) {
-        forceRefetch();
+      if (forceRefetch) {
+        // Add a small delay to avoid interfering with initial page load
+        setTimeout(() => {
+          forceRefetch();
+        }, 1500);
       }
-    } else if (lastSuccessfulFetch && 
+    } else if (!isRefreshing && lastSuccessfulFetch && 
         (new Date().getTime() - new Date(lastSuccessfulFetch).getTime() > 86400000) && // More than 24 hours
-        forceRefetch && !isRefreshing) {
+        forceRefetch) {
       console.log("Content is stale (>24 hours). Triggering automatic refresh...");
-      forceRefetch();
+      // Add a small delay to avoid interfering with initial page load
+      setTimeout(() => {
+        forceRefetch();
+      }, 1500);
     }
   }, [videos, lastSuccessfulFetch, forceRefetch, isRefreshing]);
   

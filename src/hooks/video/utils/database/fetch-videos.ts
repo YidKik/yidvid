@@ -15,15 +15,17 @@ export const fetchVideosFromDatabase = async (): Promise<any[]> => {
       .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at")
       .is("deleted_at", null)
       .order("uploaded_at", { ascending: false })
-      .limit(100); // Reduced limit for faster initial load
+      .limit(50); // Reduced from 100 to 50 for faster initial load
       
     if (!initialError && initialData && initialData.length > 0) {
       console.log(`Successfully fetched ${initialData.length} videos (initial batch)`);
       
-      // Start loading additional videos in the background
-      fetchAdditionalVideos(initialData.length).catch(err => {
-        console.warn("Background fetch error:", err);
-      });
+      // Start loading additional videos in the background with lower priority
+      setTimeout(() => {
+        fetchAdditionalVideos(initialData.length).catch(err => {
+          console.warn("Background fetch error:", err);
+        });
+      }, 2000); // Delay background loading to prioritize main page display
       
       return initialData;
     }
@@ -38,7 +40,7 @@ export const fetchVideosFromDatabase = async (): Promise<any[]> => {
       .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at")
       .is("deleted_at", null)
       .order("uploaded_at", { ascending: false })
-      .limit(50);
+      .limit(30); // Reduced from 50 to 30
 
     if (error) {
       console.error("Error fetching videos from database:", error);
@@ -72,7 +74,7 @@ const fetchAdditionalVideos = async (skipCount: number): Promise<void> => {
       .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at")
       .is("deleted_at", null)
       .order("uploaded_at", { ascending: false })
-      .range(skipCount, skipCount + 99);
+      .range(skipCount, skipCount + 49); // Reduced range from 99 to 49
       
     if (data && data.length > 0) {
       console.log(`Successfully loaded ${data.length} additional videos in background`);
@@ -91,13 +93,13 @@ export const fetchUpdatedVideosAfterSync = async (): Promise<any[]> => {
   try {
     console.log("Fetching updated videos after sync...");
     
-    // Get only needed fields, limited to 100
+    // Get only needed fields, limited to 50 (reduced from 100)
     const { data, error } = await supabase
       .from("youtube_videos")
       .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at")
       .is("deleted_at", null)
       .order("uploaded_at", { ascending: false })
-      .limit(100);
+      .limit(50);
 
     if (error) {
       console.error('Error fetching updated videos:', error);

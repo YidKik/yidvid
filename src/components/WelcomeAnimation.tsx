@@ -38,61 +38,59 @@ export const WelcomeAnimation = () => {
       return;
     }
 
-    if (!isWelcomeLoading && !isVideosLoading && !isVideosFetching && show) {
-      console.log("All content loaded, preparing to hide welcome animation...");
-      const timer = setTimeout(() => {
-        setShow(false);
-        sessionStorage.setItem('hasVisited', 'true');
-        
-        // Show the information notification after a delay
-        if (!localStorage.getItem('hasSeenInfoNotification') && !infoShown) {
-          const hasVisitedWelcome = localStorage.getItem('hasVisitedWelcome');
-          if (hasVisitedWelcome) {
-            setInfoShown(true);
-            const infoTimer = setTimeout(() => {
-              toast.custom((t) => (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className={`bg-white rounded-lg shadow-lg ${isMobile ? 'p-2 max-w-[85%] mx-auto' : 'p-4 max-w-lg mx-auto'}`}
-                >
-                  <div className="flex flex-col items-center text-center space-y-2">
-                    <img 
-                      src="/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png" 
-                      alt="YidVid Logo" 
-                      className={isMobile ? "w-10 h-10" : "w-24 h-24"}
-                    />
-                    <h3 className={isMobile ? "text-sm font-semibold" : "text-2xl font-semibold"}>Welcome to YidVid!</h3>
-                    <p className={isMobile ? "text-xs text-gray-600 leading-tight" : "text-lg text-gray-600"}>
-                      {isMobile ? "Create account to unlock all features!" : "Start exploring our curated collection of Jewish content. Create a free account to unlock all features!"}
-                    </p>
-                    <button
-                      onClick={() => {
-                        toast.dismiss(t);
-                        localStorage.setItem('hasSeenInfoNotification', 'true');
-                      }}
-                      className={`bg-primary text-white ${isMobile ? "px-3 py-1 text-xs" : "px-4 py-3 text-lg"} rounded-md hover:bg-primary/90 transition-colors`}
-                    >
-                      Got it!
-                    </button>
-                  </div>
-                </motion.div>
-              ), {
-                duration: 6000,
-                id: "welcome-info-notification",
-                onAutoClose: () => {
-                  localStorage.setItem('hasSeenInfoNotification', 'true');
-                }
-              });
-            }, 500);
-            return () => clearTimeout(infoTimer);
-          }
+    // Reduced timer from 1500ms to 800ms for faster transition
+    const timer = setTimeout(() => {
+      setShow(false);
+      sessionStorage.setItem('hasVisited', 'true');
+      
+      // Show the information notification after a delay
+      if (!localStorage.getItem('hasSeenInfoNotification') && !infoShown) {
+        const hasVisitedWelcome = localStorage.getItem('hasVisitedWelcome');
+        if (hasVisitedWelcome) {
+          setInfoShown(true);
+          const infoTimer = setTimeout(() => {
+            toast.custom((t) => (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className={`bg-white rounded-lg shadow-lg ${isMobile ? 'p-2 max-w-[85%] mx-auto' : 'p-4 max-w-lg mx-auto'}`}
+              >
+                <div className="flex flex-col items-center text-center space-y-2">
+                  <img 
+                    src="/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png" 
+                    alt="YidVid Logo" 
+                    className={isMobile ? "w-10 h-10" : "w-24 h-24"}
+                  />
+                  <h3 className={isMobile ? "text-sm font-semibold" : "text-2xl font-semibold"}>Welcome to YidVid!</h3>
+                  <p className={isMobile ? "text-xs text-gray-600 leading-tight" : "text-lg text-gray-600"}>
+                    {isMobile ? "Create account to unlock all features!" : "Start exploring our curated collection of Jewish content. Create a free account to unlock all features!"}
+                  </p>
+                  <button
+                    onClick={() => {
+                      toast.dismiss(t);
+                      localStorage.setItem('hasSeenInfoNotification', 'true');
+                    }}
+                    className={`bg-primary text-white ${isMobile ? "px-3 py-1 text-xs" : "px-4 py-3 text-lg"} rounded-md hover:bg-primary/90 transition-colors`}
+                  >
+                    Got it!
+                  </button>
+                </div>
+              </motion.div>
+            ), {
+              duration: 6000,
+              id: "welcome-info-notification",
+              onAutoClose: () => {
+                localStorage.setItem('hasSeenInfoNotification', 'true');
+              }
+            });
+          }, 500);
+          return () => clearTimeout(infoTimer);
         }
-      }, 1500);
+      }
+    }, 800); // Reduced from 1500ms to 800ms
 
-      return () => clearTimeout(timer);
-    }
+    return () => clearTimeout(timer);
   }, [skipWelcome, isWelcomeLoading, isVideosLoading, isVideosFetching, isError, videosError, show, infoShown, isMobile]);
 
   useEffect(() => {
@@ -109,7 +107,7 @@ export const WelcomeAnimation = () => {
         <motion.div
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
+          transition={{ duration: 0.2 }} // Reduced from 0.3 to 0.2
           className="fixed inset-0 z-50 flex items-center justify-center bg-white"
           onAnimationComplete={() => {
             if (!show) {
@@ -121,7 +119,7 @@ export const WelcomeAnimation = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.2 }} // Reduced from 0.3 to 0.2
             className="text-center"
           >
             <WelcomeText userName={userName} />
@@ -141,7 +139,7 @@ export const WelcomeAnimation = () => {
                     width: ["0%", "100%"],
                   }}
                   transition={{
-                    duration: 2,
+                    duration: 1, // Reduced from 2 to 1
                     repeat: Infinity,
                     ease: "linear",
                   }}
@@ -153,7 +151,7 @@ export const WelcomeAnimation = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ delay: 1.2 }}
+              transition={{ delay: 0.5 }} // Reduced from 1.2 to 0.5
               className="text-xl text-muted-foreground mt-4"
             >
               Your source for Jewish content
