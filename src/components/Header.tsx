@@ -19,19 +19,30 @@ export const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { session, handleLogout } = useAuth();
   const queryClient = useQueryClient();
+  const [isMarkingNotifications, setIsMarkingNotifications] = useState(false);
 
   const markNotificationsAsRead = async () => {
-    if (!session?.user?.id) return;
+    if (!session?.user?.id || isMarkingNotifications) return;
 
-    const { error } = await supabase
-      .from("video_notifications")
-      .update({ is_read: true })
-      .eq("user_id", session.user.id)
-      .eq("is_read", false);
+    setIsMarkingNotifications(true);
+    try {
+      const { error } = await supabase
+        .from("video_notifications")
+        .update({ is_read: true })
+        .eq("user_id", session.user.id)
+        .eq("is_read", false);
 
-    if (error) {
+      if (error) {
+        console.error("Error marking notifications as read:", error);
+        // Silent error - don't show toast to users to prevent duplicates
+      }
+      
+      // Refetch notifications to update the UI
+      queryClient.invalidateQueries({ queryKey: ["video-notifications", session?.user?.id] });
+    } catch (error) {
       console.error("Error marking notifications as read:", error);
-      toast.error("Failed to mark notifications as read");
+    } finally {
+      setIsMarkingNotifications(false);
     }
   };
 

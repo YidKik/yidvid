@@ -1,7 +1,7 @@
 import { createContext, useContext, ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 interface Comment {
   id: string;
@@ -94,11 +94,7 @@ export const CommentsProvider = ({ children }: { children: ReactNode }) => {
 
       if (error) {
         console.error("Error fetching notifications:", error);
-        toast({
-          title: "Error fetching notifications",
-          description: error.message,
-          variant: "destructive",
-        });
+        toast.error("Error fetching notifications: " + error.message);
         return [];
       }
 
@@ -130,11 +126,7 @@ export const CommentsProvider = ({ children }: { children: ReactNode }) => {
 
       if (error) {
         console.error("Error fetching comments:", error);
-        toast({
-          title: "Error fetching comments",
-          description: error.message,
-          variant: "destructive",
-        });
+        toast.error("Error fetching comments: " + error.message);
         return [];
       }
 
@@ -145,11 +137,7 @@ export const CommentsProvider = ({ children }: { children: ReactNode }) => {
 
   const handleDeleteComment = async (commentId: string) => {
     if (!session?.user?.id || !profile?.is_admin) {
-      toast({
-        title: "Permission denied",
-        description: "Only admins can delete comments",
-        variant: "destructive",
-      });
+      toast.error("Permission denied: Only admins can delete comments");
       return;
     }
 
@@ -161,20 +149,13 @@ export const CommentsProvider = ({ children }: { children: ReactNode }) => {
 
       if (error) throw error;
 
-      toast({
-        title: "Success",
-        description: "Comment deleted successfully",
-      });
+      toast.success("Comment deleted successfully");
       
       await refetchComments();
       await refetchNotifications();
     } catch (error: any) {
       console.error("Error deleting comment:", error);
-      toast({
-        title: "Error",
-        description: "Error deleting comment: " + error.message,
-        variant: "destructive",
-      });
+      toast.error("Error deleting comment: " + error.message);
     }
   };
 

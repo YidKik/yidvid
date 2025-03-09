@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -24,9 +23,7 @@ export const useLayoutData = () => {
         throw error;
       }
       
-      // Transform the raw data to ensure proper typing
       const transformedData: LayoutConfig[] = (data || []).map(section => {
-        // Ensure spacing has the correct structure
         const defaultSpacing = {
           marginTop: 'mt-0',
           marginBottom: 'mb-0',
@@ -40,7 +37,6 @@ export const useLayoutData = () => {
           padding: typeof rawSpacing?.padding === 'string' ? rawSpacing.padding : defaultSpacing.padding
         };
 
-        // Ensure visibility has the correct structure
         const defaultVisibility = {
           mobile: true,
           desktop: true
@@ -79,7 +75,6 @@ export const useLayoutData = () => {
       const order = parseInt(value);
       if (isNaN(order)) return;
 
-      // Update local state first for immediate feedback
       setSections(currentSections => 
         currentSections.map(section => 
           section.id === sectionId 
@@ -111,7 +106,6 @@ export const useLayoutData = () => {
       const section = sections.find(s => s.id === sectionId);
       if (!section) return;
 
-      // Update local state first
       setSections(currentSections => 
         currentSections.map(s => 
           s.id === sectionId 
@@ -146,7 +140,6 @@ export const useLayoutData = () => {
       const section = sections.find(s => s.id === sectionId);
       if (!section) return;
 
-      // Update local state first
       setSections(currentSections => 
         currentSections.map(s => 
           s.id === sectionId 

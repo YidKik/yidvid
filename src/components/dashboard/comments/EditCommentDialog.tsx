@@ -25,11 +25,17 @@ interface EditCommentDialogProps {
 
 export const EditCommentDialog = ({ comment, onClose }: EditCommentDialogProps) => {
   const [editedContent, setEditedContent] = useState(comment?.content || "");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { refetchComments, refetchNotifications } = useComments();
 
   const handleEditComment = async () => {
     if (!comment) return;
+    if (!editedContent.trim()) {
+      toast.error("Comment cannot be empty");
+      return;
+    }
 
+    setIsSubmitting(true);
     try {
       const { error } = await supabase
         .from("video_comments")
@@ -44,7 +50,10 @@ export const EditCommentDialog = ({ comment, onClose }: EditCommentDialogProps) 
       await refetchComments();
       await refetchNotifications();
     } catch (error: any) {
+      console.error("Error updating comment:", error);
       toast.error("Error updating comment: " + error.message);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -62,10 +71,12 @@ export const EditCommentDialog = ({ comment, onClose }: EditCommentDialogProps) 
           />
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={() => onClose()}>
+          <Button variant="outline" onClick={() => onClose()} disabled={isSubmitting}>
             Cancel
           </Button>
-          <Button onClick={handleEditComment}>Save Changes</Button>
+          <Button onClick={handleEditComment} disabled={isSubmitting}>
+            {isSubmitting ? "Saving..." : "Save Changes"}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

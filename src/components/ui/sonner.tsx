@@ -25,6 +25,12 @@ const Toaster = ({ ...props }: ToasterProps) => {
         closeButton: true,
         duration: 5000,
       }}
+      richColors
+      expand={false}
+      position="top-right"
+      visibleToasts={3}
+      // Prevent duplicate notifications by grouping similar toasts
+      toastGrouping
       {...props}
     />
   )

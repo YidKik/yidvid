@@ -1,4 +1,3 @@
-
 import { BackButton } from "@/components/navigation/BackButton";
 import { useState, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";

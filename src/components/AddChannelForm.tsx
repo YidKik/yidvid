@@ -31,7 +31,8 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
     setIsLoading(true);
     
     try {
-      toast.loading("Adding channel...");
+      // Don't use toast.loading here as it can create duplicate toasts
+      // Instead we'll use a loading state for the button
 
       const result = await addChannel(channelId);
       

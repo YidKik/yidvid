@@ -22,6 +22,11 @@ export const CommentForm = ({ onSubmit }: CommentFormProps) => {
       return;
     }
 
+    if (!comment.trim()) {
+      toast.error("Comment cannot be empty");
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       await onSubmit(comment);

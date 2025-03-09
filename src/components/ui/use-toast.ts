@@ -1,5 +1,6 @@
 
+// We're standardizing on sonner for toast notifications to prevent duplicates
 import { toast } from "sonner";
-import { useToast } from "@/hooks/use-toast";
 
-export { useToast, toast };
+// Re-export toast for consistent usage across the app
+export { toast };
