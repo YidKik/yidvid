@@ -59,15 +59,6 @@ export const AuthOptions = ({ onSelectOption }: AuthOptionsProps) => {
           </Button>
         </motion.div>
       </div>
-      
-      <motion.p 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.3, delay: 0.3 }}
-        className="text-sm text-gray-500 whitespace-nowrap overflow-hidden text-ellipsis"
-      >
-        By continuing, you agree to our <a href="#" className="text-[#ea384c] hover:underline">Terms of Service</a> and <a href="#" className="text-[#ea384c] hover:underline">Privacy Policy</a>
-      </motion.p>
     </div>
   );
 };
