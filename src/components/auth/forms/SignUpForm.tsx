@@ -1,11 +1,14 @@
 
 import { useState } from "react";
-import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
+import { SignUpFormField } from "./SignUpFormField";
+import { TermsCheckbox } from "./TermsCheckbox";
+import { SocialLoginButtons } from "../SocialLoginButtons";
+import { validateSignUpForm } from "@/utils/formValidation";
 
 interface SignUpFormProps {
   isLoading: boolean;
@@ -23,7 +26,9 @@ export const SignUpForm = ({ isLoading, setIsLoading, onOpenChange }: SignUpForm
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!validateForm()) {
+    const validation = validateSignUpForm(email, password, username);
+    if (!validation.valid) {
+      toast.error(validation.message);
       return;
     }
 
@@ -73,86 +78,34 @@ export const SignUpForm = ({ isLoading, setIsLoading, onOpenChange }: SignUpForm
     }
   };
 
-  const validateForm = () => {
-    if (!email || !password || !username) {
-      toast.error("Please fill in all required fields");
-      return false;
-    }
-    
-    if (!email.includes('@')) {
-      toast.error("Please enter a valid email address");
-      return false;
-    }
-
-    if (password.length < 6) {
-      toast.error("Password must be at least 6 characters long");
-      return false;
-    }
-
-    return true;
-  };
-
   return (
     <form onSubmit={handleSignUp} className="space-y-4">
-      <div className="space-y-2">
-        <Input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          className={`${isMobile 
-            ? 'h-10 text-sm' 
-            : 'h-12 text-base'} 
-            px-4 border-[#E9ECEF] bg-[#F8F9FA] focus:bg-white transition-all duration-300 
-            rounded-lg focus:ring-2 focus:ring-purple-400/30 focus:border-purple-400 shadow-sm text-gray-800`}
-          required
-          disabled={isLoading}
-        />
-      </div>
-      <div className="space-y-2">
-        <Input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className={`${isMobile 
-            ? 'h-10 text-sm' 
-            : 'h-12 text-base'} 
-            px-4 border-[#E9ECEF] bg-[#F8F9FA] focus:bg-white transition-all duration-300 
-            rounded-lg focus:ring-2 focus:ring-purple-400/30 focus:border-purple-400 shadow-sm text-gray-800`}
-          required
-          disabled={isLoading}
-        />
-      </div>
-      <div className="space-y-2">
-        <Input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className={`${isMobile 
-            ? 'h-10 text-sm' 
-            : 'h-12 text-base'} 
-            px-4 border-[#E9ECEF] bg-[#F8F9FA] focus:bg-white transition-all duration-300 
-            rounded-lg focus:ring-2 focus:ring-purple-400/30 focus:border-purple-400 shadow-sm text-gray-800`}
-          required
-          disabled={isLoading}
-          minLength={6}
-        />
-      </div>
+      <SignUpFormField
+        type="text"
+        placeholder="Username"
+        value={username}
+        onChange={setUsername}
+        disabled={isLoading}
+      />
       
-      {!isMobile && (
-        <div className="flex items-center">
-          <input 
-            id="terms" 
-            type="checkbox" 
-            className="h-4 w-4 text-purple-600 rounded border-gray-300 focus:ring-purple-500"
-          />
-          <label htmlFor="terms" className="ml-2 text-sm text-gray-600">
-            I agree to the <a href="#" className="text-purple-600 hover:underline">Terms of Service</a> and <a href="#" className="text-purple-600 hover:underline">Privacy Policy</a>
-          </label>
-        </div>
-      )}
+      <SignUpFormField
+        type="email"
+        placeholder="Email"
+        value={email}
+        onChange={setEmail}
+        disabled={isLoading}
+      />
+      
+      <SignUpFormField
+        type="password"
+        placeholder="Password"
+        value={password}
+        onChange={setPassword}
+        disabled={isLoading}
+        minLength={6}
+      />
+      
+      {!isMobile && <TermsCheckbox disabled={isLoading} />}
       
       <Button
         type="submit"
@@ -169,39 +122,7 @@ export const SignUpForm = ({ isLoading, setIsLoading, onOpenChange }: SignUpForm
         {isLoading ? "Creating Account..." : "Create Account"}
       </Button>
       
-      {!isMobile && (
-        <div className="relative flex py-3 items-center">
-          <div className="flex-grow border-t border-gray-200"></div>
-          <span className="flex-shrink mx-4 text-sm text-gray-400">Or sign up with</span>
-          <div className="flex-grow border-t border-gray-200"></div>
-        </div>
-      )}
-
-      {!isMobile && (
-        <div className="grid grid-cols-3 gap-3">
-          <button
-            type="button"
-            className="flex justify-center items-center py-2 px-4 border border-gray-200 rounded-lg shadow-sm bg-white hover:bg-gray-50 transition-colors"
-          >
-            <img src="https://cdn-icons-png.flaticon.com/512/2991/2991148.png" alt="Google" className="h-5 w-5 mr-2" />
-            <span className="text-sm">Google</span>
-          </button>
-          <button
-            type="button"
-            className="flex justify-center items-center py-2 px-4 border border-gray-200 rounded-lg shadow-sm bg-white hover:bg-gray-50 transition-colors"
-          >
-            <img src="https://cdn-icons-png.flaticon.com/512/5968/5968764.png" alt="Facebook" className="h-5 w-5 mr-2" />
-            <span className="text-sm">Facebook</span>
-          </button>
-          <button
-            type="button"
-            className="flex justify-center items-center py-2 px-4 border border-gray-200 rounded-lg shadow-sm bg-white hover:bg-gray-50 transition-colors"
-          >
-            <img src="https://cdn-icons-png.flaticon.com/512/0/747.png" alt="Apple" className="h-5 w-5 mr-2" />
-            <span className="text-sm">Apple</span>
-          </button>
-        </div>
-      )}
+      <SocialLoginButtons />
     </form>
   );
 };

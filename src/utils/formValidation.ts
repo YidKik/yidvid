@@ -47,3 +47,24 @@ export const validateSignInForm = (email: string, password: string): {
   
   return { valid: true };
 };
+
+export const validateSignUpForm = (email: string, password: string, username: string): {
+  valid: boolean;
+  message?: string
+} => {
+  if (!email || !password || !username) {
+    return { valid: false, message: "Please fill in all required fields" };
+  }
+  
+  const emailValidation = validateEmail(email);
+  if (!emailValidation.valid) {
+    return emailValidation;
+  }
+  
+  const passwordValidation = validatePassword(password);
+  if (!passwordValidation.valid) {
+    return passwordValidation;
+  }
+  
+  return { valid: true };
+};
