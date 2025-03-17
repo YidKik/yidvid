@@ -17,7 +17,7 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
       <DialogContent 
         className={`p-0 gap-0 border-none ${isMobile 
           ? 'bg-white w-[95%] max-w-[350px] max-h-[85vh] overflow-auto rounded-xl shadow-md border border-gray-100' 
-          : 'sm:max-w-[1000px] max-w-[1000px] bg-white shadow-xl border border-[#E9ECEF] rounded-2xl overflow-hidden'
+          : 'sm:max-w-[450px] max-w-[450px] bg-white shadow-xl border border-[#E9ECEF] rounded-2xl overflow-hidden'
         }`}
       > 
         <AuthHeader />
