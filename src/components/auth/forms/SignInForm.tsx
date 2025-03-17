@@ -60,6 +60,18 @@ export const SignInForm = ({ onOpenChange, isLoading, setIsLoading }: SignInForm
         minLength={6}
       />
       
+      <div className="flex justify-between items-center">
+        <div className="flex items-center">
+          <input 
+            type="checkbox" 
+            id="remember" 
+            className="h-4 w-4 text-purple-600 rounded border-gray-300 focus:ring-purple-500"
+          />
+          <label htmlFor="remember" className="ml-2 text-sm text-gray-600">Remember me</label>
+        </div>
+        <a href="#" className="text-sm text-purple-600 hover:text-purple-800">Forgot password?</a>
+      </div>
+      
       <SignInErrorMessage error={loginError} />
       
       <Button
@@ -74,6 +86,40 @@ export const SignInForm = ({ onOpenChange, isLoading, setIsLoading }: SignInForm
       >
         {isLoading ? "Signing in..." : "Sign In"}
       </Button>
+
+      {!isMobile && (
+        <div className="relative flex py-3 items-center">
+          <div className="flex-grow border-t border-gray-200"></div>
+          <span className="flex-shrink mx-4 text-sm text-gray-400">Or continue with</span>
+          <div className="flex-grow border-t border-gray-200"></div>
+        </div>
+      )}
+
+      {!isMobile && (
+        <div className="grid grid-cols-3 gap-3">
+          <button
+            type="button"
+            className="flex justify-center items-center py-2 px-4 border border-gray-200 rounded-lg shadow-sm bg-white hover:bg-gray-50 transition-colors"
+          >
+            <img src="https://cdn-icons-png.flaticon.com/512/2991/2991148.png" alt="Google" className="h-5 w-5 mr-2" />
+            <span className="text-sm">Google</span>
+          </button>
+          <button
+            type="button"
+            className="flex justify-center items-center py-2 px-4 border border-gray-200 rounded-lg shadow-sm bg-white hover:bg-gray-50 transition-colors"
+          >
+            <img src="https://cdn-icons-png.flaticon.com/512/5968/5968764.png" alt="Facebook" className="h-5 w-5 mr-2" />
+            <span className="text-sm">Facebook</span>
+          </button>
+          <button
+            type="button"
+            className="flex justify-center items-center py-2 px-4 border border-gray-200 rounded-lg shadow-sm bg-white hover:bg-gray-50 transition-colors"
+          >
+            <img src="https://cdn-icons-png.flaticon.com/512/0/747.png" alt="Apple" className="h-5 w-5 mr-2" />
+            <span className="text-sm">Apple</span>
+          </button>
+        </div>
+      )}
     </form>
   );
 };

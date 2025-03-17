@@ -93,7 +93,7 @@ export const SignUpForm = ({ isLoading, setIsLoading, onOpenChange }: SignUpForm
   };
 
   return (
-    <form onSubmit={handleSignUp} className="space-y-3">
+    <form onSubmit={handleSignUp} className="space-y-4">
       <div className="space-y-2">
         <Input
           type="text"
@@ -140,6 +140,20 @@ export const SignUpForm = ({ isLoading, setIsLoading, onOpenChange }: SignUpForm
           minLength={6}
         />
       </div>
+      
+      {!isMobile && (
+        <div className="flex items-center">
+          <input 
+            id="terms" 
+            type="checkbox" 
+            className="h-4 w-4 text-purple-600 rounded border-gray-300 focus:ring-purple-500"
+          />
+          <label htmlFor="terms" className="ml-2 text-sm text-gray-600">
+            I agree to the <a href="#" className="text-purple-600 hover:underline">Terms of Service</a> and <a href="#" className="text-purple-600 hover:underline">Privacy Policy</a>
+          </label>
+        </div>
+      )}
+      
       <Button
         type="submit"
         variant="outline"
@@ -154,6 +168,40 @@ export const SignUpForm = ({ isLoading, setIsLoading, onOpenChange }: SignUpForm
       >
         {isLoading ? "Creating Account..." : "Create Account"}
       </Button>
+      
+      {!isMobile && (
+        <div className="relative flex py-3 items-center">
+          <div className="flex-grow border-t border-gray-200"></div>
+          <span className="flex-shrink mx-4 text-sm text-gray-400">Or sign up with</span>
+          <div className="flex-grow border-t border-gray-200"></div>
+        </div>
+      )}
+
+      {!isMobile && (
+        <div className="grid grid-cols-3 gap-3">
+          <button
+            type="button"
+            className="flex justify-center items-center py-2 px-4 border border-gray-200 rounded-lg shadow-sm bg-white hover:bg-gray-50 transition-colors"
+          >
+            <img src="https://cdn-icons-png.flaticon.com/512/2991/2991148.png" alt="Google" className="h-5 w-5 mr-2" />
+            <span className="text-sm">Google</span>
+          </button>
+          <button
+            type="button"
+            className="flex justify-center items-center py-2 px-4 border border-gray-200 rounded-lg shadow-sm bg-white hover:bg-gray-50 transition-colors"
+          >
+            <img src="https://cdn-icons-png.flaticon.com/512/5968/5968764.png" alt="Facebook" className="h-5 w-5 mr-2" />
+            <span className="text-sm">Facebook</span>
+          </button>
+          <button
+            type="button"
+            className="flex justify-center items-center py-2 px-4 border border-gray-200 rounded-lg shadow-sm bg-white hover:bg-gray-50 transition-colors"
+          >
+            <img src="https://cdn-icons-png.flaticon.com/512/0/747.png" alt="Apple" className="h-5 w-5 mr-2" />
+            <span className="text-sm">Apple</span>
+          </button>
+        </div>
+      )}
     </form>
   );
 };

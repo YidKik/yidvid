@@ -15,6 +15,10 @@
   --auth-secondary: #F5F3FF;
   --auth-border: #E9ECEF;
   --auth-input-bg: #F8F9FA;
+  --auth-footer-bg: #F9FAFB;
+  --auth-footer-text: #6B7280;
+  --auth-link: #8B5CF6;
+  --auth-link-hover: #7C3AED;
 
   --card: 0 0% 100%;
   --card-foreground: 222.2 84% 4.9%;
