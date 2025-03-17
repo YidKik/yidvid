@@ -57,9 +57,15 @@ export const SignInForm = ({ onOpenChange, isLoading, setIsLoading }: SignInForm
     setLoginError("");
 
     try {
-      // Important fix: Don't use the https:// in redirectTo - Supabase handles the protocol
+      console.log("Sending password reset email to:", email);
+      console.log("Redirect URL:", `${window.location.origin}/reset-password`);
+      
+      // IMPORTANT: Remove protocol from redirect URL as Supabase adds it
+      const redirectUrl = window.location.origin.replace(/^https?:\/\//, '') + '/reset-password';
+      console.log("Formatted redirect URL:", redirectUrl);
+      
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password`,
+        redirectTo: redirectUrl,
       });
 
       if (error) {

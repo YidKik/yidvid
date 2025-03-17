@@ -12,6 +12,7 @@ const ResetPassword = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const [sessionChecked, setSessionChecked] = useState(false);
   const navigate = useNavigate();
 
   const handleResetPassword = async (e: React.FormEvent) => {
@@ -31,12 +32,14 @@ const ResetPassword = () => {
     setError("");
 
     try {
+      console.log("Attempting to reset password...");
       const { error } = await supabase.auth.updateUser({ password });
 
       if (error) {
         console.error("Password reset error:", error);
         setError(error.message);
       } else {
+        console.log("Password reset successful");
         setSuccess(true);
         toast.success("Password reset successfully! Redirecting to home page...");
         setTimeout(() => {
@@ -54,15 +57,45 @@ const ResetPassword = () => {
   // Check for auth state
   useEffect(() => {
     const checkSession = async () => {
-      const { data } = await supabase.auth.getSession();
-      if (!data.session) {
-        toast.error("Invalid or expired reset link. Please try again.");
+      try {
+        console.log("Checking session for password reset...");
+        const { data, error } = await supabase.auth.getSession();
+        
+        if (error) {
+          console.error("Error checking session:", error);
+          toast.error("Session error. Please try again.");
+          navigate("/");
+          return;
+        }
+        
+        console.log("Session check result:", data.session ? "Session exists" : "No session");
+        
+        if (!data.session) {
+          toast.error("Invalid or expired reset link. Please request a new password reset.");
+          navigate("/");
+          return;
+        }
+        
+        setSessionChecked(true);
+      } catch (err) {
+        console.error("Error in session check:", err);
+        toast.error("An error occurred. Please try again.");
         navigate("/");
       }
     };
 
     checkSession();
   }, [navigate]);
+
+  if (!sessionChecked) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 p-4">
+        <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-md text-center">
+          <p className="text-gray-500">Verifying your reset link...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 p-4">
