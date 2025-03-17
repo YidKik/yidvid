@@ -48,21 +48,11 @@ export const SignInFormContent = ({
         minLength={6}
       />
       
-      <div className="flex justify-between items-center">
-        {!hideRememberMe && (
-          <div className="flex items-center">
-            <input 
-              type="checkbox" 
-              id="remember" 
-              className="h-4 w-4 text-[#ea384c] rounded border-gray-300 focus:ring-[#ea384c]"
-            />
-            <label htmlFor="remember" className="ml-2 text-sm text-gray-600">Remember me</label>
-          </div>
-        )}
+      <div className="flex justify-end items-center">
         <button 
           type="button" 
           onClick={onForgotPassword}
-          className={`text-sm text-[#ea384c] hover:text-red-700 ${!hideRememberMe ? '' : 'ml-auto'}`}
+          className="text-sm text-[#ea384c] hover:text-red-700"
         >
           Forgot password?
         </button>

@@ -11,7 +11,7 @@ export const AuthHeader = ({ onBack }: AuthHeaderProps) => {
   const isMobile = useIsMobile();
   
   return (
-    <div className={`flex items-center ${isMobile ? 'px-4 py-3' : 'px-8 py-6'} bg-white border-b border-gray-100`}>
+    <div className={`flex items-center ${isMobile ? 'px-4 py-3' : 'px-8 py-6'} bg-transparent border-b border-gray-100`}>
       {onBack && (
         <Button
           variant="ghost"
@@ -24,7 +24,7 @@ export const AuthHeader = ({ onBack }: AuthHeaderProps) => {
       )}
       <div className="flex-1 flex justify-center">
         <img
-          src="/yidkik-logo.png"
+          src="/lovable-uploads/647f173b-d940-48cd-a88d-b6d8806813fa.png"
           alt="Logo"
           className={`${isMobile ? 'h-6' : 'h-8'}`}
         />
