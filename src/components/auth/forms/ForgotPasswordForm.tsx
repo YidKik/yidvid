@@ -4,7 +4,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
 import { SignInFormField } from "./SignInFormField";
 import { SignInErrorMessage } from "./SignInErrorMessage";
-import { supabase } from "@/integrations/supabase/client";
+import { useAuthentication } from "@/hooks/useAuthentication";
 import { toast } from "sonner";
 
 interface ForgotPasswordFormProps {
@@ -26,45 +26,29 @@ export const ForgotPasswordForm = ({
   setLoginError,
   onBackToSignIn,
 }: ForgotPasswordFormProps) => {
+  const { resetPassword, isLoading: authLoading, authError, isPasswordResetSent, setAuthError } = useAuthentication();
   const [resetEmailSent, setResetEmailSent] = useState(false);
   const isMobile = useIsMobile();
 
+  // Sync loading state with authentication hook
+  useEffect(() => {
+    setIsLoading(authLoading);
+  }, [authLoading, setIsLoading]);
+  
+  // Sync error state with authentication hook
+  useEffect(() => {
+    setLoginError(authError);
+  }, [authError, setLoginError]);
+
+  // Sync reset email state with authentication hook
+  useEffect(() => {
+    setResetEmailSent(isPasswordResetSent);
+  }, [isPasswordResetSent]);
+
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!email) {
-      setLoginError("Please enter your email address to reset your password");
-      return;
-    }
-
-    setIsLoading(true);
-    setLoginError("");
-
-    try {
-      console.log("Sending password reset email to:", email);
-      console.log("Redirect URL:", `${window.location.origin}/reset-password`);
-      
-      // IMPORTANT: Remove protocol from redirect URL as Supabase adds it
-      const redirectUrl = window.location.origin.replace(/^https?:\/\//, '') + '/reset-password';
-      console.log("Formatted redirect URL:", redirectUrl);
-      
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: redirectUrl,
-      });
-
-      if (error) {
-        console.error("Password reset error:", error);
-        setLoginError(error.message);
-      } else {
-        setResetEmailSent(true);
-        toast.success("Password reset email sent. Please check your inbox.");
-      }
-    } catch (error: any) {
-      console.error("Error in password reset:", error);
-      setLoginError(error.message || "An error occurred while sending the reset link");
-    } finally {
-      setIsLoading(false);
-    }
+    setAuthError("");
+    await resetPassword(email);
   };
 
   return (

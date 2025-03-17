@@ -1,18 +1,26 @@
 
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import { useAuthentication } from "@/hooks/useAuthentication";
 
 const ResetPassword = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [sessionChecked, setSessionChecked] = useState(false);
+  
+  const { 
+    updatePassword, 
+    isLoading, 
+    authError, 
+    session, 
+    setAuthError 
+  } = useAuthentication();
+  
   const navigate = useNavigate();
 
   const handleResetPassword = async (e: React.FormEvent) => {
@@ -28,29 +36,18 @@ const ResetPassword = () => {
       return;
     }
 
-    setLoading(true);
     setError("");
 
-    try {
-      console.log("Attempting to reset password...");
-      const { error } = await supabase.auth.updateUser({ password });
-
-      if (error) {
-        console.error("Password reset error:", error);
-        setError(error.message);
-      } else {
-        console.log("Password reset successful");
-        setSuccess(true);
-        toast.success("Password reset successfully! Redirecting to home page...");
-        setTimeout(() => {
-          navigate("/");
-        }, 3000);
-      }
-    } catch (err: any) {
-      console.error("Error during password reset:", err);
-      setError(err.message || "An error occurred while resetting your password");
-    } finally {
-      setLoading(false);
+    const success = await updatePassword(password);
+    
+    if (success) {
+      setSuccess(true);
+      toast.success("Password reset successfully! Redirecting to home page...");
+      setTimeout(() => {
+        navigate("/");
+      }, 3000);
+    } else {
+      setError(authError || "Failed to reset password");
     }
   };
 
@@ -59,24 +56,16 @@ const ResetPassword = () => {
     const checkSession = async () => {
       try {
         console.log("Checking session for password reset...");
-        const { data, error } = await supabase.auth.getSession();
         
-        if (error) {
-          console.error("Error checking session:", error);
-          toast.error("Session error. Please try again.");
-          navigate("/");
+        if (session) {
+          console.log("Session exists, user can reset password");
+          setSessionChecked(true);
           return;
         }
         
-        console.log("Session check result:", data.session ? "Session exists" : "No session");
-        
-        if (!data.session) {
-          toast.error("Invalid or expired reset link. Please request a new password reset.");
-          navigate("/");
-          return;
-        }
-        
-        setSessionChecked(true);
+        console.log("No session found, redirecting to home");
+        toast.error("Invalid or expired reset link. Please request a new password reset.");
+        navigate("/");
       } catch (err) {
         console.error("Error in session check:", err);
         toast.error("An error occurred. Please try again.");
@@ -85,7 +74,7 @@ const ResetPassword = () => {
     };
 
     checkSession();
-  }, [navigate]);
+  }, [navigate, session]);
 
   if (!sessionChecked) {
     return (
@@ -127,7 +116,7 @@ const ResetPassword = () => {
                 className="h-12 text-base px-4 border-[#E9ECEF] bg-[#F8F9FA] focus:bg-white transition-all duration-300 rounded-lg focus:ring-2 focus:ring-purple-400/30 focus:border-purple-400 shadow-sm text-gray-800"
                 required
                 minLength={6}
-                disabled={loading}
+                disabled={isLoading}
               />
             </div>
 
@@ -144,7 +133,7 @@ const ResetPassword = () => {
                 className="h-12 text-base px-4 border-[#E9ECEF] bg-[#F8F9FA] focus:bg-white transition-all duration-300 rounded-lg focus:ring-2 focus:ring-purple-400/30 focus:border-purple-400 shadow-sm text-gray-800"
                 required
                 minLength={6}
-                disabled={loading}
+                disabled={isLoading}
               />
             </div>
 
@@ -157,9 +146,9 @@ const ResetPassword = () => {
             <Button
               type="submit"
               className="w-full h-12 text-base py-0 mt-6 bg-[#8B5CF6] hover:bg-[#7C3AED] text-white rounded-lg font-medium transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02] active:scale-[0.98] disabled:hover:scale-100 shadow-md hover:shadow-lg"
-              disabled={loading}
+              disabled={isLoading}
             >
-              {loading ? "Resetting..." : "Reset Password"}
+              {isLoading ? "Resetting..." : "Reset Password"}
             </Button>
           </form>
         ) : (
