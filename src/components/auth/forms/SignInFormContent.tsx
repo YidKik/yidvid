@@ -13,6 +13,7 @@ interface SignInFormContentProps {
   loginError: string;
   handleSignIn: (e: React.FormEvent) => Promise<void>;
   onForgotPassword: () => void;
+  hideRememberMe?: boolean;
 }
 
 export const SignInFormContent = ({
@@ -24,6 +25,7 @@ export const SignInFormContent = ({
   loginError,
   handleSignIn,
   onForgotPassword,
+  hideRememberMe = false,
 }: SignInFormContentProps) => {
   const isMobile = useIsMobile();
 
@@ -47,18 +49,20 @@ export const SignInFormContent = ({
       />
       
       <div className="flex justify-between items-center">
-        <div className="flex items-center">
-          <input 
-            type="checkbox" 
-            id="remember" 
-            className="h-4 w-4 text-[#ea384c] rounded border-gray-300 focus:ring-[#ea384c]"
-          />
-          <label htmlFor="remember" className="ml-2 text-sm text-gray-600">Remember me</label>
-        </div>
+        {!hideRememberMe && (
+          <div className="flex items-center">
+            <input 
+              type="checkbox" 
+              id="remember" 
+              className="h-4 w-4 text-[#ea384c] rounded border-gray-300 focus:ring-[#ea384c]"
+            />
+            <label htmlFor="remember" className="ml-2 text-sm text-gray-600">Remember me</label>
+          </div>
+        )}
         <button 
           type="button" 
           onClick={onForgotPassword}
-          className="text-sm text-[#ea384c] hover:text-red-700"
+          className={`text-sm text-[#ea384c] hover:text-red-700 ${!hideRememberMe ? '' : 'ml-auto'}`}
         >
           Forgot password?
         </button>

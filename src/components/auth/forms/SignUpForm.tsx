@@ -14,9 +14,15 @@ interface SignUpFormProps {
   isLoading: boolean;
   setIsLoading: (loading: boolean) => void;
   onOpenChange?: (open: boolean) => void;
+  hideSocialButtons?: boolean;
 }
 
-export const SignUpForm = ({ isLoading, setIsLoading, onOpenChange }: SignUpFormProps) => {
+export const SignUpForm = ({ 
+  isLoading, 
+  setIsLoading, 
+  onOpenChange,
+  hideSocialButtons = false
+}: SignUpFormProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
@@ -105,8 +111,6 @@ export const SignUpForm = ({ isLoading, setIsLoading, onOpenChange }: SignUpForm
         minLength={6}
       />
       
-      {!isMobile && <TermsCheckbox disabled={isLoading} />}
-      
       <Button
         type="submit"
         variant="outline"
@@ -122,7 +126,7 @@ export const SignUpForm = ({ isLoading, setIsLoading, onOpenChange }: SignUpForm
         {isLoading ? "Creating Account..." : "Create Account"}
       </Button>
       
-      <SocialLoginButtons />
+      {!hideSocialButtons && <SocialLoginButtons />}
     </form>
   );
 };

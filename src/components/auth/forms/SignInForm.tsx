@@ -10,9 +10,17 @@ interface SignInFormProps {
   onOpenChange: (open: boolean) => void;
   isLoading: boolean;
   setIsLoading: (loading: boolean) => void;
+  hideRememberMe?: boolean;
+  hideSocialButtons?: boolean;
 }
 
-export const SignInForm = ({ onOpenChange, isLoading, setIsLoading }: SignInFormProps) => {
+export const SignInForm = ({ 
+  onOpenChange, 
+  isLoading, 
+  setIsLoading, 
+  hideRememberMe = false,
+  hideSocialButtons = false 
+}: SignInFormProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [forgotPasswordMode, setForgotPasswordMode] = useState(false);
@@ -74,9 +82,10 @@ export const SignInForm = ({ onOpenChange, isLoading, setIsLoading }: SignInForm
         loginError={loginError}
         handleSignIn={handleSignIn}
         onForgotPassword={toggleForgotPassword}
+        hideRememberMe={hideRememberMe}
       />
 
-      <SocialLoginButtons />
+      {!hideSocialButtons && <SocialLoginButtons />}
     </>
   );
 };
