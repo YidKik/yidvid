@@ -15,7 +15,7 @@ export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
   
   return (
     <Tabs defaultValue="signin" className="w-full">
-      <div className={`${isMobile ? 'px-4 pt-3' : 'px-16 pt-6'} bg-white`}>
+      <div className={`${isMobile ? 'px-4 pt-3' : 'px-8 pt-6'} bg-white`}>
         <TabsList className={`w-full grid grid-cols-2 ${isMobile 
           ? 'h-9 bg-[#E5DEFF] p-1 rounded-lg gap-1 shadow-none' 
           : 'h-12 bg-[#F5F3FF] p-1 rounded-xl gap-4 shadow-sm'}`}
@@ -45,12 +45,12 @@ export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
         </TabsList>
       </div>
 
-      <div className={`${isMobile ? 'p-4 pt-4 pb-5' : 'px-16 py-8 grid grid-cols-2 gap-8'} bg-white`}>
+      <div className={`${isMobile ? 'p-4 pt-4 pb-5' : 'px-8 py-6'} bg-white`}>
         <TabsContent value="signin" className="mt-0">
-          <div className={isMobile ? '' : 'flex flex-col space-y-4'}>
+          <div className="flex flex-col space-y-4">
             {!isMobile && (
-              <div className="mb-4">
-                <h3 className="text-xl font-semibold text-gray-800 mb-2">Welcome Back</h3>
+              <div className="mb-2">
+                <h3 className="text-xl font-semibold text-gray-800 mb-1">Welcome Back</h3>
                 <p className="text-sm text-gray-500">Sign in to continue exploring our platform</p>
               </div>
             )}
@@ -63,10 +63,10 @@ export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
         </TabsContent>
 
         <TabsContent value="signup" className="mt-0">
-          <div className={isMobile ? '' : 'flex flex-col space-y-4'}>
+          <div className="flex flex-col space-y-4">
             {!isMobile && (
-              <div className="mb-4">
-                <h3 className="text-xl font-semibold text-gray-800 mb-2">Join Our Community</h3>
+              <div className="mb-2">
+                <h3 className="text-xl font-semibold text-gray-800 mb-1">Join Our Community</h3>
                 <p className="text-sm text-gray-500">Create an account to get started</p>
               </div>
             )}
@@ -80,7 +80,7 @@ export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
       </div>
       
       {!isMobile && (
-        <div className="border-t border-gray-100 bg-gray-50/50 py-4 px-16 flex justify-center">
+        <div className="border-t border-gray-100 bg-gray-50/50 py-3 px-8 flex justify-center">
           <p className="text-sm text-gray-500">
             By signing in, you agree to our <a href="#" className="text-purple-600 hover:underline">Terms of Service</a> and <a href="#" className="text-purple-600 hover:underline">Privacy Policy</a>
           </p>
