@@ -35,7 +35,7 @@ export const SignUpFormField: React.FC<SignUpFormFieldProps> = ({
           ? 'h-10 text-sm' 
           : 'h-12 text-base'} 
           px-4 border-[#E9ECEF] bg-[#F8F9FA] focus:bg-white transition-all duration-300 
-          rounded-lg focus:ring-2 focus:ring-purple-400/30 focus:border-purple-400 shadow-sm text-gray-800`}
+          rounded-lg focus:ring-2 focus:ring-[#ea384c]/30 focus:border-[#ea384c] shadow-sm text-gray-800`}
         required={required}
         disabled={disabled}
         minLength={minLength}
