@@ -39,22 +39,27 @@ export const VideoContent = ({
     hasOnlySampleVideos 
   } = useSampleVideos();
 
-  // State to track if we've already attempted a refresh
+  // Delay the background refresh to prioritize showing UI first
   const [hasAttemptedRefresh, setHasAttemptedRefresh] = useState(false);
 
-  // Optimize logging and automatically try to fetch real content if needed
+  // Schedule background content loading with delay
   useEffect(() => {
     if (!isLoading && !isRefreshing && hasOnlySampleVideos(videos) && !hasAttemptedRefresh && forceRefetch) {
       setHasAttemptedRefresh(true);
-      console.log("Only sample videos detected, attempting to fetch real content");
       
-      // Trigger fetch without toast to reduce UI noise during initial load
-      forceRefetch().catch(err => {
-        console.error("Error force fetching:", err);
-      });
+      // Delay the background refresh to improve perceived performance
+      const timer = setTimeout(() => {
+        console.log("Starting delayed background refresh for real content");
+        forceRefetch().catch(err => {
+          console.error("Error in delayed force fetching:", err);
+        });
+      }, 2500); // Wait longer to fetch real content
+      
+      return () => clearTimeout(timer);
     }
   }, [videos, isLoading, isRefreshing, hasOnlySampleVideos, hasAttemptedRefresh, forceRefetch]);
 
+  // Always show some content immediately - prioritize UI rendering speed
   // Use limited sample videos if we absolutely have no real data
   const displayVideos = videos?.length ? videos : createSampleVideos(8);
   

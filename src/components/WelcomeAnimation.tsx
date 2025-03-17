@@ -34,7 +34,7 @@ export const WelcomeAnimation = () => {
     error: videosError 
   } = useVideos();
 
-  // New logic: only hide welcome animation when videos are loaded
+  // New optimized logic: hide welcome animation faster
   useEffect(() => {
     if (skipWelcome || isError || videosError) {
       setShow(false);
@@ -42,64 +42,61 @@ export const WelcomeAnimation = () => {
       return;
     }
 
-    // Only hide welcome animation when videos are fully loaded
-    if (!isVideosLoading && !isVideosFetching && videos && videos.length > 0) {
-      console.log("Videos loaded, hiding welcome animation");
+    // Hide welcome animation quicker - don't wait for all videos to load
+    // Just check if the fetch process has started
+    const timer = setTimeout(() => {
+      console.log("Auto-hiding welcome animation after short timeout");
+      setShow(false);
+      sessionStorage.setItem('hasVisited', 'true');
       
-      // Add a small delay to ensure smooth transition
-      const timer = setTimeout(() => {
-        setShow(false);
-        sessionStorage.setItem('hasVisited', 'true');
-        
-        // Show the information notification after a delay
-        if (!localStorage.getItem('hasSeenInfoNotification') && !infoShown) {
-          const hasVisitedWelcome = localStorage.getItem('hasVisitedWelcome');
-          if (hasVisitedWelcome) {
-            setInfoShown(true);
-            const infoTimer = setTimeout(() => {
-              toast.custom((t) => (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className={`bg-white rounded-lg shadow-lg ${isMobile ? 'p-2 max-w-[85%] mx-auto' : 'p-4 max-w-lg mx-auto'}`}
-                >
-                  <div className="flex flex-col items-center text-center space-y-2">
-                    <img 
-                      src="/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png" 
-                      alt="YidVid Logo" 
-                      className={isMobile ? "w-10 h-10" : "w-24 h-24"}
-                    />
-                    <h3 className={isMobile ? "text-sm font-semibold" : "text-2xl font-semibold"}>Welcome to YidVid!</h3>
-                    <p className={isMobile ? "text-xs text-gray-600 leading-tight" : "text-lg text-gray-600"}>
-                      {isMobile ? "Create account to unlock all features!" : "Start exploring our curated collection of Jewish content. Create a free account to unlock all features!"}
-                    </p>
-                    <button
-                      onClick={() => {
-                        toast.dismiss(t);
-                        localStorage.setItem('hasSeenInfoNotification', 'true');
-                      }}
-                      className={`bg-primary text-white ${isMobile ? "px-3 py-1 text-xs" : "px-4 py-3 text-lg"} rounded-md hover:bg-primary/90 transition-colors`}
-                    >
-                      Got it!
-                    </button>
-                  </div>
-                </motion.div>
-              ), {
-                duration: 6000,
-                id: "welcome-info-notification",
-                onAutoClose: () => {
-                  localStorage.setItem('hasSeenInfoNotification', 'true');
-                }
-              });
-            }, 500);
-            return () => clearTimeout(infoTimer);
-          }
+      // Show the information notification after a delay
+      if (!localStorage.getItem('hasSeenInfoNotification') && !infoShown) {
+        const hasVisitedWelcome = localStorage.getItem('hasVisitedWelcome');
+        if (hasVisitedWelcome) {
+          setInfoShown(true);
+          const infoTimer = setTimeout(() => {
+            toast.custom((t) => (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className={`bg-white rounded-lg shadow-lg ${isMobile ? 'p-2 max-w-[85%] mx-auto' : 'p-4 max-w-lg mx-auto'}`}
+              >
+                <div className="flex flex-col items-center text-center space-y-2">
+                  <img 
+                    src="/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png" 
+                    alt="YidVid Logo" 
+                    className={isMobile ? "w-10 h-10" : "w-24 h-24"}
+                  />
+                  <h3 className={isMobile ? "text-sm font-semibold" : "text-2xl font-semibold"}>Welcome to YidVid!</h3>
+                  <p className={isMobile ? "text-xs text-gray-600 leading-tight" : "text-lg text-gray-600"}>
+                    {isMobile ? "Create account to unlock all features!" : "Start exploring our curated collection of Jewish content. Create a free account to unlock all features!"}
+                  </p>
+                  <button
+                    onClick={() => {
+                      toast.dismiss(t);
+                      localStorage.setItem('hasSeenInfoNotification', 'true');
+                    }}
+                    className={`bg-primary text-white ${isMobile ? "px-3 py-1 text-xs" : "px-4 py-3 text-lg"} rounded-md hover:bg-primary/90 transition-colors`}
+                  >
+                    Got it!
+                  </button>
+                </div>
+              </motion.div>
+            ), {
+              duration: 6000,
+              id: "welcome-info-notification",
+              onAutoClose: () => {
+                localStorage.setItem('hasSeenInfoNotification', 'true');
+              }
+            });
+          }, 500);
+          return () => clearTimeout(infoTimer);
         }
-      }, 800);
+      }
+    }, 1500); // Reduced from waiting for videos to a fixed 1.5 second timeout
 
-      return () => clearTimeout(timer);
-    }
+    return () => clearTimeout(timer);
   }, [skipWelcome, isWelcomeLoading, isVideosLoading, isVideosFetching, videos, isError, videosError, show, infoShown, isMobile]);
 
   useEffect(() => {

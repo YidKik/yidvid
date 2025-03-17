@@ -14,6 +14,7 @@ interface UseInitialVideoLoadProps {
 
 /**
  * Hook to handle initial data loading and refreshing with optimized performance
+ * Now prioritizes showing UI quickly and loading data in the background
  */
 export const useInitialVideoLoad = ({
   data,
@@ -23,35 +24,35 @@ export const useInitialVideoLoad = ({
   triggerRetry,
   setIsRefreshing
 }: UseInitialVideoLoadProps) => {
-  // Optimize refresh logic to reduce unnecessary refreshes
+  // Optimize refresh logic to reduce unnecessary refreshes and speed up initial loading
   useEffect(() => {
-    // Only refresh if we have no data or only sample data
+    // Only refresh if we have no data or only sample data, but add a delay
+    // to allow the UI to render first
     const refreshNeeded = !isLoading && (!data || data.length === 0 || !hasRealVideos(data));
     
     if (refreshNeeded) {
-      console.log("Initial data load needed - triggering refresh");
-      if (setIsRefreshing) setIsRefreshing(true);
+      console.log("Initial data load needed - scheduling background refresh");
       
-      // Use a shorter timeout for faster initial load
+      // Don't set refreshing state immediately to avoid loading indicators
+      // Let the UI render with sample data first
       const timer = setTimeout(() => {
+        if (setIsRefreshing) setIsRefreshing(true);
+        
         forceRefetch()
           .then(() => {
-            console.log("Force refetch completed");
+            console.log("Background force refetch completed");
             if (setIsRefreshing) setIsRefreshing(false);
           })
           .catch(err => {
-            console.error("Error in force refetch:", err);
+            console.error("Error in background force refetch:", err);
             triggerRetry();
             if (setIsRefreshing) setIsRefreshing(false);
           });
-      }, 500); // Reduced from 1500ms to 500ms for faster initial load
+      }, 2000); // Schedule the actual fetch after UI has rendered
       
       return () => clearTimeout(timer);
     }
   }, [isLoading, data]);
-
-  // Remove the second effect that was checking for sample videos again
-  // as it was causing duplicate refresh attempts
 
   return null;
 };
