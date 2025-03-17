@@ -79,7 +79,7 @@ export const HeaderActions = ({
         ) : (
           <Button 
             onClick={onAuthOpen}
-            className="bg-[#222222] hover:bg-[#333333] text-white relative h-10 w-10 rounded-full"
+            className="bg-[#222222] hover:bg-[#333333] text-white h-10 w-10 rounded-md flex items-center justify-center"
             variant="ghost"
             size="icon"
           >
