@@ -23,6 +23,7 @@ export const UserMenu = ({ onLogout }: UserMenuProps) => {
       className="h-10 w-10"
       disabled={isLoggingOut}
       onClick={handleSettingsClick}
+      title="Settings"
     >
       <Settings className="h-5 w-5" />
     </Button>

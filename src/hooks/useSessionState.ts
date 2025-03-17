@@ -28,13 +28,14 @@ export const useSessionState = (queryClient: QueryClient) => {
           setSession(initialSession);
           
           // Pre-fetch profile data if we have a session
-          prefetchUserData(initialSession, queryClient);
+          await prefetchUserData(initialSession, queryClient);
+          console.log("Profile data prefetching completed");
         } else {
           console.log("No initial session found");
         }
         
         // Always fetch content data regardless of session status
-        fetchInitialContent(queryClient);
+        await fetchInitialContent(queryClient);
         
         setIsLoading(false);
       } catch (error) {
@@ -61,10 +62,11 @@ export const useSessionState = (queryClient: QueryClient) => {
           // Only invalidate user-specific queries
           queryClient.invalidateQueries({ queryKey: ["profile"] });
           queryClient.invalidateQueries({ queryKey: ["user-profile"] });
+          queryClient.invalidateQueries({ queryKey: ["admin-section-profile"] });
           
           // Fetch new profile data
           if (currentSession?.user?.id) {
-            prefetchUserData(currentSession, queryClient);
+            await prefetchUserData(currentSession, queryClient);
           }
           
           // Restore content data to ensure it's not lost during sign in
@@ -84,6 +86,7 @@ export const useSessionState = (queryClient: QueryClient) => {
           // Only invalidate user-specific queries, not content
           queryClient.invalidateQueries({ queryKey: ["profile"] });
           queryClient.invalidateQueries({ queryKey: ["user-profile"] });
+          queryClient.invalidateQueries({ queryKey: ["admin-section-profile"] });
           queryClient.invalidateQueries({ queryKey: ["user-video-interactions"] });
           
           // Restore content data
@@ -100,6 +103,7 @@ export const useSessionState = (queryClient: QueryClient) => {
           if (currentSession?.user?.id) {
             queryClient.invalidateQueries({ queryKey: ["profile", currentSession.user.id] });
             queryClient.invalidateQueries({ queryKey: ["user-profile"] });
+            queryClient.invalidateQueries({ queryKey: ["admin-section-profile"] });
           }
           break;
       }

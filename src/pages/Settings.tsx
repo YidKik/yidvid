@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -5,8 +6,7 @@ import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
 import { BackButton } from "@/components/navigation/BackButton";
 import { useColors } from "@/contexts/ColorContext";
-import { Settings as SettingsIcon, LayoutDashboard } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Settings as SettingsIcon } from "lucide-react";
 
 // Import section components
 import { ContentPreferencesSection } from "@/components/settings/sections/ContentPreferencesSection";
@@ -15,6 +15,7 @@ import { AppearanceSection } from "@/components/settings/sections/AppearanceSect
 import { AdminSection } from "@/components/settings/sections/AdminSection";
 import { SupportSection } from "@/components/settings/sections/SupportSection";
 import { AccountSection } from "@/components/settings/sections/AccountSection";
+import { ProfileSection } from "@/components/settings/ProfileSection";
 
 const Settings = () => {
   const navigate = useNavigate();
@@ -25,6 +26,36 @@ const Settings = () => {
   const [buttonColor, setButtonColor] = useState(colors.buttonColor);
   const [logoColor, setLogoColor] = useState(colors.logoColor);
   const [autoplay, setAutoplay] = useState(true);
+
+  // Fetch user session first
+  useEffect(() => {
+    const getSession = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error) {
+          console.error("Session error:", error);
+          navigate("/auth");
+          toast.error("Please sign in to access settings");
+          return;
+        }
+        
+        if (!session) {
+          navigate("/auth");
+          toast.error("Please sign in to access settings");
+          return;
+        }
+        
+        setUserId(session.user.id);
+        console.log("User ID set in settings:", session.user.id);
+      } catch (err) {
+        console.error("Unexpected error getting session:", err);
+        navigate("/auth");
+      }
+    };
+    
+    getSession();
+  }, [navigate]);
 
   useEffect(() => {
     const savedSettings = localStorage.getItem('settings');
@@ -47,17 +78,6 @@ const Settings = () => {
     setLogoColor(colors.logoColor);
   }, [colors]);
 
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!session) {
-        navigate("/auth");
-        toast.error("Please sign in to access settings");
-      } else {
-        setUserId(session.user.id);
-      }
-    });
-  }, [navigate]);
-
   const resetToDefaults = async () => {
     await resetColors();
   };
@@ -75,60 +95,74 @@ const Settings = () => {
     }
   };
 
-  const { data: profile } = useQuery({
-    queryKey: ["user-profile"],
+  // Query user profile data with better error handling
+  const { data: profile, isLoading, error } = useQuery({
+    queryKey: ["user-profile-settings", userId],
     queryFn: async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        navigate("/auth");
+      if (!userId) {
+        console.log("No user ID available for profile query");
         return null;
       }
 
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", session.user.id)
-        .single();
+      console.log("Fetching user profile in Settings for:", userId);
+      try {
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", userId)
+          .single();
 
-      if (error) {
-        toast.error("Error fetching profile");
+        if (error) {
+          console.error("Error fetching profile in Settings:", error);
+          toast.error("Error loading your profile");
+          throw error;
+        }
+
+        console.log("Profile data loaded successfully:", data);
+        return data;
+      } catch (err) {
+        console.error("Unexpected error fetching profile:", err);
         return null;
       }
-
-      return data;
     },
+    enabled: !!userId,
+    retry: 2,
+    staleTime: 0 // Don't cache profile data
   });
 
-  const isAdmin = profile?.is_admin === true;
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background text-foreground pt-24 px-4">
+        <div className="container mx-auto max-w-4xl">
+          <BackButton />
+          <div className="animate-pulse">
+            <div className="h-8 w-56 bg-gray-200 rounded mb-8"></div>
+            <div className="space-y-12">
+              <div className="h-40 bg-gray-100 rounded"></div>
+              <div className="h-60 bg-gray-100 rounded"></div>
+              <div className="h-40 bg-gray-100 rounded"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
-  const handleDashboardClick = () => {
-    navigate("/dashboard");
-  };
+  if (error) {
+    console.error("Profile query error:", error);
+  }
 
   return (
     <div className="min-h-screen bg-background text-foreground">
       <BackButton />
       <main className="container mx-auto pt-24 px-4 pb-16 max-w-4xl">
-        <div className="mb-8 flex items-center gap-2 justify-between">
-          <div className="flex items-center gap-2">
-            <SettingsIcon className="w-8 h-8 text-primary" />
-            <h1 className="text-3xl font-bold">Settings</h1>
-          </div>
-          
-          {isAdmin && (
-            <Button 
-              onClick={handleDashboardClick}
-              className="flex items-center gap-2"
-              variant="outline"
-            >
-              <LayoutDashboard className="h-5 w-5" />
-              Dashboard
-            </Button>
-          )}
+        <div className="mb-8 flex items-center gap-2">
+          <SettingsIcon className="w-8 h-8 text-primary" />
+          <h1 className="text-3xl font-bold">Settings</h1>
         </div>
 
         <div className="space-y-12">
-          <AccountSection />
+          <ProfileSection />
           <ContentPreferencesSection 
             userId={userId}
             autoplay={autoplay}
@@ -147,6 +181,7 @@ const Settings = () => {
             saveColors={saveColors}
             resetToDefaults={resetToDefaults}
           />
+          {userId && <AdminSection userId={userId} />}
           <SupportSection />
         </div>
       </main>

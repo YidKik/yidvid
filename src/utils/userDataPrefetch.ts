@@ -7,13 +7,19 @@ import { supabase } from "@/integrations/supabase/client";
  * Prefetches user profile data after authentication
  */
 export function prefetchUserData(session: Session, queryClient: QueryClient) {
-  if (!session?.user?.id) return;
+  if (!session?.user?.id) {
+    console.log("No session user ID available for prefetching");
+    return;
+  }
   
-  // Prefetch profile data
+  console.log("Prefetching profile data for user:", session.user.id);
+  
+  // Prefetch profile data with detailed error logging
   queryClient.prefetchQuery({
     queryKey: ["profile", session.user.id],
     queryFn: async () => {
       try {
+        console.log("Executing profile prefetch query for:", session.user.id);
         const { data, error } = await supabase
           .from("profiles")
           .select("*")
@@ -27,24 +33,57 @@ export function prefetchUserData(session: Session, queryClient: QueryClient) {
           return null;
         }
         
+        console.log("Successfully prefetched profile data:", data ? "found" : "not found");
         return data;
       } catch (err) {
-        console.error("Error prefetching profile:", err);
+        console.error("Unexpected error in profile prefetch:", err);
         return null;
       }
     },
-    retry: 1,
+    retry: 2,
     meta: {
       errorBoundary: false,
       suppressToasts: true
     }
   });
   
-  // Also prefetch for user-profile (used in UserMenu)
+  // Also prefetch for user-profile (used in various components)
   queryClient.prefetchQuery({
     queryKey: ["user-profile"],
     queryFn: async () => {
       try {
+        console.log("Executing user-profile prefetch query");
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", session.user.id)
+          .single();
+        
+        if (error) {
+          console.error("Error prefetching user profile:", error);
+          return null;
+        }
+        
+        console.log("Successfully prefetched user-profile data:", data ? "found" : "not found");
+        return data;
+      } catch (err) {
+        console.error("Unexpected error in user-profile prefetch:", err);
+        return null;
+      }
+    },
+    retry: 2,
+    meta: {
+      errorBoundary: false,
+      suppressToasts: true
+    }
+  });
+  
+  // Prefetch admin status specifically
+  queryClient.prefetchQuery({
+    queryKey: ["admin-section-profile", session.user.id],
+    queryFn: async () => {
+      try {
+        console.log("Executing admin status prefetch query");
         const { data, error } = await supabase
           .from("profiles")
           .select("is_admin")
@@ -52,19 +91,18 @@ export function prefetchUserData(session: Session, queryClient: QueryClient) {
           .single();
         
         if (error) {
-          if (!error.message.includes("recursion") && !error.message.includes("policy")) {
-            console.error("Error prefetching user profile:", error);
-          }
+          console.error("Error prefetching admin status:", error);
           return null;
         }
         
+        console.log("Successfully prefetched admin status:", data);
         return data;
       } catch (err) {
-        console.error("Error prefetching user profile:", err);
+        console.error("Unexpected error in admin status prefetch:", err);
         return null;
       }
     },
-    retry: 1,
+    retry: 2,
     meta: {
       errorBoundary: false,
       suppressToasts: true

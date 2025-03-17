@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -11,6 +11,35 @@ export const useAuth = () => {
   const queryClient = useQueryClient();
   const { session } = useSession();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  // Effect to fetch user profile and check admin status
+  useEffect(() => {
+    if (session?.user?.id) {
+      const fetchUserProfile = async () => {
+        try {
+          const { data, error } = await supabase
+            .from("profiles")
+            .select("is_admin")
+            .eq("id", session.user.id)
+            .single();
+
+          if (error) {
+            console.error("Error fetching profile:", error);
+            return;
+          }
+
+          if (data) {
+            setIsAdmin(data.is_admin === true);
+          }
+        } catch (err) {
+          console.error("Unexpected error fetching profile:", err);
+        }
+      };
+
+      fetchUserProfile();
+    }
+  }, [session]);
 
   const handleLogout = async () => {
     try {
@@ -37,6 +66,7 @@ export const useAuth = () => {
       // First invalidate only user-specific queries to avoid unnecessary fetches
       queryClient.invalidateQueries({ queryKey: ["profile"] });
       queryClient.invalidateQueries({ queryKey: ["user-profile"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-section-profile"] });
       queryClient.invalidateQueries({ queryKey: ["user-video-interactions"] });
       
       // Restore videos and channels data immediately to prevent blank screen
@@ -77,6 +107,7 @@ export const useAuth = () => {
     session,
     isAuthenticated: !!session,
     handleLogout,
-    isLoggingOut
+    isLoggingOut,
+    isAdmin
   };
 };
