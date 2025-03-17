@@ -24,9 +24,13 @@ export const AuthHeader = ({ onBack }: AuthHeaderProps) => {
       )}
       <div className="flex-1 flex justify-center">
         <img
-          src="/lovable-uploads/647f173b-d940-48cd-a88d-b6d8806813fa.png"
-          alt="Logo"
-          className={`${isMobile ? 'h-6' : 'h-8'}`}
+          src="/lovable-uploads/0a422655-cf47-4789-bf38-ed05cc6bd4f6.png"
+          alt="YidVid Logo"
+          className={`${isMobile ? 'h-10' : 'h-14'} object-contain`}
+          onError={(e) => {
+            console.error('Logo failed to load:', e);
+            e.currentTarget.src = '/favicon.ico';
+          }}
         />
       </div>
       {onBack && <div className="w-8" />}
