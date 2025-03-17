@@ -30,11 +30,11 @@ export const AccountActions = ({ isLoggingOut, handleLogout }: AccountActionsPro
     // Cancel any in-flight queries immediately
     queryClient.cancelQueries();
     
+    // Show immediate feedback to user (don't wait for completion)
+    toast.loading("Signing out...");
+    
     // Start the logout process
     handleLogout();
-    
-    // Immediately show feedback to user (don't wait for completion)
-    toast.loading("Signing out...");
   };
 
   const handleDeleteAccount = async () => {
