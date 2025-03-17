@@ -249,53 +249,57 @@ export const useAuthentication = () => {
     }
   }, [navigate, prefetchUserData]);
 
-  // Sign out
+  // Sign out - improved for faster response
   const signOut = useCallback(async () => {
     try {
       setIsLoggingOut(true);
+      
+      // Cancel all in-flight queries immediately
+      queryClient.cancelQueries();
       
       // Save important content data before logout
       const videosData = queryClient.getQueryData(["youtube_videos"]);
       const channelsData = queryClient.getQueryData(["youtube_channels"]);
       
-      // Track if we had real content before logout (improved check)
+      // Track if we had real content before logout
       const hasVideos = Array.isArray(videosData) && videosData.length > 0;
       const hasChannels = Array.isArray(channelsData) && channelsData.length > 0;
       
-      console.log(`Before logout: Has videos: ${hasVideos ? 'Yes' : 'No'}, Has channels: ${hasChannels ? 'Yes' : 'No'}`);
+      console.log(`Before logout: Cancelling queries and proceeding with immediate logout`);
       
+      // Set a timeout to navigate even if supabase is slow
+      const timeoutId = setTimeout(() => {
+        console.log("Logout taking too long - forcing navigation");
+        navigate("/");
+        toast.success("Logged out successfully");
+      }, 1000); // Wait max 1 second before forcing navigation
+      
+      // Start the signOut process
       const { error } = await supabase.auth.signOut();
+      
+      // Clear the timeout since we got a response
+      clearTimeout(timeoutId);
+      
       if (error) {
         console.error("Error during logout:", error);
         toast.error("Error during logout: " + error.message);
         return;
       }
       
-      // First invalidate only user-specific queries to avoid unnecessary fetches
-      queryClient.invalidateQueries({ queryKey: ["profile"] });
-      queryClient.invalidateQueries({ queryKey: ["user-profile"] });
-      queryClient.invalidateQueries({ queryKey: ["user-video-interactions"] });
+      // Clear user-specific queries
+      queryClient.removeQueries({ queryKey: ["profile"] });
+      queryClient.removeQueries({ queryKey: ["user-profile"] });
+      queryClient.removeQueries({ queryKey: ["user-video-interactions"] });
       
-      // Restore videos and channels data immediately to prevent blank screen
+      // Restore content data immediately to prevent blank screen
       if (hasVideos && videosData) {
-        console.log("Restoring videos data after logout", videosData.length);
+        console.log("Restoring videos data after logout");
         queryClient.setQueryData(["youtube_videos"], videosData);
       }
       
       if (hasChannels && channelsData) {
-        console.log("Restoring channels data after logout", channelsData.length);
+        console.log("Restoring channels data after logout");
         queryClient.setQueryData(["youtube_channels"], channelsData);
-      }
-      
-      // If we didn't have data before, trigger a fresh fetch immediately
-      if (!hasVideos) {
-        console.log("No videos to restore, invalidating to trigger fetch");
-        queryClient.invalidateQueries({ queryKey: ["youtube_videos"] });
-      }
-      
-      if (!hasChannels) {
-        console.log("No channels to restore, invalidating to trigger fetch");
-        queryClient.invalidateQueries({ queryKey: ["youtube_channels"] });
       }
       
       navigate("/");

@@ -43,57 +43,63 @@ export const useAuth = () => {
 
   const handleLogout = async () => {
     try {
+      // Set logout state immediately to update UI
       setIsLoggingOut(true);
       
-      // Save important content data before logout
+      // Cancel all in-flight queries to prevent them from completing
+      queryClient.cancelQueries();
+      
+      // Cache the minimal content data before logout
       const videosData = queryClient.getQueryData(["youtube_videos"]);
       const channelsData = queryClient.getQueryData(["youtube_channels"]);
       
-      // Track if we had real content before logout (improved check)
       const hasVideos = Array.isArray(videosData) && videosData.length > 0;
       const hasChannels = Array.isArray(channelsData) && channelsData.length > 0;
       
-      console.log(`Before logout: Has videos: ${hasVideos ? 'Yes' : 'No'}, Has channels: ${hasChannels ? 'Yes' : 'No'}`);
+      console.log(`Before logout: Cancelling queries and proceeding with immediate logout`);
       
-      const { error } = await supabase.auth.signOut();
+      // Start the signOut process immediately
+      const signOutPromise = supabase.auth.signOut();
+      
+      // Set a timeout to navigate and show success even if supabase is slow
+      const timeoutId = setTimeout(() => {
+        // If logout is taking too long, navigate anyway
+        console.log("Logout taking too long - forcing navigation");
+        navigate("/");
+        toast.success("Logged out successfully");
+      }, 1000); // Wait max 1 second before forcing navigation
+      
+      // Wait for signOut to complete (but with timeout backup)
+      const { error } = await signOutPromise;
+      
+      // Clear the timeout as we got a response
+      clearTimeout(timeoutId);
+      
       if (error) {
         console.error("Error during logout:", error);
         toast.error("Error during logout: " + error.message);
-        setIsLoggingOut(false);
-        return;
+      } else {
+        // Clear user-specific queries
+        queryClient.removeQueries({ queryKey: ["profile"] });
+        queryClient.removeQueries({ queryKey: ["user-profile"] });
+        queryClient.removeQueries({ queryKey: ["admin-section-profile"] });
+        queryClient.removeQueries({ queryKey: ["user-video-interactions"] });
+        
+        // Restore content data to prevent blank screen
+        if (hasVideos && videosData) {
+          console.log("Restoring videos data after logout");
+          queryClient.setQueryData(["youtube_videos"], videosData);
+        }
+        
+        if (hasChannels && channelsData) {
+          console.log("Restoring channels data after logout");
+          queryClient.setQueryData(["youtube_channels"], channelsData);
+        }
+        
+        // Navigate to home page after logout
+        navigate("/");
+        toast.success("Logged out successfully");
       }
-      
-      // First invalidate only user-specific queries to avoid unnecessary fetches
-      queryClient.invalidateQueries({ queryKey: ["profile"] });
-      queryClient.invalidateQueries({ queryKey: ["user-profile"] });
-      queryClient.invalidateQueries({ queryKey: ["admin-section-profile"] });
-      queryClient.invalidateQueries({ queryKey: ["user-video-interactions"] });
-      
-      // Restore videos and channels data immediately to prevent blank screen
-      if (hasVideos && videosData) {
-        console.log("Restoring videos data after logout", videosData.length);
-        queryClient.setQueryData(["youtube_videos"], videosData);
-      }
-      
-      if (hasChannels && channelsData) {
-        console.log("Restoring channels data after logout", channelsData.length);
-        queryClient.setQueryData(["youtube_channels"], channelsData);
-      }
-      
-      // If we didn't have data before, trigger a fresh fetch immediately
-      if (!hasVideos) {
-        console.log("No videos to restore, invalidating to trigger fetch");
-        queryClient.invalidateQueries({ queryKey: ["youtube_videos"] });
-      }
-      
-      if (!hasChannels) {
-        console.log("No channels to restore, invalidating to trigger fetch");
-        queryClient.invalidateQueries({ queryKey: ["youtube_channels"] });
-      }
-      
-      // Always navigate to the home page after logout, regardless of where logout was triggered
-      navigate("/");
-      toast.success("Logged out successfully");
     } catch (error) {
       console.error("Unexpected error during logout:", error);
       toast.error("Unexpected error during logout");

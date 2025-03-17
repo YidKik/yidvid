@@ -5,6 +5,7 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   Dialog,
   DialogContent,
@@ -22,10 +23,25 @@ interface AccountActionsProps {
 
 export const AccountActions = ({ isLoggingOut, handleLogout }: AccountActionsProps) => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
+  const handleFastLogout = async () => {
+    // Cancel any in-flight queries immediately
+    queryClient.cancelQueries();
+    
+    // Start the logout process
+    handleLogout();
+    
+    // Immediately show feedback to user (don't wait for completion)
+    toast.loading("Signing out...");
+  };
 
   const handleDeleteAccount = async () => {
     try {
+      // Cancel any in-flight queries
+      queryClient.cancelQueries();
+      
       const { error } = await supabase.rpc('delete_user', {});
       if (error) {
         toast.error("Error deleting account");
@@ -43,7 +59,7 @@ export const AccountActions = ({ isLoggingOut, handleLogout }: AccountActionsPro
   return (
     <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
       <Button
-        onClick={handleLogout}
+        onClick={handleFastLogout}
         variant="outline"
         className="flex items-center justify-center gap-2"
         disabled={isLoggingOut}

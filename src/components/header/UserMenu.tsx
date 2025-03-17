@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface UserMenuProps {
   onLogout: () => Promise<void>;
@@ -11,9 +12,18 @@ interface UserMenuProps {
 export const UserMenu = ({ onLogout }: UserMenuProps) => {
   const navigate = useNavigate();
   const { isLoggingOut } = useAuth();
+  const queryClient = useQueryClient();
 
   const handleSettingsClick = () => {
     navigate("/settings");
+  };
+  
+  const handleFastLogout = () => {
+    // Cancel any in-flight queries immediately 
+    queryClient.cancelQueries();
+    
+    // Trigger logout
+    onLogout();
   };
 
   return (
