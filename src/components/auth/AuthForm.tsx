@@ -42,13 +42,13 @@ export const AuthForm = ({ onOpenChange, initialTab = 'signin', hideOptions = fa
           By signing in, you agree to our {" "}
           <button 
             onClick={() => setTosDialogOpen(true)} 
-            className="text-[#ea384c] hover:underline bg-transparent p-0 border-none inline font-normal"
+            className="text-purple-600 hover:underline bg-transparent p-0 border-none inline font-normal"
           >
             Terms of Service
           </button> and {" "}
           <button 
             onClick={() => setPrivacyDialogOpen(true)} 
-            className="text-[#ea384c] hover:underline bg-transparent p-0 border-none inline font-normal"
+            className="text-purple-600 hover:underline bg-transparent p-0 border-none inline font-normal"
           >
             Privacy Policy
           </button>
