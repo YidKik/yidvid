@@ -15,32 +15,40 @@
   color: #606060 !important;
 }
 
-/* Modern design search bar */
-.modern-search-design {
+/* Puzzle piece search design */
+.puzzle-search-container {
   position: relative;
   width: 100%;
 }
 
-.search-input-rounded {
+.puzzle-search-input {
   border: 2px solid #222 !important;
   border-radius: 30px !important;
   height: 44px !important;
   padding-left: 20px !important;
-  padding-right: 50px !important;
+  padding-right: 60px !important;
   transition: all 0.3s ease;
   background-color: white !important;
+  margin-right: -20px !important;
+  /* Create the cutout effect using a clipping path */
+  clip-path: polygon(
+    0 0, 
+    100% 0, 
+    100% 0%, 
+    calc(100% - 22px) 0%, 
+    calc(100% - 22px) 50%, 
+    calc(100% - 44px) 100%, 
+    0 100%
+  );
 }
 
-.search-input-rounded:focus {
+.puzzle-search-input:focus {
   box-shadow: 0 0 0 2px rgba(234, 56, 76, 0.2) !important;
   border-color: #ea384c !important;
 }
 
-.search-button-circle {
-  position: absolute;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
+.puzzle-search-button {
+  position: relative;
   width: 44px;
   height: 44px;
   border-radius: 50%;
@@ -51,14 +59,15 @@
   transition: all 0.3s ease;
   border: 2px solid #222;
   color: white !important;
-  margin-right: -2px;
+  margin-left: -22px;
+  z-index: 30;
 }
 
-.search-button-circle:hover {
+.puzzle-search-button:hover {
   background-color: #333 !important;
 }
 
-.search-button-circle svg {
+.puzzle-search-button svg {
   color: white !important;
 }
 
