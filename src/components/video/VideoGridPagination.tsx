@@ -60,9 +60,12 @@ export const VideoGridPagination = ({
         <ChevronLeft className={isMobile ? "h-3 w-3" : "h-4 w-4"} />
       </Button>
       
-      <div className="flex items-center text-sm text-muted-foreground">
-        Page {currentPage} of {totalPages}
-      </div>
+      {/* Only show page numbers on mobile */}
+      {isMobile && (
+        <div className="flex items-center text-sm text-muted-foreground">
+          Page {currentPage} of {totalPages}
+        </div>
+      )}
       
       <Button
         variant="outline"
