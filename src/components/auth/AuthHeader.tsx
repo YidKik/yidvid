@@ -1,21 +1,35 @@
 
-import { DialogTitle } from "@/components/ui/dialog";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { ArrowLeft } from "lucide-react";
+import { Button } from "../ui/button";
 
-export const AuthHeader = () => {
+interface AuthHeaderProps {
+  onBack?: () => void;
+}
+
+export const AuthHeader = ({ onBack }: AuthHeaderProps) => {
   const isMobile = useIsMobile();
   
   return (
-    <DialogTitle className={`text-center ${isMobile ? 'py-4 px-4' : 'py-6 px-8'} border-b border-gray-100/50 bg-gradient-to-r from-purple-50 to-indigo-50`}>
-      <div className="flex flex-col items-center">
-        <img 
-          src="/lovable-uploads/e425cacb-4c3a-4d81-b4e0-77fcbf10f61c.png"
-          alt="YidVid Logo"
-          className={`${isMobile ? 'h-16' : 'h-24'} w-auto mb-2 drop-shadow-lg hover:scale-105 transition-transform duration-300`}
+    <div className={`flex items-center ${isMobile ? 'px-4 py-3' : 'px-8 py-6'} bg-white`}>
+      {onBack && (
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onBack}
+          className="mr-2 h-8 w-8 rounded-full"
+        >
+          <ArrowLeft className="h-4 w-4 text-gray-600" />
+        </Button>
+      )}
+      <div className="flex-1 flex justify-center">
+        <img
+          src="/yidkik-logo.png"
+          alt="Logo"
+          className={`${isMobile ? 'h-6' : 'h-8'}`}
         />
-        <h2 className={`${isMobile ? 'text-xl' : 'text-2xl'} font-semibold text-gray-800 mb-1`}>Welcome to YidVid</h2>
-        <p className="text-sm text-gray-500">Your Premier Jewish Platform</p>
       </div>
-    </DialogTitle>
+      {onBack && <div className="w-8" />}
+    </div>
   );
 };

@@ -7,14 +7,15 @@ import { useIsMobile } from "@/hooks/use-mobile";
 
 interface AuthFormProps {
   onOpenChange: (open: boolean) => void;
+  initialTab?: 'signin' | 'signup';
 }
 
-export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
+export const AuthForm = ({ onOpenChange, initialTab = 'signin' }: AuthFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const isMobile = useIsMobile();
   
   return (
-    <Tabs defaultValue="signin" className="w-full">
+    <Tabs defaultValue={initialTab} className="w-full">
       <div className={`${isMobile ? 'px-4 pt-3' : 'px-8 pt-6'} bg-white`}>
         <TabsList className={`w-full grid grid-cols-2 ${isMobile 
           ? 'h-9 bg-[#E5DEFF] p-1 rounded-lg gap-1 shadow-none' 
