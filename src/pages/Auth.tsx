@@ -35,30 +35,31 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
       onOpenChange(open);
     }}>
       <DialogContent 
-        className={`p-0 gap-0 border-none ${isMobile 
-          ? 'bg-white w-[95%] max-w-[350px] max-h-[85vh] overflow-auto rounded-xl shadow-md border border-gray-100' 
-          : 'sm:max-w-[450px] max-w-[450px] bg-white shadow-xl border border-[#E9ECEF] rounded-2xl overflow-hidden'
+        className={`p-0 gap-0 border-none bg-transparent backdrop-blur-lg ${isMobile 
+          ? 'w-[95%] max-w-[350px] max-h-[85vh] overflow-auto rounded-xl shadow-[0_4px_30px_rgba(0,0,0,0.1)]' 
+          : 'sm:max-w-[450px] max-w-[450px] shadow-[0_8px_32px_rgba(0,0,0,0.15)] rounded-2xl overflow-hidden'
         }`}
       > 
         <AnimatePresence mode="wait">
           {showOptions ? (
             <motion.div
               key="options"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+              className="flex flex-col items-center justify-center"
             >
               <AuthOptions onSelectOption={handleSelectOption} />
             </motion.div>
           ) : (
             <motion.div
               key="auth-form"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="flex flex-col h-full"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+              className="flex flex-col h-full bg-white/90 backdrop-blur-md rounded-2xl"
             >
               <AuthHeader onBack={handleBack} />
               <AuthForm 
