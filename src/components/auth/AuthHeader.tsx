@@ -26,7 +26,7 @@ export const AuthHeader = ({ onBack }: AuthHeaderProps) => {
         <img
           src="/lovable-uploads/0a422655-cf47-4789-bf38-ed05cc6bd4f6.png"
           alt="YidVid Logo"
-          className={`${isMobile ? 'h-10' : 'h-14'} object-contain`}
+          className={`${isMobile ? 'h-30' : 'h-42'} object-contain`}
           onError={(e) => {
             console.error('Logo failed to load:', e);
             e.currentTarget.src = '/favicon.ico';
