@@ -11,7 +11,7 @@ export const AuthHeader = ({ onBack }: AuthHeaderProps) => {
   const isMobile = useIsMobile();
   
   return (
-    <div className={`flex items-center ${isMobile ? 'px-4 py-3' : 'px-8 py-6'} bg-white`}>
+    <div className={`flex items-center ${isMobile ? 'px-4 py-3' : 'px-8 py-6'} bg-white border-b border-gray-100`}>
       {onBack && (
         <Button
           variant="ghost"

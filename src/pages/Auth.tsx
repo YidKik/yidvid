@@ -35,9 +35,9 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
       onOpenChange(open);
     }}>
       <DialogContent 
-        className={`p-0 gap-0 border-none bg-transparent ${isMobile 
+        className={`p-0 gap-0 border-none ${showOptions ? 'bg-transparent' : 'bg-white shadow-lg'} ${isMobile 
           ? 'w-[95%] max-w-[350px] max-h-[85vh] overflow-auto rounded-xl' 
-          : 'sm:max-w-[600px] max-w-[600px] rounded-2xl overflow-hidden'
+          : 'sm:max-w-[650px] max-w-[650px] rounded-2xl overflow-hidden'
         }`}
       > 
         <AnimatePresence mode="wait">
@@ -59,7 +59,7 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.3, ease: "easeOut" }}
-              className="flex flex-col h-full backdrop-blur-sm bg-transparent rounded-2xl"
+              className="flex flex-col h-full rounded-2xl overflow-hidden border border-gray-200"
             >
               <AuthHeader onBack={handleBack} />
               <AuthForm 

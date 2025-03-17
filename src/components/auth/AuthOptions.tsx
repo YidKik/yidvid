@@ -18,8 +18,8 @@ export const AuthOptions = ({ onSelectOption }: AuthOptionsProps) => {
         transition={{ duration: 0.5, ease: "easeOut" }}
         className="text-center space-y-3"
       >
-        <h2 className={`${isMobile ? 'text-3xl' : 'text-4xl'} font-bold text-gray-100`}>Welcome</h2>
-        <p className={`${isMobile ? 'text-base' : 'text-lg'} text-gray-300 font-medium`}>Choose an option to continue</p>
+        <h2 className={`${isMobile ? 'text-3xl' : 'text-4xl'} font-bold text-white`}>Welcome</h2>
+        <p className={`${isMobile ? 'text-base' : 'text-lg'} text-white font-medium`}>Choose an option to continue</p>
       </motion.div>
       
       <div className={`flex flex-col w-full space-y-6 mt-4 ${isMobile ? 'max-w-[280px]' : 'max-w-[350px]'}`}>
@@ -61,9 +61,9 @@ export const AuthOptions = ({ onSelectOption }: AuthOptionsProps) => {
             className={`w-full ${isMobile 
               ? 'h-12 text-base' 
               : 'h-16 text-xl'} 
-              border-2 border-white/40 text-white bg-transparent hover:bg-white/10 
+              border-2 border-white/70 text-white bg-white/10 hover:bg-white/20 
               rounded-xl font-medium transition-all duration-300
-              shadow-md hover:shadow-lg hover:shadow-white/5`}
+              shadow-md hover:shadow-lg hover:shadow-white/10`}
           >
             Sign Up
           </Button>
