@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -27,12 +26,10 @@ export const SearchResults = ({
 
   return (
     <div 
-      className={`absolute top-full left-0 mt-1 bg-white rounded-md shadow-lg border border-gray-100 overflow-hidden z-50 ${
-        isMobile ? 'w-full' : 'w-full max-h-[400px]'
-      }`}
+      className="absolute top-full left-0 mt-1 bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden z-50 search-results-dropdown"
       style={{
         top: isMobile ? '35px' : undefined,
-        width: isMobile ? '100%' : undefined
+        width: '100%'
       }}
       onMouseDown={(e) => e.preventDefault()}
     >

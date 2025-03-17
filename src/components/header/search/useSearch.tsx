@@ -1,13 +1,9 @@
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useDebounce } from "@/hooks/use-debounce";
-import { toast } from "sonner";
-import { queryClient } from "@/lib/query-client";
 
-// Define interfaces for the search results
 export interface SearchVideo {
   id: string;
   title: string;
@@ -18,7 +14,7 @@ export interface SearchVideo {
 export interface SearchChannel {
   channel_id: string;
   title: string;
-  thumbnail_url: string;
+  thumbnail_url: string | null;
 }
 
 export interface SearchResults {
@@ -27,99 +23,130 @@ export interface SearchResults {
 }
 
 export const useSearch = () => {
-  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<SearchResults | null>(null);
   const [showResults, setShowResults] = useState(false);
-  const debouncedSearch = useDebounce(searchQuery, 200);
+  const [isSearching, setIsSearching] = useState(false);
+  const debouncedSearch = useDebounce(searchQuery, 300);
+  const navigate = useNavigate();
 
-  // Check cache before making a new request
-  const getSearchFromCache = (query: string): SearchResults | undefined => {
-    return queryClient.getQueryData<SearchResults>(["quick-search", query]);
-  };
+  const handleSearchChange = useCallback((value: string) => {
+    setSearchQuery(value);
+    if (value.length > 0) {
+      setShowResults(true);
+    }
+  }, []);
 
-  const { data: searchResults, isFetching: isSearching } = useQuery<SearchResults>({
-    queryKey: ["quick-search", debouncedSearch],
-    queryFn: async () => {
-      if (!debouncedSearch.trim()) return { videos: [], channels: [] };
-      
-      // Check if we have a cached result
-      const cachedResult = getSearchFromCache(debouncedSearch);
-      if (cachedResult) return cachedResult;
-      
+  const clearSearch = useCallback(() => {
+    setSearchQuery("");
+    setSearchResults(null);
+    setShowResults(false);
+  }, []);
+
+  const handleSearchFocus = useCallback(() => {
+    if (searchQuery.length > 0) {
+      setShowResults(true);
+    }
+  }, [searchQuery]);
+
+  const handleResultClick = useCallback(() => {
+    setShowResults(false);
+  }, []);
+
+  const handleSearch = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+      if (searchQuery.trim()) {
+        navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+        setShowResults(false);
+      }
+    },
+    [searchQuery, navigate]
+  );
+
+  // Perform search when query changes
+  useEffect(() => {
+    const performSearch = async () => {
+      if (debouncedSearch.length < 2) {
+        setSearchResults(null);
+        return;
+      }
+
+      setIsSearching(true);
+
       try {
-        // Optimize the search query by using more specific conditions
-        // and adding limits earlier in the query to reduce processing
+        // Search for videos
         const { data: videos, error: videosError } = await supabase
           .from("youtube_videos")
-          .select("id, title, thumbnail, channel_name")
+          .select("id, title, thumbnail, channel_name, video_id")
           .filter('deleted_at', 'is', null)
           .or(`title.ilike.%${debouncedSearch}%,channel_name.ilike.%${debouncedSearch}%`)
           .order('created_at', { ascending: false })
           .limit(5);
 
-        if (videosError) throw videosError;
+        if (videosError) {
+          console.error("Error searching videos:", videosError);
+        }
 
+        // Search for channels
         const { data: channels, error: channelsError } = await supabase
           .from("youtube_channels")
           .select("channel_id, title, thumbnail_url")
           .or(`title.ilike.%${debouncedSearch}%,description.ilike.%${debouncedSearch}%`)
-          .order('created_at', { ascending: false })
           .limit(3);
 
-        if (channelsError) throw channelsError;
-
-        const result: SearchResults = {
-          videos: videos || [],
-          channels: channels || []
-        };
-        
-        return result;
-      } catch (error: any) {
-        console.error("Search error:", error);
-        if (!error.message?.includes('Failed to fetch')) {
-          toast.error("Search is temporarily unavailable");
+        if (channelsError) {
+          console.error("Error searching channels:", channelsError);
         }
-        return { videos: [], channels: [] };
+
+        setSearchResults({
+          videos: videos ? videos.map(v => ({
+            id: v.video_id,
+            title: v.title,
+            thumbnail: v.thumbnail,
+            channel_name: v.channel_name
+          })) : [],
+          channels: channels || []
+        });
+      } catch (error) {
+        console.error("Search error:", error);
+      } finally {
+        setIsSearching(false);
       }
-    },
-    enabled: debouncedSearch.length > 0,
-    staleTime: 1000 * 60 * 5, // Increase stale time to 5 minutes for longer caching
-    gcTime: 1000 * 60 * 15,   // Increase garbage collection time to 15 minutes
-    refetchOnWindowFocus: false,
-  });
+    };
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      setShowResults(false);
-      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
-      setSearchQuery("");
-    }
-  };
+    performSearch();
+  }, [debouncedSearch]);
 
-  const handleSearchChange = (value: string) => {
-    setSearchQuery(value);
-    setShowResults(true);
-  };
+  // Handle click outside to close results
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      const isSearchContainer = target.closest(".search-results-dropdown") !== null;
+      const isSearchInput = target.closest("input[type='search']") !== null;
+      
+      if (!isSearchContainer && !isSearchInput) {
+        setShowResults(false);
+      }
+    };
 
-  const handleSearchFocus = () => {
-    setShowResults(true);
-  };
-
-  const handleResultClick = () => {
-    setShowResults(false);
-    setSearchQuery("");
-  };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return {
     searchQuery,
-    showResults,
     searchResults,
+    showResults,
     isSearching,
-    handleSearch,
+    setSearchQuery,
+    setShowResults,
     handleSearchChange,
     handleSearchFocus,
     handleResultClick,
-    setShowResults
+    handleSearch,
+    clearSearch
   };
 };

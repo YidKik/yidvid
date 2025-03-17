@@ -18,7 +18,8 @@ export const SearchBar = ({ onFocus, onClose }: SearchBarProps) => {
     handleSearchChange,
     handleSearchFocus,
     handleResultClick,
-    setShowResults
+    setShowResults,
+    clearSearch
   } = useSearch();
   
   const hasResults = 
@@ -48,6 +49,7 @@ export const SearchBar = ({ onFocus, onClose }: SearchBarProps) => {
           onClose?.();
         }}
         onClose={onClose}
+        onClear={clearSearch}
       />
       
       <SearchResults
