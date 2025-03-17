@@ -14,7 +14,7 @@ export const HeaderLogo = ({ isMobile }: HeaderLogoProps) => {
         <img 
           src="/lovable-uploads/e425cacb-4c3a-4d81-b4e0-77fcbf10f61c.png" 
           alt="YidVid Logo"
-          className={`object-contain drop-shadow-md ${isMobile ? 'h-12 w-auto' : 'h-24 w-auto'}`}
+          className={`object-contain drop-shadow-md ${isMobile ? 'h-12 w-auto' : 'h-32 w-auto'}`}
           onError={(e) => {
             console.error('Logo failed to load:', e);
             e.currentTarget.src = '/favicon.ico';
