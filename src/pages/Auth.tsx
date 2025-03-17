@@ -44,10 +44,10 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
           {showOptions ? (
             <motion.div
               key="options"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.3, ease: "easeOut" }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20, scale: 0.98 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
               className="flex flex-col items-center justify-center"
             >
               <AuthOptions onSelectOption={handleSelectOption} />
@@ -55,10 +55,10 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
           ) : (
             <motion.div
               key="auth-form"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.3, ease: "easeOut" }}
+              initial={{ opacity: 0, y: 20, rotateX: 10 }}
+              animate={{ opacity: 1, y: 0, rotateX: 0 }}
+              exit={{ opacity: 0, y: 20, rotateX: -10 }}
+              transition={{ duration: 0.2, ease: [0.19, 1.0, 0.22, 1.0] }}
               className="flex flex-col h-full rounded-2xl overflow-hidden"
             >
               <AuthHeader onBack={handleBack} />
