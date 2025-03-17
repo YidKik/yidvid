@@ -84,7 +84,7 @@ export const SearchInput = ({
         />
         <div className={`animated-border ${isFocused ? 'opacity-100' : 'opacity-0'}`}></div>
         
-        {/* Clear button (X) */}
+        {/* Clear button (X) - Updated to use red color */}
         {searchQuery && (
           <Button
             type="button"

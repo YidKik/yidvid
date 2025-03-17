@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -29,7 +30,9 @@ export const SearchResults = ({
       className="absolute top-full left-0 mt-1 bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden z-50 search-results-dropdown"
       style={{
         top: isMobile ? '35px' : undefined,
-        width: '100%'
+        width: '100%',
+        maxWidth: isMobile ? '100%' : 'calc(100% - 44px)', // Adjust width to end where search bar ends
+        borderRadius: '12px' // More rounded edges
       }}
       onMouseDown={(e) => e.preventDefault()}
     >
