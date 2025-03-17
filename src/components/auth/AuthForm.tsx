@@ -25,7 +25,7 @@ export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
             className={`rounded-md ${isMobile 
               ? 'text-xs font-medium py-1 transition-all' 
               : 'text-base font-medium py-1'} 
-              text-gray-700 data-[state=active]:bg-white data-[state=active]:text-[#8B5CF6] 
+              text-gray-700 data-[state=active]:bg-white data-[state=active]:text-[#ea384c] 
               data-[state=active]:shadow-md data-[state=active]:scale-[1.02] data-[state=active]:font-semibold 
               transition-all duration-200 hover:bg-white/80`}
           >
@@ -36,7 +36,7 @@ export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
             className={`rounded-md ${isMobile 
               ? 'text-xs font-medium py-1 transition-all' 
               : 'text-base font-medium py-1'} 
-              text-gray-700 data-[state=active]:bg-white data-[state=active]:text-[#8B5CF6] 
+              text-gray-700 data-[state=active]:bg-white data-[state=active]:text-[#ea384c] 
               data-[state=active]:shadow-md data-[state=active]:scale-[1.02] data-[state=active]:font-semibold 
               transition-all duration-200 hover:bg-white/80`}
           >
@@ -51,7 +51,7 @@ export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
             {!isMobile && (
               <div className="mb-2">
                 <h3 className="text-xl font-semibold text-gray-800 mb-2">Welcome Back</h3>
-                <p className="text-sm text-gray-500">Sign in to continue exploring our platform</p>
+                <p className="text-sm text-gray-500">Sign in for additional features</p>
               </div>
             )}
             <SignInForm 
@@ -79,13 +79,11 @@ export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
         </TabsContent>
       </div>
       
-      {!isMobile && (
-        <div className="border-t border-gray-100 bg-gray-50/50 py-4 px-8 flex justify-center">
-          <p className="text-sm text-gray-500">
-            By signing in, you agree to our <a href="#" className="text-purple-600 hover:underline">Terms of Service</a> and <a href="#" className="text-purple-600 hover:underline">Privacy Policy</a>
-          </p>
-        </div>
-      )}
+      <div className="border-t border-gray-100 bg-gray-50/50 py-3 px-8 flex justify-center">
+        <p className="text-sm text-gray-500">
+          By signing in, you agree to our <a href="#" className="text-[#ea384c] hover:underline">Terms of Service</a> and <a href="#" className="text-[#ea384c] hover:underline">Privacy Policy</a>
+        </p>
+      </div>
     </Tabs>
   );
 };

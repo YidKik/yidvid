@@ -17,21 +17,21 @@ export const SocialLoginButtons = () => {
       <div className="grid grid-cols-3 gap-3">
         <button
           type="button"
-          className="flex justify-center items-center py-2 px-4 border border-gray-200 rounded-lg shadow-sm bg-white hover:bg-gray-50 transition-colors"
+          className="flex justify-center items-center py-2 px-4 border border-[#ea384c] rounded-lg shadow-sm bg-white hover:bg-gray-50 transition-colors"
         >
           <img src="https://cdn-icons-png.flaticon.com/512/2991/2991148.png" alt="Google" className="h-5 w-5 mr-2" />
           <span className="text-sm">Google</span>
         </button>
         <button
           type="button"
-          className="flex justify-center items-center py-2 px-4 border border-gray-200 rounded-lg shadow-sm bg-white hover:bg-gray-50 transition-colors"
+          className="flex justify-center items-center py-2 px-4 border border-[#ea384c] rounded-lg shadow-sm bg-white hover:bg-gray-50 transition-colors"
         >
           <img src="https://cdn-icons-png.flaticon.com/512/5968/5968764.png" alt="Facebook" className="h-5 w-5 mr-2" />
           <span className="text-sm">Facebook</span>
         </button>
         <button
           type="button"
-          className="flex justify-center items-center py-2 px-4 border border-gray-200 rounded-lg shadow-sm bg-white hover:bg-gray-50 transition-colors"
+          className="flex justify-center items-center py-2 px-4 border border-[#ea384c] rounded-lg shadow-sm bg-white hover:bg-gray-50 transition-colors"
         >
           <img src="https://cdn-icons-png.flaticon.com/512/0/747.png" alt="Apple" className="h-5 w-5 mr-2" />
           <span className="text-sm">Apple</span>

@@ -81,7 +81,7 @@ export const ForgotPasswordForm = ({
         className={`w-full ${isMobile 
           ? 'h-10 text-sm py-0' 
           : 'h-12 text-base py-0'} 
-          mt-3 bg-[#8B5CF6] hover:bg-[#7C3AED] text-white rounded-lg font-medium
+          mt-3 bg-[#ea384c] hover:bg-red-700 text-white rounded-lg font-medium
           transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed 
           hover:scale-[1.02] active:scale-[0.98] disabled:hover:scale-100 shadow-md hover:shadow-lg`}
         disabled={isLoading || resetEmailSent}
@@ -93,7 +93,7 @@ export const ForgotPasswordForm = ({
         <button 
           type="button" 
           onClick={onBackToSignIn}
-          className="text-sm text-purple-600 hover:text-purple-800"
+          className="text-sm text-[#ea384c] hover:text-red-700"
         >
           Back to Sign In
         </button>
