@@ -11,7 +11,7 @@ export const AuthHeader = () => {
         <img 
           src="/lovable-uploads/e425cacb-4c3a-4d81-b4e0-77fcbf10f61c.png"
           alt="YidVid Logo"
-          className={`${isMobile ? 'h-16' : 'h-28'} w-auto mb-2 drop-shadow-md hover:scale-105 transition-transform duration-300`}
+          className={`${isMobile ? 'h-16' : 'h-32'} w-auto mb-2 drop-shadow-lg hover:scale-105 transition-transform duration-300`}
         />
         <h2 className={`${isMobile ? 'text-xl' : 'text-2xl'} font-semibold text-gray-800 mb-1`}>Welcome to YidVid</h2>
         <p className="text-xs text-gray-500">Your Premier Jewish Platform</p>
