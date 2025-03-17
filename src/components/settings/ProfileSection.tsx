@@ -18,7 +18,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useState, useEffect } from "react";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useAuth } from "@/hooks/useAuth";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -82,11 +81,6 @@ export const ProfileSection = () => {
     }
   };
 
-  const handleRetry = () => {
-    refetch();
-    toast.info("Refreshing profile information...");
-  };
-
   if (isLoading) {
     return (
       <section className="mb-8">
@@ -106,8 +100,6 @@ export const ProfileSection = () => {
   }
 
   if (error || !profile) {
-    const displayName = userEmail ? userEmail.toString().split('@')[0] : "User";
-    
     return (
       <section className="mb-8">
         <Card className="p-6">
@@ -119,26 +111,10 @@ export const ProfileSection = () => {
                 </AvatarFallback>
               </Avatar>
               <div>
-                <h3 className="text-lg font-medium">Temporary Profile</h3>
                 <p className="text-sm text-muted-foreground">
-                  {userEmail || "Sign in to view your full profile"}
+                  {userEmail || ""}
                 </p>
               </div>
-            </div>
-            <div>
-              <Button 
-                variant="outline" 
-                onClick={handleRetry}
-                className="flex items-center gap-2 mb-2"
-              >
-                <RefreshCw className="h-4 w-4" />
-                <span>Refresh Profile</span>
-              </Button>
-              <Alert variant="destructive" className="mt-4">
-                <AlertDescription className="text-sm">
-                  Unable to load complete profile information. You can still use the app, but some personalized features may be limited.
-                </AlertDescription>
-              </Alert>
             </div>
           </div>
           <div className="flex flex-col sm:flex-row gap-3 w-full mt-6">
