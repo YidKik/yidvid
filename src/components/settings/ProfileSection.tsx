@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { LogOut, Trash2, RefreshCw, User } from "lucide-react";
@@ -18,7 +17,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useAuth } from "@/hooks/useAuth";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -28,6 +27,7 @@ export const ProfileSection = () => {
   const navigate = useNavigate();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const { handleLogout, isLoggingOut } = useAuth();
+  const [userEmail, setUserEmail] = useState<string | null>(null);
 
   const { data: profile, isLoading, error, refetch } = useQuery({
     queryKey: ["user-profile"],
@@ -56,6 +56,15 @@ export const ProfileSection = () => {
       errorBoundary: false
     }
   });
+
+  useEffect(() => {
+    if (error) {
+      supabase.auth.getSession().then(({ data }) => {
+        const email = data.session?.user?.email;
+        setUserEmail(email || null);
+      });
+    }
+  }, [error]);
 
   const handleDeleteAccount = async () => {
     try {
@@ -97,8 +106,7 @@ export const ProfileSection = () => {
   }
 
   if (error || !profile) {
-    const email = supabase.auth.getSession().then(({ data }) => data.session?.user?.email);
-    const displayName = email ? email.toString().split('@')[0] : "User";
+    const displayName = userEmail ? userEmail.toString().split('@')[0] : "User";
     
     return (
       <section className="mb-8">
@@ -113,7 +121,7 @@ export const ProfileSection = () => {
               <div>
                 <h3 className="text-lg font-medium">Temporary Profile</h3>
                 <p className="text-sm text-muted-foreground">
-                  {email || "Sign in to view your full profile"}
+                  {userEmail || "Sign in to view your full profile"}
                 </p>
               </div>
             </div>
