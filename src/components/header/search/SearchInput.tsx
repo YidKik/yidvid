@@ -3,7 +3,7 @@ import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface SearchInputProps {
   searchQuery: string;
@@ -22,15 +22,43 @@ export const SearchInput = ({
 }: SearchInputProps) => {
   const isMobile = useIsMobile();
   const [isFocused, setIsFocused] = useState(false);
+  const [isButtonActive, setIsButtonActive] = useState(false);
+  const [isIconAnimating, setIsIconAnimating] = useState(false);
 
   const handleFocus = () => {
     setIsFocused(true);
     onSearchFocus();
+    // Trigger icon animation on focus
+    setIsIconAnimating(true);
   };
 
   const handleBlur = () => {
     setIsFocused(false);
   };
+
+  const handleButtonClick = (e: React.MouseEvent) => {
+    if (isMobile && onClose) {
+      onClose();
+    } else {
+      setIsButtonActive(true);
+      setIsIconAnimating(true);
+      
+      // Reset active state after animation completes
+      setTimeout(() => {
+        setIsButtonActive(false);
+      }, 300);
+    }
+  };
+
+  // Reset icon animation after it completes
+  useEffect(() => {
+    if (isIconAnimating) {
+      const timer = setTimeout(() => {
+        setIsIconAnimating(false);
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [isIconAnimating]);
 
   return (
     <form onSubmit={onSearch} className="w-full max-w-lg flex items-center relative group">
@@ -49,12 +77,24 @@ export const SearchInput = ({
       
       <Button 
         type={isMobile && onClose ? "button" : "submit"}
-        onClick={isMobile && onClose ? onClose : undefined}
+        onClick={(e) => {
+          if (isMobile && onClose) {
+            onClose();
+          } else {
+            handleButtonClick(e);
+          }
+        }}
         variant="ghost" 
         size="icon"
         className={`z-20 ${isMobile ? 'absolute right-0 h-7 w-7 md:h-8 md:w-8 rounded-full bg-gray-100 hover:bg-gray-200' : 'puzzle-search-button'}`}
       >
-        <Search className={`${isMobile ? 'h-3 w-3 md:h-5 md:w-5' : 'h-5 w-5'} ${isMobile ? 'text-[#555555]' : 'text-white'}`} />
+        <Search 
+          className={`
+            ${isMobile ? 'h-3 w-3 md:h-5 md:w-5' : 'h-5 w-5'} 
+            ${isMobile ? 'text-[#555555]' : 'text-white'}
+            ${isIconAnimating && !isMobile ? 'search-icon-pulse' : ''}
+          `} 
+        />
       </Button>
     </form>
   );
