@@ -61,6 +61,7 @@ export const useAuth = () => {
         queryClient.invalidateQueries({ queryKey: ["youtube_channels"] });
       }
       
+      // Always navigate to the home page after logout, regardless of where logout was triggered
       navigate("/");
       toast.success("Logged out successfully");
     } catch (error) {
