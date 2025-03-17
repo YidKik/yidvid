@@ -61,7 +61,11 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
               transition={{ duration: 0.2, ease: [0.19, 1.0, 0.22, 1.0] }}
               className="flex flex-col h-full rounded-2xl overflow-hidden"
             >
-              <AuthHeader onBack={handleBack} />
+              <AuthHeader 
+                onBack={handleBack} 
+                title={activeTab === 'signin' ? 'Welcome Back' : 'Join Our Community'}
+                subtitle={activeTab === 'signin' ? 'Sign in for additional features' : 'Create an account to get started'}
+              />
               <AuthForm 
                 onOpenChange={onOpenChange} 
                 initialTab={activeTab}
