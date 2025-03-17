@@ -37,7 +37,7 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
       <DialogContent 
         className={`p-0 gap-0 border-none bg-transparent backdrop-blur-lg ${isMobile 
           ? 'w-[95%] max-w-[350px] max-h-[85vh] overflow-auto rounded-xl shadow-[0_4px_30px_rgba(0,0,0,0.1)]' 
-          : 'sm:max-w-[450px] max-w-[450px] shadow-[0_8px_32px_rgba(0,0,0,0.15)] rounded-2xl overflow-hidden'
+          : 'sm:max-w-[550px] max-w-[550px] shadow-[0_8px_40px_rgba(0,0,0,0.2)] rounded-2xl overflow-hidden'
         }`}
       > 
         <AnimatePresence mode="wait">

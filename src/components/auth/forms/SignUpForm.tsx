@@ -79,7 +79,7 @@ export const SignUpForm = ({ isLoading, setIsLoading, onOpenChange }: SignUpForm
   };
 
   return (
-    <form onSubmit={handleSignUp} className="space-y-4">
+    <form onSubmit={handleSignUp} className="space-y-5">
       <SignUpFormField
         type="text"
         placeholder="Username"
