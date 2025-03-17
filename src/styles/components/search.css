@@ -30,14 +30,15 @@
   transition: all 0.3s ease;
   background-color: white !important;
   margin-right: -20px !important;
-  /* Create the cutout effect using a clipping path */
+  /* Create the circular cutout effect using a clipping path */
   clip-path: polygon(
     0 0, 
     100% 0, 
     100% 0%, 
     calc(100% - 22px) 0%, 
-    calc(100% - 22px) 50%, 
-    calc(100% - 44px) 100%, 
+    calc(100% - 22px - 22px) 22px, 
+    calc(100% - 22px - 22px) calc(100% - 22px), 
+    calc(100% - 22px) 100%, 
     0 100%
   );
 }
