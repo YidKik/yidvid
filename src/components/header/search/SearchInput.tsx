@@ -34,7 +34,7 @@ export const SearchInput = ({
 
   return (
     <form onSubmit={onSearch} className="w-full max-w-lg flex items-center relative group">
-      <div className="search-animated-border w-full relative">
+      <div className={`search-container w-full relative ${isMobile ? '' : 'modern-search-design'}`}>
         <Input
           type="search"
           placeholder="Search videos and channels..."
@@ -42,30 +42,20 @@ export const SearchInput = ({
           onChange={(e) => onSearchChange(e.target.value)}
           onFocus={handleFocus}
           onBlur={handleBlur}
-          className="w-full bg-transparent z-10 relative border-none text-[#555555] placeholder:text-[#555555] focus-visible:ring-0 focus-visible:ring-offset-0 h-7 md:h-10 text-xs md:text-sm pr-10 md:pr-14"
+          className={`w-full bg-transparent z-10 relative text-[#555555] placeholder:text-[#555555] focus-visible:ring-0 focus-visible:ring-offset-0 h-7 md:h-10 text-xs md:text-sm ${isMobile ? 'pr-10' : 'pr-14 search-input-rounded'}`}
         />
         <div className={`animated-border ${isFocused ? 'opacity-100' : 'opacity-0'}`}></div>
       </div>
-      {isMobile && onClose ? (
-        <Button 
-          type="button"
-          variant="ghost" 
-          size="icon"
-          onClick={onClose}
-          className="absolute right-1 h-5 w-5 md:h-8 md:w-8 rounded-full bg-gray-100 hover:bg-gray-200 z-20"
-        >
-          <Search className="h-3 w-3 md:h-5 md:w-5 text-[#555555]" />
-        </Button>
-      ) : (
-        <Button 
-          type="submit"
-          variant="ghost" 
-          size="icon"
-          className="absolute right-1 h-5 w-5 md:h-8 md:w-8 rounded-full bg-gray-100 hover:bg-gray-200 z-20"
-        >
-          <Search className="h-3 w-3 md:h-5 md:w-5 text-[#555555]" />
-        </Button>
-      )}
+      
+      <Button 
+        type={isMobile && onClose ? "button" : "submit"}
+        onClick={isMobile && onClose ? onClose : undefined}
+        variant="ghost" 
+        size="icon"
+        className={`absolute right-0 z-20 ${isMobile ? 'h-7 w-7 md:h-8 md:w-8 rounded-full bg-gray-100 hover:bg-gray-200' : 'search-button-circle'}`}
+      >
+        <Search className={`${isMobile ? 'h-3 w-3 md:h-5 md:w-5' : 'h-5 w-5'} text-[#555555]`} />
+      </Button>
     </form>
   );
 };
