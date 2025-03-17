@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -6,9 +5,10 @@ import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
 import { BackButton } from "@/components/navigation/BackButton";
 import { useColors } from "@/contexts/ColorContext";
-import { Settings as SettingsIcon } from "lucide-react";
+import { Settings as SettingsIcon, LayoutDashboard } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
-// Import new section components
+// Import section components
 import { ContentPreferencesSection } from "@/components/settings/sections/ContentPreferencesSection";
 import { ActivitySection } from "@/components/settings/sections/ActivitySection";
 import { AppearanceSection } from "@/components/settings/sections/AppearanceSection";
@@ -99,13 +99,32 @@ const Settings = () => {
     },
   });
 
+  const isAdmin = profile?.is_admin === true;
+
+  const handleDashboardClick = () => {
+    navigate("/dashboard");
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <BackButton />
       <main className="container mx-auto pt-24 px-4 pb-16 max-w-4xl">
-        <div className="mb-8 flex items-center gap-2">
-          <SettingsIcon className="w-8 h-8 text-primary" />
-          <h1 className="text-3xl font-bold">Settings</h1>
+        <div className="mb-8 flex items-center gap-2 justify-between">
+          <div className="flex items-center gap-2">
+            <SettingsIcon className="w-8 h-8 text-primary" />
+            <h1 className="text-3xl font-bold">Settings</h1>
+          </div>
+          
+          {isAdmin && (
+            <Button 
+              onClick={handleDashboardClick}
+              className="flex items-center gap-2"
+              variant="outline"
+            >
+              <LayoutDashboard className="h-5 w-5" />
+              Dashboard
+            </Button>
+          )}
         </div>
 
         <div className="space-y-12">
@@ -128,7 +147,6 @@ const Settings = () => {
             saveColors={saveColors}
             resetToDefaults={resetToDefaults}
           />
-          <AdminSection userId={userId} />
           <SupportSection />
         </div>
       </main>

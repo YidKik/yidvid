@@ -1,7 +1,3 @@
-
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useState, useEffect } from "react";
@@ -11,7 +7,6 @@ interface AdminSectionProps {
 }
 
 export const AdminSection = ({ userId }: AdminSectionProps) => {
-  const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState(false);
 
   // Fetch admin status directly
@@ -48,23 +43,7 @@ export const AdminSection = ({ userId }: AdminSectionProps) => {
     }
   }, [profile]);
 
-  if (!isAdmin) return null;
-
-  return (
-    <div className="space-y-8">
-      <h2 className="text-2xl font-semibold text-primary/80">Admin Controls</h2>
-      <Card className="p-6">
-        <div className="flex items-center justify-between">
-          <div className="space-y-0.5">
-            <p className="text-sm text-muted-foreground">
-              Access the admin dashboard to manage channels and videos
-            </p>
-          </div>
-          <Button onClick={() => navigate("/dashboard")}>
-            Open Dashboard
-          </Button>
-        </div>
-      </Card>
-    </div>
-  );
+  // AdminSection is now empty as the dashboard button has been moved
+  // We'll return null since there's no content to show
+  return null;
 };
