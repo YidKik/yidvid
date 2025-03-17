@@ -15,85 +15,10 @@
   color: #606060 !important;
 }
 
-/* Puzzle piece search design */
-.puzzle-search-container {
-  position: relative;
-  width: 100%;
-}
-
-.puzzle-search-input {
-  border: 2px solid #222 !important;
-  border-radius: 8px !important;
-  height: 44px !important;
-  padding-left: 16px !important;
-  padding-right: 50px !important;
-  transition: all 0.3s ease;
-  background-color: #ea384c !important;
-  color: white !important;
-  margin-right: -10px !important;
-  /* Create the slightly rounded cutout effect */
-  clip-path: polygon(
-    0 0, 
-    100% 0, 
-    100% 0%, 
-    calc(100% - 10px) 0%, 
-    calc(100% - 10px) 100%, 
-    0 100%
-  );
-}
-
-.puzzle-search-input::placeholder {
-  color: rgba(255, 255, 255, 0.8) !important;
-}
-
-.puzzle-search-input:focus {
-  box-shadow: 0 0 0 2px rgba(234, 56, 76, 0.2) !important;
-  border-color: #ea384c !important;
-}
-
-.puzzle-search-button {
-  position: relative;
-  width: 44px;
-  height: 44px;
-  border-radius: 8px !important;
-  background-color: #ea384c !important;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-  border: 2px solid #ea384c;
-  color: white !important;
-  margin-left: -10px;
-  z-index: 30;
-  /* Button click animation */
-  transform-origin: center;
-}
-
-/* Button animation on click */
-.puzzle-search-button:active {
-  transform: scale(0.95);
-  background-color: #d03244 !important;
-}
-
-.puzzle-search-button:hover {
-  background-color: #f04d61 !important;
-  border-color: #f04d61;
-}
-
-.puzzle-search-button svg {
-  color: white !important;
-  transition: all 0.3s ease;
-}
-
-/* SVG animation on click */
-.puzzle-search-button:active svg {
-  transform: scale(0.9);
-}
-
 /* Default thin red outline for search bar */
 .search-animated-border {
   position: relative;
-  border-radius: 8px;
+  border-radius: 0.5rem;
 }
 
 .search-animated-border::before {
@@ -103,7 +28,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  border-radius: 8px;
+  border-radius: 0.5rem;
   border: 1px solid #ea384c;
   pointer-events: none;
   z-index: 5;
@@ -117,7 +42,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  border-radius: 8px;
+  border-radius: 0.5rem;
   padding: 2px;
   background: linear-gradient(90deg, #ea384c, #f97316, #8b5cf6, #000000, #ea384c);
   background-size: 300% 100%;
@@ -154,35 +79,4 @@
 /* Hide the regular outline when input is focused */
 .search-animated-border input:focus + .search-animated-border::before {
   opacity: 0;
-}
-
-/* Ripple animation on input focus */
-@keyframes ripple {
-  0% {
-    box-shadow: 0 0 0 0 rgba(234, 56, 76, 0.3);
-  }
-  100% {
-    box-shadow: 0 0 0 12px rgba(234, 56, 76, 0);
-  }
-}
-
-.puzzle-search-input:focus {
-  animation: ripple 1s ease-out;
-}
-
-/* Search icon pulse animation */
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.1);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-.search-icon-pulse {
-  animation: pulse 1.5s infinite ease-in-out;
 }

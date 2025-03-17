@@ -3,7 +3,7 @@ import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 interface SearchInputProps {
   searchQuery: string;
@@ -22,47 +22,19 @@ export const SearchInput = ({
 }: SearchInputProps) => {
   const isMobile = useIsMobile();
   const [isFocused, setIsFocused] = useState(false);
-  const [isButtonActive, setIsButtonActive] = useState(false);
-  const [isIconAnimating, setIsIconAnimating] = useState(false);
 
   const handleFocus = () => {
     setIsFocused(true);
     onSearchFocus();
-    // Trigger icon animation on focus
-    setIsIconAnimating(true);
   };
 
   const handleBlur = () => {
     setIsFocused(false);
   };
 
-  const handleButtonClick = (e: React.MouseEvent) => {
-    if (isMobile && onClose) {
-      onClose();
-    } else {
-      setIsButtonActive(true);
-      setIsIconAnimating(true);
-      
-      // Reset active state after animation completes
-      setTimeout(() => {
-        setIsButtonActive(false);
-      }, 300);
-    }
-  };
-
-  // Reset icon animation after it completes
-  useEffect(() => {
-    if (isIconAnimating) {
-      const timer = setTimeout(() => {
-        setIsIconAnimating(false);
-      }, 1500);
-      return () => clearTimeout(timer);
-    }
-  }, [isIconAnimating]);
-
   return (
     <form onSubmit={onSearch} className="w-full max-w-lg flex items-center relative group">
-      <div className={`w-full relative ${isMobile ? '' : 'puzzle-search-container'}`}>
+      <div className="search-animated-border w-full relative">
         <Input
           type="search"
           placeholder="Search videos and channels..."
@@ -70,32 +42,30 @@ export const SearchInput = ({
           onChange={(e) => onSearchChange(e.target.value)}
           onFocus={handleFocus}
           onBlur={handleBlur}
-          className={`w-full z-10 relative placeholder:text-[rgba(255,255,255,0.8)] focus-visible:ring-0 focus-visible:ring-offset-0 h-7 md:h-10 text-xs md:text-sm ${isMobile ? 'pr-10 bg-gray-100 text-[#555555]' : 'puzzle-search-input text-white'}`}
+          className="w-full bg-transparent z-10 relative border-none text-[#555555] placeholder:text-[#555555] focus-visible:ring-0 focus-visible:ring-offset-0 h-7 md:h-10 text-xs md:text-sm pr-10 md:pr-14"
         />
         <div className={`animated-border ${isFocused ? 'opacity-100' : 'opacity-0'}`}></div>
       </div>
-      
-      <Button 
-        type={isMobile && onClose ? "button" : "submit"}
-        onClick={(e) => {
-          if (isMobile && onClose) {
-            onClose();
-          } else {
-            handleButtonClick(e);
-          }
-        }}
-        variant="ghost" 
-        size="icon"
-        className={`z-20 ${isMobile ? 'absolute right-0 h-7 w-7 md:h-8 md:w-8 rounded-full bg-gray-100 hover:bg-gray-200' : 'puzzle-search-button'}`}
-      >
-        <Search 
-          className={`
-            ${isMobile ? 'h-3 w-3 md:h-5 md:w-5' : 'h-5 w-5'} 
-            ${isMobile ? 'text-[#555555]' : 'text-white'}
-            ${isIconAnimating && !isMobile ? 'search-icon-pulse' : ''}
-          `} 
-        />
-      </Button>
+      {isMobile && onClose ? (
+        <Button 
+          type="button"
+          variant="ghost" 
+          size="icon"
+          onClick={onClose}
+          className="absolute right-1 h-5 w-5 md:h-8 md:w-8 rounded-full bg-gray-100 hover:bg-gray-200 z-20"
+        >
+          <Search className="h-3 w-3 md:h-5 md:w-5 text-[#555555]" />
+        </Button>
+      ) : (
+        <Button 
+          type="submit"
+          variant="ghost" 
+          size="icon"
+          className="absolute right-1 h-5 w-5 md:h-8 md:w-8 rounded-full bg-gray-100 hover:bg-gray-200 z-20"
+        >
+          <Search className="h-3 w-3 md:h-5 md:w-5 text-[#555555]" />
+        </Button>
+      )}
     </form>
   );
 };
