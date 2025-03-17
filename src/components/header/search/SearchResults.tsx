@@ -27,12 +27,12 @@ export const SearchResults = ({
 
   return (
     <div 
-      className="absolute top-full left-0 mt-1 bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden z-50 search-results-dropdown"
+      className={`absolute top-full left-0 mt-1 bg-white rounded-md shadow-lg border border-gray-100 overflow-hidden z-50 ${
+        isMobile ? 'w-full' : 'w-full max-h-[400px]'
+      }`}
       style={{
         top: isMobile ? '35px' : undefined,
-        width: '100%',
-        maxWidth: isMobile ? '100%' : 'calc(100% - 44px)', // Adjust width to end where search bar ends
-        borderRadius: '12px' // More rounded edges
+        width: isMobile ? '100%' : undefined
       }}
       onMouseDown={(e) => e.preventDefault()}
     >

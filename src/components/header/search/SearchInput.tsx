@@ -1,4 +1,5 @@
-import { Search, X } from "lucide-react";
+
+import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -10,7 +11,6 @@ interface SearchInputProps {
   onSearchFocus: () => void;
   onSearch: (e: React.FormEvent) => void;
   onClose?: () => void;
-  onClear?: () => void;
 }
 
 export const SearchInput = ({
@@ -18,8 +18,7 @@ export const SearchInput = ({
   onSearchChange,
   onSearchFocus,
   onSearch,
-  onClose,
-  onClear
+  onClose
 }: SearchInputProps) => {
   const isMobile = useIsMobile();
   const [isFocused, setIsFocused] = useState(false);
@@ -29,6 +28,7 @@ export const SearchInput = ({
   const handleFocus = () => {
     setIsFocused(true);
     onSearchFocus();
+    // Trigger icon animation on focus
     setIsIconAnimating(true);
   };
 
@@ -43,20 +43,14 @@ export const SearchInput = ({
       setIsButtonActive(true);
       setIsIconAnimating(true);
       
+      // Reset active state after animation completes
       setTimeout(() => {
         setIsButtonActive(false);
       }, 300);
     }
   };
 
-  const handleClear = () => {
-    if (onClear) {
-      onClear();
-    } else {
-      onSearchChange('');
-    }
-  };
-
+  // Reset icon animation after it completes
   useEffect(() => {
     if (isIconAnimating) {
       const timer = setTimeout(() => {
@@ -76,20 +70,9 @@ export const SearchInput = ({
           onChange={(e) => onSearchChange(e.target.value)}
           onFocus={handleFocus}
           onBlur={handleBlur}
-          className={`w-full z-10 relative focus-visible:ring-0 focus-visible:ring-offset-0 h-7 md:h-10 text-xs md:text-sm ${isMobile ? 'pr-10 bg-gray-100 text-[#555555]' : 'puzzle-search-input text-[#555555]'}`}
+          className={`w-full z-10 relative placeholder:text-[rgba(255,255,255,0.8)] focus-visible:ring-0 focus-visible:ring-offset-0 h-7 md:h-10 text-xs md:text-sm ${isMobile ? 'pr-10 bg-gray-100 text-[#555555]' : 'puzzle-search-input text-white'}`}
         />
         <div className={`animated-border ${isFocused ? 'opacity-100' : 'opacity-0'}`}></div>
-        
-        {searchQuery && (
-          <button
-            type="button"
-            onClick={handleClear}
-            className="absolute right-0 top-1/2 transform -translate-y-1/2 z-20 mr-14 md:mr-16 text-[#ea384c] hover:text-[#d03244] bg-transparent border-none flex items-center justify-center cursor-pointer"
-            style={{ outline: 'none' }}
-          >
-            <X className="h-4 w-4 transition-all duration-150 hover:scale-110" strokeWidth={2.5} />
-          </button>
-        )}
       </div>
       
       <Button 
