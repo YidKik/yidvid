@@ -80,7 +80,7 @@ export const AuthForm = ({ onOpenChange }: AuthFormProps) => {
       </div>
       
       <div className="border-t border-gray-100 bg-gray-50/50 py-3 px-8 flex justify-center">
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-gray-500 whitespace-nowrap overflow-hidden text-ellipsis">
           By signing in, you agree to our <a href="#" className="text-[#ea384c] hover:underline">Terms of Service</a> and <a href="#" className="text-[#ea384c] hover:underline">Privacy Policy</a>
         </p>
       </div>
