@@ -1,4 +1,3 @@
-
 import { Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -30,7 +29,6 @@ export const SearchInput = ({
   const handleFocus = () => {
     setIsFocused(true);
     onSearchFocus();
-    // Trigger icon animation on focus
     setIsIconAnimating(true);
   };
 
@@ -45,7 +43,6 @@ export const SearchInput = ({
       setIsButtonActive(true);
       setIsIconAnimating(true);
       
-      // Reset active state after animation completes
       setTimeout(() => {
         setIsButtonActive(false);
       }, 300);
@@ -60,7 +57,6 @@ export const SearchInput = ({
     }
   };
 
-  // Reset icon animation after it completes
   useEffect(() => {
     if (isIconAnimating) {
       const timer = setTimeout(() => {
@@ -84,17 +80,15 @@ export const SearchInput = ({
         />
         <div className={`animated-border ${isFocused ? 'opacity-100' : 'opacity-0'}`}></div>
         
-        {/* Clear button (X) - Updated to use red color */}
         {searchQuery && (
-          <Button
+          <button
             type="button"
             onClick={handleClear}
-            variant="ghost"
-            size="icon"
-            className="absolute right-0 top-1/2 transform -translate-y-1/2 z-20 h-7 w-7 mr-10 text-[#ea384c] hover:text-[#d03244] hover:bg-transparent"
+            className="absolute right-0 top-1/2 transform -translate-y-1/2 z-20 mr-14 md:mr-16 text-[#ea384c] hover:text-[#d03244] bg-transparent border-none flex items-center justify-center cursor-pointer"
+            style={{ outline: 'none' }}
           >
-            <X className="h-4 w-4" />
-          </Button>
+            <X className="h-4 w-4 transition-all duration-150 hover:scale-110" strokeWidth={2.5} />
+          </button>
         )}
       </div>
       
