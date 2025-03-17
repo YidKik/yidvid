@@ -70,7 +70,7 @@ export const SearchInput = ({
           onChange={(e) => onSearchChange(e.target.value)}
           onFocus={handleFocus}
           onBlur={handleBlur}
-          className={`w-full z-10 relative placeholder:text-[rgba(255,255,255,0.8)] focus-visible:ring-0 focus-visible:ring-offset-0 h-7 md:h-10 text-xs md:text-sm ${isMobile ? 'pr-10 bg-gray-100 text-[#555555]' : 'puzzle-search-input text-white'}`}
+          className={`w-full z-10 relative focus-visible:ring-0 focus-visible:ring-offset-0 h-7 md:h-10 text-xs md:text-sm ${isMobile ? 'pr-10 bg-gray-100 text-[#555555]' : 'puzzle-search-input text-[#555555]'}`}
         />
         <div className={`animated-border ${isFocused ? 'opacity-100' : 'opacity-0'}`}></div>
       </div>
