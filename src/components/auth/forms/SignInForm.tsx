@@ -10,10 +10,9 @@ interface SignInFormProps {
   onOpenChange: (open: boolean) => void;
   isLoading: boolean;
   setIsLoading: (loading: boolean) => void;
-  onForgotPassword: () => void;
 }
 
-export const SignInForm = ({ onOpenChange, isLoading, setIsLoading, onForgotPassword }: SignInFormProps) => {
+export const SignInForm = ({ onOpenChange, isLoading, setIsLoading }: SignInFormProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const isMobile = useIsMobile();
@@ -70,13 +69,7 @@ export const SignInForm = ({ onOpenChange, isLoading, setIsLoading, onForgotPass
           />
           <label htmlFor="remember" className="ml-2 text-sm text-gray-600">Remember me</label>
         </div>
-        <button 
-          type="button" 
-          onClick={onForgotPassword}
-          className="text-sm text-purple-600 hover:text-purple-800 transition-colors"
-        >
-          Forgot password?
-        </button>
+        <a href="#" className="text-sm text-purple-600 hover:text-purple-800">Forgot password?</a>
       </div>
       
       <SignInErrorMessage error={loginError} />
