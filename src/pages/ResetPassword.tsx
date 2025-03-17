@@ -34,6 +34,7 @@ const ResetPassword = () => {
       const { error } = await supabase.auth.updateUser({ password });
 
       if (error) {
+        console.error("Password reset error:", error);
         setError(error.message);
       } else {
         setSuccess(true);
@@ -43,6 +44,7 @@ const ResetPassword = () => {
         }, 3000);
       }
     } catch (err: any) {
+      console.error("Error during password reset:", err);
       setError(err.message || "An error occurred while resetting your password");
     } finally {
       setLoading(false);

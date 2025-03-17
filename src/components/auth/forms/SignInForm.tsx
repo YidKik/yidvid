@@ -57,17 +57,20 @@ export const SignInForm = ({ onOpenChange, isLoading, setIsLoading }: SignInForm
     setLoginError("");
 
     try {
+      // Important fix: Don't use the https:// in redirectTo - Supabase handles the protocol
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/reset-password`,
       });
 
       if (error) {
+        console.error("Password reset error:", error);
         setLoginError(error.message);
       } else {
         setResetEmailSent(true);
         toast.success("Password reset email sent. Please check your inbox.");
       }
     } catch (error: any) {
+      console.error("Error in password reset:", error);
       setLoginError(error.message || "An error occurred while sending the reset link");
     } finally {
       setIsLoading(false);
