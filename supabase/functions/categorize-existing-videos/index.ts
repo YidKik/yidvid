@@ -1,5 +1,4 @@
 
-import "https://deno.land/x/xhr@0.1.0/mod.ts"
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
@@ -26,7 +25,7 @@ serve(async (req) => {
       .select('*')
       .is('category', null)
       .is('deleted_at', null)
-      .limit(5) // Reduced batch size to avoid rate limits
+      .limit(5)
 
     if (fetchError) {
       console.error('Error fetching videos:', fetchError)
@@ -49,18 +48,17 @@ serve(async (req) => {
 
     console.log(`Found ${videos.length} videos to process`)
 
-    const geminiApiKey = Deno.env.get('GEMINI_API_KEY')
-    if (!geminiApiKey) {
-      return new Response(
-        JSON.stringify({ error: 'Missing Gemini API key' }),
-        { 
-          status: 500,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-        }
-      )
-    }
+    // Define category keyword mapping
+    const categoryKeywords = {
+      music: ['music', 'song', 'singer', 'concert', 'melody', 'rhythm', 'dance'],
+      torah: ['torah', 'rabbi', 'jewish', 'judaism', 'parsha', 'dvar', 'talmud', 'mitzvah'],
+      inspiration: ['inspiration', 'motivate', 'encourage', 'uplift', 'spiritual'],
+      podcast: ['podcast', 'episode', 'interview', 'conversation', 'talk', 'discussion'],
+      education: ['education', 'learn', 'teach', 'school', 'lesson', 'tutorial', 'guide'],
+      entertainment: ['entertainment', 'funny', 'comedy', 'humor', 'joke', 'laugh']
+    };
 
-    // Process videos with longer delays between requests
+    // Process videos
     const results = []
     for (const video of videos) {
       try {
@@ -69,64 +67,20 @@ serve(async (req) => {
           continue
         }
 
-        const prompt = `Based on this YouTube video title: "${video.title}", classify it into exactly one of these categories: music, torah, inspiration, podcast, education, entertainment, other. Only respond with a single word from the given categories in lowercase, nothing else.`
-
-        const response = await fetch('https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-goog-api-key': geminiApiKey,
-          },
-          body: JSON.stringify({
-            contents: [{
-              parts: [{
-                text: prompt
-              }]
-            }],
-            generationConfig: {
-              temperature: 0,
-              maxOutputTokens: 5,
-            },
-            safetySettings: [
-              {
-                category: "HARM_CATEGORY_HARASSMENT",
-                threshold: "BLOCK_NONE"
-              },
-              {
-                category: "HARM_CATEGORY_HATE_SPEECH",
-                threshold: "BLOCK_NONE"
-              },
-              {
-                category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-                threshold: "BLOCK_NONE"
-              },
-              {
-                category: "HARM_CATEGORY_DANGEROUS_CONTENT",
-                threshold: "BLOCK_NONE"
-              }
-            ]
-          }),
-        })
-
-        if (!response.ok) {
-          console.error(`Gemini API error: ${response.status} ${response.statusText}`)
-          const errorText = await response.text()
-          console.error('Error details:', errorText)
-          throw new Error(`Gemini API error: ${response.status} ${response.statusText}`)
-        }
-
-        const data = await response.json()
-        if (!data.candidates?.[0]?.content?.parts?.[0]?.text) {
-          throw new Error('Invalid response from Gemini API')
-        }
+        // Simple rule-based categorization
+        const videoText = video.title.toLowerCase() + ' ' + (video.description || '').toLowerCase();
         
-        const category = data.candidates[0].content.parts[0].text.trim().toLowerCase()
-
-        // Validate category
-        const validCategories = ['music', 'torah', 'inspiration', 'podcast', 'education', 'entertainment', 'other']
-        if (!validCategories.includes(category)) {
-          throw new Error(`Invalid category returned: ${category}`)
-        }
+        // Count keyword matches for each category
+        const matches = Object.entries(categoryKeywords).map(([category, keywords]) => {
+          const matchCount = keywords.filter(keyword => videoText.includes(keyword)).length;
+          return { category, matchCount };
+        });
+        
+        // Find category with most matches
+        matches.sort((a, b) => b.matchCount - a.matchCount);
+        
+        // If no matches found, use 'other' category
+        const category = matches[0].matchCount > 0 ? matches[0].category : 'other';
 
         // Update the video with its category
         const { error: updateError } = await supabaseClient
@@ -139,13 +93,12 @@ serve(async (req) => {
         console.log(`Successfully categorized video ${video.id} as ${category}`)
         results.push({ id: video.id, category, success: true })
 
-        // Add a longer delay between requests (2 seconds)
-        await new Promise(resolve => setTimeout(resolve, 2000))
+        // Add a delay between requests
+        await new Promise(resolve => setTimeout(resolve, 100))
       } catch (error) {
         console.error(`Error processing video ${video.id}:`, error)
         results.push({ id: video.id, error: error.message, success: false })
-        // Still add delay even on error to maintain rate limiting
-        await new Promise(resolve => setTimeout(resolve, 2000))
+        await new Promise(resolve => setTimeout(resolve, 100))
       }
     }
 

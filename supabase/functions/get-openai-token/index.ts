@@ -1,3 +1,4 @@
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import "https://deno.land/x/xhr@0.1.0/mod.ts"
 
@@ -12,29 +13,11 @@ serve(async (req) => {
   }
 
   try {
-    const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY')
-    if (!OPENAI_API_KEY) {
-      throw new Error('OPENAI_API_KEY is not set')
-    }
-
-    // Request an ephemeral token from OpenAI
-    const response = await fetch("https://api.openai.com/v1/realtime/sessions", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${OPENAI_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "gpt-4o-realtime-preview-2024-12-17",
-        voice: "alloy",
-        instructions: "You are a helpful assistant for the Jewish Tube website. Help users find videos, channels, and answer questions about Jewish content. Keep responses concise and relevant to the website's content."
-      }),
-    });
-
-    const data = await response.json();
-    
-    return new Response(JSON.stringify(data), {
+    return new Response(JSON.stringify({
+      error: "This functionality has been disabled."
+    }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 404
     });
   } catch (error) {
     console.error("Error:", error);

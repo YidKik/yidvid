@@ -1,6 +1,5 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { HfInference } from 'https://esm.sh/@huggingface/inference@2.3.2'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -13,58 +12,36 @@ serve(async (req) => {
   }
 
   try {
-    const { title, description, thumbnail } = await req.json()
+    const { title, description } = await req.json()
     console.log('Analyzing content:', { title, description })
 
-    const hf = new HfInference(Deno.env.get('HUGGING_FACE_ACCESS_TOKEN'))
+    // Simple rule-based content checking (no AI)
+    const forbiddenWords = ['inappropriate', 'obscene', 'offensive', 'explicit'];
+    const sensitiveTerms = ['women', 'lady', 'ladies', 'female'];
+    
+    // Check if title or description contains any forbidden words
+    const lowercaseTitle = (title || '').toLowerCase();
+    const lowercaseDesc = (description || '').toLowerCase();
+    
+    const hasForbiddenWords = forbiddenWords.some(word => 
+      lowercaseTitle.includes(word) || lowercaseDesc.includes(word)
+    );
+    
+    const hasSensitiveTerms = sensitiveTerms.some(term => 
+      lowercaseTitle.includes(term) || lowercaseDesc.includes(term)
+    );
+    
+    const isApproved = !hasForbiddenWords && !hasSensitiveTerms;
 
-    // Analyze text content (title and description)
-    const textAnalysis = await hf.textClassification({
-      model: 'michellejieli/inappropriate_text_classifier',
-      inputs: `${title}\n${description}`,
-    })
-
-    // Also analyze for women/ladies mentions
-    const womenMentions = (title + description).toLowerCase().includes('women') || 
-                         (title + description).toLowerCase().includes('lady') ||
-                         (title + description).toLowerCase().includes('ladies') ||
-                         (title + description).toLowerCase().includes('female')
-
-    // For image analysis, we'll use a pre-trained model
-    let imageAnalysis = null
-    if (thumbnail) {
-      try {
-        const imageClassification = await hf.imageClassification({
-          model: 'Falconsai/nsfw_image_detection',  // Safe for work classifier
-          data: await (await fetch(thumbnail)).blob(),
-        })
-        imageAnalysis = imageClassification
-      } catch (error) {
-        console.error('Error analyzing image:', error)
-        // Continue without image analysis if it fails
-      }
-    }
-
-    // Determine if content is appropriate
-    const isTextSafe = textAnalysis[0].label === 'appropriate' && !womenMentions
-    const isImageSafe = !imageAnalysis || 
-                       (imageAnalysis[0].label === 'safe' && 
-                        imageAnalysis[0].score > 0.7)
-
-    const isApproved = isTextSafe && isImageSafe
-
-    // Prepare detailed response
+    // Prepare response
     const response = {
       approved: isApproved,
       textAnalysis: {
-        appropriate: textAnalysis[0].label === 'appropriate',
-        noWomenMentions: !womenMentions,
-        score: textAnalysis[0].score
+        appropriate: !hasForbiddenWords,
+        noWomenMentions: !hasSensitiveTerms,
+        score: isApproved ? 0.9 : 0.3
       },
-      imageAnalysis: imageAnalysis ? {
-        appropriate: imageAnalysis[0].label === 'safe',
-        score: imageAnalysis[0].score
-      } : 'No image analysis performed'
+      imageAnalysis: 'No image analysis performed'
     }
 
     console.log('Analysis result:', response)
