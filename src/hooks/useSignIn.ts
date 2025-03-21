@@ -1,11 +1,9 @@
 
 import { useState, useEffect } from "react";
 import { useAuthentication } from "./useAuthentication";
+import type { AuthCredentials } from "./useAuthentication";
 
-export interface SignInCredentials {
-  email: string;
-  password: string;
-}
+export type { AuthCredentials } from "./useAuthentication";
 
 interface UseSignInProps {
   onSuccess?: () => void;
@@ -32,7 +30,7 @@ export const useSignIn = ({ onSuccess }: UseSignInProps = {}) => {
     setLoginError(authError);
   }, [authError]);
 
-  const handleSignIn = async (credentials: SignInCredentials) => {
+  const handleSignIn = async (credentials: AuthCredentials) => {
     return await signIn(credentials, { onSuccess });
   };
 
