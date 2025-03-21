@@ -5,6 +5,10 @@ import { toast } from "sonner";
 import { useAuthBase } from "./useAuthBase";
 import { AuthCredentials, AuthOptions } from "./useAuthSignIn";
 
+/**
+ * Hook that handles user sign-up functionality
+ * Depends on useAuthBase for shared authentication state
+ */
 export const useAuthSignUp = () => {
   const {
     navigate,
@@ -14,6 +18,13 @@ export const useAuthSignUp = () => {
     prefetchUserData
   } = useAuthBase();
 
+  /**
+   * Handles user registration with email and password
+   * 
+   * @param credentials - User credentials (email and password)
+   * @param options - Optional configuration for redirect and callbacks
+   * @returns Promise resolving to boolean indicating success/failure
+   */
   const signUp = useCallback(async (credentials: AuthCredentials, options?: AuthOptions) => {
     const { email, password } = credentials;
     
@@ -29,6 +40,7 @@ export const useAuthSignUp = () => {
     try {
       console.log("Attempting to sign up with email:", email);
       
+      // Request account creation through Supabase
       const { data, error } = await supabase.auth.signUp({
         email: email.trim(),
         password: password.trim(),
@@ -47,14 +59,18 @@ export const useAuthSignUp = () => {
 
       console.log("Sign up response:", data);
       
+      // Check if email confirmation is required
+      // When identities array is empty, it means confirmation is needed
       const isEmailConfirmationSent = data?.user && data.user.identities && data.user.identities.length === 0;
       
       if (isEmailConfirmationSent) {
+        // Handle case when email confirmation is required
         toast.success("Please check your email for a confirmation link to complete your registration");
       } else {
+        // Handle successful registration with automatic confirmation
         toast.success("Account created successfully");
         
-        // Prefetch user data in the background if we have a user ID
+        // Prefetch user data for improved performance
         if (data?.user?.id) {
           await prefetchUserData(data.user.id);
         }

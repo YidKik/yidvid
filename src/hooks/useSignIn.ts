@@ -9,6 +9,11 @@ interface UseSignInProps {
   onSuccess?: () => void;
 }
 
+/**
+ * Hook that provides a simplified interface for sign-in functionality
+ * Wraps useAuthentication to focus specifically on the sign-in process
+ * with local state management for loading and errors
+ */
 export const useSignIn = ({ onSuccess }: UseSignInProps = {}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [loginError, setLoginError] = useState("");
@@ -30,6 +35,9 @@ export const useSignIn = ({ onSuccess }: UseSignInProps = {}) => {
     setLoginError(authError);
   }, [authError]);
 
+  /**
+   * Wrapper function for signIn that passes through the onSuccess callback
+   */
   const handleSignIn = async (credentials: AuthCredentials) => {
     return await signIn(credentials, { onSuccess });
   };

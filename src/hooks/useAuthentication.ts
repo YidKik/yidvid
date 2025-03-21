@@ -7,6 +7,11 @@ import { useAuthPasswordReset } from "./auth/useAuthPasswordReset";
 
 export type { AuthCredentials, AuthOptions } from "./auth/useAuthSignIn";
 
+/**
+ * Main authentication hook that composes all authentication functionality
+ * This hook orchestrates the various specialized authentication hooks
+ * to provide a unified interface for authentication operations
+ */
 export const useAuthentication = () => {
   const baseAuth = useAuthBase();
   const { signIn } = useAuthSignIn();

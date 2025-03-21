@@ -16,6 +16,10 @@ export interface AuthOptions {
   onError?: (error: string) => void;
 }
 
+/**
+ * Hook that handles user sign-in functionality
+ * Depends on useAuthBase for shared authentication state
+ */
 export const useAuthSignIn = () => {
   const {
     navigate,
@@ -26,10 +30,17 @@ export const useAuthSignIn = () => {
     prefetchUserData
   } = useAuthBase();
 
+  /**
+   * Handles user sign-in with email and password
+   * 
+   * @param credentials - User credentials (email and password)
+   * @param options - Optional configuration for redirect and callbacks
+   * @returns Promise resolving to boolean indicating success/failure
+   */
   const signIn = useCallback(async (credentials: AuthCredentials, options?: AuthOptions) => {
     const { email, password } = credentials;
     
-    // Validate form inputs
+    // Validate form inputs before attempting sign-in
     const validation = validateSignInForm(email, password);
     if (!validation.valid) {
       setAuthError(validation.message || "Invalid form data");
@@ -42,6 +53,7 @@ export const useAuthSignIn = () => {
     try {
       console.log("Attempting to sign in with email:", email);
       
+      // Attempt authentication with Supabase using password method
       const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
         email: email.trim(),
         password: password.trim(),
@@ -50,6 +62,7 @@ export const useAuthSignIn = () => {
       if (signInError) {
         console.error("Sign in error:", signInError);
         
+        // Provide more user-friendly error for common authentication failure
         if (signInError.message === "Invalid login credentials") {
           setAuthError("Invalid email or password. Please check your credentials and try again.");
         } else {
@@ -66,19 +79,21 @@ export const useAuthSignIn = () => {
       if (signInData?.user) {
         console.log("User signed in successfully:", signInData.user.email);
         
-        // Clear stale user data
+        // Clear stale user data from cache to ensure fresh data is loaded
         queryClient.removeQueries({ queryKey: ["profile"] });
         queryClient.removeQueries({ queryKey: ["user-profile"] });
         
-        // Prefetch user data in the background
+        // Prefetch user data for improved performance
         await prefetchUserData(signInData.user.id);
         
         toast.success("Signed in successfully!");
         
+        // Execute success callback if provided
         if (options?.onSuccess) {
           options.onSuccess();
         }
         
+        // Navigate based on redirectTo option or default to home
         if (options?.redirectTo) {
           navigate(options.redirectTo);
         } else {

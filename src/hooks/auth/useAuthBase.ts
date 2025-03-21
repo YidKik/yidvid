@@ -6,6 +6,11 @@ import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSession } from "@/contexts/SessionContext";
 
+/**
+ * Base authentication hook that provides shared state and utilities
+ * for all authentication operations. Acts as the foundation for other
+ * auth hooks.
+ */
 export const useAuthBase = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -14,15 +19,22 @@ export const useAuthBase = () => {
   const [authError, setAuthError] = useState("");
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  // Clear any authentication errors
+  /**
+   * Clears any authentication errors from state
+   */
   const clearErrors = useCallback(() => {
     setAuthError("");
   }, []);
 
-  // Handle prefetching user data after authentication
+  /**
+   * Prefetches user profile data after successful authentication
+   * to improve user experience by having data ready when needed
+   * 
+   * @param userId - The authenticated user's ID
+   */
   const prefetchUserData = useCallback(async (userId: string) => {
     try {
-      // Prefetch user profile
+      // Prefetch user profile - improves UX by having data ready when profile page loads
       queryClient.prefetchQuery({
         queryKey: ["profile", userId],
         queryFn: async () => {
@@ -51,7 +63,7 @@ export const useAuthBase = () => {
         }
       });
       
-      // Prefetch admin status
+      // Prefetch admin status - needed for UI permission controls
       queryClient.prefetchQuery({
         queryKey: ["user-profile"],
         queryFn: async () => {
