@@ -84,34 +84,36 @@ export const SupportSection = () => {
   return (
     <div className="space-y-4">
       <h2 className="text-2xl font-semibold text-primary/80">Help & Support</h2>
-      <Card className="p-6">
-        <div className="text-center mb-4">
+      <Card className="p-6 border-primary/20 shadow-sm">
+        <div className="text-center mb-6">
           <p className="text-muted-foreground">
             Need help or have suggestions? We're here to assist you.
           </p>
         </div>
         
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <FormField
               control={form.control}
               name="category"
               render={({ field }) => (
                 <FormItem className="space-y-3">
-                  <FormLabel>Select a Category</FormLabel>
+                  <FormLabel className="font-medium">Select a Category</FormLabel>
                   <FormControl>
                     <RadioGroup
                       onValueChange={field.onChange}
                       defaultValue={field.value}
-                      className="grid grid-cols-1 md:grid-cols-2 gap-2"
+                      className="grid grid-cols-1 md:grid-cols-2 gap-3"
                     >
                       {categoryOptions.map((category) => (
                         <FormItem key={category.value}>
                           <FormControl>
                             <label
-                              className={`flex items-start space-x-2 space-y-0 rounded-md border p-3 cursor-pointer hover:bg-accent ${
-                                field.value === category.value ? 'border-primary' : 'border-input'
-                              }`}
+                              className={`flex items-start space-x-2 space-y-0 rounded-md border p-3 cursor-pointer transition-all duration-200
+                                ${field.value === category.value 
+                                  ? 'border-primary bg-primary/5' 
+                                  : 'border-input hover:border-primary/50 hover:bg-accent/30'
+                                }`}
                             >
                               <RadioGroupItem
                                 value={category.value}
@@ -137,15 +139,19 @@ export const SupportSection = () => {
               )}
             />
 
-            <div className="space-y-4">
+            <div className="space-y-4 bg-slate-50 p-4 rounded-md">
               <FormField
                 control={form.control}
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Name</FormLabel>
+                    <FormLabel className="font-medium">Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter your name" {...field} />
+                      <Input 
+                        placeholder="Enter your name" 
+                        {...field} 
+                        className="border-input hover:border-primary/50 focus:border-primary transition-colors"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -156,9 +162,14 @@ export const SupportSection = () => {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel className="font-medium">Email</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter your email" type="email" {...field} />
+                      <Input 
+                        placeholder="Enter your email" 
+                        type="email" 
+                        {...field} 
+                        className="border-input hover:border-primary/50 focus:border-primary transition-colors"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -169,11 +180,11 @@ export const SupportSection = () => {
                 name="message"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Message</FormLabel>
+                    <FormLabel className="font-medium">Message</FormLabel>
                     <FormControl>
                       <Textarea 
                         placeholder="What would you like to tell us?" 
-                        className="min-h-[120px] resize-none"
+                        className="min-h-[120px] resize-none border-input hover:border-primary/50 focus:border-primary transition-colors"
                         {...field} 
                       />
                     </FormControl>
@@ -183,7 +194,10 @@ export const SupportSection = () => {
               />
             </div>
             
-            <Button type="submit" className="w-full">
+            <Button 
+              type="submit" 
+              className="w-full transition-all duration-200 hover:shadow-md"
+            >
               Send Message
             </Button>
           </form>
