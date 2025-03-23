@@ -14,54 +14,63 @@ import { AccountActions } from "./profile/AccountActions";
 
 export const ProfileSection = () => {
   const navigate = useNavigate();
-  const { handleLogout, isLoggingOut } = useAuth();
+  const { handleLogout, isLoggingOut, session } = useAuth();
   const [userEmail, setUserEmail] = useState<string | null>(null);
+  
+  // Use session data directly from useAuth hook to avoid waiting for another session fetch
+  const userId = session?.user?.id;
+
+  // Initialize email from session if available
+  useEffect(() => {
+    if (session?.user?.email) {
+      setUserEmail(session.user.email);
+    }
+  }, [session]);
 
   const { data: profile, isLoading, error } = useQuery({
-    queryKey: ["user-profile"],
+    queryKey: ["user-profile-settings", userId],
     queryFn: async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
+      if (!userId) {
+        console.log("No session available for profile query");
         navigate("/auth");
         return null;
       }
 
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", session.user.id)
-        .maybeSingle();
+      try {
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", userId)
+          .maybeSingle();
 
-      if (error) {
-        console.error("Error fetching profile:", error);
-        throw error;
+        if (error) {
+          console.error("Error fetching profile:", error);
+          throw error;
+        }
+
+        return data as ProfilesTable["Row"];
+      } catch (err) {
+        console.error("Unexpected error fetching profile:", err);
+        throw err;
       }
-
-      return data as ProfilesTable["Row"];
     },
-    retry: 2,
+    enabled: !!userId,
+    staleTime: 30000, // Keep data fresh for 30 seconds to avoid unnecessary refetches
     meta: {
       errorBoundary: false
     }
   });
 
-  useEffect(() => {
-    if (error) {
-      supabase.auth.getSession().then(({ data }) => {
-        const email = data.session?.user?.email;
-        setUserEmail(email || null);
-      });
-    }
-  }, [error]);
-
-  if (isLoading) {
+  // Immediately show loading state when session exists but profile is loading
+  if (isLoading && userId) {
     return <ProfileSectionSkeleton />;
   }
 
+  // Show error state if there was an error loading profile
   if (error || !profile) {
     return (
       <ProfileErrorState
-        userEmail={userEmail}
+        userEmail={userEmail || session?.user?.email || null}
         isLoggingOut={isLoggingOut}
         handleLogout={handleLogout}
       />
