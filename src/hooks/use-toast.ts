@@ -1,5 +1,6 @@
 
 import * as React from "react"
+import { toast as sonnerToast } from "sonner"
 
 import type {
   ToastActionElement,
@@ -57,34 +58,43 @@ interface State {
 // Empty state - no toasts
 const memoryState: State = { toasts: [] }
 
-// No-op toast function that accepts arguments but does nothing with them
-function toast() {
-  return {
-    id: "",
-    dismiss: () => {},
-    update: () => {},
+// Create our forwarding functions to sonner
+function toast(props: { title?: string; description?: string; variant?: "default" | "destructive"; id?: string }) {
+  const { title, description, variant, id } = props
+  if (variant === "destructive") {
+    return sonnerToast.error(title || description || "", {
+      description: title ? description : undefined,
+      id
+    })
   }
+  return sonnerToast(title || description || "", {
+    description: title ? description : undefined,
+    id
+  })
 }
 
-// Empty hook that provides toast functionality without actually showing toasts
-// But allows any number of arguments to be passed (and ignored)
+// Hook that forwards to sonner but maintains interface compatibility
 function useToast() {
   return {
     toasts: [],
-    toast: () => {},
-    dismiss: () => {},
-    addToast: () => {},
-    removeToast: () => {},
+    toast: (props: { title?: string; description?: string; variant?: "default" | "destructive"; id?: string }) => {
+      toast(props)
+    },
+    dismiss: (id?: string) => sonnerToast.dismiss(id),
+    addToast: (props: { title?: string; description?: string; variant?: "default" | "destructive"; id?: string }) => {
+      toast(props)
+    },
+    removeToast: (id?: string) => sonnerToast.dismiss(id),
   }
 }
 
 // Add these extensions to make the toast function work as expected
-toast.success = () => {}
-toast.error = () => {}
-toast.warning = () => {}
-toast.info = () => {}
-toast.loading = () => {}
-toast.dismiss = () => {}
-toast.custom = () => {}
+toast.success = (message: string, opts?: { id?: string }) => sonnerToast.success(message, opts)
+toast.error = (message: string, opts?: { id?: string }) => sonnerToast.error(message, opts)
+toast.warning = (message: string, opts?: { id?: string }) => sonnerToast.warning(message, opts)
+toast.info = (message: string, opts?: { id?: string }) => sonnerToast.info(message, opts)
+toast.loading = (message: string, opts?: { id?: string }) => sonnerToast.loading(message, opts)
+toast.dismiss = (id?: string) => sonnerToast.dismiss(id)
+toast.custom = (render: React.ReactNode, opts?: { id?: string }) => sonnerToast.custom(render, opts)
 
 export { useToast, toast }

@@ -51,7 +51,7 @@ export const useAuthPasswordReset = () => {
       
       // Update UI state to show confirmation message
       setIsPasswordResetSent(true);
-      toast.success("Password reset email sent. Please check your inbox.");
+      toast.success("Password reset email sent. Please check your inbox.", { id: "password-reset-sent" });
       return true;
     } catch (error: any) {
       console.error("Error in password reset:", error);
@@ -89,7 +89,7 @@ export const useAuthPasswordReset = () => {
         return false;
       }
       
-      toast.success("Password updated successfully");
+      toast.success("Password updated successfully", { id: "password-updated" });
       return true;
     } catch (error: any) {
       console.error("Error during password update:", error);

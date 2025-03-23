@@ -58,7 +58,7 @@ export const SignInForm = ({
     try {
       const success = await signIn({ email, password });
       if (success) {
-        toast.success("Signed in successfully!");
+        toast.success("Signed in successfully!", { id: "signin-success" });
       }
     } catch (error) {
       console.error("Sign in error:", error);

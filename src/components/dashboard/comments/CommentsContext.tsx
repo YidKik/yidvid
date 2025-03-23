@@ -1,3 +1,4 @@
+
 import { createContext, useContext, ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -94,7 +95,7 @@ export const CommentsProvider = ({ children }: { children: ReactNode }) => {
 
       if (error) {
         console.error("Error fetching notifications:", error);
-        toast.error("Error fetching notifications: " + error.message);
+        toast.error("Error fetching notifications: " + error.message, { id: "fetch-notifications-error" });
         return [];
       }
 
@@ -126,7 +127,7 @@ export const CommentsProvider = ({ children }: { children: ReactNode }) => {
 
       if (error) {
         console.error("Error fetching comments:", error);
-        toast.error("Error fetching comments: " + error.message);
+        toast.error("Error fetching comments: " + error.message, { id: "fetch-comments-error" });
         return [];
       }
 
@@ -137,7 +138,7 @@ export const CommentsProvider = ({ children }: { children: ReactNode }) => {
 
   const handleDeleteComment = async (commentId: string) => {
     if (!session?.user?.id || !profile?.is_admin) {
-      toast.error("Permission denied: Only admins can delete comments");
+      toast.error("Permission denied: Only admins can delete comments", { id: "permission-denied" });
       return;
     }
 
@@ -149,13 +150,13 @@ export const CommentsProvider = ({ children }: { children: ReactNode }) => {
 
       if (error) throw error;
 
-      toast.success("Comment deleted successfully");
+      toast.success("Comment deleted successfully", { id: "comment-deleted" });
       
       await refetchComments();
       await refetchNotifications();
     } catch (error: any) {
       console.error("Error deleting comment:", error);
-      toast.error("Error deleting comment: " + error.message);
+      toast.error("Error deleting comment: " + error.message, { id: "delete-comment-error" });
     }
   };
 

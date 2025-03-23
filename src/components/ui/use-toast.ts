@@ -1,22 +1,16 @@
 
-// Custom hook to completely disable toast notifications
-export const useToast = () => {
-  return {
-    toasts: [],
-    toast: () => {},
-    dismiss: () => {},
-    addToast: () => {},
-    removeToast: () => {},
-  };
-};
+import { toast as mainToast, useToast as useMainToast } from "@/hooks/use-toast";
 
-// Noop toast functions that do nothing
+// Forward all toast functions to the main implementation
+export const useToast = useMainToast;
+
+// Forward all toast functions to the main implementation
 export const toast = {
-  success: () => {},
-  error: () => {},
-  warning: () => {},
-  info: () => {},
-  loading: () => {},
-  dismiss: () => {},
-  custom: () => {},
+  success: mainToast.success,
+  error: mainToast.error,
+  warning: mainToast.warning,
+  info: mainToast.info,
+  loading: mainToast.loading,
+  dismiss: mainToast.dismiss,
+  custom: mainToast.custom,
 };

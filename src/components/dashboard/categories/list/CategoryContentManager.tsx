@@ -58,10 +58,11 @@ export function CategoryContentManager({
   const handleSaveWithNotification = async () => {
     try {
       await onSave(selectedVideos, selectedChannels);
-      toast.success("Category content updated. New videos from these channels will automatically be added to this category.");
+      toast.success("Category content updated. New videos from these channels will automatically be added to this category.", 
+        { id: `category-content-updated-${category?.id}` });
     } catch (error) {
       console.error("Error saving category content:", error);
-      toast.error("Failed to update category content");
+      toast.error("Failed to update category content", { id: "category-update-error" });
     }
   };
 

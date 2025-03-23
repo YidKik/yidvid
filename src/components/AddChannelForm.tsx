@@ -24,7 +24,7 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
     setIsQuotaExceeded(false);
     
     if (!channelId.trim()) {
-      toast.error("Please enter a channel ID or URL");
+      toast.error("Please enter a channel ID or URL", { id: "channel-empty" });
       return;
     }
 
@@ -36,7 +36,7 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
 
       const result = await addChannel(channelId);
       
-      toast.success("Channel added successfully!");
+      toast.success("Channel added successfully!", { id: "channel-added" });
       
       setChannelId("");
       onSuccess?.();
@@ -60,7 +60,7 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
       
       setErrorMessage(message);
       
-      toast.error(message);
+      toast.error(message, { id: "channel-add-error" });
     } finally {
       setIsLoading(false);
     }

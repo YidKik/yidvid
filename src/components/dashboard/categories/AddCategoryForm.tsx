@@ -45,17 +45,17 @@ export function AddCategoryForm({ onSuccess }: AddCategoryFormProps) {
 
   const handleAddCategory = async () => {
     if (!newCategory.name) {
-      toast.error("Please enter a category name");
+      toast.error("Please enter a category name", { id: "category-name-required" });
       return;
     }
 
     if (!newCategory.is_emoji && !selectedFile) {
-      toast.error("Please select an image file");
+      toast.error("Please select an image file", { id: "category-image-required" });
       return;
     }
 
     if (newCategory.is_emoji && !newCategory.icon) {
-      toast.error("Please enter an emoji");
+      toast.error("Please enter an emoji", { id: "category-emoji-required" });
       return;
     }
 
@@ -89,13 +89,13 @@ export function AddCategoryForm({ onSuccess }: AddCategoryFormProps) {
 
       if (error) throw error;
 
-      toast.success("Category added successfully");
+      toast.success("Category added successfully", { id: "category-added" });
       setNewCategory({ name: "", icon: "", is_emoji: true });
       setSelectedFile(null);
       onSuccess();
     } catch (error) {
       console.error("Error adding category:", error);
-      toast.error("Failed to add category");
+      toast.error("Failed to add category", { id: "category-add-failed" });
     }
   };
 

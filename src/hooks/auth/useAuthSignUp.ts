@@ -65,10 +65,10 @@ export const useAuthSignUp = () => {
       
       if (isEmailConfirmationSent) {
         // Handle case when email confirmation is required
-        toast.success("Please check your email for a confirmation link to complete your registration");
+        toast.success("Please check your email for a confirmation link to complete your registration", { id: "signup-confirmation-sent" });
       } else {
         // Handle successful registration with automatic confirmation
-        toast.success("Account created successfully");
+        toast.success("Account created successfully", { id: "signup-success" });
         
         // Prefetch user data for improved performance
         if (data?.user?.id) {

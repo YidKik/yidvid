@@ -20,7 +20,7 @@ export const useUserManagement = (currentUserId: string) => {
 
       if (error) {
         console.error("Error fetching users:", error);
-        toast.error("Error fetching users: " + error.message);
+        toast.error("Error fetching users: " + error.message, { id: "fetch-users-error" });
         return [];
       }
 
@@ -41,7 +41,7 @@ export const useUserManagement = (currentUserId: string) => {
       if (currentUserError) throw currentUserError;
 
       if (!currentUser?.is_admin) {
-        toast.error("Permission denied: Only admins can modify admin status.");
+        toast.error("Permission denied: Only admins can modify admin status.", { id: "admin-permission-denied" });
         return;
       }
 
@@ -54,13 +54,14 @@ export const useUserManagement = (currentUserId: string) => {
 
       if (updateError) throw updateError;
 
-      toast.success(`Admin status ${currentStatus ? "removed" : "granted"}: User has been ${currentStatus ? "removed from" : "made"} admin.`);
+      toast.success(`Admin status ${currentStatus ? "removed" : "granted"}: User has been ${currentStatus ? "removed from" : "made"} admin.`, 
+        { id: `admin-status-changed-${userId}` });
       
       // Refresh the user list to reflect the changes
       refetchUsers();
     } catch (error: any) {
       console.error("Error updating admin status:", error);
-      toast.error("Error updating admin status: " + error.message);
+      toast.error("Error updating admin status: " + error.message, { id: "admin-status-update-error" });
     }
   };
 
