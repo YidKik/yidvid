@@ -104,11 +104,11 @@ export const MostViewedVideos = ({
 
   return (
     <div className="w-full max-w-[1200px] mx-auto mb-2 md:mb-8">
-      <div className="bg-gradient-to-r from-white via-[#D3E4FD] to-white rounded-lg md:rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300">
+      <div className="bg-gradient-to-r from-[#222222] via-[#f1f1f1] to-[#222222] rounded-lg md:rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300">
         <div className="px-3 md:px-6 pt-4 md:pt-6 pb-6 md:pb-8">
           <div className="flex items-center gap-2 mb-3 md:mb-6">
-            <div className="bg-[#eff6ff] p-1.5 md:p-2 rounded-full">
-              <TrendingUp className="h-3 w-3 md:h-4 md:w-4 text-blue-500" />
+            <div className="bg-[#333333] p-1.5 md:p-2 rounded-full">
+              <TrendingUp className="h-3 w-3 md:h-4 md:w-4 text-white" />
             </div>
             <h2 className="text-sm md:text-xl font-bold text-[#333333] flex items-center">
               Most Watched
@@ -151,7 +151,7 @@ export const MostViewedVideos = ({
                 className={`absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/3 md:-translate-x-1/4 z-10 p-1.5 md:p-2.5 bg-white/90 hover:bg-white rounded-full shadow-md hover:shadow-lg transition-all duration-200 ${isTransitioning ? 'opacity-50 cursor-not-allowed' : 'opacity-90 hover:opacity-100'}`}
                 aria-label="Previous videos"
               >
-                <ChevronLeft className="w-3.5 h-3.5 md:w-4 md:h-4 text-blue-500" />
+                <ChevronLeft className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-600" />
               </button>
             )}
 
@@ -162,7 +162,7 @@ export const MostViewedVideos = ({
                 className={`absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/3 md:translate-x-1/4 z-10 p-1.5 md:p-2.5 bg-white/90 hover:bg-white rounded-full shadow-md hover:shadow-lg transition-all duration-200 ${isTransitioning ? 'opacity-50 cursor-not-allowed' : 'opacity-90 hover:opacity-100'}`}
                 aria-label="Next videos"
               >
-                <ChevronRight className="w-3.5 h-3.5 md:w-4 md:h-4 text-blue-500" />
+                <ChevronRight className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-600" />
               </button>
             )}
           </div>
