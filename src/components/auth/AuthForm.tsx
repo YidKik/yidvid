@@ -37,18 +37,18 @@ export const AuthForm = ({ onOpenChange, initialTab = 'signin', hideOptions = fa
         />
       )}
       
-      <div className="border-t border-gray-200 bg-gray-50 py-4 px-10 flex justify-center mt-6">
-        <p className="text-sm text-gray-600 whitespace-nowrap overflow-hidden text-ellipsis">
-          By signing in, you agree to our {" "}
+      <div className="mt-6 text-center">
+        <p className="text-xs text-gray-500">
+          By signing in, you agree to our{" "}
           <button 
             onClick={() => setTosDialogOpen(true)} 
-            className="text-purple-600 hover:underline bg-transparent p-0 border-none inline font-normal"
+            className="text-purple-600 hover:underline bg-transparent p-0 border-none inline font-normal text-xs"
           >
             Terms of Service
-          </button> and {" "}
+          </button>{" "}and{" "}
           <button 
             onClick={() => setPrivacyDialogOpen(true)} 
-            className="text-purple-600 hover:underline bg-transparent p-0 border-none inline font-normal"
+            className="text-purple-600 hover:underline bg-transparent p-0 border-none inline font-normal text-xs"
           >
             Privacy Policy
           </button>
