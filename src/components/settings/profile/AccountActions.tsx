@@ -27,13 +27,16 @@ export const AccountActions = ({ isLoggingOut, handleLogout }: AccountActionsPro
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const handleFastLogout = async () => {
-    // Cancel any in-flight queries immediately
+    // Cancel all in-flight queries immediately
     queryClient.cancelQueries();
     
-    // Show immediate feedback to user (don't wait for completion)
+    // Show immediate feedback to user
     toast.loading("Signing out...");
     
-    // Start the logout process
+    // Navigate to home page immediately for instant feedback
+    navigate("/");
+    
+    // Then perform the actual logout
     handleLogout();
   };
 

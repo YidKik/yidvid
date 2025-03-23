@@ -26,6 +26,7 @@ export const WelcomeAnimation = () => {
     },
   });
 
+  // Pass an empty string as userName when session is null (user is signed out)
   const { isLoading: isWelcomeLoading, isError, userName } = useWelcomeData(session);
   const { 
     isLoading: isVideosLoading, 
@@ -34,7 +35,7 @@ export const WelcomeAnimation = () => {
     error: videosError 
   } = useVideos();
 
-  // New optimized logic: hide welcome animation faster
+  // Hide welcome animation faster
   useEffect(() => {
     if (skipWelcome || isError || videosError) {
       setShow(false);
@@ -43,7 +44,6 @@ export const WelcomeAnimation = () => {
     }
 
     // Hide welcome animation quicker - don't wait for all videos to load
-    // Just check if the fetch process has started
     const timer = setTimeout(() => {
       console.log("Auto-hiding welcome animation after short timeout");
       setShow(false);
@@ -94,7 +94,7 @@ export const WelcomeAnimation = () => {
           return () => clearTimeout(infoTimer);
         }
       }
-    }, 1500); // Reduced from waiting for videos to a fixed 1.5 second timeout
+    }, 1500); // Fixed 1.5 second timeout
 
     return () => clearTimeout(timer);
   }, [skipWelcome, isWelcomeLoading, isVideosLoading, isVideosFetching, videos, isError, videosError, show, infoShown, isMobile]);
@@ -128,7 +128,7 @@ export const WelcomeAnimation = () => {
             transition={{ duration: 0.2 }}
             className="text-center"
           >
-            <WelcomeText userName={userName} />
+            <WelcomeText userName={session ? userName : ""} />
             <LogoAnimation />
 
             <motion.div

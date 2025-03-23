@@ -17,69 +17,56 @@ export const useAuthSignOut = () => {
 
   /**
    * Handles user sign-out process with optimizations for speed and reliability
-   * Uses multiple techniques to ensure the UI remains responsive even when
-   * Supabase auth operations are slow
    */
   const signOut = useCallback(async () => {
     try {
       setIsLoggingOut(true);
       
-      // Cancel all in-flight queries immediately to prevent stale data
+      // Cancel all in-flight queries immediately
       queryClient.cancelQueries();
       
-      // Save important content data before logout to preserve user experience
+      // Save public content data before logout to preserve user experience
       const videosData = queryClient.getQueryData(["youtube_videos"]);
       const channelsData = queryClient.getQueryData(["youtube_channels"]);
       
-      // Track if we had real content before logout to decide what to restore
+      // Track if we had real content before logout
       const hasVideos = Array.isArray(videosData) && videosData.length > 0;
       const hasChannels = Array.isArray(channelsData) && channelsData.length > 0;
       
-      console.log(`Before logout: Cancelling queries and proceeding with immediate logout`);
+      // Navigate to welcome page immediately for instant feedback
+      // This makes logout feel instant to the user
+      navigate("/");
       
-      // Set a timeout to navigate even if supabase is slow
-      // This is crucial for perceived performance - don't make users wait
-      const timeoutId = setTimeout(() => {
-        console.log("Logout taking too long - forcing navigation");
-        navigate("/");
-        toast.success("Logged out successfully");
-      }, 1000); // Wait max 1 second before forcing navigation
-      
-      // Start the signOut process with Supabase
-      const { error } = await supabase.auth.signOut();
-      
-      // Clear the timeout since we got a response
-      clearTimeout(timeoutId);
-      
-      if (error) {
-        console.error("Error during logout:", error);
-        toast.error("Error during logout: " + error.message);
-        return;
-      }
-      
-      // Clear user-specific queries from cache
-      // This prevents potential data leaks between users
+      // Clear all user specific data from the query cache
       queryClient.removeQueries({ queryKey: ["profile"] });
       queryClient.removeQueries({ queryKey: ["user-profile"] });
+      queryClient.removeQueries({ queryKey: ["user-profile-settings"] });
+      queryClient.removeQueries({ queryKey: ["admin-section-profile"] });
       queryClient.removeQueries({ queryKey: ["user-video-interactions"] });
+      queryClient.removeQueries({ queryKey: ["video-notifications"] });
       
-      // Restore public content data immediately to prevent blank screen
-      // This significantly improves UX after logout
+      // Restore public content data to prevent blank screen
       if (hasVideos && videosData) {
-        console.log("Restoring videos data after logout");
         queryClient.setQueryData(["youtube_videos"], videosData);
       }
       
       if (hasChannels && channelsData) {
-        console.log("Restoring channels data after logout");
         queryClient.setQueryData(["youtube_channels"], channelsData);
       }
       
-      navigate("/");
+      // Show success message immediately
       toast.success("Logged out successfully");
+      
+      // Now perform the actual Supabase logout in the background
+      const { error } = await supabase.auth.signOut();
+      
+      if (error) {
+        console.error("Error during logout:", error);
+        // Don't show error toast since we've already navigated away
+      }
     } catch (error) {
       console.error("Unexpected error during logout:", error);
-      toast.error("Unexpected error during logout");
+      // Still navigate home even if there's an error
       navigate("/");
     } finally {
       setIsLoggingOut(false);

@@ -26,19 +26,22 @@ export const WelcomeText = ({ userName }: WelcomeTextProps) => {
       >
         Welcome
       </motion.span>
-      <motion.span
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        transition={{
-          type: "spring",
-          stiffness: 260,
-          damping: 20,
-          delay: 0.5,
-        }}
-        className="text-5xl font-bold text-accent ml-3 inline-block"
-      >
-        {userName}
-      </motion.span>
+      
+      {userName && (
+        <motion.span
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{
+            type: "spring",
+            stiffness: 260,
+            damping: 20,
+            delay: 0.5,
+          }}
+          className="text-5xl font-bold text-accent ml-3 inline-block"
+        >
+          {userName}
+        </motion.span>
+      )}
     </motion.div>
   );
 };
