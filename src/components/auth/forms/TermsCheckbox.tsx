@@ -17,7 +17,7 @@ export const TermsCheckbox: React.FC<TermsCheckboxProps> = ({ disabled = false }
         <input 
           id="terms" 
           type="checkbox" 
-          className="h-4 w-4 text-purple-600 rounded border-gray-300 focus:ring-purple-500"
+          className="h-4 w-4 text-gray-600 rounded border-gray-300 focus:ring-gray-500"
           disabled={disabled}
         />
         <label htmlFor="terms" className="ml-2 text-sm text-gray-600">
@@ -28,7 +28,7 @@ export const TermsCheckbox: React.FC<TermsCheckboxProps> = ({ disabled = false }
               e.preventDefault();
               setTosDialogOpen(true);
             }} 
-            className="text-purple-600 hover:underline bg-transparent p-0 border-none inline font-normal"
+            className="text-gray-700 hover:text-gray-900 transition-colors bg-transparent p-0 border-none inline font-medium underline-offset-2 hover:underline"
           >
             Terms of Service
           </button> and {" "}
@@ -38,7 +38,7 @@ export const TermsCheckbox: React.FC<TermsCheckboxProps> = ({ disabled = false }
               e.preventDefault();
               setPrivacyDialogOpen(true);
             }} 
-            className="text-purple-600 hover:underline bg-transparent p-0 border-none inline font-normal"
+            className="text-gray-700 hover:text-gray-900 transition-colors bg-transparent p-0 border-none inline font-medium underline-offset-2 hover:underline"
           >
             Privacy Policy
           </button>

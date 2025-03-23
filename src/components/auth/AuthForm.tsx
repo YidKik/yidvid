@@ -5,6 +5,7 @@ import { SignInForm } from "./forms/SignInForm";
 import { SignUpForm } from "./forms/SignUpForm";
 import { TermsOfServiceDialog } from "./TermsOfServiceDialog";
 import { PrivacyPolicyDialog } from "./PrivacyPolicyDialog";
+import { AuthTermsFooter } from "./AuthTermsFooter";
 
 interface AuthFormProps {
   onOpenChange: (open: boolean) => void;
@@ -37,23 +38,10 @@ export const AuthForm = ({ onOpenChange, initialTab = 'signin', hideOptions = fa
         />
       )}
       
-      <div className="mt-6 text-center">
-        <p className="text-xs text-gray-500">
-          By signing in, you agree to our{" "}
-          <button 
-            onClick={() => setTosDialogOpen(true)} 
-            className="text-purple-600 hover:underline bg-transparent p-0 border-none inline font-normal text-xs"
-          >
-            Terms of Service
-          </button>{" "}and{" "}
-          <button 
-            onClick={() => setPrivacyDialogOpen(true)} 
-            className="text-purple-600 hover:underline bg-transparent p-0 border-none inline font-normal text-xs"
-          >
-            Privacy Policy
-          </button>
-        </p>
-      </div>
+      <AuthTermsFooter 
+        onOpenTos={() => setTosDialogOpen(true)}
+        onOpenPrivacy={() => setPrivacyDialogOpen(true)}
+      />
 
       <TermsOfServiceDialog isOpen={tosDialogOpen} onOpenChange={setTosDialogOpen} />
       <PrivacyPolicyDialog isOpen={privacyDialogOpen} onOpenChange={setPrivacyDialogOpen} />
