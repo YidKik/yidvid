@@ -46,7 +46,7 @@ export const NotificationItem = ({ notification, onNotificationClick }: Notifica
                 logoOverlay.className = 'absolute inset-0 flex items-center justify-center';
                 
                 const logoImg = document.createElement('img');
-                logoImg.src = "/lovable-uploads/2df6b540-f798-4831-8fcc-255a55486aa0.png";
+                logoImg.src = "/lovable-uploads/e425cacb-4c3a-4d81-b4e0-77fcbf10f61c.png";
                 logoImg.alt = "YidVid Logo";
                 logoImg.className = 'w-6 h-6 sm:w-8 sm:h-8 opacity-70'; // Small centered logo
                 

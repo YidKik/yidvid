@@ -32,7 +32,7 @@ export const CenterLogo: React.FC<CenterLogoProps> = ({
     >
       <img 
         src="/lovable-uploads/e425cacb-4c3a-4d81-b4e0-77fcbf10f61c.png" 
-        alt="Site Logo"
+        alt="YidVid Logo"
         className={cn("object-contain", selectedSize.logoSize)}
         onError={(e) => {
           console.error('Logo failed to load:', e);

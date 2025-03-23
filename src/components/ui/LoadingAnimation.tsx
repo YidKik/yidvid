@@ -70,7 +70,7 @@ export const LoadingAnimation = ({
           {size !== "small" && (
             <img 
               src="/lovable-uploads/e425cacb-4c3a-4d81-b4e0-77fcbf10f61c.png" 
-              alt="Site Logo"
+              alt="YidVid Logo"
               className={cn("object-contain", selectedSize.logoSize)}
               onError={(e) => {
                 e.currentTarget.style.display = 'none';

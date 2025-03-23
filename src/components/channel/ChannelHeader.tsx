@@ -27,7 +27,11 @@ export const ChannelHeader = ({
           className="object-cover transition-transform duration-300 group-hover:scale-105"
         />
         <AvatarFallback className="bg-primary/10">
-          <Youtube className="w-10 h-10 md:w-16 md:h-16 text-primary" />
+          <img 
+            src="/lovable-uploads/e425cacb-4c3a-4d81-b4e0-77fcbf10f61c.png" 
+            alt="YidVid Logo" 
+            className="w-10 h-10 md:w-16 md:h-16"
+          />
         </AvatarFallback>
       </Avatar>
       

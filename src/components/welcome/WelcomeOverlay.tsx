@@ -58,12 +58,17 @@ export const WelcomeOverlay = () => {
             <div className={`${isMobile ? 'p-3' : 'p-8'}`}>
               <div className="flex justify-center mb-2">
                 <motion.img
-                  src="/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png"
+                  src="/lovable-uploads/e425cacb-4c3a-4d81-b4e0-77fcbf10f61c.png"
                   alt="YidVid Logo"
                   className={`${isMobile ? 'w-12 h-12' : 'w-24 h-24'}`}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.2 }}
+                  onError={(e) => {
+                    console.error('Welcome overlay logo failed to load:', e);
+                    // Fallback to alternate logo
+                    e.currentTarget.src = "/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png";
+                  }}
                 />
               </div>
 

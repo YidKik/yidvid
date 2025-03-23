@@ -41,7 +41,7 @@ export const ChannelCard = ({ id, channel_id, title, thumbnail_url, index }: Cha
             <AvatarFallback className="bg-primary/10">
               <img 
                 src="/lovable-uploads/e425cacb-4c3a-4d81-b4e0-77fcbf10f61c.png" 
-                alt="Channel Logo"
+                alt="YidVid Logo"
                 className="w-8 h-8 md:w-16 md:h-16 object-contain"
               />
             </AvatarFallback>
@@ -50,7 +50,7 @@ export const ChannelCard = ({ id, channel_id, title, thumbnail_url, index }: Cha
             <AvatarFallback className="bg-primary/10">
               <img 
                 src="/lovable-uploads/e425cacb-4c3a-4d81-b4e0-77fcbf10f61c.png" 
-                alt="Channel Logo"
+                alt="YidVid Logo"
                 className="w-8 h-8 md:w-16 md:h-16 object-contain"
               />
             </AvatarFallback>

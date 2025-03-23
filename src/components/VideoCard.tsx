@@ -99,10 +99,10 @@ export const VideoCard = ({
               const logoOverlay = document.createElement('div');
               logoOverlay.className = 'thumbnail-logo-overlay absolute inset-0 flex items-center justify-center';
               
-              // Create the logo image
+              // Create the logo image - using the correct YidVid logo
               const logoImg = document.createElement('img');
-              logoImg.src = "/lovable-uploads/2df6b540-f798-4831-8fcc-255a55486aa0.png";
-              logoImg.alt = "Site Logo";
+              logoImg.src = "/lovable-uploads/e425cacb-4c3a-4d81-b4e0-77fcbf10f61c.png";
+              logoImg.alt = "YidVid Logo";
               logoImg.className = 'w-12 h-12 opacity-70'; // Smaller centered logo
               
               // Append elements
