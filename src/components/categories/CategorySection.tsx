@@ -8,6 +8,7 @@ import { CategorySkeleton } from "./CategorySkeleton";
 import { useCategories } from "@/hooks/useCategories";
 import { supabase } from "@/integrations/supabase/client";
 import { useLocation } from "react-router-dom";
+import { toast } from "sonner";
 
 export const CategorySection = () => {
   const { colors } = useColors();
@@ -17,6 +18,7 @@ export const CategorySection = () => {
   
   const { 
     infiniteCategories, 
+    allCategories,
     categoriesLoading, 
     refetchVideos 
   } = useCategories();
@@ -40,6 +42,16 @@ export const CategorySection = () => {
 
     processExistingVideos();
   }, [refetchVideos]);
+
+  // Debug log to check categories data
+  useEffect(() => {
+    console.log("CategorySection rendering with:", {
+      isMobile,
+      categoriesCount: infiniteCategories?.length || 0,
+      isLoading: categoriesLoading,
+      firstCategory: infiniteCategories?.[0]
+    });
+  }, [infiniteCategories, categoriesLoading, isMobile]);
 
   // Handle loading states
   if (categoriesLoading) {

@@ -18,6 +18,14 @@ export const MobileCategoryScroll: React.FC<MobileCategoryScrollProps> = ({
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [isInitialized, setIsInitialized] = useState(false);
 
+  // Debug log to help diagnose issues
+  useEffect(() => {
+    console.log(`MobileCategoryScroll rendering with ${infiniteCategories?.length || 0} categories`);
+    if (infiniteCategories?.[0]) {
+      console.log("First category:", infiniteCategories[0]);
+    }
+  }, [infiniteCategories]);
+
   // Guard against empty categories
   if (!infiniteCategories || infiniteCategories.length === 0) {
     console.warn("No categories available for mobile scroll");
@@ -96,7 +104,7 @@ export const MobileCategoryScroll: React.FC<MobileCategoryScrollProps> = ({
         }}
       >
         {/* Triple the categories to ensure continuous scroll */}
-        {[...infiniteCategories, ...infiniteCategories, ...infiniteCategories].map((category, index) => (
+        {infiniteCategories.map((category, index) => (
           <div
             key={`${category.id}-${index}`}
             className="flex-shrink-0 w-[100px] relative"

@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -26,7 +26,13 @@ export const CategoryCard = ({ icon, label, id, isCustomImage = false }: Categor
   const navigate = useNavigate();
   const isMobile = useIsMobile();
 
+  // Debug log to check props
+  useEffect(() => {
+    console.log(`CategoryCard rendering for: ${label} (${id}) with icon: ${icon}`);
+  }, [label, id, icon]);
+
   const handleClick = () => {
+    console.log(`Navigating to category: ${id}`);
     navigate(`/category/${id}`);
   };
 

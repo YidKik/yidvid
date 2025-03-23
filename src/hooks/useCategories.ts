@@ -58,6 +58,7 @@ export const useCategories = (): UseCategories => {
           .order("name", { ascending: true });
 
         if (error) throw error;
+        console.log("Fetched custom categories:", data);
         return data || [];
       } catch (error) {
         console.error('Error fetching custom categories:', error);
@@ -79,7 +80,17 @@ export const useCategories = (): UseCategories => {
   ];
 
   // Create infiniteCategories by repeating the allCategories array to create a continuous scrolling effect
-  const infiniteCategories = [...allCategories, ...allCategories, ...allCategories];
+  const infiniteCategories = allCategories.length > 0 
+    ? [...allCategories, ...allCategories, ...allCategories]
+    : [];
+
+  // Debug log to help diagnose issues
+  console.log("useCategories hook state:", {
+    allCategoriesCount: allCategories.length,
+    infiniteCategoriesCount: infiniteCategories.length,
+    isLoading: categoriesLoading,
+    customCategoriesCount: customCategories?.length || 0
+  });
 
   return {
     allCategories,

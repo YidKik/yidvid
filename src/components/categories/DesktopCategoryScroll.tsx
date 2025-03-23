@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { motion } from "framer-motion";
 import { CategoryCard } from "./CategoryCard";
 
@@ -16,8 +16,17 @@ interface DesktopCategoryScrollProps {
 export const DesktopCategoryScroll: React.FC<DesktopCategoryScrollProps> = ({ 
   infiniteCategories 
 }) => {
+  // Debug log to help diagnose issues
+  useEffect(() => {
+    console.log(`DesktopCategoryScroll rendering with ${infiniteCategories?.length || 0} categories`);
+    if (infiniteCategories?.[0]) {
+      console.log("First category:", infiniteCategories[0]);
+    }
+  }, [infiniteCategories]);
+
   // Guard against empty categories
   if (!infiniteCategories || infiniteCategories.length === 0) {
+    console.warn("No categories available to display in desktop scroll");
     return null;
   }
 
