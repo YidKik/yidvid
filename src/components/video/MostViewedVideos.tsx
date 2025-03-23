@@ -104,7 +104,7 @@ export const MostViewedVideos = ({
 
   return (
     <div className="w-full max-w-[1200px] mx-auto mb-2 md:mb-8">
-      <div className="bg-gradient-to-r from-[#222222] via-[#f1f1f1] to-[#222222] rounded-lg md:rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300">
+      <div className="bg-gradient-to-r from-[#111111] via-[#e5e5e5] to-[#111111] rounded-lg md:rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300">
         <div className="px-3 md:px-6 pt-4 md:pt-6 pb-6 md:pb-8">
           <div className="flex items-center gap-2 mb-3 md:mb-6">
             <div className="bg-[#333333] p-1.5 md:p-2 rounded-full">
