@@ -16,7 +16,7 @@ import { GlobalNotification } from "@/components/notifications/GlobalNotificatio
 import { WelcomeOverlay } from "@/components/welcome/WelcomeOverlay";
 import { getPageTitle, DEFAULT_META_DESCRIPTION, DEFAULT_META_KEYWORDS, DEFAULT_META_IMAGE } from "@/utils/pageTitle";
 import { Helmet } from "react-helmet";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { SiteDisclaimerBanner } from "@/components/notifications/SiteDisclaimerBanner";
 
 const MainContent = () => {
@@ -34,6 +34,7 @@ const MainContent = () => {
   const isMobile = useIsMobile();
   const { session } = useSessionManager();
   const notificationsProcessedRef = useRef(false);
+  const hasMadeInitialFetchAttempt = useRef(false);
 
   const markNotificationsAsRead = async () => {
     if (!session?.user?.id || notificationsProcessedRef.current) return;
@@ -82,16 +83,27 @@ const MainContent = () => {
     }
   }, [videos, isLoading, error]);
 
+  // Always attempt to fetch real content when component mounts
   useEffect(() => {
-    if (!isLoading && (!videos || videos.length === 0)) {
-      console.log("No videos loaded, triggering a refetch");
-      setTimeout(() => {
-        refetch().catch(err => {
-          console.error("Error refetching videos:", err);
-        });
-      }, 2000);
+    // Ensure we only make this attempt once
+    if (!hasMadeInitialFetchAttempt.current) {
+      hasMadeInitialFetchAttempt.current = true;
+      
+      // Try an immediate fetch if we don't have data or only have sample data
+      if (!isLoading && 
+          (!videos || videos.length === 0 || 
+           (videos.length > 0 && videos.some(v => v.id.toString().includes('sample'))))) {
+        console.log("Initial mount - forcing video fetch to get real content");
+        
+        // Small delay to let UI render first
+        setTimeout(() => {
+          forceRefetch().catch(err => {
+            console.error("Error fetching videos on mount:", err);
+          });
+        }, 100);
+      }
     }
-  }, [videos, isLoading, refetch]);
+  }, [videos, isLoading, forceRefetch]);
 
   return (
     <div className="flex-1">

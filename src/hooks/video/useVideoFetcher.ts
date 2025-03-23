@@ -8,6 +8,7 @@ import {
 } from "./utils/database";
 import { tryFetchNewVideos } from "./utils/youtube-fetch";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 /**
  * Hook with functionality to fetch all videos from the database
@@ -27,33 +28,35 @@ export const useVideoFetcher = (): VideoFetcherResult => {
     console.log("Starting video fetch process with highest priority...");
     
     try {
-      // First try direct database query with anon key
+      // First try direct database query with anon key - but now using simpler query to avoid RLS issues
       let videosData: any[] = [];
       
       try {
-        // Try direct query first without requiring authentication
+        // Try direct query first with simplified approach for anonymous access
         const { data, error } = await supabase
           .from("youtube_videos")
-          .select(`
-            id, 
-            video_id, 
-            title, 
-            thumbnail, 
-            channel_name, 
-            channel_id, 
-            views, 
-            uploaded_at, 
-            category, 
-            description,
-            youtube_channels(thumbnail_url)
-          `)
+          .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, category, description")
           .is('deleted_at', null)
           .order("uploaded_at", { ascending: false })
-          .limit(200);
+          .limit(100);  // Reduced limit for faster loading
           
         if (error) {
           console.error("Direct database query error:", error);
-          // Continue to next approach if this fails
+          
+          // Try an even simpler query if first one fails
+          const fallbackData = await supabase
+            .from("youtube_videos")
+            .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at")
+            .order("uploaded_at", { ascending: false })
+            .limit(50);
+            
+          if (!fallbackData.error && fallbackData.data && fallbackData.data.length > 0) {
+            videosData = fallbackData.data;
+            setLastSuccessfulFetch(new Date());
+            console.log(`Retrieved ${videosData.length} videos with fallback query`);
+          } else {
+            console.warn("Fallback query also failed, trying secondary method");
+          }
         } else if (data && data.length > 0) {
           videosData = data;
           setLastSuccessfulFetch(new Date());
@@ -75,6 +78,11 @@ export const useVideoFetcher = (): VideoFetcherResult => {
           if (videosData.length > 0) {
             setLastSuccessfulFetch(new Date());
             console.log(`Successfully fetched ${videosData.length} videos from database`);
+            
+            // Toast notification only if we previously had no videos (first successful load)
+            if (fetchAttempts > 0) {
+              toast.success("Successfully loaded videos");
+            }
           } else {
             console.warn("No videos found in database, will try to fetch new ones with high priority");
           }
@@ -135,6 +143,9 @@ export const useVideoFetcher = (): VideoFetcherResult => {
         }));
       }
 
+      // Log success and increase fetch attempt counter
+      setFetchAttempts(prev => prev + 1);
+      
       // Return the data we got
       return formatVideoData(videosData);
     } catch (error: any) {

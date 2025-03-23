@@ -16,7 +16,7 @@ export const AutoRefreshHandler: React.FC<AutoRefreshHandlerProps> = ({
   lastSuccessfulFetch,
   forceRefetch
 }) => {
-  // Optimize refresh logic to be more efficient
+  // Optimize refresh logic to immediately load real content
   useEffect(() => {
     // Skip if we're already refreshing
     if (isRefreshing || !forceRefetch) return;
@@ -29,15 +29,15 @@ export const AutoRefreshHandler: React.FC<AutoRefreshHandlerProps> = ({
         v.channelName === "Sample Channel"
       );
     
-    // Only trigger if we have missing data
+    // Only trigger if we have missing or sample data
     if (videos.length === 0 || hasOnlySampleVideos) {
       console.log("No real videos detected, triggering immediate force refresh...");
-      // Use even shorter delay for faster content loading
+      // Almost immediate refresh for better user experience
       setTimeout(() => {
         forceRefetch().catch(error => {
           console.error("Failed to force refresh videos:", error);
         });
-      }, 50); // Reduced from 100ms to 50ms for faster load
+      }, 10); // Almost immediate load (just enough time for UI to render)
     } else if (lastSuccessfulFetch && 
         (new Date().getTime() - new Date(lastSuccessfulFetch).getTime() > 1800000) && // More than 30 minutes
         forceRefetch) {

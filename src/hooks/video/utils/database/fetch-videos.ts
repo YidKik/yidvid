@@ -9,48 +9,49 @@ export const fetchVideosFromDatabase = async (): Promise<any[]> => {
   try {
     console.log("Fetching videos from database with optimized performance...");
     
-    // Try a direct query with optimized fields for faster loading
-    const { data: directData, error: directError } = await supabase
-      .from("youtube_videos")
-      .select(`
-        id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, category, description,
-        youtube_channels(thumbnail_url)
-      `)
-      .is("deleted_at", null)
-      .order("uploaded_at", { ascending: false })
-      .limit(150);  // Increased to get more videos
-      
-    if (!directError && directData && directData.length > 0) {
-      console.log(`Successfully fetched ${directData.length} videos directly`);
-      return directData;
-    }
-    
-    if (directError) {
-      console.warn("Direct query failed, trying simplified approach:", directError);
-    }
-    
-    // Use a simpler query with fewer joins as backup
+    // Try a simplified query first without complex joins for anonymous access
     const { data: simpleData, error: simpleError } = await supabase
       .from("youtube_videos")
       .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, category, description")
       .is("deleted_at", null)
       .order("uploaded_at", { ascending: false })
-      .limit(100);
+      .limit(150);
       
     if (!simpleError && simpleData && simpleData.length > 0) {
       console.log(`Successfully fetched ${simpleData.length} videos with simplified query`);
       return simpleData;
     }
     
-    // Try basic query without filters as last resort
-    const { data: basicData, error: basicError } = await supabase
-      .from("youtube_videos")
-      .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, category, description")
-      .limit(50);
+    if (simpleError) {
+      console.warn("Simple query failed:", simpleError);
       
-    if (!basicError && basicData && basicData.length > 0) {
-      console.log(`Got ${basicData.length} videos with basic query`);
-      return basicData;
+      // Try even simpler query without filters as second attempt
+      const { data: basicData, error: basicError } = await supabase
+        .from("youtube_videos")
+        .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at")
+        .limit(100);
+        
+      if (!basicError && basicData && basicData.length > 0) {
+        console.log(`Got ${basicData.length} videos with basic query`);
+        return basicData;
+      }
+      
+      if (basicError) {
+        console.error("Basic query also failed:", basicError);
+        
+        // Try absolute minimal query as last resort
+        const { data: minimalData, error: minimalError } = await supabase
+          .from("youtube_videos")
+          .select("*")
+          .limit(50);
+          
+        if (!minimalError && minimalData && minimalData.length > 0) {
+          console.log(`Retrieved ${minimalData.length} videos with minimal query`);
+          return minimalData;
+        }
+        
+        console.error("All query methods failed:", minimalError);
+      }
     }
     
     console.log("No videos found in database with any query method");
@@ -69,16 +70,26 @@ export const fetchUpdatedVideosAfterSync = async (): Promise<any[]> => {
   try {
     console.log("Fetching updated videos after sync...");
     
-    // Optimized query with only essential fields
+    // Simplified query without RLS-triggering filters
     const { data, error } = await supabase
       .from("youtube_videos")
       .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, category, description")
-      .is("deleted_at", null)
       .order("uploaded_at", { ascending: false })
-      .limit(150);  // Increased limit to get more content
+      .limit(150);
 
     if (error) {
       console.error('Error fetching updated videos:', error);
+      
+      // Try an even simpler approach if that fails
+      const { data: basicData, error: basicError } = await supabase
+        .from("youtube_videos")
+        .select("*")
+        .limit(100);
+        
+      if (!basicError && basicData && basicData.length > 0) {
+        return basicData;
+      }
+      
       return [];
     }
     

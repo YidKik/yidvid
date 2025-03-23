@@ -1,6 +1,6 @@
 
 import { useIsMobile } from "@/hooks/useIsMobile";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { MobileVideoView } from "./MobileVideoView";
 import { DesktopVideoView } from "./DesktopVideoView";
 import { VideoData } from "@/hooks/video/types/video-fetcher";
@@ -42,22 +42,32 @@ export const VideoContent = ({
   // Delay the background refresh to prioritize showing UI first
   const [hasAttemptedRefresh, setHasAttemptedRefresh] = useState(false);
 
-  // Schedule background content loading with delay
-  useEffect(() => {
-    if (!isLoading && !isRefreshing && hasOnlySampleVideos(videos) && !hasAttemptedRefresh && forceRefetch) {
+  // Actively trigger a refresh after component mount if we have no real videos
+  const triggerContentRefresh = useCallback(() => {
+    if (forceRefetch && !isRefreshing) {
       setHasAttemptedRefresh(true);
+      console.log("Triggering content refresh due to sample-only videos");
       
-      // Delay the background refresh to improve perceived performance
+      // Immediate refresh for better user experience
+      forceRefetch().catch(err => {
+        console.error("Error in force refresh:", err);
+      });
+    }
+  }, [forceRefetch, isRefreshing]);
+
+  // If we have only sample videos, try to refresh real content ASAP
+  useEffect(() => {
+    if (!isLoading && !isRefreshing && hasOnlySampleVideos(videos) && !hasAttemptedRefresh) {
+      console.log("Detected sample-only videos, scheduling refresh");
+      
+      // Quick timeout to let UI render first
       const timer = setTimeout(() => {
-        console.log("Starting delayed background refresh for real content");
-        forceRefetch().catch(err => {
-          console.error("Error in delayed force fetching:", err);
-        });
-      }, 2500); // Wait longer to fetch real content
+        triggerContentRefresh();
+      }, 500); // Reduced time for faster content loading
       
       return () => clearTimeout(timer);
     }
-  }, [videos, isLoading, isRefreshing, hasOnlySampleVideos, hasAttemptedRefresh, forceRefetch]);
+  }, [videos, isLoading, isRefreshing, hasOnlySampleVideos, hasAttemptedRefresh, triggerContentRefresh]);
 
   // Always show some content immediately - prioritize UI rendering speed
   // Use limited sample videos if we absolutely have no real data
