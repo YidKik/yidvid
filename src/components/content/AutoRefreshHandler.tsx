@@ -2,6 +2,7 @@
 import { useEffect } from "react";
 import { VideoData } from "@/hooks/video/types/video-fetcher";
 import { toast } from "sonner";
+import { clearApplicationCache } from "@/lib/query-client";
 
 interface AutoRefreshHandlerProps {
   videos: VideoData[];
@@ -16,6 +17,36 @@ export const AutoRefreshHandler: React.FC<AutoRefreshHandlerProps> = ({
   lastSuccessfulFetch,
   forceRefetch
 }) => {
+  // Function to clear cache and force refresh
+  const clearCacheAndRefresh = async () => {
+    if (isRefreshing || !forceRefetch) return;
+    
+    try {
+      toast.loading("Clearing application cache...");
+      await clearApplicationCache();
+      
+      // Short delay before refresh to ensure cache is cleared
+      setTimeout(async () => {
+        toast.dismiss();
+        toast.loading("Refreshing content...");
+        
+        try {
+          await forceRefetch();
+          toast.dismiss();
+          toast.success("Content refreshed successfully");
+        } catch (error) {
+          console.error("Failed to refresh after cache clear:", error);
+          toast.dismiss();
+          toast.error("Failed to refresh content");
+        }
+      }, 300);
+    } catch (error) {
+      console.error("Failed to clear cache:", error);
+      toast.dismiss();
+      toast.error("Failed to clear cache");
+    }
+  };
+  
   // Optimize refresh logic to immediately load real content
   useEffect(() => {
     // Skip if we're already refreshing
@@ -50,6 +81,18 @@ export const AutoRefreshHandler: React.FC<AutoRefreshHandlerProps> = ({
       }, 100); // Reduced from 200ms to 100ms
     }
   }, [videos, lastSuccessfulFetch, forceRefetch, isRefreshing]);
+  
+  // Handle extremely stale content (>2 hours) with cache clearing
+  useEffect(() => {
+    if (lastSuccessfulFetch && 
+        new Date().getTime() - new Date(lastSuccessfulFetch).getTime() > 7200000 && // More than 2 hours
+        videos.length === 0 && 
+        !isRefreshing &&
+        forceRefetch) {
+      console.log("Content is extremely stale. Clearing cache...");
+      clearCacheAndRefresh();
+    }
+  }, [lastSuccessfulFetch, videos, isRefreshing, forceRefetch]);
   
   // This is a utility component with no UI
   return null;
