@@ -56,12 +56,16 @@ export const CategoryIcon = ({ icon, isCustomImage = false, iconBgColor }: Categ
   // Get the simple icon or use default if not found
   const getSimpleIcon = (iconEmoji: string) => {
     const iconSize = isMobile ? 14 : 20;
-    const IconComponent = simpleIcons[iconEmoji] || simpleIcons['default'];
+    const iconComponent = simpleIcons[iconEmoji] || simpleIcons['default'];
     
     // Clone the icon element with the new size
-    return React.cloneElement(IconComponent as React.ReactElement, { 
-      size: iconSize 
-    });
+    if (React.isValidElement(iconComponent)) {
+      return React.cloneElement(iconComponent, { 
+        size: iconSize 
+      });
+    }
+    
+    return simpleIcons['default'];
   };
 
   return (

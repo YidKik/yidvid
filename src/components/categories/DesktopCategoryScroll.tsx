@@ -22,47 +22,49 @@ export const DesktopCategoryScroll: React.FC<DesktopCategoryScrollProps> = ({
   }
 
   return (
-    <motion.div
-      className="flex gap-2 md:gap-4 cursor-grab active:cursor-grabbing"
-      drag="x"
-      dragConstraints={{
-        left: -(infiniteCategories.length * 300),
-        right: 0
-      }}
-      dragElastic={0.2}
-      dragTransition={{ bounceStiffness: 300, bounceDamping: 20 }}
-      initial={{ x: 0 }}
-      animate={{
-        x: [0, -(infiniteCategories.length * 100)]
-      }}
-      transition={{
-        x: {
-          repeat: Infinity,
-          repeatType: "loop",
-          duration: 120, // Slightly slower for better visibility
-          ease: "linear",
-          repeatDelay: 0
-        }
-      }}
-      style={{
-        width: `${(infiniteCategories.length * 100) / 3}%`,
-        minWidth: "900px" // Ensure minimum width for proper display
-      }}
-      whileTap={{ cursor: "grabbing" }}
-    >
-      {infiniteCategories.map((category, index) => (
-        <div
-          key={`${category.id}-${index}`}
-          className="w-[95px] md:w-[220px] flex-shrink-0 relative"
-        >
-          <CategoryCard
-            id={category.id}
-            icon={category.icon}
-            label={category.label}
-            isCustomImage={category.isCustom && !category.is_emoji}
-          />
-        </div>
-      ))}
-    </motion.div>
+    <div className="w-full h-full flex items-center overflow-hidden">
+      <motion.div
+        className="flex gap-2 md:gap-4 cursor-grab active:cursor-grabbing"
+        drag="x"
+        dragConstraints={{
+          left: -(infiniteCategories.length * 120),
+          right: 0
+        }}
+        dragElastic={0.2}
+        dragTransition={{ bounceStiffness: 300, bounceDamping: 20 }}
+        initial={{ x: 0 }}
+        animate={{
+          x: [0, -(infiniteCategories.length * 100)]
+        }}
+        transition={{
+          x: {
+            repeat: Infinity,
+            repeatType: "loop",
+            duration: 120,
+            ease: "linear",
+            repeatDelay: 0
+          }
+        }}
+        style={{
+          width: `${(infiniteCategories.length * 100) / 3}%`,
+          minWidth: "900px"
+        }}
+        whileTap={{ cursor: "grabbing" }}
+      >
+        {infiniteCategories.map((category, index) => (
+          <div
+            key={`${category.id}-${index}`}
+            className="w-[95px] md:w-[220px] flex-shrink-0 relative"
+          >
+            <CategoryCard
+              id={category.id}
+              icon={category.icon}
+              label={category.label}
+              isCustomImage={category.isCustom && !category.is_emoji}
+            />
+          </div>
+        ))}
+      </motion.div>
+    </div>
   );
 };

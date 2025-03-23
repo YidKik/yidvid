@@ -35,7 +35,7 @@ export const MobileCategoryScroll: React.FC<MobileCategoryScrollProps> = ({
     
     let animationFrameId: number;
     let isPaused = false;
-    const scrollSpeed = 0.8; // Increased for more visible movement
+    const scrollSpeed = 0.8;
     const container = scrollContainerRef.current;
     
     const scroll = () => {
@@ -67,7 +67,7 @@ export const MobileCategoryScroll: React.FC<MobileCategoryScrollProps> = ({
     const resumeAnimation = () => {
       setTimeout(() => {
         isPaused = false;
-      }, 2000); // Small delay before resuming
+      }, 2000);
     };
     
     container.addEventListener('touchstart', pauseAnimation, { passive: true });
@@ -83,31 +83,33 @@ export const MobileCategoryScroll: React.FC<MobileCategoryScrollProps> = ({
   }, [isInitialized, infiniteCategories]);
 
   return (
-    <div 
-      ref={scrollContainerRef}
-      className="flex gap-2 overflow-x-auto touch-pan-x scrollbar-hide no-scrollbar"
-      style={{ 
-        WebkitOverflowScrolling: 'touch',
-        scrollBehavior: 'smooth',
-        scrollbarWidth: 'none', // Firefox
-        msOverflowStyle: 'none', // IE and Edge
-        minWidth: "100%"
-      }}
-    >
-      {/* Triple the categories to ensure continuous scroll */}
-      {[...infiniteCategories, ...infiniteCategories, ...infiniteCategories].map((category, index) => (
-        <div
-          key={`${category.id}-${index}`}
-          className="flex-shrink-0 w-[100px] relative"
-        >
-          <CategoryCard
-            id={category.id}
-            icon={category.icon}
-            label={category.label}
-            isCustomImage={category.isCustom && !category.is_emoji}
-          />
-        </div>
-      ))}
+    <div className="h-full flex items-center overflow-hidden">
+      <div 
+        ref={scrollContainerRef}
+        className="flex gap-2 overflow-x-auto touch-pan-x scrollbar-hide no-scrollbar"
+        style={{ 
+          WebkitOverflowScrolling: 'touch',
+          scrollBehavior: 'smooth',
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none',
+          minWidth: "100%"
+        }}
+      >
+        {/* Triple the categories to ensure continuous scroll */}
+        {[...infiniteCategories, ...infiniteCategories, ...infiniteCategories].map((category, index) => (
+          <div
+            key={`${category.id}-${index}`}
+            className="flex-shrink-0 w-[100px] relative"
+          >
+            <CategoryCard
+              id={category.id}
+              icon={category.icon}
+              label={category.label}
+              isCustomImage={category.isCustom && !category.is_emoji}
+            />
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

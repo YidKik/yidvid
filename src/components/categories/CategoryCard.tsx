@@ -47,6 +47,7 @@ export const CategoryCard = ({ icon, label, id, isCustomImage = false }: Categor
       style={{
         background: categoryColors.bg,
         border: `1.5px solid ${categoryColors.border}`,
+        boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)"
       }}
       onClick={handleClick}
     >
