@@ -8,7 +8,6 @@ import {
 } from "./utils/database";
 import { tryFetchNewVideos } from "./utils/youtube-fetch";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
 import { clearApplicationCache } from "@/lib/query-client";
 
 /**
@@ -118,10 +117,7 @@ export const useVideoFetcher = (): VideoFetcherResult => {
             setLastSuccessfulFetch(new Date());
             console.log(`Successfully fetched ${videosData.length} videos from database`);
             
-            // Toast notification only if we previously had no videos (first successful load)
-            if (fetchAttempts > 0) {
-              toast.success("Successfully loaded videos");
-            }
+            // Removed the success toast notification
           } else {
             console.warn("No videos found in database, will try to fetch new ones with high priority");
           }

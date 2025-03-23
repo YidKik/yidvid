@@ -43,7 +43,7 @@ export const fetchNewVideosFromEdgeFunction = async (
         
         if (response.newVideos > 0) {
           console.log(`Found ${response.newVideos} new videos`);
-          // Don't show toast notification
+          // Removed toast notification
         } else {
           console.log("No new videos found");
         }
