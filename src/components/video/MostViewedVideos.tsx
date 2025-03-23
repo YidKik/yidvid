@@ -111,7 +111,7 @@ export const MostViewedVideos = ({
               <TrendingUp className="h-3 w-3 md:h-4 md:w-4 text-white" />
             </div>
             <h2 className="text-sm md:text-xl font-bold text-[#333333] flex items-center">
-              Most Watched
+              Popular content
               <span className="hidden md:inline-flex items-center ml-2 text-sm font-normal text-gray-500">
                 <Eye className="h-3.5 w-3.5 mr-1 text-gray-400" />
                 Popular content
