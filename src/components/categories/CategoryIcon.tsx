@@ -78,9 +78,11 @@ export const CategoryIcon = ({ icon, isCustomImage = false, iconBgColor }: Categ
             duration: 0.3
           }
         }}
-        className={`text-base md:text-2xl ${isMobile ? 'p-1' : 'p-1 md:p-2'} rounded-lg`}
+        className={`text-base md:text-2xl ${isMobile ? 'p-1' : 'p-1 md:p-2'} rounded-lg flex items-center justify-center`}
         style={{
           background: iconBgColor,
+          minWidth: isMobile ? '24px' : '36px',
+          minHeight: isMobile ? '24px' : '36px',
         }}
       >
         {isCustomImage ? (

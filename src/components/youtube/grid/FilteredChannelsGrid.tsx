@@ -25,6 +25,7 @@ export const FilteredChannelsGrid = ({ channels, isMainPage }: FilteredChannelsG
   };
 
   useEffect(() => {
+    // Only log once per render
     if (hasRealChannels(channels)) {
       console.log(`Displaying ${channels.length} REAL channels`);
     } else {
@@ -37,7 +38,7 @@ export const FilteredChannelsGrid = ({ channels, isMainPage }: FilteredChannelsG
       : channels || [];
       
     setDisplayChannels(filtered);
-  }, [channels, hiddenChannels]);
+  }, [channels, hiddenChannels]); // Make sure to include dependencies properly
 
   if (displayChannels.length === 0) {
     return <EmptyChannelsState />;

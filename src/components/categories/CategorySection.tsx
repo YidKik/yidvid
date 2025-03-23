@@ -41,13 +41,14 @@ export const CategorySection = () => {
     processExistingVideos();
   }, [refetchVideos]);
 
-  if (categoriesLoading && !isMainPage) {
-    return <CategorySkeleton />;
-  }
-
-  // On main page, don't show loading skeleton
+  // Early return without content if still loading on main page
   if (categoriesLoading && isMainPage) {
     return null;
+  }
+
+  // Show skeleton on non-main pages when loading
+  if (categoriesLoading && !isMainPage) {
+    return <CategorySkeleton />;
   }
 
   return (

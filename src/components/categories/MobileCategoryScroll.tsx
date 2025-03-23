@@ -20,7 +20,7 @@ export const MobileCategoryScroll: React.FC<MobileCategoryScrollProps> = ({
 
   // Auto-scroll animation for mobile - continuous right-to-left scrolling
   useEffect(() => {
-    if (!scrollContainerRef.current) return;
+    if (!scrollContainerRef.current || infiniteCategories.length === 0) return;
     
     // Set flag to ensure animation only starts once
     if (!isInitialized) {
@@ -55,12 +55,10 @@ export const MobileCategoryScroll: React.FC<MobileCategoryScrollProps> = ({
     // Pause animation on touch
     const pauseAnimation = () => {
       isPaused = true;
-      console.log("Touch detected, pausing auto-scroll");
     };
     
     // Resume animation after touch ends with a small delay
     const resumeAnimation = () => {
-      console.log("Touch ended, resuming auto-scroll after delay");
       setTimeout(() => {
         isPaused = false;
       }, 2000); // Small delay before resuming
@@ -76,7 +74,12 @@ export const MobileCategoryScroll: React.FC<MobileCategoryScrollProps> = ({
         container.removeEventListener('touchend', resumeAnimation);
       }
     };
-  }, [isInitialized]);
+  }, [isInitialized, infiniteCategories]);
+
+  // Ensure we have categories to display
+  if (!infiniteCategories || infiniteCategories.length === 0) {
+    return null;
+  }
 
   return (
     <div 

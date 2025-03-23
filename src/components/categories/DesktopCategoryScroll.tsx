@@ -26,8 +26,9 @@ export const DesktopCategoryScroll: React.FC<DesktopCategoryScrollProps> = ({
       }}
       dragElastic={0.2}
       dragTransition={{ bounceStiffness: 300, bounceDamping: 20 }}
+      initial={{ x: 0 }}
       animate={{
-        x: ['0%', '-50%']
+        x: [`0%`, `-${infiniteCategories.length * 50}px`]
       }}
       transition={{
         x: {
