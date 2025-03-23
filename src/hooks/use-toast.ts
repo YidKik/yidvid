@@ -1,4 +1,3 @@
-
 import * as React from "react"
 import { toast as sonnerToast } from "sonner"
 
@@ -97,6 +96,6 @@ toast.loading = (message: string, opts?: { id?: string }) => sonnerToast.loading
 toast.dismiss = (id?: string) => sonnerToast.dismiss(id)
 // Fix the custom method type
 toast.custom = (content: React.ReactNode, opts?: { id?: string }) => 
-  sonnerToast.custom(() => <>{content}</>, opts)
+  sonnerToast.custom(() => React.createElement(React.Fragment, null, content), opts)
 
 export { useToast, toast }
