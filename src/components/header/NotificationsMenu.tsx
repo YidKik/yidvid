@@ -92,10 +92,10 @@ export const NotificationsMenu = ({ session, onMarkAsRead }: NotificationsMenuPr
       if (error) throw error;
 
       await refetch();
-      toast.success("All notifications cleared", { id: "notifications-cleared" });
+      console.log("All notifications cleared");
     } catch (error) {
       console.error("Error clearing notifications:", error);
-      toast.error("Failed to clear notifications", { id: "notifications-clear-error" });
+      console.error("Failed to clear notifications");
     }
   };
 

@@ -3,6 +3,8 @@
 export const useToast = () => {
   return {
     toasts: [],
+    toast: () => {},
+    dismiss: () => {},
     addToast: () => {},
     removeToast: () => {},
   };
@@ -16,4 +18,5 @@ export const toast = {
   info: () => {},
   loading: () => {},
   dismiss: () => {},
+  custom: () => {},
 };

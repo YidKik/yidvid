@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { User, Shield, Computer, Smartphone, Clock, UserX, Edit2, Check, X } from "lucide-react";
 import {
@@ -29,7 +28,7 @@ export const AdminUsersTable = ({
   toggleAdminStatus,
   refreshUsers
 }: AdminUsersTableProps) => {
-  const { toast } = useToast();
+  const toast = useToast();
   const [editingUserId, setEditingUserId] = useState<string | null>(null);
   const [usernameInput, setUsernameInput] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -46,10 +45,7 @@ export const AdminUsersTable = ({
   
   const handleEditSave = async (userId: string) => {
     if (!usernameInput.trim()) {
-      toast({
-        title: "Username cannot be empty",
-        variant: "destructive",
-      });
+      console.error("Username cannot be empty");
       return;
     }
     
@@ -59,29 +55,17 @@ export const AdminUsersTable = ({
       const result = await updateUsername(userId, usernameInput);
       
       if (result.success) {
-        toast({
-          title: "Username updated successfully",
-          description: `The user's username has been updated to "${usernameInput}"`,
-        });
+        console.log(`Username updated successfully to "${usernameInput}"`);
         setEditingUserId(null);
         // Refresh the user list to show updated data
         if (refreshUsers) {
           refreshUsers();
         }
       } else {
-        toast({
-          title: "Failed to update username",
-          description: result.error,
-          variant: "destructive",
-        });
+        console.error("Failed to update username:", result.error);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error in handleEditSave:", error);
-      toast({
-        title: "An unexpected error occurred",
-        description: "Please try again later",
-        variant: "destructive",
-      });
     } finally {
       setIsSubmitting(false);
     }

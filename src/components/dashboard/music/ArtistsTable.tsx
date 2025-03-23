@@ -1,7 +1,6 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
 import {
   Table,
   TableBody,
@@ -24,8 +23,6 @@ interface ArtistsTableProps {
 }
 
 export const ArtistsTable = ({ artists, onArtistRemoved }: ArtistsTableProps) => {
-  const { toast } = useToast();
-
   const handleRemoveArtist = async (artistId: string) => {
     try {
       // First remove all tracks
@@ -44,17 +41,10 @@ export const ArtistsTable = ({ artists, onArtistRemoved }: ArtistsTableProps) =>
 
       if (artistError) throw artistError;
 
-      toast({
-        title: "Artist removed",
-        description: "The artist and their tracks have been removed.",
-      });
+      console.log("Artist and tracks removed successfully");
       onArtistRemoved();
     } catch (error: any) {
-      toast({
-        title: "Error removing artist",
-        description: error.message,
-        variant: "destructive",
-      });
+      console.error("Error removing artist:", error.message);
     }
   };
 

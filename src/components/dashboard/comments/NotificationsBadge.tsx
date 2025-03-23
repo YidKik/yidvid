@@ -2,7 +2,6 @@
 import { Bell } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
 import { useComments } from "./CommentsContext";
 
 export const NotificationsBadge = () => {
@@ -18,10 +17,9 @@ export const NotificationsBadge = () => {
 
       if (error) throw error;
       await refetchNotifications();
-      toast.success("Notifications marked as read");
+      console.log("Notifications marked as read");
     } catch (error: any) {
       console.error("Error marking notifications as read:", error);
-      toast.error("Error marking notifications as read: " + error.message);
     }
   };
 
