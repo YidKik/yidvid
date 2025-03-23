@@ -83,6 +83,9 @@ export const CategoryIcon = ({ icon, isCustomImage = false, iconBgColor }: Categ
           background: iconBgColor,
           minWidth: isMobile ? '24px' : '36px',
           minHeight: isMobile ? '24px' : '36px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
         }}
       >
         {isCustomImage ? (

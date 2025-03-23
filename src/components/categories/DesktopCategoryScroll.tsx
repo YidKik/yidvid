@@ -16,6 +16,11 @@ interface DesktopCategoryScrollProps {
 export const DesktopCategoryScroll: React.FC<DesktopCategoryScrollProps> = ({ 
   infiniteCategories 
 }) => {
+  // Guard against empty categories
+  if (!infiniteCategories || infiniteCategories.length === 0) {
+    return null;
+  }
+
   return (
     <motion.div
       className="flex gap-2 md:gap-4 cursor-grab active:cursor-grabbing"
@@ -28,19 +33,20 @@ export const DesktopCategoryScroll: React.FC<DesktopCategoryScrollProps> = ({
       dragTransition={{ bounceStiffness: 300, bounceDamping: 20 }}
       initial={{ x: 0 }}
       animate={{
-        x: [`0%`, `-${infiniteCategories.length * 50}px`]
+        x: [0, -(infiniteCategories.length * 100)]
       }}
       transition={{
         x: {
           repeat: Infinity,
           repeatType: "loop",
-          duration: 180,
+          duration: 120, // Slightly slower for better visibility
           ease: "linear",
           repeatDelay: 0
         }
       }}
       style={{
-        width: `${(infiniteCategories.length * 100) / 3}%`
+        width: `${(infiniteCategories.length * 100) / 3}%`,
+        minWidth: "900px" // Ensure minimum width for proper display
       }}
       whileTap={{ cursor: "grabbing" }}
     >

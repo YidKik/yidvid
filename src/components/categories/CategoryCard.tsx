@@ -35,6 +35,7 @@ export const CategoryCard = ({ icon, label, id, isCustomImage = false }: Categor
       whileHover={{ 
         boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1)",
         borderColor: "#d6293d",
+        scale: 1.02,
         transition: {
           type: "spring",
           stiffness: 400,
@@ -42,14 +43,14 @@ export const CategoryCard = ({ icon, label, id, isCustomImage = false }: Categor
         }
       }}
       whileTap={{ scale: 0.98 }}
-      className={`rounded-xl p-1 md:p-3 cursor-pointer transition-all duration-300 ${isMobile ? 'h-[55px]' : 'h-[90px]'} relative backdrop-blur-sm`}
+      className={`rounded-xl p-1 md:p-3 cursor-pointer transition-all duration-300 ${isMobile ? 'h-[55px]' : 'h-[90px]'} relative backdrop-blur-sm flex items-center`}
       style={{
         background: categoryColors.bg,
         border: `1.5px solid ${categoryColors.border}`,
       }}
       onClick={handleClick}
     >
-      <div className="flex items-center h-full px-1">
+      <div className="flex items-center h-full w-full px-1">
         <div className="flex items-center gap-1 md:gap-2 flex-1">
           <CategoryIcon 
             icon={icon} 

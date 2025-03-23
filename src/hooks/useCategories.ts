@@ -51,16 +51,22 @@ export const useCategories = (): UseCategories => {
   const { data: customCategories, isLoading: categoriesLoading } = useQuery({
     queryKey: ["custom-categories"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("custom_categories")
-        .select("*")
-        .order("name", { ascending: true });
+      try {
+        const { data, error } = await supabase
+          .from("custom_categories")
+          .select("*")
+          .order("name", { ascending: true });
 
-      if (error) throw error;
-      return data || [];
+        if (error) throw error;
+        return data || [];
+      } catch (error) {
+        console.error('Error fetching custom categories:', error);
+        return [];
+      }
     },
   });
 
+  // Always ensure we have the default categories, even if custom ones fail to load
   const allCategories: Category[] = [
     ...defaultCategories,
     ...(customCategories?.map(cat => ({
@@ -78,7 +84,7 @@ export const useCategories = (): UseCategories => {
   return {
     allCategories,
     infiniteCategories,
-    categoriesLoading,
+    categoriesLoading: categoriesLoading && allCategories.length <= defaultCategories.length,
     refetchVideos
   };
 };

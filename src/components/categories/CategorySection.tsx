@@ -41,14 +41,28 @@ export const CategorySection = () => {
     processExistingVideos();
   }, [refetchVideos]);
 
-  // Early return without content if still loading on main page
-  if (categoriesLoading && isMainPage) {
-    return null;
+  // Handle loading states
+  if (categoriesLoading) {
+    if (isMainPage) {
+      // On main page, show a basic container while loading to maintain layout
+      return (
+        <div className="relative w-full py-1 md:py-2 flex justify-center">
+          <div className="w-full max-w-screen-sm md:max-w-[1400px] mx-auto px-2 md:px-6">
+            <div className="overflow-hidden relative h-[55px] md:h-[150px]">
+              <CategorySkeleton />
+            </div>
+          </div>
+        </div>
+      );
+    } else {
+      return <CategorySkeleton />;
+    }
   }
 
-  // Show skeleton on non-main pages when loading
-  if (categoriesLoading && !isMainPage) {
-    return <CategorySkeleton />;
+  // Guard against empty categories
+  if (!infiniteCategories || infiniteCategories.length === 0) {
+    console.warn("No categories available to display");
+    return null;
   }
 
   return (

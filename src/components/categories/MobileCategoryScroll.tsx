@@ -18,6 +18,12 @@ export const MobileCategoryScroll: React.FC<MobileCategoryScrollProps> = ({
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [isInitialized, setIsInitialized] = useState(false);
 
+  // Guard against empty categories
+  if (!infiniteCategories || infiniteCategories.length === 0) {
+    console.warn("No categories available for mobile scroll");
+    return null;
+  }
+
   // Auto-scroll animation for mobile - continuous right-to-left scrolling
   useEffect(() => {
     if (!scrollContainerRef.current || infiniteCategories.length === 0) return;
@@ -41,9 +47,9 @@ export const MobileCategoryScroll: React.FC<MobileCategoryScrollProps> = ({
       container.scrollLeft += scrollSpeed;
       
       // Reset when reaching the end to create infinite scroll effect
-      if (container.scrollLeft >= (container.scrollWidth - container.clientWidth)) {
-        // Jump back to start smoothly
-        container.scrollLeft = 0;
+      if (container.scrollLeft >= (container.scrollWidth - container.clientWidth) * 0.95) {
+        // Jump back to 1/3 position for smoother looping
+        container.scrollLeft = container.scrollWidth / 3;
       }
       
       animationFrameId = requestAnimationFrame(scroll);
@@ -76,11 +82,6 @@ export const MobileCategoryScroll: React.FC<MobileCategoryScrollProps> = ({
     };
   }, [isInitialized, infiniteCategories]);
 
-  // Ensure we have categories to display
-  if (!infiniteCategories || infiniteCategories.length === 0) {
-    return null;
-  }
-
   return (
     <div 
       ref={scrollContainerRef}
@@ -89,11 +90,12 @@ export const MobileCategoryScroll: React.FC<MobileCategoryScrollProps> = ({
         WebkitOverflowScrolling: 'touch',
         scrollBehavior: 'smooth',
         scrollbarWidth: 'none', // Firefox
-        msOverflowStyle: 'none' // IE and Edge
+        msOverflowStyle: 'none', // IE and Edge
+        minWidth: "100%"
       }}
     >
-      {/* Double the categories to ensure continuous scroll */}
-      {[...infiniteCategories, ...infiniteCategories].map((category, index) => (
+      {/* Triple the categories to ensure continuous scroll */}
+      {[...infiniteCategories, ...infiniteCategories, ...infiniteCategories].map((category, index) => (
         <div
           key={`${category.id}-${index}`}
           className="flex-shrink-0 w-[100px] relative"
