@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { VideoCard } from "../VideoCard";
 import { ChevronLeft, ChevronRight, Sparkle } from "lucide-react";
@@ -23,7 +24,7 @@ export const MostViewedVideos = ({
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const isMobile = useIsMobile();
-  const videosPerPage = isMobile ? 2 : 4;
+  const videosPerPage = 4; // Always show 4 videos at a time
   const AUTO_SLIDE_INTERVAL = 8000;
   
   const ensureVideosToDisplay = () => {
@@ -95,7 +96,13 @@ export const MostViewedVideos = ({
     return null;
   }
 
+  // Always display 4 videos, handle mobile case differently with CSS
   const displayVideos = sortedVideos.slice(currentIndex, currentIndex + videosPerPage);
+  
+  // If we don't have enough videos to display, pad with empty slots
+  while (displayVideos.length < videosPerPage) {
+    displayVideos.push(sortedVideos[displayVideos.length % sortedVideos.length]);
+  }
 
   return (
     <div className="w-full max-w-[1200px] mx-auto mb-2 md:mb-8">
@@ -118,7 +125,7 @@ export const MostViewedVideos = ({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0.5, y: -10 }}
                 transition={{ duration: 0.3 }}
-                className={`${isMobile ? "grid grid-cols-2 gap-3" : "grid grid-cols-4 gap-4"}`}
+                className={`grid ${isMobile ? "grid-cols-2 gap-3" : "grid-cols-4 gap-4"}`}
               >
                 {displayVideos.map(video => (
                   <motion.div 
@@ -135,27 +142,24 @@ export const MostViewedVideos = ({
               </motion.div>
             </AnimatePresence>
 
-            {currentIndex > 0 && (
-              <button 
-                onClick={() => handleManualNavigation(handlePrevious)}
-                disabled={isTransitioning}
-                className={`absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/3 md:-translate-x-1/4 z-10 p-1.5 md:p-2.5 bg-white/90 hover:bg-white rounded-full shadow-md hover:shadow-lg transition-all duration-200 ${isTransitioning ? 'opacity-50 cursor-not-allowed' : 'opacity-90 hover:opacity-100'}`}
-                aria-label="Previous videos"
-              >
-                <ChevronLeft className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-600" />
-              </button>
-            )}
+            {/* Always show navigation arrows on both sides */}
+            <button 
+              onClick={() => handleManualNavigation(handlePrevious)}
+              disabled={isTransitioning}
+              className={`absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/3 md:-translate-x-1/4 z-10 p-1.5 md:p-2.5 bg-white/90 hover:bg-white rounded-full shadow-md hover:shadow-lg transition-all duration-200 ${isTransitioning ? 'opacity-50 cursor-not-allowed' : 'opacity-90 hover:opacity-100'}`}
+              aria-label="Previous videos"
+            >
+              <ChevronLeft className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-600" />
+            </button>
 
-            {currentIndex + videosPerPage < sortedVideos.length && (
-              <button 
-                onClick={() => handleManualNavigation(handleNext)}
-                disabled={isTransitioning}
-                className={`absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/3 md:translate-x-1/4 z-10 p-1.5 md:p-2.5 bg-white/90 hover:bg-white rounded-full shadow-md hover:shadow-lg transition-all duration-200 ${isTransitioning ? 'opacity-50 cursor-not-allowed' : 'opacity-90 hover:opacity-100'}`}
-                aria-label="Next videos"
-              >
-                <ChevronRight className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-600" />
-              </button>
-            )}
+            <button 
+              onClick={() => handleManualNavigation(handleNext)}
+              disabled={isTransitioning}
+              className={`absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/3 md:translate-x-1/4 z-10 p-1.5 md:p-2.5 bg-white/90 hover:bg-white rounded-full shadow-md hover:shadow-lg transition-all duration-200 ${isTransitioning ? 'opacity-50 cursor-not-allowed' : 'opacity-90 hover:opacity-100'}`}
+              aria-label="Next videos"
+            >
+              <ChevronRight className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-600" />
+            </button>
           </div>
         </div>
       </div>
