@@ -32,20 +32,36 @@ export const useSignIn = ({ onSuccess }: UseSignInProps = {}) => {
   
   // Sync error state with authentication hook
   useEffect(() => {
-    setLoginError(authError);
+    if (authError) {
+      setLoginError(authError);
+    }
   }, [authError]);
 
   /**
    * Wrapper function for signIn that passes through the onSuccess callback
    */
   const handleSignIn = async (credentials: AuthCredentials) => {
-    return await signIn(credentials, { onSuccess });
+    try {
+      setIsLoading(true);
+      setLoginError("");
+      const result = await signIn(credentials, { onSuccess });
+      return result;
+    } catch (error: any) {
+      const errorMessage = error?.message || "Sign in failed. Please try again.";
+      setLoginError(errorMessage);
+      return false;
+    } finally {
+      // We don't need to setIsLoading(false) here as it should be synced from authLoading
+    }
   };
 
   return {
     signIn: handleSignIn,
     isLoading,
     loginError,
-    setLoginError: setAuthError
+    setLoginError: (error: string) => {
+      setLoginError(error);
+      setAuthError(error);
+    }
   };
 };

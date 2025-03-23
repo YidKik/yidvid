@@ -4,6 +4,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useSignIn } from "@/hooks/useSignIn";
 import { SignInFormContent } from "./SignInFormContent";
 import { SocialLoginButtons } from "./SocialLoginButtons";
+import { toast } from "sonner";
 
 interface SignInFormProps {
   onOpenChange: (open: boolean) => void;
@@ -45,7 +46,24 @@ export const SignInForm = ({
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
-    await signIn({ email, password });
+    
+    // Clear any previous errors
+    setLoginError("");
+    
+    if (!email.trim() || !password.trim()) {
+      setLoginError("Please enter both email and password");
+      return;
+    }
+    
+    try {
+      const success = await signIn({ email, password });
+      if (success) {
+        toast.success("Signed in successfully!");
+      }
+    } catch (error) {
+      console.error("Sign in error:", error);
+      setLoginError("Failed to sign in. Please try again.");
+    }
   };
 
   // Render the sign in form

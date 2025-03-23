@@ -73,6 +73,7 @@ export const useAuthSignIn = () => {
           options.onError(signInError.message);
         }
         
+        setIsLoading(false);
         return false;
       }
 
@@ -83,26 +84,29 @@ export const useAuthSignIn = () => {
         queryClient.removeQueries({ queryKey: ["profile"] });
         queryClient.removeQueries({ queryKey: ["user-profile"] });
         
-        // Prefetch user data for improved performance
-        await prefetchUserData(signInData.user.id);
-        
-        toast.success("Signed in successfully!");
-        
-        // Execute success callback if provided
-        if (options?.onSuccess) {
-          options.onSuccess();
+        try {
+          // Prefetch user data for improved performance
+          await prefetchUserData(signInData.user.id);
+          
+          // Execute success callback if provided
+          if (options?.onSuccess) {
+            options.onSuccess();
+          }
+          
+          // Navigate based on redirectTo option or default to home
+          if (options?.redirectTo) {
+            navigate(options.redirectTo);
+          }
+        } catch (prefetchError) {
+          // Prefetch failure should not prevent successful login
+          console.error("Error prefetching user data:", prefetchError);
         }
         
-        // Navigate based on redirectTo option or default to home
-        if (options?.redirectTo) {
-          navigate(options.redirectTo);
-        } else {
-          navigate("/");
-        }
-        
+        setIsLoading(false);
         return true;
       }
       
+      setIsLoading(false);
       return false;
     } catch (error: any) {
       console.error("Sign in error:", error);
@@ -113,9 +117,8 @@ export const useAuthSignIn = () => {
         options.onError(errorMessage);
       }
       
-      return false;
-    } finally {
       setIsLoading(false);
+      return false;
     }
   }, [navigate, prefetchUserData, queryClient, setAuthError, setIsLoading]);
 

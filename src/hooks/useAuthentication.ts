@@ -29,7 +29,15 @@ export const useAuthentication = () => {
     isPasswordResetSent,
     
     // Auth methods
-    signIn,
+    signIn: async (credentials, options) => {
+      try {
+        baseAuth.clearErrors();
+        return await signIn(credentials, options);
+      } catch (error) {
+        console.error("Authentication error in useAuthentication:", error);
+        throw error; // Re-throw to allow for proper error handling upstream
+      }
+    },
     signUp,
     signOut,
     resetPassword,
