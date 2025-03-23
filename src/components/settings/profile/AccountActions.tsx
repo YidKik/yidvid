@@ -28,8 +28,7 @@ export const AccountActions = ({ isLoggingOut, handleLogout }: AccountActionsPro
 
   const handleFastLogout = async () => {
     // This triggers an immediate logout flow
-    // No need to show feedback toast here as the main logout will do that
-    // and navigating away happens automatically in the logout flow
+    // No toast notification, as per user request
     handleLogout();
   };
 

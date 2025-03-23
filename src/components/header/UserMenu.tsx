@@ -4,7 +4,6 @@ import { Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
 
 interface UserMenuProps {
   onLogout: () => Promise<void>;
@@ -23,10 +22,7 @@ export const UserMenu = ({ onLogout }: UserMenuProps) => {
     // Cancel any in-flight queries immediately 
     queryClient.cancelQueries();
     
-    // Show immediate feedback
-    toast.loading("Signing out...");
-    
-    // Trigger logout
+    // Trigger logout without toast
     onLogout();
   };
 

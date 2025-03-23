@@ -33,10 +33,7 @@ export const ProfileErrorState = ({ userEmail, isLoggingOut, handleLogout }: Pro
     // Cancel any in-flight queries immediately
     queryClient.cancelQueries();
     
-    // Show immediate feedback to user
-    toast.loading("Signing out...");
-    
-    // Start the logout process
+    // Start the logout process without toast
     handleLogout();
   };
 

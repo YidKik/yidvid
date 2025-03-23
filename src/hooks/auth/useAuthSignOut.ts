@@ -1,7 +1,6 @@
 
 import { useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
 import { useAuthBase } from "./useAuthBase";
 
 /**
@@ -33,10 +32,9 @@ export const useAuthSignOut = () => {
       const hasVideos = Array.isArray(videosData) && videosData.length > 0;
       const hasChannels = Array.isArray(channelsData) && channelsData.length > 0;
       
-      // IMMEDIATE ACTION: Navigate to welcome page and show success message
+      // IMMEDIATE ACTION: Navigate to welcome page
       // This provides instant feedback that logout is happening
       navigate("/");
-      toast.success("Logged out successfully");
       
       // Clear all user-specific data from the query cache IMMEDIATELY
       queryClient.removeQueries({ queryKey: ["profile"] });
