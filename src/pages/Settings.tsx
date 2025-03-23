@@ -1,7 +1,5 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
 import { BackButton } from "@/components/navigation/BackButton";
 import { useColors } from "@/contexts/ColorContext";
 import { Settings as SettingsIcon } from "lucide-react";
@@ -16,6 +14,7 @@ import { AppearanceSection } from "@/components/settings/sections/AppearanceSect
 import { AdminSection } from "@/components/settings/sections/AdminSection";
 import { SupportSection } from "@/components/settings/sections/SupportSection";
 import { ProfileSection } from "@/components/settings/ProfileSection";
+import { ProfileSectionSkeleton } from "@/components/settings/profile/ProfileSectionSkeleton";
 
 const Settings = () => {
   const navigate = useNavigate();
@@ -28,31 +27,54 @@ const Settings = () => {
   const [buttonColor, setButtonColor] = useState(colors.buttonColor);
   const [logoColor, setLogoColor] = useState(colors.logoColor);
   const [autoplay, setAutoplay] = useState(true);
+  const [loadingProfile, setLoadingProfile] = useState(true);
+  const [otherSectionsLoaded, setOtherSectionsLoaded] = useState(false);
 
-  // Check authentication first and prefetch profile data
+  // Immediately prefetch profile data - top priority
   useEffect(() => {
-    if (!isAuthenticated && session === null) {
-      navigate("/auth");
-      toast.error("Please sign in to access settings");
-    } else if (userId) {
-      // Prefetch profile data when component mounts to ensure immediate loading
+    if (userId) {
+      setLoadingProfile(true);
+      
+      // Force a direct fetch of profile data
       queryClient.prefetchQuery({
         queryKey: ["user-profile-settings", userId],
         queryFn: async () => {
-          const { data, error } = await supabase
-            .from("profiles")
-            .select("*")
-            .eq("id", userId)
-            .maybeSingle();
-          
-          if (error) throw error;
-          return data;
+          try {
+            const { data, error } = await supabase
+              .from("profiles")
+              .select("id, username, display_name, avatar_url, email, created_at, updated_at")
+              .eq("id", userId)
+              .maybeSingle();
+            
+            if (error) throw error;
+            return data;
+          } catch (e) {
+            console.error("Profile prefetch error:", e);
+            return null;
+          }
         },
-        staleTime: 60000, // Keep data fresh for 1 minute
+        staleTime: 0, // Force fresh data
+      }).finally(() => {
+        setLoadingProfile(false);
+        
+        // Delay loading other sections slightly to prioritize profile
+        setTimeout(() => {
+          setOtherSectionsLoaded(true);
+        }, 100);
       });
+    } else {
+      setLoadingProfile(false);
     }
-  }, [isAuthenticated, session, navigate, userId, queryClient]);
+  }, [userId, queryClient]);
 
+  // Check authentication and redirect as needed
+  useEffect(() => {
+    if (!isAuthenticated && session === null) {
+      navigate("/auth");
+    }
+  }, [isAuthenticated, session, navigate]);
+
+  // Load settings from localStorage
   useEffect(() => {
     const savedSettings = localStorage.getItem('settings');
     if (savedSettings) {
@@ -61,12 +83,14 @@ const Settings = () => {
     }
   }, []);
 
+  // Save settings to localStorage when changed
   useEffect(() => {
     localStorage.setItem('settings', JSON.stringify({
       autoplay,
     }));
   }, [autoplay]);
 
+  // Sync color state with context
   useEffect(() => {
     setBackgroundColor(colors.backgroundColor);
     setTextColor(colors.textColor);
@@ -98,11 +122,7 @@ const Settings = () => {
           <BackButton />
           <div className="animate-pulse">
             <div className="h-8 w-56 bg-gray-200 rounded mb-8"></div>
-            <div className="space-y-12">
-              <div className="h-40 bg-gray-100 rounded"></div>
-              <div className="h-60 bg-gray-100 rounded"></div>
-              <div className="h-40 bg-gray-100 rounded"></div>
-            </div>
+            <ProfileSectionSkeleton />
           </div>
         </div>
       </div>
@@ -119,27 +139,34 @@ const Settings = () => {
         </div>
 
         <div className="space-y-12">
-          <ProfileSection />
-          <ContentPreferencesSection 
-            userId={userId}
-            autoplay={autoplay}
-            setAutoplay={setAutoplay}
-          />
-          <ActivitySection />
-          <AppearanceSection 
-            backgroundColor={backgroundColor}
-            setBackgroundColor={setBackgroundColor}
-            textColor={textColor}
-            setTextColor={setTextColor}
-            buttonColor={buttonColor}
-            setButtonColor={setButtonColor}
-            logoColor={logoColor}
-            setLogoColor={setLogoColor}
-            saveColors={saveColors}
-            resetToDefaults={resetToDefaults}
-          />
-          {userId && <AdminSection userId={userId} />}
-          <SupportSection />
+          {/* Profile section always shows first, either real or skeleton */}
+          {loadingProfile ? <ProfileSectionSkeleton /> : <ProfileSection />}
+          
+          {/* Other sections only load after profile is ready */}
+          {otherSectionsLoaded && (
+            <>
+              <ContentPreferencesSection 
+                userId={userId}
+                autoplay={autoplay}
+                setAutoplay={setAutoplay}
+              />
+              <ActivitySection />
+              <AppearanceSection 
+                backgroundColor={backgroundColor}
+                setBackgroundColor={setBackgroundColor}
+                textColor={textColor}
+                setTextColor={setTextColor}
+                buttonColor={buttonColor}
+                setButtonColor={setButtonColor}
+                logoColor={logoColor}
+                setLogoColor={setLogoColor}
+                saveColors={saveColors}
+                resetToDefaults={resetToDefaults}
+              />
+              {userId && <AdminSection userId={userId} />}
+              <SupportSection />
+            </>
+          )}
         </div>
       </main>
     </div>

@@ -1,6 +1,8 @@
 
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
+import { LogOut } from "lucide-react";
 
 export const ProfileSectionSkeleton = () => {
   return (
@@ -13,6 +15,16 @@ export const ProfileSectionSkeleton = () => {
               <Skeleton className="h-5 w-40" />
               <Skeleton className="h-4 w-60" />
             </div>
+          </div>
+          <div className="mt-4 md:mt-0">
+            <Button
+              variant="outline"
+              className="flex items-center justify-center gap-2"
+              disabled
+            >
+              <LogOut className="h-4 w-4" />
+              <span>Sign Out</span>
+            </Button>
           </div>
         </div>
       </Card>

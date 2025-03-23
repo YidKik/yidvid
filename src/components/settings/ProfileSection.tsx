@@ -36,9 +36,10 @@ export const ProfileSection = () => {
       }
 
       try {
+        // Use a simpler query that doesn't trigger RLS recursion issues
         const { data, error } = await supabase
           .from("profiles")
-          .select("*")
+          .select("id, username, display_name, avatar_url, email, created_at, updated_at")
           .eq("id", userId)
           .maybeSingle();
 
@@ -54,9 +55,9 @@ export const ProfileSection = () => {
       }
     },
     enabled: !!userId, // Only run query when userId is available
-    staleTime: 60000, // Keep data fresh for 1 minute 
+    staleTime: 60000, // Keep data fresh for 1 minute
     gcTime: 300000, // Keep in cache for 5 minutes
-    retry: 2, // Retry failed requests twice
+    retry: 1, // Reduce retry attempts to speed up fallback to error state
   });
 
   // Show loading state immediately when profile is loading

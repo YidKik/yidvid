@@ -72,7 +72,7 @@ export const LoadingAnimation = ({
               alt="YidVid Logo"
               className={cn("object-contain", selectedSize.logoSize)}
               onError={(e) => {
-                // If logo fails to load, don't show anything rather than a fallback that might be a heart
+                // If logo fails to load, don't show anything rather than a fallback
                 e.currentTarget.style.display = 'none';
               }}
             />
