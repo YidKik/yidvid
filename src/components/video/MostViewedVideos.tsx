@@ -1,7 +1,6 @@
-
 import { useState, useEffect } from "react";
 import { VideoCard } from "../VideoCard";
-import { ChevronLeft, ChevronRight, TrendingUp, Eye } from "lucide-react";
+import { ChevronLeft, ChevronRight, Sparkle } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -27,13 +26,11 @@ export const MostViewedVideos = ({
   const videosPerPage = isMobile ? 2 : 4;
   const AUTO_SLIDE_INTERVAL = 8000;
   
-  // Ensure we have videos to display
   const ensureVideosToDisplay = () => {
     if (videos && videos.length > 0) {
       return videos;
     }
     
-    // Create sample videos as fallback
     const now = new Date();
     return Array(10).fill(null).map((_, i) => ({
       id: `most-viewed-${i}`,
@@ -46,7 +43,6 @@ export const MostViewedVideos = ({
     }));
   };
   
-  // Sort videos by views in descending order and take only top 10
   const sortedVideos = [...ensureVideosToDisplay()]
     .sort((a, b) => (b.views || 0) - (a.views || 0))
     .slice(0, 10);
@@ -95,7 +91,6 @@ export const MostViewedVideos = ({
     setTimeout(() => setIsAutoPlaying(true), 15000);
   };
 
-  // Always show most viewed section even if we have no data (will show fallback)
   if (sortedVideos.length === 0) {
     return null;
   }
@@ -108,14 +103,10 @@ export const MostViewedVideos = ({
         <div className="px-3 md:px-6 pt-4 md:pt-6 pb-6 md:pb-8">
           <div className="flex items-center gap-2 mb-3 md:mb-6">
             <div className="bg-[#333333] p-1.5 md:p-2 rounded-full">
-              <TrendingUp className="h-3 w-3 md:h-4 md:w-4 text-white" />
+              <Sparkle className="h-3 w-3 md:h-4 md:w-4 text-white" />
             </div>
-            <h2 className="text-sm md:text-xl font-bold text-[#333333] flex items-center">
+            <h2 className="text-sm md:text-xl font-bold text-[#333333]">
               Popular content
-              <span className="hidden md:inline-flex items-center ml-2 text-sm font-normal text-gray-500">
-                <Eye className="h-3.5 w-3.5 mr-1 text-gray-400" />
-                Popular content
-              </span>
             </h2>
           </div>
 
