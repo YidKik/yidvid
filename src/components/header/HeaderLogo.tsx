@@ -17,7 +17,8 @@ export const HeaderLogo = ({ isMobile }: HeaderLogoProps) => {
           className={`object-contain drop-shadow-md ${isMobile ? 'h-12 w-auto' : 'h-32 w-auto'}`}
           onError={(e) => {
             console.error('Logo failed to load:', e);
-            e.currentTarget.src = '/favicon.ico';
+            // Use a direct fallback to the secondary logo
+            e.currentTarget.src = "/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png";
           }}
         />
       </Link>

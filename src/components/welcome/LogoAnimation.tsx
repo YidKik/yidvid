@@ -31,7 +31,7 @@ export const LogoAnimation = () => {
           }}
           onError={(e) => {
             console.error('Animation logo failed to load:', e);
-            // Fallback to the other logo format
+            // Fallback to the alternative logo format
             e.currentTarget.src = "/lovable-uploads/e425cacb-4c3a-4d81-b4e0-77fcbf10f61c.png";
           }}
         />
@@ -48,7 +48,7 @@ export const LogoAnimation = () => {
             repeat: Infinity,
             repeatType: "reverse"
           }}
-          className="absolute inset-0 bg-primary rounded-full -z-10"
+          className="absolute inset-0 rounded-full -z-10 bg-gray-100"
         />
       </motion.div>
     </div>
