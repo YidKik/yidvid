@@ -1,12 +1,11 @@
-
 import { Card } from "@/components/ui/card";
 import { CustomCategory } from "@/types/custom-categories";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { CategoryTable } from "./list/CategoryTable";
-import { CategoryContentManager } from "./list/CategoryContentManager";
+import { CategoryTable } from "@/components/dashboard/categories/list/CategoryTable";
+import { CategoryContentManager } from "@/components/dashboard/categories/list/CategoryContentManager";
 
 interface CategoryListProps {
   categories: CustomCategory[];
@@ -49,8 +48,7 @@ export function CategoryList({ categories, onUpdate }: CategoryListProps) {
   });
 
   const handleDeleteCategory = async (id: string) => {
-    // Only allow deletion of custom categories (those with UUID format)
-    if (id.length === 36) { // UUID length check
+    if (id.length === 36) {
       try {
         const categoryToDelete = categories.find(cat => cat.id === id);
         
@@ -65,7 +63,6 @@ export function CategoryList({ categories, onUpdate }: CategoryListProps) {
           }
         }
 
-        // First delete all video and channel mappings
         const { error: videoMappingsError } = await supabase
           .from("video_custom_category_mappings")
           .delete()
@@ -80,7 +77,6 @@ export function CategoryList({ categories, onUpdate }: CategoryListProps) {
 
         if (channelMappingsError) throw channelMappingsError;
 
-        // Then delete the category itself
         const { error } = await supabase
           .from("custom_categories")
           .delete()
@@ -109,7 +105,6 @@ export function CategoryList({ categories, onUpdate }: CategoryListProps) {
     if (!selectedCategory) return;
 
     try {
-      // Handle videos
       const { error: deleteVideoError } = await supabase
         .from("video_custom_category_mappings")
         .delete()
@@ -130,7 +125,6 @@ export function CategoryList({ categories, onUpdate }: CategoryListProps) {
         if (insertVideoError) throw insertVideoError;
       }
 
-      // Handle channels
       const { error: deleteChannelError } = await supabase
         .from("channel_custom_category_mappings")
         .delete()
