@@ -109,7 +109,7 @@ export const SupportSection = () => {
                               className={`flex items-start space-x-2 space-y-0 rounded-md border p-3 cursor-pointer transition-all duration-200
                                 ${field.value === category.value 
                                   ? 'border-primary bg-primary/5' 
-                                  : 'border-input hover:border-primary/50 hover:bg-accent/30'
+                                  : 'border-input hover:border-primary/50 hover:bg-primary/5 hover:shadow-sm'
                                 }`}
                             >
                               <RadioGroupItem
