@@ -1,7 +1,6 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
 
 export const useChannelData = (channelId: string | undefined) => {
   return useQuery({
@@ -18,12 +17,7 @@ export const useChannelData = (channelId: string | undefined) => {
       if (error) {
         console.error("Error fetching channel:", error);
         
-        // Don't show toast for data access errors or RLS errors
-        if (!error.message.includes("recursion") && 
-            !error.message.includes("policy") && 
-            !error.message.includes("permission")) {
-          toast.error("Failed to load channel details", { id: "channel-load-error" });
-        }
+        // Don't show toast for any errors
         
         // Try a simplified query for public data access
         const { data: basicData, error: basicError } = await supabase
@@ -40,7 +34,7 @@ export const useChannelData = (channelId: string | undefined) => {
       }
 
       if (!data) {
-        toast.error("Channel not found", { id: "channel-not-found" });
+        console.warn("Channel not found for ID:", channelId);
         throw new Error("Channel not found");
       }
 

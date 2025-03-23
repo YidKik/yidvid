@@ -1,7 +1,6 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import { checkApiQuota } from "../useApiQuota";
-import { toast } from "sonner";
 import { fetchUpdatedVideosAfterSync } from "./database";
 
 /**
@@ -43,8 +42,8 @@ export const fetchNewVideosFromEdgeFunction = async (
         setLastSuccessfulFetch(new Date());
         
         if (response.newVideos > 0) {
-          // Use a unique ID to prevent duplicate toasts
-          toast.success(`Found ${response.newVideos} new videos!`, { id: 'new-videos-found' });
+          console.log(`Found ${response.newVideos} new videos`);
+          // Don't show toast notification
         } else {
           console.log("No new videos found");
         }

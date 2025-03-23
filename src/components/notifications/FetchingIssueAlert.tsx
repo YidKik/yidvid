@@ -3,13 +3,39 @@ import { AlertCircle } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 interface FetchingIssueAlertProps {
   onRefresh?: () => void;
+  forceShow?: boolean;
 }
 
-export const FetchingIssueAlert = ({ onRefresh }: FetchingIssueAlertProps) => {
+export const FetchingIssueAlert = ({ onRefresh, forceShow = false }: FetchingIssueAlertProps) => {
   const isMobile = useIsMobile();
+  
+  // Only show for admins by default
+  const { data: profile } = useQuery({
+    queryKey: ["current-user-profile"],
+    queryFn: async () => {
+      const { data: session } = await supabase.auth.getSession();
+      if (!session.session) return null;
+      
+      const { data } = await supabase
+        .from("profiles")
+        .select("is_admin")
+        .eq("id", session.session.user.id)
+        .single();
+      
+      return data;
+    },
+    enabled: !forceShow, // Skip if we're forcing display
+  });
+  
+  // Only show to admins unless forced
+  if (!forceShow && (!profile || !profile.is_admin)) {
+    return null;
+  }
   
   return (
     <Alert 

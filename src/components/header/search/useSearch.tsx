@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useDebounce } from "@/hooks/use-debounce";
-import { toast } from "sonner";
 import { queryClient } from "@/lib/query-client";
 
 // Define interfaces for the search results
@@ -76,9 +75,7 @@ export const useSearch = () => {
         return result;
       } catch (error: any) {
         console.error("Search error:", error);
-        if (!error.message?.includes('Failed to fetch')) {
-          toast.error("Search is temporarily unavailable");
-        }
+        // Don't show any toast
         return { videos: [], channels: [] };
       }
     },
@@ -86,6 +83,9 @@ export const useSearch = () => {
     staleTime: 1000 * 60 * 5, // Increase stale time to 5 minutes for longer caching
     gcTime: 1000 * 60 * 15,   // Increase garbage collection time to 15 minutes
     refetchOnWindowFocus: false,
+    meta: {
+      suppressToasts: true // Don't show toast notifications
+    }
   });
 
   const handleSearch = (e: React.FormEvent) => {

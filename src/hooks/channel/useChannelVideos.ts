@@ -2,7 +2,6 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
 
 const INITIAL_VIDEOS_COUNT = 12; // Increased from 6
 const FETCH_TIMEOUT = 8000; // 8 seconds timeout (increased)
@@ -67,6 +66,9 @@ export const useChannelVideos = (channelId: string | undefined) => {
     refetchOnWindowFocus: false,
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
+    meta: {
+      suppressToasts: true // Don't show toast notifications
+    }
   });
 
   // Only fetch all videos if we have initial videos
@@ -101,6 +103,9 @@ export const useChannelVideos = (channelId: string | undefined) => {
     refetchOnWindowFocus: false,
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
+    meta: {
+      suppressToasts: true // Don't show toast notifications
+    }
   });
 
   // Set displayed videos immediately from initial fetch

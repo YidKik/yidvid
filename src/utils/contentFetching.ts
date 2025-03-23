@@ -69,6 +69,9 @@ export function fetchInitialContent(queryClient: QueryClient) {
                 console.error("Error in background video fetch:", err);
                 return [];
               }
+            },
+            meta: {
+              suppressToasts: true // Don't show toast notifications
             }
           });
         }, 2000);
@@ -79,7 +82,10 @@ export function fetchInitialContent(queryClient: QueryClient) {
         return [];
       }
     },
-    staleTime: 30000 // 30 seconds
+    staleTime: 30000, // 30 seconds
+    meta: {
+      suppressToasts: true // Don't show toast notifications
+    }
   });
   
   // Prefetch a small set of channels with high priority
@@ -139,6 +145,9 @@ export function fetchInitialContent(queryClient: QueryClient) {
                 console.error("Error in background channel fetch:", err);
                 return [];
               }
+            },
+            meta: {
+              suppressToasts: true // Don't show toast notifications
             }
           });
         }, 3000);
@@ -149,6 +158,9 @@ export function fetchInitialContent(queryClient: QueryClient) {
         return [];
       }
     },
-    staleTime: 30000 // 30 seconds
+    staleTime: 30000, // 30 seconds
+    meta: {
+      suppressToasts: true // Don't show toast notifications
+    }
   });
 }

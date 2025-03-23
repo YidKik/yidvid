@@ -1,5 +1,5 @@
+
 import { useState, useEffect } from 'react';
-import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { LayoutConfig, SpacingProperty, VisibilityDevice } from "./types";
 
@@ -64,7 +64,7 @@ export const useLayoutData = () => {
       console.log('Loaded sections:', transformedData); // Debug log
     } catch (error) {
       console.error('Error loading layout config:', error);
-      toast.error('Failed to load layout configuration');
+      // Don't show toast for layout config loading error - only show in console
     } finally {
       setLoading(false);
     }
@@ -92,11 +92,14 @@ export const useLayoutData = () => {
 
       if (error) throw error;
 
-      toast.success('Order updated successfully');
+      // Show success toast only for admin actions (not loading content)
+      console.log('Order updated successfully');
+      
       loadLayoutConfig(); // Refresh to ensure consistency
     } catch (error) {
       console.error('Error updating order:', error);
-      toast.error('Failed to update order');
+      // Show error toast only for admin actions (not loading content)
+      console.error('Failed to update order');
       loadLayoutConfig(); // Revert to server state on error
     }
   };
@@ -126,11 +129,14 @@ export const useLayoutData = () => {
 
       if (error) throw error;
 
-      toast.success('Spacing updated successfully');
+      // Show success toast only for admin actions (not loading content)
+      console.log('Spacing updated successfully');
+      
       loadLayoutConfig();
     } catch (error) {
       console.error('Error updating spacing:', error);
-      toast.error('Failed to update spacing');
+      // Show error toast only for admin actions (not loading content)
+      console.error('Failed to update spacing');
       loadLayoutConfig();
     }
   };
@@ -160,11 +166,14 @@ export const useLayoutData = () => {
 
       if (error) throw error;
 
-      toast.success('Visibility updated successfully');
+      // Show success toast only for admin actions (not loading content)
+      console.log('Visibility updated successfully');
+      
       loadLayoutConfig();
     } catch (error) {
       console.error('Error updating visibility:', error);
-      toast.error('Failed to update visibility');
+      // Show error toast only for admin actions (not loading content)
+      console.error('Failed to update visibility');
       loadLayoutConfig();
     }
   };

@@ -2,7 +2,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Video } from "@/types/channel-videos";
-import { toast } from "sonner";
 
 export const useChannelVideos = (channelId: string) => {
   return useQuery({
@@ -124,5 +123,8 @@ export const useChannelVideos = (channelId: string) => {
     staleTime: 0, // Always get fresh data
     gcTime: 1000 * 60 * 30, // Cache for 30 minutes
     refetchOnWindowFocus: false,
+    meta: {
+      suppressToasts: true // Don't show toast notifications
+    }
   });
 };

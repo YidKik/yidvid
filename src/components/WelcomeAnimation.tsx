@@ -8,7 +8,6 @@ import { LogoAnimation } from "./welcome/LogoAnimation";
 import { WelcomeText } from "./welcome/WelcomeText";
 import { useWelcomeData } from "@/hooks/useWelcomeData";
 import { useVideos } from "@/hooks/video/useVideos";
-import { toast } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 export const WelcomeAnimation = () => {
@@ -55,7 +54,7 @@ export const WelcomeAnimation = () => {
         if (hasVisitedWelcome) {
           setInfoShown(true);
           const infoTimer = setTimeout(() => {
-            toast.custom((t) => (
+            const CustomNotification = (t: any) => (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -78,7 +77,8 @@ export const WelcomeAnimation = () => {
                   </p>
                   <button
                     onClick={() => {
-                      toast.dismiss(t);
+                      // Handle dismissal without relying on toast
+                      document.getElementById('welcome-info-notification')?.remove();
                       localStorage.setItem('hasSeenInfoNotification', 'true');
                     }}
                     className={`bg-primary text-white ${isMobile ? "px-3 py-1 text-xs" : "px-4 py-3 text-lg"} rounded-md hover:bg-primary/90 transition-colors`}
@@ -87,13 +87,31 @@ export const WelcomeAnimation = () => {
                   </button>
                 </div>
               </motion.div>
-            ), {
-              duration: 6000,
-              id: "welcome-info-notification",
-              onAutoClose: () => {
-                localStorage.setItem('hasSeenInfoNotification', 'true');
-              }
+            );
+            
+            // Create and append custom notification
+            const container = document.createElement('div');
+            container.id = 'welcome-info-notification';
+            container.style.position = 'fixed';
+            container.style.bottom = '20px';
+            container.style.right = '20px';
+            container.style.zIndex = '9999';
+            document.body.appendChild(container);
+            
+            // Use React to render into container
+            const root = document.createElement('div');
+            container.appendChild(root);
+            import('react-dom/client').then(({ createRoot }) => {
+              const reactRoot = createRoot(root);
+              reactRoot.render(<CustomNotification />);
             });
+            
+            // Auto-remove after 6 seconds
+            setTimeout(() => {
+              container.remove();
+              localStorage.setItem('hasSeenInfoNotification', 'true');
+            }, 6000);
+            
           }, 500);
           return () => clearTimeout(infoTimer);
         }

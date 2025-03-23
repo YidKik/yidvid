@@ -2,6 +2,28 @@
 // We're standardizing on sonner for toast notifications to prevent duplicates
 import { toast as sonnerToast } from "sonner";
 
+// List of messages that should be suppressed
+const suppressedMessages = [
+  "loading videos",
+  "error loading videos",
+  "failed to load videos",
+  "loading channels",
+  "error loading channels",
+  "failed to load channels",
+  "videos may take",
+  "channel not found",
+  "failed to load channel"
+];
+
+// Function to check if a message should be suppressed
+const shouldSuppressMessage = (message: string): boolean => {
+  if (!message) return false;
+  const lowercaseMessage = message.toLowerCase();
+  return suppressedMessages.some(suppressedMsg => 
+    lowercaseMessage.includes(suppressedMsg.toLowerCase())
+  );
+};
+
 // Wrapper for toast to prevent duplicate messages
 const toast = {
   // Store already shown messages/errors
@@ -9,6 +31,9 @@ const toast = {
   
   // Custom success method with deduplication
   success: (message: string, options?: any) => {
+    // Skip suppressed messages
+    if (shouldSuppressMessage(message)) return;
+    
     const id = options?.id || message;
     if (toast.activeToasts.has(id)) return;
     
@@ -25,6 +50,9 @@ const toast = {
   
   // Custom error method with deduplication
   error: (message: string, options?: any) => {
+    // Skip suppressed messages
+    if (shouldSuppressMessage(message)) return;
+    
     const id = options?.id || message;
     if (toast.activeToasts.has(id)) return;
     
@@ -41,6 +69,9 @@ const toast = {
   
   // Custom info method with deduplication
   info: (message: string, options?: any) => {
+    // Skip suppressed messages
+    if (shouldSuppressMessage(message)) return;
+    
     const id = options?.id || message;
     if (toast.activeToasts.has(id)) return;
     
@@ -57,6 +88,9 @@ const toast = {
   
   // Custom warning method with deduplication
   warning: (message: string, options?: any) => {
+    // Skip suppressed messages
+    if (shouldSuppressMessage(message)) return;
+    
     const id = options?.id || message;
     if (toast.activeToasts.has(id)) return;
     
@@ -75,10 +109,31 @@ const toast = {
   dismiss: sonnerToast.dismiss,
   
   // Pass through for any custom toasts
-  custom: sonnerToast.custom,
+  custom: (render: any, options?: any) => {
+    // Skip suppressed messages if render is a string
+    if (typeof render === 'string' && shouldSuppressMessage(render)) return;
+    
+    const id = options?.id || (typeof render === 'string' ? render : null);
+    if (id && toast.activeToasts.has(id)) return;
+    
+    if (id) toast.activeToasts.add(id);
+    sonnerToast.custom(render, {
+      ...options,
+      duration: options?.duration || 4000, // Default to 4 seconds
+      onDismiss: () => {
+        if (id) toast.activeToasts.delete(id);
+        options?.onDismiss?.();
+      }
+    });
+  },
   
   // Promise method with deduplication
   promise: (promise: Promise<any>, options: any) => {
+    // Skip if loading message is suppressed
+    if (options?.loading && shouldSuppressMessage(options.loading)) {
+      return promise;
+    }
+    
     const id = options?.id || JSON.stringify(options.loading);
     if (toast.activeToasts.has(id)) return promise;
     
