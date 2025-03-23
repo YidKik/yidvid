@@ -95,7 +95,7 @@ toast.warning = (message: string, opts?: { id?: string }) => sonnerToast.warning
 toast.info = (message: string, opts?: { id?: string }) => sonnerToast.info(message, opts)
 toast.loading = (message: string, opts?: { id?: string }) => sonnerToast.loading(message, opts)
 toast.dismiss = (id?: string) => sonnerToast.dismiss(id)
-// Fix the custom method type
+// Fix the custom method type - using React.createElement instead of JSX
 toast.custom = (content: React.ReactNode, opts?: { id?: string }) => 
   sonnerToast.custom(() => React.createElement(React.Fragment, null, content), opts)
 

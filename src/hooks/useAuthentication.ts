@@ -4,6 +4,9 @@ import { useAuthSignIn } from "./auth/useAuthSignIn";
 import { useAuthSignUp } from "./auth/useAuthSignUp";
 import { useAuthSignOut } from "./auth/useAuthSignOut";
 import { useAuthPasswordReset } from "./auth/useAuthPasswordReset";
+import { prefetchUserData } from "@/utils/userDataPrefetch";
+import { useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
 
 export type { AuthCredentials, AuthOptions } from "./auth/useAuthSignIn";
 
@@ -18,6 +21,17 @@ export const useAuthentication = () => {
   const { signUp } = useAuthSignUp();
   const { signOut } = useAuthSignOut();
   const { resetPassword, updatePassword, isPasswordResetSent } = useAuthPasswordReset();
+  const queryClient = useQueryClient();
+
+  // Ensure profile data is fetched when session changes
+  useEffect(() => {
+    if (baseAuth.session) {
+      console.log("Session detected in useAuthentication, ensuring profile data is available");
+      prefetchUserData(baseAuth.session, queryClient)
+        .then(() => console.log("Profile data refresh complete in useAuthentication"))
+        .catch(err => console.error("Failed to refresh profile data in useAuthentication:", err));
+    }
+  }, [baseAuth.session, queryClient]);
 
   return {
     // Auth state

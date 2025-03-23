@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { validateSignInForm } from "@/utils/formValidation";
 import { useAuthBase } from "./useAuthBase";
+import { prefetchUserData } from "@/utils/userDataPrefetch";
 
 export interface AuthCredentials {
   email: string;
@@ -27,7 +28,6 @@ export const useAuthSignIn = () => {
     isLoading,
     setIsLoading,
     setAuthError,
-    prefetchUserData
   } = useAuthBase();
 
   /**
@@ -83,10 +83,12 @@ export const useAuthSignIn = () => {
         // Clear stale user data from cache to ensure fresh data is loaded
         queryClient.removeQueries({ queryKey: ["profile"] });
         queryClient.removeQueries({ queryKey: ["user-profile"] });
+        queryClient.removeQueries({ queryKey: ["user-profile-settings"] });
+        queryClient.removeQueries({ queryKey: ["admin-section-profile"] });
         
         try {
-          // Prefetch user data for improved performance
-          await prefetchUserData(signInData.user.id);
+          // Use improved prefetch function for more consistent data loading
+          await prefetchUserData(signInData.session, queryClient);
           
           // Execute success callback if provided
           if (options?.onSuccess) {
@@ -120,7 +122,7 @@ export const useAuthSignIn = () => {
       setIsLoading(false);
       return false;
     }
-  }, [navigate, prefetchUserData, queryClient, setAuthError, setIsLoading]);
+  }, [navigate, queryClient, setAuthError, setIsLoading]);
 
   return { signIn };
 };
