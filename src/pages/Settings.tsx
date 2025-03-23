@@ -20,7 +20,7 @@ import { ProfileSection } from "@/components/settings/ProfileSection";
 const Settings = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { session, isAuthenticated } = useAuth();
+  const { session, isAuthenticated, handleLogout, isLoggingOut } = useAuth();
   const userId = session?.user?.id;
   const { colors, updateColors, resetColors } = useColors();
   const [backgroundColor, setBackgroundColor] = useState(colors.backgroundColor);
