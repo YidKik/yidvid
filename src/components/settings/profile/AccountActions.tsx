@@ -27,16 +27,9 @@ export const AccountActions = ({ isLoggingOut, handleLogout }: AccountActionsPro
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const handleFastLogout = async () => {
-    // Cancel all in-flight queries immediately
-    queryClient.cancelQueries();
-    
-    // Show immediate feedback to user
-    toast.loading("Signing out...");
-    
-    // Navigate to home page immediately for instant feedback
-    navigate("/");
-    
-    // Then perform the actual logout
+    // This triggers an immediate logout flow
+    // No need to show feedback toast here as the main logout will do that
+    // and navigating away happens automatically in the logout flow
     handleLogout();
   };
 
@@ -50,10 +43,21 @@ export const AccountActions = ({ isLoggingOut, handleLogout }: AccountActionsPro
         toast.error("Error deleting account");
         return;
       }
-      await supabase.auth.signOut();
+      
+      // Navigate first for immediate feedback
       setIsDeleteDialogOpen(false);
       navigate("/");
       toast.success("Account deleted successfully");
+      
+      // Then do the actual sign out
+      await supabase.auth.signOut();
+      
+      // Clear user data
+      queryClient.removeQueries({ queryKey: ["profile"] });
+      queryClient.removeQueries({ queryKey: ["user-profile"] });
+      queryClient.removeQueries({ queryKey: ["session"] });
+      queryClient.setQueryData(["session"], null);
+      
     } catch (error) {
       toast.error("An error occurred while deleting your account");
     }

@@ -16,7 +16,7 @@ export const useAuthSignOut = () => {
   } = useAuthBase();
 
   /**
-   * Handles user sign-out process with optimizations for speed and reliability
+   * Handles user sign-out process with immediate feedback and fast navigation
    */
   const signOut = useCallback(async () => {
     try {
@@ -33,17 +33,22 @@ export const useAuthSignOut = () => {
       const hasVideos = Array.isArray(videosData) && videosData.length > 0;
       const hasChannels = Array.isArray(channelsData) && channelsData.length > 0;
       
-      // Navigate to welcome page immediately for instant feedback
-      // This makes logout feel instant to the user
+      // IMMEDIATE ACTION: Navigate to welcome page and show success message
+      // This provides instant feedback that logout is happening
       navigate("/");
+      toast.success("Logged out successfully");
       
-      // Clear all user specific data from the query cache
+      // Clear all user-specific data from the query cache IMMEDIATELY
       queryClient.removeQueries({ queryKey: ["profile"] });
       queryClient.removeQueries({ queryKey: ["user-profile"] });
       queryClient.removeQueries({ queryKey: ["user-profile-settings"] });
       queryClient.removeQueries({ queryKey: ["admin-section-profile"] });
       queryClient.removeQueries({ queryKey: ["user-video-interactions"] });
       queryClient.removeQueries({ queryKey: ["video-notifications"] });
+      queryClient.removeQueries({ queryKey: ["session"] });
+      
+      // Force session to null in any cache
+      queryClient.setQueryData(["session"], null);
       
       // Restore public content data to prevent blank screen
       if (hasVideos && videosData) {
@@ -54,16 +59,10 @@ export const useAuthSignOut = () => {
         queryClient.setQueryData(["youtube_channels"], channelsData);
       }
       
-      // Show success message immediately
-      toast.success("Logged out successfully");
+      // Perform actual Supabase logout in background
+      // Even if this is slow, the UI has already updated
+      await supabase.auth.signOut();
       
-      // Now perform the actual Supabase logout in the background
-      const { error } = await supabase.auth.signOut();
-      
-      if (error) {
-        console.error("Error during logout:", error);
-        // Don't show error toast since we've already navigated away
-      }
     } catch (error) {
       console.error("Unexpected error during logout:", error);
       // Still navigate home even if there's an error

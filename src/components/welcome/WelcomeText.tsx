@@ -27,6 +27,20 @@ export const WelcomeText = ({ userName }: WelcomeTextProps) => {
         Welcome
       </motion.span>
       
+      <motion.span
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        transition={{
+          type: "spring",
+          stiffness: 260,
+          damping: 20,
+          delay: 0.5,
+        }}
+        className="text-5xl font-bold text-accent ml-3 inline-block"
+      >
+        to YidVid
+      </motion.span>
+      
       {userName && (
         <motion.span
           initial={{ scale: 0 }}
@@ -35,9 +49,9 @@ export const WelcomeText = ({ userName }: WelcomeTextProps) => {
             type: "spring",
             stiffness: 260,
             damping: 20,
-            delay: 0.5,
+            delay: 0.7,
           }}
-          className="text-5xl font-bold text-accent ml-3 inline-block"
+          className="text-5xl font-bold text-primary ml-3 inline-block"
         >
           {userName}
         </motion.span>

@@ -64,9 +64,13 @@ export const WelcomeAnimation = () => {
               >
                 <div className="flex flex-col items-center text-center space-y-2">
                   <img 
-                    src="/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png" 
+                    src="/lovable-uploads/e425cacb-4c3a-4d81-b4e0-77fcbf10f61c.png" 
                     alt="YidVid Logo" 
                     className={isMobile ? "w-10 h-10" : "w-24 h-24"}
+                    onError={(e) => {
+                      console.error('Logo failed to load:', e);
+                      e.currentTarget.src = '/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png';
+                    }}
                   />
                   <h3 className={isMobile ? "text-sm font-semibold" : "text-2xl font-semibold"}>Welcome to YidVid!</h3>
                   <p className={isMobile ? "text-xs text-gray-600 leading-tight" : "text-lg text-gray-600"}>
