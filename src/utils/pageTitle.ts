@@ -55,7 +55,7 @@ export const getPageTitle = (path: string): string => {
 // Enhanced SEO metadata
 export const DEFAULT_META_DESCRIPTION = APP_DESCRIPTION;
 export const DEFAULT_META_KEYWORDS = "Jewish videos, Jewish content, Torah videos, Jewish music, Jewish lectures, Jewish education, Jewish media";
-export const DEFAULT_META_IMAGE = "/og-image.png";
+export const DEFAULT_META_IMAGE = "/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png"; // Updated to use the official logo
 
 // New SEO utility functions
 export const getSEOConfig = (path: string, customConfig?: {

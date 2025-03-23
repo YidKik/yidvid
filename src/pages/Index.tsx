@@ -167,6 +167,7 @@ const Index = () => {
         <meta name="robots" content="index, follow" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="canonical" href={window.location.href} />
+        <link rel="icon" href="/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png" />
       </Helmet>
       
       <div className="min-h-screen w-full bg-gradient-to-b from-white to-gray-50">
