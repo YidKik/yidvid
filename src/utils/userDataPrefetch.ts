@@ -16,7 +16,7 @@ export function prefetchUserData(session: Session, queryClient: QueryClient) {
   
   // Prefetch profile data with detailed error logging
   queryClient.prefetchQuery({
-    queryKey: ["profile", session.user.id],
+    queryKey: ["user-profile-settings", session.user.id],
     queryFn: async () => {
       try {
         console.log("Executing profile prefetch query for:", session.user.id);
@@ -41,6 +41,7 @@ export function prefetchUserData(session: Session, queryClient: QueryClient) {
       }
     },
     retry: 2,
+    staleTime: 60000, // Keep data fresh for 1 minute
     meta: {
       errorBoundary: false,
       suppressToasts: true
@@ -72,37 +73,7 @@ export function prefetchUserData(session: Session, queryClient: QueryClient) {
       }
     },
     retry: 2,
-    meta: {
-      errorBoundary: false,
-      suppressToasts: true
-    }
-  });
-  
-  // Prefetch admin status specifically
-  queryClient.prefetchQuery({
-    queryKey: ["admin-section-profile", session.user.id],
-    queryFn: async () => {
-      try {
-        console.log("Executing admin status prefetch query");
-        const { data, error } = await supabase
-          .from("profiles")
-          .select("is_admin")
-          .eq("id", session.user.id)
-          .single();
-        
-        if (error) {
-          console.error("Error prefetching admin status:", error);
-          return null;
-        }
-        
-        console.log("Successfully prefetched admin status:", data);
-        return data;
-      } catch (err) {
-        console.error("Unexpected error in admin status prefetch:", err);
-        return null;
-      }
-    },
-    retry: 2,
+    staleTime: 60000, // Keep data fresh for 1 minute
     meta: {
       errorBoundary: false,
       suppressToasts: true

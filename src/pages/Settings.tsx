@@ -1,13 +1,11 @@
-
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { useQuery } from "@tanstack/react-query";
 import { BackButton } from "@/components/navigation/BackButton";
 import { useColors } from "@/contexts/ColorContext";
 import { Settings as SettingsIcon } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { useQueryClient } from "@tanstack/react-query";
 
 // Import section components
 import { ContentPreferencesSection } from "@/components/settings/sections/ContentPreferencesSection";
@@ -19,6 +17,7 @@ import { ProfileSection } from "@/components/settings/ProfileSection";
 
 const Settings = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { session, isAuthenticated } = useAuth();
   const userId = session?.user?.id;
   const { colors, updateColors, resetColors } = useColors();
@@ -28,13 +27,29 @@ const Settings = () => {
   const [logoColor, setLogoColor] = useState(colors.logoColor);
   const [autoplay, setAutoplay] = useState(true);
 
-  // Check authentication first
+  // Check authentication first and prefetch profile data
   useEffect(() => {
     if (!isAuthenticated && session === null) {
       navigate("/auth");
       toast.error("Please sign in to access settings");
+    } else if (userId) {
+      // Prefetch profile data when component mounts to ensure immediate loading
+      queryClient.prefetchQuery({
+        queryKey: ["user-profile-settings", userId],
+        queryFn: async () => {
+          const { data, error } = await supabase
+            .from("profiles")
+            .select("*")
+            .eq("id", userId)
+            .maybeSingle();
+          
+          if (error) throw error;
+          return data;
+        },
+        staleTime: 60000, // Keep data fresh for 1 minute
+      });
     }
-  }, [isAuthenticated, session, navigate]);
+  }, [isAuthenticated, session, navigate, userId, queryClient]);
 
   useEffect(() => {
     const savedSettings = localStorage.getItem('settings');

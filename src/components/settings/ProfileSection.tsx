@@ -32,7 +32,6 @@ export const ProfileSection = () => {
     queryFn: async () => {
       if (!userId) {
         console.log("No session available for profile query");
-        navigate("/auth");
         return null;
       }
 
@@ -54,15 +53,14 @@ export const ProfileSection = () => {
         throw err;
       }
     },
-    enabled: !!userId,
-    staleTime: 30000, // Keep data fresh for 30 seconds to avoid unnecessary refetches
-    meta: {
-      errorBoundary: false
-    }
+    enabled: !!userId, // Only run query when userId is available
+    staleTime: 60000, // Keep data fresh for 1 minute 
+    gcTime: 300000, // Keep in cache for 5 minutes
+    retry: 2, // Retry failed requests twice
   });
 
-  // Immediately show loading state when session exists but profile is loading
-  if (isLoading && userId) {
+  // Show loading state immediately when profile is loading
+  if (isLoading) {
     return <ProfileSectionSkeleton />;
   }
 
