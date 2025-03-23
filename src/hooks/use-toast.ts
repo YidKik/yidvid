@@ -57,7 +57,7 @@ interface State {
 // Empty state - no toasts
 const memoryState: State = { toasts: [] }
 
-// No-op toast function
+// No-op toast function that accepts arguments but does nothing with them
 function toast() {
   return {
     id: "",
@@ -67,10 +67,11 @@ function toast() {
 }
 
 // Empty hook that provides toast functionality without actually showing toasts
+// But allows any number of arguments to be passed (and ignored)
 function useToast() {
   return {
     toasts: [],
-    toast: () => ({}),
+    toast: () => {},
     dismiss: () => {},
     addToast: () => {},
     removeToast: () => {},

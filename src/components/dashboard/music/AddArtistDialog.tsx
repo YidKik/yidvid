@@ -27,11 +27,7 @@ export const AddArtistDialog = ({ isOpen, onOpenChange, onArtistAdded }: AddArti
   const handleAddArtist = async () => {
     try {
       if (!channelId) {
-        toast({
-          title: "Channel ID required",
-          description: "Please enter a YouTube channel ID",
-          variant: "destructive",
-        });
+        console.log("Channel ID required: Please enter a YouTube channel ID");
         return;
       }
 
@@ -43,11 +39,7 @@ export const AddArtistDialog = ({ isOpen, onOpenChange, onArtistAdded }: AddArti
         .maybeSingle();
 
       if (existingArtist) {
-        toast({
-          title: "Artist already exists",
-          description: "This artist has already been added to the platform.",
-          variant: "destructive",
-        });
+        console.log("Artist already exists: This artist has already been added to the platform.");
         return;
       }
 
@@ -65,20 +57,13 @@ export const AddArtistDialog = ({ isOpen, onOpenChange, onArtistAdded }: AddArti
 
       if (insertError) throw insertError;
 
-      toast({
-        title: "Artist added successfully",
-        description: "The artist's music will be fetched automatically.",
-      });
+      console.log("Artist added successfully: The artist's music will be fetched automatically.");
 
       setChannelId("");
       onOpenChange(false);
       onArtistAdded();
     } catch (error: any) {
-      toast({
-        title: "Error adding artist",
-        description: error.message,
-        variant: "destructive",
-      });
+      console.error("Error adding artist:", error.message);
     }
   };
 
