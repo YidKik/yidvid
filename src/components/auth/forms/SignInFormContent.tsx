@@ -48,16 +48,6 @@ export const SignInFormContent = ({
         minLength={6}
       />
       
-      <div className="flex justify-end items-center">
-        <button 
-          type="button" 
-          onClick={onForgotPassword}
-          className="text-sm text-[#ea384c] hover:text-red-700 bg-[#fff3f3] hover:bg-[#ffe6e6] px-3 py-1.5 rounded-md transition-all duration-200"
-        >
-          Forgot password?
-        </button>
-      </div>
-      
       <SignInErrorMessage error={loginError} />
       
       <Button

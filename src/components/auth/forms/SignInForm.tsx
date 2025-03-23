@@ -2,7 +2,6 @@
 import { useState, useEffect } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useSignIn } from "@/hooks/useSignIn";
-import { ForgotPasswordForm } from "./ForgotPasswordForm";
 import { SignInFormContent } from "./SignInFormContent";
 import { SocialLoginButtons } from "./SocialLoginButtons";
 
@@ -23,7 +22,6 @@ export const SignInForm = ({
 }: SignInFormProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [forgotPasswordMode, setForgotPasswordMode] = useState(false);
   const isMobile = useIsMobile();
   
   const { 
@@ -50,26 +48,6 @@ export const SignInForm = ({
     await signIn({ email, password });
   };
 
-  const toggleForgotPassword = () => {
-    setForgotPasswordMode(!forgotPasswordMode);
-    setLoginError("");
-  };
-
-  // Render the forgot password form
-  if (forgotPasswordMode) {
-    return (
-      <ForgotPasswordForm
-        email={email}
-        setEmail={setEmail}
-        isLoading={isLoading}
-        setIsLoading={setIsLoading}
-        loginError={loginError}
-        setLoginError={setLoginError}
-        onBackToSignIn={toggleForgotPassword}
-      />
-    );
-  }
-
   // Render the sign in form
   return (
     <>
@@ -81,7 +59,7 @@ export const SignInForm = ({
         isLoading={isLoading}
         loginError={loginError}
         handleSignIn={handleSignIn}
-        onForgotPassword={toggleForgotPassword}
+        onForgotPassword={() => {}} // Keeping the prop but using empty function
         hideRememberMe={hideRememberMe}
       />
 
