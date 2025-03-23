@@ -22,28 +22,21 @@ export const AutoRefreshHandler: React.FC<AutoRefreshHandlerProps> = ({
     if (isRefreshing || !forceRefetch) return;
     
     try {
-      toast.loading("Clearing application cache...");
+      console.log("Auto clearing application cache...");
       await clearApplicationCache();
       
       // Short delay before refresh to ensure cache is cleared
       setTimeout(async () => {
-        toast.dismiss();
-        toast.loading("Refreshing content...");
-        
         try {
+          console.log("Auto refreshing content after cache clear...");
           await forceRefetch();
-          toast.dismiss();
-          toast.success("Content refreshed successfully");
+          console.log("Content refreshed successfully after cache clear");
         } catch (error) {
           console.error("Failed to refresh after cache clear:", error);
-          toast.dismiss();
-          toast.error("Failed to refresh content");
         }
       }, 300);
     } catch (error) {
       console.error("Failed to clear cache:", error);
-      toast.dismiss();
-      toast.error("Failed to clear cache");
     }
   };
   
@@ -62,13 +55,9 @@ export const AutoRefreshHandler: React.FC<AutoRefreshHandlerProps> = ({
     
     // Only trigger if we have missing or sample data
     if (videos.length === 0 || hasOnlySampleVideos) {
-      console.log("No real videos detected, triggering immediate force refresh...");
-      // Almost immediate refresh for better user experience
-      setTimeout(() => {
-        forceRefetch().catch(error => {
-          console.error("Failed to force refresh videos:", error);
-        });
-      }, 10); // Almost immediate load (just enough time for UI to render)
+      console.log("No real videos detected, triggering immediate cache clear and refresh...");
+      // Clear cache and force refresh to get real content
+      clearCacheAndRefresh();
     } else if (lastSuccessfulFetch && 
         (new Date().getTime() - new Date(lastSuccessfulFetch).getTime() > 1800000) && // More than 30 minutes
         forceRefetch) {
@@ -82,17 +71,36 @@ export const AutoRefreshHandler: React.FC<AutoRefreshHandlerProps> = ({
     }
   }, [videos, lastSuccessfulFetch, forceRefetch, isRefreshing]);
   
-  // Handle extremely stale content (>2 hours) with cache clearing
+  // Handle cache clearing for any content over 1 hour (reduced from 2 hours)
   useEffect(() => {
     if (lastSuccessfulFetch && 
-        new Date().getTime() - new Date(lastSuccessfulFetch).getTime() > 7200000 && // More than 2 hours
-        videos.length === 0 && 
+        new Date().getTime() - new Date(lastSuccessfulFetch).getTime() > 3600000 && // More than 1 hour
         !isRefreshing &&
         forceRefetch) {
-      console.log("Content is extremely stale. Clearing cache...");
+      console.log("Content is stale (>1 hour). Clearing cache automatically...");
       clearCacheAndRefresh();
     }
-  }, [lastSuccessfulFetch, videos, isRefreshing, forceRefetch]);
+  }, [lastSuccessfulFetch, isRefreshing, forceRefetch]);
+  
+  // Additional cache clearing on component mount to ensure fresh content
+  useEffect(() => {
+    // Check when the cache was last cleared
+    const lastCacheClear = localStorage.getItem('lastCacheClearTime');
+    const now = new Date().getTime();
+    
+    // If cache hasn't been cleared in the last 4 hours, clear it
+    if (!lastCacheClear || (now - parseInt(lastCacheClear)) > 4 * 3600000) {
+      console.log("No recent cache clearing detected. Performing scheduled cache clear...");
+      
+      // Only clear cache if we have a way to refresh content
+      if (forceRefetch && !isRefreshing) {
+        clearCacheAndRefresh().then(() => {
+          // Record the time of this cache clear
+          localStorage.setItem('lastCacheClearTime', now.toString());
+        });
+      }
+    }
+  }, []);
   
   // This is a utility component with no UI
   return null;

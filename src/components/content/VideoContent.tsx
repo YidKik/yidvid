@@ -8,9 +8,6 @@ import { useRefetchControl } from "@/hooks/video/useRefetchControl";
 import { useSampleVideos } from "@/hooks/video/useSampleVideos";
 import { AutoRefreshHandler } from "./AutoRefreshHandler";
 import { VideoEmptyState } from "./VideoEmptyState";
-import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
-import { RefreshCw } from "lucide-react";
 import { clearApplicationCache } from "@/lib/query-client";
 
 interface VideoContentProps {
@@ -44,7 +41,28 @@ export const VideoContent = ({
 
   // Delay the background refresh to prioritize showing UI first
   const [hasAttemptedRefresh, setHasAttemptedRefresh] = useState(false);
-  const [showCacheButton, setShowCacheButton] = useState(false);
+
+  // Handle automatic cache clearing for failed fetches
+  useEffect(() => {
+    if (fetchAttempts && fetchAttempts > 2 && hasOnlySampleVideos(videos) && !isRefreshing && forceRefetch) {
+      console.log(`Multiple fetch attempts (${fetchAttempts}) with only sample videos. Auto-clearing cache...`);
+      (async () => {
+        try {
+          await clearApplicationCache();
+          console.log("Cache cleared due to multiple failed fetches");
+          
+          // Give a moment before trying to refresh
+          setTimeout(() => {
+            forceRefetch().catch(error => {
+              console.error("Failed to refresh after automatic cache clear:", error);
+            });
+          }, 500);
+        } catch (error) {
+          console.error("Failed to clear cache automatically:", error);
+        }
+      })();
+    }
+  }, [fetchAttempts, videos, hasOnlySampleVideos, isRefreshing, forceRefetch]);
 
   // Actively trigger a refresh after component mount if we have no real videos
   const triggerContentRefresh = useCallback(() => {
@@ -52,14 +70,26 @@ export const VideoContent = ({
       setHasAttemptedRefresh(true);
       console.log("Triggering content refresh due to sample-only videos");
       
-      // Immediate refresh for better user experience
-      forceRefetch().catch(err => {
-        console.error("Error in force refresh:", err);
-        // Show cache button if refresh fails
-        setShowCacheButton(true);
-      });
+      // Check if we need to clear cache before refreshing
+      if (fetchAttempts && fetchAttempts > 1) {
+        console.log("Multiple fetch attempts detected, clearing cache before refresh");
+        (async () => {
+          await clearApplicationCache();
+          // Short delay to allow cache clearing to complete
+          setTimeout(() => {
+            forceRefetch().catch(err => {
+              console.error("Error in force refresh after cache clear:", err);
+            });
+          }, 300);
+        })();
+      } else {
+        // Immediate refresh for better user experience
+        forceRefetch().catch(err => {
+          console.error("Error in force refresh:", err);
+        });
+      }
     }
-  }, [forceRefetch, isRefreshing]);
+  }, [forceRefetch, isRefreshing, fetchAttempts]);
 
   // If we have only sample videos, try to refresh real content ASAP
   useEffect(() => {
@@ -74,46 +104,6 @@ export const VideoContent = ({
       return () => clearTimeout(timer);
     }
   }, [videos, isLoading, isRefreshing, hasOnlySampleVideos, hasAttemptedRefresh, triggerContentRefresh]);
-
-  // Show cache button if multiple fetch attempts fail
-  useEffect(() => {
-    if (fetchAttempts && fetchAttempts > 2 && hasOnlySampleVideos(videos)) {
-      setShowCacheButton(true);
-    }
-  }, [fetchAttempts, videos, hasOnlySampleVideos]);
-
-  // Handle clearing cache
-  const handleClearCache = async () => {
-    try {
-      toast.loading("Clearing application cache...");
-      await clearApplicationCache();
-      
-      toast.dismiss();
-      toast.success("Cache cleared successfully");
-      
-      // Give a moment before trying to refresh
-      setTimeout(() => {
-        if (forceRefetch) {
-          toast.loading("Refreshing content...");
-          forceRefetch()
-            .then(() => {
-              toast.dismiss();
-              toast.success("Content refreshed successfully");
-              setShowCacheButton(false);
-            })
-            .catch(error => {
-              console.error("Failed to refresh after cache clear:", error);
-              toast.dismiss();
-              toast.error("Failed to refresh content");
-            });
-        }
-      }, 500);
-    } catch (error) {
-      console.error("Failed to clear cache:", error);
-      toast.dismiss();
-      toast.error("Failed to clear cache");
-    }
-  };
 
   // Always show some content immediately - prioritize UI rendering speed
   // Use limited sample videos if we absolutely have no real data
@@ -140,21 +130,6 @@ export const VideoContent = ({
         lastSuccessfulFetch={lastSuccessfulFetch}
         forceRefetch={forceRefetch}
       />
-      
-      {/* Cache clearing button that appears when content can't be loaded */}
-      {showCacheButton && (
-        <div className="flex justify-center my-4">
-          <Button 
-            variant="outline" 
-            className="flex items-center gap-2 bg-amber-50 border-amber-200 text-amber-700 hover:bg-amber-100"
-            onClick={handleClearCache}
-            disabled={isRefreshing}
-          >
-            <RefreshCw className="h-4 w-4" />
-            Clear Cache & Refresh Content
-          </Button>
-        </div>
-      )}
       
       {/* Responsive video view based on device */}
       {isMobile ? (

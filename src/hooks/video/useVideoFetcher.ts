@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { VideoData, VideoFetcherResult } from "./types/video-fetcher";
 import { 
   fetchVideosFromDatabase, 
@@ -9,6 +9,7 @@ import {
 import { tryFetchNewVideos } from "./utils/youtube-fetch";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { clearApplicationCache } from "@/lib/query-client";
 
 /**
  * Hook with functionality to fetch all videos from the database
@@ -17,6 +18,38 @@ import { toast } from "sonner";
 export const useVideoFetcher = (): VideoFetcherResult => {
   const [fetchAttempts, setFetchAttempts] = useState(0);
   const [lastSuccessfulFetch, setLastSuccessfulFetch] = useState<Date | null>(null);
+  const [lastCacheCheck, setLastCacheCheck] = useState<Date | null>(null);
+
+  // Effect to check cache freshness periodically
+  useEffect(() => {
+    // Check cache freshness on mount
+    checkAndClearStaleCache();
+    
+    // Set up periodic check (every 30 minutes)
+    const intervalId = setInterval(() => {
+      checkAndClearStaleCache();
+    }, 30 * 60 * 1000);
+    
+    return () => clearInterval(intervalId);
+  }, []);
+
+  // Check if cache is stale and clear if necessary
+  const checkAndClearStaleCache = async () => {
+    // Avoid too frequent checks
+    const now = new Date();
+    if (lastCacheCheck && now.getTime() - lastCacheCheck.getTime() < 10 * 60 * 1000) {
+      return; // Skip if we checked in the last 10 minutes
+    }
+    
+    setLastCacheCheck(now);
+    
+    // Check last successful fetch timestamp
+    if (!lastSuccessfulFetch || now.getTime() - lastSuccessfulFetch.getTime() > 60 * 60 * 1000) {
+      // Cache is considered stale after 1 hour
+      console.log("Cache is stale, automatically clearing...");
+      await clearApplicationCache();
+    }
+  };
 
   // Check if we should fetch new videos - more aggressive timeframe
   const shouldFetchNew = () => {
@@ -26,6 +59,12 @@ export const useVideoFetcher = (): VideoFetcherResult => {
 
   const fetchAllVideos = async (): Promise<VideoData[]> => {
     console.log("Starting video fetch process with highest priority...");
+    
+    // If we've had multiple failed attempts, clear cache before trying again
+    if (fetchAttempts > 2) {
+      console.log(`${fetchAttempts} fetch attempts detected, clearing cache before new attempt...`);
+      await clearApplicationCache();
+    }
     
     try {
       // First try direct database query with anon key - but now using simpler query to avoid RLS issues
@@ -172,6 +211,8 @@ export const useVideoFetcher = (): VideoFetcherResult => {
 
   const forceRefetch = async (): Promise<VideoData[]> => {
     console.log("Forcing complete refresh of all videos...");
+    // Clear cache before force refresh to ensure freshest possible data
+    await clearApplicationCache();
     setFetchAttempts(prev => prev + 1);
     return fetchAllVideos();
   };

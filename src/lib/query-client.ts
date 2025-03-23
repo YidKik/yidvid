@@ -29,7 +29,12 @@ export const clearApplicationCache = async () => {
     'userPreferences',
     'lastRefreshTime',
     'cachedVideos',
-    'cachedChannels'
+    'cachedChannels',
+    'lastFetchTimestamp', // Added new cache keys
+    'videoCacheVersion',
+    'channelCacheVersion',
+    'contentPreferences',
+    'videoRefreshTracker'
   ];
   
   cacheKeys.forEach(key => {
@@ -39,9 +44,38 @@ export const clearApplicationCache = async () => {
     }
   });
   
+  // Session storage items that might contain cached data
+  const sessionKeys = [
+    'tempVideoCache', 
+    'currentViewSession', 
+    'lastRefresh'
+  ];
+  
+  sessionKeys.forEach(key => {
+    if (sessionStorage.getItem(key)) {
+      sessionStorage.removeItem(key);
+      console.log(`Cleared sessionStorage item: ${key}`);
+    }
+  });
+  
   // Force refetch of main content
   await queryClient.invalidateQueries({ queryKey: ["youtube_videos"] });
   await queryClient.invalidateQueries({ queryKey: ["youtube_channels"] });
+  await queryClient.invalidateQueries({ queryKey: ["categories"] });
+  
+  // Add more query keys to invalidate
+  const additionalQueryKeys = [
+    "featured_videos",
+    "user_preferences",
+    "channel_videos",
+    "video_comments",
+    "video_history"
+  ];
+  
+  for (const key of additionalQueryKeys) {
+    await queryClient.invalidateQueries({ queryKey: [key] });
+    console.log(`Invalidated queries for: ${key}`);
+  }
   
   console.log("Cache clearing complete. Main content will be refreshed.");
   
