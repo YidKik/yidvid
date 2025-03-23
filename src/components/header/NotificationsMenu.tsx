@@ -100,16 +100,7 @@ export const NotificationsMenu = ({ session, onMarkAsRead }: NotificationsMenuPr
   };
 
   if (!session?.user?.id) {
-    return (
-      <Button 
-        variant="ghost" 
-        size="icon" 
-        className="bg-[#222222] hover:bg-[#333333] text-white relative h-7 w-7 md:h-10 md:w-10"
-        disabled
-      >
-        <Bell className="h-3.5 w-3.5 md:h-5 md:w-5" />
-      </Button>
-    );
+    return null;
   }
 
   return (
