@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -25,7 +24,6 @@ export const ChannelVideosFetcher = () => {
       const { data: { session } } = await supabase.auth.getSession();
       
       if (!session) {
-        toast.error("You must be logged in to perform this action");
         return;
       }
 
@@ -36,7 +34,6 @@ export const ChannelVideosFetcher = () => {
         .single();
 
       if (!userProfile?.is_admin) {
-        toast.error("You don't have permission to perform this action");
         return;
       }
 
@@ -44,26 +41,14 @@ export const ChannelVideosFetcher = () => {
 
       if (error) {
         console.error('Error fetching videos:', error);
-        toast.error("Failed to fetch videos. Please try again later.");
         return;
       }
 
-      if (data.success) {
-        const successCount = data.results.filter((r: any) => r.success).length;
-        toast.success(`Successfully processed ${successCount} channels`);
-        
-        // Show errors if any
-        const errors = data.results.filter((r: any) => !r.success);
-        if (errors.length > 0) {
-          console.error('Errors during processing:', errors);
-          toast.error(`Failed to process ${errors.length} channels. Check console for details.`);
-        }
-      } else {
-        toast.error(data.message || "Failed to fetch videos");
+      if (!data.success) {
+        console.error('Failed to fetch videos:', data.message);
       }
     } catch (error) {
       console.error('Error:', error);
-      toast.error("An unexpected error occurred");
     } finally {
       setIsLoading(false);
       setShowConfirmDialog(false);

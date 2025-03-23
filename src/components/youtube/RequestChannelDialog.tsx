@@ -22,7 +22,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
@@ -56,7 +55,6 @@ export const RequestChannelDialog = () => {
 
   const handleClick = () => {
     if (!session) {
-      toast.error("Please log in to request a channel");
       setIsAuthOpen(true);
       return;
     }
@@ -65,7 +63,6 @@ export const RequestChannelDialog = () => {
   const onSubmit = async (data: FormValues) => {
     try {
       if (!session?.user?.id) {
-        toast.error("Please log in to request a channel");
         setIsAuthOpen(true);
         return;
       }
@@ -81,11 +78,9 @@ export const RequestChannelDialog = () => {
         throw error;
       }
 
-      toast.success("Channel request submitted successfully!");
       form.reset();
     } catch (error) {
       console.error("Error submitting channel request:", error);
-      toast.error("Failed to submit channel request. Please try again.");
     }
   };
 

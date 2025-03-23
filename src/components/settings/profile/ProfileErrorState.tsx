@@ -4,7 +4,6 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -44,15 +43,13 @@ export const ProfileErrorState = ({ userEmail, isLoggingOut, handleLogout }: Pro
       
       const { error } = await supabase.rpc('delete_user', {});
       if (error) {
-        toast.error("Error deleting account");
         return;
       }
       await supabase.auth.signOut();
       setIsDeleteDialogOpen(false);
       navigate("/");
-      toast.success("Account deleted successfully");
     } catch (error) {
-      toast.error("An error occurred while deleting your account");
+      console.error("Error deleting account:", error);
     }
   };
 

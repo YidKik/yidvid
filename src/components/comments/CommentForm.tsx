@@ -2,7 +2,6 @@
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
-import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
 interface CommentFormProps {
@@ -18,12 +17,10 @@ export const CommentForm = ({ onSubmit }: CommentFormProps) => {
     
     const session = await supabase.auth.getSession();
     if (!session.data.session) {
-      toast.error("You must be logged in to comment", { id: "login-required" });
       return;
     }
 
     if (!comment.trim()) {
-      toast.error("Comment cannot be empty", { id: "empty-comment" });
       return;
     }
 
@@ -31,10 +28,8 @@ export const CommentForm = ({ onSubmit }: CommentFormProps) => {
     try {
       await onSubmit(comment);
       setComment("");
-      toast.success("Comment posted successfully", { id: "comment-posted" });
     } catch (error) {
       console.error("Error posting comment:", error);
-      toast.error("Failed to post comment. Please try again.", { id: "comment-error" });
     } finally {
       setIsSubmitting(false);
     }

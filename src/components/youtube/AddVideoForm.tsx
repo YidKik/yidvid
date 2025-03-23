@@ -1,10 +1,10 @@
+
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 
 interface AddVideoFormProps {
@@ -30,7 +30,7 @@ export const AddVideoForm = ({ onClose, onSuccess }: AddVideoFormProps) => {
       // Extract video ID from URL
       const videoId = values.videoUrl.split("v=")[1]?.split("&")[0] || values.videoUrl.split("/").pop();
       if (!videoId) {
-        toast.error("Invalid video URL");
+        console.error("Invalid video URL");
         return;
       }
 
@@ -45,7 +45,6 @@ export const AddVideoForm = ({ onClose, onSuccess }: AddVideoFormProps) => {
 
       if (analysisError || !analysisResult?.approved) {
         console.error("Content moderation failed:", analysisError || analysisResult);
-        toast.error("Video content does not meet community guidelines");
         return;
       }
 
@@ -58,7 +57,6 @@ export const AddVideoForm = ({ onClose, onSuccess }: AddVideoFormProps) => {
 
       if (channelError) {
         console.error("Error checking channel:", channelError);
-        toast.error("Error checking channel");
         return;
       }
 
@@ -74,7 +72,6 @@ export const AddVideoForm = ({ onClose, onSuccess }: AddVideoFormProps) => {
 
         if (createChannelError) {
           console.error("Error creating channel:", createChannelError);
-          toast.error("Error creating channel");
           return;
         }
       }
@@ -93,16 +90,13 @@ export const AddVideoForm = ({ onClose, onSuccess }: AddVideoFormProps) => {
 
       if (videoError) {
         console.error("Error adding video:", videoError);
-        toast.error("Error adding video");
         return;
       }
 
-      toast.success("Video added successfully");
       onSuccess();
       onClose();
     } catch (error) {
       console.error("Error in form submission:", error);
-      toast.error("Error adding video");
     } finally {
       setIsLoading(false);
     }

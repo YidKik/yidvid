@@ -13,7 +13,6 @@ import {
 import { Form } from "@/components/ui/form";
 import { MessageSquare } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CategorySelect } from "./CategorySelect";
 import { ContactFormFields } from "./ContactFormFields";
@@ -46,12 +45,10 @@ export const ContactDialog = () => {
 
       if (error) throw error;
 
-      toast.success("Contact request submitted successfully!");
       setIsOpen(false);
       form.reset();
     } catch (error) {
       console.error("Error submitting contact request:", error);
-      toast.error("Failed to submit contact request. Please try again.");
     }
   };
 

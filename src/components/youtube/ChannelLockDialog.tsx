@@ -4,7 +4,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { toast } from "sonner";
 import { Lock, Trash2 } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
@@ -30,9 +29,7 @@ export const ChannelLockDialog = ({ isOpen, onClose, onUnlock, onDelete, storedP
         onUnlock();
       }
       setPin("");
-      toast.success(showDeleteConfirm ? "Parental control removed" : "Channel Control unlocked");
     } else {
-      toast.error("Incorrect PIN");
       setPin("");
     }
   };

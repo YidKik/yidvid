@@ -1,7 +1,6 @@
 
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "@/components/ui/use-toast";
 
 export const useVideoDelete = (refetchVideos: () => void) => {
   const [isDeleting, setIsDeleting] = useState(false);
@@ -22,7 +21,7 @@ export const useVideoDelete = (refetchVideos: () => void) => {
         .single();
 
       if (quotaData?.quota_remaining <= 0) {
-        toast.error("Cannot delete video: YouTube API quota exceeded", { id: "quota-exceeded" });
+        console.error("Cannot delete video: YouTube API quota exceeded");
         return;
       }
 
@@ -97,11 +96,9 @@ export const useVideoDelete = (refetchVideos: () => void) => {
         throw videoError;
       }
 
-      toast.success("Video deleted successfully", { id: `video-deleted-${videoId}` });
       refetchVideos();
     } catch (error: any) {
       console.error("Error in deletion process:", error);
-      toast.error(`Error deleting video: ${error.message}`, { id: `video-delete-error-${videoId}` });
     } finally {
       setIsDeleting(false);
       setVideoToDelete(null);

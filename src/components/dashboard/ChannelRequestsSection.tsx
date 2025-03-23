@@ -1,9 +1,9 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
 
 interface ChannelRequest {
   id: string;
@@ -49,11 +49,9 @@ export const ChannelRequestsSection = () => {
 
       if (error) throw error;
 
-      toast.success('Channel request approved');
       refetch();
     } catch (error) {
       console.error('Error approving request:', error);
-      toast.error('Failed to approve request');
     }
   };
 
@@ -66,11 +64,9 @@ export const ChannelRequestsSection = () => {
 
       if (error) throw error;
 
-      toast.success('Channel request rejected');
       refetch();
     } catch (error) {
       console.error('Error rejecting request:', error);
-      toast.error('Failed to reject request');
     }
   };
 

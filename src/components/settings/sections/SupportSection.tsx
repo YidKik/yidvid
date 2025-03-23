@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -73,11 +72,9 @@ export const SupportSection = () => {
 
       if (error) throw error;
 
-      toast.success("Contact request submitted successfully!");
       form.reset();
     } catch (error) {
       console.error("Error submitting contact request:", error);
-      toast.error("Failed to submit contact request. Please try again.");
     }
   };
 

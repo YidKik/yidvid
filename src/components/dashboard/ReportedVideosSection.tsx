@@ -11,7 +11,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { toast } from "sonner";
 import { ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -50,9 +49,7 @@ export const ReportedVideosSection = ({ isOpen, onClose }: { isOpen: boolean; on
         .order("created_at", { ascending: false });
 
       if (error) {
-        toast("Error", {
-          description: "Failed to fetch video reports"
-        });
+        console.error("Failed to fetch video reports:", error);
         return [];
       }
 
@@ -72,9 +69,7 @@ export const ReportedVideosSection = ({ isOpen, onClose }: { isOpen: boolean; on
         },
         (payload) => {
           queryClient.invalidateQueries({ queryKey: ["video-reports"] });
-          toast("New Report", {
-            description: "A new video has been reported"
-          });
+          console.log("A new video has been reported");
         }
       )
       .subscribe();

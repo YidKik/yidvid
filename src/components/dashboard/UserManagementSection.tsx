@@ -10,7 +10,6 @@ import { AdminUsersSection } from "./user-management/AdminUsersSection";
 import { RegularUsersSection } from "./user-management/RegularUsersSection";
 import { UserManagementHeader } from "./user-management/UserManagementHeader";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
 
 export const UserManagementSection = ({ currentUserId }: { currentUserId: string }) => {
   const [showAddAdminDialog, setShowAddAdminDialog] = useState(false);
@@ -40,7 +39,7 @@ export const UserManagementSection = ({ currentUserId }: { currentUserId: string
       if (currentUserError) throw currentUserError;
 
       if (!currentUser?.is_admin) {
-        toast.error("Permission denied: Only admins can add new admins.");
+        console.error("Permission denied: Only admins can add new admins.");
         return;
       }
 
@@ -55,7 +54,7 @@ export const UserManagementSection = ({ currentUserId }: { currentUserId: string
       if (userError) throw userError;
 
       if (!userData) {
-        toast.error("User not found: Please check the email address and try again.");
+        console.error("User not found: Please check the email address and try again.");
         return;
       }
 
@@ -68,14 +67,13 @@ export const UserManagementSection = ({ currentUserId }: { currentUserId: string
 
       if (updateError) throw updateError;
 
-      toast.success(`Admin added successfully: ${newAdminEmail} has been granted admin privileges.`);
+      console.log(`Admin added successfully: ${newAdminEmail} has been granted admin privileges.`);
 
       setNewAdminEmail("");
       setShowAddAdminDialog(false);
       refetchUsers();
     } catch (error: any) {
       console.error("Error adding admin:", error);
-      toast.error("Error adding admin: " + error.message);
     }
   };
 
