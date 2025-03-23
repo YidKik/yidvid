@@ -1,8 +1,9 @@
 
 import { useState, useEffect } from "react";
 import { VideoCard } from "../VideoCard";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, TrendingUp, Eye } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface MostViewedVideosProps {
   videos: {
@@ -103,43 +104,68 @@ export const MostViewedVideos = ({
 
   return (
     <div className="w-full max-w-[1200px] mx-auto mb-2 md:mb-8">
-      <div className="bg-gradient-to-r from-[#F1F1F1] via-[#D3E4FD] to-[#F1F1F1] rounded-lg md:rounded-xl shadow-sm md:shadow-lg p-1.5 md:p-6">
-        <div className="flex items-center gap-1.5 mb-1.5 md:mb-4 px-0.5 md:px-0">
-          <h2 className="text-xs md:text-xl font-bold text-[#333333]">
-            Most Watched
-          </h2>
-        </div>
-
-        <div className="relative px-0.5 md:px-4">
-          {currentIndex > 0 && (
-            <button 
-              onClick={() => handleManualNavigation(handlePrevious)}
-              disabled={isTransitioning}
-              className={`absolute left-0 top-1/2 -translate-y-1/2 z-10 p-2 md:p-3 bg-white/90 hover:bg-white rounded-full shadow-lg transition-all duration-300 ${isTransitioning ? 'opacity-50 cursor-not-allowed' : ''}`}
-              aria-label="Previous videos"
-            >
-              <ChevronLeft className="w-4 h-4 md:w-5 md:h-5 text-[#555555]" />
-            </button>
-          )}
-
-          <div className={`${isMobile ? "grid grid-cols-2 gap-3" : "grid grid-cols-4 gap-4"} transition-all duration-300 transform ${isTransitioning ? 'scale-95 opacity-80' : 'scale-100 opacity-100'}`}>
-            {displayVideos.map(video => (
-              <div key={video.id} className="w-full">
-                <VideoCard {...video} hideInfo={true} />
-              </div>
-            ))}
+      <div className="bg-gradient-to-r from-white via-[#D3E4FD] to-white rounded-lg md:rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300">
+        <div className="px-3 md:px-6 pt-4 md:pt-6 pb-6 md:pb-8">
+          <div className="flex items-center gap-2 mb-3 md:mb-6">
+            <div className="bg-[#eff6ff] p-1.5 md:p-2 rounded-full">
+              <TrendingUp className="h-3 w-3 md:h-4 md:w-4 text-blue-500" />
+            </div>
+            <h2 className="text-sm md:text-xl font-bold text-[#333333] flex items-center">
+              Most Watched
+              <span className="hidden md:inline-flex items-center ml-2 text-sm font-normal text-gray-500">
+                <Eye className="h-3.5 w-3.5 mr-1 text-gray-400" />
+                Popular content
+              </span>
+            </h2>
           </div>
 
-          {currentIndex + videosPerPage < sortedVideos.length && (
-            <button 
-              onClick={() => handleManualNavigation(handleNext)}
-              disabled={isTransitioning}
-              className={`absolute right-0 top-1/2 -translate-y-1/2 z-10 p-2 md:p-3 bg-white/90 hover:bg-white rounded-full shadow-lg transition-all duration-300 ${isTransitioning ? 'opacity-50 cursor-not-allowed' : ''}`}
-              aria-label="Next videos"
-            >
-              <ChevronRight className="w-4 h-4 md:w-5 md:h-5 text-[#555555]" />
-            </button>
-          )}
+          <div className="relative">
+            <AnimatePresence initial={false} mode="wait">
+              <motion.div 
+                key={`carousel-${currentIndex}`}
+                initial={{ opacity: 0.5, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0.5, y: -10 }}
+                transition={{ duration: 0.3 }}
+                className={`${isMobile ? "grid grid-cols-2 gap-3" : "grid grid-cols-4 gap-4"}`}
+              >
+                {displayVideos.map(video => (
+                  <motion.div 
+                    key={video.id} 
+                    className="w-full"
+                    whileHover={{ 
+                      scale: 1.03,
+                      transition: { duration: 0.2 }
+                    }}
+                  >
+                    <VideoCard {...video} hideInfo={true} />
+                  </motion.div>
+                ))}
+              </motion.div>
+            </AnimatePresence>
+
+            {currentIndex > 0 && (
+              <button 
+                onClick={() => handleManualNavigation(handlePrevious)}
+                disabled={isTransitioning}
+                className={`absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/3 md:-translate-x-1/4 z-10 p-1.5 md:p-2.5 bg-white/90 hover:bg-white rounded-full shadow-md hover:shadow-lg transition-all duration-200 ${isTransitioning ? 'opacity-50 cursor-not-allowed' : 'opacity-90 hover:opacity-100'}`}
+                aria-label="Previous videos"
+              >
+                <ChevronLeft className="w-3.5 h-3.5 md:w-4 md:h-4 text-blue-500" />
+              </button>
+            )}
+
+            {currentIndex + videosPerPage < sortedVideos.length && (
+              <button 
+                onClick={() => handleManualNavigation(handleNext)}
+                disabled={isTransitioning}
+                className={`absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/3 md:translate-x-1/4 z-10 p-1.5 md:p-2.5 bg-white/90 hover:bg-white rounded-full shadow-md hover:shadow-lg transition-all duration-200 ${isTransitioning ? 'opacity-50 cursor-not-allowed' : 'opacity-90 hover:opacity-100'}`}
+                aria-label="Next videos"
+              >
+                <ChevronRight className="w-3.5 h-3.5 md:w-4 md:h-4 text-blue-500" />
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>
