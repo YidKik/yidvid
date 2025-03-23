@@ -2,7 +2,8 @@
 import React from "react";
 import { 
   Music, BookOpen, Sparkles, Mic, GraduationCap, Film, 
-  PlusCircle, Tag, Star, Zap, Clock, Award, Bookmark, Smile 
+  PlusCircle, Tag, Star, Zap, Clock, Award, Bookmark, Smile,
+  LucideProps
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -13,23 +14,26 @@ interface CategoryIconProps {
   iconBgColor: string;
 }
 
+// Type definition for the icon mapping
+type IconComponent = React.ComponentType<LucideProps>;
+
 // Simple icon mapping with outline-only style
-const simpleIcons: Record<string, React.ReactNode> = {
-  '🎵': <Music size={20} strokeWidth={1.5} color="white" />,
-  '📖': <BookOpen size={20} strokeWidth={1.5} color="white" />,
-  '✨': <Sparkles size={20} strokeWidth={1.5} color="white" />,
-  '🎙️': <Mic size={20} strokeWidth={1.5} color="white" />,
-  '📚': <GraduationCap size={20} strokeWidth={1.5} color="white" />,
-  '🎬': <Film size={20} strokeWidth={1.5} color="white" />,
-  '📌': <PlusCircle size={20} strokeWidth={1.5} color="white" />,
-  '😄': <Smile size={20} strokeWidth={1.5} color="white" />,
-  '🤣': <Star size={20} strokeWidth={1.5} color="white" />,
-  '🔥': <Zap size={20} strokeWidth={1.5} color="white" />,
-  '⏰': <Clock size={20} strokeWidth={1.5} color="white" />,
-  '🏆': <Award size={20} strokeWidth={1.5} color="white" />,
-  '🔖': <Bookmark size={20} strokeWidth={1.5} color="white" />,
-  '🏷️': <Tag size={20} strokeWidth={1.5} color="white" />,
-  'default': <Tag size={20} strokeWidth={1.5} color="white" />
+const simpleIcons: Record<string, IconComponent> = {
+  '🎵': Music,
+  '📖': BookOpen,
+  '✨': Sparkles,
+  '🎙️': Mic,
+  '📚': GraduationCap,
+  '🎬': Film,
+  '📌': PlusCircle,
+  '😄': Smile,
+  '🤣': Star,
+  '🔥': Zap,
+  '⏰': Clock,
+  '🏆': Award,
+  '🔖': Bookmark,
+  '🏷️': Tag,
+  'default': Tag
 };
 
 export const CategoryIcon = ({ icon, isCustomImage = false, iconBgColor }: CategoryIconProps) => {
@@ -53,19 +57,12 @@ export const CategoryIcon = ({ icon, isCustomImage = false, iconBgColor }: Categ
     }
   };
 
-  // Get the simple icon or use default if not found
-  const getSimpleIcon = (iconEmoji: string) => {
+  // Get the icon component
+  const getIconComponent = (iconEmoji: string) => {
     const iconSize = isMobile ? 14 : 20;
-    const iconComponent = simpleIcons[iconEmoji] || simpleIcons['default'];
+    const IconComponent = simpleIcons[iconEmoji] || simpleIcons['default'];
     
-    // Clone the icon element with the new size
-    if (React.isValidElement(iconComponent)) {
-      return React.cloneElement(iconComponent, { 
-        size: iconSize 
-      });
-    }
-    
-    return simpleIcons['default'];
+    return <IconComponent size={iconSize} strokeWidth={1.5} color="white" />;
   };
 
   return (
@@ -96,7 +93,7 @@ export const CategoryIcon = ({ icon, isCustomImage = false, iconBgColor }: Categ
           // Replace custom image with appropriate outline icon
           <Tag size={isMobile ? 12 : 20} strokeWidth={1.5} color="white" />
         ) : (
-          getSimpleIcon(icon)
+          getIconComponent(icon)
         )}
       </motion.span>
     </motion.div>
