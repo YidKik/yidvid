@@ -1,9 +1,8 @@
-
 import { Button } from "@/components/ui/button";
 import { NotificationsMenu } from "./NotificationsMenu";
 import { UserMenu } from "./UserMenu";
 import { ContactDialog } from "../contact/ContactDialog";
-import { LogIn, MessageSquare } from "lucide-react";
+import { LogIn, MessageSquare, Settings } from "lucide-react";
 import { Separator } from "../ui/separator";
 
 interface HeaderActionsProps {
@@ -33,9 +32,14 @@ export const HeaderActions = ({
         <ContactDialog />
         
         {session ? (
-          <div onClick={onSettingsClick}>
-            <UserMenu onLogout={onLogout} />
-          </div>
+          <Button
+            onClick={onSettingsClick}
+            variant="secondary"
+            size="icon"
+            className="h-8 w-8 rounded-full bg-white/90 shadow-sm border border-[#ea384c]"
+          >
+            <Settings className="h-4 w-4 text-black" />
+          </Button>
         ) : (
           <Button
             onClick={onAuthOpen}
