@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import Auth from "@/pages/Auth";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -57,7 +58,7 @@ export const Header = () => {
         <div className="flex h-14 items-center relative">
           {isMobile ? (
             <div className="w-full flex items-center px-2 justify-between">
-              <div className="w-1/4">
+              <div className="w-1/6">
                 <HeaderLogo 
                   isMobile={isMobile}
                   isMobileMenuOpen={isMobileMenuOpen}
@@ -65,11 +66,11 @@ export const Header = () => {
                 />
               </div>
               
-              <div className="w-1/2 px-1">
+              <div className="w-3/5 px-1">
                 <SearchBar />
               </div>
 
-              <div className="w-1/4 flex justify-end">
+              <div className="w-1/6 flex justify-end">
                 <HeaderActions 
                   isMobile={isMobile}
                   isSearchExpanded={isSearchExpanded}

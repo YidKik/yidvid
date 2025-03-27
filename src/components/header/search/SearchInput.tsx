@@ -44,7 +44,7 @@ export const SearchInput = ({
           onBlur={handleBlur}
           className="w-full bg-transparent z-10 relative border-none text-[#555555] placeholder:text-[#555555] focus-visible:ring-0 focus-visible:ring-offset-0 h-7 md:h-10 text-xs md:text-sm pr-10 md:pr-14"
         />
-        <div className={`animated-border ${isFocused ? 'opacity-100' : 'opacity-0'}`}></div>
+        <div className={`animated-border thin-outline ${isFocused ? 'opacity-100' : 'opacity-0'}`}></div>
       </div>
       <Button 
         type="submit"

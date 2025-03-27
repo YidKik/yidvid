@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { NotificationsMenu } from "./NotificationsMenu";
 import { UserMenu } from "./UserMenu";
@@ -41,9 +40,9 @@ export const HeaderActions = ({
             onClick={onAuthOpen}
             variant="secondary"
             size="icon"
-            className="h-8 w-8 rounded-full bg-white/90 shadow-sm border border-gray-100"
+            className="h-7 w-7 rounded-full bg-white/90 shadow-sm border border-gray-100"
           >
-            <LogIn className="h-4 w-4 text-primary" />
+            <LogIn className="h-3.5 w-3.5 text-primary" />
           </Button>
         )}
       </div>
