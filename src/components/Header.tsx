@@ -53,9 +53,9 @@ export const Header = () => {
   };
 
   return (
-    <header className={`sticky top-0 z-50 w-full border-b ${isMobile ? 'h-20 bg-white' : 'bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60'}`}>
+    <header className={`sticky top-0 z-50 w-full border-b ${isMobile ? 'h-16 bg-white' : 'bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60'}`}>
       <div className="container mx-auto px-0">
-        <div className={`flex ${isMobile ? 'h-20' : 'h-14'} items-center relative`}>
+        <div className={`flex ${isMobile ? 'h-16' : 'h-14'} items-center relative`}>
           {isMobile ? (
             <div className="w-full flex items-center px-2 justify-between">
               <div className="w-1/4 flex justify-start">
