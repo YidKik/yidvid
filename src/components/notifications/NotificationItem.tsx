@@ -1,5 +1,6 @@
 
 import { useNavigate } from "react-router-dom";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface NotificationItemProps {
   notification: {
@@ -16,18 +17,23 @@ interface NotificationItemProps {
 
 export const NotificationItem = ({ notification, onNotificationClick }: NotificationItemProps) => {
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   return (
     <div
       key={notification.id}
-      className="p-1.5 sm:p-4 hover:bg-[#333333] cursor-pointer transition-colors duration-200 border-b border-[#333333] animate-fade-in"
+      className={`
+        p-3 sm:p-4 hover:bg-[#333333] cursor-pointer transition-colors duration-200 
+        border-b border-[#333333] animate-fade-in
+        ${isMobile ? 'active:bg-[#444444]' : ''}
+      `}
       onClick={() => {
         navigate(`/video/${notification.video_id}`);
         onNotificationClick();
       }}
     >
-      <div className="flex items-start gap-1.5">
-        <div className="relative w-12 sm:w-24 h-8 sm:h-16">
+      <div className="flex items-start gap-3">
+        <div className="relative w-16 sm:w-24 h-10 sm:h-16 flex-shrink-0">
           <img
             src={notification.youtube_videos.thumbnail}
             alt={notification.youtube_videos.title}
@@ -57,10 +63,10 @@ export const NotificationItem = ({ notification, onNotificationClick }: Notifica
           />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-[10px] sm:text-sm text-white line-clamp-2 font-medium">
+          <p className="text-xs sm:text-sm text-white line-clamp-2 font-medium">
             New video from {notification.youtube_videos.channel_name}
           </p>
-          <p className="text-[9px] sm:text-xs text-white/70 mt-0.5 line-clamp-1 sm:line-clamp-2">
+          <p className="text-[11px] sm:text-xs text-white/70 mt-1 line-clamp-2">
             {notification.youtube_videos.title}
           </p>
         </div>

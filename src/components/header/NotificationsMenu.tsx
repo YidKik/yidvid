@@ -12,6 +12,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { NotificationHeader } from "../notifications/NotificationHeader";
 import { NotificationList } from "../notifications/NotificationList";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface NotificationsMenuProps {
   session: any;
@@ -19,6 +20,7 @@ interface NotificationsMenuProps {
 }
 
 export const NotificationsMenu = ({ session, onMarkAsRead }: NotificationsMenuProps) => {
+  const isMobile = useIsMobile();
   const { data: notifications, refetch, isError, error, isLoading } = useQuery({
     queryKey: ["video-notifications", session?.user?.id],
     queryFn: async () => {
@@ -123,8 +125,12 @@ export const NotificationsMenu = ({ session, onMarkAsRead }: NotificationsMenuPr
         </Button>
       </SheetTrigger>
       <SheetContent 
-        side="right"
-        className="w-[240px] sm:w-[400px] bg-[#222222] border-[#333333] p-0"
+        side={isMobile ? "bottom" : "right"}
+        className={`
+          ${isMobile ? 'w-full h-[90vh] rounded-t-xl' : 'w-[240px] sm:w-[400px]'} 
+          bg-[#222222] border-[#333333] p-0
+          ${isMobile ? 'animate-slide-up' : 'animate-fade-in'}
+        `}
       >
         <NotificationHeader 
           hasNotifications={!!notifications?.length}
