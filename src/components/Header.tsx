@@ -57,8 +57,8 @@ export const Header = () => {
       <div className="container mx-auto px-0">
         <div className={`flex ${isMobile ? 'h-16' : 'h-14'} items-center relative`}>
           {isMobile ? (
-            <div className="w-full flex items-center px-3 justify-between">
-              <div className="w-2/12 flex justify-start">
+            <div className="w-full flex items-center px-3">
+              <div className="w-1/4 flex justify-start">
                 <HeaderLogo 
                   isMobile={isMobile}
                   isMobileMenuOpen={isMobileMenuOpen}
@@ -66,11 +66,11 @@ export const Header = () => {
                 />
               </div>
               
-              <div className="w-7/12 px-1">
+              <div className="w-2/4 flex justify-center">
                 <SearchBar />
               </div>
 
-              <div className="w-3/12 flex justify-end">
+              <div className="w-1/4 flex justify-end">
                 <HeaderActions 
                   isMobile={isMobile}
                   isSearchExpanded={isSearchExpanded}
