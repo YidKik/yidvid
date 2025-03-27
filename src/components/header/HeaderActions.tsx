@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { NotificationsMenu } from "./NotificationsMenu";
 import { UserMenu } from "./UserMenu";
@@ -36,18 +37,18 @@ export const HeaderActions = ({
             onClick={onSettingsClick}
             variant="secondary"
             size="icon"
-            className="h-8 w-8 rounded-full bg-white/90 shadow-sm border border-[#ea384c]"
+            className="h-9 w-9 rounded-full bg-white/90 shadow-sm border border-[#ea384c]"
           >
-            <Settings className="h-4 w-4 text-black" />
+            <Settings className="h-4.5 w-4.5 text-black" />
           </Button>
         ) : (
           <Button
             onClick={onAuthOpen}
             variant="secondary"
             size="icon"
-            className="h-8 w-8 rounded-full bg-white/90 shadow-sm border border-[#ea384c]"
+            className="h-9 w-9 rounded-full bg-white/90 shadow-sm border border-[#ea384c]"
           >
-            <LogIn className="h-4 w-4 text-black" />
+            <LogIn className="h-4.5 w-4.5 text-black" />
           </Button>
         )}
       </div>
