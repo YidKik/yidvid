@@ -24,7 +24,8 @@ export const MostViewedVideos = ({
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const isMobile = useIsMobile();
-  const videosPerPage = 4; // Always show 4 videos at a time
+  // On mobile, only show 2 videos at a time instead of 4
+  const videosPerPage = isMobile ? 2 : 4;
   const AUTO_SLIDE_INTERVAL = 8000;
   
   const ensureVideosToDisplay = () => {
@@ -96,7 +97,7 @@ export const MostViewedVideos = ({
     return null;
   }
 
-  // Always display 4 videos, handle mobile case differently with CSS
+  // Display 2 videos on mobile, 4 on desktop
   const displayVideos = sortedVideos.slice(currentIndex, currentIndex + videosPerPage);
   
   // If we don't have enough videos to display, pad with empty slots
