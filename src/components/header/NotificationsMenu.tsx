@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "@/components/ui/use-toast";
 import {
   Sheet,
+  SheetClose,
   SheetContent,
   SheetTrigger,
 } from "@/components/ui/sheet";
@@ -13,6 +14,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { NotificationHeader } from "../notifications/NotificationHeader";
 import { NotificationList } from "../notifications/NotificationList";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useRef } from "react";
 
 interface NotificationsMenuProps {
   session: any;
@@ -21,6 +23,8 @@ interface NotificationsMenuProps {
 
 export const NotificationsMenu = ({ session, onMarkAsRead }: NotificationsMenuProps) => {
   const isMobile = useIsMobile();
+  const closeRef = useRef<HTMLButtonElement>(null);
+  
   const { data: notifications, refetch, isError, error, isLoading } = useQuery({
     queryKey: ["video-notifications", session?.user?.id],
     queryFn: async () => {
@@ -101,6 +105,12 @@ export const NotificationsMenu = ({ session, onMarkAsRead }: NotificationsMenuPr
     }
   };
 
+  const handleClose = () => {
+    if (closeRef.current) {
+      closeRef.current.click();
+    }
+  };
+
   if (!session?.user?.id) {
     return null;
   }
@@ -124,17 +134,20 @@ export const NotificationsMenu = ({ session, onMarkAsRead }: NotificationsMenuPr
           )}
         </Button>
       </SheetTrigger>
+      <SheetClose ref={closeRef} className="hidden" />
       <SheetContent 
         side={isMobile ? "bottom" : "right"}
         className={`
-          ${isMobile ? 'w-full h-[90vh] rounded-t-xl' : 'w-[240px] sm:w-[400px]'} 
-          bg-[#222222] border-[#333333] p-0
+          ${isMobile ? 'w-full h-[100vh] rounded-t-xl' : 'w-[240px] sm:w-[400px]'} 
+          ${isMobile ? 'bg-[#222222]/90 backdrop-blur-md' : 'bg-[#222222]'} 
+          border-[#333333] p-0
           ${isMobile ? 'animate-slide-up' : 'animate-fade-in'}
         `}
       >
         <NotificationHeader 
           hasNotifications={!!notifications?.length}
           onClearAll={handleClearAll}
+          onClose={handleClose}
         />
         <NotificationList
           notifications={notifications || []}

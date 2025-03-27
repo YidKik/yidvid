@@ -23,7 +23,7 @@ export const NotificationItem = ({ notification, onNotificationClick }: Notifica
     <div
       key={notification.id}
       className={`
-        p-3 sm:p-4 hover:bg-[#333333] cursor-pointer transition-colors duration-200 
+        p-4 sm:p-5 hover:bg-[#333333] cursor-pointer transition-colors duration-200 
         border-b border-[#333333] animate-fade-in
         ${isMobile ? 'active:bg-[#444444]' : ''}
       `}
@@ -33,11 +33,11 @@ export const NotificationItem = ({ notification, onNotificationClick }: Notifica
       }}
     >
       <div className="flex items-start gap-3">
-        <div className="relative w-16 sm:w-24 h-10 sm:h-16 flex-shrink-0">
+        <div className="relative w-18 sm:w-24 h-12 sm:h-16 flex-shrink-0">
           <img
             src={notification.youtube_videos.thumbnail}
             alt={notification.youtube_videos.title}
-            className="w-full h-full object-cover rounded"
+            className="w-full h-full object-cover rounded-md"
             onError={(e) => {
               console.error("Failed to load thumbnail");
               e.currentTarget.src = "/placeholder.svg";
@@ -63,10 +63,10 @@ export const NotificationItem = ({ notification, onNotificationClick }: Notifica
           />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-xs sm:text-sm text-white line-clamp-2 font-medium">
+          <p className="text-sm sm:text-base text-white line-clamp-2 font-medium">
             New video from {notification.youtube_videos.channel_name}
           </p>
-          <p className="text-[11px] sm:text-xs text-white/70 mt-1 line-clamp-2">
+          <p className="text-xs sm:text-sm text-white/70 mt-1 line-clamp-2">
             {notification.youtube_videos.title}
           </p>
         </div>

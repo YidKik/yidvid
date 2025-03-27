@@ -56,7 +56,7 @@ export const NotificationList = ({
   const ContentWrapper = isMobile ? 'div' : ScrollArea;
   
   return (
-    <ContentWrapper className={isMobile ? 'h-full overflow-y-auto pb-14' : 'h-[calc(100vh-64px)] sm:h-[calc(100vh-100px)]'}>
+    <ContentWrapper className={isMobile ? 'h-full overflow-y-auto pb-24' : 'h-[calc(100vh-64px)] sm:h-[calc(100vh-100px)]'}>
       <div className="animate-fade-in">
         {notifications.map((notification) => (
           <NotificationItem
