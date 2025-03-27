@@ -40,9 +40,9 @@ export const HeaderActions = ({
             onClick={onAuthOpen}
             variant="secondary"
             size="icon"
-            className="h-7 w-7 rounded-full bg-white/90 shadow-sm border border-[#ea384c]"
+            className="h-8 w-8 rounded-full bg-white/90 shadow-sm border border-[#ea384c]"
           >
-            <LogIn className="h-3.5 w-3.5 text-black" />
+            <LogIn className="h-4 w-4 text-black" />
           </Button>
         )}
       </div>
