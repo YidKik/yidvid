@@ -4,7 +4,6 @@ import { NotificationsMenu } from "./NotificationsMenu";
 import { UserMenu } from "./UserMenu";
 import { ContactDialog } from "../contact/ContactDialog";
 import { LogIn, MessageSquare, Settings } from "lucide-react";
-import { Separator } from "../ui/separator";
 
 interface HeaderActionsProps {
   isMobile: boolean;
