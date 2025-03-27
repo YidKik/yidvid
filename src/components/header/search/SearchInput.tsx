@@ -37,7 +37,7 @@ export const SearchInput = ({
       <div className="search-animated-border w-full relative">
         <Input
           type="search"
-          placeholder="Search videos and channels..."
+          placeholder={isMobile ? "Search..." : "Search videos and channels..."}
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
           onFocus={handleFocus}
@@ -46,26 +46,14 @@ export const SearchInput = ({
         />
         <div className={`animated-border ${isFocused ? 'opacity-100' : 'opacity-0'}`}></div>
       </div>
-      {isMobile && onClose ? (
-        <Button 
-          type="button"
-          variant="ghost" 
-          size="icon"
-          onClick={onClose}
-          className="absolute right-1 h-5 w-5 md:h-8 md:w-8 rounded-full bg-gray-100 hover:bg-gray-200 z-20"
-        >
-          <Search className="h-3 w-3 md:h-5 md:w-5 text-[#555555]" />
-        </Button>
-      ) : (
-        <Button 
-          type="submit"
-          variant="ghost" 
-          size="icon"
-          className="absolute right-1 h-5 w-5 md:h-8 md:w-8 rounded-full bg-gray-100 hover:bg-gray-200 z-20"
-        >
-          <Search className="h-3 w-3 md:h-5 md:w-5 text-[#555555]" />
-        </Button>
-      )}
+      <Button 
+        type="submit"
+        variant="ghost" 
+        size="icon"
+        className="absolute right-1 h-5 w-5 md:h-8 md:w-8 rounded-full bg-gray-100 hover:bg-gray-200 z-20"
+      >
+        <Search className="h-3 w-3 md:h-5 md:w-5 text-[#555555]" />
+      </Button>
     </form>
   );
 };

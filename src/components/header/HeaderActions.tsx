@@ -1,9 +1,9 @@
+
 import { Button } from "@/components/ui/button";
 import { NotificationsMenu } from "./NotificationsMenu";
 import { UserMenu } from "./UserMenu";
 import { ContactDialog } from "../contact/ContactDialog";
-import { Search, LogIn, MessageSquare, Bell, Settings } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { LogIn, MessageSquare } from "lucide-react";
 import { Separator } from "../ui/separator";
 
 interface HeaderActionsProps {
@@ -27,25 +27,9 @@ export const HeaderActions = ({
   onMarkNotificationsAsRead,
   onSettingsClick
 }: HeaderActionsProps) => {
-  if (isMobile && !isSearchExpanded) {
+  if (isMobile) {
     return (
-      <div className="flex items-center gap-1.5">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={onSearchExpand}
-          className="h-6 w-6 hover:bg-gray-100 rounded-full"
-        >
-          <Search className="h-3 w-3 text-gray-600" />
-        </Button>
-
-        {session && (
-          <NotificationsMenu 
-            session={session} 
-            onMarkAsRead={onMarkNotificationsAsRead}
-          />
-        )}
-        
+      <div className="flex items-center gap-2">
         <ContactDialog />
         
         {session ? (
@@ -55,11 +39,11 @@ export const HeaderActions = ({
         ) : (
           <Button
             onClick={onAuthOpen}
-            variant="ghost"
+            variant="secondary"
             size="icon"
-            className="h-6 w-6 hover:bg-gray-100 rounded-full"
+            className="h-8 w-8 rounded-full bg-white/90 shadow-sm border border-gray-100"
           >
-            <LogIn className="h-3 w-3 text-gray-600" />
+            <LogIn className="h-4 w-4 text-primary" />
           </Button>
         )}
       </div>

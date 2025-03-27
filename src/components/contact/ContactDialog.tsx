@@ -17,9 +17,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { CategorySelect } from "./CategorySelect";
 import { ContactFormFields } from "./ContactFormFields";
 import { FormValues, formSchema } from "./types";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export const ContactDialog = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const isMobile = useIsMobile();
+  
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -56,11 +59,11 @@ export const ContactDialog = () => {
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button 
-          variant="ghost" 
+          variant="secondary" 
           size="icon"
-          className="h-7 w-7 md:h-10 md:w-10"
+          className={`${isMobile ? 'h-8 w-8 rounded-full bg-white/90 shadow-sm border border-gray-100' : 'h-7 w-7 md:h-10 md:w-10'}`}
         >
-          <MessageSquare className="h-3.5 w-3.5 md:h-5 md:w-5" />
+          <MessageSquare className={`${isMobile ? 'h-4 w-4 text-primary' : 'h-3.5 w-3.5 md:h-5 md:w-5'}`} />
         </Button>
       </DialogTrigger>
       <DialogContent className="w-[min(calc(100%-2rem),400px)] md:w-[450px] p-0 bg-[#333333] text-white border-gray-600 rounded-lg mx-auto my-2 md:my-4">

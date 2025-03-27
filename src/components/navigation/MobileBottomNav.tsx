@@ -21,7 +21,7 @@ export const MobileBottomNav = ({
   const navigate = useNavigate();
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 border-t border-gray-100 h-16 px-4 md:hidden z-50 shadow-lg">
+    <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 border-t border-gray-100 h-14 px-4 md:hidden z-50 shadow-lg">
       <div className="flex items-center justify-around h-full max-w-lg mx-auto relative">
         {session && (
           <>
@@ -32,8 +32,6 @@ export const MobileBottomNav = ({
             <Separator orientation="vertical" className="h-8 bg-gray-200/60" />
           </>
         )}
-        
-        <ContactDialog />
         
         <Separator orientation="vertical" className="h-8 bg-gray-200/60" />
         
