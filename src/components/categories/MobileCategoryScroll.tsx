@@ -43,7 +43,7 @@ export const MobileCategoryScroll: React.FC<MobileCategoryScrollProps> = ({
     
     let animationFrameId: number;
     let isPaused = false;
-    const scrollSpeed = 0.8;
+    const scrollSpeed = 0.5; // Slower speed for mobile
     const container = scrollContainerRef.current;
     
     const scroll = () => {
@@ -63,8 +63,10 @@ export const MobileCategoryScroll: React.FC<MobileCategoryScrollProps> = ({
       animationFrameId = requestAnimationFrame(scroll);
     };
     
-    // Start the animation immediately
-    animationFrameId = requestAnimationFrame(scroll);
+    // Start the animation with a slight delay to let UI settle
+    setTimeout(() => {
+      animationFrameId = requestAnimationFrame(scroll);
+    }, 500);
     
     // Pause animation on touch
     const pauseAnimation = () => {
@@ -94,20 +96,20 @@ export const MobileCategoryScroll: React.FC<MobileCategoryScrollProps> = ({
     <div className="h-full flex items-center overflow-hidden">
       <div 
         ref={scrollContainerRef}
-        className="flex gap-2 overflow-x-auto touch-pan-x scrollbar-hide no-scrollbar"
+        className="flex gap-1.5 overflow-x-auto touch-pan-x scrollbar-hide no-scrollbar"
         style={{ 
           WebkitOverflowScrolling: 'touch',
           scrollBehavior: 'smooth',
           scrollbarWidth: 'none',
           msOverflowStyle: 'none',
-          minWidth: "100%"
+          minWidth: "100%",
+          paddingBottom: "4px", // Add some padding for shadow
         }}
       >
-        {/* Triple the categories to ensure continuous scroll */}
         {infiniteCategories.map((category, index) => (
           <div
             key={`${category.id}-${index}`}
-            className="flex-shrink-0 w-[100px] relative"
+            className="flex-shrink-0 w-[90px] relative"
           >
             <CategoryCard
               id={category.id}

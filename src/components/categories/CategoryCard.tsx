@@ -41,7 +41,7 @@ export const CategoryCard = ({ icon, label, id, isCustomImage = false }: Categor
       whileHover={{ 
         boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1)",
         borderColor: "#d6293d",
-        scale: 1.02,
+        scale: isMobile ? 1.01 : 1.02,
         transition: {
           type: "spring",
           stiffness: 400,
@@ -49,11 +49,17 @@ export const CategoryCard = ({ icon, label, id, isCustomImage = false }: Categor
         }
       }}
       whileTap={{ scale: 0.98 }}
-      className={`rounded-xl p-1 md:p-3 cursor-pointer transition-all duration-300 ${isMobile ? 'h-[55px]' : 'h-[90px]'} relative backdrop-blur-sm flex items-center`}
+      className={`rounded-xl cursor-pointer transition-all duration-300 ${
+        isMobile 
+          ? 'h-[50px] p-0.5 shadow-sm' 
+          : 'h-[90px] p-3 shadow-md'
+      } relative backdrop-blur-sm flex items-center`}
       style={{
         background: categoryColors.bg,
-        border: `1.5px solid ${categoryColors.border}`,
-        boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)"
+        border: `${isMobile ? '1px' : '1.5px'} solid ${categoryColors.border}`,
+        boxShadow: isMobile 
+          ? "0 2px 3px -1px rgba(0, 0, 0, 0.06), 0 1px 2px -1px rgba(0, 0, 0, 0.03)" 
+          : "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)"
       }}
       onClick={handleClick}
     >
@@ -71,7 +77,7 @@ export const CategoryCard = ({ icon, label, id, isCustomImage = false }: Categor
         </div>
         
         {/* Animated decorative lines for right side - only show on desktop */}
-        <CategoryLines borderColor={categoryColors.border} />
+        {!isMobile && <CategoryLines borderColor={categoryColors.border} />}
       </div>
     </motion.div>
   );

@@ -28,20 +28,20 @@
   
   /* Category card optimization */
   .category-card-mobile {
-    height: 55px !important;
+    height: 45px !important;
     padding: 0.25rem !important;
   }
   
   .category-card-mobile .icon {
-    transform: scale(0.8);
+    transform: scale(0.75);
   }
   
   .category-card-mobile .label {
-    font-size: 0.8rem;
+    font-size: 0.7rem;
     font-weight: 600;
-    line-height: 1.2;
+    line-height: 1.1;
     letter-spacing: -0.01em;
-    max-width: 85px;
+    max-width: 65px;
     text-shadow: 0 0 1px rgba(255,255,255,0.5);
   }
   
@@ -50,6 +50,13 @@
   .category-advertisement .label {
     font-size: 0.65rem !important;
     letter-spacing: -0.03em !important;
+  }
+  
+  /* Content toggle for mobile */
+  .content-toggle-mobile {
+    transform: scale(0.85);
+    margin-top: -4px;
+    margin-bottom: -4px;
   }
   
   /* Fix scrollbar visibility on Safari */

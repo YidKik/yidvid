@@ -26,7 +26,11 @@ export const CategoryLabel = ({ label, textColor }: CategoryLabelProps) => {
 
   return (
     <h3 
-      className={`font-medium text-[11px] leading-tight md:text-sm tracking-tight line-clamp-2 ${isMobile ? 'max-w-[85px]' : 'max-w-[120px]'}`}
+      className={`font-medium tracking-tight line-clamp-2 ${
+        isMobile 
+          ? 'text-[10px] leading-tight max-w-[70px]' 
+          : 'text-sm max-w-[120px]'
+      }`}
       style={{ 
         color: textColor,
         textShadow: '0 0 1px rgba(255,255,255,0.5)',

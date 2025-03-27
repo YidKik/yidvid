@@ -58,7 +58,7 @@ export const CategorySection = () => {
     return (
       <div className="relative w-full py-1 md:py-2 flex justify-center">
         <div className="w-full max-w-screen-sm md:max-w-[1400px] mx-auto px-2 md:px-6">
-          <div className="overflow-hidden relative h-[55px] md:h-[150px]">
+          <div className={`overflow-hidden relative ${isMobile ? 'h-[45px]' : 'h-[150px]'}`}>
             <CategorySkeleton />
           </div>
         </div>
@@ -75,9 +75,9 @@ export const CategorySection = () => {
   return (
     <div className="relative w-full py-1 md:py-2 flex justify-center">
       <div className="w-full max-w-screen-sm md:max-w-[1400px] mx-auto px-2 md:px-6">
-        <div className="overflow-hidden relative h-[55px] md:h-[150px]">
+        <div className={`overflow-hidden relative ${isMobile ? 'h-[45px]' : 'h-[150px]'}`}>
           <div 
-            className={`absolute left-0 top-0 ${isMobile ? 'w-4' : 'w-8 md:w-48'} h-full z-10`}
+            className={`absolute left-0 top-0 ${isMobile ? 'w-3' : 'w-8 md:w-48'} h-full z-10`}
             style={{
               background: `linear-gradient(to right, ${colors.backgroundColor}, ${colors.backgroundColor}00)`
             }}
@@ -90,7 +90,7 @@ export const CategorySection = () => {
           )}
 
           <div 
-            className={`absolute right-0 top-0 ${isMobile ? 'w-4' : 'w-8 md:w-48'} h-full z-10`}
+            className={`absolute right-0 top-0 ${isMobile ? 'w-3' : 'w-8 md:w-48'} h-full z-10`}
             style={{
               background: `linear-gradient(to left, ${colors.backgroundColor}, ${colors.backgroundColor}00)`
             }}
