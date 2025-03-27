@@ -60,9 +60,9 @@ export const ContactDialog = () => {
         <Button 
           variant="secondary" 
           size="icon"
-          className={`${isMobile ? 'h-7 w-7 rounded-full bg-white/90 shadow-sm border border-gray-100' : 'h-7 w-7 md:h-10 md:w-10'}`}
+          className={`${isMobile ? 'h-7 w-7 rounded-full bg-white/90 shadow-sm border border-[#ea384c]' : 'h-7 w-7 md:h-10 md:w-10'}`}
         >
-          <MessageSquare className={`${isMobile ? 'h-3.5 w-3.5 text-primary' : 'h-3.5 w-3.5 md:h-5 md:w-5'}`} />
+          <MessageSquare className={`${isMobile ? 'h-3.5 w-3.5 text-black' : 'h-3.5 w-3.5 md:h-5 md:w-5'}`} />
         </Button>
       </DialogTrigger>
       <DialogContent className="w-[min(calc(100%-2rem),400px)] md:w-[450px] p-0 bg-[#333333] text-white border-gray-600 rounded-lg mx-auto my-2 md:my-4">
