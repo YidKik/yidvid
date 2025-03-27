@@ -35,23 +35,35 @@ export const HeaderActions = ({
             <NotificationsMenu session={session} onMarkAsRead={onMarkNotificationsAsRead} />
             <Button
               onClick={onSettingsClick}
-              variant="secondary"
+              variant="ghost" 
               size="icon"
-              className="h-8 w-8 rounded-full bg-white/90 shadow-sm border border-[#ea384c]"
+              className="bg-[#222222] hover:bg-[#333333] text-white h-7 w-7 rounded-md"
             >
-              <Settings className="h-4 w-4 text-black" />
+              <Settings className="h-3.5 w-3.5" />
             </Button>
           </>
         ) : (
           <>
-            <ContactDialog />
+            <Button 
+              variant="ghost" 
+              size="icon"
+              className="bg-[#222222] hover:bg-[#333333] text-white h-7 w-7 rounded-md"
+              onClick={() => {
+                const contactDialog = document.querySelector('[data-state="closed"][role="dialog"]');
+                if (contactDialog) {
+                  (contactDialog as HTMLElement).click();
+                }
+              }}
+            >
+              <MessageSquare className="h-3.5 w-3.5" />
+            </Button>
             <Button
               onClick={onAuthOpen}
-              variant="secondary"
+              variant="ghost" 
               size="icon"
-              className="h-8 w-8 rounded-full bg-white/90 shadow-sm border border-[#ea384c]"
+              className="bg-[#222222] hover:bg-[#333333] text-white h-7 w-7 rounded-md"
             >
-              <LogIn className="h-4 w-4 text-black" />
+              <LogIn className="h-3.5 w-3.5" />
             </Button>
           </>
         )}
