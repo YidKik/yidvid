@@ -30,26 +30,30 @@ export const HeaderActions = ({
   if (isMobile) {
     return (
       <div className="flex items-center gap-2">
-        <ContactDialog />
-        
         {session ? (
-          <Button
-            onClick={onSettingsClick}
-            variant="secondary"
-            size="icon"
-            className="h-8 w-8 rounded-full bg-white/90 shadow-sm border border-[#ea384c]"
-          >
-            <Settings className="h-4 w-4 text-black" />
-          </Button>
+          <>
+            <NotificationsMenu session={session} onMarkAsRead={onMarkNotificationsAsRead} />
+            <Button
+              onClick={onSettingsClick}
+              variant="secondary"
+              size="icon"
+              className="h-8 w-8 rounded-full bg-white/90 shadow-sm border border-[#ea384c]"
+            >
+              <Settings className="h-4 w-4 text-black" />
+            </Button>
+          </>
         ) : (
-          <Button
-            onClick={onAuthOpen}
-            variant="secondary"
-            size="icon"
-            className="h-8 w-8 rounded-full bg-white/90 shadow-sm border border-[#ea384c]"
-          >
-            <LogIn className="h-4 w-4 text-black" />
-          </Button>
+          <>
+            <ContactDialog />
+            <Button
+              onClick={onAuthOpen}
+              variant="secondary"
+              size="icon"
+              className="h-8 w-8 rounded-full bg-white/90 shadow-sm border border-[#ea384c]"
+            >
+              <LogIn className="h-4 w-4 text-black" />
+            </Button>
+          </>
         )}
       </div>
     );
