@@ -42,7 +42,7 @@ export const SearchInput = ({
           onChange={(e) => onSearchChange(e.target.value)}
           onFocus={handleFocus}
           onBlur={handleBlur}
-          className="w-full bg-transparent z-10 relative border-none text-[#555555] placeholder:text-[#555555] focus-visible:ring-0 focus-visible:ring-offset-0 h-9 md:h-10 text-sm md:text-sm pr-10 md:pr-14"
+          className="w-full bg-transparent z-10 relative border-none text-[#555555] placeholder:text-[#555555] focus-visible:ring-0 focus-visible:ring-offset-0 h-7 md:h-10 text-xs md:text-sm pr-10 md:pr-14"
         />
         <div className={`animated-border thin-outline ${isFocused ? 'opacity-100' : 'opacity-0'}`}></div>
       </div>
@@ -50,9 +50,9 @@ export const SearchInput = ({
         type="submit"
         variant="ghost" 
         size="icon"
-        className="absolute right-1 h-7 w-7 md:h-8 md:w-8 rounded-full bg-gray-100 hover:bg-gray-200 z-20"
+        className="absolute right-1 h-5 w-5 md:h-8 md:w-8 rounded-full bg-gray-100 hover:bg-gray-200 z-20"
       >
-        <Search className="h-4 w-4 md:h-5 md:w-5 text-[#555555]" />
+        <Search className="h-3 w-3 md:h-5 md:w-5 text-[#555555]" />
       </Button>
     </form>
   );
