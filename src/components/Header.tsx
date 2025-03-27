@@ -53,12 +53,12 @@ export const Header = () => {
   };
 
   return (
-    <header className={`sticky top-0 z-50 w-full border-b ${isMobile ? 'h-14 bg-white' : 'bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60'}`}>
+    <header className={`sticky top-0 z-50 w-full border-b ${isMobile ? 'h-16 bg-white' : 'bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60'}`}>
       <div className="container mx-auto px-0">
-        <div className={`flex ${isMobile ? 'h-14' : 'h-14'} items-center relative`}>
+        <div className={`flex ${isMobile ? 'h-16' : 'h-14'} items-center relative`}>
           {isMobile ? (
             <div className="w-full flex items-center px-3 justify-between">
-              <div className="w-2/5 flex justify-start">
+              <div className="w-3/5 flex justify-start">
                 <HeaderLogo 
                   isMobile={isMobile}
                   isMobileMenuOpen={isMobileMenuOpen}
@@ -70,7 +70,7 @@ export const Header = () => {
                 <SearchBar />
               </div>
 
-              <div className="w-2/5 flex justify-end">
+              <div className="w-1/5 flex justify-end">
                 <HeaderActions 
                   isMobile={isMobile}
                   isSearchExpanded={isSearchExpanded}
