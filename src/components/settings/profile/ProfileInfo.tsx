@@ -17,7 +17,7 @@ export const ProfileInfo = ({ profile }: ProfileInfoProps) => {
     : "Unknown";
 
   return (
-    <div className={`${isMobile ? 'w-[calc(100%-48px)]' : ''}`}>
+    <div className="flex-1 min-w-0">
       <h3 className={`${isMobile ? 'text-xs font-semibold mb-0.5 truncate' : 'text-xl font-semibold mb-1'}`}>
         {display_name || username || "User"}
       </h3>

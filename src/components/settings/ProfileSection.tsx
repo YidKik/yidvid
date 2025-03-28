@@ -79,10 +79,10 @@ export const ProfileSection = () => {
   }
 
   return (
-    <section className={`mb-${isMobile ? '3' : '8'}`}>
-      <Card className={`${isMobile ? 'p-2 overflow-hidden' : 'p-6'}`}>
-        <div className={`flex flex-col ${isMobile ? 'gap-2' : 'md:flex-row items-start md:items-center justify-between gap-6'}`}>
-          <div className={`flex ${isMobile ? 'items-center gap-2' : 'items-center gap-4'}`}>
+    <section className={`mb-${isMobile ? '2' : '8'}`}>
+      <Card className={`${isMobile ? 'p-2' : 'p-6'} overflow-hidden`}>
+        <div className="flex flex-col gap-2">
+          <div className={`flex ${isMobile ? 'items-start gap-2' : 'items-center gap-4'}`}>
             <ProfileAvatar 
               avatarUrl={profile.avatar_url || ""}
               displayName={profile.display_name || ""}

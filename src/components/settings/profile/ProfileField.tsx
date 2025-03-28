@@ -9,8 +9,8 @@ interface ProfileFieldProps {
 
 export const ProfileField = ({ label, value, isMobile = false }: ProfileFieldProps) => {
   // Truncate value if it's too long (especially for mobile)
-  const displayValue = isMobile && value.length > 15 
-    ? `${value.slice(0, 15)}...` 
+  const displayValue = isMobile && value.length > 12 
+    ? `${value.slice(0, 12)}...` 
     : value;
     
   return (
