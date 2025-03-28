@@ -17,8 +17,11 @@ export const BackButton = ({ className }: BackButtonProps) => {
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-      // Show button when scrolling up or at the top of the page
-      if (currentScrollY <= 10 || currentScrollY < lastScrollY) {
+      // Only show button when very close to the top (within 100px) or at the top
+      if (currentScrollY <= 100) {
+        setVisible(true);
+      } else if (currentScrollY < lastScrollY && currentScrollY <= 250) {
+        // When scrolling up, only show if we're within 250px of the top
         setVisible(true);
       } else {
         setVisible(false);
