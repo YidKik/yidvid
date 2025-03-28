@@ -1,13 +1,16 @@
 
 import { LayoutConfig } from './types';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface LivePreviewProps {
   sections: LayoutConfig[];
 }
 
 export const LivePreview = ({ sections }: LivePreviewProps) => {
+  // Use our hook instead of directly accessing window.innerWidth
+  const { isMobile } = useIsMobile();
+  
   // Sort sections by order based on viewport
-  const isMobile = window.innerWidth < 768;
   const sortedSections = [...sections].sort((a, b) => 
     isMobile 
       ? a.mobile_order - b.mobile_order

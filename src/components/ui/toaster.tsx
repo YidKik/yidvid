@@ -1,3 +1,4 @@
+
 import { useToast } from "@/hooks/use-toast"
 import {
   Toast,
@@ -10,7 +11,7 @@ import { useIsMobile } from "@/hooks/use-mobile"
 
 export function Toaster() {
   const { toasts } = useToast()
-  const isMobile = useIsMobile()
+  const { isMobile } = useIsMobile()
 
   return (
     <ToastProvider>

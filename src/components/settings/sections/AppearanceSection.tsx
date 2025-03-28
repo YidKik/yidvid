@@ -1,3 +1,4 @@
+
 import { ColorSettings } from "@/components/settings/ColorSettings";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -26,7 +27,7 @@ export const AppearanceSection = ({
   saveColors,
   resetToDefaults,
 }: AppearanceSectionProps) => {
-  const isMobile = useIsMobile();
+  const { isMobile } = useIsMobile();
   
   return (
     <div className="space-y-6 md:space-y-8">

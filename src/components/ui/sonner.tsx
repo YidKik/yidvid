@@ -1,3 +1,4 @@
+
 import { useTheme } from "next-themes"
 import { Toaster as Sonner, type ToasterProps as SonnerToasterProps } from "sonner"
 import { useIsMobile } from "@/hooks/use-mobile"
@@ -9,7 +10,7 @@ type ToasterProps = React.ComponentProps<typeof Sonner> & {
 
 const Toaster = ({ ...props }: ToasterProps) => {
   const { theme = "system" } = useTheme()
-  const isMobile = useIsMobile()
+  const { isMobile } = useIsMobile()
 
   return (
     <Sonner

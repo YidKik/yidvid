@@ -1,3 +1,4 @@
+
 import { VideoHistorySection } from "@/components/history/VideoHistorySection";
 import { UserAnalyticsSection } from "@/components/analytics/UserAnalyticsSection";
 import { useIsMobile } from "@/hooks/use-mobile";

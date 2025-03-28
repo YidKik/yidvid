@@ -1,3 +1,4 @@
+
 import { UseFormReturn } from "react-hook-form";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
@@ -12,7 +13,7 @@ interface ContactFormProps {
 }
 
 export const ContactForm = ({ form, onSubmit }: ContactFormProps) => {
-  const isMobile = useIsMobile();
+  const { isMobile } = useIsMobile();
   
   return (
     <Form {...form}>

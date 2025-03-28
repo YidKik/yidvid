@@ -1,9 +1,14 @@
 
 import { useState, useEffect } from "react";
 
-const MOBILE_BREAKPOINT = 768;
-const TABLET_BREAKPOINT = 1024;
+// Standardized breakpoints
+const MOBILE_BREAKPOINT = 768;  // Below this is mobile
+const TABLET_BREAKPOINT = 1024; // Between mobile and this is tablet, above is desktop
 
+/**
+ * Hook that provides device type information based on viewport width
+ * Returns an object with boolean flags for each device type
+ */
 export function useIsMobile() {
   const [isMobile, setIsMobile] = useState(false);
   const [isTablet, setIsTablet] = useState(false);
@@ -17,15 +22,12 @@ export function useIsMobile() {
       setIsMobile(width < MOBILE_BREAKPOINT);
       setIsTablet(width >= MOBILE_BREAKPOINT && width < TABLET_BREAKPOINT);
       setIsDesktop(width >= TABLET_BREAKPOINT);
-      
-      // Debug log
-      console.log(`Screen width: ${width}px - isMobile: ${width < MOBILE_BREAKPOINT}, isTablet: ${width >= MOBILE_BREAKPOINT && width < TABLET_BREAKPOINT}, isDesktop: ${width >= TABLET_BREAKPOINT}`);
     };
 
     // Initial check
     checkScreenSize();
 
-    // Add event listener
+    // Add event listener for resize events
     window.addEventListener('resize', checkScreenSize);
 
     // Cleanup
@@ -35,7 +37,10 @@ export function useIsMobile() {
   return { isMobile, isTablet, isDesktop };
 }
 
-// Also export a simple boolean version for components that only need isMobile
+/**
+ * Simple version that returns just a boolean for mobile detection
+ * Used where only mobile check is needed
+ */
 export function useMobileBoolean(): boolean {
   const { isMobile } = useIsMobile();
   return isMobile;
