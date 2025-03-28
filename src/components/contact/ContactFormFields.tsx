@@ -1,3 +1,4 @@
+
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -13,7 +14,7 @@ export const ContactFormFields = ({ form }: ContactFormFieldsProps) => {
   const isMobile = useIsMobile();
   
   return (
-    <div className={`space-y-4 bg-slate-50 p-3 md:p-4 rounded-md ${isMobile ? 'mx-0.5' : ''}`}>
+    <div className={`space-y-4 bg-gray-100 p-3 md:p-4 rounded-md ${isMobile ? 'mx-0.5' : ''}`}>
       <FormField
         control={form.control}
         name="name"
@@ -24,7 +25,7 @@ export const ContactFormFields = ({ form }: ContactFormFieldsProps) => {
               <Input 
                 placeholder="Enter your name" 
                 {...field} 
-                className="border-input hover:border-primary/50 focus:border-primary transition-colors"
+                className="border-input hover:border-primary/50 focus:border-primary transition-colors bg-transparent text-black"
               />
             </FormControl>
             <FormMessage />
@@ -42,7 +43,7 @@ export const ContactFormFields = ({ form }: ContactFormFieldsProps) => {
                 placeholder="Enter your email" 
                 type="email" 
                 {...field} 
-                className="border-input hover:border-primary/50 focus:border-primary transition-colors"
+                className="border-input hover:border-primary/50 focus:border-primary transition-colors bg-transparent text-black"
               />
             </FormControl>
             <FormMessage />
@@ -58,7 +59,7 @@ export const ContactFormFields = ({ form }: ContactFormFieldsProps) => {
             <FormControl>
               <Textarea 
                 placeholder="What would you like to tell us?" 
-                className="min-h-[120px] resize-none border-input hover:border-primary/50 focus:border-primary transition-colors"
+                className="min-h-[120px] resize-none border-input hover:border-primary/50 focus:border-primary transition-colors bg-transparent text-black"
                 {...field} 
               />
             </FormControl>

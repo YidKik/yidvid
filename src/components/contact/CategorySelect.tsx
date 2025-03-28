@@ -1,3 +1,4 @@
+
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { UseFormReturn } from "react-hook-form";
@@ -31,7 +32,7 @@ export const CategorySelect = ({ form }: CategorySelectProps) => {
                       className={`flex items-start space-x-2 space-y-0 rounded-md border p-3 cursor-pointer transition-all duration-200
                         ${field.value === category.value 
                           ? 'border-primary bg-primary/5 shadow-[0_0_0_1px_#ea384c]' 
-                          : 'border-input hover:border-primary/50 hover:bg-primary/5 hover:shadow-sm'
+                          : 'border-input'
                         }`}
                     >
                       <RadioGroupItem
