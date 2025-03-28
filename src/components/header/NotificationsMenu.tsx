@@ -2,19 +2,17 @@
 import { Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { toast } from "@/components/ui/use-toast";
 import {
   Sheet,
   SheetClose,
   SheetContent,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { NotificationHeader } from "../notifications/NotificationHeader";
 import { NotificationList } from "../notifications/NotificationList";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useRef, useState } from "react";
+import { useNotifications } from "../notifications/useNotifications";
+import { useMobileDrag } from "../notifications/useMobileDrag";
 
 interface NotificationsMenuProps {
   session: any;
@@ -23,137 +21,23 @@ interface NotificationsMenuProps {
 
 export const NotificationsMenu = ({ session, onMarkAsRead }: NotificationsMenuProps) => {
   const { isMobile } = useIsMobile();
-  const closeRef = useRef<HTMLButtonElement>(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragStartY, setDragStartY] = useState(0);
-  const [dragCurrentY, setDragCurrentY] = useState(0);
-  const sheetContentRef = useRef<HTMLDivElement>(null);
   
-  const { data: notifications, refetch, isError, error, isLoading } = useQuery({
-    queryKey: ["video-notifications", session?.user?.id],
-    queryFn: async () => {
-      if (!session?.user?.id) {
-        console.log("No user session found");
-        return [];
-      }
+  const {
+    notifications,
+    isLoading,
+    isError,
+    refetch,
+    closeRef,
+    handleClose,
+    handleClearAll
+  } = useNotifications(session?.user?.id);
 
-      try {
-        const { data: notificationsData, error: notificationsError } = await supabase
-          .from("video_notifications")
-          .select(`
-            *,
-            youtube_videos (
-              title,
-              thumbnail,
-              channel_name
-            )
-          `)
-          .eq("user_id", session.user.id)
-          .eq("is_read", false)
-          .order("created_at", { ascending: false });
-
-        if (notificationsError) {
-          console.error("Error fetching notifications:", notificationsError);
-          throw notificationsError;
-        }
-
-        const validNotifications = (notificationsData || []).filter(n => n.youtube_videos?.title);
-        
-        if (validNotifications.length === 0) {
-          console.log("No valid notifications found");
-        }
-        
-        return validNotifications;
-      } catch (error: any) {
-        const enhancedError = new Error(
-          `Failed to fetch notifications: ${error.message || 'Unknown error'}`
-        );
-        console.error(enhancedError);
-        throw enhancedError;
-      }
-    },
-    enabled: !!session?.user?.id,
-    retry: (failureCount, error: any) => {
-      if (error?.status === 401 || error?.status === 403) return false;
-      return failureCount < 3;
-    },
-    retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 10000),
-    staleTime: 30000,
-    gcTime: 5 * 60 * 1000,
-    meta: {
-      errorMessage: "Unable to load notifications. Please try again later."
-    }
-  });
-
-  if (isError && error) {
-    console.error("Notifications error:", error);
-  }
-
-  const handleClearAll = async () => {
-    if (!session?.user?.id || !notifications?.length) return;
-
-    try {
-      const { error } = await supabase
-        .from("video_notifications")
-        .update({ is_read: true })
-        .eq("user_id", session.user.id)
-        .eq("is_read", false);
-
-      if (error) throw error;
-
-      await refetch();
-      console.log("All notifications cleared");
-    } catch (error) {
-      console.error("Error clearing notifications:", error);
-      console.error("Failed to clear notifications");
-    }
-  };
-
-  const handleClose = () => {
-    if (closeRef.current) {
-      closeRef.current.click();
-    }
-  };
-
-  // Touch event handlers for swipe to dismiss
-  const handleTouchStart = (e: React.TouchEvent) => {
-    if (isMobile) {
-      setIsDragging(true);
-      setDragStartY(e.touches[0].clientY);
-      setDragCurrentY(e.touches[0].clientY);
-    }
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (isMobile && isDragging) {
-      setDragCurrentY(e.touches[0].clientY);
-      
-      // Only allow dragging downward
-      const dragDistance = dragCurrentY - dragStartY;
-      if (dragDistance > 0 && sheetContentRef.current) {
-        // Apply transform to the sheet as user drags
-        sheetContentRef.current.style.transform = `translateY(${dragDistance}px)`;
-        sheetContentRef.current.style.transition = 'none';
-      }
-    }
-  };
-
-  const handleTouchEnd = () => {
-    if (isMobile && isDragging && sheetContentRef.current) {
-      const dragDistance = dragCurrentY - dragStartY;
-      
-      // If dragged down more than 100px, close the sheet
-      if (dragDistance > 100) {
-        handleClose();
-      }
-      
-      // Reset the transform
-      sheetContentRef.current.style.transform = '';
-      sheetContentRef.current.style.transition = 'transform 0.3s ease-out';
-    }
-    
-    setIsDragging(false);
-  };
+  const {
+    sheetContentRef,
+    handleTouchStart,
+    handleTouchMove,
+    handleTouchEnd
+  } = useMobileDrag(handleClose, isMobile);
 
   if (!session?.user?.id) {
     return null;
