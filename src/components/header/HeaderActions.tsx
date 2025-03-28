@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { NotificationsMenu } from "./NotificationsMenu";
 import { UserMenu } from "./UserMenu";
@@ -85,10 +84,7 @@ export const HeaderActions = ({
       <div className="flex items-center gap-3">
         {session && <NotificationsMenu session={session} onMarkAsRead={onMarkNotificationsAsRead} />}
         
-        {/* Ensure ContactDialog button has same size and styling as other buttons */}
-        <div className="flex items-center">
-          <ContactDialog />
-        </div>
+        <ContactDialog />
         
         {session ? (
           <div onClick={handleSettingsClick}>

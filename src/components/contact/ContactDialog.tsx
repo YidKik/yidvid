@@ -21,7 +21,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 
 export const ContactDialog = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const isMobile = useIsMobile();
+  const { isMobile } = useIsMobile();
   
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -61,9 +61,9 @@ export const ContactDialog = () => {
         <Button 
           variant="ghost" 
           size="icon"
-          className={`${isMobile ? 'bg-[#222222] hover:bg-[#333333] text-white h-7 w-7 rounded-md' : 'h-7 w-7 md:h-10 md:w-10'}`}
+          className={isMobile ? 'bg-[#222222] hover:bg-[#333333] text-white h-7 w-7 rounded-md' : 'h-10 w-10'}
         >
-          <MessageSquare className={`${isMobile ? 'h-3.5 w-3.5' : 'h-3.5 w-3.5 md:h-5 md:w-5'}`} />
+          <MessageSquare className={isMobile ? 'h-3.5 w-3.5' : 'h-5 w-5'} />
         </Button>
       </DialogTrigger>
       <DialogContent className="w-[min(calc(100%-2rem),400px)] md:w-[450px] p-0 bg-[#333333] text-white border-gray-600 rounded-lg mx-auto my-2 md:my-4">
