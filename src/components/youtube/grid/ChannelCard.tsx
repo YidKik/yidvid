@@ -41,7 +41,8 @@ export const ChannelCard = ({
       className={cn(
         "block opacity-0 animate-[fadeIn_0.5s_ease-out_forwards]",
         "relative group rounded-lg overflow-hidden transition-all duration-200",
-        "hover:scale-[1.03] hover:shadow-md text-center p-2"
+        "hover:scale-[1.03] hover:shadow-md text-center p-2",
+        "bg-gray-50" // Light gray background even when not hovering
       )}
       style={{ animationDelay }}
       onMouseEnter={() => setShowControls(true)}
@@ -49,7 +50,7 @@ export const ChannelCard = ({
       aria-label={`View channel: ${title}`}
     >
       <div className="flex flex-col items-center justify-center">
-        <div className="w-36 h-36 bg-pink-100 rounded-full flex items-center justify-center overflow-hidden mb-2 mx-auto">
+        <div className="w-28 h-28 bg-pink-100 rounded-full flex items-center justify-center overflow-hidden mb-2 mx-auto">
           {thumbnail_url ? (
             <img
               src={thumbnail_url}
@@ -63,7 +64,7 @@ export const ChannelCard = ({
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center">
-              <img src="/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png" alt="YidVid" className="w-16 h-16" />
+              <img src="/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png" alt="YidVid" className="w-14 h-14" />
             </div>
           )}
         </div>
