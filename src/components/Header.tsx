@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import Auth from "@/pages/Auth";
-import { useIsMobile } from "@/hooks/useIsMobile";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { SearchBar } from "./header/SearchBar";
 import { HeaderLogo } from "./header/HeaderLogo";
 import { HeaderActions } from "./header/HeaderActions";
@@ -12,7 +12,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 
 export const Header = () => {
-  const { isMobile } = useIsMobile();
+  const isMobile = useIsMobile();
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -53,7 +53,7 @@ export const Header = () => {
   };
 
   return (
-    <header className={`sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 ${isMobile ? 'h-16' : 'h-14'}`}>
+    <header className={`sticky top-0 z-50 w-full border-b ${isMobile ? 'h-16 bg-white animate-header-glow' : 'bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60'}`}>
       <div className="container mx-auto px-0">
         <div className={`flex ${isMobile ? 'h-16' : 'h-14'} items-center relative`}>
           {isMobile ? (

@@ -9,7 +9,7 @@ interface ProfileInfoProps {
 }
 
 export const ProfileInfo = ({ profile }: ProfileInfoProps) => {
-  const { isMobile } = useIsMobile();
+  const isMobile = useIsMobile();
   const { username, display_name, email, created_at } = profile;
   
   const memberSince = created_at 

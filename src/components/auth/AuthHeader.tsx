@@ -1,5 +1,4 @@
-
-import { useIsMobile } from "@/hooks/useIsMobile";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "../ui/button";
 
@@ -13,7 +12,7 @@ export const AuthHeader = ({ onBack, title, subtitle }: AuthHeaderProps) => {
   const isMobile = useIsMobile();
   
   return (
-    <div className={`flex flex-col ${isMobile ? 'px-4 py-3' : 'px-8 py-6'} bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 border-b border-gray-100`}>
+    <div className={`flex flex-col ${isMobile ? 'px-4 py-3' : 'px-8 py-6'} bg-transparent border-b border-gray-100`}>
       <div className="flex items-center">
         {onBack && (
           <Button

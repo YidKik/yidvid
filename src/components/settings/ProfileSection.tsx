@@ -1,3 +1,4 @@
+
 import { Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -16,10 +17,12 @@ export const ProfileSection = () => {
   const navigate = useNavigate();
   const { handleLogout, isLoggingOut, session } = useAuth();
   const [userEmail, setUserEmail] = useState<string | null>(null);
-  const { isMobile } = useIsMobile();
+  const isMobile = useIsMobile();
   
+  // Use session data directly from useAuth hook to avoid waiting for another session fetch
   const userId = session?.user?.id;
 
+  // Initialize email from session if available
   useEffect(() => {
     if (session?.user?.email) {
       setUserEmail(session.user.email);
@@ -35,6 +38,7 @@ export const ProfileSection = () => {
       }
 
       try {
+        // Use a simpler query that doesn't trigger RLS recursion issues
         const { data, error } = await supabase
           .from("profiles")
           .select("id, username, display_name, avatar_url, email, created_at, updated_at")
@@ -52,16 +56,18 @@ export const ProfileSection = () => {
         throw err;
       }
     },
-    enabled: !!userId,
-    staleTime: 60000,
-    gcTime: 300000,
-    retry: 1,
+    enabled: !!userId, // Only run query when userId is available
+    staleTime: 60000, // Keep data fresh for 1 minute
+    gcTime: 300000, // Keep in cache for 5 minutes
+    retry: 1, // Reduce retry attempts to speed up fallback to error state
   });
 
+  // Show loading state immediately when profile is loading
   if (isLoading) {
     return <ProfileSectionSkeleton />;
   }
 
+  // Show error state if there was an error loading profile
   if (error || !profile) {
     return (
       <ProfileErrorState

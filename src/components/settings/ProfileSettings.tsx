@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
@@ -14,7 +15,6 @@ import { ColorSettings } from "@/components/settings/ColorSettings";
 import { BackButton } from "@/components/navigation/BackButton";
 import { LogOut, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useIsMobile } from "@/hooks/useIsMobile";
 
 export const ProfileSettings = () => {
   const navigate = useNavigate();
@@ -25,7 +25,6 @@ export const ProfileSettings = () => {
   const [buttonColor, setButtonColor] = useState(colors.buttonColor);
   const [logoColor, setLogoColor] = useState(colors.logoColor);
   const [autoplay, setAutoplay] = useState(true);
-  const { isMobile } = useIsMobile();
 
   useEffect(() => {
     const savedSettings = localStorage.getItem('settings');
@@ -114,7 +113,7 @@ export const ProfileSettings = () => {
   return (
     <div className="min-h-screen" style={{ backgroundColor: backgroundColor, color: textColor }}>
       <BackButton />
-      <main className={`container mx-auto ${isMobile ? 'pt-16 px-4' : 'pt-24 px-4'} pb-16`}>
+      <main className="container mx-auto pt-24 px-4 pb-16">
         <PlaybackSettings 
           autoplay={autoplay}
           setAutoplay={setAutoplay}
@@ -134,8 +133,8 @@ export const ProfileSettings = () => {
         />
 
         <section className="mt-8">
-          <Card className={`${isMobile ? 'p-4' : 'p-6'}`}>
-            <h2 className={`${isMobile ? 'text-lg' : 'text-xl'} font-semibold mb-6`}>Account Actions</h2>
+          <Card className="p-6">
+            <h2 className="text-xl font-semibold mb-6">Account Actions</h2>
             <div className="space-y-4">
               <Button
                 onClick={handleLogout}
