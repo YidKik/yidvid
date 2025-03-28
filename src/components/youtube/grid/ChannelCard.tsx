@@ -41,37 +41,36 @@ export const ChannelCard = ({
       className={cn(
         "block opacity-0 animate-[fadeIn_0.5s_ease-out_forwards]",
         "relative group rounded-lg overflow-hidden transition-all duration-200",
-        "hover:scale-[1.03] hover:shadow-md"
+        "hover:scale-[1.03] hover:shadow-md text-center p-2"
       )}
       style={{ animationDelay }}
       onMouseEnter={() => setShowControls(true)}
       onMouseLeave={() => setShowControls(false)}
       aria-label={`View channel: ${title}`}
     >
-      <div className="aspect-video bg-muted/50 flex items-center justify-center overflow-hidden">
-        {thumbnail_url ? (
-          <img
-            src={thumbnail_url}
-            alt={title}
-            className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-            loading="lazy"
-            onError={(e) => {
-              const target = e.target as HTMLImageElement;
-              target.src = "/placeholder.svg";
-            }}
-          />
-        ) : (
-          <div className="flex items-center justify-center w-full h-full bg-gradient-to-b from-gray-200 to-gray-300">
-            <span className="text-3xl font-bold text-gray-500">{title.charAt(0)}</span>
-          </div>
-        )}
-        
-        {/* Overlay with channel title */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent flex items-end p-2">
-          <h3 className="text-white text-sm font-medium truncate w-full">
-            {title}
-          </h3>
+      <div className="flex flex-col items-center justify-center">
+        <div className="w-36 h-36 bg-pink-100 rounded-full flex items-center justify-center overflow-hidden mb-2 mx-auto">
+          {thumbnail_url ? (
+            <img
+              src={thumbnail_url}
+              alt={title}
+              className="w-full h-full object-cover"
+              loading="lazy"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.src = "/placeholder.svg";
+              }}
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              <img src="/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png" alt="YidVid" className="w-16 h-16" />
+            </div>
+          )}
         </div>
+        
+        <h3 className="text-sm font-medium text-center">
+          {title}
+        </h3>
 
         {/* Hide button - only show for non-sample channels */}
         {!isSample && showControls && (
