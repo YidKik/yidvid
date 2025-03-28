@@ -1,7 +1,6 @@
 
 import { useState } from "react";
 import { Copy, Check } from "lucide-react";
-import { copyToClipboard } from "./CopyUtils.ts";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { toast } from "sonner";
 
@@ -32,7 +31,9 @@ export const CopyToClipboard = ({ textToCopy, label = "Content" }: CopyToClipboa
       })
       .catch((error) => {
         console.error(`Failed to copy ${label.toLowerCase()}:`, error);
-        toast.error("Failed to copy to clipboard");
+        toast.error("Failed to copy to clipboard", {
+          position: "bottom-center"
+        });
       });
   };
   

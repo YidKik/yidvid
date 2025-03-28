@@ -22,7 +22,10 @@ export const useRefetchControl = ({
       try {
         await refetch();
         // Use a unique ID for the toast to prevent duplicates
-        toast.success("Content refreshed", { id: "content-refreshed" });
+        toast.success("Content refreshed", { 
+          id: "content-refreshed",
+          position: "bottom-center" 
+        });
       } catch (error) {
         console.error("Error during manual refetch:", error);
       } finally {
@@ -46,7 +49,8 @@ export const useRefetchControl = ({
         // Use a unique ID for the toast to prevent duplicates
         refreshToastIdRef.current = "content-completely-refreshed";
         toast.success("Content completely refreshed with latest data", { 
-          id: refreshToastIdRef.current 
+          id: refreshToastIdRef.current,
+          position: "bottom-center"
         });
       } catch (error) {
         console.error("Error during force refetch:", error);

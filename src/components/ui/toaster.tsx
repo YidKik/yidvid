@@ -7,7 +7,7 @@ import {
   ToastTitle,
   ToastViewport,
 } from "@/components/ui/toast"
-import { useIsMobile } from "@/hooks/use-mobile"
+import { useIsMobile } from "@/hooks/useIsMobile"
 
 export function Toaster() {
   const { toasts } = useToast()
@@ -20,7 +20,7 @@ export function Toaster() {
           <Toast 
             key={id} 
             {...props} 
-            className={`${isMobile ? 'max-w-[90%] p-2 pr-2 scale-90 origin-top-right rounded-lg shadow-md bg-white text-black' : 'md:max-w-[420px] bg-white text-black'}`}
+            className={`${isMobile ? 'max-w-[90%] p-2 pr-2 scale-90 origin-bottom-center rounded-lg shadow-md bg-white text-black toast-mobile-enter' : 'md:max-w-[420px] bg-white text-black'}`}
           >
             <div className={`grid gap-${isMobile ? '0.5' : '1'}`}>
               {title && <ToastTitle className={isMobile ? "text-xs text-black" : "text-sm text-black"}>{title}</ToastTitle>}
@@ -34,7 +34,7 @@ export function Toaster() {
           </Toast>
         )
       })}
-      <ToastViewport className={`gap-1 ${isMobile ? 'p-1' : 'gap-2'}`} />
+      <ToastViewport className={`gap-1 ${isMobile ? 'p-1 flex flex-col items-center' : 'gap-2'}`} />
     </ToastProvider>
   )
 }

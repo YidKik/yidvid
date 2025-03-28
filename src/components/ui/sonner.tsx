@@ -1,6 +1,7 @@
 
 import { useTheme } from "next-themes"
 import { Toaster as Sonner, type ToasterProps as SonnerToasterProps } from "sonner"
+import { useIsMobile } from "@/hooks/useIsMobile"
 
 // Extend the ToasterProps type to include toastDeduplication
 type ToasterProps = React.ComponentProps<typeof Sonner> & {
@@ -9,6 +10,7 @@ type ToasterProps = React.ComponentProps<typeof Sonner> & {
 
 const Toaster = ({ ...props }: ToasterProps) => {
   const { theme = "system" } = useTheme()
+  const isMobile = useIsMobile()
 
   return (
     <Sonner
@@ -28,7 +30,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
       }}
       richColors={false}
       expand={false}
-      position="bottom-right"
+      position={isMobile ? "bottom-center" : "bottom-right"}
       visibleToasts={3}
       closeButton={false}
       toastDeduplication={true} // Enable toast deduplication
