@@ -1,4 +1,3 @@
-
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -150,11 +149,11 @@ export const ColorSettings = ({
             </div>
           )}
 
-          <div className="flex gap-3 mt-4">
-            <Button onClick={saveColors} variant="default" size={isMobile ? "sm" : "default"} className={`${isMobile ? 'text-sm py-1' : ''}`}>
+          <div className="flex gap-2 mt-3">
+            <Button onClick={saveColors} variant="default" size={isMobile ? "sm" : "default"} className={`${isMobile ? 'text-xs h-8 px-3' : ''}`}>
               {t('saveChanges')}
             </Button>
-            <Button onClick={resetToDefaults} variant="outline" size={isMobile ? "sm" : "default"} className={`${isMobile ? 'text-sm py-1' : ''}`}>
+            <Button onClick={resetToDefaults} variant="outline" size={isMobile ? "sm" : "default"} className={`${isMobile ? 'text-xs h-8 px-3' : ''}`}>
               {t('resetDefaults')}
             </Button>
           </div>
@@ -163,4 +162,3 @@ export const ColorSettings = ({
     </section>
   );
 };
-

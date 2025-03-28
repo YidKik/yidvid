@@ -42,7 +42,7 @@ export const BackButton = ({ className }: BackButtonProps) => {
       size="icon"
       onClick={() => navigate("/?skipWelcome=true")}
       className={cn(
-        "fixed top-16 left-4 p-2 hover:bg-primary/5 transition-all duration-200",
+        "fixed top-12 left-4 p-2 hover:bg-primary/5 transition-all duration-200", // Adjusted position higher
         "rounded-full shadow-sm hover:shadow-md",
         "border border-gray-100 bg-white/95 backdrop-blur-sm",
         "group hover:scale-105 active:scale-95",
