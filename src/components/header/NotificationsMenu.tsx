@@ -22,7 +22,7 @@ interface NotificationsMenuProps {
 }
 
 export const NotificationsMenu = ({ session, onMarkAsRead }: NotificationsMenuProps) => {
-  const isMobile = useIsMobile();
+  const { isMobile } = useIsMobile();
   const closeRef = useRef<HTMLButtonElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [dragStartY, setDragStartY] = useState(0);
@@ -182,10 +182,10 @@ export const NotificationsMenu = ({ session, onMarkAsRead }: NotificationsMenuPr
       <SheetContent 
         side={isMobile ? "bottom" : "right"}
         className={`
-          ${isMobile ? 'w-full h-[100vh] rounded-t-xl' : 'w-[240px] sm:w-[400px]'} 
-          ${isMobile ? 'bg-[#222222]/90 backdrop-blur-md' : 'bg-[#222222]'} 
+          ${isMobile ? 'w-full h-[100vh] rounded-t-xl' : 'w-[240px] sm:w-[400px] max-h-[80vh]'} 
+          ${isMobile ? 'bg-[#222222]/90 backdrop-blur-md' : 'bg-[#222222] rounded-l-xl'} 
           border-[#333333] p-0
-          ${isMobile ? 'animate-slide-up' : 'animate-fade-in'}
+          ${isMobile ? 'animate-slide-up' : 'animate-slide-in-right'}
         `}
         ref={sheetContentRef}
         onTouchStart={handleTouchStart}
