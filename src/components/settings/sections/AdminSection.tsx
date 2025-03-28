@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { LayoutDashboard } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useIsMobile } from "@/hooks/useIsMobile";
-import { toast } from "sonner";
 
 interface AdminSectionProps {
   userId?: string;
@@ -17,14 +16,14 @@ export const AdminSection = ({ userId }: AdminSectionProps) => {
   const navigate = useNavigate();
   const { isMobile } = useIsMobile();
 
-  // Direct query to check admin status, bypassing cache issues
+  // Improved query to reliably fetch admin status
   const { data: profile, isLoading } = useQuery({
     queryKey: ["admin-section-profile", userId],
     queryFn: async () => {
       if (!userId) return null;
       
       try {
-        console.log("AdminSection: Fetching admin status for:", userId);
+        console.log("Fetching admin status for:", userId);
         const { data, error } = await supabase
           .from("profiles")
           .select("is_admin")
@@ -32,56 +31,24 @@ export const AdminSection = ({ userId }: AdminSectionProps) => {
           .single();
 
         if (error) {
-          console.error("Error fetching admin status in AdminSection:", error);
+          console.error("Error fetching admin status:", error);
           return null;
         }
 
-        console.log("AdminSection: Admin status response:", data);
+        console.log("Admin status response:", data);
         return data;
       } catch (error) {
-        console.error("Error in admin status query in AdminSection:", error);
+        console.error("Error in admin status query:", error);
         return null;
       }
     },
     enabled: !!userId,
     staleTime: 0, // Don't cache to ensure fresh admin status
-    retry: 3, // Retry more times
-    refetchOnWindowFocus: true, // Refetch when window is focused
   });
 
   useEffect(() => {
-    const checkAdminStatus = async () => {
-      if (userId) {
-        try {
-          // Direct fetch to double-check admin status
-          const { data, error } = await supabase
-            .from("profiles")
-            .select("is_admin")
-            .eq("id", userId)
-            .single();
-            
-          if (error) {
-            console.error("Failed to check admin status directly:", error);
-            return;
-          }
-          
-          console.log("Direct admin status check:", data);
-          setIsAdmin(data?.is_admin === true);
-        } catch (err) {
-          console.error("Error in direct admin check:", err);
-        }
-      }
-    };
-    
-    // Run the direct check
-    checkAdminStatus();
-  }, [userId]);
-
-  useEffect(() => {
     if (profile) {
-      const adminStatus = profile.is_admin === true;
-      console.log("Setting isAdmin to:", adminStatus, "from profile:", profile);
-      setIsAdmin(adminStatus);
+      setIsAdmin(profile.is_admin === true);
     }
   }, [profile]);
 
@@ -89,19 +56,13 @@ export const AdminSection = ({ userId }: AdminSectionProps) => {
     navigate("/dashboard");
   };
 
-  // Skip rendering entirely if no admin status is available yet or if loading
   if (isLoading) {
     return <div className="h-4"></div>;
   }
 
-  // Skip rendering if definitely not an admin
   if (!isAdmin) {
-    console.log("Not rendering AdminSection because user is not an admin");
     return null;
   }
-
-  // Log that we're rendering the admin section
-  console.log("Rendering AdminSection for admin user");
 
   return (
     <section className={`${isMobile ? 'mb-6' : 'mb-8'}`}>

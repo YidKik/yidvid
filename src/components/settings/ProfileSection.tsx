@@ -17,7 +17,7 @@ export const ProfileSection = () => {
   const navigate = useNavigate();
   const { handleLogout, isLoggingOut, session } = useAuth();
   const [userEmail, setUserEmail] = useState<string | null>(null);
-  const { isMobile } = useIsMobile();
+  const isMobile = useIsMobile();
   
   // Use session data directly from useAuth hook to avoid waiting for another session fetch
   const userId = session?.user?.id;
@@ -29,7 +29,6 @@ export const ProfileSection = () => {
     }
   }, [session]);
 
-  // Direct query to ensure we get the latest admin status
   const { data: profile, isLoading, error } = useQuery({
     queryKey: ["user-profile-settings", userId],
     queryFn: async () => {
@@ -39,29 +38,28 @@ export const ProfileSection = () => {
       }
 
       try {
-        // Direct query including is_admin
+        // Use a simpler query that doesn't trigger RLS recursion issues
         const { data, error } = await supabase
           .from("profiles")
-          .select("id, username, display_name, avatar_url, email, created_at, updated_at, is_admin")
+          .select("id, username, display_name, avatar_url, email, created_at, updated_at")
           .eq("id", userId)
           .maybeSingle();
 
         if (error) {
-          console.error("Error fetching profile in ProfileSection:", error);
+          console.error("Error fetching profile:", error);
           throw error;
         }
 
-        console.log("ProfileSection: Successfully fetched profile with admin status:", data?.is_admin);
         return data as ProfilesTable["Row"];
       } catch (err) {
-        console.error("Unexpected error fetching profile in ProfileSection:", err);
+        console.error("Unexpected error fetching profile:", err);
         throw err;
       }
     },
     enabled: !!userId, // Only run query when userId is available
-    staleTime: 0, // Don't cache to ensure fresh data
-    refetchOnWindowFocus: true, // Refetch when window is focused
-    retry: 3, // Retry more times
+    staleTime: 60000, // Keep data fresh for 1 minute
+    gcTime: 300000, // Keep in cache for 5 minutes
+    retry: 1, // Reduce retry attempts to speed up fallback to error state
   });
 
   // Show loading state immediately when profile is loading

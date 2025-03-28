@@ -38,7 +38,7 @@ export function prefetchUserData(session: Session, queryClient: QueryClient) {
             return null;
           }
           
-          console.log("Successfully prefetched profile settings data:", data ? "found" : "not found", "is_admin:", data?.is_admin);
+          console.log("Successfully prefetched profile settings data:", data ? "found" : "not found");
           return data;
         } catch (err) {
           console.error("Unexpected error in profile settings prefetch:", err);
@@ -46,7 +46,7 @@ export function prefetchUserData(session: Session, queryClient: QueryClient) {
         }
       },
       retry: 2,
-      staleTime: 0, // Ensure we always get fresh data
+      staleTime: 60000, // Keep data fresh for 1 minute
       meta: {
         errorBoundary: false,
         suppressToasts: true
@@ -72,13 +72,11 @@ export function prefetchUserData(session: Session, queryClient: QueryClient) {
             return null;
           }
           
-          console.log("Successfully prefetched user-profile data:", data ? "found" : "not found", "is_admin:", data?.is_admin);
+          console.log("Successfully prefetched user-profile data:", data ? "found" : "not found");
           
           // Log admin status for debugging
           if (data?.is_admin) {
             console.log("User has admin privileges:", data.is_admin);
-          } else {
-            console.log("User does NOT have admin privileges or status is null:", data?.is_admin);
           }
           
           return data;
@@ -88,7 +86,7 @@ export function prefetchUserData(session: Session, queryClient: QueryClient) {
         }
       },
       retry: 2,
-      staleTime: 0, // Ensure we always get fresh data
+      staleTime: 60000, // Keep data fresh for 1 minute
       meta: {
         errorBoundary: false,
         suppressToasts: true
@@ -96,7 +94,7 @@ export function prefetchUserData(session: Session, queryClient: QueryClient) {
     })
   );
   
-  // Also prefetch admin-section-profile specifically for admin status with a direct query
+  // Also prefetch admin-section-profile specifically for admin status
   prefetchPromises.push(
     queryClient.prefetchQuery({
       queryKey: ["admin-section-profile", session.user.id],
