@@ -1,3 +1,4 @@
+
 @keyframes orbital-pulse {
   0%, 100% { 
     transform: scale(0.8);
@@ -95,6 +96,12 @@
 
 .swipe-indicator {
   animation: pulseIndicator 1.5s ease-in-out infinite;
+}
+
+/* Add the search outline animation */
+@keyframes search-outline {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 100% 0%; }
 }
 
 /* Header animation for mobile */

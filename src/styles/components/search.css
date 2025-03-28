@@ -92,3 +92,4 @@
 .search-animated-border input:focus + .search-animated-border::before {
   opacity: 0;
 }
+
