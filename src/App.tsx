@@ -40,12 +40,25 @@ function AppRoutes() {
 
   useEffect(() => {
     document.title = getPageTitle(location.pathname);
+    
+    // Force check viewport and console log it
+    console.log(`Current viewport width: ${window.innerWidth}px`);
+    document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
+    
+    const handleResize = () => {
+      document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
+      console.log(`Viewport resized to: ${window.innerWidth}px x ${window.innerHeight}px`);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, [location]);
 
   return (
     <>
       <Helmet>
         <title>{getPageTitle(location.pathname)}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
       </Helmet>
       <Routes>
         {/* Public routes */}

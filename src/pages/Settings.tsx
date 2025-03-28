@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BackButton } from "@/components/navigation/BackButton";
@@ -30,7 +31,7 @@ const Settings = () => {
   const [autoplay, setAutoplay] = useState(true);
   const [loadingProfile, setLoadingProfile] = useState(true);
   const [otherSectionsLoaded, setOtherSectionsLoaded] = useState(false);
-  const isMobile = useIsMobile();
+  const { isMobile } = useIsMobile();
 
   // Immediately prefetch profile data - top priority
   useEffect(() => {
@@ -116,6 +117,9 @@ const Settings = () => {
       console.error('Error in saveColors:', error);
     }
   };
+
+  // Log current device state for debugging
+  console.log("Settings page - isMobile:", isMobile);
 
   if (!isAuthenticated && session === null) {
     return (

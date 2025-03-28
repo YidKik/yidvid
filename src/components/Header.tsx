@@ -1,18 +1,18 @@
 
 import { useState } from "react";
 import Auth from "@/pages/Auth";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/hooks/useIsMobile";
 import { SearchBar } from "./header/SearchBar";
 import { HeaderLogo } from "./header/HeaderLogo";
 import { HeaderActions } from "./header/HeaderActions";
 import { MobileMenu } from "./header/MobileMenu";
 import { useAuth } from "@/hooks/useAuth";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 
 export const Header = () => {
-  const isMobile = useIsMobile();
+  const { isMobile } = useIsMobile();
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);

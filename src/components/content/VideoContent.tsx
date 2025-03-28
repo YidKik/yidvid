@@ -27,7 +27,7 @@ export const VideoContent = ({
   lastSuccessfulFetch,
   fetchAttempts
 }: VideoContentProps) => {
-  const isMobile = useIsMobile();
+  const { isMobile, isTablet } = useIsMobile();
   const { 
     isRefreshing, 
     handleRefetch, 
@@ -121,8 +121,8 @@ export const VideoContent = ({
     );
   }
 
-  // On tablets, we want to render the desktop view but with specific tablet adjustments
-  const isTablet = !isMobile && window.innerWidth < 1024;
+  // Log the device type for debugging
+  console.log(`Device type: isMobile=${isMobile}, isTablet=${isTablet}`);
 
   return (
     <div>

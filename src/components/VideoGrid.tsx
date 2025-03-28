@@ -1,6 +1,6 @@
 
 import { cn } from "@/lib/utils";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/hooks/useIsMobile";
 import { VideoCard } from "./VideoCard";
 import { LoadingAnimation } from "@/components/ui/LoadingAnimation";
 import { useEffect, useMemo } from "react";
@@ -32,7 +32,7 @@ export const VideoGrid = ({
   isLoading = false,
   className,
 }: VideoGridProps) => {
-  const isMobile = useIsMobile();
+  const { isMobile } = useIsMobile();
   const location = useLocation();
   const isMainPage = location.pathname === "/";
   const isAdminPage = location.pathname.includes('/admin');
@@ -57,13 +57,13 @@ export const VideoGrid = ({
   
   // Log for debugging
   useEffect(() => {
-    console.log(`VideoGrid rendering with ${displayVideos.length} videos, isLoading: ${isLoading}`);
+    console.log(`VideoGrid rendering with ${displayVideos.length} videos, isLoading: ${isLoading}, isMobile: ${isMobile}`);
     if (displayVideos.length > 0) {
       console.log("First video sample title:", displayVideos[0].title);
     } else if (!isLoading) {
       console.warn("VideoGrid has no videos to display");
     }
-  }, [displayVideos, isLoading]);
+  }, [displayVideos, isLoading, isMobile]);
   
   // Dynamically determine grid columns based on screen size and page type
   let gridCols = "";

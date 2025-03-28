@@ -1,3 +1,4 @@
+
 import {
   Home,
   Flame,
@@ -18,7 +19,7 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
 } from "@/components/ui/sidebar";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/hooks/useIsMobile";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -39,9 +40,14 @@ const menuGroups = [
 ];
 
 export const Sidebar = () => {
-  const isMobile = useIsMobile();
+  const { isMobile } = useIsMobile();
   const [expandedGroup, setExpandedGroup] = useState<number | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // Log current device state for debugging
+  useEffect(() => {
+    console.log("Sidebar component - isMobile:", isMobile);
+  }, [isMobile]);
 
   // Close sidebar when clicking outside on mobile
   useEffect(() => {
