@@ -20,7 +20,7 @@ export const ChannelCard = ({
   thumbnail_url,
   index
 }: ChannelCardProps) => {
-  const { hideChannel } = useHiddenChannels();
+  const { hiddenChannels, hideChannel } = useHiddenChannels();
   const [showControls, setShowControls] = useState(false);
 
   const handleHide = (e: React.MouseEvent) => {

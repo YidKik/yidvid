@@ -26,6 +26,7 @@ export const RelatedVideos = ({ videos }: RelatedVideosProps) => {
               key={video.id}
               {...video}
               channelName={video.channel_name}
+              channelId={video.channel_id}
               uploadedAt={video.uploaded_at}
               thumbnail={video.thumbnail || "/placeholder.svg"}
             />
