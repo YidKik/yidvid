@@ -18,11 +18,11 @@ export const ProfileInfo = ({ profile }: ProfileInfoProps) => {
 
   return (
     <div className={`${isMobile ? 'w-full' : ''}`}>
-      <h3 className={`${isMobile ? 'text-base md:text-lg' : 'text-xl'} font-semibold mb-1`}>
+      <h3 className={`${isMobile ? 'text-sm font-semibold mb-0.5' : 'text-xl font-semibold mb-1'}`}>
         {display_name || username || "User"}
       </h3>
       
-      <div className={`space-y-0.5 ${isMobile ? 'space-y-0' : ''}`}>
+      <div className={`${isMobile ? 'space-y-0' : 'space-y-0.5'}`}>
         <ProfileField 
           label="Email" 
           value={email || ""} 

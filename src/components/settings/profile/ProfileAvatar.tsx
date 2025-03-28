@@ -38,7 +38,7 @@ export const ProfileAvatar = ({
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >
-      <Avatar className={`${isMobile ? 'h-16 w-16' : 'h-20 w-20'} border-2 border-primary/20`}>
+      <Avatar className={`${isMobile ? 'h-12 w-12' : 'h-20 w-20'} border-2 border-primary/20`}>
         <AvatarImage src={avatarUrl} alt={displayName || username} />
         <AvatarFallback className="bg-primary/10 text-primary">
           {initials}

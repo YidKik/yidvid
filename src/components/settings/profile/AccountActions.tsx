@@ -18,7 +18,7 @@ export const AccountActions = ({ isLoggingOut, handleLogout }: AccountActionsPro
         size={isMobile ? "sm" : "default"}
         onClick={handleLogout}
         disabled={isLoggingOut}
-        className={`${isMobile ? 'text-xs py-1 h-8' : ''} flex items-center gap-1`}
+        className={`${isMobile ? 'text-xs py-0.5 h-7 px-2' : ''} flex items-center gap-1`}
       >
         <LogOut className={`${isMobile ? 'h-3 w-3' : 'h-4 w-4'}`} />
         {isLoggingOut ? "Signing out..." : "Sign out"}
