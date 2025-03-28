@@ -24,11 +24,14 @@ export const RelatedVideos = ({ videos }: RelatedVideosProps) => {
           {videos?.map((video) => (
             <VideoCard
               key={video.id}
-              {...video}
+              id={video.id}
+              video_id={video.id}
+              title={video.title}
+              thumbnail={video.thumbnail || "/placeholder.svg"}
               channelName={video.channel_name}
               channelId={video.channel_id}
+              views={video.views}
               uploadedAt={video.uploaded_at}
-              thumbnail={video.thumbnail || "/placeholder.svg"}
             />
           ))}
         </div>
