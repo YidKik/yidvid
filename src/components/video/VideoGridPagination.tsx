@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -23,36 +24,7 @@ export const VideoGridPagination = ({
   onShowAll,
   onPageChange,
 }: VideoGridPaginationProps) => {
-  // For mobile and tablet, we always show pagination arrows instead of "See More"
-  if (isMobile) {
-    return (
-      <div className="flex items-center justify-center gap-6 mt-4">
-        <Button
-          variant="outline"
-          onClick={() => onPageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-          size="icon"
-          className="rounded-full hover:bg-muted/50 hover:border-gray-300 transition-all duration-300 w-7 h-7"
-          aria-label="Previous page"
-        >
-          <ChevronLeft className="h-3 w-3" />
-        </Button>
-        
-        <Button
-          variant="outline"
-          onClick={() => onPageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-          size="icon"
-          className="rounded-full hover:bg-muted/50 hover:border-gray-300 transition-all duration-300 w-7 h-7"
-          aria-label="Next page"
-        >
-          <ChevronRight className="h-3 w-3" />
-        </Button>
-      </div>
-    );
-  }
-
-  // Desktop view remains unchanged
+  // If not showing all, display the "See More" button
   if (!showAll) {
     return (
       <div className={`flex justify-center ${isMobile ? 'mt-1' : 'mt-8'}`}>
@@ -72,7 +44,7 @@ export const VideoGridPagination = ({
     );
   }
 
-  // For pagination display (desktop)
+  // For pagination display
   return (
     <div className={`flex items-center justify-center gap-6 ${isMobile ? 'mt-4' : 'mt-8'}`}>
       <Button
@@ -88,7 +60,8 @@ export const VideoGridPagination = ({
         <ChevronLeft className={isMobile ? "h-3 w-3" : "h-4 w-4"} />
       </Button>
       
-      {!isMobile && (
+      {/* Only show page numbers on mobile */}
+      {isMobile && (
         <div className="flex items-center text-sm text-muted-foreground">
           Page {currentPage} of {totalPages}
         </div>

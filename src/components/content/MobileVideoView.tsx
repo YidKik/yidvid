@@ -71,7 +71,7 @@ export const MobileVideoView = ({
         {sortedVideos.length > 4 && (
           <div className="px-2 mt-2">
             <VideoGridPagination
-              showAll={true} // Always use arrow pagination on mobile
+              showAll={showMoreMobile}
               currentPage={currentPage}
               totalPages={totalPages}
               filteredVideosLength={sortedVideos.length}
