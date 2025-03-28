@@ -14,7 +14,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { NotificationHeader } from "../notifications/NotificationHeader";
 import { NotificationList } from "../notifications/NotificationList";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 interface NotificationsMenuProps {
   session: any;
@@ -24,6 +24,10 @@ interface NotificationsMenuProps {
 export const NotificationsMenu = ({ session, onMarkAsRead }: NotificationsMenuProps) => {
   const isMobile = useIsMobile();
   const closeRef = useRef<HTMLButtonElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStartY, setDragStartY] = useState(0);
+  const [dragCurrentY, setDragCurrentY] = useState(0);
+  const sheetContentRef = useRef<HTMLDivElement>(null);
   
   const { data: notifications, refetch, isError, error, isLoading } = useQuery({
     queryKey: ["video-notifications", session?.user?.id],
@@ -111,6 +115,46 @@ export const NotificationsMenu = ({ session, onMarkAsRead }: NotificationsMenuPr
     }
   };
 
+  // Touch event handlers for swipe to dismiss
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (isMobile) {
+      setIsDragging(true);
+      setDragStartY(e.touches[0].clientY);
+      setDragCurrentY(e.touches[0].clientY);
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (isMobile && isDragging) {
+      setDragCurrentY(e.touches[0].clientY);
+      
+      // Only allow dragging downward
+      const dragDistance = dragCurrentY - dragStartY;
+      if (dragDistance > 0 && sheetContentRef.current) {
+        // Apply transform to the sheet as user drags
+        sheetContentRef.current.style.transform = `translateY(${dragDistance}px)`;
+        sheetContentRef.current.style.transition = 'none';
+      }
+    }
+  };
+
+  const handleTouchEnd = () => {
+    if (isMobile && isDragging && sheetContentRef.current) {
+      const dragDistance = dragCurrentY - dragStartY;
+      
+      // If dragged down more than 100px, close the sheet
+      if (dragDistance > 100) {
+        handleClose();
+      }
+      
+      // Reset the transform
+      sheetContentRef.current.style.transform = '';
+      sheetContentRef.current.style.transition = 'transform 0.3s ease-out';
+    }
+    
+    setIsDragging(false);
+  };
+
   if (!session?.user?.id) {
     return null;
   }
@@ -143,19 +187,28 @@ export const NotificationsMenu = ({ session, onMarkAsRead }: NotificationsMenuPr
           border-[#333333] p-0
           ${isMobile ? 'animate-slide-up' : 'animate-fade-in'}
         `}
+        ref={sheetContentRef}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
       >
-        <NotificationHeader 
-          hasNotifications={!!notifications?.length}
-          onClearAll={handleClearAll}
-          onClose={handleClose}
-        />
-        <NotificationList
-          notifications={notifications || []}
-          isLoading={isLoading}
-          isError={isError}
-          onRetry={() => refetch()}
-          onNotificationClick={onMarkAsRead}
-        />
+        <div className={isMobile ? 'relative' : ''}>
+          {isMobile && (
+            <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-10 h-1 bg-gray-500/50 rounded-full" />
+          )}
+          <NotificationHeader 
+            hasNotifications={!!notifications?.length}
+            onClearAll={handleClearAll}
+            onClose={handleClose}
+          />
+          <NotificationList
+            notifications={notifications || []}
+            isLoading={isLoading}
+            isError={isError}
+            onRetry={() => refetch()}
+            onNotificationClick={onMarkAsRead}
+          />
+        </div>
       </SheetContent>
     </Sheet>
   );

@@ -18,7 +18,7 @@ export const NotificationHeader = ({
   const isMobile = useIsMobile();
   
   return (
-    <SheetHeader className={`p-3 sm:p-6 border-b border-[#333333] ${isMobile ? 'sticky top-0 z-10 bg-[#222222]/95 backdrop-blur-sm' : ''}`}>
+    <SheetHeader className={`p-3 sm:p-6 border-b border-[#333333] ${isMobile ? 'sticky top-0 z-10 bg-[#222222]/95 backdrop-blur-sm mt-2' : ''}`}>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Bell className="h-5 w-5 text-white" />

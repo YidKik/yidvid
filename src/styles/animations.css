@@ -82,12 +82,12 @@
 
 @keyframes slideDown {
   from {
-    transform: translateY(-100%);
-    opacity: 0;
-  }
-  to {
     transform: translateY(0);
     opacity: 1;
+  }
+  to {
+    transform: translateY(100%);
+    opacity: 0;
   }
 }
 
@@ -168,4 +168,18 @@
 
 .animate-mobile-scale-in {
   animation: mobileScaleIn 0.3s ease-out forwards;
+}
+
+/* Add swipe indicator animation */
+@keyframes pulseIndicator {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.swipe-indicator {
+  animation: pulseIndicator 1.5s ease-in-out infinite;
 }
