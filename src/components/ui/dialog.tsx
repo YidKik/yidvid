@@ -1,3 +1,4 @@
+
 import * as React from "react"
 import * as DialogPrimitive from "@radix-ui/react-dialog"
 import { X } from "lucide-react"
@@ -42,8 +43,8 @@ const DialogContent = React.forwardRef<
       {...props}
     >
       {children}
-      <DialogPrimitive.Close className="absolute right-5 top-5 z-10 rounded-sm opacity-70 ring-offset-background transition-all duration-300 hover:opacity-100 focus:outline-none disabled:pointer-events-none text-white group">
-        <X className="h-5 w-5 text-red-500 transition-transform duration-300 group-hover:rotate-180 group-hover:text-red-600" />
+      <DialogPrimitive.Close className="absolute right-5 top-5 z-10">
+        <X className="h-5 w-5 text-red-500 transition-transform duration-300 hover:rotate-180 hover:text-red-600" />
         <span className="sr-only">Close</span>
       </DialogPrimitive.Close>
     </DialogPrimitive.Content>
