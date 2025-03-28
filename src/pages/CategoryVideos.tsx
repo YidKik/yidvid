@@ -167,6 +167,7 @@ const CategoryVideos = () => {
                 title={video.title}
                 thumbnail={video.thumbnail}
                 channelName={video.channel_name}
+                channelId={video.channel_id}
                 views={video.views}
                 uploadedAt={video.uploaded_at}
               />
