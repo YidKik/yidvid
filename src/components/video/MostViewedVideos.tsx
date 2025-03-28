@@ -23,9 +23,10 @@ export const MostViewedVideos = ({
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const isMobile = useIsMobile();
-  // On mobile, only show 2 videos at a time instead of 4
-  const videosPerPage = isMobile ? 2 : 4;
+  const { isMobile, isTablet, isDesktop } = useIsMobile();
+  
+  // Always show 4 videos on desktop, 3 on tablet, 2 on mobile
+  const videosPerPage = isMobile ? 2 : (isTablet ? 3 : 4);
   const AUTO_SLIDE_INTERVAL = 8000;
   
   const ensureVideosToDisplay = () => {
@@ -97,7 +98,7 @@ export const MostViewedVideos = ({
     return null;
   }
 
-  // Display 2 videos on mobile, 4 on desktop
+  // Get videos for current view
   const displayVideos = sortedVideos.slice(currentIndex, currentIndex + videosPerPage);
   
   // If we don't have enough videos to display, pad with empty slots
@@ -126,7 +127,7 @@ export const MostViewedVideos = ({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0.5, y: -10 }}
                 transition={{ duration: 0.3 }}
-                className={`grid ${isMobile ? "grid-cols-2 gap-3" : "grid-cols-4 gap-4"}`}
+                className={`grid ${isMobile ? "grid-cols-2 gap-3" : isTablet ? "grid-cols-3 gap-4" : "grid-cols-4 gap-4"}`}
               >
                 {displayVideos.map(video => (
                   <motion.div 

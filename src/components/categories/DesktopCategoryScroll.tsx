@@ -51,7 +51,9 @@ export const DesktopCategoryScroll: React.FC<DesktopCategoryScrollProps> = ({
             repeatType: "loop",
             duration: 120,
             ease: "linear",
-            repeatDelay: 0
+            repeatDelay: 0,
+            // Ensure it moves from right to left
+            direction: "normal" 
           }
         }}
         style={{

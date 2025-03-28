@@ -7,6 +7,7 @@ import { VideoData } from "@/hooks/video/useVideoFetcher";
 import { useVideoPagination } from "@/hooks/video/useVideoPagination";
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface DesktopVideoViewProps {
   videos: VideoData[];
@@ -27,10 +28,12 @@ export const DesktopVideoView = ({
   forceRefetch,
   isTablet = false
 }: DesktopVideoViewProps) => {
+  const { isTablet: isActualTablet, isDesktop } = useIsMobile();
+  
   // For tablets, show 6 videos (2 rows of 3)
-  // For regular desktop, show 12 videos (3 rows of 4)
-  const videosPerPage = isTablet ? 6 : 12;
-  const rowSize = isTablet ? 3 : 4;
+  // For regular desktop, always show 12 videos (3 rows of 4)
+  const videosPerPage = isActualTablet || isTablet ? 6 : 12;
+  const rowSize = isActualTablet || isTablet ? 3 : 4;
   
   const location = useLocation();
   const isMainPage = location.pathname === "/";
@@ -58,8 +61,8 @@ export const DesktopVideoView = ({
   useEffect(() => {
     console.log(`DesktopVideoView: ${videos.length} videos, hasRealVideos: ${hasRealVideos}, isLoading: ${isLoading}, isRefreshing: ${isRefreshing}`);
     console.log(`Pagination: currentPage ${currentPage} of ${totalPages}, showing ${displayVideos.length} videos`);
-    console.log(`Device type: isTablet=${isTablet}, videosPerPage=${videosPerPage}, rowSize=${rowSize}`);
-  }, [videos, hasRealVideos, isLoading, isRefreshing, currentPage, totalPages, displayVideos.length, isTablet, videosPerPage, rowSize]);
+    console.log(`Device type: isTablet=${isTablet || isActualTablet}, isDesktop=${isDesktop}, videosPerPage=${videosPerPage}, rowSize=${rowSize}`);
+  }, [videos, hasRealVideos, isLoading, isRefreshing, currentPage, totalPages, displayVideos.length, isTablet, isActualTablet, isDesktop, videosPerPage, rowSize]);
 
   return (
     <div className="space-y-6">
@@ -69,7 +72,7 @@ export const DesktopVideoView = ({
           maxVideos={videosPerPage}
           rowSize={rowSize}
           isLoading={isLoading || isRefreshing}
-          className={isTablet ? "grid-cols-3 gap-4" : "grid-cols-4 gap-4"}
+          className={isActualTablet || isTablet ? "grid-cols-3 gap-4" : "grid-cols-4 gap-4"}
         />
         
         {sortedVideos.length > 0 && (

@@ -32,7 +32,7 @@ export const VideoGrid = ({
   isLoading = false,
   className,
 }: VideoGridProps) => {
-  const { isMobile } = useIsMobile();
+  const { isMobile, isTablet, isDesktop } = useIsMobile();
   const location = useLocation();
   const isMainPage = location.pathname === "/";
   const isAdminPage = location.pathname.includes('/admin');
@@ -57,24 +57,24 @@ export const VideoGrid = ({
   
   // Log for debugging
   useEffect(() => {
-    console.log(`VideoGrid rendering with ${displayVideos.length} videos, isLoading: ${isLoading}, isMobile: ${isMobile}`);
+    console.log(`VideoGrid rendering with ${displayVideos.length} videos, isLoading: ${isLoading}, isMobile: ${isMobile}, isTablet: ${isTablet}, isDesktop: ${isDesktop}`);
     if (displayVideos.length > 0) {
       console.log("First video sample title:", displayVideos[0].title);
     } else if (!isLoading) {
       console.warn("VideoGrid has no videos to display");
     }
-  }, [displayVideos, isLoading, isMobile]);
+  }, [displayVideos, isLoading, isMobile, isTablet, isDesktop]);
   
   // Dynamically determine grid columns based on screen size and page type
   let gridCols = "";
   if (isMobile) {
     gridCols = "grid-cols-2";
-  } else if (isAdminPage || window.innerWidth < 1024) {
+  } else if (isTablet || isAdminPage || window.innerWidth < 1024) {
     // For admin pages or tablet-sized screens
     gridCols = "grid-cols-2 sm:grid-cols-3 md:grid-cols-3";
   } else {
-    // Default for regular pages on larger screens
-    gridCols = `grid-cols-2 sm:grid-cols-${Math.min(rowSize, 4)} md:grid-cols-${rowSize}`;
+    // Default for regular pages on larger screens - always use 4 columns on desktop
+    gridCols = `grid-cols-2 sm:grid-cols-3 md:grid-cols-${rowSize}`;
   }
   
   // Better check for real videos vs sample videos
