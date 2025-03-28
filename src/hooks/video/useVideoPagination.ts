@@ -35,6 +35,11 @@ export const useVideoPagination = ({
     setCurrentPage(1);
   }, [videos?.length]);
   
+  // Reset to first page when videosPerPage changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [videosPerPage]);
+  
   // Ensure current page is valid when totalPages changes
   useEffect(() => {
     if (currentPage > totalPages && totalPages > 0) {

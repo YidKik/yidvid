@@ -24,6 +24,26 @@ export const FilteredChannelsGrid = ({ channels, isMainPage }: FilteredChannelsG
     );
   };
 
+  // Get responsive grid classes based on screen width
+  const getGridClasses = () => {
+    const width = window.innerWidth;
+    if (width < 640) return "grid-cols-3 gap-2"; // Mobile
+    if (width >= 640 && width < 1024) return "grid-cols-3 sm:grid-cols-3 gap-3"; // Tablet
+    return "grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 md:gap-4"; // Desktop
+  };
+  
+  const [gridClasses, setGridClasses] = useState(getGridClasses());
+  
+  // Update grid classes on window resize
+  useEffect(() => {
+    const handleResize = () => {
+      setGridClasses(getGridClasses());
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   useEffect(() => {
     // Only log once per render
     if (hasRealChannels(channels)) {
@@ -45,7 +65,7 @@ export const FilteredChannelsGrid = ({ channels, isMainPage }: FilteredChannelsG
   }
 
   return (
-    <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 md:gap-4">
+    <div className={gridClasses}>
       {displayChannels.map((channel, index) => (
         <ChannelCard
           key={channel.id || `channel-${index}`}

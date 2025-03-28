@@ -6,7 +6,7 @@ import { ChannelsGrid } from "@/components/youtube/ChannelsGrid";
 import { VideoData } from "@/hooks/video/useVideoFetcher";
 import { useVideoPagination } from "@/hooks/video/useVideoPagination";
 import { useLocation } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 interface DesktopVideoViewProps {
   videos: VideoData[];
@@ -25,9 +25,26 @@ export const DesktopVideoView = ({
   refetch,
   forceRefetch
 }: DesktopVideoViewProps) => {
-  const videosPerPage = 12;
+  // Determine rowSize based on screen width
+  const getRowSize = () => {
+    if (window.innerWidth >= 640 && window.innerWidth < 1024) return 3; // Tablet
+    return 4; // Desktop
+  };
+
+  const [rowSize, setRowSize] = useState(getRowSize());
+  const videosPerPage = rowSize * 3; // Always show 3 rows 
   const location = useLocation();
   const isMainPage = location.pathname === "/";
+  
+  // Update row size on window resize
+  useEffect(() => {
+    const handleResize = () => {
+      setRowSize(getRowSize());
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   
   const {
     sortedVideos,
@@ -54,15 +71,23 @@ export const DesktopVideoView = ({
     console.log(`Pagination: currentPage ${currentPage} of ${totalPages}, showing ${displayVideos.length} videos`);
   }, [videos, hasRealVideos, isLoading, isRefreshing, currentPage, totalPages, displayVideos.length]);
 
+  // Dynamic CSS classes based on screen size
+  const getGridClasses = () => {
+    if (window.innerWidth >= 640 && window.innerWidth < 1024) {
+      return "grid-cols-3 gap-3 tablet-content-animate";
+    }
+    return "grid-cols-4 gap-4";
+  };
+
   return (
     <div className="space-y-6">
       <div className="video-grid relative">
         <VideoGrid 
           videos={displayVideos}
           maxVideos={videosPerPage}
-          rowSize={4}
+          rowSize={rowSize}
           isLoading={isLoading || isRefreshing}
-          className="grid-cols-4 gap-4"
+          className={getGridClasses()}
         />
         
         {sortedVideos.length > 0 && (

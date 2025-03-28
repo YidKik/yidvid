@@ -24,9 +24,27 @@ export const MostViewedVideos = ({
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const isMobile = useIsMobile();
-  // On mobile, only show 2 videos at a time instead of 4
-  const videosPerPage = isMobile ? 2 : 4;
+  
+  // Determine videos per page based on screen size
+  // Mobile: 2, Tablet: 3, Desktop: 4
+  const getVideosPerPage = () => {
+    if (window.innerWidth < 640) return 2; // Mobile
+    if (window.innerWidth >= 640 && window.innerWidth < 1024) return 3; // Tablet
+    return 4; // Desktop
+  };
+  
+  const [videosPerPage, setVideosPerPage] = useState(getVideosPerPage());
   const AUTO_SLIDE_INTERVAL = 8000;
+  
+  // Update videos per page on resize
+  useEffect(() => {
+    const handleResize = () => {
+      setVideosPerPage(getVideosPerPage());
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   
   const ensureVideosToDisplay = () => {
     if (videos && videos.length > 0) {
@@ -97,13 +115,20 @@ export const MostViewedVideos = ({
     return null;
   }
 
-  // Display 2 videos on mobile, 4 on desktop
+  // Display videos based on screen size
   const displayVideos = sortedVideos.slice(currentIndex, currentIndex + videosPerPage);
   
   // If we don't have enough videos to display, pad with empty slots
   while (displayVideos.length < videosPerPage) {
     displayVideos.push(sortedVideos[displayVideos.length % sortedVideos.length]);
   }
+
+  // Generate the grid columns based on videos per page
+  const getGridColumns = () => {
+    if (videosPerPage === 2) return "grid-cols-2 gap-3";
+    if (videosPerPage === 3) return "grid-cols-3 gap-3";
+    return "grid-cols-4 gap-4";
+  };
 
   return (
     <div className="w-full max-w-[1200px] mx-auto mb-2 md:mb-8">
@@ -126,7 +151,7 @@ export const MostViewedVideos = ({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0.5, y: -10 }}
                 transition={{ duration: 0.3 }}
-                className={`grid ${isMobile ? "grid-cols-2 gap-3" : "grid-cols-4 gap-4"}`}
+                className={`grid ${getGridColumns()}`}
               >
                 {displayVideos.map(video => (
                   <motion.div 

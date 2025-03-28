@@ -1,3 +1,4 @@
+
 @keyframes orbital-pulse {
   0%, 100% { 
     transform: scale(0.8);
@@ -144,3 +145,38 @@
 .mobile-button-animate {
   animation: buttonHighlight 4s ease-in-out infinite;
 }
+
+/* Fade in animation for elements */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* Tablet-specific animations */
+@media (min-width: 640px) and (max-width: 1023px) {
+  @keyframes tabletContentSlide {
+    from {
+      opacity: 0;
+      transform: translateX(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  .tablet-content-animate {
+    animation: tabletContentSlide 0.4s ease-out forwards;
+  }
+}
+

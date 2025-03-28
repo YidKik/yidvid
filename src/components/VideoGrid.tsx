@@ -36,6 +36,13 @@ export const VideoGrid = ({
   const location = useLocation();
   const isMainPage = location.pathname === "/";
   
+  // Get dynamic grid columns based on screen width
+  const getGridColumns = () => {
+    if (window.innerWidth < 640) return "grid-cols-2"; // Mobile
+    if (window.innerWidth >= 640 && window.innerWidth < 1024) return "grid-cols-3"; // Tablet
+    return `grid-cols-${rowSize}`; // Desktop (use rowSize)
+  };
+  
   // Memoize videos to prevent unnecessary re-renders
   const displayVideos = useMemo(() => {
     // Ensure we have valid videos to display (filter out invalid entries)
@@ -63,9 +70,6 @@ export const VideoGrid = ({
       console.warn("VideoGrid has no videos to display");
     }
   }, [displayVideos, isLoading]);
-  
-  // Dynamically determine grid columns based on rowSize and mobile status
-  const gridCols = isMobile ? "grid-cols-2" : `grid-cols-${rowSize}`;
   
   // Better check for real videos vs sample videos
   const hasRealVideos = displayVideos.some(v => 
@@ -114,7 +118,8 @@ export const VideoGrid = ({
   return (
     <div className={cn(
       "grid",
-      isMobile ? "grid-cols-2 gap-x-2 gap-y-3" : `grid-cols-${rowSize} gap-4`,
+      isMobile ? "grid-cols-2 gap-x-2 gap-y-3" : 
+      (window.innerWidth >= 640 && window.innerWidth < 1024) ? "grid-cols-3 gap-3" : `grid-cols-${rowSize} gap-4`,
       className
     )}>
       {videosToDisplay.map((video) => (
