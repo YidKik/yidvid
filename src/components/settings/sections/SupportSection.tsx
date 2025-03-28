@@ -47,7 +47,7 @@ export const SupportSection = () => {
   return (
     <div className="space-y-4">
       <h2 className="text-2xl font-semibold text-primary/80">Help & Support</h2>
-      <Card className={`p-4 md:p-6 border-primary/20 shadow-sm ${isMobile ? 'mx-0.5' : ''}`}>
+      <Card className={`p-4 md:p-6 border-primary/20 shadow-sm ${isMobile ? 'mx-1 px-2' : ''}`}>
         <div className="text-center mb-6">
           <p className="text-muted-foreground">
             Need help or have suggestions? We're here to assist you.

@@ -18,7 +18,9 @@ export const ContactForm = ({ form, onSubmit }: ContactFormProps) => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <CategorySelect form={form} />
+        <div className={`${isMobile ? 'px-1' : ''}`}>
+          <CategorySelect form={form} />
+        </div>
         <ContactFormFields form={form} />
         
         <Button 
