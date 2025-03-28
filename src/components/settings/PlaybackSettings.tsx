@@ -20,7 +20,7 @@ export const PlaybackSettings = ({
 }: PlaybackSettingsProps) => {
   const t = (key: TranslationKey) => getTranslation(key);
   const { volume, playbackSpeed, setVolume, setPlaybackSpeed } = usePlayback();
-  const isMobile = useIsMobile();
+  const { isMobile } = useIsMobile();
 
   return (
     <section className={`mb-8 ${isMobile ? 'mb-6' : 'mb-12'}`}>

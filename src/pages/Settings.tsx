@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BackButton } from "@/components/navigation/BackButton";
@@ -45,7 +44,7 @@ const Settings = () => {
           try {
             const { data, error } = await supabase
               .from("profiles")
-              .select("id, username, display_name, avatar_url, email, created_at, updated_at")
+              .select("id, username, display_name, avatar_url, email, created_at, updated_at, is_admin")
               .eq("id", userId)
               .maybeSingle();
             

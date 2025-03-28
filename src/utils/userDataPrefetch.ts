@@ -1,4 +1,3 @@
-
 import { Session } from "@supabase/supabase-js";
 import { QueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -27,7 +26,7 @@ export function prefetchUserData(session: Session, queryClient: QueryClient) {
           console.log("Executing profile settings prefetch query for:", session.user.id);
           const { data, error } = await supabase
             .from("profiles")
-            .select("*")
+            .select("id, username, display_name, avatar_url, email, is_admin, created_at, updated_at")
             .eq("id", session.user.id)
             .maybeSingle();
           

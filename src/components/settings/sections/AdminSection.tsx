@@ -14,9 +14,9 @@ interface AdminSectionProps {
 export const AdminSection = ({ userId }: AdminSectionProps) => {
   const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
-  const isMobile = useIsMobile();
+  const { isMobile } = useIsMobile();
 
-  // Fetch admin status directly
+  // Improved query to reliably fetch admin status
   const { data: profile, isLoading } = useQuery({
     queryKey: ["admin-section-profile", userId],
     queryFn: async () => {

@@ -1,4 +1,5 @@
-import { useIsMobile } from "@/hooks/use-mobile";
+
+import { useIsMobile } from "@/hooks/useIsMobile";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "../ui/button";
 
@@ -9,7 +10,7 @@ interface AuthHeaderProps {
 }
 
 export const AuthHeader = ({ onBack, title, subtitle }: AuthHeaderProps) => {
-  const isMobile = useIsMobile();
+  const { isMobile } = useIsMobile();
   
   return (
     <div className={`flex flex-col ${isMobile ? 'px-4 py-3' : 'px-8 py-6'} bg-transparent border-b border-gray-100`}>
