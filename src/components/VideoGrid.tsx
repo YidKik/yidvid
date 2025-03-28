@@ -37,7 +37,7 @@ export const VideoGrid = ({
   const isMainPage = location.pathname === "/";
   const isAdminPage = location.pathname.includes('/admin');
   
-  // Memoize videos to prevent unnecessary re-renders
+  // Memoize videos to prevent unnecessary re-renders and ensure uniqueness
   const displayVideos = useMemo(() => {
     // Ensure we have valid videos to display (filter out invalid entries)
     if (!videos || videos.length === 0) {
@@ -49,7 +49,12 @@ export const VideoGrid = ({
       v && v.title && v.video_id && (v.thumbnail || v.id.includes('sample'))
     );
     
-    return filteredVideos.slice(0, maxVideos);
+    // Ensure videos are unique by ID to prevent duplication in the UI
+    const uniqueVideos = filteredVideos.filter((video, index, self) => 
+      index === self.findIndex((v) => v.id === video.id)
+    );
+    
+    return uniqueVideos.slice(0, maxVideos);
   }, [videos, maxVideos]);
   
   // Check if we're really loading or have no videos
@@ -60,6 +65,10 @@ export const VideoGrid = ({
     console.log(`VideoGrid rendering with ${displayVideos.length} videos, isLoading: ${isLoading}, isMobile: ${isMobile}, isTablet: ${isTablet}, isDesktop: ${isDesktop}`);
     if (displayVideos.length > 0) {
       console.log("First video sample title:", displayVideos[0].title);
+      // Log unique IDs to verify no duplicates
+      const videoIds = displayVideos.map(v => v.id);
+      const uniqueIds = [...new Set(videoIds)];
+      console.log(`Total videos: ${videoIds.length}, Unique videos: ${uniqueIds.length}`);
     } else if (!isLoading) {
       console.warn("VideoGrid has no videos to display");
     }
@@ -128,9 +137,9 @@ export const VideoGrid = ({
       isMobile ? "gap-x-2 gap-y-3" : "gap-4",
       className
     )}>
-      {videosToDisplay.map((video) => (
+      {videosToDisplay.map((video, index) => (
         <div 
-          key={video.id || `video-${Math.random()}`}
+          key={`${video.id}-${index}`}
           className={cn(
             "w-full flex flex-col",
             isMobile && "mb-2"

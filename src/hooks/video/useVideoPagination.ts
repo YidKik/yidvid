@@ -17,15 +17,21 @@ export const useVideoPagination = ({
   const [showMoreMobile, setShowMoreMobile] = useState(false);
   
   // Sort videos by upload date, most recent first
+  // Ensure each video has a unique ID for proper rendering
   const sortedVideos = [...(videos || [])].sort((a, b) => {
     return new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime();
   });
   
+  // Ensure videos have unique IDs to prevent duplication in the UI
+  const uniqueVideos = sortedVideos.filter((video, index, self) => 
+    index === self.findIndex((v) => v.id === video.id)
+  );
+  
   // Calculate total pages based on number of videos and videos per page
-  const totalPages = Math.max(1, Math.ceil(sortedVideos.length / videosPerPage));
+  const totalPages = Math.max(1, Math.ceil(uniqueVideos.length / videosPerPage));
   
   // Get the videos to display on the current page
-  const displayVideos = sortedVideos.slice(
+  const displayVideos = uniqueVideos.slice(
     (currentPage - 1) * videosPerPage,
     currentPage * videosPerPage
   );
@@ -45,7 +51,7 @@ export const useVideoPagination = ({
   // If on mobile and the "show more" button hasn't been clicked,
   // only show a limited number of videos (e.g., 4)
   const mobileDisplayVideos = isMobile && !showMoreMobile
-    ? sortedVideos.slice(0, 4)
+    ? uniqueVideos.slice(0, 4)
     : displayVideos;
   
   // Handle page change with validation
@@ -56,7 +62,7 @@ export const useVideoPagination = ({
   };
   
   return {
-    sortedVideos,
+    sortedVideos: uniqueVideos,
     displayVideos: isMobile ? mobileDisplayVideos : displayVideos,
     currentPage,
     totalPages,

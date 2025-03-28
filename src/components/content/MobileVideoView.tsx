@@ -55,7 +55,12 @@ export const MobileVideoView = ({
   useEffect(() => {
     console.log(`MobileVideoView: ${videos.length} videos, hasRealVideos: ${hasRealVideos}, isLoading: ${isLoading}, isRefreshing: ${isRefreshing}`);
     console.log(`Pagination: currentPage ${currentPage} of ${totalPages}, showing ${displayVideos.length} videos`);
-  }, [videos, hasRealVideos, isLoading, isRefreshing, currentPage, totalPages, displayVideos.length]);
+    // Check for duplicates in display videos
+    const videoIds = displayVideos.map(v => v.id);
+    const hasDuplicates = videoIds.some((id, index) => videoIds.indexOf(id) !== index);
+    console.log(`Displaying videos with IDs: ${videoIds.join(', ')}`);
+    console.log(`Has duplicate videos: ${hasDuplicates}`);
+  }, [videos, hasRealVideos, isLoading, isRefreshing, currentPage, totalPages, displayVideos.length, displayVideos]);
 
   return (
     <div className="space-y-4 -mt-2 pt-8">

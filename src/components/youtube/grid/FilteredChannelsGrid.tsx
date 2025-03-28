@@ -36,8 +36,13 @@ export const FilteredChannelsGrid = ({ channels, isMainPage }: FilteredChannelsG
     const filtered = channels?.length > 4 
       ? channels.filter(channel => !hiddenChannels.has(channel.channel_id)) 
       : channels || [];
+    
+    // Ensure all channels are unique by channel_id
+    const uniqueChannels = filtered.filter((channel, index, self) => 
+      index === self.findIndex((c) => c.channel_id === channel.channel_id)
+    );
       
-    setDisplayChannels(filtered);
+    setDisplayChannels(uniqueChannels);
   }, [channels, hiddenChannels]); // Make sure to include dependencies properly
 
   if (displayChannels.length === 0) {
@@ -48,7 +53,7 @@ export const FilteredChannelsGrid = ({ channels, isMainPage }: FilteredChannelsG
     <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 md:gap-4">
       {displayChannels.map((channel, index) => (
         <ChannelCard
-          key={channel.id || `channel-${index}`}
+          key={`${channel.id}-${index}`}
           id={channel.id}
           channel_id={channel.channel_id}
           title={channel.title}
