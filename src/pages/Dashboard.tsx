@@ -21,7 +21,7 @@ export default function Dashboard() {
         if (!session) throw new Error("No session found");
         return session;
       } catch (error) {
-        console.error("Session error:", error);
+        console.error("Session error in Dashboard:", error);
         throw error;
       }
     },
@@ -44,22 +44,58 @@ export default function Dashboard() {
           .single();
 
         if (error) {
-          console.error("Error fetching profile:", error);
+          console.error("Error fetching profile in Dashboard:", error);
           toast.error("Failed to load user profile");
           throw error;
         }
 
-        console.log("Dashboard: Fetched profile:", data);
+        console.log("Dashboard: Fetched profile:", data, "is_admin:", data?.is_admin);
         return data;
       } catch (error) {
-        console.error("Profile fetch error:", error);
+        console.error("Profile fetch error in Dashboard:", error);
         throw error;
       }
     },
     enabled: !!session?.user?.id,
-    retry: 1,
+    retry: 3,
     staleTime: 0, // Don't cache this query
+    refetchOnWindowFocus: true,
   });
+
+  // On page load, directly check admin status as well
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      if (session?.user?.id) {
+        try {
+          const { data, error } = await supabase
+            .from("profiles")
+            .select("is_admin")
+            .eq("id", session.user.id)
+            .single();
+            
+          if (error) {
+            console.error("Dashboard direct admin check error:", error);
+            return;
+          }
+          
+          console.log("Dashboard direct admin check result:", data);
+          
+          // If not admin, redirect
+          if (data?.is_admin !== true) {
+            console.log("User is not an admin, redirecting to home");
+            toast.error("You do not have access to the dashboard");
+            navigate("/");
+          }
+        } catch (err) {
+          console.error("Error in dashboard admin check:", err);
+        }
+      }
+    };
+    
+    if (!isSessionLoading) {
+      checkAdminStatus();
+    }
+  }, [session, isSessionLoading, navigate]);
 
   // Redirect non-admin users
   useEffect(() => {

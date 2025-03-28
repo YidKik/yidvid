@@ -38,18 +38,24 @@ const Settings = () => {
     if (userId) {
       setLoadingProfile(true);
       
-      // Force a direct fetch of profile data
+      // Force a direct fetch of profile data with admin status
       queryClient.prefetchQuery({
         queryKey: ["user-profile-settings", userId],
         queryFn: async () => {
           try {
+            console.log("Settings: Directly fetching profile data including admin status");
             const { data, error } = await supabase
               .from("profiles")
               .select("id, username, display_name, avatar_url, email, created_at, updated_at, is_admin")
               .eq("id", userId)
               .maybeSingle();
             
-            if (error) throw error;
+            if (error) {
+              console.error("Profile prefetch error in Settings:", error);
+              throw error;
+            }
+            
+            console.log("Settings: Profile data fetched with admin status:", data?.is_admin);
             return data;
           } catch (e) {
             console.error("Profile prefetch error:", e);
