@@ -1,6 +1,5 @@
-
 import { ColorSettings } from "@/components/settings/ColorSettings";
-import { useIsMobile } from "@/hooks/useIsMobile";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface AppearanceSectionProps {
   backgroundColor: string;

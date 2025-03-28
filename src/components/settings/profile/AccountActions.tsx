@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button"; 
 import { LogOut, Trash2 } from "lucide-react";
-import { useIsMobile } from "@/hooks/useIsMobile";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { useState } from "react";
 import {
   Dialog,

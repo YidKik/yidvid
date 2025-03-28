@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { useIsMobile } from "@/hooks/useIsMobile";
+import { useIsMobile } from "@/hooks/use-mobile";
 import type { ProfilesTable } from "@/integrations/supabase/types/profiles";
 import { ProfileAvatar } from "./profile/ProfileAvatar";
 import { ProfileInfo } from "./profile/ProfileInfo";

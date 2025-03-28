@@ -1,10 +1,9 @@
-
 import { VideoHistorySection } from "@/components/history/VideoHistorySection";
 import { UserAnalyticsSection } from "@/components/analytics/UserAnalyticsSection";
-import { useIsMobile } from "@/hooks/useIsMobile";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export const ActivitySection = () => {
-  const isMobile = useIsMobile();
+  const { isMobile } = useIsMobile();
   
   return (
     <div className="space-y-6 md:space-y-8">

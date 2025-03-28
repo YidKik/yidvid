@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { supabase } from "@/integrations/supabase/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormValues, formSchema } from "@/components/contact/types";
-import { useIsMobile } from "@/hooks/useIsMobile";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { ContactForm } from "@/components/contact/ContactForm";
 import { toast } from "sonner";
 

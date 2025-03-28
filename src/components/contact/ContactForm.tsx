@@ -1,11 +1,10 @@
-
 import { UseFormReturn } from "react-hook-form";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { CategorySelect } from "@/components/contact/CategorySelect";
 import { ContactFormFields } from "@/components/contact/ContactFormFields";
 import { FormValues } from "@/components/contact/types";
-import { useIsMobile } from "@/hooks/useIsMobile";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface ContactFormProps {
   form: UseFormReturn<FormValues>;

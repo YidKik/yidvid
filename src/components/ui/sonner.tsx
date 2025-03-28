@@ -1,7 +1,6 @@
-
 import { useTheme } from "next-themes"
 import { Toaster as Sonner, type ToasterProps as SonnerToasterProps } from "sonner"
-import { useIsMobile } from "@/hooks/useIsMobile"
+import { useIsMobile } from "@/hooks/use-mobile"
 
 // Extend the ToasterProps type to include toastDeduplication
 type ToasterProps = React.ComponentProps<typeof Sonner> & {

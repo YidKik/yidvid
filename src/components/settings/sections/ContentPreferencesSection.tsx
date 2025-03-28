@@ -1,9 +1,8 @@
-
 import { Card } from "@/components/ui/card";
 import { ChannelSubscriptions } from "@/components/youtube/ChannelSubscriptions";
 import { ChannelControl } from "@/components/youtube/ChannelPreferences";
 import { PlaybackSettings } from "@/components/settings/PlaybackSettings";
-import { useIsMobile } from "@/hooks/useIsMobile";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface ContentPreferencesSectionProps {
   userId: string | null;

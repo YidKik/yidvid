@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { Copy, Check } from "lucide-react";
-import { useIsMobile } from "@/hooks/useIsMobile";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "sonner";
 
 interface CopyToClipboardProps {

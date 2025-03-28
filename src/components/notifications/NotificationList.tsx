@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { NotificationItem } from "./NotificationItem";
@@ -19,7 +18,7 @@ export const NotificationList = ({
   onRetry,
   onNotificationClick 
 }: NotificationListProps) => {
-  const isMobile = useIsMobile();
+  const { isMobile } = useIsMobile();
   
   if (isLoading) {
     return (

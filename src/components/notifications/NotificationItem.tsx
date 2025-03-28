@@ -1,4 +1,3 @@
-
 import { useNavigate } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -17,7 +16,7 @@ interface NotificationItemProps {
 
 export const NotificationItem = ({ notification, onNotificationClick }: NotificationItemProps) => {
   const navigate = useNavigate();
-  const isMobile = useIsMobile();
+  const { isMobile } = useIsMobile();
 
   return (
     <div
