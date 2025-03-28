@@ -12,3 +12,27 @@
 
 /* Import component-specific styles */
 @import './components/search.css';
+
+/* Mobile specific adjustments */
+@media (max-width: 768px) {
+  .settings-container {
+    max-width: 95%;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+  
+  .category-radio-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+  
+  .category-radio-item {
+    height: 100%;
+  }
+  
+  .settings-section-card {
+    margin-left: 0.125rem;
+    margin-right: 0.125rem;
+  }
+}

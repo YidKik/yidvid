@@ -3,12 +3,15 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/comp
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { UseFormReturn } from "react-hook-form";
 import { FormValues, categoryOptions } from "./types";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 interface CategorySelectProps {
   form: UseFormReturn<FormValues>;
 }
 
 export const CategorySelect = ({ form }: CategorySelectProps) => {
+  const isMobile = useIsMobile();
+  
   return (
     <FormField
       control={form.control}
@@ -20,7 +23,7 @@ export const CategorySelect = ({ form }: CategorySelectProps) => {
             <RadioGroup
               onValueChange={field.onChange}
               defaultValue={field.value}
-              className="grid grid-cols-2 gap-3"
+              className={`grid ${isMobile ? 'grid-cols-1 gap-2' : 'grid-cols-2 gap-3'}`}
             >
               {categoryOptions.map((category) => (
                 <FormItem key={category.value}>

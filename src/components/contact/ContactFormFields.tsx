@@ -4,14 +4,17 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { UseFormReturn } from "react-hook-form";
 import { FormValues } from "./types";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 interface ContactFormFieldsProps {
   form: UseFormReturn<FormValues>;
 }
 
 export const ContactFormFields = ({ form }: ContactFormFieldsProps) => {
+  const isMobile = useIsMobile();
+  
   return (
-    <div className="space-y-4 bg-slate-50 p-4 rounded-md">
+    <div className={`space-y-4 bg-slate-50 p-3 md:p-4 rounded-md ${isMobile ? 'mx-0.5' : ''}`}>
       <FormField
         control={form.control}
         name="name"
