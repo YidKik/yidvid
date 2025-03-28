@@ -1,9 +1,9 @@
 
 /* Search bar specific styles */
 .search-input {
-  background-color: var(--search-background) !important;
+  background-color: transparent !important;
   color: var(--search-text) !important;
-  border-color: var(--search-border) !important;
+  border-color: transparent !important;
 }
 
 .search-icon {
@@ -92,4 +92,3 @@
 .search-animated-border input:focus + .search-animated-border::before {
   opacity: 0;
 }
-
