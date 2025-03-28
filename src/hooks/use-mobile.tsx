@@ -36,7 +36,7 @@ export function useIsMobile() {
 }
 
 // Also export a simple boolean version for components that only need isMobile
-export function useMobileBoolean() {
+export function useMobileBoolean(): boolean {
   const { isMobile } = useIsMobile();
   return isMobile;
 }
