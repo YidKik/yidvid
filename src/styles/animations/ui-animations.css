@@ -184,24 +184,33 @@
   animation: buttonHighlight 4s ease-in-out infinite;
 }
 
-/* Video card hover glow animation */
-@keyframes videoHoverGlow {
+/* Thumbnail slide up animation - only affects the image */
+@keyframes thumbnailSlideUp {
   from {
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0);
     transform: translateY(0);
     filter: brightness(1);
   }
   to {
-    box-shadow: 0 8px 25px rgba(234, 56, 76, 0.15);
-    transform: translateY(-3px);
+    transform: translateY(-8px);
     filter: brightness(1.05);
   }
 }
 
-.video-card-hover {
+.thumbnail-slide-up {
+  transition: transform 0.3s ease-out, filter 0.3s ease-out;
+}
+
+.thumbnail-slide-up:hover {
+  transform: translateY(-8px) scale(1.02);
+  filter: brightness(1.05);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Video card hover glow animation - REMOVED to apply only to thumbnail */
+/* .video-card-hover {
   transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
 .video-card-hover:hover {
   animation: videoHoverGlow 0.4s ease-out forwards;
-}
+} */

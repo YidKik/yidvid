@@ -55,7 +55,7 @@ export const VideoCard = ({
     <Link 
       to={`/video/${videoIdForLink}`} 
       className={cn(
-        "block w-full cursor-pointer video-card-hover",
+        "block w-full cursor-pointer",
         className
       )}
       aria-label={`Watch ${title}`}
@@ -66,7 +66,7 @@ export const VideoCard = ({
           <img
             src={thumbnail || "/placeholder.svg"}
             alt={title}
-            className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
+            className="h-full w-full object-cover transition-transform duration-300 hover:scale-105 thumbnail-slide-up"
             loading="lazy"
             onError={(e) => {
               const target = e.target as HTMLImageElement;
