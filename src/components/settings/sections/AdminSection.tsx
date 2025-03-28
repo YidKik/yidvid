@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { LayoutDashboard } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 interface AdminSectionProps {
   userId?: string;
@@ -13,6 +14,7 @@ interface AdminSectionProps {
 export const AdminSection = ({ userId }: AdminSectionProps) => {
   const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   // Fetch admin status directly
   const { data: profile, isLoading } = useQuery({
@@ -63,21 +65,22 @@ export const AdminSection = ({ userId }: AdminSectionProps) => {
   }
 
   return (
-    <section className="mb-8">
-      <h2 className="text-2xl font-semibold mb-4">Admin Settings</h2>
-      <div className="space-y-4">
+    <section className={`${isMobile ? 'mb-6' : 'mb-8'}`}>
+      <h2 className={`${isMobile ? 'text-lg' : 'text-2xl'} font-semibold mb-2 md:mb-4`}>Admin Settings</h2>
+      <div className={`space-y-3 md:space-y-4`}>
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="font-medium">Dashboard Access</h3>
-            <p className="text-sm text-muted-foreground">
+            <h3 className={`${isMobile ? 'text-sm' : 'font-medium'}`}>Dashboard Access</h3>
+            <p className={`${isMobile ? 'text-xs' : 'text-sm'} text-muted-foreground`}>
               Access administrative dashboard and controls
             </p>
           </div>
           <Button 
             onClick={handleDashboardClick}
-            className="flex items-center gap-2"
+            className={`flex items-center gap-2 ${isMobile ? 'py-1 h-8 text-xs' : ''}`}
+            size={isMobile ? "sm" : "default"}
           >
-            <LayoutDashboard className="h-5 w-5" />
+            <LayoutDashboard className={`${isMobile ? 'h-3 w-3' : 'h-5 w-5'}`} />
             Dashboard
           </Button>
         </div>

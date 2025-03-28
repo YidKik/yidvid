@@ -1,4 +1,6 @@
 
+import { format } from "date-fns";
+import { useIsMobile } from "@/hooks/useIsMobile";
 import type { ProfilesTable } from "@/integrations/supabase/types/profiles";
 import { ProfileField } from "./ProfileField";
 
@@ -7,21 +9,38 @@ interface ProfileInfoProps {
 }
 
 export const ProfileInfo = ({ profile }: ProfileInfoProps) => {
+  const isMobile = useIsMobile();
+  const { username, display_name, email, created_at } = profile;
+  
+  const memberSince = created_at 
+    ? format(new Date(created_at), "MMMM d, yyyy")
+    : "Unknown";
+
   return (
-    <div className="mt-4 space-y-4 w-full">
-      <ProfileField 
-        label="User ID" 
-        value={profile?.id} 
-        copyLabel="User ID"
-      />
+    <div className={`${isMobile ? 'w-full' : ''}`}>
+      <h3 className={`${isMobile ? 'text-base md:text-lg' : 'text-xl'} font-semibold mb-1`}>
+        {display_name || username || "User"}
+      </h3>
       
-      {profile?.username && (
+      <div className={`space-y-0.5 ${isMobile ? 'space-y-0' : ''}`}>
+        <ProfileField 
+          label="Email" 
+          value={email || ""} 
+          isMobile={isMobile}
+        />
+        
         <ProfileField 
           label="Username" 
-          value={profile.username} 
-          copyLabel="Username"
+          value={username || ""} 
+          isMobile={isMobile}
         />
-      )}
+        
+        <ProfileField 
+          label="Member since" 
+          value={memberSince} 
+          isMobile={isMobile}
+        />
+      </div>
     </div>
   );
 };

@@ -1,19 +1,7 @@
 
-import { LogOut, Trash2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
-import { useQueryClient } from "@tanstack/react-query";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button"; 
+import { LogOut } from "lucide-react";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 interface AccountActionsProps {
   isLoggingOut: boolean;
@@ -21,90 +9,20 @@ interface AccountActionsProps {
 }
 
 export const AccountActions = ({ isLoggingOut, handleLogout }: AccountActionsProps) => {
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-
-  const handleFastLogout = async () => {
-    // This triggers an immediate logout flow
-    // No toast notification, as per user request
-    handleLogout();
-  };
-
-  const handleDeleteAccount = async () => {
-    try {
-      // Cancel any in-flight queries
-      queryClient.cancelQueries();
-      
-      const { error } = await supabase.rpc('delete_user', {});
-      if (error) {
-        return;
-      }
-      
-      // Navigate first for immediate feedback
-      setIsDeleteDialogOpen(false);
-      navigate("/");
-      
-      // Then do the actual sign out
-      await supabase.auth.signOut();
-      
-      // Clear user data
-      queryClient.removeQueries({ queryKey: ["profile"] });
-      queryClient.removeQueries({ queryKey: ["user-profile"] });
-      queryClient.removeQueries({ queryKey: ["session"] });
-      queryClient.setQueryData(["session"], null);
-      
-    } catch (error) {
-      console.error("Error deleting account:", error);
-    }
-  };
-
+  const isMobile = useIsMobile();
+  
   return (
-    <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+    <div className="flex gap-2 mt-2 md:mt-0">
       <Button
-        onClick={handleFastLogout}
         variant="outline"
-        className="flex items-center justify-center gap-2"
+        size={isMobile ? "sm" : "default"}
+        onClick={handleLogout}
         disabled={isLoggingOut}
+        className={`${isMobile ? 'text-xs py-1 h-8' : ''} flex items-center gap-1`}
       >
-        <LogOut className="h-4 w-4" />
-        <span>{isLoggingOut ? "Signing Out..." : "Sign Out"}</span>
+        <LogOut className={`${isMobile ? 'h-3 w-3' : 'h-4 w-4'}`} />
+        {isLoggingOut ? "Signing out..." : "Sign out"}
       </Button>
-      
-      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <DialogTrigger asChild>
-          <Button
-            variant="outline"
-            className="flex items-center justify-center gap-2 text-red-600 hover:text-red-700 border-red-200 hover:border-red-300 hover:bg-red-50"
-          >
-            <Trash2 className="h-4 w-4" />
-            <span>Delete Account</span>
-          </Button>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Delete Account</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently deleted.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="flex flex-col sm:flex-row gap-2 sm:gap-0">
-            <Button
-              variant="ghost"
-              onClick={() => setIsDeleteDialogOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={handleDeleteAccount}
-              className="bg-red-600 hover:bg-red-700"
-            >
-              Yes, Delete My Account
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };

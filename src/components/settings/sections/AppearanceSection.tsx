@@ -1,5 +1,6 @@
 
 import { ColorSettings } from "@/components/settings/ColorSettings";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 interface AppearanceSectionProps {
   backgroundColor: string;
@@ -26,9 +27,11 @@ export const AppearanceSection = ({
   saveColors,
   resetToDefaults,
 }: AppearanceSectionProps) => {
+  const isMobile = useIsMobile();
+  
   return (
-    <div className="space-y-8">
-      <h2 className="text-2xl font-semibold text-primary/80">Appearance</h2>
+    <div className="space-y-6 md:space-y-8">
+      <h2 className={`${isMobile ? 'text-lg' : 'text-2xl'} font-semibold text-primary/80`}>Appearance</h2>
       <ColorSettings 
         backgroundColor={backgroundColor}
         setBackgroundColor={setBackgroundColor}

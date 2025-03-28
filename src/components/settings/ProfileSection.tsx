@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import { useIsMobile } from "@/hooks/useIsMobile";
 import type { ProfilesTable } from "@/integrations/supabase/types/profiles";
 import { ProfileAvatar } from "./profile/ProfileAvatar";
 import { ProfileInfo } from "./profile/ProfileInfo";
@@ -16,6 +17,7 @@ export const ProfileSection = () => {
   const navigate = useNavigate();
   const { handleLogout, isLoggingOut, session } = useAuth();
   const [userEmail, setUserEmail] = useState<string | null>(null);
+  const isMobile = useIsMobile();
   
   // Use session data directly from useAuth hook to avoid waiting for another session fetch
   const userId = session?.user?.id;
@@ -77,10 +79,10 @@ export const ProfileSection = () => {
   }
 
   return (
-    <section className="mb-8">
-      <Card className="p-6">
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-          <div className="flex items-center gap-4">
+    <section className="mb-6 md:mb-8">
+      <Card className={`${isMobile ? 'p-3' : 'p-6'}`}>
+        <div className={`flex flex-col ${isMobile ? 'gap-4' : 'md:flex-row items-start md:items-center justify-between gap-6'}`}>
+          <div className={`flex ${isMobile ? 'flex-col items-start gap-3' : 'items-center gap-4'}`}>
             <ProfileAvatar 
               avatarUrl={profile.avatar_url || ""}
               displayName={profile.display_name || ""}

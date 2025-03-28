@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BackButton } from "@/components/navigation/BackButton";
@@ -6,6 +7,7 @@ import { Settings as SettingsIcon } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 // Import section components
 import { ContentPreferencesSection } from "@/components/settings/sections/ContentPreferencesSection";
@@ -29,6 +31,7 @@ const Settings = () => {
   const [autoplay, setAutoplay] = useState(true);
   const [loadingProfile, setLoadingProfile] = useState(true);
   const [otherSectionsLoaded, setOtherSectionsLoaded] = useState(false);
+  const isMobile = useIsMobile();
 
   // Immediately prefetch profile data - top priority
   useEffect(() => {
@@ -117,7 +120,7 @@ const Settings = () => {
 
   if (!isAuthenticated && session === null) {
     return (
-      <div className="min-h-screen bg-background text-foreground pt-24 px-4">
+      <div className="min-h-screen bg-background text-foreground pt-16 px-4">
         <div className="container mx-auto max-w-4xl">
           <BackButton />
           <div className="animate-pulse">
@@ -132,13 +135,13 @@ const Settings = () => {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <BackButton />
-      <main className="container mx-auto pt-24 px-4 pb-16 max-w-4xl">
-        <div className="mb-8 flex items-center gap-2">
-          <SettingsIcon className="w-8 h-8 text-primary" />
-          <h1 className="text-3xl font-bold">Settings</h1>
+      <main className={`container mx-auto ${isMobile ? 'pt-16 px-3' : 'pt-24 px-4'} pb-16 max-w-4xl`}>
+        <div className={`mb-4 md:mb-8 flex items-center gap-2`}>
+          <SettingsIcon className={`${isMobile ? 'w-6 h-6' : 'w-8 h-8'} text-primary`} />
+          <h1 className={`${isMobile ? 'text-xl' : 'text-3xl'} font-bold`}>Settings</h1>
         </div>
 
-        <div className="space-y-12">
+        <div className="space-y-8 md:space-y-12">
           {/* Profile section always shows first, either real or skeleton */}
           {loadingProfile ? <ProfileSectionSkeleton /> : <ProfileSection />}
           

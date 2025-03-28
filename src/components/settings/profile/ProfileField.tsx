@@ -1,37 +1,22 @@
 
-import { Copy } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { copyToClipboard } from "./CopyUtils";
+import { CopyToClipboard } from "./CopyUtils";
 
 interface ProfileFieldProps {
   label: string;
-  value: string | null;
-  copyLabel?: string;
+  value: string;
+  isMobile?: boolean;
 }
 
-export const ProfileField = ({ label, value, copyLabel }: ProfileFieldProps) => {
-  if (!value) return null;
-  
-  const handleCopy = () => {
-    copyToClipboard(value, copyLabel || label);
-  };
-
+export const ProfileField = ({ label, value, isMobile = false }: ProfileFieldProps) => {
   return (
-    <div className="flex items-center justify-between p-4 bg-muted rounded-lg">
-      <div className="flex-1 mr-4">
-        <p className="text-sm font-medium mb-1">{label}</p>
-        <p className="text-xs text-muted-foreground break-all">
-          {value}
-        </p>
-      </div>
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={handleCopy}
-        className="h-8 w-8 flex-shrink-0"
-      >
-        <Copy className="h-3.5 w-3.5" />
-      </Button>
+    <div className="flex items-center gap-2 text-muted-foreground">
+      <span className={`${isMobile ? 'text-xs' : 'text-sm'} font-medium`}>{label}:</span>
+      <span className={`${isMobile ? 'text-xs' : 'text-sm'} font-normal flex items-center`}>
+        {value}
+        {(label === "Email" || label === "Username") && (
+          <CopyToClipboard textToCopy={value} />
+        )}
+      </span>
     </div>
   );
 };
