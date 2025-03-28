@@ -40,14 +40,14 @@ export const CopyToClipboard = ({ textToCopy, label = "Content" }: CopyToClipboa
   return (
     <button 
       onClick={handleCopy}
-      className={`ml-1.5 p-0.5 rounded-sm hover:bg-muted/50 transition-colors focus:outline-none focus:ring-1 focus:ring-primary/30 ${copied ? 'text-green-500' : 'text-muted-foreground'}`}
+      className={`ml-1 p-0.5 rounded-sm hover:bg-muted/50 transition-colors focus:outline-none focus:ring-1 focus:ring-primary/30 ${copied ? 'text-green-500' : 'text-muted-foreground'}`}
       title={`Copy ${label.toLowerCase()} to clipboard`}
       aria-label={`Copy ${label.toLowerCase()} to clipboard`}
     >
       {copied ? (
-        <Check className={`${isMobile ? 'h-3 w-3' : 'h-3.5 w-3.5'}`} />
+        <Check className={`${isMobile ? 'h-2.5 w-2.5' : 'h-3.5 w-3.5'}`} />
       ) : (
-        <Copy className={`${isMobile ? 'h-3 w-3' : 'h-3.5 w-3.5'}`} />
+        <Copy className={`${isMobile ? 'h-2.5 w-2.5' : 'h-3.5 w-3.5'}`} />
       )}
     </button>
   );

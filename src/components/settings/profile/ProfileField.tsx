@@ -1,5 +1,5 @@
 
-import { CopyToClipboard } from "./CopyUtils.tsx";
+import { CopyToClipboard } from "./CopyUtils";
 
 interface ProfileFieldProps {
   label: string;
@@ -8,11 +8,16 @@ interface ProfileFieldProps {
 }
 
 export const ProfileField = ({ label, value, isMobile = false }: ProfileFieldProps) => {
+  // Truncate value if it's too long (especially for mobile)
+  const displayValue = isMobile && value.length > 15 
+    ? `${value.slice(0, 15)}...` 
+    : value;
+    
   return (
-    <div className="flex items-center gap-2 text-muted-foreground">
-      <span className={`${isMobile ? 'text-xs' : 'text-sm'} font-medium`}>{label}:</span>
-      <span className={`${isMobile ? 'text-xs' : 'text-sm'} font-normal flex items-center`}>
-        {value}
+    <div className="flex items-center gap-1 text-muted-foreground overflow-hidden">
+      <span className={`${isMobile ? 'text-[10px]' : 'text-sm'} font-medium whitespace-nowrap`}>{label}:</span>
+      <span className={`${isMobile ? 'text-[10px]' : 'text-sm'} font-normal flex items-center truncate`}>
+        {displayValue}
         {(label === "Email" || label === "Username") && (
           <CopyToClipboard textToCopy={value} label={label} />
         )}

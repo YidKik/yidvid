@@ -17,17 +17,19 @@ export const ProfileInfo = ({ profile }: ProfileInfoProps) => {
     : "Unknown";
 
   return (
-    <div className={`${isMobile ? 'w-full' : ''}`}>
-      <h3 className={`${isMobile ? 'text-sm font-semibold mb-0.5' : 'text-xl font-semibold mb-1'}`}>
+    <div className={`${isMobile ? 'w-[calc(100%-48px)]' : ''}`}>
+      <h3 className={`${isMobile ? 'text-xs font-semibold mb-0.5 truncate' : 'text-xl font-semibold mb-1'}`}>
         {display_name || username || "User"}
       </h3>
       
       <div className={`${isMobile ? 'space-y-0' : 'space-y-0.5'}`}>
-        <ProfileField 
-          label="Email" 
-          value={email || ""} 
-          isMobile={isMobile}
-        />
+        {!isMobile && (
+          <ProfileField 
+            label="Email" 
+            value={email || ""} 
+            isMobile={isMobile}
+          />
+        )}
         
         <ProfileField 
           label="Username" 
@@ -35,11 +37,13 @@ export const ProfileInfo = ({ profile }: ProfileInfoProps) => {
           isMobile={isMobile}
         />
         
-        <ProfileField 
-          label="Member since" 
-          value={memberSince} 
-          isMobile={isMobile}
-        />
+        {!isMobile && (
+          <ProfileField 
+            label="Member since" 
+            value={memberSince} 
+            isMobile={isMobile}
+          />
+        )}
       </div>
     </div>
   );

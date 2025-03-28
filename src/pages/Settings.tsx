@@ -135,13 +135,13 @@ const Settings = () => {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <BackButton />
-      <main className={`container mx-auto ${isMobile ? 'pt-16 px-3' : 'pt-24 px-4'} pb-16 max-w-4xl`}>
-        <div className={`mb-4 md:mb-8 flex items-center gap-2`}>
-          <SettingsIcon className={`${isMobile ? 'w-6 h-6' : 'w-8 h-8'} text-primary`} />
-          <h1 className={`${isMobile ? 'text-xl' : 'text-3xl'} font-bold`}>Settings</h1>
+      <main className={`container mx-auto ${isMobile ? 'pt-14 px-2' : 'pt-24 px-4'} pb-16 max-w-4xl`}>
+        <div className={`mb-3 md:mb-8 flex items-center gap-2`}>
+          <SettingsIcon className={`${isMobile ? 'w-5 h-5' : 'w-8 h-8'} text-primary`} />
+          <h1 className={`${isMobile ? 'text-lg' : 'text-3xl'} font-bold`}>Settings</h1>
         </div>
 
-        <div className="space-y-8 md:space-y-12">
+        <div className="space-y-4 md:space-y-12">
           {/* Profile section always shows first, either real or skeleton */}
           {loadingProfile ? <ProfileSectionSkeleton /> : <ProfileSection />}
           
