@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
@@ -26,13 +25,11 @@ export const ChannelDataProvider = ({ children, onError }: ChannelDataProviderPr
   const [displayChannels, setDisplayChannels] = useState<Channel[]>([]);
   const [lastAuthEvent, setLastAuthEvent] = useState<string | null>(null);
 
-  // Add auth state change listener to refetch on auth changes
   useEffect(() => {
     const { data: authListener } = supabase.auth.onAuthStateChange((event) => {
       console.log("Auth state changed in ChannelDataProvider:", event);
       setLastAuthEvent(event);
       
-      // Immediately refetch on auth state change
       if (event === 'SIGNED_IN' || event === 'SIGNED_OUT' || event === 'TOKEN_REFRESHED') {
         console.log("Auth event triggered refetch of channels");
         setIsLoading(true);
@@ -47,12 +44,10 @@ export const ChannelDataProvider = ({ children, onError }: ChannelDataProviderPr
     };
   }, []);
 
-  // Try to fetch directly from database first for faster loading
   const fetchChannelsFromDB = async () => {
     try {
       console.log("Direct database fetch for channels...");
       
-      // First try with the normal query
       const { data, error } = await supabase
         .from("youtube_channels")
         .select("id, channel_id, title, thumbnail_url")
@@ -62,7 +57,6 @@ export const ChannelDataProvider = ({ children, onError }: ChannelDataProviderPr
       if (error) {
         console.error("Direct DB fetch error:", error);
         
-        // Try a simplified query without the deleted_at filter
         const simplifiedQuery = await supabase
           .from("youtube_channels")
           .select("id, channel_id, title, thumbnail_url")
@@ -87,7 +81,6 @@ export const ChannelDataProvider = ({ children, onError }: ChannelDataProviderPr
     }
   };
 
-  // Fetch channels with improved retry logic
   const { data: channels, error, isLoading: isChannelsLoading, refetch } = useQuery({
     queryKey: ["youtube_channels", lastAuthEvent],
     queryFn: async () => {
@@ -96,13 +89,11 @@ export const ChannelDataProvider = ({ children, onError }: ChannelDataProviderPr
         return dbChannels;
       }
       
-      // Fall back to the manual fetch function
       const manualData = await fetchChannelsDirectly();
       if (manualData && manualData.length > 0) {
         return manualData;
       }
       
-      // If all else fails, try one more direct query with minimal fields
       try {
         const lastAttempt = await supabase
           .from("youtube_channels")
@@ -116,7 +107,6 @@ export const ChannelDataProvider = ({ children, onError }: ChannelDataProviderPr
         console.error("Final attempt also failed:", e);
       }
       
-      // If we get here, we need sample data
       return createSampleChannels();
     },
     retry: 3,
@@ -131,7 +121,6 @@ export const ChannelDataProvider = ({ children, onError }: ChannelDataProviderPr
     },
   });
 
-  // Effect for immediate fetch on mount
   useEffect(() => {
     console.log("ChannelDataProvider mounted, attempting to fetch channels");
     refetch().catch(err => {
@@ -140,14 +129,12 @@ export const ChannelDataProvider = ({ children, onError }: ChannelDataProviderPr
     });
   }, [refetch, onError]);
 
-  // Update loading state based on data
   useEffect(() => {
     if (channels?.length || manuallyFetchedChannels?.length) {
       setIsLoading(false);
     }
   }, [channels, manuallyFetchedChannels, setIsLoading]);
 
-  // Find the best data source to display
   useEffect(() => {
     let bestChannels: Channel[] = [];
     
@@ -162,7 +149,6 @@ export const ChannelDataProvider = ({ children, onError }: ChannelDataProviderPr
     } else if (manuallyFetchedChannels?.length) {
       bestChannels = manuallyFetchedChannels;
     } else {
-      // Use sample channels as fallback
       bestChannels = createSampleChannels();
     }
     
