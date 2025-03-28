@@ -66,22 +66,22 @@ export const ContactDialog = () => {
           <MessageSquare className={isMobile ? 'h-3.5 w-3.5' : 'h-5 w-5'} />
         </Button>
       </DialogTrigger>
-      <DialogContent className="w-[min(calc(100%-2rem),400px)] md:w-[450px] p-0 bg-[#333333] text-white border-gray-600 rounded-lg mx-auto my-2 md:my-4">
-        <DialogHeader className="p-3 md:p-4 border-b border-gray-600">
+      <DialogContent className={`${isMobile ? 'w-[calc(100%-2rem)]' : 'w-[550px]'} p-0 bg-[#333333] text-white border-gray-600 rounded-lg`}>
+        <DialogHeader className="p-4 border-b border-gray-600">
           <DialogTitle className="text-base md:text-lg text-white">Contact Us</DialogTitle>
           <DialogDescription className="text-xs md:text-sm text-gray-300 mt-1">
             How can we help you today? Choose a category below and send us your message.
           </DialogDescription>
         </DialogHeader>
-        <div className="p-3 md:p-4">
+        <div className="p-4">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3 md:space-y-4">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <CategorySelect form={form} />
               <ContactFormFields form={form} />
-              <div className="pt-1 md:pt-2">
+              <div className="pt-2">
                 <Button 
                   type="submit" 
-                  className="w-full h-8 md:h-9 text-xs md:text-sm bg-primary hover:bg-primary-hover transition-colors"
+                  className="w-full h-9 text-sm bg-primary hover:bg-primary-hover transition-colors"
                 >
                   Send Message
                 </Button>

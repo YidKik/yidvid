@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { CategorySelect } from "@/components/contact/CategorySelect";
 import { ContactFormFields } from "@/components/contact/ContactFormFields";
 import { FormValues } from "@/components/contact/types";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 interface ContactFormProps {
   form: UseFormReturn<FormValues>;
@@ -13,14 +12,10 @@ interface ContactFormProps {
 }
 
 export const ContactForm = ({ form, onSubmit }: ContactFormProps) => {
-  const { isMobile } = useIsMobile();
-  
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <div className={`${isMobile ? 'px-1' : ''}`}>
-          <CategorySelect form={form} />
-        </div>
+        <CategorySelect form={form} />
         <ContactFormFields form={form} />
         
         <Button 
