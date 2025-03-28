@@ -1,4 +1,3 @@
-
 import { useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -131,6 +130,7 @@ const Search = () => {
                     title={video.title}
                     thumbnail={video.thumbnail}
                     channelName={video.channel_name}
+                    channelId={video.channel_id}
                     views={video.views}
                     uploadedAt={video.uploaded_at}
                   />

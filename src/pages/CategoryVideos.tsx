@@ -1,4 +1,3 @@
-
 import { Header } from "@/components/Header";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -25,12 +24,10 @@ const CategoryVideos = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   
-  // First check if it's a standard category
   const standardCategoryInfo = id && Object.keys(categories).includes(id) 
     ? categories[id as VideoCategory] 
     : null;
 
-  // If not a standard category, check if it's a custom category
   const { data: customCategoryInfo, isLoading: isCustomCategoryLoading } = useQuery({
     queryKey: ["custom-category", id],
     queryFn: async () => {
@@ -52,16 +49,13 @@ const CategoryVideos = () => {
     enabled: !!id && !standardCategoryInfo,
   });
 
-  // Determine the category information
   const categoryInfo = standardCategoryInfo || customCategoryInfo;
 
-  // Fetch videos for the category
   const { data: videos, isLoading } = useQuery({
     queryKey: ["category-videos", id],
     queryFn: async () => {
       if (!id) throw new Error("Category ID is required");
       
-      // For standard categories, fetch directly
       if (standardCategoryInfo) {
         const { data, error } = await supabase
           .from("youtube_videos")
@@ -73,7 +67,6 @@ const CategoryVideos = () => {
         if (error) throw error;
         return data || [];
       } 
-      // For custom categories, join with mappings
       else if (customCategoryInfo) {
         const { data, error } = await supabase
           .from("video_custom_category_mappings")
@@ -91,7 +84,7 @@ const CategoryVideos = () => {
       
       return [];
     },
-    enabled: !!id && !!categoryInfo, // Only run query if we have a valid category
+    enabled: !!id && !!categoryInfo,
   });
 
   if (isCustomCategoryLoading || isLoading) {
@@ -167,6 +160,7 @@ const CategoryVideos = () => {
                 title={video.title}
                 thumbnail={video.thumbnail}
                 channelName={video.channel_name}
+                channelId={video.channel_id}
                 views={video.views}
                 uploadedAt={video.uploaded_at}
               />

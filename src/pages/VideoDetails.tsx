@@ -1,5 +1,4 @@
-
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { VideoPlayer } from "@/components/video/VideoPlayer";
 import { VideoInfo } from "@/components/video/VideoInfo";
 import { RelatedVideos } from "@/components/video/RelatedVideos";
@@ -10,6 +9,7 @@ import { useVideoQuery } from "@/components/video/details/VideoQuery";
 import { VideoComments } from "@/components/video/details/VideoComments";
 import { useRelatedVideosQuery } from "@/components/video/details/RelatedVideosQuery";
 import { VideoHistory } from "@/components/video/details/VideoHistory";
+import { LoadingAnimation } from "@/components/ui/LoadingAnimation";
 
 const VideoDetails = () => {
   const { id } = useParams<{ id: string }>();
