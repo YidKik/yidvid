@@ -55,7 +55,7 @@ export const VideoCard = ({
     <Link 
       to={`/video/${videoIdForLink}`} 
       className={cn(
-        "block w-full cursor-pointer transition-all duration-200 hover:scale-[1.02]",
+        "block w-full cursor-pointer video-card-hover",
         className
       )}
       aria-label={`Watch ${title}`}

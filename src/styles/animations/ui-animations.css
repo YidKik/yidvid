@@ -183,3 +183,25 @@
 .mobile-button-animate {
   animation: buttonHighlight 4s ease-in-out infinite;
 }
+
+/* Video card hover glow animation */
+@keyframes videoHoverGlow {
+  from {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0);
+    transform: translateY(0);
+    filter: brightness(1);
+  }
+  to {
+    box-shadow: 0 8px 25px rgba(234, 56, 76, 0.15);
+    transform: translateY(-3px);
+    filter: brightness(1.05);
+  }
+}
+
+.video-card-hover {
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.video-card-hover:hover {
+  animation: videoHoverGlow 0.4s ease-out forwards;
+}
