@@ -2,7 +2,6 @@
 import { VideoCard } from "@/components/VideoCard";
 import { LoadingAnimation } from "@/components/ui/LoadingAnimation";
 import { useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
 
 interface ChannelVideosProps {
   videos: any[];
@@ -22,26 +21,6 @@ export const ChannelVideos = ({
   const location = useLocation();
   const isMainPage = location.pathname === "/";
 
-  // Get responsive grid classes based on screen width
-  const getGridClasses = () => {
-    const width = window.innerWidth;
-    if (width < 640) return "grid-cols-1 gap-3"; // Mobile
-    if (width >= 640 && width < 1024) return "grid-cols-2 gap-4"; // Tablet (unchanged)
-    return "grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 md:gap-8"; // Desktop
-  };
-  
-  const [gridClasses, setGridClasses] = useState(getGridClasses());
-  
-  // Update grid classes on window resize
-  useEffect(() => {
-    const handleResize = () => {
-      setGridClasses(getGridClasses());
-    };
-    
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
   if (isLoading && !isMainPage) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -56,7 +35,7 @@ export const ChannelVideos = ({
 
   return (
     <>
-      <div className={gridClasses}>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 md:gap-8">
         {videos.map((video, index) => (
           <div 
             key={video.id} 
