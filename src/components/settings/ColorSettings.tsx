@@ -42,46 +42,58 @@ export const ColorSettings = ({
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <Label htmlFor="backgroundColor" className="text-xs mb-1 block">{t('backgroundColor')}</Label>
-                  <input
-                    type="color"
-                    id="backgroundColor"
-                    value={backgroundColor}
-                    onChange={(e) => setBackgroundColor(e.target.value)}
-                    className="w-full h-8 rounded cursor-pointer"
-                  />
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="color"
+                      id="backgroundColor"
+                      value={backgroundColor}
+                      onChange={(e) => setBackgroundColor(e.target.value)}
+                      className="w-6 h-6 p-0 border-0 rounded-sm cursor-pointer"
+                    />
+                    <span className="text-xs truncate">{backgroundColor}</span>
+                  </div>
                 </div>
                 <div>
                   <Label htmlFor="textColor" className="text-xs mb-1 block">{t('textColor')}</Label>
-                  <input
-                    type="color"
-                    id="textColor"
-                    value={textColor}
-                    onChange={(e) => setTextColor(e.target.value)}
-                    className="w-full h-8 rounded cursor-pointer"
-                  />
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="color"
+                      id="textColor"
+                      value={textColor}
+                      onChange={(e) => setTextColor(e.target.value)}
+                      className="w-6 h-6 p-0 border-0 rounded-sm cursor-pointer"
+                    />
+                    <span className="text-xs truncate">{textColor}</span>
+                  </div>
                 </div>
               </div>
               
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <Label htmlFor="buttonColor" className="text-xs mb-1 block">{t('buttonColor')}</Label>
-                  <input
-                    type="color"
-                    id="buttonColor"
-                    value={buttonColor}
-                    onChange={(e) => setButtonColor(e.target.value)}
-                    className="w-full h-8 rounded cursor-pointer"
-                  />
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="color"
+                      id="buttonColor"
+                      value={buttonColor}
+                      onChange={(e) => setButtonColor(e.target.value)}
+                      className="w-6 h-6 p-0 border-0 rounded-sm cursor-pointer"
+                    />
+                    <span className="text-xs truncate">{buttonColor}</span>
+                  </div>
                 </div>
                 <div>
                   <Label htmlFor="otherColors" className="text-xs mb-1 block">{t('otherColors')}</Label>
-                  <input
-                    type="color"
-                    id="otherColors"
-                    value={logoColor}
-                    onChange={(e) => setLogoColor(e.target.value)}
-                    className="w-full h-8 rounded cursor-pointer"
-                  />
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="color"
+                      id="otherColors"
+                      value={logoColor}
+                      onChange={(e) => setLogoColor(e.target.value)}
+                      className="w-6 h-6 p-0 border-0 rounded-sm cursor-pointer"
+                    />
+                    <span className="text-xs truncate">{logoColor}</span>
+                  </div>
                 </div>
               </div>
             </>
@@ -150,10 +162,10 @@ export const ColorSettings = ({
           )}
 
           <div className="flex gap-2 mt-3">
-            <Button onClick={saveColors} variant="default" size={isMobile ? "sm" : "default"} className={`${isMobile ? 'text-xs h-8 px-3' : ''}`}>
+            <Button onClick={saveColors} variant="default" size={isMobile ? "sm" : "default"} className={`${isMobile ? 'text-xs h-7 px-2' : ''}`}>
               {t('saveChanges')}
             </Button>
-            <Button onClick={resetToDefaults} variant="outline" size={isMobile ? "sm" : "default"} className={`${isMobile ? 'text-xs h-8 px-3' : ''}`}>
+            <Button onClick={resetToDefaults} variant="outline" size={isMobile ? "sm" : "default"} className={`${isMobile ? 'text-xs h-7 px-2' : ''}`}>
               {t('resetDefaults')}
             </Button>
           </div>
