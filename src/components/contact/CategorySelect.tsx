@@ -31,7 +31,7 @@ export const CategorySelect = ({ form }: CategorySelectProps) => {
                     <label
                       className={`flex items-start space-x-2 space-y-0 rounded-md border p-3 cursor-pointer transition-all duration-200
                         ${field.value === category.value 
-                          ? 'border-primary bg-primary/5 shadow-[0_0_0_1px_#ea384c]' 
+                          ? 'border-primary shadow-[0_0_0_1px_#ea384c]' 
                           : 'border-input'
                         }`}
                     >
