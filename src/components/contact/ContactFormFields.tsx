@@ -11,21 +11,21 @@ interface ContactFormFieldsProps {
 
 export const ContactFormFields = ({ form }: ContactFormFieldsProps) => {
   return (
-    <div className="space-y-2 md:space-y-4">
+    <div className="space-y-4 bg-slate-50 p-4 rounded-md">
       <FormField
         control={form.control}
         name="name"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="text-xs md:text-base text-white">Name</FormLabel>
+            <FormLabel className="font-medium">Name</FormLabel>
             <FormControl>
               <Input 
                 placeholder="Enter your name" 
                 {...field} 
-                className="bg-[#444444] border-gray-600 text-white placeholder:text-gray-400 h-8 md:h-10 text-xs md:text-base"
+                className="border-input hover:border-primary/50 focus:border-primary transition-colors"
               />
             </FormControl>
-            <FormMessage className="text-[10px] md:text-sm text-red-400" />
+            <FormMessage />
           </FormItem>
         )}
       />
@@ -34,16 +34,16 @@ export const ContactFormFields = ({ form }: ContactFormFieldsProps) => {
         name="email"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="text-xs md:text-base text-white">Email</FormLabel>
+            <FormLabel className="font-medium">Email</FormLabel>
             <FormControl>
               <Input 
                 placeholder="Enter your email" 
                 type="email" 
                 {...field} 
-                className="bg-[#444444] border-gray-600 text-white placeholder:text-gray-400 h-8 md:h-10 text-xs md:text-base"
+                className="border-input hover:border-primary/50 focus:border-primary transition-colors"
               />
             </FormControl>
-            <FormMessage className="text-[10px] md:text-sm text-red-400" />
+            <FormMessage />
           </FormItem>
         )}
       />
@@ -52,15 +52,15 @@ export const ContactFormFields = ({ form }: ContactFormFieldsProps) => {
         name="message"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="text-xs md:text-base text-white">Message</FormLabel>
+            <FormLabel className="font-medium">Message</FormLabel>
             <FormControl>
               <Textarea 
                 placeholder="What would you like to tell us?" 
-                className="min-h-[60px] md:min-h-[100px] bg-[#444444] border-gray-600 text-white placeholder:text-gray-400 text-xs md:text-base resize-none"
+                className="min-h-[120px] resize-none border-input hover:border-primary/50 focus:border-primary transition-colors"
                 {...field} 
               />
             </FormControl>
-            <FormMessage className="text-[10px] md:text-sm text-red-400" />
+            <FormMessage />
           </FormItem>
         )}
       />
