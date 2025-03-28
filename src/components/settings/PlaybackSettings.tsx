@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Volume2 } from "lucide-react";
 import { getTranslation, TranslationKey } from "@/utils/translations";
 import { usePlayback } from "@/contexts/PlaybackContext";
-import { useIsMobile } from "@/hooks/useIsMobile";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface PlaybackSettingsProps {
   autoplay: boolean;

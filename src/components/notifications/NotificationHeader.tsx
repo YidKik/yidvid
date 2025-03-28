@@ -15,7 +15,7 @@ export const NotificationHeader = ({
   onClearAll,
   onClose 
 }: NotificationHeaderProps) => {
-  const isMobile = useIsMobile();
+  const { isMobile } = useIsMobile();
   
   return (
     <SheetHeader className={`p-3 sm:p-6 border-b border-[#333333] ${isMobile ? 'sticky top-0 z-10 bg-[#222222]/95 backdrop-blur-sm mt-2' : ''}`}>

@@ -1,6 +1,6 @@
 
 import { format } from "date-fns";
-import { useIsMobile } from "@/hooks/useIsMobile";
+import { useIsMobile } from "@/hooks/use-mobile";
 import type { ProfilesTable } from "@/integrations/supabase/types/profiles";
 import { ProfileField } from "./ProfileField";
 
