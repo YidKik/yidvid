@@ -35,6 +35,7 @@ export const VideoGrid = ({
   const isMobile = useIsMobile();
   const location = useLocation();
   const isMainPage = location.pathname === "/";
+  const isAdminPage = location.pathname.includes('/admin');
   
   // Memoize videos to prevent unnecessary re-renders
   const displayVideos = useMemo(() => {
@@ -64,8 +65,17 @@ export const VideoGrid = ({
     }
   }, [displayVideos, isLoading]);
   
-  // Dynamically determine grid columns based on rowSize and mobile status
-  const gridCols = isMobile ? "grid-cols-2" : `grid-cols-${rowSize}`;
+  // Dynamically determine grid columns based on screen size and page type
+  let gridCols = "";
+  if (isMobile) {
+    gridCols = "grid-cols-2";
+  } else if (isAdminPage || window.innerWidth < 1024) {
+    // For admin pages or tablet-sized screens
+    gridCols = "grid-cols-2 sm:grid-cols-3 md:grid-cols-3";
+  } else {
+    // Default for regular pages on larger screens
+    gridCols = `grid-cols-2 sm:grid-cols-${Math.min(rowSize, 4)} md:grid-cols-${rowSize}`;
+  }
   
   // Better check for real videos vs sample videos
   const hasRealVideos = displayVideos.some(v => 
@@ -114,7 +124,8 @@ export const VideoGrid = ({
   return (
     <div className={cn(
       "grid",
-      isMobile ? "grid-cols-2 gap-x-2 gap-y-3" : `grid-cols-${rowSize} gap-4`,
+      gridCols,
+      isMobile ? "gap-x-2 gap-y-3" : "gap-4",
       className
     )}>
       {videosToDisplay.map((video) => (

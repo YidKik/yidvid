@@ -58,4 +58,4 @@ export const FilteredChannelsGrid = ({ channels, isMainPage }: FilteredChannelsG
       ))}
     </div>
   );
-};
+}
