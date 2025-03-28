@@ -1,8 +1,9 @@
+
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { getTranslation, TranslationKey } from "@/utils/translations";
-import { useIsMobile } from "@/hooks/useIsMobile";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface ColorSettingsProps {
   backgroundColor: string;
@@ -30,7 +31,7 @@ export const ColorSettings = ({
   resetToDefaults,
 }: ColorSettingsProps) => {
   const t = (key: TranslationKey) => getTranslation(key);
-  const isMobile = useIsMobile();
+  const { isMobile } = useIsMobile();
 
   return (
     <section className={`${isMobile ? 'mb-6' : 'mb-12'}`}>

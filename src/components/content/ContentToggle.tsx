@@ -1,6 +1,6 @@
 
 import { motion } from "framer-motion";
-import { useIsMobile } from "@/hooks/useIsMobile";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface ContentToggleProps {
   isMusic: boolean;
@@ -8,7 +8,7 @@ interface ContentToggleProps {
 }
 
 export const ContentToggle = ({ isMusic, onToggle }: ContentToggleProps) => {
-  const isMobile = useIsMobile();
+  const { isMobile } = useIsMobile();
 
   return (
     <div className="flex justify-center w-full mb-2 md:mb-4 mt-2 md:mt-4">

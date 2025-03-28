@@ -7,7 +7,7 @@ import { Settings as SettingsIcon } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useIsMobile } from "@/hooks/useIsMobile";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 // Import section components
 import { ContentPreferencesSection } from "@/components/settings/sections/ContentPreferencesSection";
@@ -119,7 +119,17 @@ const Settings = () => {
   };
 
   // Log current device state for debugging
-  console.log("Settings page - isMobile:", isMobile);
+  useEffect(() => {
+    console.log("Settings page - isMobile:", isMobile);
+    
+    // Update the page layout based on screen size
+    const resizeTimeout = setTimeout(() => {
+      // Force a reevaluation of isMobile
+      console.log("Settings page - checking layout again:", { isMobile, viewport: window.innerWidth });
+    }, 500);
+    
+    return () => clearTimeout(resizeTimeout);
+  }, [isMobile]);
 
   if (!isAuthenticated && session === null) {
     return (

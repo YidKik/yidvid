@@ -1,6 +1,6 @@
 
 import { cn } from "@/lib/utils";
-import { useIsMobile } from "@/hooks/useIsMobile";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { VideoCard } from "./VideoCard";
 import { LoadingAnimation } from "@/components/ui/LoadingAnimation";
 import { useEffect, useMemo } from "react";

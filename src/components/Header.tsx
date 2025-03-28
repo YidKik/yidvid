@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import Auth from "@/pages/Auth";
-import { useIsMobile } from "@/hooks/useIsMobile";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { SearchBar } from "./header/SearchBar";
 import { HeaderLogo } from "./header/HeaderLogo";
 import { HeaderActions } from "./header/HeaderActions";

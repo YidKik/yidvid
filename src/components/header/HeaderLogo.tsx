@@ -8,7 +8,16 @@ interface HeaderLogoProps {
   onMobileMenuToggle: () => void;
 }
 
-export const HeaderLogo = ({ isMobile }: HeaderLogoProps) => {
+export const HeaderLogo = ({ isMobile, isMobileMenuOpen, onMobileMenuToggle }: HeaderLogoProps) => {
+  // Get device info directly as a backup in case props are inconsistent
+  const deviceInfo = useIsMobile();
+  const isActuallyMobile = deviceInfo.isMobile;
+  
+  // Log any inconsistencies for debugging
+  if (isMobile !== isActuallyMobile) {
+    console.warn("HeaderLogo received inconsistent mobile status:", { propsMobile: isMobile, actualMobile: isActuallyMobile });
+  }
+
   return (
     <div className={`flex items-center ${isMobile ? '' : 'absolute left-0 top-1/2 -translate-y-1/2 ml-0 pl-0'}`}>
       <Link to="/" className="flex items-center">

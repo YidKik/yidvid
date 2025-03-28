@@ -1,4 +1,3 @@
-
 import { Header } from "@/components/Header";
 import Auth from "@/pages/Auth";
 import { useState, useEffect, useRef } from "react";
@@ -31,7 +30,7 @@ const MainContent = () => {
     error 
   } = useVideos();
   
-  const isMobile = useIsMobile();
+  const { isMobile } = useIsMobile();
   const { session } = useSessionManager();
   const notificationsProcessedRef = useRef(false);
   const hasMadeInitialFetchAttempt = useRef(false);
@@ -72,7 +71,7 @@ const MainContent = () => {
   }, []);
 
   useEffect(() => {
-    console.log(`Main content rendering with ${videos?.length || 0} videos, isLoading: ${isLoading}`);
+    console.log(`Main content rendering with ${videos?.length || 0} videos, isLoading: ${isLoading}, isMobile: ${isMobile}`);
     
     if (error) {
       console.error("Error loading videos:", error);
@@ -81,21 +80,17 @@ const MainContent = () => {
     if (videos?.length > 0) {
       console.log("First video sample:", videos[0]);
     }
-  }, [videos, isLoading, error]);
+  }, [videos, isLoading, error, isMobile]);
 
-  // Always attempt to fetch real content when component mounts
   useEffect(() => {
-    // Ensure we only make this attempt once
     if (!hasMadeInitialFetchAttempt.current) {
       hasMadeInitialFetchAttempt.current = true;
       
-      // Try an immediate fetch if we don't have data or only have sample data
       if (!isLoading && 
           (!videos || videos.length === 0 || 
            (videos.length > 0 && videos.some(v => v.id.toString().includes('sample'))))) {
         console.log("Initial mount - forcing video fetch to get real content");
         
-        // Small delay to let UI render first
         setTimeout(() => {
           forceRefetch().catch(err => {
             console.error("Error fetching videos on mount:", err);
