@@ -11,6 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 const formSchema = z.object({
   category: z.enum(['bug_report', 'feature_request', 'support', 'general'], {
@@ -56,6 +57,7 @@ export const SupportSection = () => {
       message: "",
     },
   });
+  const isMobile = useIsMobile();
 
   const onSubmit = async (data: FormValues) => {
     try {
@@ -100,7 +102,7 @@ export const SupportSection = () => {
                     <RadioGroup
                       onValueChange={field.onChange}
                       defaultValue={field.value}
-                      className="grid grid-cols-1 md:grid-cols-2 gap-3"
+                      className="grid grid-cols-2 gap-3"
                     >
                       {categoryOptions.map((category) => (
                         <FormItem key={category.value}>
