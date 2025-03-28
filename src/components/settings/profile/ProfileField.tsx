@@ -1,5 +1,5 @@
 
-import { CopyToClipboard } from "./CopyUtils";
+import { CopyToClipboard } from "./CopyUtils.tsx";
 
 interface ProfileFieldProps {
   label: string;

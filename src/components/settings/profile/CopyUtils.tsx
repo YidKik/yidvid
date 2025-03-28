@@ -5,21 +5,6 @@ import { copyToClipboard } from "./CopyUtils.ts";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { toast } from "sonner";
 
-/**
- * Copy content to clipboard without showing any notification
- * @param content Text to copy to clipboard
- * @param label Label for success message
- */
-export const copyToClipboard = (content: string, label: string = "Content"): void => {
-  if (!content) return;
-  
-  navigator.clipboard.writeText(content)
-    .then(() => {
-      console.log(`${label} copied to clipboard`);
-    })
-    .catch((error) => console.error(`Failed to copy ${label.toLowerCase()}:`, error));
-};
-
 interface CopyToClipboardProps {
   textToCopy: string;
   label?: string;
