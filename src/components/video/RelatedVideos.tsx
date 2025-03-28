@@ -3,7 +3,6 @@ import { VideoCard } from "../VideoCard";
 
 interface Video {
   id: string;
-  video_id?: string;
   title: string;
   thumbnail: string;
   channel_name: string;
@@ -25,14 +24,10 @@ export const RelatedVideos = ({ videos }: RelatedVideosProps) => {
           {videos?.map((video) => (
             <VideoCard
               key={video.id}
-              id={video.video_id || video.id}
-              uuid={video.id}
-              title={video.title}
-              thumbnail={video.thumbnail || "/placeholder.svg"}
+              {...video}
               channelName={video.channel_name}
-              channelId={video.channel_id}
-              views={video.views}
               uploadedAt={video.uploaded_at}
+              thumbnail={video.thumbnail || "/placeholder.svg"}
             />
           ))}
         </div>

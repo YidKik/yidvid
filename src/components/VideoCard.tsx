@@ -55,7 +55,7 @@ export const VideoCard = ({
     <Link 
       to={`/video/${videoIdForLink}`} 
       className={cn(
-        "block w-full cursor-pointer group transition-all duration-300",
+        "block w-full cursor-pointer transition-all duration-200 hover:scale-[1.02]",
         className
       )}
       aria-label={`Watch ${title}`}
@@ -66,7 +66,7 @@ export const VideoCard = ({
           <img
             src={thumbnail || "/placeholder.svg"}
             alt={title}
-            className="h-full w-full object-cover transition-all duration-300 group-hover:scale-105"
+            className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
             loading="lazy"
             onError={(e) => {
               const target = e.target as HTMLImageElement;
@@ -75,13 +75,10 @@ export const VideoCard = ({
           />
         </div>
         
-        {/* Hover overlay with red tint */}
-        <div className="absolute inset-0 bg-red-500/0 transition-all duration-300 group-hover:bg-red-500/10"></div>
-        
-        {/* Video info overlay that slides up on hover */}
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-3 translate-y-2 opacity-90 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-          <h3 className="text-white text-sm font-medium truncate">{title}</h3>
-        </div>
+        {/* Video duration badge - if implemented */}
+        {/* <div className="absolute bottom-2 right-2 rounded bg-black/80 px-1 py-0.5 text-xs text-white">
+          {duration}
+        </div> */}
       </div>
       
       {!hideInfo && (

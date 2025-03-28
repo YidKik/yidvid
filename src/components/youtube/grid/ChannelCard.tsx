@@ -48,7 +48,7 @@ export const ChannelCard = ({
       onMouseLeave={() => setShowControls(false)}
       aria-label={`View channel: ${title}`}
     >
-      <div className="aspect-square bg-muted/50 flex items-center justify-center overflow-hidden rounded-lg">
+      <div className="aspect-video bg-muted/50 flex items-center justify-center overflow-hidden">
         {thumbnail_url ? (
           <img
             src={thumbnail_url}
@@ -61,14 +61,14 @@ export const ChannelCard = ({
             }}
           />
         ) : (
-          <div className="flex items-center justify-center w-full h-full bg-gradient-to-b from-gray-200 to-gray-300 rounded-lg">
+          <div className="flex items-center justify-center w-full h-full bg-gradient-to-b from-gray-200 to-gray-300">
             <span className="text-3xl font-bold text-gray-500">{title.charAt(0)}</span>
           </div>
         )}
         
-        {/* Channel title below the image */}
-        <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/70 to-transparent p-2 text-center">
-          <h3 className="text-white text-sm font-medium truncate">
+        {/* Overlay with channel title */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent flex items-end p-2">
+          <h3 className="text-white text-sm font-medium truncate w-full">
             {title}
           </h3>
         </div>
