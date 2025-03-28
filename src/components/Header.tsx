@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Auth from "@/pages/Auth";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { SearchBar } from "./header/SearchBar";
@@ -19,6 +19,20 @@ export const Header = () => {
   const { session, handleLogout } = useAuth();
   const queryClient = useQueryClient();
   const [isMarkingNotifications, setIsMarkingNotifications] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  // Detect scroll position to apply different styles
+  useEffect(() => {
+    const handleScroll = () => {
+      const position = window.scrollY;
+      setScrolled(position > 20);
+    };
+    
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   const markNotificationsAsRead = async () => {
     if (!session?.user?.id || isMarkingNotifications) return;
@@ -53,7 +67,15 @@ export const Header = () => {
   };
 
   return (
-    <header className={`sticky top-0 z-50 w-full border-b ${isMobile ? 'h-16 bg-white animate-header-glow' : 'bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60'}`}>
+    <header 
+      className={`sticky top-0 z-50 w-full border-b transition-all duration-300 ${
+        scrolled 
+          ? 'bg-white/40 backdrop-blur-md supports-[backdrop-filter]:bg-white/30 shadow-sm border-transparent animate-header-glow' 
+          : isMobile 
+            ? 'h-16 bg-white/95 animate-header-glow' 
+            : 'bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/60'
+      }`}
+    >
       <div className="container mx-auto px-0">
         <div className={`flex ${isMobile ? 'h-16' : 'h-14'} items-center relative`}>
           {isMobile ? (

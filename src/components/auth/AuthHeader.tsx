@@ -20,7 +20,7 @@ export const AuthHeader = ({ onBack, title, subtitle }: AuthHeaderProps) => {
             variant="ghost"
             size="icon"
             onClick={onBack}
-            className="mr-2 h-8 w-8 rounded-full"
+            className="mr-2 h-8 w-8 rounded-full transition-all duration-300 hover:bg-gray-100"
           >
             <ArrowLeft className="h-4 w-4 text-gray-600" />
           </Button>
@@ -29,8 +29,16 @@ export const AuthHeader = ({ onBack, title, subtitle }: AuthHeaderProps) => {
       </div>
       
       <div className="text-center mt-3">
-        {title && <h3 className="text-xl font-semibold text-gray-900">{title}</h3>}
-        {subtitle && <p className="text-sm text-gray-600 mt-1">{subtitle}</p>}
+        {title && (
+          <h3 className="text-xl font-semibold text-gray-900 animate-[fadeIn_0.4s_ease-out_forwards] opacity-0">
+            {title}
+          </h3>
+        )}
+        {subtitle && (
+          <p className="text-sm text-gray-600 mt-1 animate-[fadeIn_0.5s_ease-out_0.1s_forwards] opacity-0">
+            {subtitle}
+          </p>
+        )}
       </div>
     </div>
   );
