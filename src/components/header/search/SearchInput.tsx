@@ -1,15 +1,14 @@
 
-import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Search } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useState } from "react";
+import { KeyboardEvent, useState } from "react";
 
 interface SearchInputProps {
   searchQuery: string;
-  onSearchChange: (value: string) => void;
+  onSearchChange: (query: string) => void;
   onSearchFocus: () => void;
-  onSearch: (e: React.FormEvent) => void;
+  onSearch: (e: KeyboardEvent<HTMLInputElement>) => void;
   onClose?: () => void;
 }
 
@@ -18,42 +17,37 @@ export const SearchInput = ({
   onSearchChange,
   onSearchFocus,
   onSearch,
-  onClose
+  onClose,
 }: SearchInputProps) => {
   const isMobile = useIsMobile();
   const [isFocused, setIsFocused] = useState(false);
-
-  const handleFocus = () => {
-    setIsFocused(true);
-    onSearchFocus();
-  };
-
-  const handleBlur = () => {
-    setIsFocused(false);
-  };
-
+  
   return (
-    <form onSubmit={onSearch} className="w-full max-w-lg flex items-center relative group">
-      <div className="search-animated-border w-full relative">
+    <div className="relative w-full">
+      <div className={`relative flex items-center ${isMobile ? '' : 'w-full'}`}>
+        <Search 
+          className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 
+            ${isMobile && isFocused ? 'animate-pulse-slow' : ''}`} 
+        />
         <Input
-          type="search"
-          placeholder={isMobile ? "Search..." : "Search videos and channels..."}
+          type="text"
+          placeholder="Search..."
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-          className={`w-full bg-transparent z-10 relative border-none text-[#555555] placeholder:text-[#555555] focus-visible:ring-0 focus-visible:ring-offset-0 ${isMobile ? 'h-8 text-xs rounded-full' : 'h-10 text-sm'} pr-10 md:pr-14`}
+          onFocus={() => {
+            setIsFocused(true);
+            onSearchFocus();
+          }}
+          onBlur={() => setIsFocused(false)}
+          onKeyDown={onSearch}
+          className={`
+            py-2 pl-10 pr-3 rounded-lg border-gray-200
+            ${isMobile ? 'h-8 text-sm' : 'h-10 w-full'}
+            ${isMobile && isFocused ? 'border-primary/40 shadow-sm' : ''}
+            transition-all duration-300
+          `}
         />
-        <div className={`animated-border thin-outline ${isFocused ? 'opacity-100' : 'opacity-0'}`}></div>
       </div>
-      <Button 
-        type="submit"
-        variant="ghost" 
-        size="icon"
-        className={`absolute right-1 ${isMobile ? 'h-6 w-6' : 'h-8 w-8'} rounded-full bg-gray-100 hover:bg-gray-200 z-20`}
-      >
-        <Search className={`${isMobile ? 'h-3.5 w-3.5' : 'h-5 w-5'} text-[#555555]`} />
-      </Button>
-    </form>
+    </div>
   );
 };
