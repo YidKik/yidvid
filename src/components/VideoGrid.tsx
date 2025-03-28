@@ -49,10 +49,15 @@ export const VideoGrid = ({
       v && v.title && v.video_id && (v.thumbnail || v.id.includes('sample'))
     );
     
-    // Ensure videos are unique by ID to prevent duplication in the UI
-    const uniqueVideos = filteredVideos.filter((video, index, self) => 
-      index === self.findIndex((v) => v.id === video.id)
-    );
+    // Ensure videos are unique by video_id to prevent duplication in the UI
+    const uniqueVideos = filteredVideos.reduce((acc: Video[], current) => {
+      const x = acc.find(item => item.video_id === current.video_id);
+      if (!x) {
+        return acc.concat([current]);
+      } else {
+        return acc;
+      }
+    }, []);
     
     return uniqueVideos.slice(0, maxVideos);
   }, [videos, maxVideos]);
@@ -65,10 +70,6 @@ export const VideoGrid = ({
     console.log(`VideoGrid rendering with ${displayVideos.length} videos, isLoading: ${isLoading}, isMobile: ${isMobile}, isTablet: ${isTablet}, isDesktop: ${isDesktop}`);
     if (displayVideos.length > 0) {
       console.log("First video sample title:", displayVideos[0].title);
-      // Log unique IDs to verify no duplicates
-      const videoIds = displayVideos.map(v => v.id);
-      const uniqueIds = [...new Set(videoIds)];
-      console.log(`Total videos: ${videoIds.length}, Unique videos: ${uniqueIds.length}`);
     } else if (!isLoading) {
       console.warn("VideoGrid has no videos to display");
     }
@@ -139,7 +140,7 @@ export const VideoGrid = ({
     )}>
       {videosToDisplay.map((video, index) => (
         <div 
-          key={`${video.id}-${index}`}
+          key={`${video.video_id || video.id}-${index}`}
           className={cn(
             "w-full flex flex-col",
             isMobile && "mb-2"

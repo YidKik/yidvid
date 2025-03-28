@@ -1,156 +1,134 @@
 
 import { Link } from "react-router-dom";
-import { formatDistanceToNow, parseISO } from "date-fns";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { formatDistanceToNow } from "date-fns";
 import { cn } from "@/lib/utils";
-import { useEffect } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface VideoCardProps {
   id: string;
-  uuid?: string;
   video_id?: string;
+  uuid?: string;
   title: string;
   thumbnail: string;
   channelName: string;
-  channelThumbnail?: string;
-  channelId?: string;
+  channelId: string;
   views?: number | null;
   uploadedAt: string | Date;
+  channelThumbnail?: string;
   hideInfo?: boolean;
+  className?: string;
 }
 
 export const VideoCard = ({
   id,
-  uuid,
   video_id,
+  uuid,
   title,
   thumbnail,
   channelName,
-  channelThumbnail,
   channelId,
   views,
   uploadedAt,
+  channelThumbnail,
   hideInfo = false,
+  className
 }: VideoCardProps) => {
-  const isMobile = useIsMobile();
+  const { isMobile } = useIsMobile();
   
-  // Handle thumbnail errors by logging
-  useEffect(() => {
-    if (!thumbnail || thumbnail === '/placeholder.svg') {
-      console.warn(`VideoCard ${id} is using a placeholder thumbnail`);
-    }
-  }, [thumbnail, id]);
+  // Determine the correct ID to use for navigation
+  const videoIdForLink = video_id || id;
   
-  // Handle date formatting more safely
-  const formattedDate = (() => {
-    try {
-      if (typeof uploadedAt === 'string') {
-        return formatDistanceToNow(parseISO(uploadedAt), { addSuffix: true });
-      } else if (uploadedAt instanceof Date) {
-        return formatDistanceToNow(uploadedAt, { addSuffix: true });
-      }
-      return "recently";
-    } catch (error) {
-      console.error("Date formatting error:", error, uploadedAt);
-      return "recently";
-    }
-  })();
-
-  // Format views to show actual count or default to 'No views' only if views is explicitly null/undefined
-  const formattedViews = views !== undefined && views !== null
-    ? `${Number(views).toLocaleString()} views` 
-    : 'No views';
-    
-  const routeId = uuid || video_id || id;
-
-  // Safely handle potentially missing thumbnail URL
-  const thumbnailUrl = thumbnail && thumbnail !== '/placeholder.svg' 
-    ? thumbnail 
-    : "/placeholder.svg";
+  // Format the upload date
+  const formattedDate = typeof uploadedAt === "string" 
+    ? formatDistanceToNow(new Date(uploadedAt), { addSuffix: true })
+    : formatDistanceToNow(uploadedAt, { addSuffix: true });
+  
+  // Format views count
+  const formatViews = (count: number | null | undefined) => {
+    if (count === null || count === undefined) return "0 views";
+    if (count < 1000) return `${count} views`;
+    if (count < 1000000) return `${(count / 1000).toFixed(1)}K views`;
+    return `${(count / 1000000).toFixed(1)}M views`;
+  };
 
   return (
     <Link 
-      to={`/video/${routeId}`} 
-      className="block group w-full transition-all ease-in-out duration-300"
+      to={`/video/${videoIdForLink}`} 
+      className={cn(
+        "block w-full cursor-pointer transition-all duration-200 hover:scale-[1.02]",
+        className
+      )}
+      aria-label={`Watch ${title}`}
     >
-      <div className={cn(
-        "relative rounded-lg overflow-hidden bg-muted shadow-sm transition-all duration-300 ease-in-out transform group-hover:-translate-y-1 group-hover:shadow-md",
-        isMobile ? "aspect-video w-full mb-0" : "aspect-video mb-2"
-      )}>
-        <img
-          src={thumbnailUrl}
-          alt={title}
-          className="w-full h-full object-cover"
-          loading="lazy"
-          onError={(e) => {
-            // Show placeholder with centered small logo
-            (e.target as HTMLImageElement).src = "/placeholder.svg";
-            
-            // Create a container for the thumbnail with logo
-            const imgElement = e.target as HTMLImageElement;
-            const parent = imgElement.parentElement;
-            
-            if (parent) {
-              // Remove any previously created logo overlay
-              const existingOverlay = parent.querySelector('.thumbnail-logo-overlay');
-              if (existingOverlay) existingOverlay.remove();
-              
-              // Create the logo overlay
-              const logoOverlay = document.createElement('div');
-              logoOverlay.className = 'thumbnail-logo-overlay absolute inset-0 flex items-center justify-center';
-              
-              // Create the logo image - using the correct YidVid logo
-              const logoImg = document.createElement('img');
-              logoImg.src = "/lovable-uploads/e425cacb-4c3a-4d81-b4e0-77fcbf10f61c.png";
-              logoImg.alt = "YidVid Logo";
-              logoImg.className = 'w-12 h-12 opacity-70'; // Smaller centered logo
-              
-              // Append elements
-              logoOverlay.appendChild(logoImg);
-              parent.appendChild(logoOverlay);
-            }
-          }}
-        />
+      <div className="relative w-full overflow-hidden rounded-lg bg-muted/30">
+        {/* Thumbnail */}
+        <div className="aspect-video w-full overflow-hidden">
+          <img
+            src={thumbnail || "/placeholder.svg"}
+            alt={title}
+            className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
+            loading="lazy"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.src = "/placeholder.svg";
+            }}
+          />
+        </div>
+        
+        {/* Video duration badge - if implemented */}
+        {/* <div className="absolute bottom-2 right-2 rounded bg-black/80 px-1 py-0.5 text-xs text-white">
+          {duration}
+        </div> */}
       </div>
+      
       {!hideInfo && (
-        <div className={cn(
-          "flex gap-2 w-full",
-          isMobile && "flex-col gap-0"
-        )}>
-          {channelThumbnail && !isMobile && (
-            <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 mt-1">
-              <img
-                src={channelThumbnail}
-                alt={channelName}
-                className="w-full h-full object-cover"
-                loading="lazy"
-                onError={(e) => {
-                  // Fallback to placeholder if image fails to load
-                  (e.target as HTMLImageElement).src = "/placeholder.svg";
-                }}
-              />
-            </div>
+        <div className="mt-2 flex items-start space-x-2">
+          {/* Channel avatar */}
+          {channelThumbnail && (
+            <Link 
+              to={`/channel/${channelId}`}
+              className="flex-shrink-0 mt-0.5"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="h-8 w-8 overflow-hidden rounded-full">
+                <img
+                  src={channelThumbnail}
+                  alt={channelName}
+                  className="h-full w-full object-cover"
+                  loading="lazy"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = "/placeholder.svg";
+                  }}
+                />
+              </div>
+            </Link>
           )}
-          <div className="flex-1 min-w-0 overflow-hidden">
-            <h3 className={cn(
-              "video-title line-clamp-2 text-[#030303] transition-colors duration-300 ease-in-out group-hover:text-primary",
-              isMobile ? "text-[10px] leading-[13px] mb-0.5" : "text-sm leading-5"
-            )}>
-              {title || "Untitled Video"}
+          
+          <div className="flex-1 min-w-0">
+            <h3 
+              className={cn(
+                "font-medium text-foreground line-clamp-2", 
+                isMobile ? "text-sm" : "text-base"
+              )}
+            >
+              {title}
             </h3>
-            <p className={cn(
-              "text-muted-foreground truncate video-channel-name",
-              isMobile ? "text-[8px] mt-0" : "text-xs mt-0.5"
-            )}>
-              {channelName || "Unknown Channel"}
-            </p>
-            <div className={cn(
-              "text-muted-foreground flex items-center space-x-1 truncate video-meta-text",
-              isMobile ? "text-[8px] mt-0.5" : "text-xs mt-0.5"
-            )}>
-              <span className="truncate">{formattedViews}</span>
-              <span>•</span>
-              <span className="truncate">{formattedDate}</span>
+            
+            <div className="mt-1 flex flex-col text-xs text-muted-foreground">
+              <Link 
+                to={`/channel/${channelId}`}
+                className="hover:text-foreground hover:underline"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {channelName}
+              </Link>
+              
+              <div className="flex items-center">
+                <span>{formatViews(views)}</span>
+                <span className="mx-1">•</span>
+                <span>{formattedDate}</span>
+              </div>
             </div>
           </div>
         </div>

@@ -19,11 +19,26 @@ const VideoDetails = () => {
   const { data: channelVideos } = useRelatedVideosQuery(video?.channel_id ?? "", video?.id ?? "");
 
   if (isLoadingVideo) {
-    return <div className="p-4">Loading...</div>;
+    return (
+      <div className="container mx-auto p-4 mt-16 flex justify-center">
+        <LoadingAnimation size="medium" color="primary" text="Loading video..." />
+      </div>
+    );
   }
 
   if (!video) {
-    return <div className="p-4">Video not found</div>;
+    return (
+      <div className="container mx-auto p-4 mt-16">
+        <BackButton />
+        <div className="p-8 text-center">
+          <h2 className="text-xl font-semibold text-destructive">Video not found</h2>
+          <p className="mt-2 text-muted-foreground">The video you're looking for doesn't exist or has been removed.</p>
+          <Link to="/" className="mt-4 inline-block px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 transition-colors">
+            Return to homepage
+          </Link>
+        </div>
+      </div>
+    );
   }
 
   return (

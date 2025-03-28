@@ -16,22 +16,32 @@ export const useVideoPagination = ({
   const [currentPage, setCurrentPage] = useState(1);
   const [showMoreMobile, setShowMoreMobile] = useState(false);
   
+  // Ensure we're working with unique videos by ID and video_id
+  const getUniqueVideos = (videoArr: VideoData[]) => {
+    // Create a Map using composite key of id + video_id for uniqueness
+    const uniqueMap = new Map();
+    
+    videoArr.forEach(video => {
+      const key = `${video.id}-${video.video_id}`;
+      if (!uniqueMap.has(key)) {
+        uniqueMap.set(key, video);
+      }
+    });
+    
+    return Array.from(uniqueMap.values());
+  };
+  
   // Sort videos by upload date, most recent first
   // Ensure each video has a unique ID for proper rendering
-  const sortedVideos = [...(videos || [])].sort((a, b) => {
+  const sortedVideos = getUniqueVideos([...(videos || [])].sort((a, b) => {
     return new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime();
-  });
-  
-  // Ensure videos have unique IDs to prevent duplication in the UI
-  const uniqueVideos = sortedVideos.filter((video, index, self) => 
-    index === self.findIndex((v) => v.id === video.id)
-  );
+  }));
   
   // Calculate total pages based on number of videos and videos per page
-  const totalPages = Math.max(1, Math.ceil(uniqueVideos.length / videosPerPage));
+  const totalPages = Math.max(1, Math.ceil(sortedVideos.length / videosPerPage));
   
   // Get the videos to display on the current page
-  const displayVideos = uniqueVideos.slice(
+  const displayVideos = sortedVideos.slice(
     (currentPage - 1) * videosPerPage,
     currentPage * videosPerPage
   );
@@ -51,7 +61,7 @@ export const useVideoPagination = ({
   // If on mobile and the "show more" button hasn't been clicked,
   // only show a limited number of videos (e.g., 4)
   const mobileDisplayVideos = isMobile && !showMoreMobile
-    ? uniqueVideos.slice(0, 4)
+    ? sortedVideos.slice(0, 4)
     : displayVideos;
   
   // Handle page change with validation
@@ -62,7 +72,7 @@ export const useVideoPagination = ({
   };
   
   return {
-    sortedVideos: uniqueVideos,
+    sortedVideos,
     displayVideos: isMobile ? mobileDisplayVideos : displayVideos,
     currentPage,
     totalPages,

@@ -29,6 +29,16 @@ export const MobileVideoView = ({
   const location = useLocation();
   const isMainPage = location.pathname === "/";
   
+  // Ensure videos are unique by ID
+  const uniqueVideos = videos.reduce((acc: VideoData[], current) => {
+    const x = acc.find(item => item.id === current.id || item.video_id === current.video_id);
+    if (!x) {
+      return acc.concat([current]);
+    } else {
+      return acc;
+    }
+  }, []);
+  
   const {
     sortedVideos,
     displayVideos,
@@ -38,13 +48,13 @@ export const MobileVideoView = ({
     showMoreMobile,
     setShowMoreMobile
   } = useVideoPagination({
-    videos,
+    videos: uniqueVideos,
     videosPerPage,
     isMobile: true
   });
 
   // More thorough check if we have real videos (not samples)
-  const hasRealVideos = videos.some(video => 
+  const hasRealVideos = uniqueVideos.some(video => 
     !video.id.toString().includes('sample') && 
     !video.video_id.includes('sample') &&
     video.channelName !== "Sample Channel" &&
@@ -53,14 +63,9 @@ export const MobileVideoView = ({
 
   // Log for debugging
   useEffect(() => {
-    console.log(`MobileVideoView: ${videos.length} videos, hasRealVideos: ${hasRealVideos}, isLoading: ${isLoading}, isRefreshing: ${isRefreshing}`);
+    console.log(`MobileVideoView: ${uniqueVideos.length} videos, hasRealVideos: ${hasRealVideos}, isLoading: ${isLoading}, isRefreshing: ${isRefreshing}`);
     console.log(`Pagination: currentPage ${currentPage} of ${totalPages}, showing ${displayVideos.length} videos`);
-    // Check for duplicates in display videos
-    const videoIds = displayVideos.map(v => v.id);
-    const hasDuplicates = videoIds.some((id, index) => videoIds.indexOf(id) !== index);
-    console.log(`Displaying videos with IDs: ${videoIds.join(', ')}`);
-    console.log(`Has duplicate videos: ${hasDuplicates}`);
-  }, [videos, hasRealVideos, isLoading, isRefreshing, currentPage, totalPages, displayVideos.length, displayVideos]);
+  }, [uniqueVideos, hasRealVideos, isLoading, isRefreshing, currentPage, totalPages, displayVideos.length]);
 
   return (
     <div className="space-y-4 -mt-2 pt-8">
