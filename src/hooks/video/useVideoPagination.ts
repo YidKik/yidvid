@@ -30,10 +30,10 @@ export const useVideoPagination = ({
     currentPage * videosPerPage
   );
   
-  // Reset to first page when videos array changes or its length changes
+  // Reset to first page when videos array changes or its length changes or videosPerPage changes
   useEffect(() => {
     setCurrentPage(1);
-  }, [videos?.length]);
+  }, [videos?.length, videosPerPage]);
   
   // Ensure current page is valid when totalPages changes
   useEffect(() => {

@@ -16,6 +16,7 @@ interface DesktopVideoViewProps {
   forceRefetch?: () => Promise<any>;
   lastSuccessfulFetch?: Date | null;
   fetchAttempts?: number;
+  isTablet?: boolean;
 }
 
 export const DesktopVideoView = ({
@@ -23,9 +24,14 @@ export const DesktopVideoView = ({
   isLoading,
   isRefreshing,
   refetch,
-  forceRefetch
+  forceRefetch,
+  isTablet = false
 }: DesktopVideoViewProps) => {
-  const videosPerPage = 12;
+  // For tablets, show 6 videos (2 rows of 3)
+  // For regular desktop, show 12 videos (3 rows of 4)
+  const videosPerPage = isTablet ? 6 : 12;
+  const rowSize = isTablet ? 3 : 4;
+  
   const location = useLocation();
   const isMainPage = location.pathname === "/";
   
@@ -52,7 +58,8 @@ export const DesktopVideoView = ({
   useEffect(() => {
     console.log(`DesktopVideoView: ${videos.length} videos, hasRealVideos: ${hasRealVideos}, isLoading: ${isLoading}, isRefreshing: ${isRefreshing}`);
     console.log(`Pagination: currentPage ${currentPage} of ${totalPages}, showing ${displayVideos.length} videos`);
-  }, [videos, hasRealVideos, isLoading, isRefreshing, currentPage, totalPages, displayVideos.length]);
+    console.log(`Device type: isTablet=${isTablet}, videosPerPage=${videosPerPage}, rowSize=${rowSize}`);
+  }, [videos, hasRealVideos, isLoading, isRefreshing, currentPage, totalPages, displayVideos.length, isTablet, videosPerPage, rowSize]);
 
   return (
     <div className="space-y-6">
@@ -60,9 +67,9 @@ export const DesktopVideoView = ({
         <VideoGrid 
           videos={displayVideos}
           maxVideos={videosPerPage}
-          rowSize={4}
+          rowSize={rowSize}
           isLoading={isLoading || isRefreshing}
-          className="grid-cols-4 gap-4"
+          className={isTablet ? "grid-cols-3 gap-4" : "grid-cols-4 gap-4"}
         />
         
         {sortedVideos.length > 0 && (

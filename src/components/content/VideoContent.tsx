@@ -121,6 +121,9 @@ export const VideoContent = ({
     );
   }
 
+  // On tablets, we want to render the desktop view but with specific tablet adjustments
+  const isTablet = !isMobile && window.innerWidth < 1024;
+
   return (
     <div>
       {/* Component to handle automatic refresh of stale content */}
@@ -151,6 +154,7 @@ export const VideoContent = ({
           forceRefetch={handleForceRefetch}
           lastSuccessfulFetch={lastSuccessfulFetch}
           fetchAttempts={fetchAttempts || 0}
+          isTablet={isTablet}
         />
       )}
     </div>
