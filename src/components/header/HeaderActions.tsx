@@ -4,6 +4,7 @@ import { NotificationsMenu } from "./NotificationsMenu";
 import { UserMenu } from "./UserMenu";
 import { ContactDialog } from "../contact/ContactDialog";
 import { LogIn, MessageSquare, Settings } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface HeaderActionsProps {
   isMobile: boolean;
@@ -26,6 +27,15 @@ export const HeaderActions = ({
   onMarkNotificationsAsRead,
   onSettingsClick
 }: HeaderActionsProps) => {
+  const navigate = useNavigate();
+
+  const handleSettingsClick = () => {
+    navigate("/settings");
+    if (onSettingsClick) {
+      onSettingsClick();
+    }
+  };
+
   if (isMobile) {
     return (
       <div className="flex items-center gap-2">
@@ -33,7 +43,7 @@ export const HeaderActions = ({
           <>
             <NotificationsMenu session={session} onMarkAsRead={onMarkNotificationsAsRead} />
             <Button
-              onClick={onSettingsClick}
+              onClick={handleSettingsClick}
               variant="ghost" 
               size="icon"
               className="bg-[#222222] hover:bg-[#333333] text-white h-7 w-7 rounded-md"
@@ -76,7 +86,7 @@ export const HeaderActions = ({
         {session && <NotificationsMenu session={session} onMarkAsRead={onMarkNotificationsAsRead} />}
         <ContactDialog />
         {session ? (
-          <div onClick={onSettingsClick}>
+          <div onClick={handleSettingsClick}>
             <UserMenu onLogout={onLogout} />
           </div>
         ) : (
