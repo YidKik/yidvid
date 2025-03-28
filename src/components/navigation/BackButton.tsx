@@ -1,4 +1,5 @@
 
+import { useState, useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -10,6 +11,27 @@ interface BackButtonProps {
 
 export const BackButton = ({ className }: BackButtonProps) => {
   const navigate = useNavigate();
+  const [visible, setVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      // Show button when scrolling up or at the top of the page
+      if (currentScrollY <= 10 || currentScrollY < lastScrollY) {
+        setVisible(true);
+      } else {
+        setVisible(false);
+      }
+      setLastScrollY(currentScrollY);
+    };
+
+    // Add scroll event listener
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    // Clean up event listener
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollY]);
 
   return (
     <Button
@@ -17,11 +39,13 @@ export const BackButton = ({ className }: BackButtonProps) => {
       size="icon"
       onClick={() => navigate("/?skipWelcome=true")}
       className={cn(
-        "fixed top-20 left-4 p-2 hover:bg-primary/5 transition-all duration-200",
+        "fixed top-16 left-4 p-2 hover:bg-primary/5 transition-all duration-200",
         "rounded-full shadow-sm hover:shadow-md",
         "border border-gray-100 bg-white/95 backdrop-blur-sm",
         "group hover:scale-105 active:scale-95",
         "z-[100]", // Ensure it's above other elements
+        visible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-10 pointer-events-none",
+        "transition-all duration-300 ease-in-out",
         className
       )}
     >
