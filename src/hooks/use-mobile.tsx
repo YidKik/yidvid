@@ -34,3 +34,9 @@ export function useIsMobile() {
 
   return { isMobile, isTablet, isDesktop };
 }
+
+// Also export a simple boolean version for components that only need isMobile
+export function useMobileBoolean() {
+  const { isMobile } = useIsMobile();
+  return isMobile;
+}

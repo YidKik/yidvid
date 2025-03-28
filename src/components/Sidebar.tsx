@@ -1,4 +1,3 @@
-
 import {
   Home,
   Flame,
@@ -19,7 +18,7 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
 } from "@/components/ui/sidebar";
-import { useIsMobile } from "@/hooks/useIsMobile";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
