@@ -67,9 +67,9 @@ export const VideoCard = ({
         {/* Thumbnail */}
         <div className="aspect-video w-full overflow-hidden">
           {isSample || !thumbnail ? (
-            <div className="h-full w-full flex items-center justify-center bg-gray-400">
+            <div className="h-full w-full flex items-center justify-center bg-[#9e9e9e] rounded-lg">
               <img
-                src="/lovable-uploads/1095453d-d8d8-4151-bfe8-8bfe52f2977e.png"
+                src="/lovable-uploads/42b6bf6a-9833-47de-ae22-5c9e183e66d0.png"
                 alt={title}
                 className="h-12 w-auto"
               />
@@ -83,8 +83,8 @@ export const VideoCard = ({
               onError={(e) => {
                 const target = e.target as HTMLImageElement;
                 target.parentElement!.innerHTML = `
-                  <div class="h-full w-full flex items-center justify-center bg-gray-400">
-                    <img src="/lovable-uploads/1095453d-d8d8-4151-bfe8-8bfe52f2977e.png" alt="${title}" class="h-12 w-auto" />
+                  <div class="h-full w-full flex items-center justify-center bg-[#9e9e9e] rounded-lg">
+                    <img src="/lovable-uploads/42b6bf6a-9833-47de-ae22-5c9e183e66d0.png" alt="${title}" class="h-12 w-auto" />
                   </div>
                 `;
               }}

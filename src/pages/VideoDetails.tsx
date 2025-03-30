@@ -32,9 +32,9 @@ const VideoDetails = () => {
       <div className="container mx-auto p-4 mt-16">
         <BackButton />
         <div className="p-8 text-center">
-          <div className="mx-auto mb-6 w-full max-w-md aspect-video bg-gray-400 rounded-lg flex items-center justify-center">
+          <div className="mx-auto mb-6 w-full max-w-md aspect-video bg-[#9e9e9e] rounded-lg flex items-center justify-center">
             <img 
-              src="/lovable-uploads/1095453d-d8d8-4151-bfe8-8bfe52f2977e.png" 
+              src="/lovable-uploads/42b6bf6a-9833-47de-ae22-5c9e183e66d0.png" 
               alt="Video not found" 
               className="h-20 w-auto"
             />
