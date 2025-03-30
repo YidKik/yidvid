@@ -10,13 +10,15 @@ export const useAuth = () => {
     session,
     isAuthenticated,
     isLoggingOut,
-    signOut
+    signOut,
+    isLoading
   } = useAuthentication();
 
   return {
     session,
     isAuthenticated,
     handleLogout: signOut,
-    isLoggingOut
+    isLoggingOut,
+    isLoading
   };
 };
