@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { usePlayback } from "@/contexts/PlaybackContext";
+import { VideoOff } from "lucide-react";
 
 interface VideoPlayerProps {
   videoId: string;
@@ -11,6 +12,7 @@ interface VideoPlayerProps {
 
 export const VideoPlayer = ({ videoId }: VideoPlayerProps) => {
   const [embedUrl, setEmbedUrl] = useState("");
+  const [hasError, setHasError] = useState(false);
   const navigate = useNavigate();
   const { volume, playbackSpeed } = usePlayback();
 
@@ -37,18 +39,23 @@ export const VideoPlayer = ({ videoId }: VideoPlayerProps) => {
   });
 
   useEffect(() => {
-    // Create a more permissive embed URL with additional parameters
-    const baseUrl = `https://www.youtube.com/embed/${videoId}`;
-    const params = new URLSearchParams({
-      autoplay: "1",
-      rel: "0",
-      modestbranding: "1",
-      enablejsapi: "1",
-      origin: window.location.origin,
-      widget_referrer: window.location.href,
-    });
+    try {
+      // Create a more permissive embed URL with additional parameters
+      const baseUrl = `https://www.youtube.com/embed/${videoId}`;
+      const params = new URLSearchParams({
+        autoplay: "1",
+        rel: "0",
+        modestbranding: "1",
+        enablejsapi: "1",
+        origin: window.location.origin,
+        widget_referrer: window.location.href,
+      });
 
-    setEmbedUrl(`${baseUrl}?${params.toString()}`);
+      setEmbedUrl(`${baseUrl}?${params.toString()}`);
+    } catch (error) {
+      console.error("Error creating embed URL:", error);
+      setHasError(true);
+    }
   }, [videoId]);
 
   // Handle messages from the YouTube iframe
@@ -74,6 +81,9 @@ export const VideoPlayer = ({ videoId }: VideoPlayerProps) => {
               args: [parseFloat(playbackSpeed)]
             }), '*');
           }
+        } else if (data.event === "onError") {
+          console.error("YouTube player error:", data);
+          setHasError(true);
         }
       } catch (error) {
         console.error("Error handling YouTube message:", error);
@@ -84,6 +94,18 @@ export const VideoPlayer = ({ videoId }: VideoPlayerProps) => {
     return () => window.removeEventListener('message', handleMessage);
   }, [volume, playbackSpeed]);
 
+  if (hasError) {
+    return (
+      <div className="aspect-video w-full mb-4 relative bg-gray-400 flex items-center justify-center">
+        <img 
+          src="/lovable-uploads/1095453d-d8d8-4151-bfe8-8bfe52f2977e.png" 
+          alt="Video unavailable" 
+          className="h-20 w-auto"
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="aspect-video w-full mb-4 relative">
       <iframe
@@ -93,6 +115,7 @@ export const VideoPlayer = ({ videoId }: VideoPlayerProps) => {
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
         referrerPolicy="strict-origin-when-cross-origin"
         loading="lazy"
+        onError={() => setHasError(true)}
       />
     </div>
   );

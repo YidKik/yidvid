@@ -101,11 +101,11 @@ export const VideoGrid = ({
     return Array(maxVideos).fill(null).map((_, i) => ({
       id: `sample-${i}`,
       video_id: `sample-vid-${i}`,
-      title: `Sample Video ${i+1}`,
-      thumbnail: '/placeholder.svg',
-      channelName: "Sample Channel",
+      title: `Video sample`,
+      thumbnail: '',  // Empty to trigger the placeholder
+      channelName: "channel name",
       channelId: "sample-channel",
-      views: 1000 * (i+1),
+      views: 1025,
       uploadedAt: new Date(now.getTime() - (i * 86400000))
     }));
   };
@@ -149,11 +149,11 @@ export const VideoGrid = ({
           <VideoCard 
             id={video.id}
             video_id={video.video_id}
-            title={video.title || "Untitled Video"}
-            thumbnail={video.thumbnail || "/placeholder.svg"}
-            channelName={video.channelName || "Unknown Channel"}
+            title={video.title || "Video sample"}
+            thumbnail={video.thumbnail || ""}
+            channelName={video.channelName || "channel name"}
             channelId={video.channelId}
-            views={video.views || 0}
+            views={video.views || 1025}
             uploadedAt={video.uploadedAt}
           />
         </div>

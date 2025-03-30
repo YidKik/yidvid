@@ -16,7 +16,7 @@ const VideoDetails = () => {
   const { id } = useParams<{ id: string }>();
   if (!id) return <div className="p-4">Video ID not provided</div>;
 
-  const { data: video, isLoading: isLoadingVideo } = useVideoQuery(id);
+  const { data: video, isLoading: isLoadingVideo, error } = useVideoQuery(id);
   const { data: channelVideos } = useRelatedVideosQuery(video?.channel_id ?? "", video?.id ?? "");
 
   if (isLoadingVideo) {
@@ -27,11 +27,18 @@ const VideoDetails = () => {
     );
   }
 
-  if (!video) {
+  if (!video || error) {
     return (
       <div className="container mx-auto p-4 mt-16">
         <BackButton />
         <div className="p-8 text-center">
+          <div className="mx-auto mb-6 w-40 h-40 bg-gray-400 rounded-lg flex items-center justify-center">
+            <img 
+              src="/lovable-uploads/1095453d-d8d8-4151-bfe8-8bfe52f2977e.png" 
+              alt="Video not found" 
+              className="h-20 w-auto"
+            />
+          </div>
           <h2 className="text-xl font-semibold text-destructive">Video not found</h2>
           <p className="mt-2 text-muted-foreground">The video you're looking for doesn't exist or has been removed.</p>
           <Link to="/" className="mt-4 inline-block px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 transition-colors">

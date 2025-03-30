@@ -51,6 +51,9 @@ export const VideoCard = ({
     return `${(count / 1000000).toFixed(1)}M views`;
   };
 
+  // Check if this is a placeholder or sample
+  const isSample = id.includes('sample') || video_id?.includes('sample');
+
   return (
     <Link 
       to={`/video/${videoIdForLink}`} 
@@ -63,22 +66,31 @@ export const VideoCard = ({
       <div className="relative w-full overflow-hidden rounded-lg bg-muted/30">
         {/* Thumbnail */}
         <div className="aspect-video w-full overflow-hidden">
-          <img
-            src={thumbnail || "/placeholder.svg"}
-            alt={title}
-            className="h-full w-full object-cover transition-transform duration-300 hover:scale-105 thumbnail-slide-up"
-            loading="lazy"
-            onError={(e) => {
-              const target = e.target as HTMLImageElement;
-              target.src = "/placeholder.svg";
-            }}
-          />
+          {isSample || !thumbnail ? (
+            <div className="h-full w-full flex items-center justify-center bg-gray-400">
+              <img
+                src="/lovable-uploads/1095453d-d8d8-4151-bfe8-8bfe52f2977e.png"
+                alt={title}
+                className="h-12 w-auto"
+              />
+            </div>
+          ) : (
+            <img
+              src={thumbnail}
+              alt={title}
+              className="h-full w-full object-cover transition-transform duration-300 hover:scale-105 thumbnail-slide-up"
+              loading="lazy"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.parentElement!.innerHTML = `
+                  <div class="h-full w-full flex items-center justify-center bg-gray-400">
+                    <img src="/lovable-uploads/1095453d-d8d8-4151-bfe8-8bfe52f2977e.png" alt="${title}" class="h-12 w-auto" />
+                  </div>
+                `;
+              }}
+            />
+          )}
         </div>
-        
-        {/* Video duration badge - if implemented */}
-        {/* <div className="absolute bottom-2 right-2 rounded bg-black/80 px-1 py-0.5 text-xs text-white">
-          {duration}
-        </div> */}
       </div>
       
       {!hideInfo && (
