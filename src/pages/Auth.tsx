@@ -1,11 +1,13 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { AuthForm } from "@/components/auth/AuthForm";
 import { AuthHeader } from "@/components/auth/AuthHeader";
 import { AuthOptions } from "@/components/auth/AuthOptions";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { AnimatePresence, motion } from "framer-motion";
+import { useLocation } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 
 interface AuthProps {
   isOpen: boolean;
@@ -16,6 +18,20 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
   const isMobile = useIsMobile();
   const [showOptions, setShowOptions] = useState(true);
   const [activeTab, setActiveTab] = useState<'signin' | 'signup'>('signin');
+  const location = useLocation();
+  const { isAuthenticated, session, isLoading } = useAuth();
+  
+  // Prevent dialog from showing automatically on settings page
+  useEffect(() => {
+    const isSettingsPage = location.pathname === "/settings";
+    
+    // Close the auth dialog if:
+    // 1. User is already authenticated OR
+    // 2. We're on the settings page (which requires auth)
+    if ((isAuthenticated || isSettingsPage) && !isLoading && isOpen) {
+      onOpenChange(false);
+    }
+  }, [isAuthenticated, isOpen, onOpenChange, location.pathname, isLoading]);
   
   const handleSelectOption = (option: 'signin' | 'signup') => {
     setActiveTab(option);
@@ -25,6 +41,11 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
   const handleBack = () => {
     setShowOptions(true);
   };
+  
+  // Don't render if user is already authenticated
+  if (isAuthenticated && !isLoading) {
+    return null;
+  }
   
   return (
     <Dialog open={isOpen} onOpenChange={(open) => {

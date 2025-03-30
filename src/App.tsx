@@ -7,9 +7,11 @@ import { queryClient } from "@/lib/query-client";
 import { ColorProvider } from "@/contexts/ColorContext";
 import { PlaybackProvider } from "@/contexts/PlaybackContext";
 import { SessionProvider } from "@/contexts/SessionContext";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { getPageTitle } from "@/utils/pageTitle";
 import { Helmet } from "react-helmet";
+import { useAuth } from "@/hooks/useAuth";
+import { toast } from "sonner";
 
 // Main pages
 import Index from "@/pages/Index";
@@ -37,6 +39,24 @@ import LayoutCustomizationPage from "@/pages/admin/LayoutCustomizationPage";
 
 function AppRoutes() {
   const location = useLocation();
+  const { isAuthenticated, session } = useAuth();
+  const [showAuthDialog, setShowAuthDialog] = useState(false);
+  
+  // Determine when to show auth dialog
+  useEffect(() => {
+    const protectedRoutes = ["/dashboard", "/settings"];
+    const isProtectedRoute = protectedRoutes.some(route => location.pathname.startsWith(route));
+    
+    // Don't automatically show auth dialog on page loads - let the components decide
+    if (isProtectedRoute && !isAuthenticated && session === null) {
+      // Instead of showing dialog, redirect to home
+      // The individual components can decide if they want to show dialog
+      // This prevents the dialog from automatically appearing on reload
+    } else {
+      // Always ensure dialog is hidden for non-auth routes or authenticated users
+      setShowAuthDialog(false);
+    }
+  }, [location, isAuthenticated, session]);
 
   useEffect(() => {
     document.title = getPageTitle(location.pathname);
@@ -63,7 +83,7 @@ function AppRoutes() {
       <Routes>
         {/* Public routes */}
         <Route path="/" element={<Index />} />
-        <Route path="/auth" element={<Auth isOpen={true} onOpenChange={() => {}} />} />
+        <Route path="/auth" element={<Auth isOpen={showAuthDialog} onOpenChange={setShowAuthDialog} />} />
         <Route path="/category/:id" element={<CategoryVideos />} />
         <Route path="/video/:id" element={<VideoDetails />} />
         <Route path="/channel/:id" element={<ChannelDetails />} />

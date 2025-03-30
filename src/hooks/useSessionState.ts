@@ -23,15 +23,16 @@ export const useSessionState = (queryClient: QueryClient) => {
           setSession(initialSession);
           
           // Pre-fetch profile data immediately if we have a session
-          prefetchUserData(initialSession, queryClient)
-            .then(success => {
-              if (success) {
-                console.log("Initial profile data prefetch complete");
-              } else {
-                console.warn("Initial profile data prefetch failed");
-              }
-            })
-            .catch(error => console.error("Error prefetching user data:", error));
+          try {
+            const success = await prefetchUserData(initialSession, queryClient);
+            if (success) {
+              console.log("Initial profile data prefetch complete");
+            } else {
+              console.warn("Initial profile data prefetch failed");
+            }
+          } catch (error) {
+            console.error("Error prefetching user data:", error);
+          }
         }
         
         // Load remaining content in the background after profile

@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BackButton } from "@/components/navigation/BackButton";
@@ -31,6 +32,7 @@ const Settings = () => {
   const [loadingProfile, setLoadingProfile] = useState(true);
   const [otherSectionsLoaded, setOtherSectionsLoaded] = useState(false);
   const { isMobile } = useIsMobile();
+  const [authChecked, setAuthChecked] = useState(false);
 
   // Immediately prefetch profile data - top priority
   useEffect(() => {
@@ -72,12 +74,26 @@ const Settings = () => {
     }
   }, [userId, queryClient, session]);
 
-  // Check authentication and redirect as needed
+  // Check authentication and redirect as needed - but don't show auth dialog automatically
   useEffect(() => {
-    if (!isAuthenticated && session === null) {
-      navigate("/auth");
+    // Only check authentication status once
+    if (!authChecked) {
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (!session) {
+          // User is definitely not authenticated, redirect to home page
+          navigate("/");
+        }
+        setAuthChecked(true); 
+      });
     }
-  }, [isAuthenticated, session, navigate]);
+  }, [navigate, authChecked]);
+
+  // Always check if session is lost during the component lifetime
+  useEffect(() => {
+    if (!isAuthenticated && session === null && authChecked) {
+      navigate("/");
+    }
+  }, [isAuthenticated, session, navigate, authChecked]);
 
   // Load settings from localStorage
   useEffect(() => {
@@ -120,7 +136,8 @@ const Settings = () => {
     }
   };
 
-  if (!isAuthenticated && session === null) {
+  // Show skeleton loading until we confirm login status
+  if (!authChecked || (!isAuthenticated && session === null)) {
     return (
       <div className="min-h-screen bg-background text-foreground pt-16 px-4">
         <div className="container mx-auto max-w-4xl">
