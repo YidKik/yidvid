@@ -7,7 +7,12 @@
 
 /* Import animations */
 @import './animations/theme-animations.css';
-@import './animations/ui-animations.css';
+@import './animations/pulse.css';
+@import './animations/slide.css';
+@import './animations/fade.css';
+@import './animations/glow.css';
+@import './animations/border.css';
+@import './animations/transitions.css';
 @import './animations/mobile-animations.css';
 
 /* Import component-specific styles */

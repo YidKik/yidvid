@@ -1,0 +1,26 @@
+
+/* Header animation for mobile */
+@keyframes headerGlow {
+  0% {
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  50% {
+    box-shadow: 0 4px 20px rgba(234, 56, 76, 0.15);
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+  100% {
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+.animate-header-glow {
+  animation: headerGlow 5s ease-in-out infinite;
+}
+
+/* Add the search outline animation */
+@keyframes search-outline {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 100% 0%; }
+}

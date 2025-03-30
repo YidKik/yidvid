@@ -1,0 +1,14 @@
+
+/* Rainbow border animation for header */
+@keyframes rainbowBorder {
+  0% { border-image: linear-gradient(to right, #ea384c, #f59292) 1; }
+  25% { border-image: linear-gradient(to right, #f59292, #f7c66c) 1; }
+  50% { border-image: linear-gradient(to right, #f7c66c, #a2d2a4) 1; }
+  75% { border-image: linear-gradient(to right, #a2d2a4, #66baf2) 1; }
+  100% { border-image: linear-gradient(to right, #66baf2, #ea384c) 1; }
+}
+
+.animate-rainbow-border {
+  animation: rainbowBorder 10s linear infinite;
+  border-bottom-width: 1px;
+}
