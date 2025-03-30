@@ -41,54 +41,20 @@
   }
 }
 
-/* Animated search border - only appears on focus */
-.search-animated-border .animated-border {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  border-radius: 0.5rem;
-  padding: 2.5px;
-  background: linear-gradient(90deg, #ea384c, #f97316, #8b5cf6, #000000, #ea384c);
-  background-size: 300% 100%;
-  -webkit-mask: 
-    linear-gradient(#fff 0 0) content-box, 
-    linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  animation: search-outline 4s linear infinite;
-  pointer-events: none;
-  z-index: 6;
-  opacity: 0;
-  transition: opacity 0.2s ease;
-}
-
-/* Thinner animated border for mobile */
-.search-animated-border .thin-outline {
-  padding: 1.5px;
-}
-
-/* Show animation outline on focus, hide the default outline */
-.search-animated-border input:focus {
+/* Focus styling - clean, simple focus effect */
+.search-input:focus {
   outline: none !important;
   border-color: transparent !important;
   box-shadow: none !important;
-  ring-offset: none !important;
-  ring: none !important;
 }
 
-/* Hide regular outline on focus and show only animation */
-.search-animated-border input:focus ~ .animated-border {
+/* When search bar is focused, create a subtle background overlay */
+.search-input:focus ~ .overlay-blur {
   opacity: 1;
 }
 
-.search-animated-border input:focus ~ .search-animated-border::before {
-  opacity: 0;
-}
-
-/* Hide the regular outline when input is focused */
+/* When search bar is focused, make the search bar stand out */
 .search-animated-border input:focus + .search-animated-border::before {
-  opacity: 0;
+  border-color: #ea384c !important;
+  box-shadow: 0 0 0 2px rgba(234, 56, 76, 0.1) !important;
 }

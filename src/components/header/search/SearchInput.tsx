@@ -48,7 +48,6 @@ export const SearchInput = ({
             transition-all duration-300
           `}
         />
-        <div className={`animated-border ${isMobile ? 'thin-outline' : ''}`}></div>
       </div>
     </div>
   );
