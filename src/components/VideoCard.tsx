@@ -1,8 +1,8 @@
-
 import { Link } from "react-router-dom";
 import { formatDistanceToNow } from "date-fns";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { VideoPlaceholder } from "@/components/video/VideoPlaceholder";
 
 interface VideoCardProps {
   id: string;
@@ -67,13 +67,7 @@ export const VideoCard = ({
         {/* Thumbnail */}
         <div className="aspect-video w-full overflow-hidden">
           {isSample || !thumbnail ? (
-            <div className="h-full w-full flex items-center justify-center bg-[#9e9e9e] rounded-lg">
-              <img
-                src="/lovable-uploads/42b6bf6a-9833-47de-ae22-5c9e183e66d0.png"
-                alt={title}
-                className="h-12 w-auto"
-              />
-            </div>
+            <VideoPlaceholder size="small" />
           ) : (
             <img
               src={thumbnail}
@@ -83,8 +77,8 @@ export const VideoCard = ({
               onError={(e) => {
                 const target = e.target as HTMLImageElement;
                 target.parentElement!.innerHTML = `
-                  <div class="h-full w-full flex items-center justify-center bg-[#9e9e9e] rounded-lg">
-                    <img src="/lovable-uploads/42b6bf6a-9833-47de-ae22-5c9e183e66d0.png" alt="${title}" class="h-12 w-auto" />
+                  <div class="h-full w-full flex items-center justify-center">
+                    <img src="/lovable-uploads/42b6bf6a-9833-47de-ae22-5c9e183e66d0.png" alt="${title}" class="h-16 w-auto" />
                   </div>
                 `;
               }}

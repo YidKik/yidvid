@@ -1,9 +1,9 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { usePlayback } from "@/contexts/PlaybackContext";
+import { VideoPlaceholder } from "./VideoPlaceholder";
 
 interface VideoPlayerProps {
   videoId: string;
@@ -15,7 +15,6 @@ export const VideoPlayer = ({ videoId }: VideoPlayerProps) => {
   const navigate = useNavigate();
   const { volume, playbackSpeed } = usePlayback();
 
-  // Get user's autoplay preference
   const { data: preferences } = useQuery({
     queryKey: ["user-preferences"],
     queryFn: async () => {
@@ -39,7 +38,6 @@ export const VideoPlayer = ({ videoId }: VideoPlayerProps) => {
 
   useEffect(() => {
     try {
-      // Create a more permissive embed URL with additional parameters
       const baseUrl = `https://www.youtube.com/embed/${videoId}`;
       const params = new URLSearchParams({
         autoplay: "1",
@@ -57,7 +55,6 @@ export const VideoPlayer = ({ videoId }: VideoPlayerProps) => {
     }
   }, [videoId]);
 
-  // Handle messages from the YouTube iframe
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       if (event.origin !== "https://www.youtube.com") return;
@@ -65,7 +62,6 @@ export const VideoPlayer = ({ videoId }: VideoPlayerProps) => {
       try {
         const data = JSON.parse(event.data);
         if (data.event === "onReady") {
-          // Set initial volume and playback speed when the player is ready
           const player = (event.source as Window);
           if (player && player.postMessage) {
             player.postMessage(JSON.stringify({
@@ -95,12 +91,8 @@ export const VideoPlayer = ({ videoId }: VideoPlayerProps) => {
 
   if (hasError) {
     return (
-      <div className="aspect-video w-full mb-4 relative bg-[#9e9e9e] flex items-center justify-center rounded-lg overflow-hidden">
-        <img 
-          src="/lovable-uploads/42b6bf6a-9833-47de-ae22-5c9e183e66d0.png" 
-          alt="Video unavailable" 
-          className="h-16 w-auto"
-        />
+      <div className="aspect-video w-full mb-4 relative">
+        <VideoPlaceholder size="large" />
       </div>
     );
   }

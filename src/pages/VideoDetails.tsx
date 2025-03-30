@@ -1,4 +1,3 @@
-
 import { useParams, Link } from "react-router-dom";
 import { VideoPlayer } from "@/components/video/VideoPlayer";
 import { VideoInfo } from "@/components/video/VideoInfo";
@@ -11,6 +10,7 @@ import { VideoComments } from "@/components/video/details/VideoComments";
 import { useRelatedVideosQuery } from "@/components/video/details/RelatedVideosQuery";
 import { VideoHistory } from "@/components/video/details/VideoHistory";
 import { LoadingAnimation } from "@/components/ui/LoadingAnimation";
+import { VideoPlaceholder } from "@/components/video/VideoPlaceholder";
 
 const VideoDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -32,12 +32,8 @@ const VideoDetails = () => {
       <div className="container mx-auto p-4 mt-16">
         <BackButton />
         <div className="p-8 text-center">
-          <div className="mx-auto mb-6 w-full max-w-md aspect-video bg-[#9e9e9e] rounded-lg flex items-center justify-center">
-            <img 
-              src="/lovable-uploads/42b6bf6a-9833-47de-ae22-5c9e183e66d0.png" 
-              alt="Video not found" 
-              className="h-20 w-auto"
-            />
+          <div className="mx-auto mb-6 w-full max-w-md aspect-video flex items-center justify-center">
+            <VideoPlaceholder size="large" />
           </div>
           <h2 className="text-xl font-semibold text-destructive">Video not found</h2>
           <p className="mt-2 text-muted-foreground">The video you're looking for doesn't exist or has been removed.</p>
