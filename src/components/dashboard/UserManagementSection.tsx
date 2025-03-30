@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { FetchingIssueAlert } from "@/components/notifications/FetchingIssueAlert";
 import { AddAdminDialog } from "./user-management/AddAdminDialog";
@@ -10,10 +10,38 @@ import { AdminUsersSection } from "./user-management/AdminUsersSection";
 import { RegularUsersSection } from "./user-management/RegularUsersSection";
 import { UserManagementHeader } from "./user-management/UserManagementHeader";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 export const UserManagementSection = ({ currentUserId }: { currentUserId: string }) => {
   const [showAddAdminDialog, setShowAddAdminDialog] = useState(false);
   const [newAdminEmail, setNewAdminEmail] = useState("");
+  const [isCurrentUserAdmin, setIsCurrentUserAdmin] = useState(false);
+  
+  // Direct check for admin status
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      if (!currentUserId) return;
+      
+      try {
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("is_admin")
+          .eq("id", currentUserId)
+          .maybeSingle();
+          
+        if (error) {
+          console.error("UserManagementSection: Error checking admin status:", error);
+          return;
+        }
+        
+        setIsCurrentUserAdmin(data?.is_admin === true);
+      } catch (err) {
+        console.error("UserManagementSection: Failed to check admin status:", err);
+      }
+    };
+    
+    checkAdminStatus();
+  }, [currentUserId]);
   
   const {
     adminUsers,
@@ -29,17 +57,8 @@ export const UserManagementSection = ({ currentUserId }: { currentUserId: string
 
   const handleAddAdmin = async () => {
     try {
-      // Check if current user is an admin
-      const { data: currentUser, error: currentUserError } = await supabase
-        .from("profiles")
-        .select("is_admin")
-        .eq("id", currentUserId)
-        .single();
-
-      if (currentUserError) throw currentUserError;
-
-      if (!currentUser?.is_admin) {
-        console.error("Permission denied: Only admins can add new admins.");
+      if (!isCurrentUserAdmin) {
+        toast.error("Permission denied: Only admins can add new admins.");
         return;
       }
 
@@ -51,10 +70,15 @@ export const UserManagementSection = ({ currentUserId }: { currentUserId: string
         .eq("email", newAdminEmail)
         .maybeSingle();
 
-      if (userError) throw userError;
+      if (userError) {
+        console.error("Error finding user:", userError);
+        toast.error("Error finding user: " + userError.message);
+        return;
+      }
 
       if (!userData) {
         console.error("User not found: Please check the email address and try again.");
+        toast.error("User not found: Please check the email address and try again.");
         return;
       }
 
@@ -65,17 +89,34 @@ export const UserManagementSection = ({ currentUserId }: { currentUserId: string
         .update({ is_admin: true })
         .eq("id", userData.id);
 
-      if (updateError) throw updateError;
+      if (updateError) {
+        console.error("Error updating admin status:", updateError);
+        toast.error("Error updating admin status: " + updateError.message);
+        return;
+      }
 
-      console.log(`Admin added successfully: ${newAdminEmail} has been granted admin privileges.`);
+      toast.success(`Admin added successfully: ${newAdminEmail} has been granted admin privileges.`);
 
       setNewAdminEmail("");
       setShowAddAdminDialog(false);
       refetchUsers();
     } catch (error: any) {
       console.error("Error adding admin:", error);
+      toast.error("Unexpected error: " + error.message);
     }
   };
+
+  if (!isCurrentUserAdmin) {
+    return (
+      <Card>
+        <CardContent className="p-6">
+          <div className="text-center text-muted-foreground">
+            You don't have permission to access user management.
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <div className="space-y-6">

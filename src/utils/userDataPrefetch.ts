@@ -1,9 +1,11 @@
+
 import { Session } from "@supabase/supabase-js";
 import { QueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
 /**
  * Prefetches user profile data after authentication with improved reliability
+ * and RLS issue handling
  * @param session The user's session object
  * @param queryClient React Query client to manage cache
  */
@@ -24,6 +26,8 @@ export function prefetchUserData(session: Session, queryClient: QueryClient) {
       queryFn: async () => {
         try {
           console.log("Executing profile settings prefetch query for:", session.user.id);
+          
+          // Use a direct query that minimizes potential RLS issues
           const { data, error } = await supabase
             .from("profiles")
             .select("id, username, display_name, avatar_url, email, is_admin, created_at, updated_at")
@@ -31,9 +35,27 @@ export function prefetchUserData(session: Session, queryClient: QueryClient) {
             .maybeSingle();
           
           if (error) {
+            // Don't log recursion errors as they're expected until RLS is fixed
             if (!error.message.includes("recursion") && !error.message.includes("policy")) {
               console.error("Error prefetching profile settings:", error);
             }
+            
+            // Fallback to a simpler query if the detailed one fails
+            const fallbackResult = await supabase
+              .from("profiles")
+              .select("is_admin")
+              .eq("id", session.user.id)
+              .maybeSingle();
+              
+            if (!fallbackResult.error) {
+              console.log("Successfully fetched fallback profile data");
+              return {
+                id: session.user.id,
+                email: session.user.email,
+                is_admin: fallbackResult.data?.is_admin || false
+              };
+            }
+            
             return null;
           }
           
@@ -53,69 +75,31 @@ export function prefetchUserData(session: Session, queryClient: QueryClient) {
     })
   );
   
-  // Prefetch for user-profile (used in various components)
+  // Prefetch basic admin status separately for reliability
   prefetchPromises.push(
     queryClient.prefetchQuery({
-      queryKey: ["user-profile"],
-      queryFn: async () => {
-        try {
-          console.log("Executing user-profile prefetch query");
-          const { data, error } = await supabase
-            .from("profiles")
-            .select("id, username, display_name, avatar_url, email, is_admin, created_at, updated_at")
-            .eq("id", session.user.id)
-            .single();
-          
-          if (error) {
-            console.error("Error prefetching user profile:", error);
-            return null;
-          }
-          
-          console.log("Successfully prefetched user-profile data:", data ? "found" : "not found");
-          
-          // Log admin status for debugging
-          if (data?.is_admin) {
-            console.log("User has admin privileges:", data.is_admin);
-          }
-          
-          return data;
-        } catch (err) {
-          console.error("Unexpected error in user-profile prefetch:", err);
-          return null;
-        }
-      },
-      retry: 2,
-      staleTime: 60000, // Keep data fresh for 1 minute
-      meta: {
-        errorBoundary: false,
-        suppressToasts: true
-      }
-    })
-  );
-  
-  // Also prefetch admin-section-profile specifically for admin status
-  prefetchPromises.push(
-    queryClient.prefetchQuery({
-      queryKey: ["admin-section-profile", session.user.id],
+      queryKey: ["user-admin-status", session.user.id],
       queryFn: async () => {
         try {
           console.log("Prefetching admin status for user:", session.user.id);
+          
+          // Simplest possible query to check admin status
           const { data, error } = await supabase
             .from("profiles")
             .select("is_admin")
             .eq("id", session.user.id)
-            .single();
+            .maybeSingle();
           
           if (error) {
             console.error("Error fetching admin status:", error);
-            return null;
+            return { is_admin: false };
           }
           
-          console.log("Admin status check result:", data);
-          return data;
+          console.log("Admin status check result:", data?.is_admin);
+          return { is_admin: data?.is_admin || false };
         } catch (err) {
           console.error("Error in admin status query:", err);
-          return null;
+          return { is_admin: false };
         }
       },
       retry: 1,

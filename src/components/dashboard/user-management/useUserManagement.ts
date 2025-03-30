@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -8,10 +8,42 @@ import { ProfilesTable } from "@/integrations/supabase/types/profiles";
 export const useUserManagement = (currentUserId: string) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isExpanded, setIsExpanded] = useState(true);
+  const [isCurrentUserAdmin, setIsCurrentUserAdmin] = useState(false);
+  
+  // Check if current user is admin first
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      if (!currentUserId) return;
+      
+      try {
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("is_admin")
+          .eq("id", currentUserId)
+          .maybeSingle();
+          
+        if (error) {
+          console.error("Error checking admin status:", error);
+          return;
+        }
+        
+        setIsCurrentUserAdmin(data?.is_admin === true);
+      } catch (err) {
+        console.error("Failed to check admin status:", err);
+      }
+    };
+    
+    checkAdminStatus();
+  }, [currentUserId]);
   
   const { data: users, refetch: refetchUsers, isLoading } = useQuery({
     queryKey: ["all-users"],
     queryFn: async () => {
+      if (!isCurrentUserAdmin) {
+        toast.error("Only admins can view user data", { id: "admin-permission-denied" });
+        return [];
+      }
+      
       console.log("Fetching all users...");
       const { data, error } = await supabase
         .from("profiles")
@@ -27,24 +59,16 @@ export const useUserManagement = (currentUserId: string) => {
       console.log("Fetched users:", data);
       return data;
     },
+    enabled: isCurrentUserAdmin // Only run query if user is admin
   });
 
   const toggleAdminStatus = async (userId: string, currentStatus: boolean) => {
+    if (!isCurrentUserAdmin) {
+      toast.error("Permission denied: Only admins can modify admin status.", { id: "admin-permission-denied" });
+      return;
+    }
+    
     try {
-      // Check if current user is an admin first
-      const { data: currentUser, error: currentUserError } = await supabase
-        .from("profiles")
-        .select("is_admin")
-        .eq("id", currentUserId)
-        .single();
-
-      if (currentUserError) throw currentUserError;
-
-      if (!currentUser?.is_admin) {
-        toast.error("Permission denied: Only admins can modify admin status.", { id: "admin-permission-denied" });
-        return;
-      }
-
       console.log(`Toggling admin status for user ${userId} from ${currentStatus} to ${!currentStatus}`);
       
       const { error: updateError } = await supabase
@@ -90,6 +114,7 @@ export const useUserManagement = (currentUserId: string) => {
     refetchUsers,
     toggleAdminStatus,
     isExpanded,
-    setIsExpanded
+    setIsExpanded,
+    isCurrentUserAdmin
   };
 };

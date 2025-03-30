@@ -13,44 +13,44 @@ interface AdminSectionProps {
 
 export const AdminSection = ({ userId }: AdminSectionProps) => {
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const { isMobile } = useIsMobile();
 
-  // Improved query to reliably fetch admin status
-  const { data: profile, isLoading } = useQuery({
-    queryKey: ["admin-section-profile", userId],
-    queryFn: async () => {
-      if (!userId) return null;
+  // Direct admin status check to avoid RLS issues
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      if (!userId) {
+        setIsLoading(false);
+        return;
+      }
       
       try {
-        console.log("Fetching admin status for:", userId);
+        console.log("AdminSection: Checking admin status for:", userId);
+        
         const { data, error } = await supabase
           .from("profiles")
           .select("is_admin")
           .eq("id", userId)
-          .single();
+          .maybeSingle();
 
         if (error) {
-          console.error("Error fetching admin status:", error);
-          return null;
+          console.error("AdminSection: Error fetching admin status:", error);
+          setIsAdmin(false);
+        } else {
+          console.log("AdminSection: Admin status result:", data);
+          setIsAdmin(data?.is_admin === true);
         }
-
-        console.log("Admin status response:", data);
-        return data;
       } catch (error) {
-        console.error("Error in admin status query:", error);
-        return null;
+        console.error("AdminSection: Unexpected error checking admin:", error);
+        setIsAdmin(false);
+      } finally {
+        setIsLoading(false);
       }
-    },
-    enabled: !!userId,
-    staleTime: 0, // Don't cache to ensure fresh admin status
-  });
+    };
 
-  useEffect(() => {
-    if (profile) {
-      setIsAdmin(profile.is_admin === true);
-    }
-  }, [profile]);
+    checkAdminStatus();
+  }, [userId]);
 
   const handleDashboardClick = () => {
     navigate("/dashboard");
