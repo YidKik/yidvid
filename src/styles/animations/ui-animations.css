@@ -119,26 +119,6 @@
   100% { background-position: 100% 0%; }
 }
 
-/* Glowing red line animation for header */
-@keyframes glowLine {
-  0% {
-    opacity: 0.7;
-    box-shadow: 0 0 4px 1px rgba(234, 56, 76, 0.5);
-  }
-  50% {
-    opacity: 1;
-    box-shadow: 0 0 8px 2px rgba(234, 56, 76, 0.8);
-  }
-  100% {
-    opacity: 0.7;
-    box-shadow: 0 0 4px 1px rgba(234, 56, 76, 0.5);
-  }
-}
-
-.animate-glow-line {
-  animation: glowLine 3s ease-in-out infinite;
-}
-
 /* Header animation for mobile */
 @keyframes headerGlow {
   0% {
@@ -225,12 +205,3 @@
   filter: brightness(1.05);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 }
-
-/* Video card hover glow animation - REMOVED to apply only to thumbnail */
-/* .video-card-hover {
-  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-}
-
-.video-card-hover:hover {
-  animation: videoHoverGlow 0.4s ease-out forwards;
-} */

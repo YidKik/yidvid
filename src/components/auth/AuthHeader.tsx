@@ -13,7 +13,7 @@ export const AuthHeader = ({ onBack, title, subtitle }: AuthHeaderProps) => {
   const { isMobile } = useIsMobile();
   
   return (
-    <div className={`flex flex-col ${isMobile ? 'px-4 py-3' : 'px-8 py-6'} bg-transparent border-b border-primary/30 relative after:content-[""] after:absolute after:bottom-[-1px] after:left-0 after:w-full after:h-[1px] after:bg-primary after:shadow-[0_0_5px_1px_rgba(234,56,76,0.7)] after:animate-pulse-slow`}>
+    <div className={`flex flex-col ${isMobile ? 'px-4 py-3' : 'px-8 py-6'} bg-transparent border-b border-primary/30`}>
       <div className="flex items-center">
         {onBack && (
           <Button
