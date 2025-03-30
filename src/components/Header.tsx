@@ -72,12 +72,12 @@ export const Header = () => {
         scrolled 
           ? 'bg-white/20 backdrop-blur-lg supports-[backdrop-filter]:bg-white/10 border-primary/50' 
           : isMobile 
-            ? 'h-16 bg-white/30 backdrop-blur-md' 
+            ? 'h-14 bg-white/30 backdrop-blur-md' 
             : 'bg-white/30 backdrop-blur-md'
       }`}
     >
       <div className="container mx-auto px-0">
-        <div className={`flex ${isMobile ? 'h-16' : 'h-14'} items-center relative`}>
+        <div className={`flex ${isMobile ? 'h-14' : 'h-14'} items-center relative`}>
           {isMobile ? (
             <div className="w-full flex items-center px-3">
               <div className="w-1/4 flex justify-start">
