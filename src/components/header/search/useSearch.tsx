@@ -29,7 +29,7 @@ export const useSearch = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [showResults, setShowResults] = useState(false);
-  const debouncedSearch = useDebounce(searchQuery, 200);
+  const debouncedSearch = useDebounce(searchQuery, 50);
 
   // Check cache before making a new request
   const getSearchFromCache = (query: string): SearchResults | undefined => {
@@ -79,7 +79,7 @@ export const useSearch = () => {
         return { videos: [], channels: [] };
       }
     },
-    enabled: debouncedSearch.length > 0,
+    enabled: debouncedSearch.length > 2, // Only search when at least 3 characters are typed
     staleTime: 1000 * 60 * 5, // Increase stale time to 5 minutes for longer caching
     gcTime: 1000 * 60 * 15,   // Increase garbage collection time to 15 minutes
     refetchOnWindowFocus: false,
@@ -99,16 +99,29 @@ export const useSearch = () => {
 
   const handleSearchChange = (value: string) => {
     setSearchQuery(value);
-    setShowResults(true);
+    if (value.trim().length > 0) {
+      setShowResults(true);
+    } else {
+      setShowResults(false);
+    }
   };
 
   const handleSearchFocus = () => {
-    setShowResults(true);
+    if (searchQuery.trim().length > 0) {
+      setShowResults(true);
+    }
   };
 
   const handleResultClick = () => {
     setShowResults(false);
     setSearchQuery("");
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleSearch(e);
+    }
   };
 
   return {
@@ -120,6 +133,7 @@ export const useSearch = () => {
     handleSearchChange,
     handleSearchFocus,
     handleResultClick,
+    handleKeyDown,
     setShowResults
   };
 };

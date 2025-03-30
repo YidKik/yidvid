@@ -1,7 +1,9 @@
 
+import { Search } from "lucide-react";
 import { SearchInput } from "./search/SearchInput";
 import { SearchResults } from "./search/SearchResults";
 import { useSearch, SearchResults as SearchResultsType } from "./search/useSearch";
+import { Button } from "@/components/ui/button";
 
 interface SearchBarProps {
   onFocus?: () => void;
@@ -18,6 +20,7 @@ export const SearchBar = ({ onFocus, onClose }: SearchBarProps) => {
     handleSearchChange,
     handleSearchFocus,
     handleResultClick,
+    handleKeyDown,
     setShowResults
   } = useSearch();
   
@@ -39,16 +42,24 @@ export const SearchBar = ({ onFocus, onClose }: SearchBarProps) => {
 
   return (
     <div className="relative w-full">
-      <SearchInput
-        searchQuery={searchQuery}
-        onSearchChange={handleSearchChange}
-        onSearchFocus={onSearchFocus}
-        onSearch={(e) => {
-          handleSearch(e);
-          onClose?.();
-        }}
-        onClose={onClose}
-      />
+      <form onSubmit={handleSearch} className="flex items-center">
+        <SearchInput
+          searchQuery={searchQuery}
+          onSearchChange={handleSearchChange}
+          onSearchFocus={onSearchFocus}
+          onSearch={handleKeyDown}
+          onClose={onClose}
+        />
+        <Button 
+          type="submit" 
+          variant="ghost" 
+          size="icon" 
+          className="absolute right-2 top-1/2 transform -translate-y-1/2"
+          aria-label="Search"
+        >
+          <Search className="h-4 w-4" />
+        </Button>
+      </form>
       
       <SearchResults
         isSearching={isSearching}

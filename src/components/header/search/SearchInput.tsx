@@ -40,7 +40,7 @@ export const SearchInput = ({
           onBlur={() => setIsFocused(false)}
           onKeyDown={onSearch}
           className={`
-            search-input py-2 pl-10 pr-3 rounded-lg border-gray-200
+            search-input py-2 pl-10 pr-10 rounded-lg border-gray-200
             ${isMobile ? 'h-9 text-sm' : 'h-12 w-full'}
             transition-all duration-300
           `}
