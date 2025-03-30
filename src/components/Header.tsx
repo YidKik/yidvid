@@ -70,10 +70,10 @@ export const Header = () => {
     <header 
       className={`sticky top-0 z-50 w-full border-b transition-all duration-300 ${
         scrolled 
-          ? 'bg-white/40 backdrop-blur-md supports-[backdrop-filter]:bg-white/30 shadow-sm border-transparent animate-header-glow' 
+          ? 'bg-white/20 backdrop-blur-lg supports-[backdrop-filter]:bg-white/10 border-primary/50 after:content-[""] after:absolute after:bottom-[-1px] after:left-0 after:w-full after:h-[1px] after:bg-primary after:shadow-[0_0_5px_1px_rgba(234,56,76,0.7)] after:animate-pulse-slow' 
           : isMobile 
-            ? 'h-16 bg-white/95 animate-header-glow' 
-            : 'bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/60'
+            ? 'h-16 bg-white/30 backdrop-blur-md' 
+            : 'bg-white/30 backdrop-blur-md'
       }`}
     >
       <div className="container mx-auto px-0">

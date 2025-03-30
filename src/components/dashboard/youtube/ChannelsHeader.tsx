@@ -27,7 +27,7 @@ export const ChannelsHeader = ({
   };
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 border-b border-primary/30 pb-4 relative after:content-[''] after:absolute after:bottom-[-1px] after:left-0 after:w-full after:h-[1px] after:bg-primary after:shadow-[0_0_5px_1px_rgba(234,56,76,0.7)] after:animate-pulse-slow">
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold">YouTube Channels</h2>
         <div className="flex items-center gap-4">
