@@ -9,6 +9,7 @@ interface SearchInputProps {
   onSearchChange: (query: string) => void;
   onSearchFocus: () => void;
   onSearch: (e: KeyboardEvent<HTMLInputElement>) => void;
+  onClickSearch: () => void;
   onClose?: () => void;
 }
 
@@ -17,6 +18,7 @@ export const SearchInput = ({
   onSearchChange,
   onSearchFocus,
   onSearch,
+  onClickSearch,
   onClose,
 }: SearchInputProps) => {
   const isMobile = useIsMobile();
@@ -26,7 +28,8 @@ export const SearchInput = ({
     <div className="relative w-full search-animated-border">
       <div className={`relative flex items-center ${isMobile ? '' : 'w-full'}`}>
         <Search 
-          className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 search-icon" 
+          className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 search-icon cursor-pointer" 
+          onClick={onClickSearch}
         />
         <Input
           type="text"
@@ -40,7 +43,7 @@ export const SearchInput = ({
           onBlur={() => setIsFocused(false)}
           onKeyDown={onSearch}
           className={`
-            search-input py-2 pl-10 pr-10 rounded-lg border-gray-200
+            search-input py-2 pl-10 pr-4 rounded-lg border-gray-200
             ${isMobile ? 'h-9 text-sm' : 'h-12 w-full'}
             transition-all duration-300
           `}

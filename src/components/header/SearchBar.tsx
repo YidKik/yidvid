@@ -1,9 +1,7 @@
 
-import { Search } from "lucide-react";
 import { SearchInput } from "./search/SearchInput";
 import { SearchResults } from "./search/SearchResults";
 import { useSearch, SearchResults as SearchResultsType } from "./search/useSearch";
-import { Button } from "@/components/ui/button";
 
 interface SearchBarProps {
   onFocus?: () => void;
@@ -48,17 +46,9 @@ export const SearchBar = ({ onFocus, onClose }: SearchBarProps) => {
           onSearchChange={handleSearchChange}
           onSearchFocus={onSearchFocus}
           onSearch={handleKeyDown}
+          onClickSearch={() => handleSearch(new Event('submit') as any)}
           onClose={onClose}
         />
-        <Button 
-          type="submit" 
-          variant="ghost" 
-          size="icon" 
-          className="absolute right-2 top-1/2 transform -translate-y-1/2"
-          aria-label="Search"
-        >
-          <Search className="h-4 w-4" />
-        </Button>
       </form>
       
       <SearchResults
