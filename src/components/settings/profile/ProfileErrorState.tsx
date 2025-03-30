@@ -1,5 +1,5 @@
 
-import { User, LogOut, Trash2 } from "lucide-react";
+import { User, LogOut, Trash2, LayoutDashboard } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { useQuery } from "@tanstack/react-query";
 import {
   Dialog,
   DialogContent,
@@ -27,6 +28,36 @@ export const ProfileErrorState = ({ userEmail, isLoggingOut, handleLogout }: Pro
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  
+  // Check if current user is admin - direct query approach
+  const { data: adminStatus } = useQuery({
+    queryKey: ["user-admin-status-error-state"],
+    queryFn: async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session?.user?.id) return { isAdmin: false };
+        
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("is_admin")
+          .eq("id", session.user.id)
+          .maybeSingle();
+          
+        if (error) {
+          console.error("Admin check error in error state:", error);
+          return { isAdmin: false };
+        }
+
+        return { isAdmin: Boolean(data?.is_admin) };
+      } catch (err) {
+        console.error("Error checking admin status in error state:", err);
+        return { isAdmin: false };
+      }
+    },
+    staleTime: 30000, // 30 seconds cache
+  });
+
+  const isAdmin = adminStatus?.isAdmin || false;
 
   const handleFastLogout = async () => {
     // Cancel any in-flight queries immediately
@@ -63,6 +94,10 @@ export const ProfileErrorState = ({ userEmail, isLoggingOut, handleLogout }: Pro
       console.error("Error deleting account:", error);
     }
   };
+  
+  const handleAdminDashboard = () => {
+    navigate("/dashboard");
+  };
 
   // Display user email immediately from props, with fallback to first part of email
   const displayEmail = userEmail || "User";
@@ -87,6 +122,17 @@ export const ProfileErrorState = ({ userEmail, isLoggingOut, handleLogout }: Pro
           </div>
           
           <div className="flex flex-col sm:flex-row gap-3 mt-4 md:mt-0">
+            {isAdmin && (
+              <Button
+                onClick={handleAdminDashboard}
+                variant="outline"
+                className="flex items-center justify-center gap-2 text-primary hover:text-primary-foreground hover:bg-primary"
+              >
+                <LayoutDashboard className="h-4 w-4" />
+                <span>Admin Dashboard</span>
+              </Button>
+            )}
+          
             <Button
               onClick={handleFastLogout}
               variant="outline"

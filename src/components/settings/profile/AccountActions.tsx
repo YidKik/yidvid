@@ -1,8 +1,11 @@
 
-import { Button } from "@/components/ui/button"; 
-import { LogOut, Trash2 } from "lucide-react";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { Button } from "@/components/ui/button";
+import { LogOut, Trash2, LayoutDashboard } from "lucide-react";
 import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   Dialog,
   DialogContent,
@@ -12,6 +15,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { useQuery } from "@tanstack/react-query";
 
 interface AccountActionsProps {
   isLoggingOut: boolean;
@@ -19,34 +23,104 @@ interface AccountActionsProps {
 }
 
 export const AccountActions = ({ isLoggingOut, handleLogout }: AccountActionsProps) => {
-  const isMobile = useIsMobile();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  
+
+  // Check if current user is admin - direct query approach
+  const { data: adminStatus, isLoading: isAdminCheckLoading } = useQuery({
+    queryKey: ["user-admin-status"],
+    queryFn: async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session?.user?.id) return { isAdmin: false };
+        
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("is_admin")
+          .eq("id", session.user.id)
+          .maybeSingle();
+          
+        if (error) {
+          console.error("Admin check error:", error);
+          return { isAdmin: false };
+        }
+
+        return { isAdmin: Boolean(data?.is_admin) };
+      } catch (err) {
+        console.error("Error checking admin status:", err);
+        return { isAdmin: false };
+      }
+    },
+    staleTime: 60000, // 1 minute cache
+  });
+
+  const isAdmin = adminStatus?.isAdmin || false;
+
+  const handleDeleteAccount = async () => {
+    try {
+      const { error } = await supabase.rpc('delete_user', {});
+      if (error) {
+        toast.error("Error deleting account");
+        return;
+      }
+      
+      // Navigate first for immediate feedback
+      setIsDeleteDialogOpen(false);
+      navigate("/");
+      toast.success("Account deleted successfully");
+      
+      // Then sign out
+      await supabase.auth.signOut();
+      
+      // Clear user data
+      queryClient.removeQueries({ queryKey: ["profile"] });
+      queryClient.removeQueries({ queryKey: ["user-profile"] });
+      queryClient.removeQueries({ queryKey: ["session"] });
+      queryClient.setQueryData(["session"], null);
+    } catch (error) {
+      toast.error("An error occurred while deleting your account");
+    }
+  };
+
+  const handleAdminDashboard = () => {
+    navigate("/dashboard");
+  };
+
   return (
-    <div className={`flex ${isMobile ? 'gap-1.5 w-full' : 'gap-2'} mt-1 md:mt-0`}>
+    <div className="flex flex-col sm:flex-row gap-3 mt-4">
+      {isAdmin && (
+        <Button
+          onClick={handleAdminDashboard}
+          variant="outline"
+          className="flex items-center justify-center gap-2 text-primary hover:text-primary-foreground hover:bg-primary"
+        >
+          <LayoutDashboard className="h-4 w-4" />
+          <span>Admin Dashboard</span>
+        </Button>
+      )}
+      
       <Button
-        variant="outline"
-        size={isMobile ? "sm" : "default"}
         onClick={handleLogout}
+        variant="outline"
+        className="flex items-center justify-center gap-2"
         disabled={isLoggingOut}
-        className={`${isMobile ? 'text-xs py-0.5 h-6 px-2 flex-1' : ''} flex items-center gap-1`}
       >
-        <LogOut className={`${isMobile ? 'h-3 w-3' : 'h-4 w-4'}`} />
-        {isLoggingOut ? (isMobile ? "..." : "Signing out...") : (isMobile ? "Sign out" : "Sign out")}
+        <LogOut className="h-4 w-4" />
+        <span>{isLoggingOut ? "Signing Out..." : "Sign Out"}</span>
       </Button>
       
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <DialogTrigger asChild>
           <Button
             variant="outline"
-            size={isMobile ? "sm" : "default"}
-            className={`${isMobile ? 'text-xs py-0.5 h-6 px-2 flex-1' : ''} flex items-center gap-1 text-red-600 hover:text-red-700 border-red-200 hover:border-red-300 hover:bg-red-50`}
+            className="flex items-center justify-center gap-2 text-red-600 hover:text-red-700 border-red-200 hover:border-red-300 hover:bg-red-50"
           >
-            <Trash2 className={`${isMobile ? 'h-3 w-3' : 'h-4 w-4'}`} />
-            {isMobile ? "Delete" : "Delete Account"}
+            <Trash2 className="h-4 w-4" />
+            <span>Delete Account</span>
           </Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent>
           <DialogHeader>
             <DialogTitle>Delete Account</DialogTitle>
             <DialogDescription>
@@ -62,10 +136,7 @@ export const AccountActions = ({ isLoggingOut, handleLogout }: AccountActionsPro
             </Button>
             <Button
               variant="destructive"
-              onClick={() => {
-                // Placeholder for account deletion logic
-                setIsDeleteDialogOpen(false);
-              }}
+              onClick={handleDeleteAccount}
               className="bg-red-600 hover:bg-red-700"
             >
               Yes, Delete My Account
