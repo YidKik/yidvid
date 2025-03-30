@@ -1,11 +1,10 @@
 
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { LayoutDashboard } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { supabase } from "@/integrations/supabase/client";
 
 interface AdminSectionProps {
   userId?: string;
@@ -17,7 +16,7 @@ export const AdminSection = ({ userId }: AdminSectionProps) => {
   const navigate = useNavigate();
   const { isMobile } = useIsMobile();
 
-  // Direct admin status check to avoid RLS issues
+  // Fast direct admin status check to avoid RLS issues
   useEffect(() => {
     const checkAdminStatus = async () => {
       if (!userId) {
@@ -26,8 +25,7 @@ export const AdminSection = ({ userId }: AdminSectionProps) => {
       }
       
       try {
-        console.log("AdminSection: Checking admin status for:", userId);
-        
+        // Simplified query that won't trigger RLS recursion
         const { data, error } = await supabase
           .from("profiles")
           .select("is_admin")
@@ -38,7 +36,6 @@ export const AdminSection = ({ userId }: AdminSectionProps) => {
           console.error("AdminSection: Error fetching admin status:", error);
           setIsAdmin(false);
         } else {
-          console.log("AdminSection: Admin status result:", data);
           setIsAdmin(data?.is_admin === true);
         }
       } catch (error) {

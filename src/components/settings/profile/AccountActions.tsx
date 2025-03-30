@@ -27,14 +27,15 @@ export const AccountActions = ({ isLoggingOut, handleLogout }: AccountActionsPro
   const queryClient = useQueryClient();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
-  // Check if current user is admin - direct query approach
-  const { data: adminStatus, isLoading: isAdminCheckLoading } = useQuery({
+  // Simple direct admin check that won't run into RLS issues
+  const { data: adminStatus } = useQuery({
     queryKey: ["user-admin-status"],
     queryFn: async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
         if (!session?.user?.id) return { isAdmin: false };
         
+        // Simplified query that won't trigger RLS recursion
         const { data, error } = await supabase
           .from("profiles")
           .select("is_admin")

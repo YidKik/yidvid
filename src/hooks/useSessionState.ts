@@ -5,7 +5,6 @@ import { QueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { prefetchUserData } from "@/utils/userDataPrefetch";
 import { fetchInitialContent } from "@/utils/contentFetching";
-import { preserveContentData, refreshContentAfterDelay } from "@/utils/queryPreservation";
 
 export const useSessionState = (queryClient: QueryClient) => {
   const [session, setSession] = useState<Session | null>(null);
@@ -15,36 +14,26 @@ export const useSessionState = (queryClient: QueryClient) => {
     const initializeSession = async () => {
       try {
         // Get initial session
-        const { data: { session: initialSession }, error: sessionError } = await supabase.auth.getSession();
+        const { data: { session: initialSession } } = await supabase.auth.getSession();
         
-        if (sessionError) {
-          console.error("Session error:", sessionError);
-          setIsLoading(false);
-          return;
-        }
-
         if (initialSession) {
-          console.log("Initial session loaded:", initialSession.user?.email);
+          console.log("Initial session loaded, fetching profile data");
           setSession(initialSession);
           
-          // Pre-fetch profile data if we have a session
+          // Pre-fetch profile data immediately if we have a session
           await prefetchUserData(initialSession, queryClient);
-          console.log("Profile data prefetching completed");
-        } else {
-          console.log("No initial session found");
         }
         
-        // Always fetch content data regardless of session status
-        await fetchInitialContent(queryClient);
+        // Load remaining content in the background after profile
+        setTimeout(() => {
+          fetchInitialContent(queryClient).catch(console.error);
+        }, 0);
         
         setIsLoading(false);
       } catch (error) {
         console.error("Error initializing session:", error);
         setSession(null);
         setIsLoading(false);
-        
-        // Even if there's an error, try to load content
-        fetchInitialContent(queryClient);
       }
     };
 
@@ -52,60 +41,22 @@ export const useSessionState = (queryClient: QueryClient) => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
       console.log("Auth state changed:", event);
       
-      // Preserve content data before auth changes
-      const restoreContent = preserveContentData(queryClient);
-      
-      switch (event) {
-        case 'SIGNED_IN':
-          setSession(currentSession);
-          
-          // Only invalidate user-specific queries
-          queryClient.invalidateQueries({ queryKey: ["profile"] });
-          queryClient.invalidateQueries({ queryKey: ["user-profile"] });
-          queryClient.invalidateQueries({ queryKey: ["admin-section-profile"] });
-          
-          // Fetch new profile data
-          if (currentSession?.user?.id) {
-            await prefetchUserData(currentSession, queryClient);
-          }
-          
-          // Restore content data to ensure it's not lost during sign in
-          restoreContent();
-          
-          // Refresh content after a short delay
-          refreshContentAfterDelay(queryClient);
-          break;
-          
-        case 'TOKEN_REFRESHED':
-          setSession(currentSession);
-          break;
-          
-        case 'SIGNED_OUT':
-          setSession(null);
-          
-          // Only invalidate user-specific queries, not content
-          queryClient.invalidateQueries({ queryKey: ["profile"] });
-          queryClient.invalidateQueries({ queryKey: ["user-profile"] });
-          queryClient.invalidateQueries({ queryKey: ["admin-section-profile"] });
-          queryClient.invalidateQueries({ queryKey: ["user-video-interactions"] });
-          
-          // Restore content data
-          restoreContent();
-          
-          // Force a refresh of content data after sign out with a delay
-          refreshContentAfterDelay(queryClient);
-          break;
-          
-        case 'USER_UPDATED':
-          setSession(currentSession);
-          
-          // Invalidate profile query after user update
-          if (currentSession?.user?.id) {
-            queryClient.invalidateQueries({ queryKey: ["profile", currentSession.user.id] });
-            queryClient.invalidateQueries({ queryKey: ["user-profile"] });
-            queryClient.invalidateQueries({ queryKey: ["admin-section-profile"] });
-          }
-          break;
+      if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+        setSession(currentSession);
+        
+        // Immediately prefetch profile data
+        if (currentSession?.user?.id) {
+          // Use setTimeout to avoid auth recursion issues
+          setTimeout(() => {
+            prefetchUserData(currentSession, queryClient)
+              .catch(err => console.error("Profile data prefetch error:", err));
+          }, 0);
+        }
+      } else if (event === 'SIGNED_OUT') {
+        setSession(null);
+        queryClient.removeQueries({ queryKey: ["profile"] });
+        queryClient.removeQueries({ queryKey: ["user-profile"] });
+        queryClient.removeQueries({ queryKey: ["user-profile-settings"] });
       }
     });
 

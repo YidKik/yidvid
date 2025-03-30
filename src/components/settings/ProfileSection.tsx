@@ -19,30 +19,27 @@ export const ProfileSection = () => {
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const isMobile = useIsMobile();
   
-  // Use session data directly from useAuth hook to avoid waiting for another session fetch
-  const userId = session?.user?.id;
-
-  // Initialize email from session if available
+  // Immediately get user email from session
   useEffect(() => {
     if (session?.user?.email) {
       setUserEmail(session.user.email);
     }
   }, [session]);
 
+  // Use direct query rather than RLS-protected query
   const { data: profile, isLoading, error } = useQuery({
-    queryKey: ["user-profile-settings", userId],
+    queryKey: ["user-profile-settings", session?.user?.id],
     queryFn: async () => {
-      if (!userId) {
-        console.log("No session available for profile query");
+      if (!session?.user?.id) {
         return null;
       }
 
       try {
-        // Use a simpler query that doesn't trigger RLS recursion issues
+        // Simpler direct query without joins
         const { data, error } = await supabase
           .from("profiles")
           .select("id, username, display_name, avatar_url, email, created_at, updated_at")
-          .eq("id", userId)
+          .eq("id", session.user.id)
           .maybeSingle();
 
         if (error) {
@@ -56,18 +53,15 @@ export const ProfileSection = () => {
         throw err;
       }
     },
-    enabled: !!userId, // Only run query when userId is available
-    staleTime: 60000, // Keep data fresh for 1 minute
-    gcTime: 300000, // Keep in cache for 5 minutes
-    retry: 1, // Reduce retry attempts to speed up fallback to error state
+    enabled: !!session?.user?.id,
+    staleTime: 30000, // Reduce stale time to 30 seconds for quicker refreshes
+    retry: 1, // Reduce retry attempts to speed up fallback
   });
 
-  // Show loading state immediately when profile is loading
   if (isLoading) {
     return <ProfileSectionSkeleton />;
   }
 
-  // Show error state if there was an error loading profile
   if (error || !profile) {
     return (
       <ProfileErrorState

@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BackButton } from "@/components/navigation/BackButton";
@@ -38,29 +37,32 @@ const Settings = () => {
     if (userId) {
       setLoadingProfile(true);
       
-      // Force a direct fetch of profile data
+      // Force a direct fetch of minimal profile data
       queryClient.prefetchQuery({
         queryKey: ["user-profile-settings", userId],
         queryFn: async () => {
           try {
             const { data, error } = await supabase
               .from("profiles")
-              .select("id, username, display_name, avatar_url, email, created_at, updated_at, is_admin")
+              .select("id, username, display_name, avatar_url, email")
               .eq("id", userId)
               .maybeSingle();
             
-            if (error) throw error;
+            if (error) {
+              // Just return minimal data on error, don't block UI
+              return { id: userId, email: session?.user?.email };
+            }
             return data;
           } catch (e) {
             console.error("Profile prefetch error:", e);
-            return null;
+            return { id: userId, email: session?.user?.email };
           }
         },
         staleTime: 0, // Force fresh data
       }).finally(() => {
         setLoadingProfile(false);
         
-        // Delay loading other sections slightly to prioritize profile
+        // Delay loading other sections to prioritize profile
         setTimeout(() => {
           setOtherSectionsLoaded(true);
         }, 100);
@@ -68,7 +70,7 @@ const Settings = () => {
     } else {
       setLoadingProfile(false);
     }
-  }, [userId, queryClient]);
+  }, [userId, queryClient, session]);
 
   // Check authentication and redirect as needed
   useEffect(() => {
@@ -117,19 +119,6 @@ const Settings = () => {
       console.error('Error in saveColors:', error);
     }
   };
-
-  // Log current device state for debugging
-  useEffect(() => {
-    console.log("Settings page - isMobile:", isMobile);
-    
-    // Update the page layout based on screen size
-    const resizeTimeout = setTimeout(() => {
-      // Force a reevaluation of isMobile
-      console.log("Settings page - checking layout again:", { isMobile, viewport: window.innerWidth });
-    }, 500);
-    
-    return () => clearTimeout(resizeTimeout);
-  }, [isMobile]);
 
   if (!isAuthenticated && session === null) {
     return (

@@ -1,4 +1,3 @@
-
 import { Session } from "@supabase/supabase-js";
 import { QueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
