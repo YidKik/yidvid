@@ -21,12 +21,17 @@ export const useSessionState = (queryClient: QueryClient) => {
           setSession(initialSession);
           
           // Pre-fetch profile data immediately if we have a session
-          await prefetchUserData(initialSession, queryClient);
+          try {
+            await prefetchUserData(initialSession, queryClient);
+          } catch (error) {
+            console.error("Error prefetching user data:", error);
+          }
         }
         
         // Load remaining content in the background after profile
         setTimeout(() => {
-          fetchInitialContent(queryClient).catch(console.error);
+          fetchInitialContent(queryClient)
+            .catch(error => console.error("Error fetching initial content:", error));
         }, 0);
         
         setIsLoading(false);
