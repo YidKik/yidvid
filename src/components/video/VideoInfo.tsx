@@ -32,7 +32,7 @@ export const VideoInfo = ({
           <Avatar className="h-10 w-10 md:h-12 md:w-12 ring-2 ring-background shadow-lg">
             <AvatarImage src={channelThumbnail || ''} alt={channelName} />
             <AvatarFallback className="bg-primary/10 text-primary">
-              {channelName[0]}
+              <img src="/lovable-uploads/efca5adc-d9d2-4c5b-8900-e078f9d49b6a.png" alt="YidVid Logo" className="h-8 w-8" />
             </AvatarFallback>
           </Avatar>
           <div className="flex flex-col">

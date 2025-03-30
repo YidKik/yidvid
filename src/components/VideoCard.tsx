@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { formatDistanceToNow } from "date-fns";
 import { cn } from "@/lib/utils";
@@ -78,7 +79,7 @@ export const VideoCard = ({
                 const target = e.target as HTMLImageElement;
                 target.parentElement!.innerHTML = `
                   <div class="h-full w-full flex items-center justify-center">
-                    <img src="/lovable-uploads/42b6bf6a-9833-47de-ae22-5c9e183e66d0.png" alt="${title}" class="h-16 w-auto" />
+                    <img src="/lovable-uploads/efca5adc-d9d2-4c5b-8900-e078f9d49b6a.png" alt="${title}" class="h-32 w-auto" />
                   </div>
                 `;
               }}
@@ -104,7 +105,7 @@ export const VideoCard = ({
                   loading="lazy"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
-                    target.src = "/placeholder.svg";
+                    target.src = "/lovable-uploads/efca5adc-d9d2-4c5b-8900-e078f9d49b6a.png";
                   }}
                 />
               </div>

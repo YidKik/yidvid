@@ -28,7 +28,7 @@ export const ChannelHeader = ({
         />
         <AvatarFallback className="bg-primary/10">
           <img 
-            src="/lovable-uploads/e425cacb-4c3a-4d81-b4e0-77fcbf10f61c.png" 
+            src="/lovable-uploads/efca5adc-d9d2-4c5b-8900-e078f9d49b6a.png" 
             alt="YidVid Logo" 
             className="w-10 h-10 md:w-16 md:h-16"
           />

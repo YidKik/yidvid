@@ -59,12 +59,12 @@ export const ChannelCard = ({
               loading="lazy"
               onError={(e) => {
                 const target = e.target as HTMLImageElement;
-                target.src = "/placeholder.svg";
+                target.src = "/lovable-uploads/efca5adc-d9d2-4c5b-8900-e078f9d49b6a.png";
               }}
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center">
-              <img src="/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png" alt="YidVid" className="w-14 h-14" />
+              <img src="/lovable-uploads/efca5adc-d9d2-4c5b-8900-e078f9d49b6a.png" alt="YidVid" className="w-20 h-20" />
             </div>
           )}
         </div>

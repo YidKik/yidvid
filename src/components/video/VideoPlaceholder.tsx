@@ -6,10 +6,10 @@ interface VideoPlaceholderProps {
 }
 
 export const VideoPlaceholder = ({ size = 'medium' }: VideoPlaceholderProps) => {
-  // Determine image size based on the size prop - now with larger sizes
-  const imgClass = size === 'small' ? 'h-32 w-auto' : 
-                  size === 'large' ? 'h-96 w-auto' : 
-                  'h-64 w-auto';
+  // Determine image size based on the size prop - now with much larger sizes
+  const imgClass = size === 'small' ? 'h-48 w-auto' : 
+                  size === 'large' ? 'h-128 w-auto' : 
+                  'h-80 w-auto';
   
   return (
     <div className="h-full w-full flex items-center justify-center bg-transparent">
