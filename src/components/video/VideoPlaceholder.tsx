@@ -7,15 +7,15 @@ interface VideoPlaceholderProps {
 
 export const VideoPlaceholder = ({ size = 'medium' }: VideoPlaceholderProps) => {
   // Determine image size based on the size prop
-  const imgClass = size === 'small' ? 'h-16 w-auto' : 
-                  size === 'large' ? 'h-40 w-auto' : 
-                  'h-24 w-auto';
+  const imgClass = size === 'small' ? 'h-24 w-auto' : 
+                  size === 'large' ? 'h-64 w-auto' : 
+                  'h-40 w-auto';
   
   return (
-    <div className="h-full w-full flex items-center justify-center">
+    <div className="h-full w-full flex items-center justify-center bg-transparent">
       <img
-        src="/lovable-uploads/42b6bf6a-9833-47de-ae22-5c9e183e66d0.png"
-        alt="Video unavailable"
+        src="/lovable-uploads/5a9bf84a-3676-46bf-b5f1-395e96175e82.png"
+        alt="YidVid"
         className={imgClass}
       />
     </div>
