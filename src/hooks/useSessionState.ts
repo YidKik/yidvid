@@ -30,6 +30,7 @@ export const useSessionState = (queryClient: QueryClient) => {
         
         // Load remaining content in the background after profile
         setTimeout(() => {
+          // Now fetchInitialContent returns a proper Promise that can be caught
           fetchInitialContent(queryClient)
             .catch(error => console.error("Error fetching initial content:", error));
         }, 0);
