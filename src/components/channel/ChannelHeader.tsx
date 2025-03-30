@@ -2,6 +2,7 @@
 import { Youtube, UserPlus, Check } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
 
 interface ChannelHeaderProps {
   channel: {
@@ -18,21 +19,38 @@ export const ChannelHeader = ({
   isSubscribed,
   onSubscribe,
 }: ChannelHeaderProps) => {
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageError, setImageError] = useState(false);
+  const fallbackLogo = "/lovable-uploads/efca5adc-d9d2-4c5b-8900-e078f9d49b6a.png";
+
   return (
     <div className="flex flex-col items-center mb-6 md:mb-8">
-      <Avatar className="w-20 h-20 md:w-32 md:h-32 mb-3 md:mb-4 opacity-0 animate-[scaleIn_0.6s_ease-out_0.3s_forwards] group">
+      <Avatar className="w-20 h-20 md:w-32 md:h-32 mb-3 md:mb-4 opacity-0 animate-[scaleIn_0.6s_ease-out_0.3s_forwards] group relative">
         <AvatarImage
           src={channel.thumbnail_url}
           alt={channel.title}
           className="object-cover transition-transform duration-300 group-hover:scale-105"
+          onLoad={() => setImageLoaded(true)}
+          onError={() => setImageError(true)}
         />
         <AvatarFallback className="bg-primary/10">
           <img 
-            src="/lovable-uploads/efca5adc-d9d2-4c5b-8900-e078f9d49b6a.png" 
+            src={fallbackLogo} 
             alt="YidVid Logo" 
             className="w-10 h-10 md:w-16 md:h-16"
           />
         </AvatarFallback>
+        
+        {/* Show loading indicator overlay */}
+        {!imageLoaded && !imageError && (
+          <div className="absolute inset-0 bg-gray-100 rounded-full flex items-center justify-center">
+            <img 
+              src={fallbackLogo} 
+              alt="Loading" 
+              className="w-10 h-10 md:w-16 md:h-16 animate-pulse"
+            />
+          </div>
+        )}
       </Avatar>
       
       <h1 className="text-xl md:text-3xl font-bold text-center mb-2 opacity-0 animate-[fadeIn_0.6s_ease-out_0.4s_forwards]">
