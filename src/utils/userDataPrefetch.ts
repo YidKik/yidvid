@@ -1,3 +1,4 @@
+
 import { Session } from "@supabase/supabase-js";
 import { QueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,115 +9,93 @@ import { supabase } from "@/integrations/supabase/client";
  * @param session The user's session object
  * @param queryClient React Query client to manage cache
  */
-export function prefetchUserData(session: Session, queryClient: QueryClient) {
+export function prefetchUserData(session: Session, queryClient: QueryClient): Promise<boolean> {
   if (!session?.user?.id) {
     console.log("No session user ID available for prefetching");
-    return Promise.resolve(null);
+    return Promise.resolve(false);
   }
   
   console.log("Prefetching profile data for user:", session.user.id);
   
-  const prefetchPromises = [];
-  
-  // Prefetch profile data with detailed error logging (user-profile-settings)
-  prefetchPromises.push(
+  // Create a single prefetch Promise that won't fail the whole operation
+  return new Promise((resolve) => {
+    // Direct query approach - simpler query to avoid RLS issues
     queryClient.prefetchQuery({
-      queryKey: ["user-profile-settings", session.user.id],
+      queryKey: ["user-profile-minimal", session.user.id],
       queryFn: async () => {
         try {
-          console.log("Executing profile settings prefetch query for:", session.user.id);
-          
-          // Use a direct query that minimizes potential RLS issues
+          // Use the simplest possible query to avoid RLS recursion
           const { data, error } = await supabase
             .from("profiles")
-            .select("id, username, display_name, avatar_url, email, is_admin, created_at, updated_at")
+            .select("id, email, is_admin")
             .eq("id", session.user.id)
             .maybeSingle();
           
           if (error) {
-            // Don't log recursion errors as they're expected until RLS is fixed
-            if (!error.message.includes("recursion") && !error.message.includes("policy")) {
-              console.error("Error prefetching profile settings:", error);
-            }
-            
-            // Fallback to a simpler query if the detailed one fails
-            const fallbackResult = await supabase
-              .from("profiles")
-              .select("is_admin")
-              .eq("id", session.user.id)
-              .maybeSingle();
-              
-            if (!fallbackResult.error) {
-              console.log("Successfully fetched fallback profile data");
-              return {
-                id: session.user.id,
-                email: session.user.email,
-                is_admin: fallbackResult.data?.is_admin || false
-              };
-            }
-            
-            return null;
+            console.warn("Simple profile fetch failed:", error.message);
+            // Return minimal data from session as fallback
+            return {
+              id: session.user.id,
+              email: session.user.email,
+              is_admin: false
+            };
           }
           
-          console.log("Successfully prefetched profile settings data:", data ? "found" : "not found");
           return data;
         } catch (err) {
-          console.error("Unexpected error in profile settings prefetch:", err);
-          return null;
+          console.error("Error in minimal profile fetch:", err);
+          // Return minimal data from session as fallback
+          return {
+            id: session.user.id,
+            email: session.user.email,
+            is_admin: false
+          };
         }
       },
-      retry: 2,
-      staleTime: 60000, // Keep data fresh for 1 minute
-      meta: {
-        errorBoundary: false,
-        suppressToasts: true
-      }
-    })
-  );
-  
-  // Prefetch basic admin status separately for reliability
-  prefetchPromises.push(
-    queryClient.prefetchQuery({
-      queryKey: ["user-admin-status", session.user.id],
-      queryFn: async () => {
-        try {
-          console.log("Prefetching admin status for user:", session.user.id);
-          
-          // Simplest possible query to check admin status
-          const { data, error } = await supabase
-            .from("profiles")
-            .select("is_admin")
-            .eq("id", session.user.id)
-            .maybeSingle();
-          
-          if (error) {
-            console.error("Error fetching admin status:", error);
-            return { is_admin: false };
-          }
-          
-          console.log("Admin status check result:", data?.is_admin);
-          return { is_admin: data?.is_admin || false };
-        } catch (err) {
-          console.error("Error in admin status query:", err);
-          return { is_admin: false };
-        }
-      },
+      staleTime: 10000, // 10 seconds
       retry: 1,
-      staleTime: 0, // Always fetch fresh admin status
       meta: {
         suppressToasts: true
       }
     })
-  );
-  
-  // Return a promise that resolves when all prefetch operations are complete
-  return Promise.all(prefetchPromises)
     .then(() => {
-      console.log("All profile data prefetching completed successfully");
-      return true;
+      // Only attempt full profile fetch if minimal one succeeded
+      setTimeout(() => {
+        queryClient.prefetchQuery({
+          queryKey: ["user-profile-settings", session.user.id],
+          queryFn: async () => {
+            try {
+              // Attempt to get full profile data but don't block on it
+              const { data } = await supabase
+                .from("profiles")
+                .select("*")
+                .eq("id", session.user.id)
+                .maybeSingle();
+              
+              return data || {
+                id: session.user.id,
+                email: session.user.email,
+                is_admin: false
+              };
+            } catch (err) {
+              // Just log error and rely on minimal data
+              console.warn("Full profile fetch failed:", err);
+              return null;
+            }
+          },
+          staleTime: 10000,
+          retry: 0,
+          meta: {
+            suppressToasts: true
+          }
+        });
+      }, 500); // Delay full fetch to prioritize minimal data
+      
+      resolve(true);
     })
-    .catch(error => {
-      console.error("Error during profile data prefetching:", error);
-      return null;
+    .catch(err => {
+      console.error("Critical error in profile prefetch:", err);
+      resolve(false);
     });
+  });
 }

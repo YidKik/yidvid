@@ -17,52 +17,80 @@ export const ProfileSection = () => {
   const navigate = useNavigate();
   const { handleLogout, isLoggingOut, session } = useAuth();
   const [userEmail, setUserEmail] = useState<string | null>(null);
-  const isMobile = useIsMobile();
+  const { isMobile } = useIsMobile();
   
-  // Immediately get user email from session
+  // Immediately get user email from session for fallback display
   useEffect(() => {
     if (session?.user?.email) {
       setUserEmail(session.user.email);
     }
   }, [session]);
 
-  // Use direct query rather than RLS-protected query
+  // First check if we have cached minimal profile data
+  const cachedProfile = session?.user?.id
+    ? useQuery({
+        queryKey: ["user-profile-minimal", session.user.id],
+        queryFn: async () => null, // Just access cache
+        staleTime: Infinity,
+        enabled: false, // Don't actually run a query
+      }).data
+    : null;
+
+  // Use direct query with minimal fields for better performance
   const { data: profile, isLoading, error } = useQuery({
     queryKey: ["user-profile-settings", session?.user?.id],
     queryFn: async () => {
       if (!session?.user?.id) {
-        return null;
+        return cachedProfile || null;
       }
 
       try {
-        // Simpler direct query without joins
+        // Use simplest possible query to avoid RLS issues
         const { data, error } = await supabase
           .from("profiles")
-          .select("id, username, display_name, avatar_url, email, created_at, updated_at")
+          .select("id, username, display_name, avatar_url, email")
           .eq("id", session.user.id)
           .maybeSingle();
 
         if (error) {
           console.error("Error fetching profile:", error);
-          throw error;
+          return cachedProfile || { 
+            id: session.user.id, 
+            email: session.user.email,
+            display_name: session.user.email?.split('@')[0]
+          };
         }
 
         return data as ProfilesTable["Row"];
       } catch (err) {
         console.error("Unexpected error fetching profile:", err);
-        throw err;
+        return cachedProfile || { 
+          id: session.user.id, 
+          email: session.user.email,
+          display_name: session.user.email?.split('@')[0]
+        };
       }
     },
     enabled: !!session?.user?.id,
-    staleTime: 30000, // Reduce stale time to 30 seconds for quicker refreshes
-    retry: 1, // Reduce retry attempts to speed up fallback
+    staleTime: 10000, // Shorter stale time
+    retry: 1, // Reduce retry attempts
   });
+
+  // Create a fallback profile for error cases
+  const fallbackProfile = profile || (session?.user?.id ? {
+    id: session.user.id,
+    email: userEmail || session?.user?.email,
+    display_name: userEmail?.split('@')[0] || session?.user?.email?.split('@')[0] || 'User',
+    username: null,
+    avatar_url: null
+  } : null);
 
   if (isLoading) {
     return <ProfileSectionSkeleton />;
   }
 
-  if (error || !profile) {
+  // Show error UI only if no fallback is available
+  if (error && !fallbackProfile) {
     return (
       <ProfileErrorState
         userEmail={userEmail || session?.user?.email || null}
@@ -72,18 +100,26 @@ export const ProfileSection = () => {
     );
   }
 
+  // If we have fallback data but no proper profile, show limited UI with warning
+  const showingFallback = !!error && !!fallbackProfile;
+
   return (
     <section className={`mb-${isMobile ? '2' : '8'}`}>
       <Card className={`${isMobile ? 'p-2' : 'p-6'} overflow-hidden`}>
         <div className="flex flex-col gap-2">
+          {showingFallback && (
+            <div className="text-amber-500 text-xs mb-2 px-1">
+              Using limited profile data. Some features may be unavailable.
+            </div>
+          )}
           <div className={`flex ${isMobile ? 'items-start gap-2' : 'items-center gap-4'}`}>
             <ProfileAvatar 
-              avatarUrl={profile.avatar_url || ""}
-              displayName={profile.display_name || ""}
-              username={profile.username || ""}
-              profile={profile}
+              avatarUrl={fallbackProfile?.avatar_url || ""}
+              displayName={fallbackProfile?.display_name || ""}
+              username={fallbackProfile?.username || ""}
+              profile={fallbackProfile as ProfilesTable["Row"]}
             />
-            <ProfileInfo profile={profile} />
+            <ProfileInfo profile={fallbackProfile as ProfilesTable["Row"]} />
           </div>
           <AccountActions
             isLoggingOut={isLoggingOut}

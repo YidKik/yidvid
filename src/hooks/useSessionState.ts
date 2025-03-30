@@ -11,43 +11,52 @@ export const useSessionState = (queryClient: QueryClient) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    let isMounted = true;
+    
     const initializeSession = async () => {
       try {
         // Get initial session
         const { data: { session: initialSession } } = await supabase.auth.getSession();
         
-        if (initialSession) {
-          console.log("Initial session loaded, fetching profile data");
+        if (initialSession && isMounted) {
+          console.log("Initial session loaded, user ID:", initialSession.user.id);
           setSession(initialSession);
           
           // Pre-fetch profile data immediately if we have a session
-          try {
-            await prefetchUserData(initialSession, queryClient);
-          } catch (error) {
-            console.error("Error prefetching user data:", error);
-          }
+          prefetchUserData(initialSession, queryClient)
+            .then(success => {
+              if (success) {
+                console.log("Initial profile data prefetch complete");
+              } else {
+                console.warn("Initial profile data prefetch failed");
+              }
+            })
+            .catch(error => console.error("Error prefetching user data:", error));
         }
         
         // Load remaining content in the background after profile
         setTimeout(() => {
-          // Now fetchInitialContent returns a proper Promise that can be caught
           fetchInitialContent(queryClient)
             .catch(error => console.error("Error fetching initial content:", error));
-        }, 0);
+        }, 100); // Slight delay to prioritize user data
         
-        setIsLoading(false);
+        if (isMounted) {
+          setIsLoading(false);
+        }
       } catch (error) {
         console.error("Error initializing session:", error);
-        setSession(null);
-        setIsLoading(false);
+        if (isMounted) {
+          setSession(null);
+          setIsLoading(false);
+        }
       }
     };
 
     // Set up auth state change listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, currentSession) => {
       console.log("Auth state changed:", event);
       
-      if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+      if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && isMounted) {
         setSession(currentSession);
         
         // Immediately prefetch profile data
@@ -58,17 +67,22 @@ export const useSessionState = (queryClient: QueryClient) => {
               .catch(err => console.error("Profile data prefetch error:", err));
           }, 0);
         }
-      } else if (event === 'SIGNED_OUT') {
+      } else if (event === 'SIGNED_OUT' && isMounted) {
         setSession(null);
+        // Clean up user data from cache
         queryClient.removeQueries({ queryKey: ["profile"] });
         queryClient.removeQueries({ queryKey: ["user-profile"] });
         queryClient.removeQueries({ queryKey: ["user-profile-settings"] });
+        queryClient.removeQueries({ queryKey: ["user-profile-minimal"] });
       }
     });
 
     initializeSession();
     
-    return () => subscription?.unsubscribe();
+    return () => {
+      isMounted = false;
+      subscription?.unsubscribe();
+    };
   }, [queryClient]);
 
   return { session, isLoading };

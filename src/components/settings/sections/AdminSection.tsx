@@ -5,27 +5,25 @@ import { LayoutDashboard } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
 
 interface AdminSectionProps {
   userId?: string;
 }
 
 export const AdminSection = ({ userId }: AdminSectionProps) => {
-  const [isAdmin, setIsAdmin] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const { isMobile } = useIsMobile();
 
-  // Fast direct admin status check to avoid RLS issues
-  useEffect(() => {
-    const checkAdminStatus = async () => {
-      if (!userId) {
-        setIsLoading(false);
-        return;
-      }
+  // Use React Query for better caching and offline support
+  const { data: adminStatus } = useQuery({
+    queryKey: ["user-admin-status", userId],
+    queryFn: async () => {
+      if (!userId) return { isAdmin: false };
       
       try {
-        // Simplified query that won't trigger RLS recursion
+        // Simplest possible query to check admin status
         const { data, error } = await supabase
           .from("profiles")
           .select("is_admin")
@@ -33,21 +31,26 @@ export const AdminSection = ({ userId }: AdminSectionProps) => {
           .maybeSingle();
 
         if (error) {
-          console.error("AdminSection: Error fetching admin status:", error);
-          setIsAdmin(false);
-        } else {
-          setIsAdmin(data?.is_admin === true);
+          console.warn("Error checking admin status:", error.message);
+          return { isAdmin: false };
         }
+        
+        return { isAdmin: data?.is_admin === true };
       } catch (error) {
-        console.error("AdminSection: Unexpected error checking admin:", error);
-        setIsAdmin(false);
-      } finally {
-        setIsLoading(false);
+        console.error("Unexpected error checking admin status:", error);
+        return { isAdmin: false };
       }
-    };
+    },
+    staleTime: 30000, // 30 seconds
+    retry: 1,
+    initialData: { isAdmin: false },
+    enabled: !!userId,
+  });
 
-    checkAdminStatus();
-  }, [userId]);
+  // Set loading state based on query status
+  useEffect(() => {
+    setIsLoading(false);
+  }, [adminStatus]);
 
   const handleDashboardClick = () => {
     navigate("/dashboard");
@@ -57,7 +60,7 @@ export const AdminSection = ({ userId }: AdminSectionProps) => {
     return <div className="h-4"></div>;
   }
 
-  if (!isAdmin) {
+  if (!adminStatus?.isAdmin) {
     return null;
   }
 
