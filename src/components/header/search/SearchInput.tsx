@@ -41,7 +41,7 @@ export const SearchInput = ({
           onKeyDown={onSearch}
           className={`
             search-input py-2 pl-10 pr-3 rounded-lg border-gray-200
-            ${isMobile ? 'h-8 text-sm' : 'h-10 w-full'}
+            ${isMobile ? 'h-9 text-sm' : 'h-12 w-full'}
             transition-all duration-300
           `}
         />

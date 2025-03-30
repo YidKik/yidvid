@@ -29,7 +29,7 @@
   right: 0;
   bottom: 0;
   border-radius: 0.5rem;
-  border: 1px solid #ea384c;
+  border: 1.5px solid #ea384c;
   pointer-events: none;
   z-index: 5;
 }
@@ -37,7 +37,7 @@
 /* For mobile - thinner outline */
 @media (max-width: 768px) {
   .search-animated-border::before {
-    border-width: 0.5px;
+    border-width: 1px;
   }
 }
 
@@ -50,7 +50,7 @@
   right: 0;
   bottom: 0;
   border-radius: 0.5rem;
-  padding: 2px;
+  padding: 2.5px;
   background: linear-gradient(90deg, #ea384c, #f97316, #8b5cf6, #000000, #ea384c);
   background-size: 300% 100%;
   -webkit-mask: 
@@ -67,7 +67,7 @@
 
 /* Thinner animated border for mobile */
 .search-animated-border .thin-outline {
-  padding: 1px;
+  padding: 1.5px;
 }
 
 /* Show animation outline on focus, hide the default outline */

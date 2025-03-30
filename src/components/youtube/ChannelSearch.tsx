@@ -13,7 +13,7 @@ export const ChannelSearch = ({ value, onChange }: ChannelSearchProps) => {
       placeholder="Search channels..."
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="w-full"
+      className="w-full h-11"
     />
   );
 };

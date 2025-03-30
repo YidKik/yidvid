@@ -29,7 +29,7 @@ export const ChannelsSearch = ({
             placeholder="Search videos..."
             value={videoSearchQuery}
             onChange={(e) => setVideoSearchQuery(e.target.value)}
-            className="w-64"
+            className="w-64 h-11"
           />
         </div>
       </div>
