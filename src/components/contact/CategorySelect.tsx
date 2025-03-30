@@ -29,7 +29,7 @@ export const CategorySelect = ({ form }: CategorySelectProps) => {
                       className={`flex items-start space-x-2 space-y-0 rounded-md border-2 p-3 cursor-pointer transition-all duration-200
                         ${field.value === category.value 
                           ? 'border-primary' 
-                          : 'border-gray-400/30'
+                          : 'border-gray-400/30 hover:border-gray-400/50'
                         }`}
                     >
                       <RadioGroupItem

@@ -30,9 +30,9 @@ const Settings = () => {
   const [logoColor, setLogoColor] = useState(colors.logoColor);
   const [autoplay, setAutoplay] = useState(true);
   const [loadingProfile, setLoadingProfile] = useState(true);
-  const [otherSectionsLoaded, setOtherSectionsLoaded] = useState(false);
   const { isMobile } = useIsMobile();
   const [authChecked, setAuthChecked] = useState(false);
+  const [sectionsReady, setSectionsReady] = useState(false);
 
   // Immediately prefetch profile data - top priority
   useEffect(() => {
@@ -51,6 +51,7 @@ const Settings = () => {
               .maybeSingle();
             
             if (error) {
+              console.log("Profile prefetch error:", error);
               // Just return minimal data on error, don't block UI
               return { id: userId, email: session?.user?.email };
             }
@@ -64,13 +65,13 @@ const Settings = () => {
       }).finally(() => {
         setLoadingProfile(false);
         
-        // Delay loading other sections to prioritize profile
-        setTimeout(() => {
-          setOtherSectionsLoaded(true);
-        }, 100);
+        // Always display other sections after profile loads
+        setSectionsReady(true);
       });
     } else {
       setLoadingProfile(false);
+      // Always display other sections even if no userId
+      setSectionsReady(true);
     }
   }, [userId, queryClient, session]);
 
@@ -137,7 +138,7 @@ const Settings = () => {
   };
 
   // Show skeleton loading until we confirm login status
-  if (!authChecked || (!isAuthenticated && session === null)) {
+  if (!authChecked) {
     return (
       <div className="min-h-screen bg-background text-foreground pt-16 px-4">
         <div className="container mx-auto max-w-4xl">
@@ -164,31 +165,27 @@ const Settings = () => {
           {/* Profile section always shows first, either real or skeleton */}
           {loadingProfile ? <ProfileSectionSkeleton /> : <ProfileSection />}
           
-          {/* Other sections only load after profile is ready */}
-          {otherSectionsLoaded && (
-            <>
-              <ContentPreferencesSection 
-                userId={userId}
-                autoplay={autoplay}
-                setAutoplay={setAutoplay}
-              />
-              <ActivitySection />
-              <AppearanceSection 
-                backgroundColor={backgroundColor}
-                setBackgroundColor={setBackgroundColor}
-                textColor={textColor}
-                setTextColor={setTextColor}
-                buttonColor={buttonColor}
-                setButtonColor={setButtonColor}
-                logoColor={logoColor}
-                setLogoColor={setLogoColor}
-                saveColors={saveColors}
-                resetToDefaults={resetToDefaults}
-              />
-              {userId && <AdminSection userId={userId} />}
-              <SupportSection />
-            </>
-          )}
+          {/* Always render these sections, regardless of loading state */}
+          <ContentPreferencesSection 
+            userId={userId}
+            autoplay={autoplay}
+            setAutoplay={setAutoplay}
+          />
+          <ActivitySection />
+          <AppearanceSection 
+            backgroundColor={backgroundColor}
+            setBackgroundColor={setBackgroundColor}
+            textColor={textColor}
+            setTextColor={setTextColor}
+            buttonColor={buttonColor}
+            setButtonColor={setButtonColor}
+            logoColor={logoColor}
+            setLogoColor={setLogoColor}
+            saveColors={saveColors}
+            resetToDefaults={resetToDefaults}
+          />
+          {userId && <AdminSection userId={userId} />}
+          <SupportSection />
         </div>
       </main>
     </div>
