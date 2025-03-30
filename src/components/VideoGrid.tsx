@@ -247,26 +247,56 @@ export const VideoGrid = ({
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const fetchVideos = async () => {
+  const fetchVideos = async () => {
+    try {
       setLoading(true);
       const { data, error } = await supabase
         .from("youtube_videos")
         .select("*")
-        .order("id", { ascending: false }) // Get random rows
-        .limit(100); // Limit to 20 videos
-      console.warn(data)
+        .order("id", { ascending: false })
+        .limit(100);
+
       if (error) {
         console.error("Error fetching videos:", error);
-      } else {
-        const shuffledVideos = data.sort(() => 0.5 - Math.random()).slice(0, 20);
-   
-        setDisplayVideos(shuffledVideos || []);
+        return;
       }
-      setLoading(false);
-    };
 
-    fetchVideos();
-  }, []);
+      if (data) {
+        const shuffledVideos = data.sort(() => 0.5 - Math.random()).slice(0, 20);
+        setDisplayVideos(shuffledVideos); // Update state only if data changes
+      }
+    } catch (err) {
+      console.error("Unexpected error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchVideos();
+}, []); // <-- Empty dependency array ensures it runs only once
+
+
+  // useEffect(() => {
+  //   const fetchVideos = async () => {
+  //     setLoading(true);
+  //     const { data, error } = await supabase
+  //       .from("youtube_videos")
+  //       .select("*")
+  //       .order("id", { ascending: false }) // Get random rows
+  //       .limit(100); // Limit to 20 videos
+  //     console.warn(data)
+  //     if (error) {
+  //       console.error("Error fetching videos:", error);
+  //     } else {
+  //       const shuffledVideos = data.sort(() => 0.5 - Math.random()).slice(0, 20);
+   
+  //       setDisplayVideos(shuffledVideos || []);
+  //     }
+  //     setLoading(false);
+  //   };
+
+  //   fetchVideos();
+  // }, []);
   // On main page, use a simpler loading indicator
   if (loading) {
     return (
