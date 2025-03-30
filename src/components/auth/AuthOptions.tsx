@@ -2,16 +2,28 @@
 import { motion } from "framer-motion";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
+import { X } from "lucide-react";
 
 interface AuthOptionsProps {
   onSelectOption: (option: 'signin' | 'signup') => void;
+  onClose?: () => void;
 }
 
-export const AuthOptions = ({ onSelectOption }: AuthOptionsProps) => {
+export const AuthOptions = ({ onSelectOption, onClose }: AuthOptionsProps) => {
   const isMobile = useIsMobile();
   
   return (
-    <div className="flex flex-col items-center justify-center p-12 space-y-10 backdrop-blur-md rounded-2xl">
+    <div className="flex flex-col items-center justify-center p-12 space-y-10 backdrop-blur-md rounded-2xl relative">
+      {onClose && (
+        <button 
+          onClick={onClose}
+          className="absolute top-4 right-4 text-[#ea384c] z-10"
+        >
+          <X className="h-5 w-5" />
+          <span className="sr-only">Close</span>
+        </button>
+      )}
+      
       <motion.div 
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}

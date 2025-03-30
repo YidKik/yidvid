@@ -71,7 +71,10 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
               transition={{ duration: 0.2, ease: "easeOut" }}
               className="flex flex-col items-center justify-center"
             >
-              <AuthOptions onSelectOption={handleSelectOption} />
+              <AuthOptions 
+                onSelectOption={handleSelectOption} 
+                onClose={() => onOpenChange(false)} 
+              />
             </motion.div>
           ) : (
             <motion.div

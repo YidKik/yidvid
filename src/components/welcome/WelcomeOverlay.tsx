@@ -49,9 +49,9 @@ export const WelcomeOverlay = () => {
             {/* Close button */}
             <button
               onClick={handleClose}
-              className="absolute top-2 right-2 p-2 rounded-full hover:bg-gray-100 transition-colors"
+              className="absolute top-2 right-2 p-2 text-[#ea384c] rounded-full transition-transform hover:rotate-180 duration-300"
             >
-              <X className="w-5 h-5 text-gray-500" />
+              <X className="w-5 h-5" />
             </button>
 
             {/* Logo and content */}

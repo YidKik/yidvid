@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Flag } from "lucide-react";
+import { Flag, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -69,7 +69,14 @@ export function ReportVideoDialog({ videoId }: ReportVideoDialogProps) {
           </span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] relative">
+        <button 
+          onClick={() => setIsOpen(false)}
+          className="absolute right-4 top-4 text-[#ea384c]"
+        >
+          <X className="h-5 w-5" />
+          <span className="sr-only">Close</span>
+        </button>
         <DialogHeader>
           <DialogTitle>Report Video</DialogTitle>
           <DialogDescription>

@@ -11,7 +11,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Form } from "@/components/ui/form";
-import { MessageSquare } from "lucide-react";
+import { MessageSquare, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CategorySelect } from "./CategorySelect";
@@ -67,11 +67,18 @@ export const ContactDialog = () => {
         </Button>
       </DialogTrigger>
       <DialogContent className={`${isMobile ? 'w-[calc(100%-2rem)]' : 'w-[550px]'} p-0 bg-[#333333] text-white border-gray-600 rounded-lg`}>
-        <DialogHeader className="p-4 border-b border-gray-600">
+        <DialogHeader className="p-4 border-b border-gray-600 relative">
           <DialogTitle className="text-base md:text-lg text-white">Contact Us</DialogTitle>
           <DialogDescription className="text-xs md:text-sm text-gray-300 mt-1">
             How can we help you today? Choose a category below and send us your message.
           </DialogDescription>
+          <button 
+            onClick={() => setIsOpen(false)}
+            className="absolute right-4 top-4 text-[#ea384c]"
+          >
+            <X className="h-5 w-5" />
+            <span className="sr-only">Close</span>
+          </button>
         </DialogHeader>
         <div className="p-4">
           <Form {...form}>
