@@ -20,9 +20,19 @@ export const fetchAllVideosOperation = async (
   console.log("Starting video fetch process with highest priority...");
   
   // If we've had multiple failed attempts, clear cache before trying again
+  // But limit the frequency of cache clearing to prevent loops
   if (fetchAttempts > 2) {
-    console.log(`${fetchAttempts} fetch attempts detected, clearing cache before new attempt...`);
-    await clearApplicationCache();
+    const lastCacheClear = localStorage.getItem('lastOperationCacheClear');
+    const now = new Date().getTime();
+    
+    // Only clear if it's been at least 2 minutes since last clear
+    if (!lastCacheClear || (now - parseInt(lastCacheClear) > 2 * 60 * 1000)) {
+      console.log(`${fetchAttempts} fetch attempts detected, clearing cache before new attempt...`);
+      await clearApplicationCache();
+      localStorage.setItem('lastOperationCacheClear', now.toString());
+    } else {
+      console.log(`Skipping cache clear despite ${fetchAttempts} attempts due to recent clear`);
+    }
   }
   
   try {
@@ -38,8 +48,6 @@ export const fetchAllVideosOperation = async (
         if (videosData.length > 0) {
           setLastSuccessfulFetch(new Date());
           console.log(`Successfully fetched ${videosData.length} videos from database`);
-          
-          // Removed the success toast notification
         } else {
           console.warn("No videos found in database, will try to fetch new ones with high priority");
         }
@@ -60,25 +68,35 @@ export const fetchAllVideosOperation = async (
       // Continue with what we have
     }
 
-    // Always try to fetch new videos if we have channels
+    // Only try to fetch new videos if we have channels and it's been at least 5 minutes since last attempt
     if (channelIds.length > 0) {
-      try {
-        const updatedVideos = await tryFetchNewVideos(
-          channelIds,
-          videosData,
-          fetchAttempts,
-          setFetchAttempts,
-          setLastSuccessfulFetch,
-          true // High priority flag
-        );
-        
-        if (updatedVideos && updatedVideos.length > 0) {
-          videosData = updatedVideos;
-          console.log(`Updated videos with fresh data, now have ${videosData.length} videos`);
+      const lastYoutubeAttempt = localStorage.getItem('lastYoutubeApiAttempt');
+      const now = new Date().getTime();
+      
+      // Limit YouTube API calls to prevent quota issues and feedback loops
+      if (!lastYoutubeAttempt || (now - parseInt(lastYoutubeAttempt) > 5 * 60 * 1000)) {
+        try {
+          localStorage.setItem('lastYoutubeApiAttempt', now.toString());
+          
+          const updatedVideos = await tryFetchNewVideos(
+            channelIds,
+            videosData,
+            fetchAttempts,
+            setFetchAttempts,
+            setLastSuccessfulFetch,
+            true // High priority flag
+          );
+          
+          if (updatedVideos && updatedVideos.length > 0) {
+            videosData = updatedVideos;
+            console.log(`Updated videos with fresh data, now have ${videosData.length} videos`);
+          }
+        } catch (error) {
+          console.error("Error in tryFetchNewVideos:", error);
+          // Continue with what we have
         }
-      } catch (error) {
-        console.error("Error in tryFetchNewVideos:", error);
-        // Continue with what we have
+      } else {
+        console.log("Skipping YouTube API call due to rate limiting");
       }
     }
 
@@ -111,6 +129,20 @@ export const forceRefetchOperation = async (
   setFetchAttempts: (value: number | ((prev: number) => number)) => void
 ): Promise<any[]> => {
   console.log("Forcing complete refresh of all videos...");
+  
+  // Add rate limiting to prevent excessive operations
+  const lastForceOperation = localStorage.getItem('lastForceOperation');
+  const now = new Date().getTime();
+  
+  // Only allow force refresh once per minute at most
+  if (lastForceOperation && (now - parseInt(lastForceOperation) < 60 * 1000)) {
+    console.log("Force operation skipped - too frequent");
+    return [];
+  }
+  
+  // Record this operation
+  localStorage.setItem('lastForceOperation', now.toString());
+  
   // Clear cache before force refresh to ensure freshest possible data
   await clearApplicationCache();
   setFetchAttempts(prev => prev + 1);

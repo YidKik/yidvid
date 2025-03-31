@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import { VideoData } from "@/hooks/video/types/video-fetcher";
 import { toast } from "sonner";
