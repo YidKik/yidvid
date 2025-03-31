@@ -27,7 +27,7 @@ export const VideoContent = ({
   lastSuccessfulFetch,
   fetchAttempts
 }: VideoContentProps) => {
-  const { isMobile, isTablet } = useIsMobile();
+  const { isMobile } = useIsMobile();
   const { 
     isRefreshing, 
     handleRefetch, 
@@ -122,7 +122,7 @@ export const VideoContent = ({
   }
 
   // Log the device type for debugging
-  console.log(`Device type: isMobile=${isMobile}, isTablet=${isTablet}`);
+  console.log(`Device type: isMobile=${isMobile}`);
 
   return (
     <div>

@@ -42,17 +42,44 @@ export const VideoGrid = ({
   useEffect(() => {
     // If videos are provided as a prop, use them
     if (videos && videos.length > 0) {
-      // Convert VideoData format to Video format
-      const formattedVideos = videos.map(video => ({
-        id: video.id,
-        video_id: video.video_id,
-        title: video.title || "Untitled Video",
-        thumbnail: video.thumbnail || "/placeholder.svg",
-        channelName: video.channelName || "Unknown Channel",
-        channelId: video.channelId,
-        views: video.views || 0,
-        uploadedAt: isValidDate(video.uploadedAt) ? video.uploadedAt : new Date().toISOString()
-      }));
+      // Convert VideoData format to Video format with proper validation
+      const formattedVideos = videos.map(video => {
+        // Validate date - ensure we have a valid date or use current date
+        let validatedDate: string;
+        try {
+          if (video.uploadedAt) {
+            // Test if we can create a valid date
+            const testDate = new Date(video.uploadedAt);
+            // Check if the date is valid (not NaN)
+            if (!isNaN(testDate.getTime())) {
+              // If it's already a Date object, convert to ISO string
+              validatedDate = typeof video.uploadedAt === 'object' 
+                ? video.uploadedAt.toISOString() 
+                : video.uploadedAt;
+            } else {
+              // Invalid date, use current time
+              validatedDate = new Date().toISOString();
+            }
+          } else {
+            // No date provided, use current time
+            validatedDate = new Date().toISOString();
+          }
+        } catch (err) {
+          console.error("Date validation error:", err);
+          validatedDate = new Date().toISOString();
+        }
+
+        return {
+          id: video.id,
+          video_id: video.video_id,
+          title: video.title || "Untitled Video",
+          thumbnail: video.thumbnail || "/placeholder.svg",
+          channelName: video.channelName || "Unknown Channel",
+          channelId: video.channelId,
+          views: video.views || 0,
+          uploadedAt: validatedDate
+        };
+      });
 
       setVideosToDisplay(formattedVideos);
       setLoading(false);
@@ -76,17 +103,34 @@ export const VideoGrid = ({
 
         if (data) {
           // Process the data to ensure valid date objects
-          const processedData = data.map(video => ({
-            id: video.id,
-            video_id: video.video_id,
-            title: video.title || "Untitled Video",
-            thumbnail: video.thumbnail || "/placeholder.svg",
-            channelName: video.channel_name || "Unknown Channel",
-            channelId: video.channel_id,
-            views: video.views || 0,
-            // Ensure we have a valid date or default to current date
-            uploadedAt: isValidDate(video.uploaded_at) ? video.uploaded_at : new Date().toISOString()
-          }));
+          const processedData = data.map(video => {
+            // Validate uploaded_at date
+            let validUploadedAt: string;
+            try {
+              if (video.uploaded_at) {
+                const testDate = new Date(video.uploaded_at);
+                validUploadedAt = !isNaN(testDate.getTime()) 
+                  ? video.uploaded_at 
+                  : new Date().toISOString();
+              } else {
+                validUploadedAt = new Date().toISOString();
+              }
+            } catch (err) {
+              console.error("Date processing error:", err);
+              validUploadedAt = new Date().toISOString();
+            }
+
+            return {
+              id: video.id,
+              video_id: video.video_id,
+              title: video.title || "Untitled Video",
+              thumbnail: video.thumbnail || "/placeholder.svg",
+              channelName: video.channel_name || "Unknown Channel",
+              channelId: video.channel_id,
+              views: video.views || 0,
+              uploadedAt: validUploadedAt
+            };
+          });
           
           const shuffledVideos = processedData
             .sort(() => 0.5 - Math.random())
@@ -103,17 +147,6 @@ export const VideoGrid = ({
 
     fetchVideos();
   }, [videos, maxVideos]); // Dependency ensures correct re-fetch behavior
-
-  // Helper function to validate dates
-  const isValidDate = (dateString: string | null | undefined): boolean => {
-    if (!dateString) return false;
-    
-    // Try to create a date object
-    const date = new Date(dateString);
-    
-    // Check if the date is valid and not NaN
-    return !isNaN(date.getTime());
-  };
 
   if (isLoading || loading) {
     return (

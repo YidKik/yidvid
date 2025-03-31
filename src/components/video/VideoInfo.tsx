@@ -22,7 +22,27 @@ export const VideoInfo = ({
 }: VideoInfoProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const formattedDate = formatDistanceToNow(new Date(uploadedAt), { addSuffix: true });
+  // Format the date with robust error handling
+  const getFormattedDate = () => {
+    try {
+      if (!uploadedAt) return "recently";
+      
+      const dateToFormat = new Date(uploadedAt);
+      
+      // Check if date is valid
+      if (isNaN(dateToFormat.getTime())) {
+        console.warn("Invalid date in VideoInfo:", uploadedAt);
+        return "recently";
+      }
+      
+      return formatDistanceToNow(dateToFormat, { addSuffix: true });
+    } catch (error) {
+      console.error("Error formatting date in VideoInfo:", error);
+      return "recently";
+    }
+  };
+
+  const formattedDate = getFormattedDate();
   const formattedViews = views?.toLocaleString() || "0";
 
   return (
