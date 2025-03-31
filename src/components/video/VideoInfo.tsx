@@ -9,7 +9,7 @@ interface VideoInfoProps {
   channelName: string;
   channelThumbnail?: string;
   views?: number;
-  uploadedAt: string;
+  uploadedAt: string | Date;
   description?: string;
 }
 
@@ -27,7 +27,15 @@ export const VideoInfo = ({
     try {
       if (!uploadedAt) return "recently";
       
-      const dateToFormat = new Date(uploadedAt);
+      let dateToFormat: Date;
+      
+      if (typeof uploadedAt === "string") {
+        dateToFormat = new Date(uploadedAt);
+      } else if (uploadedAt instanceof Date) {
+        dateToFormat = uploadedAt;
+      } else {
+        return "recently"; // Fallback for unexpected types
+      }
       
       // Check if date is valid
       if (isNaN(dateToFormat.getTime())) {

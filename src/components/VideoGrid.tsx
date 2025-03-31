@@ -34,7 +34,7 @@ export const VideoGrid = ({
   className,
   isLoading = false,
 }: VideoGridProps) => {
-  const isMobile = useIsMobile();
+  const { isMobile } = useIsMobile();
   const location = useLocation();
   const [videosToDisplay, setVideosToDisplay] = useState<Video[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -45,20 +45,27 @@ export const VideoGrid = ({
       // Convert VideoData format to Video format with proper validation
       const formattedVideos = videos.map(video => {
         // Validate date - ensure we have a valid date or use current date
-        let validatedDate: string;
+        let validatedDate: string | Date;
         try {
           if (video.uploadedAt) {
-            // Test if we can create a valid date
-            const testDate = new Date(video.uploadedAt);
-            // Check if the date is valid (not NaN)
-            if (!isNaN(testDate.getTime())) {
-              // If it's already a Date object, convert to ISO string
-              validatedDate = typeof video.uploadedAt === 'object' 
-                ? video.uploadedAt.toISOString() 
-                : video.uploadedAt;
+            // Handle if uploadedAt is a Date object directly
+            if (video.uploadedAt instanceof Date) {
+              // Check if it's a valid date
+              if (!isNaN(video.uploadedAt.getTime())) {
+                validatedDate = video.uploadedAt;
+              } else {
+                validatedDate = new Date().toISOString();
+              }
             } else {
-              // Invalid date, use current time
-              validatedDate = new Date().toISOString();
+              // uploadedAt is a string, test if we can create a valid date from it
+              const testDate = new Date(video.uploadedAt);
+              // Check if the date is valid (not NaN)
+              if (!isNaN(testDate.getTime())) {
+                validatedDate = video.uploadedAt;
+              } else {
+                // Invalid date, use current time
+                validatedDate = new Date().toISOString();
+              }
             }
           } else {
             // No date provided, use current time
