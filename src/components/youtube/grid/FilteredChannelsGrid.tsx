@@ -31,8 +31,12 @@ export const FilteredChannelsGrid = ({
       
       setDisplayChannels(channels);
       setInitialized(true);
+    } else if (initialized && channels.length > 0 && channels !== displayChannels) {
+      // Update display channels if channel data changes
+      console.log("Channel data updated, refreshing display");
+      setDisplayChannels(channels);
     }
-  }, [channels, initialized]);
+  }, [channels, initialized, displayChannels]);
 
   return (
     <div className="w-full">

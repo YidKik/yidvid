@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
@@ -33,9 +34,13 @@ export const ChannelDataProvider = ({ children, onError }: ChannelDataProviderPr
       if (event === 'SIGNED_IN' || event === 'SIGNED_OUT' || event === 'TOKEN_REFRESHED') {
         console.log("Auth event triggered refetch of channels");
         setIsLoading(true);
-        refetch().catch(error => {
-          console.error("Error refetching channels after auth change:", error);
-        });
+        
+        // Use setTimeout to avoid recursion issues with Supabase RLS
+        setTimeout(() => {
+          refetch().catch(error => {
+            console.error("Error refetching channels after auth change:", error);
+          });
+        }, 200);
       }
     });
 

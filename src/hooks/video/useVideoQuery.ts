@@ -52,11 +52,8 @@ export const useVideoQuery = ({
       errorMessage: "Failed to load videos",
       suppressToasts: true // Don't show error toasts
     },
-    // Only refetch on mount if we don't have real data
-    refetchOnMount: (query) => {
-      const existingData = query.state.data as VideoData[] | undefined;
-      return !hasRealVideos(existingData);
-    },
+    // Always refetch on mount to ensure fresh data with correct permissions
+    refetchOnMount: true,
     refetchOnWindowFocus: false
   });
 

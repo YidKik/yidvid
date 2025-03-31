@@ -92,7 +92,7 @@ export const VideoContent = ({
     }
   }, [isLoading, isRefreshing, forceRefetch, videos.length]);
 
-  // Always show some content immediately
+  // Always show some content immediately, whether user is logged in or not
   const displayVideos = videos?.length ? videos : createSampleVideos(8);
   
   return (
