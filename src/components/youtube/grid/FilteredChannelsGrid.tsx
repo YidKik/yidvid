@@ -1,8 +1,7 @@
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { Channel } from "@/hooks/channel/useChannelsGrid";
 import { ChannelCard } from "./ChannelCard";
-import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface FilteredChannelsGridProps {
   channels: Channel[];
@@ -36,7 +35,7 @@ export const FilteredChannelsGrid = ({
   }, [channels, initialized]);
 
   return (
-    <ScrollArea className={isMainPage ? "h-[70vh] md:h-[75vh]" : "max-h-full"}>
+    <div className="w-full">
       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-4 mt-2 pb-4">
         {displayChannels.map((channel, index) => (
           <ChannelCard 
@@ -46,6 +45,6 @@ export const FilteredChannelsGrid = ({
           />
         ))}
       </div>
-    </ScrollArea>
+    </div>
   );
 };
