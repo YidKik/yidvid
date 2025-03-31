@@ -1,9 +1,9 @@
+
 import { Header } from "@/components/Header";
 import Auth from "@/pages/Auth";
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { WelcomeAnimation } from "@/components/WelcomeAnimation";
-import { CategorySection } from "@/components/categories/CategorySection";
 import { ContentToggle } from "@/components/content/ContentToggle";
 import { MusicSection } from "@/components/content/MusicSection";
 import { VideoContent } from "@/components/content/VideoContent";
@@ -112,7 +112,7 @@ const MainContent = () => {
               isMusic={isMusic} 
               onToggle={() => setIsMusic(!isMusic)} 
             />
-            <CategorySection />
+            {/* Category section removed as requested */}
           </div>
 
           <motion.div
