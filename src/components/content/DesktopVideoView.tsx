@@ -37,7 +37,8 @@ export const DesktopVideoView = ({
     setCurrentPage
   } = useVideoPagination({
     videos,
-    videosPerPage
+    videosPerPage,
+    preloadNext: true
   });
 
   // More thorough check if we have real videos (not samples)
@@ -64,6 +65,20 @@ export const DesktopVideoView = ({
           isLoading={isLoading || isRefreshing}
           className="grid-cols-4 gap-4"
         />
+        
+        {totalPages > 1 && (
+          <div className="mt-6">
+            <VideoGridPagination
+              showAll={true}
+              currentPage={currentPage}
+              totalPages={totalPages}
+              filteredVideosLength={sortedVideos.length}
+              maxVideos={videosPerPage}
+              onShowAll={() => {}}
+              onPageChange={(page) => setCurrentPage(page)}
+            />
+          </div>
+        )}
       </div>
 
       <div className="mt-6">

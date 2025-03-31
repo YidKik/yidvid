@@ -1,9 +1,8 @@
-
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { VideoCard } from "./VideoCard";
 import { LoadingAnimation } from "@/components/ui/LoadingAnimation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { VideoData } from "@/hooks/video/types/video-fetcher";
@@ -38,37 +37,70 @@ export const VideoGrid = ({
   const location = useLocation();
   const [videosToDisplay, setVideosToDisplay] = useState<Video[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [visibleVideos, setVisibleVideos] = useState<Video[]>([]);
+  const gridRef = useRef<HTMLDivElement>(null);
+  
+  useEffect(() => {
+    if (!gridRef.current || videosToDisplay.length === 0) return;
+    
+    const options = {
+      root: null,
+      rootMargin: '200px',
+      threshold: 0.1
+    };
+    
+    const videoElements = gridRef.current.querySelectorAll('.video-card-container');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const videoId = entry.target.getAttribute('data-video-id');
+          if (videoId) {
+            const video = videosToDisplay.find(v => v.id === videoId);
+            if (video) {
+              setVisibleVideos(prev => {
+                if (!prev.some(v => v.id === video.id)) {
+                  return [...prev, video];
+                }
+                return prev;
+              });
+            }
+            
+            observer.unobserve(entry.target);
+          }
+        }
+      });
+    }, options);
+    
+    videoElements.forEach(element => {
+      observer.observe(element);
+    });
+    
+    return () => {
+      observer.disconnect();
+    };
+  }, [videosToDisplay]);
 
   useEffect(() => {
-    // If videos are provided as a prop, use them
     if (videos && videos.length > 0) {
-      // Convert VideoData format to Video format with proper validation
       const formattedVideos = videos.map(video => {
-        // Validate date - ensure we have a valid date or use current date
         let validatedDate: string | Date;
         try {
           if (video.uploadedAt) {
-            // Handle if uploadedAt is a Date object directly
             if (video.uploadedAt instanceof Date) {
-              // Check if it's a valid date
               if (!isNaN(video.uploadedAt.getTime())) {
                 validatedDate = video.uploadedAt;
               } else {
                 validatedDate = new Date().toISOString();
               }
             } else {
-              // uploadedAt is a string, test if we can create a valid date from it
               const testDate = new Date(video.uploadedAt);
-              // Check if the date is valid (not NaN)
               if (!isNaN(testDate.getTime())) {
                 validatedDate = video.uploadedAt;
               } else {
-                // Invalid date, use current time
                 validatedDate = new Date().toISOString();
               }
             }
           } else {
-            // No date provided, use current time
             validatedDate = new Date().toISOString();
           }
         } catch (err) {
@@ -89,19 +121,24 @@ export const VideoGrid = ({
       });
 
       setVideosToDisplay(formattedVideos);
+      
+      const initialVisibleCount = Math.min(formattedVideos.length, isMobile ? 4 : 8);
+      setVisibleVideos(formattedVideos.slice(0, initialVisibleCount));
+      
       setLoading(false);
       return;
     }
 
-    // If no videos are provided, fetch them from the database
     const fetchVideos = async () => {
       setLoading(true);
       try {
+        const initialLimit = isMobile ? 4 : 12;
+        
         const { data, error } = await supabase
           .from("youtube_videos")
           .select("*")
           .order("id", { ascending: false })
-          .limit(100);
+          .limit(initialLimit);
 
         if (error) {
           console.error("Error fetching videos:", error);
@@ -109,9 +146,7 @@ export const VideoGrid = ({
         }
 
         if (data) {
-          // Process the data to ensure valid date objects
           const processedData = data.map(video => {
-            // Validate uploaded_at date
             let validUploadedAt: string;
             try {
               if (video.uploaded_at) {
@@ -139,11 +174,12 @@ export const VideoGrid = ({
             };
           });
           
-          const shuffledVideos = processedData
-            .sort(() => 0.5 - Math.random())
-            .slice(0, maxVideos);
+          setVideosToDisplay(processedData);
+          setVisibleVideos(processedData);
           
-          setVideosToDisplay(shuffledVideos);
+          setTimeout(() => {
+            fetchMoreVideos(initialLimit);
+          }, 2000);
         }
       } catch (err) {
         console.error("Unexpected error:", err);
@@ -151,9 +187,59 @@ export const VideoGrid = ({
         setLoading(false);
       }
     };
+    
+    const fetchMoreVideos = async (initialLimit: number) => {
+      try {
+        const { data, error } = await supabase
+          .from("youtube_videos")
+          .select("*")
+          .order("id", { ascending: false })
+          .range(initialLimit, initialLimit + 88);
+
+        if (error) {
+          console.error("Error fetching more videos:", error);
+          return;
+        }
+
+        if (data && data.length > 0) {
+          const processedData = data.map(video => {
+            let validUploadedAt: string;
+            try {
+              if (video.uploaded_at) {
+                const testDate = new Date(video.uploaded_at);
+                validUploadedAt = !isNaN(testDate.getTime()) 
+                  ? video.uploaded_at 
+                  : new Date().toISOString();
+              } else {
+                validUploadedAt = new Date().toISOString();
+              }
+            } catch (err) {
+              console.error("Date processing error:", err);
+              validUploadedAt = new Date().toISOString();
+            }
+
+            return {
+              id: video.id,
+              video_id: video.video_id,
+              title: video.title || "Untitled Video",
+              thumbnail: video.thumbnail || "/placeholder.svg",
+              channelName: video.channel_name || "Unknown Channel",
+              channelId: video.channel_id,
+              views: video.views || 0,
+              uploadedAt: validUploadedAt
+            };
+          });
+          
+          setVideosToDisplay(prev => [...prev, ...processedData]);
+          console.log(`Loaded ${processedData.length} additional videos in the background`);
+        }
+      } catch (err) {
+        console.error("Error in background fetch:", err);
+      }
+    };
 
     fetchVideos();
-  }, [videos, maxVideos]); // Dependency ensures correct re-fetch behavior
+  }, [videos, maxVideos, isMobile]);
 
   if (isLoading || loading) {
     return (
@@ -164,10 +250,14 @@ export const VideoGrid = ({
   }
 
   return (
-    <div className={cn("grid", isMobile ? "grid-cols-2 gap-x-2 gap-y-3" : `grid-cols-${rowSize} gap-4`, className)}>
+    <div ref={gridRef} className={cn("grid", isMobile ? "grid-cols-2 gap-x-2 gap-y-3" : `grid-cols-${rowSize} gap-4`, className)}>
       {videosToDisplay.length > 0 ? (
         videosToDisplay.map((video) => (
-          <div key={video.id} className={cn("w-full flex flex-col", isMobile && "mb-2")}>
+          <div 
+            key={video.id} 
+            className={cn("w-full flex flex-col video-card-container", isMobile && "mb-2")}
+            data-video-id={video.id}
+          >
             <VideoCard
               id={video.id}
               video_id={video.video_id}
@@ -177,6 +267,7 @@ export const VideoGrid = ({
               channelId={video.channelId}
               views={video.views || 0}
               uploadedAt={video.uploadedAt}
+              isLazy={!visibleVideos.some(v => v.id === video.id)}
             />
           </div>
         ))

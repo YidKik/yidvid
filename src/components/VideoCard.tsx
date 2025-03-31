@@ -4,6 +4,7 @@ import { formatDistanceToNow } from "date-fns";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { VideoPlaceholder } from "@/components/video/VideoPlaceholder";
+import { useEffect, useState } from "react";
 
 interface VideoCardProps {
   id: string;
@@ -18,6 +19,7 @@ interface VideoCardProps {
   channelThumbnail?: string;
   hideInfo?: boolean;
   className?: string;
+  isLazy?: boolean;
 }
 
 export const VideoCard = ({
@@ -32,9 +34,46 @@ export const VideoCard = ({
   uploadedAt,
   channelThumbnail,
   hideInfo = false,
-  className
+  className,
+  isLazy = false
 }: VideoCardProps) => {
   const { isMobile } = useIsMobile();
+  const [isLoaded, setIsLoaded] = useState(!isLazy);
+  
+  // When isLazy changes (e.g., when the component becomes visible), update the loaded state
+  useEffect(() => {
+    if (!isLazy && !isLoaded) {
+      setIsLoaded(true);
+    }
+  }, [isLazy, isLoaded]);
+  
+  // If this component should be lazy loaded and hasn't been triggered yet, render a placeholder
+  if (isLazy && !isLoaded) {
+    return (
+      <div className={cn(
+        "block w-full cursor-pointer",
+        className
+      )}>
+        <div className="relative w-full overflow-hidden rounded-lg bg-muted/30">
+          <div className="aspect-video w-full overflow-hidden">
+            <VideoPlaceholder size="small" />
+          </div>
+        </div>
+        
+        {!hideInfo && (
+          <div className="mt-2 flex items-start space-x-2 animate-pulse">
+            <div className="flex-shrink-0 mt-0.5">
+              <div className="h-8 w-8 rounded-full bg-muted"></div>
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="h-4 bg-muted rounded w-3/4 mb-1"></div>
+              <div className="h-3 bg-muted/70 rounded w-1/2 mt-1"></div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
   
   // Determine the correct ID to use for navigation
   const videoIdForLink = video_id || id;
