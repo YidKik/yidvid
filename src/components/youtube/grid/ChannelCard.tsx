@@ -4,22 +4,18 @@ import { useHiddenChannels } from "@/hooks/channel/useHiddenChannels";
 import { EyeOffIcon } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { Channel } from "@/hooks/channel/useChannelsGrid";
 
-interface ChannelCardProps {
-  id: string;
-  channel_id: string;
-  title: string;
-  thumbnail_url: string | null;
-  index: number;
+export interface ChannelCardProps {
+  channel: Channel;
+  index?: number;
 }
 
 export const ChannelCard = ({
-  id,
-  channel_id,
-  title,
-  thumbnail_url,
-  index
+  channel,
+  index = 0
 }: ChannelCardProps) => {
+  const { id, channel_id, title, thumbnail_url } = channel;
   const { hiddenChannels, hideChannel } = useHiddenChannels();
   const [showControls, setShowControls] = useState(false);
 
@@ -30,7 +26,7 @@ export const ChannelCard = ({
   };
 
   // Check if this is a sample channel
-  const isSample = id.toString().includes('sample') || channel_id.includes('sample');
+  const isSample = id?.toString().includes('sample') || channel_id?.includes('sample');
 
   // Animation delay based on index
   const animationDelay = `${0.05 * (index % 10)}s`;
