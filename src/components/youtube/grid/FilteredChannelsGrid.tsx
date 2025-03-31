@@ -36,8 +36,8 @@ export const FilteredChannelsGrid = ({
   }, [channels, initialized]);
 
   return (
-    <ScrollArea className={isMainPage ? "max-h-[600px]" : "max-h-full"}>
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-4 mt-2">
+    <ScrollArea className={isMainPage ? "h-[70vh] md:h-[75vh]" : "max-h-full"}>
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-4 mt-2 pb-4">
         {displayChannels.map((channel, index) => (
           <ChannelCard 
             key={channel.id?.toString() || `channel-${index}`}
