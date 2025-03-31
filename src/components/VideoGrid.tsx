@@ -6,6 +6,7 @@ import { LoadingAnimation } from "@/components/ui/LoadingAnimation";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { VideoData } from "@/hooks/video/types/video-fetcher";
 
 interface Video {
   id: string;
@@ -19,15 +20,19 @@ interface Video {
 }
 
 interface VideoGridProps {
+  videos?: VideoData[];
   maxVideos?: number;
   rowSize?: number;
   className?: string;
+  isLoading?: boolean;
 }
 
 export const VideoGrid = ({
+  videos,
   maxVideos = 12,
   rowSize = 4,
   className,
+  isLoading = false,
 }: VideoGridProps) => {
   const isMobile = useIsMobile();
   const location = useLocation();
@@ -35,6 +40,26 @@ export const VideoGrid = ({
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
+    // If videos are provided as a prop, use them
+    if (videos && videos.length > 0) {
+      // Convert VideoData format to Video format
+      const formattedVideos = videos.map(video => ({
+        id: video.id,
+        video_id: video.video_id,
+        title: video.title || "Untitled Video",
+        thumbnail: video.thumbnail || "/placeholder.svg",
+        channelName: video.channelName || "Unknown Channel",
+        channelId: video.channelId,
+        views: video.views || 0,
+        uploadedAt: isValidDate(video.uploadedAt) ? video.uploadedAt : new Date().toISOString()
+      }));
+
+      setVideosToDisplay(formattedVideos);
+      setLoading(false);
+      return;
+    }
+
+    // If no videos are provided, fetch them from the database
     const fetchVideos = async () => {
       setLoading(true);
       try {
@@ -52,7 +77,13 @@ export const VideoGrid = ({
         if (data) {
           // Process the data to ensure valid date objects
           const processedData = data.map(video => ({
-            ...video,
+            id: video.id,
+            video_id: video.video_id,
+            title: video.title || "Untitled Video",
+            thumbnail: video.thumbnail || "/placeholder.svg",
+            channelName: video.channel_name || "Unknown Channel",
+            channelId: video.channel_id,
+            views: video.views || 0,
             // Ensure we have a valid date or default to current date
             uploadedAt: isValidDate(video.uploaded_at) ? video.uploaded_at : new Date().toISOString()
           }));
@@ -71,7 +102,7 @@ export const VideoGrid = ({
     };
 
     fetchVideos();
-  }, [maxVideos]); // Dependency ensures correct re-fetch behavior
+  }, [videos, maxVideos]); // Dependency ensures correct re-fetch behavior
 
   // Helper function to validate dates
   const isValidDate = (dateString: string | null | undefined): boolean => {
@@ -84,7 +115,7 @@ export const VideoGrid = ({
     return !isNaN(date.getTime());
   };
 
-  if (loading) {
+  if (isLoading || loading) {
     return (
       <div className={cn("flex items-center justify-center", isMobile ? "min-h-[200px]" : "min-h-[400px]")}>
         <LoadingAnimation size={isMobile ? "small" : "medium"} color="primary" text="Loading videos..." />

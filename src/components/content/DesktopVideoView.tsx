@@ -1,5 +1,4 @@
 
-
 import { VideoGrid } from "@/components/VideoGrid";
 import { VideoGridPagination } from "@/components/video/VideoGridPagination";
 import { MostViewedVideos } from "@/components/video/MostViewedVideos";
@@ -65,26 +64,8 @@ export const DesktopVideoView = ({
           isLoading={isLoading || isRefreshing}
           className="grid-cols-4 gap-4"
         />
-{/*         
-        {sortedVideos.length > 0 && (
-          <VideoGridPagination
-            showAll={true}
-            currentPage={currentPage}
-            totalPages={totalPages}
-            filteredVideosLength={sortedVideos.length}
-            maxVideos={videosPerPage}
-            onShowAll={() => setCurrentPage(1)}
-            onPageChange={setCurrentPage}
-          />
-        )} */}
       </div>
 
-      {/* {sortedVideos.length > 0 && (
-        <div>
-          <MostViewedVideos videos={sortedVideos} />
-        </div>
-      )} */}
-      
       <div className="mt-6">
         <ChannelsGrid onError={() => {
           console.error('Channel grid error');

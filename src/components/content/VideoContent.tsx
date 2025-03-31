@@ -154,7 +154,6 @@ export const VideoContent = ({
           forceRefetch={handleForceRefetch}
           lastSuccessfulFetch={lastSuccessfulFetch}
           fetchAttempts={fetchAttempts || 0}
-          isTablet={isTablet}
         />
       )}
     </div>
