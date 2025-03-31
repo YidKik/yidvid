@@ -4,18 +4,22 @@ import { useHiddenChannels } from "@/hooks/channel/useHiddenChannels";
 import { EyeOffIcon } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { Channel } from "@/hooks/channel/useChannelsGrid";
 
-export interface ChannelCardProps {
-  channel: Channel;
-  index?: number;
+interface ChannelCardProps {
+  id: string;
+  channel_id: string;
+  title: string;
+  thumbnail_url: string | null;
+  index: number;
 }
 
 export const ChannelCard = ({
-  channel,
-  index = 0
+  id,
+  channel_id,
+  title,
+  thumbnail_url,
+  index
 }: ChannelCardProps) => {
-  const { id, channel_id, title, thumbnail_url } = channel;
   const { hiddenChannels, hideChannel } = useHiddenChannels();
   const [showControls, setShowControls] = useState(false);
 

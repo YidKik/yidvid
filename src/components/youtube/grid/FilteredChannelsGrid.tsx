@@ -37,12 +37,8 @@ export const FilteredChannelsGrid = ({
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-4 mt-2">
-      {displayChannels.map((channel, index) => (
-        <ChannelCard 
-          key={channel.id} 
-          channel={channel} 
-          index={index} 
-        />
+      {displayChannels.map((channel) => (
+        <ChannelCard key={channel.id} channel={channel} />
       ))}
     </div>
   );
