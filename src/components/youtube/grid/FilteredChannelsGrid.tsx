@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Channel } from "@/hooks/channel/useChannelsGrid";
 import { ChannelCard } from "./ChannelCard";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface FilteredChannelsGridProps {
   channels: Channel[];
@@ -18,32 +19,33 @@ export const FilteredChannelsGrid = ({
   // Process channels only once when component mounts or channels change
   useEffect(() => {
     if (!initialized && channels.length > 0) {
-      const limitedChannels = isMainPage ? channels.slice(0, 8) : channels;
-      
+      // Always show all channels, regardless of main page or not
       const hasRealChannels = channels.some(c => 
         !c.id.toString().includes('sample') && 
         c.title !== 'Sample Channel');
       
       if (hasRealChannels) {
-        console.log(`Displaying ${limitedChannels.length} REAL channels`);
+        console.log(`Displaying ${channels.length} REAL channels`);
       } else {
-        console.log(`Displaying ${limitedChannels.length} SAMPLE channels`);
+        console.log(`Displaying ${channels.length} SAMPLE channels`);
       }
       
-      setDisplayChannels(limitedChannels);
+      setDisplayChannels(channels);
       setInitialized(true);
     }
-  }, [channels, isMainPage, initialized]);
+  }, [channels, initialized]);
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-4 mt-2">
-      {displayChannels.map((channel, index) => (
-        <ChannelCard 
-          key={channel.id} 
-          channel={channel} 
-          index={index}
-        />
-      ))}
-    </div>
+    <ScrollArea className={isMainPage ? "max-h-[600px]" : "max-h-full"}>
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-4 mt-2">
+        {displayChannels.map((channel, index) => (
+          <ChannelCard 
+            key={channel.id?.toString() || `channel-${index}`}
+            channel={channel} 
+            index={index}
+          />
+        ))}
+      </div>
+    </ScrollArea>
   );
 };

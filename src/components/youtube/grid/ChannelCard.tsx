@@ -25,8 +25,8 @@ export const ChannelCard = ({
     hideChannel(channel_id);
   };
 
-  // Check if this is a sample channel
-  const isSample = id?.toString().includes('sample') || channel_id?.includes('sample');
+  // Check if this is a sample channel, safely handling undefined properties
+  const isSample = id?.toString()?.includes('sample') || channel_id?.includes('sample');
 
   // Animation delay based on index
   const animationDelay = `${0.05 * (index % 10)}s`;
