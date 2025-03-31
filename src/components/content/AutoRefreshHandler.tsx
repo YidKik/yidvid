@@ -1,4 +1,5 @@
-import { useEffect } from "react";
+
+import { useEffect, useState, useRef } from "react";
 import { VideoData } from "@/hooks/video/types/video-fetcher";
 import { toast } from "sonner";
 import { clearApplicationCache } from "@/lib/query-client";
@@ -16,22 +17,38 @@ export const AutoRefreshHandler: React.FC<AutoRefreshHandlerProps> = ({
   lastSuccessfulFetch,
   forceRefetch
 }) => {
-  // Function to clear cache and force refresh
+  const [lastCacheClear, setLastCacheClear] = useState<number | null>(null);
+  const hasTriggeredInitialFetch = useRef(false);
+  
+  // Function to clear cache and force refresh with rate limiting
   const clearCacheAndRefresh = async () => {
     if (isRefreshing || !forceRefetch) return;
+    
+    // Check if we've cleared cache recently (within 5 minutes)
+    const now = new Date().getTime();
+    if (lastCacheClear && now - lastCacheClear < 5 * 60 * 1000) {
+      console.log("Skipping cache clear - too recent");
+      return;
+    }
     
     try {
       console.log("Auto clearing application cache...");
       await clearApplicationCache();
+      setLastCacheClear(now);
+      
+      // Store in localStorage to persist between sessions
+      localStorage.setItem('lastCacheClearTime', now.toString());
       
       // Short delay before refresh to ensure cache is cleared
       setTimeout(async () => {
-        try {
-          console.log("Auto refreshing content after cache clear...");
-          await forceRefetch();
-          console.log("Content refreshed successfully after cache clear");
-        } catch (error) {
-          console.error("Failed to refresh after cache clear:", error);
+        if (!isRefreshing) {
+          try {
+            console.log("Auto refreshing content after cache clear...");
+            await forceRefetch();
+            console.log("Content refreshed successfully after cache clear");
+          } catch (error) {
+            console.error("Failed to refresh after cache clear:", error);
+          }
         }
       }, 300);
     } catch (error) {
@@ -41,8 +58,8 @@ export const AutoRefreshHandler: React.FC<AutoRefreshHandlerProps> = ({
   
   // Optimize refresh logic to immediately load real content
   useEffect(() => {
-    // Skip if we're already refreshing
-    if (isRefreshing || !forceRefetch) return;
+    // Skip if we're already refreshing or if we've already triggered an initial fetch
+    if (isRefreshing || !forceRefetch || hasTriggeredInitialFetch.current) return;
     
     // Check if we have only sample videos (not real ones)
     const hasOnlySampleVideos = videos.length > 0 && 
@@ -52,9 +69,11 @@ export const AutoRefreshHandler: React.FC<AutoRefreshHandlerProps> = ({
         v.channelName === "Sample Channel"
       );
     
-    // Only trigger if we have missing or sample data
+    // Only trigger if we have missing or sample data and haven't triggered before
     if (videos.length === 0 || hasOnlySampleVideos) {
       console.log("No real videos detected, triggering immediate cache clear and refresh...");
+      // Mark that we've triggered an initial fetch
+      hasTriggeredInitialFetch.current = true;
       // Clear cache and force refresh to get real content
       clearCacheAndRefresh();
     } else if (lastSuccessfulFetch && 
@@ -63,10 +82,12 @@ export const AutoRefreshHandler: React.FC<AutoRefreshHandlerProps> = ({
       console.log("Content is stale (>30 minutes). Triggering automatic refresh...");
       // Add a small delay to avoid interfering with initial page load
       setTimeout(() => {
-        forceRefetch().catch(error => {
-          console.error("Failed to refresh stale content:", error);
-        });
-      }, 100); // Reduced from 200ms to 100ms
+        if (!isRefreshing) {
+          forceRefetch().catch(error => {
+            console.error("Failed to refresh stale content:", error);
+          });
+        }
+      }, 100);
     }
   }, [videos, lastSuccessfulFetch, forceRefetch, isRefreshing]);
   
@@ -76,31 +97,17 @@ export const AutoRefreshHandler: React.FC<AutoRefreshHandlerProps> = ({
         new Date().getTime() - new Date(lastSuccessfulFetch).getTime() > 3600000 && // More than 1 hour
         !isRefreshing &&
         forceRefetch) {
-      console.log("Content is stale (>1 hour). Clearing cache automatically...");
-      clearCacheAndRefresh();
+      const lastRefresh = localStorage.getItem('lastHourlyRefresh');
+      const now = new Date().getTime();
+      
+      if (!lastRefresh || now - parseInt(lastRefresh) > 30 * 60 * 1000) {
+        console.log("Content is stale (>1 hour). Clearing cache automatically...");
+        clearCacheAndRefresh();
+        localStorage.setItem('lastHourlyRefresh', now.toString());
+      }
     }
   }, [lastSuccessfulFetch, isRefreshing, forceRefetch]);
   
-  // Additional cache clearing on component mount to ensure fresh content
-  useEffect(() => {
-    // Check when the cache was last cleared
-    const lastCacheClear = localStorage.getItem('lastCacheClearTime');
-    const now = new Date().getTime();
-    
-    // If cache hasn't been cleared in the last 4 hours, clear it
-    if (!lastCacheClear || (now - parseInt(lastCacheClear)) > 4 * 3600000) {
-      console.log("No recent cache clearing detected. Performing scheduled cache clear...");
-      
-      // Only clear cache if we have a way to refresh content
-      if (forceRefetch && !isRefreshing) {
-        clearCacheAndRefresh().then(() => {
-          // Record the time of this cache clear
-          localStorage.setItem('lastCacheClearTime', now.toString());
-        });
-      }
-    }
-  }, []);
-  
-  // This is a utility component with no UI
+  // This component intentionally has no UI
   return null;
 };

@@ -1,4 +1,3 @@
-
 import { clearApplicationCache } from "@/lib/query-client";
 import { 
   fetchVideosFromDatabase, 
@@ -36,44 +35,47 @@ export const fetchAllVideosOperation = async (
   }
   
   try {
-    // First try direct database query with anon key
+    // First try direct database query
     let videosData: any[] = await performDirectDatabaseQuery();
     
-    // If direct query failed, try fetchVideosFromDatabase with additional fallbacks
-    if (videosData.length === 0) {
-      try {
-        videosData = await fetchVideosFromDatabase();
-        
-        // If we already have videos, set successful fetch even if the next part fails
-        if (videosData.length > 0) {
-          setLastSuccessfulFetch(new Date());
-          console.log(`Successfully fetched ${videosData.length} videos from database`);
-        } else {
-          console.warn("No videos found in database, will try to fetch new ones with high priority");
-        }
-      } catch (error) {
-        console.error("Error fetching videos from database:", error);
-        // Continue to fetch with edge function
+    // If direct query returned data, we're good
+    if (videosData.length > 0) {
+      setLastSuccessfulFetch(new Date());
+      console.log(`Successfully fetched ${videosData.length} videos from direct query`);
+      return formatVideoData(videosData);
+    }
+    
+    // Otherwise try regular database fetch
+    try {
+      videosData = await fetchVideosFromDatabase();
+      
+      // If we got videos, set successful fetch
+      if (videosData.length > 0) {
+        setLastSuccessfulFetch(new Date());
+        console.log(`Successfully fetched ${videosData.length} videos from database`);
+      } else {
+        console.warn("No videos found in database, will try to fetch new ones");
       }
+    } catch (error) {
+      console.error("Error fetching videos from database:", error);
+      // Continue to fetch with edge function
     }
 
-    // Try to get active channels, but don't fail the whole operation if this fails
+    // Try to get active channels
     let channelIds: string[] = [];
     try {
       const channels = await fetchActiveChannels();
       channelIds = channels?.map(c => c.channel_id) || [];
-      console.log(`Found ${channelIds.length} channels to process with high priority`);
     } catch (error) {
       console.error("Error fetching channels:", error);
       // Continue with what we have
     }
 
-    // Only try to fetch new videos if we have channels and it's been at least 5 minutes since last attempt
+    // If we have channels and it's been at least 5 minutes since last attempt
     if (channelIds.length > 0) {
       const lastYoutubeAttempt = localStorage.getItem('lastYoutubeApiAttempt');
       const now = new Date().getTime();
       
-      // Limit YouTube API calls to prevent quota issues and feedback loops
       if (!lastYoutubeAttempt || (now - parseInt(lastYoutubeAttempt) > 5 * 60 * 1000)) {
         try {
           localStorage.setItem('lastYoutubeApiAttempt', now.toString());
@@ -100,23 +102,22 @@ export const fetchAllVideosOperation = async (
       }
     }
 
-    // If we still have no videos, only then create sample data as fallback
-    if (videosData.length === 0) {
-      console.warn("No videos found, creating fallback sample data");
-      videosData = createSampleVideoData();
+    // If we have videos by now, return them
+    if (videosData.length > 0) {
+      // Increment fetch attempts counter for tracking
+      setFetchAttempts(prev => prev + 1);
+      return formatVideoData(videosData);
     }
 
-    // Log success and increase fetch attempt counter
+    // If all else failed, create sample data as fallback
+    console.warn("No videos found, creating fallback sample data");
     setFetchAttempts(prev => prev + 1);
-    
-    // Return the data we got
-    return formatVideoData(videosData);
+    return formatVideoData(createSampleVideoData());
   } catch (error: any) {
     console.error("Error in video fetching process:", error);
-    // For any errors, increase the fetch attempts counter
     setFetchAttempts(prev => prev + 1);
     
-    // Create and return fallback data only if we have no real data
+    // Last resort - return sample data
     return formatVideoData(createSampleVideoData());
   }
 };
@@ -143,8 +144,13 @@ export const forceRefetchOperation = async (
   // Record this operation
   localStorage.setItem('lastForceOperation', now.toString());
   
-  // Clear cache before force refresh to ensure freshest possible data
-  await clearApplicationCache();
-  setFetchAttempts(prev => prev + 1);
-  return fetchAllVideosFunc();
+  try {
+    // Clear cache before force refresh
+    await clearApplicationCache();
+    setFetchAttempts(prev => prev + 1);
+    return fetchAllVideosFunc();
+  } catch (error) {
+    console.error("Error in force refresh:", error);
+    return [];
+  }
 };
