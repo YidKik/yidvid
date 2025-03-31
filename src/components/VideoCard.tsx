@@ -39,10 +39,22 @@ export const VideoCard = ({
   // Determine the correct ID to use for navigation
   const videoIdForLink = video_id || id;
   
-  // Format the upload date
-  const formattedDate = typeof uploadedAt === "string" 
-    ? formatDistanceToNow(new Date(uploadedAt), { addSuffix: true })
-    : formatDistanceToNow(uploadedAt, { addSuffix: true });
+  // Format the upload date with error handling
+  const getFormattedDate = () => {
+    try {
+      if (typeof uploadedAt === "string") {
+        return formatDistanceToNow(new Date(uploadedAt), { addSuffix: true });
+      } else if (uploadedAt instanceof Date) {
+        return formatDistanceToNow(uploadedAt, { addSuffix: true });
+      }
+      return "recently";
+    } catch (error) {
+      console.error("Error formatting date:", error, uploadedAt);
+      return "recently"; // Fallback for invalid dates
+    }
+  };
+  
+  const formattedDate = getFormattedDate();
   
   // Format views count
   const formatViews = (count: number | null | undefined) => {
