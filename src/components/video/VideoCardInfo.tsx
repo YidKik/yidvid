@@ -10,6 +10,7 @@ interface VideoCardInfoProps {
   views?: number | null;
   formattedDate: string;
   channelThumbnail?: string;
+  hideChannelName?: boolean;
 }
 
 export const VideoCardInfo = ({
@@ -18,7 +19,8 @@ export const VideoCardInfo = ({
   channelId,
   views,
   formattedDate,
-  channelThumbnail
+  channelThumbnail,
+  hideChannelName = false
 }: VideoCardInfoProps) => {
   const { isMobile } = useIsMobile();
   
@@ -65,13 +67,15 @@ export const VideoCardInfo = ({
         </h3>
         
         <div className="mt-1 flex flex-col text-xs text-muted-foreground">
-          <Link 
-            to={`/channel/${channelId}`}
-            className="hover:text-foreground hover:underline"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {channelName}
-          </Link>
+          {!hideChannelName && (
+            <Link 
+              to={`/channel/${channelId}`}
+              className="hover:text-foreground hover:underline"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {channelName}
+            </Link>
+          )}
           
           <div className="flex flex-col sm:flex-row sm:items-center">
             <span>{formatViews(views)}</span>

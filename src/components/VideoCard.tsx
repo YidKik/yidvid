@@ -19,6 +19,7 @@ interface VideoCardProps {
   uploadedAt: string | Date;
   channelThumbnail?: string;
   hideInfo?: boolean;
+  hideChannelName?: boolean;
   className?: string;
   isLazy?: boolean;
 }
@@ -35,6 +36,7 @@ export const VideoCard = ({
   uploadedAt,
   channelThumbnail,
   hideInfo = false,
+  hideChannelName = false,
   className,
   isLazy = false
 }: VideoCardProps) => {
@@ -85,6 +87,7 @@ export const VideoCard = ({
           views={views}
           formattedDate={formattedDate}
           channelThumbnail={channelThumbnail}
+          hideChannelName={hideChannelName}
         />
       )}
     </Link>
