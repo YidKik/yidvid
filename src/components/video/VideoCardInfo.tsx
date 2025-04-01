@@ -24,9 +24,15 @@ export const VideoCardInfo = ({
 }: VideoCardInfoProps) => {
   const { isMobile } = useIsMobile();
   
-  // Format views count
+  // Format views count with improved handling
   const formatViews = (count: number | null | undefined) => {
-    if (count === null || count === undefined) return "0 views";
+    // Check if we have a valid number greater than 0
+    if (count === null || count === undefined || count === 0) {
+      // For now return "No views" but this will be updated with actual data
+      return "No views yet";
+    }
+    
+    // Format numbers appropriately
     if (count < 1000) return `${count} views`;
     if (count < 1000000) return `${(count / 1000).toFixed(1)}K views`;
     return `${(count / 1000000).toFixed(1)}M views`;

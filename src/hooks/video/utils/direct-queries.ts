@@ -7,7 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
  */
 export const performDirectDatabaseQuery = async (): Promise<any[]> => {
   try {
-    // Use a direct query instead of RPC
+    // Use a direct query with explicit columns including views
     const { data, error } = await supabase
       .from('youtube_videos')
       .select('id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at')
@@ -47,7 +47,11 @@ export const performDirectDatabaseQuery = async (): Promise<any[]> => {
       return fallbackData || [];
     }
     
-    return data || [];
+    // Process the data to ensure views are correctly formatted
+    return data.map(video => ({
+      ...video,
+      views: typeof video.views === 'number' ? video.views : 0
+    })) || [];
   } catch (error) {
     console.error("Error in direct database query:", error);
     return [];

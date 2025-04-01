@@ -34,6 +34,7 @@ export const useVideoGridData = (maxVideos: number = 12) => {
         }
         
         // Map the Supabase data to match our VideoGridItem interface
+        // Ensure we handle the views field properly
         const mappedVideos = data.map(video => ({
           id: video.id,
           video_id: video.video_id,
@@ -41,7 +42,7 @@ export const useVideoGridData = (maxVideos: number = 12) => {
           thumbnail: video.thumbnail || '/placeholder.svg',
           channelName: video.channel_name || "Unknown Channel",
           channelId: video.channel_id || "unknown-channel",
-          views: typeof video.views === 'number' ? video.views : 0,
+          views: video.views !== null ? parseInt(String(video.views)) : null,
           uploadedAt: video.uploaded_at || new Date().toISOString(),
         }));
         

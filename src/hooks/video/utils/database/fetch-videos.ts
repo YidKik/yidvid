@@ -10,6 +10,7 @@ export const fetchVideosFromDatabase = async (): Promise<any[]> => {
     console.log("Fetching videos from database with optimized performance...");
     
     // Try a simplified query first without complex joins for anonymous access
+    // Explicitly include views in the query
     const { data: simpleData, error: simpleError } = await supabase
       .from("youtube_videos")
       .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, category, description")
@@ -19,7 +20,12 @@ export const fetchVideosFromDatabase = async (): Promise<any[]> => {
       
     if (!simpleError && simpleData && simpleData.length > 0) {
       console.log(`Successfully fetched ${simpleData.length} videos with simplified query`);
-      return simpleData;
+      
+      // Ensure views are correctly processed
+      return simpleData.map(video => ({
+        ...video,
+        views: video.views !== null ? parseInt(String(video.views)) : 0
+      }));
     }
     
     if (simpleError) {
@@ -34,7 +40,12 @@ export const fetchVideosFromDatabase = async (): Promise<any[]> => {
         
       if (!basicError && basicData && basicData.length > 0) {
         console.log(`Got ${basicData.length} videos with basic query`);
-        return basicData;
+        
+        // Process views for this data too
+        return basicData.map(video => ({
+          ...video,
+          views: video.views !== null ? parseInt(String(video.views)) : 0
+        }));
       }
       
       if (basicError) {
@@ -49,7 +60,12 @@ export const fetchVideosFromDatabase = async (): Promise<any[]> => {
           
         if (!minimalError && minimalData && minimalData.length > 0) {
           console.log(`Retrieved ${minimalData.length} videos with minimal query`);
-          return minimalData;
+          
+          // Process views for this data as well
+          return minimalData.map(video => ({
+            ...video,
+            views: video.views !== null ? parseInt(String(video.views)) : 0
+          }));
         }
         
         console.error("All query methods failed:", minimalError);
@@ -73,6 +89,7 @@ export const fetchUpdatedVideosAfterSync = async (): Promise<any[]> => {
     console.log("Fetching updated videos after sync...");
     
     // Simplified query without RLS-triggering filters
+    // Explicitly include views in the query
     const { data, error } = await supabase
       .from("youtube_videos")
       .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, category, description")
@@ -90,7 +107,11 @@ export const fetchUpdatedVideosAfterSync = async (): Promise<any[]> => {
         .limit(100);
         
       if (!basicError && basicData && basicData.length > 0) {
-        return basicData;
+        // Process views for this data
+        return basicData.map(video => ({
+          ...video,
+          views: video.views !== null ? parseInt(String(video.views)) : 0
+        }));
       }
       
       return [];
@@ -102,7 +123,12 @@ export const fetchUpdatedVideosAfterSync = async (): Promise<any[]> => {
     }
     
     console.log(`Successfully fetched ${data?.length || 0} updated videos`);
-    return data;
+    
+    // Process views for this data
+    return data.map(video => ({
+      ...video,
+      views: video.views !== null ? parseInt(String(video.views)) : 0
+    }));
   } catch (error) {
     console.error("Error in fetchUpdatedVideosAfterSync:", error);
     return [];
