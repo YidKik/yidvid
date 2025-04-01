@@ -195,10 +195,10 @@ export const VideoCard = ({
                 {channelName}
               </Link>
               
-              <div className="flex items-center">
+              <div className="flex flex-col sm:flex-row sm:items-center">
                 <span>{formatViews(views)}</span>
-                <span className="mx-1">•</span>
-                <span>{formattedDate}</span>
+                <span className="hidden sm:inline mx-1">•</span>
+                <span className="font-medium text-xs">Uploaded {formattedDate}</span>
               </div>
             </div>
           </div>
