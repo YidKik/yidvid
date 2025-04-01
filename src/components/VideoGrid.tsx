@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { VideoCard } from "./VideoCard";
 import { LoadingAnimation } from "@/components/ui/LoadingAnimation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 interface Video {
@@ -48,8 +48,20 @@ export const VideoGrid = ({
       if (error) {
         console.error("Error fetching videos:", error);
       } else {
-        // No need to shuffle, we want ordered by newest first
-        const orderedVideos = data.slice(0, maxVideos);
+        // Map the Supabase data to match our Video interface
+        const mappedVideos = data.map(video => ({
+          id: video.id,
+          video_id: video.video_id,
+          title: video.title || "Untitled Video",
+          thumbnail: video.thumbnail || '/placeholder.svg',
+          channelName: video.channel_name || "Unknown Channel",
+          channelId: video.channel_id || "unknown-channel",
+          views: typeof video.views === 'number' ? video.views : 0,
+          uploadedAt: video.uploaded_at || new Date().toISOString(),
+        }));
+        
+        // Limit to maxVideos, still ordered by newest first
+        const orderedVideos = mappedVideos.slice(0, maxVideos);
         setDisplayVideos(orderedVideos || []);
       }
       setLoading(false);
