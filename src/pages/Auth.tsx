@@ -73,7 +73,8 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
             >
               <AuthOptions 
                 onSelectOption={handleSelectOption} 
-                onClose={() => onOpenChange(false)} 
+                onClose={() => onOpenChange(false)}
+                hideCloseButton={true} // Hide the close button in AuthOptions since Dialog provides one
               />
             </motion.div>
           ) : (

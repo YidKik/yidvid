@@ -7,14 +7,19 @@ import { X } from "lucide-react";
 interface AuthOptionsProps {
   onSelectOption: (option: 'signin' | 'signup') => void;
   onClose?: () => void;
+  hideCloseButton?: boolean; // New prop to hide the close button
 }
 
-export const AuthOptions = ({ onSelectOption, onClose }: AuthOptionsProps) => {
+export const AuthOptions = ({ 
+  onSelectOption, 
+  onClose,
+  hideCloseButton = false 
+}: AuthOptionsProps) => {
   const isMobile = useIsMobile();
   
   return (
     <div className="flex flex-col items-center justify-center p-12 space-y-10 backdrop-blur-md rounded-2xl relative">
-      {onClose && (
+      {!hideCloseButton && onClose && (
         <button 
           onClick={onClose}
           className="absolute top-4 right-4 text-[#ea384c] z-10"
