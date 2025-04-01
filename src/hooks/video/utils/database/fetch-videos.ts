@@ -14,7 +14,7 @@ export const fetchVideosFromDatabase = async (): Promise<any[]> => {
       .from("youtube_videos")
       .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, category, description")
       .is("deleted_at", null)
-      .order("uploaded_at", { ascending: false })
+      .order("uploaded_at", { ascending: false })  // Make sure we sort by newest first
       .limit(150);
       
     if (!simpleError && simpleData && simpleData.length > 0) {
@@ -29,6 +29,7 @@ export const fetchVideosFromDatabase = async (): Promise<any[]> => {
       const { data: basicData, error: basicError } = await supabase
         .from("youtube_videos")
         .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at")
+        .order("uploaded_at", { ascending: false })  // Ensure we're sorting by newest
         .limit(100);
         
       if (!basicError && basicData && basicData.length > 0) {
@@ -43,6 +44,7 @@ export const fetchVideosFromDatabase = async (): Promise<any[]> => {
         const { data: minimalData, error: minimalError } = await supabase
           .from("youtube_videos")
           .select("*")
+          .order("uploaded_at", { ascending: false })  // Still sorting by newest
           .limit(50);
           
         if (!minimalError && minimalData && minimalData.length > 0) {
@@ -74,7 +76,7 @@ export const fetchUpdatedVideosAfterSync = async (): Promise<any[]> => {
     const { data, error } = await supabase
       .from("youtube_videos")
       .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, category, description")
-      .order("uploaded_at", { ascending: false })
+      .order("uploaded_at", { ascending: false })  // Explicitly sort by newest first
       .limit(150);
 
     if (error) {
@@ -84,6 +86,7 @@ export const fetchUpdatedVideosAfterSync = async (): Promise<any[]> => {
       const { data: basicData, error: basicError } = await supabase
         .from("youtube_videos")
         .select("*")
+        .order("uploaded_at", { ascending: false })  // Still sort by newest
         .limit(100);
         
       if (!basicError && basicData && basicData.length > 0) {

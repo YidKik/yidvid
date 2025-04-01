@@ -25,8 +25,9 @@ export const useVideoGridData = (maxVideos: number = 12) => {
         const { data, error } = await supabase
           .from("youtube_videos")
           .select("*")
-          .order("uploaded_at", { ascending: false })
-          .limit(100);
+          .is("deleted_at", null)
+          .order("uploaded_at", { ascending: false })  // Explicitly sort by newest first
+          .limit(maxVideos);
         
         if (error) {
           throw new Error(`Error fetching videos: ${error.message}`);
@@ -44,9 +45,7 @@ export const useVideoGridData = (maxVideos: number = 12) => {
           uploadedAt: video.uploaded_at || new Date().toISOString(),
         }));
         
-        // Limit to maxVideos, still ordered by newest first
-        const orderedVideos = mappedVideos.slice(0, maxVideos);
-        setVideos(orderedVideos);
+        setVideos(mappedVideos);
       } catch (err) {
         console.error(err);
         setError(err instanceof Error ? err : new Error(String(err)));
