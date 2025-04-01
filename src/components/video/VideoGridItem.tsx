@@ -25,6 +25,7 @@ export const VideoGridItem = ({ video }: VideoGridItemProps) => {
         channelId={video.channelId}
         views={video.views || 0}
         uploadedAt={video.uploadedAt}
+        channelThumbnail={video.channelThumbnail}
       />
     </div>
   );

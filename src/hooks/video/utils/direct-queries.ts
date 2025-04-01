@@ -10,7 +10,17 @@ export const performDirectDatabaseQuery = async (): Promise<any[]> => {
     // Use a direct query instead of RPC
     const { data, error } = await supabase
       .from('youtube_videos')
-      .select('id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at')
+      .select(`
+        id, 
+        video_id, 
+        title, 
+        thumbnail, 
+        channel_name, 
+        channel_id, 
+        views, 
+        uploaded_at,
+        youtube_channels(thumbnail_url)
+      `)
       .is('deleted_at', null)
       .order('uploaded_at', { ascending: false })
       .limit(150);
@@ -21,7 +31,19 @@ export const performDirectDatabaseQuery = async (): Promise<any[]> => {
       // Fallback to an alternative query with more fields
       const { data: fallbackData, error: fallbackError } = await supabase
         .from('youtube_videos')
-        .select('id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, category, description')
+        .select(`
+          id, 
+          video_id, 
+          title, 
+          thumbnail, 
+          channel_name, 
+          channel_id, 
+          views, 
+          uploaded_at, 
+          category, 
+          description,
+          youtube_channels(thumbnail_url)
+        `)
         .is('deleted_at', null)
         .order('uploaded_at', { ascending: false })
         .limit(150);
