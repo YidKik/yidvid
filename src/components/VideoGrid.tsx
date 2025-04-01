@@ -1,24 +1,12 @@
 
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { VideoCard } from "./VideoCard";
-import { LoadingAnimation } from "@/components/ui/LoadingAnimation";
-import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-
-interface Video {
-  id: string;
-  video_id: string;
-  title: string;
-  thumbnail: string;
-  channelName: string;
-  channelId: string;
-  views: number | null;
-  uploadedAt: string | Date;
-}
+import { VideoGridLoader } from "@/components/video/VideoGridLoader";
+import { VideoGridItem } from "@/components/video/VideoGridItem";
+import { useVideoGridData, VideoGridItem as VideoItemType } from "@/hooks/video/useVideoGridData";
 
 interface VideoGridProps {
-  videos: Video[];
+  videos?: VideoItemType[];
   maxVideos?: number;
   rowSize?: number;
   isLoading?: boolean;
@@ -26,66 +14,22 @@ interface VideoGridProps {
 }
 
 export const VideoGrid = ({
-  videos,
+  videos: externalVideos,
   maxVideos = 12,
   rowSize = 4,
-  isLoading = false,
+  isLoading: externalLoading,
   className,
 }: VideoGridProps) => {
-  const isMobile = useIsMobile();
-  const [videosToDisplay, setDisplayVideos] = useState<Video[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-
-  useEffect(() => {
-    const fetchVideos = async () => {
-      setLoading(true);
-      const { data, error } = await supabase
-        .from("youtube_videos")
-        .select("*")
-        .order("uploaded_at", { ascending: false }) // Order by upload date, newest first
-        .limit(100); 
-      
-      if (error) {
-        console.error("Error fetching videos:", error);
-      } else {
-        // Map the Supabase data to match our Video interface
-        const mappedVideos = data.map(video => ({
-          id: video.id,
-          video_id: video.video_id,
-          title: video.title || "Untitled Video",
-          thumbnail: video.thumbnail || '/placeholder.svg',
-          channelName: video.channel_name || "Unknown Channel",
-          channelId: video.channel_id || "unknown-channel",
-          views: typeof video.views === 'number' ? video.views : 0,
-          uploadedAt: video.uploaded_at || new Date().toISOString(),
-        }));
-        
-        // Limit to maxVideos, still ordered by newest first
-        const orderedVideos = mappedVideos.slice(0, maxVideos);
-        setDisplayVideos(orderedVideos || []);
-      }
-      setLoading(false);
-    };
-
-    fetchVideos();
-  }, [maxVideos]);
+  const { isMobile } = useIsMobile();
+  const { videos: fetchedVideos, loading: internalLoading } = useVideoGridData(maxVideos);
+  
+  // Use external videos if provided, otherwise use fetched videos
+  const videos = externalVideos || fetchedVideos;
+  const isLoading = externalLoading !== undefined ? externalLoading : internalLoading;
 
   // On main page, use a simpler loading indicator
-  if (loading) {
-    return (
-      <div
-        className={cn(
-          "flex items-center justify-center",
-          isMobile ? "min-h-[200px]" : "min-h-[400px]"
-        )}
-      >
-        <LoadingAnimation
-          size={isMobile ? "small" : "medium"}
-          color="primary"
-          text="Loading videos..."
-        />
-      </div>
-    );
+  if (isLoading) {
+    return <VideoGridLoader />;
   }
 
   return (
@@ -96,22 +40,8 @@ export const VideoGrid = ({
         className
       )}
     >
-      {videosToDisplay.map((video) => (
-        <div
-          key={video.id || `video-${Math.random()}`}
-          className={cn("w-full flex flex-col", isMobile && "mb-2")}
-        >
-          <VideoCard
-            id={video.id}
-            video_id={video.video_id}
-            title={video.title || "Untitled Video"}
-            thumbnail={video.thumbnail || "/placeholder.svg"}
-            channelName={video.channelName || "Unknown Channel"}
-            channelId={video.channelId}
-            views={video.views || 0}
-            uploadedAt={video.uploadedAt}
-          />
-        </div>
+      {videos.map((video) => (
+        <VideoGridItem key={video.id} video={video} />
       ))}
     </div>
   );
