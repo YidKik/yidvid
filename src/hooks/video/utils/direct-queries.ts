@@ -7,14 +7,18 @@ import { supabase } from "@/integrations/supabase/client";
  */
 export const performDirectDatabaseQuery = async (): Promise<any[]> => {
   try {
-    // Direct query with minimal fields and explicit ordering
-    const { data, error } = await supabase.rpc('get_latest_videos', { limit_count: 150 })
-      .select('id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at');
+    // Use a direct query instead of RPC since the RPC function isn't defined in TypeScript types
+    const { data, error } = await supabase
+      .from('youtube_videos')
+      .select('id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at')
+      .is('deleted_at', null)
+      .order('uploaded_at', { ascending: false })
+      .limit(150);
     
     if (error) {
       console.error("Direct query failed:", error);
       
-      // Fallback to direct table query
+      // Fallback to an alternative query with more fields
       const { data: fallbackData, error: fallbackError } = await supabase
         .from('youtube_videos')
         .select('id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, category, description')
