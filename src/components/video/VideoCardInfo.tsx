@@ -2,7 +2,6 @@
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 interface VideoCardInfoProps {
   title: string;
@@ -34,23 +33,26 @@ export const VideoCardInfo = ({
   return (
     <div className="mt-2 flex items-start space-x-2">
       {/* Channel avatar */}
-      <Link 
-        to={`/channel/${channelId}`}
-        className="flex-shrink-0 mt-0.5"
-        onClick={(e) => e.stopPropagation()}
-        aria-label={`View channel: ${channelName}`}
-      >
-        <Avatar className="h-8 w-8">
-          <AvatarImage
-            src={channelThumbnail || "/lovable-uploads/efca5adc-d9d2-4c5b-8900-e078f9d49b6a.png"}
-            alt={channelName}
-            className="h-full w-full object-cover"
-          />
-          <AvatarFallback className="bg-primary/10 text-primary">
-            {channelName.charAt(0).toUpperCase()}
-          </AvatarFallback>
-        </Avatar>
-      </Link>
+      {channelThumbnail && (
+        <Link 
+          to={`/channel/${channelId}`}
+          className="flex-shrink-0 mt-0.5"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="h-8 w-8 overflow-hidden rounded-full">
+            <img
+              src={channelThumbnail}
+              alt={channelName}
+              className="h-full w-full object-cover"
+              loading="lazy"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.src = "/lovable-uploads/efca5adc-d9d2-4c5b-8900-e078f9d49b6a.png";
+              }}
+            />
+          </div>
+        </Link>
+      )}
       
       <div className="flex-1 min-w-0">
         <h3 

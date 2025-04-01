@@ -11,7 +11,6 @@ export interface VideoGridItem {
   channelId: string;
   views: number | null;
   uploadedAt: string | Date;
-  channelThumbnail?: string;
 }
 
 export const useVideoGridData = (maxVideos: number = 12) => {
@@ -25,10 +24,7 @@ export const useVideoGridData = (maxVideos: number = 12) => {
       try {
         const { data, error } = await supabase
           .from("youtube_videos")
-          .select(`
-            *,
-            youtube_channels(thumbnail_url)
-          `)
+          .select("*")
           .is("deleted_at", null)
           .order("uploaded_at", { ascending: false })  // Explicitly sort by newest first
           .limit(maxVideos);
@@ -47,7 +43,6 @@ export const useVideoGridData = (maxVideos: number = 12) => {
           channelId: video.channel_id || "unknown-channel",
           views: typeof video.views === 'number' ? video.views : 0,
           uploadedAt: video.uploaded_at || new Date().toISOString(),
-          channelThumbnail: video.youtube_channels?.thumbnail_url || null,
         }));
         
         setVideos(mappedVideos);
