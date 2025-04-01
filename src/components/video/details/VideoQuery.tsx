@@ -32,6 +32,19 @@ export const useVideoQuery = (id: string) => {
         const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
         if (!uuidRegex.test(id)) {
           console.error("Invalid video ID format:", id);
+          
+          // Try a more flexible query as fallback (simulating search)
+          const { data: searchResults } = await supabase
+            .from("youtube_videos")
+            .select("*, youtube_channels(thumbnail_url)")
+            .ilike("video_id", `%${id}%`)
+            .limit(1);
+            
+          if (searchResults && searchResults.length > 0) {
+            console.log("Found video through fallback search:", searchResults[0]);
+            return searchResults[0];
+          }
+          
           throw new Error("Invalid video ID format");
         }
 
@@ -59,7 +72,8 @@ export const useVideoQuery = (id: string) => {
         throw error;
       }
     },
-    retry: false,
+    retry: 3,
+    retryDelay: attempt => Math.min(attempt > 1 ? 2000 : 1000, 5000),
     meta: {
       suppressToasts: true
     }

@@ -7,7 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
  */
 export const performDirectDatabaseQuery = async (): Promise<any[]> => {
   try {
-    // Use a direct query instead of RPC since the RPC function isn't defined in TypeScript types
+    // Use a direct query instead of RPC
     const { data, error } = await supabase
       .from('youtube_videos')
       .select('id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at')
@@ -28,7 +28,20 @@ export const performDirectDatabaseQuery = async (): Promise<any[]> => {
       
       if (fallbackError) {
         console.error("Fallback query also failed:", fallbackError);
-        return [];
+        
+        // Try an even simpler query as last resort
+        const { data: lastResortData, error: lastResortError } = await supabase
+          .from('youtube_videos')
+          .select('*')
+          .order('uploaded_at', { ascending: false })
+          .limit(100);
+          
+        if (lastResortError) {
+          console.error("Last resort query failed:", lastResortError);
+          return [];
+        }
+        
+        return lastResortData || [];
       }
       
       return fallbackData || [];
