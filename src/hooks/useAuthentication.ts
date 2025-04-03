@@ -88,7 +88,7 @@ export const useAuthentication = () => {
         
         // Explicitly check admin status right after successful login
         if (result) {
-          // Using if check and type assertion to handle null case
+          // Using type guard for null check
           if (result && 'user' in result && result.user) {
             const userId = result.user.id;
             setTimeout(() => {
