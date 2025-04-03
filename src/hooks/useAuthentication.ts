@@ -87,7 +87,6 @@ export const useAuthentication = () => {
         const result = await signIn(credentials, options);
         
         // Explicitly check admin status right after successful login
-        // TypeScript fix: Add non-null assertion with multiple safety checks
         if (result) {
           // Make sure result is an object with a user property that has an id
           if (typeof result === 'object' && result !== null && 'user' in result) {

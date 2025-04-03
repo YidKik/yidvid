@@ -17,12 +17,22 @@ export const AdminSection = ({ userId }: AdminSectionProps) => {
   const { isMobile } = useIsMobile();
 
   // First check if we have cached admin status
-  const cachedAdminStatus = useQuery({
+  const { data: cachedAdminStatus } = useQuery({
     queryKey: ["admin-status", userId],
-    queryFn: async () => null, // Just access cache
-    enabled: false, // Don't actually run a query
+    queryFn: async () => {
+      // Check localStorage first for quicker access
+      if (userId) {
+        const cached = JSON.parse(localStorage.getItem(`admin-status-${userId}`) || 'null');
+        if (cached) {
+          console.log("Using cached admin status from localStorage:", cached);
+          return cached;
+        }
+      }
+      return null;
+    },
+    enabled: !!userId,
     staleTime: Infinity,
-  }).data;
+  });
 
   // Use direct query with minimal fields for better performance
   const { data: adminStatus } = useQuery({
@@ -56,6 +66,8 @@ export const AdminSection = ({ userId }: AdminSectionProps) => {
         
         // Cache the admin status for future quick access
         if (isAdmin) {
+          // Store in localStorage for persistence between refreshes
+          localStorage.setItem(`admin-status-${userId}`, JSON.stringify({ isAdmin: true }));
           return { isAdmin: true };
         }
         
@@ -65,8 +77,8 @@ export const AdminSection = ({ userId }: AdminSectionProps) => {
         return { isAdmin: false };
       }
     },
-    staleTime: 30000, // 30 seconds
-    retry: 1,
+    staleTime: 60000, // 60 seconds
+    retry: 2,
     enabled: !!userId,
   });
 

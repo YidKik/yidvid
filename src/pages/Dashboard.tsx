@@ -13,7 +13,25 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const [isAdminCheckComplete, setIsAdminCheckComplete] = useState(false);
 
-  // First query the session
+  // First check if we have cached admin status
+  const { data: cachedAdminStatus } = useQuery({
+    queryKey: ["admin-status"],
+    queryFn: async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user?.id) return null;
+      
+      // Try to get cached admin status first
+      const cached = JSON.parse(localStorage.getItem(`admin-status-${session.user.id}`) || 'null');
+      if (cached) {
+        console.log("Using locally cached admin status:", cached);
+        return cached;
+      }
+      return null;
+    },
+    staleTime: Infinity,
+  });
+
+  // Fetch session data
   const { data: session, isLoading: isSessionLoading } = useQuery({
     queryKey: ["dashboard-session"],
     queryFn: async () => {
@@ -26,16 +44,8 @@ export default function Dashboard() {
         throw error;
       }
     },
-    retry: 1,
+    retry: 2,
   });
-
-  // Check if there's already a cached admin status
-  const cachedAdminStatus = useQuery({
-    queryKey: ["admin-status", session?.user?.id],
-    queryFn: async () => null, // Just access cache
-    enabled: false, // Don't actually run a query
-    staleTime: Infinity,
-  }).data;
 
   // Then query the profile with better error handling
   const { data: profile, isLoading: isProfileLoading } = useQuery({
@@ -43,7 +53,7 @@ export default function Dashboard() {
     queryFn: async () => {
       if (!session?.user?.id) return null;
       
-      // If we already have cached admin status, use it
+      // Check for cached admin status first
       if (cachedAdminStatus?.isAdmin === true) {
         console.log("Using cached admin status for dashboard");
         return { is_admin: true, id: session.user.id };
@@ -57,7 +67,7 @@ export default function Dashboard() {
           .from("profiles")
           .select("id, is_admin")
           .eq("id", session.user.id)
-          .single();
+          .maybeSingle();
 
         if (error) {
           console.error("Error fetching admin status:", error);
@@ -70,8 +80,8 @@ export default function Dashboard() {
         // Cache the admin status for future quick access
         if (data?.is_admin === true) {
           // Set in query cache for future use
-          const queryCache = new Map();
-          queryCache.set(["admin-status", session.user.id], { isAdmin: true });
+          localStorage.setItem(`admin-status-${session.user.id}`, JSON.stringify({ isAdmin: true }));
+          console.log("Admin status cached in localStorage");
         }
         
         return data;
@@ -81,8 +91,9 @@ export default function Dashboard() {
       }
     },
     enabled: !!session?.user?.id,
-    retry: 2,
-    staleTime: 0, // Don't cache this query
+    retry: 3,
+    staleTime: 10000, // Cache for a short time
+    retryDelay: attempt => Math.min(attempt * 1000, 5000), // Exponential backoff
   });
 
   // We need to handle admin check completion separately from the query
@@ -133,8 +144,8 @@ export default function Dashboard() {
       }
     },
     enabled: profile?.is_admin === true,
-    retry: 1,
-    staleTime: 0, // Don't cache this query
+    retry: 2,
+    staleTime: 60000, // Cache for 1 minute
   });
 
   // Query notifications only if user is admin
@@ -161,7 +172,8 @@ export default function Dashboard() {
     },
     enabled: profile?.is_admin === true,
     refetchInterval: 30000,
-    staleTime: 0, // Don't cache this query
+    staleTime: 10000, // Shorter stale time for notifications
+    retry: 2,
   });
 
   // Show loading state while checking session and profile

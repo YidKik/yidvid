@@ -49,6 +49,9 @@ export function prefetchUserData(session: Session, queryClient: QueryClient): Pr
               ["admin-status", session.user.id],
               { isAdmin: true }
             );
+            
+            // Log successful admin cache
+            console.log("Admin status successfully cached for user:", session.user.id);
           }
           
           return data;
@@ -63,7 +66,7 @@ export function prefetchUserData(session: Session, queryClient: QueryClient): Pr
         }
       },
       staleTime: 10000, // 10 seconds
-      retry: 1,
+      retry: 2, // Increase retry attempts for this critical query
       meta: {
         suppressToasts: true
       }
@@ -88,6 +91,7 @@ export function prefetchUserData(session: Session, queryClient: QueryClient): Pr
                   ["admin-status", session.user.id],
                   { isAdmin: true }
                 );
+                console.log("Admin status cached from full profile data");
               }
               
               return data || {
@@ -102,7 +106,7 @@ export function prefetchUserData(session: Session, queryClient: QueryClient): Pr
             }
           },
           staleTime: 10000,
-          retry: 0,
+          retry: 1,
           meta: {
             suppressToasts: true
           }
