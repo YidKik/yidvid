@@ -1,4 +1,3 @@
-
 import { useAuthBase } from "./auth/useAuthBase";
 import { useAuthSignIn } from "./auth/useAuthSignIn";
 import { useAuthSignUp } from "./auth/useAuthSignUp";
@@ -88,14 +87,20 @@ export const useAuthentication = () => {
         
         // Explicitly check admin status right after successful login
         if (result) {
-          // Make sure result is an object with a user property that has an id
-          if (typeof result === 'object' && result !== null && 'user' in result) {
-            const user = result.user;
-            if (user && user.id) {
-              setTimeout(() => {
-                checkAndCacheAdminStatus(user.id);
-              }, 500); // Small delay to allow other auth processes to complete
-            }
+          // Fixed: Add proper null checks and type guards
+          if (
+            typeof result === 'object' && 
+            result !== null && 
+            'user' in result && 
+            result.user !== null && 
+            'id' in result.user && 
+            typeof result.user.id === 'string'
+          ) {
+            // Use a safer timeout approach with proper typing
+            const userId = result.user.id;
+            setTimeout(() => {
+              checkAndCacheAdminStatus(userId);
+            }, 500); // Small delay to allow other auth processes to complete
           }
         }
         
