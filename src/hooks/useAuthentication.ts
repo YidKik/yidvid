@@ -88,13 +88,15 @@ export const useAuthentication = () => {
         
         // Explicitly check admin status right after successful login
         // TypeScript fix: Add non-null assertion with multiple safety checks
-        if (result && typeof result === 'object' && 'user' in result && result.user) {
-          // Further check to make sure user.id exists
-          const userId = result.user.id;
-          if (userId) {
-            setTimeout(() => {
-              checkAndCacheAdminStatus(userId);
-            }, 500); // Small delay to allow other auth processes to complete
+        if (result) {
+          // Make sure result is an object with a user property that has an id
+          if (typeof result === 'object' && result !== null && 'user' in result) {
+            const user = result.user;
+            if (user && user.id) {
+              setTimeout(() => {
+                checkAndCacheAdminStatus(user.id);
+              }, 500); // Small delay to allow other auth processes to complete
+            }
           }
         }
         
