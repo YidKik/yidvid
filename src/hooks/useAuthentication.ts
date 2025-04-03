@@ -88,13 +88,11 @@ export const useAuthentication = () => {
         
         // Explicitly check admin status right after successful login
         if (result) {
-          // Move the null check outside of the conditional to ensure result is not null
-          // when we try to access its properties
-          const resultObj = result;
+          // Make a non-null assertion after checking result exists
+          const resultObj = result!;
           
-          // Now safely use resultObj which TypeScript knows is not null
+          // Further safeguard with a type guard
           if (
-            typeof resultObj === 'object' && 
             'user' in resultObj && 
             resultObj.user !== null && 
             'id' in resultObj.user && 
