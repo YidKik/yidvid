@@ -41,6 +41,16 @@ export function prefetchUserData(session: Session, queryClient: QueryClient): Pr
             };
           }
           
+          console.log("Admin status fetch result:", data?.is_admin);
+          
+          // Cache admin status specifically for quick access
+          if (data?.is_admin === true) {
+            queryClient.setQueryData(
+              ["admin-status", session.user.id],
+              { isAdmin: true }
+            );
+          }
+          
           return data;
         } catch (err) {
           console.error("Error in minimal profile fetch:", err);
@@ -71,6 +81,14 @@ export function prefetchUserData(session: Session, queryClient: QueryClient): Pr
                 .select("*")
                 .eq("id", session.user.id)
                 .maybeSingle();
+              
+              // Also cache the admin status from the full profile data
+              if (data?.is_admin === true) {
+                queryClient.setQueryData(
+                  ["admin-status", session.user.id],
+                  { isAdmin: true }
+                );
+              }
               
               return data || {
                 id: session.user.id,

@@ -16,14 +16,30 @@ export const AdminSection = ({ userId }: AdminSectionProps) => {
   const navigate = useNavigate();
   const { isMobile } = useIsMobile();
 
-  // Use React Query for better caching and offline support
+  // First check if we have cached admin status
+  const cachedAdminStatus = useQuery({
+    queryKey: ["admin-status", userId],
+    queryFn: async () => null, // Just access cache
+    enabled: false, // Don't actually run a query
+    staleTime: Infinity,
+  }).data;
+
+  // Use direct query with minimal fields for better performance
   const { data: adminStatus } = useQuery({
     queryKey: ["user-admin-status", userId],
     queryFn: async () => {
       if (!userId) return { isAdmin: false };
       
+      // If we already have cached admin status, use it
+      if (cachedAdminStatus) {
+        console.log("Using cached admin status:", cachedAdminStatus);
+        return cachedAdminStatus;
+      }
+      
       try {
-        // Simplest possible query to check admin status
+        console.log("Explicitly checking admin status for user:", userId);
+        
+        // Simplest possible query to avoid RLS issues
         const { data, error } = await supabase
           .from("profiles")
           .select("is_admin")
@@ -35,7 +51,15 @@ export const AdminSection = ({ userId }: AdminSectionProps) => {
           return { isAdmin: false };
         }
         
-        return { isAdmin: data?.is_admin === true };
+        const isAdmin = data?.is_admin === true;
+        console.log("Admin status from direct query:", isAdmin);
+        
+        // Cache the admin status for future quick access
+        if (isAdmin) {
+          return { isAdmin: true };
+        }
+        
+        return { isAdmin: !!data?.is_admin };
       } catch (error) {
         console.error("Unexpected error checking admin status:", error);
         return { isAdmin: false };
@@ -43,7 +67,6 @@ export const AdminSection = ({ userId }: AdminSectionProps) => {
     },
     staleTime: 30000, // 30 seconds
     retry: 1,
-    initialData: { isAdmin: false },
     enabled: !!userId,
   });
 

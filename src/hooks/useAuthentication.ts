@@ -7,6 +7,7 @@ import { useAuthPasswordReset } from "./auth/useAuthPasswordReset";
 import { prefetchUserData } from "@/utils/userDataPrefetch";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 export type { AuthCredentials, AuthOptions } from "./auth/useAuthSignIn";
 
@@ -23,12 +24,49 @@ export const useAuthentication = () => {
   const { resetPassword, updatePassword, isPasswordResetSent } = useAuthPasswordReset();
   const queryClient = useQueryClient();
 
+  // Additional admin check function
+  const checkAndCacheAdminStatus = async (userId: string) => {
+    if (!userId) return;
+    
+    try {
+      console.log("Explicitly checking admin status after authentication for user:", userId);
+      
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("is_admin")
+        .eq("id", userId)
+        .maybeSingle();
+        
+      if (error) {
+        console.error("Error checking admin status in useAuthentication:", error);
+        return;
+      }
+      
+      const isAdmin = data?.is_admin === true;
+      console.log("Admin status check result:", isAdmin);
+      
+      if (isAdmin) {
+        // Set in query cache for future quick access
+        queryClient.setQueryData(
+          ["admin-status", userId],
+          { isAdmin: true }
+        );
+      }
+    } catch (err) {
+      console.error("Failed admin status check in useAuthentication:", err);
+    }
+  };
+
   // Ensure profile data is fetched when session changes
   useEffect(() => {
     if (baseAuth.session) {
       console.log("Session detected in useAuthentication, ensuring profile data is available");
       prefetchUserData(baseAuth.session, queryClient)
-        .then(() => console.log("Profile data refresh complete in useAuthentication"))
+        .then(() => {
+          console.log("Profile data refresh complete in useAuthentication");
+          // Explicitly check admin status after profile data is fetched
+          checkAndCacheAdminStatus(baseAuth.session.user.id);
+        })
         .catch(err => console.error("Failed to refresh profile data in useAuthentication:", err));
     }
   }, [baseAuth.session, queryClient]);
@@ -46,7 +84,16 @@ export const useAuthentication = () => {
     signIn: async (credentials, options) => {
       try {
         baseAuth.clearErrors();
-        return await signIn(credentials, options);
+        const result = await signIn(credentials, options);
+        
+        // Explicitly check admin status right after successful login
+        if (result.user?.id) {
+          setTimeout(() => {
+            checkAndCacheAdminStatus(result.user.id);
+          }, 500); // Small delay to allow other auth processes to complete
+        }
+        
+        return result;
       } catch (error) {
         console.error("Authentication error in useAuthentication:", error);
         throw error; // Re-throw to allow for proper error handling upstream

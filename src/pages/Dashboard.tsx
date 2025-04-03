@@ -6,11 +6,12 @@ import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { AdminDashboardCards } from "@/components/dashboard/AdminDashboardCards";
 import { BackButton } from "@/components/navigation/BackButton";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const [isAdminCheckComplete, setIsAdminCheckComplete] = useState(false);
 
   // First query the session
   const { data: session, isLoading: isSessionLoading } = useQuery({
@@ -28,49 +29,77 @@ export default function Dashboard() {
     retry: 1,
   });
 
+  // Check if there's already a cached admin status
+  const cachedAdminStatus = useQuery({
+    queryKey: ["admin-status", session?.user?.id],
+    queryFn: async () => null, // Just access cache
+    enabled: false, // Don't actually run a query
+    staleTime: Infinity,
+  }).data;
+
   // Then query the profile with better error handling
-  const { data: profile, isLoading: isProfileLoading, error: profileError } = useQuery({
-    queryKey: ["dashboard-profile", session?.user?.id],
+  const { data: profile, isLoading: isProfileLoading } = useQuery({
+    queryKey: ["dashboard-admin-check", session?.user?.id],
     queryFn: async () => {
       if (!session?.user?.id) return null;
       
-      console.log("Dashboard: Fetching profile for user:", session.user.id);
+      // If we already have cached admin status, use it
+      if (cachedAdminStatus?.isAdmin === true) {
+        console.log("Using cached admin status for dashboard");
+        return { is_admin: true, id: session.user.id };
+      }
+      
+      console.log("Dashboard: Explicitly checking admin status for:", session.user.id);
       
       try {
+        // Make a direct and simple query for just the admin status
         const { data, error } = await supabase
           .from("profiles")
-          .select("*")
+          .select("id, is_admin")
           .eq("id", session.user.id)
           .single();
 
         if (error) {
-          console.error("Error fetching profile:", error);
-          toast.error("Failed to load user profile");
+          console.error("Error fetching admin status:", error);
+          toast.error("Failed to verify admin permissions");
           throw error;
         }
 
-        console.log("Dashboard: Fetched profile:", data);
+        console.log("Dashboard: Admin check result:", data);
+        
+        // Cache the admin status for future quick access
+        if (data?.is_admin === true) {
+          // Set in query cache for future use
+          useQuery.getQueryCache().setQueryData(
+            ["admin-status", session.user.id],
+            { isAdmin: true }
+          );
+        }
+        
         return data;
       } catch (error) {
-        console.error("Profile fetch error:", error);
+        console.error("Admin status check error:", error);
         throw error;
       }
     },
     enabled: !!session?.user?.id,
-    retry: 1,
+    retry: 2,
     staleTime: 0, // Don't cache this query
+    onSettled: () => {
+      setIsAdminCheckComplete(true);
+    }
   });
 
   // Redirect non-admin users
   useEffect(() => {
-    if (!isProfileLoading && !isSessionLoading && profile !== undefined) {
+    if (isAdminCheckComplete && profile !== undefined) {
       if (profile?.is_admin !== true) {
         console.log("User is not an admin, redirecting to home", profile);
         toast.error("You do not have access to the dashboard");
         navigate("/");
       }
     }
-  }, [profile, isProfileLoading, isSessionLoading, navigate]);
+  }, [profile, isAdminCheckComplete, navigate]);
 
   // Query dashboard stats only if user is admin
   const { data: stats, isLoading: isStatsLoading } = useQuery({
@@ -134,7 +163,7 @@ export default function Dashboard() {
   });
 
   // Show loading state while checking session and profile
-  if (isSessionLoading || isProfileLoading || isStatsLoading) {
+  if (isSessionLoading || isProfileLoading || isStatsLoading || !isAdminCheckComplete) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <Loader2 className="h-8 w-8 animate-spin" />
@@ -142,20 +171,9 @@ export default function Dashboard() {
     );
   }
 
-  // Show error state if profile fetch failed
-  if (profileError) {
-    return (
-      <div className="container mx-auto py-8">
-        <div className="text-center text-red-500">
-          Error loading dashboard. Please try again later.
-        </div>
-      </div>
-    );
-  }
-
   // Explicitly check admin status
   const isAdmin = profile?.is_admin === true;
-  console.log("Is admin:", isAdmin, "Profile:", profile);
+  console.log("Dashboard render - Is admin:", isAdmin, "Profile:", profile);
 
   return (
     <div className="container mx-auto py-12 space-y-8 px-4">
@@ -181,4 +199,4 @@ export default function Dashboard() {
       )}
     </div>
   );
-}
+};
