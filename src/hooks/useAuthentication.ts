@@ -46,10 +46,10 @@ export const useAuthentication = () => {
       console.log("Admin status check result:", isAdmin);
       
       if (isAdmin) {
-        // Set in query cache for future quick access - fix the type issue
+        // Set in query cache for future quick access
         queryClient.setQueryData(
           ["admin-status", userId],
-          { isAdmin } // Pass as object with isAdmin property
+          { isAdmin: isAdmin } // Explicitly pass as object with isAdmin property
         );
       }
     } catch (err) {
@@ -65,7 +65,9 @@ export const useAuthentication = () => {
         .then(() => {
           console.log("Profile data refresh complete in useAuthentication");
           // Explicitly check admin status after profile data is fetched
-          checkAndCacheAdminStatus(baseAuth.session.user.id);
+          if (baseAuth.session && baseAuth.session.user) {
+            checkAndCacheAdminStatus(baseAuth.session.user.id);
+          }
         })
         .catch(err => console.error("Failed to refresh profile data in useAuthentication:", err));
     }
