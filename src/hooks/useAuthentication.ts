@@ -46,10 +46,10 @@ export const useAuthentication = () => {
       console.log("Admin status check result:", isAdmin);
       
       if (isAdmin) {
-        // Set in query cache for future quick access
+        // Set in query cache for future quick access - fix the type issue
         queryClient.setQueryData(
           ["admin-status", userId],
-          { isAdmin: true }
+          { isAdmin } // Pass as object with isAdmin property
         );
       }
     } catch (err) {

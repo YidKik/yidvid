@@ -9,15 +9,16 @@ import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { useAdminStatus } from "@/hooks/useAdminStatus";
 import { useDashboardStats } from "@/hooks/useDashboardStats";
 import { useAdminNotifications } from "@/hooks/useAdminNotifications";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const { session } = useAuth();
   
   // Use our custom hooks to manage state and data fetching
   const { 
     isAdmin, 
     profile,
-    session,
     isSessionLoading, 
     isProfileLoading, 
     isAdminCheckComplete 
