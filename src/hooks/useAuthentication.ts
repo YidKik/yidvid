@@ -1,3 +1,4 @@
+
 import { useAuthBase } from "./auth/useAuthBase";
 import { useAuthSignIn } from "./auth/useAuthSignIn";
 import { useAuthSignUp } from "./auth/useAuthSignUp";
@@ -87,17 +88,20 @@ export const useAuthentication = () => {
         
         // Explicitly check admin status right after successful login
         if (result) {
-          // Fixed: Add proper null checks and type guards
+          // Move the null check outside of the conditional to ensure result is not null
+          // when we try to access its properties
+          const resultObj = result;
+          
+          // Now safely use resultObj which TypeScript knows is not null
           if (
-            typeof result === 'object' && 
-            result !== null && 
-            'user' in result && 
-            result.user !== null && 
-            'id' in result.user && 
-            typeof result.user.id === 'string'
+            typeof resultObj === 'object' && 
+            'user' in resultObj && 
+            resultObj.user !== null && 
+            'id' in resultObj.user && 
+            typeof resultObj.user.id === 'string'
           ) {
             // Use a safer timeout approach with proper typing
-            const userId = result.user.id;
+            const userId = resultObj.user.id;
             setTimeout(() => {
               checkAndCacheAdminStatus(userId);
             }, 500); // Small delay to allow other auth processes to complete
