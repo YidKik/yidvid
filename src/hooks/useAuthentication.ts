@@ -49,7 +49,7 @@ export const useAuthentication = () => {
         // Set in query cache for future quick access
         queryClient.setQueryData(
           ["admin-status", userId],
-          { isAdmin: isAdmin } // Explicitly pass as object with isAdmin property
+          { isAdmin: isAdmin } as { isAdmin: boolean } // Type assertion to fix TypeScript error
         );
       }
     } catch (err) {
