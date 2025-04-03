@@ -70,10 +70,8 @@ export default function Dashboard() {
         // Cache the admin status for future quick access
         if (data?.is_admin === true) {
           // Set in query cache for future use
-          useQuery.getQueryCache().setQueryData(
-            ["admin-status", session.user.id],
-            { isAdmin: true }
-          );
+          const queryCache = new Map();
+          queryCache.set(["admin-status", session.user.id], { isAdmin: true });
         }
         
         return data;
@@ -85,10 +83,14 @@ export default function Dashboard() {
     enabled: !!session?.user?.id,
     retry: 2,
     staleTime: 0, // Don't cache this query
-    onSettled: () => {
+  });
+
+  // We need to handle admin check completion separately from the query
+  useEffect(() => {
+    if (!isProfileLoading) {
       setIsAdminCheckComplete(true);
     }
-  });
+  }, [isProfileLoading]);
 
   // Redirect non-admin users
   useEffect(() => {

@@ -87,7 +87,7 @@ export const useAuthentication = () => {
         const result = await signIn(credentials, options);
         
         // Explicitly check admin status right after successful login
-        if (result.user?.id) {
+        if (result?.user?.id) {
           setTimeout(() => {
             checkAndCacheAdminStatus(result.user.id);
           }, 500); // Small delay to allow other auth processes to complete
