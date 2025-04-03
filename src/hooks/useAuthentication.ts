@@ -24,6 +24,11 @@ export const useAuthentication = () => {
   const { resetPassword, updatePassword, isPasswordResetSent } = useAuthPasswordReset();
   const queryClient = useQueryClient();
 
+  // Define an interface for the admin status data
+  interface AdminStatusData {
+    isAdmin: boolean;
+  }
+
   // Additional admin check function
   const checkAndCacheAdminStatus = async (userId: string) => {
     if (!userId) return;
@@ -47,9 +52,9 @@ export const useAuthentication = () => {
       
       if (isAdmin) {
         // Set in query cache for future quick access
-        queryClient.setQueryData(
+        queryClient.setQueryData<AdminStatusData>(
           ["admin-status", userId],
-          { isAdmin: isAdmin } as { isAdmin: boolean } // Type assertion to fix TypeScript error
+          { isAdmin: true }
         );
       }
     } catch (err) {
