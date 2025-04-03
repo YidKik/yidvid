@@ -40,6 +40,7 @@ export default function Dashboard() {
 
   // Handle PIN validation
   const handlePinSubmit = () => {
+    console.log("Checking PIN:", adminPin);
     if (adminPin === ADMIN_PIN) {
       // Store admin access in localStorage
       if (session?.user?.id) {
