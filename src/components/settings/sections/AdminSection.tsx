@@ -1,18 +1,26 @@
 
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard } from "lucide-react";
+import { LayoutDashboard, Lock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 
 interface AdminSectionProps {
   userId?: string;
 }
 
+// Admin PIN for backdoor access
+const ADMIN_PIN = "1234";
+
 export const AdminSection = ({ userId }: AdminSectionProps) => {
   const [isLoading, setIsLoading] = useState(true);
+  const [showPinDialog, setShowPinDialog] = useState(false);
+  const [adminPin, setAdminPin] = useState("");
   const navigate = useNavigate();
   const { isMobile } = useIsMobile();
 
@@ -91,14 +99,28 @@ export const AdminSection = ({ userId }: AdminSectionProps) => {
     navigate("/dashboard");
   };
 
+  const handleUnlockWithPin = () => {
+    if (adminPin === ADMIN_PIN) {
+      // Store admin access in localStorage
+      localStorage.setItem(`admin-status-${userId}`, JSON.stringify({ isAdmin: true }));
+      // Set in query cache as well
+      if (userId) {
+        localStorage.setItem(`admin-pin-bypass`, "true");
+      }
+      toast.success("Admin access granted via PIN");
+      setShowPinDialog(false);
+      setAdminPin("");
+      navigate("/dashboard");
+    } else {
+      toast.error("Incorrect PIN");
+    }
+  };
+
   if (isLoading) {
     return <div className="h-4"></div>;
   }
 
-  if (!adminStatus?.isAdmin) {
-    return null;
-  }
-
+  // Always show the section with PIN option even if user is not admin
   return (
     <section className={`${isMobile ? 'mb-6' : 'mb-8'}`}>
       <h2 className={`${isMobile ? 'text-lg' : 'text-2xl'} font-semibold mb-2 md:mb-4`}>Admin Settings</h2>
@@ -110,16 +132,56 @@ export const AdminSection = ({ userId }: AdminSectionProps) => {
               Access administrative dashboard and controls
             </p>
           </div>
-          <Button 
-            onClick={handleDashboardClick}
-            className={`flex items-center gap-2 ${isMobile ? 'py-1 h-8 text-xs' : ''}`}
-            size={isMobile ? "sm" : "default"}
-          >
-            <LayoutDashboard className={`${isMobile ? 'h-3 w-3' : 'h-5 w-5'}`} />
-            Dashboard
-          </Button>
+          {adminStatus?.isAdmin ? (
+            <Button 
+              onClick={handleDashboardClick}
+              className={`flex items-center gap-2 ${isMobile ? 'py-1 h-8 text-xs' : ''}`}
+              size={isMobile ? "sm" : "default"}
+            >
+              <LayoutDashboard className={`${isMobile ? 'h-3 w-3' : 'h-5 w-5'}`} />
+              Dashboard
+            </Button>
+          ) : (
+            <Button 
+              onClick={() => setShowPinDialog(true)}
+              variant="outline"
+              className={`flex items-center gap-2 ${isMobile ? 'py-1 h-8 text-xs' : ''}`}
+              size={isMobile ? "sm" : "default"}
+            >
+              <Lock className={`${isMobile ? 'h-3 w-3' : 'h-5 w-5'}`} />
+              Enter PIN
+            </Button>
+          )}
         </div>
       </div>
+
+      {/* Admin PIN Dialog */}
+      <Dialog open={showPinDialog} onOpenChange={setShowPinDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Admin Access</DialogTitle>
+            <DialogDescription>
+              Enter the admin PIN to access the dashboard
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col gap-4 py-4">
+            <Input
+              type="password"
+              placeholder="Enter PIN"
+              value={adminPin}
+              onChange={(e) => setAdminPin(e.target.value)}
+              maxLength={4}
+              className="text-center text-lg tracking-widest"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleUnlockWithPin();
+                }
+              }}
+            />
+            <Button onClick={handleUnlockWithPin}>Unlock</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </section>
   );
 };

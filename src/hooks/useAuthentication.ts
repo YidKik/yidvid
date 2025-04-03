@@ -88,18 +88,9 @@ export const useAuthentication = () => {
         
         // Explicitly check admin status right after successful login
         if (result) {
-          // Make a non-null assertion after checking result exists
-          const resultObj = result!;
-          
-          // Further safeguard with a type guard
-          if (
-            'user' in resultObj && 
-            resultObj.user !== null && 
-            'id' in resultObj.user && 
-            typeof resultObj.user.id === 'string'
-          ) {
-            // Use a safer timeout approach with proper typing
-            const userId = resultObj.user.id;
+          // Using if check and type assertion to handle null case
+          if (result && 'user' in result && result.user) {
+            const userId = result.user.id;
             setTimeout(() => {
               checkAndCacheAdminStatus(userId);
             }, 500); // Small delay to allow other auth processes to complete

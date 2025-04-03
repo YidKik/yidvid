@@ -1,4 +1,3 @@
-
 import { Card } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -12,6 +11,9 @@ import { useNavigate } from "react-router-dom";
 export default function Dashboard() {
   const navigate = useNavigate();
   const [isAdminCheckComplete, setIsAdminCheckComplete] = useState(false);
+
+  // Check for PIN bypass
+  const hasPinBypass = localStorage.getItem('admin-pin-bypass') === 'true';
 
   // First check if we have cached admin status
   const { data: cachedAdminStatus } = useQuery({
@@ -53,7 +55,13 @@ export default function Dashboard() {
     queryFn: async () => {
       if (!session?.user?.id) return null;
       
-      // Check for cached admin status first
+      // Check for PIN bypass first
+      if (hasPinBypass) {
+        console.log("Using PIN bypass for admin access");
+        return { is_admin: true, id: session.user.id };
+      }
+      
+      // Check for cached admin status
       if (cachedAdminStatus?.isAdmin === true) {
         console.log("Using cached admin status for dashboard");
         return { is_admin: true, id: session.user.id };
@@ -105,14 +113,14 @@ export default function Dashboard() {
 
   // Redirect non-admin users
   useEffect(() => {
-    if (isAdminCheckComplete && profile !== undefined) {
+    if (isAdminCheckComplete && profile !== undefined && !hasPinBypass) {
       if (profile?.is_admin !== true) {
         console.log("User is not an admin, redirecting to home", profile);
         toast.error("You do not have access to the dashboard");
         navigate("/");
       }
     }
-  }, [profile, isAdminCheckComplete, navigate]);
+  }, [profile, isAdminCheckComplete, navigate, hasPinBypass]);
 
   // Query dashboard stats only if user is admin
   const { data: stats, isLoading: isStatsLoading } = useQuery({
@@ -143,7 +151,7 @@ export default function Dashboard() {
         };
       }
     },
-    enabled: profile?.is_admin === true,
+    enabled: profile?.is_admin === true || hasPinBypass,
     retry: 2,
     staleTime: 60000, // Cache for 1 minute
   });
@@ -170,7 +178,7 @@ export default function Dashboard() {
         return [];
       }
     },
-    enabled: profile?.is_admin === true,
+    enabled: profile?.is_admin === true || hasPinBypass,
     refetchInterval: 30000,
     staleTime: 10000, // Shorter stale time for notifications
     retry: 2,
@@ -185,9 +193,9 @@ export default function Dashboard() {
     );
   }
 
-  // Explicitly check admin status
-  const isAdmin = profile?.is_admin === true;
-  console.log("Dashboard render - Is admin:", isAdmin, "Profile:", profile);
+  // Explicitly check admin status or PIN bypass
+  const isAdmin = profile?.is_admin === true || hasPinBypass;
+  console.log("Dashboard render - Is admin:", isAdmin, "Profile:", profile, "PIN bypass:", hasPinBypass);
 
   return (
     <div className="container mx-auto py-12 space-y-8 px-4">
