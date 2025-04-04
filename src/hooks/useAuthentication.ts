@@ -1,120 +1,216 @@
-
-import { useAuthBase } from "./auth/useAuthBase";
-import { useAuthSignIn } from "./auth/useAuthSignIn";
-import { useAuthSignUp } from "./auth/useAuthSignUp";
-import { useAuthSignOut } from "./auth/useAuthSignOut";
-import { useAuthPasswordReset } from "./auth/useAuthPasswordReset";
-import { prefetchUserData } from "@/utils/userDataPrefetch";
-import { useQueryClient } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useSessionManager } from "./useSessionManager";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
-export type { AuthCredentials, AuthOptions } from "./auth/useAuthSignIn";
+interface AdminStatusData {
+  isAdmin: boolean;
+  userId?: string | null;
+}
 
-/**
- * Main authentication hook that composes all authentication functionality
- * This hook orchestrates the various specialized authentication hooks
- * to provide a unified interface for authentication operations
- */
 export const useAuthentication = () => {
-  const baseAuth = useAuthBase();
-  const { signIn } = useAuthSignIn();
-  const { signUp } = useAuthSignUp();
-  const { signOut } = useAuthSignOut();
-  const { resetPassword, updatePassword, isPasswordResetSent } = useAuthPasswordReset();
-  const queryClient = useQueryClient();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  const [user, setUser] = useState<any>(null);
 
-  // Define an interface for the admin status data
-  interface AdminStatusData {
-    isAdmin: boolean;
-  }
+  useEffect(() => {
+    const fetchUser = async () => {
+      setIsLoading(true);
+      setError(null);
 
-  // Additional admin check function
-  const checkAndCacheAdminStatus = async (userId: string) => {
-    if (!userId) return;
-    
+      try {
+        const { data: { user }, error } = await supabase.auth.getUser();
+
+        if (error) {
+          setError(error);
+          setUser(null);
+        } else {
+          setUser(user);
+        }
+      } catch (err: any) {
+        setError(err);
+        setUser(null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
+  const signUp = async (credentials: any) => {
+    setIsLoading(true);
+    setError(null);
+
     try {
-      console.log("Explicitly checking admin status after authentication for user:", userId);
-      
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("is_admin")
-        .eq("id", userId)
-        .maybeSingle();
-        
+      const { data, error } = await supabase.auth.signUp(credentials);
+
       if (error) {
-        console.error("Error checking admin status in useAuthentication:", error);
-        return;
+        setError(error);
+        setUser(null);
+        toast.error(error.message);
+      } else {
+        setUser(data.user);
+        toast.success("Account created successfully! Check your email to verify.");
       }
-      
-      const isAdmin = data?.is_admin === true;
-      console.log("Admin status check result:", isAdmin);
-      
-      if (isAdmin) {
-        // Set in query cache for future quick access
-        queryClient.setQueryData<AdminStatusData>(
-          ["admin-status", userId],
-          { isAdmin: true }
-        );
-      }
-    } catch (err) {
-      console.error("Failed admin status check in useAuthentication:", err);
+    } catch (err: any) {
+      setError(err);
+      setUser(null);
+      toast.error(err.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // Ensure profile data is fetched when session changes
-  useEffect(() => {
-    if (baseAuth.session) {
-      console.log("Session detected in useAuthentication, ensuring profile data is available");
-      prefetchUserData(baseAuth.session, queryClient)
-        .then(() => {
-          console.log("Profile data refresh complete in useAuthentication");
-          // Explicitly check admin status after profile data is fetched
-          if (baseAuth.session && baseAuth.session.user) {
-            checkAndCacheAdminStatus(baseAuth.session.user.id);
-          }
-        })
-        .catch(err => console.error("Failed to refresh profile data in useAuthentication:", err));
+  const signIn = async (credentials: any) => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword(credentials);
+
+      if (error) {
+        setError(error);
+        setUser(null);
+        toast.error(error.message);
+      } else {
+        setUser(data.user);
+        toast.success("Signed in successfully!");
+      }
+    } catch (err: any) {
+      setError(err);
+      setUser(null);
+      toast.error(err.message);
+    } finally {
+      setIsLoading(false);
     }
-  }, [baseAuth.session, queryClient]);
+  };
+
+  const signOut = async () => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const { error } = await supabase.auth.signOut();
+
+      if (error) {
+        setError(error);
+        toast.error(error.message);
+      } else {
+        setUser(null);
+        toast.success("Signed out successfully!");
+      }
+    } catch (err: any) {
+      setError(err);
+      toast.error(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const resetPassword = async (email: string) => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+
+      if (error) {
+        setError(error);
+        toast.error(error.message);
+      } else {
+        toast.success("Password reset email sent!");
+      }
+    } catch (err: any) {
+      setError(err);
+      toast.error(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const updatePassword = async (password: string) => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const { data, error } = await supabase.auth.updateUser({ password: password });
+
+      if (error) {
+        setError(error);
+        toast.error(error.message);
+      } else {
+        toast.success("Password updated successfully!");
+      }
+    } catch (err: any) {
+      setError(err);
+      toast.error(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return {
-    // Auth state
-    session: baseAuth.session,
-    isAuthenticated: baseAuth.isAuthenticated,
-    isLoading: baseAuth.isLoading,
-    isLoggingOut: baseAuth.isLoggingOut,
-    authError: baseAuth.authError,
-    isPasswordResetSent,
-    
-    // Auth methods
-    signIn: async (credentials, options) => {
-      try {
-        baseAuth.clearErrors();
-        const result = await signIn(credentials, options);
-        
-        // Explicitly check admin status right after successful login
-        if (result) {
-          // Using type guard for null check
-          if (result && 'user' in result && result.user) {
-            const userId = result.user.id;
-            setTimeout(() => {
-              checkAndCacheAdminStatus(userId);
-            }, 500); // Small delay to allow other auth processes to complete
-          }
-        }
-        
-        return result;
-      } catch (error) {
-        console.error("Authentication error in useAuthentication:", error);
-        throw error; // Re-throw to allow for proper error handling upstream
-      }
-    },
+    user,
+    isLoading,
+    error,
     signUp,
+    signIn,
     signOut,
     resetPassword,
     updatePassword,
-    clearErrors: baseAuth.clearErrors,
-    setAuthError: baseAuth.setAuthError
+  };
+};
+
+export const useAdminStatus = () => {
+  const { session } = useSessionManager();
+  const queryClient = useQueryClient();
+  const userId = session?.user?.id;
+
+  const { data: status, isLoading } = useQuery({
+    queryKey: ["admin-status", userId],
+    queryFn: async () => {
+      if (!userId) return { isAdmin: false };
+      
+      try {
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("is_admin")
+          .eq("id", userId)
+          .single();
+          
+        if (error || !data) {
+          console.error("Error checking admin status:", error);
+          return { isAdmin: false };
+        }
+        
+        return { 
+          isAdmin: !!data.is_admin,
+          userId: userId
+        };
+      } catch (err) {
+        console.error("Unexpected error checking admin status:", err);
+        return { isAdmin: false };
+      }
+    },
+    enabled: !!userId,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  // Fix the TypeScript error by ensuring we're passing an object
+  useEffect(() => {
+    if (userId) {
+      // Use the correct type for the admin status data
+      const adminData: AdminStatusData = { isAdmin: false };
+      queryClient.setQueryData(["admin-status", userId], adminData);
+    }
+  }, [userId, queryClient]);
+
+  return {
+    isAdmin: status?.isAdmin || false,
+    isLoading,
   };
 };

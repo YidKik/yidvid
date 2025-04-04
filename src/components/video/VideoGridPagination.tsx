@@ -1,6 +1,5 @@
 
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface VideoGridPaginationProps {
@@ -48,16 +47,22 @@ export const VideoGridPagination = ({
   return (
     <div className={`flex items-center justify-center gap-6 ${isMobile ? 'mt-4' : 'mt-8'}`}>
       <Button
-        variant="outline"
+        variant="ghost"
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
         size="icon"
-        className={`rounded-full hover:bg-muted/50 hover:border-gray-300 transition-all duration-300 ${
-          isMobile ? "w-7 h-7" : "w-10 h-10"
+        className={`rounded-full hover:bg-transparent hover:scale-110 transition-all duration-300 ${
+          isMobile ? "w-7 h-7" : "w-9 h-9"
         }`}
         aria-label="Previous page"
       >
-        <ChevronLeft className={isMobile ? "h-3 w-3" : "h-4 w-4"} />
+        <div className={`flex justify-center items-center transform rotate-180 ${
+          currentPage === 1 ? 'text-gray-300' : 'text-[#ea384c]'
+        }`}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M9 6l6 6-6 6" strokeWidth="0" />
+          </svg>
+        </div>
       </Button>
       
       {/* Only show page numbers on mobile */}
@@ -68,16 +73,22 @@ export const VideoGridPagination = ({
       )}
       
       <Button
-        variant="outline"
+        variant="ghost"
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
         size="icon"
-        className={`rounded-full hover:bg-muted/50 hover:border-gray-300 transition-all duration-300 ${
-          isMobile ? "w-7 h-7" : "w-10 h-10"
+        className={`rounded-full hover:bg-transparent hover:scale-110 transition-all duration-300 ${
+          isMobile ? "w-7 h-7" : "w-9 h-9"
         }`}
         aria-label="Next page"
       >
-        <ChevronRight className={isMobile ? "h-3 w-3" : "h-4 w-4"} />
+        <div className={`flex justify-center items-center ${
+          currentPage === totalPages ? 'text-gray-300' : 'text-[#ea384c]'
+        }`}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M9 6l6 6-6 6" strokeWidth="0" />
+          </svg>
+        </div>
       </Button>
     </div>
   );
