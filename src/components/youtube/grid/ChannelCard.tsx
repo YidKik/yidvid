@@ -56,7 +56,7 @@ export const ChannelCard = ({
           )}
         </div>
         
-        <h3 className="text-sm font-medium text-center truncate max-w-full px-1">
+        <h3 className="text-sm font-medium text-center truncate max-w-full px-1 video-title">
           {title}
         </h3>
       </div>

@@ -65,18 +65,18 @@ export const VideoCardInfo = ({
       <div className="flex-1 min-w-0">
         <h3 
           className={cn(
-            "font-medium text-foreground line-clamp-2", 
-            isMobile ? "text-sm" : "text-base"
+            "video-title line-clamp-2", 
+            isMobile ? "text-sm" : "text-youtube-title"
           )}
         >
           {title}
         </h3>
         
-        <div className="mt-1 flex flex-col text-xs text-muted-foreground">
+        <div className="mt-1 flex flex-col text-xs video-meta-text">
           {!hideChannelName && (
             <Link 
               to={`/channel/${channelId}`}
-              className="hover:text-foreground hover:underline"
+              className="hover:text-foreground hover:underline video-channel-name"
               onClick={(e) => e.stopPropagation()}
             >
               {channelName}
@@ -85,8 +85,8 @@ export const VideoCardInfo = ({
           
           <div className="flex flex-col sm:flex-row sm:items-center">
             <span>{formatViews(views)}</span>
-            <span className="hidden sm:inline mx-1">•</span>
-            <span className="font-medium text-xs">Uploaded {formattedDate}</span>
+            <span className="hidden sm:inline mx-1 text-youtube-small">•</span>
+            <span className="text-youtube-small">Uploaded {formattedDate}</span>
           </div>
         </div>
       </div>

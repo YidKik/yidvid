@@ -1,9 +1,11 @@
 
 import { useState, useEffect } from "react";
 import { useAuthentication } from "./useAuthentication";
-import type { AuthCredentials } from "./useAuthentication";
 
-export type { AuthCredentials } from "./useAuthentication";
+interface AuthCredentials {
+  email: string;
+  password: string;
+}
 
 interface UseSignInProps {
   onSuccess?: () => void;
@@ -21,8 +23,7 @@ export const useSignIn = ({ onSuccess }: UseSignInProps = {}) => {
   const { 
     signIn, 
     isLoading: authLoading, 
-    authError, 
-    setAuthError 
+    error: authError
   } = useAuthentication();
 
   // Sync loading state with authentication hook
@@ -33,19 +34,20 @@ export const useSignIn = ({ onSuccess }: UseSignInProps = {}) => {
   // Sync error state with authentication hook
   useEffect(() => {
     if (authError) {
-      setLoginError(authError);
+      setLoginError(authError.message || "Sign in failed");
     }
   }, [authError]);
 
   /**
-   * Wrapper function for signIn that passes through the onSuccess callback
+   * Wrapper function for signIn that handles the onSuccess callback
    */
   const handleSignIn = async (credentials: AuthCredentials) => {
     try {
       setIsLoading(true);
       setLoginError("");
-      const result = await signIn(credentials, { onSuccess });
-      return result;
+      await signIn(credentials);
+      if (onSuccess) onSuccess();
+      return true;
     } catch (error: any) {
       const errorMessage = error?.message || "Sign in failed. Please try again.";
       setLoginError(errorMessage);
@@ -59,9 +61,6 @@ export const useSignIn = ({ onSuccess }: UseSignInProps = {}) => {
     signIn: handleSignIn,
     isLoading,
     loginError,
-    setLoginError: (error: string) => {
-      setLoginError(error);
-      setAuthError(error);
-    }
+    setLoginError
   };
 };
