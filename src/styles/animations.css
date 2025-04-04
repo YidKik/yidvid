@@ -1,0 +1,59 @@
+
+/* Animation Definitions */
+@keyframes toast-enter {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 20px, 0) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes toast-exit {
+  from {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate3d(0, 20px, 0) scale(0.9);
+  }
+}
+
+@keyframes subtle-glow {
+  0% { box-shadow: 0 0 0 rgba(0,0,0,0); }
+  100% { box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+}
+
+/* Video preview effect animations */
+@keyframes shimmer-preview {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+.animate-shimmer-preview {
+  animation: shimmer-preview 1.5s infinite;
+}
+
+/* Video preview zoom effect */
+.preview-zoom {
+  transition: transform 10s ease-out;
+}
+
+.preview-zoom-active {
+  transform: scale(1.1);
+}

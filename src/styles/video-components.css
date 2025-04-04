@@ -1,0 +1,31 @@
+
+/* YouTube-style Video Components Styling */
+.video-title {
+  font-family: 'Roboto', 'Arial', sans-serif;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: #030303;
+  line-height: 1.4;
+}
+
+/* Add hover effect for video title */
+.group:hover .video-title {
+  color: #ea384c;
+}
+
+.video-channel-name {
+  font-family: 'Roboto', 'Arial', sans-serif;
+  font-weight: 400;
+  color: #606060;
+}
+
+.video-meta-text {
+  font-family: 'Roboto', 'Arial', sans-serif;
+  font-weight: 400;
+  color: #606060;
+}
+
+/* Video thumbnail hover animation */
+.video-card-thumbnail:hover {
+  animation: subtle-glow 0.3s forwards;
+}

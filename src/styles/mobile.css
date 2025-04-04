@@ -1,0 +1,77 @@
+
+/* Mobile-specific styles */
+@media (max-width: 768px) {
+  .alert-compact-text {
+    font-size: 0.7rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    line-height: 1;
+  }
+  
+  /* Toast mobile optimizations */
+  [data-sonner-toast] {
+    --toast-width: 90% !important;
+    --toast-padding: 0.5rem !important;
+    --toast-font-size: 0.75rem !important;
+    transform: scale(0.9) !important;
+    transform-origin: bottom right !important;
+    animation: toast-enter 0.4s cubic-bezier(0.21, 1.02, 0.73, 1) forwards !important;
+  }
+  
+  [data-sonner-toast][data-removing="true"] {
+    animation: toast-exit 0.4s cubic-bezier(0.06, 0.71, 0.55, 1) forwards !important;
+  }
+  
+  /* Category card optimization */
+  .category-card-mobile {
+    height: 45px !important;
+    padding: 0.25rem !important;
+  }
+  
+  .category-card-mobile .icon {
+    transform: scale(0.75);
+  }
+  
+  .category-card-mobile .label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    max-width: 65px;
+    text-shadow: 0 0 1px rgba(255,255,255,0.5);
+  }
+  
+  /* Specific category optimizations */
+  .category-entertainment .label,
+  .category-advertisement .label {
+    font-size: 0.65rem !important;
+    letter-spacing: -0.03em !important;
+  }
+  
+  /* Content toggle for mobile */
+  .content-toggle-mobile {
+    transform: scale(0.85);
+    margin-top: -4px;
+    margin-bottom: -4px;
+  }
+  
+  /* Fix scrollbar visibility on Safari */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    scroll-behavior: smooth;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Auto-scrolling container */
+  .auto-scroll-container {
+    scroll-behavior: smooth;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}

@@ -1,0 +1,55 @@
+
+/* Desktop-specific styles */
+@media (min-width: 768px) {
+  [data-radix-popper-content-wrapper] {
+    transform: scale(1.05) !important;
+  }
+  
+  .auth-dialog-desktop {
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(8px);
+  }
+  
+  /* Custom scrollbar for desktop */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.02);
+    border-radius: 8px;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.25);
+  }
+  
+  /* Toast animations for desktop */
+  [data-sonner-toast] {
+    animation: toast-enter 0.4s cubic-bezier(0.21, 1.02, 0.73, 1) forwards !important;
+  }
+  
+  [data-sonner-toast][data-removing="true"] {
+    animation: toast-exit 0.4s cubic-bezier(0.06, 0.71, 0.55, 1) forwards !important;
+  }
+  
+  /* Font improvements for desktop */
+  .video-title {
+    font-size: 0.875rem;
+    line-height: 1.25;
+  }
+  
+  .video-channel-name {
+    font-size: 0.8125rem;
+  }
+  
+  .video-meta-text {
+    font-size: 0.8125rem;
+  }
+}
