@@ -1,4 +1,3 @@
-
 @import './styles/index.css';
 
 /* Mobile optimizations */
@@ -223,4 +222,3 @@
 .preview-zoom-active {
   transform: scale(1.1);
 }
-

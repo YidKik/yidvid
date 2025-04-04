@@ -57,7 +57,7 @@ export const VideoCardThumbnail = ({
         className={cn(
           "w-full h-full object-cover",
           "transition-all duration-300 ease-out",
-          isHovering ? "scale-[1.05] blur-[1px]" : "scale-100", // Scale and slight blur on hover
+          isHovering ? "scale-[1.02] translate-y-[-4px]" : "scale-100", // More subtle zoom and small lift effect
         )}
         onError={() => setImageError(true)}
       />
