@@ -132,7 +132,7 @@ export const ChannelDataProvider = ({ children, onError }: ChannelDataProviderPr
       console.error("Error fetching channels on mount:", err);
       if (onError) onError(err);
     });
-  }, [refetch, onError]);
+  }, [refetch, error]);
 
   useEffect(() => {
     if (channels?.length || manuallyFetchedChannels?.length) {
