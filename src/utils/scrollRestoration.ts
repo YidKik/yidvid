@@ -9,6 +9,7 @@ export const saveScrollPosition = (path: string) => {
     const scrollPositions = JSON.parse(sessionStorage.getItem('scrollPositions') || '{}');
     scrollPositions[path] = window.scrollY;
     sessionStorage.setItem('scrollPositions', JSON.stringify(scrollPositions));
+    console.log(`Saved scroll position for ${path}: ${window.scrollY}px`);
   } catch (e) {
     console.warn('Could not save scroll position:', e);
   }
@@ -18,7 +19,9 @@ export const saveScrollPosition = (path: string) => {
 export const getScrollPosition = (path: string): number => {
   try {
     const scrollPositions = JSON.parse(sessionStorage.getItem('scrollPositions') || '{}');
-    return scrollPositions[path] || 0;
+    const position = scrollPositions[path] || 0;
+    console.log(`Retrieved scroll position for ${path}: ${position}px`);
+    return position;
   } catch (e) {
     console.warn('Could not retrieve scroll position:', e);
     return 0;
@@ -32,12 +35,15 @@ export const recordNavigation = (path: string) => {
     
     // Only add to history if this is a new page visit (not a back navigation)
     if (history.length === 0 || history[history.length - 1] !== path) {
+      // Save current scroll position for the previous path before recording new path
+      if (history.length > 0) {
+        saveScrollPosition(history[history.length - 1]);
+      }
+      
       history.push(path);
       sessionStorage.setItem('navigationHistory', JSON.stringify(history));
+      console.log(`Recorded navigation to: ${path}, history:`, history);
     }
-    
-    // Also save current scroll position for this path
-    saveScrollPosition(path);
   } catch (e) {
     console.warn('Could not record navigation:', e);
   }
@@ -50,7 +56,9 @@ export const getPreviousPath = (): string | null => {
     
     if (history.length > 1) {
       // Return second-to-last item (previous page)
-      return history[history.length - 2];
+      const previousPath = history[history.length - 2];
+      console.log(`Retrieved previous path: ${previousPath}`);
+      return previousPath;
     }
     return null;
   } catch (e) {
@@ -68,6 +76,7 @@ export const removeCurrentPathFromHistory = () => {
       // Remove last item (current page)
       history.pop();
       sessionStorage.setItem('navigationHistory', JSON.stringify(history));
+      console.log(`Removed current path from history, new history:`, history);
     }
   } catch (e) {
     console.warn('Could not update navigation history:', e);

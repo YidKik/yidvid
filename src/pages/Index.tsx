@@ -128,7 +128,6 @@ const MainContent = () => {
               isMusic={isMusic} 
               onToggle={() => setIsMusic(!isMusic)} 
             />
-            {/* Category section removed as requested */}
           </div>
 
           <motion.div
