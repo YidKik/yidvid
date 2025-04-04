@@ -45,13 +45,11 @@ export const useSignIn = ({ onSuccess }: UseSignInProps = {}) => {
       setIsLoading(true);
       setLoginError("");
       const result = await signIn(credentials, { onSuccess });
-      return result;
+      return result.success;
     } catch (error: any) {
       const errorMessage = error?.message || "Sign in failed. Please try again.";
       setLoginError(errorMessage);
       return false;
-    } finally {
-      // We don't need to setIsLoading(false) here as it should be synced from authLoading
     }
   };
 

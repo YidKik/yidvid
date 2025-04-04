@@ -37,7 +37,9 @@ export const ForgotPasswordForm = ({
   
   // Sync error state with authentication hook
   useEffect(() => {
-    setLoginError(authError);
+    if (authError) {
+      setLoginError(authError);
+    }
   }, [authError, setLoginError]);
 
   // Sync reset email state with authentication hook
@@ -48,7 +50,8 @@ export const ForgotPasswordForm = ({
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     setAuthError("");
-    await resetPassword(email);
+    const result = await resetPassword(email);
+    // No need to check result here as states are updated in resetPassword
   };
 
   return (

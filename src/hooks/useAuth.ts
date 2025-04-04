@@ -7,6 +7,7 @@ import { useAuthentication } from "./useAuthentication";
  */
 export const useAuth = () => {
   const {
+    user,
     session,
     isAuthenticated,
     isLoggingOut,
@@ -15,6 +16,7 @@ export const useAuth = () => {
   } = useAuthentication();
 
   return {
+    user,
     session,
     isAuthenticated,
     handleLogout: signOut,

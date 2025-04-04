@@ -38,9 +38,9 @@ const ResetPassword = () => {
 
     setError("");
 
-    const success = await updatePassword(password);
+    const result = await updatePassword(password);
     
-    if (success) {
+    if (result.success) {
       setSuccess(true);
       toast.success("Password reset successfully! Redirecting to home page...");
       setTimeout(() => {
