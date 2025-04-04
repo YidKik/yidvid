@@ -1,4 +1,3 @@
-
 import { Routes, Route, useLocation } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -12,6 +11,7 @@ import { getPageTitle } from "@/utils/pageTitle";
 import { Helmet } from "react-helmet";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
+import { saveScrollPosition, recordNavigation } from "@/utils/scrollRestoration";
 
 // Main pages
 import Index from "@/pages/Index";
@@ -42,6 +42,30 @@ function AppRoutes() {
   const { isAuthenticated, session } = useAuth();
   const [showAuthDialog, setShowAuthDialog] = useState(false);
   
+  // Save scroll position and record navigation on route changes
+  useEffect(() => {
+    // Record this navigation in history
+    recordNavigation(location.pathname);
+    
+    // Set the page title based on the route
+    document.title = getPageTitle(location.pathname);
+    
+    // Force check viewport and console log it
+    console.log(`Current viewport width: ${window.innerWidth}px`);
+    document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
+  }, [location]);
+  
+  // Handle viewport resize events
+  useEffect(() => {
+    const handleResize = () => {
+      document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
+      console.log(`Viewport resized to: ${window.innerWidth}px x ${window.innerHeight}px`);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+  
   // Determine when to show auth dialog
   useEffect(() => {
     const protectedRoutes = ["/dashboard", "/settings"];
@@ -57,22 +81,6 @@ function AppRoutes() {
       setShowAuthDialog(false);
     }
   }, [location, isAuthenticated, session]);
-
-  useEffect(() => {
-    document.title = getPageTitle(location.pathname);
-    
-    // Force check viewport and console log it
-    console.log(`Current viewport width: ${window.innerWidth}px`);
-    document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
-    
-    const handleResize = () => {
-      document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
-      console.log(`Viewport resized to: ${window.innerWidth}px x ${window.innerHeight}px`);
-    };
-    
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [location]);
 
   return (
     <>

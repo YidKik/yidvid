@@ -1,3 +1,4 @@
+
 import { useParams, Link } from "react-router-dom";
 import { VideoPlayer } from "@/components/video/VideoPlayer";
 import { VideoInfo } from "@/components/video/VideoInfo";
@@ -80,6 +81,6 @@ const VideoDetails = () => {
       </div>
     </div>
   );
-};
+}
 
 export default VideoDetails;
