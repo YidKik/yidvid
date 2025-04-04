@@ -1,4 +1,3 @@
-
 import { Header } from "@/components/Header";
 import Auth from "@/pages/Auth";
 import { useState, useEffect, useRef } from "react";
@@ -17,6 +16,8 @@ import { getPageTitle, DEFAULT_META_DESCRIPTION, DEFAULT_META_KEYWORDS, DEFAULT_
 import { Helmet } from "react-helmet";
 import { toast } from "sonner";
 import { SiteDisclaimerBanner } from "@/components/notifications/SiteDisclaimerBanner";
+import { useSearchParams } from "react-router-dom";
+import { getScrollPosition } from "@/utils/scrollRestoration";
 
 const MainContent = () => {
   const [isMusic, setIsMusic] = useState(false);
@@ -34,6 +35,8 @@ const MainContent = () => {
   const { session } = useSessionManager();
   const notificationsProcessedRef = useRef(false);
   const hasMadeInitialFetchAttempt = useRef(false);
+  const [searchParams] = useSearchParams();
+  const skipWelcome = searchParams.get("skipWelcome") === "true";
 
   const markNotificationsAsRead = async () => {
     if (!session?.user?.id || notificationsProcessedRef.current) return;
@@ -49,7 +52,6 @@ const MainContent = () => {
       if (error) {
         console.error("Error marking notifications as read:", error);
         if (!error.message.includes("recursion") && !error.message.includes("policy")) {
-          // Silent error - don't show toast to users
           console.warn("Notifications error suppressed:", error.message);
         }
       }
@@ -100,6 +102,20 @@ const MainContent = () => {
     }
   }, [videos, isLoading, forceRefetch]);
 
+  useEffect(() => {
+    if (skipWelcome) {
+      const savedPosition = getScrollPosition("/" + window.location.search);
+      if (savedPosition > 0) {
+        setTimeout(() => {
+          window.scrollTo({
+            top: savedPosition,
+            behavior: 'auto'
+          });
+        }, 100);
+      }
+    }
+  }, [skipWelcome]);
+
   return (
     <div className="flex-1">
       <Header />
@@ -144,6 +160,8 @@ const MainContent = () => {
 
 const Index = () => {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [searchParams] = useSearchParams();
+  const skipWelcome = searchParams.get("skipWelcome") === "true";
 
   return (
     <>
@@ -166,8 +184,8 @@ const Index = () => {
       </Helmet>
       
       <div className="min-h-screen w-full bg-gradient-to-b from-white to-gray-50">
-        <WelcomeOverlay />
-        <WelcomeAnimation />
+        {!skipWelcome && <WelcomeOverlay />}
+        {!skipWelcome && <WelcomeAnimation />}
         <MainContent />
         <Auth isOpen={isAuthOpen} onOpenChange={setIsAuthOpen} />
       </div>

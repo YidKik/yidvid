@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useLocation } from "react-router-dom";
 import { LogoAnimation } from "./welcome/LogoAnimation";
 import { WelcomeText } from "./welcome/WelcomeText";
 import { useWelcomeData } from "@/hooks/useWelcomeData";
@@ -14,6 +14,7 @@ export const WelcomeAnimation = () => {
   const [show, setShow] = useState(true); // Always start with showing
   const [infoShown, setInfoShown] = useState(false);
   const [searchParams] = useSearchParams();
+  const location = useLocation();
   const skipWelcome = searchParams.get("skipWelcome") === "true";
   const isMobile = useIsMobile();
 

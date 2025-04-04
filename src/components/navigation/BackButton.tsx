@@ -4,54 +4,22 @@ import { ArrowLeft } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { 
+  getPreviousPath, 
+  getScrollPosition, 
+  removeCurrentPathFromHistory,
+  isWelcomePage
+} from "@/utils/scrollRestoration";
 
 interface BackButtonProps {
   className?: string;
 }
-
-// We'll store scroll positions for each path in sessionStorage
-const saveScrollPosition = (path: string) => {
-  try {
-    const scrollPositions = JSON.parse(sessionStorage.getItem('scrollPositions') || '{}');
-    scrollPositions[path] = window.scrollY;
-    sessionStorage.setItem('scrollPositions', JSON.stringify(scrollPositions));
-  } catch (e) {
-    console.warn('Could not save scroll position:', e);
-  }
-};
-
-// Retrieve previously saved scroll position for a path
-const getScrollPosition = (path: string): number => {
-  try {
-    const scrollPositions = JSON.parse(sessionStorage.getItem('scrollPositions') || '{}');
-    return scrollPositions[path] || 0;
-  } catch (e) {
-    console.warn('Could not retrieve scroll position:', e);
-    return 0;
-  }
-};
 
 export const BackButton = ({ className }: BackButtonProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [visible, setVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
-
-  // Track navigation history in session storage
-  useEffect(() => {
-    // Save current path to history when visiting a new page
-    const history = JSON.parse(sessionStorage.getItem('navigationHistory') || '[]');
-    
-    // Only add to history if this is a new page visit (not a back navigation)
-    if (history.length === 0 || history[history.length - 1] !== location.pathname) {
-      history.push(location.pathname);
-      sessionStorage.setItem('navigationHistory', JSON.stringify(history));
-    }
-    
-    // Also save current scroll position for this path
-    saveScrollPosition(location.pathname);
-    
-  }, [location.pathname]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -76,24 +44,23 @@ export const BackButton = ({ className }: BackButtonProps) => {
   }, [lastScrollY]);
 
   const handleGoBack = () => {
-    // Get navigation history
-    const history = JSON.parse(sessionStorage.getItem('navigationHistory') || '[]');
+    // Get previous path from history
+    const previousPath = getPreviousPath();
     
-    if (history.length > 1) {
+    if (previousPath) {
       // Remove current page from history
-      history.pop();
-      
-      // Get the previous page
-      const previousPath = history[history.length - 1];
-      
-      // Update history in storage (remove current page)
-      sessionStorage.setItem('navigationHistory', JSON.stringify(history));
+      removeCurrentPathFromHistory();
       
       // Get saved scroll position for the previous page
       const scrollPosition = getScrollPosition(previousPath);
       
       // Navigate to previous page
-      navigate(previousPath);
+      if (isWelcomePage(previousPath)) {
+        // If the previous page is the welcome page, add skipWelcome parameter
+        navigate("/?skipWelcome=true");
+      } else {
+        navigate(previousPath);
+      }
       
       // After navigation, restore scroll position with a slight delay to ensure page is loaded
       setTimeout(() => {
@@ -103,7 +70,7 @@ export const BackButton = ({ className }: BackButtonProps) => {
         });
       }, 100);
     } else {
-      // If no history, go to home
+      // If no history, go to home with skipWelcome flag
       navigate("/?skipWelcome=true");
     }
   };

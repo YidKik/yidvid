@@ -1,5 +1,5 @@
 
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useLocation } from "react-router-dom";
 import { VideoPlayer } from "@/components/video/VideoPlayer";
 import { VideoInfo } from "@/components/video/VideoInfo";
 import { RelatedVideos } from "@/components/video/RelatedVideos";
@@ -15,6 +15,8 @@ import { VideoPlaceholder } from "@/components/video/VideoPlaceholder";
 
 const VideoDetails = () => {
   const { id } = useParams<{ id: string }>();
+  const location = useLocation();
+
   if (!id) return <div className="p-4">Video ID not provided</div>;
 
   const { data: video, isLoading: isLoadingVideo, error } = useVideoQuery(id);
@@ -38,7 +40,7 @@ const VideoDetails = () => {
           </div>
           <h2 className="text-xl font-semibold text-destructive">Video not found</h2>
           <p className="mt-2 text-muted-foreground">The video you're looking for doesn't exist or has been removed.</p>
-          <Link to="/" className="mt-4 inline-block px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 transition-colors">
+          <Link to="/?skipWelcome=true" className="mt-4 inline-block px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 transition-colors">
             Return to homepage
           </Link>
         </div>

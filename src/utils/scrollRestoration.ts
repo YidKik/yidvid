@@ -59,13 +59,33 @@ export const getPreviousPath = (): string | null => {
   }
 };
 
+// Remove the current path from history when navigating back
+export const removeCurrentPathFromHistory = () => {
+  try {
+    const history = JSON.parse(sessionStorage.getItem('navigationHistory') || '[]');
+    
+    if (history.length > 0) {
+      // Remove last item (current page)
+      history.pop();
+      sessionStorage.setItem('navigationHistory', JSON.stringify(history));
+    }
+  } catch (e) {
+    console.warn('Could not update navigation history:', e);
+  }
+};
+
+// Check if the current route is the welcome page
+export const isWelcomePage = (path: string) => {
+  return path === '/' && !window.location.search.includes('skipWelcome=true');
+};
+
 // Update the App component to track all route changes
 export const setupScrollRestoration = () => {
   // Track initial page load
-  recordNavigation(window.location.pathname);
+  recordNavigation(window.location.pathname + window.location.search);
   
   // Listen for route changes to save scroll positions
   window.addEventListener('beforeunload', () => {
-    saveScrollPosition(window.location.pathname);
+    saveScrollPosition(window.location.pathname + window.location.search);
   });
 };

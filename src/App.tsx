@@ -1,3 +1,4 @@
+
 import { Routes, Route, useLocation } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -11,7 +12,7 @@ import { getPageTitle } from "@/utils/pageTitle";
 import { Helmet } from "react-helmet";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
-import { saveScrollPosition, recordNavigation } from "@/utils/scrollRestoration";
+import { recordNavigation, setupScrollRestoration } from "@/utils/scrollRestoration";
 
 // Main pages
 import Index from "@/pages/Index";
@@ -42,10 +43,15 @@ function AppRoutes() {
   const { isAuthenticated, session } = useAuth();
   const [showAuthDialog, setShowAuthDialog] = useState(false);
   
+  // Initialize scroll restoration system
+  useEffect(() => {
+    setupScrollRestoration();
+  }, []);
+  
   // Save scroll position and record navigation on route changes
   useEffect(() => {
-    // Record this navigation in history
-    recordNavigation(location.pathname);
+    // Record this navigation in history (includes search params)
+    recordNavigation(location.pathname + location.search);
     
     // Set the page title based on the route
     document.title = getPageTitle(location.pathname);
