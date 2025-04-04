@@ -68,7 +68,7 @@ export const VideoCard = ({
     <Link 
       to={`/video/${videoIdForLink}`} 
       className={cn(
-        "block w-full cursor-pointer",
+        "block w-full cursor-pointer group",
         className
       )}
       aria-label={`Watch ${title}`}

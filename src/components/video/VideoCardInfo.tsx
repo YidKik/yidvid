@@ -65,7 +65,7 @@ export const VideoCardInfo = ({
       <div className="flex-1 min-w-0">
         <h3 
           className={cn(
-            "video-title line-clamp-2", 
+            "video-title line-clamp-2 group-hover:text-primary transition-colors duration-200", 
             isMobile ? "text-sm" : "text-youtube-title"
           )}
         >
