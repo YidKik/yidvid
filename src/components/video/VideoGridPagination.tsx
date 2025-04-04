@@ -1,5 +1,4 @@
 
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 interface VideoGridPaginationProps {
@@ -27,8 +26,7 @@ export const VideoGridPagination = ({
   if (!showAll) {
     return (
       <div className={`flex justify-center ${isMobile ? 'mt-1' : 'mt-8'}`}>
-        <Button 
-          variant="outline" 
+        <button 
           onClick={onShowAll}
           className={`group relative rounded-full text-muted-foreground hover:bg-muted/50 hover:border-gray-300 transition-all duration-300 ${
             isMobile ? "text-[9px] px-2 py-0.5 h-6" : "text-xs px-4 py-1.5"
@@ -38,7 +36,7 @@ export const VideoGridPagination = ({
           <span className="absolute -bottom-4 left-1/2 -translate-x-1/2 text-[8px] font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200">
             View more videos
           </span>
-        </Button>
+        </button>
       </div>
     );
   }
@@ -46,13 +44,11 @@ export const VideoGridPagination = ({
   // For pagination display
   return (
     <div className={`flex items-center justify-center gap-6 ${isMobile ? 'mt-4' : 'mt-8'}`}>
-      <Button
-        variant="ghost"
+      <button
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        size="icon"
-        className={`rounded-full hover:bg-transparent hover:scale-110 transition-all duration-300 ${
-          isMobile ? "w-7 h-7" : "w-9 h-9"
+        className={`transition-all duration-300 hover:scale-110 p-1 ${
+          currentPage === 1 ? 'cursor-not-allowed' : 'cursor-pointer'
         }`}
         aria-label="Previous page"
       >
@@ -63,7 +59,7 @@ export const VideoGridPagination = ({
             <path d="M9 6l6 6-6 6" strokeWidth="0" />
           </svg>
         </div>
-      </Button>
+      </button>
       
       {/* Only show page numbers on mobile */}
       {isMobile && (
@@ -72,13 +68,11 @@ export const VideoGridPagination = ({
         </div>
       )}
       
-      <Button
-        variant="ghost"
+      <button
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        size="icon"
-        className={`rounded-full hover:bg-transparent hover:scale-110 transition-all duration-300 ${
-          isMobile ? "w-7 h-7" : "w-9 h-9"
+        className={`transition-all duration-300 hover:scale-110 p-1 ${
+          currentPage === totalPages ? 'cursor-not-allowed' : 'cursor-pointer'
         }`}
         aria-label="Next page"
       >
@@ -89,7 +83,7 @@ export const VideoGridPagination = ({
             <path d="M9 6l6 6-6 6" strokeWidth="0" />
           </svg>
         </div>
-      </Button>
+      </button>
     </div>
   );
 };
