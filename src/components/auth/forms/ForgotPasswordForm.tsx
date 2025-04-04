@@ -26,7 +26,7 @@ export const ForgotPasswordForm = ({
   setLoginError,
   onBackToSignIn,
 }: ForgotPasswordFormProps) => {
-  const { resetPassword, isLoading: authLoading, authError, isPasswordResetSent, setAuthError } = useAuthentication();
+  const { resetPassword, isLoading: authLoading, error } = useAuthentication();
   const [resetEmailSent, setResetEmailSent] = useState(false);
   const isMobile = useIsMobile();
 
@@ -37,18 +37,19 @@ export const ForgotPasswordForm = ({
   
   // Sync error state with authentication hook
   useEffect(() => {
-    setLoginError(authError);
-  }, [authError, setLoginError]);
-
-  // Sync reset email state with authentication hook
-  useEffect(() => {
-    setResetEmailSent(isPasswordResetSent);
-  }, [isPasswordResetSent]);
+    if (error) {
+      setLoginError(error.message || "An error occurred");
+    }
+  }, [error, setLoginError]);
 
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    setAuthError("");
-    await resetPassword(email);
+    try {
+      await resetPassword(email);
+      setResetEmailSent(true);
+    } catch (err) {
+      console.error("Password reset error:", err);
+    }
   };
 
   return (

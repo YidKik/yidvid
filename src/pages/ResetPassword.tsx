@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { useAuthentication } from "@/hooks/useAuthentication";
+import { supabase } from "@/integrations/supabase/client";
 
 const ResetPassword = () => {
   const [password, setPassword] = useState("");
@@ -12,16 +13,42 @@ const ResetPassword = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [sessionChecked, setSessionChecked] = useState(false);
+  const [currentSession, setCurrentSession] = useState<any>(null);
   
   const { 
     updatePassword, 
-    isLoading, 
-    authError, 
-    session, 
-    setAuthError 
+    isLoading,
+    error: authError
   } = useAuthentication();
   
   const navigate = useNavigate();
+
+  // Check for auth session
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        console.log("Checking session for password reset...");
+        const { data } = await supabase.auth.getSession();
+        
+        if (data.session) {
+          console.log("Session exists, user can reset password");
+          setCurrentSession(data.session);
+          setSessionChecked(true);
+          return;
+        }
+        
+        console.log("No session found, redirecting to home");
+        toast.error("Invalid or expired reset link. Please request a new password reset.");
+        navigate("/");
+      } catch (err) {
+        console.error("Error in session check:", err);
+        toast.error("An error occurred. Please try again.");
+        navigate("/");
+      }
+    };
+
+    checkSession();
+  }, [navigate]);
 
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,43 +65,17 @@ const ResetPassword = () => {
 
     setError("");
 
-    const success = await updatePassword(password);
-    
-    if (success) {
+    try {
+      await updatePassword(password);
       setSuccess(true);
       toast.success("Password reset successfully! Redirecting to home page...");
       setTimeout(() => {
         navigate("/");
       }, 3000);
-    } else {
-      setError(authError || "Failed to reset password");
+    } catch (err) {
+      setError(authError?.message || "Failed to reset password");
     }
   };
-
-  // Check for auth state
-  useEffect(() => {
-    const checkSession = async () => {
-      try {
-        console.log("Checking session for password reset...");
-        
-        if (session) {
-          console.log("Session exists, user can reset password");
-          setSessionChecked(true);
-          return;
-        }
-        
-        console.log("No session found, redirecting to home");
-        toast.error("Invalid or expired reset link. Please request a new password reset.");
-        navigate("/");
-      } catch (err) {
-        console.error("Error in session check:", err);
-        toast.error("An error occurred. Please try again.");
-        navigate("/");
-      }
-    };
-
-    checkSession();
-  }, [navigate, session]);
 
   if (!sessionChecked) {
     return (
