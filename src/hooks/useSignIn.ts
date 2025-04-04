@@ -1,9 +1,9 @@
 
 import { useState, useEffect } from "react";
 import { useAuthentication } from "./useAuthentication";
-import type { AuthCredentials } from "./auth/useAuthSignIn";
+import type { AuthCredentials } from "./useAuthentication";
 
-export type { AuthCredentials } from "./auth/useAuthSignIn";
+export type { AuthCredentials } from "./useAuthentication";
 
 interface UseSignInProps {
   onSuccess?: () => void;
@@ -50,6 +50,8 @@ export const useSignIn = ({ onSuccess }: UseSignInProps = {}) => {
       const errorMessage = error?.message || "Sign in failed. Please try again.";
       setLoginError(errorMessage);
       return false;
+    } finally {
+      // We don't need to setIsLoading(false) here as it should be synced from authLoading
     }
   };
 

@@ -24,7 +24,7 @@ export const useAuthPasswordReset = () => {
   const resetPassword = useCallback(async (email: string) => {
     if (!email) {
       setAuthError("Please enter your email address to reset your password");
-      return { success: false };
+      return false;
     }
 
     setIsLoading(true);
@@ -46,17 +46,17 @@ export const useAuthPasswordReset = () => {
       if (error) {
         console.error("Password reset error:", error);
         setAuthError(error.message);
-        return { success: false };
+        return false;
       } 
       
       // Update UI state to show confirmation message
       setIsPasswordResetSent(true);
       toast.success("Password reset email sent. Please check your inbox.", { id: "password-reset-sent" });
-      return { success: true };
+      return true;
     } catch (error: any) {
       console.error("Error in password reset:", error);
       setAuthError(error.message || "An error occurred while sending the reset link");
-      return { success: false };
+      return false;
     } finally {
       setIsLoading(false);
     }
@@ -72,7 +72,7 @@ export const useAuthPasswordReset = () => {
   const updatePassword = useCallback(async (newPassword: string) => {
     if (!newPassword || newPassword.length < 6) {
       setAuthError("Password must be at least 6 characters");
-      return { success: false };
+      return false;
     }
 
     setIsLoading(true);
@@ -86,15 +86,15 @@ export const useAuthPasswordReset = () => {
       if (error) {
         console.error("Password update error:", error);
         setAuthError(error.message);
-        return { success: false };
+        return false;
       }
       
       toast.success("Password updated successfully", { id: "password-updated" });
-      return { success: true };
+      return true;
     } catch (error: any) {
       console.error("Error during password update:", error);
       setAuthError(error.message || "An error occurred while updating your password");
-      return { success: false };
+      return false;
     } finally {
       setIsLoading(false);
     }

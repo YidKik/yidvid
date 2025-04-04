@@ -7,7 +7,6 @@ import { useAuthentication } from "./useAuthentication";
  */
 export const useAuth = () => {
   const {
-    user,
     session,
     isAuthenticated,
     isLoggingOut,
@@ -15,17 +14,10 @@ export const useAuth = () => {
     isLoading
   } = useAuthentication();
 
-  // Provide a consistent logout handler
-  const handleLogout = async () => {
-    await signOut();
-    return Promise.resolve();
-  };
-
   return {
-    user,
     session,
     isAuthenticated,
-    handleLogout,
+    handleLogout: signOut,
     isLoggingOut,
     isLoading
   };

@@ -1,35 +1,90 @@
 
 import { useState, useEffect } from "react";
+import { Session } from "@supabase/supabase-js";
+import { QueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { prefetchUserData } from "@/utils/userDataPrefetch";
+import { fetchInitialContent } from "@/utils/contentFetching";
 
-/**
- * Hook to track session state and provide auth state change notifications
- */
-export const useSessionState = () => {
-  const [sessionState, setSessionState] = useState<string | null>(null);
+export const useSessionState = (queryClient: QueryClient) => {
+  const [session, setSession] = useState<Session | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Set up auth state listener
-    const { data } = supabase.auth.onAuthStateChange((event) => {
-      setSessionState(event);
-      
-      // Log the auth state change for debugging
-      console.log(`Auth state changed: ${event}`);
-    });
+    let isMounted = true;
     
-    // Fetch initial session
-    const getInitialSession = async () => {
-      const { data } = await supabase.auth.getSession();
-      setSessionState(data.session ? 'INITIAL_SESSION' : 'NO_SESSION');
+    const initializeSession = async () => {
+      try {
+        // Get initial session
+        const { data: { session: initialSession } } = await supabase.auth.getSession();
+        
+        if (initialSession && isMounted) {
+          console.log("Initial session loaded, user ID:", initialSession.user.id);
+          setSession(initialSession);
+          
+          // Pre-fetch profile data immediately if we have a session
+          try {
+            const success = await prefetchUserData(initialSession, queryClient);
+            if (success) {
+              console.log("Initial profile data prefetch complete");
+            } else {
+              console.warn("Initial profile data prefetch failed");
+            }
+          } catch (error) {
+            console.error("Error prefetching user data:", error);
+          }
+        }
+        
+        // Load remaining content in the background after profile
+        setTimeout(() => {
+          fetchInitialContent(queryClient)
+            .catch(error => console.error("Error fetching initial content:", error));
+        }, 100); // Slight delay to prioritize user data
+        
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      } catch (error) {
+        console.error("Error initializing session:", error);
+        if (isMounted) {
+          setSession(null);
+          setIsLoading(false);
+        }
+      }
     };
-    
-    getInitialSession();
-    
-    // Clean up subscription
-    return () => {
-      data.subscription.unsubscribe();
-    };
-  }, []);
 
-  return { sessionState };
+    // Set up auth state change listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, currentSession) => {
+      console.log("Auth state changed:", event);
+      
+      if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && isMounted) {
+        setSession(currentSession);
+        
+        // Immediately prefetch profile data
+        if (currentSession?.user?.id) {
+          // Use setTimeout to avoid auth recursion issues
+          setTimeout(() => {
+            prefetchUserData(currentSession, queryClient)
+              .catch(err => console.error("Profile data prefetch error:", err));
+          }, 0);
+        }
+      } else if (event === 'SIGNED_OUT' && isMounted) {
+        setSession(null);
+        // Clean up user data from cache
+        queryClient.removeQueries({ queryKey: ["profile"] });
+        queryClient.removeQueries({ queryKey: ["user-profile"] });
+        queryClient.removeQueries({ queryKey: ["user-profile-settings"] });
+        queryClient.removeQueries({ queryKey: ["user-profile-minimal"] });
+      }
+    });
+
+    initializeSession();
+    
+    return () => {
+      isMounted = false;
+      subscription?.unsubscribe();
+    };
+  }, [queryClient]);
+
+  return { session, isLoading };
 };
