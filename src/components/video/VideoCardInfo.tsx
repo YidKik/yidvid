@@ -40,14 +40,14 @@ export const VideoCardInfo = ({
 
   return (
     <div className="mt-2 flex items-start space-x-2">
-      {/* Channel avatar */}
+      {/* Channel avatar - Updated size from h-8 w-8 to h-6 w-6 */}
       {channelThumbnail && (
         <Link 
           to={`/channel/${channelId}`}
           className="flex-shrink-0 mt-0.5"
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="h-8 w-8 overflow-hidden rounded-full">
+          <div className="h-6 w-6 overflow-hidden rounded-full">
             <img
               src={channelThumbnail}
               alt={channelName}
