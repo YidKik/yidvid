@@ -40,7 +40,7 @@ export const FilteredChannelsGrid = ({
 
   return (
     <div className="w-full">
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-4 mt-2 pb-4">
+      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2 md:gap-3 mt-2 pb-4">
         {displayChannels.map((channel, index) => (
           <ChannelCard 
             key={channel.id?.toString() || `channel-${index}`}
