@@ -193,3 +193,34 @@
   animation: subtle-glow 0.3s forwards;
 }
 
+/* Video preview effect animations */
+@keyframes shimmer-preview {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+.animate-shimmer-preview {
+  animation: shimmer-preview 1.5s infinite;
+}
+
+/* Video preview zoom effect */
+.preview-zoom {
+  transition: transform 10s ease-out;
+}
+
+.preview-zoom-active {
+  transform: scale(1.1);
+}
+
