@@ -1,9 +1,13 @@
-
+import { User, Session } from "@supabase/supabase-js";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useSessionManager } from "./useSessionManager";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { useSession } from "@/contexts/SessionContext";
+import { useQuery } from "@tanstack/react-query";
+import { useAuthSignIn } from "./auth/useAuthSignIn";
+import { useAuthSignUp } from "./auth/useAuthSignUp";
+import { useAuthSignOut } from "./auth/useAuthSignOut";
+import { useAuthPasswordReset } from "./auth/useAuthPasswordReset";
+import { useAuthBase } from "./auth/useAuthBase";
 
 export interface AuthCredentials {
   email: string;
@@ -16,199 +20,60 @@ interface AdminStatusData {
 }
 
 export const useAuthentication = () => {
-  const [isLoading, setIsLoading] = useState(false);
+  // Get the base auth state
+  const {
+    isLoading: baseIsLoading,
+    authError,
+    setAuthError,
+    isLoggingOut,
+    session,
+    isAuthenticated
+  } = useAuthBase();
+
+  // Get user state from session
+  const [user, setUser] = useState<User | null>(null);
   const [error, setError] = useState<Error | null>(null);
-  const [user, setUser] = useState<any>(null);
-  const [session, setSession] = useState<any>(null);
-  const [authError, setAuthError] = useState<string>("");
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const [isPasswordResetSent, setIsPasswordResetSent] = useState(false);
+  
+  // Hook into specialized auth operations
+  const { signIn } = useAuthSignIn();
+  const { signUp } = useAuthSignUp();
+  const { signOut } = useAuthSignOut();
+  const { 
+    resetPassword, 
+    updatePassword, 
+    isPasswordResetSent 
+  } = useAuthPasswordReset();
 
-  // Derive authentication status from user
-  const isAuthenticated = !!user;
+  // Keep local user state in sync with session
+  useEffect(() => {
+    setUser(session?.user || null);
+  }, [session]);
 
+  // Initial user fetch
   useEffect(() => {
     const fetchUser = async () => {
-      setIsLoading(true);
-      setError(null);
-
       try {
         const { data: { user, session }, error } = await supabase.auth.getUser();
 
         if (error) {
           setError(error);
           setUser(null);
-          setSession(null);
         } else {
           setUser(user);
-          setSession(session);
         }
       } catch (err: any) {
         setError(err);
         setUser(null);
-        setSession(null);
-      } finally {
-        setIsLoading(false);
-      }
+      } 
     };
 
     fetchUser();
   }, []);
 
-  const signUp = async (credentials: AuthCredentials) => {
-    setIsLoading(true);
-    setError(null);
-    setAuthError("");
-
-    try {
-      const { data, error } = await supabase.auth.signUp(credentials);
-
-      if (error) {
-        setError(error);
-        setUser(null);
-        setAuthError(error.message);
-        toast.error(error.message);
-      } else {
-        setUser(data.user);
-        setSession(data.session);
-        toast.success("Account created successfully! Check your email to verify.");
-      }
-    } catch (err: any) {
-      setError(err);
-      setUser(null);
-      setAuthError(err.message);
-      toast.error(err.message);
-    } finally {
-      setIsLoading(false);
-    }
-    
-    return { success: !error }; // Return an object instead of void
-  };
-
-  const signIn = async (credentials: AuthCredentials, options?: { redirectTo?: string; onSuccess?: () => void }) => {
-    setIsLoading(true);
-    setError(null);
-    setAuthError("");
-
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword(credentials);
-
-      if (error) {
-        setError(error);
-        setUser(null);
-        setAuthError(error.message);
-        toast.error(error.message);
-      } else {
-        setUser(data.user);
-        setSession(data.session);
-        toast.success("Signed in successfully!");
-        
-        if (options?.onSuccess) {
-          options.onSuccess();
-        }
-      }
-    } catch (err: any) {
-      setError(err);
-      setUser(null);
-      setAuthError(err.message);
-      toast.error(err.message);
-    } finally {
-      setIsLoading(false);
-    }
-    
-    return { success: !error }; // Return an object instead of void
-  };
-
-  const signOut = async () => {
-    setIsLoading(true);
-    setIsLoggingOut(true);
-    setError(null);
-
-    try {
-      const { error } = await supabase.auth.signOut();
-
-      if (error) {
-        setError(error);
-        setAuthError(error.message);
-        toast.error(error.message);
-      } else {
-        setUser(null);
-        setSession(null);
-        toast.success("Signed out successfully!");
-      }
-    } catch (err: any) {
-      setError(err);
-      setAuthError(err.message);
-      toast.error(err.message);
-    } finally {
-      setIsLoading(false);
-      setIsLoggingOut(false);
-    }
-    
-    return { success: !error }; // Return an object instead of void
-  };
-
-  const resetPassword = async (email: string) => {
-    setIsLoading(true);
-    setError(null);
-    setAuthError("");
-
-    try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password`,
-      });
-
-      if (error) {
-        setError(error);
-        setAuthError(error.message);
-        toast.error(error.message);
-        setIsPasswordResetSent(false);
-      } else {
-        setIsPasswordResetSent(true);
-        toast.success("Password reset email sent!");
-      }
-    } catch (err: any) {
-      setError(err);
-      setAuthError(err.message);
-      toast.error(err.message);
-      setIsPasswordResetSent(false);
-    } finally {
-      setIsLoading(false);
-    }
-    
-    return { success: !error && isPasswordResetSent }; // Return an object instead of void
-  };
-
-  const updatePassword = async (password: string) => {
-    setIsLoading(true);
-    setError(null);
-    setAuthError("");
-
-    try {
-      const { data, error } = await supabase.auth.updateUser({ password: password });
-
-      if (error) {
-        setError(error);
-        setAuthError(error.message);
-        toast.error(error.message);
-      } else {
-        toast.success("Password updated successfully!");
-      }
-    } catch (err: any) {
-      setError(err);
-      setAuthError(err.message);
-      toast.error(err.message);
-    } finally {
-      setIsLoading(false);
-    }
-    
-    return { success: !error }; // Return an object instead of void
-  };
-
   return {
     user,
     session,
-    isLoading,
+    isLoading: baseIsLoading,
     error,
     authError,
     setAuthError,
@@ -224,7 +89,7 @@ export const useAuthentication = () => {
 };
 
 export const useAdminStatus = () => {
-  const { session } = useSessionManager();
+  const { session } = useSession();
   const queryClient = useQueryClient();
   const userId = session?.user?.id;
 

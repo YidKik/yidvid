@@ -61,10 +61,12 @@ export const useAuthSignOut = () => {
       // Even if this is slow, the UI has already updated
       await supabase.auth.signOut();
       
+      return { success: true };
     } catch (error) {
       console.error("Unexpected error during logout:", error);
       // Still navigate home even if there's an error
       navigate("/");
+      return { success: false };
     } finally {
       setIsLoggingOut(false);
     }

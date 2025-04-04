@@ -15,11 +15,17 @@ export const useAuth = () => {
     isLoading
   } = useAuthentication();
 
+  // Provide a consistent logout handler
+  const handleLogout = async () => {
+    await signOut();
+    return Promise.resolve();
+  };
+
   return {
     user,
     session,
     isAuthenticated,
-    handleLogout: signOut,
+    handleLogout,
     isLoggingOut,
     isLoading
   };

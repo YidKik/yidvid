@@ -1,9 +1,9 @@
 
 import { useState, useEffect } from "react";
 import { useAuthentication } from "./useAuthentication";
-import type { AuthCredentials } from "./useAuthentication";
+import type { AuthCredentials } from "./auth/useAuthSignIn";
 
-export type { AuthCredentials } from "./useAuthentication";
+export type { AuthCredentials } from "./auth/useAuthSignIn";
 
 interface UseSignInProps {
   onSuccess?: () => void;
@@ -45,7 +45,7 @@ export const useSignIn = ({ onSuccess }: UseSignInProps = {}) => {
       setIsLoading(true);
       setLoginError("");
       const result = await signIn(credentials, { onSuccess });
-      return result.success;
+      return result;
     } catch (error: any) {
       const errorMessage = error?.message || "Sign in failed. Please try again.";
       setLoginError(errorMessage);
