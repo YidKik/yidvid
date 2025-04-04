@@ -6,19 +6,13 @@ import { useAuthentication } from "./useAuthentication";
  * basic authentication state and logout functionality
  */
 export const useAuth = () => {
-  const {
-    session,
-    isAuthenticated,
-    isLoggingOut,
-    signOut,
-    isLoading
-  } = useAuthentication();
-
+  const auth = useAuthentication();
+  
   return {
-    session,
-    isAuthenticated,
-    handleLogout: signOut,
-    isLoggingOut,
-    isLoading
+    session: auth.user,
+    isAuthenticated: !!auth.user,
+    handleLogout: auth.signOut,
+    isLoggingOut: auth.isLoading && !auth.user,
+    isLoading: auth.isLoading
   };
 };

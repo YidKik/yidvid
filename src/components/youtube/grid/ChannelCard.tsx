@@ -37,7 +37,7 @@ export const ChannelCard = ({
       aria-label={`View channel: ${title}`}
     >
       <div className="flex flex-col items-center justify-center">
-        <div className="w-24 h-24 bg-pink-100 rounded-full flex items-center justify-center overflow-hidden mb-3 mx-auto">
+        <div className="w-24 h-24 bg-pink-100 rounded-full flex items-center justify-center overflow-hidden mb-3 mx-auto group-hover:scale-110 transition-transform duration-300">
           {thumbnail_url ? (
             <img
               src={thumbnail_url}
