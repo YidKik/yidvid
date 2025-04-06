@@ -1,5 +1,6 @@
 
 import { Button } from "@/components/ui/button";
+import { CustomPaginationArrow } from "@/components/ui/custom-pagination-arrow";
 import { cn } from "@/lib/utils";
 
 interface VideoGridPaginationProps {
@@ -43,23 +44,14 @@ export const VideoGridPagination = ({
     );
   }
 
-  // For pagination display - pure arrow icons without button backgrounds
+  // For pagination display with custom arrows
   return (
     <div className={`flex items-center justify-center gap-6 ${isMobile ? 'mt-4' : 'mt-8'}`}>
-      <button
-        onClick={() => onPageChange(currentPage - 1)}
+      <CustomPaginationArrow 
+        direction="left"
         disabled={currentPage === 1}
-        className="p-2 rounded-full hover:scale-110 transition-all duration-300 focus:outline-none"
-        aria-label="Previous page"
-      >
-        <div className={`flex justify-center items-center transform rotate-180 ${
-          currentPage === 1 ? 'text-gray-300' : 'text-[#ea384c]'
-        }`}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M9 6l6 6-6 6" strokeWidth="0" />
-          </svg>
-        </div>
-      </button>
+        onClick={() => onPageChange(currentPage - 1)}
+      />
       
       {/* Only show page numbers on mobile */}
       {isMobile && (
@@ -68,20 +60,11 @@ export const VideoGridPagination = ({
         </div>
       )}
       
-      <button
-        onClick={() => onPageChange(currentPage + 1)}
+      <CustomPaginationArrow 
+        direction="right"
         disabled={currentPage === totalPages}
-        className="p-2 rounded-full hover:scale-110 transition-all duration-300 focus:outline-none"
-        aria-label="Next page"
-      >
-        <div className={`flex justify-center items-center ${
-          currentPage === totalPages ? 'text-gray-300' : 'text-[#ea384c]'
-        }`}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M9 6l6 6-6 6" strokeWidth="0" />
-          </svg>
-        </div>
-      </button>
+        onClick={() => onPageChange(currentPage + 1)}
+      />
     </div>
   );
 };
