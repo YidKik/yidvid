@@ -25,14 +25,9 @@ export const CustomPaginationArrow = ({
         disabled ? 'opacity-50' : 'opacity-100'
       }`}>
         <img 
-          src="/lovable-uploads/10b6d1cf-735e-4723-92e8-bea5eb9375a3.png" 
+          src="/lovable-uploads/a470b64a-63ad-40c1-9ffb-7811fc5bb966.png" 
           alt={direction === "left" ? "Previous Page" : "Next Page"}
-          className={`w-10 h-10 object-contain transform ${direction === "left" ? "rotate-0" : "rotate-0"}`}
-          style={{
-            clipPath: direction === "left" 
-              ? 'polygon(0 0, 50% 0, 50% 100%, 0 100%)' 
-              : 'polygon(50% 0, 100% 0, 100% 100%, 50% 100%)'
-          }}
+          className={`w-10 h-10 object-contain transform ${direction === "left" ? "rotate-180" : ""}`}
         />
       </div>
     </button>
