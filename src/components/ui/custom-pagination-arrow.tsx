@@ -24,11 +24,16 @@ export const CustomPaginationArrow = ({
       <div className={`flex justify-center items-center ${
         disabled ? 'opacity-50' : 'opacity-100'
       }`}>
-        <img 
-          src="/lovable-uploads/a470b64a-63ad-40c1-9ffb-7811fc5bb966.png" 
-          alt={direction === "left" ? "Previous Page" : "Next Page"}
-          className={`w-10 h-10 object-contain transform ${direction === "left" ? "rotate-180" : ""}`}
-        />
+        <svg 
+          width="40" 
+          height="40" 
+          viewBox="0 0 40 40" 
+          xmlns="http://www.w3.org/2000/svg"
+          className={`transform ${direction === "left" ? "rotate-180" : ""}`}
+        >
+          <circle cx="20" cy="20" r="19" stroke="#ea384c" strokeWidth="1" fill="none" />
+          <path d="M15 20L25 12.5V27.5L15 20Z" fill="#ea384c" />
+        </svg>
       </div>
     </button>
   );
