@@ -60,6 +60,25 @@ export const VideoGridPagination = ({
         </div>
       )}
       
+      {/* Show page numbers on desktop too for better UX */}
+      {!isMobile && (
+        <div className="flex items-center text-sm text-muted-foreground space-x-1">
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+            <button
+              key={page}
+              onClick={() => onPageChange(page)}
+              className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
+                currentPage === page
+                  ? "bg-primary text-white"
+                  : "hover:bg-gray-100 text-gray-600"
+              }`}
+            >
+              {page}
+            </button>
+          ))}
+        </div>
+      )}
+      
       <CustomPaginationArrow 
         direction="right"
         disabled={currentPage === totalPages}
