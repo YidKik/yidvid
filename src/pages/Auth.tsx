@@ -56,6 +56,7 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
       onOpenChange(open);
     }}>
       <DialogContent 
+        hideCloseButton={true}
         className={`p-0 gap-0 ${showOptions ? 'bg-transparent border-none' : 'bg-white border border-gray-200 shadow-lg'} ${isMobile 
           ? 'w-[95%] max-w-[350px] max-h-[85vh] overflow-auto rounded-xl' 
           : 'sm:max-w-[500px] max-w-[500px] rounded-2xl overflow-hidden'
@@ -74,7 +75,7 @@ const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
               <AuthOptions 
                 onSelectOption={handleSelectOption} 
                 onClose={() => onOpenChange(false)}
-                hideCloseButton={true} // Hide the close button in AuthOptions since Dialog provides one
+                hideCloseButton={true}
               />
             </motion.div>
           ) : (
