@@ -5,12 +5,17 @@ import type { ProfilesTable } from "@/integrations/supabase/types/profiles";
 import { ProfileField } from "./ProfileField";
 
 interface ProfileInfoProps {
-  profile: ProfilesTable["Row"];
+  profile: ProfilesTable["Row"] | null;
 }
 
 export const ProfileInfo = ({ profile }: ProfileInfoProps) => {
   const { isMobile } = useIsMobile();
-  const { username, display_name, email, created_at } = profile;
+  
+  // Handle null profile by providing default values
+  const username = profile?.username || "";
+  const display_name = profile?.display_name || "User";
+  const email = profile?.email || "";
+  const created_at = profile?.created_at || null;
   
   const memberSince = created_at 
     ? format(new Date(created_at), "MMMM d, yyyy")
@@ -26,14 +31,14 @@ export const ProfileInfo = ({ profile }: ProfileInfoProps) => {
         {!isMobile && (
           <ProfileField 
             label="Email" 
-            value={email || ""} 
+            value={email} 
             isMobile={isMobile}
           />
         )}
         
         <ProfileField 
           label="Username" 
-          value={username || ""} 
+          value={username} 
           isMobile={isMobile}
         />
         
