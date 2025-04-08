@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { VideoCard } from "../VideoCard";
 import { Sparkle } from "lucide-react";
