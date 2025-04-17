@@ -53,11 +53,11 @@ export const WelcomeText = ({ userName }: WelcomeTextProps) => {
           className="flex items-center justify-center space-x-2"
         >
           {!userName ? (
-            <span className="text-5xl font-bold text-accent">to YidVid</span>
+            <span className="text-5xl font-bold text-accent">YidVid</span>
           ) : (
             <>
               <span className="text-5xl font-bold text-accent">{userName}</span>
-              <span className="text-5xl font-bold text-primary">to YidVid</span>
+              <span className="text-5xl font-bold text-primary">YidVid</span>
             </>
           )}
         </motion.div>
