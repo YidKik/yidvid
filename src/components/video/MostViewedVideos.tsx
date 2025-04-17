@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+
+import { useState, useEffect, useRef } from "react";
 import { VideoCard } from "../VideoCard";
 import { Sparkle } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -24,6 +25,10 @@ export const MostViewedVideos = ({
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const { isMobile, isTablet, isDesktop } = useIsMobile();
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
   
   const videosPerPage = isMobile ? 2 : (isTablet ? 3 : 4);
   const AUTO_SLIDE_INTERVAL = 8000;
@@ -49,28 +54,42 @@ export const MostViewedVideos = ({
     .sort((a, b) => (b.views || 0) - (a.views || 0))
     .slice(0, 10);
 
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (!scrollContainerRef.current) return;
+    setIsDragging(true);
+    setStartX(e.touches[0].pageX - scrollContainerRef.current.offsetLeft);
+    setScrollLeft(scrollContainerRef.current.scrollLeft);
+    setIsAutoPlaying(false);  // Pause autoplay on touch
+  };
+
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (!isDragging || !scrollContainerRef.current) return;
+    e.preventDefault();
+    const x = e.touches[0].pageX - scrollContainerRef.current.offsetLeft;
+    const walk = (x - startX) * 1.5;
+    scrollContainerRef.current.scrollLeft = scrollLeft - walk;
+  };
+
+  const handleTouchEnd = () => {
+    setIsDragging(false);
+    // Resume autoplay after 5 seconds of no interaction
+    setTimeout(() => setIsAutoPlaying(true), 5000);
+  };
+
   const handleNext = () => {
     if (!sortedVideos.length || isTransitioning) return;
-    
     setIsTransitioning(true);
     const nextIndex = currentIndex + videosPerPage >= sortedVideos.length ? 0 : currentIndex + videosPerPage;
     setCurrentIndex(nextIndex);
-    
-    setTimeout(() => {
-      setIsTransitioning(false);
-    }, 300);
+    setTimeout(() => setIsTransitioning(false), 300);
   };
 
   const handlePrevious = () => {
     if (!sortedVideos.length || isTransitioning) return;
-    
     setIsTransitioning(true);
     const nextIndex = currentIndex - videosPerPage < 0 ? Math.max(0, sortedVideos.length - videosPerPage) : currentIndex - videosPerPage;
     setCurrentIndex(nextIndex);
-    
-    setTimeout(() => {
-      setIsTransitioning(false);
-    }, 300);
+    setTimeout(() => setIsTransitioning(false), 300);
   };
 
   useEffect(() => {
@@ -98,7 +117,6 @@ export const MostViewedVideos = ({
   }
 
   const displayVideos = sortedVideos.slice(currentIndex, currentIndex + videosPerPage);
-  
   while (displayVideos.length < videosPerPage) {
     displayVideos.push(sortedVideos[displayVideos.length % sortedVideos.length]);
   }
@@ -119,12 +137,24 @@ export const MostViewedVideos = ({
           <div className="relative">
             <AnimatePresence initial={false} mode="wait">
               <motion.div 
+                ref={scrollContainerRef}
                 key={`carousel-${currentIndex}`}
                 initial={{ opacity: 0.5, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0.5, y: -10 }}
                 transition={{ duration: 0.3 }}
-                className={`grid ${isMobile ? "grid-cols-2 gap-3" : isTablet ? "grid-cols-3 gap-4" : "grid-cols-4 gap-4"}`}
+                className={`grid ${isMobile ? "grid-cols-2 gap-3 touch-pan-x" : isTablet ? "grid-cols-3 gap-4" : "grid-cols-4 gap-4"}`}
+                style={{
+                  cursor: isDragging ? 'grabbing' : 'grab',
+                  overflowX: isMobile ? 'auto' : 'hidden',
+                  WebkitOverflowScrolling: 'touch',
+                  scrollBehavior: 'smooth',
+                  scrollbarWidth: 'none',
+                  msOverflowStyle: 'none'
+                }}
+                onTouchStart={isMobile ? handleTouchStart : undefined}
+                onTouchMove={isMobile ? handleTouchMove : undefined}
+                onTouchEnd={isMobile ? handleTouchEnd : undefined}
               >
                 {displayVideos.map(video => (
                   <motion.div 
@@ -141,23 +171,27 @@ export const MostViewedVideos = ({
               </motion.div>
             </AnimatePresence>
 
-            <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/3 md:-translate-x-1/4 z-10">
-              <CustomPaginationArrow 
-                direction="left"
-                disabled={isTransitioning}
-                onClick={() => handleManualNavigation(handlePrevious)}
-                className="scale-75 md:scale-100"
-              />
-            </div>
+            {!isMobile && (
+              <>
+                <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/3 md:-translate-x-1/4 z-10">
+                  <CustomPaginationArrow 
+                    direction="left"
+                    disabled={isTransitioning}
+                    onClick={() => handleManualNavigation(handlePrevious)}
+                    className="scale-75 md:scale-100"
+                  />
+                </div>
 
-            <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/3 md:translate-x-1/4 z-10">
-              <CustomPaginationArrow 
-                direction="right"
-                disabled={isTransitioning}
-                onClick={() => handleManualNavigation(handleNext)}
-                className="scale-75 md:scale-100"
-              />
-            </div>
+                <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/3 md:translate-x-1/4 z-10">
+                  <CustomPaginationArrow 
+                    direction="right"
+                    disabled={isTransitioning}
+                    onClick={() => handleManualNavigation(handleNext)}
+                    className="scale-75 md:scale-100"
+                  />
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>
