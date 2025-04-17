@@ -2,7 +2,7 @@
 import { motion } from "framer-motion";
 import { VideoInfo } from "./types/most-viewed-videos";
 import { MostViewedVideoCard } from "./MostViewedVideoCard";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 
 interface MostViewedVideosListProps {
   displayVideos: VideoInfo[];
@@ -19,6 +19,20 @@ export const MostViewedVideosList = ({
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
+
+  // Setup proper scroll behavior on mobile
+  useEffect(() => {
+    if (!isMobile || !scrollContainerRef.current) return;
+    
+    const container = scrollContainerRef.current;
+    container.style.overflowX = 'auto';
+    container.style.scrollSnapType = 'x mandatory';
+    
+    // Add scroll snap to children
+    Array.from(container.children).forEach((child) => {
+      (child as HTMLElement).style.scrollSnapAlign = 'start';
+    });
+  }, [isMobile, displayVideos]);
 
   const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
     if (!scrollContainerRef.current) return;
@@ -37,6 +51,18 @@ export const MostViewedVideosList = ({
 
   const handleTouchEnd = () => {
     setIsDragging(false);
+    
+    // Snap to closest card after scrolling
+    if (scrollContainerRef.current && isMobile) {
+      const container = scrollContainerRef.current;
+      const itemWidth = container.scrollWidth / displayVideos.length;
+      const index = Math.round(container.scrollLeft / itemWidth);
+      
+      container.scrollTo({
+        left: index * itemWidth,
+        behavior: 'smooth'
+      });
+    }
   };
 
   return (
@@ -46,7 +72,7 @@ export const MostViewedVideosList = ({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0.5, y: -10 }}
       transition={{ duration: 0.3 }}
-      className={`grid ${isMobile ? "grid-cols-2 gap-3 touch-pan-x" : "grid-cols-4 gap-4"}`}
+      className={`flex ${isMobile ? "gap-3" : "grid grid-cols-4 gap-4"}`}
       style={{
         cursor: isDragging ? 'grabbing' : 'grab',
         overflowX: isMobile ? 'auto' : 'hidden',
@@ -60,7 +86,10 @@ export const MostViewedVideosList = ({
       onTouchEnd={isMobile ? handleTouchEnd : undefined}
     >
       {displayVideos.map(video => (
-        <MostViewedVideoCard key={video.id} video={video} />
+        <div key={video.id} 
+          className={`${isMobile ? "flex-shrink-0 w-[85%] sm:w-[45%]" : "w-full"}`}>
+          <MostViewedVideoCard video={video} />
+        </div>
       ))}
     </motion.div>
   );

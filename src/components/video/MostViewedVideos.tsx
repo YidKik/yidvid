@@ -13,7 +13,7 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const { isMobile, isTablet, isDesktop } = useIsMobile();
   
-  const videosPerPage = isMobile ? 2 : (isTablet ? 3 : 4);
+  const videosPerPage = isMobile ? 1 : (isTablet ? 3 : 4);
   const AUTO_SLIDE_INTERVAL = 8000;
   
   const ensureVideosToDisplay = () => {
