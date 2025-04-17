@@ -1,3 +1,4 @@
+
 import { Header } from "@/components/Header";
 import Auth from "@/pages/Auth";
 import { useState } from "react";
@@ -11,6 +12,7 @@ import { useSessionManager } from "@/hooks/useSessionManager";
 import { GlobalNotification } from "@/components/notifications/GlobalNotification";
 import { getPageTitle, DEFAULT_META_DESCRIPTION, DEFAULT_META_KEYWORDS, DEFAULT_META_IMAGE } from "@/utils/pageTitle";
 import { Helmet } from "react-helmet";
+import { SiteDisclaimerBanner } from "@/components/notifications/SiteDisclaimerBanner";
 import { useSearchParams } from "react-router-dom";
 
 const MainContent = () => {
@@ -34,6 +36,7 @@ const MainContent = () => {
       <Header />
       <GlobalNotification />
       <main className="mt-4 mx-auto px-2 md:px-6 max-w-[1400px]">
+        <SiteDisclaimerBanner />
         <div className="space-y-2 md:space-y-4">
           <div className="space-y-0">
             <ContentToggle 
