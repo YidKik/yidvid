@@ -26,9 +26,19 @@ export const WelcomeOverlay = () => {
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.5 }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-white"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-r from-primary/5 via-white to-primary/5"
         >
-          <div className="text-center space-y-6">
+          <motion.div 
+            className="absolute inset-0 pointer-events-none"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1 }}
+          >
+            <div className="absolute left-10 top-1/4 w-24 h-24 bg-primary/10 rounded-full blur-xl" />
+            <div className="absolute right-10 bottom-1/4 w-32 h-32 bg-accent/10 rounded-full blur-xl" />
+          </motion.div>
+          
+          <div className="text-center space-y-6 relative">
             <LogoAnimation />
             <WelcomeText userName={userName} />
           </div>

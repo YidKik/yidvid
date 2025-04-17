@@ -13,7 +13,20 @@ export const WelcomeText = ({ userName }: WelcomeTextProps) => {
       transition={{ delay: 0.2, duration: 0.5 }}
       className="mb-6 space-y-4"
     >
-      <motion.div className="space-y-2">
+      <motion.div className="space-y-2 relative">
+        <motion.div
+          className="absolute -left-12 top-1/2 -translate-y-1/2 w-8 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent"
+          initial={{ scaleX: 0, opacity: 0 }}
+          animate={{ scaleX: 1, opacity: 1 }}
+          transition={{ delay: 0.5, duration: 0.8 }}
+        />
+        <motion.div
+          className="absolute -right-12 top-1/2 -translate-y-1/2 w-8 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent"
+          initial={{ scaleX: 0, opacity: 0 }}
+          animate={{ scaleX: 1, opacity: 1 }}
+          transition={{ delay: 0.5, duration: 0.8 }}
+        />
+        
         <motion.span
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
@@ -39,9 +52,13 @@ export const WelcomeText = ({ userName }: WelcomeTextProps) => {
           }}
           className="flex items-center justify-center space-x-2"
         >
-          <span className="text-5xl font-bold text-accent">to YidVid</span>
-          {userName && (
-            <span className="text-5xl font-bold text-primary">{userName}</span>
+          {!userName ? (
+            <span className="text-5xl font-bold text-accent">to YidVid</span>
+          ) : (
+            <>
+              <span className="text-5xl font-bold text-accent">{userName}</span>
+              <span className="text-5xl font-bold text-primary">to YidVid</span>
+            </>
           )}
         </motion.div>
       </motion.div>
@@ -50,8 +67,20 @@ export const WelcomeText = ({ userName }: WelcomeTextProps) => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.7, duration: 0.5 }}
-        className="text-lg text-muted-foreground"
+        className="text-lg text-muted-foreground relative"
       >
+        <motion.span
+          className="absolute -left-4 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-primary"
+          initial={{ scale: 0 }}
+          animate={{ scale: [0, 1.2, 1] }}
+          transition={{ delay: 1, duration: 0.5 }}
+        />
+        <motion.span
+          className="absolute -right-4 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-primary"
+          initial={{ scale: 0 }}
+          animate={{ scale: [0, 1.2, 1] }}
+          transition={{ delay: 1, duration: 0.5 }}
+        />
         Your gateway to curated Jewish content
       </motion.p>
     </motion.div>
