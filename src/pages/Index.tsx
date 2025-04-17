@@ -37,7 +37,6 @@ const MainContent = () => {
       <Header />
       <GlobalNotification />
       <main className="mt-4 mx-auto px-2 md:px-6 max-w-[1400px]">
-        <SiteDisclaimerBanner />
         <div className="space-y-2 md:space-y-4">
           <div className="space-y-0">
             <ContentToggle 
