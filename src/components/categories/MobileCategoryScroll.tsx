@@ -17,13 +17,13 @@ export const MobileCategoryScroll: React.FC<MobileCategoryScrollProps> = ({
 }) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
 
   // Debug log to help diagnose issues
   useEffect(() => {
     console.log(`MobileCategoryScroll rendering with ${infiniteCategories?.length || 0} categories`);
-    if (infiniteCategories?.[0]) {
-      console.log("First category:", infiniteCategories[0]);
-    }
   }, [infiniteCategories]);
 
   // Guard against empty categories
@@ -32,79 +32,42 @@ export const MobileCategoryScroll: React.FC<MobileCategoryScrollProps> = ({
     return null;
   }
 
-  // Auto-scroll animation for mobile - continuous right-to-left scrolling
-  useEffect(() => {
-    if (!scrollContainerRef.current || infiniteCategories.length === 0) return;
-    
-    // Set flag to ensure animation only starts once
-    if (!isInitialized) {
-      setIsInitialized(true);
-    }
-    
-    let animationFrameId: number;
-    let isPaused = false;
-    const scrollSpeed = 0.5; // Slower speed for mobile
-    const container = scrollContainerRef.current;
-    
-    const scroll = () => {
-      if (!container || isPaused) {
-        animationFrameId = requestAnimationFrame(scroll);
-        return;
-      }
-      
-      container.scrollLeft += scrollSpeed;
-      
-      // Reset when reaching the end to create infinite scroll effect
-      if (container.scrollLeft >= (container.scrollWidth - container.clientWidth) * 0.95) {
-        // Jump back to 1/3 position for smoother looping
-        container.scrollLeft = container.scrollWidth / 3;
-      }
-      
-      animationFrameId = requestAnimationFrame(scroll);
-    };
-    
-    // Start the animation with a slight delay to let UI settle
-    setTimeout(() => {
-      animationFrameId = requestAnimationFrame(scroll);
-    }, 500);
-    
-    // Pause animation on touch
-    const pauseAnimation = () => {
-      isPaused = true;
-    };
-    
-    // Resume animation after touch ends with a small delay
-    const resumeAnimation = () => {
-      setTimeout(() => {
-        isPaused = false;
-      }, 2000);
-    };
-    
-    container.addEventListener('touchstart', pauseAnimation, { passive: true });
-    container.addEventListener('touchend', resumeAnimation, { passive: true });
-    
-    return () => {
-      cancelAnimationFrame(animationFrameId);
-      if (container) {
-        container.removeEventListener('touchstart', pauseAnimation);
-        container.removeEventListener('touchend', resumeAnimation);
-      }
-    };
-  }, [isInitialized, infiniteCategories]);
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (!scrollContainerRef.current) return;
+    setIsDragging(true);
+    setStartX(e.touches[0].pageX - scrollContainerRef.current.offsetLeft);
+    setScrollLeft(scrollContainerRef.current.scrollLeft);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (!isDragging || !scrollContainerRef.current) return;
+    e.preventDefault();
+    const x = e.touches[0].pageX - scrollContainerRef.current.offsetLeft;
+    const walk = (x - startX) * 1.5;
+    scrollContainerRef.current.scrollLeft = scrollLeft - walk;
+  };
+
+  const handleTouchEnd = () => {
+    setIsDragging(false);
+  };
 
   return (
     <div className="h-full flex items-center overflow-hidden">
       <div 
         ref={scrollContainerRef}
-        className="flex gap-1.5 overflow-x-auto touch-pan-x scrollbar-hide no-scrollbar"
+        className="flex gap-1.5 overflow-x-auto touch-pan-x scrollbar-hide no-scrollbar scroll-smooth"
         style={{ 
           WebkitOverflowScrolling: 'touch',
           scrollBehavior: 'smooth',
           scrollbarWidth: 'none',
           msOverflowStyle: 'none',
           minWidth: "100%",
-          paddingBottom: "4px", // Add some padding for shadow
+          paddingBottom: "4px",
+          cursor: isDragging ? 'grabbing' : 'grab'
         }}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
       >
         {infiniteCategories.map((category, index) => (
           <div
