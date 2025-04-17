@@ -1,34 +1,17 @@
 
-import { useState, useEffect, useRef } from "react";
-import { VideoCard } from "../VideoCard";
+import { useState, useEffect } from "react";
 import { Sparkle } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import { CustomPaginationArrow } from "@/components/ui/custom-pagination-arrow";
+import { MostViewedVideosList } from "./MostViewedVideosList";
+import { MostViewedVideosProps } from "./types/most-viewed-videos";
 
-interface MostViewedVideosProps {
-  videos: {
-    id: string;
-    title: string;
-    thumbnail: string;
-    channelName: string;
-    channelId: string;
-    views: number;
-    uploadedAt: string | Date;
-  }[];
-}
-
-export const MostViewedVideos = ({
-  videos
-}: MostViewedVideosProps) => {
+export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const { isMobile, isTablet, isDesktop } = useIsMobile();
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [startX, setStartX] = useState(0);
-  const [scrollLeft, setScrollLeft] = useState(0);
   
   const videosPerPage = isMobile ? 2 : (isTablet ? 3 : 4);
   const AUTO_SLIDE_INTERVAL = 8000;
@@ -54,28 +37,6 @@ export const MostViewedVideos = ({
     .sort((a, b) => (b.views || 0) - (a.views || 0))
     .slice(0, 10);
 
-  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
-    if (!scrollContainerRef.current) return;
-    setIsDragging(true);
-    setStartX(e.touches[0].pageX - scrollContainerRef.current.offsetLeft);
-    setScrollLeft(scrollContainerRef.current.scrollLeft);
-    setIsAutoPlaying(false);  // Pause autoplay on touch
-  };
-
-  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
-    if (!isDragging || !scrollContainerRef.current) return;
-    e.preventDefault();
-    const x = e.touches[0].pageX - scrollContainerRef.current.offsetLeft;
-    const walk = (x - startX) * 1.5;
-    scrollContainerRef.current.scrollLeft = scrollLeft - walk;
-  };
-
-  const handleTouchEnd = () => {
-    setIsDragging(false);
-    // Resume autoplay after 5 seconds of no interaction
-    setTimeout(() => setIsAutoPlaying(true), 5000);
-  };
-
   const handleNext = () => {
     if (!sortedVideos.length || isTransitioning) return;
     setIsTransitioning(true);
@@ -95,9 +56,7 @@ export const MostViewedVideos = ({
   useEffect(() => {
     let intervalId: NodeJS.Timeout;
     if (!isMobile && isAutoPlaying && sortedVideos.length > videosPerPage) {
-      intervalId = setInterval(() => {
-        handleNext();
-      }, AUTO_SLIDE_INTERVAL);
+      intervalId = setInterval(handleNext, AUTO_SLIDE_INTERVAL);
     }
     return () => {
       if (intervalId) {
@@ -136,39 +95,11 @@ export const MostViewedVideos = ({
 
           <div className="relative">
             <AnimatePresence initial={false} mode="wait">
-              <motion.div 
-                ref={scrollContainerRef}
-                key={`carousel-${currentIndex}`}
-                initial={{ opacity: 0.5, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0.5, y: -10 }}
-                transition={{ duration: 0.3 }}
-                className={`grid ${isMobile ? "grid-cols-2 gap-3 touch-pan-x" : isTablet ? "grid-cols-3 gap-4" : "grid-cols-4 gap-4"}`}
-                style={{
-                  cursor: isDragging ? 'grabbing' : 'grab',
-                  overflowX: isMobile ? 'auto' : 'hidden',
-                  WebkitOverflowScrolling: 'touch',
-                  scrollBehavior: 'smooth',
-                  scrollbarWidth: 'none',
-                  msOverflowStyle: 'none'
-                }}
-                onTouchStart={isMobile ? handleTouchStart : undefined}
-                onTouchMove={isMobile ? handleTouchMove : undefined}
-                onTouchEnd={isMobile ? handleTouchEnd : undefined}
-              >
-                {displayVideos.map(video => (
-                  <motion.div 
-                    key={video.id} 
-                    className="w-full"
-                    whileHover={{ 
-                      scale: 1.03,
-                      transition: { duration: 0.2 }
-                    }}
-                  >
-                    <VideoCard {...video} hideInfo={true} />
-                  </motion.div>
-                ))}
-              </motion.div>
+              <MostViewedVideosList 
+                displayVideos={displayVideos}
+                isMobile={isMobile}
+                isTransitioning={isTransitioning}
+              />
             </AnimatePresence>
 
             {!isMobile && (
