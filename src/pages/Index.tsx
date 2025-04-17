@@ -1,7 +1,6 @@
-
 import { Header } from "@/components/Header";
 import Auth from "@/pages/Auth";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { ContentToggle } from "@/components/content/ContentToggle";
 import { MusicSection } from "@/components/content/MusicSection";
@@ -13,8 +12,6 @@ import { GlobalNotification } from "@/components/notifications/GlobalNotificatio
 import { getPageTitle, DEFAULT_META_DESCRIPTION, DEFAULT_META_KEYWORDS, DEFAULT_META_IMAGE } from "@/utils/pageTitle";
 import { Helmet } from "react-helmet";
 import { useSearchParams } from "react-router-dom";
-import { LogoAnimation } from "@/components/welcome/LogoAnimation";
-import { WelcomeText } from "@/components/welcome/WelcomeText";
 
 const MainContent = () => {
   const [isMusic, setIsMusic] = useState(false);
@@ -74,26 +71,6 @@ const MainContent = () => {
 
 const Index = () => {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
-  const [showWelcome, setShowWelcome] = useState(true);
-  const { session } = useSessionManager();
-
-  useEffect(() => {
-    // Hide welcome screen after 2.5 seconds
-    const timer = setTimeout(() => {
-      setShowWelcome(false);
-    }, 2500);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (showWelcome) {
-    return (
-      <div className="min-h-screen w-full bg-gradient-to-b from-white to-gray-50 flex flex-col items-center justify-center">
-        <LogoAnimation />
-        <WelcomeText userName={session?.user?.email?.split('@')[0] || ''} />
-      </div>
-    );
-  }
 
   return (
     <>
