@@ -1,6 +1,7 @@
+
 import { Header } from "@/components/Header";
 import Auth from "@/pages/Auth";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ContentToggle } from "@/components/content/ContentToggle";
 import { MusicSection } from "@/components/content/MusicSection";
@@ -8,10 +9,10 @@ import { VideoContent } from "@/components/content/VideoContent";
 import { useVideos } from "@/hooks/video/useVideos";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useSessionManager } from "@/hooks/useSessionManager";
-import { GlobalNotification } from "@/components/notifications/GlobalNotification";
-import { getPageTitle, DEFAULT_META_DESCRIPTION, DEFAULT_META_KEYWORDS, DEFAULT_META_IMAGE } from "@/utils/pageTitle";
+import { WelcomeOverlay } from "@/components/welcome/WelcomeOverlay";
 import { Helmet } from "react-helmet";
 import { useSearchParams } from "react-router-dom";
+import { getPageTitle, DEFAULT_META_DESCRIPTION, DEFAULT_META_KEYWORDS, DEFAULT_META_IMAGE } from "@/utils/pageTitle";
 
 const MainContent = () => {
   const [isMusic, setIsMusic] = useState(false);
@@ -28,19 +29,37 @@ const MainContent = () => {
   const { isMobile } = useIsMobile();
   const { session } = useSessionManager();
   const [searchParams] = useSearchParams();
+  const [hasScrolled, setHasScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setHasScrolled(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
     <div className="flex-1">
       <Header />
-      <GlobalNotification />
-      <main className="mt-4 mx-auto px-2 md:px-6 max-w-[1400px]">
+      <motion.main 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 2.7, duration: 0.5 }}
+        className="mt-4 mx-auto px-2 md:px-6 max-w-[1400px]"
+      >
         <div className="space-y-2 md:space-y-4">
-          <div className="space-y-0">
+          <motion.div 
+            className="space-y-0"
+            initial={{ scale: 0.95 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 3, duration: 0.3 }}
+          >
             <ContentToggle 
               isMusic={isMusic} 
               onToggle={() => setIsMusic(!isMusic)} 
             />
-          </div>
+          </motion.div>
 
           <motion.div
             key={isMusic ? "music" : "videos"}
@@ -64,7 +83,35 @@ const MainContent = () => {
             )}
           </motion.div>
         </div>
-      </main>
+      </motion.main>
+
+      <motion.div 
+        className="fixed bottom-4 right-4 p-3 bg-white/80 backdrop-blur-sm rounded-full shadow-lg"
+        initial={{ opacity: 0, scale: 0.5 }}
+        animate={{ 
+          opacity: hasScrolled ? 1 : 0,
+          scale: hasScrolled ? 1 : 0.5,
+          y: hasScrolled ? 0 : 20
+        }}
+        transition={{ duration: 0.3 }}
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+      >
+        <motion.svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          whileHover={{ scale: 1.2 }}
+          className="cursor-pointer text-primary"
+        >
+          <path d="m18 15-6-6-6 6"/>
+        </motion.svg>
+      </motion.div>
     </div>
   );
 };
@@ -93,6 +140,7 @@ const Index = () => {
       </Helmet>
       
       <div className="min-h-screen w-full bg-gradient-to-b from-white to-gray-50">
+        <WelcomeOverlay />
         <MainContent />
         <Auth isOpen={isAuthOpen} onOpenChange={setIsAuthOpen} />
       </div>
