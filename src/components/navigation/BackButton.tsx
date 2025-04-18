@@ -8,7 +8,7 @@ import {
   getPreviousPath, 
   getScrollPosition, 
   removeCurrentPathFromHistory,
-  isWelcomePage
+  saveScrollPosition
 } from "@/utils/scrollRestoration";
 
 interface BackButtonProps {
@@ -24,11 +24,9 @@ export const BackButton = ({ className }: BackButtonProps) => {
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-      // Only show button when very close to the top (within 100px) or at the top
       if (currentScrollY <= 100) {
         setVisible(true);
       } else if (currentScrollY < lastScrollY && currentScrollY <= 250) {
-        // When scrolling up, only show if we're within 250px of the top
         setVisible(true);
       } else {
         setVisible(false);
@@ -36,14 +34,14 @@ export const BackButton = ({ className }: BackButtonProps) => {
       setLastScrollY(currentScrollY);
     };
 
-    // Add scroll event listener
     window.addEventListener("scroll", handleScroll, { passive: true });
-
-    // Clean up event listener
     return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
 
   const handleGoBack = () => {
+    // Save current scroll position before navigating
+    saveScrollPosition(location.pathname + location.search);
+    
     // Get previous path from history
     const previousPath = getPreviousPath();
     
@@ -55,12 +53,7 @@ export const BackButton = ({ className }: BackButtonProps) => {
       const scrollPosition = getScrollPosition(previousPath);
       
       // Navigate to previous page
-      if (isWelcomePage(previousPath)) {
-        // If the previous page is the welcome page, add skipWelcome parameter
-        navigate("/?skipWelcome=true");
-      } else {
-        navigate(previousPath);
-      }
+      navigate(previousPath);
       
       // After navigation, restore scroll position with a slight delay to ensure page is loaded
       setTimeout(() => {
@@ -70,7 +63,7 @@ export const BackButton = ({ className }: BackButtonProps) => {
         });
       }, 100);
     } else {
-      // If no history, go to home with skipWelcome flag
+      // If no history, go to home but skip welcome
       navigate("/?skipWelcome=true");
     }
   };
@@ -81,11 +74,11 @@ export const BackButton = ({ className }: BackButtonProps) => {
       size="icon"
       onClick={handleGoBack}
       className={cn(
-        "fixed top-12 left-4 p-2 hover:bg-primary/5 transition-all duration-200", // Adjusted position higher
+        "fixed top-12 left-4 p-2 hover:bg-primary/5 transition-all duration-200",
         "rounded-full shadow-sm hover:shadow-md",
         "border border-gray-100 bg-white/95 backdrop-blur-sm",
         "group hover:scale-105 active:scale-95",
-        "z-[100]", // Ensure it's above other elements
+        "z-[100]",
         visible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-10 pointer-events-none",
         "transition-all duration-300 ease-in-out",
         className
