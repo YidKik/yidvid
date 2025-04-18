@@ -1,4 +1,3 @@
-
 import { motion } from "framer-motion";
 
 interface WelcomeTextProps {
@@ -93,7 +92,7 @@ export const WelcomeText = ({ userName }: WelcomeTextProps) => {
           }}
           className="text-5xl font-bold text-primary inline-block"
         >
-          Welcome
+          Welcome to
         </motion.span>
         
         <motion.div
@@ -107,30 +106,12 @@ export const WelcomeText = ({ userName }: WelcomeTextProps) => {
           }}
           className="flex items-center justify-center space-x-2"
         >
-          {!userName ? (
-            <motion.span 
-              className="text-5xl font-bold text-accent"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              YidVid
-            </motion.span>
-          ) : (
-            <>
-              <motion.span 
-                className="text-5xl font-bold text-accent"
-                whileHover={{ scale: 1.05 }}
-              >
-                {userName}
-              </motion.span>
-              <motion.span 
-                className="text-5xl font-bold text-primary"
-                whileHover={{ scale: 1.05 }}
-              >
-                YidVid
-              </motion.span>
-            </>
-          )}
+          <motion.span 
+            className="text-5xl font-bold text-accent"
+            whileHover={{ scale: 1.05 }}
+          >
+            {userName || "Edward"}
+          </motion.span>
         </motion.div>
       </motion.div>
 
