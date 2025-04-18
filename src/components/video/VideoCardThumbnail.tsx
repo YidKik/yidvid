@@ -69,11 +69,6 @@ export const VideoCardThumbnail = ({
             "absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent",
             "animate-shimmer-preview" // Animation defined in global CSS
           )} />
-          
-          {/* Video timestamp indicator */}
-          <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-1 rounded">
-            Preview
-          </div>
         </div>
       )}
     </div>
