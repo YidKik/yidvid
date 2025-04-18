@@ -1,13 +1,15 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BackButton } from "@/components/navigation/BackButton";
 import { useColors } from "@/contexts/ColorContext";
-import { Settings as SettingsIcon } from "lucide-react";
+import { Settings as SettingsIcon, LayoutDashboard } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useAdminStatus } from "@/hooks/useAdminStatus";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 // Import section components
 import { ContentPreferencesSection } from "@/components/settings/sections/ContentPreferencesSection";
@@ -137,6 +139,15 @@ const Settings = () => {
     }
   };
 
+  // Add admin status check
+  const userId = session?.user?.id;
+  const { isAdmin, hasPinBypass } = useAdminStatus(userId);
+
+  // Add dashboard navigation
+  const handleDashboardClick = () => {
+    navigate("/dashboard");
+  };
+
   // Show skeleton loading until we confirm login status
   if (!authChecked) {
     return (
@@ -160,6 +171,25 @@ const Settings = () => {
           <SettingsIcon className={`${isMobile ? 'w-5 h-5' : 'w-8 h-8'} text-primary`} />
           <h1 className={`${isMobile ? 'text-lg' : 'text-3xl'} font-bold`}>Settings</h1>
         </div>
+
+        {/* Add Admin Dashboard Button if user is admin */}
+        {(isAdmin || hasPinBypass) && (
+          <Card className="p-4 mb-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-semibold">Admin Dashboard</h3>
+                <p className="text-sm text-muted-foreground">Access administrative controls and settings</p>
+              </div>
+              <Button
+                onClick={handleDashboardClick}
+                className="flex items-center gap-2"
+              >
+                <LayoutDashboard className="h-4 w-4" />
+                Dashboard
+              </Button>
+            </div>
+          </Card>
+        )}
 
         <div className="space-y-4 md:space-y-12">
           {/* Profile section always shows first, either real or skeleton */}
