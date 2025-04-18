@@ -140,7 +140,6 @@ const Settings = () => {
   };
 
   // Add admin status check
-  const userId = session?.user?.id;
   const { isAdmin, hasPinBypass } = useAdminStatus(userId);
 
   // Add dashboard navigation
