@@ -1,4 +1,3 @@
-
 "use client";
 
 import { motion, useScroll, useTransform } from "framer-motion";
@@ -125,7 +124,7 @@ export function HeroGeometric({
                         <img 
                             src="/lovable-uploads/e425cacb-4c3a-4d81-b4e0-77fcbf10f61c.png" 
                             alt="YidVid Logo" 
-                            className="h-12 w-auto"
+                            className="h-48 w-auto"
                         />
                     </motion.div>
 
