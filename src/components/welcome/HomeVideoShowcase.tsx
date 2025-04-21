@@ -2,6 +2,7 @@
 import { useEffect, useMemo } from "react";
 import { VideoGridItem } from "@/components/video/VideoGridItem";
 import { useVideoGridData, VideoGridItem as VideoItemType } from "@/hooks/video/useVideoGridData";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 /**
  * New AnimatedVideoRow
@@ -38,11 +39,8 @@ const AnimatedVideoRow = ({
     }
   }, [animationName, direction]);
 
-  // Thumbnail dimensions (16:9 ratio: width 224px, height 126px)
-  // We'll use w-56 (224px) and aspect-[16/9] for perfect thumbnail look.
-
   return (
-    <div className="relative w-full overflow-hidden" style={{ height: "136px" }}>
+    <div className="relative w-full overflow-hidden" style={{ height: "126px" }}>
       <div
         className="flex gap-4 absolute left-0 top-0 w-full"
         style={{
@@ -55,8 +53,9 @@ const AnimatedVideoRow = ({
         {doubledVideos.map((video, idx) => (
           <div
             key={video.id + "-" + idx}
-            className="w-56 aspect-[16/9] flex-shrink-0 rounded-md overflow-hidden"
+            className="w-56 flex-shrink-0 rounded-md overflow-hidden"
             style={{
+              height: "126px", // Exact 16:9 height for a 224px width thumbnail
               transform: `rotate(${((idx + rowIdx) % 2 === 0 ? 1 : -1) * ((rowIdx + 1) * 2 - 3)}deg) scale(0.96)`,
             }}
           >
