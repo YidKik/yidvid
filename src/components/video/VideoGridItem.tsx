@@ -1,6 +1,7 @@
 
 import { cn } from "@/lib/utils";
 import { VideoGridItem as VideoItemType } from "@/hooks/video/useVideoGridData";
+import { Link } from "react-router-dom";
 
 /**
  * MINIMAL variant for hero/home showcase: Just show video thumbnails, nothing else!
@@ -11,8 +12,12 @@ export const VideoGridItem = ({
   noRadius = false,
 }: { video: VideoItemType; noRadius?: boolean }) => {
   return (
-    <div
+    <Link
+      to={`/video/${video.id}`}
+      tabIndex={0}
+      aria-label={`View video: ${video.title || "Untitled video"}`}
       className={cn(
+        "block focus:outline-none focus:ring-2 focus:ring-primary",
         "w-full h-full overflow-hidden",
         noRadius ? "rounded-md" : "rounded-lg"
       )}
@@ -20,24 +25,25 @@ export const VideoGridItem = ({
         aspectRatio: "16 / 9",
         width: "100%",
         height: "100%",
-        minWidth: "100%", // Ensure no constraints on minimum width
-        minHeight: "100%" // Ensure no constraints on minimum height
+        minWidth: "100%",
+        minHeight: "100%"
       }}
+      draggable={false}
     >
       <img
         src={video.thumbnail || "/placeholder.svg"}
-        alt=""
+        alt={video.title || ""}
         className="w-full h-full object-cover"
         draggable={false}
         style={{
           aspectRatio: "16 / 9",
           width: "100%",
           height: "100%",
-          minWidth: "100%", // Ensure image fills container
-          minHeight: "100%", // Ensure image fills container
-          objectFit: "cover" // Ensure proper scaling
+          minWidth: "100%",
+          minHeight: "100%",
+          objectFit: "cover"
         }}
       />
-    </div>
+    </Link>
   );
 };
