@@ -60,8 +60,8 @@ const HomePage = () => {
       animate="animate"
     >
       {/* Hero Section with Content */}
-      <div className="relative min-h-[150vh]">
-        {/* Content Overlay - With GSAP animation class */}
+      <div className="relative min-h-[120vh]">
+        {/* Content Overlay */}
         <div className="fixed top-10 left-0 right-0 z-20 flex flex-col items-center justify-start px-4 text-center hero-content">
           <div className="mb-8">
             <img 
@@ -94,7 +94,7 @@ const HomePage = () => {
 
         {/* Video Background */}
         {videos && videos.length > 15 && (
-          <div className="absolute top-[40vh] inset-x-0 h-[120vh]">
+          <div className="absolute top-[40vh] inset-x-0 h-[100vh]">
             <HeroParallax 
               videos={videos} 
               title="" 
@@ -104,13 +104,15 @@ const HomePage = () => {
         )}
       </div>
 
-      {/* Channels Section with GridMotion */}
-      <motion.section className="relative z-10 h-screen">
-        <GridMotion 
-          items={channelItems}
-          gradientColor="#ea384c"
-          className="relative z-10 opacity-90"
-        />
+      {/* Channels Section with GridMotion - Now positioned lower and with smaller images */}
+      <motion.section className="relative z-10 mt-[20vh]">
+        <div className="h-[70vh]"> {/* Reduced height for smaller profile pics */}
+          <GridMotion 
+            items={[...channelItems, ...channelItems].slice(0, 35)} // Added more items for extra row
+            gradientColor="#ea384c"
+            className="relative z-10 opacity-90 scale-50" // Added scale-50 to make images smaller
+          />
+        </div>
       </motion.section>
     </motion.div>
   );
