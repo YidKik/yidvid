@@ -70,11 +70,8 @@ export function VideoCarouselRows() {
     <div
       className="absolute left-0 right-0 z-10 pointer-events-auto select-none flex justify-center items-center"
       style={{
-        top: "50%",
-        left: "50%",
-        right: "unset",
-        bottom: "unset",
-        transform: `translate(-50%, -50%) rotate(${rotation}deg) scale(${scale})`,
+        top: "0",
+        transform: `rotate(${rotation}deg) scale(${scale})`,
         transition: "transform 0.35s cubic-bezier(.53,.42,.19,1.04)",
         width: "100vw",
         height: "100vh"

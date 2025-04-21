@@ -78,7 +78,7 @@ export default function HomeWelcome() {
       ))}
 
       {/* Center hero section */}
-      <div className="relative z-20 flex flex-col items-center pt-24 mb-96">
+      <div className="relative z-20 flex flex-col items-center pt-24 mb-16">
         <motion.img
           src="/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png"
           alt="YidVid Logo"
@@ -130,8 +130,8 @@ export default function HomeWelcome() {
         </motion.div>
       </div>
 
-      {/* Added extra space for scrolling past the video carousel */}
-      <div className="h-[200vh] relative">
+      {/* Video carousel container with reduced height */}
+      <div className="h-[80vh] relative">
         {/* Video carousel grid rows background */}
         <VideoCarouselRows />
       </div>
