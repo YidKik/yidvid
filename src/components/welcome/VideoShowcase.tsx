@@ -5,7 +5,7 @@ import { useVideoGridData } from "@/hooks/video/useVideoGridData";
 import { cn } from "@/lib/utils";
 
 /**
- * VideoShowcase - A completely rebuilt video showcase with proper scroll-based animations
+ * VideoShowcase - A video showcase with proper scroll-based animations
  * Features:
  * - 4 rows of scrolling videos (alternating directions)
  * - Rotation and scaling on scroll
@@ -19,10 +19,11 @@ export const VideoShowcase = () => {
   // Handle scroll events
   useEffect(() => {
     const handleScroll = () => {
-      // Use a lower max scroll value (200px) for faster animation effect
-      const maxScroll = 200;
+      // Use a lower max scroll value (300px) for faster animation effect
+      const maxScroll = 300;
       const progress = Math.min(window.scrollY / maxScroll, 1);
       setScrollProgress(progress);
+      console.log("Scroll progress:", progress); // Debug log
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -41,10 +42,10 @@ export const VideoShowcase = () => {
 
   // Create video rows with different sets of videos
   const videoRows = [
-    { videos: videos.slice(0, 15), direction: "left", speed: 120 },
-    { videos: videos.slice(15, 30), direction: "right", speed: 100 },
-    { videos: videos.slice(30, 45), direction: "left", speed: 140 },
-    { videos: videos.slice(45, 60), direction: "right", speed: 90 },
+    { videos: videos.slice(0, 15), direction: "right", speed: 120 },
+    { videos: videos.slice(15, 30), direction: "left", speed: 100 },
+    { videos: videos.slice(30, 45), direction: "right", speed: 140 },
+    { videos: videos.slice(45, 60), direction: "left", speed: 90 },
   ];
 
   return (
@@ -55,8 +56,9 @@ export const VideoShowcase = () => {
       <div 
         className="flex flex-col gap-6 py-8 transform-gpu"
         style={{
-          transform: `scale(${1 + scrollProgress * 0.3})`,
-          transition: "transform 0.3s ease-out",
+          transform: `scale(${1 + scrollProgress * 0.5})`,
+          opacity: Math.max(0.5, 1 - scrollProgress * 0.3),
+          transition: "transform 0.3s ease-out, opacity 0.3s ease-out",
         }}
       >
         {videoRows.map((row, index) => (
@@ -83,11 +85,11 @@ interface VideoRowProps {
 }
 
 const VideoRow = ({ videos, direction, speed, rowIndex, scrollProgress }: VideoRowProps) => {
-  // Use even more rotation for dramatic effect
-  const rotationAngles = [15, -18, 12, -20];
+  // Use even more rotation for dramatic effect - increased rotation values
+  const rotationAngles = [25, -30, 20, -35];
   const rotationAngle = rotationAngles[rowIndex % rotationAngles.length] * scrollProgress;
   
-  // Use animation name based on direction and row
+  // Animation name based on direction and row
   const animationName = `scroll-${direction}-${rowIndex}`;
   const doubledVideos = [...videos, ...videos]; // Double videos for seamless looping
   
@@ -97,6 +99,7 @@ const VideoRow = ({ videos, direction, speed, rowIndex, scrollProgress }: VideoR
       const style = document.createElement("style");
       style.id = animationName;
       
+      // Adjust direction based on prop
       const fromPosition = direction === "left" ? "0%" : "-100%";
       const toPosition = direction === "left" ? "-100%" : "0%";
       
@@ -109,7 +112,9 @@ const VideoRow = ({ videos, direction, speed, rowIndex, scrollProgress }: VideoR
       document.head.appendChild(style);
       
       return () => {
-        document.head.removeChild(style);
+        if (document.getElementById(animationName)) {
+          document.head.removeChild(document.getElementById(animationName)!);
+        }
       };
     }
   }, [animationName, direction]);
@@ -146,7 +151,7 @@ interface VideoCardProps {
 
 const VideoCard = ({ video, scrollProgress }: VideoCardProps) => {
   // Increase scale based on scroll progress
-  const scale = 1 + scrollProgress * 0.15;
+  const scale = 1 + scrollProgress * 0.25;
   
   return (
     <Link
