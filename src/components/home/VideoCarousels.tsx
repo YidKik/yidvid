@@ -18,7 +18,6 @@ function getSortedVideos(videos: VideoGridItemType[]): VideoGridItemType[] {
   });
 }
 
-// Each row should get a unique shuffle key so that their orders differ
 export const VideoCarousels = ({ videos, isLoading }: VideoCarouselsProps) => {
   const { isMobile } = useIsMobile();
 
@@ -55,10 +54,25 @@ export const VideoCarousels = ({ videos, isLoading }: VideoCarouselsProps) => {
       animate={{ opacity: 1 }}
       transition={{ duration: 1, delay: 0.4 }}
     >
-      {/* All 3 rows get the full sorted videos list, but shuffles differ (via shuffleKey prop) */}
-      <VideoCarousel videos={sortedVideos} direction="ltr" speed={32} shuffleKey={rowShuffleKeys[0]} />
-      <VideoCarousel videos={sortedVideos} direction="rtl" speed={32} shuffleKey={rowShuffleKeys[1]} />
-      <VideoCarousel videos={sortedVideos} direction="ltr" speed={34} shuffleKey={rowShuffleKeys[2]} />
+      {/* Three rows with different directions and shuffle keys */}
+      <VideoCarousel 
+        videos={sortedVideos} 
+        direction="ltr" 
+        speed={40} 
+        shuffleKey={rowShuffleKeys[0]} 
+      />
+      <VideoCarousel 
+        videos={sortedVideos} 
+        direction="rtl" 
+        speed={30} 
+        shuffleKey={rowShuffleKeys[1]} 
+      />
+      <VideoCarousel 
+        videos={sortedVideos} 
+        direction="ltr" 
+        speed={35} 
+        shuffleKey={rowShuffleKeys[2]} 
+      />
     </motion.div>
   );
 };
