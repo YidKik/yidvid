@@ -32,27 +32,26 @@ const HomePage = () => {
       initial="initial"
       animate="animate"
     >
-      <HeroGeometric 
-        badge="YidVid"
-        title1="Your Gateway to"
-        title2="Jewish Content"
-        channels={manuallyFetchedChannels}
-      />
-
-      {videos && videos.length > 15 && (
-        <motion.section
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5, duration: 0.8 }}
-          className="w-full"
-        >
-          <HeroParallax 
-            videos={videos} 
-            title="" 
-            description=""
+      <div className="relative h-[100vh]">
+        {videos && videos.length > 15 && (
+          <div className="absolute inset-0 w-full h-full">
+            <HeroParallax 
+              videos={videos} 
+              title="" 
+              description=""
+            />
+          </div>
+        )}
+        
+        <div className="relative z-10">
+          <HeroGeometric 
+            badge="YidVid"
+            title1="Your Gateway to"
+            title2="Jewish Content"
+            channels={manuallyFetchedChannels}
           />
-        </motion.section>
-      )}
+        </div>
+      </div>
 
       <motion.section className="py-4 relative">
         <ChannelCarousels isLoading={channelsLoading} />
