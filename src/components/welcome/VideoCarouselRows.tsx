@@ -33,7 +33,7 @@ export function VideoCarouselRows() {
         height: "min(99vh,820px)",
       }}
     >
-      <div className="w-[99vw] max-w-none mx-0 flex flex-col gap-1 justify-center">
+      <div className="w-[99vw] max-w-none mx-0 flex flex-col gap-0.5 justify-center">
         {Array.from({ length: ROW_COUNT }).map((_, ri) => (
           <VideoCarouselRow
             key={`carousel-row-${ri}`}
