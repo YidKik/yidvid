@@ -1,4 +1,3 @@
-
 import { useEffect, useMemo } from "react";
 import { VideoGridItem } from "@/components/video/VideoGridItem";
 import { VideoGridItem as VideoItemType } from "@/hooks/video/useVideoGridData";
@@ -11,9 +10,9 @@ interface AnimatedVideoRowProps {
   rowOffset?: number;
 }
 
-// Enormous thumbnail size for immersive background effect (responsive!)
-const THUMB_WIDTH = 960;   // px, HUGE for almost full screen, adjusts for viewport
-const THUMB_HEIGHT = 540;  // px, 16:9 ratio
+// Enormous thumbnail size for truly immersive background effect
+const THUMB_WIDTH = 1200;   // px, HUGE for almost full screen, adjusts for viewport
+const THUMB_HEIGHT = 675;  // px, 16:9 ratio
 
 export const AnimatedVideoRow = ({
   videos,
@@ -54,7 +53,7 @@ export const AnimatedVideoRow = ({
   const cardStyle = {
     width: "100%",
     height: "100%",
-    borderRadius: "18px",
+    borderRadius: "20px",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -62,27 +61,31 @@ export const AnimatedVideoRow = ({
     padding: 0
   };
 
-  // Responsive wrapper width
+  // Responsive wrapper width - make sure it fills screen
   const wrapperStyle = {
     width: "100vw",
     maxWidth: "100vw",
-    minWidth: "100vw"
+    minWidth: "100vw",
+    overflow: "hidden"
   };
 
-  // The row container style (makes sure it won't overflow screen horizontally)
-  // For mobile: scale down dramatically!
-  const getRowHeight = () =>
-    `clamp(180px, ${THUMB_HEIGHT}px, 60vw)`; // Scales on mobile, big on desktop
+  // Better responsive sizing for truly immersive experience
+  // For mobile: scale down but still keep impressive size
+  const getItemWidth = () => "clamp(320px, 95vw, 1200px)"; 
+  const getItemHeight = () => "clamp(180px, 54vw, 675px)";
+  
+  // Row height needs to be large enough to contain the items
+  const getRowHeight = () => `clamp(200px, 60vw, 700px)`;
 
   // For left/right animation
   if (direction === "left") {
     return (
       <div
-        className="relative w-full overflow-hidden"
+        className="relative overflow-hidden w-full"
         style={{ ...wrapperStyle, height: getRowHeight() }}
       >
         <div
-          className="flex gap-4 absolute left-0 top-0 w-full"
+          className="flex gap-6 absolute left-0 top-0"
           style={{
             width: "200%",
             animation: `${animationName} ${duration}s linear infinite`,
@@ -95,10 +98,10 @@ export const AnimatedVideoRow = ({
           {doubledVideos.map((video, idx) => (
             <div
               key={video.id + "-" + idx}
-              className="flex-shrink-0 bg-white/90 border border-white/60 shadow aspect-[16/9]"
+              className="flex-shrink-0 bg-white/80 border border-white/60 shadow-lg"
               style={{
-                width: "clamp(280px, 88vw, 960px)",
-                height: "clamp(158px, 49vw, 540px)",
+                width: getItemWidth(),
+                height: getItemHeight(),
                 ...cardStyle
               }}
             >
@@ -112,11 +115,11 @@ export const AnimatedVideoRow = ({
     const stackedVideos = [...videos, ...videos];
     return (
       <div
-        className="relative w-full overflow-hidden flex flex-row justify-center"
-        style={{ ...wrapperStyle, height: `calc(${getRowHeight()} * 2.1)` }}
+        className="relative overflow-hidden flex flex-row justify-center w-full"
+        style={{ ...wrapperStyle, height: `calc(${getRowHeight()} * 2.2)` }}
       >
         <div
-          className="flex flex-col gap-6 absolute left-0 top-0 w-full items-center"
+          className="flex flex-col gap-8 absolute left-0 top-0 w-full items-center"
           style={{
             height: "200%",
             animation: `${animationName} ${duration}s linear infinite`,
@@ -128,10 +131,10 @@ export const AnimatedVideoRow = ({
           {stackedVideos.map((video, idx) => (
             <div
               key={video.id + "-vert-" + idx}
-              className="flex-shrink-0 bg-white/90 border border-white/60 shadow aspect-[16/9]"
+              className="flex-shrink-0 bg-white/80 border border-white/60 shadow-lg"
               style={{
-                width: "clamp(280px, 88vw, 960px)",
-                height: "clamp(158px, 49vw, 540px)",
+                width: getItemWidth(),
+                height: getItemHeight(),
                 ...cardStyle
               }}
             >

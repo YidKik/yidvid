@@ -1,3 +1,4 @@
+
 import React from "react";
 import { AnimatedVideoRow } from "./AnimatedVideoRow";
 import { VideoGridItem as VideoItemType } from "@/hooks/video/useVideoGridData";
@@ -36,12 +37,13 @@ export const AnimatedVideoRowsShowcase = ({
     rowSlices.push(slice);
   }
 
-  const animationDuration = 32;
+  // Longer animation duration for more immersive effect
+  const animationDuration = 36;
   const durations = [
     animationDuration,
-    animationDuration - 4,
-    animationDuration - 2,
-    animationDuration - 6,
+    animationDuration - 5,
+    animationDuration - 3,
+    animationDuration - 7,
   ];
 
   const directions: ("left" | "vertical-down")[] = [
@@ -51,10 +53,11 @@ export const AnimatedVideoRowsShowcase = ({
     "vertical-down",
   ];
 
-  const rowOffsets = [0, 60, 120, 80]; // tweak as preferred for contrast
+  // More dramatic offsets for better visual contrast
+  const rowOffsets = [0, 120, 180, 100];
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-2">
       {rowSlices.map((videosForRow, i) => (
         <AnimatedVideoRow
           key={i}
