@@ -1,5 +1,8 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import { VideoRows } from "@/components/welcome/VideoRows";
+import { WelcomeHeader } from "@/components/welcome/WelcomeHeader";
+import { RightFadeOverlay } from "@/components/welcome/RightFadeOverlay";
 
 // Brand background gradients (keep as before)
 const brandGradients = [
@@ -38,6 +41,22 @@ export default function HomeWelcome() {
           }}
         />
       </AnimatePresence>
+
+      {/* Main content container */}
+      <div className="relative w-full h-screen flex flex-col">
+        {/* Right side gradient fade overlay */}
+        <RightFadeOverlay />
+        
+        {/* Top section with welcome text and logo */}
+        <div className="relative z-20 pt-8 md:pt-16 px-6 md:px-12 lg:px-16 mb-6">
+          <WelcomeHeader />
+        </div>
+        
+        {/* Video rows - positioned below header */}
+        <div className="relative flex-1 z-10 mt-4">
+          <VideoRows />
+        </div>
+      </div>
     </div>
   );
 }
