@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
+
+import React, { useEffect, useState } from "react";
 import { useVideoGridData } from "@/hooks/video/useVideoGridData";
 import { useNavigate } from "react-router-dom";
 
@@ -17,8 +18,10 @@ function getRowVideosWithOffset(allVideos, rowIdx, perRow, allRows) {
     base.push(allVideos[(start + i) % total]);
   }
   const slide = [];
+  // Ensure each row has a unique starting point with proper distribution
   const offset = Math.floor((total / allRows) * rowIdx);
   for (let i = 0; i < total; i++) {
+    // Ensure we include ALL videos in each row's slide sequence
     slide.push(allVideos[(offset + i) % total]);
   }
   return [base, slide];
@@ -51,14 +54,17 @@ export function VideoCarouselRows() {
   let rowBases = [];
   let rowSlides = [];
   if (!videos.length) {
+    // Create placeholder rows while loading
     rowBases = Array(ROW_COUNT).fill(0).map((_, idx) =>
       Array(VIDEOS_PER_ROW).fill(0).map((_, j) => placeholder(idx * VIDEOS_PER_ROW + j))
     );
     rowSlides = rowBases.map(row => [...row, ...row]);
   } else {
+    // Ensure all rows have a proper distribution of videos
     for (let r = 0; r < ROW_COUNT; r++) {
       const [startSegment, rowLoop] = getRowVideosWithOffset(videos, r, VIDEOS_PER_ROW, ROW_COUNT);
       rowBases.push(startSegment);
+      // Double the array for seamless looping (when the first set ends, second begins without jump)
       rowSlides.push([...rowLoop, ...rowLoop]);
     }
   }
@@ -101,7 +107,7 @@ export function VideoCarouselRows() {
               <div
                 className="flex gap-8 md:gap-11"
                 style={{
-                  width: `calc(${rowVideos.length * 24}vw)`,
+                  width: `calc(${rowVideos.length * 24}vw)`, // Ensure consistent width for all rows
                   animation: `slideRow${ri} ${SLIDE_SECONDS[ri % SLIDE_SECONDS.length]}s linear infinite`,
                   flexDirection: getDirection(ri) === "left" ? "row" : "row-reverse",
                   alignItems: "center",
