@@ -1,9 +1,10 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { Circle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { FloatingAvatar } from "./floating-avatar";
+import { useEffect, useState } from "react";
 
 export function HeroGeometric({
     badge = "YidVid",
@@ -16,6 +17,20 @@ export function HeroGeometric({
     title2?: string;
     channels?: any[];
 }) {
+    const { scrollY } = useScroll();
+    const [isMounted, setIsMounted] = useState(false);
+
+    // Transform values for floating avatars
+    const avatarY = useTransform(scrollY, [0, 500], [0, -200]);
+    const avatarOpacity = useTransform(scrollY, [0, 400], [1, 0]);
+    
+    // Transform values for text scaling
+    const textScale = useTransform(scrollY, [0, 300], [1, 1.1]);
+
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
+
     const fadeUpVariants = {
         hidden: { opacity: 0, y: 30 },
         visible: (i: number) => ({
@@ -29,34 +44,39 @@ export function HeroGeometric({
         }),
     };
 
+    if (!isMounted) return null;
+
     return (
         <div className="relative min-h-[60vh] w-full flex items-center justify-center overflow-hidden bg-[#030303]">
             <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.15] via-transparent to-primary/[0.05] blur-3xl" />
 
-            <div className="absolute inset-0 overflow-hidden">
+            <motion.div 
+                className="absolute inset-0 overflow-hidden"
+                style={{ y: avatarY, opacity: avatarOpacity }}
+            >
                 <FloatingAvatar
                     imageUrl={channels[0]?.thumbnail_url}
                     delay={0.3}
                     size="xl"
-                    className="left-[-10%] top-[15%]"
+                    className="left-[-20%] top-[15%]"
                 />
                 <FloatingAvatar
                     imageUrl={channels[1]?.thumbnail_url}
                     delay={0.5}
                     size="xl"
-                    className="right-[-5%] top-[65%]"
+                    className="right-[-15%] top-[65%]"
                 />
                 <FloatingAvatar
                     imageUrl={channels[2]?.thumbnail_url}
                     delay={0.4}
                     size="xl"
-                    className="left-[-8%] bottom-[5%]"
+                    className="left-[-18%] bottom-[5%]"
                 />
                 <FloatingAvatar
                     imageUrl={channels[3]?.thumbnail_url}
                     delay={0.6}
                     size="xl"
-                    className="right-[-8%] top-[10%]"
+                    className="right-[-18%] top-[10%]"
                 />
                 <FloatingAvatar
                     imageUrl={channels[4]?.thumbnail_url}
@@ -88,7 +108,7 @@ export function HeroGeometric({
                     size="md"
                     className="left-[12%] top-[25%]"
                 />
-            </div>
+            </motion.div>
 
             <div className="relative z-10 container mx-auto px-4 md:px-6">
                 <div className="max-w-3xl mx-auto text-center">
@@ -110,13 +130,14 @@ export function HeroGeometric({
                         variants={fadeUpVariants}
                         initial="hidden"
                         animate="visible"
+                        style={{ scale: textScale }}
                     >
                         <h1 className="text-4xl sm:text-6xl md:text-8xl font-bold mb-6 md:mb-8 tracking-tight">
                             <span className="bg-clip-text text-transparent bg-gradient-to-b from-white to-white/80">
                                 {title1}
                             </span>
                             <br />
-                            <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary-300 via-white/90 to-primary-300">
+                            <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-white to-primary">
                                 {title2}
                             </span>
                         </h1>
@@ -127,6 +148,7 @@ export function HeroGeometric({
                         variants={fadeUpVariants}
                         initial="hidden"
                         animate="visible"
+                        style={{ scale: textScale }}
                     >
                         <p className="text-base sm:text-lg md:text-xl text-white/40 mb-8 leading-relaxed font-light tracking-wide max-w-xl mx-auto px-4">
                             Watch, share, and connect with the finest Jewish content from around the world.
