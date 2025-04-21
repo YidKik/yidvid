@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useVideoGridData } from "@/hooks/video/useVideoGridData";
 import { VideoCarouselRow } from "./VideoCarouselRow";
@@ -51,7 +50,7 @@ export function VideoCarouselRows() {
         height: "min(99vh,820px)",
       }}
     >
-      <div className="w-[99vw] max-w-none mx-0 flex flex-col gap-[2px] justify-center">
+      <div className="w-[99vw] max-w-none mx-0 flex flex-col gap-px justify-center">
         {Array.from({ length: ROW_COUNT }).map((_, ri) => (
           <VideoCarouselRow
             key={`carousel-row-${ri}`}

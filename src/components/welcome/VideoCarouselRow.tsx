@@ -59,7 +59,7 @@ export const VideoCarouselRow: React.FC<VideoCarouselRowProps> = ({
   };
 
   const sliderStyle: React.CSSProperties = {
-    width: `calc(${duplicated.length * 24}vw)`,
+    width: `calc(${duplicated.length * 28}vw)`, // slightly larger for larger videos
     animation: `slide-row-${rowIndex} ${animationDuration}s linear infinite`,
     animationFillMode: "forwards",
     display: "flex",
@@ -69,16 +69,16 @@ export const VideoCarouselRow: React.FC<VideoCarouselRowProps> = ({
 
   return (
     <div
-      className="relative flex overflow-hidden w-full h-44 md:h-52"
+      className="relative flex overflow-hidden w-full h-52 md:h-64"
       style={rowStyle}
       aria-roledescription="carousel row"
     >
-      <div ref={sliderRef} className="flex gap-5 md:gap-8" style={sliderStyle}>
+      <div ref={sliderRef} className="flex gap-2 md:gap-3" style={sliderStyle}>
         {duplicated.map((video, vi) =>
           video ? (
             <button
               key={video.id + "-" + vi}
-              className="aspect-video rounded-xl shadow-lg ring-2 ring-primary/20 overflow-hidden bg-white/80 hover:scale-110 transition-transform duration-300 flex-none w-44 md:w-60 cursor-pointer group"
+              className="aspect-video rounded-xl shadow-lg ring-2 ring-primary/20 overflow-hidden bg-white/80 hover:scale-110 transition-transform duration-300 flex-none w-60 md:w-80 cursor-pointer group"
               onClick={() =>
                 video.video_id && video.video_id !== "-"
                   ? navigate(`/video/${video.video_id}`)
@@ -95,7 +95,7 @@ export const VideoCarouselRow: React.FC<VideoCarouselRowProps> = ({
               />
             </button>
           ) : (
-            <div key={`empty-${vi}`} className="aspect-video rounded-lg bg-gray-200 w-44 md:w-60 animate-pulse" aria-hidden="true" />
+            <div key={`empty-${vi}`} className="aspect-video rounded-lg bg-gray-200 w-60 md:w-80 animate-pulse" aria-hidden="true" />
           )
         )}
       </div>
