@@ -23,11 +23,9 @@ export const HomeVideoShowcaseSection = ({
     );
   }
 
+  // Simplified container to allow videos to be as large as possible
   return (
-    <div className="w-full max-w-7xl mx-auto py-10 md:py-14 bg-gradient-to-br from-[#f6dbf5]/40 to-[#ffe29f]/40 rounded-3xl shadow-lg border border-white/30 backdrop-blur-md">
-      <h2 className="text-3xl md:text-4xl font-extrabold text-center mb-10 bg-gradient-to-r from-primary via-accent to-pink-400 bg-clip-text text-transparent animate-fade-in drop-shadow-lg">
-        Latest Videos
-      </h2>
+    <div className="w-full mx-auto py-0">
       {children}
     </div>
   );

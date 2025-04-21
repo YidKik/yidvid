@@ -12,8 +12,9 @@ export const AnimatedVideoRowsShowcase = ({
   videos,
   loading,
 }: AnimatedVideoRowsShowcaseProps) => {
-  const numRows = 4;
-  const minVideos = numRows * 6;
+  // Reduce number of rows to make each video row more prominent
+  const numRows = 2;
+  const minVideos = numRows * 4;
 
   const allVideos =
     videos.length < minVideos
@@ -37,27 +38,24 @@ export const AnimatedVideoRowsShowcase = ({
     rowSlices.push(slice);
   }
 
-  // Longer animation duration for more immersive effect
-  const animationDuration = 36;
+  // Slower animation for more massive, dramatic effect
+  const animationDuration = 60;
   const durations = [
     animationDuration,
-    animationDuration - 5,
-    animationDuration - 3,
-    animationDuration - 7,
+    animationDuration - 10,
   ];
 
+  // Simply alternate directions for maximum visual impact
   const directions: ("left" | "vertical-down")[] = [
     "left",
-    "vertical-down",
     "left",
-    "vertical-down",
   ];
 
-  // More dramatic offsets for better visual contrast
-  const rowOffsets = [0, 120, 180, 100];
+  // Minimal row offsets since videos are so large now
+  const rowOffsets = [0, 120];
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-4">
       {rowSlices.map((videosForRow, i) => (
         <AnimatedVideoRow
           key={i}
