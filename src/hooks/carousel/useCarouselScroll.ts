@@ -30,28 +30,21 @@ export const useCarouselScroll = ({ emblaApi, direction, speed, itemsLength }: U
       lastTime = timestamp;
       
       if (!scrolling.current) {
-        // Calculate the scroll amount based on direction and speed
-        const scrollAmount = (direction === "rtl" ? -1 : 1) * scrollStep * (deltaTime / 16);
+        // Always scroll from right to left (direction === "ltr")
+        const scrollAmount = scrollStep * (deltaTime / 16);
         
         // Use scrollSnaps and selectedScrollSnap for proper scrolling
         const scrollSnaps = emblaApi.scrollSnapList();
         const currentIndex = emblaApi.selectedScrollSnap();
         const nextIndex = (currentIndex + 1) % scrollSnaps.length;
-        const prevIndex = currentIndex === 0 ? scrollSnaps.length - 1 : currentIndex - 1;
         
         // Get current scroll progress (0 to 1)
         const scrollProgress = emblaApi.scrollProgress();
         
         // Create smooth scrolling effect
-        if (direction === "ltr") {
-          emblaApi.scrollTo(scrollProgress + scrollAmount);
-          // If we reach the end of current slide, snap to next
-          if (scrollProgress >= 0.98) emblaApi.scrollTo(nextIndex);
-        } else {
-          emblaApi.scrollTo(scrollProgress - scrollAmount);
-          // If we reach the beginning of current slide, snap to previous
-          if (scrollProgress <= 0.02) emblaApi.scrollTo(prevIndex);
-        }
+        emblaApi.scrollTo(scrollProgress + scrollAmount);
+        // If we reach the end of current slide, snap to next
+        if (scrollProgress >= 0.98) emblaApi.scrollTo(nextIndex);
       }
       
       animationRef.current = requestAnimationFrame(scroll);

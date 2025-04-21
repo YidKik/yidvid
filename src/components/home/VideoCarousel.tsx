@@ -29,13 +29,13 @@ export const VideoCarousel = ({
     loop: true,
     dragFree: true,
     containScroll: "trimSnaps",
-    direction: direction === "rtl" ? "rtl" : "ltr",
+    direction: "ltr", // Always set to ltr for right-to-left movement
     align: "start",
   });
 
   useCarouselScroll({
     emblaApi,
-    direction,
+    direction, // We'll still pass the direction prop but ignore it in the hook
     speed,
     itemsLength: shuffledVideos.length,
   });

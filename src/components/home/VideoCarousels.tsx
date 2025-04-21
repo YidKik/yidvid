@@ -1,3 +1,4 @@
+
 import React from "react";
 import { VideoGridItem as VideoGridItemType } from "@/hooks/video/useVideoGridData";
 import { VideoCarousel } from "./VideoCarousel";
@@ -58,7 +59,7 @@ export const VideoCarousels = ({ videos, isLoading, onVideoClick }: VideoCarouse
       <div className="overflow-hidden">
         <VideoCarousel 
           videos={sortedVideos} 
-          direction="rtl" 
+          direction="ltr" 
           speed={30} 
           shuffleKey={rowShuffleKeys[1]} 
           onVideoClick={onVideoClick}
