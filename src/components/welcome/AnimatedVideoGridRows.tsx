@@ -1,5 +1,5 @@
 import { useVideoGridData } from "@/hooks/video/useVideoGridData";
-import { useRef } from "react";
+import { useMemo } from "react";
 
 /**
  * Single video thumbnail for grid (original size)
@@ -15,7 +15,7 @@ function VideoGridThumb({
 }) {
   return (
     <div
-      className={`rounded-md bg-white aspect-[16/11] w-40 md:w-56 lg:w-60 shadow-none ${className}`}
+      className={`rounded-md bg-white aspect-[16/11] w-28 md:w-36 lg:w-40 shadow-none ${className}`}
       style={{
         overflow: "hidden",
         background: "#fff",
@@ -35,38 +35,50 @@ function VideoGridThumb({
 
 const GRID_ROWS = 4;
 const GRID_COLS = 5;
-const VISIBLE_SLIDES = 4; // number of videos visible at a time in the vertical column
-const SLIDE_HEIGHT_REM = 7.5; // match to w-40 aspect
-const GAP_REM = 2; // gap-8 ~2rem
-const TOTAL_CYCLE_VIDEOS = 30; // How many videos to use for the main carousel (enough for real scrolling)
+const VISIBLE_SLIDES = 4; // Number of videos visible at a time in the vertical columns
+const SLIDE_HEIGHT_REM = 5.5; // Reduced height for more compact look (was 7.5)
+const GAP_REM = 1.25; // Smaller gap for compactness (was 2)
+const TOTAL_CYCLE_VIDEOS = 30; // How many unique videos per carousel column (enough for smooth scroll)
 
 /**
- * CarouselColumn: Seamlessly vertical scrolling through ALL videos provided, one-by-one, always showing 4 at a time.
+ * Vertical CarouselColumn: Seamless vertical scroll of N videos.
+ * offsetIndex: start index in the videos list to ensure each column shows a unique sequence.
  */
 function CarouselColumn({
   videoList,
   visibleSlides = VISIBLE_SLIDES,
+  offsetIndex = 0,
+  animationDelay = 0,
 }: {
   videoList: Array<{ id: string; thumbnail: string }>;
   visibleSlides?: number;
+  offsetIndex?: number;
+  animationDelay?: number;
 }) {
-  // Double the list to ensure a smooth seamless loop
-  const displayList =
-    videoList.length > 0
-      ? [...videoList, ...videoList.slice(0, visibleSlides)]
-      : Array(visibleSlides).fill({ id: "fake", thumbnail: "/placeholder.svg" });
+  // Create an offset (cycled) display list for this column
+  const displayList = useMemo(() => {
+    if (videoList.length === 0) {
+      return Array(visibleSlides).fill({ id: "fake", thumbnail: "/placeholder.svg" });
+    }
+    // Cycle offset
+    const looped = videoList
+      .slice(offsetIndex)
+      .concat(videoList.slice(0, offsetIndex));
+    // To ensure seamless scrolling, repeat the first 'visibleSlides' at the end
+    return [...looped, ...looped.slice(0, visibleSlides)];
+  }, [videoList, offsetIndex, visibleSlides]);
 
-  // Calculate the total height of one slide
+  // Animation distances
   const slideSizeRem = SLIDE_HEIGHT_REM + GAP_REM;
   const totalSlides = displayList.length;
   const animationDistance = slideSizeRem * totalSlides;
 
-  // Slower speed per slide for smooth effect:
-  const SLIDE_DURATION_SEC = 6; // seconds to show each slide before it moves down by one
-  const totalDuration = (SLIDE_DURATION_SEC * totalSlides);
+  // Animation duration: slower for smooth feel
+  const SLIDE_DURATION_SEC = 6; // seconds per slide
+  const totalDuration = SLIDE_DURATION_SEC * totalSlides;
 
-  // Generate keyframes for smooth endless downward scroll
-  const animationName = `slide-down-all-videos-${totalSlides}`;
+  // Create unique keyframes name for each column to allow for offset animation delays
+  const animationName = `slide-down-col-${offsetIndex}-${totalSlides}`;
   const keyframes = `
     @keyframes ${animationName} {
       0% { transform: translateY(0); }
@@ -84,15 +96,16 @@ function CarouselColumn({
     >
       <style>{keyframes}</style>
       <div
-        className="flex flex-col gap-8"
+        className="flex flex-col gap-5"
         style={{
           animation: `${animationName} ${totalDuration}s linear infinite`,
+          animationDelay: `${animationDelay}s`,
           willChange: "transform",
         }}
       >
         {displayList.map((v, idx) => (
           <VideoGridThumb
-            key={`carousel-all-videos-${v.id}-${idx}`}
+            key={`carousel-videos-${offsetIndex}-${v.id}-${idx}`}
             thumbnail={v.thumbnail}
             className=""
           />
@@ -103,19 +116,17 @@ function CarouselColumn({
 }
 
 /**
- * Video grid with animated 1st column (vertical carousel showing all videos)
+ * Video grid with animated first TWO columns (vertical carousels showing all videos, with offset)
  */
 export function AnimatedVideoGridRows({ staticRows = false }: { staticRows?: boolean }) {
-  // Pull enough videos for full carousel effect
-  // Note: If there aren't enough, will fill with placeholders!
+  // Pull enough videos for both carousels + static grid
   const { videos } = useVideoGridData(TOTAL_CYCLE_VIDEOS + GRID_ROWS * GRID_COLS);
 
-  // Always fill to at least what we need for non-carousel grid, then extras for the carousel
   const fallbackThumbs = Array(GRID_COLS * GRID_ROWS)
     .fill("/placeholder.svg")
     .map((t, i) => ({ id: "fake-" + i, thumbnail: t }));
 
-  // Pad to fill the whole grid (20) if not enough
+  // Pad if needed
   const fullVideos = [
     ...videos,
     ...(videos.length < GRID_ROWS * GRID_COLS
@@ -128,20 +139,23 @@ export function AnimatedVideoGridRows({ staticRows = false }: { staticRows?: boo
       : []),
   ];
 
-  // Prepare vertical carousel list: Use all available videos for smooth scroll
-  // Limit for performance and smoothness if there are *lots* of videos
-  const carouselVideos =
-    videos.length > 0
-      ? videos.slice(0, TOTAL_CYCLE_VIDEOS)
-      : fallbackThumbs.slice(0, TOTAL_CYCLE_VIDEOS);
+  // Carousels: each column gets a different start point in the list
+  const carouselVideos = videos.length > 0
+    ? videos.slice(0, TOTAL_CYCLE_VIDEOS)
+    : fallbackThumbs.slice(0, TOTAL_CYCLE_VIDEOS);
 
-  // The rest (static, non-carousel columns): columns 2-5, per row
+  // The two animated columns
+  const col1Offset = 0;
+  const col2Offset = Math.floor(carouselVideos.length / 2); // Halfway through for uniqueness
+
+  // The rest (static, non-carousel columns): columns 3-5, per row
   const rowDatas: Array<Array<{ id: string; thumbnail: string }>> = [];
   for (let i = 0; i < GRID_ROWS; i++) {
     const start = i * GRID_COLS;
     rowDatas.push(fullVideos.slice(start, start + GRID_COLS));
   }
-  const staticCols = rowDatas.map((row) => row.slice(1, GRID_COLS)); // [row][col]
+  // We'll only render columns 3-5 of each row
+  const staticCols = rowDatas.map((row) => row.slice(2, GRID_COLS)); // [row][col]
 
   return (
     <div
@@ -150,16 +164,17 @@ export function AnimatedVideoGridRows({ staticRows = false }: { staticRows?: boo
         zIndex: 1,
       }}
     >
-      <div className="flex flex-row gap-8">
-        {/* Animated vertical carousel as the first column */}
-        <CarouselColumn videoList={carouselVideos} visibleSlides={VISIBLE_SLIDES} />
+      <div className="flex flex-row gap-5">
+        {/* Animated vertical carousels: columns 1 and 2 */}
+        <CarouselColumn videoList={carouselVideos} visibleSlides={VISIBLE_SLIDES} offsetIndex={col1Offset} animationDelay={0} />
+        <CarouselColumn videoList={carouselVideos} visibleSlides={VISIBLE_SLIDES} offsetIndex={col2Offset} animationDelay={3} />
 
-        {/* Rest of the grid - 4 rows, each 4 (not carousel) */}
-        <div className="flex flex-col gap-8">
+        {/* Rest of the grid: 4 rows, each 3 (not animated) */}
+        <div className="flex flex-col gap-5">
           {staticCols.map((row, rowIdx) => (
             <div
               key={rowIdx + 1}
-              className="flex flex-row gap-8 justify-center"
+              className="flex flex-row gap-5 justify-center"
             >
               {row.map((v, colIdx) => (
                 <VideoGridThumb
