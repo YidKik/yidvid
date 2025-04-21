@@ -21,7 +21,8 @@ export function VideoCarouselRows() {
     ? videos
     : Array(16).fill(0).map((_, i) => placeholder(i)); // Only needed to prevent animation breaking
 
-  const directions = ["rightToLeft", "leftToRight", "rightToLeft", "leftToRight"];
+  // Define directions as an array of the specific literal types
+  const directions: Array<"rightToLeft" | "leftToRight"> = ["rightToLeft", "leftToRight", "rightToLeft", "leftToRight"];
 
   return (
     <div
