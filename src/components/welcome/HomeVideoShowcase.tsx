@@ -1,3 +1,4 @@
+
 import { useEffect, useMemo } from "react";
 import { VideoGridItem } from "@/components/video/VideoGridItem";
 import { useVideoGridData, VideoGridItem as VideoItemType } from "@/hooks/video/useVideoGridData";
@@ -7,7 +8,7 @@ import { useVideoGridData, VideoGridItem as VideoItemType } from "@/hooks/video/
  */
 interface AnimatedVideoRowProps {
   videos: VideoItemType[];
-  direction: "left" | "vertical-down";
+  direction: "left" | "right" | "vertical-down";
   duration: number;
   rowIdx: number;
 }
@@ -41,8 +42,8 @@ const AnimatedVideoRow = ({
       } else if (direction === "vertical-down") {
         keyframes = `
           @keyframes ${animationName} {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(100%); }
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(0); }
           }
         `;
       }
