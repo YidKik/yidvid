@@ -35,11 +35,11 @@ function VideoGridThumb({
 
 const GRID_ROWS = 4;
 const GRID_COLS = 5;
-const SLIDE_DURATION = 14_000; // 14 seconds for a slow, smooth animation
+const SLIDE_DURATION = 25000; // 25 seconds for a very slow, smooth animation
 const SLIDE_HEIGHT_REM = 9.5; // approximately matches w-56 aspect-[16/11]
 
 /**
- * CarouselColumn: Vertically and smoothly sliding 4 video thumbs, cycling continuously.
+ * CarouselColumn: Vertically and smoothly sliding video thumbs, cycling continuously.
  */
 function CarouselColumn({
   videoList,
@@ -48,82 +48,41 @@ function CarouselColumn({
   videoList: Array<{id: string; thumbnail: string}>,
   rowCount?: number;
 }) {
-  // For smooth looping, repeat the list so we have an extra slide at the bottom during the transition.
-  const [pointer, setPointer] = useState(0);
-  const [isAnimating, setIsAnimating] = useState(true);
   const listLen = videoList.length;
-
-  // Construct list of [V1, V2, V3, V4, V1, V2, ...] to enable seamless loop
-  const carouselItems =
-    listLen >= rowCount
-      ? [
-          ...Array(rowCount + 1)
-            .fill(0)
-            .map((_, i) => videoList[(pointer + i) % listLen])
-        ]
-      : [...videoList];
-
-  const containerRef = useRef<HTMLDivElement>(null);
-  const animationRef = useRef<number>();
-  const [translateY, setTranslateY] = useState(0);
-
-  useEffect(() => {
-    setTranslateY(0);
-    setIsAnimating(true);
-
-    let start: number | null = null;
-    let frame: number;
-
-    function step(ts: number) {
-      if (!start) start = ts;
-      const elapsed = ts - start;
-      const percent = elapsed / SLIDE_DURATION;
-      // Animate from 0 to full slide down of one row
-      const newY = percent * SLIDE_HEIGHT_REM;
-      setTranslateY(-newY);
-
-      if (percent < 1) {
-        frame = requestAnimationFrame(step);
-        animationRef.current = frame;
-      } else {
-        // Done with slide: move pointer down
-        setPointer((prev) => (prev + 1) % listLen);
-        setTimeout(() => {
-          setIsAnimating(false);
-          setTranslateY(0); // snap back instantly and restart
-          setTimeout(() => setIsAnimating(true), 10);
-        }, 10);
+  
+  // To ensure a completely smooth continuous animation, we'll duplicate the list 
+  // and use CSS animation to create an infinite loop
+  const duplicatedList = [...videoList, ...videoList];
+  
+  // Calculate animation duration based on number of items
+  const animationDuration = `${SLIDE_DURATION / 1000}s`;
+  const animationName = `slideUpInfinite-${listLen}`;
+  
+  // Create a dynamic keyframe animation
+  const keyframes = `
+    @keyframes ${animationName} {
+      0% {
+        transform: translateY(0);
+      }
+      100% {
+        transform: translateY(-${listLen * (SLIDE_HEIGHT_REM + 2)}rem);
       }
     }
+  `;
 
-    if (isAnimating) {
-      frame = requestAnimationFrame(step);
-      animationRef.current = frame;
-    }
-    return () => {
-      if (animationRef.current) cancelAnimationFrame(animationRef.current);
-    };
-    // Only restart when pointer or isAnimating changes
-  }, [pointer, isAnimating, listLen]);
-
-  // Render the list as a stacked column, shifting upward
   return (
-    <div
-      className="relative flex flex-col h-full min-h-[41rem] justify-center w-fit overflow-hidden"
-      style={{ height: `calc(${rowCount} * ${SLIDE_HEIGHT_REM}rem + 2rem)` }}
-      ref={containerRef}
-    >
-      <div
+    <div className="relative flex flex-col h-full min-h-[41rem] justify-center w-fit overflow-hidden">
+      <style>{keyframes}</style>
+      <div 
         className="flex flex-col gap-8"
         style={{
-          transform: `translateY(${translateY}rem)`,
-          transition: isAnimating ? "none" : "transform 0s",
+          animation: `${animationName} ${animationDuration} linear infinite`,
           willChange: "transform",
         }}
       >
-        {carouselItems.map((v, i) => (
+        {duplicatedList.map((v, i) => (
           <VideoGridThumb
-            key={"car-c-" + v.id + i + pointer}
+            key={`car-c-${v.id}-${i}`}
             thumbnail={v.thumbnail}
             className=""
           />
