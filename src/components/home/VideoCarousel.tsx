@@ -42,7 +42,7 @@ export const VideoCarousel = ({
     shufflerRef.current = createShuffler(videos);
     // Prime the initial set of shuffled videos for display
     setShuffledVideos(
-      Array.from({ length: Math.max(8, isMobile ? 4 : 8) }, () =>
+      Array.from({ length: Math.max(12, isMobile ? 6 : 12) }, () =>
         shufflerRef.current!.next().value
       )
     );
@@ -58,7 +58,6 @@ export const VideoCarousel = ({
 
   const scrolling = useRef<boolean>(false);
   const reqRef = useRef<number>();
-  const scrollStep = isMobile ? 0.8 : 1.6; // px/frame for smoothness (not used directly, we're using scrollTo)
 
   // Continuous auto-scroll & live shuffle.
   useEffect(() => {
@@ -74,8 +73,7 @@ export const VideoCarousel = ({
 
         // Use scrollProgress for [0,1], scrollTo works with fractional slide index!
         const currentProgress = emblaApi.scrollProgress();
-        const slideCount = emblaApi.slideNodes().length;
-        const stepAmount = (0.011 * speed * (dt / 16)); // Tune for smoothness
+        const stepAmount = (0.005 * speed * (dt / 16)); // Reduced speed for smoother scrolling
 
         let newProgress =
           direction === "rtl"
@@ -83,12 +81,12 @@ export const VideoCarousel = ({
             : currentProgress + stepAmount;
 
         if (newProgress >= 1) {
-          emblaApi.scrollTo(0);
+          newProgress = 0;
         } else if (newProgress < 0) {
-          emblaApi.scrollTo(1);
-        } else {
-          emblaApi.scrollTo(newProgress);
+          newProgress = 1;
         }
+        
+        emblaApi.scrollTo(newProgress);
 
         // LIVE shuffle: every second, rotate the videos array (simulate continuous shuffle)
         if (Math.floor(time / 1200) !== Math.floor((time - dt) / 1200) && shufflerRef.current) {
@@ -107,7 +105,6 @@ export const VideoCarousel = ({
         cancelAnimationFrame(reqRef.current);
       }
     };
-    // eslint-disable-next-line
   }, [emblaApi, direction, speed, shuffledVideos, isMobile, videos, shuffleKey]);
 
   // Handle drag interrupts to pause auto-scroll
@@ -134,7 +131,7 @@ export const VideoCarousel = ({
     return null;
   }
 
-  // Thumbnail dimensions (YouTube 16:9): width 320px, height 180px on desktop, ~75vw x 42vw on mobile
+  // Standard YouTube thumbnail dimensions (16:9 aspect ratio)
   const DESKTOP_WIDTH = 320;
   const DESKTOP_HEIGHT = 180;
   const MOBILE_WIDTH = "75vw";
