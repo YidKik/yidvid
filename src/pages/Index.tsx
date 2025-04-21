@@ -1,7 +1,7 @@
-
 import React from "react";
 import { VideoRows } from "@/components/welcome/VideoRows";
 import { SeattleLineOverlay } from "@/components/welcome/SeattleLineOverlay";
+import { CenterFadeOverlay } from "@/components/welcome/CenterFadeOverlay";
 
 export default function Index() {
   return (
@@ -38,6 +38,9 @@ export default function Index() {
             </p>
           </div>
         </div>
+
+        {/* Add the center fade overlay above videos but below the diagonal line */}
+        <CenterFadeOverlay />
 
         {/* Seattle diagonal line + fade overlay (on top of/over videos) */}
         <SeattleLineOverlay />
