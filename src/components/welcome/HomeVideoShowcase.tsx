@@ -171,10 +171,10 @@ export const HomeVideoShowcase = () => {
   const animationDuration = 32;
   const durations = [animationDuration, animationDuration - 4, animationDuration - 2, animationDuration - 6];
 
-  // 1=left, 2=vertical-down, 3=left, 4=vertical-down (zero-indexed)
+  // Make rows 1 and 3 slide left, rows 2 and 4 slide vertically down
   const directions: ("left" | "vertical-down")[] = [
     "left",
-    "vertical-down",
+    "vertical-down", 
     "left",
     "vertical-down"
   ];
