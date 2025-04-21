@@ -1,3 +1,4 @@
+
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
@@ -26,7 +27,7 @@ export default function HomeWelcome() {
   }, []);
 
   return (
-    <div className="relative min-h-screen w-full flex flex-col overflow-x-hidden bg-transparent">
+    <div className="relative min-h-screen w-full flex flex-col overflow-x-hidden overflow-y-auto bg-transparent">
       <AnimatePresence mode="wait">
         <motion.div
           key={fadeKey + "-" + gradientIndex}
@@ -67,7 +68,7 @@ export default function HomeWelcome() {
         />
       ))}
 
-      <div className="relative z-20 flex flex-col items-center pt-16 pb-10">
+      <div className="relative z-20 flex flex-col items-center pt-10 pb-4">
         <motion.img
           src="/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png"
           alt="YidVid Logo"
@@ -94,7 +95,7 @@ export default function HomeWelcome() {
           Welcome to YidVid
         </motion.h1>
         <motion.p
-          className="text-lg md:text-2xl text-black/80 text-center max-w-2xl mb-8 font-semibold"
+          className="text-lg md:text-2xl text-black/80 text-center max-w-2xl mb-6 font-semibold"
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.2, duration: 0.9 }}
@@ -103,7 +104,7 @@ export default function HomeWelcome() {
         </motion.p>
 
         <motion.div
-          className="flex gap-4 mt-2"
+          className="flex gap-4"
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 2, duration: 1.1 }}
@@ -119,7 +120,7 @@ export default function HomeWelcome() {
         </motion.div>
       </div>
 
-      <div className="w-full h-[550px] relative pointer-events-none z-10" style={{ marginTop: "-40px" }}>
+      <div className="w-full h-[600px] relative pointer-events-none z-10">
         <VideoCarouselRows />
       </div>
 

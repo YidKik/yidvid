@@ -44,6 +44,7 @@ export function VideoCarouselRows() {
   const navigate = useNavigate();
   const { videos, loading } = useVideoGridData(MAX_FETCH);
   const { rotation, scale } = useScrollRotation();
+  const carouselRef = useRef<HTMLDivElement>(null);
 
   const placeholder = (i: number) => ({
     id: `placeholder-${i}`,
@@ -63,41 +64,52 @@ export function VideoCarouselRows() {
     for (let r = 0; r < ROW_COUNT; r++) {
       const [startSegment, rowLoop] = getRowVideosWithOffset(videos, r, VIDEOS_PER_ROW, ROW_COUNT);
       rowBases.push(startSegment);
-      rowSlides.push([...rowLoop, ...rowLoop, ...rowLoop]);
+      rowSlides.push([...rowLoop, ...rowLoop]);
     }
   }
 
+  // Create animation style sheets for each row only once
+  useEffect(() => {
+    const styleElement = document.createElement('style');
+    styleElement.id = 'carousel-animations';
+    
+    let animations = '';
+    
+    for (let i = 0; i < ROW_COUNT; i++) {
+      animations += `
+        @keyframes slideRow${i} {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+      `;
+    }
+    
+    styleElement.innerHTML = animations;
+    document.head.appendChild(styleElement);
+    
+    return () => {
+      const existingStyle = document.getElementById('carousel-animations');
+      if (existingStyle) {
+        existingStyle.remove();
+      }
+    };
+  }, []);
+
   return (
     <div
-      className="fixed left-0 right-0 z-10 pointer-events-auto select-none flex justify-center items-start"
+      ref={carouselRef}
+      className="fixed left-0 right-0 z-10 pointer-events-auto select-none"
       style={{
-        top: 0,
+        top: -50,
         width: "100vw",
         height: "min(99vh,820px)",
         transform: `rotate(${rotation}deg) scale(${scale})`,
         transformOrigin: "100% 0%", // anchor at top right
         transition: "transform 0.5s cubic-bezier(.53,.42,.19,1.04)",
-        // No margin - always sits at top!
       }}
     >
       <div className="w-[99vw] max-w-none mx-0 flex flex-col gap-3 justify-center">
         {rowSlides.map((rowVideos, ri) => {
-          // All rows slide from right-to-left, using much slower individual duration (SLIDE_SECONDS)
-          const slideAnim = `
-            @keyframes slideRow${ri} {
-              0% { transform: translateX(0); }
-              100% { transform: translateX(-50%); }
-            }
-          `;
-          useEffect(() => {
-            if (!document.getElementById(`carousel-row-anim-${ri}`)) {
-              const style = document.createElement('style');
-              style.id = `carousel-row-anim-${ri}`;
-              style.innerHTML = slideAnim;
-              document.head.appendChild(style);
-            }
-          }, [slideAnim, ri]);
-
           // Use updated closer vertical offsets
           const verticalOffset = ROW_VERTICAL_OFFSETS[ri] ?? 0;
           const rowStyle: React.CSSProperties = {
@@ -117,7 +129,9 @@ export function VideoCarouselRows() {
                 className="flex gap-8 md:gap-11"
                 style={{
                   width: `calc(${rowVideos.length * 24}vw)`,
-                  animation: `slideRow${ri} ${SLIDE_SECONDS[ri % SLIDE_SECONDS.length]}s cubic-bezier(0.33,1,0.68,1) infinite`,
+                  animation: `slideRow${ri} ${SLIDE_SECONDS[ri % SLIDE_SECONDS.length]}s linear infinite`,
+                  animationFillMode: "forwards",
+                  animationDelay: `${ri * 0.5}s`,
                   flexDirection: "row",
                   alignItems: "center",
                   transform: "translateX(0)",
@@ -148,6 +162,44 @@ export function VideoCarouselRows() {
                   )
                 )}
               </div>
+              {/* Add duplicated row for seamless looping */}
+              <div
+                className="flex gap-8 md:gap-11 absolute"
+                style={{
+                  left: "100%",
+                  width: `calc(${rowVideos.length * 24}vw)`,
+                  animation: `slideRow${ri} ${SLIDE_SECONDS[ri % SLIDE_SECONDS.length]}s linear infinite`,
+                  animationFillMode: "forwards",
+                  animationDelay: `${ri * 0.5}s`,
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+              >
+                {rowVideos.map((video, vi) =>
+                  video ? (
+                    <button
+                      key={`dup-${video.id}-${vi}`}
+                      className="aspect-video rounded-xl shadow-lg ring-2 ring-primary/20 overflow-hidden bg-white/80 hover:scale-110 transition-transform duration-300 flex-none w-44 md:w-60 cursor-pointer group"
+                      onClick={() =>
+                        video.video_id && video.video_id !== "-"
+                          ? navigate(`/video/${video.video_id}`)
+                          : undefined
+                      }
+                      aria-label={video.title}
+                      tabIndex={-1}
+                    >
+                      <img
+                        src={video.thumbnail}
+                        alt={video.title}
+                        className="w-full h-full object-cover group-hover:brightness-110"
+                        draggable={false}
+                      />
+                    </button>
+                  ) : (
+                    <div key={`dup-empty-${vi}`} className="aspect-video rounded-lg bg-gray-200 w-44 md:w-60 animate-pulse" aria-hidden="true" />
+                  )
+                )}
+              </div>
             </div>
           );
         })}
@@ -155,4 +207,3 @@ export function VideoCarouselRows() {
     </div>
   );
 }
-
