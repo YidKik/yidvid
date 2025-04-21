@@ -16,19 +16,20 @@ export function TiltedVideoScroll({ videos = [], className }: TiltedVideoScrollP
   const scrollingVideos = [...videos, ...videos, ...videos];
 
   return (
-    <div className={cn("flex items-center justify-center py-8", className)}>
+    <div className={cn("flex items-center justify-center py-16 perspective-[1000px]", className)}>
       <div className="relative overflow-hidden [mask-composite:intersect] [mask-image:linear-gradient(to_right,transparent,black_5rem),linear-gradient(to_left,transparent,black_5rem),linear-gradient(to_bottom,transparent,black_5rem),linear-gradient(to_top,transparent,black_5rem)]">
         <motion.div 
           className="grid gap-5 animate-skew-scroll"
           style={{
-            gridTemplateColumns: "repeat(2, minmax(300px, 1fr))",
-            height: "600px",
+            gridTemplateColumns: "repeat(2, minmax(250px, 1fr))",
+            height: "800px",
+            transformStyle: "preserve-3d",
           }}
         >
           {scrollingVideos.map((video, index) => (
             <motion.div
               key={`${video.id}-${index}`}
-              className="group relative cursor-pointer rounded-xl border border-white/[0.08] bg-gradient-to-b from-background/80 to-muted/80 shadow-md transition-all duration-300 ease-in-out hover:scale-105 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-xl overflow-hidden"
+              className="group relative cursor-pointer rounded-xl border border-white/[0.08] bg-gradient-to-b from-background/80 to-muted/80 shadow-md transition-all duration-300 ease-in-out hover:scale-105 hover:-translate-y-1 hover:shadow-xl overflow-hidden"
               onClick={() => navigate(`/video/${video.video_id}`)}
               whileHover={{ scale: 1.05 }}
             >
