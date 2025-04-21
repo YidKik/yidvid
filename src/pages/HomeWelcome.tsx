@@ -1,3 +1,4 @@
+
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { VideoCarouselRows } from "@/components/welcome/VideoCarouselRows";
@@ -70,7 +71,12 @@ export default function HomeWelcome() {
       {/* Overlay top-right fade shape above videos */}
       <WelcomeTopShape />
 
-      {/* HERO SECTION */}
+      {/* PLACE VIDEO CAROUSEL SECTION AT THE TOP */}
+      <div className="w-full relative z-0" style={{ marginTop: "0" }}>
+        <VideoCarouselRows />
+      </div>
+
+      {/* HERO SECTION: logo and message remain as-is, just beneath carousel */}
       <div className="relative w-full flex flex-row items-start md:items-center pt-7 pb-2" style={{ minHeight: "44vh", zIndex: 20 }}>
         {/* Left: Logo & Welcome Message */}
         <div className="ml-[clamp(1rem,9vw,7rem)] mt-6 flex flex-col items-start justify-center z-20" style={{ maxWidth: 510 }}>
@@ -95,16 +101,11 @@ export default function HomeWelcome() {
             </p>
           </div>
         </div>
-        {/* We intentionally leave the right side empty so the shape and carousel can overlap */}
+        {/* Right side intentionally left empty for overlapping shape/carousel */}
       </div>
 
-      {/* Video carousel: moved to top, remains visible under the shape */}
-      <div className="w-full relative z-0" style={{ marginTop: "-4.5vh" }}>
-        <VideoCarouselRows />
-      </div>
-
-      {/* Give more vertical space to the carousel for overflow + touch scrolling */}
-      <div className="h-[43vh]" />
+      {/* Remove extra space below carousel */}
+      {/* <div className="h-[43vh]" /> */}
     </div>
   );
 }
