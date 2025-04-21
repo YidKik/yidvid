@@ -1,5 +1,5 @@
 
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { VideoCarouselRows } from "@/components/welcome/VideoCarouselRows";
 
@@ -64,23 +64,28 @@ export default function HomeWelcome() {
         />
       ))}
 
-      {/* Centered large YidVid logo */}
+      {/* Centered large static YidVid logo with blur underneath */}
       <div className="flex-1 flex flex-col items-center justify-center pt-12 pb-4 relative z-20 min-h-[500px]">
-        <motion.img
+        {/* Blur effect div positioned absolutely under the logo */}
+        <div
+          className="
+            absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2
+            w-[390px] h-[170px] rounded-full
+            bg-[#f1f1f1]/60 blur-2xl z-0
+            pointer-events-none
+          "
+          style={{
+            filter: "blur(28px)",
+            opacity: 0.88,
+            // Responsive scaling for mobile
+            maxWidth: "92vw"
+          }}
+        />
+        <img
           src="/lovable-uploads/be2a7abc-dfab-4472-9970-5d7df617545f.png"
           alt="YidVid Logo"
-          className="w-[380px] max-w-[92vw] h-auto mb-2 mx-auto"
-          initial={{ scale: 0.89, opacity: 0.82 }}
-          animate={{
-            scale: [0.89, 1.04, 1],
-            opacity: [0.82, 1, 1]
-          }}
-          transition={{
-            duration: 1.8,
-            repeat: Infinity,
-            repeatType: "mirror",
-            ease: "easeInOut"
-          }}
+          className="w-[380px] max-w-[92vw] h-auto mb-2 mx-auto relative z-10 select-none"
+          draggable={false}
         />
       </div>
 
