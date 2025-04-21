@@ -1,6 +1,7 @@
 
 import React from "react";
 import { VideoRows } from "@/components/welcome/VideoRows";
+import { SeattleLineOverlay } from "@/components/welcome/SeattleLineOverlay";
 
 export default function Index() {
   return (
@@ -37,6 +38,9 @@ export default function Index() {
             </p>
           </div>
         </div>
+
+        {/* Seattle diagonal line + fade overlay (on top of/over videos) */}
+        <SeattleLineOverlay />
 
         {/* Video rows - made higher up by reducing top margin */}
         <div className="relative z-10 mt-8 md:mt-14 lg:mt-20">
