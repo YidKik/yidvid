@@ -31,17 +31,17 @@ export default function HomeWelcome() {
         transition: "background 2s linear"
       }}
     >
-      {/* Animated 4-row video grid as the main background */}
+      {/* Video grid as a background, centered and absolutely layered behind welcome card */}
       <div
-        className="absolute left-1/2 w-[105vw] max-w-[1720px] bottom-0 -translate-x-1/2 z-10 pointer-events-none opacity-90"
+        className="absolute left-1/2 top-1/2 w-[110vw] max-w-[1720px] -translate-x-1/2 -translate-y-1/2 z-0 pointer-events-none"
         style={{
-          transform: "translateY(6vw)",
+          // vertical offset: just right so it's behind the hero, responsive tweak
         }}
       >
-        <AnimatedVideoGridRows />
+        <AnimatedVideoGridRows staticRows />
       </div>
 
-      {/* Hero Glass Card */}
+      {/* Welcome Card */}
       <div className="relative z-30 flex flex-col items-center pt-[18vh] pb-8">
         {/* Optional: floating logo with subtle animation */}
         <motion.img
