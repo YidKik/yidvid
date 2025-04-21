@@ -52,6 +52,13 @@ export default function Index() {
           <WelcomeHeader />
         </div>
         
+        {/* "Welcome to edit" debug message overlay on the left side */}
+        <div 
+          className="pointer-events-none absolute top-20 left-4 z-[9999] bg-yellow-400 text-black px-4 py-2 rounded shadow-lg select-none"
+        >
+          Welcome to edit
+        </div>
+
         {/* Video rows (positioned below in z-index) */}
         <div className="relative z-20 mt-32 md:mt-40 lg:mt-48">
           <VideoRows />
