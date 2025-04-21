@@ -8,6 +8,7 @@ import { useChannelsGrid } from '@/hooks/channel/useChannelsGrid';
 import { useShuffledVideos } from '@/hooks/video/useShuffledVideos';
 import { HeroGeometric } from '@/components/ui/shape-landing-hero';
 import { HeroParallax } from '@/components/ui/hero-parallax';
+import { Link } from 'react-router-dom';
 
 const HomePage = () => {
   const { data: videos, isLoading: videosLoading } = useVideos();
@@ -27,31 +28,56 @@ const HomePage = () => {
 
   return (
     <motion.div 
-      className="min-h-screen w-full overflow-x-hidden bg-white"
+      className="min-h-screen w-full overflow-x-hidden bg-[#030303]"
       variants={pageVariants}
       initial="initial"
       animate="animate"
     >
-      {videos && videos.length > 15 && (
-        <div className="w-full">
-          <HeroParallax 
-            videos={videos} 
-            title="" 
-            description=""
-          />
+      <div className="relative">
+        {/* Video Background */}
+        {videos && videos.length > 15 && (
+          <div className="absolute inset-0 w-full h-[100vh]">
+            <HeroParallax 
+              videos={videos} 
+              title="" 
+              description=""
+            />
+          </div>
+        )}
+        
+        {/* Content Overlay */}
+        <div className="relative z-20 min-h-[100vh] flex flex-col items-center justify-center px-4 text-center">
+          <div className="mb-8">
+            <img 
+              src="/lovable-uploads/e425cacb-4c3a-4d81-b4e0-77fcbf10f61c.png" 
+              alt="YidVid Logo" 
+              className="h-48 w-auto mx-auto"
+            />
+          </div>
+          
+          <h1 className="text-4xl sm:text-6xl md:text-8xl font-bold mb-6 md:mb-8 tracking-tight">
+            <span className="bg-clip-text text-transparent bg-gradient-to-b from-white to-white/80">
+              Your Gateway to
+            </span>
+            <br />
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-white to-primary">
+              Jewish Content
+            </span>
+          </h1>
+          
+          <p className="text-base sm:text-lg md:text-xl text-white/40 mb-8 leading-relaxed font-light tracking-wide max-w-xl">
+            Watch, share, and connect with the finest Jewish content from around the world.
+          </p>
+
+          <Link to="/videos">
+            <button className="px-6 py-3 bg-primary hover:bg-primary/90 text-white font-medium rounded-lg transition-colors">
+              Explore Videos
+            </button>
+          </Link>
         </div>
-      )}
-      
-      <div className="relative z-10 mt-[-100vh]">
-        <HeroGeometric 
-          badge="YidVid"
-          title1="Your Gateway to"
-          title2="Jewish Content"
-          channels={manuallyFetchedChannels}
-        />
       </div>
 
-      <motion.section className="py-4 relative">
+      <motion.section className="py-4 relative z-10">
         <ChannelCarousels isLoading={channelsLoading} />
       </motion.section>
     </motion.div>
