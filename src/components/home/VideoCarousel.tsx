@@ -4,7 +4,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import useEmblaCarousel from "embla-carousel-react";
 import { VideoGridItem as VideoGridItemType } from "@/hooks/video/useVideoGridData";
 import { VideoGridItem } from "@/components/video/VideoGridItem";
-import { useRouter } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 interface VideoCarouselProps {
   videos: VideoGridItemType[];
@@ -15,7 +15,7 @@ interface VideoCarouselProps {
 
 export const VideoCarousel = ({ videos, direction, speed, shuffleKey }: VideoCarouselProps) => {
   const { isMobile } = useIsMobile();
-  const router = useRouter();
+  const navigate = useNavigate();
   
   // Shuffle videos once on mount and when shuffleKey changes
   const [shuffledVideos, setShuffledVideos] = useState<VideoGridItemType[]>([]);
@@ -80,11 +80,11 @@ export const VideoCarousel = ({ videos, direction, speed, shuffleKey }: VideoCar
         
         // Create smooth scrolling effect
         if (direction === "ltr") {
-          emblaApi.scrollTo(currentPosition + scrollAmount, { duration: 0 });
+          emblaApi.scrollTo(currentPosition + scrollAmount);
           // If we reach the end of current slide, snap to next
           if (currentPosition >= 0.98) emblaApi.scrollTo(nextIndex);
         } else {
-          emblaApi.scrollTo(currentPosition - scrollAmount, { duration: 0 });
+          emblaApi.scrollTo(currentPosition - scrollAmount);
           // If we reach the beginning of current slide, snap to previous
           if (currentPosition <= 0.02) emblaApi.scrollTo(prevIndex);
         }
@@ -125,7 +125,7 @@ export const VideoCarousel = ({ videos, direction, speed, shuffleKey }: VideoCar
 
   // Handle video click to navigate to video details
   const handleVideoClick = (videoId: string) => {
-    router.navigate(`/video/${videoId}`);
+    navigate(`/video/${videoId}`);
   };
 
   if (!shuffledVideos || shuffledVideos.length === 0) {
