@@ -1,37 +1,51 @@
 
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Play } from "lucide-react";
 import { VideoCarouselRows } from "@/components/welcome/VideoCarouselRows";
 
-const coolGradients = [
-  "linear-gradient(102.3deg, #93278f 5.9%, #eaace8 64%, #f6dbf5 89%)",
-  "linear-gradient(225deg, #FFE29F 0%, #FFA99F 48%, #FF719A 100%)",
-  "linear-gradient(60deg, #abecd6 0%, #fbed96 100%)"
+// Gradients with shades matching the YidVid branding: warm, friendly, purple-pink-primary blends
+const brandGradients = [
+  "linear-gradient(98deg, #ea384c 0%, #fbed96 100%)",   // Red/Pink to soft yellow
+  "linear-gradient(102.3deg, #9b87f5 11%, #eaace8 70%, #f6dbf5 92%)", // Purple to soft pink
+  "linear-gradient(120deg, #FFDEE2 10%, #ffe29f 85%)",   // Soft pink to yellow
+  "linear-gradient(60deg, #abecd6 0%, #ea384c 100%)",    // Mint to brand red
 ];
 
 export default function HomeWelcome() {
   const navigate = useNavigate();
   const [gradientIndex, setGradientIndex] = useState(0);
+  const [fadeKey, setFadeKey] = useState(0);
 
-  // Cycle background gradients every few seconds
+  // Cycle background gradients every longer seconds, fade smoothly
   useEffect(() => {
     const interval = setInterval(() => {
-      setGradientIndex((i) => (i + 1) % coolGradients.length);
-    }, 5000);
+      setGradientIndex((i) => (i + 1) % brandGradients.length);
+      setFadeKey((k) => k + 1); // force re-mount for AnimatePresence fade
+    }, 8000); // slower change (8 seconds per color)
     return () => clearInterval(interval);
   }, []);
 
   return (
-    <div
-      className="relative min-h-screen w-full flex flex-col"
-      style={{
-        background: coolGradients[gradientIndex],
-        transition: "background 2s linear"
-      }}
-    >
+    <div className="relative min-h-screen w-full flex flex-col overflow-hidden">
+      {/* Background gradient with smooth cross-fade */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={fadeKey + "-" + gradientIndex}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 2.2 }} // very smooth and slow fade
+          className="absolute inset-0 -z-10"
+          style={{
+            background: brandGradients[gradientIndex],
+            transition: "background 1.5s linear"
+          }}
+        />
+      </AnimatePresence>
+
       {/* Floating decorative blobs */}
       {Array.from({ length: 8 }).map((_, i) => (
         <motion.div
@@ -116,3 +130,4 @@ export default function HomeWelcome() {
     </div>
   );
 }
+
