@@ -3,7 +3,6 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { VideoCarousels } from '@/components/home/VideoCarousels';
 import { ChannelCarousels } from '@/components/home/ChannelCarousels';
-import { TiltedVideoScroll } from '@/components/home/TiltedVideoScroll';
 import { useVideos } from '@/hooks/video/useVideos';
 import { useChannelsGrid } from '@/hooks/channel/useChannelsGrid';
 import { useShuffledVideos } from '@/hooks/video/useShuffledVideos';
@@ -54,30 +53,6 @@ const HomePage = () => {
           />
         </motion.section>
       )}
-
-      <div className="space-y-2 mt-4">
-        {videos && (
-          <motion.section 
-            className="relative"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-          >
-            <TiltedVideoScroll videos={videos} />
-          </motion.section>
-        )}
-
-        {shuffledVideos && (
-          <motion.section 
-            className="relative"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-          >
-            <TiltedVideoScroll videos={shuffledVideos} reverse={true} />
-          </motion.section>
-        )}
-      </div>
 
       <motion.section className="py-4 relative">
         <ChannelCarousels isLoading={channelsLoading} />
