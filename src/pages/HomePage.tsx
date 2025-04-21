@@ -32,7 +32,7 @@ const HomePage = () => {
       initial="initial"
       animate="animate"
     >
-      <div className="relative h-[100vh]">
+      <div className="relative h-screen">
         {videos && videos.length > 15 && (
           <div className="absolute inset-0 w-full h-full">
             <HeroParallax 
