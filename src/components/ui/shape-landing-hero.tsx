@@ -8,8 +8,8 @@ import { FloatingAvatar } from "./floating-avatar";
 
 export function HeroGeometric({
     badge = "YidVid",
-    title1 = "Your Premier",
-    title2 = "Jewish Content Platform",
+    title1 = "Your Gateway to",
+    title2 = "Jewish Content",
     channels = []
 }: {
     badge?: string;
@@ -64,6 +64,31 @@ export function HeroGeometric({
                     delay={0.7}
                     size="md"
                     className="left-[25%] top-[10%]"
+                />
+                {/* Additional floating avatars */}
+                <FloatingAvatar
+                    imageUrl={channels[5]?.thumbnail_url}
+                    delay={0.8}
+                    size="lg"
+                    className="right-[15%] bottom-[20%]"
+                />
+                <FloatingAvatar
+                    imageUrl={channels[6]?.thumbnail_url}
+                    delay={0.9}
+                    size="lg"
+                    className="left-[40%] top-[15%]"
+                />
+                <FloatingAvatar
+                    imageUrl={channels[7]?.thumbnail_url}
+                    delay={1}
+                    size="lg"
+                    className="right-[35%] bottom-[25%]"
+                />
+                <FloatingAvatar
+                    imageUrl={channels[8]?.thumbnail_url}
+                    delay={1.1}
+                    size="lg"
+                    className="left-[15%] top-[60%]"
                 />
             </div>
 

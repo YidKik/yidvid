@@ -20,7 +20,6 @@ export function FloatingAvatar({ imageUrl, delay = 0, className, size = "md" }: 
 
   const [currentImage, setCurrentImage] = useState(imageUrl);
 
-  // Effect to change image every 5 seconds with fade
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentImage(imageUrl);

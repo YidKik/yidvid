@@ -54,7 +54,7 @@ const FlipCard = React.memo(
       },
       ref
     ) => {
-      const [isFlipped, setIsFlipped] = React.useState(initialFlipped)
+      const [isFlipped, setIsFlipped] = React.useState(initialFlipped);
 
       const handleMouseEnter = React.useCallback(() => {
         if (!disabled) {
@@ -80,7 +80,7 @@ const FlipCard = React.memo(
           <div
             ref={ref}
             className={cn(
-              "relative border-none bg-none shadow-none",
+              "relative border-none bg-none shadow-none w-full h-full",
               disabled && "pointer-events-none",
               className
             )}
