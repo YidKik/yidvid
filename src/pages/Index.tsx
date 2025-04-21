@@ -2,7 +2,7 @@
 import React from "react";
 import { useVideoGridData } from "@/hooks/video/useVideoGridData";
 import { useNavigate } from "react-router-dom";
-import { HomeFadeDivider } from "@/components/home/HomeFadeDivider";
+// Removed import of HomeFadeDivider
 import { AnimatedVideoRows } from "@/components/home/AnimatedVideoRows";
 
 export default function Index() {
@@ -36,8 +36,7 @@ export default function Index() {
             </div>
           </div>
         </div>
-        {/* Crooked SVG fade divider */}
-        <HomeFadeDivider />
+        {/* Removed HomeFadeDivider */}
         {/* Right: Animated Videos */}
         <div className="hidden md:block w-[56%] relative z-10 pl-[-10vw]">
           <div className="h-full flex items-center">
@@ -60,3 +59,4 @@ export default function Index() {
     </div>
   );
 }
+
