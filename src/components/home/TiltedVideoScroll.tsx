@@ -1,8 +1,7 @@
 
 import { cn } from "@/lib/utils";
 import { VideoGridItem } from "@/hooks/video/useVideoGridData";
-import { FlipCard, FlipCardFront, FlipCardBack } from "@/components/ui/flip-card";
-import { formatDistanceToNow } from "date-fns";
+import { VideoCard } from "@/components/VideoCard";
 
 interface TiltedVideoScrollProps {
   videos?: VideoGridItem[];
@@ -15,14 +14,8 @@ export function TiltedVideoScroll({
   className,
   reverse = false
 }: TiltedVideoScrollProps) {
+  // Double the videos array to create a seamless scroll effect
   const scrollVideos = [...videos, ...videos];
-
-  const formatViews = (views: number | null) => {
-    if (!views) return "No views";
-    if (views < 1000) return `${views} views`;
-    if (views < 1000000) return `${(views / 1000).toFixed(1)}K views`;
-    return `${(views / 1000000).toFixed(1)}M views`;
-  };
 
   return (
     <div className={cn("flex items-center justify-center w-full", className)}>
@@ -32,30 +25,22 @@ export function TiltedVideoScroll({
           reverse ? "animate-scroll-x-reverse" : "animate-scroll-x"
         )}>
           {scrollVideos.map((video, index) => (
-            <FlipCard
+            <div
               key={`${video.id}-${index}`}
-              className="h-full w-full"
+              className="group flex items-start cursor-pointer rounded-md p-2 transition-all duration-300 ease-in-out hover:scale-105"
             >
-              <FlipCardFront className="group h-full w-full rounded-md">
-                <img
-                  src={video.thumbnail}
-                  alt={video.title}
-                  className="h-full w-full object-cover rounded-md"
-                />
-              </FlipCardFront>
-              <FlipCardBack className="flex flex-col justify-center rounded-md bg-gradient-to-br from-[#030303] via-[#ea384c]/90 to-[#030303]/80 p-4 text-white">
-                <h3 className="text-sm font-medium line-clamp-2 mb-2">
-                  {video.title}
-                </h3>
-                <div className="space-y-1 text-xs text-gray-300">
-                  <p>{formatViews(video.views)}</p>
-                  <p>
-                    {formatDistanceToNow(new Date(video.uploadedAt), { addSuffix: true })}
-                  </p>
-                  <p className="text-gray-400">{video.channelName}</p>
-                </div>
-              </FlipCardBack>
-            </FlipCard>
+              <VideoCard
+                id={video.id}
+                video_id={video.video_id}
+                title={video.title}
+                thumbnail={video.thumbnail}
+                channelName={video.channelName}
+                channelId={video.channelId}
+                views={video.views}
+                uploadedAt={video.uploadedAt}
+                hideInfo={true}
+              />
+            </div>
           ))}
         </div>
       </div>
