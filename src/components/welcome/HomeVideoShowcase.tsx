@@ -1,4 +1,3 @@
-
 import { useEffect, useMemo } from "react";
 import { VideoGridItem } from "@/components/video/VideoGridItem";
 import { useVideoGridData, VideoGridItem as VideoItemType } from "@/hooks/video/useVideoGridData";
@@ -8,14 +7,14 @@ import { useVideoGridData, VideoGridItem as VideoItemType } from "@/hooks/video/
  */
 interface AnimatedVideoRowProps {
   videos: VideoItemType[];
-  direction: "left" | "right";
+  direction: "left" | "vertical-down";
   duration: number;
   rowIdx: number;
 }
 
 // Use standard YouTube thumbnail size as reference
-const THUMB_WIDTH = 320;  // px, common YT width
-const THUMB_HEIGHT = 180; // 16:9
+const THUMB_WIDTH = 340;  // px, a little bit wider for a boxier look
+const THUMB_HEIGHT = 192; // px, 16:9
 
 const AnimatedVideoRow = ({
   videos,
@@ -31,53 +30,102 @@ const AnimatedVideoRow = ({
     if (!document.getElementById(animationName)) {
       const style = document.createElement("style");
       style.id = animationName;
-      const totalWidthPct = 100;
-      style.innerHTML = `
-        @keyframes ${animationName} {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(${direction === "left" ? "-" : ""}${totalWidthPct}%); }
-        }
-      `;
+      let keyframes = "";
+      if (direction === "left") {
+        keyframes = `
+          @keyframes ${animationName} {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+          }
+        `;
+      } else if (direction === "vertical-down") {
+        keyframes = `
+          @keyframes ${animationName} {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(100%); }
+          }
+        `;
+      }
+      style.innerHTML = keyframes;
       document.head.appendChild(style);
     }
   }, [animationName, direction]);
 
-  return (
-    <div
-      className="relative w-full overflow-hidden"
-      style={{ height: `${THUMB_HEIGHT + 8}px` }} // space for outline/gap
-    >
+  if (direction === "left") {
+    return (
       <div
-        className="flex gap-6 absolute left-0 top-0 w-full"
-        style={{
-          width: "200%",
-          animation: `${animationName} ${duration}s linear infinite`,
-          animationDelay: `${-rowIdx * (duration / 4)}s`,
-          flexDirection: "row"
-        }}
+        className="relative w-full overflow-hidden"
+        style={{ height: `${THUMB_HEIGHT + 8}px` }} // keep same height for all
       >
-        {doubledVideos.map((video, idx) => (
-          <div
-            key={video.id + "-" + idx}
-            className="flex-shrink-0 bg-white/90 border border-white/60 shadow aspect-[16/9] rounded-md"
-            style={{
-              width: `${THUMB_WIDTH}px`,
-              height: `${THUMB_HEIGHT}px`,
-              // No rotation/scale for neat rows
-              // boxShadow and border for separation
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginTop: "0",
-              marginBottom: "0",
-            }}
-          >
-            <VideoGridItem video={video} noRadius />
-          </div>
-        ))}
+        <div
+          className="flex gap-6 absolute left-0 top-0 w-full"
+          style={{
+            width: "200%",
+            animation: `${animationName} ${duration}s linear infinite`,
+            animationDelay: `${-rowIdx * (duration / 4)}s`,
+            flexDirection: "row"
+          }}
+        >
+          {doubledVideos.map((video, idx) => (
+            <div
+              key={video.id + "-" + idx}
+              className="flex-shrink-0 bg-white/90 border border-white/60 shadow aspect-[16/9]"
+              style={{
+                width: `${THUMB_WIDTH}px`,
+                height: `${THUMB_HEIGHT}px`,
+                borderRadius: "8px", // boxier corners
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                margin: "0"
+              }}
+            >
+              <VideoGridItem video={video} noRadius />
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
-  );
+    );
+  } else if (direction === "vertical-down") {
+    // Vertical duplicate for smooth looping
+    const stackedVideos = [...videos, ...videos];
+    return (
+      <div
+        className="relative w-full overflow-hidden flex flex-row justify-center"
+        style={{ height: `${THUMB_HEIGHT * 2 + 24}px` }}
+      >
+        <div
+          className="flex flex-col gap-6 absolute left-0 top-0 w-full items-center"
+          style={{
+            height: "200%",
+            animation: `${animationName} ${duration}s linear infinite`,
+            animationDelay: `${-rowIdx * (duration / 4)}s`,
+            flexDirection: "column"
+          }}
+        >
+          {stackedVideos.map((video, idx) => (
+            <div
+              key={video.id + "-vert-" + idx}
+              className="flex-shrink-0 bg-white/90 border border-white/60 shadow aspect-[16/9]"
+              style={{
+                width: `${THUMB_WIDTH}px`,
+                height: `${THUMB_HEIGHT}px`,
+                borderRadius: "8px", // boxier corners
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                margin: "0"
+              }}
+            >
+              <VideoGridItem video={video} noRadius />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  } else {
+    return null;
+  }
 };
 
 export const HomeVideoShowcase = () => {
@@ -118,7 +166,17 @@ export const HomeVideoShowcase = () => {
     rowSlices.push(slice);
   }
 
+  // Durations per row, keep them slightly different for visual interest
   const animationDuration = 32;
+  const durations = [animationDuration, animationDuration - 4, animationDuration - 2, animationDuration - 6];
+
+  // 1=left, 2=vertical-down, 3=left, 4=vertical-down (zero-indexed)
+  const directions: ("left" | "vertical-down")[] = [
+    "left",
+    "vertical-down",
+    "left",
+    "vertical-down"
+  ];
 
   return (
     <div className="w-full max-w-7xl mx-auto py-10 md:py-14 bg-gradient-to-br from-[#f6dbf5]/40 to-[#ffe29f]/40 rounded-3xl shadow-lg border border-white/30 backdrop-blur-md">
@@ -130,8 +188,8 @@ export const HomeVideoShowcase = () => {
           <AnimatedVideoRow
             key={i}
             videos={videosForRow}
-            direction={i % 2 === 0 ? "left" : "right"}
-            duration={animationDuration - i * 2}
+            direction={directions[i]}
+            duration={durations[i]}
             rowIdx={i}
           />
         ))}
