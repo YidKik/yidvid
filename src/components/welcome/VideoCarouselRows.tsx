@@ -8,8 +8,8 @@ const VIDEOS_PER_ROW = 4;
 const MAX_FETCH = 40;
 // MUCH SLOWER and SMOOTHER slide durations (seconds)
 const SLIDE_SECONDS = [900, 720, 800, 600];
-// Even and close vertical spacing offsets for each row (pixels)
-const ROW_VERTICAL_OFFSETS = [0, 4, 8, 12]; // closer rows with equal spacing
+// Vertical spacing offsets for brick pattern (pixels)
+const ROW_VERTICAL_OFFSETS = [0, 4, 8, 12];
 
 function getRowVideosWithOffset(allVideos, rowIdx, perRow, allRows) {
   const total = allVideos.length;
@@ -124,11 +124,10 @@ export function VideoCarouselRows() {
           const cardOffset = getCardOffset();
           const isOdd = ri % 2 === 1;
 
-          // Custom row style for brick offset and tight stacking.
+          // Custom row style for brick offset and tight stacking
           const rowStyle: React.CSSProperties = {
             marginTop: verticalOffset > 0 ? `${verticalOffset}px` : undefined,
             marginBottom: verticalOffset < 0 ? `${-verticalOffset}px` : undefined,
-            // Stagger only odd rows for brick effect. Use CSS var for responsiveness below.
           };
 
           // Inline style for translateX (mobile & desktop)
