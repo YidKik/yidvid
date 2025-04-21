@@ -11,17 +11,27 @@ export default function Index() {
       <div className="relative w-full flex-1">
         {/* Diagonal (angled) fade overlay (positioned on top) */}
         <HomeLeftDiagonalFade />
-        
+
         {/* Welcome header (positioned on top of diagonal fade) */}
         <div className="relative z-[51] pt-8 md:pt-16 px-6 md:px-12 lg:px-16">
           <WelcomeHeader />
         </div>
-        
-        {/* "Welcome to edit" debug message overlay on the left side */}
-        <div 
-          className="pointer-events-none absolute top-20 left-4 z-[9999] bg-yellow-400 text-black px-4 py-2 rounded shadow-lg select-none"
+
+        {/* Overlay message+logo box (centered, on top of videos) */}
+        <div
+          className="pointer-events-none absolute left-1/2 top-[43%] z-[70] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center"
         >
-          Welcome to edit
+          <div className="pointer-events-auto flex flex-col items-center gap-2 rounded-xl shadow-lg px-8 py-6 min-w-[220px] backdrop-blur-xl bg-white/60 border border-primary animate-fade-in">
+            <img
+              src="/public/yidkik-logo.png"
+              alt="Logo"
+              className="h-14 w-auto mb-2"
+              draggable={false}
+            />
+            <span className="text-xl font-semibold text-primary drop-shadow">
+              Welcome to edit
+            </span>
+          </div>
         </div>
 
         {/* Video rows (positioned below in z-index) */}
