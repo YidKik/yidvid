@@ -1,11 +1,10 @@
-
 import React from "react";
 import { useVideoGridData } from "@/hooks/video/useVideoGridData";
 import { VideoCarouselRow } from "./VideoCarouselRow";
 
 const ROW_COUNT = 4;
 const SLIDE_SECONDS = [900, 720, 800, 600];
-const ROW_VERTICAL_OFFSETS = [0, 4, 8, 12];
+const ROW_VERTICAL_OFFSETS = [0, 2, 4, 6];
 
 export function VideoCarouselRows() {
   const { videos, loading } = useVideoGridData(40);
@@ -33,7 +32,7 @@ export function VideoCarouselRows() {
         height: "min(99vh,820px)",
       }}
     >
-      <div className="w-[99vw] max-w-none mx-0 flex flex-col gap-0.5 justify-center">
+      <div className="w-[99vw] max-w-none mx-0 flex flex-col justify-center">
         {Array.from({ length: ROW_COUNT }).map((_, ri) => (
           <VideoCarouselRow
             key={`carousel-row-${ri}`}
