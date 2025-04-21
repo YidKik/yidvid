@@ -1,9 +1,10 @@
 
 import { useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Play, Video, GalleryHorizontal, Star } from "lucide-react";
+import { Play } from "lucide-react";
+import { VideoCarouselRows } from "@/components/welcome/VideoCarouselRows";
 
 const coolGradients = [
   "linear-gradient(102.3deg, #93278f 5.9%, #eaace8 64%, #f6dbf5 89%)",
@@ -110,7 +111,8 @@ export default function HomeWelcome() {
         </motion.div>
       </div>
 
-      {/* The animated 4-row video grid section at the bottom has been removed */}
+      {/* Video carousel grid rows background */}
+      <VideoCarouselRows />
     </div>
   );
 }
