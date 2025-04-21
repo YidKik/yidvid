@@ -1,4 +1,3 @@
-
 /* Import theme variables */
 @import './theme.css';
 
@@ -60,3 +59,15 @@
     margin-right: 0.125rem;
   }
 }
+
+@keyframes scroll-x-loop {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* Optionally, for right-to-left scrolling row, you could define:
+@keyframes scroll-x-loop-rtl {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(50%); }
+}
+*/
