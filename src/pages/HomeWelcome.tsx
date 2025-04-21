@@ -7,8 +7,9 @@ export default function HomeWelcome() {
   
   useEffect(() => {
     // Redirect to main page
+    console.log("HomeWelcome redirecting to /");
     navigate("/");
   }, [navigate]);
   
-  return <></>;
+  return <div className="h-screen flex items-center justify-center">Redirecting...</div>;
 }

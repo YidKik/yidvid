@@ -1,4 +1,3 @@
-
 import { Routes, Route, useLocation } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -15,7 +14,6 @@ import { toast } from "sonner";
 import { recordNavigation, setupScrollRestoration } from "@/utils/scrollRestoration";
 
 // Lazy loaded pages
-const HomeWelcome = lazy(() => import("@/pages/HomeWelcome"));
 const Videos = lazy(() => import("@/pages/Videos"));
 
 // Main pages
@@ -100,9 +98,9 @@ function AppRoutes() {
       </Helmet>
       <Suspense fallback={<div className="flex items-center justify-center h-screen">Loading...</div>}>
         <Routes>
-          {/* New home Welcome Page */}
-          <Route path="/" element={<HomeWelcome />} />
-          {/* Videos (old homepage) */}
+          {/* Direct to Index (new homepage) */}
+          <Route path="/" element={<Index />} />
+          {/* Old Videos route */}
           <Route path="/videos" element={<Videos />} />
           {/* Public routes */}
           <Route path="/auth" element={<Auth isOpen={showAuthDialog} onOpenChange={setShowAuthDialog} />} />

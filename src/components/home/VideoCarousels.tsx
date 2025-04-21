@@ -15,9 +15,13 @@ export const VideoCarousels = ({ videos, isLoading }: VideoCarouselsProps) => {
   const [shuffledVideos, setShuffledVideos] = useState<VideoGridItem[]>([]);
   const [newVideos, setNewVideos] = useState<VideoGridItem[]>([]);
   
+  console.log("VideoCarousels rendering with", videos.length, "videos, isLoading:", isLoading);
+  
   // Prepare different video sets
   useEffect(() => {
     if (videos.length > 0) {
+      console.log("Processing videos for carousels");
+      
       // Sort by newest first for the "All New Videos" row
       const sortedByDate = [...videos].sort((a, b) => {
         const dateA = new Date(a.uploadedAt).getTime();
@@ -62,28 +66,34 @@ export const VideoCarousels = ({ videos, isLoading }: VideoCarouselsProps) => {
       transition={{ duration: 1, delay: 0.4 }}
     >
       {/* First row - All New Videos (left to right) */}
-      <VideoCarousel 
-        title="All New Videos" 
-        videos={newVideos} 
-        direction="ltr" 
-        speed={30}
-      />
+      {newVideos.length > 0 && (
+        <VideoCarousel 
+          title="All New Videos" 
+          videos={newVideos} 
+          direction="ltr" 
+          speed={30}
+        />
+      )}
       
       {/* Second row - Featured Videos (right to left) */}
-      <VideoCarousel 
-        title="Featured Videos" 
-        videos={shuffledVideos.slice(0, 15)} 
-        direction="rtl" 
-        speed={25}
-      />
+      {shuffledVideos.length > 0 && (
+        <VideoCarousel 
+          title="Featured Videos" 
+          videos={shuffledVideos.slice(0, 15)} 
+          direction="rtl" 
+          speed={25}
+        />
+      )}
       
       {/* Third row - Popular Videos (left to right) */}
-      <VideoCarousel 
-        title="Popular Videos" 
-        videos={shuffledVideos.slice(15, 30)} 
-        direction="ltr" 
-        speed={35}
-      />
+      {shuffledVideos.length > 0 && (
+        <VideoCarousel 
+          title="Popular Videos" 
+          videos={shuffledVideos.slice(15, 30)} 
+          direction="ltr" 
+          speed={35}
+        />
+      )}
     </motion.div>
   );
 };

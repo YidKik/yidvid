@@ -9,6 +9,8 @@ export default function Index() {
   const { videos, loading } = useVideoGridData(50); // Fetch more videos for the carousels
   const { isMobile } = useIsMobile();
 
+  console.log("Index page rendering with", videos?.length || 0, "videos");
+
   return (
     <div className="min-h-screen bg-gradient-to-r from-[#f8f6ff] to-[#f1f1f7] overflow-hidden">
       <div className={`flex ${isMobile ? "flex-col" : "flex-row"} min-h-screen relative`}>
@@ -16,7 +18,7 @@ export default function Index() {
         <WelcomeSection />
         
         {/* Video carousels section (right side) */}
-        <VideoCarousels videos={videos} isLoading={loading} />
+        <VideoCarousels videos={videos || []} isLoading={loading} />
       </div>
     </div>
   );

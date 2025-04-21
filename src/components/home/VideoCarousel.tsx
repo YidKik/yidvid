@@ -16,6 +16,8 @@ interface VideoCarouselProps {
 export const VideoCarousel = ({ title, videos, direction, speed }: VideoCarouselProps) => {
   const { isMobile } = useIsMobile();
   
+  console.log(`VideoCarousel "${title}" rendering with ${videos?.length} videos`);
+  
   // Set up Embla carousel
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: true,
@@ -31,12 +33,13 @@ export const VideoCarousel = ({ title, videos, direction, speed }: VideoCarousel
   useEffect(() => {
     if (!emblaApi || videos.length === 0) return;
     
+    console.log(`Initializing carousel for "${title}"`);
     emblaApi.reInit();
     
     if (scrolling.current) return;
     
     const autoplay = setInterval(() => {
-      if (!scrolling.current) {
+      if (!scrolling.current && emblaApi) {
         emblaApi.scrollNext();
       }
     }, 50000 / speed); // Adjust speed based on prop
@@ -44,7 +47,7 @@ export const VideoCarousel = ({ title, videos, direction, speed }: VideoCarousel
     return () => {
       clearInterval(autoplay);
     };
-  }, [emblaApi, videos, speed]);
+  }, [emblaApi, videos, speed, title]);
   
   // Handle scroll start/stop
   useEffect(() => {
@@ -67,7 +70,8 @@ export const VideoCarousel = ({ title, videos, direction, speed }: VideoCarousel
     };
   }, [emblaApi]);
   
-  if (!videos.length) {
+  if (!videos || videos.length === 0) {
+    console.log(`No videos for carousel "${title}"`);
     return null;
   }
   
@@ -85,6 +89,7 @@ export const VideoCarousel = ({ title, videos, direction, speed }: VideoCarousel
             <div 
               key={video.id} 
               className={`flex-[0_0_${isMobile ? "75%" : "300px"}] min-w-0`}
+              style={{ flex: `0 0 ${isMobile ? "75%" : "300px"}` }}
             >
               <motion.div
                 whileHover={{ scale: 1.03 }}

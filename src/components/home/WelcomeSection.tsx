@@ -6,6 +6,8 @@ import { motion } from "framer-motion";
 export const WelcomeSection = () => {
   const { isMobile } = useIsMobile();
 
+  console.log("WelcomeSection rendering, isMobile:", isMobile);
+
   return (
     <motion.div 
       className={`${isMobile ? "w-full py-12" : "w-1/2 pr-6"} flex items-center justify-center relative z-10`}
@@ -16,7 +18,7 @@ export const WelcomeSection = () => {
       <div className="max-w-md mx-auto px-6">
         {/* Logo */}
         <div className="mb-8 flex justify-center">
-          <img src="/yidkik-logo.png" alt="YidVid Logo" className="h-16" />
+          <img src="/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png" alt="YidVid Logo" className="h-16" />
         </div>
         
         {/* Welcome text */}

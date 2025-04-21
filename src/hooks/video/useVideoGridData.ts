@@ -22,6 +22,8 @@ export const useVideoGridData = (maxVideos: number = 12) => {
     const fetchVideos = async () => {
       setLoading(true);
       try {
+        console.log(`Fetching up to ${maxVideos} videos from Supabase`);
+        
         const { data, error } = await supabase
           .from("youtube_videos")
           .select("*")
@@ -30,8 +32,11 @@ export const useVideoGridData = (maxVideos: number = 12) => {
           .limit(maxVideos);
         
         if (error) {
+          console.error("Supabase error:", error);
           throw new Error(`Error fetching videos: ${error.message}`);
         }
+        
+        console.log(`Successfully fetched ${data?.length || 0} videos`);
         
         // Map the Supabase data to match our VideoGridItem interface
         // Ensure we handle the views field properly
@@ -48,8 +53,10 @@ export const useVideoGridData = (maxVideos: number = 12) => {
         
         setVideos(mappedVideos);
       } catch (err) {
-        console.error(err);
+        console.error("Error in useVideoGridData:", err);
         setError(err instanceof Error ? err : new Error(String(err)));
+        // Still set videos to empty array to avoid undefined errors
+        setVideos([]);
       } finally {
         setLoading(false);
       }
