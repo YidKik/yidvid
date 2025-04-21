@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -59,7 +58,7 @@ export const VideoCarouselRow: React.FC<VideoCarouselRowProps> = ({
   };
 
   const sliderStyle: React.CSSProperties = {
-    width: `calc(${duplicated.length * 28}vw)`, // slightly larger for larger videos
+    width: `calc(${duplicated.length * 28}vw)`,
     animation: `slide-row-${rowIndex} ${animationDuration}s linear infinite`,
     animationFillMode: "forwards",
     display: "flex",
