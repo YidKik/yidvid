@@ -3,7 +3,6 @@ import React, { useMemo } from "react";
 import { VideoGridItem as VideoItemType } from "@/hooks/video/useVideoGridData";
 import { VideoGridItem } from "@/components/video/VideoGridItem";
 
-// Animation helpers
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
@@ -13,19 +12,17 @@ function shuffle<T>(arr: T[]): T[] {
   return a;
 }
 
-// Single row with infinite scroll
 const AnimatedRow: React.FC<{
   videos: VideoItemType[];
   duration?: number; // in seconds
   delay?: number;
   rowIdx?: number;
-}> = ({ videos, duration = 34, delay = 0, rowIdx = 0 }) => {
-  // Duplicate the array to ensure seamless loop animation
+  onVideoClick?: (videoId: string) => void;
+}> = ({ videos, duration = 34, delay = 0, rowIdx = 0, onVideoClick }) => {
+  // Duplicate for infinite loop
   const loopVideos = [...videos, ...videos];
-  // Responsive: card size
   const cardWidthClass = "w-[170px] md:w-[220px]";
 
-  // Animation: keyframes for smooth continuous scroll
   return (
     <div className="relative w-full overflow-x-hidden py-2">
       <div
@@ -40,15 +37,17 @@ const AnimatedRow: React.FC<{
             key={video.id + "-row" + rowIdx + "-i" + i}
             className={`rounded-xl ${cardWidthClass} aspect-video bg-white/60 shadow-md cursor-pointer transition-all duration-200 hover:scale-105`}
             style={{
-              // Give a subtle offset/shadow difference for realism
               boxShadow: `0 2px 12px 0 rgba(80,50,115,0.07)`,
             }}
+            onClick={() => onVideoClick && onVideoClick(video.video_id)}
+            tabIndex={0}
+            role="button"
+            aria-label={`View video: ${video.title}`}
           >
             <VideoGridItem video={video} />
           </div>
         ))}
       </div>
-      {/* Add fade-out at left & right in parent via parent layout */}
     </div>
   );
 };
@@ -56,8 +55,8 @@ const AnimatedRow: React.FC<{
 export const AnimatedVideoRows: React.FC<{
   videos: VideoItemType[];
   isLoading: boolean;
-}> = ({ videos, isLoading }) => {
-  // Loading skeleton
+  onVideoClick?: (videoId: string) => void;
+}> = ({ videos, isLoading, onVideoClick }) => {
   if (isLoading || !videos.length) {
     return (
       <div className="flex flex-col gap-6 justify-center items-center h-full w-full py-16">
@@ -75,27 +74,21 @@ export const AnimatedVideoRows: React.FC<{
     );
   }
 
-  // Sort videos by newest for first row
+  // Sort by newest, then shuffle for the lower rows
   const sortedVideos = useMemo(
-    () =>
-      [...videos].sort(
-        (a, b) =>
-          new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime()
-      ),
+    () => [...videos].sort((a, b) =>
+      new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime()
+    ),
     [videos]
   );
-  // Shuffle for the other two rows (ensuring different shuffles)
   const shuffledA = useMemo(() => shuffle(videos), [videos]);
   const shuffledB = useMemo(() => shuffle(videos), [videos]);
 
-  // For each row, change scroll speed just a bit so they desync
   return (
     <div className="flex flex-col gap-8 pt-14 pb-8 pl-4 pr-2 md:pr-10 h-full">
-      <AnimatedRow videos={sortedVideos} duration={34} rowIdx={0} />
-      <AnimatedRow videos={shuffledA} duration={30} rowIdx={1} />
-      <AnimatedRow videos={shuffledB} duration={37} rowIdx={2} />
+      <AnimatedRow videos={sortedVideos} duration={34} rowIdx={0} onVideoClick={onVideoClick} />
+      <AnimatedRow videos={shuffledA} duration={30} rowIdx={1} onVideoClick={onVideoClick} />
+      <AnimatedRow videos={shuffledB} duration={37} rowIdx={2} onVideoClick={onVideoClick} />
     </div>
   );
 };
-
-// Keyframes for smooth infinite scroll (make sure it's in your global CSS for both directions)
