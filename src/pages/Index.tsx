@@ -14,6 +14,7 @@ import { Helmet } from "react-helmet";
 import { useSearchParams } from "react-router-dom";
 import { getPageTitle, DEFAULT_META_DESCRIPTION, DEFAULT_META_KEYWORDS, DEFAULT_META_IMAGE } from "@/utils/pageTitle";
 import { isWelcomePage } from "@/utils/scrollRestoration";
+import { VideoShowcase } from "@/components/welcome/VideoShowcase";
 
 const MainContent = () => {
   const [isMusic, setIsMusic] = useState(false);
@@ -42,12 +43,15 @@ const MainContent = () => {
 
   return (
     <div className="flex-1">
+      {/* Add the new VideoShowcase as background */}
+      <VideoShowcase />
+      
       <Header />
       <motion.main 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 2.7, duration: 0.5 }}
-        className="mt-4 mx-auto px-2 md:px-6 max-w-[1400px]"
+        className="mt-4 mx-auto px-2 md:px-6 max-w-[1400px] relative z-10"
       >
         <div className="space-y-2 md:space-y-4">
           <motion.div 
@@ -86,11 +90,11 @@ const MainContent = () => {
         </div>
         
         {/* Added spacer div to ensure there's enough content to scroll through */}
-        <div className="h-[800px]"></div>
+        <div className="h-[1200px]"></div>
       </motion.main>
 
       <motion.div 
-        className="fixed bottom-4 right-4 p-3 bg-white/80 backdrop-blur-sm rounded-full shadow-lg"
+        className="fixed bottom-4 right-4 p-3 bg-white/80 backdrop-blur-sm rounded-full shadow-lg z-50"
         initial={{ opacity: 0, scale: 0.5 }}
         animate={{ 
           opacity: hasScrolled ? 1 : 0,
