@@ -1,9 +1,9 @@
 
 import { useRef, useEffect } from "react";
-import { EmblaCarouselType } from "embla-carousel-react";
+import { UseEmblaCarouselType } from "embla-carousel-react";
 
 interface UseCarouselScrollProps {
-  emblaApi: EmblaCarouselType | undefined;
+  emblaApi: UseEmblaCarouselType[1] | undefined;
   direction: "ltr" | "rtl";
   speed: number;
   itemsLength: number;
@@ -39,15 +39,18 @@ export const useCarouselScroll = ({ emblaApi, direction, speed, itemsLength }: U
         const nextIndex = (currentIndex + 1) % scrollSnaps.length;
         const prevIndex = currentIndex === 0 ? scrollSnaps.length - 1 : currentIndex - 1;
         
+        // Get current scroll progress (0 to 1)
+        const scrollProgress = emblaApi.scrollProgress();
+        
         // Create smooth scrolling effect
         if (direction === "ltr") {
-          emblaApi.scrollTo(currentPosition + scrollAmount);
+          emblaApi.scrollTo(scrollProgress + scrollAmount);
           // If we reach the end of current slide, snap to next
-          if (currentPosition >= 0.98) emblaApi.scrollTo(nextIndex);
+          if (scrollProgress >= 0.98) emblaApi.scrollTo(nextIndex);
         } else {
-          emblaApi.scrollTo(currentPosition - scrollAmount);
+          emblaApi.scrollTo(scrollProgress - scrollAmount);
           // If we reach the beginning of current slide, snap to previous
-          if (currentPosition <= 0.02) emblaApi.scrollTo(prevIndex);
+          if (scrollProgress <= 0.02) emblaApi.scrollTo(prevIndex);
         }
       }
       
