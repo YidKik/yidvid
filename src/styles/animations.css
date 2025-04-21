@@ -57,3 +57,22 @@
 .preview-zoom-active {
   transform: scale(1.1);
 }
+
+/* New horizontal scrolling animations */
+@keyframes scroll-x {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@keyframes scroll-x-reverse {
+  from { transform: translateX(-50%); }
+  to { transform: translateX(0); }
+}
+
+.animate-scroll-x {
+  animation: scroll-x 30s linear infinite;
+}
+
+.animate-scroll-x-reverse {
+  animation: scroll-x-reverse 30s linear infinite;
+}

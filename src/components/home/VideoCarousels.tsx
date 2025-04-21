@@ -49,8 +49,8 @@ export const VideoCarousels = ({ videos, isLoading, onVideoClick }: VideoCarouse
   // Add category labels for each row
   const rowLabels = ["Popular Videos", "Latest Uploads", "Featured Content"];
 
-  // Significantly increased speeds for faster scrolling
-  const rowSpeeds = [180, 150, 200];
+  // DRAMATICALLY increased speeds for much faster scrolling that's clearly visible
+  const rowSpeeds = [40, 30, 35];
 
   return (
     <div className="space-y-6">

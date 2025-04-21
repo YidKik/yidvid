@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from "react";
 import { ChannelCarousel } from "./ChannelCarousel";
 import { supabase } from "@/integrations/supabase/client";
-import { YoutubeChannelsTable } from "@/integrations/supabase/types/youtube-channels";
 import { motion } from "framer-motion";
 
 export interface ChannelItem {
@@ -77,7 +76,7 @@ export const ChannelCarousels = ({ isLoading }: ChannelCarouselsProps) => {
 
   return (
     <div className="space-y-8 py-2">
-      {/* Three rows with different directions and speeds - significantly increased speeds */}
+      {/* Three rows with different directions and speeds - dramatically increased speeds */}
       <motion.div 
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -87,7 +86,7 @@ export const ChannelCarousels = ({ isLoading }: ChannelCarouselsProps) => {
         <ChannelCarousel 
           channels={channels} 
           direction="ltr" 
-          speed={200} 
+          speed={40} 
           shuffleKey={rowShuffleKeys[0]} 
         />
       </motion.div>
@@ -101,7 +100,7 @@ export const ChannelCarousels = ({ isLoading }: ChannelCarouselsProps) => {
         <ChannelCarousel 
           channels={channels} 
           direction="rtl" 
-          speed={150} 
+          speed={30} 
           shuffleKey={rowShuffleKeys[1]} 
         />
       </motion.div>
@@ -115,7 +114,7 @@ export const ChannelCarousels = ({ isLoading }: ChannelCarouselsProps) => {
         <ChannelCarousel 
           channels={channels} 
           direction="ltr" 
-          speed={180} 
+          speed={35} 
           shuffleKey={rowShuffleKeys[2]} 
         />
       </motion.div>

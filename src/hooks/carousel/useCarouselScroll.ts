@@ -31,8 +31,8 @@ export const useCarouselScroll = ({ emblaApi, direction, speed, itemsLength }: U
     emblaApi.reInit();
     
     // Convert speed to a more manageable value (higher number = faster scrolling)
-    // Significantly increased from 0.0005 to 0.005 for much faster scrolling
-    const scrollStep = speed * 0.005;
+    // DRAMATICALLY increased from 0.005 to 0.05 for much faster scrolling that's clearly visible
+    const scrollStep = speed * 0.05;
     
     const scroll = () => {
       if (!emblaApi || scrolling.current) {
@@ -67,9 +67,9 @@ export const useCarouselScroll = ({ emblaApi, direction, speed, itemsLength }: U
     
     // Start the scroll animation with a shorter delay
     const timer = setTimeout(() => {
-      console.log("Starting carousel scroll animation with speed:", speed);
+      console.log(`Starting carousel scroll animation with speed: ${speed}, step: ${scrollStep}`);
       animationRef.current = requestAnimationFrame(scroll);
-    }, 100); // Reduced from 500ms to 100ms
+    }, 100); // Very short delay
     
     return () => {
       clearTimeout(timer);
@@ -86,10 +86,12 @@ export const useCarouselScroll = ({ emblaApi, direction, speed, itemsLength }: U
     
     const onPointerDown = () => {
       scrolling.current = true;
+      console.log("User interaction detected, pausing auto-scroll");
     };
     
     const onPointerUp = () => {
       scrolling.current = false;
+      console.log("User interaction ended, resuming auto-scroll");
     };
     
     emblaApi.on("pointerDown", onPointerDown);

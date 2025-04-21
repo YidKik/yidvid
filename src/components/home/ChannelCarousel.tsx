@@ -27,8 +27,7 @@ export const ChannelCarousel = ({ channels, direction, speed, shuffleKey }: Chan
     containScroll: false,
     direction: direction,
     align: "start",
-    watchDrag: true,
-    skipSnaps: true,
+    watchDrag: false, // Disable watchDrag to make scrolling smoother
   });
 
   // Use the improved carousel scroll hook with faster speed
@@ -52,16 +51,33 @@ export const ChannelCarousel = ({ channels, direction, speed, shuffleKey }: Chan
     
     if (channels.length > 0) {
       // Create a much larger set of channels to ensure continuous scrolling
-      // Repeat channels 8 times instead of 4
-      const repeatedChannels = [
-        ...channels, ...channels, ...channels, ...channels,
-        ...channels, ...channels, ...channels, ...channels
-      ];
+      // Repeat channels many more times
+      const repeatedChannels = [];
+      
+      // Repeat channels 20 times to ensure plenty of content for continuous scrolling
+      for (let i = 0; i < 20; i++) {
+        repeatedChannels.push(...channels);
+      }
       
       console.log(`Created ${repeatedChannels.length} repeated channels for continuous scrolling`);
       setShuffledChannels(shuffle(repeatedChannels));
     }
   }, [channels, shuffleKey]);
+
+  // Initialize and report on carousel
+  React.useEffect(() => {
+    console.log(`ChannelCarousel initialized with ${shuffledChannels.length} channels and speed ${speed}`);
+    
+    // Force reinitialization after a short delay to ensure proper scrolling
+    if (emblaApi) {
+      const timer = setTimeout(() => {
+        emblaApi.reInit();
+        console.log("Forcing reinitialization of channel carousel");
+      }, 200);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [emblaApi, shuffledChannels.length, speed]);
 
   const handleChannelClick = (channelId: string) => {
     navigate(`/channel/${channelId}`);

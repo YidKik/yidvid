@@ -33,8 +33,7 @@ export const VideoCarousel = ({
     containScroll: false,
     direction: direction,
     align: "start",
-    watchDrag: true,
-    skipSnaps: true,
+    watchDrag: false, // Disable watch drag to make scrolling smoother
   });
 
   // Use the improved carousel scroll hook with faster speed
@@ -54,7 +53,7 @@ export const VideoCarousel = ({
       const timer = setTimeout(() => {
         emblaApi.reInit();
         console.log("Forcing reinitialization of video carousel");
-      }, 500);
+      }, 200);
       
       return () => clearTimeout(timer);
     }
@@ -82,6 +81,7 @@ export const VideoCarousel = ({
       <div 
         className="overflow-hidden rounded-xl" 
         ref={emblaRef}
+        style={{ cursor: "grab" }}
       >
         <div className="flex gap-3 md:gap-4">
           {shuffledVideos.map((video, index) => (

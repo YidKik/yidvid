@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { VideoCarousels } from '@/components/home/VideoCarousels';
 import { ChannelCarousels } from '@/components/home/ChannelCarousels';
-import { HomeHero } from '@/components/home/HomeHero';
+import { WelcomeSection } from '@/components/home/WelcomeSection';
 import { useVideos } from '@/hooks/video/useVideos';
 import { useChannelsGrid } from '@/hooks/channel/useChannelsGrid';
 
@@ -44,27 +44,9 @@ const HomePage = () => {
       initial="initial"
       animate="animate"
     >
-      {/* Hero Section */}
-      <motion.section 
-        className="pt-10 pb-6 md:pb-12"
-        variants={itemVariants}
-      >
-        <HomeHero />
-      </motion.section>
-
-      {/* Channel Avatars Scrolling */}
-      <motion.section 
-        className="py-4 relative before:absolute before:inset-0 before:bg-gradient-to-r before:from-white before:via-transparent before:to-white before:z-10 overflow-hidden"
-        variants={itemVariants}
-      >
-        <div className="relative z-0">
-          <ChannelCarousels isLoading={channelsLoading} />
-        </div>
-      </motion.section>
-
-      {/* Video Carousels */}
+      {/* Video Carousels - MOVED TO TOP */}
       <motion.section
-        className="py-4 relative before:absolute before:inset-0 before:bg-gradient-to-r before:from-white before:via-transparent before:to-white before:z-10 overflow-hidden"
+        className="py-4 pt-10 relative before:absolute before:inset-0 before:bg-gradient-to-r before:from-white before:via-transparent before:to-white before:z-10 overflow-hidden"
         variants={itemVariants}
       >
         <div className="relative z-0">
@@ -74,6 +56,26 @@ const HomePage = () => {
             isLoading={videosLoading} 
             onVideoClick={handleVideoClick}
           />
+        </div>
+      </motion.section>
+
+      {/* Welcome Section - Now in the middle */}
+      <motion.section 
+        className="py-10"
+        variants={itemVariants}
+      >
+        <div className="max-w-7xl mx-auto px-6 md:px-16 flex flex-col md:flex-row items-center">
+          <WelcomeSection />
+        </div>
+      </motion.section>
+
+      {/* Channel Avatars Scrolling */}
+      <motion.section 
+        className="py-4 relative before:absolute before:inset-0 before:bg-gradient-to-r before:from-white before:via-transparent before:to-white before:z-10 overflow-hidden"
+        variants={itemVariants}
+      >
+        <div className="relative z-0">
+          <ChannelCarousels isLoading={channelsLoading} />
         </div>
       </motion.section>
 
