@@ -1,5 +1,6 @@
+
 import React, { useEffect, useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { VideoCarousels } from '@/components/home/VideoCarousels';
 import { useVideos } from '@/hooks/video/useVideos';
 import { useChannelsGrid } from '@/hooks/channel/useChannelsGrid';
@@ -14,23 +15,22 @@ gsap.registerPlugin(ScrollTrigger);
 const HomePage = () => {
   const { data: videos, isLoading: videosLoading } = useVideos();
   const { manuallyFetchedChannels, isLoading: channelsLoading } = useChannelsGrid();
-  const videoSectionRef = useRef(null);
   const channelsSectionRef = useRef(null);
-  const isChannelsInView = useInView(channelsSectionRef, { once: true, amount: 0.2 });
 
   useEffect(() => {
-    // Animate hero content on scroll
+    // Animate hero content on first scroll
     const heroContent = document.querySelector('.hero-content');
     if (heroContent) {
       gsap.to(heroContent, {
         scrollTrigger: {
           trigger: heroContent,
           start: 'top top',
-          end: '+=300',
-          scrub: 1,
+          end: '+=100', // Reduced scroll distance for faster animation
+          scrub: 0.5, // Faster scrub for more immediate response
         },
         y: -100,
         opacity: 0,
+        ease: 'power2.inOut',
       });
     }
 
@@ -63,7 +63,7 @@ const HomePage = () => {
     channel.thumbnail_url || 'https://images.unsplash.com/photo-1723403804231-f4e9b515fe9d'
   ) || [];
 
-  // Add more items to create additional rows (increased from 84 to 126 for more circles)
+  // Add more items to create additional rows
   const extendedChannelItems = [...channelItems, ...channelItems, ...channelItems, ...channelItems].slice(0, 126);
 
   return (
@@ -74,7 +74,7 @@ const HomePage = () => {
       transition={{ duration: 0.5 }}
     >
       {/* Hero Section with Content */}
-      <div className="relative min-h-[120vh]">
+      <div className="relative min-h-[100vh]">
         {/* Content Overlay */}
         <div className="fixed top-10 left-0 right-0 z-20 flex flex-col items-center justify-start px-4 text-center hero-content">
           <div className="mb-8">
@@ -108,7 +108,7 @@ const HomePage = () => {
 
         {/* Video Background */}
         {videos && videos.length > 15 && (
-          <div className="absolute top-[40vh] inset-x-0 h-[100vh]">
+          <div className="absolute top-[20vh] inset-x-0 h-[100vh]">
             <HeroParallax 
               videos={videos} 
               title="" 
