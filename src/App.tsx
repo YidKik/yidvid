@@ -7,11 +7,13 @@ import ChannelDetails from './pages/ChannelDetails';
 import WritingVideos from './pages/WritingVideos';
 import ResetPassword from './pages/ResetPassword';
 import Videos from './pages/Videos';
+import HomePage from './pages/HomePage';
 
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Videos />} />
+      <Route path="/" element={<HomePage />} />
+      <Route path="/videos" element={<Videos />} />
       <Route path="/video/:videoId" element={<VideoDetails />} />
       <Route path="/search" element={<Search />} />
       <Route path="/channel/:channelId" element={<ChannelDetails />} />

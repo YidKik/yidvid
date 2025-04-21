@@ -48,6 +48,7 @@ export const VideoCarousels = ({ videos, isLoading, onVideoClick }: VideoCarouse
     <div className="space-y-16 py-8">
       {/* Three rows with different directions and speeds */}
       <div className="overflow-hidden py-4">
+        <h2 className="text-2xl font-bold mb-6">Featured Videos</h2>
         <VideoCarousel 
           videos={sortedVideos} 
           direction="ltr" 
@@ -58,6 +59,7 @@ export const VideoCarousels = ({ videos, isLoading, onVideoClick }: VideoCarouse
       </div>
       
       <div className="overflow-hidden py-4">
+        <h2 className="text-2xl font-bold mb-6">Popular Picks</h2>
         <VideoCarousel 
           videos={sortedVideos} 
           direction="rtl" 
@@ -68,6 +70,7 @@ export const VideoCarousels = ({ videos, isLoading, onVideoClick }: VideoCarouse
       </div>
       
       <div className="overflow-hidden py-4">
+        <h2 className="text-2xl font-bold mb-6">Latest Uploads</h2>
         <VideoCarousel 
           videos={sortedVideos} 
           direction="ltr" 
