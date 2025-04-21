@@ -35,7 +35,12 @@ const HomePage = () => {
 
       {/* Tilted Video Scroll */}
       <motion.section className="py-8 relative">
-        {videos && <TiltedVideoScroll videos={videos} />}
+        <div className="container mx-auto px-4">
+          <h2 className="text-2xl md:text-3xl font-bold text-white/90 mb-8">
+            Discover More
+          </h2>
+        </div>
+        {videos && videos.length > 0 && <TiltedVideoScroll videos={videos} />}
       </motion.section>
 
       {/* Channel Avatars Scrolling */}

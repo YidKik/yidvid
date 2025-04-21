@@ -3,6 +3,8 @@ import { cn } from "@/lib/utils";
 import { VideoGridItem } from "@/hooks/video/useVideoGridData";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { useShuffledVideos } from "@/hooks/video/useShuffledVideos";
+import { VideoCard } from "@/components/VideoCard";
 
 interface TiltedVideoScrollProps {
   videos: VideoGridItem[];
@@ -11,13 +13,14 @@ interface TiltedVideoScrollProps {
 
 export function TiltedVideoScroll({ videos = [], className }: TiltedVideoScrollProps) {
   const navigate = useNavigate();
+  const shuffledVideos = useShuffledVideos(videos);
 
-  // Duplicate videos array to ensure continuous scrolling
-  const scrollingVideos = [...videos, ...videos, ...videos];
+  // Use the original videos array if shuffled videos aren't ready yet
+  const displayVideos = shuffledVideos.length > 0 ? shuffledVideos : [...videos, ...videos, ...videos];
 
   return (
     <div className={cn("flex items-center justify-center py-16 perspective-[1000px]", className)}>
-      <div className="relative overflow-hidden [mask-composite:intersect] [mask-image:linear-gradient(to_right,transparent,black_5rem),linear-gradient(to_left,transparent,black_5rem),linear-gradient(to_bottom,transparent,black_5rem),linear-gradient(to_top,transparent,black_5rem)]">
+      <div className="relative overflow-hidden w-full [mask-composite:intersect] [mask-image:linear-gradient(to_right,transparent,black_5rem),linear-gradient(to_left,transparent,black_5rem),linear-gradient(to_bottom,transparent,black_5rem),linear-gradient(to_top,transparent,black_5rem)]">
         <motion.div 
           className="grid gap-5 animate-skew-scroll"
           style={{
@@ -26,7 +29,7 @@ export function TiltedVideoScroll({ videos = [], className }: TiltedVideoScrollP
             transformStyle: "preserve-3d",
           }}
         >
-          {scrollingVideos.map((video, index) => (
+          {displayVideos.map((video, index) => (
             <motion.div
               key={`${video.id}-${index}`}
               className="group relative cursor-pointer rounded-xl border border-white/[0.08] bg-gradient-to-b from-background/80 to-muted/80 shadow-md transition-all duration-300 ease-in-out hover:scale-105 hover:-translate-y-1 hover:shadow-xl overflow-hidden"
