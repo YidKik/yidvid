@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useVideoGridData } from "@/hooks/video/useVideoGridData";
 import { useNavigate } from "react-router-dom";
@@ -6,8 +5,10 @@ import { useNavigate } from "react-router-dom";
 const ROW_COUNT = 4;
 const VIDEOS_PER_ROW = 4;
 const MAX_FETCH = 40;
-// SLOW and SMOOTH animation
-const SLIDE_SECONDS = [220, 240, 230, 250];
+// MUCH SLOWER and SMOOTHER slide durations (seconds)
+const SLIDE_SECONDS = [900, 720, 800, 600];
+// Uneven vertical offsets for each row in pixels (can be positive/negative)
+const ROW_VERTICAL_OFFSETS = [0, 36, -20, 64]; // px offset -- adjust as desired for more visual staggering
 
 function getRowVideosWithOffset(allVideos, rowIdx, perRow, allRows) {
   const total = allVideos.length;
@@ -75,12 +76,12 @@ export function VideoCarouselRows() {
         transform: `translate(-50%, -50%) rotate(${rotation}deg) scale(${scale})`,
         transition: "transform 0.35s cubic-bezier(.53,.42,.19,1.04)",
         width: "100vw",
-        height: "100vh" // Changed from auto to 100vh to ensure all rows are visible
+        height: "100vh"
       }}
     >
-      <div className="w-full max-w-[1680px] mx-auto flex flex-col gap-12 justify-center"> {/* Increased gap between rows and added justify-center */}
+      <div className="w-full max-w-[1680px] mx-auto flex flex-col gap-12 justify-center">
         {rowSlides.map((rowVideos, ri) => {
-          // All rows now slide from right-to-left
+          // All rows slide from right-to-left, using much slower individual duration (SLIDE_SECONDS)
           const slideAnim = `
             @keyframes slideRow${ri} {
               0% { transform: translateX(0); }
@@ -95,12 +96,22 @@ export function VideoCarouselRows() {
               document.head.appendChild(style);
             }
           }, [slideAnim, ri]);
+
+          // Offsets: use px marginTop or transform for each row to visually stagger
+          const verticalOffset = ROW_VERTICAL_OFFSETS[ri] ?? 0;
+          const rowStyle: React.CSSProperties = {
+            marginTop: verticalOffset > 0 ? `${verticalOffset}px` : undefined,
+            marginBottom: verticalOffset < 0 ? `${-verticalOffset}px` : undefined,
+            // For more randomness, could also add: transform: `translateY(${verticalOffset}px)`
+          };
+
           return (
             <div
               key={`carousel-row-${ri}`}
-              className="relative flex overflow-hidden w-full h-44 md:h-48" // Standardized height for all rows
+              className="relative flex overflow-hidden w-full h-44 md:h-48"
               tabIndex={-1}
               aria-roledescription="carousel row"
+              style={rowStyle}
             >
               <div
                 className="flex gap-8 md:gap-11"
