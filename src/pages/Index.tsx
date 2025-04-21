@@ -46,15 +46,15 @@ const MainContent = () => {
       <motion.main 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3, duration: 0.5 }}
-        className="mt-4 mx-auto px-2 md:px-6 max-w-[1400px] relative z-10"
+        transition={{ delay: 2.7, duration: 0.5 }}
+        className="mt-4 mx-auto px-2 md:px-6 max-w-[1400px]"
       >
         <div className="space-y-2 md:space-y-4">
           <motion.div 
             className="space-y-0"
             initial={{ scale: 0.95 }}
             animate={{ scale: 1 }}
-            transition={{ delay: 0.4, duration: 0.3 }}
+            transition={{ delay: 3, duration: 0.3 }}
           >
             <ContentToggle 
               isMusic={isMusic} 
@@ -84,12 +84,10 @@ const MainContent = () => {
             )}
           </motion.div>
         </div>
-        
-        <div className="h-[1500px]"></div>
       </motion.main>
 
       <motion.div 
-        className="fixed bottom-4 right-4 p-3 bg-white/80 backdrop-blur-sm rounded-full shadow-lg z-50"
+        className="fixed bottom-4 right-4 p-3 bg-white/80 backdrop-blur-sm rounded-full shadow-lg"
         initial={{ opacity: 0, scale: 0.5 }}
         animate={{ 
           opacity: hasScrolled ? 1 : 0,
