@@ -2,18 +2,18 @@
 import React, { useEffect, useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { motion } from "framer-motion";
-import { VideoGrid } from "@/hooks/video/useVideoGridData";
+import { VideoGridItem } from "@/hooks/video/useVideoGridData";
 import { VideoCarousel } from "./VideoCarousel";
 
 interface VideoCarouselsProps {
-  videos: VideoGrid[];
+  videos: VideoGridItem[];
   isLoading: boolean;
 }
 
 export const VideoCarousels = ({ videos, isLoading }: VideoCarouselsProps) => {
   const { isMobile } = useIsMobile();
-  const [shuffledVideos, setShuffledVideos] = useState<VideoGrid[]>([]);
-  const [newVideos, setNewVideos] = useState<VideoGrid[]>([]);
+  const [shuffledVideos, setShuffledVideos] = useState<VideoGridItem[]>([]);
+  const [newVideos, setNewVideos] = useState<VideoGridItem[]>([]);
   
   // Prepare different video sets
   useEffect(() => {

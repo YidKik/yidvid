@@ -2,13 +2,13 @@
 import React, { useRef, useEffect } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { motion } from "framer-motion";
-import { VideoGrid } from "@/hooks/video/useVideoGridData";
+import { VideoGridItem } from "@/hooks/video/useVideoGridData";
 import useEmblaCarousel from "embla-carousel-react";
 import { VideoCard } from "@/components/VideoCard";
 
 interface VideoCarouselProps {
   title: string;
-  videos: VideoGrid[];
+  videos: VideoGridItem[];
   direction: "ltr" | "rtl";
   speed: number;
 }
