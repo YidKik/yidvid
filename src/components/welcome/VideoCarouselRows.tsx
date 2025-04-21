@@ -47,7 +47,7 @@ export function VideoCarouselRows() {
     <div
       className="fixed left-0 right-0 z-10 pointer-events-auto select-none"
       style={{
-        top: -50,
+        top: 0, // changed from -50 to 0 to bring the section lower on the screen
         width: "100vw",
         height: "min(99vh,820px)",
       }}
