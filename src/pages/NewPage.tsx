@@ -56,30 +56,6 @@ export default function NewPage() {
                 Discover a world of curated Jewish videos and channels. From educational content to entertainment,
                 find everything you need in one place.
               </p>
-              
-              {/* Action Buttons */}
-              <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4 mt-6 animate-fade-in-blur">
-                <Button 
-                  variant="default" 
-                  className={cn(
-                    "bg-[#ea384c] hover:bg-[#d52a3d] text-white px-8 py-6 h-auto text-lg",
-                    showChannels ? "opacity-80" : "opacity-100"
-                  )}
-                  onClick={() => setShowChannels(false)}
-                >
-                  View Videos
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className={cn(
-                    "border-[#ea384c] text-[#ea384c] hover:bg-[#ea384c]/10 px-8 py-6 h-auto text-lg",
-                    showChannels ? "opacity-100" : "opacity-80"
-                  )}
-                  onClick={() => setShowChannels(true)}
-                >
-                  View Channels
-                </Button>
-              </div>
             </div>
           </div>
         </div>
