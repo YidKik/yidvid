@@ -6,16 +6,13 @@ import { useVideoGridData } from "@/hooks/video/useVideoGridData";
  */
 function VideoGridThumb({
   thumbnail,
-  borderColor,
 }: {
   thumbnail: string;
-  borderColor: string;
 }) {
   return (
     <div
-      className="rounded-xl bg-white aspect-video w-40 md:w-56 lg:w-64 border-2"
+      className="rounded-lg bg-white aspect-video w-40 md:w-56 lg:w-64" // Less rounded, no border
       style={{
-        borderColor,
         overflow: "hidden",
         background: "#fff",
       }}
@@ -31,9 +28,7 @@ function VideoGridThumb({
 }
 
 /**
- * Static, perfectly aligned 4x5 video grid, with entire grid rotated and alternating border color rows.
- *
- * The entire grid is rotated to the right (positive angle), per user sketch.
+ * Static, perfectly aligned 4x5 video grid, with gentle grid rotation.
  * All rows and columns are perfectly aligned, with larger thumbnails.
  */
 export function AnimatedVideoGridRows({ staticRows = false }: { staticRows?: boolean }) {
@@ -43,9 +38,6 @@ export function AnimatedVideoGridRows({ staticRows = false }: { staticRows?: boo
   const fallbackThumbs = Array(colPerRow)
     .fill("/placeholder.svg")
     .map((t, i) => ({ id: "fake-" + i, thumbnail: t }));
-
-  // Alternate row borders: red, black, red, black
-  const borderColors = ["#ea384c", "#000", "#ea384c", "#000"];
 
   // Split into up to 4 rows
   const rows = [];
@@ -58,7 +50,7 @@ export function AnimatedVideoGridRows({ staticRows = false }: { staticRows?: boo
     rows.push(rowVideos);
   }
 
-  // Render as a background block, rotated as a whole
+  // Grid with a subtle rotation (not so crooked)
   return (
     <div
       className="absolute inset-0 flex items-center justify-center pointer-events-none select-none"
@@ -69,22 +61,18 @@ export function AnimatedVideoGridRows({ staticRows = false }: { staticRows?: boo
       <div
         className="flex flex-col gap-8"
         style={{
-          transform: "rotate(13deg)", // Rotate right as per user sketch
+          transform: "rotate(5deg)", // Less rotation for subtle effect
         }}
       >
         {rows.map((row, rowIdx) => (
           <div
             key={rowIdx}
             className="flex flex-row gap-8 justify-center"
-            style={{
-              // No extra translation, all rows perfectly aligned
-            }}
           >
             {row.map((v, colIdx) => (
               <VideoGridThumb
                 key={v.id + "-" + colIdx}
                 thumbnail={v.thumbnail}
-                borderColor={borderColors[rowIdx % borderColors.length]}
               />
             ))}
           </div>
