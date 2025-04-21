@@ -1,4 +1,3 @@
-
 import { useEffect, useMemo } from "react";
 import { VideoGridItem } from "@/components/video/VideoGridItem";
 import { useVideoGridData, VideoGridItem as VideoItemType } from "@/hooks/video/useVideoGridData";
@@ -45,7 +44,7 @@ const AnimatedVideoRow = ({
   }, [animationName, direction]);
 
   return (
-    <div className="relative w-full h-44 overflow-hidden">
+    <div className="relative w-full h-36 overflow-hidden">
       <div
         className="flex gap-6 absolute left-0 top-0 w-full"
         style={{
@@ -60,7 +59,7 @@ const AnimatedVideoRow = ({
             key={video.id + "-" + idx}
             className="w-56 flex-shrink-0"
             style={{
-              // Subtle alternating tilt for interest
+              aspectRatio: "16 / 9",
               transform: `rotate(${((idx + rowIdx) % 2 === 0 ? 1 : -1) * ((rowIdx + 1) * 2 - 3)}deg) scale(0.96)`,
             }}
           >
