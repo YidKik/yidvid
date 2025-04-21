@@ -6,12 +6,17 @@ import { Button } from "@/components/ui/button";
 import { Play } from "lucide-react";
 import { VideoCarouselRows } from "@/components/welcome/VideoCarouselRows";
 
-// Gradients with shades matching the YidVid branding: warm, friendly, purple-pink-primary blends
+// Friendly single-hue gradients: top (lighter) to bottom (deeper)
+// Use YidVid palette: red, purple, soft yellow, lavender tones
 const brandGradients = [
-  "linear-gradient(98deg, #ea384c 0%, #fbed96 100%)",   // Red/Pink to soft yellow
-  "linear-gradient(102.3deg, #9b87f5 11%, #eaace8 70%, #f6dbf5 92%)", // Purple to soft pink
-  "linear-gradient(120deg, #FFDEE2 10%, #ffe29f 85%)",   // Soft pink to yellow
-  "linear-gradient(60deg, #abecd6 0%, #ea384c 100%)",    // Mint to brand red
+  // Warm Red
+  "linear-gradient(to bottom, #fecdd3 0%, #ea384c 100%)",
+  // Brand Purple
+  "linear-gradient(to bottom, #ede9fe 0%, #9b87f5 100%)",
+  // Happy Soft Yellow
+  "linear-gradient(to bottom, #fff7d6 0%, #ffe29f 100%)",
+  // Light Lavender
+  "linear-gradient(to bottom, #f3e8ff 0%, #d6bcfa 100%)",
 ];
 
 export default function HomeWelcome() {
@@ -19,29 +24,29 @@ export default function HomeWelcome() {
   const [gradientIndex, setGradientIndex] = useState(0);
   const [fadeKey, setFadeKey] = useState(0);
 
-  // Cycle background gradients every longer seconds, fade smoothly
+  // Ultra-smooth, longer cycle (18s), super gentle cross-fade
   useEffect(() => {
     const interval = setInterval(() => {
       setGradientIndex((i) => (i + 1) % brandGradients.length);
       setFadeKey((k) => k + 1); // force re-mount for AnimatePresence fade
-    }, 8000); // slower change (8 seconds per color)
+    }, 18000); // 18 seconds per color
     return () => clearInterval(interval);
   }, []);
 
   return (
     <div className="relative min-h-screen w-full flex flex-col overflow-hidden">
-      {/* Background gradient with smooth cross-fade */}
+      {/* Background gradient with ultra-smooth cross-fade */}
       <AnimatePresence mode="wait">
         <motion.div
           key={fadeKey + "-" + gradientIndex}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 2.2 }} // very smooth and slow fade
+          transition={{ duration: 3.5 }}
           className="absolute inset-0 -z-10"
           style={{
             background: brandGradients[gradientIndex],
-            transition: "background 1.5s linear"
+            transition: "background 2.7s linear"
           }}
         />
       </AnimatePresence>
