@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { motion } from "framer-motion";
 import { VideoGridItem as VideoGridItemType } from "@/hooks/video/useVideoGridData";
@@ -10,41 +10,17 @@ interface VideoCarouselsProps {
   isLoading: boolean;
 }
 
+function getSortedVideos(videos: VideoGridItemType[]): VideoGridItemType[] {
+  return [...videos].sort((a, b) => {
+    const dateA = new Date(a.uploadedAt).getTime();
+    const dateB = new Date(b.uploadedAt).getTime();
+    return dateB - dateA;
+  });
+}
+
+// Each row should get a unique shuffle key so that their orders differ
 export const VideoCarousels = ({ videos, isLoading }: VideoCarouselsProps) => {
   const { isMobile } = useIsMobile();
-  const [chunks, setChunks] = useState<VideoGridItemType[][]>([[], [], []]);
-
-  // Remove titles, section headers, and only display video thumbnails, shuffle with no overlap
-  useEffect(() => {
-    if (videos.length > 0) {
-      // Start with videos sorted from newest to oldest
-      const sorted = [...videos].sort((a, b) => {
-        const dateA = new Date(a.uploadedAt).getTime();
-        const dateB = new Date(b.uploadedAt).getTime();
-        return dateB - dateA;
-      });
-
-      // Shuffle for each row ensuring no overlap (split sorted array into 3 chunks, then shuffle each)
-      const chunkSize = Math.ceil(sorted.length / 3);
-      const chunk1 = sorted.slice(0, chunkSize);
-      const chunk2 = sorted.slice(chunkSize, 2 * chunkSize);
-      const chunk3 = sorted.slice(2 * chunkSize);
-
-      // Helper shuffle function
-      function shuffle(arr: VideoGridItemType[]) {
-        return arr
-          .map(value => ({ value, sort: Math.random() }))
-          .sort((a, b) => a.sort - b.sort)
-          .map(({ value }) => value);
-      }
-
-      setChunks([
-        shuffle(chunk1),
-        shuffle(chunk2),
-        shuffle(chunk3)
-      ]);
-    }
-  }, [videos]);
 
   if (isLoading) {
     return (
@@ -66,6 +42,12 @@ export const VideoCarousels = ({ videos, isLoading }: VideoCarouselsProps) => {
     );
   }
 
+  const sortedVideos = getSortedVideos(videos);
+  if (!sortedVideos.length) return null;
+
+  // Use different shuffle keys for each row so that order differs
+  const rowShuffleKeys = [1, 2, 3];
+
   return (
     <motion.div
       className={`${isMobile ? "w-full py-8" : "w-1/2"} flex flex-col justify-center gap-8 relative`}
@@ -73,30 +55,10 @@ export const VideoCarousels = ({ videos, isLoading }: VideoCarouselsProps) => {
       animate={{ opacity: 1 }}
       transition={{ duration: 1, delay: 0.4 }}
     >
-      {/* First row - LTR */}
-      {chunks[0].length > 0 && (
-        <VideoCarousel
-          videos={chunks[0]}
-          direction="ltr"
-          speed={30}
-        />
-      )}
-      {/* Second row - RTL */}
-      {chunks[1].length > 0 && (
-        <VideoCarousel
-          videos={chunks[1]}
-          direction="rtl"
-          speed={25}
-        />
-      )}
-      {/* Third row - LTR */}
-      {chunks[2].length > 0 && (
-        <VideoCarousel
-          videos={chunks[2]}
-          direction="ltr"
-          speed={35}
-        />
-      )}
+      {/* All 3 rows get the full sorted videos list, but shuffles differ (via shuffleKey prop) */}
+      <VideoCarousel videos={sortedVideos} direction="ltr" speed={32} shuffleKey={rowShuffleKeys[0]} />
+      <VideoCarousel videos={sortedVideos} direction="rtl" speed={32} shuffleKey={rowShuffleKeys[1]} />
+      <VideoCarousel videos={sortedVideos} direction="ltr" speed={34} shuffleKey={rowShuffleKeys[2]} />
     </motion.div>
   );
 };
