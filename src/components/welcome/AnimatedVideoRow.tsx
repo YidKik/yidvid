@@ -1,3 +1,4 @@
+
 import { useEffect, useMemo } from "react";
 import { VideoGridItem } from "@/components/video/VideoGridItem";
 import { VideoGridItem as VideoItemType } from "@/hooks/video/useVideoGridData";
@@ -8,6 +9,7 @@ interface AnimatedVideoRowProps {
   duration: number;
   rowIdx: number;
   rowOffset?: number;
+  scrollProgress?: number; // New: 0 (top) ... 1 (maxed)
 }
 
 // MASSIVELY increased thumbnail size (3x larger than before)
@@ -19,7 +21,8 @@ export const AnimatedVideoRow = ({
   direction,
   duration,
   rowIdx,
-  rowOffset = 0
+  rowOffset = 0,
+  scrollProgress = 0
 }: AnimatedVideoRowProps) => {
   const doubledVideos = useMemo(() => [...videos, ...videos], [videos]);
   const animationName = `scroll-${direction}-row-${rowIdx}`;
@@ -79,12 +82,24 @@ export const AnimatedVideoRow = ({
   // Row height needs to be ultra-large to contain the huge items
   const getRowHeight = () => `clamp(3600px, 1080vh, 18000px)`;
 
+  // --- ROTATION & SCALE ANIMATION BASED ON SCROLL ---
+  // Each row gets a small, staggered offset for more dynamic feel
+  const maxRotate = [12, -16, 10, -13];
+  const maxScale = [1.19, 1.30, 1.14, 1.24];
+  const rowRotate = maxRotate[rowIdx % maxRotate.length] * scrollProgress;
+  const rowScale = 1 + ((maxScale[rowIdx % maxScale.length] - 1) * scrollProgress);
+
   // For left/right animation
   if (direction === "left") {
     return (
       <div
-        className="relative overflow-visible w-full"
-        style={{ ...wrapperStyle, height: getRowHeight() }}
+        className="relative overflow-visible w-full transition-transform duration-200"
+        style={{
+          ...wrapperStyle, 
+          height: getRowHeight(),
+          transform: `rotate(${rowRotate}deg) scale(${rowScale * 1.5})`, // *1.5 for existing scaling
+          willChange: "transform"
+        }}
       >
         <div
           className="flex gap-4 absolute left-0 top-0"
@@ -95,7 +110,7 @@ export const AnimatedVideoRow = ({
             flexDirection: "row",
             marginLeft: `${rowOffset}px`,
             alignItems: "center",
-            transform: "scale(1.5)" // Extra scaling for additional size
+            transform: "scale(1)", // children scale is handled at wrapper
           }}
         >
           {doubledVideos.map((video, idx) => (
@@ -118,8 +133,13 @@ export const AnimatedVideoRow = ({
     const stackedVideos = [...videos, ...videos];
     return (
       <div
-        className="relative overflow-visible flex flex-row justify-center w-full"
-        style={{ ...wrapperStyle, height: `calc(${getRowHeight()} * 2.5)` }}
+        className="relative overflow-visible flex flex-row justify-center w-full transition-transform duration-200"
+        style={{
+          ...wrapperStyle, 
+          height: `calc(${getRowHeight()} * 2.5)`,
+          transform: `rotate(${rowRotate}deg) scale(${rowScale * 1.5})`,
+          willChange: "transform"
+        }}
       >
         <div
           className="flex flex-col gap-6 absolute left-0 top-0 w-full items-center"
@@ -129,7 +149,7 @@ export const AnimatedVideoRow = ({
             animationDelay: `${-rowIdx * (duration / 4)}s`,
             flexDirection: "column",
             marginTop: `${rowOffset}px`,
-            transform: "scale(1.5)" // Extra scaling for additional size
+            transform: "scale(1)"
           }}
         >
           {stackedVideos.map((video, idx) => (

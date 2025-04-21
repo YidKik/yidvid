@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { AnimatedVideoRow } from "./AnimatedVideoRow";
 import { VideoGridItem as VideoItemType } from "@/hooks/video/useVideoGridData";
 
@@ -58,6 +58,21 @@ export const AnimatedVideoRowsShowcase = ({
   // Increased offsets for better visual staggering
   const rowOffsets = [0, 200, 0, 300];
 
+  // --- SCROLL ROTATION & SCALE LOGIC ---
+  const [scrollProgress, setScrollProgress] = useState(0);
+
+  useEffect(() => {
+    function handleScroll() {
+      // Normalize scroll progress (0 = top, 1 = 1000px down or max 1)
+      const maxScroll = 500; // You can tune this, higher value = slower effect
+      const progress = Math.min(window.scrollY / maxScroll, 1);
+      setScrollProgress(progress);
+    }
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
     <div className="flex flex-col gap-0 -my-20 transform scale-[1.7] origin-center">
       {rowSlices.map((videosForRow, i) => (
@@ -68,6 +83,7 @@ export const AnimatedVideoRowsShowcase = ({
           duration={durations[i]}
           rowIdx={i}
           rowOffset={rowOffsets[i] ?? 0}
+          scrollProgress={scrollProgress}
         />
       ))}
     </div>
