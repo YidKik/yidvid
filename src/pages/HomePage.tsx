@@ -1,21 +1,16 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
 import { VideoCarousels } from '@/components/home/VideoCarousels';
 import { ChannelCarousels } from '@/components/home/ChannelCarousels';
 import { useVideos } from '@/hooks/video/useVideos';
 import { useChannelsGrid } from '@/hooks/channel/useChannelsGrid';
 import { AnimatedVideoHero } from '@/components/home/AnimatedVideoHero';
+import { TiltedVideoScroll } from '@/components/home/TiltedVideoScroll';
 
 const HomePage = () => {
-  const navigate = useNavigate();
   const { data: videos, isLoading: videosLoading } = useVideos();
   const { manuallyFetchedChannels, isLoading: channelsLoading } = useChannelsGrid();
-
-  const handleVideoClick = (videoId: string) => {
-    navigate(`/video/${videoId}`);
-  };
 
   const pageVariants = {
     initial: { opacity: 0 },
@@ -38,13 +33,9 @@ const HomePage = () => {
       {/* Animated Hero Section with Videos */}
       {videos && <AnimatedVideoHero videos={videos} />}
 
-      {/* Video Carousels */}
-      <motion.section className="py-4 relative">
-        <VideoCarousels 
-          videos={videos || []} 
-          isLoading={videosLoading} 
-          onVideoClick={handleVideoClick}
-        />
+      {/* Tilted Video Scroll */}
+      <motion.section className="py-8 relative">
+        {videos && <TiltedVideoScroll videos={videos} />}
       </motion.section>
 
       {/* Channel Avatars Scrolling */}

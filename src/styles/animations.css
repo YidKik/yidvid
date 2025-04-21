@@ -1,4 +1,3 @@
-
 /* Animation Definitions */
 @keyframes toast-enter {
   from {
@@ -75,4 +74,17 @@
 
 .animate-scroll-x-reverse {
   animation: scroll-x-reverse 30s linear infinite;
+}
+
+@keyframes skew-scroll {
+  0% {
+    transform: translateY(0) rotate(-10deg);
+  }
+  100% {
+    transform: translateY(calc(-50%)) rotate(-10deg);
+  }
+}
+
+.animate-skew-scroll {
+  animation: skew-scroll 40s linear infinite;
 }
