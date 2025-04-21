@@ -1,22 +1,20 @@
-
 import React from "react";
 import { useVideoGridData } from "@/hooks/video/useVideoGridData";
 import { HomeHero } from "@/components/home/HomeHero";
 import { AnimatedVideoRows } from "@/components/home/AnimatedVideoRows";
 
 export default function Index() {
-  // Get enough videos to fill all carousels, more if possible
   const { videos, loading } = useVideoGridData(50);
 
   return (
     <div className="min-h-screen w-full bg-[#f1eaff] flex items-stretch relative overflow-x-hidden">
       {/* Main grid: Left = Hero, Right = Videos */}
       <div className="flex flex-1 items-stretch max-w-[1920px] mx-auto relative w-full">
-        {/* Left side: Welcome */}
-        <div className="w-full md:w-[44%] flex flex-col justify-center z-20 px-4 md:px-0">
-          <div className="md:pl-[6vw] mt-12 md:mt-0">
+        {/* Left side: Welcome, vertically and horizontally centered and taller */}
+        <div className="w-full md:w-[44%] flex flex-col justify-center z-20 px-6 md:px-0">
+          <div className="md:pl-[6vw] flex flex-col justify-center h-[75vh]">
             {/* Logo and welcome */}
-            <div className="flex flex-col items-center md:items-start">
+            <div className="flex flex-col items-center md:items-start justify-center h-full">
               {/* Logo */}
               <img
                 src="/yidkik-logo.png"
@@ -26,7 +24,7 @@ export default function Index() {
                 style={{ filter: "drop-shadow(0 2px 12px rgba(70,0,70,.06))" }}
               />
               {/* Welcome text */}
-              <h1 className="text-center md:text-left text-3xl md:text-5xl font-black mb-2 mt-2">
+              <h1 className="text-center md:text-left text-4xl md:text-6xl font-black mb-3 mt-2">
                 <span className="text-[#ea384c]">Welcome to YidVid</span>
               </h1>
               <div className="text-center md:text-left text-lg md:text-2xl text-gray-700 max-w-md mb-1">
@@ -75,4 +73,3 @@ export default function Index() {
     </div>
   );
 }
-
