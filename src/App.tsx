@@ -39,6 +39,7 @@ import ContactRequestsPage from "@/pages/admin/ContactRequestsPage";
 import ReportedVideosPage from "@/pages/admin/ReportedVideosPage";
 import NotificationsPage from "@/pages/admin/NotificationsPage";
 import LayoutCustomizationPage from "@/pages/admin/LayoutCustomizationPage";
+import NewPage from "@/pages/NewPage";
 
 function AppRoutes() {
   const location = useLocation();
@@ -100,6 +101,8 @@ function AppRoutes() {
         <Routes>
           {/* Direct to Index (new homepage) */}
           <Route path="/" element={<Index />} />
+          {/* New blank page */}
+          <Route path="/new-page" element={<NewPage />} />
           {/* Old Videos route */}
           <Route path="/videos" element={<Videos />} />
           {/* Public routes */}
