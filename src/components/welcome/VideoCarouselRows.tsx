@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from "react";
 import { useVideoGridData } from "@/hooks/video/useVideoGridData";
 import { useNavigate } from "react-router-dom";
@@ -10,24 +9,18 @@ const SLIDE_SECONDS = [15, 16.5, 17.5, 18.5];
 
 const getDirection = (rowIdx: number) => (rowIdx % 2 === 0 ? "left" : "right");
 
-// When list is short, loop & fill
 function getRowVideosWithOffset(allVideos, rowIdx, perRow, allRows) {
   const total = allVideos.length;
   const start = rowIdx * perRow;
-  // For static start: unique, non-overlapping segment for each row
   const base = [];
   for (let i = 0; i < perRow; i++) {
     base.push(allVideos[(start + i) % total]);
   }
-
-  // For sliding: build an offset loop for each row
-  // Slides start at different positions
   const slide = [];
-  const offset = Math.floor((total / allRows) * rowIdx); // Offset per-row
+  const offset = Math.floor((total / allRows) * rowIdx);
   for (let i = 0; i < total; i++) {
     slide.push(allVideos[(offset + i) % total]);
   }
-  // Return [startSegment, fullRowLoop]
   return [base, slide];
 }
 
@@ -38,7 +31,6 @@ function useScrollRotation() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
-  // Range: 0px to 220px scroll -> 0deg to 6deg and 1 -> 1.10 scale
   const rotation = Math.min((scroll / 220) * 6, 6);
   const scale = 1 + Math.min((scroll / 220) * 0.10, 0.10);
   return { rotation, scale };
@@ -46,11 +38,9 @@ function useScrollRotation() {
 
 export function VideoCarouselRows() {
   const navigate = useNavigate();
-  // Attempt to grab up to 40, fallback to however many exist
   const { videos, loading } = useVideoGridData(MAX_FETCH);
   const { rotation, scale } = useScrollRotation();
 
-  // Placeholder for loading state
   const placeholder = (i: number) => ({
     id: `placeholder-${i}`,
     thumbnail: "/placeholder.svg",
@@ -58,21 +48,16 @@ export function VideoCarouselRows() {
     video_id: "-"
   });
 
-  // Compose the data for each row
   let rowBases = [];
   let rowSlides = [];
   if (!videos.length) {
-    // Still loading: fill with placeholders (same as before)
     rowBases = Array(ROW_COUNT).fill(0).map((_, idx) =>
       Array(VIDEOS_PER_ROW).fill(0).map((_, j) => placeholder(idx * VIDEOS_PER_ROW + j))
     );
-    rowSlides = rowBases.map(row => [...row, ...row]); // just static for loading
+    rowSlides = rowBases.map(row => [...row, ...row]);
   } else {
-    // Real videos!
     for (let r = 0; r < ROW_COUNT; r++) {
       const [startSegment, rowLoop] = getRowVideosWithOffset(videos, r, VIDEOS_PER_ROW, ROW_COUNT);
-      // Each row's slide track is the full unique order (looped)
-      // For infinite scroll, we'll double it to allow seamless animation
       rowBases.push(startSegment);
       rowSlides.push([...rowLoop, ...rowLoop]);
     }
@@ -80,14 +65,16 @@ export function VideoCarouselRows() {
 
   return (
     <div
-      className="absolute left-1/2 bottom-0 w-[99vw] max-w-[1680px] -translate-x-1/2 pointer-events-auto select-none z-10"
+      className="fixed left-0 right-0 bottom-0 z-10 pointer-events-auto select-none"
       style={{
-        // Place in the horizontal center and animate rotation/scale on scroll
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "flex-end",
         transform: `translateY(7vw) rotate(${rotation}deg) scale(${scale})`,
         transition: "transform 0.35s cubic-bezier(.53,.42,.19,1.04)"
       }}
     >
-      <div className="flex flex-col gap-7 w-full">
+      <div className="w-full max-w-[1680px] mx-auto flex flex-col gap-7">
         {rowSlides.map((rowVideos, ri) => {
           const slideAnim = `
             @keyframes slideRow${ri} {
@@ -95,7 +82,6 @@ export function VideoCarouselRows() {
               100% { transform: translateX(${getDirection(ri)==="left" ? '-' : ''}50%); }
             }
           `;
-          // Only inject once per row
           useEffect(() => {
             if (!document.getElementById(`carousel-row-anim-${ri}`)) {
               const style = document.createElement('style');
