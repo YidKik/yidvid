@@ -83,22 +83,27 @@ export const AnimatedVideoRow = ({
   const getRowHeight = () => `clamp(3600px, 1080vh, 18000px)`;
 
   // --- ROTATION & SCALE ANIMATION BASED ON SCROLL ---
-  // Each row gets a small, staggered offset for more dynamic feel
-  const maxRotate = [12, -16, 10, -13];
-  const maxScale = [1.19, 1.30, 1.14, 1.24];
+  // GREATLY increased rotation and scale values for more dramatic effect
+  const maxRotate = [20, -25, 18, -22]; // Increased rotation angles
+  const maxScale = [1.4, 1.6, 1.35, 1.5]; // Increased scale factors
+  
+  // Apply rotation and scale based on scroll progress
   const rowRotate = maxRotate[rowIdx % maxRotate.length] * scrollProgress;
   const rowScale = 1 + ((maxScale[rowIdx % maxScale.length] - 1) * scrollProgress);
+  
+  console.log(`Row ${rowIdx} - Rotation: ${rowRotate}deg, Scale: ${rowScale}, Scroll: ${scrollProgress}`);
 
   // For left/right animation
   if (direction === "left") {
     return (
       <div
-        className="relative overflow-visible w-full transition-transform duration-200"
+        className="relative overflow-visible w-full transition-all duration-500 ease-out"
         style={{
           ...wrapperStyle, 
           height: getRowHeight(),
           transform: `rotate(${rowRotate}deg) scale(${rowScale * 1.5})`, // *1.5 for existing scaling
-          willChange: "transform"
+          willChange: "transform",
+          zIndex: rowIdx + 10, // Ensure proper layering
         }}
       >
         <div
@@ -106,7 +111,7 @@ export const AnimatedVideoRow = ({
           style={{
             width: "400%", // Wider container to ensure more content is visible
             animation: `${animationName} ${duration}s linear infinite`,
-            animationDelay: `${-rowIdx * (duration / 4)}s`,
+            animationDelay: `-${rowIdx * 5}s`, // Fixed animation delay to avoid style conflicts
             flexDirection: "row",
             marginLeft: `${rowOffset}px`,
             alignItems: "center",
@@ -133,12 +138,13 @@ export const AnimatedVideoRow = ({
     const stackedVideos = [...videos, ...videos];
     return (
       <div
-        className="relative overflow-visible flex flex-row justify-center w-full transition-transform duration-200"
+        className="relative overflow-visible flex flex-row justify-center w-full transition-all duration-500 ease-out"
         style={{
           ...wrapperStyle, 
           height: `calc(${getRowHeight()} * 2.5)`,
           transform: `rotate(${rowRotate}deg) scale(${rowScale * 1.5})`,
-          willChange: "transform"
+          willChange: "transform",
+          zIndex: rowIdx + 10, // Ensure proper layering
         }}
       >
         <div
@@ -146,7 +152,7 @@ export const AnimatedVideoRow = ({
           style={{
             height: "400%", // Taller container for more content visibility
             animation: `${animationName} ${duration}s linear infinite`,
-            animationDelay: `${-rowIdx * (duration / 4)}s`,
+            animationDelay: `-${rowIdx * 5}s`, // Fixed animation delay to avoid style conflicts
             flexDirection: "column",
             marginTop: `${rowOffset}px`,
             transform: "scale(1)"

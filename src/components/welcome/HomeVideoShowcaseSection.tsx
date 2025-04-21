@@ -27,7 +27,7 @@ export const HomeVideoShowcaseSection = ({
   // Added stronger scaling to ensure maximum space utilization
   return (
     <div 
-      className="w-screen h-screen overflow-visible fixed inset-0" 
+      className="w-screen h-screen overflow-visible fixed inset-0 pointer-events-none" 
       style={{
         minWidth: "100vw",
         minHeight: "100vh",

@@ -62,16 +62,26 @@ export const AnimatedVideoRowsShowcase = ({
   const [scrollProgress, setScrollProgress] = useState(0);
 
   useEffect(() => {
-    function handleScroll() {
-      // Normalize scroll progress (0 = top, 1 = 1000px down or max 1)
-      const maxScroll = 500; // You can tune this, higher value = slower effect
+    // Create the scroll event handler
+    const handleScroll = () => {
+      // Make rotation happen with much less scrolling (250px instead of 500px)
+      const maxScroll = 250; 
       const progress = Math.min(window.scrollY / maxScroll, 1);
+      console.log("Scroll progress:", progress, "Window scrollY:", window.scrollY); // Debug log
       setScrollProgress(progress);
-    }
+    };
+
+    // Add the event listener
     window.addEventListener("scroll", handleScroll, { passive: true });
+    
+    // Initial call to set the initial state
     handleScroll();
+    
+    // Cleanup function to remove the event listener
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  console.log("Current scroll progress state:", scrollProgress); // Additional debug log
 
   return (
     <div className="flex flex-col gap-0 -my-20 transform scale-[1.7] origin-center">

@@ -12,7 +12,10 @@ export const HomeVideoShowcase = () => {
   const { videos, loading } = useVideoGridData(120);
 
   return (
-    <div className="w-full overflow-hidden absolute inset-0 z-0" style={{ transform: "scale(1.5)" }}>
+    <div 
+      className="w-full overflow-hidden absolute inset-0 z-0 pointer-events-none" 
+      style={{ transform: "scale(1.5)" }}
+    >
       <HomeVideoShowcaseSection loading={loading} videos={videos}>
         <AnimatedVideoRowsShowcase videos={videos} loading={loading} />
       </HomeVideoShowcaseSection>

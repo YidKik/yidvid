@@ -84,6 +84,9 @@ const MainContent = () => {
             )}
           </motion.div>
         </div>
+        
+        {/* Added spacer div to ensure there's enough content to scroll through */}
+        <div className="h-[800px]"></div>
       </motion.main>
 
       <motion.div 
