@@ -4,7 +4,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import useEmblaCarousel from "embla-carousel-react";
 import { useNavigate } from "react-router-dom";
 import { ChannelItem } from "./ChannelCarousels";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { motion } from "framer-motion";
 
 interface ChannelCarouselProps {
   channels: ChannelItem[];
@@ -54,7 +54,7 @@ export const ChannelCarousel = ({ channels, direction, speed, shuffleKey }: Chan
     // Re-initialize the carousel when channels change
     emblaApi.reInit();
     
-    const scrollStep = speed * 0.02; // Control speed (pixels per frame)
+    const scrollStep = speed * 0.025; // Control speed (pixels per frame)
     let lastTime = 0;
     
     const scroll = (timestamp: number) => {
@@ -67,26 +67,17 @@ export const ChannelCarousel = ({ channels, direction, speed, shuffleKey }: Chan
       if (!scrolling.current) {
         // Calculate the scroll amount based on direction and speed
         const scrollAmount = (direction === "rtl" ? -1 : 1) * scrollStep * (deltaTime / 16);
-        
-        // Use scrollSnaps and selectedScrollSnap for proper scrolling
-        const scrollSnaps = emblaApi.scrollSnapList();
-        const currentIndex = emblaApi.selectedScrollSnap();
-        const nextIndex = (currentIndex + 1) % scrollSnaps.length;
-        const prevIndex = currentIndex === 0 ? scrollSnaps.length - 1 : currentIndex - 1;
-        
-        // Determine target based on direction
-        const targetIndex = direction === "ltr" ? nextIndex : prevIndex;
         const currentPosition = emblaApi.scrollProgress();
         
         // Create smooth scrolling effect
         if (direction === "ltr") {
           emblaApi.scrollTo(currentPosition + scrollAmount);
-          // If we reach the end of current slide, snap to next
-          if (currentPosition >= 0.98) emblaApi.scrollTo(nextIndex);
+          // If we reach the end, loop around
+          if (currentPosition >= 0.98) emblaApi.scrollTo(0);
         } else {
           emblaApi.scrollTo(currentPosition - scrollAmount);
-          // If we reach the beginning of current slide, snap to previous
-          if (currentPosition <= 0.02) emblaApi.scrollTo(prevIndex);
+          // If we reach the beginning, loop around
+          if (currentPosition <= 0.02) emblaApi.scrollTo(1);
         }
       }
       
@@ -137,13 +128,14 @@ export const ChannelCarousel = ({ channels, direction, speed, shuffleKey }: Chan
       <div className="overflow-hidden" ref={emblaRef}>
         <div className="flex gap-4 md:gap-6">
           {shuffledChannels.map((channel) => (
-            <div
+            <motion.div
               key={channel.id}
               className="flex-none w-20 h-20 md:w-28 md:h-28 cursor-pointer relative group"
+              whileHover={{ scale: 1.1, zIndex: 10 }}
               onClick={() => handleChannelClick(channel.channel_id)}
             >
-              <div className="w-full h-full rounded-full overflow-hidden border-2 border-white/50 shadow-md transition-all duration-300 
-                            group-hover:border-white group-hover:shadow-lg group-hover:scale-105">
+              <div className="w-full h-full rounded-full overflow-hidden border-2 border-white shadow-md transition-all duration-300 
+                            group-hover:border-[#ea384c] group-hover:shadow-lg">
                 {channel.thumbnail_url ? (
                   <img 
                     src={channel.thumbnail_url} 
@@ -158,15 +150,19 @@ export const ChannelCarousel = ({ channels, direction, speed, shuffleKey }: Chan
               </div>
               
               {/* Hover tooltip with channel name */}
-              <div className="opacity-0 group-hover:opacity-100 absolute -bottom-8 left-1/2 transform -translate-x-1/2 
-                            bg-black/70 text-white text-xs md:text-sm px-2 py-1 rounded-md whitespace-nowrap
-                            transition-opacity duration-300">
+              <motion.div 
+                className="opacity-0 group-hover:opacity-100 absolute -bottom-8 left-1/2 transform -translate-x-1/2 
+                          bg-black/70 text-white text-xs md:text-sm px-2 py-1 rounded-md whitespace-nowrap z-20"
+                initial={{ y: 5, opacity: 0 }}
+                whileHover={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.2 }}
+              >
                 {channel.title}
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
           ))}
         </div>
       </div>
     </div>
   );
-}
+};

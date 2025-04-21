@@ -30,14 +30,29 @@ export const useCarouselScroll = ({ emblaApi, direction, speed, itemsLength }: U
       lastTime = timestamp;
       
       if (!scrolling.current) {
-        // Create continuous scrolling by moving content without waiting for snap points
-        emblaApi.scrollNext(true); // Fix: Pass boolean instead of object for loop parameter
-        
-        // Force a small movement each frame to create continuous movement
+        // Create continuous scrolling with direction control
+        const scrollAmount = (direction === "ltr" ? 1 : -1) * scrollStep * (deltaTime / 16);
         const engine = emblaApi.internalEngine();
+        
         if (engine) {
           const currentScrollProgress = emblaApi.scrollProgress();
-          emblaApi.scrollTo(currentScrollProgress + (scrollStep * (deltaTime / 16)));
+          
+          // Adjust for direction
+          if (direction === "ltr") {
+            emblaApi.scrollTo(currentScrollProgress + (scrollStep * (deltaTime / 16)));
+            
+            // If we've scrolled almost to the end, loop around
+            if (currentScrollProgress > 0.95) {
+              emblaApi.scrollTo(0);
+            }
+          } else {
+            emblaApi.scrollTo(currentScrollProgress - (scrollStep * (deltaTime / 16)));
+            
+            // If we've scrolled almost to the beginning, loop around
+            if (currentScrollProgress < 0.05) {
+              emblaApi.scrollTo(1);
+            }
+          }
         }
       }
       
@@ -51,7 +66,7 @@ export const useCarouselScroll = ({ emblaApi, direction, speed, itemsLength }: U
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [emblaApi, speed, itemsLength]);
+  }, [emblaApi, direction, speed, itemsLength]);
 
   // Handle user interaction to pause auto-scroll
   useEffect(() => {

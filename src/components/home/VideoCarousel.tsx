@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useCarouselScroll } from "@/hooks/carousel/useCarouselScroll";
 import { useShuffledVideos } from "@/hooks/video/useShuffledVideos";
 import { VideoCarouselItem } from "./VideoCarouselItem";
+import { motion } from "framer-motion";
 
 interface VideoCarouselProps {
   videos: VideoGridItemType[];
@@ -31,8 +32,9 @@ export const VideoCarousel = ({
     containScroll: false, // Don't contain scroll to prevent stopping at snap points
     align: "start",
     slidesToScroll: 1,
-    watchDrag: false, // Prevent drag detection to ensure continuous movement
-    skipSnaps: true // Allow scrolling past snap points
+    watchDrag: true,
+    skipSnaps: true, // Allow scrolling past snap points
+    direction: direction,
   });
 
   useCarouselScroll({
@@ -53,8 +55,16 @@ export const VideoCarousel = ({
   }
 
   return (
-    <div className="px-2 md:px-4">
-      <div className="overflow-hidden" ref={emblaRef}>
+    <motion.div 
+      className="px-2 md:px-4 mb-3"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
+      <div 
+        className="overflow-hidden rounded-xl" 
+        ref={emblaRef}
+      >
         <div className="flex gap-3 md:gap-4">
           {shuffledVideos.map((video) => (
             <VideoCarouselItem
@@ -65,6 +75,6 @@ export const VideoCarousel = ({
           ))}
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };

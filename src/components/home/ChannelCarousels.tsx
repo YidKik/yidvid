@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { ChannelCarousel } from "./ChannelCarousel";
 import { supabase } from "@/integrations/supabase/client";
 import { YoutubeChannelsTable } from "@/integrations/supabase/types/youtube-channels";
+import { motion } from "framer-motion";
 
 export interface ChannelItem {
   id: string;
@@ -56,14 +57,15 @@ export const ChannelCarousels = ({ isLoading }: ChannelCarouselsProps) => {
 
   if (isLoading || loading) {
     return (
-      <div className="space-y-16 py-8">
+      <div className="space-y-8 py-4">
         {[0, 1, 2].map((index) => (
-          <div key={index} className="overflow-hidden py-4">
-            <div className="flex gap-4">
-              {Array.from({ length: 8 }).map((_, i) => (
+          <div key={index} className="overflow-hidden">
+            <div className="flex gap-4 px-6 md:px-16">
+              {Array.from({ length: 10 }).map((_, i) => (
                 <div 
                   key={i} 
-                  className="flex-none rounded-full w-20 h-20 md:w-28 md:h-28 bg-gray-200 animate-pulse"
+                  className="flex-none rounded-full w-16 h-16 md:w-24 md:h-24 bg-gray-200 animate-pulse"
+                  style={{animationDelay: `${i * 0.1}s`}}
                 />
               ))}
             </div>
@@ -74,34 +76,49 @@ export const ChannelCarousels = ({ isLoading }: ChannelCarouselsProps) => {
   }
 
   return (
-    <div className="space-y-16 py-8">
+    <div className="space-y-8 py-2">
       {/* Three rows with different directions and speeds */}
-      <div className="overflow-hidden py-4">
+      <motion.div 
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="overflow-hidden py-2"
+      >
         <ChannelCarousel 
           channels={channels} 
           direction="ltr" 
-          speed={35} 
+          speed={25} 
           shuffleKey={rowShuffleKeys[0]} 
         />
-      </div>
+      </motion.div>
       
-      <div className="overflow-hidden py-4">
+      <motion.div 
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.1 }}
+        className="overflow-hidden py-2"
+      >
         <ChannelCarousel 
           channels={channels} 
           direction="rtl" 
           speed={30} 
           shuffleKey={rowShuffleKeys[1]} 
         />
-      </div>
+      </motion.div>
       
-      <div className="overflow-hidden py-4">
+      <motion.div 
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className="overflow-hidden py-2"
+      >
         <ChannelCarousel 
           channels={channels} 
           direction="ltr" 
-          speed={40} 
+          speed={35} 
           shuffleKey={rowShuffleKeys[2]} 
         />
-      </div>
+      </motion.div>
     </div>
   );
 };
