@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState, useRef } from "react";
 import { useVideoGridData } from "@/hooks/video/useVideoGridData";
 import { useNavigate } from "react-router-dom";
@@ -8,7 +9,7 @@ const MAX_FETCH = 40;
 // MUCH SLOWER and SMOOTHER slide durations (seconds)
 const SLIDE_SECONDS = [900, 720, 800, 600];
 // Even and close vertical spacing offsets for each row (pixels)
-const ROW_VERTICAL_OFFSETS = [0, 8, 16, 24]; // closer rows with equal spacing
+const ROW_VERTICAL_OFFSETS = [0, 4, 8, 12]; // closer rows with equal spacing
 
 function getRowVideosWithOffset(allVideos, rowIdx, perRow, allRows) {
   const total = allVideos.length;
@@ -66,9 +67,6 @@ export function VideoCarouselRows() {
       rowSlides.push([...rowLoop, ...rowLoop]);
     }
   }
-
-  // Reduce vertical offsets for even tighter rows
-  const ROW_VERTICAL_OFFSETS = [0, 0, 0, 0];
 
   useEffect(() => {
     const styleElement = document.createElement('style');
@@ -134,12 +132,13 @@ export function VideoCarouselRows() {
           };
 
           // Inline style for translateX (mobile & desktop)
-          const sliderStyle = {
+          const sliderStyle: React.CSSProperties = {
             width: `calc(${rowVideos.length * 24}vw)`,
             animation: `slideRow${ri} ${SLIDE_SECONDS[ri % SLIDE_SECONDS.length]}s linear infinite`,
             animationFillMode: "forwards",
             animationDelay: `${ri * 0.5}s`,
-            flexDirection: "row",
+            display: "flex",
+            flexDirection: "row" as const,
             alignItems: "center",
             // Apply translateX for brick effect
             transform: isOdd
@@ -148,9 +147,10 @@ export function VideoCarouselRows() {
           };
 
           // For duplicated (seamless) row as well:
-          const sliderStyleDup = {
+          const sliderStyleDup: React.CSSProperties = {
             ...sliderStyle,
             left: "100%",
+            position: "absolute"
           };
 
           // Also, override translateX for desktop using media query
