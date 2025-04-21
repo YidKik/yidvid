@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { VideoCarousels } from '@/components/home/VideoCarousels';
@@ -45,8 +44,8 @@ const HomePage = () => {
         {
           scrollTrigger: {
             trigger: '.hero-parallax-section',
-            start: 'center center',
-            end: 'bottom center',
+            start: 'bottom center',
+            end: 'bottom top',
             scrub: 1,
           },
           y: 0,
@@ -115,12 +114,12 @@ const HomePage = () => {
         )}
       </div>
 
-      {/* Channels Grid Section - Now follows the video parallax */}
+      {/* Channels Grid Section - Now with full width and proper spacing */}
       <motion.section 
         ref={channelsSectionRef}
-        className="relative z-10"
+        className="relative z-10 w-full mt-[80vh]"
       >
-        <div className="pb-20">
+        <div className="w-full py-40">
           <GridMotion 
             items={extendedChannelItems}
             gradientColor="#ea384c"
