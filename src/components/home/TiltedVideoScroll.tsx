@@ -6,11 +6,13 @@ import { VideoCard } from "@/components/VideoCard";
 interface TiltedVideoScrollProps {
   videos?: VideoGridItem[];
   className?: string;
+  reverse?: boolean;
 }
 
 export function TiltedVideoScroll({ 
   videos = [],
-  className 
+  className,
+  reverse = false
 }: TiltedVideoScrollProps) {
   // Double the videos array to create a seamless scroll effect
   const scrollVideos = [...videos, ...videos];
@@ -18,7 +20,10 @@ export function TiltedVideoScroll({
   return (
     <div className={cn("flex items-center justify-center w-full", className)}>
       <div className="relative overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_5rem,black_calc(100%-5rem),transparent)]">
-        <div className="grid h-[350px] w-full gap-4 animate-scroll-x grid-flow-col auto-cols-[280px]">
+        <div className={cn(
+          "grid h-[350px] w-full gap-4 grid-flow-col auto-cols-[280px]",
+          reverse ? "animate-scroll-x-reverse" : "animate-scroll-x"
+        )}>
           {scrollVideos.map((video, index) => (
             <div
               key={`${video.id}-${index}`}

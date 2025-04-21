@@ -7,10 +7,12 @@ import { useVideos } from '@/hooks/video/useVideos';
 import { useChannelsGrid } from '@/hooks/channel/useChannelsGrid';
 import { AnimatedVideoHero } from '@/components/home/AnimatedVideoHero';
 import { TiltedVideoScroll } from '@/components/home/TiltedVideoScroll';
+import { useShuffledVideos } from '@/hooks/video/useShuffledVideos';
 
 const HomePage = () => {
   const { data: videos, isLoading: videosLoading } = useVideos();
   const { manuallyFetchedChannels, isLoading: channelsLoading } = useChannelsGrid();
+  const shuffledVideos = useShuffledVideos(videos);
 
   const pageVariants = {
     initial: { opacity: 0 },
@@ -33,7 +35,7 @@ const HomePage = () => {
       {/* Animated Hero Section with Videos */}
       {videos && <AnimatedVideoHero videos={videos} />}
 
-      {/* Tilted Video Scroll Section */}
+      {/* First Tilted Video Scroll Section - Right to Left */}
       {videos && (
         <motion.section 
           className="py-8 relative"
@@ -42,6 +44,18 @@ const HomePage = () => {
           transition={{ delay: 0.3 }}
         >
           <TiltedVideoScroll videos={videos} />
+        </motion.section>
+      )}
+
+      {/* Second Tilted Video Scroll Section - Left to Right */}
+      {shuffledVideos && (
+        <motion.section 
+          className="py-8 relative"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+        >
+          <TiltedVideoScroll videos={shuffledVideos} reverse={true} />
         </motion.section>
       )}
 
