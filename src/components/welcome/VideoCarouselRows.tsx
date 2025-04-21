@@ -111,10 +111,6 @@ export function VideoCarouselRows() {
               className="relative flex overflow-hidden w-full h-44 md:h-56"
               tabIndex={-1}
               aria-roledescription="carousel row"
-              style={{
-                maskImage: "linear-gradient(90deg,transparent,black 10%,black 90%,transparent)",
-                WebkitMaskImage: "linear-gradient(90deg,transparent,black 10%,black 90%,transparent)",
-              }}
             >
               <div
                 className="flex gap-8 md:gap-11"
