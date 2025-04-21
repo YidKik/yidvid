@@ -77,7 +77,7 @@ export const ChannelCarousels = ({ isLoading }: ChannelCarouselsProps) => {
 
   return (
     <div className="space-y-8 py-2">
-      {/* Three rows with different directions and slower speeds */}
+      {/* Three rows with different directions and visible speeds */}
       <motion.div 
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -87,7 +87,7 @@ export const ChannelCarousels = ({ isLoading }: ChannelCarouselsProps) => {
         <ChannelCarousel 
           channels={channels} 
           direction="ltr" 
-          speed={15} 
+          speed={18} 
           shuffleKey={rowShuffleKeys[0]} 
         />
       </motion.div>
@@ -101,7 +101,7 @@ export const ChannelCarousels = ({ isLoading }: ChannelCarouselsProps) => {
         <ChannelCarousel 
           channels={channels} 
           direction="rtl" 
-          speed={20} 
+          speed={22} 
           shuffleKey={rowShuffleKeys[1]} 
         />
       </motion.div>
@@ -115,7 +115,7 @@ export const ChannelCarousels = ({ isLoading }: ChannelCarouselsProps) => {
         <ChannelCarousel 
           channels={channels} 
           direction="ltr" 
-          speed={25} 
+          speed={26} 
           shuffleKey={rowShuffleKeys[2]} 
         />
       </motion.div>

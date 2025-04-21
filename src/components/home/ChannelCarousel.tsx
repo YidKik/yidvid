@@ -1,3 +1,4 @@
+
 import React, { useRef, useEffect, useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import useEmblaCarousel from "embla-carousel-react";
@@ -29,7 +30,9 @@ export const ChannelCarousel = ({ channels, direction, speed, shuffleKey }: Chan
     }
     
     if (channels.length > 0) {
-      setShuffledChannels(shuffle(channels));
+      // Create a larger set of channels to ensure continuous scrolling
+      const repeatedChannels = [...channels, ...channels, ...channels];
+      setShuffledChannels(shuffle(repeatedChannels));
     }
   }, [channels, shuffleKey]);
 
@@ -43,13 +46,15 @@ export const ChannelCarousel = ({ channels, direction, speed, shuffleKey }: Chan
 
   const scrolling = useRef<boolean>(false);
   const animationRef = useRef<number>();
+  const isInitialRender = useRef(true);
 
   useEffect(() => {
     if (!emblaApi || shuffledChannels.length === 0) return;
     
     emblaApi.reInit();
     
-    const scrollStep = speed * 0.015;
+    // Ensure scrolling is more visible - increased slightly
+    const scrollStep = speed * 0.02;
     let lastTime = 0;
     
     const scroll = (timestamp: number) => {
@@ -60,6 +65,7 @@ export const ChannelCarousel = ({ channels, direction, speed, shuffleKey }: Chan
       lastTime = timestamp;
       
       if (!scrolling.current) {
+        // Force a more noticeable scroll amount
         const scrollAmount = (direction === "rtl" ? -1 : 1) * scrollStep * (deltaTime / 16);
         const currentPosition = emblaApi.scrollProgress();
         
@@ -75,7 +81,11 @@ export const ChannelCarousel = ({ channels, direction, speed, shuffleKey }: Chan
       animationRef.current = requestAnimationFrame(scroll);
     };
     
-    animationRef.current = requestAnimationFrame(scroll);
+    // Start with a slight delay to ensure the carousel is properly initialized
+    setTimeout(() => {
+      animationRef.current = requestAnimationFrame(scroll);
+      isInitialRender.current = false;
+    }, 100);
     
     return () => {
       if (animationRef.current) {
@@ -116,9 +126,9 @@ export const ChannelCarousel = ({ channels, direction, speed, shuffleKey }: Chan
     <div className="px-2 md:px-4">
       <div className="overflow-hidden" ref={emblaRef}>
         <div className="flex gap-4 md:gap-6">
-          {shuffledChannels.map((channel) => (
+          {shuffledChannels.map((channel, index) => (
             <motion.div
-              key={channel.id}
+              key={`${channel.id}-${index}`}
               className="flex-none w-20 h-20 md:w-28 md:h-28 cursor-pointer relative group"
               whileHover={{ scale: 1.1, zIndex: 10 }}
               onClick={() => handleChannelClick(channel.channel_id)}

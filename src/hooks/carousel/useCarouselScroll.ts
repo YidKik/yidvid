@@ -12,6 +12,7 @@ interface UseCarouselScrollProps {
 export const useCarouselScroll = ({ emblaApi, direction, speed, itemsLength }: UseCarouselScrollProps) => {
   const scrolling = useRef<boolean>(false);
   const animationRef = useRef<number>();
+  const isInitialRender = useRef(true);
 
   useEffect(() => {
     if (!emblaApi || itemsLength === 0) return;
@@ -19,7 +20,8 @@ export const useCarouselScroll = ({ emblaApi, direction, speed, itemsLength }: U
     // Re-initialize the carousel when items change
     emblaApi.reInit();
     
-    const scrollStep = speed * 0.05; // Increased speed factor for more noticeable movement
+    // Adjust speed for more noticeable scrolling
+    const scrollStep = speed * 0.08; 
     let lastTime = 0;
     
     const scroll = (timestamp: number) => {
@@ -32,9 +34,8 @@ export const useCarouselScroll = ({ emblaApi, direction, speed, itemsLength }: U
       if (!scrolling.current) {
         // Create continuous scrolling with direction control
         const scrollAmount = (direction === "ltr" ? 1 : -1) * scrollStep * (deltaTime / 16);
-        const engine = emblaApi.internalEngine();
         
-        if (engine) {
+        try {
           const currentScrollProgress = emblaApi.scrollProgress();
           
           // Adjust for direction
@@ -53,13 +54,20 @@ export const useCarouselScroll = ({ emblaApi, direction, speed, itemsLength }: U
               emblaApi.scrollTo(1);
             }
           }
+        } catch (error) {
+          console.error("Scroll error:", error);
+          // If there's an error, we'll try to recover by continuing animation
         }
       }
       
       animationRef.current = requestAnimationFrame(scroll);
     };
     
-    animationRef.current = requestAnimationFrame(scroll);
+    // Start with a slight delay to ensure proper initialization
+    setTimeout(() => {
+      animationRef.current = requestAnimationFrame(scroll);
+      isInitialRender.current = false;
+    }, 100);
     
     return () => {
       if (animationRef.current) {
