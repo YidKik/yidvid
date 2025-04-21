@@ -49,6 +49,9 @@ export const VideoCarousels = ({ videos, isLoading, onVideoClick }: VideoCarouse
   // Add category labels for each row
   const rowLabels = ["Popular Videos", "Latest Uploads", "Featured Content"];
 
+  // Significantly increased speeds for faster scrolling
+  const rowSpeeds = [180, 150, 200];
+
   return (
     <div className="space-y-6">
       {[0, 1, 2].map((index) => (
@@ -65,7 +68,7 @@ export const VideoCarousels = ({ videos, isLoading, onVideoClick }: VideoCarouse
           <VideoCarousel 
             videos={sortedVideos} 
             direction={index % 2 === 0 ? "ltr" : "rtl"} 
-            speed={50 + (index * 10)} 
+            speed={rowSpeeds[index]} 
             shuffleKey={rowShuffleKeys[index]} 
             onVideoClick={onVideoClick}
           />

@@ -37,13 +37,28 @@ export const VideoCarousel = ({
     skipSnaps: true,
   });
 
-  // Use the fixed carousel scroll hook
+  // Use the improved carousel scroll hook with faster speed
   useCarouselScroll({
     emblaApi,
     direction,
     speed,
     itemsLength: shuffledVideos.length,
   });
+
+  // Add console log to help debug
+  React.useEffect(() => {
+    console.log(`VideoCarousel initialized with ${shuffledVideos.length} videos and speed ${speed}`);
+    
+    // Force reinitialization after a short delay to ensure proper scrolling
+    if (emblaApi) {
+      const timer = setTimeout(() => {
+        emblaApi.reInit();
+        console.log("Forcing reinitialization of video carousel");
+      }, 500);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [emblaApi, shuffledVideos.length, speed]);
 
   const handleVideoClick = (videoId: string) => {
     if (onVideoClick) {
@@ -69,9 +84,9 @@ export const VideoCarousel = ({
         ref={emblaRef}
       >
         <div className="flex gap-3 md:gap-4">
-          {shuffledVideos.map((video) => (
+          {shuffledVideos.map((video, index) => (
             <VideoCarouselItem
-              key={video.id}
+              key={`${video.id}-${index}`}
               video={video}
               onClick={handleVideoClick}
             />

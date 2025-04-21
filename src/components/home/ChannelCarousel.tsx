@@ -20,7 +20,7 @@ export const ChannelCarousel = ({ channels, direction, speed, shuffleKey }: Chan
   
   const [shuffledChannels, setShuffledChannels] = useState<ChannelItem[]>([]);
   
-  // Create embla carousel with proper configuration
+  // Create embla carousel with proper configuration for better scrolling
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: true,
     dragFree: true,
@@ -31,7 +31,7 @@ export const ChannelCarousel = ({ channels, direction, speed, shuffleKey }: Chan
     skipSnaps: true,
   });
 
-  // Use the fixed carousel scroll hook
+  // Use the improved carousel scroll hook with faster speed
   useCarouselScroll({
     emblaApi,
     direction,
@@ -51,9 +51,14 @@ export const ChannelCarousel = ({ channels, direction, speed, shuffleKey }: Chan
     }
     
     if (channels.length > 0) {
-      // Create a larger set of channels to ensure continuous scrolling
-      // Repeat channels multiple times
-      const repeatedChannels = [...channels, ...channels, ...channels, ...channels];
+      // Create a much larger set of channels to ensure continuous scrolling
+      // Repeat channels 8 times instead of 4
+      const repeatedChannels = [
+        ...channels, ...channels, ...channels, ...channels,
+        ...channels, ...channels, ...channels, ...channels
+      ];
+      
+      console.log(`Created ${repeatedChannels.length} repeated channels for continuous scrolling`);
       setShuffledChannels(shuffle(repeatedChannels));
     }
   }, [channels, shuffleKey]);

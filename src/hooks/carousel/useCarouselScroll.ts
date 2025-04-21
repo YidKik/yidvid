@@ -31,7 +31,8 @@ export const useCarouselScroll = ({ emblaApi, direction, speed, itemsLength }: U
     emblaApi.reInit();
     
     // Convert speed to a more manageable value (higher number = faster scrolling)
-    const scrollStep = speed * 0.0005;
+    // Significantly increased from 0.0005 to 0.005 for much faster scrolling
+    const scrollStep = speed * 0.005;
     
     const scroll = () => {
       if (!emblaApi || scrolling.current) {
@@ -64,10 +65,11 @@ export const useCarouselScroll = ({ emblaApi, direction, speed, itemsLength }: U
       animationRef.current = requestAnimationFrame(scroll);
     };
     
-    // Start the scroll animation with a delay to ensure proper initialization
+    // Start the scroll animation with a shorter delay
     const timer = setTimeout(() => {
+      console.log("Starting carousel scroll animation with speed:", speed);
       animationRef.current = requestAnimationFrame(scroll);
-    }, 500);
+    }, 100); // Reduced from 500ms to 100ms
     
     return () => {
       clearTimeout(timer);

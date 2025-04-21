@@ -17,9 +17,14 @@ export const useShuffledVideos = (videos: VideoGridItemType[], shuffleKey?: numb
     }
     
     if (videos.length > 0) {
-      // Create a larger set of videos by repeating them multiple times
-      // This ensures continuous scrolling even with few videos
-      const repeatedVideos = [...videos, ...videos, ...videos, ...videos];
+      // Create an even larger set of videos by repeating them multiple times
+      // This ensures continuous and noticeable scrolling
+      const repeatedVideos = [
+        ...videos, ...videos, ...videos, ...videos,
+        ...videos, ...videos, ...videos, ...videos
+      ];
+      
+      console.log(`Created ${repeatedVideos.length} repeated videos for continuous scrolling`);
       setShuffledVideos(shuffle(repeatedVideos));
     }
   }, [videos, shuffleKey]);
