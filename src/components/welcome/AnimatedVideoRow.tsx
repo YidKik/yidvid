@@ -11,8 +11,8 @@ interface AnimatedVideoRowProps {
 }
 
 // MASSIVELY increased thumbnail size (3x larger than before)
-const THUMB_WIDTH = 13500;   // px, ENORMOUSLY INCREASED to ensure complete screen coverage
-const THUMB_HEIGHT = 8400;   // px, ENORMOUSLY INCREASED for ultra-widescreen effect
+const THUMB_WIDTH = 27000;   // px, DRAMATICALLY INCREASED to ensure complete screen coverage
+const THUMB_HEIGHT = 16800;   // px, DRAMATICALLY INCREASED for ultra-widescreen effect
 
 export const AnimatedVideoRow = ({
   videos,
@@ -49,7 +49,7 @@ export const AnimatedVideoRow = ({
     }
   }, [animationName, direction]);
 
-  // Card style so the card matches the thumbnail exactly
+  // Card style so the card matches the thumbnail exactly - removed any constraining styles
   const cardStyle = {
     width: "100%",
     height: "100%",
@@ -58,41 +58,44 @@ export const AnimatedVideoRow = ({
     alignItems: "center",
     justifyContent: "center",
     margin: "0",
-    padding: 0
+    padding: 0,
+    minWidth: THUMB_WIDTH / 10 + "px", // Ensure minimum size is respected
+    minHeight: THUMB_HEIGHT / 10 + "px" // Ensure minimum size is respected
   };
 
-  // Ultra wide wrapper - ensuring it completely fills the screen
+  // Ultra wide wrapper - ensuring it completely fills the screen with no constraints
   const wrapperStyle = {
     width: "100vw",
-    maxWidth: "100vw",
+    maxWidth: "none", // Remove any maximum width constraints
     minWidth: "100vw",
-    overflow: "hidden"
+    overflow: "visible" // Allow content to overflow to avoid clipping
   };
 
   // Massively increased responsive sizing for completely immersive experience (3x larger)
   // For mobile: still keeps enormous size
-  const getItemWidth = () => "clamp(3600px, 450vw, 13500px)"; 
-  const getItemHeight = () => "clamp(2100px, 450vh, 8400px)";
+  const getItemWidth = () => "clamp(5400px, 900vw, 27000px)"; 
+  const getItemHeight = () => "clamp(3200px, 900vh, 16800px)";
   
   // Row height needs to be ultra-large to contain the huge items
-  const getRowHeight = () => `clamp(2400px, 540vh, 9000px)`;
+  const getRowHeight = () => `clamp(3600px, 1080vh, 18000px)`;
 
   // For left/right animation
   if (direction === "left") {
     return (
       <div
-        className="relative overflow-hidden w-full"
+        className="relative overflow-visible w-full"
         style={{ ...wrapperStyle, height: getRowHeight() }}
       >
         <div
           className="flex gap-4 absolute left-0 top-0"
           style={{
-            width: "250%",
+            width: "400%", // Wider container to ensure more content is visible
             animation: `${animationName} ${duration}s linear infinite`,
             animationDelay: `${-rowIdx * (duration / 4)}s`,
             flexDirection: "row",
             marginLeft: `${rowOffset}px`,
-            alignItems: "center"
+            alignItems: "center",
+            transform: "scale(1.5)" // Extra scaling for additional size
           }}
         >
           {doubledVideos.map((video, idx) => (
@@ -115,17 +118,18 @@ export const AnimatedVideoRow = ({
     const stackedVideos = [...videos, ...videos];
     return (
       <div
-        className="relative overflow-hidden flex flex-row justify-center w-full"
+        className="relative overflow-visible flex flex-row justify-center w-full"
         style={{ ...wrapperStyle, height: `calc(${getRowHeight()} * 2.5)` }}
       >
         <div
           className="flex flex-col gap-6 absolute left-0 top-0 w-full items-center"
           style={{
-            height: "250%",
+            height: "400%", // Taller container for more content visibility
             animation: `${animationName} ${duration}s linear infinite`,
             animationDelay: `${-rowIdx * (duration / 4)}s`,
             flexDirection: "column",
-            marginTop: `${rowOffset}px`
+            marginTop: `${rowOffset}px`,
+            transform: "scale(1.5)" // Extra scaling for additional size
           }}
         >
           {stackedVideos.map((video, idx) => (

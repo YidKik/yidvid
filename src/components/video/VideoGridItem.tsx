@@ -20,6 +20,8 @@ export const VideoGridItem = ({
         aspectRatio: "16 / 9",
         width: "100%",
         height: "100%",
+        minWidth: "100%", // Ensure no constraints on minimum width
+        minHeight: "100%" // Ensure no constraints on minimum height
       }}
     >
       <img
@@ -30,7 +32,10 @@ export const VideoGridItem = ({
         style={{
           aspectRatio: "16 / 9",
           width: "100%",
-          height: "100%"
+          height: "100%",
+          minWidth: "100%", // Ensure image fills container
+          minHeight: "100%", // Ensure image fills container
+          objectFit: "cover" // Ensure proper scaling
         }}
       />
     </div>

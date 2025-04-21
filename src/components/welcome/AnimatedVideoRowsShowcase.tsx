@@ -59,7 +59,7 @@ export const AnimatedVideoRowsShowcase = ({
   const rowOffsets = [0, 200, 0, 300];
 
   return (
-    <div className="flex flex-col gap-0 -my-20 transform scale-[1.25] origin-center">
+    <div className="flex flex-col gap-0 -my-20 transform scale-[1.7] origin-center">
       {rowSlices.map((videosForRow, i) => (
         <AnimatedVideoRow
           key={i}
