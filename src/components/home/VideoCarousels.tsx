@@ -2,39 +2,47 @@
 import React, { useEffect, useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { motion } from "framer-motion";
-import { VideoGridItem } from "@/hooks/video/useVideoGridData";
+import { VideoGridItem as VideoGridItemType } from "@/hooks/video/useVideoGridData";
 import { VideoCarousel } from "./VideoCarousel";
 
 interface VideoCarouselsProps {
-  videos: VideoGridItem[];
+  videos: VideoGridItemType[];
   isLoading: boolean;
 }
 
 export const VideoCarousels = ({ videos, isLoading }: VideoCarouselsProps) => {
   const { isMobile } = useIsMobile();
-  const [shuffledVideos, setShuffledVideos] = useState<VideoGridItem[]>([]);
-  const [newVideos, setNewVideos] = useState<VideoGridItem[]>([]);
-  
-  console.log("VideoCarousels rendering with", videos.length, "videos, isLoading:", isLoading);
-  
-  // Prepare different video sets
+  const [chunks, setChunks] = useState<VideoGridItemType[][]>([[], [], []]);
+
+  // Remove titles, section headers, and only display video thumbnails, shuffle with no overlap
   useEffect(() => {
     if (videos.length > 0) {
-      console.log("Processing videos for carousels");
-      
-      // Sort by newest first for the "All New Videos" row
-      const sortedByDate = [...videos].sort((a, b) => {
+      // Start with videos sorted from newest to oldest
+      const sorted = [...videos].sort((a, b) => {
         const dateA = new Date(a.uploadedAt).getTime();
         const dateB = new Date(b.uploadedAt).getTime();
         return dateB - dateA;
       });
-      
-      // Get newest videos
-      setNewVideos(sortedByDate.slice(0, 12));
-      
-      // Create shuffled videos for variety
-      const shuffled = [...videos].sort(() => Math.random() - 0.5);
-      setShuffledVideos(shuffled);
+
+      // Shuffle for each row ensuring no overlap (split sorted array into 3 chunks, then shuffle each)
+      const chunkSize = Math.ceil(sorted.length / 3);
+      const chunk1 = sorted.slice(0, chunkSize);
+      const chunk2 = sorted.slice(chunkSize, 2 * chunkSize);
+      const chunk3 = sorted.slice(2 * chunkSize);
+
+      // Helper shuffle function
+      function shuffle(arr: VideoGridItemType[]) {
+        return arr
+          .map(value => ({ value, sort: Math.random() }))
+          .sort((a, b) => a.sort - b.sort)
+          .map(({ value }) => value);
+      }
+
+      setChunks([
+        shuffle(chunk1),
+        shuffle(chunk2),
+        shuffle(chunk3)
+      ]);
     }
   }, [videos]);
 
@@ -65,32 +73,27 @@ export const VideoCarousels = ({ videos, isLoading }: VideoCarouselsProps) => {
       animate={{ opacity: 1 }}
       transition={{ duration: 1, delay: 0.4 }}
     >
-      {/* First row - All New Videos (left to right) */}
-      {newVideos.length > 0 && (
-        <VideoCarousel 
-          title="All New Videos" 
-          videos={newVideos} 
-          direction="ltr" 
+      {/* First row - LTR */}
+      {chunks[0].length > 0 && (
+        <VideoCarousel
+          videos={chunks[0]}
+          direction="ltr"
           speed={30}
         />
       )}
-      
-      {/* Second row - Featured Videos (right to left) */}
-      {shuffledVideos.length > 0 && (
-        <VideoCarousel 
-          title="Featured Videos" 
-          videos={shuffledVideos.slice(0, 15)} 
-          direction="rtl" 
+      {/* Second row - RTL */}
+      {chunks[1].length > 0 && (
+        <VideoCarousel
+          videos={chunks[1]}
+          direction="rtl"
           speed={25}
         />
       )}
-      
-      {/* Third row - Popular Videos (left to right) */}
-      {shuffledVideos.length > 0 && (
-        <VideoCarousel 
-          title="Popular Videos" 
-          videos={shuffledVideos.slice(15, 30)} 
-          direction="ltr" 
+      {/* Third row - LTR */}
+      {chunks[2].length > 0 && (
+        <VideoCarousel
+          videos={chunks[2]}
+          direction="ltr"
           speed={35}
         />
       )}
