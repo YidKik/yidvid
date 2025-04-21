@@ -6,7 +6,6 @@ import { ChannelCarousels } from '@/components/home/ChannelCarousels';
 import { useVideos } from '@/hooks/video/useVideos';
 import { useChannelsGrid } from '@/hooks/channel/useChannelsGrid';
 import { useShuffledVideos } from '@/hooks/video/useShuffledVideos';
-import { HeroGeometric } from '@/components/ui/shape-landing-hero';
 import { HeroParallax } from '@/components/ui/hero-parallax';
 import { Link } from 'react-router-dom';
 
@@ -33,20 +32,10 @@ const HomePage = () => {
       initial="initial"
       animate="animate"
     >
-      <div className="relative">
-        {/* Video Background */}
-        {videos && videos.length > 15 && (
-          <div className="absolute inset-0 w-full h-[100vh]">
-            <HeroParallax 
-              videos={videos} 
-              title="" 
-              description=""
-            />
-          </div>
-        )}
-        
-        {/* Content Overlay */}
-        <div className="relative z-20 min-h-[100vh] flex flex-col items-center justify-center px-4 text-center">
+      {/* Hero Section with Content */}
+      <div className="relative min-h-[150vh]">
+        {/* Content Overlay - Moved higher */}
+        <div className="fixed top-20 left-0 right-0 z-20 flex flex-col items-center justify-start px-4 text-center">
           <div className="mb-8">
             <img 
               src="/lovable-uploads/e425cacb-4c3a-4d81-b4e0-77fcbf10f61c.png" 
@@ -75,6 +64,17 @@ const HomePage = () => {
             </button>
           </Link>
         </div>
+
+        {/* Video Background - Moved down */}
+        {videos && videos.length > 15 && (
+          <div className="absolute top-[30vh] inset-x-0 h-[120vh]">
+            <HeroParallax 
+              videos={videos} 
+              title="" 
+              description=""
+            />
+          </div>
+        )}
       </div>
 
       <motion.section className="py-4 relative z-10">
