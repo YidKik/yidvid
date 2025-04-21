@@ -6,7 +6,6 @@ import { ChannelCarousels } from '@/components/home/ChannelCarousels';
 import { useVideos } from '@/hooks/video/useVideos';
 import { useChannelsGrid } from '@/hooks/channel/useChannelsGrid';
 import { AnimatedVideoHero } from '@/components/home/AnimatedVideoHero';
-import { TiltedVideoScroll } from '@/components/home/TiltedVideoScroll';
 
 const HomePage = () => {
   const { data: videos, isLoading: videosLoading } = useVideos();
@@ -32,16 +31,6 @@ const HomePage = () => {
     >
       {/* Animated Hero Section with Videos */}
       {videos && <AnimatedVideoHero videos={videos} />}
-
-      {/* Tilted Video Scroll */}
-      <motion.section className="py-8 relative">
-        <div className="container mx-auto px-4">
-          <h2 className="text-2xl md:text-3xl font-bold text-white/90 mb-8">
-            Discover More
-          </h2>
-        </div>
-        {videos && videos.length > 0 && <TiltedVideoScroll videos={videos} />}
-      </motion.section>
 
       {/* Channel Avatars Scrolling */}
       <motion.section className="py-4 relative">
