@@ -11,7 +11,7 @@ function VideoGridThumb({
 }) {
   return (
     <div
-      className="rounded-lg bg-white aspect-video w-40 md:w-56 lg:w-64" // Less rounded, no border
+      className="rounded-lg bg-white aspect-video w-48 md:w-64 lg:w-72" // Scaled up sizes for larger thumbnails
       style={{
         overflow: "hidden",
         background: "#fff",
@@ -81,3 +81,4 @@ export function AnimatedVideoGridRows({ staticRows = false }: { staticRows?: boo
     </div>
   );
 }
+
