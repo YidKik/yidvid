@@ -1,4 +1,3 @@
-
 "use client";
 
 import { motion } from "framer-motion";
@@ -38,57 +37,56 @@ export function HeroGeometric({
                 <FloatingAvatar
                     imageUrl={channels[0]?.thumbnail_url}
                     delay={0.3}
-                    size="lg"
-                    className="left-[-5%] top-[20%]"
+                    size="xl"
+                    className="left-[-10%] top-[15%]"
                 />
                 <FloatingAvatar
                     imageUrl={channels[1]?.thumbnail_url}
                     delay={0.5}
-                    size="md"
-                    className="right-[5%] top-[70%]"
+                    size="xl"
+                    className="right-[-5%] top-[65%]"
                 />
                 <FloatingAvatar
                     imageUrl={channels[2]?.thumbnail_url}
                     delay={0.4}
-                    size="lg"
-                    className="left-[10%] bottom-[10%]"
+                    size="xl"
+                    className="left-[-8%] bottom-[5%]"
                 />
                 <FloatingAvatar
                     imageUrl={channels[3]?.thumbnail_url}
                     delay={0.6}
-                    size="sm"
-                    className="right-[20%] top-[15%]"
+                    size="xl"
+                    className="right-[-8%] top-[10%]"
                 />
                 <FloatingAvatar
                     imageUrl={channels[4]?.thumbnail_url}
                     delay={0.7}
-                    size="md"
-                    className="left-[25%] top-[10%]"
+                    size="lg"
+                    className="left-[5%] top-[40%]"
                 />
-                {/* Additional floating avatars */}
                 <FloatingAvatar
                     imageUrl={channels[5]?.thumbnail_url}
                     delay={0.8}
                     size="lg"
-                    className="right-[15%] bottom-[20%]"
+                    className="right-[5%] bottom-[35%]"
                 />
                 <FloatingAvatar
                     imageUrl={channels[6]?.thumbnail_url}
                     delay={0.9}
                     size="lg"
-                    className="left-[40%] top-[15%]"
+                    className="left-[8%] top-[75%]"
                 />
                 <FloatingAvatar
                     imageUrl={channels[7]?.thumbnail_url}
                     delay={1}
                     size="lg"
-                    className="right-[35%] bottom-[25%]"
+                    className="right-[8%] bottom-[15%]"
                 />
                 <FloatingAvatar
                     imageUrl={channels[8]?.thumbnail_url}
                     delay={1.1}
-                    size="lg"
-                    className="left-[15%] top-[60%]"
+                    size="md"
+                    className="left-[12%] top-[25%]"
                 />
             </div>
 
