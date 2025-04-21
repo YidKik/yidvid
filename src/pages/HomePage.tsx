@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { motion } from 'framer-motion';
 import { VideoCarousels } from '@/components/home/VideoCarousels';
@@ -7,6 +8,8 @@ import { useVideos } from '@/hooks/video/useVideos';
 import { useChannelsGrid } from '@/hooks/channel/useChannelsGrid';
 import { useShuffledVideos } from '@/hooks/video/useShuffledVideos';
 import { HeroGeometric } from '@/components/ui/shape-landing-hero';
+import { HeroParallax } from '@/components/ui/hero-parallax';
+import { FlipCard, FlipCardFront, FlipCardBack } from '@/components/ui/flip-card';
 
 const HomePage = () => {
   const { data: videos, isLoading: videosLoading } = useVideos();
@@ -61,6 +64,37 @@ const HomePage = () => {
           </motion.section>
         )}
       </div>
+
+      {/* Added two new parallax sections */}
+      {videos && videos.length > 15 && (
+        <motion.section
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5, duration: 0.8 }}
+          className="w-full"
+        >
+          <HeroParallax 
+            videos={videos} 
+            title="Featured Videos" 
+            description="Discover the finest Jewish content from our curated collection."
+          />
+        </motion.section>
+      )}
+
+      {shuffledVideos && shuffledVideos.length > 15 && (
+        <motion.section
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5, duration: 0.8 }}
+          className="w-full"
+        >
+          <HeroParallax 
+            videos={shuffledVideos}
+            title="Trending This Week" 
+            description="See what's popular in the Jewish video community right now."
+          />
+        </motion.section>
+      )}
 
       <motion.section className="py-4 relative">
         <ChannelCarousels isLoading={channelsLoading} />
