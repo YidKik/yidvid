@@ -1,3 +1,4 @@
+
 import { useEffect, useRef } from "react";
 import { useVideoGridData } from "@/hooks/video/useVideoGridData";
 
@@ -147,6 +148,14 @@ export function AnimatedVideoGridRows({ staticRows = false }: { staticRows?: boo
     { angle: 8,  borderColor: "#000" },    // black (up)
   ];
 
+  // For animated version, we need direction and speed too
+  const animatedRowConfigs = [
+    { direction: "down" as const, angle: -7, borderColor: "#ea384c", speed: 14 }, // red
+    { direction: "up" as const,   angle: 5,  borderColor: "#000",    speed: 16 }, // black
+    { direction: "down" as const, angle: -4, borderColor: "#ea384c", speed: 12 }, // red
+    { direction: "up" as const,   angle: 8,  borderColor: "#000",    speed: 15 }, // black
+  ];
+
   // Split videos into up to 4 rows
   const rows = [];
   for (let i = 0; i < 4; i++) {
@@ -189,7 +198,7 @@ export function AnimatedVideoGridRows({ staticRows = false }: { staticRows?: boo
   return (
     <div className="w-full relative flex flex-col gap-4 items-center select-none z-5 pb-1 pointer-events-none">
       {rows.map((row, idx) => {
-        const config = rowConfigs[idx];
+        const config = animatedRowConfigs[idx];
         return (
           <div
             key={idx}
@@ -201,7 +210,7 @@ export function AnimatedVideoGridRows({ staticRows = false }: { staticRows?: boo
           >
             <AnimatedRow
               videos={row}
-              direction={config.direction as "up" | "down"}
+              direction={config.direction}
               angle={config.angle}
               borderColor={config.borderColor}
               speed={config.speed}
