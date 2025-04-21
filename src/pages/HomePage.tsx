@@ -32,25 +32,23 @@ const HomePage = () => {
       initial="initial"
       animate="animate"
     >
-      <div className="relative h-[100vh]">
-        {videos && videos.length > 15 && (
-          <div className="absolute inset-0 w-full h-full">
-            <HeroParallax 
-              videos={videos} 
-              title="" 
-              description=""
-            />
-          </div>
-        )}
-        
-        <div className="relative z-10">
-          <HeroGeometric 
-            badge="YidVid"
-            title1="Your Gateway to"
-            title2="Jewish Content"
-            channels={manuallyFetchedChannels}
+      {videos && videos.length > 15 && (
+        <div className="w-full">
+          <HeroParallax 
+            videos={videos} 
+            title="" 
+            description=""
           />
         </div>
+      )}
+      
+      <div className="relative z-10 mt-[-100vh]">
+        <HeroGeometric 
+          badge="YidVid"
+          title1="Your Gateway to"
+          title2="Jewish Content"
+          channels={manuallyFetchedChannels}
+        />
       </div>
 
       <motion.section className="py-4 relative">
