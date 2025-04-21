@@ -1,21 +1,25 @@
-
 import { useVideoGridData } from "@/hooks/video/useVideoGridData";
 import { useEffect, useRef, useState } from "react";
 
 /**
- * Single video thumbnail for grid
+ * Single video thumbnail for grid (scaled up)
  */
 function VideoGridThumb({
   thumbnail,
+  className = "",
+  style = {},
 }: {
   thumbnail: string;
+  className?: string;
+  style?: React.CSSProperties;
 }) {
   return (
     <div
-      className="rounded-md bg-white aspect-[16/11] w-60 md:w-80 lg:w-[22rem] shadow-none" // Larger, more square, no outline
+      className={`rounded-md bg-white aspect-[16/11] w-72 md:w-96 lg:w-[25rem] shadow-none scale-[1.09] ${className}`}
       style={{
         overflow: "hidden",
         background: "#fff",
+        ...style,
       }}
     >
       <img
@@ -29,136 +33,156 @@ function VideoGridThumb({
   );
 }
 
-const ANIMATED_ROW_SIZE = 4;
+const GRID_ROWS = 4;
 const GRID_COLS = 5;
+const CAROUSEL_ANIMATION_INTERVAL = 2500;
+const SLIDE_ANIMATION_DURATION = 430;
 
 /**
- * Sliding row implementation for top row: cycles through grid videos 4 at a time, sliding down
+ * CarouselColumn: Vertically sliding 4 video thumbs, cycling through a video array.
  */
-function SlidingVideoRow({ videos, intervalMs = 2700 }: { videos: Array<{ id: string; thumbnail: string }>; intervalMs?: number }) {
+function CarouselColumn({
+  videoList,
+  rowCount = GRID_ROWS,
+  animationInterval = CAROUSEL_ANIMATION_INTERVAL,
+}: {
+  videoList: Array<{id: string; thumbnail: string}>,
+  rowCount?: number;
+  animationInterval?: number;
+}) {
   const [pointer, setPointer] = useState(0);
-  const [isSliding, setIsSliding] = useState(false);
+  const [sliding, setSliding] = useState(false);
   const timeoutRef = useRef<any>(null);
 
-  // Compute group sets (loop through the videos array).
-  const total = videos.length;
-  const makeWindow = (start: number) => {
-    if (total <= ANIMATED_ROW_SIZE) return videos;
-    return Array(ANIMATED_ROW_SIZE)
-      .fill(0)
-      .map((_, i) => videos[(start + i) % total]);
-  };
+  // Compute which videos should be present in the carousel stack right now
+  const windowIndex = pointer;
+  const total = videoList.length;
+  const window = Array(rowCount)
+    .fill(0)
+    .map((_, i) => videoList[(windowIndex + i) % total]);
 
-  // Track prevWindow for animation
-  const [prevWindow, setPrevWindow] = useState(makeWindow(0));
-  const [currentWindow, setCurrentWindow] = useState(makeWindow(0));
-  const [animDir, setAnimDir] = useState<"down" | "none">("none");
+  // Previous window for animation
+  const [prevWindow, setPrevWindow] = useState(window);
+  const [currentWindow, setCurrentWindow] = useState(window);
+  const [animating, setAnimating] = useState(false);
 
+  // Animation loop
   useEffect(() => {
-    // Set interval for loop
     timeoutRef.current = setTimeout(() => {
-      setAnimDir("down");
+      setAnimating(true);
       setTimeout(() => {
-        setPointer((p) => (p + ANIMATED_ROW_SIZE) % total);
-        setAnimDir("none");
-      }, 430); // animation duration
-    }, intervalMs);
+        setPointer((p) => (p + 1) % total);
+        setAnimating(false);
+      }, SLIDE_ANIMATION_DURATION);
+    }, animationInterval);
 
     return () => clearTimeout(timeoutRef.current);
-  }, [pointer, total, intervalMs]);
+  }, [pointer, total, animationInterval]);
 
-  // When pointer updates, set new windows
+  // Sync prev/current window for animation
   useEffect(() => {
-    setPrevWindow(currentWindow);
-    setCurrentWindow(makeWindow(pointer));
-  }, [pointer]);
+    if (!animating) {
+      setPrevWindow(currentWindow);
+      setCurrentWindow(
+        Array(rowCount)
+          .fill(0)
+          .map((_, i) => videoList[(pointer + i) % total])
+      );
+    }
+  }, [pointer, animating, rowCount, videoList]);
 
   return (
-    <div
-      className="relative h-[7.7rem] md:h-[10.5rem] lg:h-[12.2rem] overflow-visible flex justify-center"
-      style={{ minWidth: "min(90vw,1060px)" }}
-    >
-      {/* The animated old row (slides out down) */}
+    <div className="relative flex flex-col h-full min-h-[41rem] justify-center w-fit">
+      {/* Animate previous window: slides *down* */}
       <div
         className={`
-          absolute left-1/2 -translate-x-1/2 flex gap-8 top-0 w-full transition-transform duration-400 pointer-events-none
-          ${animDir === "down" ? "animate-slide-down-row" : "opacity-0"}
+          absolute left-0 w-full flex flex-col gap-8 top-0 transition-transform duration-400 pointer-events-none
+          ${animating ? "animate-slide-down-carousel" : "opacity-0"}
         `}
         style={{
-          zIndex: animDir === "down" ? 2 : 0,
+          zIndex: animating ? 10 : 1,
         }}
       >
         {prevWindow.map((v, i) => (
-          <div key={"prev-" + v.id + i} className="transition-transform duration-400">
-            <VideoGridThumb thumbnail={v.thumbnail} />
-          </div>
+          <VideoGridThumb
+            key={"prev-c-" + v.id + i}
+            thumbnail={v.thumbnail}
+            className="duration-300"
+          />
         ))}
       </div>
-      {/* The new row (slides in from above) */}
+      {/* New window, slides in from above */}
       <div
-        className={`
-          relative flex gap-8 transition-transform duration-400 w-full
-          ${animDir === "down" ? "animate-slide-in-row" : ""}
-        `}
-        style={{
-          zIndex: 5,
-        }}
+        className={`relative flex flex-col gap-8 w-full transition-transform duration-400 ${animating ? "animate-slide-in-carousel" : ""}`}
+        style={{zIndex: 20}}
       >
         {currentWindow.map((v, i) => (
-          <div key={"curr-" + v.id + i} className="transition-transform duration-400">
-            <VideoGridThumb thumbnail={v.thumbnail} />
-          </div>
+          <VideoGridThumb
+            key={"curr-c-" + v.id + i}
+            thumbnail={v.thumbnail}
+            className="duration-300"
+          />
         ))}
       </div>
-      {/* Add animations via custom CSS below */}
+      {/* Carousel-specific animations */}
       <style>{`
-      @keyframes slideDownRow {
-        0% { opacity: 1; transform: translateY(0);}
-        85% { opacity: 0.11; }
-        100% { opacity:0; transform: translateY(130%);}
-      }
-      .animate-slide-down-row {
-        animation: slideDownRow 0.43s cubic-bezier(.44,0,.72,1) forwards;
-      }
-      @keyframes slideInRow {
-        0% { opacity: 0; transform: translateY(-110%) scale(0.96);}
-        60% { opacity: 0.07;}
-        98% {opacity:0.91;}
-        100% { opacity: 1; transform: translateY(0) scale(1);}
-      }
-      .animate-slide-in-row {
-        animation: slideInRow 0.43s cubic-bezier(.44,0,.72,1) forwards;
-      }
+        @keyframes slideDownCarousel {
+          0% { opacity: 1; transform: translateY(0);}
+          90% { opacity: 0.15; }
+          100% { opacity:0; transform: translateY(125%);}
+        }
+        .animate-slide-down-carousel {
+          animation: slideDownCarousel ${SLIDE_ANIMATION_DURATION/1000}s cubic-bezier(.44,0,.72,1) forwards;
+        }
+        @keyframes slideInCarousel {
+          0% { opacity: 0; transform: translateY(-115%) scale(0.97);}
+          50% { opacity: 0.08;}
+          98% {opacity:0.95;}
+          100% { opacity: 1; transform: translateY(0) scale(1);}
+        }
+        .animate-slide-in-carousel {
+          animation: slideInCarousel ${SLIDE_ANIMATION_DURATION/1000}s cubic-bezier(.44,0,.72,1) forwards;
+        }
       `}</style>
     </div>
   );
 }
 
 /**
- * Video grid with animated 1st row; all videos larger, less rounded, more square, not rotated.
+ * Video grid with animated 1st column (vertical carousel)
  */
 export function AnimatedVideoGridRows({ staticRows = false }: { staticRows?: boolean }) {
-  // Grab 20+ videos (fallback to placeholder if missing)
-  const { videos, loading } = useVideoGridData(20);
-  const fallbackThumbs = Array(GRID_COLS)
+  // Grab enough videos, default fallback if missing
+  const { videos, loading } = useVideoGridData(GRID_ROWS * GRID_COLS);
+  const fallbackThumbs = Array(GRID_COLS * GRID_ROWS)
     .fill("/placeholder.svg")
     .map((t, i) => ({ id: "fake-" + i, thumbnail: t }));
 
-  // If not enough videos, fill up
+  // If not enough: always fill up with placeholders
   const fullVideos = [
     ...videos,
-    ...(videos.length < 20 ? Array(20 - videos.length).fill(0).map((_, i) => ({
-      id: "extra" + i,
-      thumbnail: "/placeholder.svg"
-    })) : [])
+    ...(videos.length < GRID_ROWS * GRID_COLS
+      ? Array(GRID_ROWS * GRID_COLS - videos.length)
+          .fill(0)
+          .map((_, i) => ({
+            id: "extra" + i,
+            thumbnail: "/placeholder.svg",
+          }))
+      : []),
   ];
 
-  // For 4 rows, first is animated sliding carousel, rest are static and aligned.
+  // Derive grid: each "row" is GRID_COLS, but first col in each row becomes the top to bottom carousel
   const rowDatas: Array<Array<{ id: string; thumbnail: string }>> = [];
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < GRID_ROWS; i++) {
     const start = i * GRID_COLS;
     rowDatas.push(fullVideos.slice(start, start + GRID_COLS));
   }
+
+  // For 1st column carousel: select 1st video from each row and build a cycling list (to make it seamless, cycle through the same video ids in order).
+  const carouselColVideos = rowDatas.map((row) => row[0]);
+
+  // The rest (static, non-carousel columns): columns 2-5, per row
+  const staticCols = rowDatas.map((row) => row.slice(1, GRID_COLS)); // [row][col]
 
   return (
     <div
@@ -167,28 +191,25 @@ export function AnimatedVideoGridRows({ staticRows = false }: { staticRows?: boo
         zIndex: 1,
       }}
     >
-      <div
-        className="flex flex-col gap-8"
-        style={{
-          transform: "rotate(2.5deg)", // Just a touch, barely visible
-        }}
-      >
-        {/* Animated top row */}
-        <SlidingVideoRow videos={rowDatas[0]} />
-        {/* Rest rows static */}
-        {rowDatas.slice(1).map((row, rowIdx) => (
-          <div
-            key={rowIdx + 1}
-            className="flex flex-row gap-8 justify-center"
-          >
-            {row.map((v, colIdx) => (
-              <VideoGridThumb
-                key={v.id + "-" + colIdx}
-                thumbnail={v.thumbnail}
-              />
-            ))}
-          </div>
-        ))}
+      <div className="flex flex-row gap-8">
+        {/* Animated vertical carousel as the first column */}
+        <CarouselColumn videoList={carouselColVideos} rowCount={GRID_ROWS} />
+        {/* Rest of the grid - 4 rows, each 4 (not carousel) */}
+        <div className="flex flex-col gap-8">
+          {staticCols.map((row, rowIdx) => (
+            <div
+              key={rowIdx + 1}
+              className="flex flex-row gap-8 justify-center"
+            >
+              {row.map((v, colIdx) => (
+                <VideoGridThumb
+                  key={v.id + "-" + colIdx}
+                  thumbnail={v.thumbnail}
+                />
+              ))}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
