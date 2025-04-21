@@ -1,8 +1,6 @@
-
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Header } from "@/components/Header";
 import { VideoCarousels } from "@/components/home/VideoCarousels";
 import { useVideos } from "@/hooks/video/useVideos";
 import { Helmet } from "react-helmet";
@@ -10,7 +8,7 @@ import { getPageTitle, DEFAULT_META_DESCRIPTION, DEFAULT_META_KEYWORDS, DEFAULT_
 
 const WelcomeSection = () => {
   return (
-    <div className="py-10 px-4 md:px-6 lg:px-8 bg-gradient-to-b from-gray-50 to-white">
+    <div className="py-6 px-4 md:px-6 lg:px-8 bg-gradient-to-b from-gray-50 to-white">
       <div className="max-w-4xl mx-auto text-center">
         <motion.h1 
           className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4"
@@ -21,13 +19,12 @@ const WelcomeSection = () => {
           Welcome to Your Video Experience
         </motion.h1>
         <motion.p 
-          className="text-lg md:text-xl text-gray-600 mb-8"
+          className="text-lg md:text-xl text-gray-600 mb-4"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
           Discover and enjoy a curated collection of videos from across the web.
-          Our platform brings you the best content all in one place.
         </motion.p>
       </div>
     </div>
@@ -64,16 +61,14 @@ const HomePage = () => {
       </Helmet>
       
       <div className="min-h-screen w-full bg-gradient-to-b from-white to-gray-50">
-        <Header />
-        
-        <main className="container mx-auto px-4 py-8">
+        <main className="container mx-auto px-4 py-4">
           <WelcomeSection />
           
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="mt-8"
+            className="mt-4"
           >
             <VideoCarousels 
               videos={videos || []} 
