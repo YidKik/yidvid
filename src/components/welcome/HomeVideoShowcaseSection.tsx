@@ -23,9 +23,9 @@ export const HomeVideoShowcaseSection = ({
     );
   }
 
-  // Simplified container to allow videos to be as large as possible
+  // Maximized container with no constraining styles
   return (
-    <div className="w-full mx-auto py-0">
+    <div className="w-full h-full overflow-hidden">
       {children}
     </div>
   );

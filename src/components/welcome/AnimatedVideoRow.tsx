@@ -10,10 +10,9 @@ interface AnimatedVideoRowProps {
   rowOffset?: number;
 }
 
-// MASSIVE thumbnail size for full-screen immersive background effect
-// These sizes are dramatically increased to fill most of the viewport
-const THUMB_WIDTH = 2400;   // px, MASSIVE to fill screen
-const THUMB_HEIGHT = 1350;  // px, 16:9 ratio, scaled up proportionally
+// ULTRA MASSIVE thumbnail size for truly immersive full-screen background effect
+const THUMB_WIDTH = 4500;   // px, ENORMOUS to completely fill screen
+const THUMB_HEIGHT = 2800;  // px, massive height for ultra-widescreen effect
 
 export const AnimatedVideoRow = ({
   videos,
@@ -54,7 +53,7 @@ export const AnimatedVideoRow = ({
   const cardStyle = {
     width: "100%",
     height: "100%",
-    borderRadius: "20px",
+    borderRadius: "10px",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -70,13 +69,13 @@ export const AnimatedVideoRow = ({
     overflow: "hidden"
   };
 
-  // Dramatically increased responsive sizing for truly full-screen experience
-  // For mobile: still keeps impressive size
-  const getItemWidth = () => "clamp(800px, 90vw, 2400px)"; 
-  const getItemHeight = () => "clamp(450px, 90vh, 1350px)";
+  // ULTRA-MASSIVE responsive sizing for completely immersive experience
+  // For mobile: still keeps enormous size
+  const getItemWidth = () => "clamp(1200px, 150vw, 4500px)"; 
+  const getItemHeight = () => "clamp(700px, 150vh, 2800px)";
   
-  // Row height needs to be extra large to contain the huge items
-  const getRowHeight = () => `clamp(500px, 95vh, 1400px)`;
+  // Row height needs to be ultra-large to contain the huge items
+  const getRowHeight = () => `clamp(800px, 180vh, 3000px)`;
 
   // For left/right animation
   if (direction === "left") {
@@ -86,9 +85,9 @@ export const AnimatedVideoRow = ({
         style={{ ...wrapperStyle, height: getRowHeight() }}
       >
         <div
-          className="flex gap-8 absolute left-0 top-0"
+          className="flex gap-4 absolute left-0 top-0"
           style={{
-            width: "200%",
+            width: "250%",
             animation: `${animationName} ${duration}s linear infinite`,
             animationDelay: `${-rowIdx * (duration / 4)}s`,
             flexDirection: "row",
@@ -117,12 +116,12 @@ export const AnimatedVideoRow = ({
     return (
       <div
         className="relative overflow-hidden flex flex-row justify-center w-full"
-        style={{ ...wrapperStyle, height: `calc(${getRowHeight()} * 2.2)` }}
+        style={{ ...wrapperStyle, height: `calc(${getRowHeight()} * 2.5)` }}
       >
         <div
-          className="flex flex-col gap-12 absolute left-0 top-0 w-full items-center"
+          className="flex flex-col gap-6 absolute left-0 top-0 w-full items-center"
           style={{
-            height: "200%",
+            height: "250%",
             animation: `${animationName} ${duration}s linear infinite`,
             animationDelay: `${-rowIdx * (duration / 4)}s`,
             flexDirection: "column",

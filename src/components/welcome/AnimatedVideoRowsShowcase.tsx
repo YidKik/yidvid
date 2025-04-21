@@ -12,9 +12,9 @@ export const AnimatedVideoRowsShowcase = ({
   videos,
   loading,
 }: AnimatedVideoRowsShowcaseProps) => {
-  // Reduce number of rows to make each video row more prominent
-  const numRows = 2;
-  const minVideos = numRows * 4;
+  // Use more rows to completely fill the background
+  const numRows = 4;
+  const minVideos = numRows * 3;
 
   const allVideos =
     videos.length < minVideos
@@ -38,24 +38,28 @@ export const AnimatedVideoRowsShowcase = ({
     rowSlices.push(slice);
   }
 
-  // Slower animation for more massive, dramatic effect
-  const animationDuration = 60;
+  // MUCH slower animation for dramatic, immersive effect
+  const animationDuration = 80;
   const durations = [
     animationDuration,
+    animationDuration - 15,
+    animationDuration - 25,
     animationDuration - 10,
   ];
 
-  // Simply alternate directions for maximum visual impact
+  // More varied directions for a truly immersive background effect
   const directions: ("left" | "vertical-down")[] = [
     "left",
     "left",
+    "vertical-down",
+    "left",
   ];
 
-  // Minimal row offsets since videos are so large now
-  const rowOffsets = [0, 120];
+  // Increased offsets for better visual staggering
+  const rowOffsets = [0, 200, 0, 300];
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-0 -my-20">
       {rowSlices.map((videosForRow, i) => (
         <AnimatedVideoRow
           key={i}
