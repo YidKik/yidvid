@@ -1,12 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { VideoCarousels } from '@/components/home/VideoCarousels';
 import { ChannelCarousels } from '@/components/home/ChannelCarousels';
 import { Button } from '@/components/ui/button';
 import { useVideoGridData } from "@/hooks/video/useVideoGridData";
-import { cn } from "@/lib/utils";
 
 export default function NewPage() {
   const navigate = useNavigate();
@@ -56,6 +54,30 @@ export default function NewPage() {
                 Discover a world of curated Jewish videos and channels. From educational content to entertainment,
                 find everything you need in one place.
               </p>
+              
+              <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+                <Button
+                  onClick={() => setShowChannels(false)}
+                  variant={showChannels ? "outline" : "default"}
+                  className="w-full sm:w-auto"
+                >
+                  Show Videos
+                </Button>
+                <Button
+                  onClick={() => setShowChannels(true)}
+                  variant={showChannels ? "default" : "outline"}
+                  className="w-full sm:w-auto"
+                >
+                  Show Channels
+                </Button>
+                <Button
+                  onClick={() => navigate('/writing-videos')}
+                  variant="secondary"
+                  className="w-full sm:w-auto"
+                >
+                  Writing Videos
+                </Button>
+              </div>
             </div>
           </div>
         </div>

@@ -7,11 +7,13 @@ import Search from './pages/Search';
 import ChannelDetails from './pages/ChannelDetails';
 import WritingVideos from './pages/WritingVideos';
 import ResetPassword from './pages/ResetPassword';
+import Index from './pages/Index';
 
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<NewPage />} />
+      <Route path="/" element={<Index />} />
+      <Route path="/new-page" element={<NewPage />} />
       <Route path="/video/:videoId" element={<VideoDetails />} />
       <Route path="/search" element={<Search />} />
       <Route path="/channel/:channelId" element={<ChannelDetails />} />
