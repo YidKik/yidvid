@@ -34,7 +34,7 @@ export default function HomeWelcome() {
   }, []);
 
   return (
-    <div className="relative min-h-screen w-full flex flex-col overflow-hidden">
+    <div className="relative min-h-screen w-full flex flex-col overflow-y-auto">
       {/* Background gradient with ultra-smooth cross-fade */}
       <AnimatePresence mode="wait">
         <motion.div
@@ -78,7 +78,7 @@ export default function HomeWelcome() {
       ))}
 
       {/* Center hero section */}
-      <div className="relative z-20 flex flex-col items-center pt-24">
+      <div className="relative z-20 flex flex-col items-center pt-24 mb-96">
         <motion.img
           src="/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png"
           alt="YidVid Logo"
@@ -130,9 +130,11 @@ export default function HomeWelcome() {
         </motion.div>
       </div>
 
-      {/* Video carousel grid rows background */}
-      <VideoCarouselRows />
+      {/* Added extra space for scrolling past the video carousel */}
+      <div className="h-[200vh] relative">
+        {/* Video carousel grid rows background */}
+        <VideoCarouselRows />
+      </div>
     </div>
   );
 }
-

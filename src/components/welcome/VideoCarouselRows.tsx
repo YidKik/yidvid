@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+
+import React, { useEffect, useState, useRef } from "react";
 import { useVideoGridData } from "@/hooks/video/useVideoGridData";
 import { useNavigate } from "react-router-dom";
 
@@ -67,7 +68,7 @@ export function VideoCarouselRows() {
 
   return (
     <div
-      className="fixed left-0 right-0 z-10 pointer-events-auto select-none flex justify-center items-center"
+      className="absolute left-0 right-0 z-10 pointer-events-auto select-none flex justify-center items-center"
       style={{
         top: "50%",
         left: "50%",
