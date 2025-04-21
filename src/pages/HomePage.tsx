@@ -33,7 +33,7 @@ const HomePage = () => {
       initial="initial"
       animate="animate"
     >
-      <div className="relative">
+      <div className="relative h-screen">
         {videos && videos.length > 15 && (
           <motion.section
             initial={{ opacity: 0 }}
@@ -57,21 +57,6 @@ const HomePage = () => {
             channels={manuallyFetchedChannels}
           />
         </div>
-
-        {shuffledVideos && shuffledVideos.length > 15 && (
-          <motion.section
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5, duration: 0.8 }}
-            className="w-full relative z-0"
-          >
-            <HeroParallax 
-              videos={shuffledVideos}
-              title="Trending This Week" 
-              description="See what's popular in the Jewish video community right now."
-            />
-          </motion.section>
-        )}
       </div>
 
       <div className="space-y-2 mt-4">
