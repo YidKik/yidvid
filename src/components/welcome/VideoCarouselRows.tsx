@@ -61,9 +61,10 @@ export function VideoCarouselRows() {
 
   return (
     <div
-      className="absolute left-1/2 bottom-0 w-[99vw] max-w-[1680px] -translate-x-1/2 pointer-events-auto select-none z-10"
+      className="relative w-full max-w-6xl mx-auto z-10 py-4 md:py-12 flex flex-col items-center"
       style={{
-        transform: `translateY(7vw) rotate(${rotation}deg) scale(${scale})`,
+        // Center and animate rotation/scale on scroll
+        transform: `rotate(${rotation}deg) scale(${scale})`,
         transition: "transform 0.35s cubic-bezier(.53,.42,.19,1.04)"
       }}
     >
@@ -138,4 +139,3 @@ export function VideoCarouselRows() {
     </div>
   );
 }
-
