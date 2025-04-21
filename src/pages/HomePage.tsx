@@ -25,8 +25,8 @@ const HomePage = () => {
         scrollTrigger: {
           trigger: heroContent,
           start: 'top top',
-          end: '+=100', // Reduced scroll distance for faster animation
-          scrub: 0.5, // Faster scrub for more immediate response
+          end: '+=100',
+          scrub: 0.5,
         },
         y: -100,
         opacity: 0,
@@ -34,36 +34,33 @@ const HomePage = () => {
       });
     }
 
-    // Add scroll trigger for channels section to appear after videos
+    // Link channels section animation to the last video row
     if (channelsSectionRef.current) {
       gsap.fromTo(
         channelsSectionRef.current,
         { 
-          y: 100, 
-          opacity: 0
+          y: 200,
+          opacity: 0 
         },
         {
           scrollTrigger: {
-            trigger: channelsSectionRef.current,
-            start: 'top bottom',
-            end: 'top center',
+            trigger: '.hero-parallax-section',
+            start: 'center center',
+            end: 'bottom center',
             scrub: 1,
           },
           y: 0,
           opacity: 1,
           ease: 'power2.out',
-          duration: 1
         }
       );
     }
   }, []);
 
-  // Transform channel data for GridMotion with smaller circles
   const channelItems = manuallyFetchedChannels?.map(channel => 
     channel.thumbnail_url || 'https://images.unsplash.com/photo-1723403804231-f4e9b515fe9d'
   ) || [];
 
-  // Add more items to create additional rows
   const extendedChannelItems = [...channelItems, ...channelItems, ...channelItems, ...channelItems].slice(0, 126);
 
   return (
@@ -108,7 +105,7 @@ const HomePage = () => {
 
         {/* Video Background */}
         {videos && videos.length > 15 && (
-          <div className="absolute top-[20vh] inset-x-0 h-[100vh]">
+          <div className="absolute top-[20vh] inset-x-0 h-[100vh] hero-parallax-section">
             <HeroParallax 
               videos={videos} 
               title="" 
@@ -118,12 +115,12 @@ const HomePage = () => {
         )}
       </div>
 
-      {/* Channels Section with GridMotion - Smaller circles */}
+      {/* Channels Grid Section - Now follows the video parallax */}
       <motion.section 
-        ref={channelsSectionRef} 
-        className="relative z-10 mt-[20vh]"
+        ref={channelsSectionRef}
+        className="relative z-10"
       >
-        <div className="min-h-screen py-20">
+        <div className="pb-20">
           <GridMotion 
             items={extendedChannelItems}
             gradientColor="#ea384c"
