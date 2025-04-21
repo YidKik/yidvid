@@ -9,7 +9,7 @@ import { useChannelsGrid } from '@/hooks/channel/useChannelsGrid';
 import { useShuffledVideos } from '@/hooks/video/useShuffledVideos';
 import { HeroGeometric } from '@/components/ui/shape-landing-hero';
 import { HeroParallax } from '@/components/ui/hero-parallax';
-import { FlipCard, FlipCardFront, FlipCardBack } from '@/components/ui/flip-card';
+import { WelcomeSection } from '@/components/home/WelcomeSection';
 
 const HomePage = () => {
   const { data: videos, isLoading: videosLoading } = useVideos();
@@ -41,31 +41,8 @@ const HomePage = () => {
         channels={manuallyFetchedChannels}
       />
 
-      <div className="space-y-2 mt-4">
-        {videos && (
-          <motion.section 
-            className="relative"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-          >
-            <TiltedVideoScroll videos={videos} />
-          </motion.section>
-        )}
+      <WelcomeSection />
 
-        {shuffledVideos && (
-          <motion.section 
-            className="relative"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-          >
-            <TiltedVideoScroll videos={shuffledVideos} reverse={true} />
-          </motion.section>
-        )}
-      </div>
-
-      {/* Added two new parallax sections */}
       {videos && videos.length > 15 && (
         <motion.section
           initial={{ opacity: 0 }}
@@ -95,6 +72,30 @@ const HomePage = () => {
           />
         </motion.section>
       )}
+
+      <div className="space-y-2 mt-4">
+        {videos && (
+          <motion.section 
+            className="relative"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            <TiltedVideoScroll videos={videos} />
+          </motion.section>
+        )}
+
+        {shuffledVideos && (
+          <motion.section 
+            className="relative"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+          >
+            <TiltedVideoScroll videos={shuffledVideos} reverse={true} />
+          </motion.section>
+        )}
+      </div>
 
       <motion.section className="py-4 relative">
         <ChannelCarousels isLoading={channelsLoading} />
