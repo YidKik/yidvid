@@ -1,3 +1,4 @@
+
 import { Routes, Route, useLocation } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -6,12 +7,16 @@ import { queryClient } from "@/lib/query-client";
 import { ColorProvider } from "@/contexts/ColorContext";
 import { PlaybackProvider } from "@/contexts/PlaybackContext";
 import { SessionProvider } from "@/contexts/SessionContext";
-import { useEffect, useState } from "react";
+import { useEffect, useState, lazy, Suspense } from "react";
 import { getPageTitle } from "@/utils/pageTitle";
 import { Helmet } from "react-helmet";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { recordNavigation, setupScrollRestoration } from "@/utils/scrollRestoration";
+
+// Lazy loaded pages
+const HomeWelcome = lazy(() => import("@/pages/HomeWelcome"));
+const Videos = lazy(() => import("@/pages/Videos"));
 
 // Main pages
 import Index from "@/pages/Index";
@@ -93,38 +98,40 @@ function AppRoutes() {
         <title>{getPageTitle(location.pathname)}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
       </Helmet>
-      <Routes>
-        {/* New home Welcome Page */}
-        <Route path="/" element={<import('@/pages/HomeWelcome').then(m => m.default) />} />
-        {/* Videos (old homepage) */}
-        <Route path="/videos" element={<import('@/pages/Videos').then(m => m.default) />} />
-        {/* Public routes */}
-        <Route path="/auth" element={<Auth isOpen={showAuthDialog} onOpenChange={setShowAuthDialog} />} />
-        <Route path="/category/:id" element={<CategoryVideos />} />
-        <Route path="/video/:id" element={<VideoDetails />} />
-        <Route path="/channel/:id" element={<ChannelDetails />} />
-        <Route path="/search" element={<Search />} />
-        <Route path="/music/:id" element={<MusicDetails />} />
-        
-        {/* User routes */}
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/settings" element={<Settings />} />
-        
-        {/* Admin routes */}
-        <Route path="/admin">
-          <Route path="analytics" element={<AnalyticsPage />} />
-          <Route path="videos" element={<VideosPage />} />
-          <Route path="channels" element={<ChannelsPage />} />
-          <Route path="users" element={<UsersPage />} />
-          <Route path="comments" element={<CommentsPage />} />
-          <Route path="categories" element={<CategoriesPage />} />
-          <Route path="requests" element={<RequestsPage />} />
-          <Route path="contact-requests" element={<ContactRequestsPage />} />
-          <Route path="reported-videos" element={<ReportedVideosPage />} />
-          <Route path="notifications" element={<NotificationsPage />} />
-          <Route path="layout" element={<LayoutCustomizationPage />} />
-        </Route>
-      </Routes>
+      <Suspense fallback={<div className="flex items-center justify-center h-screen">Loading...</div>}>
+        <Routes>
+          {/* New home Welcome Page */}
+          <Route path="/" element={<HomeWelcome />} />
+          {/* Videos (old homepage) */}
+          <Route path="/videos" element={<Videos />} />
+          {/* Public routes */}
+          <Route path="/auth" element={<Auth isOpen={showAuthDialog} onOpenChange={setShowAuthDialog} />} />
+          <Route path="/category/:id" element={<CategoryVideos />} />
+          <Route path="/video/:id" element={<VideoDetails />} />
+          <Route path="/channel/:id" element={<ChannelDetails />} />
+          <Route path="/search" element={<Search />} />
+          <Route path="/music/:id" element={<MusicDetails />} />
+          
+          {/* User routes */}
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/settings" element={<Settings />} />
+          
+          {/* Admin routes */}
+          <Route path="/admin">
+            <Route path="analytics" element={<AnalyticsPage />} />
+            <Route path="videos" element={<VideosPage />} />
+            <Route path="channels" element={<ChannelsPage />} />
+            <Route path="users" element={<UsersPage />} />
+            <Route path="comments" element={<CommentsPage />} />
+            <Route path="categories" element={<CategoriesPage />} />
+            <Route path="requests" element={<RequestsPage />} />
+            <Route path="contact-requests" element={<ContactRequestsPage />} />
+            <Route path="reported-videos" element={<ReportedVideosPage />} />
+            <Route path="notifications" element={<NotificationsPage />} />
+            <Route path="layout" element={<LayoutCustomizationPage />} />
+          </Route>
+        </Routes>
+      </Suspense>
     </>
   );
 }
