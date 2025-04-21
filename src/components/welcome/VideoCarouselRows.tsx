@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { useVideoGridData } from "@/hooks/video/useVideoGridData";
 import { useNavigate } from "react-router-dom";
@@ -54,11 +55,13 @@ export function VideoCarouselRows() {
     rowBases = Array(ROW_COUNT).fill(0).map((_, idx) =>
       Array(VIDEOS_PER_ROW).fill(0).map((_, j) => placeholder(idx * VIDEOS_PER_ROW + j))
     );
+    // Always double the placeholder row: ensures full loop for both directions
     rowSlides = rowBases.map(row => [...row, ...row]);
   } else {
     for (let r = 0; r < ROW_COUNT; r++) {
       const [startSegment, rowLoop] = getRowVideosWithOffset(videos, r, VIDEOS_PER_ROW, ROW_COUNT);
       rowBases.push(startSegment);
+      // Always double the video loop for every row, so both "left" and "right" directions are always filled
       rowSlides.push([...rowLoop, ...rowLoop]);
     }
   }
