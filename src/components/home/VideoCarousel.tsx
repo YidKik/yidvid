@@ -12,9 +12,16 @@ interface VideoCarouselProps {
   direction: "ltr" | "rtl";
   speed: number;
   shuffleKey?: number;
+  onVideoClick?: (videoId: string) => void;
 }
 
-export const VideoCarousel = ({ videos, direction, speed, shuffleKey }: VideoCarouselProps) => {
+export const VideoCarousel = ({ 
+  videos, 
+  direction, 
+  speed, 
+  shuffleKey,
+  onVideoClick 
+}: VideoCarouselProps) => {
   const navigate = useNavigate();
   const shuffledVideos = useShuffledVideos(videos, shuffleKey);
   
@@ -34,7 +41,9 @@ export const VideoCarousel = ({ videos, direction, speed, shuffleKey }: VideoCar
   });
 
   const handleVideoClick = (videoId: string) => {
-    navigate(`/video/${videoId}`);
+    if (onVideoClick) {
+      onVideoClick(videoId);
+    }
   };
 
   if (!shuffledVideos || shuffledVideos.length === 0) {

@@ -6,6 +6,7 @@ import { VideoCarousel } from "./VideoCarousel";
 interface VideoCarouselsProps {
   videos: VideoGridItemType[];
   isLoading: boolean;
+  onVideoClick?: (videoId: string) => void;
 }
 
 function getSortedVideos(videos: VideoGridItemType[]): VideoGridItemType[] {
@@ -16,7 +17,7 @@ function getSortedVideos(videos: VideoGridItemType[]): VideoGridItemType[] {
   });
 }
 
-export const VideoCarousels = ({ videos, isLoading }: VideoCarouselsProps) => {
+export const VideoCarousels = ({ videos, isLoading, onVideoClick }: VideoCarouselsProps) => {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -52,6 +53,7 @@ export const VideoCarousels = ({ videos, isLoading }: VideoCarouselsProps) => {
           direction="ltr" 
           speed={40} 
           shuffleKey={rowShuffleKeys[0]} 
+          onVideoClick={onVideoClick}
         />
       </div>
       
@@ -61,6 +63,7 @@ export const VideoCarousels = ({ videos, isLoading }: VideoCarouselsProps) => {
           direction="rtl" 
           speed={30} 
           shuffleKey={rowShuffleKeys[1]} 
+          onVideoClick={onVideoClick}
         />
       </div>
       
@@ -70,6 +73,7 @@ export const VideoCarousels = ({ videos, isLoading }: VideoCarouselsProps) => {
           direction="ltr" 
           speed={35} 
           shuffleKey={rowShuffleKeys[2]} 
+          onVideoClick={onVideoClick}
         />
       </div>
     </div>
