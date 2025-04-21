@@ -5,7 +5,9 @@ import App from './App.tsx'
 import './index.css'
 import { initializeCursor } from './utils/cursor.ts'
 import { BrowserRouter } from 'react-router-dom'
-import ResetPassword from './pages/ResetPassword.tsx'
+import { QueryClientProvider } from '@tanstack/react-query'
+import { queryClient } from './lib/query-client'
+import { Toaster } from 'sonner'
 
 // Initialize custom cursor
 initializeCursor();
@@ -35,8 +37,11 @@ window.addEventListener('load', setFavicon);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+      <Toaster position="top-right" />
+    </QueryClientProvider>
   </React.StrictMode>,
 )
