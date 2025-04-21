@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useRef } from "react";
 import { useVideoGridData } from "@/hooks/video/useVideoGridData";
 import { useNavigate } from "react-router-dom";
@@ -6,9 +5,7 @@ import { useNavigate } from "react-router-dom";
 const ROW_COUNT = 4;
 const VIDEOS_PER_ROW = 4;
 const MAX_FETCH = 40;
-// MUCH SLOWER and SMOOTHER slide durations (seconds)
 const SLIDE_SECONDS = [900, 720, 800, 600];
-// Vertical spacing offsets for brick pattern (pixels)
 const ROW_VERTICAL_OFFSETS = [0, 4, 8, 12];
 
 function getRowVideosWithOffset(allVideos, rowIdx, perRow, allRows) {
@@ -19,7 +16,6 @@ function getRowVideosWithOffset(allVideos, rowIdx, perRow, allRows) {
     base.push(allVideos[(start + i) % total]);
   }
   const slide = [];
-  // For variety: stagger the start for each row
   const offset = Math.floor((total / allRows) * rowIdx);
   for (let i = 0; i < total; i++) {
     slide.push(allVideos[(offset + i) % total]);
@@ -34,9 +30,8 @@ function useScrollRotation() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
-  // Start with a default rotation of 4deg and scale 1.09, increase with scroll (stronger effect)
-  const rotation = 4 + Math.min((scroll / 140) * 10, 10); // up to ~14deg total
-  const scale = 1.09 + Math.min((scroll / 160) * 0.18, 0.18); // up to 1.27x scale
+  const rotation = 4 + Math.min((scroll / 140) * 10, 10);
+  const scale = 1.09 + Math.min((scroll / 160) * 0.18, 0.18);
   return { rotation, scale };
 }
 
@@ -75,12 +70,21 @@ export function VideoCarouselRows() {
     let animations = '';
     
     for (let i = 0; i < ROW_COUNT; i++) {
-      animations += `
-        @keyframes slideRow${i} {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
-        }
-      `;
+      if (i === 1 || i === 3) {
+        animations += `
+          @keyframes slideRow${i} {
+            0% { transform: translateX(-50%); }
+            100% { transform: translateX(0); }
+          }
+        `;
+      } else {
+        animations += `
+          @keyframes slideRow${i} {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+          }
+        `;
+      }
     }
     
     styleElement.innerHTML = animations;
@@ -94,12 +98,9 @@ export function VideoCarouselRows() {
     };
   }, []);
 
-  // Define pixel width of a video card for offset calculation
-  // w-44 = 176px (default), md:w-60 = 240px (desktop)
-  // Use half for the "brick" effect
   const getCardOffset = () => ({
-    base: 88,    // half of 176
-    md: 120      // half of 240
+    base: 88,
+    md: 120
   });
 
   return (
@@ -115,22 +116,18 @@ export function VideoCarouselRows() {
         transition: "transform 0.5s cubic-bezier(.53,.42,.19,1.04)",
       }}
     >
-      {/* Reduce vertical gap between rows */}
       <div className="w-[99vw] max-w-none mx-0 flex flex-col gap-1 justify-center">
         {rowSlides.map((rowVideos, ri) => {
-          // Brick effect: horizontally shift every odd row (ri % 2 === 1)
-          // Responsive: use different shifts on mobile/desktop
           const verticalOffset = ROW_VERTICAL_OFFSETS[ri] ?? 0;
           const cardOffset = getCardOffset();
           const isOdd = ri % 2 === 1;
+          const isLeftToRight = ri === 1 || ri === 3;
 
-          // Custom row style for brick offset and tight stacking
           const rowStyle: React.CSSProperties = {
             marginTop: verticalOffset > 0 ? `${verticalOffset}px` : undefined,
             marginBottom: verticalOffset < 0 ? `${-verticalOffset}px` : undefined,
           };
 
-          // Inline style for translateX (mobile & desktop)
           const sliderStyle: React.CSSProperties = {
             width: `calc(${rowVideos.length * 24}vw)`,
             animation: `slideRow${ri} ${SLIDE_SECONDS[ri % SLIDE_SECONDS.length]}s linear infinite`,
@@ -139,21 +136,17 @@ export function VideoCarouselRows() {
             display: "flex",
             flexDirection: "row" as const,
             alignItems: "center",
-            // Apply translateX for brick effect
-            transform: isOdd
-              ? `translateX(${cardOffset.base}px)`
+            transform: (ri % 2 === 1)
+              ? `translateX(${getCardOffset().base}px)`
               : "translateX(0px)",
           };
 
-          // For duplicated (seamless) row as well:
           const sliderStyleDup: React.CSSProperties = {
             ...sliderStyle,
             left: "100%",
             position: "absolute"
           };
 
-          // Also, override translateX for desktop using media query
-          // Will inject a style tag just once for the responsive shift
           useEffect(() => {
             const id = "carousel-brick-responsive-styles";
             if (document.getElementById(id)) return;
@@ -173,7 +166,6 @@ export function VideoCarouselRows() {
             };
           }, []);
 
-          // Add extra class for odd rows on desktop for responsive brick offset
           const brickRowClass =
             isOdd ? "carousel-brick-offset-md" : "";
 
@@ -214,7 +206,6 @@ export function VideoCarouselRows() {
                   )
                 )}
               </div>
-              {/* Duplicated row for seamless looping */}
               <div
                 className={`flex gap-5 md:gap-8 absolute ${brickRowClass}`}
                 style={sliderStyleDup}
