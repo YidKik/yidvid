@@ -2,6 +2,7 @@
 import { useEffect, useState, useRef } from "react";
 import { VideoGridItem } from "@/components/video/VideoGridItem";
 import { useVideoGridData, VideoGridItem as VideoItemType } from "@/hooks/video/useVideoGridData";
+import { motion } from "framer-motion";
 
 // Helper to split videos into chunks for each row
 const chunkVideos = (videos: VideoItemType[], size: number) => {
@@ -58,15 +59,19 @@ const AnimatedVideoRow = ({ videos, direction, speed }: RowProps) => {
         }}
       >
         {doubledVideos.map((video, i) => (
-          <div
+          <motion.div
             key={video.id + "-" + i}
             className="w-56 flex-shrink-0"
             style={{
               transform: `rotate(${(Math.random() - 0.5) * 7}deg) scale(0.95)`, // small tilt for effect
             }}
+            whileHover={{ 
+              scale: 1.05, 
+              transition: { duration: 0.2 } 
+            }}
           >
             <VideoGridItem video={video} />
-          </div>
+          </motion.div>
         ))}
       </div>
     </div>
@@ -87,7 +92,12 @@ export const HomeVideoShowcase = () => {
   const rows = chunkVideos(videos, rowSize);
 
   return (
-    <div className="w-full max-w-7xl mx-auto py-10 md:py-14 bg-gradient-to-br from-[#f6dbf5]/40 to-[#ffe29f]/40 rounded-3xl shadow-lg border border-white/30 backdrop-blur-md">
+    <motion.div 
+      className="w-full max-w-7xl mx-auto py-10 md:py-14 bg-gradient-to-br from-[#f6dbf5]/40 to-[#ffe29f]/40 rounded-3xl shadow-lg border border-white/30 backdrop-blur-md"
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.7, delay: 0.2 }}
+    >
       <h2 className="text-3xl md:text-4xl font-extrabold text-center mb-10 bg-gradient-to-r from-primary via-accent to-pink-400 bg-clip-text text-transparent animate-fade-in drop-shadow-lg">
         Latest Videos
       </h2>
@@ -101,6 +111,6 @@ export const HomeVideoShowcase = () => {
           />
         ))}
       </div>
-    </div>
+    </motion.div>
   );
 };
