@@ -2,7 +2,7 @@ import { useVideoGridData } from "@/hooks/video/useVideoGridData";
 import { useEffect, useRef, useState } from "react";
 
 /**
- * Single video thumbnail for grid (scaled up)
+ * Single video thumbnail for grid (original size)
  */
 function VideoGridThumb({
   thumbnail,
@@ -15,7 +15,7 @@ function VideoGridThumb({
 }) {
   return (
     <div
-      className={`rounded-md bg-white aspect-[16/11] w-72 md:w-96 lg:w-[25rem] shadow-none scale-[1.09] ${className}`}
+      className={`rounded-md bg-white aspect-[16/11] w-56 md:w-72 lg:w-[18rem] shadow-none ${className}`}
       style={{
         overflow: "hidden",
         background: "#fff",
@@ -35,115 +35,100 @@ function VideoGridThumb({
 
 const GRID_ROWS = 4;
 const GRID_COLS = 5;
-const CAROUSEL_ANIMATION_INTERVAL = 2500;
-const SLIDE_ANIMATION_DURATION = 430;
+const SLIDE_DURATION = 14_000; // 14 seconds for a slow, smooth animation
+const SLIDE_HEIGHT_REM = 9.5; // approximately matches w-56 aspect-[16/11]
 
 /**
- * CarouselColumn: Vertically sliding 4 video thumbs, cycling through a video array.
+ * CarouselColumn: Vertically and smoothly sliding 4 video thumbs, cycling continuously.
  */
 function CarouselColumn({
   videoList,
   rowCount = GRID_ROWS,
-  animationInterval = CAROUSEL_ANIMATION_INTERVAL,
 }: {
   videoList: Array<{id: string; thumbnail: string}>,
   rowCount?: number;
-  animationInterval?: number;
 }) {
+  // For smooth looping, repeat the list so we have an extra slide at the bottom during the transition.
   const [pointer, setPointer] = useState(0);
-  const [sliding, setSliding] = useState(false);
-  const timeoutRef = useRef<any>(null);
+  const [isAnimating, setIsAnimating] = useState(true);
+  const listLen = videoList.length;
 
-  // Compute which videos should be present in the carousel stack right now
-  const windowIndex = pointer;
-  const total = videoList.length;
-  const window = Array(rowCount)
-    .fill(0)
-    .map((_, i) => videoList[(windowIndex + i) % total]);
+  // Construct list of [V1, V2, V3, V4, V1, V2, ...] to enable seamless loop
+  const carouselItems =
+    listLen >= rowCount
+      ? [
+          ...Array(rowCount + 1)
+            .fill(0)
+            .map((_, i) => videoList[(pointer + i) % listLen])
+        ]
+      : [...videoList];
 
-  // Previous window for animation
-  const [prevWindow, setPrevWindow] = useState(window);
-  const [currentWindow, setCurrentWindow] = useState(window);
-  const [animating, setAnimating] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const animationRef = useRef<number>();
+  const [translateY, setTranslateY] = useState(0);
 
-  // Animation loop
   useEffect(() => {
-    timeoutRef.current = setTimeout(() => {
-      setAnimating(true);
-      setTimeout(() => {
-        setPointer((p) => (p + 1) % total);
-        setAnimating(false);
-      }, SLIDE_ANIMATION_DURATION);
-    }, animationInterval);
+    setTranslateY(0);
+    setIsAnimating(true);
 
-    return () => clearTimeout(timeoutRef.current);
-  }, [pointer, total, animationInterval]);
+    let start: number | null = null;
+    let frame: number;
 
-  // Sync prev/current window for animation
-  useEffect(() => {
-    if (!animating) {
-      setPrevWindow(currentWindow);
-      setCurrentWindow(
-        Array(rowCount)
-          .fill(0)
-          .map((_, i) => videoList[(pointer + i) % total])
-      );
+    function step(ts: number) {
+      if (!start) start = ts;
+      const elapsed = ts - start;
+      const percent = elapsed / SLIDE_DURATION;
+      // Animate from 0 to full slide down of one row
+      const newY = percent * SLIDE_HEIGHT_REM;
+      setTranslateY(-newY);
+
+      if (percent < 1) {
+        frame = requestAnimationFrame(step);
+        animationRef.current = frame;
+      } else {
+        // Done with slide: move pointer down
+        setPointer((prev) => (prev + 1) % listLen);
+        setTimeout(() => {
+          setIsAnimating(false);
+          setTranslateY(0); // snap back instantly and restart
+          setTimeout(() => setIsAnimating(true), 10);
+        }, 10);
+      }
     }
-  }, [pointer, animating, rowCount, videoList]);
 
+    if (isAnimating) {
+      frame = requestAnimationFrame(step);
+      animationRef.current = frame;
+    }
+    return () => {
+      if (animationRef.current) cancelAnimationFrame(animationRef.current);
+    };
+    // Only restart when pointer or isAnimating changes
+  }, [pointer, isAnimating, listLen]);
+
+  // Render the list as a stacked column, shifting upward
   return (
-    <div className="relative flex flex-col h-full min-h-[41rem] justify-center w-fit">
-      {/* Animate previous window: slides *down* */}
+    <div
+      className="relative flex flex-col h-full min-h-[41rem] justify-center w-fit overflow-hidden"
+      style={{ height: `calc(${rowCount} * ${SLIDE_HEIGHT_REM}rem + 2rem)` }}
+      ref={containerRef}
+    >
       <div
-        className={`
-          absolute left-0 w-full flex flex-col gap-8 top-0 transition-transform duration-400 pointer-events-none
-          ${animating ? "animate-slide-down-carousel" : "opacity-0"}
-        `}
+        className="flex flex-col gap-8"
         style={{
-          zIndex: animating ? 10 : 1,
+          transform: `translateY(${translateY}rem)`,
+          transition: isAnimating ? "none" : "transform 0s",
+          willChange: "transform",
         }}
       >
-        {prevWindow.map((v, i) => (
+        {carouselItems.map((v, i) => (
           <VideoGridThumb
-            key={"prev-c-" + v.id + i}
+            key={"car-c-" + v.id + i + pointer}
             thumbnail={v.thumbnail}
-            className="duration-300"
+            className=""
           />
         ))}
       </div>
-      {/* New window, slides in from above */}
-      <div
-        className={`relative flex flex-col gap-8 w-full transition-transform duration-400 ${animating ? "animate-slide-in-carousel" : ""}`}
-        style={{zIndex: 20}}
-      >
-        {currentWindow.map((v, i) => (
-          <VideoGridThumb
-            key={"curr-c-" + v.id + i}
-            thumbnail={v.thumbnail}
-            className="duration-300"
-          />
-        ))}
-      </div>
-      {/* Carousel-specific animations */}
-      <style>{`
-        @keyframes slideDownCarousel {
-          0% { opacity: 1; transform: translateY(0);}
-          90% { opacity: 0.15; }
-          100% { opacity:0; transform: translateY(125%);}
-        }
-        .animate-slide-down-carousel {
-          animation: slideDownCarousel ${SLIDE_ANIMATION_DURATION/1000}s cubic-bezier(.44,0,.72,1) forwards;
-        }
-        @keyframes slideInCarousel {
-          0% { opacity: 0; transform: translateY(-115%) scale(0.97);}
-          50% { opacity: 0.08;}
-          98% {opacity:0.95;}
-          100% { opacity: 1; transform: translateY(0) scale(1);}
-        }
-        .animate-slide-in-carousel {
-          animation: slideInCarousel ${SLIDE_ANIMATION_DURATION/1000}s cubic-bezier(.44,0,.72,1) forwards;
-        }
-      `}</style>
     </div>
   );
 }
@@ -153,7 +138,7 @@ function CarouselColumn({
  */
 export function AnimatedVideoGridRows({ staticRows = false }: { staticRows?: boolean }) {
   // Grab enough videos, default fallback if missing
-  const { videos, loading } = useVideoGridData(GRID_ROWS * GRID_COLS);
+  const { videos } = useVideoGridData(GRID_ROWS * GRID_COLS);
   const fallbackThumbs = Array(GRID_COLS * GRID_ROWS)
     .fill("/placeholder.svg")
     .map((t, i) => ({ id: "fake-" + i, thumbnail: t }));
@@ -178,7 +163,7 @@ export function AnimatedVideoGridRows({ staticRows = false }: { staticRows?: boo
     rowDatas.push(fullVideos.slice(start, start + GRID_COLS));
   }
 
-  // For 1st column carousel: select 1st video from each row and build a cycling list (to make it seamless, cycle through the same video ids in order).
+  // For 1st column carousel: select 1st video from each row and build a cycling list
   const carouselColVideos = rowDatas.map((row) => row[0]);
 
   // The rest (static, non-carousel columns): columns 2-5, per row
