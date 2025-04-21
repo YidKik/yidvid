@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { useVideoGridData } from "@/hooks/video/useVideoGridData";
 import { useNavigate } from "react-router-dom";
@@ -7,8 +8,8 @@ const VIDEOS_PER_ROW = 4;
 const MAX_FETCH = 40;
 // MUCH SLOWER and SMOOTHER slide durations (seconds)
 const SLIDE_SECONDS = [900, 720, 800, 600];
-// Uneven vertical offsets for each row in pixels (can be positive/negative)
-const ROW_VERTICAL_OFFSETS = [0, 36, -20, 64]; // px offset -- adjust as desired for more visual staggering
+// Even and close vertical spacing offsets for each row (pixels)
+const ROW_VERTICAL_OFFSETS = [0, 20, 40, 60]; // smaller, equal steps for closer rows
 
 function getRowVideosWithOffset(allVideos, rowIdx, perRow, allRows) {
   const total = allVideos.length;
@@ -79,7 +80,7 @@ export function VideoCarouselRows() {
         height: "100vh"
       }}
     >
-      <div className="w-full max-w-[1680px] mx-auto flex flex-col gap-12 justify-center">
+      <div className="w-full max-w-[1680px] mx-auto flex flex-col gap-6 justify-center">
         {rowSlides.map((rowVideos, ri) => {
           // All rows slide from right-to-left, using much slower individual duration (SLIDE_SECONDS)
           const slideAnim = `
@@ -97,12 +98,11 @@ export function VideoCarouselRows() {
             }
           }, [slideAnim, ri]);
 
-          // Offsets: use px marginTop or transform for each row to visually stagger
+          // Offsets: use px marginTop or transform for each row to visually stagger evenly closer
           const verticalOffset = ROW_VERTICAL_OFFSETS[ri] ?? 0;
           const rowStyle: React.CSSProperties = {
             marginTop: verticalOffset > 0 ? `${verticalOffset}px` : undefined,
             marginBottom: verticalOffset < 0 ? `${-verticalOffset}px` : undefined,
-            // For more randomness, could also add: transform: `translateY(${verticalOffset}px)`
           };
 
           return (
