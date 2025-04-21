@@ -9,10 +9,11 @@ import { VideoContent } from "@/components/content/VideoContent";
 import { useVideos } from "@/hooks/video/useVideos";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useSessionManager } from "@/hooks/useSessionManager";
-import { WelcomeOverlay } from "@/components/welcome/WelcomeOverlay";
+import { EnhancedWelcomeOverlay } from "@/components/welcome/EnhancedWelcomeOverlay";
 import { Helmet } from "react-helmet";
 import { useSearchParams } from "react-router-dom";
 import { getPageTitle, DEFAULT_META_DESCRIPTION, DEFAULT_META_KEYWORDS, DEFAULT_META_IMAGE } from "@/utils/pageTitle";
+import { isWelcomePage } from "@/utils/scrollRestoration";
 
 const MainContent = () => {
   const [isMusic, setIsMusic] = useState(false);
@@ -118,6 +119,8 @@ const MainContent = () => {
 
 const Index = () => {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [searchParams] = useSearchParams();
+  const shouldShowWelcome = !searchParams.get('skipWelcome') && isWelcomePage(window.location.pathname + window.location.search);
 
   return (
     <>
@@ -140,7 +143,7 @@ const Index = () => {
       </Helmet>
       
       <div className="min-h-screen w-full bg-gradient-to-b from-white to-gray-50">
-        <WelcomeOverlay />
+        {shouldShowWelcome && <EnhancedWelcomeOverlay />}
         <MainContent />
         <Auth isOpen={isAuthOpen} onOpenChange={setIsAuthOpen} />
       </div>
