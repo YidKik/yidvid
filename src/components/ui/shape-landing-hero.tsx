@@ -1,3 +1,4 @@
+
 "use client";
 
 import { motion, useScroll, useTransform } from "framer-motion";
@@ -5,6 +6,8 @@ import { Circle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { FloatingAvatar } from "./floating-avatar";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 export function HeroGeometric({
     badge = "YidVid",
@@ -117,12 +120,13 @@ export function HeroGeometric({
                         variants={fadeUpVariants}
                         initial="hidden"
                         animate="visible"
-                        className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.03] border border-white/[0.08] mb-8 md:mb-12"
+                        className="inline-flex items-center justify-center gap-2 mb-8 md:mb-12"
                     >
-                        <Circle className="h-2 w-2 fill-primary/80" />
-                        <span className="text-sm text-white/60 tracking-wide">
-                            {badge}
-                        </span>
+                        <img 
+                            src="/lovable-uploads/2f1d0616-642f-4b59-b552-64922023f6bc.png" 
+                            alt="YidVid Logo" 
+                            className="h-12 w-auto"
+                        />
                     </motion.div>
 
                     <motion.div
@@ -153,6 +157,16 @@ export function HeroGeometric({
                         <p className="text-base sm:text-lg md:text-xl text-white/40 mb-8 leading-relaxed font-light tracking-wide max-w-xl mx-auto px-4">
                             Watch, share, and connect with the finest Jewish content from around the world.
                         </p>
+
+                        <Link to="/videos">
+                            <Button 
+                                variant="default" 
+                                size="lg" 
+                                className="mx-auto"
+                            >
+                                Explore Videos
+                            </Button>
+                        </Link>
                     </motion.div>
                 </div>
             </div>
