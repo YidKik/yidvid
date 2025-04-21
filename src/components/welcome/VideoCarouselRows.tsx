@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useVideoGridData } from "@/hooks/video/useVideoGridData";
 import { useNavigate } from "react-router-dom";
@@ -6,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 const ROW_COUNT = 4;
 const VIDEOS_PER_ROW = 4;
 const MAX_FETCH = 40; // Get more videos for more variety
-const SLIDE_SECONDS = [80, 90, 95, 100];
+const SLIDE_SECONDS = [200, 200, 200, 200]; // Much slower for all rows
 
 const getDirection = (rowIdx: number) => (rowIdx % 2 === 0 ? "left" : "right");
 
@@ -110,10 +109,10 @@ export function VideoCarouselRows() {
                 className="flex gap-8 md:gap-11"
                 style={{
                   width: `calc(${rowVideos.length * 24}vw)`,
-                  animation: `slideRow${ri} ${SLIDE_SECONDS[ri % SLIDE_SECONDS.length]}s linear infinite`,
-                  flexDirection: "row", // All rows have same flex direction now
+                  animation: `slideRow${ri} ${SLIDE_SECONDS[ri % SLIDE_SECONDS.length]}s cubic-bezier(0.33,1,0.68,1) infinite`,
+                  flexDirection: "row",
                   alignItems: "center",
-                  transform: direction === "right" ? "translateX(-50%)" : "translateX(0)", // Initial offset for right-to-left rows
+                  transform: direction === "right" ? "translateX(-50%)" : "translateX(0)",
                 }}
               >
                 {rowVideos.map((video, vi) =>
