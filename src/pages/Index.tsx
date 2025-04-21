@@ -4,7 +4,7 @@ import { VideoCarousels } from "@/components/home/VideoCarousels";
 import { useVideoGridData } from "@/hooks/video/useVideoGridData";
 
 export default function Index() {
-  const { videos, isLoading } = useVideoGridData(30);
+  const { videos, loading } = useVideoGridData(30);
 
   return (
     <div className="min-h-screen w-full bg-gray-50 flex relative overflow-hidden">
@@ -33,7 +33,7 @@ export default function Index() {
       <div className="hidden md:block absolute right-0 top-0 w-[65%] h-full overflow-hidden bg-gray-100">
         <div className="h-full flex items-center">
           {videos && videos.length > 0 && (
-            <VideoCarousels videos={videos} isLoading={isLoading} />
+            <VideoCarousels videos={videos} isLoading={loading} />
           )}
         </div>
       </div>
@@ -41,7 +41,7 @@ export default function Index() {
       {/* Mobile video carousels */}
       <div className="md:hidden w-full mt-8">
         {videos && videos.length > 0 && (
-          <VideoCarousels videos={videos} isLoading={isLoading} />
+          <VideoCarousels videos={videos} isLoading={loading} />
         )}
       </div>
     </div>
