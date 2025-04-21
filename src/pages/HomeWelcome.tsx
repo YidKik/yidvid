@@ -4,7 +4,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Play, Video, GalleryHorizontal, Star } from "lucide-react";
-import { AnimatedVideoGridRows } from "@/components/welcome/AnimatedVideoGridRows";
 
 const coolGradients = [
   "linear-gradient(102.3deg, #93278f 5.9%, #eaace8 64%, #f6dbf5 89%)",
@@ -111,14 +110,7 @@ export default function HomeWelcome() {
         </motion.div>
       </div>
 
-      {/* Main animated 4-row video grid (as background, rotated) */}
-      <div className="absolute left-1/2 w-[99vw] max-w-[1680px] bottom-0 -translate-x-1/2 z-10 pointer-events-none"
-        style={{
-          transform: "translateY(6vw)",
-        }}
-      >
-        <AnimatedVideoGridRows />
-      </div>
+      {/* The animated 4-row video grid section at the bottom has been removed */}
     </div>
   );
 }
