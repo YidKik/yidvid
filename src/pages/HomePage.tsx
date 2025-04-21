@@ -33,22 +33,7 @@ const HomePage = () => {
       initial="initial"
       animate="animate"
     >
-      <div className="relative h-screen">
-        {videos && videos.length > 15 && (
-          <motion.section
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5, duration: 0.8 }}
-            className="absolute inset-0 w-full h-full"
-          >
-            <HeroParallax 
-              videos={videos} 
-              title="" 
-              description=""
-            />
-          </motion.section>
-        )}
-
+      <div className="relative">
         <div className="relative z-10">
           <HeroGeometric 
             badge="YidVid"
@@ -57,6 +42,21 @@ const HomePage = () => {
             channels={manuallyFetchedChannels}
           />
         </div>
+
+        {videos && videos.length > 15 && (
+          <motion.section
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5, duration: 0.8 }}
+            className="w-full"
+          >
+            <HeroParallax 
+              videos={videos} 
+              title="" 
+              description=""
+            />
+          </motion.section>
+        )}
       </div>
 
       <div className="space-y-2 mt-4">
