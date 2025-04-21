@@ -28,14 +28,16 @@ export const VideoCarousel = ({
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: true,
     dragFree: true,
-    containScroll: "trimSnaps",
-    direction: "ltr", // Always set to ltr for right-to-left movement
+    containScroll: false, // Don't contain scroll to prevent stopping at snap points
     align: "start",
+    slidesToScroll: 1,
+    watchDrag: false, // Prevent drag detection to ensure continuous movement
+    skipSnaps: true // Allow scrolling past snap points
   });
 
   useCarouselScroll({
     emblaApi,
-    direction, // We'll still pass the direction prop but ignore it in the hook
+    direction,
     speed,
     itemsLength: shuffledVideos.length,
   });

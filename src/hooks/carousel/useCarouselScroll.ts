@@ -19,7 +19,7 @@ export const useCarouselScroll = ({ emblaApi, direction, speed, itemsLength }: U
     // Re-initialize the carousel when items change
     emblaApi.reInit();
     
-    const scrollStep = speed * 0.02; // Control speed (pixels per frame)
+    const scrollStep = speed * 0.05; // Increased speed factor for more noticeable movement
     let lastTime = 0;
     
     const scroll = (timestamp: number) => {
@@ -30,21 +30,15 @@ export const useCarouselScroll = ({ emblaApi, direction, speed, itemsLength }: U
       lastTime = timestamp;
       
       if (!scrolling.current) {
-        // Always scroll from right to left (direction === "ltr")
-        const scrollAmount = scrollStep * (deltaTime / 16);
+        // Create continuous scrolling by moving content without waiting for snap points
+        emblaApi.scrollNext({ loop: true });
         
-        // Use scrollSnaps and selectedScrollSnap for proper scrolling
-        const scrollSnaps = emblaApi.scrollSnapList();
-        const currentIndex = emblaApi.selectedScrollSnap();
-        const nextIndex = (currentIndex + 1) % scrollSnaps.length;
-        
-        // Get current scroll progress (0 to 1)
-        const scrollProgress = emblaApi.scrollProgress();
-        
-        // Create smooth scrolling effect
-        emblaApi.scrollTo(scrollProgress + scrollAmount);
-        // If we reach the end of current slide, snap to next
-        if (scrollProgress >= 0.98) emblaApi.scrollTo(nextIndex);
+        // Force a small movement each frame to create continuous movement
+        const engine = emblaApi.internalEngine();
+        if (engine) {
+          const currentScrollProgress = emblaApi.scrollProgress();
+          emblaApi.scrollTo(currentScrollProgress + (scrollStep * (deltaTime / 16)));
+        }
       }
       
       animationRef.current = requestAnimationFrame(scroll);
@@ -57,7 +51,7 @@ export const useCarouselScroll = ({ emblaApi, direction, speed, itemsLength }: U
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [emblaApi, direction, speed, itemsLength]);
+  }, [emblaApi, speed, itemsLength]);
 
   // Handle user interaction to pause auto-scroll
   useEffect(() => {

@@ -45,12 +45,12 @@ export const VideoCarousels = ({ videos, isLoading, onVideoClick }: VideoCarouse
   const rowShuffleKeys = [1, 2, 3];
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-2">
       <div className="overflow-hidden">
         <VideoCarousel 
           videos={sortedVideos} 
           direction="ltr" 
-          speed={40} 
+          speed={35} 
           shuffleKey={rowShuffleKeys[0]} 
           onVideoClick={onVideoClick}
         />
@@ -60,7 +60,7 @@ export const VideoCarousels = ({ videos, isLoading, onVideoClick }: VideoCarouse
         <VideoCarousel 
           videos={sortedVideos} 
           direction="ltr" 
-          speed={30} 
+          speed={25} 
           shuffleKey={rowShuffleKeys[1]} 
           onVideoClick={onVideoClick}
         />
@@ -70,7 +70,7 @@ export const VideoCarousels = ({ videos, isLoading, onVideoClick }: VideoCarouse
         <VideoCarousel 
           videos={sortedVideos} 
           direction="ltr" 
-          speed={35} 
+          speed={40} 
           shuffleKey={rowShuffleKeys[2]} 
           onVideoClick={onVideoClick}
         />
