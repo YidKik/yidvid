@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 const ROW_COUNT = 4;
 const VIDEOS_PER_ROW = 4;
 const MAX_FETCH = 40; // Get more videos for more variety
-const SLIDE_SECONDS = [38, 40, 44, 48];
+const SLIDE_SECONDS = [80, 90, 95, 100];
 
 const getDirection = (rowIdx: number) => (rowIdx % 2 === 0 ? "left" : "right");
 
