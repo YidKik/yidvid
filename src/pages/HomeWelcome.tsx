@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Play, Video, GalleryHorizontal, Star } from "lucide-react";
+import { HomeVideoShowcase } from "@/components/welcome/HomeVideoShowcase";
 
 const coolGradients = [
   "linear-gradient(102.3deg, #93278f 5.9%, #eaace8 64%, #f6dbf5 89%)",
@@ -31,7 +32,7 @@ export default function HomeWelcome() {
 
   return (
     <div 
-      className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden"
+      className="relative min-h-screen flex flex-col items-center justify-center overflow-x-hidden"
       style={{
         background: coolGradients[gradientIndex],
         transition: "background 2s linear"
@@ -159,6 +160,11 @@ export default function HomeWelcome() {
           </motion.div>
         </motion.div>
       </AnimatePresence>
+
+      {/* Latest animated video showcase */}
+      <div className="relative z-10 w-full mt-20 mb-24 animate-fade-in">
+        <HomeVideoShowcase />
+      </div>
 
       {/* Bottom shimmer prompt to scroll */}
       <motion.div 
