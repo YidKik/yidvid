@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useVideoGridData } from "@/hooks/video/useVideoGridData";
 import { HomeHero } from "@/components/home/HomeHero";
@@ -38,14 +39,31 @@ export default function Index() {
         </div>
         {/* Crooked SVG fade, overlays the dividing line */}
         <div className="pointer-events-none absolute top-0 right-[56%] h-full w-[56%] z-30 hidden md:block">
-          <svg width="100%" height="100%" viewBox="0 0 480 900" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-full w-full">
+          <svg
+            width="100%"
+            height="100%"
+            viewBox="0 0 480 900"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-full w-full"
+            style={{
+              position: "absolute",
+              left: 0,
+              top: 0,
+              pointerEvents: "none",
+              zIndex: 2,
+            }}
+          >
             <defs>
-              <linearGradient id="fadeGrad" x1="0" y1="0" x2="1" y2="0">
+              {/* Gradient fades strongly to the right */}
+              <linearGradient id="crookedFade" x1="0" y1="0" x2="1" y2="0">
                 <stop offset="0%" stopColor="#f1eaff" stopOpacity="1" />
-                <stop offset="96%" stopColor="#f1eaff" stopOpacity="0.4" />
+                <stop offset="70%" stopColor="#f1eaff" stopOpacity="0.7" />
+                <stop offset="90%" stopColor="#f1eaff" stopOpacity="0.25" />
                 <stop offset="100%" stopColor="#f1eaff" stopOpacity="0" />
               </linearGradient>
             </defs>
+            {/* The fade path is C-shaped and crooked */}
             <path
               d="
                 M 0 0 
@@ -55,7 +73,7 @@ export default function Index() {
                 L 480 0
                 Z
               "
-              fill="url(#fadeGrad)"
+              fill="url(#crookedFade)"
             />
           </svg>
         </div>
