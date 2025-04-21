@@ -31,7 +31,7 @@ export const useCarouselScroll = ({ emblaApi, direction, speed, itemsLength }: U
       
       if (!scrolling.current) {
         // Create continuous scrolling by moving content without waiting for snap points
-        emblaApi.scrollNext({ loop: true });
+        emblaApi.scrollNext(true); // Fix: Pass boolean instead of object for loop parameter
         
         // Force a small movement each frame to create continuous movement
         const engine = emblaApi.internalEngine();
