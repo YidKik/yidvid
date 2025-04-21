@@ -1,9 +1,6 @@
 
-import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Play } from "lucide-react";
 import { VideoCarouselRows } from "@/components/welcome/VideoCarouselRows";
 
 const brandGradients = [
@@ -14,7 +11,6 @@ const brandGradients = [
 ];
 
 export default function HomeWelcome() {
-  const navigate = useNavigate();
   const [gradientIndex, setGradientIndex] = useState(0);
   const [fadeKey, setFadeKey] = useState(0);
 
@@ -68,56 +64,24 @@ export default function HomeWelcome() {
         />
       ))}
 
-      <div className="relative z-20 flex flex-col items-center pt-10 pb-4">
+      {/* Centered large YidVid logo */}
+      <div className="flex-1 flex flex-col items-center justify-center pt-12 pb-4 relative z-20 min-h-[500px]">
         <motion.img
-          src="/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png"
+          src="/lovable-uploads/be2a7abc-dfab-4472-9970-5d7df617545f.png"
           alt="YidVid Logo"
-          className="w-24 h-24 mb-4 shadow-2xl rounded-full border-4 border-primary bg-white/60"
-          initial={{ rotate: -10, scale: 0.75, opacity: 0.7 }}
+          className="w-[380px] max-w-[92vw] h-auto mb-2 mx-auto"
+          initial={{ scale: 0.89, opacity: 0.82 }}
           animate={{
-            rotate: [0, 10, -10, 0],
-            scale: [0.75, 1.1, 1],
-            opacity: 1
+            scale: [0.89, 1.04, 1],
+            opacity: [0.82, 1, 1]
           }}
           transition={{
-            duration: 2.2,
+            duration: 1.8,
             repeat: Infinity,
             repeatType: "mirror",
             ease: "easeInOut"
           }}
         />
-        <motion.h1
-          className="text-5xl md:text-7xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-primary via-accent to-pink-400 py-2 mb-4"
-          initial={{ opacity: 0, y: -24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7, duration: 0.8 }}
-        >
-          Welcome to YidVid
-        </motion.h1>
-        <motion.p
-          className="text-lg md:text-2xl text-black/80 text-center max-w-2xl mb-6 font-semibold"
-          initial={{ opacity: 0, y: 14 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.2, duration: 0.9 }}
-        >
-          The friendly Jewish video platform. Explore, discover, be inspired – all in one place with vibrant effects and a professional feel.
-        </motion.p>
-
-        <motion.div
-          className="flex gap-4"
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 2, duration: 1.1 }}
-        >
-          <Button
-            onClick={() => navigate("/videos")}
-            className="text-xl py-5 px-8 bg-primary shadow-xl hover:bg-accent hover:scale-105 transition-all flex items-center gap-2"
-            size="lg"
-          >
-            <Play className="h-5 w-5" />
-            Explore Videos
-          </Button>
-        </motion.div>
       </div>
 
       <div className="w-full h-[600px] relative pointer-events-none z-10">
