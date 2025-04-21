@@ -36,7 +36,6 @@ export const AnimatedVideoRowsShowcase = ({
     rowSlices.push(slice);
   }
 
-  // Durations per row, keeping them slightly different for visual interest
   const animationDuration = 32;
   const durations = [
     animationDuration,
@@ -45,13 +44,14 @@ export const AnimatedVideoRowsShowcase = ({
     animationDuration - 6,
   ];
 
-  // Make rows 1 and 3 slide left, rows 2 and 4 slide vertically down
   const directions: ("left" | "vertical-down")[] = [
     "left",
     "vertical-down",
     "left",
     "vertical-down",
   ];
+
+  const rowOffsets = [0, 60, 120, 80]; // tweak as preferred for contrast
 
   return (
     <div className="flex flex-col gap-6">
@@ -62,6 +62,7 @@ export const AnimatedVideoRowsShowcase = ({
           direction={directions[i]}
           duration={durations[i]}
           rowIdx={i}
+          rowOffset={rowOffsets[i] ?? 0}
         />
       ))}
     </div>

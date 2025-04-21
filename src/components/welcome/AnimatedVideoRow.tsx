@@ -1,4 +1,3 @@
-
 import { useEffect, useMemo } from "react";
 import { VideoGridItem } from "@/components/video/VideoGridItem";
 import { VideoGridItem as VideoItemType } from "@/hooks/video/useVideoGridData";
@@ -8,9 +7,9 @@ interface AnimatedVideoRowProps {
   direction: "left" | "right" | "vertical-down";
   duration: number;
   rowIdx: number;
+  rowOffset?: number;
 }
 
-// Use standard YouTube thumbnail size as reference
 const THUMB_WIDTH = 340;  // px, a little bit wider for a boxier look
 const THUMB_HEIGHT = 192; // px, 16:9
 
@@ -18,9 +17,9 @@ export const AnimatedVideoRow = ({
   videos,
   direction,
   duration,
-  rowIdx
+  rowIdx,
+  rowOffset = 0
 }: AnimatedVideoRowProps) => {
-  // Double list for seamless looping
   const doubledVideos = useMemo(() => [...videos, ...videos], [videos]);
   const animationName = `scroll-${direction}-row-${rowIdx}`;
 
@@ -61,7 +60,8 @@ export const AnimatedVideoRow = ({
             width: "200%",
             animation: `${animationName} ${duration}s linear infinite`,
             animationDelay: `${-rowIdx * (duration / 4)}s`,
-            flexDirection: "row"
+            flexDirection: "row",
+            marginLeft: `${rowOffset}px`
           }}
         >
           {doubledVideos.map((video, idx) => (
@@ -85,7 +85,6 @@ export const AnimatedVideoRow = ({
       </div>
     );
   } else if (direction === "vertical-down") {
-    // Vertical duplicate for smooth looping
     const stackedVideos = [...videos, ...videos];
     return (
       <div
@@ -98,7 +97,8 @@ export const AnimatedVideoRow = ({
             height: "200%",
             animation: `${animationName} ${duration}s linear infinite`,
             animationDelay: `${-rowIdx * (duration / 4)}s`,
-            flexDirection: "column"
+            flexDirection: "column",
+            marginTop: `${rowOffset}px`
           }}
         >
           {stackedVideos.map((video, idx) => (
