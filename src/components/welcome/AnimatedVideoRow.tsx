@@ -11,9 +11,9 @@ interface AnimatedVideoRowProps {
   rowOffset?: number;
 }
 
-// Dramatically bump up the size for high visual impact (remains responsive)
-const THUMB_WIDTH = 460;  // px, much bigger for a bold look
-const THUMB_HEIGHT = 259; // px, 16:9 ratio for 460 width
+// Enormous thumbnail size for immersive background effect (responsive!)
+const THUMB_WIDTH = 960;   // px, HUGE for almost full screen, adjusts for viewport
+const THUMB_HEIGHT = 540;  // px, 16:9 ratio
 
 export const AnimatedVideoRow = ({
   videos,
@@ -50,38 +50,58 @@ export const AnimatedVideoRow = ({
     }
   }, [animationName, direction]);
 
+  // Card style so the card matches the thumbnail exactly
+  const cardStyle = {
+    width: "100%",
+    height: "100%",
+    borderRadius: "18px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    margin: "0",
+    padding: 0
+  };
+
+  // Responsive wrapper width
+  const wrapperStyle = {
+    width: "100vw",
+    maxWidth: "100vw",
+    minWidth: "100vw"
+  };
+
+  // The row container style (makes sure it won't overflow screen horizontally)
+  // For mobile: scale down dramatically!
+  const getRowHeight = () =>
+    `clamp(180px, ${THUMB_HEIGHT}px, 60vw)`; // Scales on mobile, big on desktop
+
+  // For left/right animation
   if (direction === "left") {
     return (
       <div
         className="relative w-full overflow-hidden"
-        style={{ height: `${THUMB_HEIGHT + 14}px` }}
+        style={{ ...wrapperStyle, height: getRowHeight() }}
       >
         <div
-          className="flex gap-9 absolute left-0 top-0 w-full"
+          className="flex gap-4 absolute left-0 top-0 w-full"
           style={{
             width: "200%",
             animation: `${animationName} ${duration}s linear infinite`,
             animationDelay: `${-rowIdx * (duration / 4)}s`,
             flexDirection: "row",
-            marginLeft: `${rowOffset}px`
+            marginLeft: `${rowOffset}px`,
+            alignItems: "center"
           }}
         >
           {doubledVideos.map((video, idx) => (
             <div
               key={video.id + "-" + idx}
-              className="flex-shrink-0 bg-white/95 border border-white/60 shadow aspect-[16/9]"
+              className="flex-shrink-0 bg-white/90 border border-white/60 shadow aspect-[16/9]"
               style={{
-                width: `${THUMB_WIDTH}px`,
-                height: `${THUMB_HEIGHT}px`,
-                borderRadius: "11px",
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                margin: "0",
-                padding: 0 // tight to the thumbnail
+                width: "clamp(280px, 88vw, 960px)",
+                height: "clamp(158px, 49vw, 540px)",
+                ...cardStyle
               }}
             >
-              {/* VideoGridItem will fill exactly */}
               <VideoGridItem video={video} noRadius />
             </div>
           ))}
@@ -93,10 +113,10 @@ export const AnimatedVideoRow = ({
     return (
       <div
         className="relative w-full overflow-hidden flex flex-row justify-center"
-        style={{ height: `${THUMB_HEIGHT * 2.04 + 30}px` }}
+        style={{ ...wrapperStyle, height: `calc(${getRowHeight()} * 2.1)` }}
       >
         <div
-          className="flex flex-col gap-9 absolute left-0 top-0 w-full items-center"
+          className="flex flex-col gap-6 absolute left-0 top-0 w-full items-center"
           style={{
             height: "200%",
             animation: `${animationName} ${duration}s linear infinite`,
@@ -108,16 +128,11 @@ export const AnimatedVideoRow = ({
           {stackedVideos.map((video, idx) => (
             <div
               key={video.id + "-vert-" + idx}
-              className="flex-shrink-0 bg-white/95 border border-white/60 shadow aspect-[16/9]"
+              className="flex-shrink-0 bg-white/90 border border-white/60 shadow aspect-[16/9]"
               style={{
-                width: `${THUMB_WIDTH}px`,
-                height: `${THUMB_HEIGHT}px`,
-                borderRadius: "11px",
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                margin: "0",
-                padding: 0 // tight
+                width: "clamp(280px, 88vw, 960px)",
+                height: "clamp(158px, 49vw, 540px)",
+                ...cardStyle
               }}
             >
               <VideoGridItem video={video} noRadius />
