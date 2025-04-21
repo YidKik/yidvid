@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { VideoCarousels } from '@/components/home/VideoCarousels';
@@ -104,13 +103,24 @@ const HomePage = () => {
         )}
       </div>
 
-      {/* Channels Section with GridMotion - Now positioned lower and with smaller images */}
-      <motion.section className="relative z-10 mt-[20vh]">
-        <div className="h-[70vh]"> {/* Reduced height for smaller profile pics */}
+      {/* Video Background Section */}
+      {videos && videos.length > 15 && (
+        <div className="absolute top-[40vh] inset-x-0 h-[100vh]">
+          <HeroParallax 
+            videos={videos} 
+            title="" 
+            description=""
+          />
+        </div>
+      )}
+
+      {/* Channels Section with GridMotion - Now with circular images and more rows */}
+      <motion.section className="relative z-10 mt-[40vh]">
+        <div className="min-h-screen py-20"> 
           <GridMotion 
-            items={[...channelItems, ...channelItems].slice(0, 35)} // Added more items for extra row
+            items={[...channelItems, ...channelItems, ...channelItems].slice(0, 49)} // Added more items for more rows
             gradientColor="#ea384c"
-            className="relative z-10 opacity-90 scale-50" // Added scale-50 to make images smaller
+            className="relative z-10 opacity-90 channel-grid"
           />
         </div>
       </motion.section>
