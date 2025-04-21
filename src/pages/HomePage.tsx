@@ -28,7 +28,7 @@ const HomePage = () => {
 
   return (
     <motion.div 
-      className="min-h-screen w-full overflow-x-hidden bg-[#030303]"
+      className="min-h-screen w-full overflow-x-hidden bg-white"
       variants={pageVariants}
       initial="initial"
       animate="animate"
