@@ -23,9 +23,17 @@ export const HomeVideoShowcaseSection = ({
     );
   }
 
-  // Maximized container with no constraining styles
+  // Maximized container with absolutely no constraining styles
+  // Added styling to ensure maximum space utilization
   return (
-    <div className="w-full h-full overflow-hidden">
+    <div 
+      className="w-screen h-screen overflow-hidden fixed inset-0" 
+      style={{
+        minWidth: "100vw",
+        minHeight: "100vh",
+        transform: "scale(1.2)", // Force scale up to ensure full coverage
+      }}
+    >
       {children}
     </div>
   );

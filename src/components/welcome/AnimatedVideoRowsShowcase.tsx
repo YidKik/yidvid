@@ -38,8 +38,8 @@ export const AnimatedVideoRowsShowcase = ({
     rowSlices.push(slice);
   }
 
-  // MUCH slower animation for dramatic, immersive effect
-  const animationDuration = 80;
+  // EXTREMELY slow animation speed for truly massive dramatic effect
+  const animationDuration = 120; // Even slower for more dramatic effect
   const durations = [
     animationDuration,
     animationDuration - 15,
@@ -51,7 +51,7 @@ export const AnimatedVideoRowsShowcase = ({
   const directions: ("left" | "vertical-down")[] = [
     "left",
     "left",
-    "vertical-down",
+    "vertical-down", 
     "left",
   ];
 
@@ -59,7 +59,7 @@ export const AnimatedVideoRowsShowcase = ({
   const rowOffsets = [0, 200, 0, 300];
 
   return (
-    <div className="flex flex-col gap-0 -my-20">
+    <div className="flex flex-col gap-0 -my-20 transform scale-[1.25] origin-center">
       {rowSlices.map((videosForRow, i) => (
         <AnimatedVideoRow
           key={i}

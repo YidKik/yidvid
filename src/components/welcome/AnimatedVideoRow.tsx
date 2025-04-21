@@ -10,9 +10,9 @@ interface AnimatedVideoRowProps {
   rowOffset?: number;
 }
 
-// ULTRA MASSIVE thumbnail size for truly immersive full-screen background effect
-const THUMB_WIDTH = 4500;   // px, ENORMOUS to completely fill screen
-const THUMB_HEIGHT = 2800;  // px, massive height for ultra-widescreen effect
+// MASSIVELY increased thumbnail size (3x larger than before)
+const THUMB_WIDTH = 13500;   // px, ENORMOUSLY INCREASED to ensure complete screen coverage
+const THUMB_HEIGHT = 8400;   // px, ENORMOUSLY INCREASED for ultra-widescreen effect
 
 export const AnimatedVideoRow = ({
   videos,
@@ -61,7 +61,7 @@ export const AnimatedVideoRow = ({
     padding: 0
   };
 
-  // Ultra wide wrapper - make sure it fills screen
+  // Ultra wide wrapper - ensuring it completely fills the screen
   const wrapperStyle = {
     width: "100vw",
     maxWidth: "100vw",
@@ -69,13 +69,13 @@ export const AnimatedVideoRow = ({
     overflow: "hidden"
   };
 
-  // ULTRA-MASSIVE responsive sizing for completely immersive experience
+  // Massively increased responsive sizing for completely immersive experience (3x larger)
   // For mobile: still keeps enormous size
-  const getItemWidth = () => "clamp(1200px, 150vw, 4500px)"; 
-  const getItemHeight = () => "clamp(700px, 150vh, 2800px)";
+  const getItemWidth = () => "clamp(3600px, 450vw, 13500px)"; 
+  const getItemHeight = () => "clamp(2100px, 450vh, 8400px)";
   
   // Row height needs to be ultra-large to contain the huge items
-  const getRowHeight = () => `clamp(800px, 180vh, 3000px)`;
+  const getRowHeight = () => `clamp(2400px, 540vh, 9000px)`;
 
   // For left/right animation
   if (direction === "left") {
