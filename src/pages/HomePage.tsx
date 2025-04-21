@@ -1,10 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { VideoCarousels } from '@/components/home/VideoCarousels';
-import { ChannelCarousels } from '@/components/home/ChannelCarousels';
 import { useVideos } from '@/hooks/video/useVideos';
 import { useChannelsGrid } from '@/hooks/channel/useChannelsGrid';
-import { useShuffledVideos } from '@/hooks/video/useShuffledVideos';
 import { HeroParallax } from '@/components/ui/hero-parallax';
 import { Link } from 'react-router-dom';
 import { gsap } from 'gsap';
@@ -16,7 +14,6 @@ gsap.registerPlugin(ScrollTrigger);
 const HomePage = () => {
   const { data: videos, isLoading: videosLoading } = useVideos();
   const { manuallyFetchedChannels, isLoading: channelsLoading } = useChannelsGrid();
-  const shuffledVideos = useShuffledVideos(videos);
   const videoSectionRef = useRef(null);
   const channelsSectionRef = useRef(null);
   const isChannelsInView = useInView(channelsSectionRef, { once: true, amount: 0.2 });
@@ -37,22 +34,7 @@ const HomePage = () => {
       });
     }
 
-    // Animate video section fade out
-    if (videoSectionRef.current && channelsSectionRef.current) {
-      gsap.to(videoSectionRef.current, {
-        scrollTrigger: {
-          trigger: channelsSectionRef.current,
-          start: 'top bottom',
-          end: 'top center',
-          scrub: 1,
-        },
-        y: -50,
-        opacity: 0,
-        ease: 'power2.inOut',
-      });
-    }
-
-    // Add scroll trigger for channels section
+    // Add scroll trigger for channels section to appear after videos
     if (channelsSectionRef.current) {
       gsap.fromTo(
         channelsSectionRef.current,
@@ -81,8 +63,8 @@ const HomePage = () => {
     channel.thumbnail_url || 'https://images.unsplash.com/photo-1723403804231-f4e9b515fe9d'
   ) || [];
 
-  // Add more items to create additional rows
-  const extendedChannelItems = [...channelItems, ...channelItems, ...channelItems].slice(0, 84);
+  // Add more items to create additional rows (increased from 84 to 126 for more circles)
+  const extendedChannelItems = [...channelItems, ...channelItems, ...channelItems, ...channelItems].slice(0, 126);
 
   return (
     <motion.div 
@@ -136,22 +118,6 @@ const HomePage = () => {
         )}
       </div>
 
-      {/* Video Background Section */}
-      <motion.section 
-        ref={videoSectionRef}
-        className="relative z-10 mb-20"
-      >
-        {videos && videos.length > 15 && (
-          <div className="absolute top-[40vh] inset-x-0 h-[100vh]">
-            <HeroParallax 
-              videos={videos} 
-              title="" 
-              description=""
-            />
-          </div>
-        )}
-      </motion.section>
-
       {/* Channels Section with GridMotion - Smaller circles */}
       <motion.section 
         ref={channelsSectionRef} 
@@ -161,7 +127,7 @@ const HomePage = () => {
           <GridMotion 
             items={extendedChannelItems}
             gradientColor="#ea384c"
-            className="relative z-10 opacity-90 channel-grid transform scale-75"
+            className="relative z-10 opacity-90 channel-grid transform scale-50"
           />
         </div>
       </motion.section>
