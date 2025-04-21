@@ -1,10 +1,12 @@
+
 import React from "react";
 import { useVideoGridData } from "@/hooks/video/useVideoGridData";
 import { VideoCarouselRow } from "./VideoCarouselRow";
 
 const ROW_COUNT = 4;
 const SLIDE_SECONDS = [900, 720, 800, 600];
-const ROW_VERTICAL_OFFSETS = [0, 2, 4, 6];
+// Further reduce vertical offsets for closer rows
+const ROW_VERTICAL_OFFSETS = [0, 1, 2, 3];
 
 export function VideoCarouselRows() {
   const { videos, loading } = useVideoGridData(40);
@@ -32,7 +34,8 @@ export function VideoCarouselRows() {
         height: "min(99vh,820px)",
       }}
     >
-      <div className="w-[99vw] max-w-none mx-0 flex flex-col justify-center">
+      {/* Add a small gap between rows, e.g. 1 (0.25rem) */}
+      <div className="w-[99vw] max-w-none mx-0 flex flex-col gap-1 justify-center">
         {Array.from({ length: ROW_COUNT }).map((_, ri) => (
           <VideoCarouselRow
             key={`carousel-row-${ri}`}
