@@ -2,6 +2,8 @@
 import React from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import HomeLeftDiagonalFade from "@/components/welcome/HomeLeftDiagonalFade";
+import { VideoRows } from "@/components/welcome/VideoRows";
+import { WelcomeHeader } from "@/components/welcome/WelcomeHeader";
 
 const brandGradients = [
   "linear-gradient(to bottom, #fecdd3 0%, #ea384c 100%)",
@@ -39,9 +41,22 @@ export default function Index() {
           }}
         />
       </AnimatePresence>
-      {/* Diagonal (angled) fade overlay on top left */}
-      <HomeLeftDiagonalFade />
-      {/* Video rows will be rendered below, per your next steps */}
+      
+      {/* Content container with proper z-indexing */}
+      <div className="relative w-full flex-1">
+        {/* Diagonal (angled) fade overlay (positioned on top) */}
+        <HomeLeftDiagonalFade />
+        
+        {/* Welcome header (positioned on top of diagonal fade) */}
+        <div className="relative z-[51] pt-8 md:pt-16 px-6 md:px-12 lg:px-16">
+          <WelcomeHeader />
+        </div>
+        
+        {/* Video rows (positioned below in z-index) */}
+        <div className="relative z-20 mt-32 md:mt-40 lg:mt-48">
+          <VideoRows />
+        </div>
+      </div>
     </div>
   );
 }

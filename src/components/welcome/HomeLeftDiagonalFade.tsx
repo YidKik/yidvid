@@ -9,7 +9,7 @@ import React from "react";
 const HomeLeftDiagonalFade: React.FC = () => {
   return (
     <div
-      className="pointer-events-none absolute top-0 left-0 h-[390px] md:h-[370px] lg:h-[350px] z-40"
+      className="pointer-events-none absolute top-0 left-0 h-[390px] md:h-[370px] lg:h-[350px] z-50"
       style={{
         width: "55vw",
         minWidth: 320,
