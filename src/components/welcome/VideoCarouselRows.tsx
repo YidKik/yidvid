@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState, useRef } from "react";
 import { useVideoGridData } from "@/hooks/video/useVideoGridData";
 import { useNavigate } from "react-router-dom";
@@ -7,8 +8,8 @@ const VIDEOS_PER_ROW = 4;
 const MAX_FETCH = 40;
 // MUCH SLOWER and SMOOTHER slide durations (seconds)
 const SLIDE_SECONDS = [900, 720, 800, 600];
-// Even and closer vertical spacing offsets for each row (pixels)
-const ROW_VERTICAL_OFFSETS = [0, 4, 8, 12]; // reduced spacing to make rows closer
+// Even and close vertical spacing offsets for each row (pixels)
+const ROW_VERTICAL_OFFSETS = [0, 8, 16, 24]; // closer rows with equal spacing
 
 function getRowVideosWithOffset(allVideos, rowIdx, perRow, allRows) {
   const total = allVideos.length;
