@@ -1,45 +1,23 @@
-import React, { useEffect, useState, useRef } from "react";
+
+import React, { useEffect } from "react";
 import { useVideoGridData } from "@/hooks/video/useVideoGridData";
-import { useNavigate } from "react-router-dom";
+import { VideoCarouselRow } from "./VideoCarouselRow";
 
 const ROW_COUNT = 4;
 const VIDEOS_PER_ROW = 4;
-const MAX_FETCH = 40;
 const SLIDE_SECONDS = [900, 720, 800, 600];
 const ROW_VERTICAL_OFFSETS = [0, 4, 8, 12];
 
-function getRowVideosWithOffset(allVideos, rowIdx, perRow, allRows) {
+// Helper to get a unique slice for normal rows or all videos for scrolling
+function getRowVideosWithOffset(allVideos, rowIdx, perRow, useFullList = false) {
   const total = allVideos.length;
+  if (useFullList) return allVideos;
   const start = rowIdx * perRow;
-  const base = [];
-  for (let i = 0; i < perRow; i++) {
-    base.push(allVideos[(start + i) % total]);
-  }
-  const slide = [];
-  const offset = Math.floor((total / allRows) * rowIdx);
-  for (let i = 0; i < total; i++) {
-    slide.push(allVideos[(offset + i) % total]);
-  }
-  return [base, slide];
-}
-
-function useScrollRotation() {
-  const [scroll, setScroll] = useState(0);
-  useEffect(() => {
-    const onScroll = () => setScroll(window.scrollY);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-  const rotation = 4 + Math.min((scroll / 140) * 10, 10);
-  const scale = 1.09 + Math.min((scroll / 160) * 0.18, 0.18);
-  return { rotation, scale };
+  return Array.from({ length: perRow }).map((_, i) => allVideos[(start + i) % total]);
 }
 
 export function VideoCarouselRows() {
-  const navigate = useNavigate();
-  const { videos, loading } = useVideoGridData(MAX_FETCH);
-  const { rotation, scale } = useScrollRotation();
-  const carouselRef = useRef<HTMLDivElement>(null);
+  const { videos, loading } = useVideoGridData(40);
 
   const placeholder = (i: number) => ({
     id: `placeholder-${i}`,
@@ -48,196 +26,37 @@ export function VideoCarouselRows() {
     video_id: "-"
   });
 
-  let rowBases = [];
-  let rowSlides = [];
-  if (!videos.length) {
-    rowBases = Array(ROW_COUNT).fill(0).map((_, idx) =>
-      Array(VIDEOS_PER_ROW).fill(0).map((_, j) => placeholder(idx * VIDEOS_PER_ROW + j))
-    );
-    rowSlides = rowBases.map(row => [...row, ...row, ...row]);
-  } else {
-    for (let r = 0; r < ROW_COUNT; r++) {
-      const [startSegment, rowLoop] = getRowVideosWithOffset(videos, r, VIDEOS_PER_ROW, ROW_COUNT);
-      rowBases.push(startSegment);
-      rowSlides.push([...rowLoop, ...rowLoop]);
-    }
-  }
+  // Fill placeholder videos if loading/no data
+  const effectiveVideos = videos.length ? videos : Array(ROW_COUNT * VIDEOS_PER_ROW).fill(0).map((_, i) => placeholder(i));
 
-  useEffect(() => {
-    const styleElement = document.createElement('style');
-    styleElement.id = 'carousel-animations';
-    
-    let animations = '';
-    
-    for (let i = 0; i < ROW_COUNT; i++) {
-      if (i === 1 || i === 3) {
-        animations += `
-          @keyframes slideRow${i} {
-            0% { transform: translateX(-50%); }
-            100% { transform: translateX(0); }
-          }
-        `;
-      } else {
-        animations += `
-          @keyframes slideRow${i} {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-          }
-        `;
-      }
-    }
-    
-    styleElement.innerHTML = animations;
-    document.head.appendChild(styleElement);
-    
-    return () => {
-      const existingStyle = document.getElementById('carousel-animations');
-      if (existingStyle) {
-        existingStyle.remove();
-      }
-    };
-  }, []);
-
-  const getCardOffset = () => ({
-    base: 88,
-    md: 120
-  });
+  // For 2nd and 4th rows, use the full video list, for others just a segment
+  const getVideosForRow = (rowIdx: number) => {
+    const useFullList = rowIdx === 1 || rowIdx === 3;
+    return getRowVideosWithOffset(effectiveVideos, rowIdx, VIDEOS_PER_ROW, useFullList);
+  };
 
   return (
     <div
-      ref={carouselRef}
       className="fixed left-0 right-0 z-10 pointer-events-auto select-none"
       style={{
         top: -50,
         width: "100vw",
         height: "min(99vh,820px)",
-        transform: `rotate(${rotation}deg) scale(${scale})`,
-        transformOrigin: "100% 0%",
-        transition: "transform 0.5s cubic-bezier(.53,.42,.19,1.04)",
+        // Note: removed scroll rotation for simpler demo (consider restoring if desired)
       }}
     >
       <div className="w-[99vw] max-w-none mx-0 flex flex-col gap-1 justify-center">
-        {rowSlides.map((rowVideos, ri) => {
-          const verticalOffset = ROW_VERTICAL_OFFSETS[ri] ?? 0;
-          const cardOffset = getCardOffset();
-          const isOdd = ri % 2 === 1;
-          const isLeftToRight = ri === 1 || ri === 3;
-
-          const rowStyle: React.CSSProperties = {
-            marginTop: verticalOffset > 0 ? `${verticalOffset}px` : undefined,
-            marginBottom: verticalOffset < 0 ? `${-verticalOffset}px` : undefined,
-          };
-
-          const sliderStyle: React.CSSProperties = {
-            width: `calc(${rowVideos.length * 24}vw)`,
-            animation: `slideRow${ri} ${SLIDE_SECONDS[ri % SLIDE_SECONDS.length]}s linear infinite`,
-            animationFillMode: "forwards",
-            animationDelay: `${ri * 0.5}s`,
-            display: "flex",
-            flexDirection: "row" as const,
-            alignItems: "center",
-            transform: (ri % 2 === 1)
-              ? `translateX(${getCardOffset().base}px)`
-              : "translateX(0px)",
-          };
-
-          const sliderStyleDup: React.CSSProperties = {
-            ...sliderStyle,
-            left: "100%",
-            position: "absolute"
-          };
-
-          useEffect(() => {
-            const id = "carousel-brick-responsive-styles";
-            if (document.getElementById(id)) return;
-            const st = document.createElement("style");
-            st.id = id;
-            st.innerHTML = `
-              @media (min-width: 768px) {
-                .carousel-brick-offset-md {
-                  transform: translateX(${cardOffset.md}px) !important;
-                }
-              }
-            `;
-            document.head.appendChild(st);
-            return () => {
-              const el = document.getElementById(id);
-              if (el) el.remove();
-            };
-          }, []);
-
-          const brickRowClass =
-            isOdd ? "carousel-brick-offset-md" : "";
-
-          return (
-            <div
-              key={`carousel-row-${ri}`}
-              className="relative flex overflow-hidden w-full h-44 md:h-52"
-              tabIndex={-1}
-              aria-roledescription="carousel row"
-              style={rowStyle}
-            >
-              <div
-                className={`flex gap-5 md:gap-8 ${brickRowClass}`}
-                style={sliderStyle}
-              >
-                {rowVideos.map((video, vi) =>
-                  video ? (
-                    <button
-                      key={video.id + "-" + vi}
-                      className="aspect-video rounded-xl shadow-lg ring-2 ring-primary/20 overflow-hidden bg-white/80 hover:scale-110 transition-transform duration-300 flex-none w-44 md:w-60 cursor-pointer group"
-                      onClick={() =>
-                        video.video_id && video.video_id !== "-"
-                          ? navigate(`/video/${video.video_id}`)
-                          : undefined
-                      }
-                      aria-label={video.title}
-                      tabIndex={0}
-                    >
-                      <img
-                        src={video.thumbnail}
-                        alt={video.title}
-                        className="w-full h-full object-cover group-hover:brightness-110"
-                        draggable={false}
-                      />
-                    </button>
-                  ) : (
-                    <div key={`empty-${vi}`} className="aspect-video rounded-lg bg-gray-200 w-44 md:w-60 animate-pulse" aria-hidden="true" />
-                  )
-                )}
-              </div>
-              <div
-                className={`flex gap-5 md:gap-8 absolute ${brickRowClass}`}
-                style={sliderStyleDup}
-              >
-                {rowVideos.map((video, vi) =>
-                  video ? (
-                    <button
-                      key={`dup-${video.id}-${vi}`}
-                      className="aspect-video rounded-xl shadow-lg ring-2 ring-primary/20 overflow-hidden bg-white/80 hover:scale-110 transition-transform duration-300 flex-none w-44 md:w-60 cursor-pointer group"
-                      onClick={() =>
-                        video.video_id && video.video_id !== "-"
-                          ? navigate(`/video/${video.video_id}`)
-                          : undefined
-                      }
-                      aria-label={video.title}
-                      tabIndex={-1}
-                    >
-                      <img
-                        src={video.thumbnail}
-                        alt={video.title}
-                        className="w-full h-full object-cover group-hover:brightness-110"
-                        draggable={false}
-                      />
-                    </button>
-                  ) : (
-                    <div key={`dup-empty-${vi}`} className="aspect-video rounded-lg bg-gray-200 w-44 md:w-60 animate-pulse" aria-hidden="true" />
-                  )
-                )}
-              </div>
-            </div>
-          );
-        })}
+        {[0, 1, 2, 3].map((ri) => (
+          <VideoCarouselRow
+            key={`carousel-row-${ri}`}
+            rowIndex={ri}
+            videos={getVideosForRow(ri)}
+            direction={ri === 1 || ri === 3 ? "leftToRight" : "rightToLeft"}
+            animationDuration={SLIDE_SECONDS[ri % SLIDE_SECONDS.length]}
+            verticalOffset={ROW_VERTICAL_OFFSETS[ri] ?? 0}
+            placeholder={!videos.length}
+          />
+        ))}
       </div>
     </div>
   );
