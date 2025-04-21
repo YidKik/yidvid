@@ -2,7 +2,6 @@
 import { useEffect, useMemo } from "react";
 import { VideoGridItem } from "@/components/video/VideoGridItem";
 import { useVideoGridData, VideoGridItem as VideoItemType } from "@/hooks/video/useVideoGridData";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 /**
  * New AnimatedVideoRow
@@ -14,6 +13,10 @@ interface AnimatedVideoRowProps {
   rowIdx: number;
 }
 
+// Use standard YouTube thumbnail size as reference
+const THUMB_WIDTH = 320;  // px, common YT width
+const THUMB_HEIGHT = 180; // 16:9
+
 const AnimatedVideoRow = ({
   videos,
   direction,
@@ -23,7 +26,7 @@ const AnimatedVideoRow = ({
   // Double list for seamless looping
   const doubledVideos = useMemo(() => [...videos, ...videos], [videos]);
   const animationName = `scroll-${direction}-row-${rowIdx}`;
-  // Keyframes: left means negative X, right means positive X
+
   useEffect(() => {
     if (!document.getElementById(animationName)) {
       const style = document.createElement("style");
@@ -40,9 +43,12 @@ const AnimatedVideoRow = ({
   }, [animationName, direction]);
 
   return (
-    <div className="relative w-full overflow-hidden" style={{ height: "126px" }}>
+    <div
+      className="relative w-full overflow-hidden"
+      style={{ height: `${THUMB_HEIGHT + 8}px` }} // space for outline/gap
+    >
       <div
-        className="flex gap-4 absolute left-0 top-0 w-full"
+        className="flex gap-6 absolute left-0 top-0 w-full"
         style={{
           width: "200%",
           animation: `${animationName} ${duration}s linear infinite`,
@@ -53,13 +59,20 @@ const AnimatedVideoRow = ({
         {doubledVideos.map((video, idx) => (
           <div
             key={video.id + "-" + idx}
-            className="w-56 flex-shrink-0 rounded-md overflow-hidden"
+            className="flex-shrink-0 bg-white/90 border border-white/60 shadow aspect-[16/9] rounded-md"
             style={{
-              height: "126px", // Exact 16:9 height for a 224px width thumbnail
-              transform: `rotate(${((idx + rowIdx) % 2 === 0 ? 1 : -1) * ((rowIdx + 1) * 2 - 3)}deg) scale(0.96)`,
+              width: `${THUMB_WIDTH}px`,
+              height: `${THUMB_HEIGHT}px`,
+              // No rotation/scale for neat rows
+              // boxShadow and border for separation
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginTop: "0",
+              marginBottom: "0",
             }}
           >
-            <VideoGridItem video={video} />
+            <VideoGridItem video={video} noRadius />
           </div>
         ))}
       </div>
