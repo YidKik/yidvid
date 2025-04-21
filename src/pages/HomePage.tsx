@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react';
-import { motion } from 'framer-motion';
+
+import React, { useEffect, useRef } from 'react';
+import { motion, useInView } from 'framer-motion';
 import { VideoCarousels } from '@/components/home/VideoCarousels';
 import { ChannelCarousels } from '@/components/home/ChannelCarousels';
 import { useVideos } from '@/hooks/video/useVideos';
@@ -10,6 +11,7 @@ import { Link } from 'react-router-dom';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { GridMotion } from '@/components/ui/grid-motion';
+import { ChannelCard } from '@/components/youtube/grid/ChannelCard';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -17,6 +19,8 @@ const HomePage = () => {
   const { data: videos, isLoading: videosLoading } = useVideos();
   const { manuallyFetchedChannels, isLoading: channelsLoading } = useChannelsGrid();
   const shuffledVideos = useShuffledVideos(videos);
+  const extraChannelSectionRef = useRef(null);
+  const isExtraChannelsInView = useInView(extraChannelSectionRef, { once: true, amount: 0.2 });
 
   useEffect(() => {
     // Animate hero content on scroll
@@ -32,6 +36,31 @@ const HomePage = () => {
         y: -100,
         opacity: 0,
       });
+    }
+
+    // Add scroll trigger for extra channel section
+    if (extraChannelSectionRef.current) {
+      gsap.fromTo(
+        extraChannelSectionRef.current,
+        { 
+          x: -1000, 
+          opacity: 0,
+          rotate: -5
+        },
+        {
+          scrollTrigger: {
+            trigger: extraChannelSectionRef.current,
+            start: 'top bottom',
+            end: 'top center',
+            scrub: 1,
+          },
+          x: 0,
+          opacity: 1,
+          rotate: 0,
+          ease: 'power2.out',
+          duration: 1.5
+        }
+      );
     }
   }, []);
 
@@ -124,6 +153,43 @@ const HomePage = () => {
           />
         </div>
       </motion.section>
+
+      {/* Additional Channel Rows that slide in from left */}
+      <div 
+        ref={extraChannelSectionRef}
+        className="relative z-10 py-16 bg-gradient-to-b from-[#030303] to-[#0a0a0a] overflow-hidden"
+      >
+        <motion.div 
+          className="container mx-auto"
+          initial={{ x: "-100%", opacity: 0 }}
+          animate={isExtraChannelsInView ? { x: 0, opacity: 1 } : { x: "-100%", opacity: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+        >
+          <h2 className="text-3xl font-bold mb-8 text-white/90 ml-4">Popular Channels</h2>
+          
+          {/* First additional row of channels */}
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 mb-10">
+            {manuallyFetchedChannels?.slice(0, 7).map((channel, index) => (
+              <ChannelCard 
+                key={channel.id || index}
+                channel={channel}
+                index={index}
+              />
+            ))}
+          </div>
+          
+          {/* Second additional row of channels */}
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
+            {manuallyFetchedChannels?.slice(8, 15).map((channel, index) => (
+              <ChannelCard 
+                key={channel.id || index}
+                channel={channel}
+                index={index + 8}
+              />
+            ))}
+          </div>
+        </motion.div>
+      </div>
     </motion.div>
   );
 };
