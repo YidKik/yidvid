@@ -1,4 +1,3 @@
-
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
@@ -6,16 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Play } from "lucide-react";
 import { VideoCarouselRows } from "@/components/welcome/VideoCarouselRows";
 
-// Friendly single-hue gradients: top (lighter) to bottom (deeper)
-// Use YidVid palette: red, purple, soft yellow, lavender tones
 const brandGradients = [
-  // Warm Red
   "linear-gradient(to bottom, #fecdd3 0%, #ea384c 100%)",
-  // Brand Purple
   "linear-gradient(to bottom, #ede9fe 0%, #9b87f5 100%)",
-  // Happy Soft Yellow
   "linear-gradient(to bottom, #fff7d6 0%, #ffe29f 100%)",
-  // Light Lavender
   "linear-gradient(to bottom, #f3e8ff 0%, #d6bcfa 100%)",
 ];
 
@@ -24,18 +17,16 @@ export default function HomeWelcome() {
   const [gradientIndex, setGradientIndex] = useState(0);
   const [fadeKey, setFadeKey] = useState(0);
 
-  // Ultra-smooth, longer cycle (18s), super gentle cross-fade
   useEffect(() => {
     const interval = setInterval(() => {
       setGradientIndex((i) => (i + 1) % brandGradients.length);
-      setFadeKey((k) => k + 1); // force re-mount for AnimatePresence fade
-    }, 18000); // 18 seconds per color
+      setFadeKey((k) => k + 1);
+    }, 18000);
     return () => clearInterval(interval);
   }, []);
 
   return (
-    <div className="relative min-h-screen w-full flex flex-col overflow-y-auto">
-      {/* Background gradient with ultra-smooth cross-fade */}
+    <div className="relative min-h-screen w-full flex flex-col overflow-x-hidden bg-transparent">
       <AnimatePresence mode="wait">
         <motion.div
           key={fadeKey + "-" + gradientIndex}
@@ -51,7 +42,6 @@ export default function HomeWelcome() {
         />
       </AnimatePresence>
 
-      {/* Floating decorative blobs */}
       {Array.from({ length: 8 }).map((_, i) => (
         <motion.div
           key={i}
@@ -77,8 +67,7 @@ export default function HomeWelcome() {
         />
       ))}
 
-      {/* Center hero section */}
-      <div className="relative z-20 flex flex-col items-center pt-24 mb-16">
+      <div className="relative z-20 flex flex-col items-center pt-16 pb-10">
         <motion.img
           src="/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png"
           alt="YidVid Logo"
@@ -130,11 +119,11 @@ export default function HomeWelcome() {
         </motion.div>
       </div>
 
-      {/* Video carousel container with reduced height */}
-      <div className="h-[80vh] relative">
-        {/* Video carousel grid rows background */}
+      <div className="w-full h-[550px] relative pointer-events-none z-10" style={{ marginTop: "-40px" }}>
         <VideoCarouselRows />
       </div>
+
+      <div className="h-[155vh]" />
     </div>
   );
 }

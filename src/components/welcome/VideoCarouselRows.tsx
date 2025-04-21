@@ -34,8 +34,9 @@ function useScrollRotation() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
-  const rotation = Math.min((scroll / 220) * 6, 6);
-  const scale = 1 + Math.min((scroll / 220) * 0.10, 0.10);
+  // Start with a default rotation of 4deg and scale 1.09, increase with scroll (stronger effect)
+  const rotation = 4 + Math.min((scroll / 140) * 10, 10); // up to ~14deg total
+  const scale = 1.09 + Math.min((scroll / 160) * 0.18, 0.18); // up to 1.27x scale
   return { rotation, scale };
 }
 
@@ -68,16 +69,18 @@ export function VideoCarouselRows() {
 
   return (
     <div
-      className="absolute left-0 right-0 z-10 pointer-events-auto select-none flex justify-center items-center"
+      className="fixed left-0 right-0 z-10 pointer-events-auto select-none flex justify-center items-start"
       style={{
-        top: "0",
-        transform: `rotate(${rotation}deg) scale(${scale})`,
-        transition: "transform 0.35s cubic-bezier(.53,.42,.19,1.04)",
+        top: 0,
         width: "100vw",
-        height: "100vh"
+        height: "min(99vh,820px)",
+        transform: `rotate(${rotation}deg) scale(${scale})`,
+        transformOrigin: "100% 0%", // anchor at top right
+        transition: "transform 0.5s cubic-bezier(.53,.42,.19,1.04)",
+        // No margin - always sits at top!
       }}
     >
-      <div className="w-full max-w-[1680px] mx-auto flex flex-col gap-3 justify-center">
+      <div className="w-[99vw] max-w-none mx-0 flex flex-col gap-3 justify-center">
         {rowSlides.map((rowVideos, ri) => {
           // All rows slide from right-to-left, using much slower individual duration (SLIDE_SECONDS)
           const slideAnim = `
@@ -105,7 +108,7 @@ export function VideoCarouselRows() {
           return (
             <div
               key={`carousel-row-${ri}`}
-              className="relative flex overflow-hidden w-full h-44 md:h-48"
+              className="relative flex overflow-hidden w-full h-44 md:h-52"
               tabIndex={-1}
               aria-roledescription="carousel row"
               style={rowStyle}
@@ -152,3 +155,4 @@ export function VideoCarouselRows() {
     </div>
   );
 }
+
