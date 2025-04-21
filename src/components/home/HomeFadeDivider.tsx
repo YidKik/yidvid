@@ -2,9 +2,9 @@
 import React from "react";
 
 /**
- * Overlay SVG divider: semi-crooked, solid shape (no fade).
- * Crooked divider starts from the top right and curves down to the bottom left.
- * Used as visual divider between welcome text and video carousel.
+ * Overlay SVG divider: bold, crooked, solid (no fade).
+ * Crooked divider starts from the top right and goes down to the bottom left,
+ * creating a clear, prominent separation.
  */
 export const HomeFadeDivider = () => (
   <div className="pointer-events-none absolute top-0 right-[56%] h-full w-[56%] z-30 hidden md:block">
@@ -23,14 +23,14 @@ export const HomeFadeDivider = () => (
         zIndex: 2,
       }}
     >
+      {/* Draw a bold crooked divider: top right moves sharply to bottom left */}
       <path
         d="
-          M 0 0
-          Q 120 180 90 450
-          Q 60 700 210 900
-          L 480 900
-          L 480 0
-          Z
+          M 480 0           /* Start at the top right */
+          Q 340 120 100 0   /* Crooked toward upper-left (top curve) */
+          Q -40 450 100 900 /* Sweep diagonally to lower left (diagonal curve) */
+          L 480 900         /* Bottom right corner */
+          Z                /* Close path */
         "
         fill="#f1eaff"
       />
