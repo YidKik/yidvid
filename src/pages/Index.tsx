@@ -1,3 +1,4 @@
+
 import { Header } from "@/components/Header";
 import Auth from "@/pages/Auth";
 import { useState, useEffect } from "react";
@@ -13,7 +14,6 @@ import { Helmet } from "react-helmet";
 import { useSearchParams } from "react-router-dom";
 import { getPageTitle, DEFAULT_META_DESCRIPTION, DEFAULT_META_KEYWORDS, DEFAULT_META_IMAGE } from "@/utils/pageTitle";
 import { isWelcomePage } from "@/utils/scrollRestoration";
-import { VideoShowcase } from "@/components/welcome/VideoShowcase";
 
 const MainContent = () => {
   const [isMusic, setIsMusic] = useState(false);
@@ -42,8 +42,6 @@ const MainContent = () => {
 
   return (
     <div className="flex-1">
-      <VideoShowcase />
-      
       <Header />
       <motion.main 
         initial={{ opacity: 0, y: 20 }}
