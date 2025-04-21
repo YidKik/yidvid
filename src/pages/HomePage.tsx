@@ -1,11 +1,10 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import { VideoCarousels } from '@/components/home/VideoCarousels';
 import { ChannelCarousels } from '@/components/home/ChannelCarousels';
+import { TiltedVideoScroll } from '@/components/home/TiltedVideoScroll';
 import { useVideos } from '@/hooks/video/useVideos';
 import { useChannelsGrid } from '@/hooks/channel/useChannelsGrid';
-import { TiltedVideoScroll } from '@/components/home/TiltedVideoScroll';
 import { useShuffledVideos } from '@/hooks/video/useShuffledVideos';
 import { HeroGeometric } from '@/components/ui/shape-landing-hero';
 
@@ -32,16 +31,14 @@ const HomePage = () => {
       initial="initial"
       animate="animate"
     >
-      {/* New Hero Section */}
       <HeroGeometric 
         badge="YidVid"
-        title1="Your Premier"
-        title2="Jewish Content Platform"
+        title1="Your Gateway to"
+        title2="Jewish Content"
+        channels={manuallyFetchedChannels}
       />
 
-      {/* Video Scroll Sections - Closer Together */}
       <div className="space-y-2 mt-4">
-        {/* First Tilted Video Scroll Section - Right to Left */}
         {videos && (
           <motion.section 
             className="relative"
@@ -53,7 +50,6 @@ const HomePage = () => {
           </motion.section>
         )}
 
-        {/* Second Tilted Video Scroll Section - Left to Right */}
         {shuffledVideos && (
           <motion.section 
             className="relative"
@@ -66,7 +62,6 @@ const HomePage = () => {
         )}
       </div>
 
-      {/* Channel Avatars Scrolling */}
       <motion.section className="py-4 relative">
         <ChannelCarousels isLoading={channelsLoading} />
       </motion.section>
