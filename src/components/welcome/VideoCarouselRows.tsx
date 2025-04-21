@@ -38,7 +38,7 @@ function useScrollRotation() {
 
 export function VideoCarouselRows() {
   const navigate = useNavigate();
-  const { videos, loading } = useVideoGridData(ROWS_COUNT * VIDEOS_PER_ROW + 8);
+  const { videos, loading } = useVideoGridData(ROW_COUNT * VIDEOS_PER_ROW + 8); // Fixed typo here
   const { rotation, scale } = useScrollRotation();
 
   // Use placeholder thumbs if loading
@@ -138,3 +138,4 @@ export function VideoCarouselRows() {
     </div>
   );
 }
+
