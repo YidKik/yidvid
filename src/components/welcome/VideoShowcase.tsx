@@ -20,7 +20,7 @@ export const VideoShowcase = () => {
   useEffect(() => {
     const handleScroll = () => {
       // Use a lower max scroll value (300px) for faster animation effect
-      const maxScroll = 300;
+      const maxScroll = 400;
       const progress = Math.min(window.scrollY / maxScroll, 1);
       setScrollProgress(progress);
       console.log("Scroll progress:", progress); // Debug log
@@ -56,9 +56,9 @@ export const VideoShowcase = () => {
       <div 
         className="flex flex-col gap-6 py-8 transform-gpu"
         style={{
-          transform: `scale(${1 + scrollProgress * 0.5})`,
-          opacity: Math.max(0.5, 1 - scrollProgress * 0.3),
-          transition: "transform 0.3s ease-out, opacity 0.3s ease-out",
+          transform: `scale(${1 + scrollProgress * 0.8})`,
+          opacity: Math.max(0.4, 1 - scrollProgress * 0.6),
+          transition: "transform 0.2s ease-out, opacity 0.2s ease-out",
         }}
       >
         {videoRows.map((row, index) => (
@@ -86,7 +86,7 @@ interface VideoRowProps {
 
 const VideoRow = ({ videos, direction, speed, rowIndex, scrollProgress }: VideoRowProps) => {
   // Use even more rotation for dramatic effect - increased rotation values
-  const rotationAngles = [25, -30, 20, -35];
+  const rotationAngles = [40, -45, 35, -50]; // Increased rotation angles for more dramatic effect
   const rotationAngle = rotationAngles[rowIndex % rotationAngles.length] * scrollProgress;
   
   // Animation name based on direction and row
@@ -125,7 +125,7 @@ const VideoRow = ({ videos, direction, speed, rowIndex, scrollProgress }: VideoR
       style={{
         height: "260px",
         transform: `rotate(${rotationAngle}deg)`,
-        transition: "transform 0.3s ease-out",
+        transition: "transform 0.2s ease-out",
         zIndex: rowIndex + 1,
       }}
     >
@@ -151,14 +151,14 @@ interface VideoCardProps {
 
 const VideoCard = ({ video, scrollProgress }: VideoCardProps) => {
   // Increase scale based on scroll progress
-  const scale = 1 + scrollProgress * 0.25;
+  const scale = 1 + scrollProgress * 0.4; // Increased scale effect
   
   return (
     <Link
       to={`/video/${video.id}`}
       className={cn(
         "relative flex-shrink-0 rounded-lg overflow-hidden shadow-lg border border-white/20",
-        "transition-all duration-300 ease-out pointer-events-auto"
+        "transition-all duration-200 ease-out pointer-events-auto"
       )}
       style={{
         width: "350px",
