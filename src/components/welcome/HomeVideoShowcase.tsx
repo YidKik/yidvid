@@ -1,134 +1,9 @@
-
-import { useEffect, useMemo } from "react";
-import { VideoGridItem } from "@/components/video/VideoGridItem";
 import { useVideoGridData, VideoGridItem as VideoItemType } from "@/hooks/video/useVideoGridData";
+import { AnimatedVideoRow } from "./AnimatedVideoRow";
 
 /**
- * New AnimatedVideoRow
+ * HomeVideoShowcase
  */
-interface AnimatedVideoRowProps {
-  videos: VideoItemType[];
-  direction: "left" | "right" | "vertical-down";
-  duration: number;
-  rowIdx: number;
-}
-
-// Use standard YouTube thumbnail size as reference
-const THUMB_WIDTH = 340;  // px, a little bit wider for a boxier look
-const THUMB_HEIGHT = 192; // px, 16:9
-
-const AnimatedVideoRow = ({
-  videos,
-  direction,
-  duration,
-  rowIdx
-}: AnimatedVideoRowProps) => {
-  // Double list for seamless looping
-  const doubledVideos = useMemo(() => [...videos, ...videos], [videos]);
-  const animationName = `scroll-${direction}-row-${rowIdx}`;
-
-  useEffect(() => {
-    if (!document.getElementById(animationName)) {
-      const style = document.createElement("style");
-      style.id = animationName;
-      let keyframes = "";
-      if (direction === "left") {
-        keyframes = `
-          @keyframes ${animationName} {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-100%); }
-          }
-        `;
-      } else if (direction === "vertical-down") {
-        keyframes = `
-          @keyframes ${animationName} {
-            0% { transform: translateY(-100%); }
-            100% { transform: translateY(0); }
-          }
-        `;
-      }
-      style.innerHTML = keyframes;
-      document.head.appendChild(style);
-    }
-  }, [animationName, direction]);
-
-  if (direction === "left") {
-    return (
-      <div
-        className="relative w-full overflow-hidden"
-        style={{ height: `${THUMB_HEIGHT + 8}px` }} // keep same height for all
-      >
-        <div
-          className="flex gap-6 absolute left-0 top-0 w-full"
-          style={{
-            width: "200%",
-            animation: `${animationName} ${duration}s linear infinite`,
-            animationDelay: `${-rowIdx * (duration / 4)}s`,
-            flexDirection: "row"
-          }}
-        >
-          {doubledVideos.map((video, idx) => (
-            <div
-              key={video.id + "-" + idx}
-              className="flex-shrink-0 bg-white/90 border border-white/60 shadow aspect-[16/9]"
-              style={{
-                width: `${THUMB_WIDTH}px`,
-                height: `${THUMB_HEIGHT}px`,
-                borderRadius: "8px", // boxier corners
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                margin: "0"
-              }}
-            >
-              <VideoGridItem video={video} noRadius />
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  } else if (direction === "vertical-down") {
-    // Vertical duplicate for smooth looping
-    const stackedVideos = [...videos, ...videos];
-    return (
-      <div
-        className="relative w-full overflow-hidden flex flex-row justify-center"
-        style={{ height: `${THUMB_HEIGHT * 2 + 24}px` }}
-      >
-        <div
-          className="flex flex-col gap-6 absolute left-0 top-0 w-full items-center"
-          style={{
-            height: "200%",
-            animation: `${animationName} ${duration}s linear infinite`,
-            animationDelay: `${-rowIdx * (duration / 4)}s`,
-            flexDirection: "column"
-          }}
-        >
-          {stackedVideos.map((video, idx) => (
-            <div
-              key={video.id + "-vert-" + idx}
-              className="flex-shrink-0 bg-white/90 border border-white/60 shadow aspect-[16/9]"
-              style={{
-                width: `${THUMB_WIDTH}px`,
-                height: `${THUMB_HEIGHT}px`,
-                borderRadius: "8px", // boxier corners
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                margin: "0"
-              }}
-            >
-              <VideoGridItem video={video} noRadius />
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  } else {
-    return null;
-  }
-};
-
 export const HomeVideoShowcase = () => {
   // Grab enough videos for a continuous showcase
   const { videos, loading } = useVideoGridData(40);
@@ -174,7 +49,7 @@ export const HomeVideoShowcase = () => {
   // Make rows 1 and 3 slide left, rows 2 and 4 slide vertically down
   const directions: ("left" | "vertical-down")[] = [
     "left",
-    "vertical-down", 
+    "vertical-down",
     "left",
     "vertical-down"
   ];
