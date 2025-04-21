@@ -9,7 +9,6 @@ import { useChannelsGrid } from '@/hooks/channel/useChannelsGrid';
 import { useShuffledVideos } from '@/hooks/video/useShuffledVideos';
 import { HeroGeometric } from '@/components/ui/shape-landing-hero';
 import { HeroParallax } from '@/components/ui/hero-parallax';
-import { WelcomeSection } from '@/components/home/WelcomeSection';
 
 const HomePage = () => {
   const { data: videos, isLoading: videosLoading } = useVideos();
@@ -34,44 +33,44 @@ const HomePage = () => {
       initial="initial"
       animate="animate"
     >
-      <HeroGeometric 
-        badge="YidVid"
-        title1="Your Gateway to"
-        title2="Jewish Content"
-        channels={manuallyFetchedChannels}
-      />
+      <div className="relative">
+        <HeroGeometric 
+          badge="YidVid"
+          title1="Your Gateway to"
+          title2="Jewish Content"
+          channels={manuallyFetchedChannels}
+        />
 
-      <WelcomeSection />
+        {videos && videos.length > 15 && (
+          <motion.section
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5, duration: 0.8 }}
+            className="w-full -mt-20 relative z-0"
+          >
+            <HeroParallax 
+              videos={videos} 
+              title="Featured Videos" 
+              description="Discover the finest Jewish content from our curated collection."
+            />
+          </motion.section>
+        )}
 
-      {videos && videos.length > 15 && (
-        <motion.section
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5, duration: 0.8 }}
-          className="w-full"
-        >
-          <HeroParallax 
-            videos={videos} 
-            title="Featured Videos" 
-            description="Discover the finest Jewish content from our curated collection."
-          />
-        </motion.section>
-      )}
-
-      {shuffledVideos && shuffledVideos.length > 15 && (
-        <motion.section
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5, duration: 0.8 }}
-          className="w-full"
-        >
-          <HeroParallax 
-            videos={shuffledVideos}
-            title="Trending This Week" 
-            description="See what's popular in the Jewish video community right now."
-          />
-        </motion.section>
-      )}
+        {shuffledVideos && shuffledVideos.length > 15 && (
+          <motion.section
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5, duration: 0.8 }}
+            className="w-full relative z-0"
+          >
+            <HeroParallax 
+              videos={shuffledVideos}
+              title="Trending This Week" 
+              description="See what's popular in the Jewish video community right now."
+            />
+          </motion.section>
+        )}
+      </div>
 
       <div className="space-y-2 mt-4">
         {videos && (
