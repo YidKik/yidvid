@@ -65,18 +65,18 @@ export function GridMotion({
           background: `radial-gradient(circle, ${gradientColor} 0%, transparent 100%)`,
         }}
       >
-        <div className="relative z-2 flex-none grid h-[200vh] w-[150vw] gap-6 grid-rows-[repeat(7,1fr)] grid-cols-[100%] -rotate-15 origin-center">
+        <div className="relative z-2 flex-none grid h-[200vh] w-[150vw] gap-8 grid-rows-[repeat(7,1fr)] grid-cols-[100%] -rotate-15 origin-center">
           {[...Array(7)].map((_, rowIndex) => (
             <div
               key={rowIndex}
-              className="grid gap-6 grid-cols-[repeat(7,1fr)] will-change-transform will-change-filter"
+              className="grid gap-8 grid-cols-[repeat(7,1fr)] will-change-transform will-change-filter"
               ref={(el) => (rowRefs.current[rowIndex] = el)}
             >
               {[...Array(7)].map((_, itemIndex) => {
-                const content = combinedItems[rowIndex * 7 + itemIndex]
+                const content = items[rowIndex * 7 + itemIndex]
                 return (
-                  <div key={itemIndex} className="relative aspect-square">
-                    <div className="relative h-full w-full overflow-hidden rounded-full bg-muted flex items-center justify-center text-foreground text-xl transform scale-75 hover:scale-90 transition-transform">
+                  <div key={itemIndex} className="relative aspect-square p-2">
+                    <div className="relative h-full w-full overflow-hidden rounded-full bg-muted flex items-center justify-center text-foreground text-xl transform hover:scale-110 transition-transform duration-300">
                       {typeof content === 'string' && content.startsWith('http') ? (
                         <div
                           className="absolute inset-0 bg-cover bg-center rounded-full"

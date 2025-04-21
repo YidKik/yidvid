@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { VideoCarousels } from '@/components/home/VideoCarousels';
@@ -19,6 +18,7 @@ const HomePage = () => {
   const { data: videos, isLoading: videosLoading } = useVideos();
   const { manuallyFetchedChannels, isLoading: channelsLoading } = useChannelsGrid();
   const shuffledVideos = useShuffledVideos(videos);
+  const videoSectionRef = useRef(null);
   const extraChannelSectionRef = useRef(null);
   const isExtraChannelsInView = useInView(extraChannelSectionRef, { once: true, amount: 0.2 });
 
@@ -35,6 +35,21 @@ const HomePage = () => {
         },
         y: -100,
         opacity: 0,
+      });
+    }
+
+    // Animate video section fade out when channel section comes in
+    if (videoSectionRef.current && extraChannelSectionRef.current) {
+      gsap.to(videoSectionRef.current, {
+        scrollTrigger: {
+          trigger: extraChannelSectionRef.current,
+          start: 'top bottom',
+          end: 'top center',
+          scrub: 1,
+        },
+        y: -50,
+        opacity: 0,
+        ease: 'power2.inOut',
       });
     }
 
@@ -132,22 +147,27 @@ const HomePage = () => {
         )}
       </div>
 
-      {/* Video Background Section */}
-      {videos && videos.length > 15 && (
-        <div className="absolute top-[40vh] inset-x-0 h-[100vh]">
-          <HeroParallax 
-            videos={videos} 
-            title="" 
-            description=""
-          />
-        </div>
-      )}
+      {/* Video Background Section with fade out animation */}
+      <motion.section 
+        ref={videoSectionRef}
+        className="relative z-10 mb-20"
+      >
+        {videos && videos.length > 15 && (
+          <div className="absolute top-[40vh] inset-x-0 h-[100vh]">
+            <HeroParallax 
+              videos={videos} 
+              title="" 
+              description=""
+            />
+          </div>
+        )}
+      </motion.section>
 
-      {/* Channels Section with GridMotion - Now with circular images and more rows */}
+      {/* Channels Section with GridMotion - Now with full circular images */}
       <motion.section className="relative z-10 mt-[40vh]">
         <div className="min-h-screen py-20"> 
           <GridMotion 
-            items={[...channelItems, ...channelItems, ...channelItems].slice(0, 49)} // Added more items for more rows
+            items={[...channelItems, ...channelItems, ...channelItems, ...channelItems].slice(0, 70)} 
             gradientColor="#ea384c"
             className="relative z-10 opacity-90 channel-grid"
           />
@@ -167,27 +187,21 @@ const HomePage = () => {
         >
           <h2 className="text-3xl font-bold mb-8 text-white/90 ml-4">Popular Channels</h2>
           
-          {/* First additional row of channels */}
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 mb-10">
-            {manuallyFetchedChannels?.slice(0, 7).map((channel, index) => (
-              <ChannelCard 
-                key={channel.id || index}
-                channel={channel}
-                index={index}
-              />
-            ))}
-          </div>
-          
-          {/* Second additional row of channels */}
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
-            {manuallyFetchedChannels?.slice(8, 15).map((channel, index) => (
-              <ChannelCard 
-                key={channel.id || index}
-                channel={channel}
-                index={index + 8}
-              />
-            ))}
-          </div>
+          {/* Four rows of channels */}
+          {[0, 1, 2, 3].map((rowIndex) => (
+            <div 
+              key={rowIndex}
+              className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 mb-10"
+            >
+              {manuallyFetchedChannels?.slice(rowIndex * 7, (rowIndex + 1) * 7).map((channel, index) => (
+                <ChannelCard 
+                  key={channel.id || index}
+                  channel={channel}
+                  index={index + (rowIndex * 7)}
+                />
+              ))}
+            </div>
+          ))}
         </motion.div>
       </div>
     </motion.div>
