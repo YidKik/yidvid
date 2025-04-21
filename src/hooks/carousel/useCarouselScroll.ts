@@ -11,72 +11,74 @@ interface UseCarouselScrollProps {
 
 export const useCarouselScroll = ({ emblaApi, direction, speed, itemsLength }: UseCarouselScrollProps) => {
   const scrolling = useRef<boolean>(false);
-  const animationRef = useRef<number>();
-  const isInitialRender = useRef(true);
+  const animationRef = useRef<number | null>(null);
 
+  // Clear any existing animation when component unmounts or dependencies change
   useEffect(() => {
-    if (!emblaApi || itemsLength === 0) return;
-    
-    // Re-initialize the carousel when items change
-    emblaApi.reInit();
-    
-    // Adjust speed for more noticeable scrolling
-    const scrollStep = speed * 0.08; 
-    let lastTime = 0;
-    
-    const scroll = (timestamp: number) => {
-      if (!emblaApi) return;
-      
-      if (!lastTime) lastTime = timestamp;
-      const deltaTime = timestamp - lastTime;
-      lastTime = timestamp;
-      
-      if (!scrolling.current) {
-        // Create continuous scrolling with direction control
-        const scrollAmount = (direction === "ltr" ? 1 : -1) * scrollStep * (deltaTime / 16);
-        
-        try {
-          const currentScrollProgress = emblaApi.scrollProgress();
-          
-          // Adjust for direction
-          if (direction === "ltr") {
-            emblaApi.scrollTo(currentScrollProgress + (scrollStep * (deltaTime / 16)));
-            
-            // If we've scrolled almost to the end, loop around
-            if (currentScrollProgress > 0.95) {
-              emblaApi.scrollTo(0);
-            }
-          } else {
-            emblaApi.scrollTo(currentScrollProgress - (scrollStep * (deltaTime / 16)));
-            
-            // If we've scrolled almost to the beginning, loop around
-            if (currentScrollProgress < 0.05) {
-              emblaApi.scrollTo(1);
-            }
-          }
-        } catch (error) {
-          console.error("Scroll error:", error);
-          // If there's an error, we'll try to recover by continuing animation
-        }
-      }
-      
-      animationRef.current = requestAnimationFrame(scroll);
-    };
-    
-    // Start with a slight delay to ensure proper initialization
-    setTimeout(() => {
-      animationRef.current = requestAnimationFrame(scroll);
-      isInitialRender.current = false;
-    }, 100);
-    
     return () => {
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
+        animationRef.current = null;
+      }
+    };
+  }, []);
+
+  // Handle the actual scrolling logic
+  useEffect(() => {
+    if (!emblaApi || itemsLength === 0) return;
+    
+    // Make sure carousel is properly initialized
+    emblaApi.reInit();
+    
+    // Convert speed to a more manageable value (higher number = faster scrolling)
+    const scrollStep = speed * 0.0005;
+    
+    const scroll = () => {
+      if (!emblaApi || scrolling.current) {
+        // If user is interacting or emblaApi is not available, just continue the animation loop
+        animationRef.current = requestAnimationFrame(scroll);
+        return;
+      }
+      
+      try {
+        // Determine scroll direction
+        const scrollAmount = direction === "ltr" ? scrollStep : -scrollStep;
+        
+        // Get current scroll position
+        const currentScrollProgress = emblaApi.scrollProgress();
+        
+        // Apply scroll
+        emblaApi.scrollTo(currentScrollProgress + scrollAmount);
+        
+        // Loop around if we reach the end/beginning
+        if (direction === "ltr" && currentScrollProgress >= 0.99) {
+          emblaApi.scrollTo(0);
+        } else if (direction === "rtl" && currentScrollProgress <= 0.01) {
+          emblaApi.scrollTo(1);
+        }
+      } catch (error) {
+        console.error("Scroll error:", error);
+      }
+      
+      // Continue the animation loop
+      animationRef.current = requestAnimationFrame(scroll);
+    };
+    
+    // Start the scroll animation with a delay to ensure proper initialization
+    const timer = setTimeout(() => {
+      animationRef.current = requestAnimationFrame(scroll);
+    }, 500);
+    
+    return () => {
+      clearTimeout(timer);
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+        animationRef.current = null;
       }
     };
   }, [emblaApi, direction, speed, itemsLength]);
 
-  // Handle user interaction to pause auto-scroll
+  // Handle user interaction
   useEffect(() => {
     if (!emblaApi) return;
     

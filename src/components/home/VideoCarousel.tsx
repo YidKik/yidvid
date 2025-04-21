@@ -26,17 +26,18 @@ export const VideoCarousel = ({
   const navigate = useNavigate();
   const shuffledVideos = useShuffledVideos(videos, shuffleKey);
   
+  // Create embla carousel with proper configuration
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: true,
     dragFree: true,
-    containScroll: false, // Don't contain scroll to prevent stopping at snap points
-    align: "start",
-    slidesToScroll: 1,
-    watchDrag: true,
-    skipSnaps: true, // Allow scrolling past snap points
+    containScroll: false,
     direction: direction,
+    align: "start",
+    watchDrag: true,
+    skipSnaps: true,
   });
 
+  // Use the fixed carousel scroll hook
   useCarouselScroll({
     emblaApi,
     direction,
@@ -47,6 +48,8 @@ export const VideoCarousel = ({
   const handleVideoClick = (videoId: string) => {
     if (onVideoClick) {
       onVideoClick(videoId);
+    } else {
+      navigate(`/video/${videoId}`);
     }
   };
 

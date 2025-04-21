@@ -65,7 +65,7 @@ export const VideoCarousels = ({ videos, isLoading, onVideoClick }: VideoCarouse
           <VideoCarousel 
             videos={sortedVideos} 
             direction={index % 2 === 0 ? "ltr" : "rtl"} 
-            speed={25 + (index * 10)} 
+            speed={50 + (index * 10)} 
             shuffleKey={rowShuffleKeys[index]} 
             onVideoClick={onVideoClick}
           />

@@ -1,10 +1,11 @@
 
-import React, { useRef, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import useEmblaCarousel from "embla-carousel-react";
 import { useNavigate } from "react-router-dom";
 import { ChannelItem } from "./ChannelCarousels";
 import { motion } from "framer-motion";
+import { useCarouselScroll } from "@/hooks/carousel/useCarouselScroll";
 
 interface ChannelCarouselProps {
   channels: ChannelItem[];
@@ -19,6 +20,26 @@ export const ChannelCarousel = ({ channels, direction, speed, shuffleKey }: Chan
   
   const [shuffledChannels, setShuffledChannels] = useState<ChannelItem[]>([]);
   
+  // Create embla carousel with proper configuration
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    loop: true,
+    dragFree: true,
+    containScroll: false,
+    direction: direction,
+    align: "start",
+    watchDrag: true,
+    skipSnaps: true,
+  });
+
+  // Use the fixed carousel scroll hook
+  useCarouselScroll({
+    emblaApi,
+    direction,
+    speed,
+    itemsLength: shuffledChannels.length,
+  });
+  
+  // Shuffle and repeat channels to ensure continuous scrolling
   useEffect(() => {
     function shuffle<T>(array: T[]): T[] {
       const newArray = [...array];
@@ -31,88 +52,11 @@ export const ChannelCarousel = ({ channels, direction, speed, shuffleKey }: Chan
     
     if (channels.length > 0) {
       // Create a larger set of channels to ensure continuous scrolling
-      const repeatedChannels = [...channels, ...channels, ...channels];
+      // Repeat channels multiple times
+      const repeatedChannels = [...channels, ...channels, ...channels, ...channels];
       setShuffledChannels(shuffle(repeatedChannels));
     }
   }, [channels, shuffleKey]);
-
-  const [emblaRef, emblaApi] = useEmblaCarousel({
-    loop: true,
-    dragFree: true,
-    containScroll: "trimSnaps",
-    direction: direction === "rtl" ? "rtl" : "ltr",
-    align: "start",
-  });
-
-  const scrolling = useRef<boolean>(false);
-  const animationRef = useRef<number>();
-  const isInitialRender = useRef(true);
-
-  useEffect(() => {
-    if (!emblaApi || shuffledChannels.length === 0) return;
-    
-    emblaApi.reInit();
-    
-    // Ensure scrolling is more visible - increased slightly
-    const scrollStep = speed * 0.02;
-    let lastTime = 0;
-    
-    const scroll = (timestamp: number) => {
-      if (!emblaApi) return;
-      
-      if (!lastTime) lastTime = timestamp;
-      const deltaTime = timestamp - lastTime;
-      lastTime = timestamp;
-      
-      if (!scrolling.current) {
-        // Force a more noticeable scroll amount
-        const scrollAmount = (direction === "rtl" ? -1 : 1) * scrollStep * (deltaTime / 16);
-        const currentPosition = emblaApi.scrollProgress();
-        
-        if (direction === "ltr") {
-          emblaApi.scrollTo(currentPosition + scrollAmount);
-          if (currentPosition >= 0.98) emblaApi.scrollTo(0);
-        } else {
-          emblaApi.scrollTo(currentPosition - scrollAmount);
-          if (currentPosition <= 0.02) emblaApi.scrollTo(1);
-        }
-      }
-      
-      animationRef.current = requestAnimationFrame(scroll);
-    };
-    
-    // Start with a slight delay to ensure the carousel is properly initialized
-    setTimeout(() => {
-      animationRef.current = requestAnimationFrame(scroll);
-      isInitialRender.current = false;
-    }, 100);
-    
-    return () => {
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-      }
-    };
-  }, [emblaApi, direction, speed, shuffledChannels]);
-
-  useEffect(() => {
-    if (!emblaApi) return;
-    
-    const onPointerDown = () => {
-      scrolling.current = true;
-    };
-    
-    const onPointerUp = () => {
-      scrolling.current = false;
-    };
-    
-    emblaApi.on("pointerDown", onPointerDown);
-    emblaApi.on("pointerUp", onPointerUp);
-    
-    return () => {
-      emblaApi.off("pointerDown", onPointerDown);
-      emblaApi.off("pointerUp", onPointerUp);
-    };
-  }, [emblaApi]);
 
   const handleChannelClick = (channelId: string) => {
     navigate(`/channel/${channelId}`);
