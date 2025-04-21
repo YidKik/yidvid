@@ -75,10 +75,10 @@ export function VideoCarouselRows() {
         transform: `translate(-50%, -50%) rotate(${rotation}deg) scale(${scale})`,
         transition: "transform 0.35s cubic-bezier(.53,.42,.19,1.04)",
         width: "100vw",
-        height: "auto"
+        height: "100vh" // Changed from auto to 100vh to ensure all rows are visible
       }}
     >
-      <div className="w-full max-w-[1680px] mx-auto flex flex-col gap-7">
+      <div className="w-full max-w-[1680px] mx-auto flex flex-col gap-12 justify-center"> {/* Increased gap between rows and added justify-center */}
         {rowSlides.map((rowVideos, ri) => {
           // All rows now slide from right-to-left
           const slideAnim = `
@@ -98,7 +98,7 @@ export function VideoCarouselRows() {
           return (
             <div
               key={`carousel-row-${ri}`}
-              className="relative flex overflow-hidden w-full h-44 md:h-56"
+              className="relative flex overflow-hidden w-full h-44 md:h-48" // Standardized height for all rows
               tabIndex={-1}
               aria-roledescription="carousel row"
             >
