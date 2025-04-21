@@ -94,8 +94,11 @@ function AppRoutes() {
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
       </Helmet>
       <Routes>
+        {/* New home Welcome Page */}
+        <Route path="/" element={<import('@/pages/HomeWelcome').then(m => m.default) />} />
+        {/* Videos (old homepage) */}
+        <Route path="/videos" element={<import('@/pages/Videos').then(m => m.default) />} />
         {/* Public routes */}
-        <Route path="/" element={<Index />} />
         <Route path="/auth" element={<Auth isOpen={showAuthDialog} onOpenChange={setShowAuthDialog} />} />
         <Route path="/category/:id" element={<CategoryVideos />} />
         <Route path="/video/:id" element={<VideoDetails />} />
