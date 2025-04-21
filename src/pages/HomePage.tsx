@@ -4,9 +4,9 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { VideoCarousels } from '@/components/home/VideoCarousels';
 import { ChannelCarousels } from '@/components/home/ChannelCarousels';
-import { WelcomeSection } from '@/components/home/WelcomeSection';
 import { useVideos } from '@/hooks/video/useVideos';
 import { useChannelsGrid } from '@/hooks/channel/useChannelsGrid';
+import { AnimatedVideoHero } from '@/components/home/AnimatedVideoHero';
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -28,74 +28,28 @@ const HomePage = () => {
     }
   };
 
-  const itemVariants = {
-    initial: { opacity: 0, y: 20 },
-    animate: { 
-      opacity: 1, 
-      y: 0,
-      transition: { duration: 0.6 }
-    }
-  };
-
   return (
     <motion.div 
-      className="min-h-screen w-full overflow-x-hidden bg-gradient-to-b from-gray-50 to-white"
+      className="min-h-screen w-full overflow-x-hidden bg-[#030303]"
       variants={pageVariants}
       initial="initial"
       animate="animate"
     >
-      {/* Video Carousels - MOVED TO TOP */}
-      <motion.section
-        className="py-4 pt-10 relative before:absolute before:inset-0 before:bg-gradient-to-r before:from-white before:via-transparent before:to-white before:z-10 overflow-hidden"
-        variants={itemVariants}
-      >
-        <div className="relative z-0">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4 px-6 md:px-16">Discover Videos</h2>
-          <VideoCarousels 
-            videos={videos || []} 
-            isLoading={videosLoading} 
-            onVideoClick={handleVideoClick}
-          />
-        </div>
-      </motion.section>
+      {/* Animated Hero Section with Videos */}
+      {videos && <AnimatedVideoHero videos={videos} />}
 
-      {/* Welcome Section - Now in the middle */}
-      <motion.section 
-        className="py-10"
-        variants={itemVariants}
-      >
-        <div className="max-w-7xl mx-auto px-6 md:px-16 flex flex-col md:flex-row items-center">
-          <WelcomeSection />
-        </div>
+      {/* Video Carousels */}
+      <motion.section className="py-4 relative">
+        <VideoCarousels 
+          videos={videos || []} 
+          isLoading={videosLoading} 
+          onVideoClick={handleVideoClick}
+        />
       </motion.section>
 
       {/* Channel Avatars Scrolling */}
-      <motion.section 
-        className="py-4 relative before:absolute before:inset-0 before:bg-gradient-to-r before:from-white before:via-transparent before:to-white before:z-10 overflow-hidden"
-        variants={itemVariants}
-      >
-        <div className="relative z-0">
-          <ChannelCarousels isLoading={channelsLoading} />
-        </div>
-      </motion.section>
-
-      {/* Call-to-Action Section */}
-      <motion.section 
-        className="py-12 md:py-16 px-6"
-        variants={itemVariants}
-      >
-        <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Ready to Explore?</h2>
-          <p className="text-xl text-gray-600 mb-8">Discover inspiring videos from our curated selection</p>
-          <motion.button
-            className="bg-[#ea384c] text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-[#d6293d] transition-colors"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.97 }}
-            onClick={() => navigate('/videos')}
-          >
-            Browse All Videos
-          </motion.button>
-        </div>
+      <motion.section className="py-4 relative">
+        <ChannelCarousels isLoading={channelsLoading} />
       </motion.section>
     </motion.div>
   );
