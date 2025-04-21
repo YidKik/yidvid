@@ -55,14 +55,14 @@ export function VideoCarouselRows() {
     rowBases = Array(ROW_COUNT).fill(0).map((_, idx) =>
       Array(VIDEOS_PER_ROW).fill(0).map((_, j) => placeholder(idx * VIDEOS_PER_ROW + j))
     );
-    // Always double the placeholder row: ensures full loop for both directions
-    rowSlides = rowBases.map(row => [...row, ...row]);
+    // Always triple the placeholder row to ensure full coverage in all directions
+    rowSlides = rowBases.map(row => [...row, ...row, ...row]);
   } else {
     for (let r = 0; r < ROW_COUNT; r++) {
       const [startSegment, rowLoop] = getRowVideosWithOffset(videos, r, VIDEOS_PER_ROW, ROW_COUNT);
       rowBases.push(startSegment);
-      // Always double the video loop for every row, so both "left" and "right" directions are always filled
-      rowSlides.push([...rowLoop, ...rowLoop]);
+      // Triple the video loop for every row to ensure continuous coverage in all directions
+      rowSlides.push([...rowLoop, ...rowLoop, ...rowLoop]);
     }
   }
 
@@ -82,12 +82,14 @@ export function VideoCarouselRows() {
     >
       <div className="w-full max-w-[1680px] mx-auto flex flex-col gap-7">
         {rowSlides.map((rowVideos, ri) => {
+          const direction = getDirection(ri);
           const slideAnim = `
             @keyframes slideRow${ri} {
-              0% { transform: translateX(0); }
-              100% { transform: translateX(${getDirection(ri)==="left" ? '-' : ''}50%); }
+              0% { transform: translateX(${direction === "left" ? '0' : '-50%'}); }
+              100% { transform: translateX(${direction === "left" ? '-50%' : '0'}); }
             }
           `;
+          
           useEffect(() => {
             if (!document.getElementById(`carousel-row-anim-${ri}`)) {
               const style = document.createElement('style');
@@ -109,8 +111,9 @@ export function VideoCarouselRows() {
                 style={{
                   width: `calc(${rowVideos.length * 24}vw)`,
                   animation: `slideRow${ri} ${SLIDE_SECONDS[ri % SLIDE_SECONDS.length]}s linear infinite`,
-                  flexDirection: getDirection(ri) === "left" ? "row" : "row-reverse",
+                  flexDirection: "row", // All rows have same flex direction now
                   alignItems: "center",
+                  transform: direction === "right" ? "translateX(-50%)" : "translateX(0)", // Initial offset for right-to-left rows
                 }}
               >
                 {rowVideos.map((video, vi) =>
