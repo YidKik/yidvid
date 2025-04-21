@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect, useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import useEmblaCarousel from "embla-carousel-react";
@@ -17,11 +16,9 @@ export const ChannelCarousel = ({ channels, direction, speed, shuffleKey }: Chan
   const { isMobile } = useIsMobile();
   const navigate = useNavigate();
   
-  // Shuffle channels
   const [shuffledChannels, setShuffledChannels] = useState<ChannelItem[]>([]);
   
   useEffect(() => {
-    // Shuffle utility
     function shuffle<T>(array: T[]): T[] {
       const newArray = [...array];
       for (let i = newArray.length - 1; i > 0; i--) {
@@ -47,14 +44,12 @@ export const ChannelCarousel = ({ channels, direction, speed, shuffleKey }: Chan
   const scrolling = useRef<boolean>(false);
   const animationRef = useRef<number>();
 
-  // Handle continuous auto-scroll animation
   useEffect(() => {
     if (!emblaApi || shuffledChannels.length === 0) return;
     
-    // Re-initialize the carousel when channels change
     emblaApi.reInit();
     
-    const scrollStep = speed * 0.025; // Control speed (pixels per frame)
+    const scrollStep = speed * 0.015;
     let lastTime = 0;
     
     const scroll = (timestamp: number) => {
@@ -65,18 +60,14 @@ export const ChannelCarousel = ({ channels, direction, speed, shuffleKey }: Chan
       lastTime = timestamp;
       
       if (!scrolling.current) {
-        // Calculate the scroll amount based on direction and speed
         const scrollAmount = (direction === "rtl" ? -1 : 1) * scrollStep * (deltaTime / 16);
         const currentPosition = emblaApi.scrollProgress();
         
-        // Create smooth scrolling effect
         if (direction === "ltr") {
           emblaApi.scrollTo(currentPosition + scrollAmount);
-          // If we reach the end, loop around
           if (currentPosition >= 0.98) emblaApi.scrollTo(0);
         } else {
           emblaApi.scrollTo(currentPosition - scrollAmount);
-          // If we reach the beginning, loop around
           if (currentPosition <= 0.02) emblaApi.scrollTo(1);
         }
       }
@@ -93,7 +84,6 @@ export const ChannelCarousel = ({ channels, direction, speed, shuffleKey }: Chan
     };
   }, [emblaApi, direction, speed, shuffledChannels]);
 
-  // Handle user interaction to pause auto-scroll
   useEffect(() => {
     if (!emblaApi) return;
     
@@ -114,7 +104,6 @@ export const ChannelCarousel = ({ channels, direction, speed, shuffleKey }: Chan
     };
   }, [emblaApi]);
 
-  // Handle channel click
   const handleChannelClick = (channelId: string) => {
     navigate(`/channel/${channelId}`);
   };
@@ -149,7 +138,6 @@ export const ChannelCarousel = ({ channels, direction, speed, shuffleKey }: Chan
                 )}
               </div>
               
-              {/* Hover tooltip with channel name */}
               <motion.div 
                 className="opacity-0 group-hover:opacity-100 absolute -bottom-8 left-1/2 transform -translate-x-1/2 
                           bg-black/70 text-white text-xs md:text-sm px-2 py-1 rounded-md whitespace-nowrap z-20"
