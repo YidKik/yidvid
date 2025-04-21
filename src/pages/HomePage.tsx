@@ -8,6 +8,7 @@ import { useChannelsGrid } from '@/hooks/channel/useChannelsGrid';
 import { AnimatedVideoHero } from '@/components/home/AnimatedVideoHero';
 import { TiltedVideoScroll } from '@/components/home/TiltedVideoScroll';
 import { useShuffledVideos } from '@/hooks/video/useShuffledVideos';
+import { WelcomeSection } from '@/components/home/WelcomeSection';
 
 const HomePage = () => {
   const { data: videos, isLoading: videosLoading } = useVideos();
@@ -32,32 +33,35 @@ const HomePage = () => {
       initial="initial"
       animate="animate"
     >
-      {/* Animated Hero Section with Videos */}
-      {videos && <AnimatedVideoHero videos={videos} />}
+      {/* Welcome Section */}
+      <WelcomeSection />
 
-      {/* First Tilted Video Scroll Section - Right to Left */}
-      {videos && (
-        <motion.section 
-          className="py-8 relative"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-        >
-          <TiltedVideoScroll videos={videos} />
-        </motion.section>
-      )}
+      {/* Video Scroll Sections - Closer Together */}
+      <div className="space-y-2 mt-4">
+        {/* First Tilted Video Scroll Section - Right to Left */}
+        {videos && (
+          <motion.section 
+            className="relative"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            <TiltedVideoScroll videos={videos} />
+          </motion.section>
+        )}
 
-      {/* Second Tilted Video Scroll Section - Left to Right */}
-      {shuffledVideos && (
-        <motion.section 
-          className="py-8 relative"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-        >
-          <TiltedVideoScroll videos={shuffledVideos} reverse={true} />
-        </motion.section>
-      )}
+        {/* Second Tilted Video Scroll Section - Left to Right */}
+        {shuffledVideos && (
+          <motion.section 
+            className="relative"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+          >
+            <TiltedVideoScroll videos={shuffledVideos} reverse={true} />
+          </motion.section>
+        )}
+      </div>
 
       {/* Channel Avatars Scrolling */}
       <motion.section className="py-4 relative">
@@ -68,3 +72,4 @@ const HomePage = () => {
 };
 
 export default HomePage;
+
