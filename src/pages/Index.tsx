@@ -15,7 +15,7 @@ export default function Index() {
   return (
     <div className="min-h-screen w-full bg-gray-100 flex relative overflow-hidden">
       {/* Left side - Text content */}
-      <div className="w-full md:w-[20%] p-8 md:p-16 flex flex-col justify-center z-10">
+      <div className="w-full md:w-[15%] p-8 md:p-12 flex flex-col justify-center z-10">
         <h1 className="text-4xl md:text-6xl font-bold text-gray-700 mb-6">
           YidVid
         </h1>
@@ -27,13 +27,13 @@ export default function Index() {
         </p>
       </div>
 
-      {/* Diagonal divider - moved more to the right */}
+      {/* Diagonal divider - moved further right */}
       <div 
-        className="absolute top-0 left-[30%] md:left-[32%] w-[100px] h-full bg-gray-100 transform rotate-12 origin-top-left z-20"
+        className="absolute top-0 left-[35%] md:left-[38%] w-[100px] h-full bg-gray-100 transform rotate-12 origin-top-left z-20"
       />
 
       {/* Right side - Video carousels */}
-      <div className="hidden md:block absolute right-0 top-0 w-[85%] h-full overflow-hidden bg-gray-100">
+      <div className="hidden md:block absolute right-0 top-0 w-[90%] h-full overflow-hidden bg-gray-100">
         <div className="h-full flex items-center">
           {videos && videos.length > 0 && (
             <VideoCarousels 

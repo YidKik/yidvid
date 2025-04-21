@@ -16,7 +16,7 @@ export const VideoCarouselItem = ({ video, onClick }: VideoCarouselItemProps) =>
     <div
       className="flex-none"
       style={{ 
-        flex: `0 0 ${isMobile ? "85%" : "33%"}`, 
+        flex: `0 0 ${isMobile ? "85%" : "45%"}`, 
         aspectRatio: "16/9",
         cursor: "pointer" 
       }}
