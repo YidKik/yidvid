@@ -13,7 +13,7 @@ function VideoGridThumb({
 }) {
   return (
     <div
-      className="rounded-xl bg-white aspect-video w-24 md:w-32 lg:w-40 border-2"
+      className="rounded-xl bg-white aspect-video w-40 md:w-56 lg:w-64 border-2"
       style={{
         borderColor,
         overflow: "hidden",
@@ -32,6 +32,9 @@ function VideoGridThumb({
 
 /**
  * Static, perfectly aligned 4x5 video grid, with entire grid rotated and alternating border color rows.
+ *
+ * The entire grid is rotated to the right (positive angle), per user sketch.
+ * All rows and columns are perfectly aligned, with larger thumbnails.
  */
 export function AnimatedVideoGridRows({ staticRows = false }: { staticRows?: boolean }) {
   // Grab 20 videos (fallback to placeholder if missing)
@@ -64,17 +67,17 @@ export function AnimatedVideoGridRows({ staticRows = false }: { staticRows?: boo
       }}
     >
       <div
-        className="flex flex-col gap-4"
+        className="flex flex-col gap-8"
         style={{
-          transform: "rotate(-13deg)", // Main block rotation to match sketch
+          transform: "rotate(13deg)", // Rotate right as per user sketch
         }}
       >
         {rows.map((row, rowIdx) => (
           <div
             key={rowIdx}
-            className="flex flex-row gap-7 justify-center"
+            className="flex flex-row gap-8 justify-center"
             style={{
-              // No row rotation, all properly aligned, just like the sketch.
+              // No extra translation, all rows perfectly aligned
             }}
           >
             {row.map((v, colIdx) => (
