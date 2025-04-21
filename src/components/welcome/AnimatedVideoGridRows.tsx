@@ -1,162 +1,50 @@
 
-import { useEffect, useRef } from "react";
 import { useVideoGridData } from "@/hooks/video/useVideoGridData";
 
 /**
- * Static row of video thumbnails with props for rotation and color.
+ * Single video thumbnail for grid
  */
-function StaticRow({
-  videos,
-  angle,
+function VideoGridThumb({
+  thumbnail,
   borderColor,
-  className = "",
 }: {
-  videos: { id: string; thumbnail: string }[];
-  angle: number;
+  thumbnail: string;
   borderColor: string;
-  className?: string;
 }) {
-  // Only the static version: just show thumbnails in a row with rotation and border
   return (
     <div
-      className={`relative flex w-fit ${className}`}
+      className="rounded-xl bg-white aspect-video w-24 md:w-32 lg:w-40 border-2"
       style={{
-        transform: `rotate(${angle}deg)`,
-        height: 110,
-        alignItems: "center",
+        borderColor,
+        overflow: "hidden",
+        background: "#fff",
       }}
     >
-      <div className="flex gap-7 px-2">
-        {videos.map((v, i) => (
-          <div
-            key={v.id + "-" + i}
-            className="rounded-xl bg-white aspect-video w-32 lg:w-44 border-2"
-            style={{
-              borderColor,
-              overflow: "hidden",
-              background: "#fff",
-            }}
-          >
-            <img
-              src={v.thumbnail}
-              alt=""
-              className="w-full h-full object-cover"
-              draggable={false}
-            />
-          </div>
-        ))}
-      </div>
+      <img
+        src={thumbnail}
+        alt=""
+        className="w-full h-full object-cover"
+        draggable={false}
+      />
     </div>
   );
 }
 
 /**
- * Animated row of video thumbnails with props for scrolling direction, rotation, and color.
+ * Static, perfectly aligned 4x5 video grid, with entire grid rotated and alternating border color rows.
  */
-function AnimatedRow({
-  videos,
-  direction,
-  angle,
-  borderColor,
-  speed,
-}: {
-  videos: { id: string; thumbnail: string }[];
-  direction: "up" | "down";
-  angle: number;
-  borderColor: string;
-  speed: number;
-}) {
-  const rowRef = useRef<HTMLDivElement>(null);
-
-  // Inject keyframes for animation (once)
-  useEffect(() => {
-    if (!document.getElementById("yidvid-home-row-anim")) {
-      const style = document.createElement("style");
-      style.id = "yidvid-home-row-anim";
-      style.innerHTML = `
-        @keyframes yidvid-slide-down {
-          0% { transform: translateY(-68px); }
-          100% { transform: translateY(68px);}
-        }
-        @keyframes yidvid-slide-up {
-          0% { transform: translateY(68px);}
-          100% { transform: translateY(-68px);}
-        }
-      `;
-      document.head.appendChild(style);
-    }
-  }, []);
-
-  const rowAnim = direction === "down" ? "yidvid-slide-down" : "yidvid-slide-up";
-  const doubled = [...videos, ...videos]; // Loop thumbnails
-
-  return (
-    <div
-      ref={rowRef}
-      className="relative flex w-fit"
-      style={{
-        transform: `rotate(${angle}deg)`,
-        height: 120,
-      }}
-    >
-      <div
-        className="flex gap-9 px-6"
-        style={{
-          animation: `${rowAnim} ${speed}s linear infinite`,
-          alignItems: "center",
-        }}
-      >
-        {doubled.map((v, i) => (
-          <div
-            // Border: only visible, no drop-shadow, red or black
-            key={v.id + "-" + i}
-            className={`rounded-xl bg-white aspect-video w-44 lg:w-56 border-2`}
-            style={{
-              borderColor,
-              overflow: "hidden",
-              background: "#fff",
-            }}
-          >
-            <img
-              src={v.thumbnail}
-              alt=""
-              className="w-full h-full object-cover"
-              draggable={false}
-            />
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 export function AnimatedVideoGridRows({ staticRows = false }: { staticRows?: boolean }) {
-  // Fetch latest 20 videos.
+  // Grab 20 videos (fallback to placeholder if missing)
   const { videos, loading } = useVideoGridData(20);
   const colPerRow = 5;
-
-  // Fallbacks in case no videos.
-  const fallbackThumbs = Array(5)
+  const fallbackThumbs = Array(colPerRow)
     .fill("/placeholder.svg")
     .map((t, i) => ({ id: "fake-" + i, thumbnail: t }));
 
-  // Match the sketch: red/black, rotated, no animation
-  const rowConfigs = [
-    { angle: -7, borderColor: "#ea384c" }, // red (down)
-    { angle: 5,  borderColor: "#000" },    // black (up)
-    { angle: -4, borderColor: "#ea384c" }, // red (down)
-    { angle: 8,  borderColor: "#000" },    // black (up)
-  ];
+  // Alternate row borders: red, black, red, black
+  const borderColors = ["#ea384c", "#000", "#ea384c", "#000"];
 
-  // For animated version, we need direction and speed too
-  const animatedRowConfigs = [
-    { direction: "down" as const, angle: -7, borderColor: "#ea384c", speed: 14 }, // red
-    { direction: "up" as const,   angle: 5,  borderColor: "#000",    speed: 16 }, // black
-    { direction: "down" as const, angle: -4, borderColor: "#ea384c", speed: 12 }, // red
-    { direction: "up" as const,   angle: 8,  borderColor: "#000",    speed: 15 }, // black
-  ];
-
-  // Split videos into up to 4 rows
+  // Split into up to 4 rows
   const rows = [];
   for (let i = 0; i < 4; i++) {
     const start = i * colPerRow;
@@ -167,57 +55,38 @@ export function AnimatedVideoGridRows({ staticRows = false }: { staticRows?: boo
     rows.push(rowVideos);
   }
 
-  // If staticRows is true, show static rows (otherwise old behavior)
-  if (staticRows) {
-    return (
-      <div className="w-full relative flex flex-col gap-4 items-center select-none z-5 pointer-events-none pb-1">
-        {rows.map((row, idx) => {
-          const config = rowConfigs[idx];
-          return (
-            <div
-              key={idx}
-              className="w-full flex justify-center"
-              style={{
-                marginTop: idx === 0 ? 0 : "-32px",
-                zIndex: 10 - idx,
-              }}
-            >
-              <StaticRow
-                videos={row}
-                angle={config.angle}
-                borderColor={config.borderColor}
-              />
-            </div>
-          );
-        })}
-      </div>
-    );
-  }
-
-  // For animated rows case (legacy, not used on main page now)
+  // Render as a background block, rotated as a whole
   return (
-    <div className="w-full relative flex flex-col gap-4 items-center select-none z-5 pb-1 pointer-events-none">
-      {rows.map((row, idx) => {
-        const config = animatedRowConfigs[idx];
-        return (
+    <div
+      className="absolute inset-0 flex items-center justify-center pointer-events-none select-none"
+      style={{
+        zIndex: 1,
+      }}
+    >
+      <div
+        className="flex flex-col gap-4"
+        style={{
+          transform: "rotate(-13deg)", // Main block rotation to match sketch
+        }}
+      >
+        {rows.map((row, rowIdx) => (
           <div
-            key={idx}
-            className="w-full flex justify-center"
+            key={rowIdx}
+            className="flex flex-row gap-7 justify-center"
             style={{
-              marginTop: idx === 0 ? 0 : "-28px",
-              zIndex: 10 - idx,
+              // No row rotation, all properly aligned, just like the sketch.
             }}
           >
-            <AnimatedRow
-              videos={row}
-              direction={config.direction}
-              angle={config.angle}
-              borderColor={config.borderColor}
-              speed={config.speed}
-            />
+            {row.map((v, colIdx) => (
+              <VideoGridThumb
+                key={v.id + "-" + colIdx}
+                thumbnail={v.thumbnail}
+                borderColor={borderColors[rowIdx % borderColors.length]}
+              />
+            ))}
           </div>
-        );
-      })}
+        ))}
+      </div>
     </div>
   );
 }
