@@ -1,9 +1,8 @@
 
 import React from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import HomeLeftFadeOverlay from "@/components/welcome/HomeLeftFadeOverlay";
+import HomeLeftDiagonalFade from "@/components/welcome/HomeLeftDiagonalFade";
 
-// Animated gradient backgrounds
 const brandGradients = [
   "linear-gradient(to bottom, #fecdd3 0%, #ea384c 100%)",
   "linear-gradient(to bottom, #ede9fe 0%, #9b87f5 100%)",
@@ -25,7 +24,7 @@ export default function Index() {
 
   return (
     <div className="relative min-h-screen w-full flex flex-col overflow-x-hidden overflow-y-auto bg-transparent">
-      {/* Gradient background */}
+      {/* Animated gradient background */}
       <AnimatePresence mode="wait">
         <motion.div
           key={fadeKey + "-" + gradientIndex}
@@ -40,9 +39,9 @@ export default function Index() {
           }}
         />
       </AnimatePresence>
-      {/* Fade overlay from left (covers about half the page) */}
-      <HomeLeftFadeOverlay />
-      {/* Nothing else visible yet, so you see only color + fade */}
+      {/* Diagonal (angled) fade overlay on top left */}
+      <HomeLeftDiagonalFade />
+      {/* Video rows will be rendered below, per your next steps */}
     </div>
   );
 }
