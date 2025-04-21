@@ -43,7 +43,7 @@ export function TiltedVideoScroll({
                   className="h-full w-full object-cover rounded-md"
                 />
               </FlipCardFront>
-              <FlipCardBack className="flex flex-col justify-center rounded-md bg-black/90 p-4 text-white">
+              <FlipCardBack className="flex flex-col justify-center rounded-md bg-gradient-to-br from-[#030303] via-[#ea384c]/90 to-[#030303]/80 p-4 text-white">
                 <h3 className="text-sm font-medium line-clamp-2 mb-2">
                   {video.title}
                 </h3>
