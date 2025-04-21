@@ -141,7 +141,7 @@ export const VideoCarousel = ({ videos, direction, speed, shuffleKey }: VideoCar
               key={video.id}
               className="flex-none"
               style={{ 
-                flex: `0 0 ${isMobile ? "70%" : "320px"}`, 
+                flex: `0 0 ${isMobile ? "70%" : "25%"}`, 
                 aspectRatio: "16/9",
                 cursor: "pointer" 
               }}
@@ -154,4 +154,4 @@ export const VideoCarousel = ({ videos, direction, speed, shuffleKey }: VideoCar
       </div>
     </div>
   );
-};
+}

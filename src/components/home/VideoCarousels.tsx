@@ -1,7 +1,5 @@
 
 import React from "react";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { motion } from "framer-motion";
 import { VideoGridItem as VideoGridItemType } from "@/hooks/video/useVideoGridData";
 import { VideoCarousel } from "./VideoCarousel";
 
@@ -19,11 +17,9 @@ function getSortedVideos(videos: VideoGridItemType[]): VideoGridItemType[] {
 }
 
 export const VideoCarousels = ({ videos, isLoading }: VideoCarouselsProps) => {
-  const { isMobile } = useIsMobile();
-
   if (isLoading) {
     return (
-      <div className={`${isMobile ? "w-full py-8" : "w-1/2"} flex items-center justify-center`}>
+      <div className="flex justify-center items-center h-screen">
         <div className="animate-pulse flex space-x-4">
           <div className="rounded-full bg-slate-200 h-10 w-10"></div>
           <div className="flex-1 space-y-6 py-1">
@@ -48,31 +44,34 @@ export const VideoCarousels = ({ videos, isLoading }: VideoCarouselsProps) => {
   const rowShuffleKeys = [1, 2, 3];
 
   return (
-    <motion.div
-      className={`${isMobile ? "w-full py-8" : "w-1/2"} flex flex-col justify-center gap-8 relative`}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 1, delay: 0.4 }}
-    >
-      {/* Three rows with different directions and shuffle keys */}
-      <VideoCarousel 
-        videos={sortedVideos} 
-        direction="ltr" 
-        speed={40} 
-        shuffleKey={rowShuffleKeys[0]} 
-      />
-      <VideoCarousel 
-        videos={sortedVideos} 
-        direction="rtl" 
-        speed={30} 
-        shuffleKey={rowShuffleKeys[1]} 
-      />
-      <VideoCarousel 
-        videos={sortedVideos} 
-        direction="ltr" 
-        speed={35} 
-        shuffleKey={rowShuffleKeys[2]} 
-      />
-    </motion.div>
+    <div className="space-y-16 py-8">
+      {/* Three rows with different directions and speeds */}
+      <div className="overflow-hidden py-4">
+        <VideoCarousel 
+          videos={sortedVideos} 
+          direction="ltr" 
+          speed={40} 
+          shuffleKey={rowShuffleKeys[0]} 
+        />
+      </div>
+      
+      <div className="overflow-hidden py-4">
+        <VideoCarousel 
+          videos={sortedVideos} 
+          direction="rtl" 
+          speed={30} 
+          shuffleKey={rowShuffleKeys[1]} 
+        />
+      </div>
+      
+      <div className="overflow-hidden py-4">
+        <VideoCarousel 
+          videos={sortedVideos} 
+          direction="ltr" 
+          speed={35} 
+          shuffleKey={rowShuffleKeys[2]} 
+        />
+      </div>
+    </div>
   );
 };
