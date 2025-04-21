@@ -3,8 +3,8 @@ import React from "react";
 
 /**
  * HomeLeftDiagonalFade
- * Diagonal gradient overlay covering the left half of the screen with a slanted right edge.
- * The overlay is positioned absolutely. The right edge is clipped diagonally.
+ * Solid semi-transparent box (instead of fade) covering the left half of the screen on top of videos,
+ * to debug overlay visibility and layering.
  */
 const HomeLeftDiagonalFade: React.FC = () => {
   return (
@@ -14,12 +14,11 @@ const HomeLeftDiagonalFade: React.FC = () => {
         width: "55vw",
         minWidth: 320,
         maxWidth: 720,
-        background: "linear-gradient(100deg, rgba(231,225,255,0.93) 67%, rgba(253, 245, 255, 0.6) 95%, rgba(255,255,255,0.01) 100%)",
+        backgroundColor: "rgba(180, 150, 250, 0.4)", // Solid purple translucent color for visibility
         borderBottom: "1.5px solid #b198f6",
-        boxShadow: "0 1px 10px 0 rgba(120,76,200,0.06)",
-        // angled cut: bottom right diagonal
+        boxShadow: "0 1px 10px 0 rgba(120,76,200,0.3)",
         clipPath:
-          "polygon(0 0, 97% 0, 72% 100%, 0% 100%)",
+          "polygon(0 0, 100% 0, 100% 100%, 0% 100%)", // Full rectangle (not diagonal clipped) for visibility
         transition: "opacity 0.7s",
       }}
       aria-hidden="true"
