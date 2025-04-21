@@ -34,7 +34,7 @@ export const VideoCarousel = ({ videos, direction, speed, shuffleKey }: VideoCar
     containScroll: "trimSnaps",
     direction: direction === "rtl" ? "rtl" : "ltr",
     align: "start",
-    speed: 10,
+    // Remove the 'speed' property as it's not supported in the options type
   });
 
   const scrolling = useRef<boolean>(false);
@@ -52,8 +52,22 @@ export const VideoCarousel = ({ videos, direction, speed, shuffleKey }: VideoCar
       if (!scrolling.current && emblaApi) {
         const dt = Math.min(28, time - last); // max cap = 28ms for safety
         last = time;
-        // emblaApi.scrollBy expects px, so we do a tiny step for smoothness
-        emblaApi.scrollBy((direction === "rtl" ? -1 : 1) * (scrollStep * speed * (dt / 16)));
+        // Use scrollTo instead of scrollBy which doesn't exist in the API
+        // Calculate the position delta instead
+        const currentPos = emblaApi.scrollProgress();
+        const stepAmount = (scrollStep * speed * (dt / 16)) / 100; // Convert to percentage (0-1)
+        const newPos = direction === "rtl" 
+          ? currentPos - stepAmount 
+          : currentPos + stepAmount;
+          
+        // Handle wraparound at boundaries (0-1)
+        if (newPos >= 1) {
+          emblaApi.scrollTo(0);
+        } else if (newPos < 0) {
+          emblaApi.scrollTo(1);
+        } else {
+          emblaApi.scrollTo(newPos);
+        }
       }
       reqRef.current = requestAnimationFrame(animate);
     };
