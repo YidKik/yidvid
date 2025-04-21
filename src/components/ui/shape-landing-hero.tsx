@@ -123,7 +123,7 @@ export function HeroGeometric({
                         className="inline-flex items-center justify-center gap-2 mb-8 md:mb-12"
                     >
                         <img 
-                            src="/lovable-uploads/2f1d0616-642f-4b59-b552-64922023f6bc.png" 
+                            src="/lovable-uploads/e425cacb-4c3a-4d81-b4e0-77fcbf10f61c.png" 
                             alt="YidVid Logo" 
                             className="h-12 w-auto"
                         />
@@ -162,7 +162,7 @@ export function HeroGeometric({
                             <Button 
                                 variant="default" 
                                 size="lg" 
-                                className="mx-auto"
+                                className="mx-auto mb-8 bg-primary hover:bg-primary/90 text-white font-medium"
                             >
                                 Explore Videos
                             </Button>
