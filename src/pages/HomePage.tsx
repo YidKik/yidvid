@@ -10,7 +10,6 @@ import { Link } from 'react-router-dom';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { GridMotion } from '@/components/ui/grid-motion';
-import { ChannelCard } from '@/components/youtube/grid/ChannelCard';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -19,8 +18,8 @@ const HomePage = () => {
   const { manuallyFetchedChannels, isLoading: channelsLoading } = useChannelsGrid();
   const shuffledVideos = useShuffledVideos(videos);
   const videoSectionRef = useRef(null);
-  const extraChannelSectionRef = useRef(null);
-  const isExtraChannelsInView = useInView(extraChannelSectionRef, { once: true, amount: 0.2 });
+  const channelsSectionRef = useRef(null);
+  const isChannelsInView = useInView(channelsSectionRef, { once: true, amount: 0.2 });
 
   useEffect(() => {
     // Animate hero content on scroll
@@ -38,11 +37,11 @@ const HomePage = () => {
       });
     }
 
-    // Animate video section fade out when channel section comes in
-    if (videoSectionRef.current && extraChannelSectionRef.current) {
+    // Animate video section fade out
+    if (videoSectionRef.current && channelsSectionRef.current) {
       gsap.to(videoSectionRef.current, {
         scrollTrigger: {
-          trigger: extraChannelSectionRef.current,
+          trigger: channelsSectionRef.current,
           start: 'top bottom',
           end: 'top center',
           scrub: 1,
@@ -53,54 +52,44 @@ const HomePage = () => {
       });
     }
 
-    // Add scroll trigger for extra channel section
-    if (extraChannelSectionRef.current) {
+    // Add scroll trigger for channels section
+    if (channelsSectionRef.current) {
       gsap.fromTo(
-        extraChannelSectionRef.current,
+        channelsSectionRef.current,
         { 
-          x: -1000, 
-          opacity: 0,
-          rotate: -5
+          y: 100, 
+          opacity: 0
         },
         {
           scrollTrigger: {
-            trigger: extraChannelSectionRef.current,
+            trigger: channelsSectionRef.current,
             start: 'top bottom',
             end: 'top center',
             scrub: 1,
           },
-          x: 0,
+          y: 0,
           opacity: 1,
-          rotate: 0,
           ease: 'power2.out',
-          duration: 1.5
+          duration: 1
         }
       );
     }
   }, []);
 
-  const pageVariants = {
-    initial: { opacity: 0 },
-    animate: { 
-      opacity: 1,
-      transition: { 
-        duration: 0.5,
-        staggerChildren: 0.2 
-      }
-    }
-  };
-
-  // Transform channel data for GridMotion
+  // Transform channel data for GridMotion with smaller circles
   const channelItems = manuallyFetchedChannels?.map(channel => 
     channel.thumbnail_url || 'https://images.unsplash.com/photo-1723403804231-f4e9b515fe9d'
   ) || [];
 
+  // Add more items to create additional rows
+  const extendedChannelItems = [...channelItems, ...channelItems, ...channelItems].slice(0, 84);
+
   return (
     <motion.div 
       className="min-h-screen w-full overflow-x-hidden bg-[#030303]"
-      variants={pageVariants}
-      initial="initial"
-      animate="animate"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
     >
       {/* Hero Section with Content */}
       <div className="relative min-h-[120vh]">
@@ -147,7 +136,7 @@ const HomePage = () => {
         )}
       </div>
 
-      {/* Video Background Section with fade out animation */}
+      {/* Video Background Section */}
       <motion.section 
         ref={videoSectionRef}
         className="relative z-10 mb-20"
@@ -163,47 +152,19 @@ const HomePage = () => {
         )}
       </motion.section>
 
-      {/* Channels Section with GridMotion - Now with full circular images */}
-      <motion.section className="relative z-10 mt-[40vh]">
-        <div className="min-h-screen py-20"> 
+      {/* Channels Section with GridMotion - Smaller circles */}
+      <motion.section 
+        ref={channelsSectionRef} 
+        className="relative z-10 mt-[20vh]"
+      >
+        <div className="min-h-screen py-20">
           <GridMotion 
-            items={[...channelItems, ...channelItems, ...channelItems, ...channelItems].slice(0, 70)} 
+            items={extendedChannelItems}
             gradientColor="#ea384c"
-            className="relative z-10 opacity-90 channel-grid"
+            className="relative z-10 opacity-90 channel-grid transform scale-75"
           />
         </div>
       </motion.section>
-
-      {/* Additional Channel Rows that slide in from left */}
-      <div 
-        ref={extraChannelSectionRef}
-        className="relative z-10 py-16 bg-gradient-to-b from-[#030303] to-[#0a0a0a] overflow-hidden"
-      >
-        <motion.div 
-          className="container mx-auto"
-          initial={{ x: "-100%", opacity: 0 }}
-          animate={isExtraChannelsInView ? { x: 0, opacity: 1 } : { x: "-100%", opacity: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-        >
-          <h2 className="text-3xl font-bold mb-8 text-white/90 ml-4">Popular Channels</h2>
-          
-          {/* Four rows of channels */}
-          {[0, 1, 2, 3].map((rowIndex) => (
-            <div 
-              key={rowIndex}
-              className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 mb-10"
-            >
-              {manuallyFetchedChannels?.slice(rowIndex * 7, (rowIndex + 1) * 7).map((channel, index) => (
-                <ChannelCard 
-                  key={channel.id || index}
-                  channel={channel}
-                  index={index + (rowIndex * 7)}
-                />
-              ))}
-            </div>
-          ))}
-        </motion.div>
-      </div>
     </motion.div>
   );
 };

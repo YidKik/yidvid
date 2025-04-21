@@ -1,3 +1,4 @@
+
 import { useEffect, useRef, ReactNode } from 'react'
 import { gsap } from 'gsap'
 import { cn } from "@/lib/utils"
@@ -75,13 +76,14 @@ export function GridMotion({
               {[...Array(7)].map((_, itemIndex) => {
                 const content = items[rowIndex * 7 + itemIndex]
                 return (
-                  <div key={itemIndex} className="relative aspect-square p-2">
+                  <div key={itemIndex} className="relative aspect-square p-1">
                     <div className="relative h-full w-full overflow-hidden rounded-full bg-muted flex items-center justify-center text-foreground text-xl transform hover:scale-110 transition-transform duration-300">
                       {typeof content === 'string' && content.startsWith('http') ? (
                         <div
                           className="absolute inset-0 bg-cover bg-center rounded-full"
                           style={{
                             backgroundImage: `url(${content})`,
+                            transform: 'scale(1)',
                           }}
                         />
                       ) : (
