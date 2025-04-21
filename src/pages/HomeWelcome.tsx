@@ -25,9 +25,9 @@ export default function HomeWelcome() {
     const handleScroll = () => {
       setScrolled(window.scrollY > 100);
     };
-    
+
     window.addEventListener('scroll', handleScroll);
-    
+
     return () => {
       clearInterval(interval);
       window.removeEventListener('scroll', handleScroll);
@@ -80,88 +80,44 @@ export default function HomeWelcome() {
 
       {/* Hero section with centered logo */}
       <div className="flex-1 flex flex-col items-center justify-center pt-12 pb-4 relative z-20 min-h-[500px]">
-        {/* Subtle glow effect behind the logo */}
-        <div
-          className="
-            absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2
-            w-[700px] h-[300px] rounded-full
-            pointer-events-none
-            z-0
-          "
-          style={{
-            background: "rgba(142, 145, 150, 0.38)",
-            filter: "blur(44px)",
-            opacity: 0.97,
-            maxWidth: "97vw"
-          }}
-        />
+        {/* Removed the blurred background glow here */}
         
-        {/* Main logo */}
+        {/* Smaller main logo */}
         <motion.img
           src="/lovable-uploads/be2a7abc-dfab-4472-9970-5d7df617545f.png"
           alt="YidVid Logo"
-          className="w-[420px] max-w-[97vw] h-auto mb-2 mx-auto relative z-10 select-none"
+          className="w-[270px] max-w-[85vw] h-auto mb-2 mx-auto relative z-10 select-none"
           initial={{ scale: 0.9, y: -10, opacity: 0 }}
-          animate={{ 
+          animate={{
             scale: 1,
             y: 0,
             opacity: 1,
           }}
-          transition={{ 
-            duration: 1.2, 
+          transition={{
+            duration: 1.2,
             delay: 0.2,
-            ease: "easeOut" 
+            ease: "easeOut"
           }}
           draggable={false}
         />
-        
-        {/* Welcome text */}
+
+        {/* Welcome text lifted higher: tighter to the logo */}
         <motion.div
-          className="text-center relative z-10"
-          initial={{ opacity: 0, y: 20 }}
+          className="text-center relative z-10 mt-2"
+          initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6, duration: 0.8 }}
+          transition={{ delay: 0.35, duration: 0.6 }}
         >
-          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-3">
+          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-2">
             Welcome to YidVid
           </h1>
-          <p className="text-xl text-slate-700 max-w-[600px] mx-auto px-4">
-            Your gateway to curated Jewish content. Discover videos that inspire, entertain, and connect.
+          <p className="text-lg md:text-xl text-slate-700 max-w-[520px] mx-auto px-4">
+            Your gateway to curated Jewish content.<br />
+            Discover videos that inspire, entertain, and connect.
           </p>
         </motion.div>
         
-        {/* Scroll down indicator */}
-        <motion.div 
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center"
-          initial={{ opacity: 0 }}
-          animate={{ 
-            opacity: scrolled ? 0 : [0, 1, 0.7],
-            y: scrolled ? 10 : [0, 10, 0]
-          }}
-          transition={{ 
-            duration: 2,
-            repeat: Infinity,
-            repeatType: "loop"
-          }}
-        >
-          <p className="text-sm text-slate-600 mb-2">Scroll to explore</p>
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            className="animate-bounce"
-          >
-            <path
-              d="M12 5V19M12 19L19 12M12 19L5 12"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </motion.div>
+        {/* Removed Scroll to explore arrow and label */}
       </div>
 
       {/* Video carousel section */}
