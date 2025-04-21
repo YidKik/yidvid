@@ -1,4 +1,3 @@
-
 "use client"
 
 import * as React from "react"
@@ -15,6 +14,8 @@ const TRANSFORM_STYLES: React.CSSProperties = {
   transformStyle: "preserve-3d",
   perspective: "1000px",
   backfaceVisibility: "hidden",
+  width: "100%",
+  height: "100%"
 }
 
 type FlipDirection = "horizontal" | "vertical"
@@ -80,7 +81,7 @@ const FlipCard = React.memo(
           <div
             ref={ref}
             className={cn(
-              "relative border-none bg-none shadow-none w-full h-full",
+              "relative border-none bg-none shadow-none w-full h-full preserve-3d",
               disabled && "pointer-events-none",
               className
             )}
@@ -116,7 +117,7 @@ const FlipCardFront = React.memo(
     return (
       <motion.div
         ref={ref}
-        className={cn("absolute inset-0 z-20 size-full overflow-hidden", className)}
+        className={cn("absolute inset-0 w-full h-full", className)}
         initial={false}
         animate={rotation}
         transition={TRANSITION_CONFIG}
@@ -145,7 +146,7 @@ const FlipCardBack = React.memo(
     return (
       <motion.div
         ref={ref}
-        className={cn("absolute inset-0 z-10 size-full", className)}
+        className={cn("absolute inset-0 w-full h-full", className)}
         initial={false}
         animate={rotation}
         transition={TRANSITION_CONFIG}
