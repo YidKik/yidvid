@@ -2,37 +2,45 @@
 import { useEffect, useRef } from "react";
 import { useVideoGridData } from "@/hooks/video/useVideoGridData";
 
-// Renders a single animated row of thumbnails
-function AnimatedRow({ videos, direction, angle, borderColor, speed }: {
+/**
+ * Animated row of video thumbnails with props for scrolling direction, rotation, and color.
+ */
+function AnimatedRow({
+  videos,
+  direction,
+  angle,
+  borderColor,
+  speed,
+}: {
   videos: { id: string; thumbnail: string }[];
   direction: "up" | "down";
-  angle: number;            // degrees for rotation
-  borderColor: string;      // any tailwind color for demo
-  speed: number;            // seconds for one full animation cycle
+  angle: number;
+  borderColor: string;
+  speed: number;
 }) {
   const rowRef = useRef<HTMLDivElement>(null);
-  // Animation keyframe logic (inject just once globally)
+
+  // Inject keyframes for animation (once)
   useEffect(() => {
-    if (!document.getElementById("home-rows-anim")) {
+    if (!document.getElementById("yidvid-home-row-anim")) {
       const style = document.createElement("style");
-      style.id = "home-rows-anim";
+      style.id = "yidvid-home-row-anim";
       style.innerHTML = `
-        @keyframes slideRowDown {
-          0% { transform: translateY(-60px); }
-          100% { transform: translateY(60px);}
+        @keyframes yidvid-slide-down {
+          0% { transform: translateY(-68px); }
+          100% { transform: translateY(68px);}
         }
-        @keyframes slideRowUp {
-          0% { transform: translateY(60px);}
-          100% { transform: translateY(-60px);}
+        @keyframes yidvid-slide-up {
+          0% { transform: translateY(68px);}
+          100% { transform: translateY(-68px);}
         }
       `;
       document.head.appendChild(style);
     }
   }, []);
 
-  const rowAnim = direction === "down" ? "slideRowDown" : "slideRowUp";
-  // Loop thumbnails for seamless animation
-  const doubled = [...videos, ...videos];
+  const rowAnim = direction === "down" ? "yidvid-slide-down" : "yidvid-slide-up";
+  const doubled = [...videos, ...videos]; // Loop thumbnails
 
   return (
     <div
@@ -40,7 +48,7 @@ function AnimatedRow({ videos, direction, angle, borderColor, speed }: {
       className="relative flex w-fit"
       style={{
         transform: `rotate(${angle}deg)`,
-        height: 120, // set row height, tweak as needed
+        height: 120,
       }}
     >
       <div
@@ -52,11 +60,13 @@ function AnimatedRow({ videos, direction, angle, borderColor, speed }: {
       >
         {doubled.map((v, i) => (
           <div
+            // Border: only visible, no drop-shadow, red or black
             key={v.id + "-" + i}
-            className={`rounded-xl bg-white shadow-lg aspect-video w-44 lg:w-56 border-2`}
+            className={`rounded-xl bg-white aspect-video w-44 lg:w-56 border-2`}
             style={{
               borderColor,
-              overflow: "hidden"
+              overflow: "hidden",
+              background: "#fff",
             }}
           >
             <img
@@ -73,39 +83,45 @@ function AnimatedRow({ videos, direction, angle, borderColor, speed }: {
 }
 
 export function AnimatedVideoGridRows() {
-  // Fetch 20 latest videos
+  // Fetch latest 20 videos for variety
   const { videos, loading } = useVideoGridData(20);
   const colPerRow = 5;
-  // Fallback: empty slots if loading
-  const fallbackThumbs = Array(5).fill("/placeholder.svg").map((t,i) => ({id: 'fake-'+i, thumbnail: t}));
+  // Fallbacks
+  const fallbackThumbs = Array(5)
+    .fill("/placeholder.svg")
+    .map((t, i) => ({ id: "fake-" + i, thumbnail: t }));
 
-  // Helper to assign directions/angles/colors as your sample
+  // Define row config to match your mock: red/black, rotated, scroll dir
   const rowConfigs = [
-    { direction: "down", angle: -5, borderColor: "#ea384c", speed: 13 },
-    { direction: "up",   angle: 4,  borderColor: "#000",    speed: 15 },
-    { direction: "down", angle: -3, borderColor: "#ea384c", speed: 12 },
-    { direction: "up",   angle: 6,  borderColor: "#000",    speed: 14 },
+    { direction: "down", angle: -7, borderColor: "#ea384c", speed: 14 }, // red
+    { direction: "up",   angle: 5,  borderColor: "#000",    speed: 16 }, // black
+    { direction: "down", angle: -4, borderColor: "#ea384c", speed: 12 }, // red
+    { direction: "up",   angle: 8,  borderColor: "#000",    speed: 15 }, // black
   ];
-  // Chunk videos, fill with fallback if too few
+
+  // Split videos into up to 4 rows
   const rows = [];
   for (let i = 0; i < 4; i++) {
     const start = i * colPerRow;
     const rowVideos =
-      videos.length >= (start + colPerRow)
+      videos.length >= start + colPerRow
         ? videos.slice(start, start + colPerRow)
         : fallbackThumbs;
     rows.push(rowVideos);
   }
-  // Mobile: scale down
+
   return (
-    <div className="w-full relative flex flex-col gap-4 items-center select-none z-5 pb-1">
+    <div className="w-full relative flex flex-col gap-4 items-center select-none z-5 pb-1 pointer-events-none">
       {rows.map((row, idx) => {
         const config = rowConfigs[idx];
         return (
           <div
             key={idx}
             className="w-full flex justify-center"
-            style={{ marginTop: idx === 0 ? 0 : "-25px", zIndex: 10 - idx }}
+            style={{
+              marginTop: idx === 0 ? 0 : "-28px",
+              zIndex: 10 - idx,
+            }}
           >
             <AnimatedRow
               videos={row}
@@ -120,4 +136,3 @@ export function AnimatedVideoGridRows() {
     </div>
   );
 }
-
