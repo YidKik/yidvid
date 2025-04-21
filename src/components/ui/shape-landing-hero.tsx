@@ -1,3 +1,4 @@
+
 "use client";
 
 import { motion, useScroll, useTransform } from "framer-motion";
@@ -21,10 +22,6 @@ export function HeroGeometric({
 }) {
     const { scrollY } = useScroll();
     const [isMounted, setIsMounted] = useState(false);
-
-    // Transform values for floating avatars
-    const avatarY = useTransform(scrollY, [0, 500], [0, -200]);
-    const avatarOpacity = useTransform(scrollY, [0, 400], [1, 0]);
     
     // Transform values for text scaling
     const textScale = useTransform(scrollY, [0, 300], [1, 1.1]);
@@ -49,69 +46,7 @@ export function HeroGeometric({
     if (!isMounted) return null;
 
     return (
-        <div className="relative min-h-[60vh] w-full flex items-center justify-center overflow-hidden bg-[#030303]">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.15] via-transparent to-primary/[0.05] blur-3xl" />
-
-            <motion.div 
-                className="absolute inset-0 overflow-hidden"
-                style={{ y: avatarY, opacity: avatarOpacity }}
-            >
-                <FloatingAvatar
-                    imageUrl={channels[0]?.thumbnail_url}
-                    delay={0.3}
-                    size="xl"
-                    className="left-[-20%] top-[15%]"
-                />
-                <FloatingAvatar
-                    imageUrl={channels[1]?.thumbnail_url}
-                    delay={0.5}
-                    size="xl"
-                    className="right-[-15%] top-[65%]"
-                />
-                <FloatingAvatar
-                    imageUrl={channels[2]?.thumbnail_url}
-                    delay={0.4}
-                    size="xl"
-                    className="left-[-18%] bottom-[5%]"
-                />
-                <FloatingAvatar
-                    imageUrl={channels[3]?.thumbnail_url}
-                    delay={0.6}
-                    size="xl"
-                    className="right-[-18%] top-[10%]"
-                />
-                <FloatingAvatar
-                    imageUrl={channels[4]?.thumbnail_url}
-                    delay={0.7}
-                    size="lg"
-                    className="left-[5%] top-[40%]"
-                />
-                <FloatingAvatar
-                    imageUrl={channels[5]?.thumbnail_url}
-                    delay={0.8}
-                    size="lg"
-                    className="right-[5%] bottom-[35%]"
-                />
-                <FloatingAvatar
-                    imageUrl={channels[6]?.thumbnail_url}
-                    delay={0.9}
-                    size="lg"
-                    className="left-[8%] top-[75%]"
-                />
-                <FloatingAvatar
-                    imageUrl={channels[7]?.thumbnail_url}
-                    delay={1}
-                    size="lg"
-                    className="right-[8%] bottom-[15%]"
-                />
-                <FloatingAvatar
-                    imageUrl={channels[8]?.thumbnail_url}
-                    delay={1.1}
-                    size="md"
-                    className="left-[12%] top-[25%]"
-                />
-            </motion.div>
-
+        <div className="relative w-full flex items-center justify-center overflow-hidden bg-[#030303]">
             <div className="relative z-10 container mx-auto px-4 md:px-6">
                 <div className="max-w-3xl mx-auto text-center">
                     <motion.div
@@ -169,8 +104,6 @@ export function HeroGeometric({
                     </motion.div>
                 </div>
             </div>
-
-            <div className="absolute inset-0 bg-gradient-to-t from-[#030303] via-transparent to-[#030303]/80 pointer-events-none" />
         </div>
     );
 }

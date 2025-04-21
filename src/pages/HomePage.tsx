@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import { VideoCarousels } from '@/components/home/VideoCarousels';
@@ -33,31 +32,27 @@ const HomePage = () => {
       initial="initial"
       animate="animate"
     >
-      <div className="relative">
-        <div className="relative z-10">
-          <HeroGeometric 
-            badge="YidVid"
-            title1="Your Gateway to"
-            title2="Jewish Content"
-            channels={manuallyFetchedChannels}
-          />
-        </div>
+      <HeroGeometric 
+        badge="YidVid"
+        title1="Your Gateway to"
+        title2="Jewish Content"
+        channels={manuallyFetchedChannels}
+      />
 
-        {videos && videos.length > 15 && (
-          <motion.section
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5, duration: 0.8 }}
-            className="w-full"
-          >
-            <HeroParallax 
-              videos={videos} 
-              title="" 
-              description=""
-            />
-          </motion.section>
-        )}
-      </div>
+      {videos && videos.length > 15 && (
+        <motion.section
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5, duration: 0.8 }}
+          className="w-full"
+        >
+          <HeroParallax 
+            videos={videos} 
+            title="" 
+            description=""
+          />
+        </motion.section>
+      )}
 
       <div className="space-y-2 mt-4">
         {videos && (
