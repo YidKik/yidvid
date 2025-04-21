@@ -5,10 +5,9 @@ import { VideoCarousels } from '@/components/home/VideoCarousels';
 import { ChannelCarousels } from '@/components/home/ChannelCarousels';
 import { useVideos } from '@/hooks/video/useVideos';
 import { useChannelsGrid } from '@/hooks/channel/useChannelsGrid';
-import { AnimatedVideoHero } from '@/components/home/AnimatedVideoHero';
 import { TiltedVideoScroll } from '@/components/home/TiltedVideoScroll';
 import { useShuffledVideos } from '@/hooks/video/useShuffledVideos';
-import { WelcomeSection } from '@/components/home/WelcomeSection';
+import { HeroGeometric } from '@/components/ui/shape-landing-hero';
 
 const HomePage = () => {
   const { data: videos, isLoading: videosLoading } = useVideos();
@@ -33,8 +32,12 @@ const HomePage = () => {
       initial="initial"
       animate="animate"
     >
-      {/* Welcome Section */}
-      <WelcomeSection />
+      {/* New Hero Section */}
+      <HeroGeometric 
+        badge="YidVid"
+        title1="Your Premier"
+        title2="Jewish Content Platform"
+      />
 
       {/* Video Scroll Sections - Closer Together */}
       <div className="space-y-2 mt-4">
@@ -72,4 +75,3 @@ const HomePage = () => {
 };
 
 export default HomePage;
-
