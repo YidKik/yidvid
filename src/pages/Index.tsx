@@ -2,7 +2,7 @@
 import React from "react";
 import { useVideoGridData } from "@/hooks/video/useVideoGridData";
 import { useNavigate } from "react-router-dom";
-// Removed import of HomeFadeDivider
+import { HomeFadeDivider } from "@/components/home/HomeFadeDivider";
 import { AnimatedVideoRows } from "@/components/home/AnimatedVideoRows";
 
 export default function Index() {
@@ -13,32 +13,35 @@ export default function Index() {
     <div className="min-h-screen w-full bg-[#f1eaff] flex items-stretch relative overflow-x-hidden">
       <div className="flex flex-1 items-stretch max-w-[1920px] mx-auto relative w-full">
         {/* Left: Welcome Area */}
-        <div className="w-full md:w-[44%] flex flex-col justify-center z-20 px-6 md:px-0">
-          <div className="md:pl-[6vw] flex flex-col justify-center h-[75vh]">
-            <div className="flex flex-col items-center md:items-start justify-center h-full">
+        <div className="w-full md:w-[44%] flex flex-col justify-start z-20 px-6 md:px-0 relative">
+          <div className="md:pl-[6vw] flex flex-col justify-start" style={{ minHeight: "77vh" }}>
+            <div className="flex flex-col items-center md:items-start justify-start h-full pt-12 md:pt-14">
               {/* Logo */}
               <img
                 src="/yidkik-logo.png"
                 alt="YidVid Logo"
-                className="w-[150px] md:w-[200px] h-auto mb-5"
+                className="w-[180px] md:w-[220px] h-auto mb-6"
                 draggable={false}
-                style={{ filter: "drop-shadow(0 2px 12px rgba(70,0,70,.06))" }}
+                style={{ filter: "drop-shadow(0 2px 12px rgba(70,0,70,.08))" }}
               />
-              <h1 className="text-center md:text-left text-4xl md:text-6xl font-black mb-3 mt-2">
-                <span className="text-[#ea384c]">Welcome to YidVid</span>
-              </h1>
-              <div className="text-center md:text-left text-lg md:text-2xl text-gray-700 max-w-md mb-1">
-                Your gateway to curated Jewish content.
+              <div className="bg-[#efe0fc]/60 rounded-xl shadow-md px-6 py-8 md:px-12 mb-2 md:mb-0">
+                <h1 className="text-center md:text-left text-3xl md:text-5xl font-black font-sans mb-4 mt-0">
+                  <span className="text-[#ea384c]">Welcome to YidVid</span>
+                </h1>
+                <div className="text-center md:text-left text-lg md:text-2xl text-gray-700 max-w-md mb-2">
+                  Your gateway to curated Jewish content.
+                </div>
+                <p className="text-center md:text-left text-base md:text-lg text-gray-600 opacity-95 mb-0">
+                  Discover videos that inspire, entertain, and connect.
+                </p>
               </div>
-              <p className="text-center md:text-left text-base md:text-lg text-gray-600 opacity-95 mb-3">
-                Discover videos that inspire, entertain, and connect.
-              </p>
             </div>
           </div>
         </div>
-        {/* Removed HomeFadeDivider */}
+        {/* Crooked SVG fade divider */}
+        <HomeFadeDivider />
         {/* Right: Animated Videos */}
-        <div className="hidden md:block w-[56%] relative z-10 pl-[-10vw]">
+        <div className="hidden md:block w-[56%] relative z-10">
           <div className="h-full flex items-center">
             <AnimatedVideoRows
               videos={videos || []}
@@ -59,4 +62,3 @@ export default function Index() {
     </div>
   );
 }
-
