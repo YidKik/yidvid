@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, ReactNode } from 'react'
 import { gsap } from 'gsap'
 import { cn } from "@/lib/utils"
@@ -18,7 +17,7 @@ export function GridMotion({
   const rowRefs = useRef<(HTMLDivElement | null)[]>([])
   const mouseXRef = useRef(window.innerWidth / 2)
 
-  const totalItems = 28
+  const totalItems = 49
   const defaultItems = Array.from({ length: totalItems }, (_, index) => `Item ${index + 1}`)
   const combinedItems = items.length > 0 ? items.slice(0, totalItems) : defaultItems
 
@@ -66,18 +65,18 @@ export function GridMotion({
           background: `radial-gradient(circle, ${gradientColor} 0%, transparent 100%)`,
         }}
       >
-        <div className="relative z-2 flex-none grid h-[220vh] w-[150vw] gap-10 grid-rows-[repeat(7,1fr)] grid-cols-[100%] -rotate-15 origin-center">
+        <div className="relative z-2 flex-none grid h-[220vh] w-[150vw] gap-6 grid-rows-[repeat(7,1fr)] grid-cols-[100%] -rotate-15 origin-center">
           {[...Array(7)].map((_, rowIndex) => (
             <div
               key={rowIndex}
-              className="grid gap-10 grid-cols-[repeat(7,1fr)] will-change-transform will-change-filter"
+              className="grid gap-6 grid-cols-[repeat(10,1fr)] will-change-transform will-change-filter"
               ref={(el) => (rowRefs.current[rowIndex] = el)}
             >
-              {[...Array(7)].map((_, itemIndex) => {
-                const content = items[rowIndex * 7 + itemIndex]
+              {[...Array(10)].map((_, itemIndex) => {
+                const content = items[rowIndex * 10 + itemIndex]
                 return (
-                  <div key={itemIndex} className="relative aspect-square p-2">
-                    <div className="relative h-full w-full overflow-hidden rounded-full bg-muted flex items-center justify-center text-foreground text-xl transform hover:scale-110 transition-transform duration-300">
+                  <div key={itemIndex} className="relative aspect-square p-1">
+                    <div className="relative h-full w-full overflow-hidden rounded-full bg-muted flex items-center justify-center text-foreground text-sm transform hover:scale-110 transition-transform duration-300">
                       {typeof content === 'string' && content.startsWith('http') ? (
                         <div
                           className="absolute inset-0 bg-cover bg-center rounded-full"
@@ -87,7 +86,7 @@ export function GridMotion({
                           }}
                         />
                       ) : (
-                        <div className="p-4 text-center z-1">
+                        <div className="p-2 text-center z-1">
                           {content}
                         </div>
                       )}

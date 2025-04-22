@@ -64,7 +64,7 @@ const HomePage = () => {
     channel.thumbnail_url || 'https://images.unsplash.com/photo-1723403804231-f4e9b515fe9d'
   ) || [];
 
-  const extendedChannelItems = [...channelItems, ...channelItems, ...channelItems, ...channelItems].slice(0, 126);
+  const extendedChannelItems = [...channelItems, ...channelItems, ...channelItems, ...channelItems].slice(0, 200);
 
   return (
     <motion.div 
@@ -118,10 +118,10 @@ const HomePage = () => {
         )}
       </div>
 
-      {/* Channels Grid Section - Positioned lower under videos section */}
+      {/* Channels Grid Section - Positioned much lower under videos section */}
       <motion.section 
         ref={channelsSectionRef}
-        className="relative z-10 w-full mt-[80vh]"
+        className="relative z-10 w-full mt-[120vh]"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5, delay: 0.3 }}
