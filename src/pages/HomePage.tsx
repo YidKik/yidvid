@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { VideoCarousels } from '@/components/home/VideoCarousels';
@@ -79,12 +78,19 @@ const HomePage = () => {
       <div className="relative min-h-[100vh]">
         {/* Content Overlay */}
         <div className="fixed top-10 left-0 right-0 z-20 flex flex-col items-center justify-start px-4 text-center hero-content">
-          <div className="mb-8">
-            <img 
-              src="/lovable-uploads/e425cacb-4c3a-4d81-b4e0-77fcbf10f61c.png" 
-              alt="YidVid Logo" 
-              className="h-48 w-auto mx-auto"
-            />
+          <div className="mb-12">
+            <div className="flex flex-col items-center">
+              <div className="w-24 h-24 mb-4">
+                <img 
+                  src="/lovable-uploads/24aececb-0cb2-4ac8-908a-74f50e0fa50f.png" 
+                  alt="YidVid Logo" 
+                  className="w-full h-full object-contain"
+                />
+              </div>
+              <h2 className="text-4xl sm:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary via-white to-primary">
+                YidVid
+              </h2>
+            </div>
           </div>
           
           <h1 className="text-4xl sm:text-6xl md:text-8xl font-bold mb-6 md:mb-8 tracking-tight">
@@ -120,7 +126,7 @@ const HomePage = () => {
         )}
       </div>
 
-      {/* Channels Grid Section - Positioned much lower under videos section */}
+      {/* Channels Grid Section */}
       <motion.section 
         ref={channelsSectionRef}
         className="relative z-10 w-full mt-[130vh]"
