@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import useEmblaCarousel from "embla-carousel-react";
@@ -88,13 +87,13 @@ export const ChannelCarousel = ({ channels, direction, speed, shuffleKey }: Chan
   }
 
   return (
-    <div className="px-2 md:px-4">
+    <div className="px-1 md:px-2">
       <div className="overflow-hidden" ref={emblaRef}>
-        <div className="flex gap-4 md:gap-6">
+        <div className="flex gap-2 md:gap-3">
           {shuffledChannels.map((channel, index) => (
             <motion.div
               key={`${channel.id}-${index}`}
-              className="flex-none w-14 h-14 md:w-16 md:h-16 cursor-pointer relative group"
+              className="flex-none w-8 h-8 md:w-10 md:h-10 cursor-pointer relative group"
               whileHover={{ scale: 1.1, zIndex: 10 }}
               onClick={() => handleChannelClick(channel.channel_id)}
             >
@@ -108,15 +107,15 @@ export const ChannelCarousel = ({ channels, direction, speed, shuffleKey }: Chan
                     loading="lazy"
                   />
                 ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-sm font-bold">
+                  <div className="w-full h-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-[10px] font-bold">
                     {channel.title.charAt(0)}
                   </div>
                 )}
               </div>
               
               <motion.div 
-                className="opacity-0 group-hover:opacity-100 absolute -bottom-6 left-1/2 transform -translate-x-1/2 
-                          bg-black/70 text-white text-xs px-2 py-1 rounded-md whitespace-nowrap z-20"
+                className="opacity-0 group-hover:opacity-100 absolute -bottom-4 left-1/2 transform -translate-x-1/2 
+                          bg-black/70 text-white text-[10px] px-1.5 py-0.5 rounded whitespace-nowrap z-20"
                 initial={{ y: 5, opacity: 0 }}
                 whileHover={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.2 }}

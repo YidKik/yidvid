@@ -75,19 +75,19 @@ export const ChannelCarousels = ({ isLoading }: ChannelCarouselsProps) => {
   }
 
   return (
-    <div className="space-y-8 py-2">
-      {/* Three rows with different directions and speeds - dramatically increased speeds */}
+    <div className="space-y-4 py-1">
+      {/* Four rows with different directions and speeds */}
       <motion.div 
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="overflow-hidden py-2"
+        className="overflow-hidden py-1"
       >
         <ChannelCarousel 
           channels={channels} 
           direction="ltr" 
           speed={40} 
-          shuffleKey={rowShuffleKeys[0]} 
+          shuffleKey={1} 
         />
       </motion.div>
       
@@ -95,13 +95,13 @@ export const ChannelCarousels = ({ isLoading }: ChannelCarouselsProps) => {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.1 }}
-        className="overflow-hidden py-2"
+        className="overflow-hidden py-1"
       >
         <ChannelCarousel 
           channels={channels} 
           direction="rtl" 
           speed={30} 
-          shuffleKey={rowShuffleKeys[1]} 
+          shuffleKey={2} 
         />
       </motion.div>
       
@@ -109,15 +109,30 @@ export const ChannelCarousels = ({ isLoading }: ChannelCarouselsProps) => {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.2 }}
-        className="overflow-hidden py-2"
+        className="overflow-hidden py-1"
       >
         <ChannelCarousel 
           channels={channels} 
           direction="ltr" 
           speed={35} 
-          shuffleKey={rowShuffleKeys[2]} 
+          shuffleKey={3} 
+        />
+      </motion.div>
+
+      <motion.div 
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.3 }}
+        className="overflow-hidden py-1"
+      >
+        <ChannelCarousel 
+          channels={channels} 
+          direction="rtl" 
+          speed={38} 
+          shuffleKey={4} 
         />
       </motion.div>
     </div>
   );
 };
+
