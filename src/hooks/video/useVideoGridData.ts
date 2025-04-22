@@ -11,6 +11,7 @@ export interface VideoGridItem {
   channelId: string;
   views: number | null;
   uploadedAt: string | Date;
+  channelThumbnail?: string; // Add channelThumbnail as an optional property
 }
 
 export const useVideoGridData = (maxVideos: number = 12) => {
@@ -49,6 +50,7 @@ export const useVideoGridData = (maxVideos: number = 12) => {
           channelId: video.channel_id || "unknown-channel",
           views: video.views !== null ? parseInt(String(video.views)) : null,
           uploadedAt: video.uploaded_at || new Date().toISOString(),
+          channelThumbnail: video.channel_thumbnail || null, // Add mapping for channelThumbnail
         }));
         
         setVideos(mappedVideos);
