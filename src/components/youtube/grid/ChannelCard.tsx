@@ -28,8 +28,8 @@ export const ChannelCard = ({
       className={cn(
         "block opacity-0 animate-[fadeIn_0.5s_ease-out_forwards]",
         "relative group rounded-lg overflow-hidden transition-all duration-200",
-        "hover:scale-[1.03] hover:shadow-md text-center p-4",
-        "bg-gray-50 mx-auto w-full" // Made card full width and centered
+        "hover:scale-[1.03] hover:shadow-md text-center p-3",
+        "bg-transparent mx-auto w-full"
       )}
       style={{ animationDelay }}
       onMouseEnter={() => setShowControls(true)}
@@ -37,7 +37,9 @@ export const ChannelCard = ({
       aria-label={`View channel: ${title}`}
     >
       <div className="flex flex-col items-center justify-center">
-        <div className="w-24 h-24 bg-pink-100 rounded-full flex items-center justify-center overflow-hidden mb-3 mx-auto group-hover:scale-110 transition-transform duration-300">
+        <div className="w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center overflow-hidden mb-2 mx-auto 
+                      border border-white/20 group-hover:border-[#ea384c] transition-all duration-300
+                      group-hover:shadow-lg shadow-white/10">
           {thumbnail_url ? (
             <img
               src={thumbnail_url}
@@ -50,13 +52,13 @@ export const ChannelCard = ({
               }}
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center">
-              <img src="/lovable-uploads/efca5adc-d9d2-4c5b-8900-e078f9d49b6a.png" alt="YidVid" className="w-20 h-20" />
+            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900">
+              <img src="/lovable-uploads/efca5adc-d9d2-4c5b-8900-e078f9d49b6a.png" alt="YidVid" className="w-12 h-12" />
             </div>
           )}
         </div>
         
-        <h3 className="text-sm font-medium text-center truncate max-w-full px-1 video-title">
+        <h3 className="text-xs md:text-sm font-medium text-center truncate max-w-full px-1 text-white/80 video-title">
           {title}
         </h3>
       </div>

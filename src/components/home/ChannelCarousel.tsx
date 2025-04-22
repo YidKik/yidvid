@@ -94,28 +94,29 @@ export const ChannelCarousel = ({ channels, direction, speed, shuffleKey }: Chan
           {shuffledChannels.map((channel, index) => (
             <motion.div
               key={`${channel.id}-${index}`}
-              className="flex-none w-20 h-20 md:w-28 md:h-28 cursor-pointer relative group"
+              className="flex-none w-14 h-14 md:w-16 md:h-16 cursor-pointer relative group"
               whileHover={{ scale: 1.1, zIndex: 10 }}
               onClick={() => handleChannelClick(channel.channel_id)}
             >
-              <div className="w-full h-full rounded-full overflow-hidden border-2 border-white shadow-md transition-all duration-300 
-                            group-hover:border-[#ea384c] group-hover:shadow-lg">
+              <div className="w-full h-full rounded-full overflow-hidden border border-white/20 shadow-sm transition-all duration-300 
+                            group-hover:border-[#ea384c] group-hover:shadow-md">
                 {channel.thumbnail_url ? (
                   <img 
                     src={channel.thumbnail_url} 
                     alt={channel.title}
                     className="w-full h-full object-cover" 
+                    loading="lazy"
                   />
                 ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-lg font-bold">
+                  <div className="w-full h-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-sm font-bold">
                     {channel.title.charAt(0)}
                   </div>
                 )}
               </div>
               
               <motion.div 
-                className="opacity-0 group-hover:opacity-100 absolute -bottom-8 left-1/2 transform -translate-x-1/2 
-                          bg-black/70 text-white text-xs md:text-sm px-2 py-1 rounded-md whitespace-nowrap z-20"
+                className="opacity-0 group-hover:opacity-100 absolute -bottom-6 left-1/2 transform -translate-x-1/2 
+                          bg-black/70 text-white text-xs px-2 py-1 rounded-md whitespace-nowrap z-20"
                 initial={{ y: 5, opacity: 0 }}
                 whileHover={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.2 }}
