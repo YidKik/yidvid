@@ -22,7 +22,7 @@ export const HeroParallax = ({
   title?: string;
   description?: string;
 }) => {
-  // Now 4 videos per row for 3 rows
+  // 4 videos per row for 3 rows
   const firstRow = videos.slice(0, 4);
   const secondRow = videos.slice(4, 8);
   const thirdRow = videos.slice(8, 12);
@@ -33,40 +33,42 @@ export const HeroParallax = ({
     offset: ["start start", "end start"],
   });
 
-  // More dramatic fold/unfold transforms
+  // Strong parallax for "folded/unfolded" look, pronounced slide-down effect:
   const springConfig = { stiffness: 280, damping: 32, bounce: 100 };
 
-  // Stronger transforms for parallax "folded/unfolded" look:
-  // Increase rotateX and rotateZ, and greater Y translation for drama.
+  // Dramatic unfold: More aggressive rotateX and translateY for reveal "downward"
   const translateX = useSpring(
-    useTransform(scrollYProgress, [0, 1], [0, 450]),
+    useTransform(scrollYProgress, [0, 1], [0, 480]),
     springConfig
   );
   const translateXReverse = useSpring(
-    useTransform(scrollYProgress, [0, 1], [0, -450]),
+    useTransform(scrollYProgress, [0, 1], [0, -480]),
     springConfig
   );
+  // Strong folded: Lay the videos "flatter" at the top, then open up straight
   const rotateX = useSpring(
-    useTransform(scrollYProgress, [0, 0.22], [22, 0]), // Stronger fold (was 6)
-    springConfig
-  );
-  const opacity = useSpring(
-    useTransform(scrollYProgress, [0, 0.15], [0.15, 1]),
+    useTransform(scrollYProgress, [0, 0.22], [32, 0]), // Much more pronounced at top
     springConfig
   );
   const rotateZ = useSpring(
-    useTransform(scrollYProgress, [0, 0.22], [14, 0]), // Stronger fold (was 6)
+    useTransform(scrollYProgress, [0, 0.22], [18, 0]),
     springConfig
   );
+  // Slide the entire block much further down
   const translateY = useSpring(
-    useTransform(scrollYProgress, [0, 0.22], [-420, 320]), // More pronounced Y
+    useTransform(scrollYProgress, [0, 0.22], [-540, 240]), // Notice higher negative at the start, bigger down opening
+    springConfig
+  );
+  const opacity = useSpring(
+    useTransform(scrollYProgress, [0, 0.13], [0.11, 1]),
     springConfig
   );
 
   return (
     <div
       ref={ref}
-      className="h-[140vh] pt-[12vh] pb-10 overflow-visible antialiased relative flex flex-col [perspective:1800px] [transform-style:preserve-3d] w-full"
+      className="h-[150vh] pt-[25vh] pb-10 overflow-visible antialiased relative flex flex-col [perspective:2000px] [transform-style:preserve-3d] w-full"
+      // ↑ More top padding and height for lower placement
     >
       <Header title={title} description={description} />
       <motion.div
@@ -151,21 +153,22 @@ export const VideoCard = ({
         scale: 1.045,
       }}
       key={video.id}
-      className="group/video h-[13vw] min-h-[130px] w-[22vw] min-w-[210px] max-w-[24vw] relative flex-shrink-0 rounded-[22px] shadow-2xl overflow-hidden transition-all"
+      className="group/video h-[18vw] min-h-[170px] w-[24vw] min-w-[220px] max-w-[26vw] relative flex-shrink-0 rounded-lg shadow-2xl overflow-hidden transition-all"
+      // ↑ less rounded, taller, boxier card
     >
       <Link
         to={`/video/${video.video_id}`}
         className="block"
       >
-        <AspectRatio ratio={16 / 6.3} className="h-full w-full">
+        <AspectRatio ratio={16 / 7} className="h-full w-full">
           <img
             src={video.thumbnail}
-            className="object-cover object-center absolute h-full w-full inset-0 rounded-[22px] border-4 border-white/10"
+            className="object-cover object-center absolute h-full w-full inset-0 rounded-lg border-4 border-white/10"
             alt={video.title}
           />
         </AspectRatio>
       </Link>
-      <div className="absolute inset-0 h-full w-full opacity-0 group-hover/video:opacity-80 bg-black pointer-events-none rounded-[22px] transition-opacity duration-300"></div>
+      <div className="absolute inset-0 h-full w-full opacity-0 group-hover/video:opacity-80 bg-black pointer-events-none rounded-lg transition-opacity duration-300"></div>
       <h2 className="absolute bottom-3 left-4 opacity-0 group-hover/video:opacity-100 text-white transition-opacity duration-300 text-lg font-medium line-clamp-2 max-w-[90%] drop-shadow-lg">
         {video.title}
       </h2>
