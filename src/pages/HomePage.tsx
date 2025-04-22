@@ -39,15 +39,16 @@ const HomePage = () => {
       gsap.fromTo(
         channelsSectionRef.current,
         { 
-          y: 200,
+          y: 100,
           opacity: 0 
         },
         {
           scrollTrigger: {
             trigger: '.hero-parallax-section',
-            start: 'bottom-=300 center',
-            end: 'bottom top',
+            start: 'bottom-=100 bottom',
+            end: 'bottom center',
             scrub: 1,
+            markers: true, // For debugging - will be visible during dev
           },
           y: 0,
           opacity: 1,
@@ -55,6 +56,11 @@ const HomePage = () => {
         }
       );
     }
+
+    // Clean up markers on component unmount
+    return () => {
+      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+    };
   }, []);
 
   const channelItems = manuallyFetchedChannels?.map(channel => 
@@ -115,17 +121,23 @@ const HomePage = () => {
         )}
       </div>
 
-      {/* Channels Grid Section - Now properly positioned under videos */}
+      {/* Channels Grid Section - Positioned directly under videos section */}
       <motion.section 
         ref={channelsSectionRef}
-        className="relative z-10 w-full mt-[60vh]"
+        className="relative z-10 w-full mt-[40vh]"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5, delay: 0.3 }}
       >
-        <div className="w-full px-4 py-32">
-          <GridMotion 
-            items={extendedChannelItems}
-            gradientColor="#ea384c"
-            className="relative z-10 w-full h-[600px] opacity-90"
-          />
+        <div className="w-full px-0 py-40">
+          <h2 className="text-white text-2xl font-bold text-center mb-8">Featured Channels</h2>
+          <div className="w-full h-[700px] overflow-visible">
+            <GridMotion 
+              items={extendedChannelItems}
+              gradientColor="#ea384c"
+              className="relative z-10 w-full h-full opacity-90"
+            />
+          </div>
         </div>
       </motion.section>
     </motion.div>

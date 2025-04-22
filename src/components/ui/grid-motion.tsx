@@ -30,7 +30,7 @@ export function GridMotion({
     }
 
     const updateMotion = () => {
-      const maxMoveAmount = 300
+      const maxMoveAmount = 200
       const baseDuration = 0.8
       const inertiaFactors = [0.6, 0.4, 0.3, 0.2]
 
@@ -59,24 +59,24 @@ export function GridMotion({
   }, [])
 
   return (
-    <div className={cn("h-full w-full overflow-hidden", className)} ref={gridRef}>
+    <div className={cn("h-full w-full overflow-visible", className)} ref={gridRef}>
       <section
-        className="relative flex h-screen w-full items-center justify-center overflow-hidden"
+        className="relative flex h-screen w-full items-center justify-center overflow-visible"
         style={{
           background: `radial-gradient(circle, ${gradientColor} 0%, transparent 100%)`,
         }}
       >
-        <div className="relative z-2 flex-none grid h-[200vh] w-[150vw] gap-8 grid-rows-[repeat(7,1fr)] grid-cols-[100%] -rotate-15 origin-center">
+        <div className="relative z-2 flex-none grid h-[220vh] w-[150vw] gap-10 grid-rows-[repeat(7,1fr)] grid-cols-[100%] -rotate-15 origin-center">
           {[...Array(7)].map((_, rowIndex) => (
             <div
               key={rowIndex}
-              className="grid gap-8 grid-cols-[repeat(7,1fr)] will-change-transform will-change-filter"
+              className="grid gap-10 grid-cols-[repeat(7,1fr)] will-change-transform will-change-filter"
               ref={(el) => (rowRefs.current[rowIndex] = el)}
             >
               {[...Array(7)].map((_, itemIndex) => {
                 const content = items[rowIndex * 7 + itemIndex]
                 return (
-                  <div key={itemIndex} className="relative aspect-square p-1">
+                  <div key={itemIndex} className="relative aspect-square p-2">
                     <div className="relative h-full w-full overflow-hidden rounded-full bg-muted flex items-center justify-center text-foreground text-xl transform hover:scale-110 transition-transform duration-300">
                       {typeof content === 'string' && content.startsWith('http') ? (
                         <div
