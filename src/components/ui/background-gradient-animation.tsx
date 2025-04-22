@@ -6,12 +6,12 @@ import { useEffect, useRef, useState } from "react";
 export const BackgroundGradientAnimation = ({
   gradientBackgroundStart = "#030303",
   gradientBackgroundEnd = "#1a0000",
-  firstColor = "234, 56, 76",  // Primary red with low opacity
-  secondColor = "234, 56, 76", // Primary red with different opacity
-  thirdColor = "255, 255, 255", // White with low opacity
-  fourthColor = "234, 56, 76", // Primary red again
-  fifthColor = "255, 255, 255", // White again
-  pointerColor = "234, 56, 76", // Primary red for interactive pointer
+  firstColor = "234, 56, 76",
+  secondColor = "234, 56, 76",
+  thirdColor = "255, 255, 255",
+  fourthColor = "234, 56, 76",
+  fifthColor = "255, 255, 255",
+  pointerColor = "234, 56, 76",
   size = "100%",
   blendingValue = "soft-light",
   children,

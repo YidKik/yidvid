@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { VideoCarousels } from '@/components/home/VideoCarousels';
@@ -73,7 +72,6 @@ const HomePage = () => {
     channel.thumbnail_url || 'https://images.unsplash.com/photo-1723403804231-f4e9b515fe9d'
   ) || [];
 
-  // Reduce the number of repeated items and rows
   const extendedChannelItems = [...channelItems, ...channelItems].slice(0, 30);
 
   return (
@@ -83,7 +81,7 @@ const HomePage = () => {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      {/* Full-page background that extends to all content */}
+      {/* Background that extends to all content */}
       <BackgroundGradientAnimation 
         interactive={false}
         gradientBackgroundStart="#030303"
