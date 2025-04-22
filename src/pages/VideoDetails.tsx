@@ -14,12 +14,13 @@ import { LoadingAnimation } from "@/components/ui/LoadingAnimation";
 import { VideoPlaceholder } from "@/components/video/VideoPlaceholder";
 
 const VideoDetails = () => {
-  const { id } = useParams<{ id: string }>();
+  const { videoId } = useParams<{ videoId: string }>();
   const location = useLocation();
 
-  if (!id) return <div className="p-4">Video ID not provided</div>;
+  if (!videoId) return <div className="p-4">Video ID not provided</div>;
 
-  const { data: video, isLoading: isLoadingVideo, error } = useVideoQuery(id);
+  // Pass the videoId directly to the query hooks
+  const { data: video, isLoading: isLoadingVideo, error } = useVideoQuery(videoId);
   const { data: channelVideos } = useRelatedVideosQuery(video?.channel_id ?? "", video?.id ?? "");
 
   if (isLoadingVideo) {

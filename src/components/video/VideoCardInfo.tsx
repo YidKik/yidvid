@@ -40,13 +40,9 @@ export const VideoCardInfo = ({
 
   return (
     <div className="mt-2 flex items-start space-x-2">
-      {/* Channel avatar - Updated size from h-8 w-8 to h-6 w-6 */}
+      {/* Channel avatar - prevent nested links by using span instead of Link */}
       {channelThumbnail && (
-        <Link 
-          to={`/channel/${channelId}`}
-          className="flex-shrink-0 mt-0.5"
-          onClick={(e) => e.stopPropagation()}
-        >
+        <span className="flex-shrink-0 mt-0.5">
           <div className="h-6 w-6 overflow-hidden rounded-full">
             <img
               src={channelThumbnail}
@@ -59,7 +55,7 @@ export const VideoCardInfo = ({
               }}
             />
           </div>
-        </Link>
+        </span>
       )}
       
       <div className="flex-1 min-w-0">
@@ -74,13 +70,7 @@ export const VideoCardInfo = ({
         
         <div className="mt-1 flex flex-col text-xs video-meta-text">
           {!hideChannelName && (
-            <Link 
-              to={`/channel/${channelId}`}
-              className="hover:text-foreground hover:underline video-channel-name"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {channelName}
-            </Link>
+            <span className="video-channel-name">{channelName}</span>
           )}
           
           <div className="flex flex-col sm:flex-row sm:items-center">

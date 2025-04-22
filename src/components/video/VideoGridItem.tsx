@@ -42,8 +42,7 @@ export const VideoGridItem = ({ video, loading }: VideoGridItemProps) => {
           channelId={video.channelId}
           views={video.views}
           formattedDate={formattedDate}
-          // Only pass channelThumbnail if it exists in video
-          // This fixes the Property 'channelThumbnail' does not exist error
+          channelThumbnail={video.channelThumbnail}
         />
       )}
     </Link>
