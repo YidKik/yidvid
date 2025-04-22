@@ -1,19 +1,45 @@
 
-import { cn } from "@/lib/utils";
+import { Link } from "react-router-dom";
+import { VideoCardSkeleton } from "./VideoCardSkeleton";
+import { VideoCardThumbnail } from "./VideoCardThumbnail";
+import { VideoCardInfo } from "./VideoCardInfo";
+import { useLocation } from "react-router-dom";
 import { VideoGridItem as VideoItemType } from "@/hooks/video/useVideoGridData";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
 
-export const VideoGridItem = ({ video }: { video: VideoItemType }) => {
+interface VideoGridItemProps {
+  video: VideoItemType;
+  loading?: boolean;
+}
+
+export const VideoGridItem = ({ video, loading }: VideoGridItemProps) => {
+  const location = useLocation();
+  const isVideosPage = location.pathname === "/videos";
+
+  if (loading) {
+    return <VideoCardSkeleton />;
+  }
+
   return (
-    <div className={cn("w-full h-full rounded-lg overflow-hidden")}>
-      <AspectRatio ratio={16/9}>
-        <img
-          src={video.thumbnail || "/placeholder.svg"}
-          alt={video.title}
-          className="w-full h-full object-cover"
-          draggable={false}
+    <Link 
+      to={`/video/${video.video_id}`}
+      className="group block w-full"
+    >
+      <VideoCardThumbnail 
+        thumbnail={video.thumbnail} 
+        title={video.title} 
+        isSample={video.id?.toString().includes('sample')} 
+      />
+      
+      {isVideosPage && (
+        <VideoCardInfo
+          title={video.title}
+          channelName={video.channelName}
+          channelId={video.channelId}
+          views={video.views}
+          formattedDate={video.uploadedAt}
+          channelThumbnail={video.channelThumbnail}
         />
-      </AspectRatio>
-    </div>
+      )}
+    </Link>
   );
 };

@@ -15,10 +15,8 @@ export const FilteredChannelsGrid = ({
   const [displayChannels, setDisplayChannels] = useState<Channel[]>([]);
   const [initialized, setInitialized] = useState(false);
   
-  // Process channels only once when component mounts or channels change
   useEffect(() => {
     if (!initialized && channels.length > 0) {
-      // Always show all channels, regardless of main page or not
       const hasRealChannels = channels.some(c => 
         !c.id.toString().includes('sample') && 
         c.title !== 'Sample Channel');
@@ -32,7 +30,6 @@ export const FilteredChannelsGrid = ({
       setDisplayChannels(channels);
       setInitialized(true);
     } else if (initialized && channels.length > 0 && channels !== displayChannels) {
-      // Update display channels if channel data changes
       console.log("Channel data updated, refreshing display");
       setDisplayChannels(channels);
     }
@@ -40,7 +37,7 @@ export const FilteredChannelsGrid = ({
 
   return (
     <div className="w-full">
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4 mt-2 pb-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6 mt-4 pb-8">
         {displayChannels.map((channel, index) => (
           <ChannelCard 
             key={channel.id?.toString() || `channel-${index}`}

@@ -16,10 +16,7 @@ export const ChannelCard = ({
   const { id, channel_id, title, thumbnail_url } = channel;
   const [showControls, setShowControls] = useState(false);
 
-  // Check if this is a sample channel, safely handling undefined properties
   const isSample = id?.toString()?.includes('sample') || channel_id?.includes('sample');
-
-  // Animation delay based on index
   const animationDelay = `${0.05 * (index % 10)}s`;
 
   return (
@@ -28,8 +25,8 @@ export const ChannelCard = ({
       className={cn(
         "block opacity-0 animate-[fadeIn_0.5s_ease-out_forwards]",
         "relative group rounded-lg overflow-hidden transition-all duration-200",
-        "hover:scale-[1.03] hover:shadow-md text-center p-2",
-        "bg-transparent mx-auto w-full"
+        "hover:scale-[1.03] hover:shadow-md text-center p-4",
+        "bg-white/5 mx-auto w-full"
       )}
       style={{ animationDelay }}
       onMouseEnter={() => setShowControls(true)}
@@ -37,8 +34,8 @@ export const ChannelCard = ({
       aria-label={`View channel: ${title}`}
     >
       <div className="flex flex-col items-center justify-center">
-        <div className="w-4 h-4 md:w-5 md:h-5 rounded-full flex items-center justify-center overflow-hidden mb-1 mx-auto 
-                      border border-white/20 group-hover:border-[#ea384c] transition-all duration-300
+        <div className="w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center overflow-hidden mb-3 mx-auto 
+                      border-2 border-white/20 group-hover:border-[#ea384c] transition-all duration-300
                       group-hover:shadow-lg shadow-white/10">
           {thumbnail_url ? (
             <img
@@ -53,14 +50,18 @@ export const ChannelCard = ({
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900">
-              <img src="/lovable-uploads/efca5adc-d9d2-4c5b-8900-e078f9d49b6a.png" alt="YidVid" className="w-3 h-3" />
+              <img src="/lovable-uploads/efca5adc-d9d2-4c5b-8900-e078f9d49b6a.png" alt="YidVid" className="w-8 h-8" />
             </div>
           )}
         </div>
         
-        <h3 className="text-[10px] md:text-xs font-medium text-center truncate max-w-full px-1 text-white/80 video-title">
+        <h3 className="text-sm md:text-base font-medium text-center mb-1 text-white/90">
           {title}
         </h3>
+        
+        <p className="text-xs text-white/60">
+          View Channel
+        </p>
       </div>
     </Link>
   );
