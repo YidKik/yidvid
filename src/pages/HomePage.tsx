@@ -18,13 +18,11 @@ const HomePage = () => {
   const channelsSectionRef = useRef(null);
 
   useEffect(() => {
-    // Reset any body/html styles that might be affecting scrolling
     document.body.style.overflow = 'auto';
     document.documentElement.style.overflow = 'auto';
     document.body.style.height = 'auto';
     document.documentElement.style.height = 'auto';
 
-    // Animate hero content on first scroll
     const heroContent = document.querySelector('.hero-content');
     if (heroContent) {
       gsap.to(heroContent, {
@@ -40,7 +38,6 @@ const HomePage = () => {
       });
     }
 
-    // Link channels section animation to the hero content
     if (channelsSectionRef.current) {
       gsap.fromTo(
         channelsSectionRef.current,
@@ -63,7 +60,6 @@ const HomePage = () => {
     }
 
     return () => {
-      // Clean up all scroll triggers on unmount
       ScrollTrigger.getAll().forEach(trigger => trigger.kill());
     };
   }, []);
@@ -81,25 +77,21 @@ const HomePage = () => {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      {/* Background that extends to all content */}
       <BackgroundGradientAnimation 
         interactive={false}
         gradientBackgroundStart="#030303"
         gradientBackgroundEnd="#1a0000"
-        firstColor="234, 56, 76"  // Primary red with low opacity
-        secondColor="234, 56, 76" // Primary red with different opacity
-        thirdColor="255, 255, 255" // White with low opacity
-        fourthColor="234, 56, 76" // Primary red again
-        fifthColor="255, 255, 255" // White again
+        firstColor="234, 56, 76"
+        secondColor="234, 56, 76"
+        thirdColor="255, 255, 255"
+        fourthColor="234, 56, 76"
+        fifthColor="255, 255, 255"
         blendingValue="soft-light"
         containerClassName="fixed inset-0 z-0"
       />
 
-      {/* Content container with proper scrolling */}
       <div className="relative z-10 w-full">
-        {/* Hero Section with Content */}
         <div className="relative min-h-[100vh]">
-          {/* Content Overlay */}
           <div className="fixed top-10 left-0 right-0 z-20 flex flex-col items-center justify-start px-4 text-center hero-content">
             <div className="mb-12">
               <div className="flex items-center gap-6 mb-6">
@@ -135,22 +127,20 @@ const HomePage = () => {
             </Link>
           </div>
 
-          {/* Video Background */}
-          {videos && videos.length > 15 && (
-            <div className="absolute top-[20vh] inset-x-0 h-[100vh] hero-parallax-section">
+          {videos && videos.length > 8 && (
+            <div className="absolute top-[36vh] inset-x-0 hero-parallax-section z-10">
               <HeroParallax 
-                videos={videos} 
-                title="" 
+                videos={videos}
+                title=""
                 description=""
               />
             </div>
           )}
         </div>
 
-        {/* Channel Grid Section */}
         <motion.section 
           ref={channelsSectionRef}
-          className="relative z-10 w-full mt-[130vh]"
+          className="relative z-10 w-full mt-[140vh]"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.3 }}
