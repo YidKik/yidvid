@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { VideoCarousels } from '@/components/home/VideoCarousels';
@@ -24,7 +25,7 @@ const HomePage = () => {
         scrollTrigger: {
           trigger: heroContent,
           start: 'top top',
-          end: '+=100',
+          end: '+=300',
           scrub: 0.5,
         },
         y: -100,
@@ -33,7 +34,7 @@ const HomePage = () => {
       });
     }
 
-    // Link channels section animation to the last video row
+    // Link channels section animation to the hero content
     if (channelsSectionRef.current) {
       gsap.fromTo(
         channelsSectionRef.current,
@@ -44,8 +45,8 @@ const HomePage = () => {
         {
           scrollTrigger: {
             trigger: '.hero-parallax-section',
-            start: 'bottom-=100 bottom',
-            end: 'bottom center',
+            start: 'top top',
+            end: 'bottom bottom',
             scrub: 1,
           },
           y: 0,
@@ -56,6 +57,7 @@ const HomePage = () => {
     }
 
     return () => {
+      // Clean up all scroll triggers on unmount
       ScrollTrigger.getAll().forEach(trigger => trigger.kill());
     };
   }, []);
@@ -121,7 +123,7 @@ const HomePage = () => {
       {/* Channels Grid Section - Positioned much lower under videos section */}
       <motion.section 
         ref={channelsSectionRef}
-        className="relative z-10 w-full mt-[120vh]"
+        className="relative z-10 w-full mt-[150vh]"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5, delay: 0.3 }}
