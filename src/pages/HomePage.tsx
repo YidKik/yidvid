@@ -1,8 +1,6 @@
-
 import React, { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { VideoCarousels } from '@/components/home/VideoCarousels';
-import { ChannelCarousels } from '@/components/home/ChannelCarousels';
 import { useVideos } from '@/hooks/video/useVideos';
 import { useChannelsGrid } from '@/hooks/channel/useChannelsGrid';
 import { HeroParallax } from '@/components/ui/hero-parallax';
@@ -149,7 +147,7 @@ const HomePage = () => {
           )}
         </div>
 
-        {/* Channels Grid Section */}
+        {/* Channel Grid Section */}
         <motion.section 
           ref={channelsSectionRef}
           className="relative z-10 w-full mt-[130vh]"
@@ -158,17 +156,6 @@ const HomePage = () => {
           transition={{ duration: 0.5, delay: 0.3 }}
         >
           <div className="w-full px-0 py-20">
-            <div className="mb-12 text-center">
-              <h2 className="text-3xl sm:text-4xl font-bold text-white">
-                Featured Channels
-              </h2>
-            </div>
-            
-            {/* Channel Carousels with small profile pictures */}
-            <div className="mb-16">
-              <ChannelCarousels />
-            </div>
-            
             <div className="w-full h-[200px] overflow-visible">
               <GridMotion 
                 items={extendedChannelItems}
