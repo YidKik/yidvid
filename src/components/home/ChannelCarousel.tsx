@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import useEmblaCarousel from "embla-carousel-react";
@@ -89,11 +90,11 @@ export const ChannelCarousel = ({ channels, direction, speed, shuffleKey }: Chan
   return (
     <div className="px-1 md:px-2">
       <div className="overflow-hidden" ref={emblaRef}>
-        <div className="flex gap-2 md:gap-3">
+        <div className="flex gap-1 md:gap-2">
           {shuffledChannels.map((channel, index) => (
             <motion.div
               key={`${channel.id}-${index}`}
-              className="flex-none w-8 h-8 md:w-10 md:h-10 cursor-pointer relative group"
+              className="flex-none w-4 h-4 md:w-5 md:h-5 cursor-pointer relative group"
               whileHover={{ scale: 1.1, zIndex: 10 }}
               onClick={() => handleChannelClick(channel.channel_id)}
             >
@@ -107,7 +108,7 @@ export const ChannelCarousel = ({ channels, direction, speed, shuffleKey }: Chan
                     loading="lazy"
                   />
                 ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-[10px] font-bold">
+                  <div className="w-full h-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-[8px] font-bold">
                     {channel.title.charAt(0)}
                   </div>
                 )}
@@ -115,7 +116,7 @@ export const ChannelCarousel = ({ channels, direction, speed, shuffleKey }: Chan
               
               <motion.div 
                 className="opacity-0 group-hover:opacity-100 absolute -bottom-4 left-1/2 transform -translate-x-1/2 
-                          bg-black/70 text-white text-[10px] px-1.5 py-0.5 rounded whitespace-nowrap z-20"
+                          bg-black/70 text-white text-[8px] px-1 py-0.5 rounded whitespace-nowrap z-20"
                 initial={{ y: 5, opacity: 0 }}
                 whileHover={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.2 }}

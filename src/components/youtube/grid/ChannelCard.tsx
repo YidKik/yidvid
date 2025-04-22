@@ -37,7 +37,7 @@ export const ChannelCard = ({
       aria-label={`View channel: ${title}`}
     >
       <div className="flex flex-col items-center justify-center">
-        <div className="w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center overflow-hidden mb-1 mx-auto 
+        <div className="w-4 h-4 md:w-5 md:h-5 rounded-full flex items-center justify-center overflow-hidden mb-1 mx-auto 
                       border border-white/20 group-hover:border-[#ea384c] transition-all duration-300
                       group-hover:shadow-lg shadow-white/10">
           {thumbnail_url ? (
@@ -53,7 +53,7 @@ export const ChannelCard = ({
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900">
-              <img src="/lovable-uploads/efca5adc-d9d2-4c5b-8900-e078f9d49b6a.png" alt="YidVid" className="w-6 h-6" />
+              <img src="/lovable-uploads/efca5adc-d9d2-4c5b-8900-e078f9d49b6a.png" alt="YidVid" className="w-3 h-3" />
             </div>
           )}
         </div>
@@ -65,4 +65,3 @@ export const ChannelCard = ({
     </Link>
   );
 };
-
