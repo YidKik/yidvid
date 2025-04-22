@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, ReactNode } from 'react'
 import { gsap } from 'gsap'
 import { cn } from "@/lib/utils"
@@ -18,20 +17,20 @@ export function GridMotion({
   const rowRefs = useRef<(HTMLDivElement | null)[]>([])
   const mouseXRef = useRef(window.innerWidth / 2)
 
-  const totalItems = 98 // Increased to accommodate more items per row
+  const totalItems = 50
   const defaultItems = Array.from({ length: totalItems }, (_, index) => `Item ${index + 1}`)
   const combinedItems = items.length > 0 ? items.slice(0, totalItems) : defaultItems
 
   useEffect(() => {
-    gsap.ticker.lagSmoothing(1000, 16) // Increase lag smoothing to prevent jank
+    gsap.ticker.lagSmoothing(1000, 16)
 
     const handleMouseMove = (e: MouseEvent) => {
       mouseXRef.current = e.clientX
     }
 
     const updateMotion = () => {
-      const maxMoveAmount = 150 // Reduced for smoother movement
-      const baseDuration = 1.2 // Increased for smoother transitions
+      const maxMoveAmount = 150
+      const baseDuration = 1.2
       const inertiaFactors = [0.6, 0.4, 0.3, 0.2, 0.15, 0.1, 0.05]
 
       rowRefs.current.forEach((row, index) => {
@@ -42,7 +41,7 @@ export function GridMotion({
           gsap.to(row, {
             x: moveAmount,
             duration: baseDuration + inertiaFactors[index % inertiaFactors.length],
-            ease: 'power1.out', // Changed to power1 for smoother motion
+            ease: 'power1.out',
             overwrite: 'auto',
           })
         }
@@ -62,19 +61,16 @@ export function GridMotion({
     <div className={cn("h-full w-full overflow-visible", className)} ref={gridRef}>
       <section
         className="relative flex h-screen w-full items-center justify-center overflow-visible"
-        style={{
-          background: `radial-gradient(circle, ${gradientColor} 0%, transparent 100%)`,
-        }}
       >
-        <div className="relative z-2 flex-none grid h-[220vh] w-[150vw] gap-3 grid-rows-[repeat(7,1fr)] grid-cols-[100%] -rotate-15 origin-center">
-          {[...Array(7)].map((_, rowIndex) => (
+        <div className="relative z-2 flex-none grid h-[220vh] w-[150vw] gap-3 grid-rows-[repeat(5,1fr)] grid-cols-[100%] -rotate-15 origin-center">
+          {[...Array(5)].map((_, rowIndex) => (
             <div
               key={rowIndex}
-              className="grid gap-2 grid-cols-[repeat(14,1fr)] will-change-transform will-change-filter"
+              className="grid gap-2 grid-cols-[repeat(10,1fr)] will-change-transform will-change-filter"
               ref={(el) => (rowRefs.current[rowIndex] = el)}
             >
-              {[...Array(14)].map((_, itemIndex) => {
-                const content = combinedItems[rowIndex * 14 + itemIndex]
+              {[...Array(10)].map((_, itemIndex) => {
+                const content = combinedItems[rowIndex * 10 + itemIndex]
                 return (
                   <div key={itemIndex} className="relative aspect-square p-0.5">
                     <div className="relative h-full w-full overflow-hidden rounded-full bg-muted flex items-center justify-center text-foreground text-[10px] transform hover:scale-105 transition-transform duration-200">
@@ -83,7 +79,7 @@ export function GridMotion({
                           className="absolute inset-0 bg-cover bg-center rounded-full"
                           style={{
                             backgroundImage: `url(${content})`,
-                            transform: 'scale(1)',
+                            transform: 'scale(0.7)',
                           }}
                         />
                       ) : (

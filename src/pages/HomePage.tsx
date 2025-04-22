@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { VideoCarousels } from '@/components/home/VideoCarousels';
@@ -66,7 +65,8 @@ const HomePage = () => {
     channel.thumbnail_url || 'https://images.unsplash.com/photo-1723403804231-f4e9b515fe9d'
   ) || [];
 
-  const extendedChannelItems = [...channelItems, ...channelItems, ...channelItems, ...channelItems].slice(0, 200);
+  // Reduce the number of repeated items to create fewer rows
+  const extendedChannelItems = [...channelItems, ...channelItems].slice(0, 100);
 
   return (
     <motion.div 
@@ -133,12 +133,10 @@ const HomePage = () => {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5, delay: 0.3 }}
       >
-        <div className="w-full px-0 py-40">
-          <h2 className="text-white text-2xl font-bold text-center mb-8">Featured Channels</h2>
-          <div className="w-full h-[700px] overflow-visible">
+        <div className="w-full px-0 py-20">
+          <div className="w-full h-[400px] overflow-visible">
             <GridMotion 
               items={extendedChannelItems}
-              gradientColor="#ea384c"
               className="relative z-10 w-full h-full opacity-90"
             />
           </div>
