@@ -11,7 +11,7 @@ export interface VideoGridItem {
   channelId: string;
   views: number | null;
   uploadedAt: string | Date;
-  channelThumbnail?: string; // Add channelThumbnail as an optional property
+  channelThumbnail?: string; // Keep the channelThumbnail as an optional property
 }
 
 export const useVideoGridData = (maxVideos: number = 12) => {
@@ -25,9 +25,15 @@ export const useVideoGridData = (maxVideos: number = 12) => {
       try {
         console.log(`Fetching up to ${maxVideos} videos from Supabase`);
         
+        // Join with youtube_channels to get the channel thumbnail
         const { data, error } = await supabase
           .from("youtube_videos")
-          .select("*")
+          .select(`
+            *,
+            youtube_channels:channel_id (
+              thumbnail_url
+            )
+          `)
           .is("deleted_at", null)
           .order("uploaded_at", { ascending: false })  // Explicitly sort by newest first
           .limit(maxVideos);
@@ -40,7 +46,7 @@ export const useVideoGridData = (maxVideos: number = 12) => {
         console.log(`Successfully fetched ${data?.length || 0} videos`);
         
         // Map the Supabase data to match our VideoGridItem interface
-        // Ensure we handle the views field properly
+        // Ensure we handle the views field and channel_thumbnail properly
         const mappedVideos = data.map(video => ({
           id: video.id,
           video_id: video.video_id,
@@ -50,7 +56,7 @@ export const useVideoGridData = (maxVideos: number = 12) => {
           channelId: video.channel_id || "unknown-channel",
           views: video.views !== null ? parseInt(String(video.views)) : null,
           uploadedAt: video.uploaded_at || new Date().toISOString(),
-          channelThumbnail: video.channel_thumbnail || null, // Add mapping for channelThumbnail
+          channelThumbnail: video.youtube_channels?.thumbnail_url || null, // Correctly access nested property
         }));
         
         setVideos(mappedVideos);
