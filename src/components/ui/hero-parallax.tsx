@@ -12,7 +12,7 @@ import { Link } from "react-router-dom";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { VideoGridItem as VideoItemType } from "@/hooks/video/useVideoGridData";
 
-// 3 videos per row, 4 rows = 12 videos
+// 4 videos per row, 3 rows = 12 videos
 export const HeroParallax = ({
   videos,
   title = "Popular Videos",
@@ -22,11 +22,10 @@ export const HeroParallax = ({
   title?: string;
   description?: string;
 }) => {
-  // Require at least 12 videos for the 4 rows of 3
-  const firstRow = videos.slice(0, 3);
-  const secondRow = videos.slice(3, 6);
-  const thirdRow = videos.slice(6, 9);
-  const fourthRow = videos.slice(9, 12);
+  // Now 4 videos per row for 3 rows
+  const firstRow = videos.slice(0, 4);
+  const secondRow = videos.slice(4, 8);
+  const thirdRow = videos.slice(8, 12);
 
   const ref = React.useRef(null);
   const { scrollYProgress } = useScroll({
@@ -34,10 +33,11 @@ export const HeroParallax = ({
     offset: ["start start", "end start"],
   });
 
-  // Flatten initial rotation, soften Y movement, increase perspective
+  // More dramatic fold/unfold transforms
   const springConfig = { stiffness: 280, damping: 32, bounce: 100 };
 
-  // Much gentler transforms
+  // Stronger transforms for parallax "folded/unfolded" look:
+  // Increase rotateX and rotateZ, and greater Y translation for drama.
   const translateX = useSpring(
     useTransform(scrollYProgress, [0, 1], [0, 450]),
     springConfig
@@ -47,7 +47,7 @@ export const HeroParallax = ({
     springConfig
   );
   const rotateX = useSpring(
-    useTransform(scrollYProgress, [0, 0.22], [6, 0]), // Start flatter (was 10)
+    useTransform(scrollYProgress, [0, 0.22], [22, 0]), // Stronger fold (was 6)
     springConfig
   );
   const opacity = useSpring(
@@ -55,18 +55,18 @@ export const HeroParallax = ({
     springConfig
   );
   const rotateZ = useSpring(
-    useTransform(scrollYProgress, [0, 0.22], [6, 0]), // Match rotateX change
+    useTransform(scrollYProgress, [0, 0.22], [14, 0]), // Stronger fold (was 6)
     springConfig
   );
   const translateY = useSpring(
-    useTransform(scrollYProgress, [0, 0.22], [-220, 320]), // Gentler
+    useTransform(scrollYProgress, [0, 0.22], [-420, 320]), // More pronounced Y
     springConfig
   );
 
   return (
     <div
       ref={ref}
-      className="h-[140vh] pt-[12vh] pb-10 overflow-visible antialiased relative flex flex-col [perspective:1600px] [transform-style:preserve-3d] w-full"
+      className="h-[140vh] pt-[12vh] pb-10 overflow-visible antialiased relative flex flex-col [perspective:1800px] [transform-style:preserve-3d] w-full"
     >
       <Header title={title} description={description} />
       <motion.div
@@ -78,7 +78,7 @@ export const HeroParallax = ({
         }}
         className="w-full"
       >
-        <motion.div className="flex flex-row justify-center gap-10 md:gap-14 mb-10">
+        <motion.div className="flex flex-row justify-center gap-6 md:gap-10 mb-8">
           {firstRow.map((video) => (
             <VideoCard
               video={video}
@@ -87,7 +87,7 @@ export const HeroParallax = ({
             />
           ))}
         </motion.div>
-        <motion.div className="flex flex-row justify-center gap-10 md:gap-14 mb-10">
+        <motion.div className="flex flex-row justify-center gap-6 md:gap-10 mb-8">
           {secondRow.map((video) => (
             <VideoCard
               video={video}
@@ -96,20 +96,11 @@ export const HeroParallax = ({
             />
           ))}
         </motion.div>
-        <motion.div className="flex flex-row justify-center gap-10 md:gap-14 mb-10">
+        <motion.div className="flex flex-row justify-center gap-6 md:gap-10">
           {thirdRow.map((video) => (
             <VideoCard
               video={video}
               translate={translateX}
-              key={video.id}
-            />
-          ))}
-        </motion.div>
-        <motion.div className="flex flex-row justify-center gap-10 md:gap-14">
-          {fourthRow.map((video) => (
-            <VideoCard
-              video={video}
-              translate={translateXReverse}
               key={video.id}
             />
           ))}
@@ -160,22 +151,21 @@ export const VideoCard = ({
         scale: 1.045,
       }}
       key={video.id}
-      // Flatter + wider + more screen-filling
-      className="group/video h-[16vw] min-h-[170px] w-[32vw] min-w-[290px] max-w-[34vw] relative flex-shrink-0 rounded-[28px] shadow-2xl overflow-hidden transition-all"
+      className="group/video h-[13vw] min-h-[130px] w-[22vw] min-w-[210px] max-w-[24vw] relative flex-shrink-0 rounded-[22px] shadow-2xl overflow-hidden transition-all"
     >
       <Link
         to={`/video/${video.video_id}`}
         className="block"
       >
-        <AspectRatio ratio={16 / 6.7} className="h-full w-full">
+        <AspectRatio ratio={16 / 6.3} className="h-full w-full">
           <img
             src={video.thumbnail}
-            className="object-cover object-center absolute h-full w-full inset-0 rounded-[28px] border-4 border-white/10"
+            className="object-cover object-center absolute h-full w-full inset-0 rounded-[22px] border-4 border-white/10"
             alt={video.title}
           />
         </AspectRatio>
       </Link>
-      <div className="absolute inset-0 h-full w-full opacity-0 group-hover/video:opacity-80 bg-black pointer-events-none rounded-[28px] transition-opacity duration-300"></div>
+      <div className="absolute inset-0 h-full w-full opacity-0 group-hover/video:opacity-80 bg-black pointer-events-none rounded-[22px] transition-opacity duration-300"></div>
       <h2 className="absolute bottom-3 left-4 opacity-0 group-hover/video:opacity-100 text-white transition-opacity duration-300 text-lg font-medium line-clamp-2 max-w-[90%] drop-shadow-lg">
         {video.title}
       </h2>
