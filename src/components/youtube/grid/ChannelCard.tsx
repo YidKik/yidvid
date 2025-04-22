@@ -26,7 +26,7 @@ export const ChannelCard = ({
         "block opacity-0 animate-[fadeIn_0.5s_ease-out_forwards]",
         "relative group rounded-lg overflow-hidden transition-all duration-200",
         "hover:scale-[1.03] hover:shadow-md text-center p-4",
-        "bg-white/5 mx-auto w-full"
+        "bg-white/5 mx-auto w-full border border-white/10"
       )}
       style={{ animationDelay }}
       onMouseEnter={() => setShowControls(true)}
@@ -34,7 +34,9 @@ export const ChannelCard = ({
       aria-label={`View channel: ${title}`}
     >
       <div className="flex flex-col items-center justify-center">
-        <div className="w-24 h-24 md:w-28 md:h-28 rounded-full flex items-center justify-center overflow-hidden mb-4 mx-auto">
+        <div className="w-24 h-24 md:w-28 md:h-28 rounded-full flex items-center justify-center overflow-hidden mb-4 mx-auto 
+                      border-2 border-white/20 group-hover:border-[#ea384c] transition-all duration-300
+                      group-hover:shadow-lg shadow-white/10">
           {thumbnail_url ? (
             <img
               src={thumbnail_url}
