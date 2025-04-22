@@ -88,17 +88,17 @@ export const ChannelCarousel = ({ channels, direction, speed, shuffleKey }: Chan
   }
 
   return (
-    <div className="px-1 md:px-2">
+    <div className="px-0.5 md:px-1">
       <div className="overflow-hidden" ref={emblaRef}>
-        <div className="flex gap-1 md:gap-2">
+        <div className="flex gap-0.5 md:gap-1">
           {shuffledChannels.map((channel, index) => (
             <motion.div
               key={`${channel.id}-${index}`}
-              className="flex-none w-4 h-4 md:w-5 md:h-5 cursor-pointer relative group"
+              className="flex-none w-3 h-3 md:w-4 md:h-4 cursor-pointer relative group"
               whileHover={{ scale: 1.1, zIndex: 10 }}
               onClick={() => handleChannelClick(channel.channel_id)}
             >
-              <div className="w-full h-full rounded-full overflow-hidden border border-white/20 shadow-sm transition-all duration-300 
+              <div className="w-full h-full rounded-full overflow-hidden border border-white/10 shadow-sm transition-all duration-300 
                             group-hover:border-[#ea384c] group-hover:shadow-md">
                 {channel.thumbnail_url ? (
                   <img 
@@ -108,15 +108,15 @@ export const ChannelCarousel = ({ channels, direction, speed, shuffleKey }: Chan
                     loading="lazy"
                   />
                 ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-[8px] font-bold">
+                  <div className="w-full h-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-[6px] font-bold">
                     {channel.title.charAt(0)}
                   </div>
                 )}
               </div>
               
               <motion.div 
-                className="opacity-0 group-hover:opacity-100 absolute -bottom-4 left-1/2 transform -translate-x-1/2 
-                          bg-black/70 text-white text-[8px] px-1 py-0.5 rounded whitespace-nowrap z-20"
+                className="opacity-0 group-hover:opacity-100 absolute -bottom-3 left-1/2 transform -translate-x-1/2 
+                          bg-black/70 text-white text-[6px] px-1 py-0.5 rounded whitespace-nowrap z-20"
                 initial={{ y: 5, opacity: 0 }}
                 whileHover={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.2 }}
