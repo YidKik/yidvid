@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { VideoCarousels } from '@/components/home/VideoCarousels';
@@ -18,6 +19,12 @@ const HomePage = () => {
   const channelsSectionRef = useRef(null);
 
   useEffect(() => {
+    // Reset any body/html styles that might be affecting scrolling
+    document.body.style.overflow = 'auto';
+    document.documentElement.style.overflow = 'auto';
+    document.body.style.height = 'auto';
+    document.documentElement.style.height = 'auto';
+
     // Animate hero content on first scroll
     const heroContent = document.querySelector('.hero-content');
     if (heroContent) {
@@ -66,17 +73,32 @@ const HomePage = () => {
     channel.thumbnail_url || 'https://images.unsplash.com/photo-1723403804231-f4e9b515fe9d'
   ) || [];
 
-  // Reduce the number of repeated items to create fewer rows
-  const extendedChannelItems = [...channelItems, ...channelItems].slice(0, 100);
+  // Reduce the number of repeated items and rows
+  const extendedChannelItems = [...channelItems, ...channelItems].slice(0, 30);
 
   return (
     <motion.div 
-      className="min-h-screen w-full overflow-x-hidden"
+      className="min-h-screen w-full overflow-x-hidden relative"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      <BackgroundGradientAnimation interactive={false}>
+      {/* Full-page background that extends to all content */}
+      <BackgroundGradientAnimation 
+        interactive={false}
+        gradientBackgroundStart="#030303"
+        gradientBackgroundEnd="#1a0000"
+        firstColor="234, 56, 76"  // Primary red with low opacity
+        secondColor="234, 56, 76" // Primary red with different opacity
+        thirdColor="255, 255, 255" // White with low opacity
+        fourthColor="234, 56, 76" // Primary red again
+        fifthColor="255, 255, 255" // White again
+        blendingValue="soft-light"
+        containerClassName="fixed inset-0 z-0"
+      />
+
+      {/* Content container with proper scrolling */}
+      <div className="relative z-10 w-full">
         {/* Hero Section with Content */}
         <div className="relative min-h-[100vh]">
           {/* Content Overlay */}
@@ -136,15 +158,15 @@ const HomePage = () => {
           transition={{ duration: 0.5, delay: 0.3 }}
         >
           <div className="w-full px-0 py-20">
-            <div className="w-full h-[400px] overflow-visible">
+            <div className="w-full h-[200px] overflow-visible">
               <GridMotion 
                 items={extendedChannelItems}
-                className="relative z-10 w-full h-full opacity-90"
+                className="relative z-10 w-full h-full opacity-70"
               />
             </div>
           </div>
         </motion.section>
-      </BackgroundGradientAnimation>
+      </div>
     </motion.div>
   );
 };

@@ -1,3 +1,4 @@
+
 "use client";
 import { cn } from "@/lib/utils";
 import { useEffect, useRef, useState } from "react";
@@ -39,24 +40,46 @@ export const BackgroundGradientAnimation = ({
   const [curY, setCurY] = useState(0);
   const [tgX, setTgX] = useState(0);
   const [tgY, setTgY] = useState(0);
+  
   useEffect(() => {
-    document.body.style.setProperty(
-      "--gradient-background-start",
-      gradientBackgroundStart
-    );
-    document.body.style.setProperty(
-      "--gradient-background-end",
-      gradientBackgroundEnd
-    );
-    document.body.style.setProperty("--first-color", firstColor);
-    document.body.style.setProperty("--second-color", secondColor);
-    document.body.style.setProperty("--third-color", thirdColor);
-    document.body.style.setProperty("--fourth-color", fourthColor);
-    document.body.style.setProperty("--fifth-color", fifthColor);
-    document.body.style.setProperty("--pointer-color", pointerColor);
-    document.body.style.setProperty("--size", size);
-    document.body.style.setProperty("--blending-value", blendingValue);
-  }, []);
+    // Don't set body styles to prevent scrolling issues
+    const root = document.documentElement;
+    root.style.setProperty("--gradient-background-start", gradientBackgroundStart);
+    root.style.setProperty("--gradient-background-end", gradientBackgroundEnd);
+    root.style.setProperty("--first-color", firstColor);
+    root.style.setProperty("--second-color", secondColor);
+    root.style.setProperty("--third-color", thirdColor);
+    root.style.setProperty("--fourth-color", fourthColor);
+    root.style.setProperty("--fifth-color", fifthColor);
+    root.style.setProperty("--pointer-color", pointerColor);
+    root.style.setProperty("--size", size);
+    root.style.setProperty("--blending-value", blendingValue);
+    
+    return () => {
+      // Clean up
+      root.style.removeProperty("--gradient-background-start");
+      root.style.removeProperty("--gradient-background-end");
+      root.style.removeProperty("--first-color");
+      root.style.removeProperty("--second-color");
+      root.style.removeProperty("--third-color");
+      root.style.removeProperty("--fourth-color");
+      root.style.removeProperty("--fifth-color");
+      root.style.removeProperty("--pointer-color");
+      root.style.removeProperty("--size");
+      root.style.removeProperty("--blending-value");
+    };
+  }, [
+    gradientBackgroundStart, 
+    gradientBackgroundEnd, 
+    firstColor, 
+    secondColor, 
+    thirdColor, 
+    fourthColor, 
+    fifthColor, 
+    pointerColor, 
+    size, 
+    blendingValue
+  ]);
 
   useEffect(() => {
     function move() {

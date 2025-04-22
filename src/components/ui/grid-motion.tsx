@@ -1,3 +1,4 @@
+
 import { useEffect, useRef, ReactNode } from 'react'
 import { gsap } from 'gsap'
 import { cn } from "@/lib/utils"
@@ -17,7 +18,7 @@ export function GridMotion({
   const rowRefs = useRef<(HTMLDivElement | null)[]>([])
   const mouseXRef = useRef(window.innerWidth / 2)
 
-  const totalItems = 50
+  const totalItems = 30 // Reduced number of items
   const defaultItems = Array.from({ length: totalItems }, (_, index) => `Item ${index + 1}`)
   const combinedItems = items.length > 0 ? items.slice(0, totalItems) : defaultItems
 
@@ -31,7 +32,7 @@ export function GridMotion({
     const updateMotion = () => {
       const maxMoveAmount = 150
       const baseDuration = 1.2
-      const inertiaFactors = [0.6, 0.4, 0.3, 0.2, 0.15, 0.1, 0.05]
+      const inertiaFactors = [0.6, 0.4, 0.3]
 
       rowRefs.current.forEach((row, index) => {
         if (row) {
@@ -62,8 +63,9 @@ export function GridMotion({
       <section
         className="relative flex h-screen w-full items-center justify-center overflow-visible"
       >
-        <div className="relative z-2 flex-none grid h-[220vh] w-[150vw] gap-3 grid-rows-[repeat(5,1fr)] grid-cols-[100%] -rotate-15 origin-center">
-          {[...Array(5)].map((_, rowIndex) => (
+        {/* Reduced number of rows and adjusted grid layout */}
+        <div className="relative z-2 flex-none grid h-[150vh] w-[150vw] gap-3 grid-rows-[repeat(3,1fr)] grid-cols-[100%] -rotate-15 origin-center">
+          {[...Array(3)].map((_, rowIndex) => (
             <div
               key={rowIndex}
               className="grid gap-2 grid-cols-[repeat(10,1fr)] will-change-transform will-change-filter"
@@ -79,7 +81,7 @@ export function GridMotion({
                           className="absolute inset-0 bg-cover bg-center rounded-full"
                           style={{
                             backgroundImage: `url(${content})`,
-                            transform: 'scale(0.7)',
+                            transform: 'scale(0.6)', // Reduced size of circle images
                           }}
                         />
                       ) : (
