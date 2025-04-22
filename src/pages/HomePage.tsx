@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { VideoCarousels } from '@/components/home/VideoCarousels';
@@ -79,13 +80,13 @@ const HomePage = () => {
         {/* Content Overlay */}
         <div className="fixed top-10 left-0 right-0 z-20 flex flex-col items-center justify-start px-4 text-center hero-content">
           <div className="mb-12">
-            <div className="flex items-center gap-4 mb-6">
+            <div className="flex items-center gap-6 mb-6">
               <img 
-                src="/lovable-uploads/24aececb-0cb2-4ac8-908a-74f50e0fa50f.png" 
+                src="/lovable-uploads/dd4fbfcb-aeb9-4cd3-a7b1-9dbf07b81a43.png" 
                 alt="YidVid Icon" 
-                className="w-32 h-32 object-contain"
+                className="w-40 h-40 object-contain"
               />
-              <h2 className="text-6xl sm:text-7xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary via-white to-primary">
+              <h2 className="text-7xl sm:text-8xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary via-white to-primary">
                 YidVid
               </h2>
             </div>
