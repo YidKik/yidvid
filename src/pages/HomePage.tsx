@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { VideoCarousels } from '@/components/home/VideoCarousels';
@@ -48,7 +47,6 @@ const HomePage = () => {
             start: 'bottom-=100 bottom',
             end: 'bottom center',
             scrub: 1,
-            markers: true, // For debugging - will be visible during dev
           },
           y: 0,
           opacity: 1,
@@ -57,7 +55,6 @@ const HomePage = () => {
       );
     }
 
-    // Clean up markers on component unmount
     return () => {
       ScrollTrigger.getAll().forEach(trigger => trigger.kill());
     };
@@ -121,10 +118,10 @@ const HomePage = () => {
         )}
       </div>
 
-      {/* Channels Grid Section - Positioned directly under videos section */}
+      {/* Channels Grid Section - Positioned lower under videos section */}
       <motion.section 
         ref={channelsSectionRef}
-        className="relative z-10 w-full mt-[40vh]"
+        className="relative z-10 w-full mt-[80vh]"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5, delay: 0.3 }}
