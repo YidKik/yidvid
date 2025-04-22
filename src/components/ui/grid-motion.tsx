@@ -18,7 +18,7 @@ export function GridMotion({
   const rowRefs = useRef<(HTMLDivElement | null)[]>([])
   const mouseXRef = useRef(window.innerWidth / 2)
 
-  const totalItems = 49
+  const totalItems = 98 // Increased to accommodate more items per row
   const defaultItems = Array.from({ length: totalItems }, (_, index) => `Item ${index + 1}`)
   const combinedItems = items.length > 0 ? items.slice(0, totalItems) : defaultItems
 
@@ -66,18 +66,18 @@ export function GridMotion({
           background: `radial-gradient(circle, ${gradientColor} 0%, transparent 100%)`,
         }}
       >
-        <div className="relative z-2 flex-none grid h-[220vh] w-[150vw] gap-5 grid-rows-[repeat(7,1fr)] grid-cols-[100%] -rotate-15 origin-center">
+        <div className="relative z-2 flex-none grid h-[220vh] w-[150vw] gap-3 grid-rows-[repeat(7,1fr)] grid-cols-[100%] -rotate-15 origin-center">
           {[...Array(7)].map((_, rowIndex) => (
             <div
               key={rowIndex}
-              className="grid gap-4 grid-cols-[repeat(10,1fr)] will-change-transform will-change-filter"
+              className="grid gap-2 grid-cols-[repeat(14,1fr)] will-change-transform will-change-filter"
               ref={(el) => (rowRefs.current[rowIndex] = el)}
             >
-              {[...Array(10)].map((_, itemIndex) => {
-                const content = items[rowIndex * 10 + itemIndex]
+              {[...Array(14)].map((_, itemIndex) => {
+                const content = combinedItems[rowIndex * 14 + itemIndex]
                 return (
-                  <div key={itemIndex} className="relative aspect-square p-1">
-                    <div className="relative h-full w-full overflow-hidden rounded-full bg-muted flex items-center justify-center text-foreground text-xs transform hover:scale-105 transition-transform duration-200">
+                  <div key={itemIndex} className="relative aspect-square p-0.5">
+                    <div className="relative h-full w-full overflow-hidden rounded-full bg-muted flex items-center justify-center text-foreground text-[10px] transform hover:scale-105 transition-transform duration-200">
                       {typeof content === 'string' && content.startsWith('http') ? (
                         <div
                           className="absolute inset-0 bg-cover bg-center rounded-full"
@@ -87,7 +87,7 @@ export function GridMotion({
                           }}
                         />
                       ) : (
-                        <div className="p-1 text-center z-1">
+                        <div className="p-0.5 text-center z-1">
                           {content}
                         </div>
                       )}

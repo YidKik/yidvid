@@ -123,7 +123,7 @@ const HomePage = () => {
       {/* Channels Grid Section - Positioned much lower under videos section */}
       <motion.section 
         ref={channelsSectionRef}
-        className="relative z-10 w-full mt-[150vh]"
+        className="relative z-10 w-full mt-[130vh]"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5, delay: 0.3 }}
