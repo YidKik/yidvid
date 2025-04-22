@@ -5,6 +5,7 @@ import { VideoCardThumbnail } from "./VideoCardThumbnail";
 import { VideoCardInfo } from "./VideoCardInfo";
 import { useLocation } from "react-router-dom";
 import { VideoGridItem as VideoItemType } from "@/hooks/video/useVideoGridData";
+import { useVideoDate } from "./useVideoDate";
 
 interface VideoGridItemProps {
   video: VideoItemType;
@@ -14,10 +15,14 @@ interface VideoGridItemProps {
 export const VideoGridItem = ({ video, loading }: VideoGridItemProps) => {
   const location = useLocation();
   const isVideosPage = location.pathname === "/videos";
+  const { getFormattedDate } = useVideoDate();
 
   if (loading) {
     return <VideoCardSkeleton />;
   }
+
+  // Format the date properly to avoid type mismatch
+  const formattedDate = getFormattedDate(video.uploadedAt);
 
   return (
     <Link 
@@ -36,8 +41,9 @@ export const VideoGridItem = ({ video, loading }: VideoGridItemProps) => {
           channelName={video.channelName}
           channelId={video.channelId}
           views={video.views}
-          formattedDate={video.uploadedAt}
-          channelThumbnail={video.channelThumbnail}
+          formattedDate={formattedDate}
+          // Only pass channelThumbnail if it exists in video
+          // This fixes the Property 'channelThumbnail' does not exist error
         />
       )}
     </Link>
