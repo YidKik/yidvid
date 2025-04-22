@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -63,6 +62,26 @@ export default {
         "bounce-small": {
           "0%, 100%": { transform: "translateY(0)" },
           "50%": { transform: "translateY(-10%)" }
+        },
+        "first": {
+          "0%": { transform: "translateY(-30%) translateX(-30%) rotate(0deg)" },
+          "100%": { transform: "translateY(30%) translateX(30%) rotate(180deg)" }
+        },
+        "second": {
+          "0%": { transform: "translateY(-30%) translateX(30%) rotate(0deg)" },
+          "100%": { transform: "translateY(30%) translateX(-30%) rotate(180deg)" }
+        },
+        "third": {
+          "0%": { transform: "translateY(30%) translateX(-30%) rotate(0deg)" },
+          "100%": { transform: "translateY(-30%) translateX(30%) rotate(180deg)" }
+        },
+        "fourth": {
+          "0%": { transform: "translateY(30%) translateX(30%) rotate(0deg)" },
+          "100%": { transform: "translateY(-30%) translateX(-30%) rotate(180deg)" }
+        },
+        "fifth": {
+          "0%": { transform: "translateY(0%) translateX(0%) rotate(0deg)" },
+          "100%": { transform: "translateY(-30%) translateX(30%) rotate(90deg)" }
         }
       },
       animation: {
@@ -74,7 +93,12 @@ export default {
         "search-outline": "search-outline 4s linear infinite",
         "spin": "spin 1.2s linear infinite",
         "spin-slow": "spin 2s linear infinite",
-        "bounce-small": "bounce-small 1.5s ease-in-out infinite"
+        "bounce-small": "bounce-small 1.5s ease-in-out infinite",
+        "first": "first 15s linear infinite",
+        "second": "second 20s linear infinite",
+        "third": "third 25s linear infinite",
+        "fourth": "fourth 22s linear infinite",
+        "fifth": "fifth 18s linear infinite"
       },
       colors: {
         border: "hsl(var(--border))",

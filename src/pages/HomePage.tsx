@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { GridMotion } from '@/components/ui/grid-motion';
+import { BackgroundGradientAnimation } from '@/components/ui/background-gradient-animation';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -70,78 +71,80 @@ const HomePage = () => {
 
   return (
     <motion.div 
-      className="min-h-screen w-full overflow-x-hidden bg-[#030303]"
+      className="min-h-screen w-full overflow-x-hidden"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      {/* Hero Section with Content */}
-      <div className="relative min-h-[100vh]">
-        {/* Content Overlay */}
-        <div className="fixed top-10 left-0 right-0 z-20 flex flex-col items-center justify-start px-4 text-center hero-content">
-          <div className="mb-12">
-            <div className="flex items-center gap-6 mb-6">
-              <img 
-                src="/lovable-uploads/dd4fbfcb-aeb9-4cd3-a7b1-9dbf07b81a43.png" 
-                alt="YidVid Icon" 
-                className="w-40 h-40 object-contain"
+      <BackgroundGradientAnimation interactive={false}>
+        {/* Hero Section with Content */}
+        <div className="relative min-h-[100vh]">
+          {/* Content Overlay */}
+          <div className="fixed top-10 left-0 right-0 z-20 flex flex-col items-center justify-start px-4 text-center hero-content">
+            <div className="mb-12">
+              <div className="flex items-center gap-6 mb-6">
+                <img 
+                  src="/lovable-uploads/dd4fbfcb-aeb9-4cd3-a7b1-9dbf07b81a43.png" 
+                  alt="YidVid Icon" 
+                  className="w-40 h-40 object-contain"
+                />
+                <h2 className="text-7xl sm:text-8xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary via-white to-primary">
+                  YidVid
+                </h2>
+              </div>
+            </div>
+            
+            <h1 className="text-4xl sm:text-6xl md:text-8xl font-bold mb-6 md:mb-8 tracking-tight">
+              <span className="bg-clip-text text-transparent bg-gradient-to-b from-white to-white/80">
+                Your Gateway to
+              </span>
+              <br />
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-white to-primary">
+                Jewish Content
+              </span>
+            </h1>
+            
+            <p className="text-base sm:text-lg md:text-xl text-white/40 mb-8 leading-relaxed font-light tracking-wide max-w-xl">
+              Watch, share, and connect with the finest Jewish content from around the world.
+            </p>
+
+            <Link to="/videos">
+              <button className="px-6 py-3 bg-primary hover:bg-primary/90 text-white font-medium rounded-lg transition-colors">
+                Explore Videos
+              </button>
+            </Link>
+          </div>
+
+          {/* Video Background */}
+          {videos && videos.length > 15 && (
+            <div className="absolute top-[20vh] inset-x-0 h-[100vh] hero-parallax-section">
+              <HeroParallax 
+                videos={videos} 
+                title="" 
+                description=""
               />
-              <h2 className="text-7xl sm:text-8xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary via-white to-primary">
-                YidVid
-              </h2>
+            </div>
+          )}
+        </div>
+
+        {/* Channels Grid Section */}
+        <motion.section 
+          ref={channelsSectionRef}
+          className="relative z-10 w-full mt-[130vh]"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+        >
+          <div className="w-full px-0 py-20">
+            <div className="w-full h-[400px] overflow-visible">
+              <GridMotion 
+                items={extendedChannelItems}
+                className="relative z-10 w-full h-full opacity-90"
+              />
             </div>
           </div>
-          
-          <h1 className="text-4xl sm:text-6xl md:text-8xl font-bold mb-6 md:mb-8 tracking-tight">
-            <span className="bg-clip-text text-transparent bg-gradient-to-b from-white to-white/80">
-              Your Gateway to
-            </span>
-            <br />
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-white to-primary">
-              Jewish Content
-            </span>
-          </h1>
-          
-          <p className="text-base sm:text-lg md:text-xl text-white/40 mb-8 leading-relaxed font-light tracking-wide max-w-xl">
-            Watch, share, and connect with the finest Jewish content from around the world.
-          </p>
-
-          <Link to="/videos">
-            <button className="px-6 py-3 bg-primary hover:bg-primary/90 text-white font-medium rounded-lg transition-colors">
-              Explore Videos
-            </button>
-          </Link>
-        </div>
-
-        {/* Video Background */}
-        {videos && videos.length > 15 && (
-          <div className="absolute top-[20vh] inset-x-0 h-[100vh] hero-parallax-section">
-            <HeroParallax 
-              videos={videos} 
-              title="" 
-              description=""
-            />
-          </div>
-        )}
-      </div>
-
-      {/* Channels Grid Section */}
-      <motion.section 
-        ref={channelsSectionRef}
-        className="relative z-10 w-full mt-[130vh]"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5, delay: 0.3 }}
-      >
-        <div className="w-full px-0 py-20">
-          <div className="w-full h-[400px] overflow-visible">
-            <GridMotion 
-              items={extendedChannelItems}
-              className="relative z-10 w-full h-full opacity-90"
-            />
-          </div>
-        </div>
-      </motion.section>
+        </motion.section>
+      </BackgroundGradientAnimation>
     </motion.div>
   );
 };
