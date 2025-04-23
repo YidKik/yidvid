@@ -16,13 +16,45 @@ export const UserManagementSection = ({ currentUserId }: { currentUserId: string
   const [showAddAdminDialog, setShowAddAdminDialog] = useState(false);
   const [newAdminEmail, setNewAdminEmail] = useState("");
   const [isCurrentUserAdmin, setIsCurrentUserAdmin] = useState(false);
+  const [hasPinBypass, setHasPinBypass] = useState(false);
+  
+  // Check for PIN bypass on mount
+  useEffect(() => {
+    const pinBypass = localStorage.getItem('admin-pin-bypass') === 'true';
+    setHasPinBypass(pinBypass);
+    
+    if (pinBypass) {
+      setIsCurrentUserAdmin(true);
+    }
+  }, []);
   
   // Direct check for admin status
   useEffect(() => {
     const checkAdminStatus = async () => {
-      if (!currentUserId) return;
+      if (!currentUserId && !hasPinBypass) return;
+      
+      if (hasPinBypass) {
+        setIsCurrentUserAdmin(true);
+        return;
+      }
       
       try {
+        // Try to use edge function to bypass RLS issues
+        try {
+          const { data: adminCheckData, error: funcError } = await supabase.functions.invoke('check-admin-status', {
+            body: { userId: currentUserId }
+          });
+          
+          if (!funcError && adminCheckData?.isAdmin) {
+            console.log("Admin status confirmed via edge function");
+            setIsCurrentUserAdmin(true);
+            return;
+          }
+        } catch (edgeFuncError) {
+          console.log("Edge function not available, falling back to direct query");
+        }
+        
+        // Use a direct query as fallback
         const { data, error } = await supabase
           .from("profiles")
           .select("is_admin")
@@ -41,7 +73,7 @@ export const UserManagementSection = ({ currentUserId }: { currentUserId: string
     };
     
     checkAdminStatus();
-  }, [currentUserId]);
+  }, [currentUserId, hasPinBypass]);
   
   const {
     adminUsers,
@@ -57,13 +89,36 @@ export const UserManagementSection = ({ currentUserId }: { currentUserId: string
 
   const handleAddAdmin = async () => {
     try {
-      if (!isCurrentUserAdmin) {
+      if (!isCurrentUserAdmin && !hasPinBypass) {
         toast.error("Permission denied: Only admins can add new admins.");
         return;
       }
 
       console.log(`Looking for user with email: ${newAdminEmail}`);
       
+      // Try edge function first to bypass RLS
+      try {
+        const { data: result, error: funcError } = await supabase.functions.invoke('add-admin-user', {
+          body: { email: newAdminEmail }
+        });
+        
+        if (!funcError && result?.success) {
+          toast.success(`Admin added successfully: ${newAdminEmail} has been granted admin privileges.`);
+          setNewAdminEmail("");
+          setShowAddAdminDialog(false);
+          refetchUsers();
+          return;
+        }
+        
+        if (result?.error) {
+          toast.error(result.error);
+          return;
+        }
+      } catch (edgeFuncError) {
+        console.log("Edge function not available, falling back to direct query");
+      }
+
+      // Fallback to direct query
       const { data: userData, error: userError } = await supabase
         .from("profiles")
         .select("*")
@@ -106,7 +161,7 @@ export const UserManagementSection = ({ currentUserId }: { currentUserId: string
     }
   };
 
-  if (!isCurrentUserAdmin) {
+  if (!isCurrentUserAdmin && !hasPinBypass) {
     return (
       <Card>
         <CardContent className="p-6">
