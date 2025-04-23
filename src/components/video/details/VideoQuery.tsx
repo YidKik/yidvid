@@ -61,16 +61,16 @@ export const useVideoQuery = (id: string) => {
           return searchResults[0];
         }
 
-        // Check if the ID contains part of a valid video_id
-        const { data: partialResults, error: partialError } = await supabase
+        // Try a more aggressive search on both video_id and id fields
+        const { data: anyMatches, error: anyMatchesError } = await supabase
           .from("youtube_videos")
           .select("*, youtube_channels(thumbnail_url)")
-          .filter("video_id", "ilike", `%${id}%`)
+          .or(`video_id.ilike.%${id}%,id.ilike.%${id}%`)
           .limit(1);
           
-        if (!partialError && partialResults && partialResults.length > 0) {
-          console.log("Found video through partial match:", partialResults[0]);
-          return partialResults[0];
+        if (!anyMatchesError && anyMatches && anyMatches.length > 0) {
+          console.log("Found video through aggressive search:", anyMatches[0]);
+          return anyMatches[0];
         }
 
         console.error("Video not found with ID:", id);

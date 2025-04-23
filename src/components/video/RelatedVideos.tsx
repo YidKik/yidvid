@@ -3,6 +3,7 @@ import { VideoCard } from "../VideoCard";
 
 interface Video {
   id: string;
+  video_id: string; // Add this field to ensure we have YouTube video ID
   title: string;
   thumbnail: string;
   channel_name: string;
@@ -25,7 +26,7 @@ export const RelatedVideos = ({ videos }: RelatedVideosProps) => {
             <VideoCard
               key={video.id}
               id={video.id}
-              video_id={video.id}
+              video_id={video.video_id}
               title={video.title}
               thumbnail={video.thumbnail || "/placeholder.svg"}
               channelName={video.channel_name}

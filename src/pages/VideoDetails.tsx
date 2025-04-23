@@ -13,6 +13,7 @@ import { VideoHistory } from "@/components/video/details/VideoHistory";
 import { LoadingAnimation } from "@/components/ui/LoadingAnimation";
 import { VideoPlaceholder } from "@/components/video/VideoPlaceholder";
 import { toast } from "sonner";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { YoutubeVideosTable } from "@/integrations/supabase/types/youtube-videos";
 
 // Extended interface to include the youtube_channels property
@@ -25,6 +26,7 @@ interface ExtendedYoutubeVideo extends YoutubeVideosTable {
 const VideoDetails = () => {
   const { videoId } = useParams<{ videoId: string }>();
   const location = useLocation();
+  const { isMobile } = useIsMobile();
 
   if (!videoId) {
     toast.error("Video ID not provided");

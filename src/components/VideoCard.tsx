@@ -56,6 +56,7 @@ export const VideoCard = ({
   }
   
   // Determine the correct ID to use for navigation - prioritize video_id over id
+  // video_id is the YouTube video ID, which is what our VideoPlayer component will use
   const videoIdForLink = video_id || id;
   
   // Format the date
