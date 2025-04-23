@@ -1,6 +1,5 @@
 
 import { Button } from "@/components/ui/button";
-import { LogIn } from "lucide-react";
 import { NotificationsMenu } from "../NotificationsMenu";
 import { UserMenu } from "../UserMenu";
 import { ContactDialog } from "../../contact/ContactDialog";
@@ -18,19 +17,19 @@ export const DesktopHeaderActions = ({
   onAuthOpen,
   onLogout,
   onMarkNotificationsAsRead,
-  handleSettingsClick
+  // handleSettingsClick not used anymore for UserMenu popover
 }: DesktopHeaderActionsProps) => {
   return (
     <div className="flex items-center gap-3">
       {/* Always show Contact Us button */}
       <ContactDialog />
+      {/* Show notifications (if logged in) */}
       {session && (
         <NotificationsMenu session={session} onMarkAsRead={onMarkNotificationsAsRead} />
       )}
+      {/* Show avatar as popover (if logged in), replacing settings button */}
       {session ? (
-        <div onClick={handleSettingsClick}>
-          <UserMenu onLogout={onLogout} />
-        </div>
+        <UserMenu onLogout={onLogout} />
       ) : (
         <Button 
           onClick={onAuthOpen}
@@ -38,7 +37,8 @@ export const DesktopHeaderActions = ({
           variant="ghost"
           size="icon"
         >
-          <LogIn className="h-5 w-5" />
+          {/* Lucide LogIn icon */}
+          <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" x2="3" y1="12" y2="12"/></svg>
         </Button>
       )}
     </div>
