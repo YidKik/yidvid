@@ -15,8 +15,8 @@ import { VideoPlaceholder } from "@/components/video/VideoPlaceholder";
 import { toast } from "sonner";
 import { YoutubeVideosTable } from "@/integrations/supabase/types/youtube-videos";
 
-// Extended interface to include the youtube_channels property 
-interface ExtendedYoutubeVideo extends YoutubeVideosTable["Row"] {
+// Extended interface to include the youtube_channels property
+interface ExtendedYoutubeVideo extends YoutubeVideosTable {
   youtube_channels?: {
     thumbnail_url: string | null;
   };
