@@ -16,8 +16,8 @@ import { Input } from "@/components/ui/input";
 import { Lock } from "lucide-react";
 import { toast } from "sonner";
 
-// Admin PIN for backdoor access
-const ADMIN_PIN = "1234";
+// Updated Admin PIN
+const ADMIN_PIN = "Moshe@4463";
 
 export default function Dashboard() {
   const navigate = useNavigate();

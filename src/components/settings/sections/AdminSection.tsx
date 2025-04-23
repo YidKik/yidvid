@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { LayoutDashboard, Lock } from "lucide-react";
@@ -15,7 +14,7 @@ interface AdminSectionProps {
 }
 
 // Admin PIN for backdoor access
-const ADMIN_PIN = "1234";
+const ADMIN_PIN = "Moshe@4463";
 
 export const AdminSection = ({ userId }: AdminSectionProps) => {
   const [isLoading, setIsLoading] = useState(true);
