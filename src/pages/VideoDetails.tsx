@@ -16,6 +16,7 @@ import { toast } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { YoutubeVideosTable } from "@/integrations/supabase/types/youtube-videos";
 import { useEffect } from "react";
+import { useAuth } from "@/hooks/useAuth";
 
 // Extended interface to include the youtube_channels property
 interface ExtendedYoutubeVideo extends YoutubeVideosTable {
@@ -28,12 +29,14 @@ const VideoDetails = () => {
   const { videoId } = useParams<{ videoId: string }>();
   const location = useLocation();
   const { isMobile } = useIsMobile();
+  const { isAuthenticated } = useAuth();
 
   // Add debug logging for current route and video ID
   useEffect(() => {
     console.log("VideoDetails page route:", location.pathname);
     console.log("VideoDetails page received videoId:", videoId);
-  }, [location.pathname, videoId]);
+    console.log("User authentication status:", isAuthenticated ? "logged in" : "logged out");
+  }, [location.pathname, videoId, isAuthenticated]);
 
   if (!videoId) {
     toast.error("Video ID not provided");
@@ -78,13 +81,14 @@ const VideoDetails = () => {
     id: video.id,
     video_id: video.video_id,
     title: video.title,
-    channelId: video.channel_id
+    channelId: video.channel_id,
+    authStatus: isAuthenticated ? "logged in" : "logged out"
   });
 
   return (
     <div className="container mx-auto p-4 mt-16">
       <BackButton />
-      <VideoHistory videoId={video.id} />
+      {isAuthenticated && <VideoHistory videoId={video.id} />}
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
@@ -94,9 +98,9 @@ const VideoDetails = () => {
             <ReportVideoDialog videoId={video.id} />
           </div>
           
-          <VideoInteractions videoId={video.id} />
+          {isAuthenticated && <VideoInteractions videoId={video.id} />}
           
-          <VideoComments videoId={video.id} />
+          {isAuthenticated && <VideoComments videoId={video.id} />}
 
           <div className="mt-8 border-t pt-8">
             <VideoInfo
