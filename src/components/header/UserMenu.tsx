@@ -1,40 +1,86 @@
 
 import { useNavigate } from "react-router-dom";
-import { Settings } from "lucide-react";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
-import { useQueryClient } from "@tanstack/react-query";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { useRef, useState } from "react";
 
 interface UserMenuProps {
   onLogout: () => Promise<void>;
 }
 
 export const UserMenu = ({ onLogout }: UserMenuProps) => {
+  const { session, isLoggingOut } = useAuth();
   const navigate = useNavigate();
-  const { isLoggingOut } = useAuth();
-  const queryClient = useQueryClient();
-  
-  const handleSettingsClick = () => {
-    navigate("/settings");
+  const [open, setOpen] = useState(false);
+  const buttonRef = useRef<HTMLButtonElement | null>(null);
+
+  if (!session || !session.user) return null;
+
+  const user = session.user;
+  const displayName = user.email?.split("@")[0] || "User";
+  const email = user.email || "";
+  // Default avatar fallback (first character)
+  const initials = displayName[0]?.toUpperCase() || "U";
+  // Render the small avatar for the header/top right
+  const avatarUrl = user.user_metadata?.avatar_url || "";
+
+  const handleNavigate = (path: string) => {
+    setOpen(false);
+    navigate(path);
   };
-  
-  const handleFastLogout = async () => {
-    // Cancel any in-flight queries immediately 
-    queryClient.cancelQueries();
-    
-    // Trigger logout without toast
-    onLogout();
+
+  const handleSignOut = async () => {
+    setOpen(false);
+    await onLogout();
   };
 
   return (
-    <Button 
-      variant="ghost" 
-      size="icon"
-      className="h-10 w-10"
-      title="Settings"
-      onClick={handleSettingsClick}
-    >
-      <Settings className="h-5 w-5" />
-    </Button>
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <button
+          ref={buttonRef}
+          className="h-10 w-10 rounded-full overflow-hidden border-2 border-primary/20 bg-white flex items-center justify-center transition ring-0 focus-visible:ring-2 focus-visible:ring-primary"
+          aria-label="User menu"
+          data-testid="user-avatar"
+        >
+          <Avatar className="h-10 w-10">
+            {avatarUrl ? (
+              <AvatarImage src={avatarUrl} alt={displayName} />
+            ) : (
+              <AvatarFallback>{initials}</AvatarFallback>
+            )}
+          </Avatar>
+        </button>
+      </PopoverTrigger>
+      <PopoverContent className="w-60 p-0" sideOffset={8}>
+        <div className="flex flex-col py-3">
+          <div className="px-4 py-2 border-b border-muted mb-2">
+            <div className="font-bold text-lg leading-tight">{displayName}</div>
+            <div className="text-xs text-muted-foreground break-all">{email}</div>
+          </div>
+          <button
+            className="w-full px-4 py-2 text-left hover:bg-muted transition text-base"
+            onClick={() => handleNavigate("/dashboard")}
+          >
+            Dashboard
+          </button>
+          <button
+            className="w-full px-4 py-2 text-left hover:bg-muted transition text-base"
+            onClick={() => handleNavigate("/settings")}
+          >
+            Settings
+          </button>
+          <button
+            className="mt-1 w-full px-4 py-2 text-left text-red-600 hover:bg-red-50 transition text-base"
+            disabled={isLoggingOut}
+            onClick={handleSignOut}
+          >
+            {isLoggingOut ? "Signing out..." : "Sign out"}
+          </button>
+        </div>
+      </PopoverContent>
+    </Popover>
   );
 };
