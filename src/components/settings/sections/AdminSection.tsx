@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { LayoutDashboard, Lock } from "lucide-react";
@@ -99,19 +100,22 @@ export const AdminSection = ({ userId }: AdminSectionProps) => {
   };
 
   const handleUnlockWithPin = () => {
+    console.log("Validating PIN:", adminPin, "against expected:", ADMIN_PIN);
     if (adminPin === ADMIN_PIN) {
       // Store admin access in localStorage
-      localStorage.setItem(`admin-status-${userId}`, JSON.stringify({ isAdmin: true }));
-      // Set in query cache as well
       if (userId) {
+        localStorage.setItem(`admin-status-${userId}`, JSON.stringify({ isAdmin: true }));
+        // Add the PIN bypass flag too for consistent behavior with Dashboard.tsx
         localStorage.setItem(`admin-pin-bypass`, "true");
       }
       toast.success("Admin access granted via PIN");
       setShowPinDialog(false);
       setAdminPin("");
-      navigate("/dashboard");
+      // Navigate to dashboard with a small delay to allow state updates
+      setTimeout(() => navigate("/dashboard"), 100);
     } else {
       toast.error("Incorrect PIN");
+      setAdminPin("");
     }
   };
 

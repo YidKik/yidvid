@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BackButton } from "@/components/navigation/BackButton";
@@ -39,7 +40,7 @@ export default function Dashboard() {
 
   // Handle PIN validation
   const handlePinSubmit = () => {
-    console.log("Checking PIN:", adminPin);
+    console.log("Checking PIN:", adminPin, "against expected:", ADMIN_PIN);
     if (adminPin === ADMIN_PIN) {
       // Store admin access in localStorage
       if (session?.user?.id) {
@@ -48,7 +49,10 @@ export default function Dashboard() {
         setShowPinDialog(false);
         setAdminPin("");
         // Force a refresh to update the UI with admin content
-        window.location.reload();
+        // Using setTimeout to ensure the state is updated before reloading
+        setTimeout(() => window.location.reload(), 100);
+      } else {
+        toast.error("Session data missing. Please try signing in again.");
       }
     } else {
       toast.error("Incorrect PIN");

@@ -11,7 +11,14 @@ export const useAdminStatus = (userId: string | undefined) => {
   const [isAdminCheckComplete, setIsAdminCheckComplete] = useState(false);
   
   // Check for PIN bypass
-  const hasPinBypass = localStorage.getItem('admin-pin-bypass') === 'true';
+  const [hasPinBypass, setHasPinBypass] = useState(false);
+
+  // Check localStorage for PIN bypass on mount
+  useEffect(() => {
+    const pinBypass = localStorage.getItem('admin-pin-bypass') === 'true';
+    console.log("PIN bypass check from localStorage:", pinBypass);
+    setHasPinBypass(pinBypass);
+  }, []);
 
   // First check if we have cached admin status
   const { data: cachedAdminStatus } = useQuery({
@@ -110,7 +117,7 @@ export const useAdminStatus = (userId: string | undefined) => {
   }, [isProfileLoading]);
 
   // Calculate the final admin status
-  const isAdmin = profile?.is_admin === true || hasPinBypass;
+  const isAdmin = profile?.is_admin === true;
 
   // Return all relevant data and state
   return {
