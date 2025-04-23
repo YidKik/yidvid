@@ -22,10 +22,11 @@ export const DesktopHeaderActions = ({
 }: DesktopHeaderActionsProps) => {
   return (
     <div className="flex items-center gap-3">
-      {session && <NotificationsMenu session={session} onMarkAsRead={onMarkNotificationsAsRead} />}
-      
+      {/* Always show Contact Us button */}
       <ContactDialog />
-      
+      {session && (
+        <NotificationsMenu session={session} onMarkAsRead={onMarkNotificationsAsRead} />
+      )}
       {session ? (
         <div onClick={handleSettingsClick}>
           <UserMenu onLogout={onLogout} />
