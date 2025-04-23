@@ -9,6 +9,7 @@ import ResetPassword from './pages/ResetPassword';
 import Videos from './pages/Videos';
 import HomePage from './pages/HomePage';
 import { PlaybackProvider } from './contexts/PlaybackContext';
+import Settings from './pages/Settings';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/channel/:channelId" element={<ChannelDetails />} />
         <Route path="/writing-videos" element={<WritingVideos />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/settings" element={<Settings />} />
       </Routes>
     </PlaybackProvider>
   );

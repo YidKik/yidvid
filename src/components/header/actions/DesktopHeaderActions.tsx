@@ -27,9 +27,7 @@ export const DesktopHeaderActions = ({
       <ContactDialog />
       
       {session ? (
-        <div onClick={handleSettingsClick}>
-          <UserMenu onLogout={onLogout} />
-        </div>
+        <UserMenu onLogout={onLogout} />
       ) : (
         <Button 
           onClick={onAuthOpen}

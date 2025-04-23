@@ -45,6 +45,7 @@ export const HeaderActions = ({
         onAuthOpen={onAuthOpen}
         onMarkNotificationsAsRead={onMarkNotificationsAsRead}
         handleSettingsClick={handleSettingsClick}
+        onLogout={onLogout}
       />
     );
   }

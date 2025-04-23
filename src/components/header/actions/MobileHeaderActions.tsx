@@ -2,33 +2,29 @@
 import { Button } from "@/components/ui/button";
 import { LogIn, MessageSquare, Settings } from "lucide-react";
 import { NotificationsMenu } from "../NotificationsMenu";
+import { UserMenu } from "../UserMenu";
 
 interface MobileHeaderActionsProps {
   session: any;
   onAuthOpen: () => void;
   onMarkNotificationsAsRead: () => Promise<void>;
   handleSettingsClick: () => void;
+  onLogout: () => Promise<void>;
 }
 
 export const MobileHeaderActions = ({
   session,
   onAuthOpen,
   onMarkNotificationsAsRead,
-  handleSettingsClick
+  handleSettingsClick,
+  onLogout
 }: MobileHeaderActionsProps) => {
   return (
     <div className="flex items-center gap-2">
       {session ? (
         <>
           <NotificationsMenu session={session} onMarkAsRead={onMarkNotificationsAsRead} />
-          <Button
-            onClick={handleSettingsClick}
-            variant="ghost" 
-            size="icon"
-            className="bg-[#222222] hover:bg-[#333333] text-white h-7 w-7 rounded-md transition-all duration-300 mobile-button-animate"
-          >
-            <Settings className="h-3.5 w-3.5" />
-          </Button>
+          <UserMenu onLogout={onLogout} />
         </>
       ) : (
         <>
