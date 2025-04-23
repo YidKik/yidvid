@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { NotificationsMenu } from "./NotificationsMenu";
 import { UserMenu } from "./UserMenu";
@@ -44,7 +45,6 @@ export const HeaderActions = ({
         onAuthOpen={onAuthOpen}
         onMarkNotificationsAsRead={onMarkNotificationsAsRead}
         handleSettingsClick={handleSettingsClick}
-        onLogout={onLogout}
       />
     );
   }

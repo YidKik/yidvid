@@ -1,43 +1,59 @@
 
 import { Button } from "@/components/ui/button";
+import { LogIn, MessageSquare, Settings } from "lucide-react";
 import { NotificationsMenu } from "../NotificationsMenu";
-import { ContactDialog } from "../../contact/ContactDialog";
-import { UserMenu } from "../UserMenu";
 
 interface MobileHeaderActionsProps {
   session: any;
   onAuthOpen: () => void;
   onMarkNotificationsAsRead: () => Promise<void>;
   handleSettingsClick: () => void;
-  onLogout?: () => Promise<void>;
 }
 
 export const MobileHeaderActions = ({
   session,
   onAuthOpen,
   onMarkNotificationsAsRead,
-  onLogout,
+  handleSettingsClick
 }: MobileHeaderActionsProps) => {
   return (
     <div className="flex items-center gap-2">
-      {/* Always show Contact Us button */}
-      <ContactDialog />
       {session ? (
         <>
           <NotificationsMenu session={session} onMarkAsRead={onMarkNotificationsAsRead} />
-          {/* Settings icon for user menu */}
-          <UserMenu onLogout={onLogout!} showSettingsIcon={true} />
+          <Button
+            onClick={handleSettingsClick}
+            variant="ghost" 
+            size="icon"
+            className="bg-[#222222] hover:bg-[#333333] text-white h-7 w-7 rounded-md transition-all duration-300 mobile-button-animate"
+          >
+            <Settings className="h-3.5 w-3.5" />
+          </Button>
         </>
       ) : (
-        <Button
-          onClick={onAuthOpen}
-          variant="ghost"
-          size="icon"
-          className="bg-[#222222] hover:bg-[#333333] text-white h-7 w-7 rounded-md transition-all duration-300 mobile-button-animate"
-        >
-          {/* Lucide LogIn icon */}
-          <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" x2="3" y1="12" y2="12"/></svg>
-        </Button>
+        <>
+          <Button 
+            variant="ghost" 
+            size="icon"
+            className="bg-[#222222] hover:bg-[#333333] text-white h-7 w-7 rounded-md transition-all duration-300 mobile-button-animate"
+            onClick={() => {
+              const contactDialog = document.querySelector('[data-state="closed"][role="dialog"]');
+              if (contactDialog) {
+                (contactDialog as HTMLElement).click();
+              }
+            }}
+          >
+            <MessageSquare className="h-3.5 w-3.5" />
+          </Button>
+          <Button
+            onClick={onAuthOpen}
+            variant="ghost" 
+            size="icon"
+            className="bg-[#222222] hover:bg-[#333333] text-white h-7 w-7 rounded-md transition-all duration-300 mobile-button-animate"
+          >
+            <LogIn className="h-3.5 w-3.5" />
+          </Button>
+        </>
       )}
     </div>
   );
