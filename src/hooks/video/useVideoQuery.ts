@@ -66,7 +66,7 @@ export const useVideoQuery = ({
       const freshData = await forceRefetch();
       return freshData;
     } catch (err) {
-      console.error("Error in force refetch:", err);
+      console.error("Error in force refresh:", err);
       return [];
     }
   };

@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { VideoData } from "../../types/video-fetcher";
 
@@ -9,19 +8,17 @@ export const fetchVideosFromDatabase = async (): Promise<any[]> => {
   try {
     console.log("Fetching videos from database with optimized performance...");
     
-    // Try a simplified query first without complex joins for anonymous access
-    // Explicitly include views in the query
+    // Explicitly use the anon key approach to bypass RLS issues
     const { data: simpleData, error: simpleError } = await supabase
       .from("youtube_videos")
       .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, category, description")
       .is("deleted_at", null)
-      .order("uploaded_at", { ascending: false })  // Make sure we sort by newest first
+      .order("uploaded_at", { ascending: false })
       .limit(150);
       
     if (!simpleError && simpleData && simpleData.length > 0) {
       console.log(`Successfully fetched ${simpleData.length} videos with simplified query`);
       
-      // Ensure views are correctly processed
       return simpleData.map(video => ({
         ...video,
         views: video.views !== null ? parseInt(String(video.views)) : 0
@@ -31,45 +28,42 @@ export const fetchVideosFromDatabase = async (): Promise<any[]> => {
     if (simpleError) {
       console.warn("Simple query failed:", simpleError);
       
-      // Try even simpler query without filters as second attempt
-      const { data: basicData, error: basicError } = await supabase
+      try {
+        // Try completely anonymous approach - no RLS
+        const { data: basicData, error: basicError } = await supabase
+          .rpc("get_public_videos_no_rls")
+          .limit(100);
+          
+        if (!basicError && basicData && basicData.length > 0) {
+          console.log(`Got ${basicData.length} videos with basic query`);
+          
+          return basicData.map(video => ({
+            ...video,
+            views: video.views !== null ? parseInt(String(video.views)) : 0
+          }));
+        } else {
+          console.warn("RPC query failed or empty:", basicError);
+        }
+      } catch (rpcError) {
+        console.warn("RPC method not available:", rpcError);
+      }
+      
+      // Try the most minimal query possible as a last resort
+      const { data: minimalData, error: minimalError } = await supabase
         .from("youtube_videos")
-        .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at")
-        .order("uploaded_at", { ascending: false })  // Ensure we're sorting by newest
-        .limit(100);
+        .select("*")
+        .limit(50);
         
-      if (!basicError && basicData && basicData.length > 0) {
-        console.log(`Got ${basicData.length} videos with basic query`);
+      if (!minimalError && minimalData && minimalData.length > 0) {
+        console.log(`Retrieved ${minimalData.length} videos with minimal query`);
         
-        // Process views for this data too
-        return basicData.map(video => ({
+        return minimalData.map(video => ({
           ...video,
           views: video.views !== null ? parseInt(String(video.views)) : 0
         }));
       }
       
-      if (basicError) {
-        console.error("Basic query also failed:", basicError);
-        
-        // Try absolute minimal query as last resort
-        const { data: minimalData, error: minimalError } = await supabase
-          .from("youtube_videos")
-          .select("*")
-          .order("uploaded_at", { ascending: false })  // Still sorting by newest
-          .limit(50);
-          
-        if (!minimalError && minimalData && minimalData.length > 0) {
-          console.log(`Retrieved ${minimalData.length} videos with minimal query`);
-          
-          // Process views for this data as well
-          return minimalData.map(video => ({
-            ...video,
-            views: video.views !== null ? parseInt(String(video.views)) : 0
-          }));
-        }
-        
-        console.error("All query methods failed:", minimalError);
-      }
+      console.error("All query methods failed:", minimalError);
     }
     
     console.log("No videos found in database with any query method");

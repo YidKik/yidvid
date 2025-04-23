@@ -10,6 +10,7 @@ import { AutoRefreshHandler } from "./AutoRefreshHandler";
 import { VideoEmptyState } from "./VideoEmptyState";
 import { clearApplicationCache } from "@/lib/query-client";
 import { toast } from "sonner";
+import { useSessionManager } from "@/hooks/useSessionManager";
 
 interface VideoContentProps {
   videos: VideoData[];
@@ -40,9 +41,32 @@ export const VideoContent = ({
     hasOnlySampleVideos 
   } = useSampleVideos();
 
+  const { session } = useSessionManager();
+  
   // Track if we've already attempted background refresh
   const [hasAttemptedRefresh, setHasAttemptedRefresh] = useState(false);
   const initialLoadAttemptMade = useRef(false);
+  const userChangedRef = useRef(session?.user?.id);
+  
+  // Handle auth state changes to trigger a video refresh
+  useEffect(() => {
+    if (userChangedRef.current !== session?.user?.id) {
+      userChangedRef.current = session?.user?.id;
+      console.log("User authentication state changed, refreshing videos...");
+      
+      if (forceRefetch) {
+        // Clear any cached data first
+        clearApplicationCache();
+        
+        // Short delay to let auth state fully update
+        setTimeout(() => {
+          forceRefetch().catch(err => {
+            console.error("Error refreshing after auth change:", err);
+          });
+        }, 300);
+      }
+    }
+  }, [session?.user?.id, forceRefetch]);
   
   // Add a check for infinite refresh loops
   useEffect(() => {

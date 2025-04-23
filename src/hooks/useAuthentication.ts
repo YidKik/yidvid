@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuthSignIn } from "./auth/useAuthSignIn";
@@ -12,6 +13,7 @@ export const useAuthentication = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [user, setUser] = useState<any>(null);
+  const queryClient = useQueryClient();
   
   // Use specialized auth hooks
   const { signIn } = useAuthSignIn();
@@ -25,6 +27,28 @@ export const useAuthentication = () => {
       setError(null);
 
       try {
+        // Set up the auth change listener first
+        const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+          if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+            // Important: use setTimeout to avoid recursive RLS policy triggers
+            setTimeout(() => {
+              setUser(session?.user || null);
+              
+              // Invalidate all queries to refresh the data
+              queryClient.invalidateQueries({ queryKey: ["youtube_videos"] });
+              queryClient.invalidateQueries({ queryKey: ["youtube_channels"] });
+            }, 0);
+          } else if (event === 'SIGNED_OUT') {
+            setTimeout(() => {
+              setUser(null);
+              
+              // Clear user-specific cached data
+              queryClient.invalidateQueries();
+            }, 0);
+          }
+        });
+        
+        // Then get the current session
         const { data: { user }, error } = await supabase.auth.getUser();
 
         if (error) {
@@ -42,7 +66,7 @@ export const useAuthentication = () => {
     };
 
     fetchUser();
-  }, []);
+  }, [queryClient]);
 
   return {
     user,
