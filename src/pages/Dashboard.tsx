@@ -41,19 +41,18 @@ export default function Dashboard() {
   // Handle PIN validation
   const handlePinSubmit = () => {
     console.log("Checking PIN:", adminPin, "against expected:", ADMIN_PIN);
+    
+    // Always grant admin access if PIN is correct, regardless of session
     if (adminPin === ADMIN_PIN) {
-      // Store admin access in localStorage
-      if (session?.user?.id) {
-        localStorage.setItem(`admin-pin-bypass`, "true");
-        toast.success("Admin access granted via PIN");
-        setShowPinDialog(false);
-        setAdminPin("");
-        // Force a refresh to update the UI with admin content
-        // Using setTimeout to ensure the state is updated before reloading
-        setTimeout(() => window.location.reload(), 100);
-      } else {
-        toast.error("Session data missing. Please try signing in again.");
-      }
+      // Set PIN bypass flag in localStorage
+      localStorage.setItem(`admin-pin-bypass`, "true");
+      toast.success("Admin access granted via PIN");
+      setShowPinDialog(false);
+      setAdminPin("");
+      
+      // Force a refresh to update the UI with admin content
+      // Using setTimeout to ensure the state is updated before reloading
+      setTimeout(() => window.location.reload(), 100);
     } else {
       toast.error("Incorrect PIN");
       setAdminPin("");

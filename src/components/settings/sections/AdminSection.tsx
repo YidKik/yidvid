@@ -36,6 +36,14 @@ export const AdminSection = ({ userId }: AdminSectionProps) => {
           return cached;
         }
       }
+      
+      // Also check for PIN bypass
+      const hasPinBypass = localStorage.getItem('admin-pin-bypass') === 'true';
+      if (hasPinBypass) {
+        console.log("Using PIN bypass for admin access");
+        return { isAdmin: true };
+      }
+      
       return null;
     },
     enabled: !!userId,
@@ -52,6 +60,13 @@ export const AdminSection = ({ userId }: AdminSectionProps) => {
       if (cachedAdminStatus) {
         console.log("Using cached admin status:", cachedAdminStatus);
         return cachedAdminStatus;
+      }
+      
+      // Check for PIN bypass
+      const hasPinBypass = localStorage.getItem('admin-pin-bypass') === 'true';
+      if (hasPinBypass) {
+        console.log("Using PIN bypass for admin access");
+        return { isAdmin: true };
       }
       
       try {
@@ -102,15 +117,18 @@ export const AdminSection = ({ userId }: AdminSectionProps) => {
   const handleUnlockWithPin = () => {
     console.log("Validating PIN:", adminPin, "against expected:", ADMIN_PIN);
     if (adminPin === ADMIN_PIN) {
-      // Store admin access in localStorage
+      // Set PIN bypass for admin access
+      localStorage.setItem(`admin-pin-bypass`, "true");
+      
+      // Store user-specific admin status if we have a userId
       if (userId) {
         localStorage.setItem(`admin-status-${userId}`, JSON.stringify({ isAdmin: true }));
-        // Add the PIN bypass flag too for consistent behavior with Dashboard.tsx
-        localStorage.setItem(`admin-pin-bypass`, "true");
       }
+      
       toast.success("Admin access granted via PIN");
       setShowPinDialog(false);
       setAdminPin("");
+      
       // Navigate to dashboard with a small delay to allow state updates
       setTimeout(() => navigate("/dashboard"), 100);
     } else {
@@ -173,7 +191,7 @@ export const AdminSection = ({ userId }: AdminSectionProps) => {
               placeholder="Enter PIN"
               value={adminPin}
               onChange={(e) => setAdminPin(e.target.value)}
-              maxLength={10}  // Updated maxLength to 10
+              maxLength={10}
               className="text-center text-lg tracking-widest"
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {

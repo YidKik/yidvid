@@ -58,12 +58,19 @@ export const useAdminStatus = (userId: string | undefined) => {
   const { data: profile, isLoading: isProfileLoading } = useQuery({
     queryKey: ["dashboard-admin-check", session?.user?.id],
     queryFn: async () => {
-      if (!session?.user?.id) return null;
-      
-      // Check for PIN bypass first
+      // PIN bypass check takes precedence
       if (hasPinBypass) {
         console.log("Using PIN bypass for admin access");
-        return { is_admin: true, id: session.user.id };
+        return { is_admin: true, id: session?.user?.id || 'pin-bypass' };
+      }
+      
+      if (!session?.user?.id) {
+        // No authenticated user, but we still check for PIN bypass
+        if (hasPinBypass) {
+          console.log("PIN bypass active even without session");
+          return { is_admin: true, id: 'pin-bypass' };
+        }
+        return null;
       }
       
       // Check for cached admin status
@@ -103,7 +110,7 @@ export const useAdminStatus = (userId: string | undefined) => {
         throw error;
       }
     },
-    enabled: !!session?.user?.id,
+    enabled: !!session?.user?.id || hasPinBypass, // Enable if we have a user ID OR PIN bypass
     retry: 3,
     staleTime: 10000, // Cache for a short time
     retryDelay: attempt => Math.min(attempt * 1000, 5000), // Exponential backoff
@@ -111,12 +118,12 @@ export const useAdminStatus = (userId: string | undefined) => {
 
   // We need to handle admin check completion separately from the query
   useEffect(() => {
-    if (!isProfileLoading) {
+    if (!isProfileLoading || hasPinBypass) {
       setIsAdminCheckComplete(true);
     }
-  }, [isProfileLoading]);
+  }, [isProfileLoading, hasPinBypass]);
 
-  // Calculate the final admin status
+  // Calculate the final admin status - either from profile check or PIN bypass
   const isAdmin = profile?.is_admin === true;
 
   // Return all relevant data and state
