@@ -21,14 +21,17 @@ const VideoDetails = () => {
   const { videoId } = useParams<{ videoId: string }>();
   const location = useLocation();
   const { isMobile } = useIsMobile();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, session } = useAuth();
 
   // Add debug logging for current route and video ID
   useEffect(() => {
     console.log("VideoDetails page route:", location.pathname);
     console.log("VideoDetails page received videoId:", videoId);
     console.log("User authentication status:", isAuthenticated ? "logged in" : "logged out");
-  }, [location.pathname, videoId, isAuthenticated]);
+    if (isAuthenticated && session) {
+      console.log("User session exists:", !!session);
+    }
+  }, [location.pathname, videoId, isAuthenticated, session]);
 
   if (!videoId) {
     toast.error("Video ID not provided");
@@ -112,6 +115,6 @@ const VideoDetails = () => {
       </div>
     </div>
   );
-}
+};
 
 export default VideoDetails;
