@@ -9,21 +9,24 @@ import ResetPassword from './pages/ResetPassword';
 import Videos from './pages/Videos';
 import HomePage from './pages/HomePage';
 import { PlaybackProvider } from './contexts/PlaybackContext';
+import { ColorProvider } from './contexts/ColorContext';
 import Settings from './pages/Settings';
 
 function App() {
   return (
     <PlaybackProvider>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/videos" element={<Videos />} />
-        <Route path="/video/:videoId" element={<VideoDetails />} />
-        <Route path="/search" element={<Search />} />
-        <Route path="/channel/:channelId" element={<ChannelDetails />} />
-        <Route path="/writing-videos" element={<WritingVideos />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/settings" element={<Settings />} />
-      </Routes>
+      <ColorProvider>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/videos" element={<Videos />} />
+          <Route path="/video/:videoId" element={<VideoDetails />} />
+          <Route path="/search" element={<Search />} />
+          <Route path="/channel/:channelId" element={<ChannelDetails />} />
+          <Route path="/writing-videos" element={<WritingVideos />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/settings" element={<Settings />} />
+        </Routes>
+      </ColorProvider>
     </PlaybackProvider>
   );
 }
