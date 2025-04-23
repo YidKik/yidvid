@@ -15,18 +15,34 @@ serve(async (req) => {
     
     const supabase = createClient(supabaseUrl, supabaseKey);
     
-    // Fetch channel data with service role key to bypass RLS
-    const { data, error } = await supabase
+    // Parse query parameters if any
+    const url = new URL(req.url);
+    const searchQuery = url.searchParams.get('search') || '';
+    
+    console.log("Edge function called to fetch channels", searchQuery ? `with search: ${searchQuery}` : "");
+    
+    // Create base query
+    let query = supabase
       .from('youtube_channels')
       .select('id, channel_id, title, thumbnail_url, description')
       .is('deleted_at', null)
-      .order('title')
-      .limit(100);
+      .order('title');
+    
+    // Add search filter if provided
+    if (searchQuery) {
+      query = query.ilike('title', `%${searchQuery}%`);
+    }
+    
+    // Fetch channel data with service role key to bypass RLS
+    const { data, error } = await query.limit(100);
     
     if (error) {
+      console.error("Database error:", error);
       throw error;
     }
 
+    console.log(`Successfully fetched ${data?.length || 0} channels`);
+    
     return new Response(
       JSON.stringify({
         success: true,
