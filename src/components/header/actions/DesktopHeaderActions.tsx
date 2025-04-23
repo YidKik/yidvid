@@ -27,9 +27,9 @@ export const DesktopHeaderActions = ({
       {session && (
         <NotificationsMenu session={session} onMarkAsRead={onMarkNotificationsAsRead} />
       )}
-      {/* Show avatar as popover (if logged in), replacing settings button */}
+      {/* Show settings icon for user menu */}
       {session ? (
-        <UserMenu onLogout={onLogout} />
+        <UserMenu onLogout={onLogout} showSettingsIcon={true} />
       ) : (
         <Button 
           onClick={onAuthOpen}

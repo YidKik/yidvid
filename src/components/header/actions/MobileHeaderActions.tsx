@@ -25,8 +25,8 @@ export const MobileHeaderActions = ({
       {session ? (
         <>
           <NotificationsMenu session={session} onMarkAsRead={onMarkNotificationsAsRead} />
-          {/* Avatar popover always visible when logged in */}
-          <UserMenu onLogout={onLogout!} />
+          {/* Settings icon for user menu */}
+          <UserMenu onLogout={onLogout!} showSettingsIcon={true} />
         </>
       ) : (
         <Button
