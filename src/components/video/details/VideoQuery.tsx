@@ -2,6 +2,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { YoutubeVideosTable, YoutubeChannelsTable } from "@/integrations/supabase/types";
+
+// Extended interface to include the youtube_channels property
+interface ExtendedYoutubeVideo extends YoutubeVideosTable['Row'] {
+  youtube_channels?: {
+    thumbnail_url: string | null;
+  };
+}
 
 export const useVideoQuery = (id: string) => {
   return useQuery({
@@ -32,11 +40,13 @@ export const useVideoQuery = (id: string) => {
               
             // Add channel thumbnail to the video data
             if (channelData) {
-              videoBasic.youtube_channels = { thumbnail_url: channelData.thumbnail_url };
+              const extendedVideo = videoBasic as ExtendedYoutubeVideo;
+              extendedVideo.youtube_channels = { thumbnail_url: channelData.thumbnail_url };
+              return extendedVideo;
             }
           }
           
-          return videoBasic;
+          return videoBasic as ExtendedYoutubeVideo;
         }
 
         // If the video_id query failed, check if it's a valid UUID
@@ -61,11 +71,13 @@ export const useVideoQuery = (id: string) => {
                 .maybeSingle();
                 
               if (channelData) {
-                videoByUuid.youtube_channels = { thumbnail_url: channelData.thumbnail_url };
+                const extendedVideo = videoByUuid as ExtendedYoutubeVideo;
+                extendedVideo.youtube_channels = { thumbnail_url: channelData.thumbnail_url };
+                return extendedVideo;
               }
             }
             
-            return videoByUuid;
+            return videoByUuid as ExtendedYoutubeVideo;
           }
         }
         
@@ -89,11 +101,13 @@ export const useVideoQuery = (id: string) => {
               .maybeSingle();
               
             if (channelData) {
-              searchResults[0].youtube_channels = { thumbnail_url: channelData.thumbnail_url };
+              const extendedVideo = searchResults[0] as ExtendedYoutubeVideo;
+              extendedVideo.youtube_channels = { thumbnail_url: channelData.thumbnail_url };
+              return extendedVideo;
             }
           }
           
-          return searchResults[0];
+          return searchResults[0] as ExtendedYoutubeVideo;
         }
 
         console.error("Video not found with ID:", id);
