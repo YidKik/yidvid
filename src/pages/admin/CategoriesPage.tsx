@@ -1,9 +1,8 @@
 
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { useState, useEffect } from "react";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 import { BackButton } from "@/components/navigation/BackButton";
 import { VideoCategoryManagement } from "@/components/dashboard/VideoCategoryManagement";
 import { ChannelCategoryManagement } from "@/components/dashboard/ChannelCategoryManagement";
@@ -11,64 +10,102 @@ import { CustomCategoryManagement } from "@/components/dashboard/CustomCategoryM
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function CategoriesPage() {
-  const { data: videos, isLoading: videosLoading, error: videosError, refetch: refetchVideos } = useQuery({
-    queryKey: ["all-videos"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("youtube_videos")
-        .select("*")
-        .is("deleted_at", null)
-        .order("uploaded_at", { ascending: false });
-
-      if (error) {
-        console.error("Error fetching videos:", error);
-        throw error;
-      }
-
-      return data || [];
-    },
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [data, setData] = useState({
+    videos: [],
+    channels: [],
+    customCategories: []
   });
 
-  const { data: channels, isLoading: channelsLoading, error: channelsError, refetch: refetchChannels } = useQuery({
-    queryKey: ["all-channels"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("youtube_channels")
-        .select("*")
-        .order("title", { ascending: true });
-
-      if (error) {
-        console.error("Error fetching channels:", error);
-        throw error;
+  const fetchData = async () => {
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      // Try using edge function first
+      const { data: responseData, error: functionError } = await supabase.functions.invoke('get-admin-categories');
+      
+      if (functionError) {
+        throw functionError;
       }
-
-      return data || [];
-    },
-  });
-
-  const { data: customCategories, isLoading: categoriesLoading, error: categoriesError, refetch: refetchCategories } = useQuery({
-    queryKey: ["custom-categories"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("custom_categories")
-        .select("*")
-        .order("name", { ascending: true });
-
-      if (error) {
-        console.error("Error fetching custom categories:", error);
-        throw error;
+      
+      if (responseData) {
+        setData(responseData);
       }
+    } catch (edgeFunctionError) {
+      console.error("Edge function error:", edgeFunctionError);
+      toast.error("Error loading data. Trying alternative method...");
+      
+      // Fallback to direct queries if edge function fails
+      try {
+        // Fetch videos
+        const { data: videos, error: videosError } = await supabase
+          .from("youtube_videos")
+          .select("*")
+          .is("deleted_at", null)
+          .order("uploaded_at", { ascending: false });
 
-      return data || [];
-    },
-  });
+        if (videosError) throw videosError;
 
-  if (videosError || channelsError || categoriesError) {
+        // Fetch channels
+        const { data: channels, error: channelsError } = await supabase
+          .from("youtube_channels")
+          .select("*")
+          .order("title", { ascending: true });
+
+        if (channelsError) throw channelsError;
+
+        // Fetch custom categories
+        const { data: customCategories, error: categoriesError } = await supabase
+          .from("custom_categories")
+          .select("*")
+          .order("name", { ascending: true });
+
+        if (categoriesError) throw categoriesError;
+
+        setData({
+          videos: videos || [],
+          channels: channels || [],
+          customCategories: customCategories || []
+        });
+      } catch (dbError) {
+        console.error("Database error:", dbError);
+        setError("Failed to load category data. Please try again later.");
+        toast.error("Error loading categories data");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Initial data fetch
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  // Handle refetch functions
+  const refetchVideos = async () => {
+    await fetchData();
+    toast.success("Videos data refreshed");
+  };
+
+  const refetchChannels = async () => {
+    await fetchData();
+    toast.success("Channels data refreshed");
+  };
+
+  const refetchCategories = async () => {
+    await fetchData();
+    toast.success("Categories data refreshed");
+  };
+
+  if (error) {
     return (
       <div className="container mx-auto py-8">
         <BackButton />
         <div className="text-center text-red-500">
-          Error loading data. Please try again later.
+          {error}
         </div>
       </div>
     );
@@ -105,22 +142,22 @@ export default function CategoriesPage() {
           </TabsList>
 
           <TabsContent value="videos">
-            {videosLoading ? (
+            {isLoading ? (
               <div className="flex justify-center py-8">
                 <Loader2 className="h-8 w-8 animate-spin" />
               </div>
             ) : (
-              <VideoCategoryManagement videos={videos || []} onUpdate={() => refetchVideos()} />
+              <VideoCategoryManagement videos={data.videos} onUpdate={refetchVideos} />
             )}
           </TabsContent>
 
           <TabsContent value="channels">
-            {channelsLoading ? (
+            {isLoading ? (
               <div className="flex justify-center py-8">
                 <Loader2 className="h-8 w-8 animate-spin" />
               </div>
             ) : (
-              <ChannelCategoryManagement channels={channels || []} onUpdate={() => {
+              <ChannelCategoryManagement channels={data.channels} onUpdate={() => {
                 refetchChannels();
                 refetchVideos();
               }} />
@@ -128,14 +165,14 @@ export default function CategoriesPage() {
           </TabsContent>
 
           <TabsContent value="categories">
-            {categoriesLoading ? (
+            {isLoading ? (
               <div className="flex justify-center py-8">
                 <Loader2 className="h-8 w-8 animate-spin" />
               </div>
             ) : (
               <CustomCategoryManagement 
-                categories={customCategories || []} 
-                onUpdate={() => refetchCategories()} 
+                categories={data.customCategories} 
+                onUpdate={refetchCategories} 
               />
             )}
           </TabsContent>
