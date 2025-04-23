@@ -6,8 +6,22 @@ import { YoutubeVideosTable } from "@/integrations/supabase/types/youtube-videos
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 
-// Extended interface to include the youtube_channels property
-interface ExtendedYoutubeVideo extends YoutubeVideosTable {
+// Extended interface that matches the actual structure from the database
+interface ExtendedYoutubeVideo {
+  id: string;
+  video_id: string;
+  title: string;
+  thumbnail: string;
+  channel_id: string;
+  channel_name: string;
+  views: number | null;
+  uploaded_at: string;
+  category?: string | null;
+  deleted_at?: string | null;
+  description?: string | null;
+  last_viewed_at?: string | null;
+  created_at?: string;
+  updated_at?: string;
   youtube_channels?: {
     thumbnail_url: string | null;
   };

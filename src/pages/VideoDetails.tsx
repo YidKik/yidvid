@@ -14,16 +14,8 @@ import { LoadingAnimation } from "@/components/ui/LoadingAnimation";
 import { VideoPlaceholder } from "@/components/video/VideoPlaceholder";
 import { toast } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { YoutubeVideosTable } from "@/integrations/supabase/types/youtube-videos";
 import { useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
-
-// Extended interface to include the youtube_channels property
-interface ExtendedYoutubeVideo extends YoutubeVideosTable {
-  youtube_channels?: {
-    thumbnail_url: string | null;
-  };
-}
 
 const VideoDetails = () => {
   const { videoId } = useParams<{ videoId: string }>();
