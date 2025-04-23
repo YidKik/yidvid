@@ -12,11 +12,23 @@ import { ProfileInfo } from "./profile/ProfileInfo";
 import { ProfileSectionSkeleton } from "./profile/ProfileSectionSkeleton";
 import { ProfileErrorState } from "./profile/ProfileErrorState";
 import { AccountActions } from "./profile/AccountActions";
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogDescription, 
+  DialogFooter, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogTrigger 
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Trash2 } from "lucide-react";
 
 export const ProfileSection = () => {
   const navigate = useNavigate();
   const { handleLogout, isLoggingOut, session } = useAuth();
   const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const { isMobile } = useIsMobile();
   
   // Immediately get user email from session for fallback display
@@ -76,6 +88,22 @@ export const ProfileSection = () => {
     retry: 1, // Reduce retry attempts
   });
 
+  // Handle account deletion
+  const handleDeleteAccount = async () => {
+    try {
+      const { error } = await supabase.rpc('delete_user', {});
+      if (error) {
+        console.error("Error deleting account:", error);
+        return;
+      }
+      
+      await supabase.auth.signOut();
+      navigate("/");
+    } catch (error) {
+      console.error("Unexpected error during account deletion:", error);
+    }
+  };
+
   // Create a fallback profile for error cases
   const fallbackProfile = profile || (session?.user?.id ? {
     id: session.user.id,
@@ -121,10 +149,47 @@ export const ProfileSection = () => {
             />
             <ProfileInfo profile={fallbackProfile as ProfilesTable["Row"]} />
           </div>
-          <AccountActions
-            isLoggingOut={isLoggingOut}
-            handleLogout={handleLogout}
-          />
+          <div className="space-y-2">
+            <AccountActions
+              isLoggingOut={isLoggingOut}
+              handleLogout={handleLogout}
+            />
+            
+            <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+              <DialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="w-full flex items-center justify-center gap-2 text-red-600 hover:text-red-700 border-red-200 hover:border-red-300 hover:bg-red-50 transition-colors"
+                >
+                  <Trash2 className="h-4 w-4" />
+                  <span>Delete Account</span>
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Delete Account</DialogTitle>
+                  <DialogDescription>
+                    Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently deleted.
+                  </DialogDescription>
+                </DialogHeader>
+                <DialogFooter className="flex flex-col sm:flex-row gap-2 sm:gap-0">
+                  <Button
+                    variant="ghost"
+                    onClick={() => setIsDeleteDialogOpen(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    onClick={handleDeleteAccount}
+                    className="bg-red-600 hover:bg-red-700"
+                  >
+                    Yes, Delete My Account
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </div>
         </div>
       </Card>
     </section>
