@@ -1,16 +1,176 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { corsHeaders } from '../_shared/cors.ts';
 
-// Define CORS headers directly here instead of importing from utils
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, GET, OPTIONS'
-};
+// Define fetchChannelVideos function directly here instead of importing it
+interface VideoResult {
+  videos: any[];
+  nextPageToken?: string | null;
+  quotaExceeded?: boolean;
+}
 
-// Import the fetchChannelVideos function directly
-import { fetchChannelVideos } from '../fetch-youtube-videos/youtube-api.ts';
+async function fetchChannelVideos(
+  channelId: string, 
+  apiKey: string, 
+  nextPageToken: string | null = null
+): Promise<VideoResult> {
+  try {
+    // Get channel details
+    const channelUrl = `https://www.googleapis.com/youtube/v3/channels?part=contentDetails,snippet,status&id=${channelId}&key=${apiKey}`;
+    const channelResponse = await fetch(channelUrl, {
+      headers: {
+        'Accept': 'application/json',
+        'Referer': 'https://yidvid.com'
+      }
+    });
+    
+    if (!channelResponse.ok) {
+      const errorText = await channelResponse.text();
+      console.error(`Channel API error for ${channelId}:`, errorText);
+      
+      // Check for quota exceeded
+      if (errorText.includes('quotaExceeded')) {
+        return { videos: [], quotaExceeded: true };
+      }
+      
+      throw new Error(`Channel API error: ${channelResponse.status} - ${errorText}`);
+    }
+    
+    const channelData = await channelResponse.json();
+
+    if (!channelData.items?.[0]) {
+      console.error(`No channel found for ID ${channelId}`);
+      return { videos: [] };
+    }
+
+    // Check if channel is active and public
+    const channelStatus = channelData.items[0].status;
+    if (channelStatus?.privacyStatus === 'private') {
+      console.error(`Channel ${channelId} is private`);
+      return { videos: [] };
+    }
+
+    const uploadsPlaylistId = channelData.items[0].contentDetails?.relatedPlaylists?.uploads;
+    if (!uploadsPlaylistId) {
+      console.error(`No uploads playlist found for channel ${channelId}`);
+      return { videos: [] };
+    }
+
+    const channelTitle = channelData.items[0].snippet.title;
+    const channelThumbnail = channelData.items[0].snippet.thumbnails?.default?.url || null;
+    console.log(`Fetching videos for channel: ${channelTitle} (${channelId})`);
+
+    // Fetch videos with pagination
+    let playlistUrl = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${uploadsPlaylistId}&key=${apiKey}`;
+    
+    if (nextPageToken) {
+      playlistUrl += `&pageToken=${nextPageToken}`;
+    }
+    
+    const response = await fetch(playlistUrl, {
+      headers: {
+        'Accept': 'application/json',
+        'Referer': 'https://yidvid.com'
+      }
+    });
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`Playlist API error for channel ${channelId}:`, errorText);
+      
+      // Check for quota exceeded
+      if (errorText.includes('quotaExceeded')) {
+        return { videos: [], quotaExceeded: true };
+      }
+      
+      throw new Error(`Playlist API error: ${response.status} - ${errorText}`);
+    }
+    
+    const data = await response.json();
+    const nextToken = data.nextPageToken || null;
+
+    if (!data.items || data.items.length === 0) {
+      console.log(`No videos found in playlist for channel ${channelId}`);
+      return { videos: [], nextPageToken: nextToken };
+    }
+
+    // Get video IDs and fetch statistics in a single batch
+    const videoIds = data.items
+      .map((item: any) => item.snippet?.resourceId?.videoId)
+      .filter(Boolean);
+
+    console.log(`Found ${videoIds.length} videos in current page for channel ${channelId}`);
+
+    if (videoIds.length === 0) {
+      return { videos: [], nextPageToken: nextToken };
+    }
+
+    const statsUrl = `https://www.googleapis.com/youtube/v3/videos?part=statistics,snippet&id=${videoIds.join(',')}&key=${apiKey}`;
+    const statsResponse = await fetch(statsUrl, {
+      headers: {
+        'Accept': 'application/json',
+        'Referer': 'https://yidvid.com'
+      }
+    });
+    
+    if (!statsResponse.ok) {
+      const errorText = await statsResponse.text();
+      console.error(`Statistics API error for channel ${channelId}:`, errorText);
+      
+      // Check for quota exceeded
+      if (errorText.includes('quotaExceeded')) {
+        return { videos: [], quotaExceeded: true, nextPageToken: nextToken };
+      }
+      
+      throw new Error(`Statistics API error: ${statsResponse.status} - ${errorText}`);
+    }
+    
+    const statsData = await statsResponse.json();
+
+    // Create a map for quick lookup of statistics
+    const statsMap = new Map(
+      statsData.items?.map((item: any) => [item.id, {
+        statistics: item.statistics,
+        description: item.snippet.description
+      }]) || []
+    );
+
+    // Process videos with their statistics
+    const processedVideos = data.items
+      .filter((item: any) => {
+        if (!item.snippet?.resourceId?.videoId) {
+          console.log(`Skipping invalid video item in channel ${channelId}`);
+          return false;
+        }
+        return true;
+      })
+      .map((item: any) => {
+        const stats = statsMap.get(item.snippet.resourceId.videoId);
+        if (!stats) {
+          console.log(`No stats found for video ${item.snippet.resourceId.videoId}`);
+        }
+        return {
+          video_id: item.snippet.resourceId.videoId,
+          title: item.snippet.title,
+          thumbnail: item.snippet.thumbnails.high?.url || item.snippet.thumbnails.default?.url,
+          channel_id: channelId,
+          channel_name: channelTitle,
+          uploaded_at: item.snippet.publishedAt,
+          views: parseInt(stats?.statistics?.viewCount || '0'),
+          description: stats?.description || null,
+        };
+      });
+
+    console.log(`Successfully processed ${processedVideos.length} videos for current page`);
+
+    return { videos: processedVideos, nextPageToken: nextToken };
+  } catch (error) {
+    console.error(`Error processing channel ${channelId}:`, error);
+    // Return empty result instead of throwing to prevent cascade failures
+    return { videos: [] };
+  }
+}
 
 serve(async (req) => {
   // Handle CORS preflight requests
