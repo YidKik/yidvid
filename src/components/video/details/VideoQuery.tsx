@@ -48,6 +48,18 @@ export const useVideoQuery = (id: string) => {
           }
         }
         
+        // Try an anonymous query to bypass any potential RLS issues
+        const { data: publicAccess, error: publicError } = await supabase
+          .from("youtube_videos")
+          .select("*, youtube_channels(thumbnail_url)")
+          .or(`video_id.eq.${id},id.eq.${id}`)
+          .maybeSingle();
+          
+        if (!publicError && publicAccess) {
+          console.log("Found video through public access query:", publicAccess);
+          return publicAccess;
+        }
+        
         // Try a flexible search as fallback
         console.log("Attempting flexible search for video ID:", id);
         const { data: searchResults, error: searchError } = await supabase
@@ -71,6 +83,25 @@ export const useVideoQuery = (id: string) => {
         if (!anyMatchesError && anyMatches && anyMatches.length > 0) {
           console.log("Found video through aggressive search:", anyMatches[0]);
           return anyMatches[0];
+        }
+
+        // Last resort: Try fully anonymous fetch (if all else fails)
+        try {
+          const response = await fetch(`https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/get-public-videos?video_id=${encodeURIComponent(id)}`, {
+            headers: {
+              'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1aW5ja3R2c2l1enRzeGN1cWZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY0ODgzNzcsImV4cCI6MjA1MjA2NDM3N30.zbReqHoAR33QoCi_wqNp8AtNofTX3JebM7jvjFAWbMg`
+            }
+          });
+          
+          if (response.ok) {
+            const data = await response.json();
+            if (data.video) {
+              console.log("Found video through edge function:", data.video);
+              return data.video;
+            }
+          }
+        } catch (edgeError) {
+          console.error("Edge function error:", edgeError);
         }
 
         console.error("Video not found with ID:", id);

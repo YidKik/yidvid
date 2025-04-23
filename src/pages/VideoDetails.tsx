@@ -15,6 +15,7 @@ import { VideoPlaceholder } from "@/components/video/VideoPlaceholder";
 import { toast } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { YoutubeVideosTable } from "@/integrations/supabase/types/youtube-videos";
+import { useEffect } from "react";
 
 // Extended interface to include the youtube_channels property
 interface ExtendedYoutubeVideo extends YoutubeVideosTable {
@@ -28,12 +29,16 @@ const VideoDetails = () => {
   const location = useLocation();
   const { isMobile } = useIsMobile();
 
+  // Add debug logging for current route and video ID
+  useEffect(() => {
+    console.log("VideoDetails page route:", location.pathname);
+    console.log("VideoDetails page received videoId:", videoId);
+  }, [location.pathname, videoId]);
+
   if (!videoId) {
     toast.error("Video ID not provided");
     return <div className="p-4">Video ID not provided</div>;
   }
-
-  console.log("VideoDetails page received videoId:", videoId);
 
   // Pass the videoId directly to the query hooks
   const { data: video, isLoading: isLoadingVideo, error } = useVideoQuery(videoId);
@@ -48,7 +53,7 @@ const VideoDetails = () => {
   }
 
   if (!video || error) {
-    console.error("Video not found or error:", error);
+    console.error("Video not found or error:", error, "for videoId:", videoId);
     return (
       <div className="container mx-auto p-4 mt-16">
         <BackButton />
@@ -67,6 +72,14 @@ const VideoDetails = () => {
       </div>
     );
   }
+
+  // Additional debug logging for the found video
+  console.log("Video details found:", { 
+    id: video.id,
+    video_id: video.video_id,
+    title: video.title,
+    channelId: video.channel_id
+  });
 
   return (
     <div className="container mx-auto p-4 mt-16">
