@@ -11,6 +11,7 @@ import HomePage from './pages/HomePage';
 import { PlaybackProvider } from './contexts/PlaybackContext';
 import { ColorProvider } from './contexts/ColorContext';
 import Settings from './pages/Settings';
+import Dashboard from './pages/Dashboard';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
           <Route path="/writing-videos" element={<WritingVideos />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/dashboard" element={<Dashboard />} />
         </Routes>
       </ColorProvider>
     </PlaybackProvider>
