@@ -12,3 +12,6 @@ verify_jwt = false
 
 [functions.get-public-videos]
 verify_jwt = false
+
+[functions.get-public-channels]
+verify_jwt = false

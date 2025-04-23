@@ -62,6 +62,27 @@ export const ChannelDataProvider = ({ children, onError }: ChannelDataProviderPr
       if (error) {
         console.error("Direct DB fetch error:", error);
         
+        try {
+          console.log("Trying edge function to fetch channels...");
+          const response = await fetch("https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/get-public-channels", {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1aW5ja3R2c2l1enRzeGN1cWZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY0ODgzNzcsImV4cCI6MjA1MjA2NDM3N30.zbReqHoAR33QoCi_wqNp8AtNofTX3JebM7jvjFAWbMg`
+            }
+          });
+          
+          if (response.ok) {
+            const result = await response.json();
+            if (result.data && Array.isArray(result.data) && result.data.length > 0) {
+              console.log(`Retrieved ${result.data.length} channels with edge function`);
+              return result.data;
+            }
+          }
+        } catch (edgeError) {
+          console.error("Edge function error:", edgeError);
+        }
+        
         const simplifiedQuery = await supabase
           .from("youtube_channels")
           .select("id, channel_id, title, thumbnail_url")

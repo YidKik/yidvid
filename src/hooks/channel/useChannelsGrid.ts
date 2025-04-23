@@ -1,154 +1,124 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { useSession } from "@/contexts/SessionContext";
 
 export interface Channel {
   id: string;
   channel_id: string;
   title: string;
-  thumbnail_url: string | null;
+  thumbnail_url?: string | null;
 }
 
 export const useChannelsGrid = () => {
-  const [isLoading, setIsLoading] = useState(true);
   const [manuallyFetchedChannels, setManuallyFetchedChannels] = useState<Channel[]>([]);
-  const [fetchError, setFetchError] = useState<any>(null);
-  const [fetchAttempts, setFetchAttempts] = useState(0);
-  const { session } = useSession();
+  const [isLoading, setIsLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<Error | null>(null);
 
   const fetchChannelsDirectly = async (): Promise<Channel[]> => {
     try {
-      console.log("Fetching YouTube channels directly (attempt " + (fetchAttempts + 1) + ")");
-      setFetchAttempts(prev => prev + 1);
+      console.log("Attempting to fetch channels directly...");
       
-      // Get the user's session - important to check auth state
-      const sessionStatus = await supabase.auth.getSession();
-      const isAuthenticated = !!sessionStatus.data.session;
-      console.log(`User authentication status: ${isAuthenticated ? 'LOGGED IN' : 'NOT LOGGED IN'}`);
-      
-      // Try to fetch channels with thumbnail URL first
-      const { data, error } = await supabase
+      // First try regular database query (may fail due to RLS)
+      const { data: channelsData, error: channelsError } = await supabase
         .from("youtube_channels")
-        .select("id, channel_id, title, thumbnail_url, description")
+        .select("id, channel_id, title, thumbnail_url")
         .is("deleted_at", null)
-        .limit(50);
-
-      if (error) {
-        console.error("Channel fetch error:", error);
-        setFetchError(error);
+        .limit(100);
         
-        // Try without the deleted_at filter which might cause RLS issues
-        const simpleQuery = await supabase
-          .from("youtube_channels")
-          .select("id, channel_id, title, thumbnail_url, description")
-          .limit(50);
-          
-        if (!simpleQuery.error && simpleQuery.data && simpleQuery.data.length > 0) {
-          console.log(`Recovered with simple query: ${simpleQuery.data.length} channels`);
-          setManuallyFetchedChannels(simpleQuery.data);
-          setIsLoading(false);
-          return simpleQuery.data;
-        }
-        
-        // Try with a more minimal query as last resort
-        const minimalQuery = await supabase
-          .from("youtube_channels")
-          .select("id, channel_id, title, thumbnail_url")
-          .limit(30);
-          
-        if (!minimalQuery.error && minimalQuery.data && minimalQuery.data.length > 0) {
-          console.log(`Retrieved ${minimalQuery.data.length} channels with minimal data`);
-          setManuallyFetchedChannels(minimalQuery.data);
-          setIsLoading(false);
-          return minimalQuery.data;
-        }
-        
-        // Only use sample data as final fallback
-        const sampleChannels: Channel[] = createSampleChannels();
-        setManuallyFetchedChannels(sampleChannels);
+      if (!channelsError && channelsData && channelsData.length > 0) {
+        console.log(`Successfully fetched ${channelsData.length} channels directly`);
+        setManuallyFetchedChannels(channelsData);
         setIsLoading(false);
-        return sampleChannels;
+        return channelsData;
       }
       
-      console.log(`Successfully fetched ${data?.length || 0} channels`);
-      
-      if (data && data.length > 0) {
-        setManuallyFetchedChannels(data);
-        setIsLoading(false);
-        return data;
+      if (channelsError) {
+        console.warn("Direct DB fetch error:", channelsError);
+        
+        // Try fallback with edge function to bypass RLS
+        try {
+          console.log("Trying edge function to fetch channels...");
+          const response = await fetch("https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/get-public-channels", {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1aW5ja3R2c2l1enRzeGN1cWZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY0ODgzNzcsImV4cCI6MjA1MjA2NDM3N30.zbReqHoAR33QoCi_wqNp8AtNofTX3JebM7jvjFAWbMg`
+            }
+          });
+          
+          if (response.ok) {
+            const result = await response.json();
+            if (result.data && Array.isArray(result.data) && result.data.length > 0) {
+              console.log(`Retrieved ${result.data.length} channels with edge function`);
+              setManuallyFetchedChannels(result.data);
+              setIsLoading(false);
+              return result.data;
+            }
+          } else {
+            console.warn("Edge function call failed:", response.statusText);
+          }
+        } catch (edgeError) {
+          console.error("Edge function error:", edgeError);
+        }
       }
       
-      // Try another approach if first query returned empty
-      const backupQuery = await supabase
+      // Final fallback - try simplified query
+      const { data: simplifiedData, error: simplifiedError } = await supabase
         .from("youtube_channels")
-        .select("*")
+        .select("id, channel_id, title, thumbnail_url")
         .limit(50);
         
-      if (!backupQuery.error && backupQuery.data && backupQuery.data.length > 0) {
-        console.log(`Retrieved ${backupQuery.data.length} channels with backup query`);
-        setManuallyFetchedChannels(backupQuery.data);
+      if (!simplifiedError && simplifiedData && simplifiedData.length > 0) {
+        console.log(`Retrieved ${simplifiedData.length} channels with simplified query`);
+        setManuallyFetchedChannels(simplifiedData);
         setIsLoading(false);
-        return backupQuery.data;
+        return simplifiedData;
       }
       
-      // Last resort: sample data
-      const sampleChannels: Channel[] = createSampleChannels();
-      setManuallyFetchedChannels(sampleChannels);
+      console.error("All channel fetch methods failed");
+      setFetchError(new Error("Failed to fetch channels"));
       setIsLoading(false);
-      return sampleChannels;
-    } catch (error: any) {
-      console.error("Channel fetch error:", error);
-      
-      // Final attempt with a different approach
-      try {
-        const finalAttempt = await supabase
-          .from("youtube_channels")
-          .select("*")
-          .limit(30);
-          
-        if (!finalAttempt.error && finalAttempt.data?.length > 0) {
-          console.log(`Final attempt retrieved ${finalAttempt.data.length} channels`);
-          setManuallyFetchedChannels(finalAttempt.data);
-          setIsLoading(false);
-          return finalAttempt.data;
-        }
-      } catch (e) {
-        console.error("Final channel attempt also failed:", e);
-      }
-      
-      // Last resort: sample data
-      const sampleChannels: Channel[] = createSampleChannels();
-      setManuallyFetchedChannels(sampleChannels);
+      return [];
+    } catch (err) {
+      console.error("Error in fetchChannelsDirectly:", err);
+      setFetchError(err instanceof Error ? err : new Error(String(err)));
       setIsLoading(false);
-      return sampleChannels;
+      return [];
     }
-  };
-  
-  // Create sample channels as a fallback - only used when all else fails
-  const createSampleChannels = (): Channel[] => {
-    return Array(8).fill(null).map((_, i) => ({
-      id: `sample-${i}`,
-      channel_id: `sample-channel-${i}`,
-      title: `Sample Channel ${i+1}`,
-      thumbnail_url: null
-    }));
   };
 
   useEffect(() => {
-    console.log("useChannelsGrid mounted, fetching channels with auth status:", !!session);
-    fetchChannelsDirectly().catch(() => {
-      console.error("Failed to fetch channels on mount");
-    });
-  }, [session]);
+    let isMounted = true;
+    
+    const initialFetchChannels = async () => {
+      try {
+        const channels = await fetchChannelsDirectly();
+        if (isMounted) {
+          setManuallyFetchedChannels(channels);
+          setIsLoading(false);
+        }
+      } catch (error) {
+        if (isMounted) {
+          console.error("Error in initialFetchChannels:", error);
+          setFetchError(error instanceof Error ? error : new Error(String(error)));
+          setIsLoading(false);
+        }
+      }
+    };
+    
+    initialFetchChannels();
+    
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   return {
     fetchChannelsDirectly,
     manuallyFetchedChannels,
     isLoading,
     setIsLoading,
-    fetchError,
-    fetchAttempts
+    fetchError
   };
 };
