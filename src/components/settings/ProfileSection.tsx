@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+
+import { Card } from "@/components/ui/card";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useIsMobile } from "@/hooks/use-mobile";
 import type { ProfilesTable } from "@/integrations/supabase/types/profiles";
-import { Card } from "@/components/ui/card";
 import { ProfileAvatar } from "./profile/ProfileAvatar";
 import { ProfileInfo } from "./profile/ProfileInfo";
 import { ProfileSectionSkeleton } from "./profile/ProfileSectionSkeleton";
@@ -30,21 +31,24 @@ export const ProfileSection = () => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const { isMobile } = useIsMobile();
   
+  // Immediately get user email from session for fallback display
   useEffect(() => {
     if (session?.user?.email) {
       setUserEmail(session.user.email);
     }
   }, [session]);
 
+  // First check if we have cached minimal profile data
   const cachedProfile = session?.user?.id
     ? useQuery({
         queryKey: ["user-profile-minimal", session.user.id],
-        queryFn: async () => null,
+        queryFn: async () => null, // Just access cache
         staleTime: Infinity,
-        enabled: false,
+        enabled: false, // Don't actually run a query
       }).data
     : null;
 
+  // Use direct query with minimal fields for better performance
   const { data: profile, isLoading, error } = useQuery({
     queryKey: ["user-profile-settings", session?.user?.id],
     queryFn: async () => {
@@ -53,6 +57,7 @@ export const ProfileSection = () => {
       }
 
       try {
+        // Use simplest possible query to avoid RLS issues
         const { data, error } = await supabase
           .from("profiles")
           .select("id, username, display_name, avatar_url, email")
@@ -79,10 +84,11 @@ export const ProfileSection = () => {
       }
     },
     enabled: !!session?.user?.id,
-    staleTime: 10000,
-    retry: 1,
+    staleTime: 10000, // Shorter stale time
+    retry: 1, // Reduce retry attempts
   });
 
+  // Handle account deletion
   const handleDeleteAccount = async () => {
     try {
       const { error } = await supabase.rpc('delete_user', {});
@@ -98,6 +104,7 @@ export const ProfileSection = () => {
     }
   };
 
+  // Create a fallback profile for error cases
   const fallbackProfile = profile || (session?.user?.id ? {
     id: session.user.id,
     email: userEmail || session?.user?.email,
@@ -110,6 +117,7 @@ export const ProfileSection = () => {
     return <ProfileSectionSkeleton />;
   }
 
+  // Show error UI only if no fallback is available
   if (error && !fallbackProfile) {
     return (
       <ProfileErrorState
@@ -120,6 +128,7 @@ export const ProfileSection = () => {
     );
   }
 
+  // If we have fallback data but no proper profile, show limited UI with warning
   const showingFallback = !!error && !!fallbackProfile;
 
   return (
@@ -141,46 +150,45 @@ export const ProfileSection = () => {
             <ProfileInfo profile={fallbackProfile as ProfilesTable["Row"]} />
           </div>
           <div className="space-y-2">
-            <div className={`flex ${isMobile ? 'flex-col gap-2' : 'flex-row gap-4'}`}>
-              <AccountActions
-                isLoggingOut={isLoggingOut}
-                handleLogout={handleLogout}
-              />
-              <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-                <DialogTrigger asChild>
+            <AccountActions
+              isLoggingOut={isLoggingOut}
+              handleLogout={handleLogout}
+            />
+            
+            <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+              <DialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="w-full flex items-center justify-center gap-2 text-red-600 hover:text-red-700 border-red-200 hover:border-red-300 hover:bg-red-50 transition-colors"
+                >
+                  <Trash2 className="h-4 w-4" />
+                  <span>Delete Account</span>
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Delete Account</DialogTitle>
+                  <DialogDescription>
+                    Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently deleted.
+                  </DialogDescription>
+                </DialogHeader>
+                <DialogFooter className="flex flex-col sm:flex-row gap-2 sm:gap-0">
                   <Button
-                    variant="outline"
-                    className="flex-1 flex items-center justify-center gap-2 text-red-600 hover:text-red-700 border-red-200 hover:border-red-300 hover:bg-red-50 transition-colors"
+                    variant="ghost"
+                    onClick={() => setIsDeleteDialogOpen(false)}
                   >
-                    <Trash2 className="h-4 w-4" />
-                    <span>Delete Account</span>
+                    Cancel
                   </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Delete Account</DialogTitle>
-                    <DialogDescription>
-                      Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently deleted.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <DialogFooter className="flex flex-col sm:flex-row gap-2 sm:gap-0">
-                    <Button
-                      variant="ghost"
-                      onClick={() => setIsDeleteDialogOpen(false)}
-                    >
-                      Cancel
-                    </Button>
-                    <Button
-                      variant="destructive"
-                      onClick={handleDeleteAccount}
-                      className="bg-red-600 hover:bg-red-700"
-                    >
-                      Yes, Delete My Account
-                    </Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
-            </div>
+                  <Button
+                    variant="destructive"
+                    onClick={handleDeleteAccount}
+                    className="bg-red-600 hover:bg-red-700"
+                  >
+                    Yes, Delete My Account
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
       </Card>
