@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { VideoData } from "../../types/video-fetcher";
 
@@ -29,23 +30,27 @@ export const fetchVideosFromDatabase = async (): Promise<any[]> => {
       console.warn("Simple query failed:", simpleError);
       
       try {
-        // Try completely anonymous approach - no RLS
-        const { data: basicData, error: basicError } = await supabase
-          .rpc("get_public_videos_no_rls")
-          .limit(100);
-          
-        if (!basicError && basicData && basicData.length > 0) {
-          console.log(`Got ${basicData.length} videos with basic query`);
-          
-          return basicData.map(video => ({
-            ...video,
-            views: video.views !== null ? parseInt(String(video.views)) : 0
-          }));
+        // Try completely anonymous approach - but without RPC call
+        // Instead, use the get-public-videos edge function
+        const response = await fetch("https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/get-public-videos", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1aW5ja3R2c2l1enRzeGN1cWZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY0ODgzNzcsImV4cCI6MjA1MjA2NDM3N30.zbReqHoAR33QoCi_wqNp8AtNofTX3JebM7jvjFAWbMg`
+          }
+        });
+        
+        if (response.ok) {
+          const result = await response.json();
+          if (result.data && Array.isArray(result.data) && result.data.length > 0) {
+            console.log(`Retrieved ${result.data.length} videos with edge function`);
+            return result.data;
+          }
         } else {
-          console.warn("RPC query failed or empty:", basicError);
+          console.warn("Edge function call failed:", response.statusText);
         }
-      } catch (rpcError) {
-        console.warn("RPC method not available:", rpcError);
+      } catch (edgeError) {
+        console.warn("Edge function error:", edgeError);
       }
       
       // Try the most minimal query possible as a last resort

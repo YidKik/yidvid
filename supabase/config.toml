@@ -9,3 +9,6 @@ verify_jwt = false
 
 [functions.update-channel-thumbnails]
 verify_jwt = false
+
+[functions.get-public-videos]
+verify_jwt = false
