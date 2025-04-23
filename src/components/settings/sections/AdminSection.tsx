@@ -169,7 +169,7 @@ export const AdminSection = ({ userId }: AdminSectionProps) => {
               placeholder="Enter PIN"
               value={adminPin}
               onChange={(e) => setAdminPin(e.target.value)}
-              maxLength={4}
+              maxLength={10}  // Updated maxLength to 10
               className="text-center text-lg tracking-widest"
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {

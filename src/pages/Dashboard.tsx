@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BackButton } from "@/components/navigation/BackButton";
@@ -106,7 +105,7 @@ export default function Dashboard() {
               placeholder="Enter PIN"
               value={adminPin}
               onChange={(e) => setAdminPin(e.target.value)}
-              maxLength={4}
+              maxLength={10}
               className="text-center text-lg tracking-widest"
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
