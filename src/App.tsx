@@ -1,6 +1,6 @@
 
-import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import VideoDetails from './pages/VideoDetails';
 import Search from './pages/Search';
 import ChannelDetails from './pages/ChannelDetails';
@@ -12,6 +12,7 @@ import { PlaybackProvider } from './contexts/PlaybackContext';
 import { ColorProvider } from './contexts/ColorContext';
 import Settings from './pages/Settings';
 import Dashboard from './pages/Dashboard';
+import { recordNavigation, setupScrollRestoration } from './utils/scrollRestoration';
 
 // Admin Pages
 import ChannelsPage from './pages/admin/ChannelsPage';
@@ -27,6 +28,23 @@ import NotificationsPage from './pages/admin/NotificationsPage';
 import LayoutCustomizationPage from './pages/admin/LayoutCustomizationPage';
 
 function App() {
+  const location = useLocation();
+  
+  // Set up navigation tracking
+  useEffect(() => {
+    // Initialize the scroll restoration system
+    setupScrollRestoration();
+    
+    // Record the initial location
+    recordNavigation(location.pathname + location.search);
+  }, []);
+  
+  // Record navigation for each location change
+  useEffect(() => {
+    const currentPath = location.pathname + location.search;
+    recordNavigation(currentPath);
+  }, [location]);
+
   return (
     <PlaybackProvider>
       <ColorProvider>

@@ -8,7 +8,8 @@ import {
   getPreviousPath, 
   getScrollPosition, 
   removeCurrentPathFromHistory,
-  saveScrollPosition
+  saveScrollPosition,
+  recordNavigation
 } from "@/utils/scrollRestoration";
 
 interface BackButtonProps {
@@ -20,6 +21,12 @@ export const BackButton = ({ className }: BackButtonProps) => {
   const location = useLocation();
   const [visible, setVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  
+  // Record current route for proper history tracking
+  useEffect(() => {
+    const currentPath = location.pathname + location.search;
+    recordNavigation(currentPath);
+  }, [location.pathname, location.search]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -45,6 +52,8 @@ export const BackButton = ({ className }: BackButtonProps) => {
     // Get previous path from history
     const previousPath = getPreviousPath();
     
+    console.log("Back button clicked. Previous path:", previousPath);
+    
     if (previousPath) {
       // Remove current page from history
       removeCurrentPathFromHistory();
@@ -64,6 +73,7 @@ export const BackButton = ({ className }: BackButtonProps) => {
       }, 100);
     } else {
       // If no history, go to home but skip welcome
+      console.log("No previous path found, navigating to home with skipWelcome");
       navigate("/?skipWelcome=true");
     }
   };

@@ -1,3 +1,4 @@
+
 /**
  * Utilities for managing scroll restoration during navigation
  */
@@ -33,12 +34,14 @@ export const recordNavigation = (path: string) => {
     const history = JSON.parse(sessionStorage.getItem('navigationHistory') || '[]');
     
     // Only add to history if this is a new page visit (not a back navigation)
+    // and not already the last item in history
     if (history.length === 0 || history[history.length - 1] !== path) {
       // Save current scroll position for the previous path before recording new path
       if (history.length > 0) {
         saveScrollPosition(history[history.length - 1]);
       }
       
+      // Add the path to history
       history.push(path);
       sessionStorage.setItem('navigationHistory', JSON.stringify(history));
       console.log(`Recorded navigation to: ${path}, history:`, history);
@@ -59,6 +62,13 @@ export const getPreviousPath = (): string | null => {
       console.log(`Retrieved previous path: ${previousPath}`);
       return previousPath;
     }
+    
+    // If there's no previous path, consider returning a fallback other than home
+    if (history.length === 1 && history[0] !== '/') {
+      console.log('No previous path, but current page is not home. Will return null.');
+      return null;
+    }
+    
     return null;
   } catch (e) {
     console.warn('Could not get previous path:', e);
@@ -87,7 +97,7 @@ export const isWelcomePage = (path: string) => {
   return path === '/' && !window.location.search.includes('skipWelcome=true');
 };
 
-// Update the App component to track all route changes
+// Initialize navigation history tracking
 export const setupScrollRestoration = () => {
   // Track initial page load
   recordNavigation(window.location.pathname + window.location.search);
@@ -97,3 +107,4 @@ export const setupScrollRestoration = () => {
     saveScrollPosition(window.location.pathname + window.location.search);
   });
 };
+
