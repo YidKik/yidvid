@@ -55,14 +55,16 @@ export const VideoCard = ({
     return <VideoCardSkeleton hideInfo={hideInfo} className={cn("block w-full cursor-pointer", className)} />;
   }
   
-  // Determine the correct ID to use for navigation
+  // Determine the correct ID to use for navigation - prioritize video_id over id
   const videoIdForLink = video_id || id;
   
   // Format the date
   const formattedDate = getFormattedDate(uploadedAt);
 
   // Check if this is a placeholder or sample
-  const isSample = id.includes('sample') || video_id?.includes('sample');
+  const isSample = id?.toString().includes('sample') || video_id?.includes('sample');
+
+  console.log("VideoCard rendering with videoIdForLink:", videoIdForLink); // Debug log
 
   return (
     <Link 

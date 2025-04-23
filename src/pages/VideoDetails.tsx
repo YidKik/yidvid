@@ -12,12 +12,16 @@ import { useRelatedVideosQuery } from "@/components/video/details/RelatedVideosQ
 import { VideoHistory } from "@/components/video/details/VideoHistory";
 import { LoadingAnimation } from "@/components/ui/LoadingAnimation";
 import { VideoPlaceholder } from "@/components/video/VideoPlaceholder";
+import { toast } from "sonner";
 
 const VideoDetails = () => {
   const { videoId } = useParams<{ videoId: string }>();
   const location = useLocation();
 
-  if (!videoId) return <div className="p-4">Video ID not provided</div>;
+  if (!videoId) {
+    toast.error("Video ID not provided");
+    return <div className="p-4">Video ID not provided</div>;
+  }
 
   // Pass the videoId directly to the query hooks
   const { data: video, isLoading: isLoadingVideo, error } = useVideoQuery(videoId);
@@ -32,6 +36,7 @@ const VideoDetails = () => {
   }
 
   if (!video || error) {
+    console.error("Video not found or error:", error);
     return (
       <div className="container mx-auto p-4 mt-16">
         <BackButton />
@@ -40,9 +45,11 @@ const VideoDetails = () => {
             <VideoPlaceholder size="large" />
           </div>
           <h2 className="text-xl font-semibold text-destructive">Video not found</h2>
-          <p className="mt-2 text-muted-foreground">The video you're looking for doesn't exist or has been removed.</p>
-          <Link to="/?skipWelcome=true" className="mt-4 inline-block px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 transition-colors">
-            Return to homepage
+          <p className="mt-2 text-muted-foreground">
+            {error ? `Error: ${error.message}` : "The video you're looking for doesn't exist or has been removed."}
+          </p>
+          <Link to="/videos" className="mt-4 inline-block px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 transition-colors">
+            Return to videos
           </Link>
         </div>
       </div>
