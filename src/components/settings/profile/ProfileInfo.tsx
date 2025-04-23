@@ -28,27 +28,21 @@ export const ProfileInfo = ({ profile }: ProfileInfoProps) => {
       </h3>
       
       <div className={`${isMobile ? 'space-y-0' : 'space-y-0.5'}`}>
-        {!isMobile && (
-          <ProfileField 
-            label="Email" 
-            value={email} 
-            isMobile={isMobile}
-          />
-        )}
-        
+        <ProfileField 
+          label="Email" 
+          value={email} 
+          isMobile={isMobile}
+        />
         <ProfileField 
           label="Username" 
           value={username} 
           isMobile={isMobile}
         />
-        
-        {!isMobile && (
-          <ProfileField 
-            label="Member since" 
-            value={memberSince} 
-            isMobile={isMobile}
-          />
-        )}
+        <ProfileField 
+          label="Member since" 
+          value={memberSince} 
+          isMobile={isMobile}
+        />
       </div>
     </div>
   );
