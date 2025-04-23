@@ -20,94 +20,57 @@ export const useVideoQuery = (id: string) => {
       console.log("Attempting to fetch video with ID:", id);
 
       try {
-        // First try direct query without joining to avoid RLS recursion issues
-        const { data: videoBasic, error: videoBasicError } = await supabase
+        // First try direct query with video_id (YouTube video ID)
+        const { data: videoByVideoId, error: videoError } = await supabase
           .from("youtube_videos")
-          .select("*")
+          .select("*, youtube_channels(thumbnail_url)")
           .eq("video_id", id)
           .maybeSingle();
 
-        if (!videoBasicError && videoBasic) {
-          console.log("Found video by video_id with basic query:", videoBasic);
-          
-          // Separately fetch the channel thumbnail to avoid join issues
-          if (videoBasic.channel_id) {
-            const { data: channelData } = await supabase
-              .from("youtube_channels")
-              .select("thumbnail_url")
-              .eq("channel_id", videoBasic.channel_id)
-              .maybeSingle();
-              
-            // Add channel thumbnail to the video data
-            if (channelData) {
-              const extendedVideo = videoBasic as ExtendedYoutubeVideo;
-              extendedVideo.youtube_channels = { thumbnail_url: channelData.thumbnail_url };
-              return extendedVideo;
-            }
-          }
-          
-          return videoBasic as ExtendedYoutubeVideo;
+        if (!videoError && videoByVideoId) {
+          console.log("Found video by video_id:", videoByVideoId);
+          return videoByVideoId;
         }
 
-        // If the video_id query failed, check if it's a valid UUID
+        // If not found, check if it's a valid UUID
         const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
         if (uuidRegex.test(id)) {
           // Try fetching by UUID
           const { data: videoByUuid, error: videoByUuidError } = await supabase
             .from("youtube_videos")
-            .select("*")
+            .select("*, youtube_channels(thumbnail_url)")
             .eq("id", id)
             .maybeSingle();
 
           if (!videoByUuidError && videoByUuid) {
             console.log("Found video by UUID:", videoByUuid);
-            
-            // Separately fetch the channel thumbnail
-            if (videoByUuid.channel_id) {
-              const { data: channelData } = await supabase
-                .from("youtube_channels")
-                .select("thumbnail_url")
-                .eq("channel_id", videoByUuid.channel_id)
-                .maybeSingle();
-                
-              if (channelData) {
-                const extendedVideo = videoByUuid as ExtendedYoutubeVideo;
-                extendedVideo.youtube_channels = { thumbnail_url: channelData.thumbnail_url };
-                return extendedVideo;
-              }
-            }
-            
-            return videoByUuid as ExtendedYoutubeVideo;
+            return videoByUuid;
           }
         }
         
-        // Try a flexible query as fallback
+        // Try a flexible search as fallback
         console.log("Attempting flexible search for video ID:", id);
-        const { data: searchResults } = await supabase
+        const { data: searchResults, error: searchError } = await supabase
           .from("youtube_videos")
-          .select("*")
+          .select("*, youtube_channels(thumbnail_url)")
           .ilike("video_id", `%${id}%`)
           .limit(1);
           
-        if (searchResults && searchResults.length > 0) {
+        if (!searchError && searchResults && searchResults.length > 0) {
           console.log("Found video through flexible search:", searchResults[0]);
+          return searchResults[0];
+        }
+
+        // Check if the ID contains part of a valid video_id
+        const { data: partialResults, error: partialError } = await supabase
+          .from("youtube_videos")
+          .select("*, youtube_channels(thumbnail_url)")
+          .filter("video_id", "ilike", `%${id}%`)
+          .limit(1);
           
-          // Get channel thumbnail
-          if (searchResults[0].channel_id) {
-            const { data: channelData } = await supabase
-              .from("youtube_channels")
-              .select("thumbnail_url")
-              .eq("channel_id", searchResults[0].channel_id)
-              .maybeSingle();
-              
-            if (channelData) {
-              const extendedVideo = searchResults[0] as ExtendedYoutubeVideo;
-              extendedVideo.youtube_channels = { thumbnail_url: channelData.thumbnail_url };
-              return extendedVideo;
-            }
-          }
-          
-          return searchResults[0] as ExtendedYoutubeVideo;
+        if (!partialError && partialResults && partialResults.length > 0) {
+          console.log("Found video through partial match:", partialResults[0]);
+          return partialResults[0];
         }
 
         console.error("Video not found with ID:", id);

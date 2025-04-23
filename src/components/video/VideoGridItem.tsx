@@ -23,11 +23,19 @@ export const VideoGridItem = ({ video, loading }: VideoGridItemProps) => {
 
   // Format the date properly to avoid type mismatch
   const formattedDate = getFormattedDate(video.uploadedAt);
+  
+  // Make sure we have a valid ID for linking - prioritize video_id over id
+  // video_id is the YouTube's video ID, which is what our VideoPlayer expects
+  const videoIdForLink = video.video_id || video.id;
+  
+  // Add debug log to help troubleshoot routing issues
+  console.log("VideoGridItem linking to video with ID:", videoIdForLink);
 
   return (
     <Link 
-      to={`/video/${video.video_id}`}
+      to={`/video/${videoIdForLink}`}
       className="group block w-full"
+      onClick={() => console.log("Video link clicked:", videoIdForLink)}
     >
       <VideoCardThumbnail 
         thumbnail={video.thumbnail} 

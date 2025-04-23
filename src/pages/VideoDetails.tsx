@@ -31,6 +31,8 @@ const VideoDetails = () => {
     return <div className="p-4">Video ID not provided</div>;
   }
 
+  console.log("VideoDetails page received videoId:", videoId);
+
   // Pass the videoId directly to the query hooks
   const { data: video, isLoading: isLoadingVideo, error } = useVideoQuery(videoId);
   const { data: channelVideos } = useRelatedVideosQuery(video?.channel_id ?? "", video?.id ?? "");
