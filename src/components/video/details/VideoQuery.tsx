@@ -2,10 +2,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { YoutubeVideosTable, YoutubeChannelsTable } from "@/integrations/supabase/types";
+import { YoutubeVideosTable } from "@/integrations/supabase/types/youtube-videos";
 
 // Extended interface to include the youtube_channels property
-interface ExtendedYoutubeVideo extends YoutubeVideosTable['Row'] {
+interface ExtendedYoutubeVideo extends YoutubeVideosTable["Row"] {
   youtube_channels?: {
     thumbnail_url: string | null;
   };
