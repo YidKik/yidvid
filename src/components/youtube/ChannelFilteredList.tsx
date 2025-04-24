@@ -3,6 +3,7 @@ import { Search } from "lucide-react";
 import { ChannelSearch } from "@/components/youtube/ChannelSearch";
 import { ChannelListItem } from "@/components/youtube/ChannelListItem";
 import { YoutubeChannelsTable } from "@/integrations/supabase/types/youtube-channels";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface ChannelFilteredListProps {
   searchQuery: string;
@@ -11,6 +12,7 @@ interface ChannelFilteredListProps {
   hiddenChannels: Set<string>;
   onToggle: (channelId: string) => void;
   isLocked: boolean;
+  isLoading?: boolean;
 }
 
 export const ChannelFilteredList = ({
@@ -19,7 +21,8 @@ export const ChannelFilteredList = ({
   filteredChannels,
   hiddenChannels,
   onToggle,
-  isLocked
+  isLocked,
+  isLoading = false
 }: ChannelFilteredListProps) => {
   const handleSearch = (value: string) => {
     console.log("Search query changed to:", value);
@@ -40,7 +43,19 @@ export const ChannelFilteredList = ({
       </div>
 
       <div className="max-h-[250px] md:max-h-[350px] overflow-y-auto scrollbar-hide space-y-1 md:space-y-2">
-        {filteredChannels && filteredChannels.length > 0 ? (
+        {isLoading ? (
+          Array(5).fill(0).map((_, i) => (
+            <div key={i} className="p-3 border rounded-lg">
+              <div className="flex items-center gap-3">
+                <Skeleton className="h-8 w-8 rounded-full" />
+                <div className="space-y-2 flex-1">
+                  <Skeleton className="h-4 w-2/3" />
+                  <Skeleton className="h-3 w-1/2" />
+                </div>
+              </div>
+            </div>
+          ))
+        ) : filteredChannels && filteredChannels.length > 0 ? (
           filteredChannels.map((channel) => (
             <ChannelListItem
               key={channel.channel_id}

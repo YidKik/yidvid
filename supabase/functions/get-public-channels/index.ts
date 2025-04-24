@@ -1,70 +1,66 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import { corsHeaders } from '../_shared/cors.ts';
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.7.1";
+
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Content-Type': 'application/json'
+};
 
 serve(async (req) => {
-  // Handle CORS preflight requests
+  // Handle CORS preflight request
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, {
+      headers: corsHeaders,
+      status: 204,
+    });
   }
 
   try {
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    
-    const supabase = createClient(supabaseUrl, supabaseKey);
-    
-    // Parse query parameters if any
+    // Extract search query if present
     const url = new URL(req.url);
     const searchQuery = url.searchParams.get('search') || '';
-    
-    console.log("Edge function called to fetch channels", searchQuery ? `with search: ${searchQuery}` : "");
-    
-    // Create base query
-    let query = supabase
+
+    // Initialize Supabase client
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? 'https://euincktvsiuztsxcuqfd.supabase.co',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1aW5ja3R2c2l1enRzeGN1cWZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY0ODgzNzcsImV4cCI6MjA1MjA2NDM3N30.zbReqHoAR33QoCi_wqNp8AtNofTX3JebM7jvjFAWbMg'
+    );
+
+    // Build query
+    let query = supabaseClient
       .from('youtube_channels')
-      .select('id, channel_id, title, thumbnail_url, description')
+      .select('id, channel_id, title, description, thumbnail_url, created_at, updated_at')
       .is('deleted_at', null)
       .order('title');
-    
-    // Add search filter if provided
+
+    // Add search filter if search query present
     if (searchQuery) {
       query = query.ilike('title', `%${searchQuery}%`);
     }
-    
-    // Fetch channel data with service role key to bypass RLS
+
+    // Execute query with limit
     const { data, error } = await query.limit(100);
-    
+
     if (error) {
       console.error("Database error:", error);
-      throw error;
+      return new Response(
+        JSON.stringify({ error: 'Failed to fetch channels', details: error.message }),
+        { headers: corsHeaders, status: 500 }
+      );
     }
 
-    console.log(`Successfully fetched ${data?.length || 0} channels`);
-    
     return new Response(
-      JSON.stringify({
-        success: true,
-        data
-      }),
-      { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200
-      }
+      JSON.stringify({ data, success: true, count: data.length }),
+      { headers: corsHeaders, status: 200 }
     );
-  } catch (error) {
-    console.error('Error in get-public-channels:', error);
-    
+
+  } catch (err) {
+    console.error("Unexpected error:", err);
     return new Response(
-      JSON.stringify({
-        success: false,
-        error: error.message
-      }),
-      { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 500
-      }
+      JSON.stringify({ error: 'Unexpected error occurred', details: err.message }),
+      { headers: corsHeaders, status: 500 }
     );
   }
 });

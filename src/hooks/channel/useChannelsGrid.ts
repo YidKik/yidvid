@@ -14,14 +14,16 @@ export const useChannelsGrid = () => {
   const [manuallyFetchedChannels, setManuallyFetchedChannels] = useState<Channel[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [fetchError, setFetchError] = useState<Error | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const fetchChannelsDirectly = async (searchQuery: string = ""): Promise<Channel[]> => {
+  const fetchChannelsDirectly = async (searchTerm: string = ""): Promise<Channel[]> => {
     try {
-      console.log("Attempting to fetch channels directly...");
+      setIsLoading(true);
+      console.log("Attempting to fetch channels directly with search:", searchTerm);
       
       // First try with edge function which supports search
       try {
-        const urlWithSearch = `https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/get-public-channels${searchQuery ? `?search=${encodeURIComponent(searchQuery)}` : ''}`;
+        const urlWithSearch = `https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/get-public-channels${searchTerm ? `?search=${encodeURIComponent(searchTerm)}` : ''}`;
         console.log("Fetching from edge function:", urlWithSearch);
         
         const response = await fetch(urlWithSearch, {
@@ -37,7 +39,7 @@ export const useChannelsGrid = () => {
           if (result.data && Array.isArray(result.data) && result.data.length > 0) {
             console.log(`Retrieved ${result.data.length} channels with edge function`);
             setManuallyFetchedChannels(result.data);
-            setIsLoading(false);
+            setFetchError(null);
             return result.data;
           }
         }
@@ -50,8 +52,8 @@ export const useChannelsGrid = () => {
         .select("id, channel_id, title, thumbnail_url")
         .is("deleted_at", null);
         
-      if (searchQuery) {
-        query = query.ilike("title", `%${searchQuery}%`);
+      if (searchTerm) {
+        query = query.ilike("title", `%${searchTerm}%`);
       }
       
       const { data: channelsData, error: channelsError } = await query.limit(100);
@@ -59,7 +61,7 @@ export const useChannelsGrid = () => {
       if (!channelsError && channelsData && channelsData.length > 0) {
         console.log(`Successfully fetched ${channelsData.length} channels directly`);
         setManuallyFetchedChannels(channelsData);
-        setIsLoading(false);
+        setFetchError(null);
         return channelsData;
       }
       
@@ -71,8 +73,8 @@ export const useChannelsGrid = () => {
           .from("youtube_channels")
           .select("id, channel_id, title, thumbnail_url");
           
-        if (searchQuery) {
-          simplifiedQuery = simplifiedQuery.ilike("title", `%${searchQuery}%`);
+        if (searchTerm) {
+          simplifiedQuery = simplifiedQuery.ilike("title", `%${searchTerm}%`);
         }
         
         const { data: simplifiedData, error: simplifiedError } = await simplifiedQuery.limit(50);
@@ -80,21 +82,27 @@ export const useChannelsGrid = () => {
         if (!simplifiedError && simplifiedData && simplifiedData.length > 0) {
           console.log(`Retrieved ${simplifiedData.length} channels with simplified query`);
           setManuallyFetchedChannels(simplifiedData);
-          setIsLoading(false);
+          setFetchError(null);
           return simplifiedData;
         }
       }
       
       console.error("All channel fetch methods failed");
       setFetchError(new Error("Failed to fetch channels"));
-      setIsLoading(false);
       return [];
     } catch (err) {
       console.error("Error in fetchChannelsDirectly:", err);
       setFetchError(err instanceof Error ? err : new Error(String(err)));
-      setIsLoading(false);
       return [];
+    } finally {
+      setIsLoading(false);
     }
+  };
+
+  // Update search handler
+  const handleSearchChange = async (newQuery: string) => {
+    setSearchQuery(newQuery);
+    await fetchChannelsDirectly(newQuery);
   };
 
   useEffect(() => {
@@ -128,6 +136,8 @@ export const useChannelsGrid = () => {
     manuallyFetchedChannels,
     isLoading,
     setIsLoading,
-    fetchError
+    fetchError,
+    searchQuery,
+    setSearchQuery: handleSearchChange
   };
 };

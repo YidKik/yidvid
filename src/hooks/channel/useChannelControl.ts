@@ -1,7 +1,9 @@
+
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useChannelsGrid } from "./useChannelsGrid";
 
 export const useChannelControl = () => {
   const [hiddenChannels, setHiddenChannels] = useState<Set<string>>(new Set());
@@ -11,6 +13,22 @@ export const useChannelControl = () => {
   const [showSetPinDialog, setShowSetPinDialog] = useState(false);
   const [pin, setPin] = useState("");
   const [storedPin, setStoredPin] = useState("");
+  
+  // Use our enhanced channels grid hook
+  const { 
+    manuallyFetchedChannels: channels, 
+    isLoading, 
+    fetchError, 
+    searchQuery: gridSearchQuery,
+    setSearchQuery: setGridSearchQuery
+  } = useChannelsGrid();
+
+  // Sync the search queries
+  useEffect(() => {
+    if (gridSearchQuery !== searchQuery) {
+      setGridSearchQuery(searchQuery);
+    }
+  }, [searchQuery, gridSearchQuery, setGridSearchQuery]);
 
   const loadLockStatus = async () => {
     const { data: { session } } = await supabase.auth.getSession();
@@ -50,59 +68,6 @@ export const useChannelControl = () => {
     loadHiddenChannels();
     loadLockStatus();
   }, []);
-
-  const { data: channels, isLoading } = useQuery({
-    queryKey: ["youtube-channels", searchQuery],
-    queryFn: async () => {
-      try {
-        const response = await fetch(
-          `https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/get-public-channels${searchQuery ? `?search=${encodeURIComponent(searchQuery)}` : ''}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1aW5ja3R2c2l1enRzeGN1cWZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY0ODgzNzcsImV4cCI6MjA1MjA2NDM3N30.zbReqHoAR33QoCi_wqNp8AtNofTX3JebM7jvjFAWbMg`
-            }
-          }
-        );
-        
-        if (response.ok) {
-          const result = await response.json();
-          if (result.data && Array.isArray(result.data)) {
-            return result.data;
-          }
-        } else {
-          console.warn("Edge function response not OK:", response.statusText);
-        }
-        
-        let query = supabase
-          .from("youtube_channels")
-          .select("*")
-          .is("deleted_at", null)
-          .order("title", { ascending: true });
-          
-        if (searchQuery) {
-          query = query.ilike("title", `%${searchQuery}%`);
-        }
-        
-        const { data, error } = await query;
-
-        if (error) {
-          console.error("Error fetching channels:", error);
-          toast.error("Failed to load channels");
-          return [];
-        }
-
-        return data || [];
-      } catch (err) {
-        console.error("Error in channel query:", err);
-        toast.error("Failed to load channels");
-        return [];
-      }
-    },
-    staleTime: 1000 * 60 * 5, // 5 minutes
-    refetchOnWindowFocus: false,
-  });
 
   const toggleChannel = async (channelId: string) => {
     if (isLocked) {
@@ -244,6 +209,7 @@ export const useChannelControl = () => {
     setShowLockDialog(false);
   };
 
+  // Filter the channels based on search query
   const filteredChannels = channels || [];
 
   return {

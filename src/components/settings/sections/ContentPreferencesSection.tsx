@@ -1,8 +1,10 @@
+
 import { Card } from "@/components/ui/card";
 import { ChannelSubscriptions } from "@/components/youtube/ChannelSubscriptions";
 import { ChannelControl } from "@/components/youtube/ChannelPreferences";
 import { PlaybackSettings } from "@/components/settings/PlaybackSettings";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useAuth } from "@/hooks/useAuth";
 
 interface ContentPreferencesSectionProps {
   userId: string | null;
@@ -16,6 +18,8 @@ export const ContentPreferencesSection = ({
   setAutoplay,
 }: ContentPreferencesSectionProps) => {
   const isMobile = useIsMobile();
+  const { isAuthenticated, session } = useAuth();
+  const currentUserId = session?.user?.id || userId;
   
   return (
     <div className="space-y-6 md:space-y-8">
@@ -23,8 +27,8 @@ export const ContentPreferencesSection = ({
       
       <div>
         <h3 className={`${isMobile ? 'text-base' : 'text-xl'} font-semibold mb-3 md:mb-4`}>Channel Subscriptions</h3>
-        {userId ? (
-          <ChannelSubscriptions userId={userId} />
+        {currentUserId ? (
+          <ChannelSubscriptions userId={currentUserId} />
         ) : (
           <Card className={`${isMobile ? 'p-3 text-sm' : 'p-6'}`}>
             <p className="text-muted-foreground">Please sign in to manage your subscriptions.</p>

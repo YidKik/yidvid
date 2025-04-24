@@ -13,6 +13,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useAuth } from "@/hooks/useAuth";
 
 interface ChannelSubscription {
   channel: {
@@ -26,24 +27,7 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  useEffect(() => {
-    const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setIsAuthenticated(!!session);
-    };
-
-    checkAuth();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      setIsAuthenticated(!!session);
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, []);
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
 
   useEffect(() => {
     const checkScrollability = () => {
@@ -61,7 +45,7 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
     return () => window.removeEventListener('resize', checkScrollability);
   }, []);
 
-  const { data: subscriptions, refetch } = useQuery({
+  const { data: subscriptions, refetch, isLoading } = useQuery({
     queryKey: ["channel-subscriptions", userId],
     queryFn: async () => {
       if (!userId) return [];
@@ -131,6 +115,22 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
     );
   };
 
+  if (authLoading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-2xl font-semibold flex items-center gap-2">
+            <Bell className="w-5 h-5 text-primary" />
+            Channel Subscriptions
+          </CardTitle>
+          <CardDescription>
+            Loading authentication status...
+          </CardDescription>
+        </CardHeader>
+      </Card>
+    );
+  }
+
   if (!isAuthenticated) {
     return (
       <Card>
@@ -147,7 +147,7 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
     );
   }
 
-  if (!subscriptions) {
+  if (isLoading) {
     return (
       <Card>
         <CardHeader>
