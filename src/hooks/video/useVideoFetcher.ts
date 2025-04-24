@@ -1,111 +1,80 @@
+import { useState, useCallback } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { VideoData } from "./types/video-fetcher";
+import { formatVideoData } from "./utils/database";
+import { toast } from "sonner";
 
-import { useState, useEffect, useCallback } from "react";
-import { VideoData, VideoFetcherResult } from "./types/video-fetcher";
-import { checkAndClearStaleCache, shouldFetchNewVideos } from "./utils/cache-manager";
-import { fetchAllVideosOperation, forceRefetchOperation } from "./utils/video-operations";
-
-/**
- * Hook with functionality to fetch all videos from the database
- * and trigger edge function for fetching new videos
- */
-export const useVideoFetcher = (): VideoFetcherResult => {
+export const useVideoFetcher = () => {
   const [fetchAttempts, setFetchAttempts] = useState(0);
   const [lastSuccessfulFetch, setLastSuccessfulFetch] = useState<Date | null>(null);
-  const [lastCacheCheck, setLastCacheCheck] = useState<Date | null>(null);
 
-  // Effect to check cache freshness periodically, but with rate limiting
-  useEffect(() => {
-    // Get the timestamp of when we last cleared the cache
-    const lastCacheClearTime = localStorage.getItem('lastCacheClearTime');
-    const now = new Date().getTime();
-    
-    // Only check cache if it hasn't been cleared in the last 10 minutes
-    if (!lastCacheClearTime || (now - parseInt(lastCacheClearTime)) > 10 * 60 * 1000) {
-      // Check cache freshness on mount
-      checkAndClearStaleCache(lastCacheCheck, lastSuccessfulFetch, setLastCacheCheck);
+  const forceRefetch = useCallback(async (): Promise<any> => {
+    try {
+      console.log("Force refetching all videos...");
       
-      // Record this cache check
-      localStorage.setItem('lastCacheClearTime', now.toString());
-    } else {
-      console.log("Skipping cache check due to recent clear");
-    }
-    
-    // Set up periodic check (every 30 minutes) with rate limiting
-    const intervalId = setInterval(() => {
-      const currentTime = new Date().getTime();
-      const lastClear = localStorage.getItem('lastCacheClearTime');
+      // Clear local storage to force a refresh from the server
+      localStorage.removeItem('supabase.cache.youtube_videos');
       
-      // Only perform cache check if it's been at least 30 minutes since last clear
-      if (!lastClear || (currentTime - parseInt(lastClear)) > 30 * 60 * 1000) {
-        checkAndClearStaleCache(lastCacheCheck, lastSuccessfulFetch, setLastCacheCheck);
-        localStorage.setItem('lastCacheClearTime', currentTime.toString());
+      const { data, error } = await supabase
+        .from("youtube_videos")
+        .select("*, youtube_channels(thumbnail_url)")
+        .is("deleted_at", null)
+        .order("uploaded_at", { ascending: false })
+        .limit(150);  // Limit to prevent large dataset issues
+
+      if (error) {
+        console.error("Error force refetching videos:", error);
+        throw error;
       }
-    }, 30 * 60 * 1000);
-    
-    return () => clearInterval(intervalId);
-  }, [lastCacheCheck, lastSuccessfulFetch]);
 
-  // Reset excessive fetch attempts counter
-  useEffect(() => {
-    // If we somehow have an extremely high fetch attempt count, reset it
-    // This prevents the infinite loop of fetch attempts
-    if (fetchAttempts > 20) {
-      console.log("Resetting excessive fetch attempts counter");
+      const formatted = formatVideoData(data);
+      setLastSuccessfulFetch(new Date());
       setFetchAttempts(0);
+      return formatted;
+    } catch (err: any) {
+      console.error("Error in force refetch:", err);
+      toast.error("Failed to refresh content", {
+        description: err.message,
+        duration: 5000
+      });
+      setFetchAttempts(prev => prev + 1);
+      return [];
+    }
+  }, []);
+
+  const fetchAllVideos = async (): Promise<VideoData[]> => {
+    try {
+      console.log("Fetching all videos");
       
-      // Record this in localStorage to prevent immediate resets
-      localStorage.setItem('fetchAttemptsReset', new Date().getTime().toString());
-    }
-  }, [fetchAttempts]);
+      const { data, error } = await supabase
+        .from("youtube_videos")
+        .select("*, youtube_channels(thumbnail_url)")
+        .is("deleted_at", null)
+        .order("uploaded_at", { ascending: false })
+        .limit(150);  // Limit to prevent large dataset issues
 
-  // Memoize fetchAllVideos to avoid recreating on each render
-  const fetchAllVideos = useCallback(async (): Promise<VideoData[]> => {
-    // Check if we've reset attempts recently to prevent feedback loops
-    const lastReset = localStorage.getItem('fetchAttemptsReset');
-    const now = new Date().getTime();
-    
-    // If we reset recently and still have high attempts, just return empty to break the cycle
-    if (lastReset && (now - parseInt(lastReset) < 5 * 60 * 1000) && fetchAttempts > 10) {
-      console.log("Breaking fetch cycle due to recent reset and still high attempt count");
-      return [];
-    }
-    
-    // Use a modified fetchAttempts that caps at 10 to prevent excessive resource usage
-    const limitedAttempts = Math.min(fetchAttempts, 10);
-    
-    return fetchAllVideosOperation(
-      limitedAttempts, 
-      setFetchAttempts, 
-      setLastSuccessfulFetch
-    );
-  }, [fetchAttempts]);
+      if (error) {
+        console.error("Error fetching videos:", error);
+        throw error;
+      }
 
-  // Memoize forceRefetch to avoid recreating on each render
-  const forceRefetch = useCallback(async (): Promise<VideoData[]> => {
-    // Add rate limiting for force refreshes
-    const lastForceRefresh = localStorage.getItem('lastForceRefresh');
-    const now = new Date().getTime();
-    
-    if (lastForceRefresh && (now - parseInt(lastForceRefresh) < 60 * 1000)) {
-      console.log("Force refresh limited - last refresh was less than 1 minute ago");
-      return [];
+      const formatted = formatVideoData(data);
+      setLastSuccessfulFetch(new Date());
+      setFetchAttempts(0);
+      return formatted;
+
+    } catch (err) {
+      console.error("Error fetching videos:", err);
+      setFetchAttempts(prev => prev + 1);
+      throw err;
     }
-    
-    // Record this force refresh
-    localStorage.setItem('lastForceRefresh', now.toString());
-    
-    return forceRefetchOperation(fetchAllVideos, setFetchAttempts);
-  }, [fetchAllVideos]);
+  };
 
   return {
     fetchAllVideos,
     forceRefetch,
     fetchAttempts,
     lastSuccessfulFetch,
-    setFetchAttempts,
-    setLastSuccessfulFetch
+    setFetchAttempts
   };
 };
-
-// Re-export VideoData type for convenience
-export type { VideoData } from "./types/video-fetcher";
