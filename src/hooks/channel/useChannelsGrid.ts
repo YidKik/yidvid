@@ -8,7 +8,6 @@ export interface Channel {
   channel_id: string;
   title: string;
   thumbnail_url?: string | null;
-  description?: string | null;
 }
 
 export const useChannelsGrid = () => {
@@ -16,23 +15,16 @@ export const useChannelsGrid = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [fetchError, setFetchError] = useState<Error | null>(null);
 
-  const fetchChannelsDirectly = async (searchQuery: string = ""): Promise<Channel[]> => {
+  const fetchChannelsDirectly = async (): Promise<Channel[]> => {
     try {
-      console.log(`Attempting to fetch channels directly with search: "${searchQuery}"`);
+      console.log("Attempting to fetch channels directly...");
       
-      // Build the query
-      let queryBuilder = supabase
+      // First try regular database query (may fail due to RLS)
+      const { data: channelsData, error: channelsError } = await supabase
         .from("youtube_channels")
-        .select("id, channel_id, title, thumbnail_url, description")
-        .is("deleted_at", null);
-        
-      // Add search filter if provided
-      if (searchQuery) {
-        queryBuilder = queryBuilder.ilike("title", `%${searchQuery}%`);
-      }
-      
-      // Execute with limit
-      const { data: channelsData, error: channelsError } = await queryBuilder.limit(100);
+        .select("id, channel_id, title, thumbnail_url")
+        .is("deleted_at", null)
+        .limit(100);
         
       if (!channelsError && channelsData && channelsData.length > 0) {
         console.log(`Successfully fetched ${channelsData.length} channels directly`);
@@ -47,12 +39,7 @@ export const useChannelsGrid = () => {
         // Try fallback with edge function to bypass RLS
         try {
           console.log("Trying edge function to fetch channels...");
-          const url = new URL("https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/get-public-channels");
-          if (searchQuery) {
-            url.searchParams.append("search", searchQuery);
-          }
-          
-          const response = await fetch(url.toString(), {
+          const response = await fetch("https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/get-public-channels", {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
@@ -79,25 +66,14 @@ export const useChannelsGrid = () => {
       // Final fallback - try simplified query
       const { data: simplifiedData, error: simplifiedError } = await supabase
         .from("youtube_channels")
-        .select("id, channel_id, title, thumbnail_url, description")
+        .select("id, channel_id, title, thumbnail_url")
         .limit(50);
         
       if (!simplifiedError && simplifiedData && simplifiedData.length > 0) {
         console.log(`Retrieved ${simplifiedData.length} channels with simplified query`);
-        
-        // Apply search filter if needed
-        if (searchQuery) {
-          const filtered = simplifiedData.filter(channel => 
-            channel.title.toLowerCase().includes(searchQuery.toLowerCase())
-          );
-          setManuallyFetchedChannels(filtered);
-          setIsLoading(false);
-          return filtered;
-        } else {
-          setManuallyFetchedChannels(simplifiedData);
-          setIsLoading(false);
-          return simplifiedData;
-        }
+        setManuallyFetchedChannels(simplifiedData);
+        setIsLoading(false);
+        return simplifiedData;
       }
       
       console.error("All channel fetch methods failed");

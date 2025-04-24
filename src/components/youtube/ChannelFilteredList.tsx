@@ -3,9 +3,6 @@ import { Search } from "lucide-react";
 import { ChannelSearch } from "@/components/youtube/ChannelSearch";
 import { ChannelListItem } from "@/components/youtube/ChannelListItem";
 import { YoutubeChannelsTable } from "@/integrations/supabase/types/youtube-channels";
-import { useState, useEffect } from "react";
-import { ChannelDataProvider } from "@/components/youtube/grid/ChannelDataProvider";
-import { Channel } from "@/hooks/channel/useChannelsGrid";
 
 interface ChannelFilteredListProps {
   searchQuery: string;
@@ -19,7 +16,7 @@ interface ChannelFilteredListProps {
 export const ChannelFilteredList = ({
   searchQuery,
   setSearchQuery,
-  filteredChannels: externalFilteredChannels,
+  filteredChannels,
   hiddenChannels,
   onToggle,
   isLocked
@@ -37,26 +34,16 @@ export const ChannelFilteredList = ({
         </div>
       </div>
 
-      <ChannelDataProvider searchQuery={searchQuery}>
-        {({ displayChannels, isLoading }) => (
-          <div className="max-h-[250px] md:max-h-[350px] overflow-y-auto scrollbar-hide space-y-1 md:space-y-2">
-            {isLoading ? (
-              <div className="p-4 text-center text-muted-foreground">Loading channels...</div>
-            ) : displayChannels.length === 0 ? (
-              <div className="p-4 text-center text-muted-foreground">No channels found</div>
-            ) : (
-              displayChannels.map((channel) => (
-                <ChannelListItem
-                  key={channel.channel_id}
-                  channel={channel}
-                  isHidden={hiddenChannels.has(channel.channel_id)}
-                  onToggle={onToggle}
-                />
-              ))
-            )}
-          </div>
-        )}
-      </ChannelDataProvider>
+      <div className="max-h-[250px] md:max-h-[350px] overflow-y-auto scrollbar-hide space-y-1 md:space-y-2">
+        {filteredChannels?.map((channel) => (
+          <ChannelListItem
+            key={channel.channel_id}
+            channel={channel}
+            isHidden={hiddenChannels.has(channel.channel_id)}
+            onToggle={onToggle}
+          />
+        ))}
+      </div>
     </div>
   );
 };
