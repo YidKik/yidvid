@@ -110,42 +110,40 @@ Deno.serve(async (req) => {
 
     try {
       const response = await fetch(apiUrl, options);
-      const data: YouTubeApiResponse = await response.json();
       
-      // Handle API errors
+      // Before parsing JSON, handle fetch error cases
       if (!response.ok) {
-        console.error('YouTube API error response:', data);
-        const statusText = response.statusText || 'Unknown Error';
-        const errorMessage = data.error?.message || statusText;
+        console.error('YouTube API fetch error:', response.status, response.statusText);
+        const errorText = await response.text();
+        console.error('Error response body:', errorText);
         
-        // Check if this is a quota exceeded error
-        const isQuotaError = errorMessage.includes('quota') || 
-                            response.status === 403 ||
-                            JSON.stringify(data).toLowerCase().includes('quota');
-        
-        if (isQuotaError) {
-          return new Response(
-            JSON.stringify({ error: 'YouTube API quota exceeded. Please try again tomorrow.' }),
-            { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 429 }
-          );
-        }
-
-        // Check if this is a forbidden error (API key restrictions)
-        const isForbidden = response.status === 403 || errorMessage.toLowerCase().includes('forbidden');
-        if (isForbidden) {
-          console.error('YouTube API access forbidden:', errorMessage);
+        // Handle specific error cases
+        if (response.status === 403) {
           return new Response(
             JSON.stringify({ error: 'YouTube API access forbidden. This may be due to API key restrictions.' }),
             { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 403 }
           );
         }
         
+        if (response.status === 404) {
+          return new Response(
+            JSON.stringify({ error: 'Channel not found. Check if the ID or handle is correct.' }),
+            { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 404 }
+          );
+        }
+        
+        // Generic error response
         return new Response(
-          JSON.stringify({ error: `YouTube API error: ${errorMessage}` }),
-          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+          JSON.stringify({ 
+            error: `YouTube API error: ${response.status} ${response.statusText}`,
+            details: errorText
+          }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: response.status }
         );
       }
-
+      
+      const data: YouTubeApiResponse = await response.json();
+      
       if (!data.items || data.items.length === 0) {
         console.error('No channel found:', data);
         return new Response(

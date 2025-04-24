@@ -25,7 +25,8 @@ export async function fetchChannelVideos(
       console.error(`[YouTube Videos] Channel API error for ${channelId}:`, errorText);
       
       // Check for quota exceeded
-      if (errorText.includes('quotaExceeded')) {
+      if (errorText.includes('quotaExceeded') || channelResponse.status === 403) {
+        console.error('YouTube API quota exceeded');
         return { videos: [], quotaExceeded: true };
       }
       
@@ -72,7 +73,8 @@ export async function fetchChannelVideos(
       console.error(`[YouTube Videos] Playlist API error for channel ${channelId}:`, errorText);
       
       // Check for quota exceeded
-      if (errorText.includes('quotaExceeded')) {
+      if (errorText.includes('quotaExceeded') || response.status === 403) {
+        console.error('YouTube API quota exceeded');
         return { videos: [], quotaExceeded: true };
       }
       
@@ -112,7 +114,8 @@ export async function fetchChannelVideos(
       console.error(`[YouTube Videos] Statistics API error for channel ${channelId}:`, errorText);
       
       // Check for quota exceeded
-      if (errorText.includes('quotaExceeded')) {
+      if (errorText.includes('quotaExceeded') || statsResponse.status === 403) {
+        console.error('YouTube API quota exceeded');
         return { videos: [], quotaExceeded: true };
       }
       
