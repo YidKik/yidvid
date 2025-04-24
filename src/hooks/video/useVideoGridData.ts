@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -10,7 +11,7 @@ export interface VideoGridItem {
   channelId: string;
   views: number | null;
   uploadedAt: string | Date;
-  channelThumbnail?: string; // Keep the channelThumbnail as an optional property
+  channelThumbnail?: string;
 }
 
 export const useVideoGridData = (maxVideos: number = 12) => {
@@ -24,7 +25,6 @@ export const useVideoGridData = (maxVideos: number = 12) => {
       try {
         console.log(`Fetching up to ${maxVideos} videos from Supabase`);
         
-        // Join with youtube_channels to get the channel thumbnail
         const { data, error } = await supabase
           .from("youtube_videos")
           .select(`
@@ -34,7 +34,7 @@ export const useVideoGridData = (maxVideos: number = 12) => {
             )
           `)
           .is("deleted_at", null)
-          .order("uploaded_at", { ascending: false })  // Explicitly sort by newest first
+          .order("created_at", { ascending: false })  // Changed from uploaded_at to created_at
           .limit(maxVideos);
         
         if (error) {

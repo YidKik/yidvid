@@ -50,8 +50,8 @@ export const useVideoFetcher = () => {
         .from("youtube_videos")
         .select("*, youtube_channels(thumbnail_url)")
         .is("deleted_at", null)
-        .order("uploaded_at", { ascending: false })
-        .limit(150);  // Limit to prevent large dataset issues
+        .order("created_at", { ascending: false })  // Changed from uploaded_at to created_at
+        .limit(150);
 
       if (error) {
         console.error("Error fetching videos:", error);
