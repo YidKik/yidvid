@@ -1,59 +1,54 @@
 
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.47.0';
+import { corsHeaders } from '../_shared/cors.ts';
 
-// Define CORS headers
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+// Get environment variables
+const supabaseUrl = Deno.env.get('SUPABASE_URL') || '';
+const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
 
-serve(async (req) => {
+// This is a service function, so we can bypass RLS with service role key
+const supabase = createClient(supabaseUrl, serviceRoleKey);
+
+Deno.serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
+    // Get the userId from the request body
     const { userId } = await req.json();
     
     if (!userId) {
       return new Response(
-        JSON.stringify({ error: 'userId is required' }),
+        JSON.stringify({ error: 'User ID is required' }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
       );
     }
 
-    // Get Supabase client with admin privileges to bypass RLS
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    console.log('Checking admin status for user:', userId);
     
-    // Check if the user is an admin
+    // Query the profiles table directly with service role to bypass RLS
     const { data, error } = await supabase
       .from('profiles')
       .select('is_admin')
       .eq('id', userId)
       .maybeSingle();
-    
+      
     if (error) {
-      console.error('Error checking admin status:', error);
-      return new Response(
-        JSON.stringify({ error: error.message }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
-      );
+      console.error('Error querying admin status:', error);
+      throw error;
     }
-
+    
+    const isAdmin = !!data?.is_admin;
+    console.log('Admin check result:', isAdmin);
+    
     return new Response(
-      JSON.stringify({ 
-        isAdmin: data?.is_admin === true,
-        userId: userId
-      }),
+      JSON.stringify({ isAdmin }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
     );
   } catch (error) {
-    console.error('Unexpected error:', error);
-    
+    console.error('Error in check-admin-status:', error);
     return new Response(
       JSON.stringify({ error: error.message }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }

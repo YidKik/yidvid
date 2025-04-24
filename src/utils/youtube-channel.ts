@@ -17,22 +17,60 @@ export const checkAdminStatus = async () => {
       throw new Error("You must be signed in to add channels");
     }
 
-    const { data: profile, error: profileError } = await supabase
-      .from("profiles")
-      .select("is_admin")
-      .eq("id", session.user.id)
-      .single();
+    // Modified approach to fetch admin status with better error handling
+    try {
+      const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("is_admin")
+        .eq("id", session.user.id)
+        .maybeSingle();
 
-    if (profileError) {
-      console.error("Profile fetch error:", profileError);
-      throw new Error("Error fetching user profile");
+      if (profileError) {
+        console.error("Profile fetch error:", profileError);
+        
+        // Try alternative query with minimal fields
+        const { data: altProfile, error: altError } = await supabase
+          .from("profiles")
+          .select("id, is_admin")
+          .eq("id", session.user.id)
+          .maybeSingle();
+          
+        if (altError || !altProfile?.is_admin) {
+          console.error("Alternative profile fetch error:", altError);
+          throw new Error("You don't have permission to add channels");
+        }
+        
+        return true;
+      }
+
+      if (!profile?.is_admin) {
+        throw new Error("You don't have permission to add channels");
+      }
+
+      return true;
+    } catch (profileError) {
+      console.error("Profile check error:", profileError);
+      
+      // As a last resort, try using the edge function
+      try {
+        const { data: adminCheck, error: adminCheckError } = await supabase.functions.invoke('check-admin-status', {
+          body: { userId: session.user.id },
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+            apikey: SUPABASE_ANON_KEY
+          }
+        });
+        
+        if (adminCheckError || !adminCheck?.isAdmin) {
+          throw new Error("You don't have permission to add channels");
+        }
+        
+        return true;
+      } catch (edgeFunctionError) {
+        console.error("Edge function error:", edgeFunctionError);
+        throw new Error("Error verifying admin permissions. Please try again later.");
+      }
     }
-
-    if (!profile?.is_admin) {
-      throw new Error("You don't have permission to add channels");
-    }
-
-    return true;
   } catch (error) {
     console.error("Admin check error:", error);
     throw error;
