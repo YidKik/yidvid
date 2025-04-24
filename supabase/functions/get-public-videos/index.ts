@@ -16,15 +16,46 @@ Deno.serve(async (req) => {
   }
 
   try {
-    // Get video_id from URL parameters
+    // Get parameters from URL
     const url = new URL(req.url);
     const videoId = url.searchParams.get('video_id');
+    const channelId = url.searchParams.get('channel_id');
     
-    console.log("Edge function called to fetch video:", videoId);
+    console.log("Edge function called to fetch video:", videoId, "or channel videos:", channelId);
 
     let queryResponse;
     
-    if (videoId) {
+    // If channel_id is provided, fetch videos for that channel
+    if (channelId) {
+      console.log("Fetching videos for channel:", channelId);
+      
+      // Bypass RLS by using service role
+      const { data, error } = await supabase
+        .from('youtube_videos')
+        .select('*')
+        .eq('channel_id', channelId)
+        .is('deleted_at', null)
+        .order('uploaded_at', { ascending: false });
+      
+      if (error) {
+        throw error;
+      }
+      
+      console.log(`Edge function found ${data?.length || 0} videos for channel ${channelId}`);
+      
+      return new Response(
+        JSON.stringify({
+          data,
+          status: 'success',
+        }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 200,
+        }
+      );
+    }
+    // Handle video_id case (existing functionality)
+    else if (videoId) {
       // First try direct match with video_id or UUID
       queryResponse = await supabase
         .from('youtube_videos')

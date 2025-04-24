@@ -21,6 +21,11 @@ export const useVideoManagement = (channelId: string) => {
     setVideoToDelete,
   } = useVideoDelete(refetch);
 
+  // Log more information about the error for debugging
+  if (isError) {
+    console.error("Error loading videos:", error);
+  }
+
   return {
     videos,
     isLoading,
