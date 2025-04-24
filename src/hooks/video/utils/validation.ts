@@ -3,9 +3,12 @@ import { VideoData } from "../types/video-fetcher";
 
 /**
  * Check if the array of videos contains real videos (not samples)
- * with improved performance
+ * with improved performance, skipping check if user is logged in
  */
-export const hasRealVideos = (videos?: VideoData[] | null): boolean => {
+export const hasRealVideos = (videos?: VideoData[] | null, isAuthenticated?: boolean): boolean => {
+  // If user is authenticated, assume videos are real
+  if (isAuthenticated) return true;
+  
   if (!videos || videos.length === 0) return false;
   
   // Check just the first few videos to determine if they're real (more efficient)

@@ -7,6 +7,7 @@ import { useVideoQuery } from "./useVideoQuery";
 import { useInitialVideoLoad } from "./useInitialVideoLoad";
 import { hasRealVideos, createSampleVideos } from "./utils/validation";
 import { VideoData } from "./types/video-fetcher";
+import { useSessionManager } from "@/hooks/useSessionManager";
 
 export interface UseVideosResult {
   data: VideoData[];
@@ -23,6 +24,7 @@ export interface UseVideosResult {
 export const useVideos = (): UseVideosResult => {
   const [authState, setAuthState] = useState<string | null>(null);
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
+  const { session } = useSessionManager();
   
   // Set up real-time subscription for video changes
   useVideoRealtime();
@@ -64,8 +66,8 @@ export const useVideos = (): UseVideosResult => {
     setIsRefreshing
   });
 
-  // Always ensure we have some data to display
-  const ensuredData = hasRealVideos(data) ? data : (data?.length ? data : createSampleVideos());
+  // Only use sample data when not authenticated
+  const ensuredData = hasRealVideos(data, !!session) ? data : (data?.length ? data : createSampleVideos());
 
   return {
     data: ensuredData,

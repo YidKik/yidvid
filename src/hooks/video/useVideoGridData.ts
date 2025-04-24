@@ -14,7 +14,7 @@ export interface VideoGridItem {
   channelThumbnail?: string;
 }
 
-export const useVideoGridData = (maxVideos: number = 12) => {
+export const useVideoGridData = (maxVideos: number = 12, isAuthenticated: boolean = false) => {
   const [videos, setVideos] = useState<VideoGridItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
@@ -23,6 +23,12 @@ export const useVideoGridData = (maxVideos: number = 12) => {
     const fetchVideos = async () => {
       setLoading(true);
       try {
+        // Skip fetching if not authenticated
+        if (!isAuthenticated) {
+          setLoading(false);
+          return;
+        }
+
         console.log(`Fetching up to ${maxVideos} videos from Supabase`);
         
         const { data, error } = await supabase
@@ -34,7 +40,7 @@ export const useVideoGridData = (maxVideos: number = 12) => {
             )
           `)
           .is("deleted_at", null)
-          .order("created_at", { ascending: false })  // Changed from uploaded_at to created_at
+          .order("created_at", { ascending: false })
           .limit(maxVideos);
         
         if (error) {
@@ -45,7 +51,6 @@ export const useVideoGridData = (maxVideos: number = 12) => {
         console.log(`Successfully fetched ${data?.length || 0} videos`);
         
         // Map the Supabase data to match our VideoGridItem interface
-        // Ensure we handle the views field and channel_thumbnail properly
         const mappedVideos = data.map(video => ({
           id: video.id,
           video_id: video.video_id,
@@ -55,14 +60,13 @@ export const useVideoGridData = (maxVideos: number = 12) => {
           channelId: video.channel_id || "unknown-channel",
           views: video.views !== null ? parseInt(String(video.views)) : null,
           uploadedAt: video.uploaded_at || new Date().toISOString(),
-          channelThumbnail: video.youtube_channels?.thumbnail_url || null, // Correctly access nested property
+          channelThumbnail: video.youtube_channels?.thumbnail_url || null,
         }));
         
         setVideos(mappedVideos);
       } catch (err) {
         console.error("Error in useVideoGridData:", err);
         setError(err instanceof Error ? err : new Error(String(err)));
-        // Still set videos to empty array to avoid undefined errors
         setVideos([]);
       } finally {
         setLoading(false);
@@ -70,7 +74,7 @@ export const useVideoGridData = (maxVideos: number = 12) => {
     };
 
     fetchVideos();
-  }, [maxVideos]);
+  }, [maxVideos, isAuthenticated]);
 
   return { videos, loading, error };
 };
