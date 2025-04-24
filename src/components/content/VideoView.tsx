@@ -3,7 +3,7 @@ import { VideoGrid } from "@/components/VideoGrid";
 import { VideoGridPagination } from "@/components/video/VideoGridPagination";
 import { MostViewedVideos } from "@/components/video/MostViewedVideos";
 import { ChannelsGrid } from "@/components/youtube/ChannelsGrid";
-import { VideoData } from "@/hooks/video/useVideoFetcher";
+import { VideoData } from "@/hooks/video/types/video-fetcher";
 import { useVideoPagination } from "@/hooks/video/useVideoPagination";
 
 export interface VideoViewProps {

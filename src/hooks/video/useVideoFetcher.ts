@@ -1,3 +1,4 @@
+
 import { useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { VideoData } from "./types/video-fetcher";
@@ -19,7 +20,7 @@ export const useVideoFetcher = () => {
         .from("youtube_videos")
         .select("*, youtube_channels(thumbnail_url)")
         .is("deleted_at", null)
-        .order("uploaded_at", { ascending: false })
+        .order("created_at", { ascending: false })  // Changed from uploaded_at to created_at
         .limit(150);  // Limit to prevent large dataset issues
 
       if (error) {
@@ -75,6 +76,7 @@ export const useVideoFetcher = () => {
     forceRefetch,
     fetchAttempts,
     lastSuccessfulFetch,
-    setFetchAttempts
+    setFetchAttempts,
+    setLastSuccessfulFetch
   };
 };

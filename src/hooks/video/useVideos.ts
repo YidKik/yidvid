@@ -1,11 +1,12 @@
 
 import { useState } from "react";
 import { useVideoRealtime } from "./useVideoRealtime";
-import { useVideoFetcher, VideoData } from "./useVideoFetcher";
+import { useVideoFetcher } from "./useVideoFetcher";
 import { useAuthStateListener } from "./useAuthStateListener";
 import { useVideoQuery } from "./useVideoQuery";
 import { useInitialVideoLoad } from "./useInitialVideoLoad";
 import { hasRealVideos, createSampleVideos } from "./utils/validation";
+import { VideoData } from "./types/video-fetcher";
 
 export interface UseVideosResult {
   data: VideoData[];
