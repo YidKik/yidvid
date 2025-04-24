@@ -1,4 +1,5 @@
 
+import { useState } from "react";
 import { useChannelVideos } from "./useChannelVideos";
 import { useVideoDelete } from "./useVideoDelete";
 import { toast } from "sonner";
@@ -9,7 +10,8 @@ export const useVideoManagement = (channelId: string) => {
     data: videos, 
     refetch, 
     isError, 
-    isLoading 
+    isLoading,
+    error
   } = useChannelVideos(channelId);
 
   const {
@@ -23,6 +25,7 @@ export const useVideoManagement = (channelId: string) => {
     videos,
     isLoading,
     isError,
+    error,
     isDeleting,
     videoToDelete,
     refetch,
