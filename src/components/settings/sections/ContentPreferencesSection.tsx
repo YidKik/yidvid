@@ -27,7 +27,7 @@ export const ContentPreferencesSection = ({
       
       <div>
         <h3 className={`${isMobile ? 'text-base' : 'text-xl'} font-semibold mb-3 md:mb-4`}>Channel Subscriptions</h3>
-        {currentUserId ? (
+        {isAuthenticated && currentUserId ? (
           <ChannelSubscriptions userId={currentUserId} />
         ) : (
           <Card className={`${isMobile ? 'p-3 text-sm' : 'p-6'}`}>

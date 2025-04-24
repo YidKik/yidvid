@@ -1,9 +1,9 @@
 
 import { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useChannelsGrid } from "./useChannelsGrid";
+import { useAuth } from "@/hooks/useAuth";
 
 export const useChannelControl = () => {
   const [hiddenChannels, setHiddenChannels] = useState<Set<string>>(new Set());
@@ -13,6 +13,7 @@ export const useChannelControl = () => {
   const [showSetPinDialog, setShowSetPinDialog] = useState(false);
   const [pin, setPin] = useState("");
   const [storedPin, setStoredPin] = useState("");
+  const { isAuthenticated, session } = useAuth();
   
   // Use our enhanced channels grid hook
   const { 
@@ -31,9 +32,8 @@ export const useChannelControl = () => {
   }, [searchQuery, gridSearchQuery, setGridSearchQuery]);
 
   const loadLockStatus = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return;
-
+    if (!isAuthenticated || !session?.user?.id) return;
+    
     const { data, error } = await supabase
       .from('parental_locks')
       .select('pin, is_locked')
@@ -48,8 +48,7 @@ export const useChannelControl = () => {
   };
 
   const loadHiddenChannels = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return;
+    if (!isAuthenticated || !session?.user?.id) return;
 
     const { data: hiddenChannelsData, error } = await supabase
       .from('hidden_channels')
@@ -65,9 +64,11 @@ export const useChannelControl = () => {
   };
 
   useEffect(() => {
-    loadHiddenChannels();
-    loadLockStatus();
-  }, []);
+    if (isAuthenticated) {
+      loadHiddenChannels();
+      loadLockStatus();
+    }
+  }, [isAuthenticated, session]);
 
   const toggleChannel = async (channelId: string) => {
     if (isLocked) {
@@ -75,8 +76,7 @@ export const useChannelControl = () => {
       return;
     }
 
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
+    if (!isAuthenticated || !session?.user?.id) {
       toast.error("You must be logged in to manage channel preferences");
       return;
     }
@@ -123,8 +123,10 @@ export const useChannelControl = () => {
       return;
     }
 
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return;
+    if (!isAuthenticated || !session?.user?.id) {
+      toast.error("You must be logged in to set a PIN");
+      return;
+    }
 
     const { error } = await supabase
       .from('parental_locks')
@@ -149,8 +151,7 @@ export const useChannelControl = () => {
   };
 
   const handleUnlock = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return;
+    if (!isAuthenticated || !session?.user?.id) return;
 
     const { error } = await supabase
       .from('parental_locks')
@@ -169,8 +170,7 @@ export const useChannelControl = () => {
   };
 
   const handleLock = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return;
+    if (!isAuthenticated || !session?.user?.id) return;
 
     const { error } = await supabase
       .from('parental_locks')
@@ -189,8 +189,7 @@ export const useChannelControl = () => {
   };
 
   const handleDelete = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return;
+    if (!isAuthenticated || !session?.user?.id) return;
 
     const { error } = await supabase
       .from('parental_locks')

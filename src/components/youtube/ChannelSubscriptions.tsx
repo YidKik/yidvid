@@ -27,7 +27,7 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(false);
-  const { isAuthenticated, isLoading: authLoading } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     const checkScrollability = () => {
@@ -45,10 +45,13 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
     return () => window.removeEventListener('resize', checkScrollability);
   }, []);
 
-  const { data: subscriptions, refetch, isLoading } = useQuery({
+  const { data: subscriptions, refetch, isLoading, error } = useQuery({
     queryKey: ["channel-subscriptions", userId],
     queryFn: async () => {
-      if (!userId) return [];
+      if (!userId) {
+        console.log("No userId provided for subscriptions");
+        return [];
+      }
 
       console.log("Fetching subscriptions for user:", userId);
       const { data, error } = await supabase
@@ -75,6 +78,11 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
   });
 
   const handleUnsubscribe = async (channelId: string) => {
+    if (!userId) {
+      toast.error("You need to be logged in to manage subscriptions");
+      return;
+    }
+    
     try {
       const { error } = await supabase
         .from("channel_subscriptions")
@@ -115,7 +123,8 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
     );
   };
 
-  if (authLoading) {
+  if (error) {
+    console.error("Subscription fetch error:", error);
     return (
       <Card>
         <CardHeader>
@@ -124,23 +133,7 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
             Channel Subscriptions
           </CardTitle>
           <CardDescription>
-            Loading authentication status...
-          </CardDescription>
-        </CardHeader>
-      </Card>
-    );
-  }
-
-  if (!isAuthenticated) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-2xl font-semibold flex items-center gap-2">
-            <Bell className="w-5 h-5 text-primary" />
-            Channel Subscriptions
-          </CardTitle>
-          <CardDescription>
-            Please sign in to manage your subscriptions.
+            Error loading subscriptions. Please try again.
           </CardDescription>
         </CardHeader>
       </Card>
@@ -156,6 +149,22 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
             Channel Subscriptions
           </CardTitle>
           <CardDescription>Loading subscriptions...</CardDescription>
+        </CardHeader>
+      </Card>
+    );
+  }
+
+  if (!isAuthenticated || !userId) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-2xl font-semibold flex items-center gap-2">
+            <Bell className="w-5 h-5 text-primary" />
+            Channel Subscriptions
+          </CardTitle>
+          <CardDescription>
+            Please sign in to manage your subscriptions.
+          </CardDescription>
         </CardHeader>
       </Card>
     );

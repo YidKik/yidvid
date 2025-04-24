@@ -3,12 +3,13 @@ import { Search } from "lucide-react";
 import { ChannelSearch } from "@/components/youtube/ChannelSearch";
 import { ChannelListItem } from "@/components/youtube/ChannelListItem";
 import { YoutubeChannelsTable } from "@/integrations/supabase/types/youtube-channels";
+import { Channel } from "@/hooks/channel/useChannelsGrid";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface ChannelFilteredListProps {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
-  filteredChannels?: YoutubeChannelsTable["Row"][];
+  filteredChannels?: (YoutubeChannelsTable["Row"] | Channel)[];
   hiddenChannels: Set<string>;
   onToggle: (channelId: string) => void;
   isLocked: boolean;

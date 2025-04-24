@@ -4,14 +4,11 @@ import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Youtube } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Channel } from "@/hooks/channel/useChannelsGrid";
+import { YoutubeChannelsTable } from "@/integrations/supabase/types/youtube-channels";
 
 interface ChannelListItemProps {
-  channel: {
-    channel_id: string;
-    title: string;
-    description: string | null;
-    thumbnail_url: string;
-  };
+  channel: Channel | YoutubeChannelsTable["Row"];
   isHidden: boolean;
   onToggle: (channelId: string) => void;
 }
@@ -24,7 +21,7 @@ export const ChannelListItem = ({ channel, isHidden, onToggle }: ChannelListItem
       <div className="flex items-center gap-1.5 md:gap-3 min-w-0">
         <Avatar className="h-6 w-6 md:h-10 md:w-10 border border-gray-100 flex-shrink-0">
           <AvatarImage
-            src={channel.thumbnail_url}
+            src={channel.thumbnail_url || ''}
             alt={channel.title}
           />
           <AvatarFallback>
@@ -37,7 +34,7 @@ export const ChannelListItem = ({ channel, isHidden, onToggle }: ChannelListItem
           </p>
           {!isMobile ? (
             <p className="text-xs md:text-sm text-gray-500 truncate max-w-[140px] md:max-w-[200px]">
-              {channel.description || "No description"}
+              {'description' in channel ? (channel.description || "No description") : "No description"}
             </p>
           ) : null}
         </div>

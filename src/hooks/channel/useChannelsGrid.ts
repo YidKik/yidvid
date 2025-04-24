@@ -8,6 +8,13 @@ export interface Channel {
   channel_id: string;
   title: string;
   thumbnail_url?: string | null;
+  description?: string | null;
+  created_at?: string;
+  updated_at?: string;
+  deleted_at?: string | null;
+  default_category?: "music" | "torah" | "inspiration" | "podcast" | "education" | "entertainment" | "other" | "custom" | null;
+  fetch_error?: string | null;
+  last_fetch?: string | null;
 }
 
 export const useChannelsGrid = () => {
@@ -49,7 +56,7 @@ export const useChannelsGrid = () => {
       
       // Fall back to regular database query
       let query = supabase.from("youtube_channels")
-        .select("id, channel_id, title, thumbnail_url")
+        .select("id, channel_id, title, thumbnail_url, description, created_at, updated_at, deleted_at, default_category, fetch_error, last_fetch")
         .is("deleted_at", null);
         
       if (searchTerm) {
@@ -71,7 +78,7 @@ export const useChannelsGrid = () => {
         // Try fallback with simplified query
         let simplifiedQuery = supabase
           .from("youtube_channels")
-          .select("id, channel_id, title, thumbnail_url");
+          .select("id, channel_id, title, thumbnail_url, description, created_at, updated_at");
           
         if (searchTerm) {
           simplifiedQuery = simplifiedQuery.ilike("title", `%${searchTerm}%`);
