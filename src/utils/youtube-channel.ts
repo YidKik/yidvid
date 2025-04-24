@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 
 // Define the anon key as a constant since it's already in the client file
@@ -17,59 +16,29 @@ export const checkAdminStatus = async () => {
       throw new Error("You must be signed in to add channels");
     }
 
-    // Modified approach to fetch admin status with better error handling
+    // Skip profile checks and go directly to edge function for admin verification
     try {
-      const { data: profile, error: profileError } = await supabase
-        .from("profiles")
-        .select("is_admin")
-        .eq("id", session.user.id)
-        .maybeSingle();
-
-      if (profileError) {
-        console.error("Profile fetch error:", profileError);
-        
-        // Try alternative query with minimal fields
-        const { data: altProfile, error: altError } = await supabase
-          .from("profiles")
-          .select("id, is_admin")
-          .eq("id", session.user.id)
-          .maybeSingle();
-          
-        if (altError || !altProfile?.is_admin) {
-          console.error("Alternative profile fetch error:", altError);
-          throw new Error("You don't have permission to add channels");
-        }
-        
-        return true;
-      }
-
-      if (!profile?.is_admin) {
+      const { data: adminCheck, error: adminCheckError } = await supabase.functions.invoke('check-admin-status', {
+        body: { userId: session.user.id },
+      });
+      
+      if (adminCheckError || !adminCheck?.isAdmin) {
+        console.error("Edge function admin check error:", adminCheckError);
         throw new Error("You don't have permission to add channels");
       }
-
-      return true;
-    } catch (profileError) {
-      console.error("Profile check error:", profileError);
       
-      // As a last resort, try using the edge function
-      try {
-        const { data: adminCheck, error: adminCheckError } = await supabase.functions.invoke('check-admin-status', {
-          body: { userId: session.user.id },
-          headers: {
-            Authorization: `Bearer ${session.access_token}`,
-            apikey: SUPABASE_ANON_KEY
-          }
-        });
-        
-        if (adminCheckError || !adminCheck?.isAdmin) {
-          throw new Error("You don't have permission to add channels");
-        }
-        
+      return true;
+    } catch (edgeFunctionError) {
+      console.error("Edge function error:", edgeFunctionError);
+      
+      // Final fallback - checking PIN bypass from localStorage
+      const hasPinBypass = localStorage.getItem('admin-pin-bypass') === 'true';
+      if (hasPinBypass) {
+        console.log("Using PIN bypass for admin access");
         return true;
-      } catch (edgeFunctionError) {
-        console.error("Edge function error:", edgeFunctionError);
-        throw new Error("Error verifying admin permissions. Please try again later.");
       }
+      
+      throw new Error("Error verifying admin permissions. Please try again later.");
     }
   } catch (error) {
     console.error("Admin check error:", error);
@@ -119,40 +88,40 @@ export const addChannel = async (channelInput: string) => {
       throw new Error('Authentication error. Please sign in again.');
     }
 
-    // Call edge function to add channel with proper authorization and API key
+    // Call edge function to add channel
     console.log('Calling edge function to fetch channel data...');
-    const { data, error } = await supabase.functions.invoke('fetch-youtube-channel', {
-      body: { channelId },
-      headers: {
-        Authorization: `Bearer ${session.access_token}`,
-        apikey: SUPABASE_ANON_KEY
+    try {
+      const { data, error } = await supabase.functions.invoke('fetch-youtube-channel', {
+        body: { channelId },
+      });
+  
+      if (error) {
+        console.error('Edge function error:', error);
+        
+        // Handle specific quota exceeded error by checking the error message content
+        if (error.message?.includes('quota') || error.toString().includes('quota')) {
+          throw new Error('YouTube API quota exceeded. Please try again tomorrow when the quota resets.');
+        }
+        
+        // Extract the actual error message if possible
+        let errorMessage = error.message;
+        if (typeof error === 'object' && error && 'message' in error) {
+          errorMessage = error.message;
+        }
+        
+        throw new Error(errorMessage || 'Failed to add channel');
       }
-    });
-
-    if (error) {
-      console.error('Edge function error:', error);
-      
-      // Handle specific quota exceeded error by checking the error message content
-      if (error.message?.includes('quota') || error.toString().includes('quota')) {
-        throw new Error('YouTube API quota exceeded. Please try again tomorrow when the quota resets.');
+  
+      if (!data) {
+        throw new Error('No data received from edge function');
       }
-      
-      // Extract the actual error message if possible
-      let errorMessage = error.message;
-      if (typeof error === 'object' && error && 'message' in error) {
-        errorMessage = error.message;
-      }
-      
-      throw new Error(errorMessage || 'Failed to add channel');
+  
+      console.log('Channel added successfully:', data);
+      return data;
+    } catch (error) {
+      console.error('Edge function invocation error:', error);
+      throw new Error('Error communicating with YouTube: ' + (error.message || 'Unknown error'));
     }
-
-    if (!data) {
-      throw new Error('No data received from edge function');
-    }
-
-    console.log('Channel added successfully:', data);
-    return data;
-
   } catch (error: any) {
     console.error('Error in addChannel:', error);
     throw error;

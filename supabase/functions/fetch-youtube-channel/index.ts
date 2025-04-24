@@ -1,5 +1,4 @@
 
-
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.38.4'
 import { corsHeaders } from '../_shared/cors.ts'
 
@@ -50,17 +49,49 @@ Deno.serve(async (req) => {
     const extractedId = extractChannelIdentifier(channelId);
     console.log('Extracted channel identifier:', extractedId);
 
-    // First try to get channel by handle
+    // Connect to Supabase with service role
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    );
+
+    // Check if channel already exists
+    const { data: existingChannel, error: checkError } = await supabaseClient
+      .from('youtube_channels')
+      .select('channel_id')
+      .eq('channel_id', extractedId)
+      .single();
+
+    if (checkError && checkError.code !== 'PGRST116') {
+      console.error('Error checking if channel exists:', checkError);
+      throw new Error('Error checking if channel exists');
+    }
+
+    if (existingChannel) {
+      throw new Error('This channel has already been added');
+    }
+
+    // Try to get channel by ID or handle using a server-side API call
+    // This avoids the referrer restriction issue with browser-based calls
+    console.log('Making YouTube API request via server-side fetch...');
+    
     let apiUrl = `https://youtube.googleapis.com/youtube/v3/channels?part=snippet&key=${YOUTUBE_API_KEY}`;
     if (extractedId.startsWith('@')) {
       apiUrl += `&forHandle=${extractedId.substring(1)}`;
     } else {
-      // Try as channel ID
       apiUrl += `&id=${extractedId}`;
     }
 
-    console.log('Making YouTube API request...');
-    const response = await fetch(apiUrl);
+    const options = {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'X-Goog-Api-Key': YOUTUBE_API_KEY,
+        // Server-side requests don't send referrer headers
+      }
+    };
+
+    const response = await fetch(apiUrl, options);
     const data: YouTubeApiResponse = await response.json();
 
     if (!response.ok) {
@@ -75,28 +106,6 @@ Deno.serve(async (req) => {
 
     const channel = data.items[0];
     console.log('Channel data received:', channel);
-
-    // Connect to Supabase
-    const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    );
-
-    // Check if channel already exists
-    const { data: existingChannel, error: checkError } = await supabaseClient
-      .from('youtube_channels')
-      .select('channel_id')
-      .eq('channel_id', channel.id)
-      .single();
-
-    if (checkError && checkError.code !== 'PGRST116') {
-      console.error('Error checking if channel exists:', checkError);
-      throw new Error('Error checking if channel exists');
-    }
-
-    if (existingChannel) {
-      throw new Error('This channel has already been added');
-    }
 
     // Insert the new channel
     const { data: insertedChannel, error: insertError } = await supabaseClient
