@@ -12,7 +12,7 @@ const supabase = createClient(supabaseUrl, serviceRoleKey);
 Deno.serve(async (req) => {
   // Handle CORS
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders });
+    return new Response(null, { headers: corsHeaders });
   }
 
   try {
@@ -79,9 +79,9 @@ Deno.serve(async (req) => {
       // Fetch videos without RLS restrictions
       const { data, error } = await supabase
         .from('youtube_videos')
-        .select('id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, category, description')
+        .select('id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, created_at, category, description')
         .is('deleted_at', null)
-        .order('uploaded_at', { ascending: false })
+        .order('created_at', { ascending: false })
         .limit(100);
 
       if (error) {

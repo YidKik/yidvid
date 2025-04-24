@@ -10,9 +10,9 @@ export const performDirectDatabaseQuery = async (): Promise<any[]> => {
     // Try direct query first
     const { data: directData, error: directError } = await supabase
       .from("youtube_videos")
-      .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, category, description")
+      .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, created_at, description")
       .is("deleted_at", null)
-      .order("uploaded_at", { ascending: false })
+      .order("created_at", { ascending: false })
       .limit(100);
     
     if (!directError && directData && directData.length > 0) {
@@ -25,8 +25,8 @@ export const performDirectDatabaseQuery = async (): Promise<any[]> => {
     // Try fallback query with less filters
     const { data: fallbackData, error: fallbackError } = await supabase
       .from("youtube_videos")
-      .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at")
-      .order("uploaded_at", { ascending: false })
+      .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, created_at")
+      .order("created_at", { ascending: false })
       .limit(100);
       
     if (!fallbackError && fallbackData && fallbackData.length > 0) {

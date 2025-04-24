@@ -25,7 +25,7 @@ export const formatVideoData = (videosData: any[]): VideoData[] => {
       channelId: video.channel_id || "unknown-channel",
       views: viewsCount,
       uploadedAt: video.uploaded_at || new Date().toISOString(),
-      category: video.category || null,
+      createdAt: video.created_at || new Date().toISOString(),
       description: video.description || null,
       channelThumbnail: video.youtube_channels?.thumbnail_url || null
     };

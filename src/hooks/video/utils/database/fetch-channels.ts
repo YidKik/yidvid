@@ -12,7 +12,7 @@ export const fetchActiveChannels = async (): Promise<ChannelData[]> => {
     // Get more channels to increase chances of finding new content
     const { data, error } = await supabase
       .from("youtube_channels")
-      .select("channel_id")
+      .select("channel_id, thumbnail_url")
       .is("deleted_at", null)
       .order("updated_at", { ascending: false })
       .limit(50);

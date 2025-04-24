@@ -13,3 +13,8 @@ export interface VideoData {
   duration?: string | null;
   channelThumbnail?: string | null;
 }
+
+export interface ChannelData {
+  channel_id: string;
+  thumbnail_url?: string | null;
+}

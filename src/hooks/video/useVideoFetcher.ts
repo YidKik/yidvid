@@ -18,15 +18,16 @@ export const useVideoFetcher = () => {
       
       // Use a direct query approach to avoid RLS recursion
       const { data, error } = await supabase
-        .rpc('get_public_videos', {
-          _limit: 150 // Limit to prevent large dataset issues
-        })
-        .select("*, youtube_channels(thumbnail_url)");
+        .from("youtube_videos")
+        .select("*, youtube_channels(thumbnail_url)")
+        .is("deleted_at", null)
+        .order("created_at", { ascending: false })
+        .limit(150);
       
       if (error) {
         console.error("Error force refetching videos:", error);
         
-        // Fallback to standard query if RPC fails
+        // Fallback to standard query if first attempt fails
         const fallbackResult = await supabase
           .from("youtube_videos")
           .select("*, youtube_channels(thumbnail_url)")
@@ -63,25 +64,27 @@ export const useVideoFetcher = () => {
     try {
       console.log("Fetching all videos");
       
-      // First try using the RPC approach to avoid RLS recursion
+      // Try the edge function approach to bypass RLS issues
       try {
-        const { data, error } = await supabase
-          .rpc('get_public_videos', {
-            _limit: 150
-          })
-          .select("*, youtube_channels(thumbnail_url)");
-          
-        if (!error) {
-          const formatted = formatVideoData(data);
-          setLastSuccessfulFetch(new Date());
-          setFetchAttempts(0);
-          return formatted;
-        }
+        const response = await fetch("https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/get-public-videos", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1aW5ja3R2c2l1enRzeGN1cWZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY0ODgzNzcsImV4cCI6MjA1MjA2NDM3N30.zbReqHoAR33QoCi_wqNp8AtNofTX3JebM7jvjFAWbMg`
+          }
+        });
         
-        // If RPC approach fails, log and fallback to standard approach
-        console.log("RPC approach failed, falling back to standard query");
-      } catch (rpcError) {
-        console.log("RPC function not available, using standard query", rpcError);
+        if (response.ok) {
+          const result = await response.json();
+          if (result.data && result.data.length > 0) {
+            const formatted = formatVideoData(result.data);
+            setLastSuccessfulFetch(new Date());
+            setFetchAttempts(0);
+            return formatted;
+          }
+        }
+      } catch (edgeError) {
+        console.log("Edge function approach failed, using standard query", edgeError);
       }
       
       // Fallback to standard query
