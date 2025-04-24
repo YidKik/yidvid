@@ -46,25 +46,29 @@ export const VideoGridPagination = ({
 
   // For pagination display with custom arrows
   return (
-    <div className={`flex items-center justify-center gap-6 ${isMobile ? 'mt-4' : 'mt-8'}`}>
-      <CustomPaginationArrow 
-        direction="left"
-        disabled={currentPage === 1}
-        onClick={() => onPageChange(currentPage - 1)}
-      />
-      
-      {/* Only show page numbers on mobile */}
-      {isMobile && (
-        <div className="flex items-center text-sm text-muted-foreground">
-          Page {currentPage} of {totalPages}
-        </div>
-      )}
-      
-      <CustomPaginationArrow 
-        direction="right"
-        disabled={currentPage === totalPages}
-        onClick={() => onPageChange(currentPage + 1)}
-      />
+    <div className="flex items-center justify-center">
+      <div className="inline-flex">
+        <button 
+          onClick={() => onPageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className={`
+            bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-l
+            ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}
+          `}
+        >
+          Prev
+        </button>
+        <button 
+          onClick={() => onPageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className={`
+            bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-r
+            ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}
+          `}
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
 };
