@@ -11,9 +11,10 @@ interface ChannelDataProviderProps {
     isLoading: boolean;
   }) => React.ReactNode;
   onError?: (error: any) => void;
+  searchQuery?: string;
 }
 
-export const ChannelDataProvider = ({ children, onError }: ChannelDataProviderProps) => {
+export const ChannelDataProvider = ({ children, onError, searchQuery = "" }: ChannelDataProviderProps) => {
   const { 
     fetchChannelsDirectly, 
     manuallyFetchedChannels, 
@@ -53,18 +54,27 @@ export const ChannelDataProvider = ({ children, onError }: ChannelDataProviderPr
     try {
       console.log("Direct database fetch for channels...");
       
-      const { data, error } = await supabase
+      // Build query with search filter if provided
+      let query = supabase
         .from("youtube_channels")
         .select("id, channel_id, title, thumbnail_url")
-        .is("deleted_at", null)
-        .limit(50);
+        .is("deleted_at", null);
+        
+      if (searchQuery) {
+        query = query.ilike("title", `%${searchQuery}%`);
+      }
+      
+      const { data, error } = await query.limit(50);
         
       if (error) {
         console.error("Direct DB fetch error:", error);
         
         try {
           console.log("Trying edge function to fetch channels...");
-          const response = await fetch("https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/get-public-channels", {
+          const urlWithSearch = `https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/get-public-channels${searchQuery ? `?search=${encodeURIComponent(searchQuery)}` : ''}`;
+          console.log("Fetching from URL:", urlWithSearch);
+          
+          const response = await fetch(urlWithSearch, {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
@@ -83,13 +93,18 @@ export const ChannelDataProvider = ({ children, onError }: ChannelDataProviderPr
           console.error("Edge function error:", edgeError);
         }
         
-        const simplifiedQuery = await supabase
+        let simplifiedQuery = supabase
           .from("youtube_channels")
-          .select("id, channel_id, title, thumbnail_url")
-          .limit(50);
+          .select("id, channel_id, title, thumbnail_url");
           
-        if (!simplifiedQuery.error && simplifiedQuery.data?.length > 0) {
-          return simplifiedQuery.data;
+        if (searchQuery) {
+          simplifiedQuery = simplifiedQuery.ilike("title", `%${searchQuery}%`);
+        }
+          
+        const simplifiedResult = await simplifiedQuery.limit(50);
+          
+        if (!simplifiedResult.error && simplifiedResult.data?.length > 0) {
+          return simplifiedResult.data;
         }
         
         return null;
@@ -108,7 +123,7 @@ export const ChannelDataProvider = ({ children, onError }: ChannelDataProviderPr
   };
 
   const { data: channels, error, isLoading: isChannelsLoading, refetch } = useQuery({
-    queryKey: ["youtube_channels", lastAuthEvent],
+    queryKey: ["youtube_channels", lastAuthEvent, searchQuery],
     queryFn: async () => {
       const dbChannels = await fetchChannelsFromDB();
       if (dbChannels && dbChannels.length > 0) {
@@ -121,10 +136,15 @@ export const ChannelDataProvider = ({ children, onError }: ChannelDataProviderPr
       }
       
       try {
-        const lastAttempt = await supabase
+        let lastQuery = supabase
           .from("youtube_channels")
-          .select("id, channel_id, title, thumbnail_url")
-          .limit(30);
+          .select("id, channel_id, title, thumbnail_url");
+          
+        if (searchQuery) {
+          lastQuery = lastQuery.ilike("title", `%${searchQuery}%`);
+        }
+          
+        const lastAttempt = await lastQuery.limit(30);
           
         if (!lastAttempt.error && lastAttempt.data?.length > 0) {
           return lastAttempt.data;
@@ -133,7 +153,13 @@ export const ChannelDataProvider = ({ children, onError }: ChannelDataProviderPr
         console.error("Final attempt also failed:", e);
       }
       
-      return createSampleChannels();
+      const sampleChannels = createSampleChannels();
+      if (searchQuery) {
+        return sampleChannels.filter(channel => 
+          channel.title.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+      }
+      return sampleChannels;
     },
     retry: 3,
     retryDelay: 1000,
@@ -148,12 +174,12 @@ export const ChannelDataProvider = ({ children, onError }: ChannelDataProviderPr
   });
 
   useEffect(() => {
-    console.log("ChannelDataProvider mounted, attempting to fetch channels");
+    console.log("ChannelDataProvider mounted or searchQuery changed:", searchQuery);
     refetch().catch(err => {
-      console.error("Error fetching channels on mount:", err);
+      console.error("Error fetching channels on mount/search change:", err);
       if (onError) onError(err);
     });
-  }, [refetch, error]);
+  }, [refetch, error, searchQuery]);
 
   useEffect(() => {
     if (channels?.length || manuallyFetchedChannels?.length) {
@@ -175,11 +201,18 @@ export const ChannelDataProvider = ({ children, onError }: ChannelDataProviderPr
     } else if (manuallyFetchedChannels?.length) {
       bestChannels = manuallyFetchedChannels;
     } else {
-      bestChannels = createSampleChannels();
+      const sampleChannels = createSampleChannels();
+      if (searchQuery) {
+        bestChannels = sampleChannels.filter(channel => 
+          channel.title.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+      } else {
+        bestChannels = sampleChannels;
+      }
     }
     
     setDisplayChannels(bestChannels);
-  }, [channels, manuallyFetchedChannels, hasRealChannels, createSampleChannels]);
+  }, [channels, manuallyFetchedChannels, hasRealChannels, createSampleChannels, searchQuery]);
 
   return (
     <>

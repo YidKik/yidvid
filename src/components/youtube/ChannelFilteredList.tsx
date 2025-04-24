@@ -21,6 +21,11 @@ export const ChannelFilteredList = ({
   onToggle,
   isLocked
 }: ChannelFilteredListProps) => {
+  const handleSearch = (value: string) => {
+    console.log("Search query changed to:", value);
+    setSearchQuery(value);
+  };
+
   return (
     <div className={`relative ${isLocked ? 'pointer-events-none' : ''}`}>
       {isLocked && (
@@ -30,19 +35,27 @@ export const ChannelFilteredList = ({
       <div className="my-2 md:my-4">
         <div className="flex items-center gap-1.5 md:gap-2 p-1 md:p-2 bg-white rounded-lg border border-gray-200">
           <Search className="h-3 w-3 md:h-4 md:w-4 text-gray-500" />
-          <ChannelSearch value={searchQuery} onChange={setSearchQuery} />
+          <ChannelSearch value={searchQuery} onChange={handleSearch} />
         </div>
       </div>
 
       <div className="max-h-[250px] md:max-h-[350px] overflow-y-auto scrollbar-hide space-y-1 md:space-y-2">
-        {filteredChannels?.map((channel) => (
-          <ChannelListItem
-            key={channel.channel_id}
-            channel={channel}
-            isHidden={hiddenChannels.has(channel.channel_id)}
-            onToggle={onToggle}
-          />
-        ))}
+        {filteredChannels && filteredChannels.length > 0 ? (
+          filteredChannels.map((channel) => (
+            <ChannelListItem
+              key={channel.channel_id}
+              channel={channel}
+              isHidden={hiddenChannels.has(channel.channel_id)}
+              onToggle={onToggle}
+            />
+          ))
+        ) : (
+          <div className="p-4 text-center text-gray-500 bg-gray-50 rounded-lg">
+            {searchQuery ? 
+              "No channels found matching your search. Try a different search term." : 
+              "No channels available. Please try refreshing the page."}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -44,7 +43,7 @@ export const useChannelControl = () => {
       return;
     }
 
-    setHiddenChannels(new Set(hiddenChannelsData.map(hc => hc.channel_id)));
+    setHiddenChannels(new Set(hiddenChannelsData?.map(hc => hc.channel_id) || []));
   };
 
   useEffect(() => {
@@ -53,21 +52,56 @@ export const useChannelControl = () => {
   }, []);
 
   const { data: channels, isLoading } = useQuery({
-    queryKey: ["youtube-channels"],
+    queryKey: ["youtube-channels", searchQuery],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("youtube_channels")
-        .select("*")
-        .order("title", { ascending: true });
+      try {
+        const response = await fetch(
+          `https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/get-public-channels${searchQuery ? `?search=${encodeURIComponent(searchQuery)}` : ''}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1aW5ja3R2c2l1enRzeGN1cWZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY0ODgzNzcsImV4cCI6MjA1MjA2NDM3N30.zbReqHoAR33QoCi_wqNp8AtNofTX3JebM7jvjFAWbMg`
+            }
+          }
+        );
+        
+        if (response.ok) {
+          const result = await response.json();
+          if (result.data && Array.isArray(result.data)) {
+            return result.data;
+          }
+        } else {
+          console.warn("Edge function response not OK:", response.statusText);
+        }
+        
+        let query = supabase
+          .from("youtube_channels")
+          .select("*")
+          .is("deleted_at", null)
+          .order("title", { ascending: true });
+          
+        if (searchQuery) {
+          query = query.ilike("title", `%${searchQuery}%`);
+        }
+        
+        const { data, error } = await query;
 
-      if (error) {
-        console.error("Error fetching channels:", error);
+        if (error) {
+          console.error("Error fetching channels:", error);
+          toast.error("Failed to load channels");
+          return [];
+        }
+
+        return data || [];
+      } catch (err) {
+        console.error("Error in channel query:", err);
         toast.error("Failed to load channels");
         return [];
       }
-
-      return data || [];
     },
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    refetchOnWindowFocus: false,
   });
 
   const toggleChannel = async (channelId: string) => {
@@ -210,9 +244,7 @@ export const useChannelControl = () => {
     setShowLockDialog(false);
   };
 
-  const filteredChannels = channels?.filter(channel =>
-    channel.title.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredChannels = channels || [];
 
   return {
     isLoading,
