@@ -16,16 +16,32 @@ export const useVideoFetcher = () => {
       // Clear local storage to force a refresh from the server
       localStorage.removeItem('supabase.cache.youtube_videos');
       
+      // Use a direct query approach to avoid RLS recursion
       const { data, error } = await supabase
-        .from("youtube_videos")
-        .select("*, youtube_channels(thumbnail_url)")
-        .is("deleted_at", null)
-        .order("created_at", { ascending: false })  // Changed from uploaded_at to created_at
-        .limit(150);  // Limit to prevent large dataset issues
-
+        .rpc('get_public_videos', {
+          _limit: 150 // Limit to prevent large dataset issues
+        })
+        .select("*, youtube_channels(thumbnail_url)");
+      
       if (error) {
         console.error("Error force refetching videos:", error);
-        throw error;
+        
+        // Fallback to standard query if RPC fails
+        const fallbackResult = await supabase
+          .from("youtube_videos")
+          .select("*, youtube_channels(thumbnail_url)")
+          .is("deleted_at", null)
+          .order("created_at", { ascending: false })
+          .limit(150);
+          
+        if (fallbackResult.error) {
+          throw fallbackResult.error;
+        }
+        
+        const formatted = formatVideoData(fallbackResult.data);
+        setLastSuccessfulFetch(new Date());
+        setFetchAttempts(0);
+        return formatted;
       }
 
       const formatted = formatVideoData(data);
@@ -47,11 +63,33 @@ export const useVideoFetcher = () => {
     try {
       console.log("Fetching all videos");
       
+      // First try using the RPC approach to avoid RLS recursion
+      try {
+        const { data, error } = await supabase
+          .rpc('get_public_videos', {
+            _limit: 150
+          })
+          .select("*, youtube_channels(thumbnail_url)");
+          
+        if (!error) {
+          const formatted = formatVideoData(data);
+          setLastSuccessfulFetch(new Date());
+          setFetchAttempts(0);
+          return formatted;
+        }
+        
+        // If RPC approach fails, log and fallback to standard approach
+        console.log("RPC approach failed, falling back to standard query");
+      } catch (rpcError) {
+        console.log("RPC function not available, using standard query", rpcError);
+      }
+      
+      // Fallback to standard query
       const { data, error } = await supabase
         .from("youtube_videos")
         .select("*, youtube_channels(thumbnail_url)")
         .is("deleted_at", null)
-        .order("created_at", { ascending: false })  // Changed from uploaded_at to created_at
+        .order("created_at", { ascending: false })
         .limit(150);
 
       if (error) {

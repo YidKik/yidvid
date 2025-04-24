@@ -1,4 +1,3 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { useState, useCallback } from "react";
 import { VideoData } from "./types/video-fetcher";
@@ -41,7 +40,8 @@ export const useVideoQuery = ({
       if (error?.message?.includes('recursion') || 
           error?.message?.includes('policy') || 
           error?.message?.includes('permission') ||
-          error?.code === '42P07') {
+          error?.code === '42P07' ||
+          error?.code === '42P17') { // Added specific RLS recursion error code
         console.log("Not retrying RLS error:", error.message);
         return false;
       }
