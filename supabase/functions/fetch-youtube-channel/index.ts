@@ -17,10 +17,6 @@ interface YouTubeApiResponse {
           height: number;
         };
       };
-      localized?: {
-        title: string;
-        description: string;
-      };
     };
   }>;
 }
@@ -101,13 +97,14 @@ Deno.serve(async (req) => {
       apiUrl += `&id=${extractedId}`;
     }
 
-    // Use proper headers and no-referrer policy for server-side requests
+    // IMPORTANT FIX: Use proper headers for the YouTube API to avoid referrer restrictions
     const options = {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
-        'referer': '', // No referrer on server-side requests
-        'origin': null  // No origin on server-side requests
+        'User-Agent': 'Supabase Edge Function',
+        'Referer': 'https://yidvid.com',  // Set a valid referer to avoid referrer blocks
+        'Origin': 'https://yidvid.com'    // Set a valid origin to avoid restrictions
       }
     };
 
@@ -130,6 +127,16 @@ Deno.serve(async (req) => {
           return new Response(
             JSON.stringify({ error: 'YouTube API quota exceeded. Please try again tomorrow.' }),
             { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 429 }
+          );
+        }
+
+        // Check if this is a forbidden error (API key restrictions)
+        const isForbidden = response.status === 403 || errorMessage.toLowerCase().includes('forbidden');
+        if (isForbidden) {
+          console.error('YouTube API access forbidden:', errorMessage);
+          return new Response(
+            JSON.stringify({ error: 'YouTube API access forbidden. This may be due to API key restrictions.' }),
+            { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 403 }
           );
         }
         

@@ -1,5 +1,4 @@
 
-
 interface VideoResult {
   videos: any[];
   quotaExceeded?: boolean;
@@ -15,7 +14,9 @@ export async function fetchChannelVideos(
     const channelResponse = await fetch(channelUrl, {
       headers: {
         'Accept': 'application/json',
-        'Referer': 'https://yidvid.com' // Set a valid referer to avoid blocked requests
+        'User-Agent': 'Supabase Edge Function',
+        'Referer': 'https://yidvid.com', // Set a valid referer to avoid blocked requests
+        'Origin': 'https://yidvid.com'   // Set a valid origin to avoid restrictions
       }
     });
     
@@ -60,7 +61,9 @@ export async function fetchChannelVideos(
     const response = await fetch(playlistUrl, {
       headers: {
         'Accept': 'application/json',
-        'Referer': 'https://yidvid.com' // Set a valid referer to avoid blocked requests
+        'User-Agent': 'Supabase Edge Function',
+        'Referer': 'https://yidvid.com', // Set a valid referer to avoid blocked requests
+        'Origin': 'https://yidvid.com'   // Set a valid origin to avoid restrictions
       }
     });
     
@@ -98,7 +101,9 @@ export async function fetchChannelVideos(
     const statsResponse = await fetch(statsUrl, {
       headers: {
         'Accept': 'application/json',
-        'Referer': 'https://yidvid.com' // Set a valid referer to avoid blocked requests
+        'User-Agent': 'Supabase Edge Function',
+        'Referer': 'https://yidvid.com', // Set a valid referer to avoid blocked requests
+        'Origin': 'https://yidvid.com'   // Set a valid origin to avoid restrictions
       }
     });
     
@@ -159,4 +164,3 @@ export async function fetchChannelVideos(
     return { videos: [] };
   }
 }
-
