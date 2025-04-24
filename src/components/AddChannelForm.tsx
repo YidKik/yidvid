@@ -17,11 +17,13 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isQuotaExceeded, setIsQuotaExceeded] = useState(false);
+  const [isForbidden, setIsForbidden] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(null);
     setIsQuotaExceeded(false);
+    setIsForbidden(false);
     
     if (!channelId.trim()) {
       toast.error("Please enter a channel ID or URL", { id: "channel-empty" });
@@ -31,9 +33,6 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
     setIsLoading(true);
     
     try {
-      // Don't use toast.loading here as it can create duplicate toasts
-      // Instead we'll use a loading state for the button
-
       const result = await addChannel(channelId);
       
       toast.success("Channel added successfully!", { id: "channel-added" });
@@ -53,9 +52,11 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
         message = error;
       }
       
-      // Check for quota exceeded
+      // Check for specific error types
       if (message.toLowerCase().includes('quota')) {
         setIsQuotaExceeded(true);
+      } else if (message.toLowerCase().includes('forbidden') || message.toLowerCase().includes('403')) {
+        setIsForbidden(true);
       }
       
       setErrorMessage(message);
@@ -90,7 +91,18 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
         </Alert>
       )}
       
-      {errorMessage && !isQuotaExceeded && (
+      {isForbidden && (
+        <Alert variant="destructive" className="bg-destructive/10 text-destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>API Access Forbidden</AlertTitle>
+          <AlertDescription className="mt-1">
+            YouTube has rejected our request. This might be due to API key restrictions or service issues.
+            Please try again later or contact support if the problem persists.
+          </AlertDescription>
+        </Alert>
+      )}
+      
+      {errorMessage && !isQuotaExceeded && !isForbidden && (
         <div className="bg-destructive/15 p-3 rounded-md flex items-start gap-2">
           <AlertCircle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
           <p className="text-sm text-destructive">{errorMessage}</p>
