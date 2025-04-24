@@ -14,15 +14,17 @@ export async function fetchChannelVideos(
     const channelResponse = await fetch(channelUrl, {
       headers: {
         'Accept': 'application/json',
-        'User-Agent': 'Supabase Edge Function',
+        'User-Agent': 'Mozilla/5.0 Supabase Edge Function',
         'Referer': 'https://yidvid.com', // Set a valid referer to avoid blocked requests
-        'Origin': 'https://yidvid.com'   // Set a valid origin to avoid restrictions
+        'Origin': 'https://yidvid.com',  // Set a valid origin to avoid restrictions
+        'X-Request-Source': 'Supabase Edge Function'
       }
     });
     
     if (!channelResponse.ok) {
       const errorText = await channelResponse.text();
       console.error(`[YouTube Videos] Channel API error for ${channelId}:`, errorText);
+      console.error(`[YouTube Videos] Status: ${channelResponse.status} ${channelResponse.statusText}`);
       
       // Check for quota exceeded
       if (errorText.includes('quotaExceeded') || channelResponse.status === 403) {
@@ -62,15 +64,17 @@ export async function fetchChannelVideos(
     const response = await fetch(playlistUrl, {
       headers: {
         'Accept': 'application/json',
-        'User-Agent': 'Supabase Edge Function',
+        'User-Agent': 'Mozilla/5.0 Supabase Edge Function',
         'Referer': 'https://yidvid.com', // Set a valid referer to avoid blocked requests
-        'Origin': 'https://yidvid.com'   // Set a valid origin to avoid restrictions
+        'Origin': 'https://yidvid.com',   // Set a valid origin to avoid restrictions
+        'X-Request-Source': 'Supabase Edge Function'
       }
     });
     
     if (!response.ok) {
       const errorText = await response.text();
       console.error(`[YouTube Videos] Playlist API error for channel ${channelId}:`, errorText);
+      console.error(`[YouTube Videos] Status: ${response.status} ${response.statusText}`);
       
       // Check for quota exceeded
       if (errorText.includes('quotaExceeded') || response.status === 403) {
@@ -103,15 +107,17 @@ export async function fetchChannelVideos(
     const statsResponse = await fetch(statsUrl, {
       headers: {
         'Accept': 'application/json',
-        'User-Agent': 'Supabase Edge Function',
+        'User-Agent': 'Mozilla/5.0 Supabase Edge Function',
         'Referer': 'https://yidvid.com', // Set a valid referer to avoid blocked requests
-        'Origin': 'https://yidvid.com'   // Set a valid origin to avoid restrictions
+        'Origin': 'https://yidvid.com',   // Set a valid origin to avoid restrictions
+        'X-Request-Source': 'Supabase Edge Function'
       }
     });
     
     if (!statsResponse.ok) {
       const errorText = await statsResponse.text();
       console.error(`[YouTube Videos] Statistics API error for channel ${channelId}:`, errorText);
+      console.error(`[YouTube Videos] Status: ${statsResponse.status} ${statsResponse.statusText}`);
       
       // Check for quota exceeded
       if (errorText.includes('quotaExceeded') || statsResponse.status === 403) {

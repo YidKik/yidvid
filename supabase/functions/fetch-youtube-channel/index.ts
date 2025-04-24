@@ -28,10 +28,13 @@ Deno.serve(async (req) => {
   }
 
   try {
+    console.log("==== FETCH YOUTUBE CHANNEL FUNCTION STARTED ====");
+    
     const { channelId } = await req.json();
     console.log('Received request for channel:', channelId);
 
     if (!channelId) {
+      console.error("Missing channelId in request");
       return new Response(
         JSON.stringify({ error: 'Channel ID is required' }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
@@ -81,6 +84,7 @@ Deno.serve(async (req) => {
     }
 
     if (existingChannel) {
+      console.log("Channel already exists:", existingChannel);
       return new Response(
         JSON.stringify({ error: 'This channel has already been added' }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
@@ -97,34 +101,43 @@ Deno.serve(async (req) => {
       apiUrl += `&id=${extractedId}`;
     }
 
-    // IMPORTANT FIX: Use proper headers for the YouTube API to avoid referrer restrictions
+    // IMPORTANT: Enhanced headers with more robust referrer/origin information
     const options = {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
-        'User-Agent': 'Supabase Edge Function',
-        'Referer': 'https://yidvid.com',  // Set a valid referer to avoid referrer blocks
-        'Origin': 'https://yidvid.com'    // Set a valid origin to avoid restrictions
+        'User-Agent': 'Mozilla/5.0 Supabase Edge Function',
+        'Referer': 'https://yidvid.com/',
+        'Origin': 'https://yidvid.com',
+        'X-Request-Source': 'Supabase Edge Function'
       }
     };
 
+    console.log("Calling YouTube API with URL:", apiUrl);
+    
     try {
+      console.log("Attempting YouTube API fetch with enhanced headers");
       const response = await fetch(apiUrl, options);
+      console.log("YouTube API response status:", response.status, response.statusText);
       
       // Before parsing JSON, handle fetch error cases
       if (!response.ok) {
-        console.error('YouTube API fetch error:', response.status, response.statusText);
         const errorText = await response.text();
+        console.error('YouTube API fetch error status:', response.status, response.statusText);
         console.error('Error response body:', errorText);
         
-        // Handle specific error cases
-        if (response.status === 403) {
+        // Handle quota exceeded error
+        if (errorText.toLowerCase().includes('quota') || response.status === 403) {
+          console.error("YouTube quota exceeded detected");
           return new Response(
-            JSON.stringify({ error: 'YouTube API access forbidden. This may be due to API key restrictions.' }),
-            { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 403 }
+            JSON.stringify({ 
+              error: 'YouTube API quota exceeded. Please try again tomorrow.' 
+            }),
+            { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 429 }
           );
         }
         
+        // Handle channel not found
         if (response.status === 404) {
           return new Response(
             JSON.stringify({ error: 'Channel not found. Check if the ID or handle is correct.' }),
@@ -138,14 +151,15 @@ Deno.serve(async (req) => {
             error: `YouTube API error: ${response.status} ${response.statusText}`,
             details: errorText
           }),
-          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: response.status }
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
         );
       }
       
       const data: YouTubeApiResponse = await response.json();
+      console.log("YouTube API response data received");
       
       if (!data.items || data.items.length === 0) {
-        console.error('No channel found:', data);
+        console.error('No channel found in API response:', data);
         return new Response(
           JSON.stringify({ error: 'Channel not found. Check if the ID or handle is correct.' }),
           { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 404 }
@@ -153,7 +167,7 @@ Deno.serve(async (req) => {
       }
 
       const channel = data.items[0];
-      console.log('Channel data received:', channel);
+      console.log('Channel data received:', channel.snippet.title);
 
       // Insert the new channel
       const { data: insertedChannel, error: insertError } = await supabaseClient
@@ -179,13 +193,10 @@ Deno.serve(async (req) => {
       // After successful channel insertion, log success
       console.log('Channel added successfully:', insertedChannel);
       
-      // Return the channel data
+      // Return the channel data with a 200 status
       return new Response(
         JSON.stringify(insertedChannel),
-        {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 200,
-        },
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
       );
 
     } catch (fetchError) {
