@@ -13,31 +13,31 @@ import { VideoPlaceholder } from "@/components/video/VideoPlaceholder";
 import { toast } from "sonner";
 
 const ChannelDetails = () => {
-  const { id } = useParams<{ id?: string }>();
-  const channelId = id?.trim() || "";
+  const { channelId } = useParams<{ channelId?: string }>();
+  const cleanChannelId = channelId?.trim() || "";
   const navigate = useNavigate();
   const [loadAttempts, setLoadAttempts] = useState(0);
   const [isRetrying, setIsRetrying] = useState(false);
   
-  console.log("ChannelDetails rendering with channelId:", channelId);
+  console.log("ChannelDetails rendering with channelId:", cleanChannelId);
   
   // Exit early if no channelId is provided at all
   useEffect(() => {
-    if (!channelId) {
+    if (!cleanChannelId) {
       console.error("No channel ID found in URL parameters");
       toast.error("Channel ID is required");
       navigate('/');
     }
-  }, [channelId, navigate]);
+  }, [cleanChannelId, navigate]);
   
   const { 
     data: channel, 
     isLoading: isLoadingChannel, 
     error: channelError,
     refetch: refetchChannel
-  } = useChannelData(channelId);
+  } = useChannelData(cleanChannelId);
   
-  const { isSubscribed, handleSubscribe } = useChannelSubscription(channelId);
+  const { isSubscribed, handleSubscribe } = useChannelSubscription(cleanChannelId);
   
   // Only initialize video hooks if we have a valid channel ID
   const { 
@@ -46,7 +46,7 @@ const ChannelDetails = () => {
     isLoadingMore, 
     INITIAL_VIDEOS_COUNT,
     refetchVideos
-  } = useChannelVideos(channelId);
+  } = useChannelVideos(cleanChannelId);
 
   useEffect(() => {
     // Log channel information for debugging
@@ -61,9 +61,9 @@ const ChannelDetails = () => {
 
   // Handle retry logic for failed channel loads
   useEffect(() => {
-    if (channelError && loadAttempts < 3 && channelId) {
+    if (channelError && loadAttempts < 3 && cleanChannelId) {
       const timer = setTimeout(() => {
-        console.log(`Retry attempt ${loadAttempts + 1} for channel:`, channelId);
+        console.log(`Retry attempt ${loadAttempts + 1} for channel:`, cleanChannelId);
         setLoadAttempts(prev => prev + 1);
         setIsRetrying(true);
         refetchChannel().finally(() => {
@@ -73,7 +73,7 @@ const ChannelDetails = () => {
       
       return () => clearTimeout(timer);
     }
-  }, [channelError, loadAttempts, refetchChannel, channelId]);
+  }, [channelError, loadAttempts, refetchChannel, cleanChannelId]);
 
   // Handle navigation from failed channel load
   const handleGoHome = () => {
@@ -81,7 +81,7 @@ const ChannelDetails = () => {
   };
 
   const handleRetryLoad = () => {
-    if (!channelId) {
+    if (!cleanChannelId) {
       toast.error("Cannot retry: Missing channel ID");
       return;
     }
@@ -101,7 +101,7 @@ const ChannelDetails = () => {
   };
 
   // Return early if no channelId is provided
-  if (!channelId) {
+  if (!cleanChannelId) {
     return (
       <div className="container mx-auto p-4 mt-16">
         <BackButton />

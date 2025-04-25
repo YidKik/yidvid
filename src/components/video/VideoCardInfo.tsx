@@ -38,24 +38,53 @@ export const VideoCardInfo = ({
     return `${(count / 1000000).toFixed(1)}M views`;
   };
 
+  // Only create channel link if we have a valid channel ID
+  const hasValidChannelId = !!channelId && channelId.trim() !== "";
+
   return (
     <div className="mt-2 flex items-start space-x-2">
-      {/* Channel avatar - prevent nested links by using span instead of Link */}
+      {/* Channel avatar - wrap in Link only if valid channel ID exists */}
       {channelThumbnail && (
-        <span className="flex-shrink-0 mt-0.5">
-          <div className="h-6 w-6 overflow-hidden rounded-full">
-            <img
-              src={channelThumbnail}
-              alt={channelName}
-              className="h-full w-full object-cover"
-              loading="lazy"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.src = "/lovable-uploads/efca5adc-d9d2-4c5b-8900-e078f9d49b6a.png";
+        <>
+          {hasValidChannelId ? (
+            <Link 
+              to={`/channel/${channelId}`} 
+              className="flex-shrink-0 mt-0.5"
+              onClick={(e) => {
+                e.stopPropagation(); // Prevent triggering parent link
+                console.log("Navigating to channel:", channelId);
               }}
-            />
-          </div>
-        </span>
+            >
+              <div className="h-6 w-6 overflow-hidden rounded-full">
+                <img
+                  src={channelThumbnail}
+                  alt={channelName}
+                  className="h-full w-full object-cover"
+                  loading="lazy"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = "/lovable-uploads/efca5adc-d9d2-4c5b-8900-e078f9d49b6a.png";
+                  }}
+                />
+              </div>
+            </Link>
+          ) : (
+            <span className="flex-shrink-0 mt-0.5">
+              <div className="h-6 w-6 overflow-hidden rounded-full">
+                <img
+                  src={channelThumbnail}
+                  alt={channelName}
+                  className="h-full w-full object-cover"
+                  loading="lazy"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = "/lovable-uploads/efca5adc-d9d2-4c5b-8900-e078f9d49b6a.png";
+                  }}
+                />
+              </div>
+            </span>
+          )}
+        </>
       )}
       
       <div className="flex-1 min-w-0">
@@ -70,7 +99,22 @@ export const VideoCardInfo = ({
         
         <div className="mt-1 flex flex-col text-xs video-meta-text">
           {!hideChannelName && (
-            <span className="video-channel-name">{channelName}</span>
+            <>
+              {hasValidChannelId ? (
+                <Link 
+                  to={`/channel/${channelId}`}
+                  className="video-channel-name hover:underline"
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent triggering parent link
+                    console.log("Channel name clicked:", channelId);
+                  }}
+                >
+                  {channelName}
+                </Link>
+              ) : (
+                <span className="video-channel-name">{channelName}</span>
+              )}
+            </>
           )}
           
           <div className="flex flex-col sm:flex-row sm:items-center">

@@ -27,11 +27,15 @@ export const VideoGridItem = ({ video, loading }: VideoGridItemProps) => {
   // Make sure we have a valid video_id for the link
   const videoIdForLink = video.video_id || video.id;
 
+  // Ensure we have a valid channelId for the link
+  const channelIdForLink = video.channelId || "";
+
   // Add debug log to see what's being passed to the link
   console.log("VideoGridItem rendering with video data:", {
     id: video.id,
     video_id: video.video_id,
-    videoIdForLink: videoIdForLink
+    videoIdForLink: videoIdForLink,
+    channelId: channelIdForLink
   });
 
   return (
@@ -50,7 +54,7 @@ export const VideoGridItem = ({ video, loading }: VideoGridItemProps) => {
         <VideoCardInfo
           title={video.title}
           channelName={video.channelName}
-          channelId={video.channelId}
+          channelId={channelIdForLink}
           views={video.views}
           formattedDate={formattedDate}
           channelThumbnail={video.channelThumbnail}
