@@ -2,6 +2,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { checkAdminStatus } from "../admin/check-admin-status";
 import { extractChannelId } from "./extract-channel-id";
 import type { ManualChannelData } from "./channel-types";
+import { hasSufficientQuota } from "@/hooks/video/utils/quota-manager";
 
 // Define the anon key as a constant since it's already in the client file
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1aW5ja3R2c2l1enRzeGN1cWZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY0ODgzNzcsImV4cCI6MjA1MjA2NDM3N30.zbReqHoAR33QoCi_wqNp8AtNofTX3JebM7jvjFAWbMg";
@@ -97,6 +98,12 @@ export const addChannel = async (channelInput: string) => {
       throw new Error('Please enter a valid channel ID or URL');
     }
     
+    // Check if we have sufficient quota before proceeding
+    const hasQuota = await hasSufficientQuota(true);
+    if (!hasQuota) {
+      throw new Error('YouTube API quota is nearly exhausted. Please try manually adding the channel instead.');
+    }
+    
     // Check if channel already exists before calling edge function
     try {
       // Use direct query instead of RPC
@@ -154,7 +161,17 @@ export const addChannel = async (channelInput: string) => {
         }
         
         if (response.status === 429 || errorMessage.toLowerCase().includes('quota')) {
-          throw new Error('YouTube API quota exceeded. Please try again tomorrow.');
+          // Update the quota status in the database to avoid further requests
+          try {
+            await supabase
+              .from("api_quota_tracking")
+              .update({ quota_remaining: 0 })
+              .eq("api_name", "youtube");
+          } catch (updateErr) {
+            console.error('Failed to update quota tracking:', updateErr);
+          }
+          
+          throw new Error('YouTube API quota exceeded. Please try again tomorrow or add the channel manually.');
         } else if (response.status === 403) {
           throw new Error('YouTube API access forbidden. Please check API key permissions.');
         } else if (response.status === 404 || errorMessage.toLowerCase().includes('not found')) {

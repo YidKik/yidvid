@@ -28,6 +28,7 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
   const [manualThumbnail, setManualThumbnail] = useState("");
   const [manualDescription, setManualDescription] = useState("");
   const [isFetchingDetails, setIsFetchingDetails] = useState(false);
+  const [quotaResetTime, setQuotaResetTime] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,6 +37,7 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
     setIsQuotaExceeded(false);
     setIsForbidden(false);
     setIsChannelNotFound(false);
+    setQuotaResetTime(null);
     
     if (!channelId.trim()) {
       toast.error("Please enter a channel ID or URL", { id: "channel-empty" });
@@ -69,6 +71,11 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
       if (errorLower.includes('quota')) {
         setIsQuotaExceeded(true);
         setShowManualEntry(true);
+        
+        // Check for quota reset time in the error message
+        if (typeof error === 'object' && error && 'quotaResetAt' in error) {
+          setQuotaResetTime(error.quotaResetAt);
+        }
       } else if (errorLower.includes('forbidden') || errorLower.includes('403')) {
         setIsForbidden(true);
       } else if (errorLower.includes('not found') || errorLower.includes('404')) {
@@ -130,14 +137,13 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
         console.log("Fetching channel details for:", extractedId);
         
         const response = await fetch(
-          'https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/fetch-youtube-channel',
+          `https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/fetch-youtube-channel?channelId=${encodeURIComponent(extractedId)}`,
           {
             method: 'GET', // Use GET for just fetching details without adding
             headers: {
               'Content-Type': 'application/json',
               'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1aW5ja3R2c2l1enRzeGN1cWZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY0ODgzNzcsImV4cCI6MjA1MjA2NDM3N30.zbReqHoAR33QoCi_wqNp8AtNofTX3JebM7jvjFAWbMg`
-            },
-            body: JSON.stringify({ channelId: extractedId }),
+            }
           }
         );
 
@@ -155,6 +161,11 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
             if (data.error.toLowerCase().includes('quota')) {
               console.log("Quota exceeded, keeping manual entry mode");
               toast.error("YouTube API quota exceeded. Please enter details manually.");
+              
+              // Set quota reset time if available
+              if (data.quotaResetAt) {
+                setQuotaResetTime(data.quotaResetAt);
+              }
             } else {
               toast.error(`Error: ${data.error}`);
             }
@@ -225,8 +236,11 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
               <AlertTitle className="text-red-800">YouTube API Quota Exceeded</AlertTitle>
               <AlertDescription className="text-red-600">
                 <p>The YouTube API quota has been exceeded. You can:</p>
+                {quotaResetTime && (
+                  <p className="font-medium mt-1">Quota will reset at: {new Date(quotaResetTime).toLocaleString()}</p>
+                )}
                 <ul className="list-disc pl-5 mt-1">
-                  <li>Try again tomorrow when the quota resets</li>
+                  <li>Try again after the quota resets</li>
                   <li>
                     <Button 
                       variant="link" 
@@ -246,7 +260,16 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
               <AlertCircle className="h-4 w-4" />
               <AlertTitle className="text-red-800">API Access Forbidden</AlertTitle>
               <AlertDescription className="text-red-600">
-                YouTube has rejected our request. Please try again later.
+                YouTube has rejected our request. Please try again later or add the channel manually.
+                <div className="mt-2">
+                  <Button 
+                    variant="outline" 
+                    className="text-red-600 border-red-300" 
+                    onClick={() => setShowManualEntry(true)}
+                  >
+                    Add channel manually
+                  </Button>
+                </div>
               </AlertDescription>
             </Alert>
           )}
@@ -257,6 +280,15 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
               <AlertTitle className="text-red-800">Channel Not Found</AlertTitle>
               <AlertDescription className="text-red-600">
                 The YouTube channel could not be found. Please verify the channel ID or URL.
+                <div className="mt-2">
+                  <Button 
+                    variant="outline" 
+                    className="text-red-600 border-red-300" 
+                    onClick={() => setShowManualEntry(true)}
+                  >
+                    Add channel manually instead
+                  </Button>
+                </div>
               </AlertDescription>
             </Alert>
           )}
@@ -280,13 +312,23 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
             >
               Close
             </Button>
-            <Button 
-              type="submit" 
-              disabled={isLoading}
-              className="bg-primary hover:bg-primary/90 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            >
-              {isLoading ? "Adding Channel..." : "Add Channel"}
-            </Button>
+            <div className="space-x-2">
+              <Button 
+                type="button" 
+                variant="outline"
+                onClick={() => setShowManualEntry(true)}
+                disabled={isLoading}
+              >
+                Manual Entry
+              </Button>
+              <Button 
+                type="submit" 
+                disabled={isLoading}
+                className="bg-primary hover:bg-primary/90 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              >
+                {isLoading ? "Adding Channel..." : "Add Channel"}
+              </Button>
+            </div>
           </div>
         </form>
       ) : (

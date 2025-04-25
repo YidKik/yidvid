@@ -128,7 +128,7 @@ Deno.serve(async (req) => {
         console.error('YouTube API quota already exceeded according to our tracking');
         return new Response(
           JSON.stringify({ 
-            error: 'YouTube API quota exceeded. Please try again tomorrow.',
+            error: 'YouTube API quota exceeded. Please try again tomorrow or add the channel manually.',
             quotaResetAt: quotaData.quota_reset_at
           }),
           { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 429 }
@@ -183,21 +183,44 @@ Deno.serve(async (req) => {
           console.error("YouTube quota exceeded detected");
           
           try {
+            // Get current date and calculate tomorrow's reset date
+            const now = new Date();
+            const tomorrow = new Date(now);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            tomorrow.setHours(0, 0, 0, 0); // Reset to midnight
+            
             // Update our quota tracking
             await supabaseClient
               .from("api_quota_tracking")
-              .update({ quota_remaining: 0 })
+              .update({ 
+                quota_remaining: 0,
+                quota_reset_at: tomorrow.toISOString()
+              })
               .eq("api_name", "youtube");
+              
+            // Get the updated reset time to return to the client
+            const { data: updatedQuota } = await supabaseClient
+              .from("api_quota_tracking")
+              .select("quota_reset_at")
+              .eq("api_name", "youtube")
+              .single();
+              
+            return new Response(
+              JSON.stringify({ 
+                error: 'YouTube API quota exceeded. Please try again tomorrow or add the channel manually.',
+                quotaResetAt: updatedQuota?.quota_reset_at
+              }),
+              { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 429 }
+            );
           } catch (updateErr) {
             console.error("Failed to update quota tracking:", updateErr);
+            return new Response(
+              JSON.stringify({ 
+                error: 'YouTube API quota exceeded. Please try again tomorrow or add the channel manually.' 
+              }),
+              { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 429 }
+            );
           }
-            
-          return new Response(
-            JSON.stringify({ 
-              error: 'YouTube API quota exceeded. Please try again tomorrow or add the channel manually.' 
-            }),
-            { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 429 }
-          );
         }
         
         // Handle channel not found
@@ -351,3 +374,4 @@ function extractChannelIdentifier(input: string): string {
   // If no patterns match, return the input as-is
   return channelId;
 }
+

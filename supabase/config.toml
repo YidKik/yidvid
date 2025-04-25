@@ -39,3 +39,7 @@ enabled = false
 [edge_functions]
 [edge_functions.admin-add-channel]
 verify_jwt = false
+
+[edge_functions.fetch-youtube-channel]
+verify_jwt = false
+

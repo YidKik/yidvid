@@ -11,14 +11,25 @@ export const hasSufficientQuota = async (
     const quotaInfo = await checkApiQuota();
     console.log("Current quota status:", quotaInfo);
     
-    // Be more aggressive with quota if high priority, otherwise be conservative
-    const minQuotaRequired = highPriority ? 500 : 1000;
+    // If quota info is null, continue anyway
+    if (quotaInfo === null) {
+      return true;
+    }
     
-    // Only proceed if we have sufficient quota remaining or if we couldn't check quota
-    return quotaInfo === null || quotaInfo.quota_remaining >= minQuotaRequired || highPriority;
+    // If quota is exhausted, always return false
+    if (quotaInfo.quota_remaining <= 0) {
+      return false;
+    }
+    
+    // Be more aggressive with quota if high priority, otherwise be conservative
+    const minQuotaRequired = highPriority ? 100 : 500;
+    
+    // Only proceed if we have sufficient quota remaining
+    return quotaInfo.quota_remaining >= minQuotaRequired;
   } catch (error) {
     console.warn("Could not check quota:", error);
     // Continue anyway if we can't check
     return true;
   }
 };
+
