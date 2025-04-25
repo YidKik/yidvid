@@ -25,6 +25,7 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
   const [manualChannelId, setManualChannelId] = useState("");
   const [manualTitle, setManualTitle] = useState("");
   const [manualThumbnail, setManualThumbnail] = useState("");
+  const [isFetchingDetails, setIsFetchingDetails] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -119,8 +120,10 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
     setManualChannelId(extractedId);
     
     if (extractedId) {
+      setIsFetchingDetails(true);
       try {
         console.log("Fetching channel details for:", extractedId);
+        
         const response = await fetch(
           'https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/fetch-youtube-channel',
           {
@@ -135,17 +138,39 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
 
         if (response.ok) {
           const data = await response.json();
+          console.log("Response data:", data);
           if (data && !data.error) {
             console.log("Channel data fetched:", data);
             setManualTitle(data.title || '');
             setManualThumbnail(data.thumbnail_url || '');
             toast.success("Channel details retrieved successfully");
-          } else if (data.error && data.error.toLowerCase().includes('quota')) {
-            console.log("Quota exceeded, keeping manual entry mode");
+          } else if (data.error) {
+            console.log("Error from API:", data.error);
+            if (data.error.toLowerCase().includes('quota')) {
+              console.log("Quota exceeded, keeping manual entry mode");
+              toast.error("YouTube API quota exceeded. Please enter details manually.");
+            } else {
+              toast.error(`Error: ${data.error}`);
+            }
+          }
+        } else {
+          const errorText = await response.text();
+          console.error("Error response:", response.status, errorText);
+          
+          try {
+            const errorData = JSON.parse(errorText);
+            if (errorData.error) {
+              toast.error(errorData.error);
+            }
+          } catch (e) {
+            toast.error(`Error: ${response.status} ${response.statusText}`);
           }
         }
       } catch (error) {
         console.error("Error fetching channel details:", error);
+        toast.error("Failed to fetch channel details");
+      } finally {
+        setIsFetchingDetails(false);
       }
     }
   };
@@ -270,7 +295,11 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
               onChange={(e) => handleChannelInputChange(e.target.value)}
               placeholder="e.g., https://youtube.com/@channelname or @channelname"
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-2"
+              disabled={isFetchingDetails}
             />
+            {isFetchingDetails && (
+              <p className="text-xs text-blue-600 mb-2">Fetching channel details...</p>
+            )}
             <div className="mt-2">
               <label 
                 htmlFor="manualChannelId" 
@@ -304,6 +333,7 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
               onChange={(e) => setManualTitle(e.target.value)}
               placeholder="e.g., Channel Name"
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              disabled={isFetchingDetails}
               required
             />
           </div>
@@ -321,6 +351,7 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
               onChange={(e) => setManualThumbnail(e.target.value)}
               placeholder="e.g., https://example.com/thumbnail.jpg"
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              disabled={isFetchingDetails}
             />
             {manualThumbnail && (
               <div className="mt-2">
@@ -329,7 +360,7 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
                   alt="Channel thumbnail preview" 
                   className="h-16 w-16 object-cover rounded"
                   onError={(e) => {
-                    e.currentTarget.src = 'https://placehold.co/100x100?text=YT';
+                    (e.target as HTMLImageElement).src = 'https://placehold.co/100x100?text=YT';
                   }}
                 />
               </div>
@@ -345,13 +376,13 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
               variant="outline"
               onClick={() => setShowManualEntry(false)}
               className="border-gray-300 text-gray-700"
-              disabled={isLoading}
+              disabled={isLoading || isFetchingDetails}
             >
               Back to Auto Add
             </Button>
             <Button 
               type="submit" 
-              disabled={isLoading || !manualChannelId || !manualTitle}
+              disabled={isLoading || !manualChannelId || !manualTitle || isFetchingDetails}
               className="bg-primary hover:bg-primary/90 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             >
               {isLoading ? "Adding Channel..." : "Add Channel Manually"}

@@ -4,7 +4,7 @@ export const extractChannelId = (input: string): string => {
   
   // Handle full URLs
   if (channelId.includes('youtube.com/')) {
-    // Handle channel URLs with channel ID
+    // Handle channel URLs with channel ID format (UC...)
     const channelMatch = channelId.match(/youtube\.com\/(?:channel\/)([\w-]+)/);
     if (channelMatch && channelMatch[1]) {
       return channelMatch[1];
@@ -20,6 +20,12 @@ export const extractChannelId = (input: string): string => {
     const cFormatMatch = channelId.match(/youtube\.com\/c\/([\w-]+)/);
     if (cFormatMatch && cFormatMatch[1]) {
       return cFormatMatch[1];
+    }
+
+    // Handle user/ format URLs
+    const userFormatMatch = channelId.match(/youtube\.com\/user\/([\w-]+)/);
+    if (userFormatMatch && userFormatMatch[1]) {
+      return userFormatMatch[1];
     }
   } else if (channelId.startsWith('@')) {
     // Handle @username format
