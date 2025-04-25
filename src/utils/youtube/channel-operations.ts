@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { checkAdminStatus } from "../admin/check-admin-status";
 import { extractChannelId } from "./extract-channel-id";
@@ -23,20 +24,33 @@ export const addChannelManually = async (channelData: ManualChannelData) => {
     console.log('Attempting to add channel manually with ID:', channelId);
 
     // Check if channel already exists
-    const { data: existingChannel, error: checkError } = await supabase
-      .from('youtube_channels')
-      .select('channel_id')
-      .eq('channel_id', channelId)
-      .is('deleted_at', null)
-      .maybeSingle();
+    try {
+      const { data: existingChannel, error: checkError } = await supabase
+        .from('youtube_channels')
+        .select('channel_id')
+        .eq('channel_id', channelId)
+        .is('deleted_at', null)
+        .maybeSingle();
 
-    if (checkError && checkError.code !== 'PGRST116') {
-      console.error('Error checking if channel exists:', checkError);
-      throw new Error('Error checking if channel exists');
-    }
+      if (checkError) {
+        console.error('Error checking if channel exists:', checkError);
+        if (checkError.code === 'PGRST116') {
+          // This is not an actual error, just no results found
+          // Continue with the insertion
+        } else {
+          throw new Error(`Database error: ${checkError.message}`);
+        }
+      }
 
-    if (existingChannel) {
-      throw new Error('This channel has already been added');
+      if (existingChannel) {
+        throw new Error('This channel has already been added');
+      }
+    } catch (checkErr) {
+      if (checkErr instanceof Error && checkErr.message === 'This channel has already been added') {
+        throw checkErr;
+      }
+      console.error('Error during channel existence check:', checkErr);
+      // Continue with insertion attempt even if check failed
     }
 
     // Insert the new channel
@@ -77,6 +91,29 @@ export const addChannel = async (channelInput: string) => {
       throw new Error('Please enter a valid channel ID or URL');
     }
     
+    // Check if channel already exists before calling edge function
+    try {
+      const { data: existingChannel, error: checkError } = await supabase
+        .from('youtube_channels')
+        .select('channel_id')
+        .eq('channel_id', channelId)
+        .is('deleted_at', null)
+        .maybeSingle();
+        
+      if (checkError && checkError.code !== 'PGRST116') {
+        console.warn('Warning during channel existence check:', checkError);
+        // Continue despite warning
+      } else if (existingChannel) {
+        throw new Error('This channel has already been added');
+      }
+    } catch (checkErr) {
+      if (checkErr instanceof Error && checkErr.message === 'This channel has already been added') {
+        throw checkErr;
+      }
+      // Continue with edge function call despite check error
+      console.warn('Warning during channel check:', checkErr);
+    }
+
     const { data: { session } } = await supabase.auth.getSession();
     if (!session?.access_token) {
       throw new Error('Authentication error. Please sign in again.');
@@ -101,14 +138,27 @@ export const addChannel = async (channelInput: string) => {
         const errorText = await response.text();
         console.error('Edge function error response:', response.status, errorText);
         
-        if (response.status === 429 || errorText.toLowerCase().includes('quota')) {
+        let errorMessage = 'Error from edge function';
+        
+        try {
+          const errorObj = JSON.parse(errorText);
+          if (errorObj && errorObj.error) {
+            errorMessage = errorObj.error;
+          }
+        } catch (parseErr) {
+          errorMessage = errorText || response.statusText;
+        }
+        
+        if (response.status === 429 || errorMessage.toLowerCase().includes('quota')) {
           throw new Error('YouTube API quota exceeded. Please try again tomorrow.');
         } else if (response.status === 403) {
           throw new Error('YouTube API access forbidden. Please check API key permissions.');
-        } else if (response.status === 404 || errorText.toLowerCase().includes('not found')) {
+        } else if (response.status === 404 || errorMessage.toLowerCase().includes('not found')) {
           throw new Error('Channel not found. Please check the channel ID or URL.');
+        } else if (errorMessage.toLowerCase().includes('already been added')) {
+          throw new Error('This channel has already been added');
         } else {
-          throw new Error(`Error from edge function: ${errorText || response.statusText}`);
+          throw new Error(`Error from edge function: ${errorMessage}`);
         }
       }
       

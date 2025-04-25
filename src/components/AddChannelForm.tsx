@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -109,7 +110,8 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
       onClose?.();
     } catch (error: any) {
       console.error("Error adding channel manually:", error);
-      toast.error(error.message || "Failed to add channel manually", { id: "manual-add-error" });
+      const errorMessage = error?.message || "Failed to add channel manually";
+      toast.error(errorMessage, { id: "manual-add-error" });
     } finally {
       setIsLoading(false);
     }
@@ -154,16 +156,28 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
             }
           }
         } else {
-          const errorText = await response.text();
-          console.error("Error response:", response.status, errorText);
-          
+          let errorMessage = "Failed to fetch channel details";
           try {
-            const errorData = JSON.parse(errorText);
-            if (errorData.error) {
-              toast.error(errorData.error);
+            const errorText = await response.text();
+            console.error("Error response:", response.status, errorText);
+            
+            try {
+              const errorData = JSON.parse(errorText);
+              if (errorData.error) {
+                errorMessage = errorData.error;
+                toast.error(errorData.error);
+              }
+            } catch (e) {
+              toast.error(`Error: ${response.status} ${response.statusText}`);
             }
           } catch (e) {
             toast.error(`Error: ${response.status} ${response.statusText}`);
+          }
+          
+          if (response.status === 429) {
+            toast.error("YouTube API quota exceeded. Please enter details manually.");
+          } else if (errorMessage.toLowerCase().includes('already been added')) {
+            toast.error("This channel has already been added");
           }
         }
       } catch (error) {

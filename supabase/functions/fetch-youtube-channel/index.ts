@@ -69,45 +69,59 @@ Deno.serve(async (req) => {
     const supabaseClient = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
     // Check if channel already exists
-    const { data: existingChannel, error: checkError } = await supabaseClient
-      .from('youtube_channels')
-      .select('channel_id')
-      .eq('channel_id', extractedId)
-      .is('deleted_at', null)
-      .maybeSingle();
+    try {
+      const { data: existingChannel, error: checkError } = await supabaseClient
+        .from('youtube_channels')
+        .select('channel_id, title, thumbnail_url')
+        .eq('channel_id', extractedId)
+        .is('deleted_at', null)
+        .maybeSingle();
 
-    if (checkError && checkError.code !== 'PGRST116') {
-      console.error('Error checking if channel exists:', checkError);
-      return new Response(
-        JSON.stringify({ error: 'Error checking if channel exists' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
-      );
-    }
+      if (checkError) {
+        if (checkError.code !== 'PGRST116') {
+          console.error('Error checking if channel exists:', checkError);
+          return new Response(
+            JSON.stringify({ error: `Database error: ${checkError.message}` }),
+            { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+          );
+        }
+      }
 
-    if (existingChannel) {
-      console.log("Channel already exists:", existingChannel);
-      return new Response(
-        JSON.stringify({ error: 'This channel has already been added' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
-      );
+      if (existingChannel) {
+        console.log("Channel already exists:", existingChannel);
+        return new Response(
+          JSON.stringify({ 
+            error: 'This channel has already been added', 
+            channel: existingChannel 
+          }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+        );
+      }
+    } catch (checkErr) {
+      console.error("Error during channel existence check:", checkErr);
+      // Continue despite check error
     }
 
     // First check the quota state to avoid making API calls if we're already over quota
-    const { data: quotaData } = await supabaseClient
-      .from("api_quota_tracking")
-      .select("quota_remaining, quota_reset_at")
-      .eq("api_name", "youtube")
-      .single();
-      
-    if (quotaData && quotaData.quota_remaining <= 0) {
-      console.error('YouTube API quota already exceeded according to our tracking');
-      return new Response(
-        JSON.stringify({ 
-          error: 'YouTube API quota exceeded. Please try again tomorrow.',
-          quotaResetAt: quotaData.quota_reset_at
-        }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 429 }
-      );
+    try {
+      const { data: quotaData } = await supabaseClient
+        .from("api_quota_tracking")
+        .select("quota_remaining, quota_reset_at")
+        .eq("api_name", "youtube")
+        .maybeSingle();
+        
+      if (quotaData && quotaData.quota_remaining <= 0) {
+        console.error('YouTube API quota already exceeded according to our tracking');
+        return new Response(
+          JSON.stringify({ 
+            error: 'YouTube API quota exceeded. Please try again tomorrow.',
+            quotaResetAt: quotaData.quota_reset_at
+          }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 429 }
+        );
+      }
+    } catch (quotaErr) {
+      console.warn("Error checking quota, continuing anyway:", quotaErr);
     }
 
     // Try to get channel by ID or handle using a server-side API call
@@ -147,11 +161,15 @@ Deno.serve(async (req) => {
         if (errorText.toLowerCase().includes('quota') || response.status === 403) {
           console.error("YouTube quota exceeded detected");
           
-          // Update our quota tracking
-          await supabaseClient
-            .from("api_quota_tracking")
-            .update({ quota_remaining: 0 })
-            .eq("api_name", "youtube");
+          try {
+            // Update our quota tracking
+            await supabaseClient
+              .from("api_quota_tracking")
+              .update({ quota_remaining: 0 })
+              .eq("api_name", "youtube");
+          } catch (updateErr) {
+            console.error("Failed to update quota tracking:", updateErr);
+          }
             
           return new Response(
             JSON.stringify({ 
@@ -194,6 +212,19 @@ Deno.serve(async (req) => {
       const channel = data.items[0];
       console.log('Channel data received:', channel.snippet.title);
 
+      // For GET request in manual entry, just return the channel data without inserting
+      if (req.method === 'GET') {
+        return new Response(
+          JSON.stringify({
+            channel_id: channel.id,
+            title: channel.snippet.title,
+            description: channel.snippet.description,
+            thumbnail_url: channel.snippet.thumbnails.default.url
+          }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
+        );
+      }
+
       // Insert the new channel
       const { data: insertedChannel, error: insertError } = await supabaseClient
         .from('youtube_channels')
@@ -218,10 +249,15 @@ Deno.serve(async (req) => {
       // After successful channel insertion, log success and update quota usage
       console.log('Channel added successfully:', insertedChannel);
       
-      // Decrement quota by approximate units used (1 for channel fetch)
-      await supabaseClient
-        .rpc("decrement_quota", { quota_amount: 1 })
-        .eq("api_name", "youtube");
+      try {
+        // Decrement quota by approximate units used (1 for channel fetch)
+        await supabaseClient
+          .rpc("decrement_quota", { quota_amount: 1 })
+          .eq("api_name", "youtube");
+      } catch (quotaErr) {
+        console.error("Failed to update quota usage:", quotaErr);
+        // Non-fatal error, continue
+      }
       
       // Return the channel data with a 200 status
       return new Response(
@@ -258,9 +294,10 @@ function extractChannelIdentifier(input: string): string {
   if (channelId.includes('youtube.com/')) {
     // Handle various URL formats
     const urlPatterns = [
-      /youtube\.com\/(?:channel|c)\/([^/?&]+)/,  // Standard channel URLs
-      /youtube\.com\/(@[\w-]+)/,                 // Handle URLs
-      /youtube\.com\/user\/([^/?&]+)/            // Legacy username URLs
+      /youtube\.com\/(?:channel\/)([\w-]+)/,  // Standard channel URLs
+      /youtube\.com\/(@[\w-]+)/,              // Handle URLs
+      /youtube\.com\/c\/([\w-]+)/,            // c/ format URLs
+      /youtube\.com\/user\/([\w-]+)/          // Legacy username URLs
     ];
 
     for (const pattern of urlPatterns) {
