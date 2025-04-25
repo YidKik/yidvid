@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -72,8 +73,7 @@ export const BackButton = ({ className }: BackButtonProps) => {
     <button
       onClick={handleGoBack}
       className={cn(
-        "bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white",
-        "py-2 px-4 border border-blue-500 hover:border-transparent rounded",
+        "bg-primary hover:bg-primary/90 text-white font-bold py-2 px-4 rounded-full", // Updated to use theme colors
         "fixed top-12 left-4 transition-all duration-200",
         "group hover:scale-105 active:scale-95",
         "z-[100]",
@@ -82,7 +82,7 @@ export const BackButton = ({ className }: BackButtonProps) => {
         className
       )}
     >
-      <ArrowLeft className="h-4 w-4 text-blue-700 group-hover:text-white" />
+      <ArrowLeft className="h-4 w-4" />
     </button>
   );
 };
