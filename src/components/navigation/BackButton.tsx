@@ -1,8 +1,6 @@
-
 import { useState, useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { 
   getPreviousPath, 
@@ -22,7 +20,6 @@ export const BackButton = ({ className }: BackButtonProps) => {
   const [visible, setVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   
-  // Record current route for proper history tracking
   useEffect(() => {
     const currentPath = location.pathname + location.search;
     recordNavigation(currentPath);
@@ -46,25 +43,19 @@ export const BackButton = ({ className }: BackButtonProps) => {
   }, [lastScrollY]);
 
   const handleGoBack = () => {
-    // Save current scroll position before navigating
     saveScrollPosition(location.pathname + location.search);
     
-    // Get previous path from history
     const previousPath = getPreviousPath();
     
     console.log("Back button clicked. Previous path:", previousPath);
     
     if (previousPath) {
-      // Remove current page from history
       removeCurrentPathFromHistory();
       
-      // Get saved scroll position for the previous page
       const scrollPosition = getScrollPosition(previousPath);
       
-      // Navigate to previous page
       navigate(previousPath);
       
-      // After navigation, restore scroll position with a slight delay to ensure page is loaded
       setTimeout(() => {
         window.scrollTo({
           top: scrollPosition,
@@ -72,21 +63,18 @@ export const BackButton = ({ className }: BackButtonProps) => {
         });
       }, 100);
     } else {
-      // If no history, go to home but skip welcome
       console.log("No previous path found, navigating to home with skipWelcome");
       navigate("/?skipWelcome=true");
     }
   };
 
   return (
-    <Button
-      variant="ghost"
-      size="icon"
+    <button
       onClick={handleGoBack}
       className={cn(
-        "fixed top-12 left-4 p-2 hover:bg-primary/5 transition-all duration-200",
-        "rounded-full shadow-sm hover:shadow-md",
-        "border border-gray-100 bg-white/95 backdrop-blur-sm",
+        "bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white",
+        "py-2 px-4 border border-blue-500 hover:border-transparent rounded",
+        "fixed top-12 left-4 transition-all duration-200",
         "group hover:scale-105 active:scale-95",
         "z-[100]",
         visible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-10 pointer-events-none",
@@ -94,7 +82,7 @@ export const BackButton = ({ className }: BackButtonProps) => {
         className
       )}
     >
-      <ArrowLeft className="h-4 w-4 text-black group-hover:h-5 group-hover:w-5 transition-all duration-200" />
-    </Button>
+      <ArrowLeft className="h-4 w-4 text-blue-700 group-hover:text-white" />
+    </button>
   );
 };
