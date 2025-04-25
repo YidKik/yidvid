@@ -46,3 +46,5 @@ verify_jwt = false
 [edge_functions.delete-channel-admin]
 verify_jwt = false
 
+[edge_functions.channel-subscribe]
+verify_jwt = false
