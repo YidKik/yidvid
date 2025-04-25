@@ -1,13 +1,17 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 
 export const useRelatedVideosQuery = (channelId: string, currentVideoId: string) => {
+  const { isAuthenticated } = useAuth();
+  
   return useQuery({
-    queryKey: ["channel-videos", channelId, currentVideoId],
+    queryKey: ["channel-videos", channelId, currentVideoId, isAuthenticated],
     enabled: !!channelId && !!currentVideoId,
     queryFn: async () => {
       console.log("Fetching related videos for channel:", channelId, "excluding video:", currentVideoId);
+      console.log("Auth status:", isAuthenticated ? "logged in" : "logged out");
       
       try {
         // First try direct database query for related videos
@@ -31,6 +35,7 @@ export const useRelatedVideosQuery = (channelId: string, currentVideoId: string)
         }
 
         // If we couldn't find videos from the same channel, try the edge function as a fallback
+        // This is especially important for authenticated users where RLS might be restricting access
         console.log("No videos found from direct query, trying edge function");
         const response = await fetch(`https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/get-public-videos?channel_id=${channelId}`, {
           method: "GET",

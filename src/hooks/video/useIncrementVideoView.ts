@@ -1,4 +1,3 @@
-
 import { useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -28,7 +27,8 @@ export const useIncrementVideoView = () => {
       const { error } = await supabase
         .from("youtube_videos")
         .update({ 
-          views: supabase.rpc('increment_counter', {}), // Using RPC function with proper syntax
+          // Fix the RPC function call with empty object parameter
+          views: supabase.rpc('increment_counter', {}), 
           last_viewed_at: new Date().toISOString() 
         })
         .eq('id', videoId);
