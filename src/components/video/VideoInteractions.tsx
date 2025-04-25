@@ -34,12 +34,7 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
           return;
         }
 
-        if (data && data.channel_id) {
-          console.log('Found channel ID for video:', data.channel_id);
-          setChannelId(data.channel_id);
-        } else {
-          console.error('No channel ID found for video:', videoId);
-        }
+        setChannelId(data.channel_id);
       } catch (err) {
         console.error("Failed to fetch channel ID:", err);
       } finally {
@@ -120,7 +115,7 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
         <Button
           variant={isSubscribed ? "default" : "outline"}
           onClick={handleSubscribe}
-          disabled={isLoadingChannel || isSubscriptionLoading || !channelId}
+          disabled={isLoadingChannel || isSubscriptionLoading}
           className={`relative group rounded-full px-6 py-2 text-xs md:text-sm transition-all duration-300
             ${isSubscribed 
               ? "bg-primary border-primary hover:bg-primary/90 text-white shadow-md" 
