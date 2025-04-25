@@ -29,7 +29,8 @@ export const VideoGridItem = ({ video, loading }: VideoGridItemProps) => {
   const videoIdForLink = video.video_id || video.id;
   
   // Always ensure we have a valid channelId for linking to the channel page
-  const channelIdForLink = video.channelId || "";
+  // Extract from different possible sources and clean it
+  const channelIdForLink = video.channelId || video.channel_id || "";
   
   // Add debug log to help troubleshoot routing issues
   console.log("VideoGridItem rendering with data:", {

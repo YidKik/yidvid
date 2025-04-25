@@ -13,12 +13,22 @@ import { VideoPlaceholder } from "@/components/video/VideoPlaceholder";
 import { toast } from "sonner";
 
 const ChannelDetails = () => {
-  const { id: channelId } = useParams();
+  const { id } = useParams<{ id?: string }>();
+  const channelId = id?.trim() || "";
   const navigate = useNavigate();
   const [loadAttempts, setLoadAttempts] = useState(0);
   const [isRetrying, setIsRetrying] = useState(false);
   
   console.log("ChannelDetails rendering with channelId:", channelId);
+  
+  // Exit early if no channelId is provided at all
+  useEffect(() => {
+    if (!channelId) {
+      console.error("No channel ID found in URL parameters");
+      toast.error("Channel ID is required");
+      navigate('/');
+    }
+  }, [channelId, navigate]);
   
   const { 
     data: channel, 
@@ -51,7 +61,7 @@ const ChannelDetails = () => {
 
   // Handle retry logic for failed channel loads
   useEffect(() => {
-    if (channelError && loadAttempts < 3) {
+    if (channelError && loadAttempts < 3 && channelId) {
       const timer = setTimeout(() => {
         console.log(`Retry attempt ${loadAttempts + 1} for channel:`, channelId);
         setLoadAttempts(prev => prev + 1);
@@ -71,6 +81,11 @@ const ChannelDetails = () => {
   };
 
   const handleRetryLoad = () => {
+    if (!channelId) {
+      toast.error("Cannot retry: Missing channel ID");
+      return;
+    }
+    
     setIsRetrying(true);
     Promise.all([refetchChannel(), refetchVideos()])
       .then(() => {
@@ -84,6 +99,27 @@ const ChannelDetails = () => {
         setIsRetrying(false);
       });
   };
+
+  // Return early if no channelId is provided
+  if (!channelId) {
+    return (
+      <div className="container mx-auto p-4 mt-16">
+        <BackButton />
+        <div className="flex flex-col items-center justify-center min-h-[300px] p-6 border border-gray-200 rounded-lg bg-white/50 shadow-sm">
+          <VideoPlaceholder size="medium" />
+          <h2 className="text-xl font-semibold text-destructive mt-6">Missing Channel ID</h2>
+          <p className="text-muted-foreground mt-2 text-center max-w-md">
+            No channel identifier was provided in the URL.
+          </p>
+          <div className="flex gap-4 mt-6">
+            <Button onClick={handleGoHome} variant="default">
+              Return Home
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (isLoadingChannel || isRetrying) {
     return <ChannelLoading />;
