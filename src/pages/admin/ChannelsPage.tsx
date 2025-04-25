@@ -6,7 +6,7 @@ export default function ChannelsPage() {
   return (
     <div className="container mx-auto py-8 space-y-6">
       <BackButton />
-      <h1 className="text-3xl font-bold">Channel Management</h1>
+      <h1 className="text-3xl font-bold">Add YouTube Channels</h1>
       <YouTubeChannelsSection />
     </div>
   );

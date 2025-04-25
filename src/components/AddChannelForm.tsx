@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -76,20 +75,24 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+    <form 
+      onSubmit={handleSubmit} 
+      className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
+    >
       <div className="mb-4">
-        <label htmlFor="channelInput" className="block text-gray-700 text-sm font-bold mb-2">
+        <label 
+          htmlFor="channelInput" 
+          className="block text-gray-700 text-sm font-bold mb-2"
+        >
           YouTube Channel URL or Handle
         </label>
-        <div className="shadow-sm">
-          <ChannelInput
-            id="channelInput"
-            value={channelId}
-            onChange={setChannelId}
-            disabled={isLoading}
-            className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-          />
-        </div>
+        <ChannelInput
+          value={channelId}
+          onChange={setChannelId}
+          disabled={isLoading}
+          placeholder="Enter channel URL, @handle, or ID"
+          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        />
         <p className="text-gray-500 text-xs mt-2">
           Enter a YouTube channel URL (e.g., https://www.youtube.com/@channelname) or channel handle (e.g., @channelname)
         </p>
@@ -134,12 +137,12 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
         </div>
       )}
       
-      <div className="flex items-center justify-end gap-4">
+      <div className="flex items-center justify-between">
         <Button 
           type="button"
           variant="outline"
           onClick={onClose}
-          className="py-2 px-4 rounded hover:bg-gray-50"
+          className="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
           disabled={isLoading}
         >
           Cancel
