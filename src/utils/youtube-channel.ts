@@ -109,6 +109,80 @@ export const extractChannelId = (input: string): string => {
   return channelId;
 };
 
+export interface ManualChannelData {
+  channel_id: string;
+  title: string;
+  description?: string;
+  thumbnail_url?: string;
+  default_category?: string;
+}
+
+export const addChannelManually = async (channelData: ManualChannelData) => {
+  try {
+    // First check admin status
+    await checkAdminStatus();
+    
+    if (!channelData.channel_id) {
+      throw new Error('Channel ID is required');
+    }
+    
+    if (!channelData.title) {
+      throw new Error('Channel title is required');
+    }
+
+    // Normalize the channel ID (remove @ if present)
+    let channelId = channelData.channel_id;
+    if (channelId.startsWith('@')) {
+      // Keep the @ symbol for display purposes
+      channelId = channelData.channel_id;
+    }
+    
+    console.log('Attempting to add channel manually with ID:', channelId);
+
+    // Check if channel already exists
+    const { data: existingChannel, error: checkError } = await supabase
+      .from('youtube_channels')
+      .select('channel_id')
+      .eq('channel_id', channelId)
+      .is('deleted_at', null)
+      .maybeSingle();
+
+    if (checkError && checkError.code !== 'PGRST116') {
+      console.error('Error checking if channel exists:', checkError);
+      throw new Error('Error checking if channel exists');
+    }
+
+    if (existingChannel) {
+      throw new Error('This channel has already been added');
+    }
+
+    // Insert the new channel
+    const { data: insertedChannel, error: insertError } = await supabase
+      .from('youtube_channels')
+      .insert({
+        channel_id: channelId,
+        title: channelData.title,
+        description: channelData.description || '',
+        thumbnail_url: channelData.thumbnail_url || 'https://placehold.co/100x100?text=YT',
+        default_category: channelData.default_category || 'other'
+      })
+      .select()
+      .single();
+
+    if (insertError) {
+      console.error('Error inserting channel:', insertError);
+      throw new Error('Failed to add channel to database');
+    }
+
+    console.log('Channel added manually successfully:', insertedChannel);
+    return insertedChannel;
+    
+  } catch (error) {
+    console.error('Error in addChannelManually:', error);
+    throw error;
+  }
+};
+
 export const addChannel = async (channelInput: string) => {
   try {
     // First check admin status

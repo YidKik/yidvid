@@ -92,6 +92,24 @@ Deno.serve(async (req) => {
       );
     }
 
+    // First check the quota state to avoid making API calls if we're already over quota
+    const { data: quotaData } = await supabaseClient
+      .from("api_quota_tracking")
+      .select("quota_remaining, quota_reset_at")
+      .eq("api_name", "youtube")
+      .single();
+      
+    if (quotaData && quotaData.quota_remaining <= 0) {
+      console.error('YouTube API quota already exceeded according to our tracking');
+      return new Response(
+        JSON.stringify({ 
+          error: 'YouTube API quota exceeded. Please try again tomorrow.',
+          quotaResetAt: quotaData.quota_reset_at
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 429 }
+      );
+    }
+
     // Try to get channel by ID or handle using a server-side API call
     console.log('Making YouTube API request via server-side fetch...');
     
@@ -102,14 +120,12 @@ Deno.serve(async (req) => {
       apiUrl += `&id=${extractedId}`;
     }
 
-    // IMPORTANT: Enhanced headers with more robust referrer/origin information
+    // IMPORTANT: Use different headers to avoid API key restrictions
     const options = {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
-        'User-Agent': 'Mozilla/5.0 Supabase Edge Function',
-        'Referer': 'https://yidvid.com/',
-        'Origin': 'https://yidvid.com',
+        'User-Agent': 'Supabase Edge Function',
         'X-Request-Source': 'Supabase Edge Function'
       }
     };
@@ -117,7 +133,7 @@ Deno.serve(async (req) => {
     console.log("Calling YouTube API with URL:", apiUrl);
     
     try {
-      console.log("Attempting YouTube API fetch with enhanced headers");
+      console.log("Attempting YouTube API fetch with improved headers");
       const response = await fetch(apiUrl, options);
       console.log("YouTube API response status:", response.status, response.statusText);
       
@@ -130,9 +146,16 @@ Deno.serve(async (req) => {
         // Handle quota exceeded error
         if (errorText.toLowerCase().includes('quota') || response.status === 403) {
           console.error("YouTube quota exceeded detected");
+          
+          // Update our quota tracking
+          await supabaseClient
+            .from("api_quota_tracking")
+            .update({ quota_remaining: 0 })
+            .eq("api_name", "youtube");
+            
           return new Response(
             JSON.stringify({ 
-              error: 'YouTube API quota exceeded. Please try again tomorrow.' 
+              error: 'YouTube API quota exceeded. Please try again tomorrow or add the channel manually.' 
             }),
             { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 429 }
           );
@@ -150,7 +173,8 @@ Deno.serve(async (req) => {
         return new Response(
           JSON.stringify({ 
             error: `YouTube API error: ${response.status} ${response.statusText}`,
-            details: errorText
+            details: errorText,
+            manualAddRequired: true
           }),
           { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
         );
@@ -191,8 +215,13 @@ Deno.serve(async (req) => {
         );
       }
 
-      // After successful channel insertion, log success
+      // After successful channel insertion, log success and update quota usage
       console.log('Channel added successfully:', insertedChannel);
+      
+      // Decrement quota by approximate units used (1 for channel fetch)
+      await supabaseClient
+        .rpc("decrement_quota", { quota_amount: 1 })
+        .eq("api_name", "youtube");
       
       // Return the channel data with a 200 status
       return new Response(
@@ -203,7 +232,10 @@ Deno.serve(async (req) => {
     } catch (fetchError) {
       console.error('Error fetching from YouTube API:', fetchError);
       return new Response(
-        JSON.stringify({ error: `Failed to fetch channel data: ${fetchError.message}` }),
+        JSON.stringify({ 
+          error: `Failed to fetch channel data: ${fetchError.message}`,
+          manualAddRequired: true 
+        }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
       );
     }
