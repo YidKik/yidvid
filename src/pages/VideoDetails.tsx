@@ -99,13 +99,6 @@ const VideoDetails = () => {
     authStatus: isAuthenticated ? "logged in" : "logged out"
   });
 
-  // Debug logging for related videos
-  console.log("Related videos:", channelVideos?.length || 0, "videos found");
-  
-  if (channelVideos?.length === 0 && !isLoadingRelated) {
-    console.log("No related videos found, channel ID:", video.channel_id);
-  }
-
   return (
     <div className="container mx-auto p-4 mt-16">
       <BackButton />

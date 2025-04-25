@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
@@ -14,10 +14,16 @@ export const useChannelSubscription = (channelId: string | null | undefined) => 
     const checkSubscription = async () => {
       // Don't check if no channelId or user is not authenticated
       if (!channelId || !isAuthenticated || !session?.user?.id) {
+        console.log("Skipping subscription check:", { 
+          channelId, 
+          isAuthenticated, 
+          hasUser: !!session?.user?.id 
+        });
         setIsSubscribed(false);
         return;
       }
 
+      console.log("Checking subscription status for channel:", channelId);
       setIsLoading(true);
       
       try {
@@ -32,7 +38,9 @@ export const useChannelSubscription = (channelId: string | null | undefined) => 
           console.error("Error checking subscription:", error);
         }
 
-        setIsSubscribed(!!data);
+        const isSubbed = !!data;
+        console.log("Subscription check result:", { isSubbed, data });
+        setIsSubscribed(isSubbed);
       } catch (err) {
         console.error("Failed to check subscription status:", err);
       } finally {
@@ -41,11 +49,12 @@ export const useChannelSubscription = (channelId: string | null | undefined) => 
     };
 
     checkSubscription();
-  }, [channelId, isAuthenticated, session]);
+  }, [channelId, isAuthenticated, session?.user?.id]);
 
-  const handleSubscribe = async () => {
+  const handleSubscribe = useCallback(async () => {
     if (!channelId) {
       console.error("No channel ID provided");
+      toast.error("Channel information is missing", { id: "no-channel-id" });
       return;
     }
 
@@ -62,6 +71,7 @@ export const useChannelSubscription = (channelId: string | null | undefined) => 
       return;
     }
 
+    console.log(`Attempting to ${isSubscribed ? 'unsubscribe from' : 'subscribe to'} channel:`, channelId);
     setIsLoading(true);
 
     try {
@@ -88,12 +98,13 @@ export const useChannelSubscription = (channelId: string | null | undefined) => 
       }
 
       const result = await response.json();
+      console.log("Subscription update result:", result);
       
       setIsSubscribed(result.isSubscribed);
       
       // Show success message 
       toast.success(
-        isSubscribed ? "Unsubscribed from channel" : "Subscribed to channel", 
+        result.isSubscribed ? "Subscribed to channel" : "Unsubscribed from channel", 
         { id: `subscription-${channelId}` }
       );
     } catch (error: any) {
@@ -102,7 +113,7 @@ export const useChannelSubscription = (channelId: string | null | undefined) => 
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [channelId, isAuthenticated, isSubscribed]);
 
   return { isSubscribed, handleSubscribe, isLoading };
 };
