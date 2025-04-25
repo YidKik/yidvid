@@ -28,11 +28,11 @@ serve(async (req) => {
       );
     }
 
-    // Update the views count for the specified video using raw SQL expression
+    // Update the views count for the specified video using raw SQL
     const { data, error } = await supabase
       .from('youtube_videos')
       .update({ 
-        views: supabase.sql`COALESCE(views, 0) + 1`,
+        views: supabase.rpc('increment_counter'),
         last_viewed_at: new Date().toISOString() 
       })
       .eq('id', videoId)
@@ -47,7 +47,7 @@ serve(async (req) => {
         .then(() => supabase
           .from('youtube_videos')
           .update({ 
-            views: supabase.sql`COALESCE(views, 0) + 1`,
+            views: supabase.rpc('increment_counter'),
             last_viewed_at: new Date().toISOString() 
           })
           .eq('id', videoId)
