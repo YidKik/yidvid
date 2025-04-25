@@ -24,12 +24,15 @@ export const useChannelSubscription = (channelId: string | undefined) => {
     return () => {
       authListener.subscription.unsubscribe();
     };
-  }, [isAuthenticated]);
+  }, [isAuthenticated, channelId]);
 
   // Use separate effect for initial check and channelId changes
   useEffect(() => {
     if (channelId && isAuthenticated) {
       checkSubscription();
+    } else {
+      // Reset subscription status when not authenticated or no channel
+      setIsSubscribed(false);
     }
   }, [channelId, isAuthenticated]);
 
@@ -86,6 +89,8 @@ export const useChannelSubscription = (channelId: string | undefined) => {
         return;
       }
 
+      console.log("Attempting to subscribe/unsubscribe with token:", currentSession.session.access_token);
+
       // Use the edge function for reliable subscription management
       const response = await fetch(
         "https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/channel-subscribe",
@@ -121,5 +126,5 @@ export const useChannelSubscription = (channelId: string | undefined) => {
     }
   };
 
-  return { isSubscribed, handleSubscribe };
+  return { isSubscribed, handleSubscribe, isLoading: isCheckingSubscription };
 };

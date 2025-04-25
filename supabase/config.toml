@@ -48,4 +48,3 @@ verify_jwt = false
 
 [edge_functions.channel-subscribe]
 verify_jwt = true
-
