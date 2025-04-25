@@ -101,6 +101,7 @@ const VideoDetails = () => {
             <VideoInfo
               title={video.title}
               channelName={video.channel_name}
+              channelId={video.channel_id}
               channelThumbnail={video.youtube_channels?.thumbnail_url}
               views={video.views}
               uploadedAt={video.uploaded_at}

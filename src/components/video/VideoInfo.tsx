@@ -3,10 +3,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatDistanceToNow } from "date-fns";
 import { useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import { Link } from "react-router-dom";
 
 interface VideoInfoProps {
   title: string;
   channelName: string;
+  channelId?: string;
   channelThumbnail?: string;
   views?: number;
   uploadedAt: string | Date;
@@ -15,6 +17,7 @@ interface VideoInfoProps {
 
 export const VideoInfo = ({ 
   channelName, 
+  channelId,
   channelThumbnail,
   description,
   views,
@@ -57,14 +60,34 @@ export const VideoInfo = ({
     <div className="space-y-4 animate-fade-in">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Avatar className="h-10 w-10 md:h-12 md:w-12 ring-2 ring-background shadow-lg">
-            <AvatarImage src={channelThumbnail || ''} alt={channelName} />
-            <AvatarFallback className="bg-primary/10 text-primary">
-              <img src="/lovable-uploads/efca5adc-d9d2-4c5b-8900-e078f9d49b6a.png" alt="YidVid Logo" className="h-8 w-8" />
-            </AvatarFallback>
-          </Avatar>
+          {channelId ? (
+            <Link to={`/channel/${channelId}`} className="hover:opacity-80 transition-opacity">
+              <Avatar className="h-10 w-10 md:h-12 md:w-12 ring-2 ring-background shadow-lg">
+                <AvatarImage src={channelThumbnail || ''} alt={channelName} />
+                <AvatarFallback className="bg-primary/10 text-primary">
+                  <img src="/lovable-uploads/efca5adc-d9d2-4c5b-8900-e078f9d49b6a.png" alt="YidVid Logo" className="h-8 w-8" />
+                </AvatarFallback>
+              </Avatar>
+            </Link>
+          ) : (
+            <Avatar className="h-10 w-10 md:h-12 md:w-12 ring-2 ring-background shadow-lg">
+              <AvatarImage src={channelThumbnail || ''} alt={channelName} />
+              <AvatarFallback className="bg-primary/10 text-primary">
+                <img src="/lovable-uploads/efca5adc-d9d2-4c5b-8900-e078f9d49b6a.png" alt="YidVid Logo" className="h-8 w-8" />
+              </AvatarFallback>
+            </Avatar>
+          )}
           <div className="flex flex-col">
-            <h3 className="font-medium text-sm md:text-base">{channelName}</h3>
+            {channelId ? (
+              <Link 
+                to={`/channel/${channelId}`}
+                className="font-medium text-sm md:text-base hover:text-primary transition-colors"
+              >
+                {channelName}
+              </Link>
+            ) : (
+              <h3 className="font-medium text-sm md:text-base">{channelName}</h3>
+            )}
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <span>{formattedViews} views</span>
               <span>•</span>
