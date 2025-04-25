@@ -14,6 +14,56 @@ interface ChannelData {
   default_category?: string;
 }
 
+// YouTube API functions for channel ID resolution
+async function resolveCustomUrlToChannelId(customUrl: string): Promise<string | null> {
+  try {
+    const YOUTUBE_API_KEY = Deno.env.get('YOUTUBE_API_KEY');
+    if (!YOUTUBE_API_KEY) {
+      console.error("YouTube API key not configured");
+      return null;
+    }
+
+    // Handle @ format - need to use forHandle parameter
+    if (customUrl.startsWith('@')) {
+      const handle = customUrl.substring(1); // Remove @ symbol
+      const url = `https://youtube.googleapis.com/youtube/v3/channels?part=id&forHandle=${handle}&key=${YOUTUBE_API_KEY}`;
+      const response = await fetch(url);
+      
+      if (!response.ok) {
+        console.error(`YouTube API error: ${response.status} - ${response.statusText}`);
+        return null;
+      }
+      
+      const data = await response.json();
+      
+      if (data.items && data.items.length > 0) {
+        return data.items[0].id;
+      }
+      return null;
+    }
+
+    // Handle username or custom URL format
+    const url = `https://youtube.googleapis.com/youtube/v3/channels?part=id&forUsername=${customUrl}&key=${YOUTUBE_API_KEY}`;
+    const response = await fetch(url);
+    
+    if (!response.ok) {
+      console.error(`YouTube API error: ${response.status} - ${response.statusText}`);
+      return null;
+    }
+    
+    const data = await response.json();
+    
+    if (data.items && data.items.length > 0) {
+      return data.items[0].id;
+    }
+    return null;
+
+  } catch (error) {
+    console.error("Error resolving custom URL:", error);
+    return null;
+  }
+}
+
 Deno.serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -33,13 +83,37 @@ Deno.serve(async (req) => {
       );
     }
     
-    console.log("Admin add channel function - adding channel:", channelData.channel_id);
+    console.log("Admin add channel function - processing channel:", channelData.channel_id);
+    
+    // Determine if we need to resolve a custom URL to a channel ID
+    let finalChannelId = channelData.channel_id;
+    
+    // If it doesn't match the UC format and has a @ or other format, try to resolve it
+    if (!finalChannelId.match(/^UC[\w-]{22}$/i)) {
+      if (finalChannelId.startsWith('@') || 
+          finalChannelId.includes('/c/') || 
+          finalChannelId.includes('/user/')) {
+        
+        console.log("Attempting to resolve custom URL to channel ID:", finalChannelId);
+        const resolvedId = await resolveCustomUrlToChannelId(finalChannelId);
+        
+        if (resolvedId) {
+          console.log("Resolved custom URL to channel ID:", resolvedId);
+          finalChannelId = resolvedId;
+        } else {
+          console.log("Could not resolve to UC format, using as-is:", finalChannelId);
+          // We'll continue with the original ID if we can't resolve it
+        }
+      }
+    }
+    
+    console.log("Using channel ID for database:", finalChannelId);
     
     // Check if channel already exists
     const { data: existingChannel, error: checkError } = await supabase
       .from('youtube_channels')
       .select('channel_id')
-      .eq('channel_id', channelData.channel_id)
+      .eq('channel_id', finalChannelId)
       .is('deleted_at', null)
       .maybeSingle();
 
@@ -62,7 +136,7 @@ Deno.serve(async (req) => {
     const { data: insertedChannel, error: insertError } = await supabase
       .from('youtube_channels')
       .insert({
-        channel_id: channelData.channel_id,
+        channel_id: finalChannelId,
         title: channelData.title,
         description: channelData.description || '',
         thumbnail_url: channelData.thumbnail_url || 'https://placehold.co/100x100?text=YT',

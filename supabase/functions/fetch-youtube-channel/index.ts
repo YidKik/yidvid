@@ -30,7 +30,19 @@ Deno.serve(async (req) => {
   try {
     console.log("==== FETCH YOUTUBE CHANNEL FUNCTION STARTED ====");
     
-    const { channelId } = await req.json();
+    // Support both GET and POST methods
+    let channelId: string;
+    let isPreviewFetch = false;
+    
+    if (req.method === 'GET') {
+      const url = new URL(req.url);
+      channelId = url.searchParams.get('channelId') || '';
+      isPreviewFetch = true;
+    } else {
+      const requestData = await req.json();
+      channelId = requestData.channelId || '';
+    }
+    
     console.log('Received request for channel:', channelId);
 
     if (!channelId) {
@@ -68,38 +80,40 @@ Deno.serve(async (req) => {
 
     const supabaseClient = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
-    // Check if channel already exists
-    try {
-      const { data: existingChannel, error: checkError } = await supabaseClient
-        .from('youtube_channels')
-        .select('channel_id, title, thumbnail_url')
-        .eq('channel_id', extractedId)
-        .is('deleted_at', null)
-        .maybeSingle();
+    // If this is not a preview fetch (actual add), check if channel already exists
+    if (!isPreviewFetch) {
+      try {
+        const { data: existingChannel, error: checkError } = await supabaseClient
+          .from('youtube_channels')
+          .select('channel_id, title, thumbnail_url')
+          .eq('channel_id', extractedId)
+          .is('deleted_at', null)
+          .maybeSingle();
 
-      if (checkError) {
-        if (checkError.code !== 'PGRST116') {
-          console.error('Error checking if channel exists:', checkError);
+        if (checkError) {
+          if (checkError.code !== 'PGRST116') {
+            console.error('Error checking if channel exists:', checkError);
+            return new Response(
+              JSON.stringify({ error: `Database error: ${checkError.message}` }),
+              { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+            );
+          }
+        }
+
+        if (existingChannel) {
+          console.log("Channel already exists:", existingChannel);
           return new Response(
-            JSON.stringify({ error: `Database error: ${checkError.message}` }),
-            { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+            JSON.stringify({ 
+              error: 'This channel has already been added', 
+              channel: existingChannel 
+            }),
+            { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
           );
         }
+      } catch (checkErr) {
+        console.error("Error during channel existence check:", checkErr);
+        // Continue despite check error
       }
-
-      if (existingChannel) {
-        console.log("Channel already exists:", existingChannel);
-        return new Response(
-          JSON.stringify({ 
-            error: 'This channel has already been added', 
-            channel: existingChannel 
-          }),
-          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
-        );
-      }
-    } catch (checkErr) {
-      console.error("Error during channel existence check:", checkErr);
-      // Continue despite check error
     }
 
     // First check the quota state to avoid making API calls if we're already over quota
@@ -127,11 +141,18 @@ Deno.serve(async (req) => {
     // Try to get channel by ID or handle using a server-side API call
     console.log('Making YouTube API request via server-side fetch...');
     
-    let apiUrl = `https://youtube.googleapis.com/youtube/v3/channels?part=snippet&key=${YOUTUBE_API_KEY}`;
-    if (extractedId.startsWith('@')) {
-      apiUrl += `&forHandle=${extractedId.substring(1)}`;
+    // Build the API URL based on the identifier format
+    let apiUrl: string;
+    
+    if (extractedId.startsWith('UC') && /^UC[\w-]{22}$/i.test(extractedId)) {
+      // If it's already a channel ID format (UC...)
+      apiUrl = `https://youtube.googleapis.com/youtube/v3/channels?part=snippet&id=${extractedId}&key=${YOUTUBE_API_KEY}`;
+    } else if (extractedId.startsWith('@')) {
+      // If it's a handle (@username)
+      apiUrl = `https://youtube.googleapis.com/youtube/v3/channels?part=snippet&forHandle=${extractedId.substring(1)}&key=${YOUTUBE_API_KEY}`;
     } else {
-      apiUrl += `&id=${extractedId}`;
+      // Try as a username
+      apiUrl = `https://youtube.googleapis.com/youtube/v3/channels?part=snippet&forUsername=${extractedId}&key=${YOUTUBE_API_KEY}`;
     }
 
     // IMPORTANT: Use different headers to avoid API key restrictions
@@ -144,7 +165,7 @@ Deno.serve(async (req) => {
       }
     };
 
-    console.log("Calling YouTube API with URL:", apiUrl);
+    console.log("Calling YouTube API with endpoint type:", extractedId.startsWith('UC') ? 'ID' : extractedId.startsWith('@') ? 'handle' : 'username');
     
     try {
       console.log("Attempting YouTube API fetch with improved headers");
@@ -212,8 +233,8 @@ Deno.serve(async (req) => {
       const channel = data.items[0];
       console.log('Channel data received:', channel.snippet.title);
 
-      // For GET request in manual entry, just return the channel data without inserting
-      if (req.method === 'GET') {
+      // For GET request in preview mode, just return the channel data without inserting
+      if (isPreviewFetch || req.method === 'GET') {
         return new Response(
           JSON.stringify({
             channel_id: channel.id,
@@ -225,7 +246,7 @@ Deno.serve(async (req) => {
         );
       }
 
-      // Insert the new channel
+      // Insert the new channel for POST request
       const { data: insertedChannel, error: insertError } = await supabaseClient
         .from('youtube_channels')
         .insert({
@@ -292,25 +313,39 @@ function extractChannelIdentifier(input: string): string {
   
   // Handle full URLs
   if (channelId.includes('youtube.com/')) {
-    // Handle various URL formats
-    const urlPatterns = [
-      /youtube\.com\/(?:channel\/)([\w-]+)/,  // Standard channel URLs
-      /youtube\.com\/(@[\w-]+)/,              // Handle URLs
-      /youtube\.com\/c\/([\w-]+)/,            // c/ format URLs
-      /youtube\.com\/user\/([\w-]+)/          // Legacy username URLs
-    ];
+    // Handle channel URLs with UC format
+    const channelMatch = channelId.match(/youtube\.com\/(?:channel\/)(UC[\w-]+)/i);
+    if (channelMatch && channelMatch[1]) {
+      return channelMatch[1];
+    }
+    
+    // Handle custom URLs with @ format
+    const customUrlMatch = channelId.match(/youtube\.com\/(@[\w-]+)/);
+    if (customUrlMatch && customUrlMatch[1]) {
+      return customUrlMatch[1];
+    }
+    
+    // Handle c/ format URLs
+    const cFormatMatch = channelId.match(/youtube\.com\/c\/([\w-]+)/);
+    if (cFormatMatch && cFormatMatch[1]) {
+      return cFormatMatch[1];
+    }
 
-    for (const pattern of urlPatterns) {
-      const match = channelId.match(pattern);
-      if (match && match[1]) {
-        return match[1];
-      }
+    // Handle user/ format URLs
+    const userFormatMatch = channelId.match(/youtube\.com\/user\/([\w-]+)/);
+    if (userFormatMatch && userFormatMatch[1]) {
+      return userFormatMatch[1];
     }
   }
-
-  // Handle direct channel IDs or handles
-  if (channelId.startsWith('UC') || channelId.startsWith('@')) {
+  
+  // If it's already a UC... format, return as is
+  if (/^UC[\w-]{22}$/i.test(channelId)) {
     return channelId;
+  }
+
+  // Handle @username format
+  if (channelId.startsWith('@')) {
+    return channelId; // Return including @ symbol
   }
 
   // If no patterns match, return the input as-is

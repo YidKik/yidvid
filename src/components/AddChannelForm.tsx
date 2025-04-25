@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { ChannelInput } from "@/components/youtube/ChannelInput";
@@ -26,6 +26,7 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
   const [manualChannelId, setManualChannelId] = useState("");
   const [manualTitle, setManualTitle] = useState("");
   const [manualThumbnail, setManualThumbnail] = useState("");
+  const [manualDescription, setManualDescription] = useState("");
   const [isFetchingDetails, setIsFetchingDetails] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -95,6 +96,7 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
       const result = await addChannelManually({
         channel_id: manualChannelId,
         title: manualTitle,
+        description: manualDescription || undefined,
         thumbnail_url: manualThumbnail || undefined
       });
       
@@ -104,6 +106,7 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
       setManualChannelId("");
       setManualTitle("");
       setManualThumbnail("");
+      setManualDescription("");
       setShowManualEntry(false);
       
       onSuccess?.();
@@ -129,7 +132,7 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
         const response = await fetch(
           'https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/fetch-youtube-channel',
           {
-            method: 'POST',
+            method: 'GET', // Use GET for just fetching details without adding
             headers: {
               'Content-Type': 'application/json',
               'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1aW5ja3R2c2l1enRzeGN1cWZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY0ODgzNzcsImV4cCI6MjA1MjA2NDM3N30.zbReqHoAR33QoCi_wqNp8AtNofTX3JebM7jvjFAWbMg`
@@ -144,6 +147,7 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
           if (data && !data.error) {
             console.log("Channel data fetched:", data);
             setManualTitle(data.title || '');
+            setManualDescription(data.description || '');
             setManualThumbnail(data.thumbnail_url || '');
             toast.success("Channel details retrieved successfully");
           } else if (data.error) {
@@ -326,10 +330,9 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
                 value={manualChannelId}
                 onChange={(e) => setManualChannelId(e.target.value)}
                 className="bg-gray-50 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                readOnly
               />
               <p className="text-gray-500 text-xs mt-1">
-                This is the extracted channel ID that will be used.
+                This is the extracted channel ID that will be used (should ideally start with UC for YouTube channels).
               </p>
             </div>
           </div>
@@ -349,6 +352,24 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               disabled={isFetchingDetails}
               required
+            />
+          </div>
+          
+          <div className="mb-4">
+            <label 
+              htmlFor="manualDescription" 
+              className="block text-gray-700 text-sm font-bold mb-2"
+            >
+              Description
+            </label>
+            <textarea
+              id="manualDescription"
+              value={manualDescription}
+              onChange={(e) => setManualDescription(e.target.value)}
+              placeholder="Channel description"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              disabled={isFetchingDetails}
+              rows={3}
             />
           </div>
           
