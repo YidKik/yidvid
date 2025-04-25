@@ -21,17 +21,6 @@ export const ContentPreferencesSection = ({
   const isMobile = useIsMobile();
   const { session, isAuthenticated } = useSessionManager();
   const currentUserId = session?.user?.id || userId;
-
-  if (!isAuthenticated || !currentUserId) {
-    return (
-      <div className="space-y-6 md:space-y-8">
-        <h2 className={`${isMobile ? 'text-lg' : 'text-2xl'} font-semibold text-primary/80`}>Content Preferences</h2>
-        <Card className={`${isMobile ? 'p-3 text-sm' : 'p-6'}`}>
-          <p className="text-muted-foreground">Please sign in to manage your content preferences.</p>
-        </Card>
-      </div>
-    );
-  }
   
   return (
     <div className="space-y-6 md:space-y-8">
@@ -39,7 +28,13 @@ export const ContentPreferencesSection = ({
       
       <div>
         <h3 className={`${isMobile ? 'text-base' : 'text-xl'} font-semibold mb-3 md:mb-4`}>Channel Subscriptions</h3>
-        <ChannelSubscriptions userId={currentUserId} />
+        {isAuthenticated && currentUserId ? (
+          <ChannelSubscriptions userId={currentUserId} />
+        ) : (
+          <Card className={`${isMobile ? 'p-3 text-sm' : 'p-6'}`}>
+            <p className="text-muted-foreground">Please sign in to manage your subscriptions.</p>
+          </Card>
+        )}
       </div>
 
       <div>
