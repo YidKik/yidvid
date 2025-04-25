@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Youtube, ArrowLeft, ArrowRight, UserMinus, Bell } from "lucide-react";
@@ -14,6 +13,7 @@ import {
 } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useAuth } from "@/hooks/useAuth";
+import { useSessionManager } from "@/hooks/useSessionManager";
 
 interface ChannelSubscription {
   channel: {
@@ -27,7 +27,7 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(false);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated } = useSessionManager();
 
   useEffect(() => {
     const checkScrollability = () => {

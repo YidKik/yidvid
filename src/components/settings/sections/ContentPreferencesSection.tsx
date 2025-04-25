@@ -5,6 +5,7 @@ import { ChannelControl } from "@/components/youtube/ChannelPreferences";
 import { PlaybackSettings } from "@/components/settings/PlaybackSettings";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useAuth } from "@/hooks/useAuth";
+import { useSessionManager } from "@/hooks/useSessionManager";
 
 interface ContentPreferencesSectionProps {
   userId: string | null;
@@ -18,7 +19,7 @@ export const ContentPreferencesSection = ({
   setAutoplay,
 }: ContentPreferencesSectionProps) => {
   const isMobile = useIsMobile();
-  const { isAuthenticated, session } = useAuth();
+  const { session, isAuthenticated } = useSessionManager();
   const currentUserId = session?.user?.id || userId;
   
   return (

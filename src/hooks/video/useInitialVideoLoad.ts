@@ -1,21 +1,16 @@
 
-import { useEffect } from "react";
-import { VideoData } from "./types/video-fetcher";
-import { hasRealVideos } from "./utils/validation";
+// This file needs to be updated to handle the proper parameter count in the triggerRetry function
 
+// Update the interface for parameters to match implementation
 interface UseInitialVideoLoadProps {
-  data: VideoData[] | undefined;
+  data: any[];
   isLoading: boolean;
   refetch: () => Promise<any>;
   forceRefetch: () => Promise<any>;
   triggerRetry: () => void;
-  setIsRefreshing?: (value: boolean) => void;
+  setIsRefreshing: (isRefreshing: boolean) => void;
 }
 
-/**
- * Hook to handle initial data loading and refreshing with optimized performance
- * Now prioritizes showing UI quickly and loading data in the background
- */
 export const useInitialVideoLoad = ({
   data,
   isLoading,
@@ -24,35 +19,57 @@ export const useInitialVideoLoad = ({
   triggerRetry,
   setIsRefreshing
 }: UseInitialVideoLoadProps) => {
-  // Optimize refresh logic to reduce unnecessary refreshes and speed up initial loading
+  // Initialize variables for tracking retry attempts
+  const retryCount = React.useRef(0);
+  const maxRetries = 3;
+  
   useEffect(() => {
-    // Only refresh if we have no data or only sample data, but add a delay
-    // to allow the UI to render first
-    const refreshNeeded = !isLoading && (!data || data.length === 0 || !hasRealVideos(data));
-    
-    if (refreshNeeded) {
-      console.log("Initial data load needed - scheduling background refresh");
-      
-      // Don't set refreshing state immediately to avoid loading indicators
-      // Let the UI render with sample data first
-      const timer = setTimeout(() => {
-        if (setIsRefreshing) setIsRefreshing(true);
+    // When no data is available and not currently loading, try to load videos
+    if (!isLoading && (!data || data.length === 0)) {
+      const attemptLoad = async () => {
+        if (retryCount.current >= maxRetries) {
+          console.log("Max retries reached, stopping auto-retry attempts");
+          return;
+        }
         
-        forceRefetch()
-          .then(() => {
-            console.log("Background force refetch completed");
-            if (setIsRefreshing) setIsRefreshing(false);
-          })
-          .catch(err => {
-            console.error("Error in background force refetch:", err);
+        retryCount.current++;
+        console.log(`Auto-retry attempt ${retryCount.current}/${maxRetries}`);
+        
+        setIsRefreshing(true);
+        try {
+          // Try standard refetch first
+          await refetch();
+        } catch (err) {
+          console.error("Error in auto-refetch:", err);
+          
+          // If standard refetch fails, try force refetch
+          try {
+            await forceRefetch();
+          } catch (forceErr) {
+            console.error("Force refetch also failed:", forceErr);
+            
+            // As last resort, trigger the retry counter in useVideoQuery
             triggerRetry();
-            if (setIsRefreshing) setIsRefreshing(false);
-          });
-      }, 2000); // Schedule the actual fetch after UI has rendered
+          }
+        } finally {
+          setIsRefreshing(false);
+        }
+      };
+      
+      // Add a small delay before attempting to load
+      const timer = setTimeout(() => {
+        attemptLoad();
+      }, 300);
       
       return () => clearTimeout(timer);
     }
-  }, [isLoading, data]);
-
-  return null;
+    
+    // Reset retry counter when we successfully get data
+    if (data && data.length > 0) {
+      retryCount.current = 0;
+    }
+  }, [data, isLoading, refetch, forceRefetch, triggerRetry, setIsRefreshing]);
 };
+
+// Add missing import
+import React, { useEffect } from "react";
