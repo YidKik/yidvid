@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -7,6 +6,7 @@ import { addChannel, addChannelManually } from "@/utils/youtube-channel";
 import { AlertCircle } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
+import { extractChannelId } from "@/utils/youtube/extract-channel-id";
 
 interface AddChannelFormProps {
   onClose?: () => void;
@@ -21,7 +21,6 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
   const [isForbidden, setIsForbidden] = useState(false);
   const [isChannelNotFound, setIsChannelNotFound] = useState(false);
   
-  // Manual entry fields
   const [showManualEntry, setShowManualEntry] = useState(false);
   const [manualChannelId, setManualChannelId] = useState("");
   const [manualTitle, setManualTitle] = useState("");
@@ -30,7 +29,6 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Reset all error states
     setErrorMessage(null);
     setIsQuotaExceeded(false);
     setIsForbidden(false);
@@ -58,14 +56,12 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
       
       let message = "There was a problem adding the channel. Please try again.";
       
-      // Try to extract the actual error message
       if (typeof error === 'object' && error && 'message' in error) {
         message = error.message;
       } else if (typeof error === 'string') {
         message = error;
       }
       
-      // Check for specific error types for better UI feedback
       const errorLower = message.toLowerCase();
       if (errorLower.includes('quota')) {
         setIsQuotaExceeded(true);
@@ -103,7 +99,6 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
       console.log("Manual channel add successful:", result);
       toast.success("Channel added manually!", { id: "channel-added-manually" });
       
-      // Reset fields
       setManualChannelId("");
       setManualTitle("");
       setManualThumbnail("");
@@ -117,6 +112,11 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleChannelInputChange = (value: string) => {
+    const extractedId = extractChannelId(value);
+    setManualChannelId(extractedId);
   };
 
   return (
@@ -223,28 +223,41 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
           <div className="mb-2">
             <h3 className="font-bold text-lg">Manual Channel Entry</h3>
             <p className="text-sm text-gray-500 mb-4">
-              Use this form when the YouTube API quota is exceeded to manually add a channel.
+              Enter a YouTube channel URL, handle (@username), or ID, and we'll help you extract the correct channel ID.
             </p>
           </div>
           
           <div className="mb-4">
             <label 
-              htmlFor="manualChannelId" 
+              htmlFor="channelInput" 
               className="block text-gray-700 text-sm font-bold mb-2"
             >
-              Channel ID <span className="text-red-500">*</span>
+              Channel URL or Handle <span className="text-red-500">*</span>
             </label>
             <Input
-              id="manualChannelId"
-              value={manualChannelId}
-              onChange={(e) => setManualChannelId(e.target.value)}
-              placeholder="e.g., UC_x5XG1OV2P6uZZ5FSM9Ttw"
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              required
+              id="channelInput"
+              onChange={(e) => handleChannelInputChange(e.target.value)}
+              placeholder="e.g., https://youtube.com/@channelname or @channelname"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-2"
             />
-            <p className="text-gray-500 text-xs mt-1">
-              The unique identifier for the YouTube channel
-            </p>
+            <div className="mt-2">
+              <label 
+                htmlFor="manualChannelId" 
+                className="block text-gray-700 text-sm font-bold mb-2"
+              >
+                Extracted Channel ID
+              </label>
+              <Input
+                id="manualChannelId"
+                value={manualChannelId}
+                onChange={(e) => setManualChannelId(e.target.value)}
+                className="bg-gray-50 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                readOnly
+              />
+              <p className="text-gray-500 text-xs mt-1">
+                This is the extracted channel ID that will be used.
+              </p>
+            </div>
           </div>
           
           <div className="mb-4">
@@ -295,7 +308,7 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
             </Button>
             <Button 
               type="submit" 
-              disabled={isLoading}
+              disabled={isLoading || !manualChannelId || !manualTitle}
               className="bg-primary hover:bg-primary/90 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             >
               {isLoading ? "Adding Channel..." : "Add Channel Manually"}
