@@ -45,7 +45,8 @@ const ChannelDetails = () => {
     isLoadingInitialVideos, 
     isLoadingMore, 
     INITIAL_VIDEOS_COUNT,
-    refetchVideos
+    refetchVideos,
+    error: videosError
   } = useChannelVideos(cleanChannelId);
 
   useEffect(() => {
@@ -148,8 +149,10 @@ const ChannelDetails = () => {
     );
   }
 
-  // Check if we have videos data
-  const noVideosFound = displayedVideos && displayedVideos.length === 0 && !isLoadingInitialVideos;
+  // Check if videos data is loading or has errors
+  const isLoadingVideos = isLoadingInitialVideos;
+  const hasVideosError = !!videosError;
+  const noVideosFound = !isLoadingVideos && !hasVideosError && (!displayedVideos || displayedVideos.length === 0);
 
   return (
     <div className="container mx-auto p-4 mt-16 opacity-0 animate-[fadeIn_0.6s_ease-out_forwards]">
@@ -160,7 +163,22 @@ const ChannelDetails = () => {
         onSubscribe={handleSubscribe}
       />
       
-      {noVideosFound ? (
+      {hasVideosError ? (
+        <div className="text-center my-12 p-6 border border-gray-100 rounded-lg bg-white/50">
+          <VideoPlaceholder size="small" />
+          <h3 className="text-lg font-medium mt-4">Error loading videos</h3>
+          <p className="text-muted-foreground mt-2">
+            {videosError instanceof Error ? videosError.message : "There was an error loading videos for this channel."}
+          </p>
+          <Button 
+            variant="outline" 
+            className="mt-4" 
+            onClick={refetchVideos}
+          >
+            Retry
+          </Button>
+        </div>
+      ) : noVideosFound ? (
         <div className="text-center my-12 p-6 border border-gray-100 rounded-lg bg-white/50">
           <VideoPlaceholder size="small" />
           <h3 className="text-lg font-medium mt-4">No videos found</h3>
@@ -178,7 +196,7 @@ const ChannelDetails = () => {
       ) : (
         <ChannelVideos
           videos={displayedVideos || []}
-          isLoading={isLoadingInitialVideos}
+          isLoading={isLoadingVideos}
           channelThumbnail={channel.thumbnail_url}
           initialCount={INITIAL_VIDEOS_COUNT}
           isLoadingMore={isLoadingMore}

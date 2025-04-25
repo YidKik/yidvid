@@ -28,7 +28,7 @@ export const ChannelVideos = ({
     isLoadingMore
   });
 
-  if (isLoading && !isMainPage) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <LoadingAnimation
@@ -53,22 +53,22 @@ export const ChannelVideos = ({
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
         {videos.map((video, index) => (
           <div 
-            key={video.id || `video-${index}`}
+            key={video.id || video.video_id || `video-${index}`}
             className="opacity-0"
             style={{ 
               animation: `fadeIn 0.6s ease-out ${0.5 + index * 0.1}s forwards`
             }}
           >
             <VideoCard
-              id={video.video_id || video.id}
-              uuid={video.id}
+              id={video.id}
+              video_id={video.video_id || video.id}
               title={video.title || "Untitled Video"}
               thumbnail={video.thumbnail || "/placeholder.svg"}
               channelName={video.channel_name || "Unknown Channel"}
               views={video.views || 0}
               uploadedAt={video.uploaded_at || new Date().toISOString()}
               channelId={video.channel_id || ""}
-              channelThumbnail={channelThumbnail || video.youtube_channels?.thumbnail_url}
+              channelThumbnail={channelThumbnail}
             />
           </div>
         ))}
