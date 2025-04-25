@@ -24,27 +24,17 @@ export const addChannelManually = async (channelData: ManualChannelData) => {
 
     // Check if channel already exists
     try {
-      // Use a database function to check if the channel exists
-      const { data: checkResult, error: checkError } = await supabase
-        .rpc('check_channel_exists', { channel_id_param: channelId })
-        .single();
+      // Use direct query with minimal columns instead of RPC
+      const { data: existingChannel, error: directQueryError } = await supabase
+        .from('youtube_channels')
+        .select('channel_id')
+        .eq('channel_id', channelId)
+        .is('deleted_at', null)
+        .maybeSingle();
 
-      if (checkError) {
-        console.error('Error checking if channel exists using RPC:', checkError);
-        // Fall back to direct query with minimal columns
-        const { data: existingChannel, error: directQueryError } = await supabase
-          .from('youtube_channels')
-          .select('channel_id')
-          .eq('channel_id', channelId)
-          .is('deleted_at', null)
-          .maybeSingle();
-
-        if (directQueryError) {
-          console.error('Error checking if channel exists with direct query:', directQueryError);
-        } else if (existingChannel) {
-          throw new Error('This channel has already been added');
-        }
-      } else if (checkResult && checkResult.exists === true) {
+      if (directQueryError) {
+        console.error('Error checking if channel exists:', directQueryError);
+      } else if (existingChannel) {
         throw new Error('This channel has already been added');
       }
     } catch (checkErr) {
@@ -109,25 +99,15 @@ export const addChannel = async (channelInput: string) => {
     
     // Check if channel already exists before calling edge function
     try {
-      // Use a database function to check if the channel exists
-      const { data: checkResult, error: checkError } = await supabase
-        .rpc('check_channel_exists', { channel_id_param: channelId })
-        .single();
-
-      if (checkError) {
-        console.warn('Warning during channel existence check with RPC:', checkError);
-        // Fall back to direct query
-        const { data: existingChannel, error: directQueryError } = await supabase
-          .from('youtube_channels')
-          .select('channel_id')
-          .eq('channel_id', channelId)
-          .is('deleted_at', null)
-          .maybeSingle();
+      // Use direct query instead of RPC
+      const { data: existingChannel, error: directQueryError } = await supabase
+        .from('youtube_channels')
+        .select('channel_id')
+        .eq('channel_id', channelId)
+        .is('deleted_at', null)
+        .maybeSingle();
           
-        if (!directQueryError && existingChannel) {
-          throw new Error('This channel has already been added');
-        }
-      } else if (checkResult && checkResult.exists === true) {
+      if (!directQueryError && existingChannel) {
         throw new Error('This channel has already been added');
       }
     } catch (checkErr) {
