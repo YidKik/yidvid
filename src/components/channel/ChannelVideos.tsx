@@ -25,7 +25,8 @@ export const ChannelVideos = ({
   console.log("ChannelVideos rendering with:", {
     videosCount: videos?.length || 0,
     isLoading,
-    isLoadingMore
+    isLoadingMore,
+    videos: videos
   });
 
   if (isLoading) {

@@ -10,21 +10,21 @@ export const useChannelVideos = (channelId: string | undefined) => {
   const [displayedVideos, setDisplayedVideos] = useState<any[]>([]);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
-  // Use a more efficient query with direct edge function call
+  // Use a direct edge function call for better reliability
   const { 
     data: initialVideos, 
     isLoading: isLoadingInitialVideos,
     refetch: refetchInitialVideos,
     error
   } = useQuery({
-    queryKey: ["initial-channel-videos", channelId],
+    queryKey: ["channel-videos", channelId],
     queryFn: async () => {
       if (!channelId) throw new Error("Channel ID is required");
 
-      console.log("Fetching initial videos for channel:", channelId);
+      console.log("Fetching videos for channel:", channelId);
       
       try {
-        // Call the edge function directly to avoid RLS issues
+        // Call the edge function directly with proper authorization
         const response = await fetch(`https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/get-public-videos?channel_id=${channelId}`, {
           method: "GET",
           headers: {
@@ -34,11 +34,17 @@ export const useChannelVideos = (channelId: string | undefined) => {
         });
         
         if (!response.ok) {
-          throw new Error(`Edge function error: ${response.statusText}`);
+          throw new Error(`Error fetching videos: ${response.statusText}`);
         }
         
         const result = await response.json();
         console.log("Edge function response:", result);
+        
+        // Handle both possible response formats
+        if (result.data && Array.isArray(result.data) && result.data.length > 0) {
+          console.log(`Found ${result.data.length} videos for channel ${channelId}`);
+          return result.data;
+        }
         
         if (result.videos && Array.isArray(result.videos)) {
           console.log(`Found ${result.videos.length} videos for channel ${channelId}`);
@@ -62,7 +68,7 @@ export const useChannelVideos = (channelId: string | undefined) => {
     }
   });
 
-  // Set displayed videos immediately from initial fetch
+  // Set displayed videos when initial fetch completes
   useEffect(() => {
     if (initialVideos) {
       setDisplayedVideos(initialVideos);
