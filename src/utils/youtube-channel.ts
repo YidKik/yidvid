@@ -184,3 +184,78 @@ export const addChannel = async (channelInput: string) => {
     throw error;
   }
 };
+
+// New function to get channel by ID from various sources
+export const getChannelById = async (channelId: string | undefined) => {
+  if (!channelId) {
+    throw new Error("Channel ID is required");
+  }
+
+  console.log("Getting channel details for:", channelId);
+  
+  try {
+    // First try direct database query
+    const { data: directChannel, error: directError } = await supabase
+      .from("youtube_channels")
+      .select("*")
+      .eq("channel_id", channelId)
+      .maybeSingle();
+    
+    if (!directError && directChannel) {
+      console.log("Channel found directly in database:", directChannel);
+      return directChannel;
+    }
+    
+    console.log("Direct channel lookup failed, trying edge function");
+    
+    // Try via edge function for more robust search
+    try {
+      const { data: publicData, error: publicError } = await supabase.functions.invoke(
+        'get-public-channel',
+        {
+          body: { channelId },
+        }
+      );
+      
+      if (publicError) {
+        console.error("Edge function error:", publicError);
+        throw publicError;
+      }
+      
+      if (publicData?.channel) {
+        console.log("Channel found via edge function:", publicData.channel);
+        return publicData.channel;
+      }
+    } catch (edgeFunctionError) {
+      console.error("Edge function call failed:", edgeFunctionError);
+    }
+    
+    // Last resort: Try to get from YouTube API directly
+    try {
+      console.log("Attempting to fetch channel from YouTube API");
+      const { data: apiData, error: apiError } = await supabase.functions.invoke(
+        'fetch-channel-details',
+        {
+          body: { channelId },
+        }
+      );
+      
+      if (apiError) {
+        console.error("API fetch error:", apiError);
+        throw apiError;
+      }
+      
+      if (apiData) {
+        console.log("Channel found via YouTube API:", apiData);
+        return apiData;
+      }
+    } catch (apiFetchError) {
+      console.error("API fetch failed:", apiFetchError);
+    }
+    
+    throw new Error("Channel not found after multiple attempts");
+  } catch (error) {
+    console.error("Error in getChannelById:", error);
+    throw error;
+  }
+};

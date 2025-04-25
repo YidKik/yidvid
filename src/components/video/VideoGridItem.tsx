@@ -28,14 +28,20 @@ export const VideoGridItem = ({ video, loading }: VideoGridItemProps) => {
   // video_id is the YouTube's video ID, which is what our VideoPlayer expects
   const videoIdForLink = video.video_id || video.id;
   
+  // Always ensure we have a valid channelId for linking to the channel page
+  const channelIdForLink = video.channelId || "";
+  
   // Add debug log to help troubleshoot routing issues
-  console.log("VideoGridItem linking to video with ID:", videoIdForLink);
+  console.log("VideoGridItem rendering with data:", {
+    videoId: videoIdForLink,
+    channelId: channelIdForLink,
+    title: video.title
+  });
 
   return (
     <Link 
       to={`/video/${videoIdForLink}`}
       className="group block w-full"
-      onClick={() => console.log("Video link clicked:", videoIdForLink)}
     >
       <VideoCardThumbnail 
         thumbnail={video.thumbnail} 
@@ -47,7 +53,7 @@ export const VideoGridItem = ({ video, loading }: VideoGridItemProps) => {
         <VideoCardInfo
           title={video.title}
           channelName={video.channelName}
-          channelId={video.channelId}
+          channelId={channelIdForLink}
           views={video.views}
           formattedDate={formattedDate}
           channelThumbnail={video.channelThumbnail}
