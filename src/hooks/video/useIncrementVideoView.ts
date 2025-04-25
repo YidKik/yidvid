@@ -1,4 +1,3 @@
-
 import { useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -24,32 +23,35 @@ export const useIncrementVideoView = () => {
       
       console.log("Incrementing view count for video:", videoId);
       
-      // Directly update the views column with a simple increment expression
+      // Use a direct update with column increment instead of RPC
       const { error } = await supabase
         .from("youtube_videos")
         .update({ 
-          // Use a direct increment instead of an RPC call to avoid type issues
-          views: supabase.rpc('increment_counter', {}) as unknown as number, 
+          views: supabase.rpc('increment', {}),  // Fixed: use 'increment' instead of 'increment_counter'
           last_viewed_at: new Date().toISOString() 
         })
         .eq('id', videoId);
 
       if (error) {
         console.error("Error incrementing view count:", error);
-        // Try the Edge Function as a fallback
+        // Try a simpler direct increment approach as fallback
         try {
-          const { error: fnError } = await supabase.functions.invoke('increment_counter', {
-            body: { videoId }
-          });
-          
-          if (fnError) {
-            console.error("Edge function error:", fnError);
+          const { error: directError } = await supabase
+            .from("youtube_videos")
+            .update({ 
+              views: supabase.sql`views + 1`,  // SQL fragment to increment counter
+              last_viewed_at: new Date().toISOString() 
+            })
+            .eq('id', videoId);
+            
+          if (directError) {
+            console.error("Direct increment error:", directError);
             return;
           }
           
-          console.log("Successfully incremented view via edge function");
-        } catch (fnInvokeError) {
-          console.error("Error invoking edge function:", fnInvokeError);
+          console.log("Successfully incremented view with direct update");
+        } catch (directIncrementError) {
+          console.error("Error with direct increment:", directIncrementError);
           return;
         }
       } else {

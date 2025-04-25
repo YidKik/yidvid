@@ -42,8 +42,10 @@ const VideoDetails = () => {
 
   // Pass the videoId directly to the query hooks
   const { data: video, isLoading: isLoadingVideo, error } = useVideoQuery(videoId);
+  
+  // Use video?.channel_id || "" to ensure we always pass a string
   const { data: channelVideos = [], isLoading: isLoadingRelated } = useRelatedVideosQuery(
-    video?.channel_id ?? "", 
+    video?.channel_id || "", 
     videoId // Pass videoId directly, not video?.id, to ensure it's present immediately
   );
 

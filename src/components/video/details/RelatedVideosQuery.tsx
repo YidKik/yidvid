@@ -14,7 +14,7 @@ export const useRelatedVideosQuery = (channelId: string, currentVideoId: string)
       console.log("Auth status:", isAuthenticated ? "logged in" : "logged out");
       
       try {
-        // First try direct database query for related videos
+        // First try direct database query for related videos by channel ID
         let { data, error } = await supabase
           .from("youtube_videos")
           .select("*")
@@ -29,33 +29,34 @@ export const useRelatedVideosQuery = (channelId: string, currentVideoId: string)
           throw error;
         }
 
+        // If we found videos, return them
         if (data && data.length > 0) {
           console.log(`Found ${data.length} related videos from the same channel`);
           return data;
         }
         
-        // If no videos found or response is empty, try alternative query with video_id instead
-        if (!data || data.length === 0) {
-          console.log("Trying alternative query with video_id");
-          const { data: altData, error: altError } = await supabase
-            .from("youtube_videos")
-            .select("*")
-            .eq("channel_id", channelId)
-            .neq("video_id", currentVideoId) // Try with video_id instead
-            .is("deleted_at", null)
-            .order("uploaded_at", { ascending: false })
-            .limit(12);
+        // Second attempt: try with video_id instead of id
+        console.log("No videos found with ID match, trying video_id");
+        const { data: videoIdData, error: videoIdError } = await supabase
+          .from("youtube_videos")
+          .select("*")
+          .eq("channel_id", channelId)
+          .neq("video_id", currentVideoId)
+          .is("deleted_at", null)
+          .order("uploaded_at", { ascending: false })
+          .limit(12);
             
-          if (!altError && altData && altData.length > 0) {
-            console.log(`Found ${altData.length} related videos from alternative query`);
-            return altData;
-          }
+        if (!videoIdError && videoIdData && videoIdData.length > 0) {
+          console.log(`Found ${videoIdData.length} related videos using video_id match`);
+          return videoIdData;
         }
-
-        // If we couldn't find videos from the same channel, try the edge function as a fallback
-        // This is especially important for authenticated users where RLS might be restricting access
+        
+        // If still no videos, try the edge function approach
         console.log("No videos found from direct queries, trying edge function");
-        const response = await fetch(`https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/get-public-videos?channel_id=${channelId}`, {
+        const edgeFunctionUrl = `https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/get-public-videos?channel_id=${channelId}`;
+        console.log("Calling edge function:", edgeFunctionUrl);
+        
+        const response = await fetch(edgeFunctionUrl, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -64,12 +65,13 @@ export const useRelatedVideosQuery = (channelId: string, currentVideoId: string)
         });
 
         if (!response.ok) {
+          console.error(`Edge function error: ${response.statusText}`);
           throw new Error(`Edge function error: ${response.statusText}`);
         }
         
         const result = await response.json();
         
-        if (result.data && Array.isArray(result.data)) {
+        if (result.data && Array.isArray(result.data) && result.data.length > 0) {
           console.log(`Found ${result.data.length} related videos from edge function`);
           // Filter out the current video
           const filteredVideos = result.data.filter(video => 
@@ -107,10 +109,34 @@ export const useRelatedVideosQuery = (channelId: string, currentVideoId: string)
         return [];
       } catch (error) {
         console.error("Error in useRelatedVideosQuery:", error);
+        
+        // One final attempt: Try the public endpoint with no authentication
+        try {
+          console.log("Attempting final fallback: public videos endpoint");
+          const publicResponse = await fetch("https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/get-public-videos", {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1aW5ja3R2c2l1enRzeGN1cWZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY0ODgzNzcsImV4cCI6MjA1MjA2NDM3N30.zbReqHoAR33QoCi_wqNp8AtNofTX3JebM7jvjFAWbMg`
+            }
+          });
+          
+          if (publicResponse.ok) {
+            const publicData = await publicResponse.json();
+            if (publicData.data && Array.isArray(publicData.data) && publicData.data.length > 0) {
+              console.log(`Found ${publicData.data.length} videos from public endpoint`);
+              return publicData.data;
+            }
+          }
+        } catch (fallbackError) {
+          console.error("Error in fallback attempt:", fallbackError);
+        }
+        
         return [];
       }
     },
     refetchOnWindowFocus: false,
     staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: 2, // Added retry for better reliability
   });
 };
