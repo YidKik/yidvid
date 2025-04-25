@@ -42,7 +42,7 @@ const VideoDetails = () => {
 
   // Pass the videoId directly to the query hooks
   const { data: video, isLoading: isLoadingVideo, error } = useVideoQuery(videoId);
-  const { data: channelVideos } = useRelatedVideosQuery(video?.channel_id ?? "", video?.id ?? "");
+  const { data: channelVideos = [], isLoading: isLoadingRelated } = useRelatedVideosQuery(video?.channel_id ?? "", video?.id ?? "");
 
   // Increment view count when video loads
   useEffect(() => {
@@ -94,6 +94,9 @@ const VideoDetails = () => {
     authStatus: isAuthenticated ? "logged in" : "logged out"
   });
 
+  // Debug logging for related videos
+  console.log("Related videos:", channelVideos?.length || 0, "videos found");
+
   return (
     <div className="container mx-auto p-4 mt-16">
       <BackButton />
@@ -125,7 +128,13 @@ const VideoDetails = () => {
         </div>
         
         <div className="lg:col-span-1">
-          <RelatedVideos videos={channelVideos} />
+          {isLoadingRelated ? (
+            <div className="flex justify-center p-4">
+              <LoadingAnimation size="small" color="muted" text="Loading related videos..." />
+            </div>
+          ) : (
+            <RelatedVideos videos={channelVideos} />
+          )}
         </div>
       </div>
     </div>

@@ -28,7 +28,7 @@ export const useIncrementVideoView = () => {
       const { error } = await supabase
         .from("youtube_videos")
         .update({ 
-          views: supabase.rpc('increment_counter'), // Using RPC instead of SQL template
+          views: supabase.rpc('increment_counter', {}), // Using RPC function with proper syntax
           last_viewed_at: new Date().toISOString() 
         })
         .eq('id', videoId);
