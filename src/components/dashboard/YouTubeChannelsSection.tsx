@@ -105,20 +105,35 @@ export const YouTubeChannelsSection = () => {
       setIsDeleting(true);
       console.log("Starting channel deletion process for:", channelId);
 
-      // With ON DELETE CASCADE, we only need to delete the channel
+      // Instead of directly deleting, update the deleted_at field
       const { error: channelError } = await supabase
         .from("youtube_channels")
-        .delete()
+        .update({ deleted_at: new Date().toISOString() })
         .eq("channel_id", channelId);
 
       if (channelError) {
-        console.error("Error deleting channel:", channelError);
-        throw channelError;
+        console.error("Error soft deleting channel:", channelError);
+        throw new Error(`Error deleting channel: ${channelError.message}`);
+      }
+
+      // Also update the deleted_at field for related videos
+      const { error: videoError } = await supabase
+        .from("youtube_videos")
+        .update({ deleted_at: new Date().toISOString() })
+        .eq("channel_id", channelId);
+
+      if (videoError) {
+        console.error("Error soft deleting videos:", videoError);
+        // Continue anyway, the channel was successfully marked as deleted
       }
 
       toast.success("Channel deleted successfully");
       refetch();
-      setSelectedChannelId(null);
+      
+      // Reset selection if the deleted channel was selected
+      if (selectedChannelId === channelId) {
+        setSelectedChannelId(null);
+      }
     } catch (error: any) {
       console.error("Error in deletion process:", error);
       toast.error(error.message || "Error deleting channel");
