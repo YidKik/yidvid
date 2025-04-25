@@ -23,39 +23,58 @@ export const useIncrementVideoView = () => {
       
       console.log("Incrementing view count for video:", videoId);
       
-      // Use a direct update with column increment instead of RPC
+      // First, fetch the current view count
+      const { data: currentVideo, error: fetchError } = await supabase
+        .from("youtube_videos")
+        .select("views")
+        .eq('id', videoId)
+        .single();
+        
+      if (fetchError) {
+        console.error("Error fetching current view count:", fetchError);
+        return;
+      }
+      
+      // Now update with incremented value
+      const currentViews = currentVideo?.views || 0;
+      const newViewCount = currentViews + 1;
+      
       const { error } = await supabase
         .from("youtube_videos")
         .update({ 
-          views: supabase.rpc('increment', {}),  // Fixed: use 'increment' instead of 'increment_counter'
+          views: newViewCount,
           last_viewed_at: new Date().toISOString() 
         })
         .eq('id', videoId);
 
       if (error) {
         console.error("Error incrementing view count:", error);
-        // Try a simpler direct increment approach as fallback
+        
+        // Try a different approach if the first one fails
         try {
-          const { error: directError } = await supabase
-            .from("youtube_videos")
-            .update({ 
-              views: supabase.sql`views + 1`,  // SQL fragment to increment counter
-              last_viewed_at: new Date().toISOString() 
-            })
-            .eq('id', videoId);
-            
-          if (directError) {
-            console.error("Direct increment error:", directError);
-            return;
+          // Attempt to call the edge function as a fallback
+          const response = await fetch(
+            'https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/increment_counter',
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1aW5ja3R2c2l1enRzeGN1cWZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY0ODgzNzcsImV4cCI6MjA1MjA2NDM3N30.zbReqHoAR33QoCi_wqNp8AtNofTX3JebM7jvjFAWbMg`
+              },
+              body: JSON.stringify({ videoId })
+            }
+          );
+          
+          if (!response.ok) {
+            throw new Error(`Edge function error: ${response.statusText}`);
           }
           
-          console.log("Successfully incremented view with direct update");
-        } catch (directIncrementError) {
-          console.error("Error with direct increment:", directIncrementError);
-          return;
+          console.log("Successfully incremented view with edge function");
+        } catch (edgeError) {
+          console.error("Error with edge function increment:", edgeError);
         }
       } else {
-        console.log("Successfully incremented view count");
+        console.log("Successfully incremented view count to", newViewCount);
       }
       
       // Invalidate the video query to get fresh data with updated view count
