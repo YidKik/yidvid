@@ -14,9 +14,10 @@ import { LoadingAnimation } from "@/components/ui/LoadingAnimation";
 import { VideoPlaceholder } from "@/components/video/VideoPlaceholder";
 import { toast } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useIncrementVideoView } from "@/hooks/video/useIncrementVideoView";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const VideoDetails = () => {
   const { videoId } = useParams<{ videoId: string }>();
@@ -24,6 +25,7 @@ const VideoDetails = () => {
   const { isMobile } = useIsMobile();
   const { isAuthenticated, session } = useAuth();
   const incrementView = useIncrementVideoView();
+  const [isRetrying, setIsRetrying] = useState(false);
 
   // Add debug logging for current route and video ID
   useEffect(() => {
@@ -40,14 +42,31 @@ const VideoDetails = () => {
     return <div className="p-4">Video ID not provided</div>;
   }
 
-  // Pass the videoId directly to the query hooks
-  const { data: video, isLoading: isLoadingVideo, error } = useVideoQuery(videoId);
+  // Pass the videoId directly to the query hooks with retry functionality
+  const { 
+    data: video, 
+    isLoading: isLoadingVideo, 
+    error,
+    refetch
+  } = useVideoQuery(videoId);
   
   // Use video?.channel_id || "" to ensure we always pass a string
   const { data: channelVideos = [], isLoading: isLoadingRelated } = useRelatedVideosQuery(
     video?.channel_id || "", 
     videoId // Pass videoId directly, not video?.id, to ensure it's present immediately
   );
+
+  // Handle retrying video load on error
+  const handleRetryLoad = async () => {
+    setIsRetrying(true);
+    try {
+      await refetch();
+    } catch (err) {
+      console.error("Error retrying video load:", err);
+    } finally {
+      setIsRetrying(false);
+    }
+  };
 
   // Increment view count when video loads
   useEffect(() => {
@@ -60,10 +79,26 @@ const VideoDetails = () => {
     }
   }, [video, incrementView]);
 
-  if (isLoadingVideo) {
+  if (isLoadingVideo || isRetrying) {
     return (
-      <div className="container mx-auto p-4 mt-16 flex justify-center">
-        <LoadingAnimation size="medium" color="primary" text="Loading video..." />
+      <div className="container mx-auto p-4 mt-16">
+        <BackButton />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2">
+            <Skeleton className="w-full aspect-video rounded-md mb-4" />
+            <Skeleton className="w-3/4 h-8 mb-2" />
+            <Skeleton className="w-1/2 h-6 mb-6" />
+            <Skeleton className="w-full h-32" />
+          </div>
+          <div className="lg:col-span-1">
+            <Skeleton className="w-full h-8 mb-4" />
+            <div className="space-y-4">
+              {[1, 2, 3, 4].map((i) => (
+                <Skeleton key={i} className="w-full h-24" />
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -81,9 +116,25 @@ const VideoDetails = () => {
           <p className="mt-2 text-muted-foreground">
             {error ? `Error: ${error.message}` : "The video you're looking for doesn't exist or has been removed."}
           </p>
-          <Link to="/videos" className="mt-4 inline-block px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 transition-colors">
-            Return to videos
-          </Link>
+          <div className="mt-6 flex flex-col sm:flex-row gap-4 justify-center">
+            <Button 
+              onClick={handleRetryLoad}
+              className="px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 transition-colors"
+              disabled={isRetrying}
+            >
+              {isRetrying ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Retrying...
+                </>
+              ) : (
+                "Try Again"
+              )}
+            </Button>
+            <Link to="/videos" className="inline-block px-4 py-2 bg-secondary text-white rounded hover:bg-secondary/90 transition-colors">
+              Return to videos
+            </Link>
+          </div>
         </div>
       </div>
     );
