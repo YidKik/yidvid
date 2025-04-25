@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Youtube, ArrowLeft, ArrowRight, UserMinus, Bell } from "lucide-react";
@@ -12,7 +13,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useAuth } from "@/hooks/useAuth";
 import { useSessionManager } from "@/hooks/useSessionManager";
 
 interface ChannelSubscription {
@@ -38,22 +38,17 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
       }
     };
 
-    // Check initially and whenever window resizes
     checkScrollability();
     window.addEventListener('resize', checkScrollability);
 
     return () => window.removeEventListener('resize', checkScrollability);
   }, []);
 
-  const { data: subscriptions, refetch, isLoading, error } = useQuery({
+  const { data: subscriptions, refetch, isLoading } = useQuery({
     queryKey: ["channel-subscriptions", userId],
     queryFn: async () => {
-      if (!userId) {
-        console.log("No userId provided for subscriptions");
-        return [];
-      }
+      if (!userId) return [];
 
-      console.log("Fetching subscriptions for user:", userId);
       const { data, error } = await supabase
         .from("channel_subscriptions")
         .select(`
@@ -71,24 +66,18 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
         return [];
       }
 
-      console.log("Fetched subscriptions:", data);
       return data as ChannelSubscription[];
     },
     enabled: !!userId && isAuthenticated,
   });
 
   const handleUnsubscribe = async (channelId: string) => {
-    if (!userId) {
-      toast.error("You need to be logged in to manage subscriptions");
-      return;
-    }
-    
     try {
       const { error } = await supabase
         .from("channel_subscriptions")
         .delete()
-        .eq("user_id", userId)
-        .eq("channel_id", channelId);
+        .eq("channel_id", channelId)
+        .eq("user_id", userId);
 
       if (error) throw error;
 
@@ -123,8 +112,7 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
     );
   };
 
-  if (error) {
-    console.error("Subscription fetch error:", error);
+  if (!isAuthenticated) {
     return (
       <Card>
         <CardHeader>
@@ -133,7 +121,7 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
             Channel Subscriptions
           </CardTitle>
           <CardDescription>
-            Error loading subscriptions. Please try again.
+            Please sign in to manage your subscriptions.
           </CardDescription>
         </CardHeader>
       </Card>
@@ -149,22 +137,6 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
             Channel Subscriptions
           </CardTitle>
           <CardDescription>Loading subscriptions...</CardDescription>
-        </CardHeader>
-      </Card>
-    );
-  }
-
-  if (!isAuthenticated || !userId) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-2xl font-semibold flex items-center gap-2">
-            <Bell className="w-5 h-5 text-primary" />
-            Channel Subscriptions
-          </CardTitle>
-          <CardDescription>
-            Please sign in to manage your subscriptions.
-          </CardDescription>
         </CardHeader>
       </Card>
     );
