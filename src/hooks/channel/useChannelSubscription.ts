@@ -7,7 +7,6 @@ import { useAuth } from "@/hooks/useAuth";
 export const useChannelSubscription = (channelId: string | undefined) => {
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [isCheckingSubscription, setIsCheckingSubscription] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const { session, isAuthenticated } = useAuth();
 
   // Use this effect to monitor auth state changes and recheck subscription
@@ -25,7 +24,7 @@ export const useChannelSubscription = (channelId: string | undefined) => {
     return () => {
       authListener.subscription.unsubscribe();
     };
-  }, [isAuthenticated, channelId]);
+  }, [isAuthenticated]);
 
   // Use separate effect for initial check and channelId changes
   useEffect(() => {
@@ -40,6 +39,7 @@ export const useChannelSubscription = (channelId: string | undefined) => {
     try {
       setIsCheckingSubscription(true);
       
+      // Get current session to ensure we have the latest user data
       const { data: currentSession } = await supabase.auth.getSession();
       
       if (!currentSession?.session?.user?.id) {
@@ -78,8 +78,7 @@ export const useChannelSubscription = (channelId: string | undefined) => {
     }
 
     try {
-      setIsLoading(true);
-      
+      // Get current session to ensure we have the latest user data
       const { data: currentSession } = await supabase.auth.getSession();
       
       if (!currentSession?.session?.user?.id) {
@@ -119,15 +118,8 @@ export const useChannelSubscription = (channelId: string | undefined) => {
     } catch (error: any) {
       console.error("Error managing subscription:", error);
       toast.error(`Failed to update subscription: ${error.message}`, { id: "subscription-error" });
-    } finally {
-      setIsLoading(false);
     }
   };
 
-  return { 
-    isSubscribed, 
-    handleSubscribe, 
-    isLoading: isCheckingSubscription || isLoading 
-  };
+  return { isSubscribed, handleSubscribe };
 };
-

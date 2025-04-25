@@ -2,49 +2,57 @@
 import { VideoData } from "../types/video-fetcher";
 
 /**
- * Checks if we have actual videos from the database
- * @param videos Array of videos to check
- * @param isAuthenticated Whether the user is authenticated
- * @returns True if we have real videos, false if empty or only sample videos
+ * Check if the array of videos contains real videos (not samples)
+ * with improved performance, skipping check if user is logged in
  */
-export const hasRealVideos = (videos: VideoData[] | undefined, isAuthenticated: boolean): boolean => {
+export const hasRealVideos = (videos?: VideoData[] | null, isAuthenticated?: boolean): boolean => {
+  // If user is authenticated, assume videos are real
+  if (isAuthenticated) return true;
+  
   if (!videos || videos.length === 0) return false;
   
-  // Check if the videos are sample placeholders
-  const hasSampleVideos = videos.some(video => 
-    video.id?.toString().includes('sample') || 
-    video.video_id?.includes('sample') ||
-    video.channelName === "Sample Channel" || 
-    video.title?.includes('Sample Video')
-  );
-  
-  if (hasSampleVideos && videos.every(video => 
-    video.id?.toString().includes('sample') ||
-    video.video_id?.includes('sample') ||
-    video.channelName === "Sample Channel"
-  )) {
-    return false;
+  // Check just the first few videos to determine if they're real (more efficient)
+  const sampleCount = Math.min(5, videos.length);
+  for (let i = 0; i < sampleCount; i++) {
+    const video = videos[i];
+    if (!video.id.toString().includes('sample') && 
+        !video.video_id.includes('sample') &&
+        video.channelName !== "Sample Channel") {
+      return true; // Found at least one real video
+    }
   }
   
-  return true;
+  return false;
 };
 
 /**
- * Creates a set of sample videos as a fallback
- * @param count Number of sample videos to create
- * @returns Array of sample video data
+ * Create sample videos for fallback display with better performance
  */
 export const createSampleVideos = (count = 12): VideoData[] => {
-  return Array.from({ length: count }, (_, i) => ({
+  const now = new Date();
+  // Pre-calculate the base time once
+  const baseTime = now.getTime();
+  
+  return Array(count).fill(null).map((_, i) => ({
     id: `sample-${i}`,
-    video_id: `sample-video-id-${i}`,
-    title: `Sample Video ${i + 1}`,
-    thumbnail: "https://via.placeholder.com/480x360?text=Sample+Video",
+    video_id: `sample-vid-${i}`,
+    title: `Sample Video ${i+1}`,
+    thumbnail: '/placeholder.svg',
     channelName: "Sample Channel",
     channelId: "sample-channel",
-    views: Math.floor(Math.random() * 1000),
-    uploadedAt: new Date(Date.now() - i * 86400000).toISOString(),
-    description: "This is a sample video available while content loads.",
-    channelThumbnail: "https://via.placeholder.com/50x50?text=SC"
+    views: 1000 * (i+1),
+    uploadedAt: new Date(baseTime - (i * 86400000)).toISOString(),
+    createdAt: new Date(baseTime - (i * 86400000)).toISOString(),
+    description: "This is a sample video until real content loads."
   }));
+};
+
+/**
+ * Format views for display
+ */
+export const formatVideoViews = (views: number): string => {
+  if (views === 0) return "No views";
+  if (views < 1000) return `${views} views`;
+  if (views < 1000000) return `${(views / 1000).toFixed(1)}K views`;
+  return `${(views / 1000000).toFixed(1)}M views`;
 };

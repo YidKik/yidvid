@@ -11,12 +11,10 @@ import { VideoEmptyState } from "./VideoEmptyState";
 import { clearApplicationCache } from "@/lib/query-client";
 import { toast } from "sonner";
 import { useSessionManager } from "@/hooks/useSessionManager";
-import { useQueryClient } from "@tanstack/react-query";
 
 interface VideoContentProps {
   videos: VideoData[];
   isLoading: boolean;
-  isRefreshing: boolean;
   refetch?: () => Promise<any>;
   forceRefetch?: () => Promise<any>;
   lastSuccessfulFetch?: Date | null;
@@ -26,7 +24,6 @@ interface VideoContentProps {
 export const VideoContent = ({ 
   videos, 
   isLoading, 
-  isRefreshing, 
   refetch,
   forceRefetch,
   lastSuccessfulFetch,
@@ -34,7 +31,7 @@ export const VideoContent = ({
 }: VideoContentProps) => {
   const { isMobile } = useIsMobile();
   const { 
-    isRefreshing: isInternalRefreshing, 
+    isRefreshing, 
     handleRefetch, 
     handleForceRefetch 
   } = useRefetchControl({ refetch, forceRefetch });
@@ -45,14 +42,13 @@ export const VideoContent = ({
   } = useSampleVideos();
 
   const { session } = useSessionManager();
-  const queryClient = useQueryClient();
   
   // Track if we've already attempted background refresh
   const [hasAttemptedRefresh, setHasAttemptedRefresh] = useState(false);
   const initialLoadAttemptMade = useRef(false);
   const userChangedRef = useRef(session?.user?.id);
   
-  // Trigger a fresh load when auth state changes
+  // Handle auth state changes to trigger a video refresh
   useEffect(() => {
     if (userChangedRef.current !== session?.user?.id) {
       userChangedRef.current = session?.user?.id;
@@ -61,7 +57,6 @@ export const VideoContent = ({
       if (forceRefetch) {
         // Clear any cached data first
         clearApplicationCache();
-        queryClient.invalidateQueries({ queryKey: ["youtube_videos"] });
         
         // Short delay to let auth state fully update
         setTimeout(() => {
@@ -71,9 +66,32 @@ export const VideoContent = ({
         }, 300);
       }
     }
-  }, [session?.user?.id, forceRefetch, queryClient]);
+  }, [session?.user?.id, forceRefetch]);
   
-  // Trigger initial load if needed
+  // Add a check for infinite refresh loops
+  useEffect(() => {
+    // If we have a very high fetch attempt count, it likely indicates a loop
+    if (fetchAttempts && fetchAttempts > 20) {
+      // Check when we last recorded this issue
+      const lastLoopDetection = localStorage.getItem('loopDetectionTime');
+      const now = new Date().getTime();
+      
+      // Only show message once per hour
+      if (!lastLoopDetection || (now - parseInt(lastLoopDetection) > 60 * 60 * 1000)) {
+        console.warn("Detected potential refresh loop. Limiting refreshes to conserve resources.");
+        toast.warning("Content refresh temporarily limited", {
+          description: "We'll try again later",
+          duration: 3000
+        });
+        localStorage.setItem('loopDetectionTime', now.toString());
+      }
+      
+      // Don't trigger any more refreshes in this session
+      setHasAttemptedRefresh(true);
+    }
+  }, [fetchAttempts]);
+
+  // Actively trigger a refresh on first mount if needed
   useEffect(() => {
     if (!initialLoadAttemptMade.current && !isLoading && !isRefreshing && 
         forceRefetch && videos.length === 0) {
@@ -101,47 +119,22 @@ export const VideoContent = ({
   // Always show some content immediately, whether user is logged in or not
   const displayVideos = videos?.length ? videos : createSampleVideos(8);
   
-  // Check if we're only displaying sample videos (fallback content)
-  const hasSampleVideosOnly = hasOnlySampleVideos(displayVideos);
-  
-  // Handle fetch error case
-  const hasNoRealVideos = videos.length === 0 || hasSampleVideosOnly;
-  const showRetryButton = !isLoading && !isRefreshing && hasNoRealVideos && fetchAttempts && fetchAttempts > 1;
-
   return (
     <div>
       {/* Component to handle automatic refresh of stale content */}
       <AutoRefreshHandler
         videos={displayVideos}
-        isRefreshing={isRefreshing || isInternalRefreshing}
+        isRefreshing={isRefreshing}
         lastSuccessfulFetch={lastSuccessfulFetch}
         forceRefetch={forceRefetch}
       />
-      
-      {/* Show retry action if we've made multiple attempts but still have no videos */}
-      {showRetryButton && (
-        <div className="flex justify-center my-4">
-          <button
-            onClick={() => forceRefetch && handleForceRefetch()}
-            className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors flex items-center gap-2"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
-              <path d="M21 3v5h-5" />
-              <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
-              <path d="M8 16H3v5" />
-            </svg>
-            Reload Videos
-          </button>
-        </div>
-      )}
       
       {/* Responsive video view based on device */}
       {isMobile ? (
         <MobileVideoView
           videos={displayVideos}
           isLoading={isLoading}
-          isRefreshing={isRefreshing || isInternalRefreshing}
+          isRefreshing={isRefreshing}
           refetch={handleRefetch}
           forceRefetch={handleForceRefetch}
           lastSuccessfulFetch={lastSuccessfulFetch}
@@ -151,7 +144,7 @@ export const VideoContent = ({
         <DesktopVideoView
           videos={displayVideos}
           isLoading={isLoading}
-          isRefreshing={isRefreshing || isInternalRefreshing}
+          isRefreshing={isRefreshing}
           refetch={handleRefetch}
           forceRefetch={handleForceRefetch}
           lastSuccessfulFetch={lastSuccessfulFetch}
