@@ -32,7 +32,7 @@ serve(async (req) => {
     const { data, error } = await supabase
       .from('youtube_videos')
       .update({ 
-        views: supabase.rpc('increment_counter', {}),
+        views: supabase.rpc('increment_counter_value'), // Using the correct function name
         last_viewed_at: new Date().toISOString() 
       })
       .eq('id', videoId)
@@ -40,11 +40,36 @@ serve(async (req) => {
 
     if (error) {
       console.error('Error incrementing view count:', error);
+      
+      // Try direct update as a fallback
+      const { data: directData, error: directError } = await supabase
+        .from('youtube_videos')
+        .update({ 
+          views: supabase.raw('COALESCE(views, 0) + 1'),
+          last_viewed_at: new Date().toISOString() 
+        })
+        .eq('id', videoId)
+        .select('id, views');
+        
+      if (directError) {
+        return new Response(
+          JSON.stringify({ error: directError.message }),
+          { 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            status: 500 
+          }
+        );
+      }
+      
       return new Response(
-        JSON.stringify({ error: error.message }),
+        JSON.stringify({ 
+          success: true, 
+          data: directData?.[0] || null,
+          message: 'View count incremented successfully (direct update)' 
+        }),
         { 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 500 
+          status: 200 
         }
       );
     }

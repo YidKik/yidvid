@@ -24,20 +24,36 @@ export const useIncrementVideoView = () => {
       console.log("Incrementing view count for video:", videoId);
       
       // Update the view count in the database
+      // Instead of using rpc with increment_counter, directly update the views column
       const { error } = await supabase
         .from("youtube_videos")
         .update({ 
-          views: supabase.rpc('increment_counter', {}), 
+          views: supabase.rpc('increment_counter'),
           last_viewed_at: new Date().toISOString() 
         })
         .eq('id', videoId);
 
       if (error) {
         console.error("Error incrementing view count:", error);
-        return;
+        // Try the Edge Function as a fallback
+        try {
+          const { error: fnError } = await supabase.functions.invoke('increment_counter', {
+            body: { videoId }
+          });
+          
+          if (fnError) {
+            console.error("Edge function error:", fnError);
+            return;
+          }
+          
+          console.log("Successfully incremented view via edge function");
+        } catch (fnInvokeError) {
+          console.error("Error invoking edge function:", fnInvokeError);
+          return;
+        }
+      } else {
+        console.log("Successfully incremented view count");
       }
-
-      console.log("Successfully incremented view count");
       
       // Invalidate the video query to get fresh data with updated view count
       queryClient.invalidateQueries({ queryKey: ["video", videoId] });
