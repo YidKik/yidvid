@@ -76,64 +76,82 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="space-y-2">
-        <ChannelInput
-          value={channelId}
-          onChange={setChannelId}
-          disabled={isLoading}
-        />
-        <p className="text-sm text-muted-foreground">
+    <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+      <div className="mb-4">
+        <label htmlFor="channelInput" className="block text-gray-700 text-sm font-bold mb-2">
+          YouTube Channel URL or Handle
+        </label>
+        <div className="shadow-sm">
+          <ChannelInput
+            id="channelInput"
+            value={channelId}
+            onChange={setChannelId}
+            disabled={isLoading}
+            className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+          />
+        </div>
+        <p className="text-gray-500 text-xs mt-2">
           Enter a YouTube channel URL (e.g., https://www.youtube.com/@channelname) or channel handle (e.g., @channelname)
         </p>
       </div>
       
       {isQuotaExceeded && (
-        <Alert variant="destructive" className="bg-destructive/10 text-destructive">
+        <Alert variant="destructive" className="mb-4 bg-red-50 border border-red-200">
           <AlertCircle className="h-4 w-4" />
-          <AlertTitle>YouTube API Quota Exceeded</AlertTitle>
-          <AlertDescription className="mt-1">
-            The YouTube API quota has been exceeded. This is a limitation imposed by YouTube and resets daily.
-            Please try again tomorrow when the quota refreshes.
+          <AlertTitle className="text-red-800">YouTube API Quota Exceeded</AlertTitle>
+          <AlertDescription className="text-red-600">
+            The YouTube API quota has been exceeded. Please try again tomorrow.
           </AlertDescription>
         </Alert>
       )}
       
       {isForbidden && (
-        <Alert variant="destructive" className="bg-destructive/10 text-destructive">
+        <Alert variant="destructive" className="mb-4 bg-red-50 border border-red-200">
           <AlertCircle className="h-4 w-4" />
-          <AlertTitle>API Access Forbidden</AlertTitle>
-          <AlertDescription className="mt-1">
-            YouTube has rejected our request. This might be due to API key restrictions or service issues.
-            Please try again later or contact support if the problem persists.
+          <AlertTitle className="text-red-800">API Access Forbidden</AlertTitle>
+          <AlertDescription className="text-red-600">
+            YouTube has rejected our request. Please try again later.
           </AlertDescription>
         </Alert>
       )}
       
       {isChannelNotFound && (
-        <Alert variant="destructive" className="bg-destructive/10 text-destructive">
+        <Alert variant="destructive" className="mb-4 bg-red-50 border border-red-200">
           <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Channel Not Found</AlertTitle>
-          <AlertDescription className="mt-1">
-            The YouTube channel could not be found. Please verify the channel ID, handle, or URL and try again.
+          <AlertTitle className="text-red-800">Channel Not Found</AlertTitle>
+          <AlertDescription className="text-red-600">
+            The YouTube channel could not be found. Please verify the channel ID or URL.
           </AlertDescription>
         </Alert>
       )}
       
       {errorMessage && !isQuotaExceeded && !isForbidden && !isChannelNotFound && (
-        <div className="bg-destructive/15 p-3 rounded-md flex items-start gap-2">
-          <AlertCircle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
-          <p className="text-sm text-destructive">{errorMessage}</p>
+        <div className="mb-4 p-3 border border-red-300 rounded bg-red-50">
+          <div className="flex items-start gap-2">
+            <AlertCircle className="h-5 w-5 text-red-600 mt-0.5" />
+            <p className="text-sm text-red-600">{errorMessage}</p>
+          </div>
         </div>
       )}
       
-      <Button 
-        type="submit" 
-        disabled={isLoading}
-        className="w-full"
-      >
-        {isLoading ? "Adding Channel..." : "Add Channel"}
-      </Button>
+      <div className="flex items-center justify-end gap-4">
+        <Button 
+          type="button"
+          variant="outline"
+          onClick={onClose}
+          className="py-2 px-4 rounded hover:bg-gray-50"
+          disabled={isLoading}
+        >
+          Cancel
+        </Button>
+        <Button 
+          type="submit" 
+          disabled={isLoading}
+          className="bg-primary hover:bg-primary/90 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        >
+          {isLoading ? "Adding Channel..." : "Add Channel"}
+        </Button>
+      </div>
     </form>
   );
 };
