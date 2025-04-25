@@ -16,38 +16,28 @@ type InteractionType = 'view' | 'like' | 'dislike' | 'save';
 export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
   const [isLiked, setIsLiked] = useState(false);
   const [showAnimation, setShowAnimation] = useState(false);
-  const [channelId, setChannelId] = useState<string | undefined>(undefined);
+  const [channelId, setChannelId] = useState<string | null>(null);
 
-  // Fetch the channel ID for the current video
   useEffect(() => {
     const fetchChannelId = async () => {
-      if (!videoId) return;
-      
-      try {
-        const { data, error } = await supabase
-          .from('youtube_videos')
-          .select('channel_id')
-          .eq('id', videoId)
-          .single();
+      const { data, error } = await supabase
+        .from('youtube_videos')
+        .select('channel_id')
+        .eq('id', videoId)
+        .single();
 
-        if (error) {
-          console.error('Error fetching channel ID:', error);
-          return;
-        }
-
-        if (data && data.channel_id) {
-          console.log('Fetched channel ID for video:', data.channel_id);
-          setChannelId(data.channel_id);
-        }
-      } catch (err) {
-        console.error('Failed to fetch channel ID:', err);
+      if (error) {
+        console.error('Error fetching channel ID:', error);
+        return;
       }
+
+      setChannelId(data.channel_id);
     };
 
     fetchChannelId();
   }, [videoId]);
 
-  const { isSubscribed, handleSubscribe, isLoading: isLoadingSubscription } = useChannelSubscription(channelId);
+  const { isSubscribed, handleSubscribe } = useChannelSubscription(channelId);
 
   const handleLike = async () => {
     const { data: { session } } = await supabase.auth.getSession();
@@ -112,39 +102,31 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
           </span>
         </Button>
         
-        {channelId && (
-          <Button
-            variant={isSubscribed ? "default" : "outline"}
-            onClick={handleSubscribe}
-            disabled={isLoadingSubscription}
-            className={`relative group rounded-full px-6 py-2 text-xs md:text-sm transition-all duration-300
-              ${isSubscribed 
-                ? "bg-primary border-primary hover:bg-primary/90 text-white shadow-md" 
-                : "hover:bg-primary/10 hover:border-gray-300"
-              }
-            `}
-          >
-            {isLoadingSubscription ? (
-              <span className="flex items-center">
-                <span className="mr-2 h-3 w-3 animate-spin rounded-full border-b-2 border-white"></span>
-                Loading...
-              </span>
-            ) : isSubscribed ? (
-              <>
-                <Check className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2 animate-in" />
-                <span>Subscribed</span>
-              </>
-            ) : (
-              <>
-                <UserPlus className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" />
-                <span>Subscribe</span>
-              </>
-            )}
-            <span className={`absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200`}>
-              {isSubscribed ? "Unsubscribe" : "Subscribe to channel"}
-            </span>
-          </Button>
-        )}
+        <Button
+          variant={isSubscribed ? "default" : "outline"}
+          onClick={handleSubscribe}
+          className={`relative group rounded-full px-6 py-2 text-xs md:text-sm transition-all duration-300
+            ${isSubscribed 
+              ? "bg-primary border-primary hover:bg-primary/90 text-white shadow-md" 
+              : "hover:bg-primary/10 hover:border-gray-300"
+            }
+          `}
+        >
+          {isSubscribed ? (
+            <>
+              <Check className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2 animate-in" />
+              <span>Subscribed</span>
+            </>
+          ) : (
+            <>
+              <UserPlus className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" />
+              <span>Subscribe</span>
+            </>
+          )}
+          <span className={`absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200`}>
+            {isSubscribed ? "Subscribed" : "Subscribe to channel"}
+          </span>
+        </Button>
       </div>
     </>
   );
