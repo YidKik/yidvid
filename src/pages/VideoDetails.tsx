@@ -16,12 +16,14 @@ import { toast } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import { useIncrementVideoView } from "@/hooks/video/useIncrementVideoView";
 
 const VideoDetails = () => {
   const { videoId } = useParams<{ videoId: string }>();
   const location = useLocation();
   const { isMobile } = useIsMobile();
   const { isAuthenticated, session } = useAuth();
+  const incrementView = useIncrementVideoView();
 
   // Add debug logging for current route and video ID
   useEffect(() => {
@@ -41,6 +43,17 @@ const VideoDetails = () => {
   // Pass the videoId directly to the query hooks
   const { data: video, isLoading: isLoadingVideo, error } = useVideoQuery(videoId);
   const { data: channelVideos } = useRelatedVideosQuery(video?.channel_id ?? "", video?.id ?? "");
+
+  // Increment view count when video loads
+  useEffect(() => {
+    if (video && video.id) {
+      // Add a small delay to make sure it's an actual view, not just page load
+      const timer = setTimeout(() => {
+        incrementView(video.id);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [video, incrementView]);
 
   if (isLoadingVideo) {
     return (
@@ -77,6 +90,7 @@ const VideoDetails = () => {
     video_id: video.video_id,
     title: video.title,
     channelId: video.channel_id,
+    views: video.views,
     authStatus: isAuthenticated ? "logged in" : "logged out"
   });
 

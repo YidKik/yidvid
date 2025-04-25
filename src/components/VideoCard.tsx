@@ -65,7 +65,14 @@ export const VideoCard = ({
   // Check if this is a placeholder or sample
   const isSample = id?.toString().includes('sample') || video_id?.includes('sample');
 
-  console.log("VideoCard rendering with videoIdForLink:", videoIdForLink); // Debug log
+  // Convert views to a number if it's not already
+  const viewsNumber = typeof views === 'number' ? views : Number(views) || 0;
+
+  console.log("VideoCard rendering with:", {
+    title,
+    views: viewsNumber,
+    videoIdForLink
+  }); // Debug log
 
   return (
     <Link 
@@ -87,7 +94,7 @@ export const VideoCard = ({
           title={title}
           channelName={channelName}
           channelId={channelId}
-          views={views}
+          views={viewsNumber}
           formattedDate={formattedDate}
           channelThumbnail={channelThumbnail}
           hideChannelName={hideChannelName}

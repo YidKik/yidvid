@@ -27,15 +27,18 @@ export const VideoCardInfo = ({
   // Format views count with improved handling
   const formatViews = (count: number | null | undefined) => {
     // Check if we have a valid number greater than 0
-    if (count === null || count === undefined || count === 0) {
-      // For now return "No views" but this will be updated with actual data
+    if (count === null || count === undefined || isNaN(Number(count))) {
       return "No views yet";
     }
     
+    const viewCount = Number(count);
+    
     // Format numbers appropriately
-    if (count < 1000) return `${count} views`;
-    if (count < 1000000) return `${(count / 1000).toFixed(1)}K views`;
-    return `${(count / 1000000).toFixed(1)}M views`;
+    if (viewCount === 0) return "No views yet";
+    if (viewCount === 1) return "1 view";
+    if (viewCount < 1000) return `${viewCount} views`;
+    if (viewCount < 1000000) return `${(viewCount / 1000).toFixed(1)}K views`;
+    return `${(viewCount / 1000000).toFixed(1)}M views`;
   };
 
   // Only create channel link if we have a valid channel ID
