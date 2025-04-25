@@ -1,4 +1,3 @@
-
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.47.0';
 import { corsHeaders } from '../_shared/cors.ts';
 
@@ -16,10 +15,26 @@ Deno.serve(async (req) => {
   }
 
   try {
-    // Get parameters from URL
-    const url = new URL(req.url);
-    const videoId = url.searchParams.get('video_id');
-    const channelId = url.searchParams.get('channel_id');
+    // Get parameters from different sources (URL or body)
+    let videoId: string | null = null;
+    let channelId: string | null = null;
+    
+    // Check if it's a GET request with query params
+    if (req.method === 'GET') {
+      const url = new URL(req.url);
+      videoId = url.searchParams.get('video_id');
+      channelId = url.searchParams.get('channel_id');
+    } 
+    // Otherwise try to get params from JSON body
+    else {
+      try {
+        const body = await req.json();
+        videoId = body.videoId || body.video_id;
+        channelId = body.channelId || body.channel_id;
+      } catch (jsonError) {
+        console.error("Failed to parse JSON body:", jsonError);
+      }
+    }
     
     console.log("Edge function called to fetch video:", videoId, "or channel videos:", channelId);
 
@@ -29,23 +44,84 @@ Deno.serve(async (req) => {
     if (channelId) {
       console.log("Fetching videos for channel:", channelId);
       
-      // Bypass RLS by using service role
-      const { data, error } = await supabase
+      // Try multiple ways to find the channel videos for better reliability
+      
+      // First, try exact channel_id match
+      const { data: exactData, error: exactError } = await supabase
         .from('youtube_videos')
-        .select('*')
+        .select('*, youtube_channels(thumbnail_url)')
         .eq('channel_id', channelId)
         .is('deleted_at', null)
-        .order('uploaded_at', { ascending: false });
+        .order('uploaded_at', { ascending: false })
+        .limit(30);
       
-      if (error) {
-        throw error;
+      if (!exactError && exactData && exactData.length > 0) {
+        console.log(`Found ${exactData.length} videos with exact channel_id match`);
+        return new Response(
+          JSON.stringify({
+            data: exactData,
+            status: 'success',
+          }),
+          {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            status: 200,
+          }
+        );
       }
       
-      console.log(`Edge function found ${data?.length || 0} videos for channel ${channelId}`);
+      // If exact match fails, try prefix/suffix matching
+      console.log("Exact match failed, trying flexible search");
+      const { data: flexData, error: flexError } = await supabase
+        .from('youtube_videos')
+        .select('*, youtube_channels(thumbnail_url)')
+        .or(`channel_id.ilike.%${channelId}%,channel_id.ilike.${channelId}%,channel_id.ilike.%${channelId}`)
+        .is('deleted_at', null)
+        .order('uploaded_at', { ascending: false })
+        .limit(30);
       
+      if (!flexError && flexData && flexData.length > 0) {
+        console.log(`Found ${flexData.length} videos with flexible channel_id search`);
+        return new Response(
+          JSON.stringify({
+            data: flexData,
+            status: 'success',
+          }),
+          {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            status: 200,
+          }
+        );
+      }
+      
+      // As a last resort, try matching by channel name or segments of channel ID
+      console.log("Flexible search failed too, trying name/title search");
+      const { data: nameData, error: nameError } = await supabase
+        .from('youtube_videos')
+        .select('*, youtube_channels(thumbnail_url)')
+        .or(`channel_name.ilike.%${channelId}%,title.ilike.%${channelId}%`)
+        .is('deleted_at', null)
+        .order('uploaded_at', { ascending: false })
+        .limit(30);
+      
+      if (!nameError && nameData && nameData.length > 0) {
+        console.log(`Found ${nameData.length} videos by channel name/title search`);
+        return new Response(
+          JSON.stringify({
+            data: nameData,
+            status: 'success',
+          }),
+          {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            status: 200,
+          }
+        );
+      }
+      
+      console.log("No videos found for channel after multiple attempts");
       return new Response(
         JSON.stringify({
-          data,
+          data: [],
+          message: "No videos found for this channel",
           status: 'success',
         }),
         {
@@ -113,7 +189,7 @@ Deno.serve(async (req) => {
         .select('id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, created_at, category, description')
         .is('deleted_at', null)
         .order('created_at', { ascending: false })
-        .limit(100);
+        .limit(30);
 
       if (error) {
         throw error;

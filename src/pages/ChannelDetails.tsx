@@ -18,6 +18,8 @@ const ChannelDetails = () => {
   const [loadAttempts, setLoadAttempts] = useState(0);
   const [isRetrying, setIsRetrying] = useState(false);
   
+  console.log("ChannelDetails rendering with channelId:", channelId);
+  
   const { 
     data: channel, 
     isLoading: isLoadingChannel, 
@@ -27,17 +29,31 @@ const ChannelDetails = () => {
   
   const { isSubscribed, handleSubscribe } = useChannelSubscription(channelId);
   
+  // Only initialize video hooks if we have a valid channel ID
   const { 
     displayedVideos, 
     isLoadingInitialVideos, 
     isLoadingMore, 
-    INITIAL_VIDEOS_COUNT 
+    INITIAL_VIDEOS_COUNT,
+    refetchVideos
   } = useChannelVideos(channelId);
+
+  useEffect(() => {
+    // Log channel information for debugging
+    if (channel) {
+      console.log("Channel data loaded successfully:", channel);
+    }
+    
+    if (channelError) {
+      console.error("Channel error details:", channelError);
+    }
+  }, [channel, channelError]);
 
   // Handle retry logic for failed channel loads
   useEffect(() => {
-    if (channelError && loadAttempts < 2) {
+    if (channelError && loadAttempts < 3) {
       const timer = setTimeout(() => {
+        console.log(`Retry attempt ${loadAttempts + 1} for channel:`, channelId);
         setLoadAttempts(prev => prev + 1);
         setIsRetrying(true);
         refetchChannel().finally(() => {
@@ -47,7 +63,7 @@ const ChannelDetails = () => {
       
       return () => clearTimeout(timer);
     }
-  }, [channelError, loadAttempts, refetchChannel]);
+  }, [channelError, loadAttempts, refetchChannel, channelId]);
 
   // Handle navigation from failed channel load
   const handleGoHome = () => {
@@ -56,11 +72,12 @@ const ChannelDetails = () => {
 
   const handleRetryLoad = () => {
     setIsRetrying(true);
-    refetchChannel()
+    Promise.all([refetchChannel(), refetchVideos()])
       .then(() => {
         toast.success("Channel reloaded successfully");
       })
-      .catch(() => {
+      .catch((error) => {
+        console.error("Retry failed:", error);
         toast.error("Failed to load channel");
       })
       .finally(() => {
@@ -80,7 +97,7 @@ const ChannelDetails = () => {
           <VideoPlaceholder size="medium" />
           <h2 className="text-xl font-semibold text-destructive mt-6">Channel not found</h2>
           <p className="text-muted-foreground mt-2 text-center max-w-md">
-            The channel could not be loaded. It may have been removed or there might be a temporary issue.
+            {channelError?.message || "The channel could not be loaded. It may have been removed or there might be a temporary issue."}
           </p>
           <div className="flex gap-4 mt-6">
             <Button onClick={handleGoHome} variant="default">
@@ -95,6 +112,9 @@ const ChannelDetails = () => {
     );
   }
 
+  // Check if we have videos data
+  const noVideosFound = displayedVideos && displayedVideos.length === 0 && !isLoadingInitialVideos;
+
   return (
     <div className="container mx-auto p-4 mt-16 opacity-0 animate-[fadeIn_0.6s_ease-out_forwards]">
       <BackButton />
@@ -103,13 +123,31 @@ const ChannelDetails = () => {
         isSubscribed={isSubscribed}
         onSubscribe={handleSubscribe}
       />
-      <ChannelVideos
-        videos={displayedVideos}
-        isLoading={isLoadingInitialVideos}
-        channelThumbnail={channel.thumbnail_url}
-        initialCount={INITIAL_VIDEOS_COUNT}
-        isLoadingMore={isLoadingMore}
-      />
+      
+      {noVideosFound ? (
+        <div className="text-center my-12 p-6 border border-gray-100 rounded-lg bg-white/50">
+          <VideoPlaceholder size="small" />
+          <h3 className="text-lg font-medium mt-4">No videos found</h3>
+          <p className="text-muted-foreground mt-2">
+            This channel doesn't have any videos yet, or they're still being processed.
+          </p>
+          <Button 
+            variant="outline" 
+            className="mt-4" 
+            onClick={refetchVideos}
+          >
+            Refresh Videos
+          </Button>
+        </div>
+      ) : (
+        <ChannelVideos
+          videos={displayedVideos || []}
+          isLoading={isLoadingInitialVideos}
+          channelThumbnail={channel.thumbnail_url}
+          initialCount={INITIAL_VIDEOS_COUNT}
+          isLoadingMore={isLoadingMore}
+        />
+      )}
     </div>
   );
 };
