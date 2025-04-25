@@ -17,37 +17,27 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
   const [isLiked, setIsLiked] = useState(false);
   const [showAnimation, setShowAnimation] = useState(false);
   const [channelId, setChannelId] = useState<string | null>(null);
-  const [isLoadingChannel, setIsLoadingChannel] = useState(true);
 
   useEffect(() => {
     const fetchChannelId = async () => {
-      setIsLoadingChannel(true);
-      try {
-        const { data, error } = await supabase
-          .from('youtube_videos')
-          .select('channel_id')
-          .eq('id', videoId)
-          .single();
+      const { data, error } = await supabase
+        .from('youtube_videos')
+        .select('channel_id')
+        .eq('id', videoId)
+        .single();
 
-        if (error) {
-          console.error('Error fetching channel ID:', error);
-          return;
-        }
-
-        setChannelId(data.channel_id);
-      } catch (err) {
-        console.error("Failed to fetch channel ID:", err);
-      } finally {
-        setIsLoadingChannel(false);
+      if (error) {
+        console.error('Error fetching channel ID:', error);
+        return;
       }
+
+      setChannelId(data.channel_id);
     };
 
-    if (videoId) {
-      fetchChannelId();
-    }
+    fetchChannelId();
   }, [videoId]);
 
-  const { isSubscribed, handleSubscribe, isLoading: isSubscriptionLoading } = useChannelSubscription(channelId);
+  const { isSubscribed, handleSubscribe } = useChannelSubscription(channelId);
 
   const handleLike = async () => {
     const { data: { session } } = await supabase.auth.getSession();
@@ -115,7 +105,6 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
         <Button
           variant={isSubscribed ? "default" : "outline"}
           onClick={handleSubscribe}
-          disabled={isLoadingChannel || isSubscriptionLoading}
           className={`relative group rounded-full px-6 py-2 text-xs md:text-sm transition-all duration-300
             ${isSubscribed 
               ? "bg-primary border-primary hover:bg-primary/90 text-white shadow-md" 
@@ -123,15 +112,7 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
             }
           `}
         >
-          {isSubscriptionLoading || isLoadingChannel ? (
-            <span className="flex items-center">
-              <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              Loading
-            </span>
-          ) : isSubscribed ? (
+          {isSubscribed ? (
             <>
               <Check className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2 animate-in" />
               <span>Subscribed</span>
