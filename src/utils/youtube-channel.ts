@@ -90,10 +90,16 @@ export const extractChannelId = (input: string): string => {
       return channelMatch[1];
     }
     
-    // Handle custom URLs
-    const customUrlMatch = channelId.match(/youtube\.com\/(?:c\/|@)([\w-]+)/);
+    // Handle custom URLs with @ format
+    const customUrlMatch = channelId.match(/youtube\.com\/(@[\w-]+)/);
     if (customUrlMatch && customUrlMatch[1]) {
-      return customUrlMatch[1];
+      return customUrlMatch[1]; // Return with @ symbol for the edge function
+    }
+    
+    // Handle c/ format URLs
+    const cFormatMatch = channelId.match(/youtube\.com\/c\/([\w-]+)/);
+    if (cFormatMatch && cFormatMatch[1]) {
+      return cFormatMatch[1];
     }
   } else if (channelId.startsWith('@')) {
     // Handle @username format
@@ -124,32 +130,36 @@ export const addChannel = async (channelInput: string) => {
     // Improved error handling with detailed logging
     console.log('Calling edge function to fetch channel data...');
     
-    // Call edge function with explicit error handling for debugging
+    // Call edge function with direct fetch instead of invoke
     try {
-      const { data, error } = await supabase.functions.invoke('fetch-youtube-channel', {
-        body: { channelId },
-      });
-    
-      if (error) {
-        console.error('Edge function error:', error);
-        
-        // Extract the most helpful error message
-        if (error.message) {
-          if (error.message.includes('quota')) {
-            throw new Error('YouTube API quota exceeded. Please try again tomorrow.');
-          } else if (error.message.includes('403') || error.message.includes('forbidden')) {
-            throw new Error('YouTube API access forbidden. Please check API key permissions.');
-          } else if (error.message.includes('404') || error.message.includes('not found')) {
-            throw new Error('Channel not found. Please check the channel ID or URL.');
-          }
-          
-          // If we have a specific error message, use it
-          throw new Error(error.message);
+      const response = await fetch(
+        'https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/fetch-youtube-channel',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+          },
+          body: JSON.stringify({ channelId }),
         }
+      );
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Edge function error response:', response.status, errorText);
         
-        // Default error if we can't extract anything useful
-        throw new Error('Error communicating with the YouTube API. Please try again later.');
+        if (response.status === 429 || errorText.toLowerCase().includes('quota')) {
+          throw new Error('YouTube API quota exceeded. Please try again tomorrow.');
+        } else if (response.status === 403) {
+          throw new Error('YouTube API access forbidden. Please check API key permissions.');
+        } else if (response.status === 404 || errorText.toLowerCase().includes('not found')) {
+          throw new Error('Channel not found. Please check the channel ID or URL.');
+        } else {
+          throw new Error(`Error from edge function: ${errorText || response.statusText}`);
+        }
       }
+      
+      const data = await response.json();
       
       if (!data) {
         throw new Error('No data received from server');
@@ -157,27 +167,9 @@ export const addChannel = async (channelInput: string) => {
       
       console.log('Channel added successfully:', data);
       return data;
-    } catch (invokeError) {
-      console.error('Edge function invocation error:', invokeError);
-      
-      // Rethrow with the most descriptive message possible
-      if (typeof invokeError === 'object' && invokeError && 'message' in invokeError) {
-        const errorMessage = invokeError.message.toString();
-        
-        // Check for common error patterns
-        if (errorMessage.includes('429') || errorMessage.toLowerCase().includes('quota')) {
-          throw new Error('YouTube API quota exceeded. Please try again tomorrow.');
-        } else if (errorMessage.includes('403') || errorMessage.includes('forbidden')) {
-          throw new Error('YouTube API access forbidden. Please check API key permissions.');
-        } else if (errorMessage.includes('404') || errorMessage.includes('not found')) {
-          throw new Error('Channel not found. Please check the channel ID or URL.');
-        }
-        
-        throw new Error(`YouTube API error: ${errorMessage}`);
-      }
-      
-      // Generic error as fallback
-      throw new Error('Error communicating with YouTube API. Please try again later.');
+    } catch (fetchError) {
+      console.error('Fetch error:', fetchError);
+      throw fetchError;
     }
   } catch (error) {
     console.error('Error in addChannel:', error);
@@ -185,7 +177,6 @@ export const addChannel = async (channelInput: string) => {
   }
 };
 
-// New function to get channel by ID from various sources
 export const getChannelById = async (channelId: string | undefined) => {
   if (!channelId) {
     throw new Error("Channel ID is required");

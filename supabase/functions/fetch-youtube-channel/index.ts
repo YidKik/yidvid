@@ -73,7 +73,8 @@ Deno.serve(async (req) => {
       .from('youtube_channels')
       .select('channel_id')
       .eq('channel_id', extractedId)
-      .single();
+      .is('deleted_at', null)
+      .maybeSingle();
 
     if (checkError && checkError.code !== 'PGRST116') {
       console.error('Error checking if channel exists:', checkError);
