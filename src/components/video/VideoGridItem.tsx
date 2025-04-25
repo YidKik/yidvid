@@ -25,32 +25,30 @@ export const VideoGridItem = ({ video, loading }: VideoGridItemProps) => {
   const formattedDate = getFormattedDate(video.uploadedAt);
   
   // Make sure we have a valid ID for linking - prioritize video_id over id
-  // video_id is the YouTube's video ID, which is what our VideoPlayer expects
+  // video_id is the YouTube's video ID, which is what our routing expects
   const videoIdForLink = video.video_id || video.id;
   
   // Always ensure we have a valid channelId for linking to the channel page
-  // Extract from different possible sources, clean it and ensure it's not empty
   const channelIdForLink = video.channelId || "";
   
-  // Add debug log to help troubleshoot routing issues
-  console.log("VideoGridItem rendering with data:", {
-    videoId: videoIdForLink,
-    channelId: channelIdForLink,
-    title: video.title
-  });
-
   // Only create channel link if we have a valid channel ID
   const hasValidChannelId = !!channelIdForLink && channelIdForLink.trim() !== "";
+  
+  // Handle sample videos differently - they should still be clickable but with a special flag
+  const isSampleVideo = video.id?.toString().includes('sample') || 
+                        video.video_id?.includes('sample') || 
+                        video.channelName === "Sample Channel";
 
   return (
     <Link 
       to={`/video/${videoIdForLink}`}
-      className="group block w-full"
+      className={`group block w-full ${isSampleVideo ? 'opacity-80 hover:opacity-100' : ''}`}
+      state={{ isSampleVideo }}
     >
       <VideoCardThumbnail 
         thumbnail={video.thumbnail} 
         title={video.title} 
-        isSample={video.id?.toString().includes('sample')} 
+        isSample={isSampleVideo} 
       />
       
       {isVideosPage && (

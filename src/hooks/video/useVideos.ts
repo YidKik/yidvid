@@ -5,7 +5,6 @@ import { useVideoFetcher } from "./useVideoFetcher";
 import { useAuthStateListener } from "./useAuthStateListener";
 import { useVideoQuery } from "./useVideoQuery";
 import { useInitialVideoLoad } from "./useInitialVideoLoad";
-import { hasRealVideos, createSampleVideos } from "./utils/validation";
 import { VideoData } from "./types/video-fetcher";
 import { useSessionManager } from "@/hooks/useSessionManager";
 
@@ -66,11 +65,8 @@ export const useVideos = (): UseVideosResult => {
     setIsRefreshing
   });
 
-  // Only use sample data when not authenticated
-  const ensuredData = hasRealVideos(data, !!session) ? data : (data?.length ? data : createSampleVideos());
-
   return {
-    data: ensuredData,
+    data: data || [],
     isLoading,
     isFetching,
     isRefreshing,

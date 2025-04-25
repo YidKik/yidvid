@@ -1,7 +1,7 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { useState, useCallback } from "react";
 import { VideoData } from "./types/video-fetcher";
-import { hasRealVideos } from "./utils/validation";
 
 interface UseVideoQueryProps {
   fetchAllVideos: () => Promise<VideoData[]>;
@@ -32,23 +32,7 @@ export const useVideoQuery = ({
     refetchInterval: 5 * 60 * 1000, // Refetch every 5 minutes
     staleTime: 2 * 60 * 1000, // Consider data stale after 2 minutes
     gcTime: 30 * 60 * 1000, // Cache data for 30 minutes
-    retry: (failureCount, error: any) => {
-      // Don't retry quota errors
-      if (error?.message?.includes('quota')) return false;
-      
-      // Don't retry RLS recursion errors - they need fixing at the DB level
-      if (error?.message?.includes('recursion') || 
-          error?.message?.includes('policy') || 
-          error?.message?.includes('permission') ||
-          error?.code === '42P07' ||
-          error?.code === '42P17') { // Added specific RLS recursion error code
-        console.log("Not retrying RLS error:", error.message);
-        return false;
-      }
-      
-      // Only retry once for other errors
-      return failureCount < 1;
-    },
+    retry: 1,
     retryDelay: 300, // Fast retry for better UX
     meta: {
       errorMessage: "Failed to load videos",

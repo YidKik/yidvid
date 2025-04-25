@@ -12,13 +12,16 @@ import { useSessionManager } from "@/hooks/useSessionManager";
 import { Helmet } from "react-helmet";
 import { useSearchParams } from "react-router-dom";
 import { getPageTitle, DEFAULT_META_DESCRIPTION, DEFAULT_META_KEYWORDS, DEFAULT_META_IMAGE } from "@/utils/pageTitle";
-import { isWelcomePage } from "@/utils/scrollRestoration";
+import { Button } from "@/components/ui/button";
+import { RefreshCcw } from "lucide-react";
+import { toast } from "sonner";
 
 const MainContent = () => {
   const [isMusic, setIsMusic] = useState(false);
   const { 
     data: videos, 
     isLoading, 
+    isRefreshing,
     refetch, 
     forceRefetch,
     lastSuccessfulFetch, 
@@ -30,6 +33,7 @@ const MainContent = () => {
   const { session } = useSessionManager();
   const [searchParams] = useSearchParams();
   const [hasScrolled, setHasScrolled] = useState(false);
+  const [isManualRefreshing, setIsManualRefreshing] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -38,6 +42,23 @@ const MainContent = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const handleManualRefresh = async () => {
+    if (isManualRefreshing) return;
+    
+    setIsManualRefreshing(true);
+    toast.info("Refreshing content...");
+    
+    try {
+      await forceRefetch();
+      toast.success("Content refreshed");
+    } catch (err) {
+      console.error("Manual refresh failed:", err);
+      toast.error("Refresh failed. Please try again.");
+    } finally {
+      setIsManualRefreshing(false);
+    }
+  };
 
   return (
     <div className="flex-1">
@@ -49,17 +70,30 @@ const MainContent = () => {
         className="mt-4 mx-auto px-2 md:px-6 max-w-[1400px]"
       >
         <div className="space-y-2 md:space-y-4">
-          <motion.div 
-            className="space-y-0"
-            initial={{ scale: 0.95 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.2, duration: 0.3 }}
-          >
-            <ContentToggle 
-              isMusic={isMusic} 
-              onToggle={() => setIsMusic(!isMusic)} 
-            />
-          </motion.div>
+          <div className="flex justify-between items-center">
+            <motion.div 
+              className="space-y-0"
+              initial={{ scale: 0.95 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.2, duration: 0.3 }}
+            >
+              <ContentToggle 
+                isMusic={isMusic} 
+                onToggle={() => setIsMusic(!isMusic)} 
+              />
+            </motion.div>
+            
+            <Button 
+              variant="outline"
+              size={isMobile ? "sm" : "default"}
+              onClick={handleManualRefresh}
+              disabled={isManualRefreshing || isLoading}
+              className="flex items-center gap-2"
+            >
+              <RefreshCcw className={`w-4 h-4 ${isManualRefreshing ? 'animate-spin' : ''}`} />
+              <span>{isManualRefreshing ? "Refreshing..." : "Refresh"}</span>
+            </Button>
+          </div>
 
           <motion.div
             key={isMusic ? "music" : "videos"}
@@ -73,6 +107,7 @@ const MainContent = () => {
               <VideoContent 
                 videos={videos || []} 
                 isLoading={isLoading} 
+                isRefreshing={isRefreshing || isManualRefreshing}
                 refetch={refetch}
                 forceRefetch={forceRefetch}
                 lastSuccessfulFetch={lastSuccessfulFetch}
