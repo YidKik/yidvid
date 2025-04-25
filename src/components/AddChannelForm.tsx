@@ -114,9 +114,40 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
     }
   };
 
-  const handleChannelInputChange = (value: string) => {
+  const handleChannelInputChange = async (value: string) => {
     const extractedId = extractChannelId(value);
     setManualChannelId(extractedId);
+    
+    if (extractedId) {
+      try {
+        console.log("Fetching channel details for:", extractedId);
+        const response = await fetch(
+          'https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/fetch-youtube-channel',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1aW5ja3R2c2l1enRzeGN1cWZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY0ODgzNzcsImV4cCI6MjA1MjA2NDM3N30.zbReqHoAR33QoCi_wqNp8AtNofTX3JebM7jvjFAWbMg`
+            },
+            body: JSON.stringify({ channelId: extractedId }),
+          }
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data && !data.error) {
+            console.log("Channel data fetched:", data);
+            setManualTitle(data.title || '');
+            setManualThumbnail(data.thumbnail_url || '');
+            toast.success("Channel details retrieved successfully");
+          } else if (data.error && data.error.toLowerCase().includes('quota')) {
+            console.log("Quota exceeded, keeping manual entry mode");
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching channel details:", error);
+      }
+    }
   };
 
   return (
@@ -223,7 +254,7 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
           <div className="mb-2">
             <h3 className="font-bold text-lg">Manual Channel Entry</h3>
             <p className="text-sm text-gray-500 mb-4">
-              Enter a YouTube channel URL, handle (@username), or ID, and we'll help you extract the correct channel ID.
+              Enter a YouTube channel URL, handle (@username), or ID, and we'll help you extract the correct channel ID and details.
             </p>
           </div>
           
@@ -282,7 +313,7 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
               htmlFor="manualThumbnail" 
               className="block text-gray-700 text-sm font-bold mb-2"
             >
-              Thumbnail URL (optional)
+              Thumbnail URL
             </label>
             <Input
               id="manualThumbnail"
@@ -291,6 +322,18 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
               placeholder="e.g., https://example.com/thumbnail.jpg"
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
+            {manualThumbnail && (
+              <div className="mt-2">
+                <img 
+                  src={manualThumbnail} 
+                  alt="Channel thumbnail preview" 
+                  className="h-16 w-16 object-cover rounded"
+                  onError={(e) => {
+                    e.currentTarget.src = 'https://placehold.co/100x100?text=YT';
+                  }}
+                />
+              </div>
+            )}
             <p className="text-gray-500 text-xs mt-1">
               URL of the channel thumbnail image
             </p>
