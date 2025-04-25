@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -141,12 +140,12 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
       <div className="flex items-center justify-between">
         <Button 
           type="button"
-          variant="outline"
+          variant="custom"
           onClick={onClose}
-          className="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
           disabled={isLoading}
         >
-          Cancel
+          Close
         </Button>
         <Button 
           type="submit" 
@@ -159,4 +158,3 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
     </form>
   );
 };
-
