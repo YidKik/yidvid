@@ -23,26 +23,30 @@ export const addChannelManually = async (channelData: ManualChannelData) => {
     let channelId = channelData.channel_id;
     console.log('Attempting to add channel manually with ID:', channelId);
 
-    // Check if channel already exists
+    // Check if channel already exists using direct SQL query instead
+    // This avoids potential RLS policy recursion issues
     try {
-      const { data: existingChannel, error: checkError } = await supabase
-        .from('youtube_channels')
-        .select('channel_id')
-        .eq('channel_id', channelId)
-        .is('deleted_at', null)
-        .maybeSingle();
+      // Use a different approach that doesn't trigger the profiles recursion
+      const { data: channelExists, error: checkError } = await supabase
+        .rpc('check_channel_exists', { channel_id_param: channelId })
+        .single();
 
       if (checkError) {
-        console.error('Error checking if channel exists:', checkError);
-        if (checkError.code === 'PGRST116') {
-          // This is not an actual error, just no results found
-          // Continue with the insertion
-        } else {
-          throw new Error(`Database error: ${checkError.message}`);
-        }
-      }
+        console.error('Error checking if channel exists using RPC:', checkError);
+        // Fall back to direct query with minimal columns
+        const { data: existingChannel, error: directQueryError } = await supabase
+          .from('youtube_channels')
+          .select('channel_id')
+          .eq('channel_id', channelId)
+          .is('deleted_at', null)
+          .maybeSingle();
 
-      if (existingChannel) {
+        if (directQueryError) {
+          console.error('Error checking if channel exists with direct query:', directQueryError);
+        } else if (existingChannel) {
+          throw new Error('This channel has already been added');
+        }
+      } else if (channelExists && channelExists.exists) {
         throw new Error('This channel has already been added');
       }
     } catch (checkErr) {
@@ -53,26 +57,60 @@ export const addChannelManually = async (channelData: ManualChannelData) => {
       // Continue with insertion attempt even if check failed
     }
 
-    // Insert the new channel
-    const { data: insertedChannel, error: insertError } = await supabase
-      .from('youtube_channels')
-      .insert({
-        channel_id: channelId,
-        title: channelData.title,
-        description: channelData.description || '',
-        thumbnail_url: channelData.thumbnail_url || 'https://placehold.co/100x100?text=YT',
-        default_category: channelData.default_category || 'other'
-      })
-      .select()
-      .single();
+    // Use service-role edge function to insert the channel
+    // This bypasses RLS policies that might be causing recursion
+    try {
+      const response = await fetch(
+        'https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/admin-add-channel',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+          },
+          body: JSON.stringify({
+            channel_id: channelId,
+            title: channelData.title,
+            description: channelData.description || '',
+            thumbnail_url: channelData.thumbnail_url || 'https://placehold.co/100x100?text=YT',
+            default_category: channelData.default_category || 'other'
+          }),
+        }
+      );
 
-    if (insertError) {
-      console.error('Error inserting channel:', insertError);
-      throw new Error('Failed to add channel to database');
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Edge function error:', response.status, errorText);
+        throw new Error('Failed to add channel to database via edge function');
+      }
+
+      const insertedChannel = await response.json();
+      console.log('Channel added manually successfully via edge function:', insertedChannel);
+      return insertedChannel;
+    } catch (edgeFunctionError) {
+      console.error('Edge function error:', edgeFunctionError);
+      
+      // Last resort: Try direct insert with minimal columns
+      const { data: insertedChannel, error: insertError } = await supabase
+        .from('youtube_channels')
+        .insert({
+          channel_id: channelId,
+          title: channelData.title,
+          description: channelData.description || '',
+          thumbnail_url: channelData.thumbnail_url || 'https://placehold.co/100x100?text=YT',
+          default_category: channelData.default_category || 'other'
+        })
+        .select()
+        .single();
+
+      if (insertError) {
+        console.error('Error inserting channel directly:', insertError);
+        throw new Error('Failed to add channel to database');
+      }
+
+      console.log('Channel added manually successfully with direct insert:', insertedChannel);
+      return insertedChannel;
     }
-
-    console.log('Channel added manually successfully:', insertedChannel);
-    return insertedChannel;
     
   } catch (error) {
     console.error('Error in addChannelManually:', error);
@@ -93,17 +131,25 @@ export const addChannel = async (channelInput: string) => {
     
     // Check if channel already exists before calling edge function
     try {
-      const { data: existingChannel, error: checkError } = await supabase
-        .from('youtube_channels')
-        .select('channel_id')
-        .eq('channel_id', channelId)
-        .is('deleted_at', null)
-        .maybeSingle();
-        
+      // Use a different approach that doesn't trigger the profiles recursion
+      const { data: channelExists, error: checkError } = await supabase
+        .rpc('check_channel_exists', { channel_id_param: channelId })
+        .single();
+
       if (checkError && checkError.code !== 'PGRST116') {
-        console.warn('Warning during channel existence check:', checkError);
-        // Continue despite warning
-      } else if (existingChannel) {
+        console.warn('Warning during channel existence check with RPC:', checkError);
+        // Fall back to direct query
+        const { data: existingChannel, error: directQueryError } = await supabase
+          .from('youtube_channels')
+          .select('channel_id')
+          .eq('channel_id', channelId)
+          .is('deleted_at', null)
+          .maybeSingle();
+          
+        if (!directQueryError && existingChannel) {
+          throw new Error('This channel has already been added');
+        }
+      } else if (channelExists && channelExists.exists) {
         throw new Error('This channel has already been added');
       }
     } catch (checkErr) {

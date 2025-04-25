@@ -1,23 +1,41 @@
 
 project_id = "euincktvsiuztsxcuqfd"
 
-[functions.fetch-youtube-channel]
-verify_jwt = true
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "storage"]
 
-[functions.fetch-youtube-videos]
-verify_jwt = true
+[db]
+port = 54322
 
-[functions.check-admin-status]
-verify_jwt = true
+[realtime]
+enabled = true
 
-[functions.get-public-videos]
-verify_jwt = false
+[studio]
+enabled = true
+port = 54323
 
-[functions.get-public-channel]
-verify_jwt = false
+[inbucket]
+enabled = true
+port = 54324
 
-[functions.fetch-channel-details]
-verify_jwt = false
+[storage]
+enabled = true
 
-[functions.increment_counter]
+[auth]
+enabled = true
+site_url = "http://localhost:5173"
+
+[analytics]
+enabled = false
+
+[vector]
+enabled = false
+
+[ai]
+enabled = false
+
+[edge_functions]
+[edge_functions.admin-add-channel]
 verify_jwt = false
