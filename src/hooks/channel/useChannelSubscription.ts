@@ -90,6 +90,8 @@ export const useChannelSubscription = (channelId: string | null | undefined) => 
       const result = await response.json();
       
       setIsSubscribed(result.isSubscribed);
+      
+      // Show success message 
       toast.success(
         isSubscribed ? "Unsubscribed from channel" : "Subscribed to channel", 
         { id: `subscription-${channelId}` }
