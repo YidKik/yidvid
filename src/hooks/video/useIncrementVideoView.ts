@@ -1,3 +1,4 @@
+
 import { useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -23,12 +24,11 @@ export const useIncrementVideoView = () => {
       
       console.log("Incrementing view count for video:", videoId);
       
-      // Update the view count in the database
-      // Instead of using rpc with increment_counter, directly update the views column
+      // Directly update the views column with an increment expression
       const { error } = await supabase
         .from("youtube_videos")
         .update({ 
-          views: supabase.rpc('increment_counter'),
+          views: supabase.sql`COALESCE(views, 0) + 1`, // Use safe SQL template for incrementing
           last_viewed_at: new Date().toISOString() 
         })
         .eq('id', videoId);

@@ -1,12 +1,4 @@
 
--- Create a function to increment counter values safely
-CREATE OR REPLACE FUNCTION increment_counter_value()
-RETURNS integer
-LANGUAGE sql
-AS $$
-  SELECT COALESCE(views, 0) + 1
-  FROM youtube_videos
-  WHERE id = NEW.id
-$$;
+-- This file is kept for historical purposes, but the function is no longer used.
+-- We are now using direct SQL expressions to increment the counter safely.
 
--- Update the config to make the function accessible

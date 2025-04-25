@@ -28,11 +28,11 @@ serve(async (req) => {
       );
     }
 
-    // Update the views count for the specified video
+    // Update the views count for the specified video using raw SQL expression
     const { data, error } = await supabase
       .from('youtube_videos')
       .update({ 
-        views: supabase.rpc('increment_counter_value'), // Using the correct function name
+        views: supabase.sql`COALESCE(views, 0) + 1`,
         last_viewed_at: new Date().toISOString() 
       })
       .eq('id', videoId)
@@ -43,13 +43,16 @@ serve(async (req) => {
       
       // Try direct update as a fallback
       const { data: directData, error: directError } = await supabase
-        .from('youtube_videos')
-        .update({ 
-          views: supabase.raw('COALESCE(views, 0) + 1'),
-          last_viewed_at: new Date().toISOString() 
-        })
-        .eq('id', videoId)
-        .select('id, views');
+        .rpc('trigger_youtube_video_fetch')
+        .then(() => supabase
+          .from('youtube_videos')
+          .update({ 
+            views: supabase.sql`COALESCE(views, 0) + 1`,
+            last_viewed_at: new Date().toISOString() 
+          })
+          .eq('id', videoId)
+          .select('id, views')
+        );
         
       if (directError) {
         return new Response(
