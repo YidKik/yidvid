@@ -16,35 +16,61 @@ Deno.serve(async (req) => {
   }
   
   try {
+    // Get the authorization header from the request
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: 'Missing authorization header' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 401 }
+      )
+    }
+    
+    // Create a client using the user's JWT
+    const userClient = createClient(supabaseUrl, serviceRoleKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+      },
+      global: {
+        headers: {
+          Authorization: authHeader,
+        },
+      },
+    });
+    
+    // Get the user from the JWT
+    const {
+      data: { user },
+      error: userError,
+    } = await userClient.auth.getUser();
+    
+    if (userError || !user) {
+      console.error('Error getting user from token:', userError);
+      return new Response(
+        JSON.stringify({ error: 'Invalid authorization token' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 401 }
+      )
+    }
+    
+    // Parse the request body
     const { channelId, userId, action } = await req.json()
     
-    if (!channelId || !userId || !action) {
+    if (!channelId || !action) {
       return new Response(
         JSON.stringify({ error: 'Missing required parameters' }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
       )
     }
     
-    console.log(`Channel subscription request: ${action} for channel: ${channelId} from user: ${userId}`)
-    
-    // Verify the user exists
-    const { data: userExists, error: userError } = await adminClient
-      .from('profiles')
-      .select('id')
-      .eq('id', userId)
-      .maybeSingle()
-      
-    if (userError) {
-      console.error('Error checking user exists:', userError)
-      throw new Error('Failed to verify user')
-    }
-    
-    if (!userExists) {
+    // Verify the user ID matches the token
+    if (userId !== user.id) {
       return new Response(
-        JSON.stringify({ error: 'User not found' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 404 }
+        JSON.stringify({ error: 'User ID does not match authorization token' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 403 }
       )
     }
+    
+    console.log(`Channel subscription request: ${action} for channel: ${channelId} from user: ${userId}`)
     
     // Verify the channel exists
     const { data: channelExists, error: channelError } = await adminClient

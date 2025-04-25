@@ -39,7 +39,10 @@ export const useChannelSubscription = (channelId: string | undefined) => {
     try {
       setIsCheckingSubscription(true);
       
-      if (!session?.user?.id) {
+      // Get current session to ensure we have the latest user data
+      const { data: currentSession } = await supabase.auth.getSession();
+      
+      if (!currentSession?.session?.user?.id) {
         setIsSubscribed(false);
         return;
       }
@@ -48,7 +51,7 @@ export const useChannelSubscription = (channelId: string | undefined) => {
         .from("channel_subscriptions")
         .select("*")
         .eq("channel_id", channelId)
-        .eq("user_id", session.user.id)
+        .eq("user_id", currentSession.session.user.id)
         .maybeSingle();
         
       if (error && !error.message.includes("policy")) {
@@ -74,12 +77,15 @@ export const useChannelSubscription = (channelId: string | undefined) => {
       return;
     }
 
-    if (!session?.user?.id) {
-      toast.error("User session not found", { id: "no-session" });
-      return;
-    }
-
     try {
+      // Get current session to ensure we have the latest user data
+      const { data: currentSession } = await supabase.auth.getSession();
+      
+      if (!currentSession?.session?.user?.id) {
+        toast.error("User session not found. Please try signing in again.", { id: "no-session" });
+        return;
+      }
+
       // Use the edge function for reliable subscription management
       const response = await fetch(
         "https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/channel-subscribe",
@@ -87,11 +93,11 @@ export const useChannelSubscription = (channelId: string | undefined) => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1aW5ja3R2c2l1enRzeGN1cWZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY0ODgzNzcsImV4cCI6MjA1MjA2NDM3N30.zbReqHoAR33QoCi_wqNp8AtNofTX3JebM7jvjFAWbMg`
+            "Authorization": `Bearer ${currentSession.session.access_token}`
           },
           body: JSON.stringify({
             channelId,
-            userId: session.user.id,
+            userId: currentSession.session.user.id,
             action: isSubscribed ? 'unsubscribe' : 'subscribe'
           })
         }
