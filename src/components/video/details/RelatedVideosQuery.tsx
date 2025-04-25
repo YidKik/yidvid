@@ -15,7 +15,7 @@ export const useRelatedVideosQuery = (channelId: string, currentVideoId: string)
       
       try {
         // First try direct database query for related videos
-        const { data, error } = await supabase
+        let { data, error } = await supabase
           .from("youtube_videos")
           .select("*")
           .eq("channel_id", channelId)
@@ -25,7 +25,7 @@ export const useRelatedVideosQuery = (channelId: string, currentVideoId: string)
           .limit(12);
 
         if (error) {
-          console.error("Error fetching related videos:", error);
+          console.error("Error fetching related videos from database:", error);
           throw error;
         }
 
@@ -33,10 +33,28 @@ export const useRelatedVideosQuery = (channelId: string, currentVideoId: string)
           console.log(`Found ${data.length} related videos from the same channel`);
           return data;
         }
+        
+        // If no videos found or response is empty, try alternative query with video_id instead
+        if (!data || data.length === 0) {
+          console.log("Trying alternative query with video_id");
+          const { data: altData, error: altError } = await supabase
+            .from("youtube_videos")
+            .select("*")
+            .eq("channel_id", channelId)
+            .neq("video_id", currentVideoId) // Try with video_id instead
+            .is("deleted_at", null)
+            .order("uploaded_at", { ascending: false })
+            .limit(12);
+            
+          if (!altError && altData && altData.length > 0) {
+            console.log(`Found ${altData.length} related videos from alternative query`);
+            return altData;
+          }
+        }
 
         // If we couldn't find videos from the same channel, try the edge function as a fallback
         // This is especially important for authenticated users where RLS might be restricting access
-        console.log("No videos found from direct query, trying edge function");
+        console.log("No videos found from direct queries, trying edge function");
         const response = await fetch(`https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/get-public-videos?channel_id=${channelId}`, {
           method: "GET",
           headers: {
@@ -54,11 +72,38 @@ export const useRelatedVideosQuery = (channelId: string, currentVideoId: string)
         if (result.data && Array.isArray(result.data)) {
           console.log(`Found ${result.data.length} related videos from edge function`);
           // Filter out the current video
-          const filteredVideos = result.data.filter(video => video.id !== currentVideoId);
-          return filteredVideos;
+          const filteredVideos = result.data.filter(video => 
+            video.id !== currentVideoId && 
+            video.video_id !== currentVideoId
+          );
+          
+          if (filteredVideos.length > 0) {
+            return filteredVideos;
+          }
         }
 
-        console.log("No videos found from either method");
+        // As a last resort, try to get any recent videos (not just from this channel)
+        console.log("No channel videos found, fetching recent videos as fallback");
+        const { data: recentVideos, error: recentError } = await supabase
+          .from("youtube_videos")
+          .select("*")
+          .is("deleted_at", null)
+          .order("uploaded_at", { ascending: false })
+          .limit(6);
+          
+        if (!recentError && recentVideos && recentVideos.length > 0) {
+          const filteredRecentVideos = recentVideos.filter(video => 
+            video.id !== currentVideoId && 
+            video.video_id !== currentVideoId
+          );
+          
+          if (filteredRecentVideos.length > 0) {
+            console.log(`Returning ${filteredRecentVideos.length} recent videos as fallback`);
+            return filteredRecentVideos;
+          }
+        }
+
+        console.log("No videos found from any method");
         return [];
       } catch (error) {
         console.error("Error in useRelatedVideosQuery:", error);
