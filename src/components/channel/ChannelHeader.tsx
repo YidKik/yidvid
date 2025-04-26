@@ -32,17 +32,6 @@ export const ChannelHeader = ({
   const [isProcessing, setIsProcessing] = useState(false);
   const [initialLoadComplete, setInitialLoadComplete] = useState(false);
 
-  // Log session state for debugging
-  useEffect(() => {
-    console.log("ChannelHeader auth state:", { 
-      isAuthenticated, 
-      isSessionLoading,
-      hasSession: !!session, 
-      userId: session?.user?.id,
-      userObj: session?.user
-    });
-  }, [session, isAuthenticated, isSessionLoading]);
-
   // Set initial subscription state and mark initial load as complete
   useEffect(() => {
     if (!initialLoadComplete && !isLoading) {
@@ -92,10 +81,15 @@ export const ChannelHeader = ({
     
     try {
       setIsProcessing(true);
-      await onSubscribe();
+      // Optimistically update UI state for better user experience
       setInternalSubscriptionState(!internalSubscriptionState);
+      
+      await onSubscribe();
+      // Note: We don't need to set state here as it will be updated
+      // in the useEffect that watches isSubscribed
     } catch (error) {
       console.error("Error in subscription action:", error);
+      // Revert the optimistic update if there's an error
       setInternalSubscriptionState(isSubscribed);
       if (error instanceof Error) {
         toast.error(`Subscription failed: ${error.message}`);

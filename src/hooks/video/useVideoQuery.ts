@@ -53,13 +53,7 @@ export const useVideoQuery = ({
       // Only retry once for other errors
       return failureCount < 1;
     },
-    retryDelay: 300, // Fast retry for better UX
-    meta: {
-      errorMessage: "Failed to load videos",
-      suppressToasts: true // Don't show error toasts to avoid overwhelming users
-    },
-    // Always refetch on mount to ensure fresh data with correct permissions
-    refetchOnMount: true,
+    refetchOnMount: true, // Always ensure fresh data on mount
     refetchOnWindowFocus: false
   });
 

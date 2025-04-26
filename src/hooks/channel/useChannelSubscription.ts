@@ -48,26 +48,6 @@ export const useChannelSubscription = (channelId: string | undefined) => {
     checkSubscription();
   }, [channelId, userId, checkSubscriptionStatus, setIsCheckingSubscription, setIsSubscribed]);
 
-  // Add a secondary check after a short delay to ensure consistency
-  useEffect(() => {
-    if (!channelId || !userId) return;
-    
-    const secondaryCheck = setTimeout(async () => {
-      try {
-        console.log(`Secondary subscription check for user ${userId} on channel ${channelId}`);
-        const isCurrentlySubscribed = await checkSubscriptionStatus(userId, channelId);
-        if (isCurrentlySubscribed !== isSubscribed) {
-          console.log(`Correcting subscription state from ${isSubscribed} to ${isCurrentlySubscribed}`);
-          setIsSubscribed(isCurrentlySubscribed);
-        }
-      } catch (err) {
-        console.error("Failed in secondary subscription check:", err);
-      }
-    }, 1000); // Small delay to ensure DB has been updated
-    
-    return () => clearTimeout(secondaryCheck);
-  }, [channelId, userId, checkSubscriptionStatus, isSubscribed, setIsSubscribed]);
-
   // Set up realtime updates
   const onSubscriptionChange = useCallback(async () => {
     if (!userId || !channelId) return;
