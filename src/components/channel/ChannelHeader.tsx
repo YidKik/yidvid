@@ -1,4 +1,3 @@
-
 import { Youtube, UserPlus, Check, Loader2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -25,8 +24,14 @@ export const ChannelHeader = ({
 }: ChannelHeaderProps) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
-  const { isAuthenticated } = useSessionManager();
+  const { session, isAuthenticated } = useSessionManager();
   const fallbackLogo = "/lovable-uploads/efca5adc-d9d2-4c5b-8900-e078f9d49b6a.png";
+
+  console.log("ChannelHeader auth state:", { 
+    isAuthenticated, 
+    hasSession: !!session, 
+    userId: session?.user?.id 
+  });
 
   const handleSubscribeClick = () => {
     if (!isAuthenticated) {
@@ -54,7 +59,6 @@ export const ChannelHeader = ({
           />
         </AvatarFallback>
         
-        {/* Show loading indicator overlay */}
         {!imageLoaded && !imageError && (
           <div className="absolute inset-0 bg-gray-100 rounded-full flex items-center justify-center">
             <img 

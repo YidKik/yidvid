@@ -21,6 +21,13 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
   const { session, isAuthenticated } = useSessionManager();
   const userId = session?.user?.id;
 
+  // Debug logging for authentication state
+  console.log("VideoInteractions auth state:", { 
+    isAuthenticated, 
+    hasSession: !!session, 
+    userId: userId 
+  });
+
   useEffect(() => {
     const fetchChannelId = async () => {
       if (!videoId) return;

@@ -7,7 +7,7 @@ import { useSessionManager } from "@/hooks/useSessionManager";
 export const useChannelSubscription = (channelId: string | undefined) => {
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [isCheckingSubscription, setIsCheckingSubscription] = useState(false);
-  const { session } = useSessionManager();
+  const { session, isAuthenticated } = useSessionManager();
   const userId = session?.user?.id;
 
   // Effect to check subscription status whenever channelId or userId changes
@@ -75,7 +75,7 @@ export const useChannelSubscription = (channelId: string | undefined) => {
       return;
     }
 
-    if (!userId) {
+    if (!isAuthenticated) {
       toast.error("Please sign in to subscribe to channels", { id: "signin-required" });
       return;
     }

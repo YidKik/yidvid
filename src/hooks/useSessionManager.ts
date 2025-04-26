@@ -8,7 +8,8 @@ export const useSessionManager = () => {
   console.log("SessionManager state:", { 
     hasSession: !!session, 
     isAuthenticated, 
-    userId: session?.user?.id 
+    userId: session?.user?.id,
+    userEmail: session?.user?.email
   });
 
   return { 
