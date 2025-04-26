@@ -1,52 +1,24 @@
 
-import { useState, useEffect, useCallback } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { useCallback, useEffect } from "react";
 import { toast } from "sonner";
-import { useSessionManager } from "@/hooks/useSessionManager";
+import { useSubscriptionState } from "./subscription/useSubscriptionState";
+import { useSubscriptionCheck } from "./subscription/useSubscriptionCheck";
+import { useRealtimeUpdates } from "./subscription/useRealtimeUpdates";
+import { useSubscriptionProcess } from "./subscription/useSubscriptionProcess";
 
 export const useChannelSubscription = (channelId: string | undefined) => {
-  const [isSubscribed, setIsSubscribed] = useState(false);
-  const [isCheckingSubscription, setIsCheckingSubscription] = useState(true);
-  const [lastChecked, setLastChecked] = useState(Date.now());
-  const { session, isAuthenticated, refreshSession } = useSessionManager();
-  const userId = session?.user?.id;
-  
-  console.log("useChannelSubscription initialization:", { 
-    channelId, 
-    userId, 
-    isAuthenticated, 
-    hasSession: !!session,
+  const {
     isSubscribed,
-    lastChecked: new Date(lastChecked).toISOString()
-  });
+    setIsSubscribed,
+    isCheckingSubscription,
+    setIsCheckingSubscription,
+    lastChecked,
+    setLastChecked,
+    userId,
+    isAuthenticated
+  } = useSubscriptionState(channelId);
 
-  // Check subscription status directly with Edge Function to avoid RLS issues
-  const checkSubscriptionStatus = useCallback(async (uid: string, chId: string) => {
-    if (!uid || !chId) return false;
-    
-    console.log(`Checking subscription status via edge function: user=${uid}, channel=${chId}`);
-    
-    try {
-      const { data, error } = await supabase.functions.invoke('channel-subscribe', {
-        body: {
-          userId: uid,
-          channelId: chId,
-          action: 'check'
-        }
-      });
-      
-      if (error) {
-        console.error('Error checking subscription status:', error);
-        return false;
-      }
-      
-      console.log(`Edge function subscription check result:`, data);
-      return data?.isSubscribed || false;
-    } catch (err) {
-      console.error("Error in subscription check:", err);
-      return false;
-    }
-  }, []);
+  const { checkSubscriptionStatus } = useSubscriptionCheck();
 
   // Effect to check subscription status whenever channelId or userId changes
   useEffect(() => {
@@ -60,10 +32,7 @@ export const useChannelSubscription = (channelId: string | undefined) => {
     const checkSubscription = async () => {
       try {
         setIsCheckingSubscription(true);
-        
-        // Try using edge function to check subscription directly
         const isCurrentlySubscribed = await checkSubscriptionStatus(userId, channelId);
-        
         console.log(`Subscription check completed: user ${userId} ${isCurrentlySubscribed ? 'is' : 'is not'} subscribed to ${channelId}`);
         setIsSubscribed(isCurrentlySubscribed);
       } catch (err) {
@@ -74,34 +43,25 @@ export const useChannelSubscription = (channelId: string | undefined) => {
     };
     
     checkSubscription();
-    
-    // Set up a subscription to channel_subscriptions table for real-time updates
-    const channel = supabase
-      .channel('subscription-changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'channel_subscriptions',
-          filter: `user_id=eq.${userId}`
-        },
-        async (payload) => {
-          console.log("Real-time subscription update detected:", payload);
-          
-          // Re-check subscription status when subscription data changes
-          const isCurrentlySubscribed = await checkSubscriptionStatus(userId, channelId);
-          console.log(`Real-time update triggered check: ${isCurrentlySubscribed ? 'Subscribed' : 'Not Subscribed'}`);
-          setIsSubscribed(isCurrentlySubscribed);
-        }
-      )
-      .subscribe();
-      
-    return () => {
-      console.log("Cleaning up subscription listener");
-      supabase.removeChannel(channel);
-    };
   }, [channelId, userId, checkSubscriptionStatus]);
+
+  // Set up realtime updates
+  const onSubscriptionChange = useCallback(async () => {
+    if (!userId || !channelId) return;
+    const result = await checkSubscriptionStatus(userId, channelId);
+    setIsSubscribed(result);
+    return result;
+  }, [userId, channelId, checkSubscriptionStatus]);
+
+  useRealtimeUpdates(userId, channelId, onSubscriptionChange);
+
+  const { processSubscription } = useSubscriptionProcess(
+    userId,
+    channelId,
+    setIsCheckingSubscription,
+    setLastChecked,
+    setIsSubscribed
+  );
 
   // Function to toggle subscription status
   const handleSubscribe = async (): Promise<void> => {
@@ -115,77 +75,12 @@ export const useChannelSubscription = (channelId: string | undefined) => {
       throw new Error("Authentication required");
     }
 
-    if (!session?.user?.id) {
+    if (!userId) {
       console.error("User ID is missing");
-      try {
-        const refreshedSession = await refreshSession();
-        if (!refreshedSession?.user?.id) {
-          toast.error("Authentication error. Please try signing in again.", { id: "auth-error" });
-          throw new Error("Failed to get user ID");
-        }
-        return processSubscription(refreshedSession.user.id, channelId);
-      } catch (error) {
-        console.error("Failed to refresh authentication:", error);
-        toast.error("Authentication error. Please try signing in again.", { id: "auth-error" });
-        throw error;
-      }
+      throw new Error("User ID is required");
     }
     
-    return processSubscription(session.user.id, channelId);
-  };
-
-  // Process the actual subscription/unsubscription
-  const processSubscription = async (currentUserId: string, currentChannelId: string): Promise<void> => {
-    try {
-      setIsCheckingSubscription(true);
-      
-      // Double-check the current subscription status before proceeding
-      const currentStatus = await checkSubscriptionStatus(currentUserId, currentChannelId);
-      console.log(`Verified subscription status before action: ${currentStatus ? 'Subscribed' : 'Not subscribed'}`);
-      
-      // The action should be the opposite of the current status
-      const action = currentStatus ? 'unsubscribe' : 'subscribe';
-      
-      console.log(`Processing ${action} request for user ${currentUserId} on channel ${currentChannelId}`);
-      
-      // Use the edge function to manage subscription
-      const { data, error } = await supabase.functions.invoke('channel-subscribe', {
-        body: {
-          channelId: currentChannelId,
-          userId: currentUserId,
-          action: action
-        }
-      });
-
-      if (error) {
-        console.error("Edge function error:", error);
-        throw error;
-      }
-      
-      console.log("Edge function response:", data);
-      
-      if (data.success) {
-        // Update local state based on the response from the server
-        setIsSubscribed(data.isSubscribed);
-        
-        // Show appropriate toast message
-        toast.success(data.isSubscribed ? "Subscribed to channel" : "Unsubscribed from channel");
-        
-        // Force a refresh of state
-        setLastChecked(Date.now());
-      } else {
-        throw new Error(data.error || `Failed to ${action}`);
-      }
-    } catch (error: any) {
-      console.error("Error managing subscription:", error);
-      toast.error(`Subscription action failed: ${error.message}`);
-      
-      // Force a re-check to sync UI with database state
-      setLastChecked(Date.now());
-      throw error;
-    } finally {
-      setIsCheckingSubscription(false);
-    }
+    return processSubscription(userId, channelId);
   };
 
   return { 
