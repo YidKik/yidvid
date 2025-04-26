@@ -3,6 +3,8 @@ import { Youtube, UserPlus, Check, Loader2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { useSessionManager } from "@/hooks/useSessionManager";
+import { toast } from "sonner";
 
 interface ChannelHeaderProps {
   channel: {
@@ -23,7 +25,16 @@ export const ChannelHeader = ({
 }: ChannelHeaderProps) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const { isAuthenticated } = useSessionManager();
   const fallbackLogo = "/lovable-uploads/efca5adc-d9d2-4c5b-8900-e078f9d49b6a.png";
+
+  const handleSubscribeClick = () => {
+    if (!isAuthenticated) {
+      toast.error("Please sign in to subscribe to channels", { id: "signin-required" });
+      return;
+    }
+    onSubscribe();
+  };
 
   return (
     <div className="flex flex-col items-center mb-6 md:mb-8">
@@ -61,7 +72,7 @@ export const ChannelHeader = ({
       
       <Button
         variant={isSubscribed ? "default" : "outline"}
-        onClick={onSubscribe}
+        onClick={handleSubscribeClick}
         disabled={isLoading}
         className={`h-7 md:h-9 text-xs md:text-sm px-2.5 md:px-3.5 mb-2 md:mb-3 transition-all duration-200 ${
           isSubscribed ? "bg-primary hover:bg-primary-hover text-white shadow-md" : ""

@@ -18,7 +18,7 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
   const [isLiked, setIsLiked] = useState(false);
   const [showAnimation, setShowAnimation] = useState(false);
   const [channelId, setChannelId] = useState<string | null>(null);
-  const { session } = useSessionManager();
+  const { session, isAuthenticated } = useSessionManager();
   const userId = session?.user?.id;
 
   useEffect(() => {
@@ -49,7 +49,7 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
   } = useChannelSubscription(channelId || undefined);
 
   const handleLike = async () => {
-    if (!userId) {
+    if (!isAuthenticated) {
       toast.error("Please sign in to like videos");
       return;
     }
