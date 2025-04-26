@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { useSessionManager } from "@/hooks/useSessionManager";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 interface ChannelHeaderProps {
   channel: {
@@ -37,7 +38,8 @@ export const ChannelHeader = ({
       isAuthenticated, 
       isSessionLoading,
       hasSession: !!session, 
-      userId: session?.user?.id 
+      userId: session?.user?.id,
+      userObj: session?.user
     });
   }, [session, isAuthenticated, isSessionLoading]);
 
@@ -69,8 +71,23 @@ export const ChannelHeader = ({
     
     if (!session?.user?.id) {
       console.error("No user ID available in session");
-      toast.error("Authentication error. Please sign in again.");
-      return;
+      
+      // Try to refresh session first
+      try {
+        console.log("Attempting to refresh session");
+        const { data } = await supabase.auth.getSession();
+        
+        if (!data.session?.user?.id) {
+          toast.error("Authentication error. Please sign in again.");
+          return;
+        }
+        
+        console.log("Session refreshed successfully, proceeding with subscription");
+      } catch (error) {
+        console.error("Session refresh failed:", error);
+        toast.error("Authentication error. Please sign in again.");
+        return;
+      }
     }
     
     try {

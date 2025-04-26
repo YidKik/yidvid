@@ -1,5 +1,5 @@
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import { toast } from "sonner";
 import { useSubscriptionState } from "./subscription/useSubscriptionState";
 import { useSubscriptionCheck } from "./subscription/useSubscriptionCheck";
@@ -64,7 +64,7 @@ export const useChannelSubscription = (channelId: string | undefined) => {
     setIsSubscribed
   );
 
-  // Function to toggle subscription status
+  // Function to toggle subscription status with improved session validation
   const handleSubscribe = async (): Promise<void> => {
     if (!channelId) {
       console.error("No channel ID provided");
@@ -76,16 +76,33 @@ export const useChannelSubscription = (channelId: string | undefined) => {
       throw new Error("Authentication required");
     }
 
-    // Add additional check and better error handling for missing user ID
+    // Check if session is still loading
     if (isSessionLoading) {
       toast.error("Please wait, still loading your session");
       throw new Error("Session loading");
     }
 
+    // Check if session exists but no user ID (possible invalid session state)
     if (!userId) {
-      console.error("User ID is missing despite authenticated state");
-      toast.error("Authentication error. Please sign out and sign in again.");
-      throw new Error("User ID is required");
+      // Try forcing a session refresh first before showing error
+      try {
+        console.log("Session exists but no user ID found, attempting to refresh session");
+        const { supabase } = await import("@/integrations/supabase/client");
+        const { data } = await supabase.auth.getSession();
+        
+        if (data.session?.user?.id) {
+          console.log("Successfully refreshed session and got user ID:", data.session.user.id);
+          return processSubscription(data.session.user.id, channelId);
+        } else {
+          console.error("Session refresh failed to retrieve user ID");
+          toast.error("Authentication issue. Please sign out and sign in again.");
+          throw new Error("User ID is required");
+        }
+      } catch (err) {
+        console.error("Failed to refresh session:", err);
+        toast.error("Authentication error. Please sign out and sign in again.");
+        throw new Error("User ID is required");
+      }
     }
     
     console.log("Processing subscription with userId:", userId, "channelId:", channelId);

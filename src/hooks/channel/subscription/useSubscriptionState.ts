@@ -9,15 +9,18 @@ export const useSubscriptionState = (channelId: string | undefined) => {
   const { session, isAuthenticated, isLoading: isSessionLoading } = useSessionManager();
   const userId = session?.user?.id;
 
-  console.log("useSubscriptionState initialization:", { 
-    channelId, 
-    userId, 
-    isAuthenticated,
-    isSessionLoading,
-    hasSession: !!session,
-    isSubscribed,
-    lastChecked: new Date(lastChecked).toISOString()
-  });
+  // Log detailed authentication state for debugging
+  useEffect(() => {
+    console.log("useSubscriptionState auth state:", { 
+      channelId, 
+      userId, 
+      isAuthenticated,
+      isSessionLoading,
+      hasSession: !!session,
+      isSubscribed,
+      lastChecked: new Date(lastChecked).toISOString()
+    });
+  }, [channelId, userId, isAuthenticated, isSessionLoading, session, isSubscribed, lastChecked]);
 
   return {
     isSubscribed,

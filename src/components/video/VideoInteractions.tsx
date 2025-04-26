@@ -27,7 +27,8 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
       isAuthenticated, 
       isSessionLoading,
       hasSession: !!session, 
-      userId
+      userId,
+      userObj: session?.user
     });
   }, [session, isAuthenticated, isSessionLoading, userId]);
 
@@ -98,6 +99,25 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
   const isAuthLoading = isSessionLoading;
   const buttonDisabled = isLoadingSubscription || isAuthLoading;
 
+  const handleSubscribeClick = async () => {
+    try {
+      if (isAuthLoading) {
+        toast.info("Please wait while we verify your account");
+        return;
+      }
+      
+      if (!isAuthenticated) {
+        toast.error("Please sign in to subscribe");
+        return;
+      }
+      
+      await handleSubscribe();
+    } catch (error) {
+      console.error("Subscribe error:", error);
+      // Error is already handled in handleSubscribe
+    }
+  };
+
   return (
     <>
       <LikeAnimation 
@@ -132,7 +152,7 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
         {channelId && (
           <Button
             variant={isSubscribed ? "default" : "outline"}
-            onClick={handleSubscribe}
+            onClick={handleSubscribeClick}
             disabled={buttonDisabled}
             className={`relative group rounded-full px-6 py-2 text-xs md:text-sm transition-all duration-300
               ${isSubscribed 
