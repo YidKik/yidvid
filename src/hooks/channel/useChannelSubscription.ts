@@ -1,5 +1,5 @@
 
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useSubscriptionState } from "./subscription/useSubscriptionState";
 import { useSubscriptionCheck } from "./subscription/useSubscriptionCheck";
@@ -15,7 +15,8 @@ export const useChannelSubscription = (channelId: string | undefined) => {
     lastChecked,
     setLastChecked,
     userId,
-    isAuthenticated
+    isAuthenticated,
+    isSessionLoading
   } = useSubscriptionState(channelId);
 
   const { checkSubscriptionStatus } = useSubscriptionCheck();
@@ -43,7 +44,7 @@ export const useChannelSubscription = (channelId: string | undefined) => {
     };
     
     checkSubscription();
-  }, [channelId, userId, checkSubscriptionStatus]);
+  }, [channelId, userId, checkSubscriptionStatus, setIsCheckingSubscription, setIsSubscribed]);
 
   // Set up realtime updates
   const onSubscriptionChange = useCallback(async () => {
@@ -51,7 +52,7 @@ export const useChannelSubscription = (channelId: string | undefined) => {
     const result = await checkSubscriptionStatus(userId, channelId);
     setIsSubscribed(result);
     return result;
-  }, [userId, channelId, checkSubscriptionStatus]);
+  }, [userId, channelId, checkSubscriptionStatus, setIsSubscribed]);
 
   useRealtimeUpdates(userId, channelId, onSubscriptionChange);
 
@@ -75,18 +76,26 @@ export const useChannelSubscription = (channelId: string | undefined) => {
       throw new Error("Authentication required");
     }
 
+    // Add additional check and better error handling for missing user ID
+    if (isSessionLoading) {
+      toast.error("Please wait, still loading your session");
+      throw new Error("Session loading");
+    }
+
     if (!userId) {
-      console.error("User ID is missing");
+      console.error("User ID is missing despite authenticated state");
+      toast.error("Authentication error. Please sign out and sign in again.");
       throw new Error("User ID is required");
     }
     
+    console.log("Processing subscription with userId:", userId, "channelId:", channelId);
     return processSubscription(userId, channelId);
   };
 
   return { 
     isSubscribed, 
     handleSubscribe, 
-    isLoading: isCheckingSubscription,
+    isLoading: isCheckingSubscription || isSessionLoading,
     checkSubscription: async () => {
       if (!userId || !channelId) return false;
       const result = await checkSubscriptionStatus(userId, channelId);

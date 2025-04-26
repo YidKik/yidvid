@@ -25,11 +25,21 @@ export const ChannelHeader = ({
 }: ChannelHeaderProps) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
-  const { session, isAuthenticated } = useSessionManager();
+  const { session, isAuthenticated, isLoading: isSessionLoading } = useSessionManager();
   const fallbackLogo = "/lovable-uploads/efca5adc-d9d2-4c5b-8900-e078f9d49b6a.png";
   const [internalSubscriptionState, setInternalSubscriptionState] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [initialLoadComplete, setInitialLoadComplete] = useState(false);
+
+  // Log session state for debugging
+  useEffect(() => {
+    console.log("ChannelHeader auth state:", { 
+      isAuthenticated, 
+      isSessionLoading,
+      hasSession: !!session, 
+      userId: session?.user?.id 
+    });
+  }, [session, isAuthenticated, isSessionLoading]);
 
   // Set initial subscription state and mark initial load as complete
   useEffect(() => {
@@ -52,8 +62,14 @@ export const ChannelHeader = ({
       return;
     }
     
-    if (isProcessing || isLoading) {
-      console.log("Already processing subscription action, ignoring click");
+    if (isProcessing || isLoading || isSessionLoading) {
+      console.log("Already processing subscription action or session is still loading, ignoring click");
+      return;
+    }
+    
+    if (!session?.user?.id) {
+      console.error("No user ID available in session");
+      toast.error("Authentication error. Please sign in again.");
       return;
     }
     
@@ -75,7 +91,7 @@ export const ChannelHeader = ({
   };
 
   // Determine the actual loading state (either component loading or processing a subscription action)
-  const buttonLoading = isLoading || isProcessing;
+  const buttonLoading = isLoading || isProcessing || isSessionLoading;
   
   // Determine the correct visual state for the button
   const displaySubscribed = internalSubscriptionState;

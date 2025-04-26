@@ -18,15 +18,18 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
   const [isLiked, setIsLiked] = useState(false);
   const [showAnimation, setShowAnimation] = useState(false);
   const [channelId, setChannelId] = useState<string | null>(null);
-  const { session, isAuthenticated } = useSessionManager();
+  const { session, isAuthenticated, isLoading: isSessionLoading } = useSessionManager();
   const userId = session?.user?.id;
 
   // Debug logging for authentication state
-  console.log("VideoInteractions auth state:", { 
-    isAuthenticated, 
-    hasSession: !!session, 
-    userId: userId 
-  });
+  useEffect(() => {
+    console.log("VideoInteractions auth state:", { 
+      isAuthenticated, 
+      isSessionLoading,
+      hasSession: !!session, 
+      userId
+    });
+  }, [session, isAuthenticated, isSessionLoading, userId]);
 
   useEffect(() => {
     const fetchChannelId = async () => {
@@ -60,6 +63,11 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
       toast.error("Please sign in to like videos");
       return;
     }
+    
+    if (!userId) {
+      toast.error("Authentication error. Please sign out and sign in again.");
+      return;
+    }
 
     try {
       const interactionData = {
@@ -86,6 +94,10 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
     }
   };
 
+  // Determine if we should disable buttons due to auth loading
+  const isAuthLoading = isSessionLoading;
+  const buttonDisabled = isLoadingSubscription || isAuthLoading;
+
   return (
     <>
       <LikeAnimation 
@@ -96,6 +108,7 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
         <Button
           variant="outline"
           onClick={handleLike}
+          disabled={isAuthLoading}
           className={`group relative rounded-full p-2 md:p-3 hover:bg-primary/10 transition-all duration-300 ${
             isLiked 
               ? "bg-primary border-primary hover:bg-primary/90" 
@@ -120,7 +133,7 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
           <Button
             variant={isSubscribed ? "default" : "outline"}
             onClick={handleSubscribe}
-            disabled={isLoadingSubscription}
+            disabled={buttonDisabled}
             className={`relative group rounded-full px-6 py-2 text-xs md:text-sm transition-all duration-300
               ${isSubscribed 
                 ? "bg-primary border-primary hover:bg-primary/90 text-white shadow-md" 
@@ -128,7 +141,7 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
               }
             `}
           >
-            {isLoadingSubscription ? (
+            {isLoadingSubscription || isAuthLoading ? (
               <>
                 <Loader2 className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2 animate-spin" />
                 <span>Loading...</span>
