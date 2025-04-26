@@ -80,32 +80,30 @@ export const useChannelSubscription = (channelId: string | undefined) => {
       return;
     }
 
+    if (!userId) {
+      console.error("User ID is missing");
+      toast.error("Authentication error. Please try signing in again.", { id: "auth-error" });
+      return;
+    }
+
     try {
-      if (isSubscribed) {
-        // Unsubscribe
-        const { error } = await supabase
-          .from("channel_subscriptions")
-          .delete()
-          .eq("channel_id", channelId)
-          .eq("user_id", userId);
+      // Use the edge function instead of direct database operations
+      // This helps avoid RLS policy recursion issues
+      const { data, error } = await supabase.functions.invoke('channel-subscribe', {
+        body: {
+          channelId,
+          userId,
+          action: isSubscribed ? 'unsubscribe' : 'subscribe'
+        }
+      });
 
-        if (error) throw error;
-        
-        setIsSubscribed(false);
-        toast.success("Unsubscribed from channel");
+      if (error) throw error;
+      
+      if (data.success) {
+        setIsSubscribed(data.isSubscribed);
+        toast.success(data.isSubscribed ? "Subscribed to channel" : "Unsubscribed from channel");
       } else {
-        // Subscribe
-        const { error } = await supabase
-          .from("channel_subscriptions")
-          .insert({
-            channel_id: channelId,
-            user_id: userId
-          });
-
-        if (error) throw error;
-        
-        setIsSubscribed(true);
-        toast.success("Subscribed to channel");
+        throw new Error(data.error || "Failed to update subscription");
       }
     } catch (error: any) {
       console.error("Error managing subscription:", error);
