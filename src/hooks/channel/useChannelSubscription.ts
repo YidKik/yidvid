@@ -9,6 +9,13 @@ export const useChannelSubscription = (channelId: string | undefined) => {
   const [isCheckingSubscription, setIsCheckingSubscription] = useState(false);
   const { session, isAuthenticated } = useSessionManager();
   const userId = session?.user?.id;
+  
+  console.log("useChannelSubscription hook state:", { 
+    channelId, 
+    userId, 
+    isAuthenticated, 
+    hasSession: !!session 
+  });
 
   // Effect to check subscription status whenever channelId or userId changes
   useEffect(() => {
@@ -80,19 +87,35 @@ export const useChannelSubscription = (channelId: string | undefined) => {
       return;
     }
 
-    if (!userId) {
+    if (!session?.user?.id) {
       console.error("User ID is missing");
-      toast.error("Authentication error. Please try signing in again.", { id: "auth-error" });
-      return;
+      // Instead of showing an error toast, try to refresh the auth state
+      try {
+        const { data } = await supabase.auth.getSession();
+        if (!data.session?.user?.id) {
+          toast.error("Authentication error. Please try signing in again.", { id: "auth-error" });
+          return;
+        }
+        // If we got a valid session, continue with that user ID
+        const refreshedUserId = data.session.user.id;
+        await processSubscription(refreshedUserId);
+      } catch (error) {
+        console.error("Failed to refresh authentication:", error);
+        toast.error("Authentication error. Please try signing in again.", { id: "auth-error" });
+      }
+    } else {
+      // If we already have user ID, proceed normally
+      await processSubscription(session.user.id);
     }
+  };
 
+  const processSubscription = async (currentUserId: string) => {
     try {
-      // Use the edge function instead of direct database operations
-      // This helps avoid RLS policy recursion issues
+      // Use the edge function to manage subscription
       const { data, error } = await supabase.functions.invoke('channel-subscribe', {
         body: {
           channelId,
-          userId,
+          userId: currentUserId,
           action: isSubscribed ? 'unsubscribe' : 'subscribe'
         }
       });
@@ -102,6 +125,11 @@ export const useChannelSubscription = (channelId: string | undefined) => {
       if (data.success) {
         setIsSubscribed(data.isSubscribed);
         toast.success(data.isSubscribed ? "Subscribed to channel" : "Unsubscribed from channel");
+        
+        // Force a refresh of subscription state
+        setTimeout(() => {
+          checkSubscription();
+        }, 500);
       } else {
         throw new Error(data.error || "Failed to update subscription");
       }
