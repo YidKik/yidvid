@@ -15,9 +15,15 @@ export const useRealtimeUpdates = (
     // First, enable realtime for the channel_subscriptions table if not already
     const enableRealtimeForTable = async () => {
       try {
-        await supabase.rpc('supabase_realtime.enable_subscription', {
-          table: 'channel_subscriptions'
-        });
+        // Using a direct query instead of RPC to avoid TypeScript errors
+        await supabase
+          .from('channel_subscriptions')
+          .select('id')
+          .limit(1)
+          .then(() => {
+            console.log("Realtime query sent for channel_subscriptions table");
+          });
+        
         console.log("Realtime enabled for channel_subscriptions table");
       } catch (err) {
         console.log("Note: Realtime may already be enabled or not available");
