@@ -31,7 +31,8 @@ export const ChannelHeader = ({
   console.log("ChannelHeader auth state:", { 
     isAuthenticated, 
     hasSession: !!session, 
-    userId: session?.user?.id 
+    userId: session?.user?.id,
+    isSubscribed 
   });
 
   const handleSubscribeClick = () => {

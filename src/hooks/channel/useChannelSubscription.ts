@@ -110,7 +110,11 @@ export const useChannelSubscription = (channelId: string | undefined) => {
   };
 
   const processSubscription = async (currentUserId: string) => {
+    setIsCheckingSubscription(true);
+    
     try {
+      console.log(`Processing ${isSubscribed ? 'unsubscribe' : 'subscribe'} request for user ${currentUserId} on channel ${channelId}`);
+      
       // Use the edge function to manage subscription
       const { data, error } = await supabase.functions.invoke('channel-subscribe', {
         body: {
@@ -120,22 +124,46 @@ export const useChannelSubscription = (channelId: string | undefined) => {
         }
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Edge function error:", error);
+        throw error;
+      }
+      
+      console.log("Subscription edge function response:", data);
       
       if (data.success) {
+        // Important: Update local state based on what the server returned
         setIsSubscribed(data.isSubscribed);
         toast.success(data.isSubscribed ? "Subscribed to channel" : "Unsubscribed from channel");
         
-        // Force a refresh of subscription state
-        setTimeout(() => {
-          checkSubscription();
-        }, 500);
+        // After edge function call, verify subscription status directly from database
+        const { data: verificationData, error: verificationError } = await supabase
+          .from("channel_subscriptions")
+          .select("id")
+          .eq("channel_id", channelId)
+          .eq("user_id", currentUserId)
+          .maybeSingle();
+          
+        if (verificationError) {
+          console.error("Error verifying subscription:", verificationError);
+        } else {
+          const dbSubscriptionExists = !!verificationData;
+          console.log("Database verification:", dbSubscriptionExists ? "Subscription exists" : "No subscription found");
+          
+          // Only update state if it doesn't match what's in the database
+          if (dbSubscriptionExists !== isSubscribed) {
+            console.log(`Correcting local state to match database: ${dbSubscriptionExists}`);
+            setIsSubscribed(dbSubscriptionExists);
+          }
+        }
       } else {
         throw new Error(data.error || "Failed to update subscription");
       }
     } catch (error: any) {
       console.error("Error managing subscription:", error);
       toast.error(`Failed to update subscription: ${error.message}`);
+    } finally {
+      setIsCheckingSubscription(false);
     }
   };
 
