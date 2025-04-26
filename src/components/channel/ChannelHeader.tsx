@@ -1,3 +1,4 @@
+
 import { Youtube, UserPlus, Check, Loader2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -26,13 +27,24 @@ export const ChannelHeader = ({
   const [imageError, setImageError] = useState(false);
   const { session, isAuthenticated } = useSessionManager();
   const fallbackLogo = "/lovable-uploads/efca5adc-d9d2-4c5b-8900-e078f9d49b6a.png";
-  const [internalSubscriptionState, setInternalSubscriptionState] = useState(isSubscribed);
+  const [internalSubscriptionState, setInternalSubscriptionState] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [initialLoadComplete, setInitialLoadComplete] = useState(false);
 
-  // Sync internal state with prop when it changes
+  // Set initial subscription state and mark initial load as complete
   useEffect(() => {
-    setInternalSubscriptionState(isSubscribed);
-  }, [isSubscribed]);
+    if (!initialLoadComplete && !isLoading) {
+      setInternalSubscriptionState(isSubscribed);
+      setInitialLoadComplete(true);
+    }
+  }, [isSubscribed, isLoading, initialLoadComplete]);
+
+  // Update internal state when prop changes after initial load
+  useEffect(() => {
+    if (initialLoadComplete) {
+      setInternalSubscriptionState(isSubscribed);
+    }
+  }, [isSubscribed, initialLoadComplete]);
 
   const handleSubscribeClick = async () => {
     if (!isAuthenticated) {
@@ -47,21 +59,12 @@ export const ChannelHeader = ({
     
     try {
       setIsProcessing(true);
-      
-      // Call the provided onSubscribe handler
       await onSubscribe();
-      
-      // Update internal state after successful subscription
       setInternalSubscriptionState(!internalSubscriptionState);
-      
-      // Show success toast
       toast.success(internalSubscriptionState ? "Unsubscribed from channel" : "Subscribed to channel");
     } catch (error) {
       console.error("Error in subscription action:", error);
-      
-      // Revert optimistic update on error
       setInternalSubscriptionState(isSubscribed);
-      
       if (error instanceof Error) {
         toast.error(`Subscription failed: ${error.message}`);
       } else {
