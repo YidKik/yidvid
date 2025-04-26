@@ -27,11 +27,12 @@ export const ChannelHeader = ({
   const [imageError, setImageError] = useState(false);
   const { session, isAuthenticated } = useSessionManager();
   const fallbackLogo = "/lovable-uploads/efca5adc-d9d2-4c5b-8900-e078f9d49b6a.png";
-  const [subscriptionStatus, setSubscriptionStatus] = useState(isSubscribed);
+  const [internalSubscriptionState, setInternalSubscriptionState] = useState(isSubscribed);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   // Sync internal state with prop when it changes
   useEffect(() => {
-    setSubscriptionStatus(isSubscribed);
+    setInternalSubscriptionState(isSubscribed);
     console.log(`ChannelHeader received isSubscribed update: ${isSubscribed}`);
   }, [isSubscribed]);
 
@@ -39,22 +40,46 @@ export const ChannelHeader = ({
     isAuthenticated, 
     hasSession: !!session, 
     userId: session?.user?.id,
-    isSubscribed: subscriptionStatus,
+    internalSubscriptionState,
     propIsSubscribed: isSubscribed,
-    isLoading
+    isLoading,
+    isProcessing
   });
 
-  const handleSubscribeClick = () => {
+  const handleSubscribeClick = async () => {
     if (!isAuthenticated) {
       toast.error("Please sign in to subscribe to channels", { id: "signin-required" });
       return;
     }
     
-    console.log("Subscribe button clicked, current state:", subscriptionStatus);
+    if (isProcessing || isLoading) {
+      console.log("Already processing subscription action, ignoring click");
+      return;
+    }
     
-    // Call the provided onSubscribe handler
-    onSubscribe();
+    console.log("Subscribe button clicked, current state:", internalSubscriptionState);
+    
+    try {
+      setIsProcessing(true);
+      
+      // Call the provided onSubscribe handler
+      await onSubscribe();
+      
+      // Don't update state here - we'll rely on the prop update from the parent
+      // This prevents visual flicker if the backend operation fails
+    } catch (error) {
+      console.error("Error in subscription action:", error);
+      toast.error("Could not process subscription - please try again");
+    } finally {
+      setIsProcessing(false);
+    }
   };
+
+  // Determine the actual loading state (either component loading or processing a subscription action)
+  const buttonLoading = isLoading || isProcessing;
+  
+  // Determine the correct visual state for the button
+  const displaySubscribed = internalSubscriptionState;
 
   return (
     <div className="flex flex-col items-center mb-6 md:mb-8">
@@ -90,20 +115,21 @@ export const ChannelHeader = ({
       </h1>
       
       <Button
-        variant={subscriptionStatus ? "default" : "outline"}
+        variant={displaySubscribed ? "default" : "outline"}
         onClick={handleSubscribeClick}
-        disabled={isLoading}
+        disabled={buttonLoading}
         className={`h-7 md:h-9 text-xs md:text-sm px-2.5 md:px-3.5 mb-2 md:mb-3 transition-all duration-200 ${
-          subscriptionStatus ? "bg-primary hover:bg-primary-hover text-white shadow-md" : ""
+          displaySubscribed ? "bg-primary hover:bg-primary-hover text-white shadow-md" : ""
         }`}
-        data-subscribed={subscriptionStatus ? "true" : "false"} // Add data attribute for easy testing
+        data-subscribed={displaySubscribed ? "true" : "false"}
+        aria-label={displaySubscribed ? "Unsubscribe from channel" : "Subscribe to channel"}
       >
-        {isLoading ? (
+        {buttonLoading ? (
           <>
             <Loader2 className="w-3 h-3 md:w-3.5 md:h-3.5 mr-1 md:mr-1.5 animate-spin" />
-            Loading...
+            {isProcessing ? "Processing..." : "Loading..."}
           </>
-        ) : subscriptionStatus ? (
+        ) : displaySubscribed ? (
           <>
             <Check className="w-3 h-3 md:w-3.5 md:h-3.5 mr-1 md:mr-1.5 animate-in" />
             Subscribed

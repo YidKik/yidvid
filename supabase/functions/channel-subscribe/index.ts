@@ -71,123 +71,165 @@ Deno.serve(async (req) => {
 });
 
 async function handleSubscribe(userId: string, channelId: string) {
-  // First, check if the subscription already exists
-  const { data: existingSubscription, error: checkError } = await adminClient
-    .from('channel_subscriptions')
-    .select('id')
-    .eq('channel_id', channelId)
-    .eq('user_id', userId)
-    .maybeSingle();
-    
-  if (checkError) {
-    console.error('Error checking existing subscription:', checkError);
-    throw new Error('Failed to check subscription status');
-  }
-  
-  let result;
-  
-  if (!existingSubscription) {
-    console.log(`Creating new subscription for user ${userId} to channel ${channelId}`);
-    
-    // Subscription doesn't exist, create it
-    const { data, error } = await adminClient
+  try {
+    // First, check if the subscription already exists
+    const { data: existingSubscription, error: checkError } = await adminClient
       .from('channel_subscriptions')
-      .insert([{ 
-        channel_id: channelId, 
-        user_id: userId,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      }])
-      .select();
+      .select('id')
+      .eq('channel_id', channelId)
+      .eq('user_id', userId)
+      .maybeSingle();
       
-    if (error) {
-      console.error('Error creating subscription:', error);
-      throw new Error(`Error creating subscription: ${error.message}`);
+    if (checkError) {
+      console.error('Error checking existing subscription:', checkError);
+      throw new Error('Failed to check subscription status');
     }
     
-    result = data?.[0];
-    console.log(`Subscription created:`, result);
-  } else {
-    console.log(`User ${userId} is already subscribed to channel ${channelId}`);
-    result = existingSubscription;
-  }
-  
-  // Verify the subscription was actually created
-  const { data: verifyData, error: verifyError } = await adminClient
-    .from('channel_subscriptions')
-    .select('id')
-    .eq('channel_id', channelId)
-    .eq('user_id', userId)
-    .maybeSingle();
+    let result;
     
-  if (verifyError) {
-    console.error('Error verifying subscription creation:', verifyError);
-    throw new Error('Failed to verify subscription creation');
+    if (!existingSubscription) {
+      console.log(`Creating new subscription for user ${userId} to channel ${channelId}`);
+      
+      // Subscription doesn't exist, create it
+      const { data, error } = await adminClient
+        .from('channel_subscriptions')
+        .insert([{ 
+          channel_id: channelId, 
+          user_id: userId,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }])
+        .select();
+        
+      if (error) {
+        console.error('Error creating subscription:', error);
+        throw new Error(`Error creating subscription: ${error.message}`);
+      }
+      
+      result = data?.[0];
+      console.log(`Subscription created:`, result);
+    } else {
+      console.log(`User ${userId} is already subscribed to channel ${channelId}`);
+      result = existingSubscription;
+    }
+    
+    // Verify the subscription was actually created
+    const { data: verifyData, error: verifyError } = await adminClient
+      .from('channel_subscriptions')
+      .select('id')
+      .eq('channel_id', channelId)
+      .eq('user_id', userId)
+      .maybeSingle();
+      
+    if (verifyError) {
+      console.error('Error verifying subscription creation:', verifyError);
+      throw new Error('Failed to verify subscription creation');
+    }
+    
+    if (!verifyData) {
+      console.error('Verification failed - subscription was not created successfully');
+      throw new Error('Failed to create subscription - verification failed');
+    }
+    
+    console.log('Verification succeeded - subscription exists in database');
+    
+    return new Response(
+      JSON.stringify({ 
+        success: true, 
+        isSubscribed: true, 
+        message: 'Successfully subscribed to channel',
+        data: result,
+        verified: true
+      }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
+    );
+  } catch (error) {
+    console.error('Error in handleSubscribe:', error);
+    return new Response(
+      JSON.stringify({ error: error.message || 'Failed to subscribe', success: false }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+    );
   }
-  
-  if (!verifyData) {
-    console.error('Verification failed - subscription was not created successfully');
-    throw new Error('Failed to create subscription - verification failed');
-  }
-  
-  console.log('Verification succeeded - subscription exists in database');
-  
-  return new Response(
-    JSON.stringify({ 
-      success: true, 
-      isSubscribed: true, 
-      message: 'Successfully subscribed to channel',
-      data: result,
-      verified: true
-    }),
-    { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
-  );
 }
 
 async function handleUnsubscribe(userId: string, channelId: string) {
-  console.log(`Processing unsubscribe request for user ${userId} from channel ${channelId}`);
-  
-  // Delete the subscription
-  const { data, error } = await adminClient
-    .from('channel_subscriptions')
-    .delete()
-    .eq('channel_id', channelId)
-    .eq('user_id', userId)
-    .select();
+  try {
+    console.log(`Processing unsubscribe request for user ${userId} from channel ${channelId}`);
     
-  if (error) {
-    console.error('Error deleting subscription:', error);
-    throw new Error(`Error unsubscribing from channel: ${error.message}`);
-  }
-  
-  // Verify the subscription was actually deleted
-  const { data: verifyData, error: verifyError } = await adminClient
-    .from('channel_subscriptions')
-    .select('id')
-    .eq('channel_id', channelId)
-    .eq('user_id', userId)
-    .maybeSingle();
+    // Check if subscription exists before attempting to delete
+    const { data: existingSubscription, error: checkError } = await adminClient
+      .from('channel_subscriptions')
+      .select('id')
+      .eq('channel_id', channelId)
+      .eq('user_id', userId)
+      .maybeSingle();
+
+    if (checkError) {
+      console.error('Error checking existing subscription before unsubscribe:', checkError);
+      throw new Error('Failed to check subscription status');
+    }
+
+    if (!existingSubscription) {
+      console.log(`User ${userId} is not subscribed to channel ${channelId}, nothing to unsubscribe`);
+      return new Response(
+        JSON.stringify({ 
+          success: true, 
+          isSubscribed: false, 
+          message: 'User was not subscribed to this channel',
+          verified: true
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
+      );
+    }
     
-  if (verifyError) {
-    console.error('Error verifying subscription deletion:', verifyError);
-    throw new Error('Failed to verify subscription deletion');
+    // Delete the subscription
+    const { data, error } = await adminClient
+      .from('channel_subscriptions')
+      .delete()
+      .eq('channel_id', channelId)
+      .eq('user_id', userId)
+      .select();
+      
+    if (error) {
+      console.error('Error deleting subscription:', error);
+      throw new Error(`Error unsubscribing from channel: ${error.message}`);
+    }
+    
+    // Verify the subscription was actually deleted
+    const { data: verifyData, error: verifyError } = await adminClient
+      .from('channel_subscriptions')
+      .select('id')
+      .eq('channel_id', channelId)
+      .eq('user_id', userId)
+      .maybeSingle();
+      
+    if (verifyError) {
+      console.error('Error verifying subscription deletion:', verifyError);
+      throw new Error('Failed to verify subscription deletion');
+    }
+    
+    if (verifyData) {
+      console.error('Verification failed - subscription still exists after deletion attempt');
+      throw new Error('Failed to delete subscription - verification failed');
+    }
+    
+    console.log('Verification succeeded - subscription was properly deleted');
+    
+    return new Response(
+      JSON.stringify({ 
+        success: true, 
+        isSubscribed: false, 
+        message: 'Successfully unsubscribed from channel',
+        data: data,
+        verified: true
+      }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
+    );
+  } catch (error) {
+    console.error('Error in handleUnsubscribe:', error);
+    return new Response(
+      JSON.stringify({ error: error.message || 'Failed to unsubscribe', success: false }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+    );
   }
-  
-  if (verifyData) {
-    console.error('Verification failed - subscription still exists after deletion attempt');
-    throw new Error('Failed to delete subscription - verification failed');
-  }
-  
-  console.log('Verification succeeded - subscription was properly deleted');
-  
-  return new Response(
-    JSON.stringify({ 
-      success: true, 
-      isSubscribed: false, 
-      message: 'Successfully unsubscribed from channel',
-      data: data,
-      verified: true
-    }),
-    { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
-  );
 }

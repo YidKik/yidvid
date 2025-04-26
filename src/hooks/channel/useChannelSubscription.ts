@@ -25,7 +25,9 @@ export const useChannelSubscription = (channelId: string | undefined) => {
     if (!uid || !chId) return false;
     
     console.log(`Performing direct DB check for subscription: user=${uid}, channel=${chId}`);
+    
     try {
+      // First try with a direct DB check
       const { data, error } = await supabase
         .from("channel_subscriptions")
         .select("id")
@@ -119,20 +121,33 @@ export const useChannelSubscription = (channelId: string | undefined) => {
           toast.error("Authentication error. Please try signing in again.", { id: "auth-error" });
           return;
         }
-        await processSubscription(refreshedSession.user.id, channelId);
+        return processSubscription(refreshedSession.user.id, channelId);
       } catch (error) {
         console.error("Failed to refresh authentication:", error);
         toast.error("Authentication error. Please try signing in again.", { id: "auth-error" });
+        return;
       }
-    } else {
-      await processSubscription(session.user.id, channelId);
     }
+    
+    return processSubscription(session.user.id, channelId);
   };
 
   // Process the actual subscription/unsubscription
   const processSubscription = async (currentUserId: string, currentChannelId: string) => {
     setIsCheckingSubscription(true);
-    const action = isSubscribed ? 'unsubscribe' : 'subscribe';
+    
+    // Double-check the current subscription status before proceeding
+    const actualCurrentState = await checkSubscriptionInDatabase(currentUserId, currentChannelId);
+    console.log(`Verified subscription status before action: ${actualCurrentState ? 'Subscribed' : 'Not subscribed'}`);
+    
+    // If the state doesn't match our current understanding, update our state first
+    if (actualCurrentState !== isSubscribed) {
+      console.log(`Correcting local subscription state from ${isSubscribed} to ${actualCurrentState}`);
+      setIsSubscribed(actualCurrentState);
+    }
+    
+    // The action should be the opposite of the actual current state
+    const action = actualCurrentState ? 'unsubscribe' : 'subscribe';
     
     try {
       console.log(`Processing ${action} request for user ${currentUserId} on channel ${currentChannelId}`);
@@ -154,12 +169,22 @@ export const useChannelSubscription = (channelId: string | undefined) => {
       console.log("Edge function response:", data);
       
       if (data.success) {
-        // Manually verify the operation before updating the UI
+        // Verify the operation completed successfully
+        const expectedNewState = action === 'subscribe';
         const verificationCheck = await checkSubscriptionInDatabase(currentUserId, currentChannelId);
         
-        console.log(`Manual verification after ${action}: DB shows ${verificationCheck ? 'subscribed' : 'not subscribed'}`);
+        console.log(`Verification after ${action}: Expected ${expectedNewState ? 'subscribed' : 'not subscribed'}, 
+          actual DB shows ${verificationCheck ? 'subscribed' : 'not subscribed'}`);
         
-        // Set state based on ACTUAL database state, not what the API returned
+        // If the verification doesn't match what we expect after the action, something went wrong
+        if (verificationCheck !== expectedNewState) {
+          console.error(`Verification failed: DB shows ${verificationCheck ? 'subscribed' : 'not subscribed'} 
+            but expected ${expectedNewState ? 'subscribed' : 'not subscribed'}`);
+          
+          throw new Error(`Database verification failed: subscription state is not as expected after ${action}`);
+        }
+        
+        // Set state based on verified database state
         setIsSubscribed(verificationCheck);
         
         // Show appropriate toast message
@@ -177,6 +202,7 @@ export const useChannelSubscription = (channelId: string | undefined) => {
       // Force a re-check to sync UI with database state
       setTimeout(async () => {
         const actualState = await checkSubscriptionInDatabase(currentUserId, currentChannelId);
+        console.log(`After error recovery, subscription state is: ${actualState ? 'subscribed' : 'not subscribed'}`);
         setIsSubscribed(actualState);
       }, 1000);
     } finally {
@@ -189,7 +215,7 @@ export const useChannelSubscription = (channelId: string | undefined) => {
     handleSubscribe, 
     isLoading: isCheckingSubscription,
     checkSubscription: async () => {
-      if (!userId || !channelId) return;
+      if (!userId || !channelId) return false;
       const result = await checkSubscriptionInDatabase(userId, channelId);
       setIsSubscribed(result);
       return result;
