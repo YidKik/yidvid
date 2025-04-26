@@ -41,12 +41,22 @@ export const VideoContent = ({
     hasOnlySampleVideos 
   } = useSampleVideos();
 
-  const { session } = useSessionManager();
+  const { session, isAuthenticated } = useSessionManager();
   
   // Track if we've already attempted background refresh
   const [hasAttemptedRefresh, setHasAttemptedRefresh] = useState(false);
   const initialLoadAttemptMade = useRef(false);
   const userChangedRef = useRef(session?.user?.id);
+  const refreshTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  
+  // Clean up any existing timeouts
+  useEffect(() => {
+    return () => {
+      if (refreshTimeoutRef.current) {
+        clearTimeout(refreshTimeoutRef.current);
+      }
+    };
+  }, []);
   
   // Handle auth state changes to trigger a video refresh
   useEffect(() => {
@@ -59,14 +69,14 @@ export const VideoContent = ({
         clearApplicationCache();
         
         // Short delay to let auth state fully update
-        setTimeout(() => {
+        refreshTimeoutRef.current = setTimeout(() => {
           forceRefetch().catch(err => {
             console.error("Error refreshing after auth change:", err);
           });
-        }, 300);
+        }, 500);
       }
     }
-  }, [session?.user?.id, forceRefetch]);
+  }, [session?.user?.id, forceRefetch, isAuthenticated]);
   
   // Add a check for infinite refresh loops
   useEffect(() => {
@@ -107,17 +117,44 @@ export const VideoContent = ({
         console.log("No videos found on initial load, triggering fetch...");
         
         // Short delay to let UI render first
-        setTimeout(() => {
+        refreshTimeoutRef.current = setTimeout(() => {
           forceRefetch().catch(err => {
             console.error("Error in initial fetch:", err);
+            // Show helpful error message
+            toast.error("Couldn't load videos", {
+              description: "Please try refreshing the page",
+              duration: 5000
+            });
           });
-        }, 200);
+        }, 500);
       }
     }
   }, [isLoading, isRefreshing, forceRefetch, videos.length]);
 
   // Always show some content immediately, whether user is logged in or not
   const displayVideos = videos?.length ? videos : createSampleVideos(8);
+  
+  const recoveryRefresh = useCallback(() => {
+    if (forceRefetch) {
+      // Clear cache first
+      clearApplicationCache();
+      toast.loading("Refreshing content...");
+      
+      // Short delay to let cache clear
+      setTimeout(() => {
+        forceRefetch()
+          .then(() => {
+            toast.success("Content refreshed successfully");
+          })
+          .catch(err => {
+            console.error("Recovery refresh failed:", err);
+            toast.error("Refresh failed", {
+              description: "Please try signing out and back in"
+            });
+          });
+      }, 500);
+    }
+  }, [forceRefetch]);
   
   return (
     <div>
@@ -128,6 +165,19 @@ export const VideoContent = ({
         lastSuccessfulFetch={lastSuccessfulFetch}
         forceRefetch={forceRefetch}
       />
+      
+      {fetchAttempts && fetchAttempts > 3 && !isRefreshing && (
+        <div className="my-4 p-4 bg-amber-50 border border-amber-200 rounded-md">
+          <h3 className="font-medium text-amber-800">Having trouble loading content?</h3>
+          <p className="text-amber-700 text-sm mb-2">We're encountering some difficulties refreshing the content.</p>
+          <button 
+            onClick={recoveryRefresh} 
+            className="text-sm bg-amber-100 hover:bg-amber-200 text-amber-800 font-medium py-1 px-3 rounded"
+          >
+            Refresh Content
+          </button>
+        </div>
+      )}
       
       {/* Responsive video view based on device */}
       {isMobile ? (

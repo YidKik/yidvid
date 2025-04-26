@@ -1,5 +1,6 @@
+
 import { useQuery } from "@tanstack/react-query";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { VideoData } from "./types/video-fetcher";
 import { hasRealVideos } from "./utils/validation";
 
@@ -18,6 +19,7 @@ export const useVideoQuery = ({
   authState
 }: UseVideoQueryProps) => {
   const [retryCount, setRetryCount] = useState(0);
+  const [isRecovering, setIsRecovering] = useState(false);
 
   // Force retry by incrementing counter
   const triggerRetry = useCallback(() => {
@@ -43,6 +45,8 @@ export const useVideoQuery = ({
           error?.code === '42P07' ||
           error?.code === '42P17') { // Added specific RLS recursion error code
         console.log("Not retrying RLS error:", error.message);
+        // Instead of retrying, we'll trigger a recovery process
+        setIsRecovering(true);
         return false;
       }
       
@@ -58,6 +62,23 @@ export const useVideoQuery = ({
     refetchOnMount: true,
     refetchOnWindowFocus: false
   });
+
+  // Add recovery logic for RLS errors
+  useEffect(() => {
+    if (isRecovering && !isFetching) {
+      setIsRecovering(false);
+      
+      // Use a timeout to prevent immediate retry
+      const recoveryTimer = setTimeout(() => {
+        console.log("Attempting recovery via edge function...");
+        handleForceRefetch().catch(err => {
+          console.error("Recovery attempt failed:", err);
+        });
+      }, 1000);
+      
+      return () => clearTimeout(recoveryTimer);
+    }
+  }, [isRecovering, isFetching]);
 
   // Create a wrapper for forceRefetch with retry counter
   const handleForceRefetch = async () => {
@@ -78,6 +99,7 @@ export const useVideoQuery = ({
     error,
     refetch,
     forceRefetch: handleForceRefetch,
-    triggerRetry
+    triggerRetry,
+    isRecovering
   };
 };

@@ -19,6 +19,7 @@ export const AutoRefreshHandler: React.FC<AutoRefreshHandlerProps> = ({
 }) => {
   const [lastCacheClear, setLastCacheClear] = useState<number | null>(null);
   const hasTriggeredInitialFetch = useRef(false);
+  const refreshAttempts = useRef(0);
   
   // Function to clear cache and force refresh with rate limiting
   const clearCacheAndRefresh = async () => {
@@ -42,15 +43,26 @@ export const AutoRefreshHandler: React.FC<AutoRefreshHandlerProps> = ({
       // Short delay before refresh to ensure cache is cleared
       setTimeout(async () => {
         if (!isRefreshing) {
+          refreshAttempts.current += 1;
           try {
             console.log("Auto refreshing content after cache clear...");
             await forceRefetch();
+            // Reset attempt counter on success
+            refreshAttempts.current = 0;
             console.log("Content refreshed successfully after cache clear");
           } catch (error) {
             console.error("Failed to refresh after cache clear:", error);
+            
+            // If too many consecutive fails, show a helpful message
+            if (refreshAttempts.current >= 3) {
+              toast.error("Refresh issue detected", {
+                description: "Try signing out and signing back in to resolve authentication issues",
+                duration: 8000
+              });
+            }
           }
         }
-      }, 300);
+      }, 500);
     } catch (error) {
       console.error("Failed to clear cache:", error);
     }
@@ -87,7 +99,7 @@ export const AutoRefreshHandler: React.FC<AutoRefreshHandlerProps> = ({
             console.error("Failed to refresh stale content:", error);
           });
         }
-      }, 100);
+      }, 500);
     }
   }, [videos, lastSuccessfulFetch, forceRefetch, isRefreshing]);
   

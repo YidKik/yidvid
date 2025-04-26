@@ -16,56 +16,12 @@ export const useVideoFetcher = () => {
       // Clear local storage to force a refresh from the server
       localStorage.removeItem('supabase.cache.youtube_videos');
       
-      // Use a direct query approach to avoid RLS recursion
-      const { data, error } = await supabase
-        .from("youtube_videos")
-        .select("*, youtube_channels(thumbnail_url)")
-        .is("deleted_at", null)
-        .order("created_at", { ascending: false })
-        .limit(150);
+      // Add delay before fetch to ensure cache is cleared
+      await new Promise(resolve => setTimeout(resolve, 100));
       
-      if (error) {
-        console.error("Error force refetching videos:", error);
-        
-        // Fallback to standard query if first attempt fails
-        const fallbackResult = await supabase
-          .from("youtube_videos")
-          .select("*, youtube_channels(thumbnail_url)")
-          .is("deleted_at", null)
-          .order("created_at", { ascending: false })
-          .limit(150);
-          
-        if (fallbackResult.error) {
-          throw fallbackResult.error;
-        }
-        
-        const formatted = formatVideoData(fallbackResult.data);
-        setLastSuccessfulFetch(new Date());
-        setFetchAttempts(0);
-        return formatted;
-      }
-
-      const formatted = formatVideoData(data);
-      setLastSuccessfulFetch(new Date());
-      setFetchAttempts(0);
-      return formatted;
-    } catch (err: any) {
-      console.error("Error in force refetch:", err);
-      toast.error("Failed to refresh content", {
-        description: err.message,
-        duration: 5000
-      });
-      setFetchAttempts(prev => prev + 1);
-      return [];
-    }
-  }, []);
-
-  const fetchAllVideos = async (): Promise<VideoData[]> => {
-    try {
-      console.log("Fetching all videos");
-      
-      // Try the edge function approach to bypass RLS issues
+      // Try edge function first for more reliable results
       try {
+        console.log("Attempting to fetch videos via edge function...");
         const response = await fetch("https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/get-public-videos", {
           method: "GET",
           headers: {
@@ -77,17 +33,126 @@ export const useVideoFetcher = () => {
         if (response.ok) {
           const result = await response.json();
           if (result.data && result.data.length > 0) {
+            console.log(`Successfully fetched ${result.data.length} videos from edge function`);
             const formatted = formatVideoData(result.data);
             setLastSuccessfulFetch(new Date());
             setFetchAttempts(0);
             return formatted;
+          } else {
+            console.log("Edge function returned no videos, falling back to direct query");
           }
+        } else {
+          console.log("Edge function response not OK, falling back to direct query:", response.status);
+        }
+      } catch (edgeError) {
+        console.log("Edge function approach failed, using direct query", edgeError);
+      }
+      
+      // Use a direct query approach with more robust error handling
+      const { data, error } = await supabase
+        .from("youtube_videos")
+        .select("*, youtube_channels(thumbnail_url)")
+        .is("deleted_at", null)
+        .order("created_at", { ascending: false })
+        .limit(150);
+      
+      if (error) {
+        console.error("Direct query error:", error);
+        
+        // Fallback to minimal query if first attempt fails
+        console.log("Attempting fallback with minimal query...");
+        const fallbackResult = await supabase
+          .from("youtube_videos")
+          .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at")
+          .is("deleted_at", null)
+          .order("created_at", { ascending: false })
+          .limit(100);
+          
+        if (fallbackResult.error) {
+          console.error("Fallback query also failed:", fallbackResult.error);
+          throw fallbackResult.error;
+        }
+        
+        console.log(`Fallback query successful, retrieved ${fallbackResult.data?.length || 0} videos`);
+        const formatted = formatVideoData(fallbackResult.data);
+        setLastSuccessfulFetch(new Date());
+        setFetchAttempts(0);
+        return formatted;
+      }
+
+      console.log(`Direct query successful, retrieved ${data?.length || 0} videos`);
+      const formatted = formatVideoData(data);
+      setLastSuccessfulFetch(new Date());
+      setFetchAttempts(0);
+      return formatted;
+    } catch (err: any) {
+      console.error("Error in force refetch:", err);
+      
+      // Only show toast for actual errors, not just empty results
+      if (err.message && err.message !== "No videos found") {
+        toast.error("Failed to refresh content", {
+          description: err.code === "42P17" ? "Database permission issue. Please try again later." : err.message,
+          duration: 5000
+        });
+      }
+      
+      setFetchAttempts(prev => prev + 1);
+      
+      // Return empty array to prevent further errors
+      return [];
+    }
+  }, []);
+
+  const fetchAllVideos = async (): Promise<VideoData[]> => {
+    try {
+      console.log("Fetching all videos");
+      
+      // Try the edge function approach to bypass RLS issues
+      try {
+        console.log("Attempting to fetch videos via edge function...");
+        const response = await fetch("https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/get-public-videos", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1aW5ja3R2c2l1enRzeGN1cWZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY0ODgzNzcsImV4cCI6MjA1MjA2NDM3N30.zbReqHoAR33QoCi_wqNp8AtNofTX3JebM7jvjFAWbMg`
+          }
+        });
+        
+        if (response.ok) {
+          const result = await response.json();
+          if (result.data && result.data.length > 0) {
+            console.log(`Successfully fetched ${result.data.length} videos from edge function`);
+            const formatted = formatVideoData(result.data);
+            setLastSuccessfulFetch(new Date());
+            setFetchAttempts(0);
+            return formatted;
+          } else {
+            console.log("Edge function returned no videos, falling back to direct query");
+          }
+        } else {
+          console.log("Edge function response not OK:", response.status);
         }
       } catch (edgeError) {
         console.log("Edge function approach failed, using standard query", edgeError);
       }
       
-      // Fallback to standard query
+      // First try simplified query for better compatibility
+      const { data: simpleData, error: simpleError } = await supabase
+        .from("youtube_videos")
+        .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at")
+        .is("deleted_at", null)
+        .order("created_at", { ascending: false })
+        .limit(100);
+        
+      if (!simpleError && simpleData && simpleData.length > 0) {
+        console.log(`Successfully fetched ${simpleData.length} videos with simplified query`);
+        const formatted = formatVideoData(simpleData);
+        setLastSuccessfulFetch(new Date());
+        setFetchAttempts(0);
+        return formatted;
+      }
+      
+      // Fallback to standard query with full data
       const { data, error } = await supabase
         .from("youtube_videos")
         .select("*, youtube_channels(thumbnail_url)")
@@ -100,6 +165,12 @@ export const useVideoFetcher = () => {
         throw error;
       }
 
+      if (!data || data.length === 0) {
+        console.log("No videos found in database");
+        throw new Error("No videos found");
+      }
+
+      console.log(`Successfully fetched ${data.length} videos from database`);
       const formatted = formatVideoData(data);
       setLastSuccessfulFetch(new Date());
       setFetchAttempts(0);
