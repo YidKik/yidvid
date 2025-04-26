@@ -1,6 +1,6 @@
 
 import { useParams, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { BackButton } from "@/components/navigation/BackButton";
 import { ChannelLoading } from "@/components/channel/ChannelLoading";
 import { ChannelHeader } from "@/components/channel/ChannelHeader";
