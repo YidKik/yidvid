@@ -27,25 +27,32 @@ export const ChannelHeader = ({
   const [imageError, setImageError] = useState(false);
   const { session, isAuthenticated } = useSessionManager();
   const fallbackLogo = "/lovable-uploads/efca5adc-d9d2-4c5b-8900-e078f9d49b6a.png";
+  const [subscriptionStatus, setSubscriptionStatus] = useState(isSubscribed);
 
-  console.log("ChannelHeader rendering state:", { 
+  // Sync internal state with prop when it changes
+  useEffect(() => {
+    setSubscriptionStatus(isSubscribed);
+    console.log(`ChannelHeader received isSubscribed update: ${isSubscribed}`);
+  }, [isSubscribed]);
+
+  console.log("ChannelHeader rendering with subscription state:", { 
     isAuthenticated, 
     hasSession: !!session, 
     userId: session?.user?.id,
-    isSubscribed,
+    isSubscribed: subscriptionStatus,
+    propIsSubscribed: isSubscribed,
     isLoading
   });
-
-  // Effect to log changes to subscription state for debugging
-  useEffect(() => {
-    console.log(`Subscription state changed to: ${isSubscribed ? 'Subscribed' : 'Not Subscribed'}`);
-  }, [isSubscribed]);
 
   const handleSubscribeClick = () => {
     if (!isAuthenticated) {
       toast.error("Please sign in to subscribe to channels", { id: "signin-required" });
       return;
     }
+    
+    console.log("Subscribe button clicked, current state:", subscriptionStatus);
+    
+    // Call the provided onSubscribe handler
     onSubscribe();
   };
 
@@ -83,20 +90,20 @@ export const ChannelHeader = ({
       </h1>
       
       <Button
-        variant={isSubscribed ? "default" : "outline"}
+        variant={subscriptionStatus ? "default" : "outline"}
         onClick={handleSubscribeClick}
         disabled={isLoading}
         className={`h-7 md:h-9 text-xs md:text-sm px-2.5 md:px-3.5 mb-2 md:mb-3 transition-all duration-200 ${
-          isSubscribed ? "bg-primary hover:bg-primary-hover text-white shadow-md" : ""
+          subscriptionStatus ? "bg-primary hover:bg-primary-hover text-white shadow-md" : ""
         }`}
-        data-subscribed={isSubscribed ? "true" : "false"} // Add data attribute for easy testing
+        data-subscribed={subscriptionStatus ? "true" : "false"} // Add data attribute for easy testing
       >
         {isLoading ? (
           <>
             <Loader2 className="w-3 h-3 md:w-3.5 md:h-3.5 mr-1 md:mr-1.5 animate-spin" />
             Loading...
           </>
-        ) : isSubscribed ? (
+        ) : subscriptionStatus ? (
           <>
             <Check className="w-3 h-3 md:w-3.5 md:h-3.5 mr-1 md:mr-1.5 animate-in" />
             Subscribed

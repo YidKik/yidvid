@@ -1,6 +1,6 @@
 
 import { useParams, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { BackButton } from "@/components/navigation/BackButton";
 import { ChannelLoading } from "@/components/channel/ChannelLoading";
 import { ChannelHeader } from "@/components/channel/ChannelHeader";
@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { VideoPlaceholder } from "@/components/video/VideoPlaceholder";
 import { toast } from "sonner";
 import { useSessionManager } from "@/hooks/useSessionManager";
+import { supabase } from "@/integrations/supabase/client";
 
 const ChannelDetails = () => {
   const { channelId } = useParams<{ channelId?: string }>();
@@ -42,7 +43,8 @@ const ChannelDetails = () => {
   const { 
     isSubscribed, 
     handleSubscribe, 
-    isLoading: isLoadingSubscription 
+    isLoading: isLoadingSubscription,
+    checkSubscription
   } = useChannelSubscription(cleanChannelId);
   
   // Only initialize video hooks if we have a valid channel ID
@@ -54,6 +56,29 @@ const ChannelDetails = () => {
     refetchVideos,
     error: videosError
   } = useChannelVideos(cleanChannelId);
+  
+  // Double-check subscription status when component mounts
+  useEffect(() => {
+    if (isAuthenticated && cleanChannelId && checkSubscription) {
+      console.log("Double-checking subscription status on component mount");
+      checkSubscription().then(status => {
+        console.log("Initial subscription status check:", status);
+      });
+    }
+  }, [isAuthenticated, cleanChannelId, checkSubscription]);
+
+  // Effect to recheck subscription status periodically
+  useEffect(() => {
+    if (!isAuthenticated || !checkSubscription) return;
+    
+    const interval = setInterval(() => {
+      checkSubscription().then(status => {
+        console.log(`Periodic subscription check: ${status ? 'Subscribed' : 'Not Subscribed'}`);
+      });
+    }, 10000); // Every 10 seconds
+    
+    return () => clearInterval(interval);
+  }, [isAuthenticated, checkSubscription]);
 
   useEffect(() => {
     // Log channel information for debugging
@@ -106,6 +131,12 @@ const ChannelDetails = () => {
         setIsRetrying(false);
       });
   };
+  
+  // Handle the subscribe action with verification
+  const handleSubscribeAction = useCallback(async () => {
+    console.log("Subscribe action triggered");
+    await handleSubscribe();
+  }, [handleSubscribe]);
 
   // Return early if no channelId is provided
   if (!cleanChannelId) {
@@ -166,7 +197,7 @@ const ChannelDetails = () => {
       <ChannelHeader
         channel={channel}
         isSubscribed={isSubscribed}
-        onSubscribe={handleSubscribe}
+        onSubscribe={handleSubscribeAction}
         isLoading={isLoadingSubscription}
       />
       
