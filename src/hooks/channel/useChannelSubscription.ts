@@ -6,7 +6,7 @@ import { useSessionManager } from "@/hooks/useSessionManager";
 
 export const useChannelSubscription = (channelId: string | undefined) => {
   const [isSubscribed, setIsSubscribed] = useState(false);
-  const [isCheckingSubscription, setIsCheckingSubscription] = useState(false);
+  const [isCheckingSubscription, setIsCheckingSubscription] = useState(true);
   const [lastChecked, setLastChecked] = useState(Date.now());
   const { session, isAuthenticated, refreshSession } = useSessionManager();
   const userId = session?.user?.id;
@@ -53,6 +53,7 @@ export const useChannelSubscription = (channelId: string | undefined) => {
     if (!channelId || !userId) {
       console.log("No channel ID or user ID available, setting isSubscribed to false");
       setIsSubscribed(false);
+      setIsCheckingSubscription(false);
       return;
     }
     
@@ -100,7 +101,7 @@ export const useChannelSubscription = (channelId: string | undefined) => {
       console.log("Cleaning up subscription listener");
       supabase.removeChannel(channel);
     };
-  }, [channelId, userId, lastChecked, checkSubscriptionStatus]);
+  }, [channelId, userId, checkSubscriptionStatus]);
 
   // Function to toggle subscription status
   const handleSubscribe = async (): Promise<void> => {

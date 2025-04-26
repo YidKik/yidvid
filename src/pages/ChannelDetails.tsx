@@ -1,4 +1,3 @@
-
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState, useCallback } from "react";
 import { BackButton } from "@/components/navigation/BackButton";
@@ -12,7 +11,6 @@ import { Button } from "@/components/ui/button";
 import { VideoPlaceholder } from "@/components/video/VideoPlaceholder";
 import { toast } from "sonner";
 import { useSessionManager } from "@/hooks/useSessionManager";
-import { supabase } from "@/integrations/supabase/client";
 
 const ChannelDetails = () => {
   const { channelId } = useParams<{ channelId?: string }>();
