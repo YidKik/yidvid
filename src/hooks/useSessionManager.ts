@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import type { Session } from "@supabase/supabase-js";
 
 export const useSessionManager = () => {
-  const { session, isAuthenticated, handleLogout, isLoggingOut } = useAuth();
+  const { session, isAuthenticated, handleLogout, isLoggingOut, isLoading } = useAuth();
   const [lastRefreshed, setLastRefreshed] = useState(Date.now());
   
   // Set up periodic session refresh 
@@ -36,7 +36,8 @@ export const useSessionManager = () => {
     isAuthenticated, 
     userId: session?.user?.id,
     userEmail: session?.user?.email,
-    lastRefreshed: new Date(lastRefreshed).toISOString()
+    lastRefreshed: new Date(lastRefreshed).toISOString(),
+    isLoading
   });
 
   return { 
@@ -44,6 +45,7 @@ export const useSessionManager = () => {
     isAuthenticated,
     handleLogout,
     isLoggingOut,
+    isLoading, // Expose isLoading from useAuth
     refreshSession: async (): Promise<Session | null> => {
       const { data } = await supabase.auth.getSession();
       setLastRefreshed(Date.now());
