@@ -7,7 +7,7 @@ import { useSessionManager } from "@/hooks/useSessionManager";
 export const useChannelSubscription = (channelId: string | undefined) => {
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [isCheckingSubscription, setIsCheckingSubscription] = useState(false);
-  const { session, isAuthenticated } = useSessionManager();
+  const { session, isAuthenticated, refreshSession } = useSessionManager();
   const userId = session?.user?.id;
   
   console.log("useChannelSubscription hook state:", { 
@@ -91,14 +91,13 @@ export const useChannelSubscription = (channelId: string | undefined) => {
       console.error("User ID is missing");
       // Instead of showing an error toast, try to refresh the auth state
       try {
-        const { data } = await supabase.auth.getSession();
-        if (!data.session?.user?.id) {
+        const refreshedSession = await refreshSession();
+        if (!refreshedSession?.user?.id) {
           toast.error("Authentication error. Please try signing in again.", { id: "auth-error" });
           return;
         }
         // If we got a valid session, continue with that user ID
-        const refreshedUserId = data.session.user.id;
-        await processSubscription(refreshedUserId);
+        await processSubscription(refreshedSession.user.id);
       } catch (error) {
         console.error("Failed to refresh authentication:", error);
         toast.error("Authentication error. Please try signing in again.", { id: "auth-error" });

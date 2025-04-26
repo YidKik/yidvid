@@ -2,6 +2,7 @@
 import { useAuth } from "@/hooks/useAuth";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import type { Session } from "@supabase/supabase-js";
 
 export const useSessionManager = () => {
   const { session, isAuthenticated, handleLogout, isLoggingOut } = useAuth();
@@ -43,10 +44,10 @@ export const useSessionManager = () => {
     isAuthenticated,
     handleLogout,
     isLoggingOut,
-    refreshSession: async () => {
+    refreshSession: async (): Promise<Session | null> => {
       const { data } = await supabase.auth.getSession();
       setLastRefreshed(Date.now());
-      return data?.session;
+      return data?.session || null;
     }
   };
 };
