@@ -21,7 +21,7 @@ export const useChannelSubscription = (channelId: string | undefined) => {
 
   const { checkSubscriptionStatus } = useSubscriptionCheck();
 
-  // Effect to check subscription status whenever channelId or userId changes
+  // Add an immediate check when component mounts
   useEffect(() => {
     if (!channelId || !userId) {
       console.log("No channel ID or user ID available, setting isSubscribed to false");
@@ -32,19 +32,41 @@ export const useChannelSubscription = (channelId: string | undefined) => {
     
     const checkSubscription = async () => {
       try {
+        console.log(`Initial subscription check for user ${userId} on channel ${channelId}`);
         setIsCheckingSubscription(true);
         const isCurrentlySubscribed = await checkSubscriptionStatus(userId, channelId);
-        console.log(`Subscription check completed: user ${userId} ${isCurrentlySubscribed ? 'is' : 'is not'} subscribed to ${channelId}`);
+        console.log(`Initial subscription check completed: user ${userId} ${isCurrentlySubscribed ? 'is' : 'is not'} subscribed to ${channelId}`);
         setIsSubscribed(isCurrentlySubscribed);
       } catch (err) {
-        console.error("Failed to check subscription status:", err);
+        console.error("Failed to check initial subscription status:", err);
       } finally {
         setIsCheckingSubscription(false);
       }
     };
     
+    // Ensure this runs immediately when we have userId and channelId
     checkSubscription();
   }, [channelId, userId, checkSubscriptionStatus, setIsCheckingSubscription, setIsSubscribed]);
+
+  // Add a secondary check after a short delay to ensure consistency
+  useEffect(() => {
+    if (!channelId || !userId) return;
+    
+    const secondaryCheck = setTimeout(async () => {
+      try {
+        console.log(`Secondary subscription check for user ${userId} on channel ${channelId}`);
+        const isCurrentlySubscribed = await checkSubscriptionStatus(userId, channelId);
+        if (isCurrentlySubscribed !== isSubscribed) {
+          console.log(`Correcting subscription state from ${isSubscribed} to ${isCurrentlySubscribed}`);
+          setIsSubscribed(isCurrentlySubscribed);
+        }
+      } catch (err) {
+        console.error("Failed in secondary subscription check:", err);
+      }
+    }, 1000); // Small delay to ensure DB has been updated
+    
+    return () => clearTimeout(secondaryCheck);
+  }, [channelId, userId, checkSubscriptionStatus, isSubscribed, setIsSubscribed]);
 
   // Set up realtime updates
   const onSubscriptionChange = useCallback(async () => {
@@ -92,6 +114,7 @@ export const useChannelSubscription = (channelId: string | undefined) => {
         
         if (data.session?.user?.id) {
           console.log("Successfully refreshed session and got user ID:", data.session.user.id);
+          // Process subscription with refreshed userId
           return processSubscription(data.session.user.id, channelId);
         } else {
           console.error("Session refresh failed to retrieve user ID");
@@ -109,15 +132,29 @@ export const useChannelSubscription = (channelId: string | undefined) => {
     return processSubscription(userId, channelId);
   };
 
+  // Add a function to verify the subscription status directly
+  const verifySubscriptionStatus = useCallback(async () => {
+    if (!userId || !channelId) return false;
+    
+    try {
+      console.log(`Verifying subscription status for user ${userId} on channel ${channelId}`);
+      setIsCheckingSubscription(true);
+      const isCurrentlySubscribed = await checkSubscriptionStatus(userId, channelId);
+      console.log(`Subscription verification: user ${userId} ${isCurrentlySubscribed ? 'is' : 'is not'} subscribed to ${channelId}`);
+      setIsSubscribed(isCurrentlySubscribed);
+      return isCurrentlySubscribed;
+    } catch (err) {
+      console.error("Failed to verify subscription status:", err);
+      return false;
+    } finally {
+      setIsCheckingSubscription(false);
+    }
+  }, [userId, channelId, checkSubscriptionStatus, setIsCheckingSubscription, setIsSubscribed]);
+
   return { 
     isSubscribed, 
     handleSubscribe, 
     isLoading: isCheckingSubscription || isSessionLoading,
-    checkSubscription: async () => {
-      if (!userId || !channelId) return false;
-      const result = await checkSubscriptionStatus(userId, channelId);
-      setIsSubscribed(result);
-      return result;
-    }
+    checkSubscription: verifySubscriptionStatus
   };
 };

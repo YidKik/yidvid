@@ -18,7 +18,7 @@ const ChannelDetails = () => {
   const navigate = useNavigate();
   const [loadAttempts, setLoadAttempts] = useState(0);
   const [isRetrying, setIsRetrying] = useState(false);
-  const { isAuthenticated } = useSessionManager();
+  const { isAuthenticated, session } = useSessionManager();
   
   // Exit early if no channelId is provided
   useEffect(() => {
@@ -52,28 +52,37 @@ const ChannelDetails = () => {
     error: videosError
   } = useChannelVideos(cleanChannelId);
 
-  // Double-check subscription status when component mounts
+  // Verify subscription status when component mounts or auth state changes
   useEffect(() => {
-    if (isAuthenticated && cleanChannelId && checkSubscription) {
-      console.log("Double-checking subscription status on component mount");
+    if (isAuthenticated && cleanChannelId && checkSubscription && session?.user?.id) {
+      console.log("Verifying subscription status on channel page mount/auth change");
       checkSubscription().then(status => {
-        console.log("Initial subscription status check:", status);
+        console.log("Channel page subscription verification:", status ? 'Subscribed' : 'Not subscribed');
       });
     }
-  }, [isAuthenticated, cleanChannelId, checkSubscription]);
+  }, [isAuthenticated, cleanChannelId, checkSubscription, session?.user?.id]);
 
-  // Effect to recheck subscription status periodically
+  // Effect to verify subscription status periodically
   useEffect(() => {
-    if (!isAuthenticated || !checkSubscription) return;
+    if (!isAuthenticated || !checkSubscription || !session?.user?.id) return;
     
+    // First check after a short delay
+    const firstCheck = setTimeout(() => {
+      checkSubscription();
+    }, 2000);
+    
+    // Regular interval check
     const interval = setInterval(() => {
       checkSubscription().then(status => {
         console.log(`Periodic subscription check: ${status ? 'Subscribed' : 'Not Subscribed'}`);
       });
-    }, 10000); // Every 10 seconds
+    }, 30000); // Every 30 seconds
     
-    return () => clearInterval(interval);
-  }, [isAuthenticated, checkSubscription]);
+    return () => {
+      clearTimeout(firstCheck);
+      clearInterval(interval);
+    };
+  }, [isAuthenticated, checkSubscription, session?.user?.id]);
 
   // Handle retry logic for failed channel loads
   useEffect(() => {

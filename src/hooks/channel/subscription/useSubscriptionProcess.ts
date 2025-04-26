@@ -51,6 +51,18 @@ export const useSubscriptionProcess = (
         
         // Force a refresh of state
         setLastChecked(Date.now());
+        
+        // Double-check subscription status after a short delay
+        setTimeout(async () => {
+          const verifiedStatus = await checkSubscriptionStatus(currentUserId, currentChannelId);
+          if (verifiedStatus !== data.isSubscribed) {
+            console.warn(`Subscription status mismatch: API returned ${data.isSubscribed} but verification found ${verifiedStatus}`);
+            setIsSubscribed(verifiedStatus);
+          } else {
+            console.log(`Subscription status verified: ${verifiedStatus ? 'Subscribed' : 'Not subscribed'}`);
+          }
+        }, 1000);
+        
       } else {
         throw new Error(data.error || `Failed to ${action}`);
       }
