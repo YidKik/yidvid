@@ -92,6 +92,8 @@ Deno.serve(async (req) => {
       )
     }
     
+    let result = null;
+    
     if (action === 'subscribe') {
       // Check if already subscribed
       const { data: existing, error: checkError } = await adminClient
@@ -108,40 +110,90 @@ Deno.serve(async (req) => {
       
       // If not already subscribed, create subscription
       if (!existing) {
-        const { error: insertError } = await adminClient
+        const { data: insertData, error: insertError } = await adminClient
           .from('channel_subscriptions')
-          .insert({ channel_id: channelId, user_id: userId })
+          .insert([{ channel_id: channelId, user_id: userId }])
+          .select()
           
         if (insertError) {
           console.error('Error creating subscription:', insertError)
           throw new Error(`Error creating subscription: ${insertError.message}`)
         }
         
-        console.log(`Successfully subscribed user ${userId} to channel ${channelId}`)
+        result = insertData?.[0] || null;
+        console.log(`Successfully subscribed user ${userId} to channel ${channelId}`, result ? 'Data saved' : 'No data returned')
       } else {
+        result = existing;
         console.log(`User ${userId} is already subscribed to channel ${channelId}`)
       }
       
+      // Double verify the subscription exists as a final check
+      const { data: verifyData, error: verifyError } = await adminClient
+        .from('channel_subscriptions')
+        .select('id')
+        .eq('channel_id', channelId)
+        .eq('user_id', userId)
+        .maybeSingle()
+        
+      if (verifyError) {
+        console.error('Error verifying subscription creation:', verifyError)
+        // Continue anyway since we might have succeeded despite the error
+      } else if (!verifyData) {
+        console.error('Verification failed - subscription was not found after creation attempt')
+      } else {
+        console.log('Verification succeeded - subscription exists in database')
+      }
+      
       return new Response(
-        JSON.stringify({ success: true, isSubscribed: true, message: 'Successfully subscribed to channel' }),
+        JSON.stringify({ 
+          success: true, 
+          isSubscribed: true, 
+          message: 'Successfully subscribed to channel',
+          data: result
+        }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
       )
     } else if (action === 'unsubscribe') {
-      const { error: deleteError } = await adminClient
+      const { data: deleteData, error: deleteError } = await adminClient
         .from('channel_subscriptions')
         .delete()
         .eq('channel_id', channelId)
         .eq('user_id', userId)
+        .select()
         
       if (deleteError) {
         console.error('Error deleting subscription:', deleteError)
         throw new Error(`Error unsubscribing from channel: ${deleteError.message}`)
       }
       
-      console.log(`Successfully unsubscribed user ${userId} from channel ${channelId}`)
+      result = deleteData;
+      console.log(`Successfully unsubscribed user ${userId} from channel ${channelId}`, 
+                  deleteData && deleteData.length ? 'Rows deleted' : 'No rows deleted')
+      
+      // Verify the subscription is gone
+      const { data: verifyData, error: verifyError } = await adminClient
+        .from('channel_subscriptions')
+        .select('id')
+        .eq('channel_id', channelId)
+        .eq('user_id', userId)
+        .maybeSingle()
+        
+      if (verifyError) {
+        console.error('Error verifying subscription deletion:', verifyError)
+        // Continue anyway since we might have succeeded despite the error
+      } else if (verifyData) {
+        console.error('Verification failed - subscription still exists after deletion attempt')
+      } else {
+        console.log('Verification succeeded - subscription was properly deleted')
+      }
       
       return new Response(
-        JSON.stringify({ success: true, isSubscribed: false, message: 'Successfully unsubscribed from channel' }),
+        JSON.stringify({ 
+          success: true, 
+          isSubscribed: false, 
+          message: 'Successfully unsubscribed from channel',
+          data: result
+        }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
       )
     } else {

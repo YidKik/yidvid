@@ -7,6 +7,7 @@ import { useSessionManager } from "@/hooks/useSessionManager";
 export const useChannelSubscription = (channelId: string | undefined) => {
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [isCheckingSubscription, setIsCheckingSubscription] = useState(false);
+  const [lastChecked, setLastChecked] = useState(Date.now());
   const { session, isAuthenticated, refreshSession } = useSessionManager();
   const userId = session?.user?.id;
   
@@ -14,7 +15,8 @@ export const useChannelSubscription = (channelId: string | undefined) => {
     channelId, 
     userId, 
     isAuthenticated, 
-    hasSession: !!session 
+    hasSession: !!session,
+    isSubscribed
   });
 
   // Effect to check subscription status whenever channelId or userId changes
@@ -37,7 +39,8 @@ export const useChannelSubscription = (channelId: string | undefined) => {
           table: 'channel_subscriptions',
           filter: `user_id=eq.${userId}`
         },
-        () => {
+        (payload) => {
+          console.log("Real-time subscription update:", payload);
           // Re-check subscription status when subscription data changes
           checkSubscription();
         }
@@ -47,7 +50,7 @@ export const useChannelSubscription = (channelId: string | undefined) => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [channelId, userId]);
+  }, [channelId, userId, lastChecked]);
 
   const checkSubscription = async () => {
     if (!channelId || !userId) return;
@@ -64,13 +67,18 @@ export const useChannelSubscription = (channelId: string | undefined) => {
       
       if (error) {
         console.error("Error checking subscription:", error);
+        throw error;
       }
 
       // Update subscription status based on whether data exists
-      setIsSubscribed(!!subscription);
-      console.log("Subscription check result:", !!subscription, "for channel:", channelId, "user:", userId);
+      const isCurrentlySubscribed = !!subscription;
+      setIsSubscribed(isCurrentlySubscribed);
+      console.log("Subscription check result:", isCurrentlySubscribed, 
+                  "for channel:", channelId, "user:", userId, 
+                  "subscription data:", subscription);
     } catch (err) {
       console.error("Failed to check subscription status:", err);
+      // Don't update state on error to avoid false negatives
     } finally {
       setIsCheckingSubscription(false);
     }
@@ -89,7 +97,7 @@ export const useChannelSubscription = (channelId: string | undefined) => {
 
     if (!session?.user?.id) {
       console.error("User ID is missing");
-      // Instead of showing an error toast, try to refresh the auth state
+      // Try to refresh the auth state
       try {
         const refreshedSession = await refreshSession();
         if (!refreshedSession?.user?.id) {
@@ -131,7 +139,7 @@ export const useChannelSubscription = (channelId: string | undefined) => {
       console.log("Subscription edge function response:", data);
       
       if (data.success) {
-        // Important: Update local state based on what the server returned
+        // Update local state based on what the server returned
         setIsSubscribed(data.isSubscribed);
         toast.success(data.isSubscribed ? "Subscribed to channel" : "Unsubscribed from channel");
         
@@ -154,6 +162,9 @@ export const useChannelSubscription = (channelId: string | undefined) => {
             console.log(`Correcting local state to match database: ${dbSubscriptionExists}`);
             setIsSubscribed(dbSubscriptionExists);
           }
+          
+          // Force a refresh of the state by updating lastChecked
+          setLastChecked(Date.now());
         }
       } else {
         throw new Error(data.error || "Failed to update subscription");
@@ -161,6 +172,11 @@ export const useChannelSubscription = (channelId: string | undefined) => {
     } catch (error: any) {
       console.error("Error managing subscription:", error);
       toast.error(`Failed to update subscription: ${error.message}`);
+      
+      // Force a re-check to make sure our UI is in sync with the database
+      setTimeout(() => {
+        checkSubscription();
+      }, 1000);
     } finally {
       setIsCheckingSubscription(false);
     }

@@ -2,7 +2,7 @@
 import { Youtube, UserPlus, Check, Loader2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSessionManager } from "@/hooks/useSessionManager";
 import { toast } from "sonner";
 
@@ -28,12 +28,18 @@ export const ChannelHeader = ({
   const { session, isAuthenticated } = useSessionManager();
   const fallbackLogo = "/lovable-uploads/efca5adc-d9d2-4c5b-8900-e078f9d49b6a.png";
 
-  console.log("ChannelHeader auth state:", { 
+  console.log("ChannelHeader rendering state:", { 
     isAuthenticated, 
     hasSession: !!session, 
     userId: session?.user?.id,
-    isSubscribed 
+    isSubscribed,
+    isLoading
   });
+
+  // Effect to log changes to subscription state for debugging
+  useEffect(() => {
+    console.log(`Subscription state changed to: ${isSubscribed ? 'Subscribed' : 'Not Subscribed'}`);
+  }, [isSubscribed]);
 
   const handleSubscribeClick = () => {
     if (!isAuthenticated) {
@@ -83,6 +89,7 @@ export const ChannelHeader = ({
         className={`h-7 md:h-9 text-xs md:text-sm px-2.5 md:px-3.5 mb-2 md:mb-3 transition-all duration-200 ${
           isSubscribed ? "bg-primary hover:bg-primary-hover text-white shadow-md" : ""
         }`}
+        data-subscribed={isSubscribed ? "true" : "false"} // Add data attribute for easy testing
       >
         {isLoading ? (
           <>
