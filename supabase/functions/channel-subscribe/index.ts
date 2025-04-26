@@ -55,9 +55,11 @@ Deno.serve(async (req) => {
       return await handleSubscribe(userId, channelId);
     } else if (action === 'unsubscribe') {
       return await handleUnsubscribe(userId, channelId);
+    } else if (action === 'check') {
+      return await checkSubscription(userId, channelId);
     } else {
       return new Response(
-        JSON.stringify({ error: 'Invalid action. Use "subscribe" or "unsubscribe".', success: false }),
+        JSON.stringify({ error: 'Invalid action. Use "subscribe", "unsubscribe", or "check".', success: false }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
       )
     }
@@ -70,8 +72,46 @@ Deno.serve(async (req) => {
   }
 });
 
+async function checkSubscription(userId: string, channelId: string) {
+  try {
+    console.log(`Checking subscription for user ${userId} on channel ${channelId}`);
+    
+    // Check if the subscription exists
+    const { data: subscription, error } = await adminClient
+      .from('channel_subscriptions')
+      .select('id')
+      .eq('channel_id', channelId)
+      .eq('user_id', userId)
+      .maybeSingle();
+      
+    if (error) {
+      console.error('Error checking subscription status:', error);
+      throw new Error('Failed to check subscription status');
+    }
+    
+    const isSubscribed = !!subscription;
+    console.log(`Subscription status result: User ${userId} ${isSubscribed ? 'is' : 'is not'} subscribed to channel ${channelId}`);
+    
+    return new Response(
+      JSON.stringify({ 
+        success: true, 
+        isSubscribed: isSubscribed, 
+      }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
+    );
+  } catch (error) {
+    console.error('Error in checkSubscription:', error);
+    return new Response(
+      JSON.stringify({ error: error.message || 'Failed to check subscription status', success: false }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+    );
+  }
+}
+
 async function handleSubscribe(userId: string, channelId: string) {
   try {
+    console.log(`Processing subscribe request for user ${userId} to channel ${channelId}`);
+    
     // First, check if the subscription already exists
     const { data: existingSubscription, error: checkError } = await adminClient
       .from('channel_subscriptions')
@@ -85,35 +125,49 @@ async function handleSubscribe(userId: string, channelId: string) {
       throw new Error('Failed to check subscription status');
     }
     
-    let result;
-    
-    if (!existingSubscription) {
-      console.log(`Creating new subscription for user ${userId} to channel ${channelId}`);
-      
-      // Subscription doesn't exist, create it
-      const { data, error } = await adminClient
-        .from('channel_subscriptions')
-        .insert([{ 
-          channel_id: channelId, 
-          user_id: userId,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        }])
-        .select();
-        
-      if (error) {
-        console.error('Error creating subscription:', error);
-        throw new Error(`Error creating subscription: ${error.message}`);
-      }
-      
-      result = data?.[0];
-      console.log(`Subscription created:`, result);
-    } else {
+    // If subscription exists, return success without trying to create it again
+    if (existingSubscription) {
       console.log(`User ${userId} is already subscribed to channel ${channelId}`);
-      result = existingSubscription;
+      
+      return new Response(
+        JSON.stringify({ 
+          success: true, 
+          isSubscribed: true, 
+          message: 'Already subscribed to channel',
+          data: existingSubscription,
+          verified: true
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
+      );
     }
     
-    // Verify the subscription was actually created
+    // Subscription doesn't exist, create it
+    console.log(`Creating new subscription for user ${userId} to channel ${channelId}`);
+    
+    const timestamp = new Date().toISOString();
+    const { data: newSubscription, error: insertError } = await adminClient
+      .from('channel_subscriptions')
+      .insert([{ 
+        channel_id: channelId, 
+        user_id: userId,
+        created_at: timestamp,
+        updated_at: timestamp
+      }])
+      .select()
+      .single();
+      
+    if (insertError) {
+      console.error('Error creating subscription:', insertError);
+      throw new Error(`Error creating subscription: ${insertError.message}`);
+    }
+    
+    if (!newSubscription) {
+      throw new Error('Failed to create subscription - no data returned');
+    }
+    
+    console.log(`Subscription created successfully:`, newSubscription);
+    
+    // Double verify the subscription was actually created
     const { data: verifyData, error: verifyError } = await adminClient
       .from('channel_subscriptions')
       .select('id')
@@ -138,7 +192,7 @@ async function handleSubscribe(userId: string, channelId: string) {
         success: true, 
         isSubscribed: true, 
         message: 'Successfully subscribed to channel',
-        data: result,
+        data: newSubscription,
         verified: true
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }

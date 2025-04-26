@@ -13,7 +13,7 @@ interface ChannelHeaderProps {
     description?: string;
   };
   isSubscribed: boolean;
-  onSubscribe: () => void;
+  onSubscribe: () => Promise<void>;
   isLoading?: boolean;
 }
 
@@ -32,9 +32,11 @@ export const ChannelHeader = ({
 
   // Sync internal state with prop when it changes
   useEffect(() => {
-    setInternalSubscriptionState(isSubscribed);
-    console.log(`ChannelHeader received isSubscribed update: ${isSubscribed}`);
-  }, [isSubscribed]);
+    if (internalSubscriptionState !== isSubscribed) {
+      console.log(`ChannelHeader received isSubscribed update: ${isSubscribed}, updating internal state from ${internalSubscriptionState}`);
+      setInternalSubscriptionState(isSubscribed);
+    }
+  }, [isSubscribed, internalSubscriptionState]);
 
   console.log("ChannelHeader rendering with subscription state:", { 
     isAuthenticated, 
@@ -57,18 +59,25 @@ export const ChannelHeader = ({
       return;
     }
     
-    console.log("Subscribe button clicked, current state:", internalSubscriptionState);
+    console.log(`Subscribe button clicked, current state: ${internalSubscriptionState ? 'Subscribed' : 'Not Subscribed'}`);
     
     try {
       setIsProcessing(true);
       
+      // Optimistic UI update
+      setInternalSubscriptionState(!internalSubscriptionState);
+      
       // Call the provided onSubscribe handler
       await onSubscribe();
       
-      // Don't update state here - we'll rely on the prop update from the parent
-      // This prevents visual flicker if the backend operation fails
+      // The parent component will update the isSubscribed prop based on the actual result
+      // If it doesn't match our optimistic update, the useEffect will correct it
     } catch (error) {
       console.error("Error in subscription action:", error);
+      
+      // Revert optimistic update on error
+      setInternalSubscriptionState(isSubscribed);
+      
       toast.error("Could not process subscription - please try again");
     } finally {
       setIsProcessing(false);

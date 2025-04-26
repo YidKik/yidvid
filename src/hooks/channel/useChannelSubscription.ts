@@ -20,31 +20,30 @@ export const useChannelSubscription = (channelId: string | undefined) => {
     lastChecked: new Date(lastChecked).toISOString()
   });
 
-  // Direct database check function for subscriptions
-  const checkSubscriptionInDatabase = useCallback(async (uid: string, chId: string) => {
+  // Check subscription status directly with Edge Function to avoid RLS issues
+  const checkSubscriptionStatus = useCallback(async (uid: string, chId: string) => {
     if (!uid || !chId) return false;
     
-    console.log(`Performing direct DB check for subscription: user=${uid}, channel=${chId}`);
+    console.log(`Checking subscription status via edge function: user=${uid}, channel=${chId}`);
     
     try {
-      // First try with a direct DB check
-      const { data, error } = await supabase
-        .from("channel_subscriptions")
-        .select("id")
-        .eq("channel_id", chId)
-        .eq("user_id", uid)
-        .maybeSingle();
+      const { data, error } = await supabase.functions.invoke('channel-subscribe', {
+        body: {
+          userId: uid,
+          channelId: chId,
+          action: 'check'
+        }
+      });
       
       if (error) {
-        console.error("Error in direct subscription check:", error);
+        console.error('Error checking subscription status:', error);
         return false;
       }
       
-      const exists = !!data;
-      console.log(`Direct DB check result: ${exists ? 'Subscription found' : 'No subscription found'}`);
-      return exists;
+      console.log(`Edge function subscription check result:`, data);
+      return data?.isSubscribed || false;
     } catch (err) {
-      console.error("Unexpected error in subscription check:", err);
+      console.error("Error in subscription check:", err);
       return false;
     }
   }, []);
@@ -60,7 +59,9 @@ export const useChannelSubscription = (channelId: string | undefined) => {
     const checkSubscription = async () => {
       try {
         setIsCheckingSubscription(true);
-        const isCurrentlySubscribed = await checkSubscriptionInDatabase(userId, channelId);
+        
+        // Try using edge function to check subscription directly
+        const isCurrentlySubscribed = await checkSubscriptionStatus(userId, channelId);
         
         console.log(`Subscription check completed: user ${userId} ${isCurrentlySubscribed ? 'is' : 'is not'} subscribed to ${channelId}`);
         setIsSubscribed(isCurrentlySubscribed);
@@ -88,7 +89,7 @@ export const useChannelSubscription = (channelId: string | undefined) => {
           console.log("Real-time subscription update detected:", payload);
           
           // Re-check subscription status when subscription data changes
-          const isCurrentlySubscribed = await checkSubscriptionInDatabase(userId, channelId);
+          const isCurrentlySubscribed = await checkSubscriptionStatus(userId, channelId);
           console.log(`Real-time update triggered check: ${isCurrentlySubscribed ? 'Subscribed' : 'Not Subscribed'}`);
           setIsSubscribed(isCurrentlySubscribed);
         }
@@ -99,18 +100,18 @@ export const useChannelSubscription = (channelId: string | undefined) => {
       console.log("Cleaning up subscription listener");
       supabase.removeChannel(channel);
     };
-  }, [channelId, userId, lastChecked, checkSubscriptionInDatabase]);
+  }, [channelId, userId, lastChecked, checkSubscriptionStatus]);
 
   // Function to toggle subscription status
-  const handleSubscribe = async () => {
+  const handleSubscribe = async (): Promise<void> => {
     if (!channelId) {
       console.error("No channel ID provided");
-      return;
+      throw new Error("Channel ID is required");
     }
 
     if (!isAuthenticated) {
       toast.error("Please sign in to subscribe to channels", { id: "signin-required" });
-      return;
+      throw new Error("Authentication required");
     }
 
     if (!session?.user?.id) {
@@ -119,13 +120,13 @@ export const useChannelSubscription = (channelId: string | undefined) => {
         const refreshedSession = await refreshSession();
         if (!refreshedSession?.user?.id) {
           toast.error("Authentication error. Please try signing in again.", { id: "auth-error" });
-          return;
+          throw new Error("Failed to get user ID");
         }
         return processSubscription(refreshedSession.user.id, channelId);
       } catch (error) {
         console.error("Failed to refresh authentication:", error);
         toast.error("Authentication error. Please try signing in again.", { id: "auth-error" });
-        return;
+        throw error;
       }
     }
     
@@ -133,23 +134,17 @@ export const useChannelSubscription = (channelId: string | undefined) => {
   };
 
   // Process the actual subscription/unsubscription
-  const processSubscription = async (currentUserId: string, currentChannelId: string) => {
-    setIsCheckingSubscription(true);
-    
-    // Double-check the current subscription status before proceeding
-    const actualCurrentState = await checkSubscriptionInDatabase(currentUserId, currentChannelId);
-    console.log(`Verified subscription status before action: ${actualCurrentState ? 'Subscribed' : 'Not subscribed'}`);
-    
-    // If the state doesn't match our current understanding, update our state first
-    if (actualCurrentState !== isSubscribed) {
-      console.log(`Correcting local subscription state from ${isSubscribed} to ${actualCurrentState}`);
-      setIsSubscribed(actualCurrentState);
-    }
-    
-    // The action should be the opposite of the actual current state
-    const action = actualCurrentState ? 'unsubscribe' : 'subscribe';
-    
+  const processSubscription = async (currentUserId: string, currentChannelId: string): Promise<void> => {
     try {
+      setIsCheckingSubscription(true);
+      
+      // Double-check the current subscription status before proceeding
+      const currentStatus = await checkSubscriptionStatus(currentUserId, currentChannelId);
+      console.log(`Verified subscription status before action: ${currentStatus ? 'Subscribed' : 'Not subscribed'}`);
+      
+      // The action should be the opposite of the current status
+      const action = currentStatus ? 'unsubscribe' : 'subscribe';
+      
       console.log(`Processing ${action} request for user ${currentUserId} on channel ${currentChannelId}`);
       
       // Use the edge function to manage subscription
@@ -169,42 +164,24 @@ export const useChannelSubscription = (channelId: string | undefined) => {
       console.log("Edge function response:", data);
       
       if (data.success) {
-        // Verify the operation completed successfully
-        const expectedNewState = action === 'subscribe';
-        const verificationCheck = await checkSubscriptionInDatabase(currentUserId, currentChannelId);
-        
-        console.log(`Verification after ${action}: Expected ${expectedNewState ? 'subscribed' : 'not subscribed'}, 
-          actual DB shows ${verificationCheck ? 'subscribed' : 'not subscribed'}`);
-        
-        // If the verification doesn't match what we expect after the action, something went wrong
-        if (verificationCheck !== expectedNewState) {
-          console.error(`Verification failed: DB shows ${verificationCheck ? 'subscribed' : 'not subscribed'} 
-            but expected ${expectedNewState ? 'subscribed' : 'not subscribed'}`);
-          
-          throw new Error(`Database verification failed: subscription state is not as expected after ${action}`);
-        }
-        
-        // Set state based on verified database state
-        setIsSubscribed(verificationCheck);
+        // Update local state based on the response from the server
+        setIsSubscribed(data.isSubscribed);
         
         // Show appropriate toast message
-        toast.success(verificationCheck ? "Subscribed to channel" : "Unsubscribed from channel");
+        toast.success(data.isSubscribed ? "Subscribed to channel" : "Unsubscribed from channel");
         
         // Force a refresh of state
         setLastChecked(Date.now());
       } else {
-        throw new Error(data.error || "Failed to update subscription");
+        throw new Error(data.error || `Failed to ${action}`);
       }
     } catch (error: any) {
       console.error("Error managing subscription:", error);
-      toast.error(`Failed to ${action}: ${error.message}`);
+      toast.error(`Subscription action failed: ${error.message}`);
       
       // Force a re-check to sync UI with database state
-      setTimeout(async () => {
-        const actualState = await checkSubscriptionInDatabase(currentUserId, currentChannelId);
-        console.log(`After error recovery, subscription state is: ${actualState ? 'subscribed' : 'not subscribed'}`);
-        setIsSubscribed(actualState);
-      }, 1000);
+      setLastChecked(Date.now());
+      throw error;
     } finally {
       setIsCheckingSubscription(false);
     }
@@ -216,7 +193,7 @@ export const useChannelSubscription = (channelId: string | undefined) => {
     isLoading: isCheckingSubscription,
     checkSubscription: async () => {
       if (!userId || !channelId) return false;
-      const result = await checkSubscriptionInDatabase(userId, channelId);
+      const result = await checkSubscriptionStatus(userId, channelId);
       setIsSubscribed(result);
       return result;
     }
