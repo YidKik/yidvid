@@ -61,7 +61,6 @@ export const ChannelHeader = ({
       setIsProcessing(true);
       await onSubscribe();
       setInternalSubscriptionState(!internalSubscriptionState);
-      toast.success(internalSubscriptionState ? "Unsubscribed from channel" : "Subscribed to channel");
     } catch (error) {
       console.error("Error in subscription action:", error);
       setInternalSubscriptionState(isSubscribed);
