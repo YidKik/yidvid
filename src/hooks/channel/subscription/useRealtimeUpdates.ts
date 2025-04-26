@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 export const useRealtimeUpdates = (
   userId: string | undefined,
   channelId: string | undefined,
-  onSubscriptionChange: () => Promise<void>
+  onSubscriptionChange: () => Promise<boolean | void>
 ) => {
   useEffect(() => {
     if (!channelId || !userId) return;

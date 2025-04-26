@@ -1,4 +1,3 @@
-
 import { useCallback, useEffect } from "react";
 import { toast } from "sonner";
 import { useSubscriptionState } from "./subscription/useSubscriptionState";
@@ -65,7 +64,7 @@ export const useChannelSubscription = (channelId: string | undefined) => {
     if (!userId || !channelId) return;
     const result = await checkSubscriptionStatus(userId, channelId);
     setIsSubscribed(result);
-    return result;
+    // Return type doesn't matter as long as the promise resolves
   }, [userId, channelId, checkSubscriptionStatus, setIsSubscribed]);
 
   useRealtimeUpdates(userId, channelId, onSubscriptionChange);
