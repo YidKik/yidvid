@@ -28,7 +28,7 @@ export const ChannelHeader = ({
   const [imageError, setImageError] = useState(false);
   const { session, isAuthenticated, isLoading: isSessionLoading } = useSessionManager();
   const fallbackLogo = "/lovable-uploads/efca5adc-d9d2-4c5b-8900-e078f9d49b6a.png";
-  const [internalSubscriptionState, setInternalSubscriptionState] = useState(false);
+  const [internalSubscriptionState, setInternalSubscriptionState] = useState();
   const [isProcessing, setIsProcessing] = useState(false);
   const [initialLoadComplete, setInitialLoadComplete] = useState(false);
 
