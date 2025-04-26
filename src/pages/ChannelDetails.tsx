@@ -1,3 +1,4 @@
+
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { BackButton } from "@/components/navigation/BackButton";
@@ -10,6 +11,7 @@ import { useChannelVideos } from "@/hooks/channel/useChannelVideos";
 import { Button } from "@/components/ui/button";
 import { VideoPlaceholder } from "@/components/video/VideoPlaceholder";
 import { toast } from "sonner";
+import { useSessionManager } from "@/hooks/useSessionManager";
 
 const ChannelDetails = () => {
   const { channelId } = useParams<{ channelId?: string }>();
@@ -17,8 +19,9 @@ const ChannelDetails = () => {
   const navigate = useNavigate();
   const [loadAttempts, setLoadAttempts] = useState(0);
   const [isRetrying, setIsRetrying] = useState(false);
+  const { isAuthenticated } = useSessionManager();
   
-  console.log("ChannelDetails rendering with channelId:", cleanChannelId);
+  console.log("ChannelDetails rendering with channelId:", cleanChannelId, "isAuthenticated:", isAuthenticated);
   
   // Exit early if no channelId is provided at all
   useEffect(() => {

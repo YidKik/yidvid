@@ -43,7 +43,7 @@ export const useChannelSubscription = (channelId: string | undefined) => {
   }, [channelId, userId]);
 
   const checkSubscription = async () => {
-    if (!channelId || !userId || isCheckingSubscription) return;
+    if (!channelId || !userId) return;
     
     try {
       setIsCheckingSubscription(true);
@@ -61,7 +61,7 @@ export const useChannelSubscription = (channelId: string | undefined) => {
 
       // Update subscription status based on whether data exists
       setIsSubscribed(!!subscription);
-      console.log("Subscription check result:", !!subscription, "for channel:", channelId);
+      console.log("Subscription check result:", !!subscription, "for channel:", channelId, "user:", userId);
     } catch (err) {
       console.error("Failed to check subscription status:", err);
     } finally {
@@ -107,9 +107,6 @@ export const useChannelSubscription = (channelId: string | undefined) => {
         setIsSubscribed(true);
         toast.success("Subscribed to channel");
       }
-      
-      // Refetch subscription status to ensure UI is in sync
-      checkSubscription();
     } catch (error: any) {
       console.error("Error managing subscription:", error);
       toast.error(`Failed to update subscription: ${error.message}`);
