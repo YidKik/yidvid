@@ -2,63 +2,66 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { useAuth } from "@/hooks/useAuth";
+import { useSessionManager } from "@/hooks/useSessionManager";
 
 export const useChannelSubscription = (channelId: string | undefined) => {
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [isCheckingSubscription, setIsCheckingSubscription] = useState(false);
-  const { session, isAuthenticated } = useAuth();
+  const { session } = useSessionManager();
+  const userId = session?.user?.id;
 
-  // Use this effect to monitor auth state changes and recheck subscription
+  // Effect to check subscription status whenever channelId or userId changes
   useEffect(() => {
-    if (!channelId || !isAuthenticated) return;
-    
-    const { data: authListener } = supabase.auth.onAuthStateChange((event) => {
-      if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-        checkSubscription();
-      } else if (event === 'SIGNED_OUT') {
-        setIsSubscribed(false);
-      }
-    });
-
-    return () => {
-      authListener.subscription.unsubscribe();
-    };
-  }, [isAuthenticated]);
-
-  // Use separate effect for initial check and channelId changes
-  useEffect(() => {
-    if (channelId && isAuthenticated) {
-      checkSubscription();
+    if (!channelId || !userId) {
+      setIsSubscribed(false);
+      return;
     }
-  }, [channelId, isAuthenticated]);
+    
+    checkSubscription();
+    
+    // Set up a subscription to channel_subscriptions table for real-time updates
+    const channel = supabase
+      .channel('subscription-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'channel_subscriptions',
+          filter: `user_id=eq.${userId}`
+        },
+        () => {
+          // Re-check subscription status when subscription data changes
+          checkSubscription();
+        }
+      )
+      .subscribe();
+      
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [channelId, userId]);
 
   const checkSubscription = async () => {
-    if (!channelId || !isAuthenticated || isCheckingSubscription) return;
+    if (!channelId || !userId || isCheckingSubscription) return;
     
     try {
       setIsCheckingSubscription(true);
       
-      // Get current session to ensure we have the latest user data
-      const { data: currentSession } = await supabase.auth.getSession();
-      
-      if (!currentSession?.session?.user?.id) {
-        setIsSubscribed(false);
-        return;
-      }
-
       const { data: subscription, error } = await supabase
         .from("channel_subscriptions")
-        .select("*")
+        .select("id")
         .eq("channel_id", channelId)
-        .eq("user_id", currentSession.session.user.id)
+        .eq("user_id", userId)
         .maybeSingle();
-        
-      if (error && !error.message.includes("policy")) {
+      
+      if (error) {
         console.error("Error checking subscription:", error);
       }
 
+      // Update subscription status based on whether data exists
       setIsSubscribed(!!subscription);
+      console.log("Subscription check result:", !!subscription, "for channel:", channelId);
     } catch (err) {
       console.error("Failed to check subscription status:", err);
     } finally {
@@ -72,54 +75,46 @@ export const useChannelSubscription = (channelId: string | undefined) => {
       return;
     }
 
-    if (!isAuthenticated) {
+    if (!userId) {
       toast.error("Please sign in to subscribe to channels", { id: "signin-required" });
       return;
     }
 
     try {
-      // Get current session to ensure we have the latest user data
-      const { data: currentSession } = await supabase.auth.getSession();
-      
-      if (!currentSession?.session?.user?.id) {
-        toast.error("User session not found. Please try signing in again.", { id: "no-session" });
-        return;
+      if (isSubscribed) {
+        // Unsubscribe
+        const { error } = await supabase
+          .from("channel_subscriptions")
+          .delete()
+          .eq("channel_id", channelId)
+          .eq("user_id", userId);
+
+        if (error) throw error;
+        
+        setIsSubscribed(false);
+        toast.success("Unsubscribed from channel");
+      } else {
+        // Subscribe
+        const { error } = await supabase
+          .from("channel_subscriptions")
+          .insert({
+            channel_id: channelId,
+            user_id: userId
+          });
+
+        if (error) throw error;
+        
+        setIsSubscribed(true);
+        toast.success("Subscribed to channel");
       }
-
-      // Use the edge function for reliable subscription management
-      const response = await fetch(
-        "https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/channel-subscribe",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${currentSession.session.access_token}`
-          },
-          body: JSON.stringify({
-            channelId,
-            userId: currentSession.session.user.id,
-            action: isSubscribed ? 'unsubscribe' : 'subscribe'
-          })
-        }
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to update subscription");
-      }
-
-      const result = await response.json();
       
-      setIsSubscribed(result.isSubscribed);
-      toast.success(
-        isSubscribed ? "Unsubscribed from channel" : "Subscribed to channel", 
-        { id: `subscription-${channelId}` }
-      );
+      // Refetch subscription status to ensure UI is in sync
+      checkSubscription();
     } catch (error: any) {
       console.error("Error managing subscription:", error);
-      toast.error(`Failed to update subscription: ${error.message}`, { id: "subscription-error" });
+      toast.error(`Failed to update subscription: ${error.message}`);
     }
   };
 
-  return { isSubscribed, handleSubscribe };
+  return { isSubscribed, handleSubscribe, isLoading: isCheckingSubscription };
 };

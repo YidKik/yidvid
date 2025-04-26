@@ -1,4 +1,3 @@
-
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { BackButton } from "@/components/navigation/BackButton";
@@ -37,7 +36,11 @@ const ChannelDetails = () => {
     refetch: refetchChannel
   } = useChannelData(cleanChannelId);
   
-  const { isSubscribed, handleSubscribe } = useChannelSubscription(cleanChannelId);
+  const { 
+    isSubscribed, 
+    handleSubscribe, 
+    isLoading: isLoadingSubscription 
+  } = useChannelSubscription(cleanChannelId);
   
   // Only initialize video hooks if we have a valid channel ID
   const { 
@@ -161,6 +164,7 @@ const ChannelDetails = () => {
         channel={channel}
         isSubscribed={isSubscribed}
         onSubscribe={handleSubscribe}
+        isLoading={isLoadingSubscription}
       />
       
       {hasVideosError ? (

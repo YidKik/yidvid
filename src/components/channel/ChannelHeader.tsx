@@ -1,5 +1,5 @@
 
-import { Youtube, UserPlus, Check } from "lucide-react";
+import { Youtube, UserPlus, Check, Loader2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -12,12 +12,14 @@ interface ChannelHeaderProps {
   };
   isSubscribed: boolean;
   onSubscribe: () => void;
+  isLoading?: boolean;
 }
 
 export const ChannelHeader = ({
   channel,
   isSubscribed,
   onSubscribe,
+  isLoading = false,
 }: ChannelHeaderProps) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
@@ -60,11 +62,17 @@ export const ChannelHeader = ({
       <Button
         variant={isSubscribed ? "default" : "outline"}
         onClick={onSubscribe}
+        disabled={isLoading}
         className={`h-7 md:h-9 text-xs md:text-sm px-2.5 md:px-3.5 mb-2 md:mb-3 transition-all duration-200 ${
           isSubscribed ? "bg-primary hover:bg-primary-hover text-white shadow-md" : ""
         }`}
       >
-        {isSubscribed ? (
+        {isLoading ? (
+          <>
+            <Loader2 className="w-3 h-3 md:w-3.5 md:h-3.5 mr-1 md:mr-1.5 animate-spin" />
+            Loading...
+          </>
+        ) : isSubscribed ? (
           <>
             <Check className="w-3 h-3 md:w-3.5 md:h-3.5 mr-1 md:mr-1.5 animate-in" />
             Subscribed

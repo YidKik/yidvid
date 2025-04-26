@@ -1,6 +1,7 @@
+
 import { useState, useRef, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Youtube, ArrowLeft, ArrowRight, UserMinus, Bell } from "lucide-react";
+import { Youtube, ArrowLeft, ArrowRight, UserMinus, Bell, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -12,7 +13,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useAuth } from "@/hooks/useAuth";
 import { useSessionManager } from "@/hooks/useSessionManager";
 
 interface ChannelSubscription {
@@ -27,7 +27,8 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(false);
-  const { isAuthenticated } = useSessionManager();
+  const { session, isAuthenticated } = useSessionManager();
+  const [processingUnsubscribe, setProcessingUnsubscribe] = useState<string | null>(null);
 
   useEffect(() => {
     const checkScrollability = () => {
@@ -84,6 +85,8 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
     }
     
     try {
+      setProcessingUnsubscribe(channelId);
+      
       const { error } = await supabase
         .from("channel_subscriptions")
         .delete()
@@ -93,10 +96,12 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
       if (error) throw error;
 
       toast.success("Unsubscribed from channel");
-      refetch();
+      await refetch();
     } catch (error: any) {
       console.error("Error unsubscribing:", error);
       toast.error("Error unsubscribing from channel");
+    } finally {
+      setProcessingUnsubscribe(null);
     }
   };
 
@@ -150,11 +155,17 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
           </CardTitle>
           <CardDescription>Loading subscriptions...</CardDescription>
         </CardHeader>
+        <CardContent>
+          <div className="flex justify-center py-8">
+            <Loader2 className="h-8 w-8 animate-spin text-primary/70" />
+          </div>
+        </CardContent>
       </Card>
     );
   }
 
-  if (!isAuthenticated || !userId) {
+  const currentUserId = session?.user?.id;
+  if (!isAuthenticated || !currentUserId) {
     return (
       <Card>
         <CardHeader>
@@ -236,10 +247,20 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
                         variant="ghost"
                         size="sm"
                         onClick={() => handleUnsubscribe(subscription.channel.channel_id)}
+                        disabled={processingUnsubscribe === subscription.channel.channel_id}
                         className="w-full text-red-600 hover:text-red-700 hover:bg-red-50 gap-1.5 text-xs"
                       >
-                        <UserMinus className="w-3.5 h-3.5" />
-                        Unsubscribe
+                        {processingUnsubscribe === subscription.channel.channel_id ? (
+                          <>
+                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                            Processing...
+                          </>
+                        ) : (
+                          <>
+                            <UserMinus className="w-3.5 h-3.5" />
+                            Unsubscribe
+                          </>
+                        )}
                       </Button>
                     </div>
                   </div>
