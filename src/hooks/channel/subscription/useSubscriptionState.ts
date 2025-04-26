@@ -14,9 +14,9 @@ export const useSubscriptionState = (channelId: string | undefined) => {
 
   // Log detailed authentication state for debugging
   useEffect(() => {
-    // Don't attempt subscription checks until we have session info
-    if (isInitialLoading) {
-      setIsCheckingSubscription(true);
+    // Set checking to false if there's no authenticated user
+    if (!isSessionLoading && !isAuthenticated) {
+      setIsCheckingSubscription(false);
     }
     
     console.log("useSubscriptionState auth state:", { 

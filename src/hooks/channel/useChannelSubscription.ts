@@ -1,3 +1,4 @@
+
 import { useCallback, useEffect } from "react";
 import { toast } from "sonner";
 import { useSubscriptionState } from "./subscription/useSubscriptionState";
@@ -23,33 +24,40 @@ export const useChannelSubscription = (channelId: string | undefined) => {
 
   // Add an immediate check when component mounts and we have userId
   useEffect(() => {
-    if (!channelId || !userId) {
-      // Only set isSubscribed to false if we're sure user isn't authenticated
-      // Otherwise just keep the loading state
-      if (!isAuthenticated && !isSessionLoading) {
-        console.log("No channel ID or user ID available, setting isSubscribed to false");
-        setIsSubscribed(false);
-        setIsCheckingSubscription(false);
-      }
+    if (!channelId) {
+      // No channel ID means we can't check subscription status
+      setIsCheckingSubscription(false);
       return;
     }
     
-    const checkSubscription = async () => {
-      try {
-        console.log(`Initial subscription check for user ${userId} on channel ${channelId}`);
-        setIsCheckingSubscription(true);
-        const isCurrentlySubscribed = await checkSubscriptionStatus(userId, channelId);
-        console.log(`Initial subscription check completed: user ${userId} ${isCurrentlySubscribed ? 'is' : 'is not'} subscribed to ${channelId}`);
-        setIsSubscribed(isCurrentlySubscribed);
-      } catch (err) {
-        console.error("Failed to check initial subscription status:", err);
-      } finally {
-        setIsCheckingSubscription(false);
-      }
-    };
+    // If user is not authenticated, set subscription status to false
+    // and exit early - no need to check subscription
+    if (!isAuthenticated && !isSessionLoading) {
+      console.log("User not authenticated, setting isSubscribed to false");
+      setIsSubscribed(false);
+      setIsCheckingSubscription(false);
+      return;
+    }
     
-    // Ensure this runs immediately when we have userId and channelId
-    checkSubscription();
+    // Only proceed with subscription check if we have user ID
+    if (userId && channelId) {
+      const checkSubscription = async () => {
+        try {
+          console.log(`Initial subscription check for user ${userId} on channel ${channelId}`);
+          setIsCheckingSubscription(true);
+          const isCurrentlySubscribed = await checkSubscriptionStatus(userId, channelId);
+          console.log(`Initial subscription check completed: user ${userId} ${isCurrentlySubscribed ? 'is' : 'is not'} subscribed to ${channelId}`);
+          setIsSubscribed(isCurrentlySubscribed);
+        } catch (err) {
+          console.error("Failed to check initial subscription status:", err);
+        } finally {
+          setIsCheckingSubscription(false);
+        }
+      };
+      
+      // Ensure this runs immediately when we have userId and channelId
+      checkSubscription();
+    }
   }, [channelId, userId, checkSubscriptionStatus, setIsCheckingSubscription, setIsSubscribed, isAuthenticated, isSessionLoading]);
 
   // Set up realtime updates
@@ -138,7 +146,7 @@ export const useChannelSubscription = (channelId: string | undefined) => {
   return { 
     isSubscribed, 
     handleSubscribe, 
-    isLoading: isCheckingSubscription || isSessionLoading || isInitialLoading,
+    isLoading: isCheckingSubscription || isInitialLoading,
     checkSubscription: verifySubscriptionStatus
   };
 };

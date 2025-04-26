@@ -77,7 +77,7 @@ const ChannelDetails = () => {
         checkSubscription().then(status => {
           console.log("Channel page subscription verification:", status ? 'Subscribed' : 'Not subscribed');
         });
-      }, 200);
+      }, 500); // Increased delay to ensure session has stabilized
       
       return () => clearTimeout(timer);
     }

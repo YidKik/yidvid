@@ -40,6 +40,7 @@ export const useSubscriptionCheck = () => {
           
         if (retryError) {
           console.error('Retry DB check also failed:', retryError);
+          return false; // Return false explicitly on error
         } else if (retryCheck) {
           console.log(`Retry successful: User is subscribed`);
           return true;
@@ -51,24 +52,6 @@ export const useSubscriptionCheck = () => {
         console.log(`Direct DB check result: ${directCheck ? 'Subscribed' : 'Not subscribed'}`);
         return !!directCheck;
       }
-      
-      // Fallback to edge function if direct check failed
-      console.log("Falling back to edge function for subscription check");
-      const { data, error } = await supabase.functions.invoke('channel-subscribe', {
-        body: {
-          userId: uid,
-          channelId: chId,
-          action: 'check'
-        }
-      });
-      
-      if (error) {
-        console.error('Error checking subscription status via edge function:', error);
-        return false;
-      }
-      
-      console.log(`Edge function subscription check result:`, data);
-      return data?.isSubscribed || false;
     } catch (err) {
       console.error("Error in subscription check:", err);
       return false;
