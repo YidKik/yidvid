@@ -28,7 +28,7 @@ export const ChannelHeader = ({
   const [imageError, setImageError] = useState(false);
   const { session, isAuthenticated, isLoading: isSessionLoading } = useSessionManager();
   const fallbackLogo = "/lovable-uploads/efca5adc-d9d2-4c5b-8900-e078f9d49b6a.png";
-  const [internalSubscriptionState, setInternalSubscriptionState] = useState();
+  const [internalSubscriptionState, setInternalSubscriptionState] = useState<boolean | undefined>(undefined);
   const [isProcessing, setIsProcessing] = useState(false);
   const [initialLoadComplete, setInitialLoadComplete] = useState(false);
 
@@ -82,7 +82,9 @@ export const ChannelHeader = ({
     try {
       setIsProcessing(true);
       // Optimistically update UI state for better user experience
-      setInternalSubscriptionState(!internalSubscriptionState);
+      if (internalSubscriptionState !== undefined) {
+        setInternalSubscriptionState(!internalSubscriptionState);
+      }
       
       await onSubscribe();
       // Note: We don't need to set state here as it will be updated
@@ -105,7 +107,9 @@ export const ChannelHeader = ({
   const buttonLoading = isLoading || isProcessing || isSessionLoading;
   
   // Determine the correct visual state for the button
-  const displaySubscribed = internalSubscriptionState;
+  // Only show subscription state if we have confirmed it (not undefined)
+  const displaySubscribed = internalSubscriptionState === undefined ? false : internalSubscriptionState;
+  const subscriptionStateKnown = internalSubscriptionState !== undefined;
 
   return (
     <div className="flex flex-col items-center mb-6 md:mb-8">
@@ -141,21 +145,21 @@ export const ChannelHeader = ({
       </h1>
       
       <Button
-        variant={displaySubscribed ? "default" : "outline"}
+        variant={displaySubscribed && subscriptionStateKnown ? "default" : "outline"}
         onClick={handleSubscribeClick}
         disabled={buttonLoading}
         className={`h-7 md:h-9 text-xs md:text-sm px-2.5 md:px-3.5 mb-2 md:mb-3 transition-all duration-200 ${
-          displaySubscribed ? "bg-primary hover:bg-primary-hover text-white shadow-md" : ""
+          (displaySubscribed && subscriptionStateKnown) ? "bg-primary hover:bg-primary-hover text-white shadow-md" : ""
         }`}
-        data-subscribed={displaySubscribed ? "true" : "false"}
-        aria-label={displaySubscribed ? "Unsubscribe from channel" : "Subscribe to channel"}
+        data-subscribed={displaySubscribed && subscriptionStateKnown ? "true" : "false"}
+        aria-label={displaySubscribed && subscriptionStateKnown ? "Unsubscribe from channel" : "Subscribe to channel"}
       >
         {buttonLoading ? (
           <>
             <Loader2 className="w-3 h-3 md:w-3.5 md:h-3.5 mr-1 md:mr-1.5 animate-spin" />
             {isProcessing ? "Processing..." : "Loading..."}
           </>
-        ) : displaySubscribed ? (
+        ) : displaySubscribed && subscriptionStateKnown ? (
           <>
             <Check className="w-3 h-3 md:w-3.5 md:h-3.5 mr-1 md:mr-1.5" />
             Subscribed

@@ -1,4 +1,3 @@
-
 import { useCallback, useEffect } from "react";
 import { toast } from "sonner";
 import { useSubscriptionState } from "./subscription/useSubscriptionState";
@@ -16,17 +15,22 @@ export const useChannelSubscription = (channelId: string | undefined) => {
     setLastChecked,
     userId,
     isAuthenticated,
-    isSessionLoading
+    isSessionLoading,
+    isInitialLoading
   } = useSubscriptionState(channelId);
 
   const { checkSubscriptionStatus } = useSubscriptionCheck();
 
-  // Add an immediate check when component mounts
+  // Add an immediate check when component mounts and we have userId
   useEffect(() => {
     if (!channelId || !userId) {
-      console.log("No channel ID or user ID available, setting isSubscribed to false");
-      setIsSubscribed(false);
-      setIsCheckingSubscription(false);
+      // Only set isSubscribed to false if we're sure user isn't authenticated
+      // Otherwise just keep the loading state
+      if (!isAuthenticated && !isSessionLoading) {
+        console.log("No channel ID or user ID available, setting isSubscribed to false");
+        setIsSubscribed(false);
+        setIsCheckingSubscription(false);
+      }
       return;
     }
     
@@ -46,7 +50,7 @@ export const useChannelSubscription = (channelId: string | undefined) => {
     
     // Ensure this runs immediately when we have userId and channelId
     checkSubscription();
-  }, [channelId, userId, checkSubscriptionStatus, setIsCheckingSubscription, setIsSubscribed]);
+  }, [channelId, userId, checkSubscriptionStatus, setIsCheckingSubscription, setIsSubscribed, isAuthenticated, isSessionLoading]);
 
   // Set up realtime updates
   const onSubscriptionChange = useCallback(async () => {
@@ -134,7 +138,7 @@ export const useChannelSubscription = (channelId: string | undefined) => {
   return { 
     isSubscribed, 
     handleSubscribe, 
-    isLoading: isCheckingSubscription || isSessionLoading,
+    isLoading: isCheckingSubscription || isSessionLoading || isInitialLoading,
     checkSubscription: verifySubscriptionStatus
   };
 };

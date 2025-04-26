@@ -18,7 +18,7 @@ const ChannelDetails = () => {
   const navigate = useNavigate();
   const [loadAttempts, setLoadAttempts] = useState(0);
   const [isRetrying, setIsRetrying] = useState(false);
-  const { isAuthenticated, session } = useSessionManager();
+  const { isAuthenticated, session, refreshSession } = useSessionManager();
   
   // Exit early if no channelId is provided
   useEffect(() => {
@@ -28,6 +28,22 @@ const ChannelDetails = () => {
       navigate('/');
     }
   }, [cleanChannelId, navigate]);
+
+  // Ensure we have a fresh session for subscription checks
+  useEffect(() => {
+    const ensureFreshSession = async () => {
+      if (isAuthenticated) {
+        try {
+          await refreshSession();
+          console.log("Session refreshed on channel page mount");
+        } catch (error) {
+          console.error("Failed to refresh session:", error);
+        }
+      }
+    };
+    
+    ensureFreshSession();
+  }, [isAuthenticated, refreshSession]);
   
   const { 
     data: channel, 
@@ -56,9 +72,14 @@ const ChannelDetails = () => {
   useEffect(() => {
     if (isAuthenticated && cleanChannelId && checkSubscription && session?.user?.id) {
       console.log("Verifying subscription status on channel page mount/auth change");
-      checkSubscription().then(status => {
-        console.log("Channel page subscription verification:", status ? 'Subscribed' : 'Not subscribed');
-      });
+      // Small delay to ensure session has stabilized
+      const timer = setTimeout(() => {
+        checkSubscription().then(status => {
+          console.log("Channel page subscription verification:", status ? 'Subscribed' : 'Not subscribed');
+        });
+      }, 200);
+      
+      return () => clearTimeout(timer);
     }
   }, [isAuthenticated, cleanChannelId, checkSubscription, session?.user?.id]);
 
