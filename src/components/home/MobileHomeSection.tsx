@@ -22,17 +22,7 @@ export const MobileHomeSection = () => {
         </nav>
       </header>
 
-      {/* Hero Content */}
       <div className="px-4 pt-8">
-        <h1 className="text-7xl font-bold tracking-tight text-center mb-8">
-          <div className="text-[#e3fef7] leading-tight">Your Gateway to</div>
-          <div className="text-[#77b0aa] leading-tight">Jewish Content</div>
-        </h1>
-        
-        <p className="text-[#77b0aa] text-xl mb-12 text-center max-w-lg mx-auto leading-relaxed">
-          Watch, share, and connect with the finest Jewish content from around the world.
-        </p>
-
         <div className="flex justify-center">
           <Link to="/videos">
             <button className="px-8 py-3 bg-[#135d66] text-[#e3fef7] text-lg font-medium rounded-full border-2 border-[#77b0aa]">
