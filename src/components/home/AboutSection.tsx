@@ -31,19 +31,17 @@ export const AboutSection = () => {
           </div>
         </div>
         <div className="flex justify-center items-center">
-          <div className="relative w-[500px] h-[500px]">
-            <div className="absolute inset-0 bg-[#003c43] rounded-3xl transform rotate-6"></div>
-            <div className="absolute inset-0 bg-brand-dark/20 rounded-3xl transform -rotate-3"></div>
-            <div className="relative flex items-center justify-center h-full">
-              <img
-                src="/public/yidkik-logo.png"
-                alt="YidVid Logo"
-                className="w-96 h-96 object-contain"
-              />
-            </div>
+          <div className="flex items-center justify-center">
+            <img
+              src="/public/yidkik-logo.png"
+              alt="YidVid Logo"
+              className="w-96 h-96 object-contain"
+            />
           </div>
         </div>
       </div>
     </section>
   );
 };
+
+export default AboutSection;
