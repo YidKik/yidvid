@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -55,7 +54,7 @@ export const ChannelCard = ({
           )}
         </div>
         
-        <h3 className="text-sm md:text-base font-medium text-center mb-1 text-white/90">
+        <h3 className="text-sm md:text-base font-medium text-center mb-1 text-black group-hover:text-[#ea384c] transition-colors">
           {title}
         </h3>
         
