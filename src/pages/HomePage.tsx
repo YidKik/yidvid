@@ -9,11 +9,13 @@ import { MainHeroSection } from '@/components/home/MainHeroSection';
 import { FeaturesSection } from '@/components/home/FeaturesSection';
 import { AnimatedGridSection } from '@/components/home/AnimatedGridSection';
 import { useHomeAnimations } from '@/hooks/useHomeAnimations';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const HomePage = () => {
   const { data: videos, isLoading: videosLoading } = useVideos();
   const { manuallyFetchedChannels, isLoading: channelsLoading } = useChannelsGrid();
   const channelsSectionRef = useRef(null);
+  const { isMobile } = useIsMobile();
 
   useHomeAnimations(channelsSectionRef);
 
@@ -32,23 +34,23 @@ const HomePage = () => {
     >
       <BackgroundGradientAnimation 
         interactive={false}
-        gradientBackgroundStart="#030303"
-        gradientBackgroundEnd="#1a0000"
-        firstColor="234, 56, 76"
-        secondColor="234, 56, 76"
+        gradientBackgroundStart="#003c43"
+        gradientBackgroundEnd="#003c43"
+        firstColor="119, 176, 170"
+        secondColor="119, 176, 170"
         thirdColor="255, 255, 255"
-        fourthColor="234, 56, 76"
+        fourthColor="119, 176, 170"
         fifthColor="255, 255, 255"
         blendingValue="soft-light"
         containerClassName="fixed inset-0 z-0"
       />
 
       <div className="relative z-10 w-full">
-        <div className="relative min-h-[20vh] px-4 sm:px-6">
+        <div className="relative min-h-[60vh] sm:min-h-[20vh] px-4">
           <MainHeroSection />
 
-          {videos && videos.length > 8 && (
-            <div className="absolute top-[15vh] sm:top-[15vh] inset-x-0 hero-parallax-section z-10">
+          {!isMobile && videos && videos.length > 8 && (
+            <div className="absolute top-[15vh] inset-x-0 hero-parallax-section z-10">
               <HeroParallax 
                 videos={videos}
                 title=""
