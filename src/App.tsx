@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import VideoDetails from './pages/VideoDetails';
@@ -7,7 +6,7 @@ import ChannelDetails from './pages/ChannelDetails';
 import WritingVideos from './pages/WritingVideos';
 import ResetPassword from './pages/ResetPassword';
 import Videos from './pages/Videos';
-import HomePage from './pages/HomePage';
+import NewHomePage from './pages/NewHomePage';
 import { PlaybackProvider } from './contexts/PlaybackContext';
 import { ColorProvider } from './contexts/ColorContext';
 import Settings from './pages/Settings';
@@ -49,7 +48,7 @@ function App() {
     <PlaybackProvider>
       <ColorProvider>
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          <Route path="/" element={<NewHomePage />} />
           <Route path="/videos" element={<Videos />} />
           <Route path="/video/:videoId" element={<VideoDetails />} />
           <Route path="/search" element={<Search />} />
