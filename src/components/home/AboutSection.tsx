@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 export const AboutSection = () => {
@@ -32,14 +31,14 @@ export const AboutSection = () => {
           </div>
         </div>
         <div className="flex justify-center items-center">
-          <div className="relative w-96 h-96">
-            <div className="absolute inset-0 bg-brand-dark rounded-3xl transform rotate-6"></div>
+          <div className="relative w-[500px] h-[500px]">
+            <div className="absolute inset-0 bg-[#003c43] rounded-3xl transform rotate-6"></div>
             <div className="absolute inset-0 bg-brand-light/20 rounded-3xl transform -rotate-3"></div>
             <div className="relative flex items-center justify-center h-full">
               <img
-                src="/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png"
+                src="/lovable-uploads/71a6cabf-63ef-4db1-8dea-4252628860dc.png"
                 alt="YidVid Logo"
-                className="w-64 h-64 object-contain"
+                className="w-80 h-80 object-contain"
               />
             </div>
           </div>
@@ -48,4 +47,3 @@ export const AboutSection = () => {
     </section>
   );
 };
-
