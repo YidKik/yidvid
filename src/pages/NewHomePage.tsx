@@ -7,17 +7,33 @@ import { AboutSection } from '@/components/home/AboutSection';
 import { StatsSection } from '@/components/home/StatsSection';
 import { FeedbackSection } from '@/components/home/FeedbackSection';
 import { Footer } from '@/components/home/Footer';
+import { ScrollReveal } from '@/components/ui/scroll-reveal';
 
 const NewHomePage = () => {
   return (
     <div className="min-h-screen bg-brand-darkest">
       <HomeHeader />
       <HeroSection />
-      <FeaturesSection />
-      <AboutSection />
-      <StatsSection />
-      <FeedbackSection />
-      <Footer />
+      
+      <ScrollReveal>
+        <FeaturesSection />
+      </ScrollReveal>
+      
+      <ScrollReveal>
+        <AboutSection />
+      </ScrollReveal>
+      
+      <ScrollReveal>
+        <StatsSection />
+      </ScrollReveal>
+      
+      <ScrollReveal>
+        <FeedbackSection />
+      </ScrollReveal>
+      
+      <ScrollReveal>
+        <Footer />
+      </ScrollReveal>
     </div>
   );
 };
