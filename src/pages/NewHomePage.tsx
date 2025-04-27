@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -127,16 +126,50 @@ const NewHomePage = () => {
       </section>
 
       {/* Stats Section */}
-      <section className="container mx-auto px-6 py-16 grid grid-cols-2 gap-8">
-        <div className="p-8 rounded-3xl border-2 border-brand-light bg-brand-dark/30 text-center">
-          <p className="text-brand-light text-xl mb-2">Over</p>
-          <h3 className="text-5xl font-display text-white mb-2">400</h3>
-          <p className="text-brand-light">Channels</p>
+      <section className="container mx-auto px-6 py-16 space-y-8">
+        <div className="grid grid-cols-2 gap-8">
+          <div className="relative group h-96">
+            {/* Animated border */}
+            <div className="absolute inset-0 bg-gradient-to-r from-[#135d66] to-[#ddf9f2] rounded-3xl opacity-70 animate-border-flow" />
+            <div className="p-12 rounded-3xl border-2 border-transparent bg-brand-dark/30 h-full flex flex-col items-center justify-center relative z-10">
+              <p className="text-[#77b0aa] text-2xl mb-4">Over</p>
+              <h3 className="text-[#ddf9f2] text-7xl font-display mb-4">400</h3>
+              <p className="text-[#77b0aa] text-2xl">Channels</p>
+            </div>
+          </div>
+          
+          <div className="relative group h-96">
+            {/* Animated border */}
+            <div className="absolute inset-0 bg-gradient-to-r from-[#135d66] to-[#ddf9f2] rounded-3xl opacity-70 animate-border-flow" />
+            <div className="p-12 rounded-3xl border-2 border-transparent bg-brand-dark/30 h-full flex flex-col items-center justify-center relative z-10">
+              <p className="text-[#77b0aa] text-2xl mb-4">Over</p>
+              <h3 className="text-[#ddf9f2] text-7xl font-display mb-4">10,000</h3>
+              <p className="text-[#77b0aa] text-2xl">Videos</p>
+            </div>
+          </div>
         </div>
-        <div className="p-8 rounded-3xl border-2 border-brand-light bg-brand-dark/30 text-center">
-          <p className="text-brand-light text-xl mb-2">Over</p>
-          <h3 className="text-5xl font-display text-white mb-2">10,000</h3>
-          <p className="text-brand-light">Videos</p>
+
+        {/* Auth Buttons */}
+        <div className="flex justify-center space-x-8">
+          <Link 
+            to="/signup"
+            className="relative group px-16 py-4"
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-[#135d66] to-[#ddf9f2] rounded-3xl opacity-70 animate-border-flow" />
+            <div className="relative z-10 rounded-3xl border-2 border-transparent bg-brand-dark/30 px-16 py-4">
+              <span className="text-[#ddf9f2] text-xl">Create account</span>
+            </div>
+          </Link>
+
+          <Link 
+            to="/signin"
+            className="relative group px-16 py-4"
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-[#135d66] to-[#ddf9f2] rounded-3xl opacity-70 animate-border-flow" />
+            <div className="relative z-10 rounded-3xl border-2 border-transparent bg-brand-dark/30 px-16 py-4">
+              <span className="text-[#ddf9f2] text-xl">Login</span>
+            </div>
+          </Link>
         </div>
       </section>
 
@@ -181,4 +214,3 @@ const NewHomePage = () => {
 };
 
 export default NewHomePage;
-
