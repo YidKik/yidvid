@@ -51,7 +51,7 @@ export const TestimonialDialog = ({
             author_name: formData.author_name,
             display_order: formData.display_order,
             is_visible: formData.is_visible,
-            updated_at: new Date()
+            updated_at: new Date().toISOString() // Convert Date to ISO string
           })
           .eq('id', testimonial.id);
         

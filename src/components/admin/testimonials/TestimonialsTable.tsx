@@ -28,7 +28,7 @@ export const TestimonialsTable = ({ testimonials, onEdit, onRefetch }: {
         .from('testimonials')
         .update({ 
           is_visible: !testimonial.is_visible,
-          updated_at: new Date()
+          updated_at: new Date().toISOString() // Convert Date to ISO string
         })
         .eq('id', testimonial.id);
 
