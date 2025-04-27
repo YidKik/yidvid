@@ -1,9 +1,18 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { NumberTicker } from '@/components/ui/number-ticker';
+import Auth from '@/pages/Auth';
 
 export const StatsSection = () => {
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<'signin' | 'signup'>('signin');
+
+  const handleAuthClick = (tab: 'signin' | 'signup') => {
+    setActiveTab(tab);
+    setIsAuthOpen(true);
+  };
+
   return (
     <section className="container mx-auto px-6 py-16 space-y-8">
       <div className="grid grid-cols-2 gap-8">
@@ -25,20 +34,23 @@ export const StatsSection = () => {
       </div>
 
       <div className="flex justify-between space-x-8">
-        <Link 
-          to="/signup"
-          className="w-[calc(50%-1rem)] h-16 flex items-center justify-center rounded-3xl border-2 border-[#ddf9f2] bg-[#003c43] text-[#ddf9f2] text-2xl hover:bg-brand-dark transition-colors duration-300"
+        <button 
+          onClick={() => handleAuthClick('signup')}
+          className="w-[calc(50%-1rem)] h-16 flex items-center justify-center rounded-3xl border-2 border-[#ddf9f2] bg-[#003c43] text-[#ddf9f2] text-2xl hover:bg-[#135d66] transition-colors duration-300"
         >
           Create account
-        </Link>
+        </button>
 
-        <Link 
-          to="/signin"
-          className="w-[calc(50%-1rem)] h-16 flex items-center justify-center rounded-3xl border-2 border-[#ddf9f2] bg-[#003c43] text-[#ddf9f2] text-2xl hover:bg-brand-dark transition-colors duration-300"
+        <button 
+          onClick={() => handleAuthClick('signin')}
+          className="w-[calc(50%-1rem)] h-16 flex items-center justify-center rounded-3xl border-2 border-[#ddf9f2] bg-[#003c43] text-[#ddf9f2] text-2xl hover:bg-[#135d66] transition-colors duration-300"
         >
           Login
-        </Link>
+        </button>
       </div>
+
+      <Auth isOpen={isAuthOpen} onOpenChange={setIsAuthOpen} initialTab={activeTab} />
     </section>
   );
 };
+
