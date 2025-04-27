@@ -10,6 +10,7 @@ import { FeaturesSection } from '@/components/home/FeaturesSection';
 import { AnimatedGridSection } from '@/components/home/AnimatedGridSection';
 import { useHomeAnimations } from '@/hooks/useHomeAnimations';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { MobileHomeSection } from '@/components/home/MobileHomeSection';
 
 const HomePage = () => {
   const { data: videos, isLoading: videosLoading } = useVideos();
@@ -17,7 +18,6 @@ const HomePage = () => {
   const channelsSectionRef = useRef(null);
   const { isMobile, isTablet } = useIsMobile();
   const showHeroParallax = !isMobile && !isTablet;
-  const showDesktopContent = !isMobile && !isTablet;
 
   useHomeAnimations(channelsSectionRef);
 
@@ -28,7 +28,7 @@ const HomePage = () => {
   const extendedChannelItems = [...channelItems, ...channelItems].slice(0, 30);
 
   if (isMobile || isTablet) {
-    return null; // Return nothing for mobile and tablet views
+    return <MobileHomeSection />;
   }
 
   return (
