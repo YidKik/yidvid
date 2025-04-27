@@ -73,31 +73,33 @@ export const TestimonialDialog = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>
+          <DialogTitle className="text-black">
             {testimonial?.id ? "Edit Testimonial" : "Add New Testimonial"}
           </DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 text-black">
           <div className="space-y-2">
-            <Label htmlFor="content">Content</Label>
+            <Label htmlFor="content" className="text-black">Content</Label>
             <Textarea
               id="content"
               value={formData.content}
               onChange={e => setFormData(prev => ({ ...prev, content: e.target.value }))}
               required
+              className="text-black"
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="author">Author Name</Label>
+            <Label htmlFor="author" className="text-black">Author Name</Label>
             <Input
               id="author"
               value={formData.author_name}
               onChange={e => setFormData(prev => ({ ...prev, author_name: e.target.value }))}
               required
+              className="text-black"
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="order">Display Order</Label>
+            <Label htmlFor="order" className="text-black">Display Order</Label>
             <Input
               id="order"
               type="number"
@@ -105,6 +107,7 @@ export const TestimonialDialog = ({
               value={formData.display_order}
               onChange={e => setFormData(prev => ({ ...prev, display_order: parseInt(e.target.value) }))}
               required
+              className="text-black"
             />
           </div>
           <div className="flex justify-end gap-2">
