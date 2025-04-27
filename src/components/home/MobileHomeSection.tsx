@@ -57,6 +57,7 @@ export const MobileHomeSection = () => {
       {/* Stats Boxes */}
       <div className="mt-12 space-y-4">
         <div className="border-2 border-[#ddf9f2] rounded-3xl p-6 text-center bg-[#135d66]">
+          <p className="text-[#77b0aa] text-lg mb-1">Over</p>
           <p className="text-[#e3fef7] text-5xl font-bold mb-1">
             <NumberTicker 
               value={10000} 
@@ -67,7 +68,7 @@ export const MobileHomeSection = () => {
         </div>
         
         <div className="border-2 border-[#ddf9f2] rounded-3xl p-6 text-center bg-[#135d66]">
-          <p className="text-[#77b0aa] text-lg mb-1">Over</p>
+          <p className="text-[#77b0aa] text-xl mb-1">Over</p>
           <p className="text-[#e3fef7] text-5xl font-bold mb-1">
             <NumberTicker 
               value={400} 
