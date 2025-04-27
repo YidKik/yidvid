@@ -15,43 +15,43 @@ export const MobileHomeSection = () => {
   const heroRef = useRef(null);
   const heroInView = useInView(heroRef, {
     once: true,
-    threshold: 0.1
+    amount: 0.1
   });
 
   const featuresRef = useRef(null);
   const featuresInView = useInView(featuresRef, {
     once: true,
-    threshold: 0.1
+    amount: 0.1
   });
 
   const descriptionRef = useRef(null);
   const descriptionInView = useInView(descriptionRef, {
     once: true,
-    threshold: 0.1
+    amount: 0.1
   });
 
   const statsRef = useRef(null);
   const statsInView = useInView(statsRef, {
     once: true,
-    threshold: 0.1
+    amount: 0.1
   });
 
   const authRef = useRef(null);
   const authInView = useInView(authRef, {
     once: true,
-    threshold: 0.1
+    amount: 0.1
   });
 
   const actionsRef = useRef(null);
   const actionsInView = useInView(actionsRef, {
     once: true,
-    threshold: 0.1
+    amount: 0.1
   });
 
   const feedbackRef = useRef(null);
   const feedbackInView = useInView(feedbackRef, {
     once: true,
-    threshold: 0.1
+    amount: 0.1
   });
 
   const feedbackItems = [
@@ -217,7 +217,7 @@ export const MobileHomeSection = () => {
       >
         <h2 className="text-[#e3fef7] text-2xl font-bold text-center mb-6">Feedback</h2>
         
-        {/* Updated feedback section with multi-line cards that show 1.5 at a time */}
+        {/* Feedback section with multi-line cards that show 1.5 at a time */}
         <div className="relative">
           <div className="overflow-x-auto pb-8 snap-x snap-mandatory scrollbar-hide">
             <div className="flex w-[250%]">
