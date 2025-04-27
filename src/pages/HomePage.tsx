@@ -27,10 +27,12 @@ const HomePage = () => {
 
   const extendedChannelItems = [...channelItems, ...channelItems].slice(0, 30);
 
+  // Return the blank mobile section for mobile and tablet views
   if (isMobile || isTablet) {
     return <MobileHomeSection />;
   }
 
+  // Only desktop views will see the full content
   return (
     <motion.div 
       className="min-h-screen w-full overflow-x-hidden relative"
