@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Auth from '@/pages/Auth';
@@ -22,7 +23,11 @@ export const HomeHeader = () => {
     <>
       <header className="w-full px-6 py-4 flex items-center justify-between fixed top-0 left-0 right-0 z-50 bg-[#003c43]">
         <div className="flex items-center space-x-2">
-          <img src="/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png" alt="YidVid Logo" className="h-12" />
+          <img 
+            src="/lovable-uploads/6b9f3eb8-8b65-41b6-84a2-6c4f6f0c3459.png" 
+            alt="YidVid Logo" 
+            className="h-16 w-auto object-contain" 
+          />
           <span className="text-white font-display text-2xl">YidVid</span>
         </div>
         <nav className="flex items-center space-x-8">
