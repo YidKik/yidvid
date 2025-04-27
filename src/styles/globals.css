@@ -19,22 +19,24 @@ body {
   color: var(--text-custom, #030303);
 }
 
-/* Global button styles - making sure no red backgrounds are in buttons */
-button, 
-.button-custom,
-.btn,
-[type='button'],
-[type='reset'],
-[type='submit'] {
+/* Global button styles - making sure buttons use primary red color except on homepage */
+button:not([class*="home-"]), 
+.button-custom:not([class*="home-"]),
+.btn:not([class*="home-"]),
+[type='button']:not([class*="home-"]),
+[type='reset']:not([class*="home-"]),
+[type='submit']:not([class*="home-"]) {
+  background-color: var(--button-custom) !important;
+  color: white !important;
   transition: filter 0.2s ease-in-out !important;
 }
 
-button:hover, 
-.button-custom:hover,
-.btn:hover,
-[type='button']:hover,
-[type='reset']:hover,
-[type='submit']:hover {
+button:not([class*="home-"]):hover, 
+.button-custom:not([class*="home-"]):hover,
+.btn:not([class*="home-"]):hover,
+[type='button']:not([class*="home-"]):hover,
+[type='reset']:not([class*="home-"]):hover,
+[type='submit']:not([class*="home-"]):hover {
   filter: brightness(90%) !important;
 }
 
@@ -48,13 +50,13 @@ header button {
 }
 
 /* Global logo styles */
-.logo-custom, h1.logo-custom {
+.logo-custom:not([class*="home-"]) {
   color: var(--logo-custom);
 }
 
 /* Global link and text hover styles */
-a:hover,
-.hover-text:hover {
+a:not([class*="home-"]):hover,
+.hover-text:not([class*="home-"]):hover {
   color: var(--button-custom) !important;
   transition: color 0.2s ease-in-out;
 }
@@ -65,18 +67,18 @@ a:hover,
 }
 
 /* Add custom color classes */
-.bg-custom {
+.bg-custom:not([class*="home-"]) {
   background-color: var(--background-custom);
 }
 
-.text-custom {
+.text-custom:not([class*="home-"]) {
   color: var(--text-custom);
 }
 
-.button-custom {
+.button-custom:not([class*="home-"]) {
   background-color: var(--button-custom);
 }
 
-.logo-custom {
+.logo-custom:not([class*="home-"]) {
   color: var(--logo-custom);
 }

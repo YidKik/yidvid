@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -19,7 +20,7 @@ export default {
     },
     extend: {
       colors: {
-        // Custom brand colors
+        // Custom brand colors for home page only
         'brand': {
           'lightest': '#e3fef7',
           'light': '#77b0aa',

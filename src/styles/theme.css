@@ -1,23 +1,24 @@
+
 :root {
   --background: 0 0% 100%;
   --foreground: 222.2 84% 4.9%;
   --background-custom: #FFFFFF;
   --text-custom: #030303;
-  --button-custom: #135d66;
+  --button-custom: #ea384c;
   --logo-custom: #030303;
   --search-background: #F2F2F2;
   --search-text: #606060;
   --search-border: #E5E5E5;
   --auth-background: #FFFFFF;
   --auth-text: #2D3748;
-  --auth-primary: #135d66;
+  --auth-primary: #ea384c;
   --auth-secondary: #FEF2F2;
   --auth-border: #E9ECEF;
   --auth-input-bg: #F8F9FA;
   --auth-footer-bg: #F9FAFB;
   --auth-footer-text: #6B7280;
-  --auth-link: #135d66;
-  --auth-link-hover: #0d4049;
+  --auth-link: #ea384c;
+  --auth-link-hover: #d6293d;
 
   --card: 0 0% 100%;
   --card-foreground: 222.2 84% 4.9%;
@@ -25,7 +26,7 @@
   --popover: 0 0% 100%;
   --popover-foreground: 222.2 84% 4.9%;
 
-  --primary: #135d66;
+  --primary: #ea384c;
   --primary-foreground: 210 40% 98%;
 
   --secondary: 210 40% 96.1%;
