@@ -18,9 +18,49 @@ export default {
       },
     },
     extend: {
+      colors: {
+        // Custom brand colors
+        'brand': {
+          'lightest': '#e3fef7',
+          'light': '#77b0aa',
+          'dark': '#135d66',
+          'darkest': '#003c43',
+        },
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        primary: {
+          DEFAULT: "#ea384c",
+          hover: "#d6293d",
+          foreground: "#FFFFFF",
+        },
+        secondary: {
+          DEFAULT: "#606060",
+          hover: "#4D4D4D",
+          foreground: "#FFFFFF",
+        },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
+        muted: {
+          DEFAULT: "#F2F2F2",
+          foreground: "#606060",
+        },
+        accent: {
+          DEFAULT: "#030303",
+          foreground: "#FFFFFF",
+        },
+        card: {
+          DEFAULT: "#FFFFFF",
+          foreground: "#030303",
+        },
+      },
       fontFamily: {
-        sans: ['Roboto', 'Arial', 'sans-serif'],
-        display: ['Playfair Display', 'serif'],
+        'display': ['Playfair Display', 'serif'],
+        'sans': ['Inter', 'sans-serif'],
       },
       fontSize: {
         'youtube-title': ['14px', '20px'],
