@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
 import { fadeInVariants } from '@/components/home/mobile/animation-utils';
 
 export const MobileContactSection = () => {
@@ -21,20 +22,28 @@ export const MobileContactSection = () => {
         animate="visible"
         variants={fadeInVariants}
         transition={{ duration: 0.6 }}
-        className="text-sm text-[#e3fef7] leading-relaxed space-y-4 bg-[#135d66] px-4 py-6"
+        className="space-y-3"
       >
-        <p className="text-center">
-          Have questions or feedback? We'd love to hear from you!
-        </p>
-        <div className="flex flex-col items-center gap-4 mt-4">
-          <a href="mailto:contact@yidvid.com" className="text-[#e3fef7] hover:underline">
-            contact@yidvid.com
-          </a>
-          <p>
-            Tel: (555) 123-4567
-          </p>
-        </div>
+        <Button 
+          variant="default" 
+          className="w-full py-4 text-base bg-[#135d66] text-[#e3fef7] border border-[#ddf9f2] hover:bg-[#135d66]/90 rounded-full"
+        >
+          Send feedback
+        </Button>
+        <Button 
+          variant="default" 
+          className="w-full py-4 text-base bg-[#135d66] text-[#e3fef7] border border-[#ddf9f2] hover:bg-[#135d66]/90 rounded-full"
+        >
+          Contact
+        </Button>
+        <Button 
+          variant="default" 
+          className="w-full py-4 text-base bg-[#135d66] text-[#e3fef7] border border-[#ddf9f2] hover:bg-[#135d66]/90 rounded-full"
+        >
+          Request channel
+        </Button>
       </motion.div>
     </div>
   );
 };
+

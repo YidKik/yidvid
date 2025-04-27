@@ -5,7 +5,6 @@ import { MobileFeaturesSection } from './mobile/MobileFeaturesSection';
 import { MobileDescriptionSection } from './mobile/MobileDescriptionSection';
 import { MobileStatsSection } from './mobile/MobileStatsSection';
 import { MobileAuthSection } from './mobile/MobileAuthSection';
-import { MobileActionsSection } from './mobile/MobileActionsSection';
 import { MobileFeedbackSection } from './mobile/MobileFeedbackSection';
 import { MobileContactSection } from './mobile/MobileContactSection';
 
@@ -41,7 +40,6 @@ export const MobileHomeSection = () => {
         <MobileDescriptionSection />
         <MobileStatsSection />
         <MobileAuthSection />
-        <MobileActionsSection />
         <MobileFeedbackSection />
         <MobileContactSection />
         
@@ -52,3 +50,4 @@ export const MobileHomeSection = () => {
     </div>
   );
 };
+
