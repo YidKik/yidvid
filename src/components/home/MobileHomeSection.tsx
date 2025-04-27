@@ -12,10 +12,12 @@ export const MobileHomeSection = () => {
 
   return (
     <div className="min-h-screen w-full bg-[#003c43] px-6 overflow-y-auto">
-      {/* Hero Section with increased top padding and adjusted text */}
+      {/* Hero Section with multi-line text and increased spacing */}
       <div className="flex flex-col items-center text-center space-y-6 pt-24">
-        <h1 className="text-5xl font-bold text-[#e3fef7] leading-tight whitespace-nowrap">
-          Your Gateway to Jewish Content
+        <h1 className="text-5xl font-bold text-[#e3fef7] leading-tight space-y-2">
+          <div>Your</div>
+          <div>Gateway to</div>
+          <div>Jewish Content</div>
         </h1>
         <p className="text-lg text-[#77b0aa] px-4">
           Watch, share, and connect with the finest Jewish content from around the world.
