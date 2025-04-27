@@ -34,8 +34,8 @@ export const FeaturesSection = () => {
               transition={{ duration: 0.6, delay: i * 0.2 }}
               whileHover={{ scale: 1.03, transition: { duration: 0.2 } }}
             >
-              <h3 className="text-4xl font-display text-[#e3fef7] mb-4">{feature.title}</h3>
-              <p className="text-[#77b0aa] text-lg leading-relaxed">{feature.description}</p>
+              <h3 className="text-6xl font-display text-[#e3fef7] mb-6 font-bold">{feature.title}</h3>
+              <p className="text-lg text-[#77b0aa] leading-relaxed">{feature.description}</p>
             </motion.div>
           ))}
         </div>
