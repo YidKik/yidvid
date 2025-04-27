@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { MobileNavHeader } from './mobile/MobileNavHeader';
 import { MobileHeroSection } from './mobile/MobileHeroSection';
 import { MobileFeaturesSection } from './mobile/MobileFeaturesSection';
 import { MobileDescriptionSection } from './mobile/MobileDescriptionSection';
@@ -13,7 +12,6 @@ import { MobileContactSection } from './mobile/MobileContactSection';
 export const MobileHomeSection = () => {
   return (
     <div className="min-h-screen w-full bg-[#003c43] overflow-y-auto">
-      <MobileNavHeader />
       <div className="px-6">
         <MobileHeroSection />
         <MobileFeaturesSection />
