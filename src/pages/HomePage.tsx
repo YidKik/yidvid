@@ -1,3 +1,4 @@
+
 import React, { useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useVideos } from '@/hooks/video/useVideos';
@@ -16,6 +17,7 @@ const HomePage = () => {
   const channelsSectionRef = useRef(null);
   const { isMobile, isTablet } = useIsMobile();
   const showHeroParallax = !isMobile && !isTablet;
+  const showDesktopContent = !isMobile && !isTablet;
 
   useHomeAnimations(channelsSectionRef);
 
@@ -24,6 +26,10 @@ const HomePage = () => {
   ) || [];
 
   const extendedChannelItems = [...channelItems, ...channelItems].slice(0, 30);
+
+  if (isMobile || isTablet) {
+    return null; // Return nothing for mobile and tablet views
+  }
 
   return (
     <motion.div 
@@ -48,11 +54,7 @@ const HomePage = () => {
       <div className="relative z-10 w-full">
         <div className="relative min-h-[80vh] px-4">
           <MainHeroSection />
-
-          <div className="sm:hidden">
-            {/* You can provide the new mobile design here later */}
-          </div>
-
+          
           {showHeroParallax && videos && videos.length > 8 && (
             <div className="absolute top-[15vh] inset-x-0 hero-parallax-section z-10">
               <HeroParallax 
