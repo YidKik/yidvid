@@ -1,10 +1,12 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { motion } from "framer-motion";
-import { fadeInVariants } from '@/components/home/mobile/animation-utils';
+import { useNavigate } from 'react-router-dom';
+import { fadeInVariants } from './animation-utils';
 
 export const MobileHeroSection = () => {
+  const navigate = useNavigate();
+
   return (
     <motion.div 
       id="home-section"
@@ -20,12 +22,12 @@ export const MobileHeroSection = () => {
       <p className="text-lg text-[#77b0aa] px-4">
         Watch, share, and connect with the finest Jewish content from around the world.
       </p>
-      <Link 
-        to="/explore"
-        className="px-8 py-3 bg-[#135d66] border border-[#ddf9f2] text-[#e3fef7] rounded-full text-base hover:bg-[#135d66]/90 transition-colors duration-300"
+      <button 
+        onClick={() => navigate('/videos')}
+        className="px-8 py-3 bg-[#135d66] border border-[#ddf9f2] text-[#e3fef7] rounded-full text-base hover:bg-[#e3fef7] hover:text-[#135d66] active:bg-[#e3fef7] active:text-[#135d66] transition-colors duration-300"
       >
         Explore
-      </Link>
+      </button>
     </motion.div>
   );
 };
