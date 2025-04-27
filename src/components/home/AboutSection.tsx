@@ -1,12 +1,13 @@
+
 import React from 'react';
 
 export const AboutSection = () => {
   return (
-    <section className="bg-[#e3fef7] px-6 py-16">
+    <section className="bg-[#135d66] px-6 py-16">
       <div className="container mx-auto grid grid-cols-2 gap-12 items-center">
         <div className="space-y-8">
-          <h2 className="text-6xl font-display text-brand-dark">About</h2>
-          <div className="space-y-6 text-lg text-brand-dark">
+          <h2 className="text-6xl font-display text-white">About</h2>
+          <div className="space-y-6 text-lg text-white/90">
             <p>
               We understand the importance of providing a safe and enjoyable platform
               for individuals and families to access entertainment content that aligns with
@@ -31,13 +32,11 @@ export const AboutSection = () => {
           </div>
         </div>
         <div className="flex justify-center items-center">
-          <div className="flex items-center justify-center">
-            <img
-              src="/public/yidkik-logo.png"
-              alt="YidVid Logo"
-              className="w-96 h-96 object-contain"
-            />
-          </div>
+          <img
+            src="/public/yidkik-logo.png"
+            alt="YidVid Logo"
+            className="w-[600px] h-[600px] object-contain"
+          />
         </div>
       </div>
     </section>
@@ -45,3 +44,4 @@ export const AboutSection = () => {
 };
 
 export default AboutSection;
+
