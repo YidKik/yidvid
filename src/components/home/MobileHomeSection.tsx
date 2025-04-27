@@ -12,24 +12,24 @@ export const MobileHomeSection = () => {
 
   return (
     <div className="min-h-screen w-full bg-[#003c43] px-6 overflow-y-auto">
-      {/* Hero Section */}
-      <div className="flex flex-col items-center text-center space-y-4 pt-12">
-        <h1 className="text-4xl font-bold text-[#e3fef7] leading-tight">
+      {/* Hero Section with increased top padding */}
+      <div className="flex flex-col items-center text-center space-y-6 pt-24">
+        <h1 className="text-5xl font-bold text-[#e3fef7] leading-tight">
           Your Gateway to Jewish Content
         </h1>
-        <p className="text-base text-[#77b0aa]">
+        <p className="text-lg text-[#77b0aa] px-4">
           Watch, share, and connect with the finest Jewish content from around the world.
         </p>
         <Link 
           to="/explore"
-          className="px-6 py-2 border border-[#77b0aa] text-[#e3fef7] rounded-full text-sm hover:bg-[#135d66] transition-colors duration-300"
+          className="px-8 py-3 border border-[#77b0aa] text-[#e3fef7] rounded-full text-base hover:bg-[#135d66] transition-colors duration-300"
         >
           Explorer
         </Link>
       </div>
 
-      {/* Feature Boxes */}
-      <div className="mt-8 flex justify-center gap-4">
+      {/* Feature Boxes with increased top margin */}
+      <div className="mt-16 flex justify-center gap-4">
         {['Free', 'Kosher', 'Up to date'].map((text) => (
           <div 
             key={text}
