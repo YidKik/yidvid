@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import VideoDetails from './pages/VideoDetails';
@@ -26,6 +25,7 @@ import RequestsPage from './pages/admin/RequestsPage';
 import ContactRequestsPage from './pages/admin/ContactRequestsPage';
 import NotificationsPage from './pages/admin/NotificationsPage';
 import LayoutCustomizationPage from './pages/admin/LayoutCustomizationPage';
+import TestimonialsPage from './pages/admin/TestimonialsPage';
 
 function App() {
   const location = useLocation();
@@ -71,6 +71,7 @@ function App() {
           <Route path="/admin/contact-requests" element={<ContactRequestsPage />} />
           <Route path="/admin/notifications" element={<NotificationsPage />} />
           <Route path="/admin/layout" element={<LayoutCustomizationPage />} />
+          <Route path="/admin/testimonials" element={<TestimonialsPage />} />
         </Routes>
       </ColorProvider>
     </PlaybackProvider>

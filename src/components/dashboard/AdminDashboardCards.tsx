@@ -1,4 +1,3 @@
-
 import { useNavigate } from "react-router-dom";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -115,6 +114,14 @@ export const AdminDashboardCards = ({ stats, notifications }: AdminDashboardCard
       onClick: () => navigate("/admin/notifications"),
       bgColor: "bg-[#FFF4E5]",
       iconColor: "text-orange-600"
+    },
+    {
+      title: "Testimonials Management",
+      description: "Manage feedback and testimonials shown on the main page",
+      icon: <MessageSquare className="h-7 w-7" />,
+      onClick: () => navigate("/admin/testimonials"),
+      bgColor: "bg-[#E0F7FF]",
+      iconColor: "text-blue-600"
     }
   ];
 
