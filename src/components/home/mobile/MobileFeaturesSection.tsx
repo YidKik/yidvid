@@ -22,18 +22,6 @@ export const MobileFeaturesSection = () => {
           </div>
         ))}
       </motion.div>
-      
-      <motion.div 
-        initial="hidden"
-        animate="visible"
-        variants={fadeInVariants}
-        transition={{ duration: 0.6, delay: 0.3 }}
-        className="bg-[#135d66] px-4 py-6 text-center"
-      >
-        <p className="text-[#e3fef7] text-base">
-          We understand the importance of providing a safe and enjoyable platform for individuals and families to access entertainment content that aligns with their values.
-        </p>
-      </motion.div>
     </div>
   );
 };
