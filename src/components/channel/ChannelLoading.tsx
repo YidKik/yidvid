@@ -1,6 +1,6 @@
 
 import { BackButton } from "@/components/navigation/BackButton";
-import { LoadingAnimation } from "@/components/ui/LoadingAnimation";
+import { MessageLoadingDots } from "@/components/ui/loading/MessageLoadingDots";
 import { useLocation } from "react-router-dom";
 
 export const ChannelLoading = () => {
@@ -15,9 +15,8 @@ export const ChannelLoading = () => {
     <div className="container mx-auto p-4 mt-16">
       <BackButton />
       <div className="flex flex-col items-center justify-center min-h-[300px]">
-        <LoadingAnimation 
+        <MessageLoadingDots 
           size="large" 
-          color="primary"
           text="Loading channel..." 
         />
       </div>
