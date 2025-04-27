@@ -70,15 +70,43 @@ export const MobileHomeSection = () => {
       {/* Auth Buttons */}
       <div className="mt-8 space-y-3">
         <Link to="/signup" className="block">
-          <Button variant="outline" className="w-full py-4 text-base border border-[#77b0aa] text-[#e3fef7] bg-transparent hover:bg-[#135d66] rounded-full">
+          <Button 
+            variant="default" 
+            className="w-full py-4 text-base bg-[#135d66] text-[#e3fef7] border border-[#ddf9f2] hover:bg-[#135d66]/90 rounded-full"
+          >
             Create account
           </Button>
         </Link>
         <Link to="/signin" className="block">
-          <Button variant="outline" className="w-full py-4 text-base border border-[#77b0aa] text-[#e3fef7] bg-transparent hover:bg-[#135d66] rounded-full">
+          <Button 
+            variant="default" 
+            className="w-full py-4 text-base bg-[#135d66] text-[#e3fef7] border border-[#ddf9f2] hover:bg-[#135d66]/90 rounded-full"
+          >
             Login
           </Button>
         </Link>
+      </div>
+
+      {/* Action Buttons */}
+      <div className="mt-8 space-y-3 mb-8">
+        <Button 
+          variant="default" 
+          className="w-full py-4 text-base bg-[#135d66] text-[#e3fef7] border border-[#ddf9f2] hover:bg-[#135d66]/90 rounded-full"
+        >
+          Send feedback
+        </Button>
+        <Button 
+          variant="default" 
+          className="w-full py-4 text-base bg-[#135d66] text-[#e3fef7] border border-[#ddf9f2] hover:bg-[#135d66]/90 rounded-full"
+        >
+          Contact
+        </Button>
+        <Button 
+          variant="default" 
+          className="w-full py-4 text-base bg-[#135d66] text-[#e3fef7] border border-[#ddf9f2] hover:bg-[#135d66]/90 rounded-full"
+        >
+          Request channel
+        </Button>
       </div>
 
       {/* Feedback Section */}
@@ -108,19 +136,6 @@ export const MobileHomeSection = () => {
             ))}
           </div>
         </div>
-      </div>
-
-      {/* Action Buttons */}
-      <div className="mt-8 space-y-3 mb-8">
-        <Button variant="outline" className="w-full py-4 text-base border border-[#77b0aa] text-[#e3fef7] bg-transparent hover:bg-[#135d66] rounded-full">
-          Send feedback
-        </Button>
-        <Button variant="outline" className="w-full py-4 text-base border border-[#77b0aa] text-[#e3fef7] bg-transparent hover:bg-[#135d66] rounded-full">
-          Contact
-        </Button>
-        <Button variant="outline" className="w-full py-4 text-base border border-[#77b0aa] text-[#e3fef7] bg-transparent hover:bg-[#135d66] rounded-full">
-          Request channel
-        </Button>
       </div>
 
       {/* Footer */}
