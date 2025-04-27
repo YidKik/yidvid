@@ -1,9 +1,6 @@
 
-import React, { useEffect, useState } from 'react';
-import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
-import { cn } from "@/lib/utils";
-import { useCarouselScroll } from '@/hooks/carousel/useCarouselScroll';
-import useEmblaCarousel from "embla-carousel-react";
+import React from 'react';
+import { InfiniteSlider } from '@/components/ui/infinite-slider';
 
 const feedbackItems = [
   "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Quis ipsum suspendisse ul-",
@@ -16,29 +13,6 @@ const feedbackItems = [
 ];
 
 export const FeedbackSection = () => {
-  const [api, setApi] = useState<any>(null);
-  const [emblaRef, emblaApi] = useEmblaCarousel({
-    loop: true,
-    dragFree: true,
-  });
-
-  useCarouselScroll({
-    emblaApi,
-    direction: "ltr",
-    speed: 0.2, // Reduced from 0.5 to 0.2 for slower movement
-    itemsLength: feedbackItems.length,
-  });
-
-  const [selectedIndex, setSelectedIndex] = useState(0);
-
-  useEffect(() => {
-    if (emblaApi) {
-      emblaApi.on("select", () => {
-        setSelectedIndex(emblaApi.selectedScrollSnap());
-      });
-    }
-  }, [emblaApi]);
-
   return (
     <section className="bg-[#135d66] py-16 overflow-hidden">
       <div className="container mx-auto px-6">
@@ -46,38 +20,24 @@ export const FeedbackSection = () => {
           Feedback
         </h2>
         
-        <Carousel
-          ref={emblaRef}
-          setApi={setApi}
-          className="w-full"
-          opts={{
-            align: "start",
-            loop: true,
-          }}
-        >
-          <CarouselContent>
-            {feedbackItems.map((feedback, index) => (
-              <CarouselItem key={index} className="basis-1/4 pl-4">
-                <div
-                  className="p-6 rounded-3xl border-2 border-[#ddf9f2] bg-[#003c43] h-80 flex items-center justify-center"
-                >
-                  <p className="text-[#ddf9f2]">{feedback}</p>
-                </div>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-        </Carousel>
+        <InfiniteSlider duration={50} gap={16} className="py-4">
+          {feedbackItems.map((feedback, index) => (
+            <div
+              key={index}
+              className="w-[300px] shrink-0"
+            >
+              <div className="p-6 rounded-3xl border-2 border-[#ddf9f2] bg-[#003c43] h-80 flex items-center justify-center">
+                <p className="text-[#ddf9f2]">{feedback}</p>
+              </div>
+            </div>
+          ))}
+        </InfiniteSlider>
 
         <div className="flex justify-center gap-2 mt-8">
           {[0, 1, 2, 3].map((dot) => (
             <div
               key={dot}
-              className={cn(
-                "w-2 h-2 rounded-full transition-all duration-300",
-                selectedIndex === dot
-                  ? "bg-[#ddf9f2] scale-125"
-                  : "bg-[#ddf9f2]/40"
-              )}
+              className="w-2 h-2 rounded-full bg-[#ddf9f2]/40 first:bg-[#ddf9f2] first:scale-125"
             />
           ))}
         </div>
@@ -85,4 +45,3 @@ export const FeedbackSection = () => {
     </section>
   );
 };
-
