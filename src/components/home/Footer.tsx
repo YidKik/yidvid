@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 export const Footer = () => {
   return (
     <motion.footer 
+      id="contact-section"
       className="bg-[#135d66] py-12"
       initial={{ opacity: 0, y: 50 }}
       animate={{ opacity: 1, y: 0 }}
