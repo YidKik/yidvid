@@ -6,6 +6,7 @@ import Auth from '@/pages/Auth';
 export const HomeHeader = () => {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'signin' | 'signup'>('signin');
+  const [activeSection, setActiveSection] = useState('home');
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -14,27 +15,45 @@ export const HomeHeader = () => {
         behavior: 'smooth',
         block: 'start'
       });
+      setActiveSection(sectionId.split('-')[0]);
     }
   };
 
   return (
     <>
-      <header className="w-full px-6 py-4 flex items-center justify-between">
+      <header className="w-full px-6 py-4 flex items-center justify-between fixed top-0 left-0 right-0 z-50 bg-brand-darkest">
         <div className="flex items-center space-x-2">
           <img src="/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png" alt="YidVid Logo" className="h-12" />
           <span className="text-white font-display text-2xl">YidVid</span>
         </div>
         <nav className="flex items-center space-x-8">
-          <Link to="/" className="text-white hover:text-brand-lightest transition-colors">Home</Link>
+          <Link 
+            to="/" 
+            className={`text-white transition-colors ${
+              activeSection === 'home' 
+                ? 'text-[#77b0aa]' 
+                : 'hover:text-[#77b0aa]'
+            }`}
+          >
+            Home
+          </Link>
           <button 
             onClick={() => scrollToSection('about-section')} 
-            className="text-white hover:text-brand-lightest transition-colors bg-transparent border-none p-0 m-0"
+            className={`text-white transition-colors bg-transparent border-none p-0 m-0 ${
+              activeSection === 'about' 
+                ? 'text-[#77b0aa]' 
+                : 'hover:text-[#77b0aa]'
+            }`}
           >
             About
           </button>
           <button 
             onClick={() => scrollToSection('contact-section')} 
-            className="text-white hover:text-brand-lightest transition-colors bg-transparent border-none p-0 m-0"
+            className={`text-white transition-colors bg-transparent border-none p-0 m-0 ${
+              activeSection === 'contact' 
+                ? 'text-[#77b0aa]' 
+                : 'hover:text-[#77b0aa]'
+            }`}
           >
             Contact
           </button>
@@ -43,7 +62,7 @@ export const HomeHeader = () => {
               setActiveTab('signin');
               setIsAuthOpen(true);
             }}
-            className="text-white hover:text-brand-lightest transition-colors bg-transparent border-none p-0 m-0"
+            className="text-white hover:text-[#77b0aa] transition-colors bg-transparent border-none p-0 m-0"
           >
             Sign in
           </button>
