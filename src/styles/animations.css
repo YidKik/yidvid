@@ -1,3 +1,4 @@
+
 /* Animation Definitions */
 @keyframes toast-enter {
   from {
@@ -91,13 +92,17 @@
 
 @keyframes border-flow {
   0% {
-    transform: rotate(0deg);
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
   }
   100% {
-    transform: rotate(360deg);
+    background-position: 0% 50%;
   }
 }
 
 .animate-border-flow {
   animation: border-flow 4s linear infinite;
+  background-size: 200% 200%;
 }
