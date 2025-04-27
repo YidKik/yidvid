@@ -47,7 +47,7 @@ const HomePage = () => {
       />
 
       <div className="relative z-10 w-full">
-        <div className="relative min-h-[60vh] sm:min-h-[20vh] px-4">
+        <div className="relative min-h-[50vh] sm:min-h-[80vh] px-4">
           <MainHeroSection />
 
           {showHeroParallax && videos && videos.length > 8 && (
