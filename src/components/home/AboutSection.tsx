@@ -1,3 +1,4 @@
+
 import React from 'react';
 
 export const AboutSection = () => {
@@ -36,7 +37,7 @@ export const AboutSection = () => {
             <div className="absolute inset-0 bg-brand-light/20 rounded-3xl transform -rotate-3"></div>
             <div className="relative flex items-center justify-center h-full">
               <img
-                src="/lovable-uploads/71a6cabf-63ef-4db1-8dea-4252628860dc.png"
+                src="/lovable-uploads/d8bf250d-cefc-489d-aec9-159edca134dd.png"
                 alt="YidVid Logo"
                 className="w-80 h-80 object-contain"
               />
