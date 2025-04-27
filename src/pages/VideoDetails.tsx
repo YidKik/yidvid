@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { useParams, Link, useLocation } from "react-router-dom";
 import { VideoPlayer } from "@/components/video/VideoPlayer";
@@ -99,7 +100,7 @@ const VideoDetails = () => {
   }
 
   return (
-    <div className="w-full min-h-screen bg-white">
+    <div className="w-full min-h-screen bg-white text-black"> {/* Updated to ensure white background and black text */}
       <div className="container mx-auto p-4 pt-16">
         <BackButton />
         {isAuthenticated && <VideoHistory videoId={video.id} />}
@@ -108,7 +109,7 @@ const VideoDetails = () => {
           <div className="lg:col-span-2">
             <VideoPlayer videoId={video.video_id} />
             <div className="flex justify-between items-start mb-4">
-              <h1 className="text-base md:text-2xl font-bold">{video.title}</h1>
+              <h1 className="text-base md:text-2xl font-bold text-black">{video.title}</h1> {/* Explicitly set text color to black */}
               <ReportVideoDialog videoId={video.id} />
             </div>
             
@@ -135,7 +136,10 @@ const VideoDetails = () => {
                 <LoadingAnimation size="small" color="muted" text="Loading related videos..." />
               </div>
             ) : (
-              <RelatedVideos videos={channelVideos} />
+              <div>
+                <h2 className="text-xl font-semibold mb-4 text-black">More videos</h2> {/* Updated to black text */}
+                <RelatedVideos videos={channelVideos} />
+              </div>
             )}
           </div>
         </div>
@@ -145,3 +149,4 @@ const VideoDetails = () => {
 };
 
 export default VideoDetails;
+

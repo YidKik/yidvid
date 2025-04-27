@@ -167,7 +167,7 @@ const ChannelDetails = () => {
   const hasVideosError = !!videosError;
 
   return (
-    <div className="w-full min-h-screen bg-white"> {/* Full white background for entire screen */}
+    <div className="w-full min-h-screen bg-white text-black"> {/* Updated to ensure white background and black text */}
       <div className="container mx-auto p-4 pt-16">
         <BackButton />
         <ChannelHeader
