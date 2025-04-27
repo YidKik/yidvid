@@ -3,8 +3,8 @@ import React from 'react';
 
 export const AboutSection = () => {
   return (
-    <section className="container mx-auto px-6 py-16">
-      <div className="grid grid-cols-2 gap-12 items-center">
+    <section className="bg-[#135d66] px-6 py-16">
+      <div className="container mx-auto grid grid-cols-2 gap-12 items-center">
         <div className="space-y-8">
           <h2 className="text-6xl font-display text-white">About</h2>
           <div className="space-y-6 text-lg text-brand-light">
@@ -48,3 +48,4 @@ export const AboutSection = () => {
     </section>
   );
 };
+
