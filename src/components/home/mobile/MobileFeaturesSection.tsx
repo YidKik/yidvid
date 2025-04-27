@@ -31,10 +31,9 @@ export const MobileFeaturesSection = () => {
         className="bg-[#135d66] px-4 py-6 text-center"
       >
         <p className="text-[#e3fef7] text-base">
-          Discover a curated collection of Jewish content that celebrates our rich culture, traditions, and stories.
+          We understand the importance of providing a safe and enjoyable platform for individuals and families to access entertainment content that aligns with their values.
         </p>
       </motion.div>
     </div>
   );
 };
-
