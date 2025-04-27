@@ -43,11 +43,11 @@ export const MobileNavHeader = () => {
           <img 
             src="/lovable-uploads/e425cacb-4c3a-4d81-b4e0-77fcbf10f61c.png" 
             alt="YidVid Logo" 
-            className="h-10 w-auto" 
+            className="h-12 w-auto"
           />
         </div>
         
-        <nav className="flex items-center gap-4">
+        <nav className="flex items-center gap-6">
           {[
             { id: 'home-section', label: 'Home' },
             { id: 'about-section', label: 'About' },
@@ -59,8 +59,8 @@ export const MobileNavHeader = () => {
               onClick={() => scrollToSection(id)}
               className={`text-sm font-medium transition-colors ${
                 activeSection === id.split('-')[0]
-                  ? 'text-black/90'  // Slightly darker when active
-                  : 'text-black/60 hover:text-black/80'
+                  ? 'text-black'
+                  : 'text-black/70 hover:text-black'
               }`}
             >
               {label}

@@ -3,21 +3,21 @@
   --foreground: 222.2 84% 4.9%;
   --background-custom: #FFFFFF;
   --text-custom: #030303;
-  --button-custom: #ea384c;
+  --button-custom: #135d66;
   --logo-custom: #030303;
   --search-background: #F2F2F2;
   --search-text: #606060;
   --search-border: #E5E5E5;
   --auth-background: #FFFFFF;
   --auth-text: #2D3748;
-  --auth-primary: #ea384c;
+  --auth-primary: #135d66;
   --auth-secondary: #FEF2F2;
   --auth-border: #E9ECEF;
   --auth-input-bg: #F8F9FA;
   --auth-footer-bg: #F9FAFB;
   --auth-footer-text: #6B7280;
-  --auth-link: #ea384c;
-  --auth-link-hover: #b91c1c;
+  --auth-link: #135d66;
+  --auth-link-hover: #0d4049;
 
   --card: 0 0% 100%;
   --card-foreground: 222.2 84% 4.9%;
@@ -25,7 +25,7 @@
   --popover: 0 0% 100%;
   --popover-foreground: 222.2 84% 4.9%;
 
-  --primary: 222.2 47.4% 11.2%;
+  --primary: #135d66;
   --primary-foreground: 210 40% 98%;
 
   --secondary: 210 40% 96.1%;
