@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -30,12 +31,12 @@ const NewHomePage = () => {
           <h1 className="text-6xl font-display text-white leading-tight">
             Your Gateway to<br />Jewish Content
           </h1>
-          <p className="text-brand-light text-lg">
+          <p className="text-[#77b0aa] text-lg leading-relaxed">
             Watch, share, and connect with the finest Jewish content from around the world.
           </p>
           <Link 
             to="/videos"
-            className="inline-block px-8 py-3 bg-transparent border-2 border-brand-light text-white rounded-full hover:bg-brand-light hover:text-brand-darkest transition-all duration-300"
+            className="inline-block px-8 py-3 bg-transparent border-2 border-brand-light text-[#77b0aa] rounded-full hover:bg-brand-light hover:text-brand-darkest transition-all duration-300"
           >
             Explorer
           </Link>
@@ -180,3 +181,4 @@ const NewHomePage = () => {
 };
 
 export default NewHomePage;
+
