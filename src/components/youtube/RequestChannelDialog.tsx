@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
@@ -44,7 +43,6 @@ export const RequestChannelDialog = () => {
     },
   });
 
-  // Get the current session
   const { data: session } = useQuery({
     queryKey: ["session"],
     queryFn: async () => {
@@ -90,6 +88,7 @@ export const RequestChannelDialog = () => {
         <DialogTrigger asChild>
           <Button 
             variant="outline" 
+            data-trigger="request-channel-dialog"
             className="flex items-center gap-1.5 bg-white hover:bg-gray-50 h-7 md:h-9 text-xs md:text-sm px-2.5 md:px-3.5 rounded-full shadow-sm border border-gray-200"
             onClick={handleClick}
           >

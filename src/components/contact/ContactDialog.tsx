@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
@@ -61,6 +60,7 @@ export const ContactDialog = () => {
         <Button 
           variant="ghost" 
           size="icon"
+          data-trigger="contact-dialog"
           className={isMobile ? 'bg-[#222222] hover:bg-[#333333] text-white h-7 w-7 rounded-md' : 'h-10 w-10'}
         >
           <MessageSquare className={isMobile ? 'h-3.5 w-3.5' : 'h-5 w-5'} />
