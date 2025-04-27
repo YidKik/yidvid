@@ -8,8 +8,18 @@ import { StatsSection } from '@/components/home/StatsSection';
 import { FeedbackSection } from '@/components/home/FeedbackSection';
 import { Footer } from '@/components/home/Footer';
 import { ScrollReveal } from '@/components/ui/scroll-reveal';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { MobileHomeSection } from '@/components/home/MobileHomeSection';
 
 const NewHomePage = () => {
+  const { isMobile, isTablet } = useIsMobile();
+  
+  // Return the completely blank mobile section for mobile and tablet views
+  if (isMobile || isTablet) {
+    return <MobileHomeSection />;
+  }
+
+  // Only desktop views will see the full content
   return (
     <div className="min-h-screen bg-brand-darkest">
       <HomeHeader />
