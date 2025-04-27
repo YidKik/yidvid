@@ -107,7 +107,7 @@ const VideoDetails = () => {
   }
 
   return (
-    <div className="container mx-auto p-4 mt-16">
+    <div className="container mx-auto p-4 mt-16 bg-white min-h-screen"> {/* Added bg-white */}
       <BackButton />
       {isAuthenticated && <VideoHistory videoId={video.id} />}
       

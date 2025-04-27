@@ -167,7 +167,7 @@ const ChannelDetails = () => {
   const hasVideosError = !!videosError;
 
   return (
-    <div className="container mx-auto p-4 mt-16 opacity-0 animate-[fadeIn_0.6s_ease-out_forwards]">
+    <div className="container mx-auto p-4 mt-16 bg-white opacity-0 animate-[fadeIn_0.6s_ease-out_forwards]"> {/* Added bg-white */}
       <BackButton />
       <ChannelHeader
         channel={channel}
