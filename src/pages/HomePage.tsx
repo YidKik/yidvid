@@ -44,11 +44,11 @@ const HomePage = () => {
       />
 
       <div className="relative z-10 w-full">
-        <div className="relative min-h-[40vh] px-4 sm:px-6">
+        <div className="relative min-h-[20vh] px-4 sm:px-6">
           <MainHeroSection />
 
           {videos && videos.length > 8 && (
-            <div className="absolute top-[15vh] sm:top-[20vh] inset-x-0 hero-parallax-section z-10">
+            <div className="absolute top-[15vh] sm:top-[15vh] inset-x-0 hero-parallax-section z-10">
               <HeroParallax 
                 videos={videos}
                 title=""

@@ -1,10 +1,11 @@
+
 import React from 'react';
 import { motion } from 'framer-motion';
 
 export const FeaturesSection = () => {
   return (
     <motion.section 
-      className="relative z-10 w-full mt-[40vh] sm:mt-[50vh]"
+      className="relative z-10 w-full mt-[15vh] sm:mt-[15vh]"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5, delay: 0.3 }}
