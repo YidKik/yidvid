@@ -28,30 +28,16 @@ export const FeaturesSection = () => {
           ].map((feature, i) => (
             <motion.div 
               key={feature.title}
-              className="rounded-xl border-2 border-[#70a9a4] bg-[#135d66] p-6 flex flex-col items-center justify-center text-center"
+              className="rounded-xl border-2 border-[#70a9a4] bg-[#135d66] p-8 flex flex-col items-center justify-center text-center min-h-[300px]"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: i * 0.2 }}
               whileHover={{ scale: 1.03, transition: { duration: 0.2 } }}
             >
-              <h3 className="text-3xl font-display text-[#e3fef7] mb-3">{feature.title}</h3>
-              <p className="text-[#77b0aa] text-sm leading-relaxed">{feature.description}</p>
+              <h3 className="text-4xl font-display text-[#e3fef7] mb-4">{feature.title}</h3>
+              <p className="text-[#77b0aa] text-lg leading-relaxed">{feature.description}</p>
             </motion.div>
           ))}
-        </div>
-      </div>
-
-      <div className="mt-16 px-4">
-        <div className="text-center space-y-4">
-          <h2 className="text-3xl text-[#77b0aa] mb-2">Over</h2>
-          <div className="text-7xl font-bold text-white">10,000</div>
-          <div className="text-3xl text-[#77b0aa]">Videos</div>
-        </div>
-
-        <div className="text-center space-y-4 mt-12">
-          <h2 className="text-3xl text-[#77b0aa] mb-2">Over</h2>
-          <div className="text-7xl font-bold text-white">400</div>
-          <div className="text-3xl text-[#77b0aa]">Channels</div>
         </div>
       </div>
     </motion.section>
