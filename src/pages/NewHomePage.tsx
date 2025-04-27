@@ -58,7 +58,7 @@ const NewHomePage = () => {
             },
             {
               title: "Kosher",
-              description: "we are on are guidelines to make sure its 100 percent kosher"
+              description: "We are on our guidelines to make sure it's 100 percent kosher"
             },
             {
               title: "Up to date",
@@ -73,8 +73,8 @@ const NewHomePage = () => {
               transition={{ duration: 0.6, delay: i * 0.2 }}
               whileHover={{ scale: 1.03, transition: { duration: 0.2 } }}
             >
-              <h3 className="text-4xl font-display text-[#e3fef7] mb-6">{feature.title}</h3>
-              <p className="text-[#77b0aa] text-lg">{feature.description}</p>
+              <h3 className="text-5xl font-display text-[#e3fef7] mb-6">{feature.title}</h3>
+              <p className="text-[#77b0aa] text-base leading-relaxed">{feature.description}</p>
             </motion.div>
           ))}
         </div>
