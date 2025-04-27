@@ -20,12 +20,16 @@ export const TestimonialsTable = ({ testimonials, onEdit, onRefetch }: {
   onRefetch: () => void;
 }) => {
   const [isDeleting, setIsDeleting] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const handleToggleVisibility = async (testimonial: Testimonial) => {
     try {
       const { error } = await supabase
         .from('testimonials')
-        .update({ is_visible: !testimonial.is_visible })
+        .update({ 
+          is_visible: !testimonial.is_visible,
+          updated_at: new Date()
+        })
         .eq('id', testimonial.id);
 
       if (error) throw error;
@@ -42,6 +46,8 @@ export const TestimonialsTable = ({ testimonials, onEdit, onRefetch }: {
     if (!confirm("Are you sure you want to delete this testimonial?")) return;
     
     setIsDeleting(true);
+    setDeletingId(id);
+    
     try {
       const { error } = await supabase
         .from('testimonials')
@@ -57,6 +63,7 @@ export const TestimonialsTable = ({ testimonials, onEdit, onRefetch }: {
       toast.error("Failed to delete testimonial");
     } finally {
       setIsDeleting(false);
+      setDeletingId(null);
     }
   };
 
@@ -104,7 +111,7 @@ export const TestimonialsTable = ({ testimonials, onEdit, onRefetch }: {
                     variant="ghost"
                     size="sm"
                     onClick={() => handleDelete(testimonial.id)}
-                    disabled={isDeleting}
+                    disabled={isDeleting && deletingId === testimonial.id}
                   >
                     <Trash2 className="h-4 w-4 text-destructive" />
                   </Button>

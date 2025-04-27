@@ -42,21 +42,31 @@ export const TestimonialDialog = ({
     setIsSaving(true);
 
     try {
-      // Use authenticated client but with admin options to bypass RLS
-      const supabaseAdmin = supabase;
-      
       if (testimonial?.id) {
-        const { error } = await supabaseAdmin
+        // Update existing testimonial
+        const { error } = await supabase
           .from('testimonials')
-          .update(formData)
+          .update({
+            content: formData.content,
+            author_name: formData.author_name,
+            display_order: formData.display_order,
+            is_visible: formData.is_visible,
+            updated_at: new Date()
+          })
           .eq('id', testimonial.id);
         
         if (error) throw error;
         toast.success("Testimonial updated successfully");
       } else {
-        const { error } = await supabaseAdmin
+        // Insert new testimonial
+        const { error } = await supabase
           .from('testimonials')
-          .insert(formData);
+          .insert({
+            content: formData.content,
+            author_name: formData.author_name,
+            display_order: formData.display_order,
+            is_visible: formData.is_visible
+          });
         
         if (error) throw error;
         toast.success("Testimonial added successfully");
