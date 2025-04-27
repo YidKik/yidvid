@@ -15,7 +15,8 @@ const HomePage = () => {
   const { data: videos, isLoading: videosLoading } = useVideos();
   const { manuallyFetchedChannels, isLoading: channelsLoading } = useChannelsGrid();
   const channelsSectionRef = useRef(null);
-  const { isMobile } = useIsMobile();
+  const { isMobile, isTablet } = useIsMobile();
+  const showHeroParallax = !isMobile && !isTablet;
 
   useHomeAnimations(channelsSectionRef);
 
@@ -49,7 +50,7 @@ const HomePage = () => {
         <div className="relative min-h-[60vh] sm:min-h-[20vh] px-4">
           <MainHeroSection />
 
-          {!isMobile && videos && videos.length > 8 && (
+          {showHeroParallax && videos && videos.length > 8 && (
             <div className="absolute top-[15vh] inset-x-0 hero-parallax-section z-10">
               <HeroParallax 
                 videos={videos}

@@ -23,8 +23,8 @@ export const MainHeroSection: React.FC = () => {
         </Link>
       </div>
       
-      <div className="mt-12 sm:mt-20">
-        <h1 className="text-4xl sm:text-7xl md:text-8xl lg:text-9xl font-bold mb-4 sm:mb-8 tracking-tight max-w-6xl mx-auto text-center px-2">
+      <div className="mt-8 sm:mt-20 max-w-[90vw] sm:max-w-6xl mx-auto">
+        <h1 className="text-3xl sm:text-7xl md:text-8xl lg:text-9xl font-bold mb-4 sm:mb-8 tracking-tight text-center px-2 leading-tight sm:leading-tight">
           <span className="bg-clip-text text-transparent bg-gradient-to-b from-white to-white/80">
             Your Gateway to
           </span>
@@ -34,13 +34,13 @@ export const MainHeroSection: React.FC = () => {
           </span>
         </h1>
         
-        <p className="text-sm sm:text-lg md:text-xl text-white/40 mb-6 sm:mb-8 leading-relaxed font-light tracking-wide max-w-2xl mx-auto text-center px-4">
+        <p className="text-xs sm:text-lg md:text-xl text-white/40 mb-6 sm:mb-8 leading-relaxed font-light tracking-wide max-w-xs sm:max-w-2xl mx-auto text-center px-2">
           Watch, share, and connect with the finest Jewish content from around the world.
         </p>
 
         <Link to="/videos">
           <motion.button 
-            className="px-8 py-2 sm:px-8 sm:py-4 bg-[#003c43] hover:bg-[#135d66] text-white text-lg sm:text-xl font-medium rounded-full transition-colors mx-auto border-2 border-[#77b0aa]"
+            className="px-6 py-2 sm:px-8 sm:py-4 bg-[#003c43] hover:bg-[#135d66] text-white text-base sm:text-xl font-medium rounded-full transition-colors mx-auto border-2 border-[#77b0aa]"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
