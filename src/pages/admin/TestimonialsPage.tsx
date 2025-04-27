@@ -8,11 +8,13 @@ import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { BackButton } from "@/components/navigation/BackButton";
+import { toast } from "sonner";
 
 export default function TestimonialsPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedTestimonial, setSelectedTestimonial] = useState<any>(null);
 
+  // Fetch all testimonials, not just visible ones
   const { data: testimonials, refetch } = useQuery({
     queryKey: ["testimonials"],
     queryFn: async () => {
@@ -21,7 +23,10 @@ export default function TestimonialsPage() {
         .select('*')
         .order('display_order');
       
-      if (error) throw error;
+      if (error) {
+        toast.error("Failed to load testimonials");
+        throw error;
+      }
       return data;
     }
   });
