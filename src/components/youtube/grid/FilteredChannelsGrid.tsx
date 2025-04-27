@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { Channel } from "@/hooks/channel/useChannelsGrid";
 import { ChannelCard } from "./ChannelCard";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface FilteredChannelsGridProps {
   channels: Channel[];
@@ -14,6 +15,7 @@ export const FilteredChannelsGrid = ({
 }: FilteredChannelsGridProps) => {
   const [displayChannels, setDisplayChannels] = useState<Channel[]>([]);
   const [initialized, setInitialized] = useState(false);
+  const { isMobile } = useIsMobile();
   
   useEffect(() => {
     if (!initialized && channels.length > 0) {
@@ -35,10 +37,13 @@ export const FilteredChannelsGrid = ({
     }
   }, [channels, initialized, displayChannels]);
 
+  // On mobile, only show first 2 channels
+  const channelsToDisplay = isMobile ? displayChannels.slice(0, 2) : displayChannels;
+
   return (
     <div className="w-full">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mt-4 pb-8">
-        {displayChannels.map((channel, index) => (
+      <div className={`grid ${isMobile ? 'grid-cols-2 gap-4' : 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6'} mt-4 pb-8`}>
+        {channelsToDisplay.map((channel, index) => (
           <ChannelCard 
             key={channel.id?.toString() || `channel-${index}`}
             channel={channel} 

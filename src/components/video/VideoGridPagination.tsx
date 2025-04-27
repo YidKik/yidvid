@@ -24,7 +24,6 @@ export const VideoGridPagination = ({
   onShowAll,
   onPageChange,
 }: VideoGridPaginationProps) => {
-  // If not showing all, display the "See More" button
   if (!showAll) {
     return (
       <div className={`flex justify-center ${isMobile ? 'mt-1' : 'mt-8'}`}>
@@ -44,7 +43,6 @@ export const VideoGridPagination = ({
     );
   }
 
-  // For pagination display with custom arrows
   return (
     <div className="flex items-center justify-center">
       <div className="inline-flex">
@@ -52,7 +50,8 @@ export const VideoGridPagination = ({
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
           className={`
-            bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-l
+            bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold
+            ${isMobile ? 'py-1 px-2 text-sm' : 'py-2 px-4'} rounded-l
             ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}
           `}
         >
@@ -62,7 +61,8 @@ export const VideoGridPagination = ({
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
           className={`
-            bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-r
+            bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold
+            ${isMobile ? 'py-1 px-2 text-sm' : 'py-2 px-4'} rounded-r
             ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}
           `}
         >
