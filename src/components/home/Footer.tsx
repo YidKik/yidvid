@@ -1,6 +1,8 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
+import { ContactDialog } from '@/components/contact/ContactDialog';
+import { RequestChannelDialog } from '@/components/youtube/RequestChannelDialog';
 
 export const Footer = () => {
   return (
@@ -13,14 +15,13 @@ export const Footer = () => {
     >
       <div className="container mx-auto px-6">
         <div className="flex justify-center space-x-10 mb-12">
-          {['Contact', 'Send feedback', 'Request channel'].map((text) => (
-            <button
-              key={text}
-              className="px-14 py-5 rounded-3xl border-2 border-[#ddf9f2] text-[#ddf9f2] text-xl hover:bg-[#003c43]/30 transition-all duration-300"
-            >
-              {text}
-            </button>
-          ))}
+          <ContactDialog />
+          <RequestChannelDialog />
+          <button
+            className="px-14 py-5 rounded-3xl border-2 border-[#ddf9f2] text-[#ddf9f2] text-xl hover:bg-[#003c43]/30 transition-all duration-300"
+          >
+            Send feedback
+          </button>
         </div>
         <p className="text-center text-[#ddf9f2] text-lg mt-8">
           © {new Date().getFullYear()} YidVid. All Rights Reserved.
