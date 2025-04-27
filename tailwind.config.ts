@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -38,8 +37,8 @@ export default {
           foreground: "#FFFFFF",
         },
         secondary: {
-          DEFAULT: "#606060",
-          hover: "#4D4D4D",
+          DEFAULT: "#030303",
+          hover: "#222222",
           foreground: "#FFFFFF",
         },
         destructive: {
@@ -153,8 +152,8 @@ export default {
           foreground: "#FFFFFF",
         },
         secondary: {
-          DEFAULT: "#606060",
-          hover: "#4D4D4D",
+          DEFAULT: "#030303",
+          hover: "#222222",
           foreground: "#FFFFFF",
         },
         destructive: {
