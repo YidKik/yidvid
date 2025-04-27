@@ -37,30 +37,30 @@ export const MobileNavHeader = () => {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-[#003c43]/95 backdrop-blur-sm border-b border-[#135d66]/30">
+    <header className="fixed top-0 left-0 right-0 z-50">
       <div className="flex items-center justify-between px-4 h-16">
         <div className="flex items-center">
           <img 
             src="/lovable-uploads/e425cacb-4c3a-4d81-b4e0-77fcbf10f61c.png" 
             alt="YidVid Logo" 
-            className="h-14 w-auto" // Increased logo size
+            className="h-10 w-auto" 
           />
         </div>
         
-        <nav className="flex items-center gap-8">
+        <nav className="flex items-center gap-4">
           {[
             { id: 'home-section', label: 'Home' },
             { id: 'about-section', label: 'About' },
             { id: 'contact-section', label: 'Contact' },
-            { id: 'sign-in', label: 'Sign In' }
+            { id: 'sign-in', label: 'Sign in' }
           ].map(({ id, label }) => (
             <button
               key={id}
               onClick={() => scrollToSection(id)}
               className={`text-sm font-medium transition-colors ${
                 activeSection === id.split('-')[0]
-                  ? 'text-[#e3fef7]'  // Active state just changes text color to brighter white
-                  : 'text-[#77b0aa] hover:text-[#e3fef7]/90' // Inactive state is more muted
+                  ? 'text-black/90'  // Slightly darker when active
+                  : 'text-black/60 hover:text-black/80'
               }`}
             >
               {label}
@@ -71,4 +71,3 @@ export const MobileNavHeader = () => {
     </header>
   );
 };
-
