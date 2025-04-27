@@ -1,28 +1,32 @@
 
+import React from 'react';
 import { VideoGrid } from "@/components/VideoGrid";
 import { VideoGridPagination } from "@/components/video/VideoGridPagination";
 import { ChannelsGrid } from "@/components/youtube/ChannelsGrid";
 import { VideoData } from "@/hooks/video/types/video-fetcher";
 import { useVideoPagination } from "@/hooks/video/useVideoPagination";
+import { useIsMobile } from "@/hooks/use-mobile";
 
-export interface VideoViewProps {
+export interface MobileVideoViewProps {
   videos: VideoData[];
   isLoading: boolean;
   isRefreshing: boolean;
   refetch?: () => Promise<any>;
+  forceRefetch?: () => Promise<any>;
   lastSuccessfulFetch?: Date | null;
   fetchAttempts?: number;
-  isMobile?: boolean;
 }
 
-export const VideoView = ({
+export const MobileVideoView: React.FC<MobileVideoViewProps> = ({
   videos,
   isLoading,
   isRefreshing,
-  isMobile = false
-}: VideoViewProps) => {
-  const videosPerPage = isMobile ? 4 : 12;
-  const rowSize = isMobile ? 2 : 4;
+  refetch,
+  forceRefetch
+}) => {
+  const { isMobile } = useIsMobile();
+  const videosPerPage = 4;
+  const rowSize = 2;
   
   const {
     sortedVideos,
@@ -35,20 +39,37 @@ export const VideoView = ({
   } = useVideoPagination({
     videos,
     videosPerPage,
-    isMobile
+    isMobile: true
   });
 
-  return {
-    sortedVideos,
-    displayVideos,
-    currentPage,
-    totalPages,
-    setCurrentPage,
-    showMoreMobile,
-    setShowMoreMobile,
-    videosPerPage,
-    rowSize,
-    isLoading,
-    isRefreshing
-  };
+  return (
+    <div className="space-y-4">
+      <VideoGrid 
+        videos={displayVideos}
+        maxVideos={videosPerPage}
+        rowSize={rowSize}
+        isLoading={isLoading || isRefreshing}
+        className="grid-cols-2 gap-4"
+      />
+      
+      {totalPages > 1 && (
+        <div className="mt-4">
+          <VideoGridPagination
+            showAll={showMoreMobile}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            filteredVideosLength={sortedVideos.length}
+            maxVideos={videosPerPage}
+            isMobile={true}
+            onShowAll={() => setShowMoreMobile(true)}
+            onPageChange={(page) => setCurrentPage(page)}
+          />
+        </div>
+      )}
+
+      <div className="mt-6">
+        <ChannelsGrid />
+      </div>
+    </div>
+  );
 };
