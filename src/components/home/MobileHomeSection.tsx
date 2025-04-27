@@ -26,13 +26,7 @@ export const MobileHomeSection = () => {
   return (
     <div className="min-h-screen w-full bg-[#003c43] overflow-y-auto">
       <div className="flex justify-around items-center py-4 px-6">
-        <div className="flex items-center">
-          <img 
-            src="/lovable-uploads/e425cacb-4c3a-4d81-b4e0-77fcbf10f61c.png" 
-            alt="YidVid Logo" 
-            className="h-12 w-auto object-contain" 
-          />
-        </div>
+        <span className="text-[#e3fef7] text-sm font-medium">YidVid</span>
         {[
           { id: 'home-section', label: 'Home' },
           { id: 'about-section', label: 'About' },

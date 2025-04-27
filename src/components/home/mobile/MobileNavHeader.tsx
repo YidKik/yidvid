@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 
 export const MobileNavHeader = () => {
@@ -39,12 +38,8 @@ export const MobileNavHeader = () => {
   return (
     <header className="fixed top-0 left-0 right-0 z-50">
       <div className="flex items-center justify-between px-4 h-16">
-        <div className="flex items-center">
-          <img 
-            src="/lovable-uploads/e425cacb-4c3a-4d81-b4e0-77fcbf10f61c.png" 
-            alt="YidVid Logo" 
-            className="h-12 w-auto"
-          />
+        <div className="flex items-center text-lg font-bold">
+          YidVid
         </div>
         
         <nav className="flex items-center gap-6">
