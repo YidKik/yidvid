@@ -24,16 +24,12 @@ export const MobileHomeSection = () => {
 
       {/* Hero Content */}
       <div className="px-4 pt-8">
-        <h1 className="text-5xl font-bold tracking-tight text-center mb-6">
-          <span className="text-[#e3fef7] block mb-2">
-            Your Gateway to
-          </span>
-          <span className="text-[#77b0aa]">
-            Jewish Content
-          </span>
+        <h1 className="text-7xl font-bold tracking-tight text-center mb-8">
+          <div className="text-[#e3fef7] leading-tight">Your Gateway to</div>
+          <div className="text-[#77b0aa] leading-tight">Jewish Content</div>
         </h1>
         
-        <p className="text-[#77b0aa] text-lg mb-8 text-center max-w-xs mx-auto">
+        <p className="text-[#77b0aa] text-xl mb-12 text-center max-w-lg mx-auto leading-relaxed">
           Watch, share, and connect with the finest Jewish content from around the world.
         </p>
 
@@ -48,3 +44,4 @@ export const MobileHomeSection = () => {
     </div>
   );
 };
+
