@@ -1,4 +1,3 @@
-
 import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -217,17 +216,16 @@ export const MobileHomeSection = () => {
       >
         <h2 className="text-[#e3fef7] text-2xl font-bold text-center mb-6">Feedback</h2>
         
-        {/* Feedback section with multi-line cards that show 1.5 at a time */}
         <div className="relative">
           <div className="overflow-x-auto pb-8 snap-x snap-mandatory scrollbar-hide">
-            <div className="flex w-[250%]">
+            <div className="flex gap-4">
               {feedbackItems.map((feedback, index) => (
                 <div 
                   key={index}
-                  className="w-[66%] flex-shrink-0 px-2"
+                  className="w-[66vw] flex-shrink-0 first:ml-4 last:mr-4"
                 >
-                  <div className="border border-[#ddf9f2] rounded-3xl p-5 bg-[#135d66] h-32 flex items-start">
-                    <p className="text-[#e3fef7] text-sm leading-relaxed overflow-y-auto">
+                  <div className="border border-[#ddf9f2] rounded-3xl p-5 bg-[#135d66] min-h-[120px] flex items-start">
+                    <p className="text-[#e3fef7] text-sm leading-relaxed">
                       {feedback}
                     </p>
                   </div>
