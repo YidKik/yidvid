@@ -1,16 +1,15 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 
 export const FeaturesSection = () => {
   return (
     <motion.section 
-      className="relative z-10 w-full mt-[80vh] sm:mt-[100vh]"
+      className="relative z-10 w-full mt-[40vh] sm:mt-[50vh]"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5, delay: 0.3 }}
     >
-      <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-16">
+      <div className="container mx-auto px-4 sm:px-6 py-4 sm:py-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-12">
           {[
             {
@@ -43,4 +42,3 @@ export const FeaturesSection = () => {
     </motion.section>
   );
 };
-
