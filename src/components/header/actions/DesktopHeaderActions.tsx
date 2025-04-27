@@ -28,16 +28,30 @@ export const DesktopHeaderActions = ({
     <div className="flex items-center gap-3">
       {session && <NotificationsMenu session={session} onMarkAsRead={onMarkNotificationsAsRead} />}
       
-      <ContactDialog />
+      <Button 
+        onClick={() => {
+          const contactDialog = document.querySelector('[data-state="closed"][role="dialog"]');
+          if (contactDialog) {
+            (contactDialog as HTMLElement).click();
+          }
+        }}
+        variant="ghost" 
+        size="icon"
+        className={`h-10 w-10 ${isVideosPage 
+          ? 'bg-[#ea384c] hover:bg-[#c82d3f] text-white' 
+          : 'bg-[#222222] hover:bg-[#333333] text-white'}`}
+      >
+        <MessageSquare className="h-5 w-5" />
+      </Button>
       
       {session ? (
         <UserMenu onLogout={onLogout} />
       ) : (
         <Button 
           onClick={onAuthOpen}
-          className={isVideosPage 
-            ? "bg-[#ea384c] hover:bg-[#c82d3f] text-white h-10 w-10 rounded-md flex items-center justify-center" 
-            : "bg-[#222222] hover:bg-[#333333] text-white h-10 w-10 rounded-md flex items-center justify-center"}
+          className={`h-10 w-10 ${isVideosPage 
+            ? 'bg-[#ea384c] hover:bg-[#c82d3f] text-white' 
+            : 'bg-[#222222] hover:bg-[#333333] text-white'} rounded-md flex items-center justify-center`}
           variant="ghost"
           size="icon"
         >

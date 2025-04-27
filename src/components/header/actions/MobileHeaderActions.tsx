@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { LogIn, MessageSquare, Settings } from "lucide-react";
+import { LogIn, MessageSquare } from "lucide-react";
 import { NotificationsMenu } from "../NotificationsMenu";
 import { UserMenu } from "../UserMenu";
 import { useLocation } from "react-router-dom";
