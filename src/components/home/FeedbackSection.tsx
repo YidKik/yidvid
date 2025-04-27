@@ -25,7 +25,7 @@ export const FeedbackSection = () => {
   useCarouselScroll({
     emblaApi,
     direction: "ltr",
-    speed: 0.5,
+    speed: 0.2, // Reduced from 0.5 to 0.2 for slower movement
     itemsLength: feedbackItems.length,
   });
 
@@ -85,3 +85,4 @@ export const FeedbackSection = () => {
     </section>
   );
 };
+
