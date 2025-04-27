@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { LogIn, MessageSquare, Settings } from "lucide-react";
 import { NotificationsMenu } from "../NotificationsMenu";
 import { UserMenu } from "../UserMenu";
+import { useLocation } from "react-router-dom";
 
 interface MobileHeaderActionsProps {
   session: any;
@@ -19,6 +20,9 @@ export const MobileHeaderActions = ({
   handleSettingsClick,
   onLogout
 }: MobileHeaderActionsProps) => {
+  const location = useLocation();
+  const isVideosPage = location.pathname === "/videos";
+
   return (
     <div className="flex items-center gap-2">
       {session ? (
@@ -31,7 +35,9 @@ export const MobileHeaderActions = ({
           <Button 
             variant="ghost" 
             size="icon"
-            className="bg-[#222222] hover:bg-[#333333] text-white h-7 w-7 rounded-md transition-all duration-300 mobile-button-animate"
+            className={`${isVideosPage 
+              ? 'bg-[#ea384c] hover:bg-[#c82d3f]' 
+              : 'bg-[#222222] hover:bg-[#333333]'} text-white h-7 w-7 rounded-md transition-all duration-300 mobile-button-animate`}
             onClick={() => {
               const contactDialog = document.querySelector('[data-state="closed"][role="dialog"]');
               if (contactDialog) {
@@ -45,7 +51,9 @@ export const MobileHeaderActions = ({
             onClick={onAuthOpen}
             variant="ghost" 
             size="icon"
-            className="bg-[#222222] hover:bg-[#333333] text-white h-7 w-7 rounded-md transition-all duration-300 mobile-button-animate"
+            className={`${isVideosPage 
+              ? 'bg-[#ea384c] hover:bg-[#c82d3f]' 
+              : 'bg-[#222222] hover:bg-[#333333]'} text-white h-7 w-7 rounded-md transition-all duration-300 mobile-button-animate`}
           >
             <LogIn className="h-3.5 w-3.5" />
           </Button>
