@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -22,7 +23,7 @@ export const MobileHomeSection = () => {
         </p>
         <Link 
           to="/explore"
-          className="px-8 py-3 border border-[#77b0aa] text-[#e3fef7] rounded-full text-base hover:bg-[#135d66] transition-colors duration-300"
+          className="px-8 py-3 bg-[#135d66] border border-[#ddf9f2] text-[#e3fef7] rounded-full text-base hover:bg-[#135d66]/90 transition-colors duration-300"
         >
           Explore
         </Link>
@@ -33,7 +34,7 @@ export const MobileHomeSection = () => {
         {['Free', 'Kosher', 'Up to date'].map((text) => (
           <div 
             key={text}
-            className="px-4 py-2 border border-[#77b0aa] rounded-full text-[#e3fef7] text-sm bg-[#135d66]/20"
+            className="px-4 py-2 border border-[#ddf9f2] rounded-full text-[#e3fef7] text-sm bg-[#135d66]"
           >
             {text}
           </div>
@@ -55,12 +56,12 @@ export const MobileHomeSection = () => {
 
       {/* Stats Boxes */}
       <div className="mt-12 space-y-4">
-        <div className="border-2 border-[#77b0aa] rounded-3xl p-6 text-center bg-[#135d66]/20">
+        <div className="border-2 border-[#ddf9f2] rounded-3xl p-6 text-center bg-[#135d66]">
           <p className="text-[#e3fef7] text-5xl font-bold mb-1">10,000</p>
           <p className="text-[#77b0aa] text-xl">Videos</p>
         </div>
         
-        <div className="border-2 border-[#77b0aa] rounded-3xl p-6 text-center bg-[#135d66]/20">
+        <div className="border-2 border-[#ddf9f2] rounded-3xl p-6 text-center bg-[#135d66]">
           <p className="text-[#77b0aa] text-lg mb-1">Over</p>
           <p className="text-[#e3fef7] text-5xl font-bold mb-1">400</p>
           <p className="text-[#77b0aa] text-xl">Channels</p>
@@ -119,7 +120,7 @@ export const MobileHomeSection = () => {
                 key={index}
                 className="min-w-full flex-shrink-0 snap-center px-4"
               >
-                <div className="border border-[#77b0aa] rounded-3xl p-4 bg-[#135d66]/20">
+                <div className="border border-[#ddf9f2] rounded-3xl p-4 bg-[#135d66]">
                   <p className="text-[#e3fef7] text-sm text-center leading-relaxed">
                     {feedback}
                   </p>
