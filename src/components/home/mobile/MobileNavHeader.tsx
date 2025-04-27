@@ -57,7 +57,7 @@ export const MobileNavHeader = () => {
             <button
               key={id}
               onClick={() => scrollToSection(id)}
-              className={`text-sm font-medium transition-colors ${
+              className={`text-sm font-medium transition-colors bg-transparent border-none p-0 m-0 ${
                 activeSection === id.split('-')[0]
                   ? 'text-black'
                   : 'text-black/70 hover:text-black'

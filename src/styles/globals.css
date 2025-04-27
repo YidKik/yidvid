@@ -19,15 +19,13 @@ body {
   color: var(--text-custom, #030303);
 }
 
-/* Global button styles */
+/* Global button styles - making sure no red backgrounds are in buttons */
 button, 
 .button-custom,
 .btn,
 [type='button'],
 [type='reset'],
 [type='submit'] {
-  background-color: var(--button-custom) !important;
-  color: white !important;
   transition: filter 0.2s ease-in-out !important;
 }
 
@@ -38,6 +36,15 @@ button:hover,
 [type='reset']:hover,
 [type='submit']:hover {
   filter: brightness(90%) !important;
+}
+
+/* Navigation links should not have background */
+nav a, 
+nav button,
+header a,
+header button {
+  background-color: transparent !important;
+  border: none !important;
 }
 
 /* Global logo styles */

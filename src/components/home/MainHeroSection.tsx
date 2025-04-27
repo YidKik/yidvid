@@ -14,11 +14,11 @@ export const MainHeroSection: React.FC = () => {
           className="w-40 h-40 object-contain"
         />
         <nav className="flex space-x-6 text-white/80">
-          <Link to="/" className="hover:text-white">Home</Link>
-          <Link to="/about" className="hover:text-white">About</Link>
-          <Link to="/contact" className="hover:text-white">Contact</Link>
+          <Link to="/" className="hover:text-white bg-transparent">Home</Link>
+          <Link to="/about" className="hover:text-white bg-transparent">About</Link>
+          <Link to="/contact" className="hover:text-white bg-transparent">Contact</Link>
         </nav>
-        <Link to="/signin" className="text-white/80 hover:text-white">
+        <Link to="/signin" className="text-white/80 hover:text-white bg-transparent">
           Sign In
         </Link>
       </div>

@@ -27,7 +27,7 @@ export const MobileHomeSection = () => {
           <button
             key={id}
             onClick={() => scrollToSection(id)}
-            className="text-[#e3fef7] text-sm font-medium"
+            className="text-[#e3fef7] text-sm font-medium bg-transparent border-none p-0 m-0"
           >
             {label}
           </button>

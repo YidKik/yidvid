@@ -27,19 +27,19 @@ export const HomeHeader = () => {
           <Link to="/" className="text-white hover:text-brand-lightest transition-colors">Home</Link>
           <button 
             onClick={() => scrollToSection('about-section')} 
-            className="text-white hover:text-brand-lightest transition-colors"
+            className="text-white hover:text-brand-lightest transition-colors bg-transparent border-none p-0 m-0"
           >
             About
           </button>
           <button 
             onClick={() => scrollToSection('contact-section')} 
-            className="text-white hover:text-brand-lightest transition-colors"
+            className="text-white hover:text-brand-lightest transition-colors bg-transparent border-none p-0 m-0"
           >
             Contact
           </button>
           <button
             onClick={() => setIsAuthOpen(true)}
-            className="text-white hover:text-brand-lightest transition-colors"
+            className="text-white hover:text-brand-lightest transition-colors bg-transparent border-none p-0 m-0"
           >
             Sign in
           </button>
