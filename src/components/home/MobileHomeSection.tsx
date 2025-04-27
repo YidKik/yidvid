@@ -1,7 +1,7 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
+import { NumberTicker } from "@/components/ui/number-ticker";
 
 export const MobileHomeSection = () => {
   const feedbackItems = [
@@ -57,13 +57,23 @@ export const MobileHomeSection = () => {
       {/* Stats Boxes */}
       <div className="mt-12 space-y-4">
         <div className="border-2 border-[#ddf9f2] rounded-3xl p-6 text-center bg-[#135d66]">
-          <p className="text-[#e3fef7] text-5xl font-bold mb-1">10,000</p>
+          <p className="text-[#e3fef7] text-5xl font-bold mb-1">
+            <NumberTicker 
+              value={10000} 
+              className="text-[#e3fef7] text-5xl font-bold"
+            />
+          </p>
           <p className="text-[#77b0aa] text-xl">Videos</p>
         </div>
         
         <div className="border-2 border-[#ddf9f2] rounded-3xl p-6 text-center bg-[#135d66]">
           <p className="text-[#77b0aa] text-lg mb-1">Over</p>
-          <p className="text-[#e3fef7] text-5xl font-bold mb-1">400</p>
+          <p className="text-[#e3fef7] text-5xl font-bold mb-1">
+            <NumberTicker 
+              value={400} 
+              className="text-[#e3fef7] text-5xl font-bold"
+            />
+          </p>
           <p className="text-[#77b0aa] text-xl">Channels</p>
         </div>
       </div>
