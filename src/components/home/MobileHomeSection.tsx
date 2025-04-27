@@ -28,9 +28,9 @@ export const MobileHomeSection = () => {
       <div className="flex justify-around items-center py-4 px-6">
         <div className="flex items-center">
           <img 
-            src="/lovable-uploads/6b9f3eb8-8b65-41b6-84a2-6c4f6f0c3459.png" 
+            src="/lovable-uploads/e425cacb-4c3a-4d81-b4e0-77fcbf10f61c.png" 
             alt="YidVid Logo" 
-            className="h-16 w-auto object-contain" 
+            className="h-12 w-auto object-contain" 
           />
         </div>
         {[
