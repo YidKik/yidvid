@@ -39,7 +39,7 @@ export const FilteredChannelsGrid = ({
 
   return (
     <div className="w-full">
-      <div className={`grid grid-cols-2 gap-4 mt-4 pb-8`}>
+      <div className={`grid ${isMobile ? 'grid-cols-2' : 'grid-cols-5'} gap-4 mt-4 pb-8`}>
         {displayChannels.map((channel, index) => (
           <ChannelCard 
             key={channel.id?.toString() || `channel-${index}`}
