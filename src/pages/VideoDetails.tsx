@@ -1,4 +1,4 @@
-
+import React, { useEffect } from 'react';
 import { useParams, Link, useLocation } from "react-router-dom";
 import { VideoPlayer } from "@/components/video/VideoPlayer";
 import { VideoInfo } from "@/components/video/VideoInfo";
@@ -14,7 +14,6 @@ import { LoadingAnimation } from "@/components/ui/LoadingAnimation";
 import { VideoPlaceholder } from "@/components/video/VideoPlaceholder";
 import { toast } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useIncrementVideoView } from "@/hooks/video/useIncrementVideoView";
 
@@ -25,7 +24,6 @@ const VideoDetails = () => {
   const { isAuthenticated, session } = useAuth();
   const incrementView = useIncrementVideoView();
 
-  // Add debug logging for current route and video ID
   useEffect(() => {
     console.log("VideoDetails page route:", location.pathname);
     console.log("VideoDetails page received videoId:", videoId);
@@ -40,19 +38,15 @@ const VideoDetails = () => {
     return <div className="p-4">Video ID not provided</div>;
   }
 
-  // Pass the videoId directly to the query hooks
   const { data: video, isLoading: isLoadingVideo, error } = useVideoQuery(videoId);
   
-  // Use video?.channel_id || "" to ensure we always pass a string
   const { data: channelVideos = [], isLoading: isLoadingRelated } = useRelatedVideosQuery(
     video?.channel_id || "", 
-    videoId // Pass videoId directly, not video?.id, to ensure it's present immediately
+    videoId
   );
 
-  // Increment view count when video loads
   useEffect(() => {
     if (video && video.id) {
-      // Add a small delay to make sure it's an actual view, not just page load
       const timer = setTimeout(() => {
         incrementView(video.id);
       }, 2000);
@@ -89,7 +83,6 @@ const VideoDetails = () => {
     );
   }
 
-  // Additional debug logging for the found video
   console.log("Video details found:", { 
     id: video.id,
     video_id: video.video_id,
@@ -99,7 +92,6 @@ const VideoDetails = () => {
     authStatus: isAuthenticated ? "logged in" : "logged out"
   });
 
-  // Debug logging for related videos
   console.log("Related videos:", channelVideos?.length || 0, "videos found");
   
   if (channelVideos?.length === 0 && !isLoadingRelated) {
@@ -107,43 +99,45 @@ const VideoDetails = () => {
   }
 
   return (
-    <div className="container mx-auto p-4 mt-16 bg-white min-h-screen"> {/* Added bg-white */}
-      <BackButton />
-      {isAuthenticated && <VideoHistory videoId={video.id} />}
-      
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2">
-          <VideoPlayer videoId={video.video_id} />
-          <div className="flex justify-between items-start mb-4">
-            <h1 className="text-base md:text-2xl font-bold">{video.title}</h1>
-            <ReportVideoDialog videoId={video.id} />
-          </div>
-          
-          {isAuthenticated && <VideoInteractions videoId={video.id} />}
-          
-          {isAuthenticated && <VideoComments videoId={video.id} />}
-
-          <div className="mt-8 border-t pt-8">
-            <VideoInfo
-              title={video.title}
-              channelName={video.channel_name}
-              channelId={video.channel_id}
-              channelThumbnail={video.youtube_channels?.thumbnail_url}
-              views={video.views}
-              uploadedAt={video.uploaded_at}
-              description={video.description}
-            />
-          </div>
-        </div>
+    <div className="w-full min-h-screen bg-white">
+      <div className="container mx-auto p-4 pt-16">
+        <BackButton />
+        {isAuthenticated && <VideoHistory videoId={video.id} />}
         
-        <div className="lg:col-span-1">
-          {isLoadingRelated ? (
-            <div className="flex justify-center p-4">
-              <LoadingAnimation size="small" color="muted" text="Loading related videos..." />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2">
+            <VideoPlayer videoId={video.video_id} />
+            <div className="flex justify-between items-start mb-4">
+              <h1 className="text-base md:text-2xl font-bold">{video.title}</h1>
+              <ReportVideoDialog videoId={video.id} />
             </div>
-          ) : (
-            <RelatedVideos videos={channelVideos} />
-          )}
+            
+            {isAuthenticated && <VideoInteractions videoId={video.id} />}
+            
+            {isAuthenticated && <VideoComments videoId={video.id} />}
+
+            <div className="mt-8 border-t pt-8">
+              <VideoInfo
+                title={video.title}
+                channelName={video.channel_name}
+                channelId={video.channel_id}
+                channelThumbnail={video.youtube_channels?.thumbnail_url}
+                views={video.views}
+                uploadedAt={video.uploaded_at}
+                description={video.description}
+              />
+            </div>
+          </div>
+          
+          <div className="lg:col-span-1">
+            {isLoadingRelated ? (
+              <div className="flex justify-center p-4">
+                <LoadingAnimation size="small" color="muted" text="Loading related videos..." />
+              </div>
+            ) : (
+              <RelatedVideos videos={channelVideos} />
+            )}
+          </div>
         </div>
       </div>
     </div>

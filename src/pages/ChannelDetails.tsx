@@ -167,27 +167,30 @@ const ChannelDetails = () => {
   const hasVideosError = !!videosError;
 
   return (
-    <div className="container mx-auto p-4 mt-16 bg-white opacity-0 animate-[fadeIn_0.6s_ease-out_forwards]"> {/* Added bg-white */}
-      <BackButton />
-      <ChannelHeader
-        channel={channel}
-        isSubscribed={isSubscribed}
-        onSubscribe={handleSubscribe}
-        isLoading={isLoadingSubscription}
-      />
-      
-      <ChannelVideoSection
-        isLoadingVideos={isLoadingVideos}
-        hasVideosError={hasVideosError}
-        videosError={videosError}
-        displayedVideos={displayedVideos || []}
-        channelThumbnail={channel.thumbnail_url}
-        INITIAL_VIDEOS_COUNT={INITIAL_VIDEOS_COUNT}
-        isLoadingMore={isLoadingMore}
-        refetchVideos={refetchVideos}
-      />
+    <div className="w-full min-h-screen bg-white"> {/* Full white background for entire screen */}
+      <div className="container mx-auto p-4 pt-16">
+        <BackButton />
+        <ChannelHeader
+          channel={channel}
+          isSubscribed={isSubscribed}
+          onSubscribe={handleSubscribe}
+          isLoading={isLoadingSubscription}
+        />
+        
+        <ChannelVideoSection
+          isLoadingVideos={isLoadingVideos}
+          hasVideosError={hasVideosError}
+          videosError={videosError}
+          displayedVideos={displayedVideos || []}
+          channelThumbnail={channel.thumbnail_url}
+          INITIAL_VIDEOS_COUNT={INITIAL_VIDEOS_COUNT}
+          isLoadingMore={isLoadingMore}
+          refetchVideos={refetchVideos}
+        />
+      </div>
     </div>
   );
 };
 
 export default ChannelDetails;
+
