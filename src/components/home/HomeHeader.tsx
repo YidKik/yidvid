@@ -5,6 +5,7 @@ import Auth from '@/pages/Auth';
 
 export const HomeHeader = () => {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<'signin' | 'signup'>('signin');
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -38,7 +39,10 @@ export const HomeHeader = () => {
             Contact
           </button>
           <button
-            onClick={() => setIsAuthOpen(true)}
+            onClick={() => {
+              setActiveTab('signin');
+              setIsAuthOpen(true);
+            }}
             className="text-white hover:text-brand-lightest transition-colors bg-transparent border-none p-0 m-0"
           >
             Sign in
@@ -46,7 +50,11 @@ export const HomeHeader = () => {
         </nav>
       </header>
 
-      <Auth isOpen={isAuthOpen} onOpenChange={setIsAuthOpen} />
+      <Auth 
+        isOpen={isAuthOpen} 
+        onOpenChange={setIsAuthOpen} 
+        initialTab={activeTab}
+      />
     </>
   );
 };

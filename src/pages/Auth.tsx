@@ -12,14 +12,22 @@ import { useAuth } from "@/hooks/useAuth";
 interface AuthProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
+  initialTab?: 'signin' | 'signup';
 }
 
-const Auth = ({ isOpen, onOpenChange }: AuthProps) => {
+const Auth = ({ isOpen, onOpenChange, initialTab = 'signin' }: AuthProps) => {
   const isMobile = useIsMobile();
   const [showOptions, setShowOptions] = useState(true);
-  const [activeTab, setActiveTab] = useState<'signin' | 'signup'>('signin');
+  const [activeTab, setActiveTab] = useState<'signin' | 'signup'>(initialTab || 'signin');
   const location = useLocation();
   const { isAuthenticated, session, isLoading } = useAuth();
+  
+  // Update activeTab when initialTab prop changes
+  useEffect(() => {
+    if (initialTab) {
+      setActiveTab(initialTab);
+    }
+  }, [initialTab]);
   
   // Prevent dialog from showing automatically on settings page
   useEffect(() => {

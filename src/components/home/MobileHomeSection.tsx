@@ -1,18 +1,27 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { MobileHeroSection } from './mobile/MobileHeroSection';
 import { MobileFeaturesSection } from './mobile/MobileFeaturesSection';
 import { MobileDescriptionSection } from './mobile/MobileDescriptionSection';
 import { MobileStatsSection } from './mobile/MobileStatsSection';
 import { MobileFeedbackSection } from './mobile/MobileFeedbackSection';
 import { MobileContactSection } from './mobile/MobileContactSection';
+import Auth from '@/pages/Auth';
 
 export const MobileHomeSection = () => {
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<'signin' | 'signup'>('signin');
+
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
+  };
+
+  const handleAuthClick = (type: 'signin' | 'signup') => {
+    setActiveTab(type);
+    setIsAuthOpen(true);
   };
 
   return (
@@ -21,8 +30,7 @@ export const MobileHomeSection = () => {
         {[
           { id: 'home-section', label: 'Home' },
           { id: 'about-section', label: 'About' },
-          { id: 'contact-section', label: 'Contact' },
-          { id: 'sign-in', label: 'Sign in' }
+          { id: 'contact-section', label: 'Contact' }
         ].map(({ id, label }) => (
           <button
             key={id}
@@ -32,6 +40,12 @@ export const MobileHomeSection = () => {
             {label}
           </button>
         ))}
+        <button
+          onClick={() => handleAuthClick('signin')}
+          className="text-[#e3fef7] text-sm font-medium bg-transparent border-none p-0 m-0"
+        >
+          Sign in
+        </button>
       </div>
       <div className="px-6">
         <MobileHeroSection />
@@ -45,6 +59,12 @@ export const MobileHomeSection = () => {
           All rights reserved © YidVid
         </footer>
       </div>
+
+      <Auth 
+        isOpen={isAuthOpen} 
+        onOpenChange={setIsAuthOpen}
+        initialTab={activeTab}
+      />
     </div>
   );
 };
