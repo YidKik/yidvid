@@ -1,13 +1,12 @@
-
 import React from 'react';
 
 export const AboutSection = () => {
   return (
-    <section className="bg-[#135d66] px-6 py-16">
+    <section className="bg-[#e3fef7] px-6 py-16">
       <div className="container mx-auto grid grid-cols-2 gap-12 items-center">
         <div className="space-y-8">
-          <h2 className="text-6xl font-display text-white">About</h2>
-          <div className="space-y-6 text-lg text-brand-light">
+          <h2 className="text-6xl font-display text-brand-dark">About</h2>
+          <div className="space-y-6 text-lg text-brand-dark">
             <p>
               We understand the importance of providing a safe and enjoyable platform
               for individuals and families to access entertainment content that aligns with
@@ -34,12 +33,12 @@ export const AboutSection = () => {
         <div className="flex justify-center items-center">
           <div className="relative w-[500px] h-[500px]">
             <div className="absolute inset-0 bg-[#003c43] rounded-3xl transform rotate-6"></div>
-            <div className="absolute inset-0 bg-brand-light/20 rounded-3xl transform -rotate-3"></div>
+            <div className="absolute inset-0 bg-brand-dark/20 rounded-3xl transform -rotate-3"></div>
             <div className="relative flex items-center justify-center h-full">
               <img
-                src="/lovable-uploads/d8bf250d-cefc-489d-aec9-159edca134dd.png"
+                src="/public/yidkik-logo.png"
                 alt="YidVid Logo"
-                className="w-80 h-80 object-contain"
+                className="w-96 h-96 object-contain"
               />
             </div>
           </div>
