@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { MobileHeroSection } from './mobile/MobileHeroSection';
 import { MobileFeaturesSection } from './mobile/MobileFeaturesSection';
@@ -35,14 +36,14 @@ export const MobileHomeSection = () => {
           <button
             key={id}
             onClick={() => scrollToSection(id)}
-            className="text-[#e3fef7] text-sm font-medium bg-transparent border-none p-0 m-0"
+            className="text-[#e3fef7] text-sm font-medium bg-transparent border-none p-0 m-0 hover:text-[#77b0aa] transition-colors"
           >
             {label}
           </button>
         ))}
         <button
           onClick={() => handleAuthClick('signin')}
-          className="text-[#e3fef7] text-sm font-medium bg-transparent border-none p-0 m-0"
+          className="text-[#e3fef7] text-sm font-medium bg-transparent border-none p-0 m-0 hover:text-[#77b0aa] transition-colors"
         >
           Sign in
         </button>
