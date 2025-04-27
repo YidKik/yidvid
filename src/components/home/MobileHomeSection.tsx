@@ -1,4 +1,5 @@
-import React from 'react';
+
+import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { NumberTicker } from "@/components/ui/number-ticker";
@@ -11,38 +12,45 @@ export const MobileHomeSection = () => {
     visible: { opacity: 1, y: 0 }
   };
 
-  const [heroRef, heroInView] = useInView({
-    triggerOnce: true,
+  const heroRef = useRef(null);
+  const heroInView = useInView(heroRef, {
+    once: true,
     threshold: 0.1
   });
 
-  const [featuresRef, featuresInView] = useInView({
-    triggerOnce: true,
+  const featuresRef = useRef(null);
+  const featuresInView = useInView(featuresRef, {
+    once: true,
     threshold: 0.1
   });
 
-  const [descriptionRef, descriptionInView] = useInView({
-    triggerOnce: true,
+  const descriptionRef = useRef(null);
+  const descriptionInView = useInView(descriptionRef, {
+    once: true,
     threshold: 0.1
   });
 
-  const [statsRef, statsInView] = useInView({
-    triggerOnce: true,
+  const statsRef = useRef(null);
+  const statsInView = useInView(statsRef, {
+    once: true,
     threshold: 0.1
   });
 
-  const [authRef, authInView] = useInView({
-    triggerOnce: true,
+  const authRef = useRef(null);
+  const authInView = useInView(authRef, {
+    once: true,
     threshold: 0.1
   });
 
-  const [actionsRef, actionsInView] = useInView({
-    triggerOnce: true,
+  const actionsRef = useRef(null);
+  const actionsInView = useInView(actionsRef, {
+    once: true,
     threshold: 0.1
   });
 
-  const [feedbackRef, feedbackInView] = useInView({
-    triggerOnce: true,
+  const feedbackRef = useRef(null);
+  const feedbackInView = useInView(feedbackRef, {
+    once: true,
     threshold: 0.1
   });
 
@@ -205,24 +213,29 @@ export const MobileHomeSection = () => {
         animate={feedbackInView ? "visible" : "hidden"}
         variants={fadeInVariants}
         transition={{ duration: 0.6 }}
-        className="mt-12"
+        className="mt-12 mb-8"
       >
         <h2 className="text-[#e3fef7] text-2xl font-bold text-center mb-6">Feedback</h2>
-        <div className="relative overflow-hidden">
-          <div className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide">
-            {feedbackItems.map((feedback, index) => (
-              <div 
-                key={index}
-                className="min-w-full flex-shrink-0 snap-center px-4"
-              >
-                <div className="border border-[#ddf9f2] rounded-3xl p-4 bg-[#135d66]">
-                  <p className="text-[#e3fef7] text-sm text-center leading-relaxed">
-                    {feedback}
-                  </p>
+        
+        {/* Updated feedback section with multi-line cards that show 1.5 at a time */}
+        <div className="relative">
+          <div className="overflow-x-auto pb-8 snap-x snap-mandatory scrollbar-hide">
+            <div className="flex w-[250%]">
+              {feedbackItems.map((feedback, index) => (
+                <div 
+                  key={index}
+                  className="w-[66%] flex-shrink-0 px-2"
+                >
+                  <div className="border border-[#ddf9f2] rounded-3xl p-5 bg-[#135d66] h-32 flex items-start">
+                    <p className="text-[#e3fef7] text-sm leading-relaxed overflow-y-auto">
+                      {feedback}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
+          
           <div className="flex justify-center gap-2 mt-4">
             {feedbackItems.map((_, index) => (
               <div
