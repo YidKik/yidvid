@@ -7,6 +7,7 @@ import { fadeInVariants } from '@/components/home/mobile/animation-utils';
 export const MobileHeroSection = () => {
   return (
     <motion.div 
+      id="home-section"
       initial="hidden"
       animate="visible"
       variants={fadeInVariants}
@@ -28,4 +29,3 @@ export const MobileHeroSection = () => {
     </motion.div>
   );
 };
-

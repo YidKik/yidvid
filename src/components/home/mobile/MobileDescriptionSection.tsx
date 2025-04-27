@@ -4,7 +4,7 @@ import { fadeInVariants } from '@/components/home/mobile/animation-utils';
 
 export const MobileDescriptionSection = () => {
   return (
-    <div>
+    <div id="about-section">
       <motion.h2
         initial={{ opacity: 0, x: 100 }}
         whileInView={{ opacity: 0.8, x: 0 }}
