@@ -22,7 +22,9 @@ export const Footer = () => {
             </button>
           ))}
         </div>
-        <p className="text-center text-[#ddf9f2] text-lg mt-8">All rights reserved @YidVid</p>
+        <p className="text-center text-[#ddf9f2] text-lg mt-8">
+          © {new Date().getFullYear()} YidVid. All Rights Reserved.
+        </p>
       </div>
     </motion.footer>
   );

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { MobileHeroSection } from './mobile/MobileHeroSection';
 import { MobileFeaturesSection } from './mobile/MobileFeaturesSection';
@@ -56,7 +55,7 @@ export const MobileHomeSection = () => {
         <MobileContactSection />
         
         <footer className="text-center text-[#77b0aa] text-xs py-4">
-          All rights reserved © YidVid
+          © {new Date().getFullYear()} YidVid. All Rights Reserved.
         </footer>
       </div>
 
