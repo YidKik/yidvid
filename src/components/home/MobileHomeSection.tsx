@@ -2,8 +2,50 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { NumberTicker } from "@/components/ui/number-ticker";
+import { motion } from "framer-motion";
+import { useInView } from "framer-motion";
 
 export const MobileHomeSection = () => {
+  const fadeInVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 }
+  };
+
+  const [heroRef, heroInView] = useInView({
+    triggerOnce: true,
+    threshold: 0.1
+  });
+
+  const [featuresRef, featuresInView] = useInView({
+    triggerOnce: true,
+    threshold: 0.1
+  });
+
+  const [descriptionRef, descriptionInView] = useInView({
+    triggerOnce: true,
+    threshold: 0.1
+  });
+
+  const [statsRef, statsInView] = useInView({
+    triggerOnce: true,
+    threshold: 0.1
+  });
+
+  const [authRef, authInView] = useInView({
+    triggerOnce: true,
+    threshold: 0.1
+  });
+
+  const [actionsRef, actionsInView] = useInView({
+    triggerOnce: true,
+    threshold: 0.1
+  });
+
+  const [feedbackRef, feedbackInView] = useInView({
+    triggerOnce: true,
+    threshold: 0.1
+  });
+
   const feedbackItems = [
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.",
@@ -12,8 +54,14 @@ export const MobileHomeSection = () => {
 
   return (
     <div className="min-h-screen w-full bg-[#003c43] px-6 overflow-y-auto">
-      {/* Hero Section with multi-line text and increased spacing */}
-      <div className="flex flex-col items-center text-center space-y-6 pt-24">
+      <motion.div 
+        ref={heroRef}
+        initial="hidden"
+        animate={heroInView ? "visible" : "hidden"}
+        variants={fadeInVariants}
+        transition={{ duration: 0.6 }}
+        className="flex flex-col items-center text-center space-y-6 pt-24"
+      >
         <h1 className="text-5xl font-bold text-[#e3fef7] leading-tight space-y-2">
           <div>Your</div>
           <div>Getaway to Jewish Content</div>
@@ -27,10 +75,16 @@ export const MobileHomeSection = () => {
         >
           Explore
         </Link>
-      </div>
+      </motion.div>
 
-      {/* Feature Boxes with increased top margin */}
-      <div className="mt-24 flex justify-center gap-4">
+      <motion.div 
+        ref={featuresRef}
+        initial="hidden"
+        animate={featuresInView ? "visible" : "hidden"}
+        variants={fadeInVariants}
+        transition={{ duration: 0.6, delay: 0.2 }}
+        className="mt-24 flex justify-center gap-4"
+      >
         {['Free', 'Kosher', 'Up to date'].map((text) => (
           <div 
             key={text}
@@ -39,10 +93,16 @@ export const MobileHomeSection = () => {
             {text}
           </div>
         ))}
-      </div>
+      </motion.div>
 
-      {/* Description Text */}
-      <div className="mt-8 text-sm text-[#e3fef7] leading-relaxed space-y-4">
+      <motion.div 
+        ref={descriptionRef}
+        initial="hidden"
+        animate={descriptionInView ? "visible" : "hidden"}
+        variants={fadeInVariants}
+        transition={{ duration: 0.6 }}
+        className="mt-8 text-sm text-[#e3fef7] leading-relaxed space-y-4"
+      >
         <p>
           We understand the importance of providing a safe and enjoyable platform for individuals and families to access entertainment content that aligns with their values. Our team is dedicated to creating a diverse range of videos that cater to a wide audience, while ensuring that all content meets our strict guidelines for kosher entertainment.
         </p>
@@ -52,12 +112,18 @@ export const MobileHomeSection = () => {
         <p>
           At YidVid, we take pride in our attention to detail and commitment to providing top-quality entertainment options for our users. We strive to maintain the highest level of standards in everything we do, so you can trust that you are getting nothing but the best when you visit our site. Thank you for choosing
         </p>
-      </div>
+      </motion.div>
 
-      {/* Stats Boxes */}
-      <div className="mt-12 space-y-4">
+      <motion.div 
+        ref={statsRef}
+        initial="hidden"
+        animate={statsInView ? "visible" : "hidden"}
+        variants={fadeInVariants}
+        transition={{ duration: 0.6 }}
+        className="mt-12 space-y-4"
+      >
         <div className="border-2 border-[#ddf9f2] rounded-3xl p-6 text-center bg-[#135d66]">
-          <p className="text-[#77b0aa] text-lg mb-1">Over</p>
+          <p className="text-[#77b0aa] text-xl mb-1">Over</p>
           <p className="text-[#e3fef7] text-5xl font-bold mb-1">
             <NumberTicker 
               value={10000} 
@@ -77,10 +143,16 @@ export const MobileHomeSection = () => {
           </p>
           <p className="text-[#77b0aa] text-xl">Channels</p>
         </div>
-      </div>
+      </motion.div>
 
-      {/* Auth Buttons */}
-      <div className="mt-8 space-y-3">
+      <motion.div 
+        ref={authRef}
+        initial="hidden"
+        animate={authInView ? "visible" : "hidden"}
+        variants={fadeInVariants}
+        transition={{ duration: 0.6 }}
+        className="mt-8 space-y-3"
+      >
         <Link to="/signup" className="block">
           <Button 
             variant="default" 
@@ -97,10 +169,16 @@ export const MobileHomeSection = () => {
             Login
           </Button>
         </Link>
-      </div>
+      </motion.div>
 
-      {/* Action Buttons */}
-      <div className="mt-8 space-y-3 mb-8">
+      <motion.div 
+        ref={actionsRef}
+        initial="hidden"
+        animate={actionsInView ? "visible" : "hidden"}
+        variants={fadeInVariants}
+        transition={{ duration: 0.6 }}
+        className="mt-8 space-y-3 mb-8"
+      >
         <Button 
           variant="default" 
           className="w-full py-4 text-base bg-[#135d66] text-[#e3fef7] border border-[#ddf9f2] hover:bg-[#135d66]/90 rounded-full"
@@ -119,10 +197,16 @@ export const MobileHomeSection = () => {
         >
           Request channel
         </Button>
-      </div>
+      </motion.div>
 
-      {/* Feedback Section */}
-      <div className="mt-12">
+      <motion.div 
+        ref={feedbackRef}
+        initial="hidden"
+        animate={feedbackInView ? "visible" : "hidden"}
+        variants={fadeInVariants}
+        transition={{ duration: 0.6 }}
+        className="mt-12"
+      >
         <h2 className="text-[#e3fef7] text-2xl font-bold text-center mb-6">Feedback</h2>
         <div className="relative overflow-hidden">
           <div className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide">
@@ -148,9 +232,8 @@ export const MobileHomeSection = () => {
             ))}
           </div>
         </div>
-      </div>
+      </motion.div>
 
-      {/* Footer */}
       <footer className="text-center text-[#77b0aa] text-xs py-4">
         All rights reserved © YidVid
       </footer>
