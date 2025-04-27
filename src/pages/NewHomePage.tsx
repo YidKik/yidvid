@@ -67,14 +67,14 @@ const NewHomePage = () => {
           ].map((feature, i) => (
             <motion.div 
               key={feature.title}
-              className="rounded-3xl border-2 border-brand-lightest bg-brand-dark h-72 flex flex-col items-center justify-center px-8 py-12 text-center"
+              className="rounded-3xl border-2 border-[#70a9a4] bg-[#135d66] h-72 flex flex-col items-center justify-center px-8 py-12 text-center"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: i * 0.2 }}
               whileHover={{ scale: 1.03, transition: { duration: 0.2 } }}
             >
-              <h3 className="text-4xl font-display text-white mb-6">{feature.title}</h3>
-              <p className="text-brand-light text-lg">{feature.description}</p>
+              <h3 className="text-4xl font-display text-[#e3fef7] mb-6">{feature.title}</h3>
+              <p className="text-[#77b0aa] text-lg">{feature.description}</p>
             </motion.div>
           ))}
         </div>
