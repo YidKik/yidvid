@@ -16,7 +16,7 @@ export const MobileFeedbackSection = () => {
       animate="visible"
       variants={fadeInVariants}
       transition={{ duration: 0.6 }}
-      className="mt-12 mb-8"
+      className="mt-12 mb-8 bg-[#135d66] py-8"
     >
       <h2 className="text-[#e3fef7] text-2xl font-bold text-center mb-6">Feedback</h2>
       
@@ -26,9 +26,9 @@ export const MobileFeedbackSection = () => {
             {feedbackItems.map((feedback, index) => (
               <div 
                 key={index}
-                className="w-[66vw] flex-shrink-0 first:ml-4 last:mr-4"
+                className="w-[75vw] flex-shrink-0 first:ml-4 last:mr-4"
               >
-                <div className="border border-[#ddf9f2] rounded-3xl p-5 bg-[#135d66] min-h-[120px] flex items-start">
+                <div className="border border-[#ddf9f2] rounded-3xl p-5 bg-[#135d66] min-h-[160px] flex items-start">
                   <p className="text-[#e3fef7] text-sm leading-relaxed">
                     {feedback}
                   </p>
