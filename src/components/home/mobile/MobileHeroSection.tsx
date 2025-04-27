@@ -13,9 +13,8 @@ export const MobileHeroSection = () => {
       transition={{ duration: 0.6 }}
       className="flex flex-col items-center text-center space-y-6 pt-24"
     >
-      <h1 className="text-5xl font-bold text-[#e3fef7] leading-tight space-y-2">
-        <div>Your</div>
-        <div>Getaway to Jewish Content</div>
+      <h1 className="text-5xl font-bold text-[#e3fef7] leading-tight">
+        Your Getaway to Jewish Content
       </h1>
       <p className="text-lg text-[#77b0aa] px-4">
         Watch, share, and connect with the finest Jewish content from around the world.
@@ -29,3 +28,4 @@ export const MobileHeroSection = () => {
     </motion.div>
   );
 };
+
