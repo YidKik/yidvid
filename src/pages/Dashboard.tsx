@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BackButton } from "@/components/navigation/BackButton";
@@ -70,10 +69,7 @@ export default function Dashboard() {
     <div className="container mx-auto py-12 space-y-8 px-4">
       <BackButton />
       
-      <DashboardHeader 
-        logoSrc="/lovable-uploads/e425cacb-4c3a-4d81-b4e0-77fcbf10f61c.png" 
-        title="Welcome to Your Dashboard" 
-      />
+      <DashboardHeader title="Welcome to Your Dashboard" />
       
       {(isAdmin || hasPinBypass) ? (
         <AdminDashboardCards stats={stats} notifications={notifications} />
