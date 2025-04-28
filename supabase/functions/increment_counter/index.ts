@@ -29,54 +29,100 @@ serve(async (req) => {
     }
 
     console.log("Incrementing view for video ID:", videoId);
-
-    // First get current view count
-    const { data: videoData, error: fetchError } = await supabase
-      .from('youtube_videos')
-      .select('views')
-      .eq('id', videoId)
-      .single();
+    
+    // Try using direct RPC call first - this avoids the profile recursion issue
+    const { data: directData, error: directError } = await supabase.rpc('increment_view_count', {
+      video_id: videoId
+    });
+    
+    if (directError) {
+      console.error('RPC method failed:', directError);
       
-    if (fetchError) {
-      console.error("Error fetching video data:", fetchError);
-      return new Response(
-        JSON.stringify({ error: fetchError.message }),
-        { 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 500 
+      // Fallback to direct update with service role that bypasses RLS
+      const now = new Date().toISOString();
+      
+      // First get current view count without using user context
+      const { data: videoData, error: fetchError } = await supabase
+        .from('youtube_videos')
+        .select('views')
+        .eq('id', videoId)
+        .single();
+      
+      if (fetchError) {
+        // If not found by UUID, try to find by video_id (YouTube ID)
+        const { data: videoByYoutubeId, error: fetchByYoutubeIdError } = await supabase
+          .from('youtube_videos')
+          .select('id, views')
+          .eq('video_id', videoId)
+          .single();
+          
+        if (fetchByYoutubeIdError || !videoByYoutubeId) {
+          console.error("Error finding video:", fetchByYoutubeIdError || "Video not found");
+          return new Response(
+            JSON.stringify({ error: `Video with ID ${videoId} not found` }),
+            { 
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+              status: 404
+            }
+          );
         }
-      );
-    }
-    
-    // Calculate new view count and update the video
-    const currentViews = videoData?.views || 0;
-    const newViews = currentViews + 1;
-    const now = new Date().toISOString(); // ISO string format for Postgres timestamps
-    
-    console.log(`Updating view count for ${videoId} from ${currentViews} to ${newViews}`);
-    
-    const { data, error } = await supabase
-      .from('youtube_videos')
-      .update({ 
-        views: newViews,
-        updated_at: now,
-        last_viewed_at: now
-      })
-      .eq('id', videoId)
-      .select('id, views');
-
-    if (error) {
-      console.error('Error incrementing view count:', error);
-      
-      // Try direct update as a fallback with a direct RPC call
-      const { data: directData, error: directError } = await supabase.rpc('increment_view_count', {
-        video_id: videoId
-      });
-      
-      if (directError) {
-        console.error('Direct update and RPC failed:', directError);
+        
+        // Use the found ID for the update
+        const currentViews = videoByYoutubeId.views || 0;
+        const newViews = currentViews + 1;
+        
+        const { data: updatedData, error: updateError } = await supabase
+          .from('youtube_videos')
+          .update({ 
+            views: newViews,
+            updated_at: now,
+            last_viewed_at: now
+          })
+          .eq('id', videoByYoutubeId.id)
+          .select('id, views');
+          
+        if (updateError) {
+          console.error('Error updating view count:', updateError);
+          return new Response(
+            JSON.stringify({ error: updateError.message }),
+            { 
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+              status: 500 
+            }
+          );
+        }
+        
         return new Response(
-          JSON.stringify({ error: directError.message }),
+          JSON.stringify({ 
+            success: true, 
+            data: updatedData?.[0] || null,
+            message: 'View count incremented successfully (YouTube ID lookup)' 
+          }),
+          { 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            status: 200 
+          }
+        );
+      }
+      
+      // Continue with regular update if video was found by UUID
+      const currentViews = videoData?.views || 0;
+      const newViews = currentViews + 1;
+      
+      const { data, error } = await supabase
+        .from('youtube_videos')
+        .update({ 
+          views: newViews,
+          updated_at: now,
+          last_viewed_at: now
+        })
+        .eq('id', videoId)
+        .select('id, views');
+        
+      if (error) {
+        console.error('Error updating view count:', error);
+        return new Response(
+          JSON.stringify({ error: error.message }),
           { 
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
             status: 500 
@@ -84,12 +130,11 @@ serve(async (req) => {
         );
       }
       
-      console.log('View count updated through RPC method:', directData);
       return new Response(
         JSON.stringify({ 
           success: true, 
-          data: { views: directData },
-          message: 'View count incremented successfully (RPC method)' 
+          data: data?.[0] || null,
+          message: 'View count incremented successfully' 
         }),
         { 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -97,13 +142,14 @@ serve(async (req) => {
         }
       );
     }
-
-    console.log('View count updated successfully:', data);
+    
+    // If the RPC call succeeded, return success response
+    console.log('View count updated through RPC method:', directData);
     return new Response(
       JSON.stringify({ 
         success: true, 
-        data: data?.[0] || null,
-        message: 'View count incremented successfully' 
+        data: { views: directData },
+        message: 'View count incremented successfully (RPC method)' 
       }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

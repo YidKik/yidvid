@@ -26,74 +26,36 @@ export const useIncrementVideoView = () => {
       
       console.log("Incrementing view count for video:", videoId);
       
-      // First, check if the video exists
-      const { data: videoExists, error: checkError } = await supabase
-        .from("youtube_videos")
-        .select("*")
-        .eq("id", videoId)
-        .maybeSingle();
-        
-      console.log("Incrementing view video existence:", videoExists?.views);
-      if (checkError) {
-        console.error("Error checking video existence:", checkError);
-        throw new Error(`Video with ID ${videoId} not found`);
-      }
+      // Use edge function for incrementing view count
+      // This approach avoids the profile recursion issue
+      const SUPABASE_URL = "https://euincktvsiuztsxcuqfd.supabase.co";
+      const functionUrl = `${SUPABASE_URL}/functions/v1/increment_counter`;
       
-      // Now update the view count - using direct increment instead of RPC
-      const currentViews = videoExists?.views || 0;
-      const newViewCount = currentViews + 1;
-      const now = new Date().toISOString(); // Convert to ISO string for Postgres timestamp fields
+      // Get auth token safely using the session
+      const { data } = await supabase.auth.getSession();
+      const authToken = data?.session?.access_token || '';
       
-      const { data: updatedVideo, error: updateError } = await supabase
-        .from("youtube_videos")
-        .update({ 
-          views: newViewCount,
-          updated_at: now,
-          last_viewed_at: now
-        })
-        .eq("id", videoId)
-        .select("id, views");
-      
-      console.log("updatedVideo Incrementing view video existence:", updatedVideo, updateError);
-      if (updateError) {
-        console.error("Error incrementing view count:", updateError);
-        
-        // Use edge function as fallback
-        try {
-          // Get the Supabase URL and construct the edge function URL
-          const SUPABASE_URL = "https://euincktvsiuztsxcuqfd.supabase.co";
-          const functionUrl = `${SUPABASE_URL}/functions/v1/increment_counter`;
-          
-          // Get auth token safely using the session
-          const { data } = await supabase.auth.getSession();
-          const authToken = data?.session?.access_token || '';
-          
-          const response = await fetch(
-            functionUrl,
-            {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${authToken}`
-              },
-              body: JSON.stringify({ videoId })
-            }
-          );
-          
-          if (!response.ok) {
-            throw new Error(`Edge function error: ${response.statusText}`);
-          }
-          
-          const responseData = await response.json();
-          // Access the response data correctly
-          console.log("Successfully incremented view with edge function", responseData?.data?.views || 'unknown');
-        } catch (edgeError) {
-          console.error("Error with edge function increment:", edgeError);
+      const response = await fetch(
+        functionUrl,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+          },
+          body: JSON.stringify({ videoId })
         }
-      } else {
-        // Make sure we're accessing the data correctly from the array
-        console.log("Successfully incremented view count to", updatedVideo?.[0]?.views);
+      );
+      
+      const responseData = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(`Edge function error: ${response.statusText}`);
       }
+      
+      // Access the response data correctly
+      console.log("Successfully incremented view with edge function", 
+        responseData?.data?.views || responseData?.data || 'unknown view count');
       
       // Invalidate the video query to get fresh data with updated view count
       queryClient.invalidateQueries({ queryKey: ["video", videoId] });
