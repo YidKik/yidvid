@@ -74,7 +74,7 @@ export const useVideoFetcher = () => {
       // Use a direct query approach with more robust error handling as last resort
       const { data: fallbackData, error: fallbackError } = await supabase
         .from("youtube_videos")
-        .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at")
+        .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at,updated_at")
         .is("deleted_at", null)
         .order("updated_at", { ascending: false })
         .limit(100);
@@ -137,7 +137,7 @@ export const useVideoFetcher = () => {
       // If direct query fails, try simplified query
       const { data: simpleData, error: simpleError } = await supabase
         .from("youtube_videos")
-        .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, category, description")
+        .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at,updated_at, category, description")
         .is("deleted_at", null)
         .order("updated_at", { ascending: false })
         .limit(150);

@@ -29,7 +29,7 @@ export const fetchVideosFromDatabase = async (): Promise<any[]> => {
     // Try simplified query if full query fails
     const { data: simpleData, error: simpleError } = await supabase
       .from("youtube_videos")
-      .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, category, description")
+      .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at,updated_at, category, description")
       .is("deleted_at", null)
       .order("updated_at", { ascending: false })
       .limit(150);
@@ -121,7 +121,7 @@ export const fetchUpdatedVideosAfterSync = async (): Promise<any[]> => {
     // Try simpler query next
     const { data, error } = await supabase
       .from("youtube_videos")
-      .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, category, description")
+      .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at,updated_at, category, description")
       .is("deleted_at", null)
       .order("updated_at", { ascending: false })
       .limit(150);
