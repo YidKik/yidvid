@@ -50,11 +50,13 @@ export const useIncrementVideoView = () => {
         .from("youtube_videos")
         .update({ 
           views: newViewCount,
-          last_viewed_at: new Date().toISOString() 
+          updated_at: new Date(),
+          last_viewed_at: new Date() 
         })
         .filter("id", "eq", videoId)
         .select("id, views");
-
+      
+        console.log("updatedVideo Incrementing view video existence:", updatedVideo);
       if (updateError) {
         console.error("Error incrementing view count:", updateError);
         
