@@ -58,7 +58,7 @@ export const useIncrementVideoView = () => {
         .eq("id", videoId)
         .select("id, views");
       
-      console.log("updatedVideo Incrementing view video existence:", updatedVideo);
+      console.log("updatedVideo Incrementing view video existence:", updatedVideo,updateError);
       if (updateError) {
         console.error("Error incrementing view count:", updateError);
         
