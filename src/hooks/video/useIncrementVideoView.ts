@@ -32,7 +32,7 @@ export const useIncrementVideoView = () => {
       // First, check if the video exists
       const { data: videoExists, error: checkError } = await supabase
         .from("youtube_videos")
-        .select("id, views")
+        .select("*")
         .filter("id", "eq", videoId)
         .single();
         
