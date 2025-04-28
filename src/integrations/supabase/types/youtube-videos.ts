@@ -39,14 +39,14 @@ export interface YoutubeVideosTable {
     id?: string;
     thumbnail?: string;
     title?: string;
-    updated_at?: Date | new Date().toISOString();
+    updated_at?: string ;
     uploaded_at?: string;
     video_id?: string;
     views?: number | null;
     category?: "music" | "torah" | "inspiration" | "podcast" | "education" | "entertainment" | "other" | "custom" | null;
     deleted_at?: string | null;
     description?: string | null;
-    last_viewed_at?: Date | null;
+    last_viewed_at?: string | null;
   };
   Relationships: [
     {
