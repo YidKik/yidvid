@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { VideoData } from "../../types/video-fetcher";
 
@@ -20,7 +19,14 @@ export const fetchVideosFromDatabase = async (): Promise<any[]> => {
     if (!mainError && mainData && mainData.length > 0) {
       console.log(`Successfully fetched ${mainData.length} videos sorted by updated_at`);
       
-      return mainData.map(video => ({
+      // Ensure data is properly sorted client-side as well
+      const sortedData = mainData.sort((a, b) => {
+        const dateA = new Date(a.updated_at).getTime();
+        const dateB = new Date(b.updated_at).getTime();
+        return dateB - dateA; // Newest first
+      });
+      
+      return sortedData.map(video => ({
         ...video,
         views: video.views !== null ? parseInt(String(video.views)) : 0
       }));

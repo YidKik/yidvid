@@ -40,15 +40,31 @@ export const useChannelVideos = (channelId: string | undefined) => {
         const result = await response.json();
         console.log("Edge function response:", result);
         
-        // Handle both possible response formats
+        // Handle both possible response formats and ensure sorting
         if (result.data && Array.isArray(result.data) && result.data.length > 0) {
           console.log(`Found ${result.data.length} videos for channel ${channelId}`);
-          return result.data;
+          
+          // Ensure videos are sorted by updated_at in descending order
+          const sortedVideos = result.data.sort((a: any, b: any) => {
+            const dateA = new Date(a.updated_at).getTime();
+            const dateB = new Date(b.updated_at).getTime();
+            return dateB - dateA; // Newest first
+          });
+          
+          return sortedVideos;
         }
         
         if (result.videos && Array.isArray(result.videos)) {
           console.log(`Found ${result.videos.length} videos for channel ${channelId}`);
-          return result.videos;
+          
+          // Ensure videos are sorted by updated_at in descending order
+          const sortedVideos = result.videos.sort((a: any, b: any) => {
+            const dateA = new Date(a.updated_at).getTime();
+            const dateB = new Date(b.updated_at).getTime();
+            return dateB - dateA; // Newest first
+          });
+          
+          return sortedVideos;
         }
         
         console.log("No videos found for channel:", channelId);

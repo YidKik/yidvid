@@ -1,8 +1,8 @@
 
-import { useState, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { VideoData } from "./types/video-fetcher";
 
-interface VideoPaginationProps {
+interface UseVideoPaginationProps {
   videos: VideoData[];
   videosPerPage: number;
   isMobile?: boolean;
@@ -13,124 +13,48 @@ export const useVideoPagination = ({
   videos,
   videosPerPage,
   isMobile = false,
-  preloadNext = true
-}: VideoPaginationProps) => {
+  preloadNext = false,
+}: UseVideoPaginationProps) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [showMoreMobile, setShowMoreMobile] = useState(false);
-  const [isLoadingNextPage, setIsLoadingNextPage] = useState(false);
-  
-  // Ensure we're working with unique videos by ID and video_id
-  const getUniqueVideos = (videoArr: VideoData[]) => {
-    // Create a Map using composite key of id + video_id for uniqueness
-    const uniqueMap = new Map();
+
+  // Sort videos by updated_at in descending order
+  const sortedVideos = useMemo(() => {
+    if (!videos || videos.length === 0) return [];
     
-    videoArr.forEach(video => {
-      const key = `${video.id}-${video.video_id}`;
-      if (!uniqueMap.has(key)) {
-        uniqueMap.set(key, video);
-      }
+    return [...videos].sort((a, b) => {
+      // Convert to Date objects to ensure proper comparison
+      const dateA = a.updated_at ? new Date(a.updated_at).getTime() : 0;
+      const dateB = b.updated_at ? new Date(b.updated_at).getTime() : 0;
+      
+      // Sort in descending order (newest first)
+      return dateB - dateA;
     });
-    
-    return Array.from(uniqueMap.values());
-  };
-  
-  // Sort videos by upload date, most recent first
-  // Ensure each video has a unique ID for proper rendering
-  const sortedVideos = getUniqueVideos([...(videos || [])].sort((a, b) => {
-    try {
-      return new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime();
-    } catch (err) {
-      console.error("Error sorting videos by date:", err);
-      return 0; // Keep original order if there's an error
+  }, [videos]);
+
+  const totalPages = Math.ceil(sortedVideos.length / videosPerPage);
+
+  // Get videos for current page
+  const displayVideos = useMemo(() => {
+    if (isMobile && showMoreMobile) {
+      return sortedVideos; // Show all videos on mobile when "show more" is clicked
     }
-  }));
-  
-  // Calculate total pages based on number of videos and videos per page
-  const totalPages = Math.max(1, Math.ceil(sortedVideos.length / videosPerPage));
-  
-  // Get the videos to display on the current page
-  const displayVideos = sortedVideos.slice(
-    (currentPage - 1) * videosPerPage,
-    currentPage * videosPerPage
-  );
-  
-  // Preload next page videos to improve perceived performance
-  useEffect(() => {
-    if (preloadNext && currentPage < totalPages) {
-      setIsLoadingNextPage(true);
+
+    const startIdx = (currentPage - 1) * videosPerPage;
+    const endIdx = preloadNext 
+      ? startIdx + videosPerPage * 2 // Preload next page if enabled
+      : startIdx + videosPerPage;
       
-      // Use a timeout to allow the current page to render first
-      const timeoutId = setTimeout(() => {
-        // This just triggers fetching the next page's thumbnails
-        // by creating Image objects that the browser will download
-        const nextPageVideos = sortedVideos.slice(
-          currentPage * videosPerPage,
-          (currentPage + 1) * videosPerPage
-        );
-        
-        nextPageVideos.forEach(video => {
-          if (video.thumbnail) {
-            const img = new Image();
-            img.src = video.thumbnail;
-          }
-        });
-        
-        setIsLoadingNextPage(false);
-      }, 500);
-      
-      return () => clearTimeout(timeoutId);
-    }
-  }, [currentPage, preloadNext, sortedVideos, totalPages, videosPerPage]);
-  
-  // Reset to first page when videos array changes or its length changes or videosPerPage changes
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [videos?.length, videosPerPage]);
-  
-  // Ensure current page is valid when totalPages changes
-  useEffect(() => {
-    if (currentPage > totalPages && totalPages > 0) {
-      setCurrentPage(totalPages);
-    }
-  }, [totalPages, currentPage]);
-  
-  // If on mobile and the "show more" button hasn't been clicked,
-  // only show a limited number of videos (e.g., 4)
-  const mobileDisplayVideos = isMobile && !showMoreMobile
-    ? sortedVideos.slice(0, 4)
-    : displayVideos;
-  
-  // Handle page change with validation
-  const handlePageChange = (page: number) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
-      // Scroll to top of grid when changing pages
-      setTimeout(() => {
-        try {
-          const gridElement = document.querySelector('.video-grid');
-          if (gridElement) {
-            const headerHeight = 100; // Approximate header height
-            const rect = gridElement.getBoundingClientRect();
-            window.scrollTo({
-              top: window.scrollY + rect.top - headerHeight,
-              behavior: 'smooth'
-            });
-          }
-        } catch (err) {
-          console.error("Error scrolling to grid:", err);
-        }
-      }, 50);
-    }
-  };
-  
+    return sortedVideos.slice(startIdx, endIdx);
+  }, [sortedVideos, currentPage, videosPerPage, isMobile, showMoreMobile, preloadNext]);
+
   return {
     sortedVideos,
-    displayVideos: isMobile ? mobileDisplayVideos : displayVideos,
+    displayVideos,
     currentPage,
     totalPages,
-    setCurrentPage: handlePageChange,
+    setCurrentPage,
     showMoreMobile,
-    setShowMoreMobile,
-    isLoadingNextPage
+    setShowMoreMobile
   };
 };

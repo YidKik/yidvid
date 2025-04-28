@@ -12,9 +12,18 @@ interface VideoCarouselsProps {
 
 function getSortedVideos(videos: VideoGridItemType[]): VideoGridItemType[] {
   return [...videos].sort((a, b) => {
+    // First try to sort by updated_at
+    const updatedAtA = a.updated_at ? new Date(a.updated_at).getTime() : null;
+    const updatedAtB = b.updated_at ? new Date(b.updated_at).getTime() : null;
+    
+    if (updatedAtA && updatedAtB) {
+      return updatedAtB - updatedAtA; // Newest first
+    }
+    
+    // Fall back to uploaded_at if updated_at is not available
     const dateA = new Date(a.uploadedAt).getTime();
     const dateB = new Date(b.uploadedAt).getTime();
-    return dateB - dateA;
+    return dateB - dateA; // Newest first
   });
 }
 
