@@ -24,7 +24,7 @@ export const useVideoFetcher = () => {
         console.log("Attempting direct database query first...");
         const { data, error } = await supabase
           .from("youtube_videos")
-          .select("*, youtube_channels(thumbnail_url)")
+          .select("*")
           .is("deleted_at", null)
           .order("updated_at", { ascending: false })
           .limit(150); // Increased limit
