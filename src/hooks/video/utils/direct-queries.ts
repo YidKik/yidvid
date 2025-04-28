@@ -7,13 +7,13 @@ import { supabase } from "@/integrations/supabase/client";
  */
 export const performDirectDatabaseQuery = async (): Promise<any[]> => {
   try {
-    // Try direct query first
+    // Try direct query first with full data and increased limit
     const { data: directData, error: directError } = await supabase
       .from("youtube_videos")
-      .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, created_at, description")
+      .select("*, youtube_channels(thumbnail_url)")
       .is("deleted_at", null)
-      .order("created_at", { ascending: false })
-      .limit(100);
+      .order("updated_at", { ascending: false })
+      .limit(150);
     
     if (!directError && directData && directData.length > 0) {
       console.log(`Direct query successful: ${directData.length} videos`);
@@ -25,9 +25,10 @@ export const performDirectDatabaseQuery = async (): Promise<any[]> => {
     // Try fallback query with less filters
     const { data: fallbackData, error: fallbackError } = await supabase
       .from("youtube_videos")
-      .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, created_at")
-      .order("created_at", { ascending: false })
-      .limit(100);
+      .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, created_at, updated_at, description")
+      .is("deleted_at", null)
+      .order("updated_at", { ascending: false })
+      .limit(150);
       
     if (!fallbackError && fallbackData && fallbackData.length > 0) {
       console.log(`Fallback query successful: ${fallbackData.length} videos`);
@@ -40,7 +41,8 @@ export const performDirectDatabaseQuery = async (): Promise<any[]> => {
     const { data: lastResortData, error: lastResortError } = await supabase
       .from("youtube_videos")
       .select("*")
-      .limit(50);
+      .order("updated_at", { ascending: false })
+      .limit(100);
       
     if (!lastResortError && lastResortData && lastResortData.length > 0) {
       console.log(`Last resort query successful: ${lastResortData.length} videos`);

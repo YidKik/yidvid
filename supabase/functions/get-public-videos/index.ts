@@ -1,3 +1,4 @@
+
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.47.0';
 import { corsHeaders } from '../_shared/cors.ts';
 
@@ -52,8 +53,8 @@ Deno.serve(async (req) => {
         .select('*, youtube_channels(thumbnail_url)')
         .eq('channel_id', channelId)
         .is('deleted_at', null)
-        .order('uploaded_at', { ascending: false })
-        .limit(30);
+        .order('updated_at', { ascending: false })
+        .limit(150);
       
       if (!exactError && exactData && exactData.length > 0) {
         console.log(`Found ${exactData.length} videos with exact channel_id match`);
@@ -76,8 +77,8 @@ Deno.serve(async (req) => {
         .select('*, youtube_channels(thumbnail_url)')
         .or(`channel_id.ilike.%${channelId}%,channel_id.ilike.${channelId}%,channel_id.ilike.%${channelId}`)
         .is('deleted_at', null)
-        .order('uploaded_at', { ascending: false })
-        .limit(30);
+        .order('updated_at', { ascending: false })
+        .limit(150);
       
       if (!flexError && flexData && flexData.length > 0) {
         console.log(`Found ${flexData.length} videos with flexible channel_id search`);
@@ -100,8 +101,8 @@ Deno.serve(async (req) => {
         .select('*, youtube_channels(thumbnail_url)')
         .or(`channel_name.ilike.%${channelId}%,title.ilike.%${channelId}%`)
         .is('deleted_at', null)
-        .order('uploaded_at', { ascending: false })
-        .limit(30);
+        .order('updated_at', { ascending: false })
+        .limit(150);
       
       if (!nameError && nameData && nameData.length > 0) {
         console.log(`Found ${nameData.length} videos by channel name/title search`);
@@ -183,13 +184,13 @@ Deno.serve(async (req) => {
         }
       );
     } else {
-      // Fetch videos without RLS restrictions
+      // Fetch videos without RLS restrictions - increased limit and order by updated_at
       const { data, error } = await supabase
         .from('youtube_videos')
-        .select('id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, created_at, category, description')
+        .select('id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, created_at, updated_at, category, description')
         .is('deleted_at', null)
-        .order('created_at', { ascending: false })
-        .limit(30);
+        .order('updated_at', { ascending: false })
+        .limit(150);
 
       if (error) {
         throw error;

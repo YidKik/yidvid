@@ -9,12 +9,29 @@ export const fetchVideosFromDatabase = async (): Promise<any[]> => {
   try {
     console.log("Fetching videos from database with optimized performance...");
     
-    // Modified query to sort by updated_at instead of uploaded_at
+    // Query sorted by updated_at with increased limit
+    const { data: mainData, error: mainError } = await supabase
+      .from("youtube_videos")
+      .select("*, youtube_channels(thumbnail_url)")
+      .is("deleted_at", null)
+      .order("updated_at", { ascending: false }) 
+      .limit(150);
+      
+    if (!mainError && mainData && mainData.length > 0) {
+      console.log(`Successfully fetched ${mainData.length} videos with full data query`);
+      
+      return mainData.map(video => ({
+        ...video,
+        views: video.views !== null ? parseInt(String(video.views)) : 0
+      }));
+    }
+    
+    // Try simplified query if full query fails
     const { data: simpleData, error: simpleError } = await supabase
       .from("youtube_videos")
       .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, category, description")
       .is("deleted_at", null)
-      .order("updated_at", { ascending: false }) // Changed to updated_at
+      .order("updated_at", { ascending: false })
       .limit(150);
       
     if (!simpleError && simpleData && simpleData.length > 0) {
@@ -30,7 +47,7 @@ export const fetchVideosFromDatabase = async (): Promise<any[]> => {
       console.warn("Simple query failed:", simpleError);
       
       try {
-        // Try edge function as fallback
+        // Try edge function as fallback only if database queries fail
         const response = await fetch("https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/get-public-videos", {
           method: "GET",
           headers: {
@@ -54,8 +71,8 @@ export const fetchVideosFromDatabase = async (): Promise<any[]> => {
       const { data: minimalData, error: minimalError } = await supabase
         .from("youtube_videos")
         .select("*")
-        .order("updated_at", { ascending: false }) // Changed to updated_at
-        .limit(50);
+        .order("updated_at", { ascending: false })
+        .limit(100);
         
       if (!minimalError && minimalData && minimalData.length > 0) {
         console.log(`Retrieved ${minimalData.length} videos with minimal query`);
@@ -85,10 +102,28 @@ export const fetchUpdatedVideosAfterSync = async (): Promise<any[]> => {
   try {
     console.log("Fetching updated videos after sync...");
     
+    // Try full data query first
+    const { data: fullData, error: fullError } = await supabase
+      .from("youtube_videos")
+      .select("*, youtube_channels(thumbnail_url)")
+      .is("deleted_at", null)
+      .order("updated_at", { ascending: false })
+      .limit(150);
+      
+    if (!fullError && fullData && fullData.length > 0) {
+      console.log(`Successfully fetched ${fullData.length} videos with full data`);
+      return fullData.map(video => ({
+        ...video,
+        views: video.views !== null ? parseInt(String(video.views)) : 0
+      }));
+    }
+    
+    // Try simpler query next
     const { data, error } = await supabase
       .from("youtube_videos")
       .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, category, description")
-      .order("updated_at", { ascending: false })  // Changed to updated_at
+      .is("deleted_at", null)
+      .order("updated_at", { ascending: false })
       .limit(150);
 
     if (error) {
@@ -98,7 +133,8 @@ export const fetchUpdatedVideosAfterSync = async (): Promise<any[]> => {
       const { data: basicData, error: basicError } = await supabase
         .from("youtube_videos")
         .select("*")
-        .order("updated_at", { ascending: false })  // Changed to updated_at
+        .is("deleted_at", null)
+        .order("updated_at", { ascending: false })
         .limit(100);
         
       if (!basicError && basicData && basicData.length > 0) {
