@@ -47,7 +47,7 @@ Deno.serve(async (req) => {
       
       // Try multiple ways to find the channel videos for better reliability
       
-      // First, try exact channel_id match
+      // First, try exact channel_id match with updated_at sorting
       const { data: exactData, error: exactError } = await supabase
         .from('youtube_videos')
         .select('*, youtube_channels(thumbnail_url)')
@@ -57,7 +57,7 @@ Deno.serve(async (req) => {
         .limit(150);
       
       if (!exactError && exactData && exactData.length > 0) {
-        console.log(`Found ${exactData.length} videos with exact channel_id match`);
+        console.log(`Found ${exactData.length} videos with exact channel_id match, sorted by updated_at`);
         return new Response(
           JSON.stringify({
             data: exactData,
@@ -81,7 +81,7 @@ Deno.serve(async (req) => {
         .limit(150);
       
       if (!flexError && flexData && flexData.length > 0) {
-        console.log(`Found ${flexData.length} videos with flexible channel_id search`);
+        console.log(`Found ${flexData.length} videos with flexible channel_id search, sorted by updated_at`);
         return new Response(
           JSON.stringify({
             data: flexData,
@@ -105,7 +105,7 @@ Deno.serve(async (req) => {
         .limit(150);
       
       if (!nameError && nameData && nameData.length > 0) {
-        console.log(`Found ${nameData.length} videos by channel name/title search`);
+        console.log(`Found ${nameData.length} videos by channel name/title search, sorted by updated_at`);
         return new Response(
           JSON.stringify({
             data: nameData,
@@ -131,7 +131,7 @@ Deno.serve(async (req) => {
         }
       );
     }
-    // Handle video_id case (existing functionality)
+    // Handle video_id case
     else if (videoId) {
       // First try direct match with video_id or UUID
       queryResponse = await supabase
@@ -184,7 +184,7 @@ Deno.serve(async (req) => {
         }
       );
     } else {
-      // Fetch videos without RLS restrictions - increased limit and order by updated_at
+      // Fetch videos without RLS restrictions - ensure updated_at sorting
       const { data, error } = await supabase
         .from('youtube_videos')
         .select('id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, created_at, updated_at, category, description')

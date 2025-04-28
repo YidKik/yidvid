@@ -19,7 +19,7 @@ export const useVideoFetcher = () => {
       // Add delay before fetch to ensure cache is cleared
       await new Promise(resolve => setTimeout(resolve, 100));
       
-      // Try direct database query first with higher limit
+      // Try direct database query first with higher limit and explicit updated_at sorting
       try {
         console.log("Attempting direct database query first...");
         const { data, error } = await supabase
@@ -27,10 +27,10 @@ export const useVideoFetcher = () => {
           .select("*")
           .is("deleted_at", null)
           .order("updated_at", { ascending: false })
-          .limit(150); // Increased limit
+          .limit(150);
         
         if (!error && data && data.length > 0) {
-          console.log(`Successfully fetched ${data.length} videos directly from database`);
+          console.log(`Successfully fetched ${data.length} videos directly from database, sorted by updated_at`);
           const formatted = formatVideoData(data);
           setLastSuccessfulFetch(new Date());
           setFetchAttempts(0);
@@ -74,7 +74,7 @@ export const useVideoFetcher = () => {
       // Use a direct query approach with more robust error handling as last resort
       const { data: fallbackData, error: fallbackError } = await supabase
         .from("youtube_videos")
-        .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at,updated_at")
+        .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, updated_at")
         .is("deleted_at", null)
         .order("updated_at", { ascending: false })
         .limit(100);
@@ -84,7 +84,7 @@ export const useVideoFetcher = () => {
         throw fallbackError;
       }
       
-      console.log(`Fallback query successful, retrieved ${fallbackData?.length || 0} videos`);
+      console.log(`Fallback query successful, retrieved ${fallbackData?.length || 0} videos, sorted by updated_at`);
       const formatted = formatVideoData(fallbackData);
       setLastSuccessfulFetch(new Date());
       setFetchAttempts(0);
@@ -112,7 +112,7 @@ export const useVideoFetcher = () => {
     try {
       console.log("Fetching all videos");
       
-      // Try direct database query first with higher limit
+      // Try direct database query first with higher limit and explicit updated_at sorting
       try {
         console.log("Attempting direct database query first for all videos...");
         const { data, error } = await supabase
@@ -120,10 +120,10 @@ export const useVideoFetcher = () => {
           .select("*, youtube_channels(thumbnail_url)")
           .is("deleted_at", null)
           .order("updated_at", { ascending: false })
-          .limit(150); // Increased limit
-        console.log("Attempting  videos",data);
+          .limit(150);
+        
         if (!error && data && data.length > 0) {
-          console.log(`Successfully fetched ${data.length} videos directly from database`);
+          console.log(`Successfully fetched ${data.length} videos directly from database, sorted by updated_at`);
           setLastSuccessfulFetch(new Date());
           setFetchAttempts(0);
           return formatVideoData(data);
@@ -134,16 +134,16 @@ export const useVideoFetcher = () => {
         console.error("Direct database query failed:", directError);
       }
       
-      // If direct query fails, try simplified query
+      // If direct query fails, try simplified query with explicit updated_at sorting
       const { data: simpleData, error: simpleError } = await supabase
         .from("youtube_videos")
-        .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at,updated_at, category, description")
+        .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, updated_at, category, description")
         .is("deleted_at", null)
         .order("updated_at", { ascending: false })
         .limit(150);
         
       if (!simpleError && simpleData && simpleData.length > 0) {
-        console.log(`Successfully fetched ${simpleData.length} videos with simplified query`);
+        console.log(`Successfully fetched ${simpleData.length} videos with simplified query, sorted by updated_at`);
         const formatted = formatVideoData(simpleData);
         setLastSuccessfulFetch(new Date());
         setFetchAttempts(0);
@@ -175,7 +175,7 @@ export const useVideoFetcher = () => {
         console.log("Edge function approach failed", edgeError);
       }
 
-      // Last resort fallback query
+      // Last resort fallback query with updated_at sorting
       const { data: fallbackData, error: fallbackError } = await supabase
         .from("youtube_videos")
         .select("*")
@@ -193,7 +193,7 @@ export const useVideoFetcher = () => {
         throw new Error("No videos found");
       }
 
-      console.log(`Successfully fetched ${fallbackData.length} videos from final fallback`);
+      console.log(`Successfully fetched ${fallbackData.length} videos from final fallback, sorted by updated_at`);
       const formatted = formatVideoData(fallbackData);
       setLastSuccessfulFetch(new Date());
       setFetchAttempts(0);

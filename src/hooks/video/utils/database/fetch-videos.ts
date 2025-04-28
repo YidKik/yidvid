@@ -7,9 +7,9 @@ import { VideoData } from "../../types/video-fetcher";
  */
 export const fetchVideosFromDatabase = async (): Promise<any[]> => {
   try {
-    console.log("Fetching videos from database with optimized performance...");
+    console.log("Fetching videos from database with proper updated_at sorting...");
     
-    // Query sorted by updated_at with increased limit
+    // Primary query sorted by updated_at with increased limit
     const { data: mainData, error: mainError } = await supabase
       .from("youtube_videos")
       .select("*, youtube_channels(thumbnail_url)")
@@ -18,7 +18,7 @@ export const fetchVideosFromDatabase = async (): Promise<any[]> => {
       .limit(150);
       
     if (!mainError && mainData && mainData.length > 0) {
-      console.log(`Successfully fetched ${mainData.length} videos with full data query`);
+      console.log(`Successfully fetched ${mainData.length} videos sorted by updated_at`);
       
       return mainData.map(video => ({
         ...video,
@@ -29,13 +29,13 @@ export const fetchVideosFromDatabase = async (): Promise<any[]> => {
     // Try simplified query if full query fails
     const { data: simpleData, error: simpleError } = await supabase
       .from("youtube_videos")
-      .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at,updated_at, category, description")
+      .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, updated_at, category, description")
       .is("deleted_at", null)
       .order("updated_at", { ascending: false })
       .limit(150);
       
     if (!simpleError && simpleData && simpleData.length > 0) {
-      console.log(`Successfully fetched ${simpleData.length} videos with simplified query`);
+      console.log(`Successfully fetched ${simpleData.length} videos with simplified query, sorted by updated_at`);
       
       return simpleData.map(video => ({
         ...video,
@@ -59,7 +59,7 @@ export const fetchVideosFromDatabase = async (): Promise<any[]> => {
         if (response.ok) {
           const result = await response.json();
           if (result.data && Array.isArray(result.data) && result.data.length > 0) {
-            console.log(`Retrieved ${result.data.length} videos with edge function`);
+            console.log(`Retrieved ${result.data.length} videos with edge function (sorted by updated_at)`);
             return result.data;
           }
         }
@@ -75,7 +75,7 @@ export const fetchVideosFromDatabase = async (): Promise<any[]> => {
         .limit(100);
         
       if (!minimalError && minimalData && minimalData.length > 0) {
-        console.log(`Retrieved ${minimalData.length} videos with minimal query`);
+        console.log(`Retrieved ${minimalData.length} videos with minimal query, sorted by updated_at`);
         
         return minimalData.map(video => ({
           ...video,
@@ -102,7 +102,7 @@ export const fetchUpdatedVideosAfterSync = async (): Promise<any[]> => {
   try {
     console.log("Fetching updated videos after sync...");
     
-    // Try full data query first
+    // Try full data query first with explicit updated_at ordering
     const { data: fullData, error: fullError } = await supabase
       .from("youtube_videos")
       .select("*, youtube_channels(thumbnail_url)")
@@ -111,7 +111,7 @@ export const fetchUpdatedVideosAfterSync = async (): Promise<any[]> => {
       .limit(150);
       
     if (!fullError && fullData && fullData.length > 0) {
-      console.log(`Successfully fetched ${fullData.length} videos with full data`);
+      console.log(`Successfully fetched ${fullData.length} videos with full data, sorted by updated_at`);
       return fullData.map(video => ({
         ...video,
         views: video.views !== null ? parseInt(String(video.views)) : 0
@@ -121,7 +121,7 @@ export const fetchUpdatedVideosAfterSync = async (): Promise<any[]> => {
     // Try simpler query next
     const { data, error } = await supabase
       .from("youtube_videos")
-      .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at,updated_at, category, description")
+      .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, updated_at, category, description")
       .is("deleted_at", null)
       .order("updated_at", { ascending: false })
       .limit(150);
@@ -152,7 +152,7 @@ export const fetchUpdatedVideosAfterSync = async (): Promise<any[]> => {
       return [];
     }
     
-    console.log(`Successfully fetched ${data?.length || 0} updated videos`);
+    console.log(`Successfully fetched ${data?.length || 0} updated videos, sorted by updated_at`);
     
     return data.map(video => ({
       ...video,
