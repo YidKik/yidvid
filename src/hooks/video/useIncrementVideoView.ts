@@ -32,7 +32,7 @@ export const useIncrementVideoView = () => {
       // First, check if the video exists
       const { data: videoExists, error: checkError } = await supabase
         .from("youtube_videos")
-        .select("id")
+        .select("id, views")
         .eq('id', videoId)
         .single();
       
@@ -41,11 +41,14 @@ export const useIncrementVideoView = () => {
         throw new Error(`Video with ID ${videoId} not found`);
       }
       
-      // Now update the view count
+      // Now update the view count - using direct increment instead of RPC
+      const currentViews = videoExists?.views || 0;
+      const newViewCount = currentViews + 1;
+      
       const { data: updatedVideo, error: updateError } = await supabase
         .from("youtube_videos")
         .update({ 
-          views: supabase.rpc('increment_counter'),  // Using RPC function
+          views: newViewCount,
           last_viewed_at: new Date().toISOString() 
         })
         .eq('id', videoId)
@@ -54,56 +57,27 @@ export const useIncrementVideoView = () => {
       if (updateError) {
         console.error("Error incrementing view count:", updateError);
         
-        // Fallback to direct update if RPC fails
-        const { data: directUpdate, error: directError } = await supabase
-          .from("youtube_videos")
-          .select("views")
-          .eq('id', videoId)
-          .single();
-          
-        if (directError) {
-          console.error("Error fetching current view count:", directError);
-          throw new Error("Failed to increment view count");
-        }
-        
-        const currentViews = directUpdate?.views || 0;
-        const newViewCount = currentViews + 1;
-        
-        const { error: finalError } = await supabase
-          .from("youtube_videos")
-          .update({ 
-            views: newViewCount,
-            last_viewed_at: new Date().toISOString() 
-          })
-          .eq('id', videoId);
-          
-        if (finalError) {
-          console.error("Final error incrementing view count:", finalError);
-          
-          // Use edge function as last resort
-          try {
-            const response = await fetch(
-              'https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/increment_counter',
-              {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1aW5ja3R2c2l1enRzeGN1cWZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY0ODgzNzcsImV4cCI6MjA1MjA2NDM3N30.zbReqHoAR33QoCi_wqNp8AtNofTX3JebM7jvjFAWbMg`
-                },
-                body: JSON.stringify({ videoId })
-              }
-            );
-            
-            if (!response.ok) {
-              throw new Error(`Edge function error: ${response.statusText}`);
+        // Use edge function as fallback
+        try {
+          const response = await fetch(
+            'https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/increment_counter',
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1aW5ja3R2c2l1enRzeGN1cWZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY0ODgzNzcsImV4cCI6MjA1MjA2NDM3N30.zbReqHoAR33QoCi_wqNp8AtNofTX3JebM7jvjFAWbMg`
+              },
+              body: JSON.stringify({ videoId })
             }
-            
-            console.log("Successfully incremented view with edge function");
-          } catch (edgeError) {
-            console.error("Error with edge function increment:", edgeError);
+          );
+          
+          if (!response.ok) {
+            throw new Error(`Edge function error: ${response.statusText}`);
           }
-        } else {
-          console.log("Successfully incremented view count with direct update to", newViewCount);
+          
+          console.log("Successfully incremented view with edge function");
+        } catch (edgeError) {
+          console.error("Error with edge function increment:", edgeError);
         }
       } else {
         console.log("Successfully incremented view count to", updatedVideo?.[0]?.views);
