@@ -123,7 +123,7 @@ export const VideoCardInfo = ({
           <div className="flex flex-col sm:flex-row sm:items-center">
             <span>{formatViews(views)}</span>
             <span className="hidden sm:inline mx-1 text-youtube-small">•</span>
-            <span className="text-youtube-small">Uploaded {formattedDate}</span>
+            <span className="text-youtube-small">{formattedDate}</span>
           </div>
         </div>
       </div>
