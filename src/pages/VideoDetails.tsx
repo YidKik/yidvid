@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { useParams, Link, useLocation } from "react-router-dom";
 import { VideoPlayer } from "@/components/video/VideoPlayer";
@@ -46,20 +45,12 @@ const VideoDetails = () => {
     videoId
   );
 
-  // Increment view count as soon as we have a valid video ID
+  // Increment view count only once after we have the video data
   useEffect(() => {
-    if (videoId) {
-      // Try incrementing view with the URL parameter videoId first
-      console.log("Incrementing view with URL parameter:", videoId);
-      incrementView(videoId);
-    }
-  }, [videoId, incrementView]);
-
-  // Also increment view when we get the video data to ensure both UUID and YouTube ID are tried
-  useEffect(() => {
-    if (video?.id && video.id !== videoId) {
-      console.log("Incrementing view with video UUID:", video.id);
-      incrementView(video.id);
+    if (videoId && video?.id) {
+      const idToIncrement = video?.id || videoId;
+      console.log("Incrementing view for video:", idToIncrement);
+      incrementView(idToIncrement);
     }
   }, [video?.id, videoId, incrementView]);
 
