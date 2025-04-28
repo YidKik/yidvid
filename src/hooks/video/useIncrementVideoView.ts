@@ -1,3 +1,4 @@
+
 import { useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -87,12 +88,14 @@ export const useIncrementVideoView = () => {
             throw new Error(`Edge function error: ${response.statusText}`);
           }
           
-          console.log("Successfully incremented view with edge function");
+          const responseData = await response.json();
+          // Fix: Access the first element of the array, then its views property
+          console.log("Successfully incremented view with edge function", responseData?.data?.views || 'unknown');
         } catch (edgeError) {
           console.error("Error with edge function increment:", edgeError);
         }
       } else {
-        console.log("Successfully incremented view count to", updatedVideo?.views);
+        console.log("Successfully incremented view count to", updatedVideo?.[0]?.views);
       }
       
       // Invalidate the video query to get fresh data with updated view count
