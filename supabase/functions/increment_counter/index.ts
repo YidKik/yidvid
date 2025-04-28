@@ -28,6 +28,8 @@ serve(async (req) => {
       );
     }
 
+    console.log("Incrementing view for video ID:", videoId);
+
     // First get current view count
     const { data: videoData, error: fetchError } = await supabase
       .from('youtube_videos')
@@ -36,6 +38,7 @@ serve(async (req) => {
       .single();
       
     if (fetchError) {
+      console.error("Error fetching video data:", fetchError);
       return new Response(
         JSON.stringify({ error: fetchError.message }),
         { 
@@ -49,6 +52,8 @@ serve(async (req) => {
     const currentViews = videoData?.views || 0;
     const newViews = currentViews + 1;
     const now = new Date().toISOString(); // ISO string format for Postgres timestamps
+    
+    console.log(`Updating view count for ${videoId} from ${currentViews} to ${newViews}`);
     
     const { data, error } = await supabase
       .from('youtube_videos')
@@ -75,6 +80,7 @@ serve(async (req) => {
         .select('id, views');
         
       if (directError) {
+        console.error('Direct update failed:', directError);
         return new Response(
           JSON.stringify({ error: directError.message }),
           { 
@@ -84,6 +90,7 @@ serve(async (req) => {
         );
       }
       
+      console.log('View count updated through direct update:', directData);
       return new Response(
         JSON.stringify({ 
           success: true, 
@@ -97,6 +104,7 @@ serve(async (req) => {
       );
     }
 
+    console.log('View count updated successfully:', data);
     return new Response(
       JSON.stringify({ 
         success: true, 

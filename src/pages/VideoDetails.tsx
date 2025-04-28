@@ -46,13 +46,18 @@ const VideoDetails = () => {
     videoId
   );
 
+  // Enhanced view tracking with better guarantees
   useEffect(() => {
     if (video && video.id) {
       console.log("Preparing to increment view for video:", video.id);
+      
       // Use a short delay to ensure the view is counted after the page loads
+      // This helps avoid counting views for videos that are quickly navigated away from
       const timer = setTimeout(() => {
+        console.log("Executing view increment for video:", video.id);
         incrementView(video.id);
       }, 2000);
+      
       return () => clearTimeout(timer);
     }
   }, [video, incrementView]);
