@@ -48,13 +48,14 @@ serve(async (req) => {
     // Calculate new view count and update the video
     const currentViews = videoData?.views || 0;
     const newViews = currentViews + 1;
+    const now = new Date().toISOString(); // Convert Date to ISO string for Postgres compatibility
     
     const { data, error } = await supabase
       .from('youtube_videos')
       .update({ 
         views: newViews,
-        updated_at: new Date().toISOString(),
-        last_viewed_at: new Date().toISOString() 
+        updated_at: now,
+        last_viewed_at: now
       })
       .eq('id', videoId)
       .select('id, views');
@@ -67,8 +68,8 @@ serve(async (req) => {
         .from('youtube_videos')
         .update({ 
           views: newViews,
-          updated_at: new Date().toISOString(),
-          last_viewed_at: new Date().toISOString() 
+          updated_at: now,
+          last_viewed_at: now 
         })
         .eq('id', videoId)
         .select('id, views');

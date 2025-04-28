@@ -1,4 +1,3 @@
-
 import { useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -46,13 +45,14 @@ export const useIncrementVideoView = () => {
       // Now update the view count - using direct increment instead of RPC
       const currentViews = videoExists?.views || 0;
       const newViewCount = currentViews + 1;
+      const now = new Date().toISOString(); // Convert to ISO string for Postgres compatibility
       
       const { data: updatedVideo, error: updateError } = await supabase
         .from("youtube_videos")
         .update({ 
           views: newViewCount,
-          updated_at: new Date().toISOString(),
-          last_viewed_at: new Date().toISOString() 
+          updated_at: now,
+          last_viewed_at: now
         })
         .filter("id", "eq", videoId)
         .select("id, views");
@@ -61,12 +61,10 @@ export const useIncrementVideoView = () => {
       if (updateError) {
         console.error("Error incrementing view count:", updateError);
         
-        // Use edge function as fallback - using proper URL construction
+        // Use edge function as fallback
         try {
-          // Extract the project reference from the Supabase client URL string
-          // Default to our known project ref if extraction fails
+          // Get the Supabase URL and construct the edge function URL
           const SUPABASE_URL = "https://euincktvsiuztsxcuqfd.supabase.co";
-          const projectRef = 'euincktvsiuztsxcuqfd'; // Hardcoded but safe fallback
           const functionUrl = `${SUPABASE_URL}/functions/v1/increment_counter`;
           
           // Get auth token safely using the session

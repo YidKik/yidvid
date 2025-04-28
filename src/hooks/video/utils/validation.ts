@@ -32,6 +32,7 @@ export const createSampleVideos = (count = 12): VideoData[] => {
   const now = new Date();
   // Pre-calculate the base time once
   const baseTime = now.getTime();
+  const nowISO = now.toISOString();
   
   return Array(count).fill(null).map((_, i) => ({
     id: `sample-${i}`,
