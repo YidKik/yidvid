@@ -94,7 +94,7 @@ export const useIncrementVideoView = () => {
           console.error("Error with edge function increment:", edgeError);
         }
       } else {
-        console.log("Successfully incremented view count to", updatedVideo?.[0]?.views);
+        console.log("Successfully incremented view count to", updatedVideo?.views);
       }
       
       // Invalidate the video query to get fresh data with updated view count
