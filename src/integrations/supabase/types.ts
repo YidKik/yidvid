@@ -1196,7 +1196,7 @@ export type Database = {
           last_viewed_at?: string | null
           thumbnail: string
           title: string
-          updated_at?: string
+          updated_at: string
           uploaded_at: string
           video_id: string
           views?: number | null

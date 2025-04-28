@@ -3,50 +3,50 @@ export interface YoutubeVideosTable {
   Row: {
     channel_id: string;
     channel_name: string;
-    created_at: string;
+    created_at: Date;
     id: string;
     thumbnail: string;
     title: string;
-    updated_at: string;
-    uploaded_at: string;
+    updated_at: Date;
+    uploaded_at: Date;
     video_id: string;
     views: number | null;
     category?: "music" | "torah" | "inspiration" | "podcast" | "education" | "entertainment" | "other" | "custom" | null;
-    deleted_at?: string | null;
+    deleted_at?: Date | null;
     description?: string | null;
-    last_viewed_at?: string | null;
+    last_viewed_at?: Date | null;
   };
   Insert: {
     channel_id: string;
     channel_name: string;
-    created_at?: string;
+    created_at?: Date;
     id?: string;
     thumbnail: string;
     title: string;
-    updated_at?: string;
-    uploaded_at: string;
+    updated_at?: Date;
+    uploaded_at: Date;
     video_id: string;
     views?: number | null;
     category?: "music" | "torah" | "inspiration" | "podcast" | "education" | "entertainment" | "other" | "custom" | null;
-    deleted_at?: string | null;
+    deleted_at?: Date | null;
     description?: string | null;
-    last_viewed_at?: string | null;
+    last_viewed_at?: Date | null;
   };
   Update: {
     channel_id?: string;
     channel_name?: string;
-    created_at?: string;
+    created_at?: Date;
     id?: string;
     thumbnail?: string;
     title?: string;
-    updated_at?: string ;
-    uploaded_at?: string;
+    updated_at?: Date;
+    uploaded_at?: Date;
     video_id?: string;
     views?: number | null;
     category?: "music" | "torah" | "inspiration" | "podcast" | "education" | "entertainment" | "other" | "custom" | null;
-    deleted_at?: string | null;
+    deleted_at?: Date | null;
     description?: string | null;
-    last_viewed_at?: string | null;
+    last_viewed_at?: Date | null;
   };
   Relationships: [
     {
