@@ -1,3 +1,4 @@
+
 import { VideoData } from "../types/video-fetcher";
 
 /**
@@ -20,6 +21,7 @@ export const formatVideoData = (data: any[]): VideoData[] => {
     views: video.views !== null ? Number(video.views) : 0,
     uploadedAt: video.uploaded_at || new Date().toISOString(),
     createdAt: video.created_at || new Date().toISOString(),
+    updatedAt: video.updated_at || new Date().toISOString(),
     duration: video.duration || null,
     channelThumbnail: video.youtube_channels?.thumbnail_url || null
   }));

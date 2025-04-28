@@ -51,8 +51,8 @@ export const useIncrementVideoView = () => {
         .from("youtube_videos")
         .update({ 
           views: newViewCount,
-          updated_at: new Date(),
-          last_viewed_at: new Date() 
+          updated_at: new Date().toISOString(),
+          last_viewed_at: new Date().toISOString() 
         })
         .filter("id", "eq", videoId)
         .select("id, views");
@@ -61,14 +61,14 @@ export const useIncrementVideoView = () => {
       if (updateError) {
         console.error("Error incrementing view count:", updateError);
         
-        // Use edge function as fallback - using dynamic URL from supabase config
+        // Use edge function as fallback - using proper URL construction
         try {
-          // Extract the URL and API key from the supabase client
-          const supabaseUrl = supabase.supabaseUrl;
-          const supabaseKey = supabase.supabaseKey;
+          // Get the Supabase URL from the current window location for edge function
+          const projectRef = supabase.getUrl().match(/\/\/(.+)\.supabase/)?.[1] || 'euincktvsiuztsxcuqfd';
+          const functionUrl = `https://${projectRef}.supabase.co/functions/v1/increment_counter`;
           
-          // Construct the edge function URL dynamically
-          const functionUrl = `${supabaseUrl}/functions/v1/increment_counter`;
+          // Get the anon key using a supported method
+          const supabaseKey = supabase.auth.getSession().then(({ data }) => data?.session?.access_token || '');
           
           const response = await fetch(
             functionUrl,
@@ -76,7 +76,7 @@ export const useIncrementVideoView = () => {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${supabaseKey}`
+                'Authorization': `Bearer ${await supabaseKey}`
               },
               body: JSON.stringify({ videoId })
             }

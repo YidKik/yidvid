@@ -43,6 +43,7 @@ export const createSampleVideos = (count = 12): VideoData[] => {
     views: 1000 * (i+1),
     uploadedAt: new Date(baseTime - (i * 86400000)).toISOString(),
     createdAt: new Date(baseTime - (i * 86400000)).toISOString(),
+    updatedAt: new Date(baseTime - (i * 86400000)).toISOString(),
     description: "This is a sample video until real content loads.",
     channelThumbnail: '/placeholder.svg'
   }));
