@@ -32,9 +32,10 @@ export const useIncrementVideoView = () => {
       // First, check if the video exists
       const { data: videoExists, error: checkError } = await supabase
         .from("youtube_videos")
-        // .select("id, views")
-        .eq('id', videoId)
+        .select("id, views")
+        .filter("id", "eq", videoId)
         .single();
+        
       console.log("Incrementing view video existence:", videoExists);
       if (checkError) {
         console.error("Error checking video existence:", checkError);
@@ -51,7 +52,7 @@ export const useIncrementVideoView = () => {
           views: newViewCount,
           last_viewed_at: new Date().toISOString() 
         })
-        .eq('id', videoId)
+        .filter("id", "eq", videoId)
         .select("id, views");
 
       if (updateError) {
