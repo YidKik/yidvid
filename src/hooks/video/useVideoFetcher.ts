@@ -121,7 +121,7 @@ export const useVideoFetcher = () => {
           .is("deleted_at", null)
           .order("updated_at", { ascending: false })
           .limit(150); // Increased limit
-        
+        console.log("Attempting  videos",data);
         if (!error && data && data.length > 0) {
           console.log(`Successfully fetched ${data.length} videos directly from database`);
           setLastSuccessfulFetch(new Date());
