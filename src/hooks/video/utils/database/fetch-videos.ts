@@ -9,12 +9,12 @@ export const fetchVideosFromDatabase = async (): Promise<any[]> => {
   try {
     console.log("Fetching videos from database with optimized performance...");
     
-    // Explicitly use the anon key approach to bypass RLS issues
+    // Modified query to sort by updated_at instead of uploaded_at
     const { data: simpleData, error: simpleError } = await supabase
       .from("youtube_videos")
       .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, category, description")
       .is("deleted_at", null)
-      .order("uploaded_at", { ascending: false })
+      .order("updated_at", { ascending: false }) // Changed to updated_at
       .limit(150);
       
     if (!simpleError && simpleData && simpleData.length > 0) {
@@ -30,8 +30,7 @@ export const fetchVideosFromDatabase = async (): Promise<any[]> => {
       console.warn("Simple query failed:", simpleError);
       
       try {
-        // Try completely anonymous approach - but without RPC call
-        // Instead, use the get-public-videos edge function
+        // Try edge function as fallback
         const response = await fetch("https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/get-public-videos", {
           method: "GET",
           headers: {
@@ -46,17 +45,16 @@ export const fetchVideosFromDatabase = async (): Promise<any[]> => {
             console.log(`Retrieved ${result.data.length} videos with edge function`);
             return result.data;
           }
-        } else {
-          console.warn("Edge function call failed:", response.statusText);
         }
       } catch (edgeError) {
         console.warn("Edge function error:", edgeError);
       }
       
-      // Try the most minimal query possible as a last resort
+      // Try minimal query as last resort
       const { data: minimalData, error: minimalError } = await supabase
         .from("youtube_videos")
         .select("*")
+        .order("updated_at", { ascending: false }) // Changed to updated_at
         .limit(50);
         
       if (!minimalError && minimalData && minimalData.length > 0) {
@@ -87,26 +85,23 @@ export const fetchUpdatedVideosAfterSync = async (): Promise<any[]> => {
   try {
     console.log("Fetching updated videos after sync...");
     
-    // Simplified query without RLS-triggering filters
-    // Explicitly include views in the query
     const { data, error } = await supabase
       .from("youtube_videos")
       .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, category, description")
-      .order("uploaded_at", { ascending: false })  // Explicitly sort by newest first
+      .order("updated_at", { ascending: false })  // Changed to updated_at
       .limit(150);
 
     if (error) {
       console.error('Error fetching updated videos:', error);
       
-      // Try an even simpler approach if that fails
+      // Try simpler approach if that fails
       const { data: basicData, error: basicError } = await supabase
         .from("youtube_videos")
         .select("*")
-        .order("uploaded_at", { ascending: false })  // Still sort by newest
+        .order("updated_at", { ascending: false })  // Changed to updated_at
         .limit(100);
         
       if (!basicError && basicData && basicData.length > 0) {
-        // Process views for this data
         return basicData.map(video => ({
           ...video,
           views: video.views !== null ? parseInt(String(video.views)) : 0
@@ -123,7 +118,6 @@ export const fetchUpdatedVideosAfterSync = async (): Promise<any[]> => {
     
     console.log(`Successfully fetched ${data?.length || 0} updated videos`);
     
-    // Process views for this data
     return data.map(video => ({
       ...video,
       views: video.views !== null ? parseInt(String(video.views)) : 0
