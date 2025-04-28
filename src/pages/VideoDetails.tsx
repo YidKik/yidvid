@@ -48,6 +48,7 @@ const VideoDetails = () => {
 
   useEffect(() => {
     if (video && video.id) {
+      console.log("VideoDetails page received videoId:", videoId,video.id);
       const timer = setTimeout(() => {
         incrementView(video.id);
       }, 2000);
