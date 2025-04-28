@@ -68,19 +68,13 @@ serve(async (req) => {
     if (error) {
       console.error('Error incrementing view count:', error);
       
-      // Try direct update as a fallback
-      const { data: directData, error: directError } = await supabase
-        .from('youtube_videos')
-        .update({ 
-          views: newViews,
-          updated_at: now,
-          last_viewed_at: now 
-        })
-        .eq('id', videoId)
-        .select('id, views');
-        
+      // Try direct update as a fallback with a direct RPC call
+      const { data: directData, error: directError } = await supabase.rpc('increment_view_count', {
+        video_id: videoId
+      });
+      
       if (directError) {
-        console.error('Direct update failed:', directError);
+        console.error('Direct update and RPC failed:', directError);
         return new Response(
           JSON.stringify({ error: directError.message }),
           { 
@@ -90,12 +84,12 @@ serve(async (req) => {
         );
       }
       
-      console.log('View count updated through direct update:', directData);
+      console.log('View count updated through RPC method:', directData);
       return new Response(
         JSON.stringify({ 
           success: true, 
-          data: directData?.[0] || null,
-          message: 'View count incremented successfully (direct update)' 
+          data: { views: directData },
+          message: 'View count incremented successfully (RPC method)' 
         }),
         { 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },

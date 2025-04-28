@@ -11,9 +11,6 @@ export const useIncrementVideoView = () => {
   const [isUpdating, setIsUpdating] = useState(false);
   const queryClient = useQueryClient();
 
-  // Keep a record of videos that have already been counted in this session
-  const viewedVideos = new Set<string>();
-
   const incrementView = useCallback(async (videoId: string) => {
     if (!videoId) {
       console.error("Invalid video ID");
@@ -21,12 +18,11 @@ export const useIncrementVideoView = () => {
     }
 
     console.log("Incrementing view:", videoId);
-    // Skip if we've already counted a view for this video in this session
-    if (viewedVideos.has(videoId) || isUpdating) return;
+    // Only skip if already in the process of updating
+    if (isUpdating) return;
     
     try {
       setIsUpdating(true);
-      viewedVideos.add(videoId); // Mark this video as viewed in this session
       
       console.log("Incrementing view count for video:", videoId);
       
@@ -37,7 +33,7 @@ export const useIncrementVideoView = () => {
         .eq("id", videoId)
         .maybeSingle();
         
-      console.log("Incrementing view video existence:", videoExists.views);
+      console.log("Incrementing view video existence:", videoExists?.views);
       if (checkError) {
         console.error("Error checking video existence:", checkError);
         throw new Error(`Video with ID ${videoId} not found`);
@@ -58,7 +54,7 @@ export const useIncrementVideoView = () => {
         .eq("id", videoId)
         .select("id, views");
       
-      console.log("updatedVideo Incrementing view video existence:", updatedVideo,updateError);
+      console.log("updatedVideo Incrementing view video existence:", updatedVideo, updateError);
       if (updateError) {
         console.error("Error incrementing view count:", updateError);
         
@@ -108,7 +104,7 @@ export const useIncrementVideoView = () => {
     } finally {
       setIsUpdating(false);
     }
-  }, [viewedVideos, isUpdating, queryClient]);
+  }, [isUpdating, queryClient]);
 
   return incrementView;
 };

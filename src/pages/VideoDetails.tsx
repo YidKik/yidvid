@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { useParams, Link, useLocation } from "react-router-dom";
 import { VideoPlayer } from "@/components/video/VideoPlayer";
@@ -46,21 +45,12 @@ const VideoDetails = () => {
     videoId
   );
 
-  // Enhanced view tracking with better guarantees
   useEffect(() => {
-    if (video && video.id) {
-      console.log("Preparing to increment view for video:", video.id);
-      
-      // Use a short delay to ensure the view is counted after the page loads
-      // This helps avoid counting views for videos that are quickly navigated away from
-      const timer = setTimeout(() => {
-        console.log("Executing view increment for video:", video.id);
-        incrementView(video.id);
-      }, 2000);
-      
-      return () => clearTimeout(timer);
+    if (video?.id) {
+      console.log("Incrementing view for video:", video.id);
+      incrementView(video.id);
     }
-  }, [video, incrementView]);
+  }, [video?.id, incrementView]);
 
   if (isLoadingVideo) {
     return (
@@ -107,7 +97,7 @@ const VideoDetails = () => {
   }
 
   return (
-    <div className="w-full min-h-screen bg-white text-black"> {/* Updated to ensure white background and black text */}
+    <div className="w-full min-h-screen bg-white text-black">
       <div className="container mx-auto p-4 pt-16">
         <BackButton />
         {isAuthenticated && <VideoHistory videoId={video?.id || ""} />}
@@ -116,7 +106,7 @@ const VideoDetails = () => {
           <div className="lg:col-span-2">
             <VideoPlayer videoId={video?.video_id || ""} />
             <div className="flex justify-between items-start mb-4">
-              <h1 className="text-base md:text-2xl font-bold text-black">{video?.title}</h1> {/* Explicitly set text color to black */}
+              <h1 className="text-base md:text-2xl font-bold text-black">{video?.title}</h1>
               <ReportVideoDialog videoId={video?.id || ""} />
             </div>
             
@@ -144,7 +134,7 @@ const VideoDetails = () => {
               </div>
             ) : (
               <div>
-                <h2 className="text-xl font-semibold mb-4 text-black">More videos</h2> {/* Updated to black text */}
+                <h2 className="text-xl font-semibold mb-4 text-black">More videos</h2>
                 <RelatedVideos videos={channelVideos} />
               </div>
             )}
