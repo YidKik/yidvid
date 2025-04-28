@@ -37,7 +37,7 @@ export const useIncrementVideoView = () => {
         .eq("id", videoId)
         .maybeSingle();
         
-      console.log("Incrementing view video existence:", videoExists);
+      console.log("Incrementing view video existence:", videoExists.views);
       if (checkError) {
         console.error("Error checking video existence:", checkError);
         throw new Error(`Video with ID ${videoId} not found`);
