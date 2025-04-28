@@ -28,11 +28,31 @@ serve(async (req) => {
       );
     }
 
-    // Update the views count for the specified video using raw SQL
+    // First get current view count
+    const { data: videoData, error: fetchError } = await supabase
+      .from('youtube_videos')
+      .select('views')
+      .eq('id', videoId)
+      .single();
+      
+    if (fetchError) {
+      return new Response(
+        JSON.stringify({ error: fetchError.message }),
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 500 
+        }
+      );
+    }
+    
+    // Calculate new view count and update the video
+    const currentViews = videoData?.views || 0;
+    const newViews = currentViews + 1;
+    
     const { data, error } = await supabase
       .from('youtube_videos')
       .update({ 
-        views: supabase.rpc('increment_counter'),
+        views: newViews,
         updated_at: new Date().toISOString(),
         last_viewed_at: new Date().toISOString() 
       })
@@ -44,17 +64,14 @@ serve(async (req) => {
       
       // Try direct update as a fallback
       const { data: directData, error: directError } = await supabase
-        .rpc('trigger_youtube_video_fetch')
-        .then(() => supabase
-          .from('youtube_videos')
-          .update({ 
-            views: supabase.rpc('increment_counter'),
-            updated_at: new Date().toISOString(),
-            last_viewed_at: new Date().toISOString() 
-          })
-          .eq('id', videoId)
-          .select('id, views')
-        );
+        .from('youtube_videos')
+        .update({ 
+          views: newViews,
+          updated_at: new Date().toISOString(),
+          last_viewed_at: new Date().toISOString() 
+        })
+        .eq('id', videoId)
+        .select('id, views');
         
       if (directError) {
         return new Response(

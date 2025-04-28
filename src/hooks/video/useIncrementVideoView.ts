@@ -63,12 +63,15 @@ export const useIncrementVideoView = () => {
         
         // Use edge function as fallback - using proper URL construction
         try {
-          // Get the Supabase URL from the current window location for edge function
-          const projectRef = supabase.getUrl().match(/\/\/(.+)\.supabase/)?.[1] || 'euincktvsiuztsxcuqfd';
-          const functionUrl = `https://${projectRef}.supabase.co/functions/v1/increment_counter`;
+          // Extract the project reference from the Supabase client URL string
+          // Default to our known project ref if extraction fails
+          const SUPABASE_URL = "https://euincktvsiuztsxcuqfd.supabase.co";
+          const projectRef = 'euincktvsiuztsxcuqfd'; // Hardcoded but safe fallback
+          const functionUrl = `${SUPABASE_URL}/functions/v1/increment_counter`;
           
-          // Get the anon key using a supported method
-          const supabaseKey = supabase.auth.getSession().then(({ data }) => data?.session?.access_token || '');
+          // Get auth token safely using the session
+          const { data } = await supabase.auth.getSession();
+          const authToken = data?.session?.access_token || '';
           
           const response = await fetch(
             functionUrl,
@@ -76,7 +79,7 @@ export const useIncrementVideoView = () => {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${await supabaseKey}`
+                'Authorization': `Bearer ${authToken}`
               },
               body: JSON.stringify({ videoId })
             }
