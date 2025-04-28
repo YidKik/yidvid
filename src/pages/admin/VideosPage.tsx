@@ -35,7 +35,15 @@ export default function VideosPage() {
         throw error;
       }
 
-      return data;
+      // Transform string dates to Date objects before returning
+      return data?.map(video => ({
+        ...video,
+        created_at: new Date(video.created_at),
+        updated_at: new Date(video.updated_at),
+        uploaded_at: new Date(video.uploaded_at),
+        deleted_at: video.deleted_at ? new Date(video.deleted_at) : undefined,
+        last_viewed_at: video.last_viewed_at ? new Date(video.last_viewed_at) : undefined
+      }));
     },
   });
 

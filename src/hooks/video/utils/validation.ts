@@ -32,7 +32,6 @@ export const createSampleVideos = (count = 12): VideoData[] => {
   const now = new Date();
   // Pre-calculate the base time once
   const baseTime = now.getTime();
-  const nowISO = now.toISOString();
   
   return Array(count).fill(null).map((_, i) => ({
     id: `sample-${i}`,
@@ -42,9 +41,9 @@ export const createSampleVideos = (count = 12): VideoData[] => {
     channelName: "Sample Channel",
     channelId: "sample-channel",
     views: 1000 * (i+1),
-    uploadedAt: new Date(baseTime - (i * 86400000)).toISOString(),
-    createdAt: new Date(baseTime - (i * 86400000)).toISOString(),
-    updatedAt: new Date(baseTime - (i * 86400000)).toISOString(),
+    uploadedAt: new Date(baseTime - (i * 86400000)),
+    createdAt: new Date(baseTime - (i * 86400000)),
+    updatedAt: new Date(baseTime - (i * 86400000)),
     description: "This is a sample video until real content loads.",
     channelThumbnail: '/placeholder.svg'
   }));

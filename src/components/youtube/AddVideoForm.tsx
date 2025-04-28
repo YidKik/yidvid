@@ -76,7 +76,9 @@ export const AddVideoForm = ({ onClose, onSuccess }: AddVideoFormProps) => {
         }
       }
 
-      // Now add the video
+      // Now add the video - ensure proper fields for insert operation
+      const nowISOString = new Date().toISOString();
+      
       const { error: videoError } = await supabase
         .from("youtube_videos")
         .insert({
@@ -85,7 +87,9 @@ export const AddVideoForm = ({ onClose, onSuccess }: AddVideoFormProps) => {
           thumbnail: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
           channel_id: values.channelName.toLowerCase(),
           channel_name: values.channelName,
-          uploaded_at: new Date().toISOString()
+          uploaded_at: nowISOString,
+          created_at: nowISOString,
+          updated_at: nowISOString
         });
 
       if (videoError) {

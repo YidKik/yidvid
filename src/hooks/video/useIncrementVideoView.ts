@@ -46,7 +46,7 @@ export const useIncrementVideoView = () => {
       // Now update the view count - using direct increment instead of RPC
       const currentViews = videoExists?.views || 0;
       const newViewCount = currentViews + 1;
-      const now = new Date(); // Create proper Date object for timestamp fields
+      const now = new Date().toISOString(); // Convert to ISO string for Postgres timestamp fields
       
       const { data: updatedVideo, error: updateError } = await supabase
         .from("youtube_videos")

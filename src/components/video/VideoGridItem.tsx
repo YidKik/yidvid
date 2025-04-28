@@ -21,8 +21,10 @@ export const VideoGridItem = ({ video, loading }: VideoGridItemProps) => {
     return <VideoCardSkeleton />;
   }
 
-  // Format the date properly to avoid type mismatch
-  const formattedDate = getFormattedDate(video.uploadedAt);
+  // Format the date properly ensuring it's a Date object
+  const uploadedDate = video.uploadedAt instanceof Date ? 
+    video.uploadedAt : new Date(video.uploadedAt);
+  const formattedDate = getFormattedDate(uploadedDate);
   
   // Make sure we have a valid ID for linking - prioritize video_id over id
   // video_id is the YouTube's video ID, which is what our VideoPlayer expects
