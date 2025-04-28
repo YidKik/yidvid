@@ -48,7 +48,7 @@ serve(async (req) => {
     // Calculate new view count and update the video
     const currentViews = videoData?.views || 0;
     const newViews = currentViews + 1;
-    const now = new Date().toISOString(); // Convert Date to ISO string for Postgres compatibility
+    const now = new Date().toISOString(); // ISO string format for Postgres timestamps
     
     const { data, error } = await supabase
       .from('youtube_videos')

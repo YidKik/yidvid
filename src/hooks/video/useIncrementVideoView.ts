@@ -46,7 +46,7 @@ export const useIncrementVideoView = () => {
       // Now update the view count - using direct increment instead of RPC
       const currentViews = videoExists?.views || 0;
       const newViewCount = currentViews + 1;
-      const now = new Date().toISOString(); // Convert to ISO string for Postgres compatibility
+      const now = new Date(); // Create proper Date object for timestamp fields
       
       const { data: updatedVideo, error: updateError } = await supabase
         .from("youtube_videos")
@@ -89,12 +89,13 @@ export const useIncrementVideoView = () => {
           }
           
           const responseData = await response.json();
-          // Fix: Access the first element of the array, then its views property
+          // Access the response data correctly
           console.log("Successfully incremented view with edge function", responseData?.data?.views || 'unknown');
         } catch (edgeError) {
           console.error("Error with edge function increment:", edgeError);
         }
       } else {
+        // Make sure we're accessing the data correctly from the array
         console.log("Successfully incremented view count to", updatedVideo?.[0]?.views);
       }
       

@@ -16,17 +16,22 @@ export const formatVideoData = (videosData: any[]): VideoData[] => {
       viewsCount = isNaN(viewsCount) ? 0 : viewsCount;
     }
     
+    // Parse dates properly
+    const uploadedAt = video.uploaded_at ? new Date(video.uploaded_at) : new Date();
+    const createdAt = video.created_at ? new Date(video.created_at) : new Date();
+    const updatedAt = video.updated_at ? new Date(video.updated_at) : new Date();
+    
     return {
       id: video.id,
-      video_id: video.video_id,
+      video_id: video.video_id || "Untitled Video",
       title: video.title || "Untitled Video",
       thumbnail: video.thumbnail || '/placeholder.svg',
       channelName: video.channel_name || "Unknown Channel",
       channelId: video.channel_id || "unknown-channel",
       views: viewsCount,
-      uploadedAt: video.uploaded_at || new Date().toISOString(),
-      createdAt: video.created_at || new Date().toISOString(),
-      updatedAt: video.updated_at || new Date().toISOString(),
+      uploadedAt: uploadedAt,
+      createdAt: createdAt,
+      updatedAt: updatedAt,
       description: video.description || null,
       channelThumbnail: video.youtube_channels?.thumbnail_url || null
     };
