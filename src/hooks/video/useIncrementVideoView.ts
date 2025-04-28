@@ -32,10 +32,10 @@ export const useIncrementVideoView = () => {
       // First, check if the video exists
       const { data: videoExists, error: checkError } = await supabase
         .from("youtube_videos")
-        .select("id, views")
+        // .select("id, views")
         .eq('id', videoId)
         .single();
-      
+      console.log("Incrementing view video existence:", videoExists);
       if (checkError) {
         console.error("Error checking video existence:", checkError);
         throw new Error(`Video with ID ${videoId} not found`);
