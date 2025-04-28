@@ -14,9 +14,14 @@ export const useIncrementVideoView = () => {
   const viewedVideos = new Set<string>();
 
   const incrementView = useCallback(async (videoId: string) => {
+    if (!videoId) {
+      console.error("Invalid video ID");
+      return;
+    }
+
     console.log("Incrementing view:", videoId);
     // Skip if we've already counted a view for this video in this session
-   // if (viewedVideos.has(videoId) || isUpdating) return;
+    if (viewedVideos.has(videoId) || isUpdating) return;
     
     try {
       setIsUpdating(true);
@@ -24,58 +29,84 @@ export const useIncrementVideoView = () => {
       
       console.log("Incrementing view count for video:", videoId);
       
-      // First, fetch the current view count
-      const { data: currentVideo, error: fetchError } = await supabase
+      // First, check if the video exists
+      const { data: videoExists, error: checkError } = await supabase
         .from("youtube_videos")
-        .select("views")
+        .select("id")
         .eq('id', videoId)
         .single();
-        console.log("Incrementing checking:", currentVideo,fetchError);
-      if (fetchError) {
-        console.error("Error fetching current view count:", fetchError);
-        return;
+      
+      if (checkError) {
+        console.error("Error checking video existence:", checkError);
+        throw new Error(`Video with ID ${videoId} not found`);
       }
       
-      // Now update with incremented value
-      const currentViews = currentVideo?.views || 0;
-      const newViewCount = currentViews + 1;
-      
-      const { error } = await supabase
+      // Now update the view count
+      const { data: updatedVideo, error: updateError } = await supabase
         .from("youtube_videos")
         .update({ 
-          views: newViewCount,
+          views: supabase.rpc('increment_counter'),  // Using RPC function
           last_viewed_at: new Date().toISOString() 
         })
-        .eq('id', videoId);
+        .eq('id', videoId)
+        .select("id, views");
 
-      if (error) {
-        console.error("Error incrementing view count:", error);
+      if (updateError) {
+        console.error("Error incrementing view count:", updateError);
         
-        // Try a different approach if the first one fails
-        try {
-          // Attempt to call the edge function as a fallback
-          const response = await fetch(
-            'https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/increment_counter',
-            {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1aW5ja3R2c2l1enRzeGN1cWZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY0ODgzNzcsImV4cCI6MjA1MjA2NDM3N30.zbReqHoAR33QoCi_wqNp8AtNofTX3JebM7jvjFAWbMg`
-              },
-              body: JSON.stringify({ videoId })
+        // Fallback to direct update if RPC fails
+        const { data: directUpdate, error: directError } = await supabase
+          .from("youtube_videos")
+          .select("views")
+          .eq('id', videoId)
+          .single();
+          
+        if (directError) {
+          console.error("Error fetching current view count:", directError);
+          throw new Error("Failed to increment view count");
+        }
+        
+        const currentViews = directUpdate?.views || 0;
+        const newViewCount = currentViews + 1;
+        
+        const { error: finalError } = await supabase
+          .from("youtube_videos")
+          .update({ 
+            views: newViewCount,
+            last_viewed_at: new Date().toISOString() 
+          })
+          .eq('id', videoId);
+          
+        if (finalError) {
+          console.error("Final error incrementing view count:", finalError);
+          
+          // Use edge function as last resort
+          try {
+            const response = await fetch(
+              'https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/increment_counter',
+              {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1aW5ja3R2c2l1enRzeGN1cWZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY0ODgzNzcsImV4cCI6MjA1MjA2NDM3N30.zbReqHoAR33QoCi_wqNp8AtNofTX3JebM7jvjFAWbMg`
+                },
+                body: JSON.stringify({ videoId })
+              }
+            );
+            
+            if (!response.ok) {
+              throw new Error(`Edge function error: ${response.statusText}`);
             }
-          );
-          
-          if (!response.ok) {
-            throw new Error(`Edge function error: ${response.statusText}`);
+            
+            console.log("Successfully incremented view with edge function");
+          } catch (edgeError) {
+            console.error("Error with edge function increment:", edgeError);
           }
-          
-          console.log("Successfully incremented view with edge function");
-        } catch (edgeError) {
-          console.error("Error with edge function increment:", edgeError);
+        } else {
+          console.log("Successfully incremented view count with direct update to", newViewCount);
         }
       } else {
-        console.log("Successfully incremented view count to", newViewCount);
+        console.log("Successfully incremented view count to", updatedVideo?.[0]?.views);
       }
       
       // Invalidate the video query to get fresh data with updated view count

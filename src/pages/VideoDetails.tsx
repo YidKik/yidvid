@@ -48,7 +48,8 @@ const VideoDetails = () => {
 
   useEffect(() => {
     if (video && video.id) {
-      console.log("VideoDetails page received videoId:", videoId,video.id);
+      console.log("Preparing to increment view for video:", video.id);
+      // Use a short delay to ensure the view is counted after the page loads
       const timer = setTimeout(() => {
         incrementView(video.id);
       }, 2000);
@@ -104,29 +105,29 @@ const VideoDetails = () => {
     <div className="w-full min-h-screen bg-white text-black"> {/* Updated to ensure white background and black text */}
       <div className="container mx-auto p-4 pt-16">
         <BackButton />
-        {isAuthenticated && <VideoHistory videoId={video.id} />}
+        {isAuthenticated && <VideoHistory videoId={video?.id || ""} />}
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
-            <VideoPlayer videoId={video.video_id} />
+            <VideoPlayer videoId={video?.video_id || ""} />
             <div className="flex justify-between items-start mb-4">
-              <h1 className="text-base md:text-2xl font-bold text-black">{video.title}</h1> {/* Explicitly set text color to black */}
-              <ReportVideoDialog videoId={video.id} />
+              <h1 className="text-base md:text-2xl font-bold text-black">{video?.title}</h1> {/* Explicitly set text color to black */}
+              <ReportVideoDialog videoId={video?.id || ""} />
             </div>
             
-            {isAuthenticated && <VideoInteractions videoId={video.id} />}
+            {isAuthenticated && <VideoInteractions videoId={video?.id || ""} />}
             
-            {isAuthenticated && <VideoComments videoId={video.id} />}
+            {isAuthenticated && <VideoComments videoId={video?.id || ""} />}
 
             <div className="mt-8 border-t pt-8">
               <VideoInfo
-                title={video.title}
-                channelName={video.channel_name}
-                channelId={video.channel_id}
-                channelThumbnail={video.youtube_channels?.thumbnail_url}
-                views={video.views}
-                uploadedAt={video.uploaded_at}
-                description={video.description}
+                title={video?.title || ""}
+                channelName={video?.channel_name || ""}
+                channelId={video?.channel_id || ""}
+                channelThumbnail={video?.youtube_channels?.thumbnail_url || ""}
+                views={video?.views || 0}
+                uploadedAt={video?.uploaded_at || ""}
+                description={video?.description || ""}
               />
             </div>
           </div>
@@ -150,4 +151,3 @@ const VideoDetails = () => {
 };
 
 export default VideoDetails;
-
