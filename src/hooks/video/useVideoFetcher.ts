@@ -53,7 +53,7 @@ export const useVideoFetcher = () => {
         .from("youtube_videos")
         .select("*, youtube_channels(thumbnail_url)")
         .is("deleted_at", null)
-        .order("created_at", { ascending: false })
+        .order("updated_at", { ascending: false })
         .limit(150);
       
       if (error) {
@@ -65,7 +65,7 @@ export const useVideoFetcher = () => {
           .from("youtube_videos")
           .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at")
           .is("deleted_at", null)
-          .order("created_at", { ascending: false })
+          .order("updated_at", { ascending: false })
           .limit(100);
           
         if (fallbackResult.error) {
@@ -141,7 +141,7 @@ export const useVideoFetcher = () => {
         .from("youtube_videos")
         .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at")
         .is("deleted_at", null)
-        .order("created_at", { ascending: false })
+        .order("updated_at", { ascending: false })
         .limit(100);
         
       if (!simpleError && simpleData && simpleData.length > 0) {
@@ -157,7 +157,7 @@ export const useVideoFetcher = () => {
         .from("youtube_videos")
         .select("*, youtube_channels(thumbnail_url)")
         .is("deleted_at", null)
-        .order("created_at", { ascending: false })
+        .order("updated_at", { ascending: false })
         .limit(150);
 
       if (error) {
