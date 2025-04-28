@@ -9,3 +9,6 @@ hostname = "localhost"
 
 [functions.channel-subscribe]
 verify_jwt = true
+
+[functions.increment_counter]
+verify_jwt = false

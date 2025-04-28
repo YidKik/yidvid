@@ -33,6 +33,7 @@ serve(async (req) => {
       .from('youtube_videos')
       .update({ 
         views: supabase.rpc('increment_counter'),
+        updated_at: new Date().toISOString(),
         last_viewed_at: new Date().toISOString() 
       })
       .eq('id', videoId)
@@ -48,6 +49,7 @@ serve(async (req) => {
           .from('youtube_videos')
           .update({ 
             views: supabase.rpc('increment_counter'),
+            updated_at: new Date().toISOString(),
             last_viewed_at: new Date().toISOString() 
           })
           .eq('id', videoId)
