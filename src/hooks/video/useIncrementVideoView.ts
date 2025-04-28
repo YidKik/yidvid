@@ -14,8 +14,9 @@ export const useIncrementVideoView = () => {
   const viewedVideos = new Set<string>();
 
   const incrementView = useCallback(async (videoId: string) => {
+    console.log("Incrementing view:", videoId);
     // Skip if we've already counted a view for this video in this session
-    if (viewedVideos.has(videoId) || isUpdating) return;
+   // if (viewedVideos.has(videoId) || isUpdating) return;
     
     try {
       setIsUpdating(true);
@@ -29,7 +30,7 @@ export const useIncrementVideoView = () => {
         .select("views")
         .eq('id', videoId)
         .single();
-        
+        console.log("Incrementing checking:", currentVideo,fetchError);
       if (fetchError) {
         console.error("Error fetching current view count:", fetchError);
         return;
