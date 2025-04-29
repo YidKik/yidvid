@@ -41,7 +41,7 @@ export const useVideoGridData = (maxVideos: number = 12, isAuthenticated: boolea
             )
           `)
           .is("deleted_at", null)
-          .order("updated_at", { ascending: false })
+          .order("uploaded_at", { ascending: false }) // Sort by uploaded_at instead of updated_at
           .limit(maxVideos);
         
         if (error) {
@@ -65,10 +65,10 @@ export const useVideoGridData = (maxVideos: number = 12, isAuthenticated: boolea
           channelThumbnail: video.youtube_channels?.thumbnail_url || null,
         }));
         
-        // Ensure videos are sorted by updated_at in descending order
+        // Ensure videos are sorted by uploaded_at in descending order
         const sortedVideos = mappedVideos.sort((a, b) => {
-          const dateA = new Date(a.updated_at || a.uploadedAt).getTime();
-          const dateB = new Date(b.updated_at || b.uploadedAt).getTime();
+          const dateA = new Date(a.uploadedAt).getTime();
+          const dateB = new Date(b.uploadedAt).getTime();
           return dateB - dateA; // Newest first
         });
         

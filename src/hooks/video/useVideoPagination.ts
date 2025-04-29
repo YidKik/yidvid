@@ -18,14 +18,14 @@ export const useVideoPagination = ({
   const [currentPage, setCurrentPage] = useState(1);
   const [showMoreMobile, setShowMoreMobile] = useState(false);
 
-  // Sort videos by updatedAt in descending order
+  // Sort videos by uploadedAt in descending order
   const sortedVideos = useMemo(() => {
     if (!videos || videos.length === 0) return [];
     
     return [...videos].sort((a, b) => {
       // Convert to Date objects to ensure proper comparison
-      const dateA = a.updatedAt ? new Date(a.updatedAt).getTime() : 0;
-      const dateB = b.updatedAt ? new Date(b.updatedAt).getTime() : 0;
+      const dateA = a.uploadedAt ? new Date(a.uploadedAt).getTime() : 0;
+      const dateB = b.uploadedAt ? new Date(b.uploadedAt).getTime() : 0;
       
       // Sort in descending order (newest first)
       return dateB - dateA;

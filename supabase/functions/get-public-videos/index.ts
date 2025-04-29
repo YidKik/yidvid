@@ -1,4 +1,3 @@
-
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.47.0';
 import { corsHeaders } from '../_shared/cors.ts';
 
@@ -47,17 +46,17 @@ Deno.serve(async (req) => {
       
       // Try multiple ways to find the channel videos for better reliability
       
-      // First, try exact channel_id match with updated_at sorting
+      // First, try exact channel_id match with uploaded_at sorting
       const { data: exactData, error: exactError } = await supabase
         .from('youtube_videos')
         .select('*, youtube_channels(thumbnail_url)')
         .eq('channel_id', channelId)
         .is('deleted_at', null)
-        .order('updated_at', { ascending: false })
+        .order('uploaded_at', { ascending: false })
         .limit(150);
       
       if (!exactError && exactData && exactData.length > 0) {
-        console.log(`Found ${exactData.length} videos with exact channel_id match, sorted by updated_at`);
+        console.log(`Found ${exactData.length} videos with exact channel_id match, sorted by uploaded_at`);
         return new Response(
           JSON.stringify({
             data: exactData,
@@ -77,11 +76,11 @@ Deno.serve(async (req) => {
         .select('*, youtube_channels(thumbnail_url)')
         .or(`channel_id.ilike.%${channelId}%,channel_id.ilike.${channelId}%,channel_id.ilike.%${channelId}`)
         .is('deleted_at', null)
-        .order('updated_at', { ascending: false })
+        .order('uploaded_at', { ascending: false })
         .limit(150);
       
       if (!flexError && flexData && flexData.length > 0) {
-        console.log(`Found ${flexData.length} videos with flexible channel_id search, sorted by updated_at`);
+        console.log(`Found ${flexData.length} videos with flexible channel_id search, sorted by uploaded_at`);
         return new Response(
           JSON.stringify({
             data: flexData,
@@ -101,11 +100,11 @@ Deno.serve(async (req) => {
         .select('*, youtube_channels(thumbnail_url)')
         .or(`channel_name.ilike.%${channelId}%,title.ilike.%${channelId}%`)
         .is('deleted_at', null)
-        .order('updated_at', { ascending: false })
+        .order('uploaded_at', { ascending: false })
         .limit(150);
       
       if (!nameError && nameData && nameData.length > 0) {
-        console.log(`Found ${nameData.length} videos by channel name/title search, sorted by updated_at`);
+        console.log(`Found ${nameData.length} videos by channel name/title search, sorted by uploaded_at`);
         return new Response(
           JSON.stringify({
             data: nameData,
@@ -184,12 +183,12 @@ Deno.serve(async (req) => {
         }
       );
     } else {
-      // Fetch videos without RLS restrictions - ensure updated_at sorting
+      // Fetch videos without RLS restrictions - ensure uploaded_at sorting
       const { data, error } = await supabase
         .from('youtube_videos')
         .select('id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, created_at, updated_at, category, description')
         .is('deleted_at', null)
-        .order('updated_at', { ascending: false })
+        .order('uploaded_at', { ascending: false }) // Sort by uploaded_at
         .limit(150);
 
       if (error) {
