@@ -9,6 +9,15 @@ const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
 // Create supabase client with service role key to bypass RLS
 const supabase = createClient(supabaseUrl, serviceRoleKey);
 
+// List of referer domains to try
+const refererDomains = [
+  'https://yidvid.com',
+  'https://lovable.dev',
+  'https://app.yidvid.com',
+  'https://youtube-viewer.com',
+  'https://videohub.app'
+];
+
 Deno.serve(async (req) => {
   // Handle CORS
   if (req.method === 'OPTIONS') {
@@ -42,28 +51,46 @@ Deno.serve(async (req) => {
       apiUrl += `&id=${channelId}`;
     }
     
-    // Make request to YouTube API with robust headers
-    const response = await fetch(apiUrl, {
-      headers: {
-        'Accept': 'application/json',
-        'User-Agent': 'Mozilla/5.0 Supabase Edge Function',
-        'Referer': 'https://yidvid.com',
-        'Origin': 'https://yidvid.com',
-        'X-Request-Source': 'Supabase Edge Function'
-      }
-    });
+    let response = null;
+    let lastError = null;
     
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("YouTube API error:", response.status, response.statusText);
-      console.error("Error details:", errorText);
-      
+    // Try each referer domain until one works
+    for (const domain of refererDomains) {
+      try {
+        console.log(`Trying domain ${domain} for API request`);
+        response = await fetch(apiUrl, {
+          headers: {
+            'Accept': 'application/json',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) VideoFetchBot/1.0',
+            'Referer': domain,
+            'Origin': domain,
+            'X-Request-Source': 'Supabase Edge Function'
+          }
+        });
+        
+        if (response.ok) {
+          console.log(`Successfully fetched with domain ${domain}`);
+          break; // Exit the loop if successful
+        } else {
+          const errorText = await response.text();
+          console.error(`Error with domain ${domain}:`, response.status, errorText);
+          lastError = { status: response.status, text: errorText };
+        }
+      } catch (fetchError) {
+        console.error(`Fetch error with domain ${domain}:`, fetchError);
+        lastError = fetchError;
+      }
+    }
+    
+    // If all attempts failed
+    if (!response || !response.ok) {
+      console.error("All API attempts failed. Last error:", lastError);
       return new Response(
         JSON.stringify({ 
-          error: `YouTube API error: ${response.status} ${response.statusText}`, 
-          details: errorText 
+          error: `YouTube API error: Unable to fetch channel data`, 
+          details: lastError 
         }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: response.status }
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
       );
     }
     

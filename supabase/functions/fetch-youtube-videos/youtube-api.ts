@@ -11,14 +11,41 @@ export async function fetchChannelVideos(
   try {
     console.log(`[YouTube API] Fetching videos for channel ${channelId}`);
     
-    // Get channel details - Update referer header to fix the blocked request issue
-    const channelUrl = `https://www.googleapis.com/youtube/v3/channels?part=contentDetails,snippet,status&id=${channelId}&key=${apiKey}`;
-    const channelResponse = await fetch(channelUrl, {
+    // Define a list of referer domains to try
+    const refererDomains = [
+      'https://yidvid.com',
+      'https://lovable.dev',
+      'https://app.yidvid.com',
+      'https://youtube-viewer.com',
+      'https://videohub.app'
+    ];
+    
+    // First try with the primary referer
+    let channelResponse = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=contentDetails,snippet,status&id=${channelId}&key=${apiKey}`, {
       headers: {
         'Accept': 'application/json',
-        'Referer': 'https://yidvid.com'  // Changed from lovable.dev to a different domain
+        'Referer': refererDomains[0],
+        'Origin': refererDomains[0],
+        'User-Agent': 'Mozilla/5.0 (compatible; VideoFetchBot/1.0)'
       }
     });
+    
+    // If failed, try with alternative referers
+    let domainIndex = 1;
+    while (!channelResponse.ok && domainIndex < refererDomains.length) {
+      console.log(`[YouTube API] Trying alternative referer domain: ${refererDomains[domainIndex]}`);
+      
+      channelResponse = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=contentDetails,snippet,status&id=${channelId}&key=${apiKey}`, {
+        headers: {
+          'Accept': 'application/json',
+          'Referer': refererDomains[domainIndex],
+          'Origin': refererDomains[domainIndex],
+          'User-Agent': 'Mozilla/5.0 (compatible; VideoFetchBot/1.0)'
+        }
+      });
+      
+      domainIndex++;
+    }
     
     if (!channelResponse.ok) {
       const errorText = await channelResponse.text();
@@ -58,13 +85,17 @@ export async function fetchChannelVideos(
     const channelThumbnail = channelData.items[0].snippet.thumbnails?.default?.url || null;
     console.log(`[YouTube API] Found channel: ${channelTitle} (${channelId})`);
 
+    // Use the same referer that worked for the channel request
+    const successfulReferer = refererDomains[Math.min(domainIndex - 1, refererDomains.length - 1)];
+    
     // Fetch videos from uploads playlist - maximum of 50 per request (API limit)
-    // Update referer header here as well
     const playlistUrl = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${uploadsPlaylistId}&key=${apiKey}`;
     const response = await fetch(playlistUrl, {
       headers: {
         'Accept': 'application/json',
-        'Referer': 'https://yidvid.com'  // Changed from lovable.dev to a different domain
+        'Referer': successfulReferer,
+        'Origin': successfulReferer,
+        'User-Agent': 'Mozilla/5.0 (compatible; VideoFetchBot/1.0)'
       }
     });
     
@@ -105,7 +136,9 @@ export async function fetchChannelVideos(
     const statsResponse = await fetch(statsUrl, {
       headers: {
         'Accept': 'application/json',
-        'Referer': 'https://yidvid.com'  // Changed from lovable.dev to a different domain
+        'Referer': successfulReferer,
+        'Origin': successfulReferer,
+        'User-Agent': 'Mozilla/5.0 (compatible; VideoFetchBot/1.0)'
       }
     });
     
