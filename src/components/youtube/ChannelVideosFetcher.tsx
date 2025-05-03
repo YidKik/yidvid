@@ -22,7 +22,7 @@ export const ChannelVideosFetcher = () => {
   const handleFetchVideos = async () => {
     try {
       setIsLoading(true);
-      toast.loading("Fetching videos from YouTube...");
+      toast.loading("Fetching channels...");
       
       // Step 1: Get all active channel IDs
       const channelIds = await fetchChannelIds();
@@ -34,7 +34,7 @@ export const ChannelVideosFetcher = () => {
       }
       
       console.log(`Successfully retrieved ${channelIds.length} channels`);
-      toast.loading(`Processing ${channelIds.length} channels...`);
+      toast.loading(`Processing ${channelIds.length} channels from YouTube...`);
       
       // Step 2 & 3: Call edge function to fetch videos from YouTube and save to database
       const { data, error } = await supabase.functions.invoke('fetch-youtube-videos', {
@@ -59,10 +59,14 @@ export const ChannelVideosFetcher = () => {
 
       // Display results
       if (data.success) {
-        if (data.newVideos > 0) {
-          toast.success(`Successfully processed ${data.processed} channels and found ${data.newVideos} new videos`);
+        if (data.processed > 0) {
+          if (data.newVideos > 0) {
+            toast.success(`Successfully processed ${data.processed} channels and found ${data.newVideos} new videos`);
+          } else {
+            toast.info(`Processed ${data.processed} channels but no new videos were found`);
+          }
         } else {
-          toast.info(`Processed ${data.processed} channels but no new videos were found`);
+          toast.warning(`No channels were processed. This might be due to YouTube API restrictions or quota limits.`);
         }
         
         // Show detailed results for debugging
@@ -102,8 +106,10 @@ export const ChannelVideosFetcher = () => {
         if (!channelsError && channels && channels.length > 0) {
           console.log(`Successfully fetched ${channels.length} channel IDs directly from database`);
           return channels.map(channel => channel.channel_id);
+        } else if (channelsError) {
+          console.warn("Direct channel fetch failed, trying alternative methods:", channelsError);
         } else {
-          console.warn("Direct channel fetch failed, trying alternative methods");
+          console.warn("Direct channel fetch returned no channels, trying alternative methods");
         }
       } catch (directQueryError) {
         console.error('Error in direct channel query:', directQueryError);
@@ -119,7 +125,7 @@ export const ChannelVideosFetcher = () => {
           console.log(`Retrieved ${edgeResponse.data.length} channels via edge function`);
           return edgeResponse.data.map(c => c.channel_id);
         } else {
-          console.warn("Edge function channel fetch failed");
+          console.warn("Edge function channel fetch failed", edgeError);
         }
       } catch (edgeError) {
         console.error('Edge function error:', edgeError);

@@ -11,9 +11,14 @@ export async function fetchChannelVideos(
   try {
     console.log(`[YouTube API] Fetching videos for channel ${channelId}`);
     
-    // Get channel details
+    // Get channel details - Add referer header to fix the blocked request issue
     const channelUrl = `https://www.googleapis.com/youtube/v3/channels?part=contentDetails,snippet,status&id=${channelId}&key=${apiKey}`;
-    const channelResponse = await fetch(channelUrl);
+    const channelResponse = await fetch(channelUrl, {
+      headers: {
+        'Accept': 'application/json',
+        'Referer': 'https://yidvid.com'  // Adding referer header to fix the blocked request
+      }
+    });
     
     if (!channelResponse.ok) {
       const errorText = await channelResponse.text();
@@ -54,8 +59,14 @@ export async function fetchChannelVideos(
     console.log(`[YouTube API] Found channel: ${channelTitle} (${channelId})`);
 
     // Fetch videos from uploads playlist - maximum of 50 per request (API limit)
+    // Add referer header here as well
     const playlistUrl = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${uploadsPlaylistId}&key=${apiKey}`;
-    const response = await fetch(playlistUrl);
+    const response = await fetch(playlistUrl, {
+      headers: {
+        'Accept': 'application/json',
+        'Referer': 'https://yidvid.com'  // Adding referer header to fix the blocked request
+      }
+    });
     
     if (!response.ok) {
       const errorText = await response.text();
@@ -89,9 +100,14 @@ export async function fetchChannelVideos(
       return { videos: [] };
     }
 
-    // Get detailed video information including statistics
+    // Get detailed video information including statistics - Add referer header
     const statsUrl = `https://www.googleapis.com/youtube/v3/videos?part=statistics,snippet&id=${videoIds.join(',')}&key=${apiKey}`;
-    const statsResponse = await fetch(statsUrl);
+    const statsResponse = await fetch(statsUrl, {
+      headers: {
+        'Accept': 'application/json',
+        'Referer': 'https://yidvid.com'  // Adding referer header to fix the blocked request
+      }
+    });
     
     if (!statsResponse.ok) {
       const errorText = await statsResponse.text();

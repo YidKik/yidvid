@@ -1,5 +1,4 @@
 
-
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") || "";
@@ -46,18 +45,35 @@ export async function checkQuota() {
 
 export async function updateQuotaUsage(quotaUsed: number) {
   try {
+    // Fixed: Using direct value update instead of RPC function
+    const { data: currentQuota, error: getError } = await supabase
+      .from("api_quota_tracking")
+      .select("quota_remaining")
+      .eq("api_name", "youtube")
+      .single();
+      
+    if (getError) {
+      console.error("Error getting current quota:", getError);
+      return;
+    }
+    
+    // Calculate new remaining quota
+    const newRemainingQuota = Math.max(0, currentQuota.quota_remaining - quotaUsed);
+    
     const { error } = await supabase
       .from("api_quota_tracking")
       .update({
-        quota_remaining: supabase.rpc("decrement_quota", { quota_amount: quotaUsed })
+        quota_remaining: newRemainingQuota,
+        updated_at: new Date().toISOString()
       })
       .eq("api_name", "youtube");
 
     if (error) {
       console.error("Error updating quota:", error);
+    } else {
+      console.log(`Successfully updated quota. Used: ${quotaUsed}, Remaining: ${newRemainingQuota}`);
     }
   } catch (error) {
     console.error("Error in updateQuotaUsage:", error);
   }
 }
-
