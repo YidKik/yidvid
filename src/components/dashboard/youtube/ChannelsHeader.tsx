@@ -29,7 +29,7 @@ export const ChannelsHeader = ({
   return (
     <div className="flex flex-col gap-4 border-b border-primary/30 pb-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold text-gray-800">YouTube Channels</h2>
+        <h2 className="text-xl font-semibold">YouTube Channels</h2>
         <div className="flex items-center gap-4">
           <Dialog open={isVideoDialogOpen} onOpenChange={setIsVideoDialogOpen}>
             <DialogTrigger asChild>
@@ -81,4 +81,4 @@ export const ChannelsHeader = ({
       </div>
     </div>
   );
-}
+};
