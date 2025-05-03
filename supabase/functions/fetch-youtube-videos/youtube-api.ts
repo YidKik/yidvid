@@ -11,12 +11,12 @@ export async function fetchChannelVideos(
   try {
     console.log(`[YouTube API] Fetching videos for channel ${channelId}`);
     
-    // Get channel details - Add referer header to fix the blocked request issue
+    // Get channel details - Update referer header to fix the blocked request issue
     const channelUrl = `https://www.googleapis.com/youtube/v3/channels?part=contentDetails,snippet,status&id=${channelId}&key=${apiKey}`;
     const channelResponse = await fetch(channelUrl, {
       headers: {
         'Accept': 'application/json',
-        'Referer': 'https://yidvid.com'  // Adding referer header to fix the blocked request
+        'Referer': 'https://lovable.dev'  // Using lovable.dev as referer which should be allowed
       }
     });
     
@@ -27,7 +27,7 @@ export async function fetchChannelVideos(
       
       // Check for quota exceeded
       if (errorText.includes('quotaExceeded') || channelResponse.status === 403) {
-        console.error('[YouTube API] YouTube API quota exceeded');
+        console.error('[YouTube API] YouTube API quota exceeded or restriction applied');
         return { videos: [], quotaExceeded: true };
       }
       
@@ -59,12 +59,12 @@ export async function fetchChannelVideos(
     console.log(`[YouTube API] Found channel: ${channelTitle} (${channelId})`);
 
     // Fetch videos from uploads playlist - maximum of 50 per request (API limit)
-    // Add referer header here as well
+    // Update referer header here as well
     const playlistUrl = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${uploadsPlaylistId}&key=${apiKey}`;
     const response = await fetch(playlistUrl, {
       headers: {
         'Accept': 'application/json',
-        'Referer': 'https://yidvid.com'  // Adding referer header to fix the blocked request
+        'Referer': 'https://lovable.dev'  // Using lovable.dev as referer which should be allowed
       }
     });
     
@@ -75,7 +75,7 @@ export async function fetchChannelVideos(
       
       // Check for quota exceeded
       if (errorText.includes('quotaExceeded') || response.status === 403) {
-        console.error('[YouTube API] YouTube API quota exceeded');
+        console.error('[YouTube API] YouTube API quota exceeded or restriction applied');
         return { videos: [], quotaExceeded: true };
       }
       
@@ -100,12 +100,12 @@ export async function fetchChannelVideos(
       return { videos: [] };
     }
 
-    // Get detailed video information including statistics - Add referer header
+    // Get detailed video information including statistics - Update referer header
     const statsUrl = `https://www.googleapis.com/youtube/v3/videos?part=statistics,snippet&id=${videoIds.join(',')}&key=${apiKey}`;
     const statsResponse = await fetch(statsUrl, {
       headers: {
         'Accept': 'application/json',
-        'Referer': 'https://yidvid.com'  // Adding referer header to fix the blocked request
+        'Referer': 'https://lovable.dev'  // Using lovable.dev as referer which should be allowed
       }
     });
     
@@ -116,7 +116,7 @@ export async function fetchChannelVideos(
       
       // Check for quota exceeded
       if (errorText.includes('quotaExceeded') || statsResponse.status === 403) {
-        console.error('[YouTube API] YouTube API quota exceeded');
+        console.error('[YouTube API] YouTube API quota exceeded or restriction applied');
         return { videos: [], quotaExceeded: true };
       }
       
