@@ -14,6 +14,8 @@ serve(async (req) => {
   try {
     const { channels = [], forceUpdate = false, quotaConservative = false, prioritizeRecent = true, maxChannelsPerRun = 20 } = await req.json();
     
+    console.log(`Received request to fetch videos for ${channels.length} channels with forceUpdate=${forceUpdate}`);
+    
     // Check if we have quota remaining before starting
     const { quota_remaining, quota_reset_at } = await checkQuota();
     
@@ -29,8 +31,19 @@ serve(async (req) => {
       );
     }
 
+    // If no channels provided, return early
+    if (!channels || channels.length === 0) {
+      console.log("No channels provided in the request");
+      return new Response(
+        JSON.stringify({
+          success: false,
+          message: "No channels provided to process"
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     // Calculate how many channels we can process based on available quota
-    // Use a more conservative quota estimate to avoid exceeding quota
     const estimatedQuotaPerChannel = quotaConservative ? 15 : 10;
     const maxChannelsBasedOnQuota = Math.floor(quota_remaining / estimatedQuotaPerChannel);
     const channelsToProcess = Math.min(
@@ -62,13 +75,14 @@ serve(async (req) => {
     let processedCount = 0;
     let quotaUsed = 0;
 
-    // Always prioritize by most recently active to get newest content first
-    console.log("Prioritizing most recently active channels");
+    console.log("Starting to process channels");
 
     // Process channels sequentially to better manage quota
     for (const channelId of channelsSubset) {
       try {
-        // Fetch channel videos
+        console.log(`Processing channel ${channelId}`);
+        
+        // Fetch channel videos directly from YouTube
         const { videos, quotaExceeded } = await fetchChannelVideos(channelId, Deno.env.get("YOUTUBE_API_KEY") || "");
         
         if (quotaExceeded) {
@@ -78,6 +92,8 @@ serve(async (req) => {
         
         // Track quota usage - each video request uses about 1 unit
         quotaUsed += videos.length > 0 ? (1 + Math.ceil(videos.length / 50)) : 1;
+        
+        console.log(`Found ${videos.length} videos for channel ${channelId}`);
         
         if (!videos || videos.length === 0) {
           results.push({
@@ -93,6 +109,8 @@ serve(async (req) => {
         
         processedCount++;
         newVideosCount += processResult.newVideos || 0;
+        
+        console.log(`Successfully added ${processResult.newVideos} new videos for channel ${channelId}`);
         
         results.push({
           channelId,
@@ -118,6 +136,8 @@ serve(async (req) => {
 
     // Update used quota
     await updateQuotaUsage(quotaUsed);
+
+    console.log(`Completed processing ${processedCount} channels, found ${newVideosCount} new videos`);
 
     return new Response(
       JSON.stringify({
