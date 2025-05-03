@@ -16,7 +16,7 @@ export async function fetchChannelVideos(
     const channelResponse = await fetch(channelUrl, {
       headers: {
         'Accept': 'application/json',
-        'Referer': 'https://lovable.dev'  // Using lovable.dev as referer which should be allowed
+        'Referer': 'https://yidvid.com'  // Changed from lovable.dev to a different domain
       }
     });
     
@@ -64,7 +64,7 @@ export async function fetchChannelVideos(
     const response = await fetch(playlistUrl, {
       headers: {
         'Accept': 'application/json',
-        'Referer': 'https://lovable.dev'  // Using lovable.dev as referer which should be allowed
+        'Referer': 'https://yidvid.com'  // Changed from lovable.dev to a different domain
       }
     });
     
@@ -105,7 +105,7 @@ export async function fetchChannelVideos(
     const statsResponse = await fetch(statsUrl, {
       headers: {
         'Accept': 'application/json',
-        'Referer': 'https://lovable.dev'  // Using lovable.dev as referer which should be allowed
+        'Referer': 'https://yidvid.com'  // Changed from lovable.dev to a different domain
       }
     });
     
