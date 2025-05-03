@@ -45,7 +45,7 @@ export async function checkQuota() {
 
 export async function updateQuotaUsage(quotaUsed: number) {
   try {
-    // Fixed: Using direct value update instead of RPC function
+    // Direct update method instead of RPC
     const { data: currentQuota, error: getError } = await supabase
       .from("api_quota_tracking")
       .select("quota_remaining")
