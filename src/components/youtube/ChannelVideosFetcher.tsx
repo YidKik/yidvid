@@ -30,28 +30,83 @@ export const ChannelVideosFetcher = () => {
         return;
       }
 
-      // Get all active channels to fetch videos for
-      const { data: channels, error: channelsError } = await supabase
-        .from('youtube_channels')
-        .select('channel_id')
-        .is('deleted_at', null)
-        .limit(20); // Limit to prevent API quota issues
+      // Try to fetch channel IDs directly with error handling
+      let channelIds = [];
+      
+      try {
+        // First attempt - direct query
+        const { data: channels, error: channelsError } = await supabase
+          .from('youtube_channels')
+          .select('channel_id')
+          .is('deleted_at', null)
+          .limit(20);
+          
+        if (channelsError) {
+          console.error('Error in primary channel fetch:', channelsError);
+          throw channelsError;
+        }
         
-      if (channelsError) {
-        console.error('Error fetching channels:', channelsError);
-        toast.error("Failed to fetch channels");
+        if (!channels || channels.length === 0) {
+          toast.error("No channels found to fetch videos for");
+          return;
+        }
+        
+        channelIds = channels.map(channel => channel.channel_id);
+        console.log(`Successfully fetched ${channelIds.length} channel IDs`);
+      } catch (fetchError) {
+        console.error('Error during channel ID fetch, trying alternate approach:', fetchError);
+        
+        try {
+          // Fallback - use edge function to get channels
+          const { data: edgeResponse, error: edgeError } = await supabase.functions.invoke('get-public-channels', {
+            body: { limit: 20 }
+          });
+          
+          if (edgeError) {
+            console.error('Edge function also failed:', edgeError);
+            throw edgeError;
+          }
+          
+          if (edgeResponse?.data && Array.isArray(edgeResponse.data) && edgeResponse.data.length > 0) {
+            channelIds = edgeResponse.data.map(c => c.channel_id);
+            console.log(`Retrieved ${channelIds.length} channels via edge function`);
+          } else {
+            throw new Error('No channels returned from edge function');
+          }
+        } catch (edgeFailure) {
+          console.error('All channel fetch methods failed:', edgeFailure);
+          
+          // Last resort - use hardcoded sample channels for testing
+          // This allows the function to continue even when data fetch fails
+          const sampleChannelsResponse = await fetch('https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/get-public-channels', {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1aW5ja3R2c2l1enRzeGN1cWZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY0ODgzNzcsImV4cCI6MjA1MjA2NDM3N30.zbReqHoAR33QoCi_wqNp8AtNofTX3JebM7jvjFAWbMg`
+            }
+          });
+          
+          if (sampleChannelsResponse.ok) {
+            const sampleData = await sampleChannelsResponse.json();
+            if (sampleData?.data && Array.isArray(sampleData.data)) {
+              channelIds = sampleData.data.slice(0, 3).map(c => c.channel_id);
+              console.log(`Using ${channelIds.length} sample channels as fallback`);
+            }
+          }
+          
+          if (channelIds.length === 0) {
+            toast.error("Failed to get any channels - please try again later");
+            return;
+          }
+        }
+      }
+      
+      if (channelIds.length === 0) {
+        toast.error("No channels available to fetch videos for");
         return;
       }
       
-      if (!channels || channels.length === 0) {
-        toast.error("No channels found to fetch videos for");
-        return;
-      }
-      
-      console.log(`Fetching videos for ${channels.length} channels`);
-
-      // Extract channel IDs
-      const channelIds = channels.map(channel => channel.channel_id);
+      console.log(`Fetching videos for ${channelIds.length} channels`);
       
       // Call the edge function to fetch videos
       const { data, error } = await supabase.functions.invoke('fetch-youtube-videos', {
