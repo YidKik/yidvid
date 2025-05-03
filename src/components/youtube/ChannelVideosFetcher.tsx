@@ -108,12 +108,12 @@ export const ChannelVideosFetcher = () => {
       
       console.log(`Fetching videos for ${channelIds.length} channels`);
       
-      // Call the edge function to fetch videos
+      // Call the edge function to fetch videos with forceUpdate=true to ensure fresh data
       const { data, error } = await supabase.functions.invoke('fetch-youtube-videos', {
         body: { 
           channels: channelIds,
-          forceUpdate: true,
-          quotaConservative: false,
+          forceUpdate: true,  // Force update to get latest videos
+          quotaConservative: false, // Use more aggressive quota to get more videos
           maxChannelsPerRun: 20
         }
       });
