@@ -27,7 +27,7 @@ export const ChannelList = ({ channels, onRemoveChannel, onManageVideos }: Chann
                 />
               )}
               <div>
-                <h3 className="font-medium text-black">{channel.title}</h3>
+                <h3 className="font-medium text-gray-950">{channel.title}</h3>
                 {channel.description && (
                   <p className="text-sm text-muted-foreground line-clamp-1">
                     {channel.description}
