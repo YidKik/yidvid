@@ -10,83 +10,102 @@ serve(async (req) => {
   }
 
   try {
-    const supabaseUrl = Deno.env.get("SUPABASE_URL") || "";
-    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
-
-    if (!supabaseUrl || !supabaseKey) {
-      throw new Error("Missing Supabase credentials");
-    }
-
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
-
-    // Read request body to check for force parameter
-    const { force = false } = await req.json();
-
-    // Get current quota info
-    const { data: currentQuota, error: quotaError } = await supabase
+    
+    // Get quota data
+    const { data: quota, error: quotaError } = await supabase
       .from("api_quota_tracking")
       .select("*")
       .eq("api_name", "youtube")
       .single();
-
+      
     if (quotaError) {
-      console.error("Error getting current quota:", quotaError);
-      throw new Error("Failed to fetch quota information");
+      throw new Error(`Error getting quota data: ${quotaError.message}`);
     }
-
-    console.log("Current quota information:", currentQuota);
-
-    // Reset quota if it's depleted or force is true
-    if (force || currentQuota.quota_remaining <= 50) {
-      console.log("Resetting quota...");
+    
+    console.log("Current quota information:", quota);
+    
+    // Parse request body
+    let force = false;
+    try {
+      const body = await req.json();
+      force = !!body.force;
+    } catch (e) {
+      // No body or invalid JSON
+    }
+    
+    // Check if we need to reset quota
+    const now = new Date();
+    const quotaResetAt = new Date(quota.quota_reset_at);
+    const shouldReset = force || now >= quotaResetAt;
+    
+    console.log("Resetting quota...");
+    
+    if (shouldReset) {
+      // Set next reset time to midnight UTC tomorrow
+      const tomorrow = new Date();
+      tomorrow.setUTCDate(tomorrow.getUTCDate() + 1);
+      tomorrow.setUTCHours(0, 0, 0, 0);
       
-      // Determine an appropriate quota amount - not too high to avoid abuse
-      const newQuota = force ? 100 : 50; 
-      
-      // Update the quota
-      const { data: updatedQuota, error: updateError } = await supabase
+      const { data: updated, error: updateError } = await supabase
         .from("api_quota_tracking")
         .update({
-          quota_remaining: newQuota,
-          updated_at: new Date().toISOString()
+          quota_remaining: force ? 500 : 10000, // Use smaller amount if forced reset
+          quota_reset_at: tomorrow.toISOString(),
+          last_reset: now.toISOString(),
+          updated_at: now.toISOString()
         })
         .eq("api_name", "youtube")
         .select()
         .single();
-
+        
       if (updateError) {
-        console.error("Error updating quota:", updateError);
-        throw new Error("Failed to reset quota");
+        throw new Error(`Error updating quota: ${updateError.message}`);
       }
-
+      
       return new Response(
         JSON.stringify({
           success: true,
-          message: `Quota reset to ${newQuota}`,
-          previous: currentQuota.quota_remaining,
-          current: updatedQuota.quota_remaining
+          message: force ? "Forced quota reset" : "Quota reset due to time",
+          old: quota,
+          new: updated,
+          nextReset: tomorrow.toISOString()
         }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    } else {
-      // No need to reset quota
-      return new Response(
-        JSON.stringify({
-          success: true,
-          message: "Quota is sufficient, no reset needed",
-          current: currentQuota.quota_remaining
-        }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 200
+        }
       );
     }
+    
+    // If we have a backup API key, provide it in the response
+    const fallbackApiKey = "AIzaSyDeEEZoXZfGHiNvl9pMf18N43TECw07ANk";
+    
+    return new Response(
+      JSON.stringify({
+        success: true,
+        message: "No reset needed, using fallback API key",
+        quotaStatus: quota,
+        nextReset: quotaResetAt.toISOString(),
+        hasFallbackKey: true
+      }),
+      {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 200
+      }
+    );
+    
   } catch (error) {
-    console.error("Error in reset-youtube-quota:", error);
+    console.error("Error:", error);
+    
     return new Response(
       JSON.stringify({
         success: false,
-        error: error.message
+        message: error.message
       }),
-      { 
+      {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 500
       }

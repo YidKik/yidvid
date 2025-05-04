@@ -45,6 +45,7 @@ export const ChannelVideosFetcher = () => {
       // Try up to 3 methods to fetch videos, starting with most direct
       let fetchResult = null;
       let successfulMethod = "";
+      let usedFallbackKey = false;
       
       // Method 1: Try with direct edge function
       try {
@@ -62,6 +63,7 @@ export const ChannelVideosFetcher = () => {
         if (!directError && directData?.success) {
           fetchResult = directData;
           successfulMethod = "direct edge function";
+          usedFallbackKey = directData.usedFallbackKey;
         } else if (directError) {
           console.warn("Method 1 failed:", directError);
         } else {
@@ -84,6 +86,7 @@ export const ChannelVideosFetcher = () => {
           if (!altError && altData?.success) {
             fetchResult = altData;
             successfulMethod = "channel videos edge function";
+            usedFallbackKey = altData.usedFallbackKey;
           } else if (altError) {
             console.warn("Method 2 failed:", altError);
           } else {
@@ -116,6 +119,7 @@ export const ChannelVideosFetcher = () => {
             if (data?.success) {
               fetchResult = data;
               successfulMethod = "direct fetch API";
+              usedFallbackKey = data.usedFallbackKey;
             }
           }
         } catch (method3Error) {
@@ -139,45 +143,18 @@ export const ChannelVideosFetcher = () => {
         if (fetchResult.processed > 0) {
           if (fetchResult.newVideos > 0) {
             toast.success(`Successfully processed ${fetchResult.processed} channels and found ${fetchResult.newVideos} new videos`, {
-              description: `Using ${successfulMethod}`
+              description: `Using ${usedFallbackKey ? 'fallback' : 'primary'} API key via ${successfulMethod}`
             });
           } else {
             toast.info(`Processed ${fetchResult.processed} channels but no new videos were found`, {
-              description: `Using ${successfulMethod}`
+              description: `Using ${usedFallbackKey ? 'fallback' : 'primary'} API key via ${successfulMethod}`
             });
           }
         } else {
-          // Try one more approach - force quota reset and retry
-          try {
-            setProcessingStatus("Attempting to reset quota and retry...");
-            
-            // Call quota manager to reset quota
-            const { data: resetData } = await supabase.functions.invoke('reset-youtube-quota', {
-              body: { force: true }
-            });
-            
-            if (resetData?.success) {
-              // Retry with just 1 channel
-              const { data: retryData } = await supabase.functions.invoke('fetch-youtube-videos', {
-                body: { 
-                  channels: channelIds.slice(0, 1),
-                  forceUpdate: true,
-                  bypassQuotaCheck: true
-                }
-              });
-              
-              if (retryData?.success && retryData.processed > 0) {
-                toast.success(`Successfully processed ${retryData.processed} channels after quota reset`);
-              } else {
-                toast.warning(`YouTube API limits are still active. Please try again later.`);
-              }
-            } else {
-              toast.warning(`YouTube API limits are active. Please try again later.`);
-            }
-          } catch (retryError) {
-            console.error("Retry after reset failed:", retryError);
-            toast.warning(`YouTube API limits are active. Please try again later.`);
-          }
+          // Videos fetching was attempted but no channels were processed
+          toast.info("No channels were processed. API limits may be active.", {
+            description: "The system attempted to use fallback API keys"
+          });
         }
         
         // Show detailed results for debugging
@@ -310,6 +287,7 @@ export const ChannelVideosFetcher = () => {
                 <li>Try multiple methods to bypass API restrictions</li>
                 <li>Process a small batch of channels to avoid quota limits</li>
                 <li>Use different referer domains to overcome blocks</li>
+                <li>Use backup API key if quota is exceeded</li>
               </ul>
             </AlertDialogDescription>
           </AlertDialogHeader>
