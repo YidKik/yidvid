@@ -2,6 +2,7 @@
 import { ChannelAvatar } from "./channel-item/ChannelAvatar";
 import { ChannelInfo } from "./channel-item/ChannelInfo";
 import { DeleteChannelButton } from "./channel-item/DeleteChannelButton";
+import { ChannelRefreshButton } from "./channel-item/ChannelRefreshButton";
 
 interface Channel {
   id: string;
@@ -41,12 +42,18 @@ export const ChannelListItem = ({
           description={channel.description}
         />
       </div>
-      <DeleteChannelButton
-        isDeleting={isDeleting}
-        channelId={channel.channel_id}
-        onDelete={onDelete}
-        setChannelToDelete={setChannelToDelete}
-      />
+      <div className="flex items-center gap-1">
+        <ChannelRefreshButton 
+          channelId={channel.channel_id} 
+          channelTitle={channel.title} 
+        />
+        <DeleteChannelButton
+          isDeleting={isDeleting}
+          channelId={channel.channel_id}
+          onDelete={onDelete}
+          setChannelToDelete={setChannelToDelete}
+        />
+      </div>
     </div>
   );
 };
