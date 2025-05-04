@@ -63,6 +63,14 @@ export const ChannelVideoSection = ({
     );
   }
 
+  // Log sorted videos for debugging
+  console.log("Rendering videos sorted by uploaded_at:", 
+    displayedVideos?.length > 0 ? 
+    displayedVideos.map(v => ({
+      title: v.title,
+      uploaded_at: v.uploaded_at
+    })) : "No videos");
+
   // Otherwise show videos (or loading state within the ChannelVideos component)
   return (
     <ChannelVideos

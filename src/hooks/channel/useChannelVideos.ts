@@ -44,10 +44,10 @@ export const useChannelVideos = (channelId: string | undefined) => {
         if (result.data && Array.isArray(result.data) && result.data.length > 0) {
           console.log(`Found ${result.data.length} videos for channel ${channelId}`);
           
-          // Ensure videos are sorted by updated_at in descending order
+          // Ensure videos are sorted by uploaded_at in descending order
           const sortedVideos = result.data.sort((a: any, b: any) => {
-            const dateA = new Date(a.updated_at).getTime();
-            const dateB = new Date(b.updated_at).getTime();
+            const dateA = new Date(a.uploaded_at).getTime();
+            const dateB = new Date(b.uploaded_at).getTime();
             return dateB - dateA; // Newest first
           });
           
@@ -57,10 +57,10 @@ export const useChannelVideos = (channelId: string | undefined) => {
         if (result.videos && Array.isArray(result.videos)) {
           console.log(`Found ${result.videos.length} videos for channel ${channelId}`);
           
-          // Ensure videos are sorted by updated_at in descending order
+          // Ensure videos are sorted by uploaded_at in descending order
           const sortedVideos = result.videos.sort((a: any, b: any) => {
-            const dateA = new Date(a.updated_at).getTime();
-            const dateB = new Date(b.updated_at).getTime();
+            const dateA = new Date(a.uploaded_at).getTime();
+            const dateB = new Date(b.uploaded_at).getTime();
             return dateB - dateA; // Newest first
           });
           
@@ -87,8 +87,15 @@ export const useChannelVideos = (channelId: string | undefined) => {
   // Set displayed videos when initial fetch completes
   useEffect(() => {
     if (initialVideos) {
-      setDisplayedVideos(initialVideos);
-      console.log("Set displayed videos:", initialVideos.length);
+      // Ensure videos are sorted by uploaded_at before setting state
+      const sortedVideos = [...initialVideos].sort((a, b) => {
+        const dateA = new Date(a.uploaded_at).getTime();
+        const dateB = new Date(b.uploaded_at).getTime();
+        return dateB - dateA; // Newest first
+      });
+      
+      setDisplayedVideos(sortedVideos);
+      console.log("Set displayed videos:", sortedVideos.length);
     }
   }, [initialVideos]);
 
