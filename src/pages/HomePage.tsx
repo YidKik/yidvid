@@ -1,5 +1,5 @@
 
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useVideos } from '@/hooks/video/useVideos';
 import { useChannelsGrid } from '@/hooks/channel/useChannelsGrid';
@@ -20,6 +20,15 @@ const HomePage = () => {
   const showHeroParallax = !isMobile && !isTablet;
 
   useHomeAnimations(channelsSectionRef);
+
+  // Add class to body on mount, remove on unmount
+  useEffect(() => {
+    document.body.classList.add('home-page');
+    
+    return () => {
+      document.body.classList.remove('home-page');
+    };
+  }, []);
 
   const channelItems = manuallyFetchedChannels?.map(channel => 
     channel.thumbnail_url || 'https://images.unsplash.com/photo-1723403804231-f4e9b515fe9d'

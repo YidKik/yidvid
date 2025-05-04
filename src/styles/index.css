@@ -1,3 +1,4 @@
+
 /* Import theme variables */
 @import './theme.css';
 
@@ -16,6 +17,15 @@
 
 /* Import component-specific styles */
 @import './components/search.css';
+
+/* Homepage full-screen background styles */
+.home-page {
+  min-height: 100vh;
+  min-width: 100vw;
+  background-color: #003c43;
+  margin: 0;
+  padding: 0;
+}
 
 /* Mobile specific adjustments */
 @media (max-width: 768px) {

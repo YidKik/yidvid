@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { HomeHeader } from '@/components/home/HomeHeader';
 import { HeroSection } from '@/components/home/HeroSection';
 import { FeaturesSection } from '@/components/home/FeaturesSection';
@@ -14,6 +14,16 @@ import { MobileHomeSection } from '@/components/home/MobileHomeSection';
 const NewHomePage = () => {
   const { isMobile, isTablet } = useIsMobile();
   
+  // Add home-page class to body element when component mounts
+  useEffect(() => {
+    document.body.classList.add('home-page');
+    
+    // Remove the class when component unmounts
+    return () => {
+      document.body.classList.remove('home-page');
+    };
+  }, []);
+  
   // Return the completely blank mobile section for mobile and tablet views
   if (isMobile || isTablet) {
     return <MobileHomeSection />;
@@ -21,7 +31,7 @@ const NewHomePage = () => {
 
   // Only desktop views will see the full content
   return (
-    <div className="min-h-screen bg-brand-darkest">
+    <div className="min-h-screen">
       <HomeHeader />
       <HeroSection />
       

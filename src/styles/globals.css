@@ -13,8 +13,8 @@
   }
 }
 
-/* Global styles */
-body {
+/* Global styles - apply to non-homepage */
+body:not(.home-page) {
   background-color: var(--background-custom, #FFFFFF);
   color: var(--text-custom, #030303);
 }
@@ -98,4 +98,14 @@ a:not([class*="home-"]):hover,
 
 :not(.home-page) .text-brand-lightest {
   color: var(--text-custom, #030303) !important;
+}
+
+/* Full-screen styles for homepage only */
+html.home-page,
+body.home-page {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
 }

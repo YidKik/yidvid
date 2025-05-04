@@ -8,15 +8,21 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@400;500;600&display=swap');
 
-/* Homepage specific styles - only apply blue theme to home page */
+/* Homepage specific styles - full screen background */
 .home-page {
   background-color: #003c43;
   color: #e3fef7;
   font-family: 'Inter', sans-serif;
+  min-height: 100vh;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  overflow-x: hidden;
 }
 
 /* Default body styles for all other pages */
-body {
+body:not(.home-page) {
   background-color: var(--background-custom, #FFFFFF);
   color: var(--text-custom, #030303);
   font-family: 'Inter', sans-serif;
@@ -39,4 +45,3 @@ body {
   transform: translateY(-5px);
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
-
