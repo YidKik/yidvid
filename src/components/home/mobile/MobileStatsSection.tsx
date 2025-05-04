@@ -13,7 +13,7 @@ export const MobileStatsSection = () => {
       transition={{ duration: 0.6 }}
       className="mt-12 space-y-4"
     >
-      <div className="border-2 border-[#ddf9f2] rounded-3xl p-6 text-center bg-[#135d66]">
+      <div className="border-2 border-[#ddf9f2] rounded-3xl p-6 text-center bg-[#003c43]">
         <p className="text-[#77b0aa] text-xl mb-1">Over</p>
         <p className="text-[#e3fef7] text-5xl font-bold mb-1">
           <NumberTicker 
@@ -24,7 +24,7 @@ export const MobileStatsSection = () => {
         <p className="text-[#77b0aa] text-xl">Videos</p>
       </div>
       
-      <div className="border-2 border-[#ddf9f2] rounded-3xl p-6 text-center bg-[#135d66]">
+      <div className="border-2 border-[#ddf9f2] rounded-3xl p-6 text-center bg-[#003c43]">
         <p className="text-[#77b0aa] text-xl mb-1">Over</p>
         <p className="text-[#e3fef7] text-5xl font-bold mb-1">
           <NumberTicker 
