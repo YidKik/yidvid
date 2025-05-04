@@ -7,7 +7,7 @@ export const MusicSection = () => {
       <div className="text-center max-w-2xl mx-auto px-4 z-20">
         <h2 className="text-2xl md:text-3xl font-bold mb-4 text-primary animate-fade-in">Coming Soon!</h2>
         <p className="text-base md:text-lg text-gray-800 animate-fade-in delay-100">
-          We're working on bringing you an amazing collection of kosher entertainment music. 
+          We're working on bringing you an amazing collection of kosher music. 
           Stay tuned for a curated selection of artists and tracks that will elevate your listening experience!
         </p>
       </div>

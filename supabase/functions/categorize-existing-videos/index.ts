@@ -55,7 +55,7 @@ serve(async (req) => {
       inspiration: ['inspiration', 'motivate', 'encourage', 'uplift', 'spiritual'],
       podcast: ['podcast', 'episode', 'interview', 'conversation', 'talk', 'discussion'],
       education: ['education', 'learn', 'teach', 'school', 'lesson', 'tutorial', 'guide'],
-      entertainment: ['entertainment', 'funny', 'comedy', 'humor', 'joke', 'laugh']
+      family: ['family', 'comedy', 'humor', 'joke', 'laugh', 'children', 'kids']
     };
 
     // Process videos
