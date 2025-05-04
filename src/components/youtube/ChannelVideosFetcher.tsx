@@ -25,11 +25,11 @@ export const ChannelVideosFetcher = () => {
   const handleFetchVideos = async () => {
     try {
       setIsLoading(true);
-      setProcessingStatus("Fetching channels...");
-      toast.loading("Fetching channels...");
+      setProcessingStatus("Fetching all active channels...");
+      toast.loading("Fetching all active channels...");
       
       // Step 1: Get all active channel IDs
-      const channelIds = await fetchChannelIds();
+      const channelIds = await fetchAllChannelIds();
       
       if (!channelIds || channelIds.length === 0) {
         toast.error("No channels found to fetch videos for");
@@ -49,13 +49,13 @@ export const ChannelVideosFetcher = () => {
       
       // Method 1: Try with direct edge function
       try {
-        setProcessingStatus("Trying method 1: Direct edge function call...");
+        setProcessingStatus("Processing all channels via edge function...");
         const { data: directData, error: directError } = await supabase.functions.invoke('fetch-youtube-videos', {
           body: { 
-            channels: channelIds.slice(0, 3), // Process just a few channels first
+            channels: channelIds, 
             forceUpdate: true,
             quotaConservative: false,
-            maxChannelsPerRun: 3,
+            maxChannelsPerRun: channelIds.length, // Process all channels
             bypassQuotaCheck: true
           }
         });
@@ -73,13 +73,14 @@ export const ChannelVideosFetcher = () => {
         console.error("Method 1 error:", method1Error);
       }
       
-      // Method 2: Try alternate edge function
+      // Method 2: Try alternate edge function if first method failed
       if (!fetchResult) {
         try {
-          setProcessingStatus("Trying method 2: Channel videos edge function...");
+          setProcessingStatus("Trying alternate method for all channels...");
           const { data: altData, error: altError } = await supabase.functions.invoke('fetch-channel-videos', {
             body: { 
-              force: true
+              force: true,
+              allChannels: true  // Signal to process all channels
             }
           });
           
@@ -97,10 +98,10 @@ export const ChannelVideosFetcher = () => {
         }
       }
       
-      // Method 3: Try direct fetch with limited channels (last resort)
+      // Method 3: Try direct fetch as last resort
       if (!fetchResult) {
         try {
-          setProcessingStatus("Trying method 3: Direct fetch with limited channels...");
+          setProcessingStatus("Trying direct API call for all channels...");
           const response = await fetch('https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/fetch-youtube-videos', {
             method: 'POST',
             headers: {
@@ -108,9 +109,10 @@ export const ChannelVideosFetcher = () => {
               'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1aW5ja3R2c2l1enRzeGN1cWZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY0ODgzNzcsImV4cCI6MjA1MjA2NDM3N30.zbReqHoAR33QoCi_wqNp8AtNofTX3JebM7jvjFAWbMg`
             },
             body: JSON.stringify({
-              channels: channelIds.slice(0, 2), // Even fewer channels as last resort
+              channels: channelIds,
               forceUpdate: true,
-              bypassQuotaCheck: true
+              bypassQuotaCheck: true,
+              maxChannelsPerRun: channelIds.length // Process all channels
             })
           });
           
@@ -178,19 +180,19 @@ export const ChannelVideosFetcher = () => {
     }
   };
 
-  // Helper function to fetch channel IDs using multiple methods for reliability
-  const fetchChannelIds = async (): Promise<string[]> => {
+  // Helper function to fetch all channel IDs
+  const fetchAllChannelIds = async (): Promise<string[]> => {
     try {
       // Try multiple approaches to get channel IDs, starting with direct database query
       let channelIds: string[] = [];
       
-      // Method 1: Direct database query
+      // Method 1: Direct database query - get ALL active channels
       try {
         const { data: channels, error: channelsError } = await supabase
           .from('youtube_channels')
           .select('channel_id')
           .is('deleted_at', null)
-          .limit(5); // Reduced limit to ensure we can process all channels
+          .order('last_fetch', { ascending: true }); // Prioritize channels that haven't been fetched recently
           
         if (!channelsError && channels && channels.length > 0) {
           console.log(`Successfully fetched ${channels.length} channel IDs directly from database`);
@@ -207,7 +209,7 @@ export const ChannelVideosFetcher = () => {
       // Method 2: Use edge function
       try {
         const { data: edgeResponse, error: edgeError } = await supabase.functions.invoke('get-public-channels', {
-          body: { limit: 5 } // Reduced limit for testing
+          body: { limit: 500 } // Increased limit to get all channels
         });
         
         if (!edgeError && edgeResponse?.data && Array.isArray(edgeResponse.data) && edgeResponse.data.length > 0) {
@@ -228,15 +230,14 @@ export const ChannelVideosFetcher = () => {
             'Content-Type': 'application/json',
             'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1aW5ja3R2c2l1enRzeGN1cWZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY0ODgzNzcsImV4cCI6MjA1MjA2NDM3N30.zbReqHoAR33QoCi_wqNp8AtNofTX3JebM7jvjFAWbMg`
           },
-          body: JSON.stringify({ limit: 5 })
+          body: JSON.stringify({ limit: 500 }) // Increased limit
         });
         
         if (response.ok) {
           const result = await response.json();
           if (result?.data && Array.isArray(result.data) && result.data.length > 0) {
             console.log(`Retrieved ${result.data.length} channels via public endpoint`);
-            // Take just a few channels to ensure success
-            return result.data.slice(0, 5).map(c => c.channel_id);
+            return result.data.map(c => c.channel_id);
           }
         }
       } catch (fetchError) {
@@ -281,19 +282,22 @@ export const ChannelVideosFetcher = () => {
           <AlertDialogHeader>
             <AlertDialogTitle>Fetch YouTube Videos</AlertDialogTitle>
             <AlertDialogDescription>
-              This will connect to YouTube and fetch the latest videos for channels.
+              This will connect to YouTube and fetch the latest videos for ALL channels.
               The process will:
               <ul className="list-disc pl-5 mt-2">
+                <li>Process all available channels in the system</li>
                 <li>Try multiple methods to bypass API restrictions</li>
-                <li>Process a small batch of channels to avoid quota limits</li>
                 <li>Use different referer domains to overcome blocks</li>
                 <li>Use backup API key if quota is exceeded</li>
               </ul>
+              <div className="mt-2 text-yellow-600 font-medium">
+                This may take several minutes depending on the number of channels.
+              </div>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleFetchVideos}>Fetch Videos</AlertDialogAction>
+            <AlertDialogAction onClick={handleFetchVideos}>Fetch All Videos</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

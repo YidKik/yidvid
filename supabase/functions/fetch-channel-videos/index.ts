@@ -300,6 +300,10 @@ serve(async (req) => {
     const fallbackApiKey = "AIzaSyDeEEZoXZfGHiNvl9pMf18N43TECw07ANk";
     
     const supabase = createClient(supabaseUrl, supabaseKey);
+    
+    // Parse request body
+    const requestData = await req.json();
+    const { force = false, allChannels = false } = requestData;
 
     // First check quota status
     const { data: quotaData, error: quotaError } = await supabase
@@ -331,15 +335,23 @@ serve(async (req) => {
       console.log("Forced quota reset for testing:", resetQuota);
     }
 
-    // Get all channels that haven't been fetched in the last 7 days or have never been fetched
-    const { data: channels, error: channelsError } = await supabase
-      .from('youtube_channels')
-      .select('*')
-      .or('last_fetch.is.null,last_fetch.lt.now()-interval.7 days')
-      .is('deleted_at', null)
-      .is('fetch_error', null)
-      .order('last_fetch', { ascending: true, nullsFirst: true })
-      .limit(3); // Process fewer channels at a time to manage quota and error risk
+    // Get channels based on the request parameters
+    let channelsQuery = supabase.from('youtube_channels').select('*').is('deleted_at', null);
+    
+    // If not processing all channels, apply additional filters
+    if (!allChannels) {
+      channelsQuery = channelsQuery
+        .or('last_fetch.is.null,last_fetch.lt.now()-interval.7 days')
+        .is('fetch_error', null)
+        .order('last_fetch', { ascending: true, nullsFirst: true })
+        .limit(3); // Process fewer channels at a time if not in all-channels mode
+    } else {
+      // When processing all channels, just order by last_fetch to prioritize
+      channelsQuery = channelsQuery
+        .order('last_fetch', { ascending: true, nullsFirst: true });
+    }
+    
+    const { data: channels, error: channelsError } = await channelsQuery;
 
     if (channelsError) {
       throw new Error('Failed to fetch channels');
@@ -347,6 +359,8 @@ serve(async (req) => {
 
     console.log(`Processing ${channels?.length || 0} channels`);
     const results = [];
+    let totalVideosFound = 0;
+    let totalChannelsProcessed = 0;
 
     for (const channel of channels || []) {
       try {
@@ -369,7 +383,7 @@ serve(async (req) => {
         let nextPageToken: string | null = null;
         let allVideos = [];
         let pageCount = 0;
-        const MAX_PAGES = 2; // Limit pages per channel to conserve quota
+        const MAX_PAGES = allChannels ? 1 : 2; // Limit pages per channel more strictly when processing all channels
 
         do {
           const result = await fetchChannelVideos(channel.channel_id, currentApiKey, nextPageToken);
@@ -400,13 +414,17 @@ serve(async (req) => {
         } while (nextPageToken && pageCount < MAX_PAGES);
 
         console.log(`Found ${allVideos.length} videos for channel ${channel.channel_id}`);
+        totalVideosFound += allVideos.length;
 
         if (allVideos.length > 0) {
           // Store videos in database
           const { error: upsertError } = await supabase
             .from('youtube_videos')
             .upsert(
-              allVideos,
+              allVideos.map(video => ({
+                ...video,
+                updated_at: new Date().toISOString() // Add required updated_at field
+              })),
               { onConflict: 'video_id' }
             );
 
@@ -430,9 +448,12 @@ serve(async (req) => {
           success: true,
           usedFallbackKey: currentApiKey === fallbackApiKey || allVideos.length === 0
         });
+        
+        totalChannelsProcessed++;
 
         // Add significant delay between channels to avoid API rate limits
-        await new Promise(resolve => setTimeout(resolve, 3000));
+        // Shorter delay when processing all channels
+        await new Promise(resolve => setTimeout(resolve, allChannels ? 1000 : 3000));
 
       } catch (error) {
         console.error(`Error processing channel ${channel.channel_id}:`, error);
@@ -468,7 +489,8 @@ serve(async (req) => {
       JSON.stringify({
         success: true,
         results,
-        processedChannels: channels?.length || 0,
+        processedChannels: totalChannelsProcessed,
+        totalVideos: totalVideosFound,
         usedFallbackKey: currentApiKey === fallbackApiKey
       }),
       { 

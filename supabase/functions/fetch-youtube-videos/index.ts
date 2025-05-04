@@ -12,7 +12,14 @@ serve(async (req) => {
   }
 
   try {
-    const { channels = [], forceUpdate = false, quotaConservative = false, prioritizeRecent = true, maxChannelsPerRun = 20 } = await req.json();
+    const { 
+      channels = [], 
+      forceUpdate = false, 
+      quotaConservative = false, 
+      prioritizeRecent = true, 
+      maxChannelsPerRun = 20,
+      bypassQuotaCheck = false 
+    } = await req.json();
     
     console.log(`Received request to fetch videos for ${channels.length} channels with forceUpdate=${forceUpdate}`);
     
@@ -22,9 +29,11 @@ serve(async (req) => {
     const fallbackApiKey = "AIzaSyDeEEZoXZfGHiNvl9pMf18N43TECw07ANk";
     
     // Check if we have quota remaining before starting
-    const { quota_remaining, quota_reset_at } = await checkQuota();
+    const { quota_remaining, quota_reset_at } = bypassQuotaCheck ? 
+      { quota_remaining: 500, quota_reset_at: new Date().toISOString() } : 
+      await checkQuota();
     
-    if (quota_remaining <= 0) {
+    if (quota_remaining <= 0 && !bypassQuotaCheck) {
       console.log(`YouTube API quota exceeded. Trying fallback key for this request.`);
       // We will use the fallback key instead of immediately failing
     }
@@ -43,7 +52,11 @@ serve(async (req) => {
 
     // Calculate how many channels we can process based on available quota
     const estimatedQuotaPerChannel = quotaConservative ? 15 : 10;
-    const maxChannelsBasedOnQuota = Math.max(3, Math.floor(quota_remaining / estimatedQuotaPerChannel));
+    // If bypassing quota check, use the provided maxChannelsPerRun directly
+    const maxChannelsBasedOnQuota = bypassQuotaCheck ? 
+      maxChannelsPerRun : 
+      Math.max(3, Math.floor(quota_remaining / estimatedQuotaPerChannel));
+    
     const channelsToProcess = Math.min(
       maxChannelsBasedOnQuota, 
       maxChannelsPerRun,
@@ -69,7 +82,7 @@ serve(async (req) => {
         console.log(`Processing channel ${channelId}`);
         
         // Use primary API key first, fallback if needed
-        const apiKey = (quota_remaining <= 0) ? fallbackApiKey : primaryApiKey;
+        const apiKey = ((quota_remaining <= 0) && !bypassQuotaCheck) ? fallbackApiKey : primaryApiKey;
         
         // Fetch channel videos directly from YouTube
         const { videos, quotaExceeded } = await fetchChannelVideos(channelId, apiKey);
@@ -145,7 +158,7 @@ serve(async (req) => {
     }
 
     // Only update quota usage for the primary API key (not the fallback)
-    if (quota_remaining > 0) {
+    if (quota_remaining > 0 && !bypassQuotaCheck) {
       await updateQuotaUsage(quotaUsed);
     }
 
@@ -158,8 +171,8 @@ serve(async (req) => {
         newVideos: newVideosCount,
         results,
         quotaUsed,
-        quotaRemaining: quota_remaining - quotaUsed,
-        usedFallbackKey: quota_remaining <= 0
+        quotaRemaining: bypassQuotaCheck ? "bypass" : (quota_remaining - quotaUsed),
+        usedFallbackKey: (quota_remaining <= 0 && !bypassQuotaCheck)
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
