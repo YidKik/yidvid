@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -12,15 +13,13 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from "@/components/ui/alert-dialog";
-import { Loader2, Trash2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 export const ChannelVideosFetcher = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [progress, setProgress] = useState<{current: number, total: number} | null>(null);
   const [processingStatus, setProcessingStatus] = useState<string | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
 
   // Main function to fetch videos from YouTube and update the database
   const handleFetchVideos = async () => {
@@ -261,40 +260,8 @@ export const ChannelVideosFetcher = () => {
     }
   };
 
-  // New function to handle deleting fetch logs
-  const handleDeleteFetchLogs = async () => {
-    try {
-      setIsDeleting(true);
-      setProcessingStatus("Deleting fetch logs...");
-      toast.loading("Deleting fetch logs...");
-      
-      // Delete video fetch logs
-      const { error: logsError } = await supabase
-        .from('video_fetch_logs')
-        .delete()
-        .neq('id', '00000000-0000-0000-0000-000000000000'); // Delete all logs except placeholder
-      
-      if (logsError) {
-        console.error("Error deleting fetch logs:", logsError);
-        toast.error("Error deleting fetch logs");
-        return;
-      }
-      
-      toast.dismiss();
-      toast.success("Fetch logs cleared successfully");
-      setShowDeleteDialog(false);
-    } catch (error) {
-      console.error('Error in handleDeleteFetchLogs:', error);
-      toast.error(`Error: ${error.message || 'Unknown error occurred'}`);
-    } finally {
-      setIsDeleting(false);
-      setProcessingStatus(null);
-      toast.dismiss();
-    }
-  };
-
   return (
-    <div className="flex space-x-2">
+    <>
       <Button
         variant="outline"
         onClick={() => setShowConfirmDialog(true)}
@@ -309,21 +276,7 @@ export const ChannelVideosFetcher = () => {
           "Fetch Channel Videos"
         )}
       </Button>
-      
-      <Button
-        variant="outline"
-        className="text-destructive hover:text-destructive hover:bg-destructive/10"
-        onClick={() => setShowDeleteDialog(true)}
-        disabled={isLoading || isDeleting}
-      >
-        {isDeleting ? (
-          <Loader2 className="h-4 w-4 animate-spin" />
-        ) : (
-          <Trash2 className="h-4 w-4" />
-        )}
-      </Button>
 
-      {/* Fetch confirmation dialog */}
       <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -348,28 +301,6 @@ export const ChannelVideosFetcher = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-      
-      {/* Delete confirmation dialog */}
-      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Clear Fetch Logs</AlertDialogTitle>
-            <AlertDialogDescription>
-              This will delete all YouTube video fetch logs from the database.
-              This action cannot be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction 
-              onClick={handleDeleteFetchLogs}
-              className="bg-destructive hover:bg-destructive/90"
-            >
-              Delete Logs
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </div>
+    </>
   );
 };
