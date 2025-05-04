@@ -18,10 +18,11 @@ serve(async (req) => {
       quotaConservative = false, 
       prioritizeRecent = true, 
       maxChannelsPerRun = 20,
-      bypassQuotaCheck = false 
+      bypassQuotaCheck = false,
+      singleChannelMode = false  // New flag to handle individual channel operations
     } = await req.json();
     
-    console.log(`Received request to fetch videos for ${channels.length} channels with forceUpdate=${forceUpdate}`);
+    console.log(`Received request to fetch videos for ${channels.length} channels with forceUpdate=${forceUpdate} and singleChannelMode=${singleChannelMode}`);
     
     // Get primary API key from environment variables
     const primaryApiKey = Deno.env.get("YOUTUBE_API_KEY") || "";
@@ -51,7 +52,7 @@ serve(async (req) => {
     }
 
     // For individual channel fetches or when bypassing quota check, we'll process all channels
-    const channelsToProcess = bypassQuotaCheck ? 
+    const channelsToProcess = bypassQuotaCheck || singleChannelMode ? 
       channels.length : 
       Math.min(
         Math.max(3, Math.floor(quota_remaining / 10)), // Ensure we can process at least 3 channels

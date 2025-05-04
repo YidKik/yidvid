@@ -25,7 +25,8 @@ export const ChannelRefreshButton = ({ channelId, channelTitle }: ChannelRefresh
           channels: [channelId],
           forceUpdate: true,
           bypassQuotaCheck: true,
-          prioritizeRecent: true
+          prioritizeRecent: true,
+          singleChannelMode: true // Flag to indicate this is a single channel request
         }
       });
 
@@ -38,6 +39,8 @@ export const ChannelRefreshButton = ({ channelId, channelTitle }: ChannelRefresh
 
       toast.dismiss();
       
+      console.log("Channel fetch response:", data);
+      
       if (data?.success) {
         if (data.newVideos > 0) {
           toast.success(`Found ${data.newVideos} new videos for ${channelTitle || channelId}`, {
@@ -45,7 +48,7 @@ export const ChannelRefreshButton = ({ channelId, channelTitle }: ChannelRefresh
           });
         } else {
           toast.info(`No new videos found for ${channelTitle || channelId}`, {
-            description: "Channel content is up to date"
+            description: "Channel content is up to date or there was an issue with video processing"
           });
         }
       } else {
@@ -54,6 +57,7 @@ export const ChannelRefreshButton = ({ channelId, channelTitle }: ChannelRefresh
 
     } catch (error) {
       console.error("Error in handleFetchChannelVideos:", error);
+      toast.dismiss();
       toast.error(`Error: ${error.message || "Unknown error occurred"}`);
     } finally {
       setIsLoading(false);

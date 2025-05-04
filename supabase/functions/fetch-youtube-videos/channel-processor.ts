@@ -1,111 +1,88 @@
 
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.23.0";
+// Import any necessary modules
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const SUPABASE_URL = Deno.env.get("SUPABASE_URL") || "";
-const SUPABASE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
-
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+// Create a Supabase client using environment variables
+const supabaseUrl = Deno.env.get("SUPABASE_URL") || "";
+const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
+const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 export async function processChannel(channelId: string, videos: any[]) {
-  console.log(`[Channel Processor] Processing ${videos.length} videos for channel ${channelId}`);
-  let newVideos = 0;
-  let errors = 0;
-
   try {
-    // Get channel details
-    const { data: channelData, error: channelError } = await supabase
-      .from("youtube_channels")
-      .select("title, default_category")
-      .eq("channel_id", channelId)
-      .single();
-
-    if (channelError) {
-      console.error(`[Channel Processor] Error fetching channel details for ${channelId}:`, channelError);
-      // Continue processing with available information
+    console.log(`[Channel Processor] Processing ${videos.length} videos for channel ${channelId}`);
+    
+    if (!videos || videos.length === 0) {
+      console.log(`[Channel Processor] No videos to process for channel ${channelId}`);
+      return { newVideos: 0 };
     }
-
+    
     // Get existing videos for this channel to avoid duplicates
-    const { data: existingVideos, error: videosError } = await supabase
+    const { data: existingVideos, error: fetchError } = await supabase
       .from("youtube_videos")
       .select("video_id")
       .eq("channel_id", channelId)
       .is("deleted_at", null);
-
-    if (videosError) {
-      console.error(`[Channel Processor] Error fetching existing videos for ${channelId}:`, videosError);
-      return { success: false, error: videosError.message, newVideos: 0 };
+      
+    if (fetchError) {
+      console.error(`[Channel Processor] Error fetching existing videos: ${fetchError.message}`);
+      throw fetchError;
     }
-
-    // Create a set of existing video IDs for faster lookup
-    const existingVideoIds = new Set(existingVideos?.map(v => v.video_id) || []);
-
-    console.log(`[Channel Processor] Found ${existingVideoIds.size} existing videos for channel ${channelId}`);
-
-    // Filter out videos that already exist
-    const newVideosList = videos.filter(video => !existingVideoIds.has(video.video_id));
     
-    console.log(`[Channel Processor] Found ${newVideosList.length} new videos for channel ${channelId}`);
-
-    // Process each new video
-    for (const video of newVideosList) {
-      try {
-        // Prepare video data with channel's default category if available
-        const videoData = {
-          video_id: video.video_id,
-          title: video.title,
-          description: video.description || "",
-          thumbnail: video.thumbnail,
-          channel_id: video.channel_id,
-          channel_name: video.channel_name,
-          uploaded_at: video.uploaded_at,
-          views: video.views || 0,
-          category: channelData?.default_category || "other",
-        };
-
-        // Insert the new video
-        const { error: insertError } = await supabase
-          .from("youtube_videos")
-          .insert(videoData);
-
-        if (insertError) {
-          console.error(`[Channel Processor] Error inserting video ${video.video_id}:`, insertError);
-          errors++;
-        } else {
-          newVideos++;
-          console.log(`[Channel Processor] Added new video: ${video.video_id} - ${video.title}`);
-        }
-      } catch (error) {
-        console.error(`[Channel Processor] Error processing video ${video.video_id}:`, error);
-        errors++;
+    // Create a set of existing video IDs for fast lookup
+    const existingVideoIds = new Set(existingVideos?.map(v => v.video_id) || []);
+    console.log(`[Channel Processor] Found ${existingVideoIds.size} existing videos for channel ${channelId}`);
+    
+    // Filter out videos that already exist in our database
+    const newVideos = videos.filter(video => !existingVideoIds.has(video.video_id));
+    console.log(`[Channel Processor] Found ${newVideos.length} new videos for channel ${channelId}`);
+    
+    let successCount = 0;
+    let errorCount = 0;
+    
+    // Insert new videos in batches to avoid errors with large payloads
+    const batchSize = 20;
+    for (let i = 0; i < newVideos.length; i += batchSize) {
+      const batch = newVideos.slice(i, i + batchSize);
+      
+      // Add the updated_at field that was missing before
+      const videosWithUpdatedAt = batch.map(video => ({
+        ...video,
+        updated_at: new Date().toISOString()
+      }));
+      
+      // Insert the batch of videos
+      const { data: insertedVideos, error: insertError } = await supabase
+        .from("youtube_videos")
+        .insert(videosWithUpdatedAt)
+        .select();
+        
+      if (insertError) {
+        console.error(`[Channel Processor] Error inserting videos batch: ${insertError.message}`);
+        errorCount += batch.length;
+      } else {
+        console.log(`[Channel Processor] Successfully inserted ${insertedVideos?.length || 0} videos`);
+        successCount += insertedVideos?.length || 0;
       }
     }
-
-    // Update channel last_fetch timestamp
+    
+    // Update the last_fetch timestamp for the channel
     const { error: updateError } = await supabase
       .from("youtube_channels")
-      .update({ 
-        last_fetch: new Date().toISOString(),
-        fetch_error: null 
-      })
+      .update({ last_fetch: new Date().toISOString() })
       .eq("channel_id", channelId);
-
+      
     if (updateError) {
-      console.error(`[Channel Processor] Error updating last_fetch for channel ${channelId}:`, updateError);
+      console.error(`[Channel Processor] Error updating channel last_fetch: ${updateError.message}`);
     }
-
-    // Log the result
-    await supabase
-      .from("youtube_update_logs")
-      .insert({
-        channel_id: channelId,
-        videos_count: newVideos,
-        error: errors > 0 ? `${errors} errors occurred` : null,
-      });
-
-    console.log(`[Channel Processor] Completed processing channel ${channelId}: ${newVideos} new videos, ${errors} errors`);
-    return { success: true, newVideos, errors };
+    
+    console.log(`[Channel Processor] Completed processing channel ${channelId}: ${successCount} new videos, ${errorCount} errors`);
+    
+    return { 
+      newVideos: successCount,
+      errors: errorCount
+    };
   } catch (error) {
-    console.error(`[Channel Processor] Error in processChannel for ${channelId}:`, error);
-    return { success: false, error: error.message, newVideos };
+    console.error(`[Channel Processor] Error processing channel ${channelId}:`, error);
+    return { newVideos: 0, error: error.message };
   }
 }
