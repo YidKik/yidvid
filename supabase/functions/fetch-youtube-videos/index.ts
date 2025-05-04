@@ -19,7 +19,7 @@ serve(async (req) => {
       prioritizeRecent = true, 
       maxChannelsPerRun = 20,
       bypassQuotaCheck = false,
-      singleChannelMode = false  // New flag to handle individual channel operations
+      singleChannelMode = false  // Flag to handle individual channel operations
     } = await req.json();
     
     console.log(`Received request to fetch videos for ${channels.length} channels with forceUpdate=${forceUpdate} and singleChannelMode=${singleChannelMode}`);
@@ -119,6 +119,7 @@ serve(async (req) => {
           results.push({
             channelId,
             success: false,
+            newVideos: 0,
             message: "No videos found or channel not found"
           });
           continue;
@@ -141,11 +142,22 @@ serve(async (req) => {
         });
       } catch (error) {
         console.error(`Error processing channel ${channelId}:`, error);
+        
         results.push({
           channelId,
           success: false,
           message: error.message
         });
+
+        // If it's a quota error, try fallback key for next channels
+        if (error.message.includes('quota') && primaryApiKey !== fallbackApiKey) {
+          console.log("Switching to fallback API key after quota error");
+        } else if (error.message.includes('quota')) {
+          break; // If both keys have quota issues, stop processing
+        }
+        
+        // Add delay even after error
+        await new Promise(resolve => setTimeout(resolve, 2000));
       }
     }
 

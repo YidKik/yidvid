@@ -44,16 +44,19 @@ export async function processChannel(channelId: string, videos: any[]) {
     for (let i = 0; i < newVideos.length; i += batchSize) {
       const batch = newVideos.slice(i, i + batchSize);
       
-      // Add the updated_at field that was missing before
-      const videosWithUpdatedAt = batch.map(video => ({
-        ...video,
-        updated_at: new Date().toISOString()
-      }));
+      // Always ensure videos have updated_at field properly set
+      const videosToInsert = batch.map(video => {
+        // Make sure updated_at is explicitly set and is not null
+        return {
+          ...video,
+          updated_at: new Date().toISOString()
+        };
+      });
       
       // Insert the batch of videos
       const { data: insertedVideos, error: insertError } = await supabase
         .from("youtube_videos")
-        .insert(videosWithUpdatedAt)
+        .insert(videosToInsert)
         .select();
         
       if (insertError) {

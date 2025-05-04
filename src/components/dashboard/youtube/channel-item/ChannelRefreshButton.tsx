@@ -16,10 +16,9 @@ export const ChannelRefreshButton = ({ channelId, channelTitle }: ChannelRefresh
   const handleFetchChannelVideos = async () => {
     try {
       setIsLoading(true);
-      toast.loading(`Fetching videos for ${channelTitle || channelId}...`);
+      const loadingToast = toast.loading(`Fetching videos for ${channelTitle || channelId}...`);
 
       // Invoke the edge function to fetch videos for this specific channel
-      // Set forceUpdate and bypassQuotaCheck to true to ensure videos are fetched regardless of quota
       const { data, error } = await supabase.functions.invoke('fetch-youtube-videos', {
         body: { 
           channels: [channelId],
@@ -30,21 +29,22 @@ export const ChannelRefreshButton = ({ channelId, channelTitle }: ChannelRefresh
         }
       });
 
+      toast.dismiss(loadingToast);
+
       if (error) {
         console.error("Error fetching videos:", error);
-        toast.dismiss();
         toast.error(`Failed to fetch videos: ${error.message}`);
         return;
       }
-
-      toast.dismiss();
       
       console.log("Channel fetch response:", data);
       
       if (data?.success) {
-        if (data.newVideos > 0) {
-          toast.success(`Found ${data.newVideos} new videos for ${channelTitle || channelId}`, {
-            description: `Used ${data.usedFallbackKey ? "fallback" : "primary"} API key`
+        const channelResult = data.results?.find(r => r.channelId === channelId);
+        
+        if (channelResult?.newVideos > 0) {
+          toast.success(`Found ${channelResult.newVideos} new videos for ${channelTitle || channelId}`, {
+            description: `Used ${channelResult.usedFallbackKey ? "fallback" : "primary"} API key`
           });
         } else {
           toast.info(`No new videos found for ${channelTitle || channelId}`, {
@@ -57,7 +57,6 @@ export const ChannelRefreshButton = ({ channelId, channelTitle }: ChannelRefresh
 
     } catch (error) {
       console.error("Error in handleFetchChannelVideos:", error);
-      toast.dismiss();
       toast.error(`Error: ${error.message || "Unknown error occurred"}`);
     } finally {
       setIsLoading(false);
