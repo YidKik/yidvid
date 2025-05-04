@@ -41,9 +41,7 @@ export const useVideoPagination = ({
     }
 
     const startIdx = (currentPage - 1) * videosPerPage;
-    const endIdx = preloadNext 
-      ? startIdx + videosPerPage * 2 // Preload next page if enabled
-      : startIdx + videosPerPage;
+    const endIdx = startIdx + videosPerPage;
       
     return sortedVideos.slice(startIdx, endIdx);
   }, [sortedVideos, currentPage, videosPerPage, isMobile, showMoreMobile, preloadNext]);

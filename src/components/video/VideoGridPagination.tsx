@@ -2,6 +2,13 @@
 import { Button } from "@/components/ui/button";
 import { CustomPaginationArrow } from "@/components/ui/custom-pagination-arrow";
 import { cn } from "@/lib/utils";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 interface VideoGridPaginationProps {
   showAll: boolean;
@@ -44,31 +51,28 @@ export const VideoGridPagination = ({
   }
 
   return (
-    <div className="flex items-center justify-center">
-      <div className="inline-flex">
-        <button 
-          onClick={() => onPageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-          className={`
-            bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold
-            ${isMobile ? 'py-1 px-2 text-sm' : 'py-2 px-4'} rounded-l
-            ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}
-          `}
-        >
-          Prev
-        </button>
-        <button 
-          onClick={() => onPageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-          className={`
-            bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold
-            ${isMobile ? 'py-1 px-2 text-sm' : 'py-2 px-4'} rounded-r
-            ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}
-          `}
-        >
-          Next
-        </button>
-      </div>
-    </div>
+    <Pagination className="mt-8">
+      <PaginationContent>
+        <PaginationItem>
+          <PaginationPrevious
+            onClick={() => onPageChange(currentPage - 1)}
+            className={cn(currentPage === 1 && "pointer-events-none opacity-50")}
+          />
+        </PaginationItem>
+        
+        <PaginationItem className="flex items-center">
+          <span className="text-sm font-medium">
+            Page {currentPage} of {totalPages}
+          </span>
+        </PaginationItem>
+        
+        <PaginationItem>
+          <PaginationNext
+            onClick={() => onPageChange(currentPage + 1)}
+            className={cn(currentPage === totalPages && "pointer-events-none opacity-50")}
+          />
+        </PaginationItem>
+      </PaginationContent>
+    </Pagination>
   );
 };

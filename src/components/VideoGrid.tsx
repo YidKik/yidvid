@@ -41,12 +41,16 @@ export const VideoGrid = ({
   }
 
   // Create grid columns based on device and rowSize
-  const gridCols = isMobile ? "grid-cols-2" : `grid-cols-${rowSize}`;
+  // Always use 4 columns for desktop (rowSize = 4)
+  const gridCols = isMobile ? "grid-cols-2" : "grid-cols-4";
   const gridGap = isMobile ? "gap-x-2 gap-y-3" : "gap-4";
+  
+  // We want to limit to max 3 rows (12 videos) for desktop
+  const displayVideos = videos.slice(0, maxVideos);
 
   return (
     <div className={cn("grid", gridCols, gridGap, className)}>
-      {videos.map((video) => (
+      {displayVideos.map((video) => (
         <VideoGridItem key={video.id} video={video} />
       ))}
     </div>

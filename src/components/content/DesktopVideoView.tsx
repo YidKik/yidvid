@@ -25,6 +25,7 @@ export const DesktopVideoView = ({
   refetch,
   forceRefetch
 }: DesktopVideoViewProps) => {
+  // Fixed to show exactly 3 rows of 4 videos (12 total)
   const videosPerPage = 12;
   const location = useLocation();
   const isMainPage = location.pathname === "/";
@@ -38,7 +39,7 @@ export const DesktopVideoView = ({
   } = useVideoPagination({
     videos,
     videosPerPage,
-    preloadNext: true
+    preloadNext: false // Don't preload to ensure we only show exactly 12 videos
   });
 
   // More thorough check if we have real videos (not samples)
