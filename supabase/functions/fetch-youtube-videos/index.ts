@@ -50,18 +50,14 @@ serve(async (req) => {
       );
     }
 
-    // Calculate how many channels we can process based on available quota
-    const estimatedQuotaPerChannel = quotaConservative ? 15 : 10;
-    // If bypassing quota check, use the provided maxChannelsPerRun directly
-    const maxChannelsBasedOnQuota = bypassQuotaCheck ? 
-      maxChannelsPerRun : 
-      Math.max(3, Math.floor(quota_remaining / estimatedQuotaPerChannel));
-    
-    const channelsToProcess = Math.min(
-      maxChannelsBasedOnQuota, 
-      maxChannelsPerRun,
-      channels.length
-    );
+    // For individual channel fetches or when bypassing quota check, we'll process all channels
+    const channelsToProcess = bypassQuotaCheck ? 
+      channels.length : 
+      Math.min(
+        Math.max(3, Math.floor(quota_remaining / 10)), // Ensure we can process at least 3 channels
+        maxChannelsPerRun,
+        channels.length
+      );
 
     console.log(`Processing ${channelsToProcess} channels out of ${channels.length} requested`);
     
@@ -142,11 +138,6 @@ serve(async (req) => {
           totalVideos: videos.length,
           usedFallbackKey: apiKey === fallbackApiKey
         });
-        
-        // If we're being quota conservative, check after each channel
-        if (quotaConservative && apiKey === primaryApiKey && quota_remaining - quotaUsed < estimatedQuotaPerChannel) {
-          console.log("Switching to fallback API key to conserve quota");
-        }
       } catch (error) {
         console.error(`Error processing channel ${channelId}:`, error);
         results.push({

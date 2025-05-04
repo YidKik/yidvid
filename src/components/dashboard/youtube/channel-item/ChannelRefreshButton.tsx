@@ -19,16 +19,19 @@ export const ChannelRefreshButton = ({ channelId, channelTitle }: ChannelRefresh
       toast.loading(`Fetching videos for ${channelTitle || channelId}...`);
 
       // Invoke the edge function to fetch videos for this specific channel
+      // Set forceUpdate and bypassQuotaCheck to true to ensure videos are fetched regardless of quota
       const { data, error } = await supabase.functions.invoke('fetch-youtube-videos', {
         body: { 
           channels: [channelId],
           forceUpdate: true,
-          bypassQuotaCheck: true
+          bypassQuotaCheck: true,
+          prioritizeRecent: true
         }
       });
 
       if (error) {
         console.error("Error fetching videos:", error);
+        toast.dismiss();
         toast.error(`Failed to fetch videos: ${error.message}`);
         return;
       }
@@ -54,7 +57,6 @@ export const ChannelRefreshButton = ({ channelId, channelTitle }: ChannelRefresh
       toast.error(`Error: ${error.message || "Unknown error occurred"}`);
     } finally {
       setIsLoading(false);
-      toast.dismiss();
     }
   };
 
