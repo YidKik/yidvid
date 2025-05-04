@@ -1,4 +1,3 @@
-
 import { VideoPlaceholder } from "@/components/video/VideoPlaceholder";
 import { ChannelVideos } from "@/components/channel/ChannelVideos";
 import { Button } from "@/components/ui/button";
@@ -24,7 +23,8 @@ export const ChannelVideoSection = ({
   isLoadingMore,
   refetchVideos
 }: ChannelVideoSectionProps) => {
-  if (hasVideosError) {
+  // Only show an error if we actually have an error AND there are no videos
+  if (hasVideosError && (!displayedVideos || displayedVideos.length === 0)) {
     return (
       <div className="text-center my-12 p-6 border border-gray-100 rounded-lg bg-white/50">
         <VideoPlaceholder size="small" />
@@ -43,7 +43,8 @@ export const ChannelVideoSection = ({
     );
   }
 
-  if (!displayedVideos || displayedVideos.length === 0) {
+  // Only show the "no videos" message if we're not loading AND there are no videos
+  if (!isLoadingVideos && (!displayedVideos || displayedVideos.length === 0)) {
     return (
       <div className="text-center my-12 p-6 border border-gray-100 rounded-lg bg-white/50">
         <VideoPlaceholder size="small" />
@@ -62,6 +63,7 @@ export const ChannelVideoSection = ({
     );
   }
 
+  // Otherwise show videos (or loading state within the ChannelVideos component)
   return (
     <ChannelVideos
       videos={displayedVideos}

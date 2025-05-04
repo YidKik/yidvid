@@ -16,6 +16,9 @@ export const ChannelErrorState = ({
   onGoHome,
   isRetrying
 }: ChannelErrorStateProps) => {
+  // Specific error message based on the error
+  const errorMessage = error?.message || "The channel could not be loaded. It may have been removed or there might be a temporary issue.";
+  
   return (
     <div className="container mx-auto p-4 mt-16">
       <BackButton />
@@ -23,7 +26,7 @@ export const ChannelErrorState = ({
         <VideoPlaceholder size="medium" />
         <h2 className="text-xl font-semibold text-destructive mt-6">Channel not found</h2>
         <p className="text-muted-foreground mt-2 text-center max-w-md">
-          {error?.message || "The channel could not be loaded. It may have been removed or there might be a temporary issue."}
+          {errorMessage}
         </p>
         <div className="flex gap-4 mt-6">
           <Button onClick={onGoHome} variant="default">

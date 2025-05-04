@@ -141,6 +141,7 @@ const ChannelDetails = () => {
       });
   };
 
+  // Only show missing channel ID error if there's no channel ID
   if (!cleanChannelId) {
     return <ChannelErrorState 
       error={new Error("Missing Channel ID")} 
@@ -150,10 +151,13 @@ const ChannelDetails = () => {
     />;
   }
 
+  // Show loading state for both channel and initial loading of videos
   if (isLoadingChannel || isRetrying) {
     return <ChannelLoading />;
   }
 
+  // Only show channel error if we truly have no channel data
+  // This is the key change to ensure we don't show "channel not found" when just videos are missing
   if (!channel || channelError) {
     return <ChannelErrorState 
       error={channelError}
@@ -193,4 +197,3 @@ const ChannelDetails = () => {
 };
 
 export default ChannelDetails;
-

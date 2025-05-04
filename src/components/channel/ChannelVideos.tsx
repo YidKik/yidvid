@@ -1,4 +1,3 @@
-
 import { VideoCard } from "@/components/VideoCard";
 import { LoadingAnimation } from "@/components/ui/LoadingAnimation";
 import { useLocation } from "react-router-dom";
@@ -29,6 +28,7 @@ export const ChannelVideos = ({
     videos: videos
   });
 
+  // Show loading animation while loading
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -41,6 +41,8 @@ export const ChannelVideos = ({
     );
   }
 
+  // This fallback should not be reached due to checks in the parent component
+  // but keeping it as a safety measure
   if (!videos || videos.length === 0) {
     return (
       <div className="flex items-center justify-center min-h-[300px]">
