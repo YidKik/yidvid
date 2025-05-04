@@ -33,17 +33,24 @@ Deno.serve(async (req) => {
     // Support both GET and POST methods
     let channelId: string;
     let isPreviewFetch = false;
+    let useFallbackKey = false;
+    let fallbackApiKey = "";
     
     if (req.method === 'GET') {
       const url = new URL(req.url);
       channelId = url.searchParams.get('channelId') || '';
       isPreviewFetch = true;
+      useFallbackKey = url.searchParams.get('useFallbackKey') === 'true';
+      fallbackApiKey = url.searchParams.get('fallbackApiKey') || '';
     } else {
       const requestData = await req.json();
       channelId = requestData.channelId || '';
+      useFallbackKey = requestData.useFallbackKey === true;
+      fallbackApiKey = requestData.fallbackApiKey || '';
     }
     
     console.log('Received request for channel:', channelId);
+    console.log('Using fallback key:', useFallbackKey);
 
     if (!channelId) {
       console.error("Missing channelId in request");
@@ -53,8 +60,14 @@ Deno.serve(async (req) => {
       );
     }
 
-    const YOUTUBE_API_KEY = Deno.env.get('YOUTUBE_API_KEY');
-    if (!YOUTUBE_API_KEY) {
+    // Get the appropriate API key
+    let YOUTUBE_API_KEY = Deno.env.get('YOUTUBE_API_KEY');
+    
+    // Use fallback key if specified and provided
+    if (useFallbackKey && fallbackApiKey) {
+      console.log('Using provided fallback API key');
+      YOUTUBE_API_KEY = fallbackApiKey;
+    } else if (!YOUTUBE_API_KEY) {
       console.error('YouTube API key not found in environment variables');
       return new Response(
         JSON.stringify({ error: 'YouTube API key not configured' }),
@@ -117,25 +130,34 @@ Deno.serve(async (req) => {
     }
 
     // First check the quota state to avoid making API calls if we're already over quota
-    try {
-      const { data: quotaData } = await supabaseClient
-        .from("api_quota_tracking")
-        .select("quota_remaining, quota_reset_at")
-        .eq("api_name", "youtube")
-        .maybeSingle();
-        
-      if (quotaData && quotaData.quota_remaining <= 0) {
-        console.error('YouTube API quota already exceeded according to our tracking');
-        return new Response(
-          JSON.stringify({ 
-            error: 'YouTube API quota exceeded. Please try again tomorrow or add the channel manually.',
-            quotaResetAt: quotaData.quota_reset_at
-          }),
-          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 429 }
-        );
+    if (!useFallbackKey) {
+      try {
+        const { data: quotaData } = await supabaseClient
+          .from("api_quota_tracking")
+          .select("quota_remaining, quota_reset_at")
+          .eq("api_name", "youtube")
+          .maybeSingle();
+          
+        if (quotaData && quotaData.quota_remaining <= 0) {
+          console.error('YouTube API quota already exceeded according to our tracking');
+          
+          if (fallbackApiKey) {
+            console.log('Primary API key quota exceeded, switching to fallback key');
+            YOUTUBE_API_KEY = fallbackApiKey;
+            useFallbackKey = true;
+          } else {
+            return new Response(
+              JSON.stringify({ 
+                error: 'YouTube API quota exceeded. Please try again tomorrow or add the channel manually.',
+                quotaResetAt: quotaData.quota_reset_at
+              }),
+              { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 429 }
+            );
+          }
+        }
+      } catch (quotaErr) {
+        console.warn("Error checking quota, continuing anyway:", quotaErr);
       }
-    } catch (quotaErr) {
-      console.warn("Error checking quota, continuing anyway:", quotaErr);
     }
 
     // Try to get channel by ID or handle using a server-side API call
@@ -161,7 +183,8 @@ Deno.serve(async (req) => {
       headers: {
         'Accept': 'application/json',
         'User-Agent': 'Supabase Edge Function',
-        'X-Request-Source': 'Supabase Edge Function'
+        'X-Request-Source': 'Supabase Edge Function',
+        'Referer': 'https://euincktvsiuztsxcuqfd.supabase.co/'
       }
     };
 
@@ -181,6 +204,71 @@ Deno.serve(async (req) => {
         // Handle quota exceeded error
         if (errorText.toLowerCase().includes('quota') || response.status === 403) {
           console.error("YouTube quota exceeded detected");
+          
+          // Try with fallback key if available and not already using it
+          if (fallbackApiKey && !useFallbackKey) {
+            console.log("Retrying with fallback API key");
+            YOUTUBE_API_KEY = fallbackApiKey;
+            
+            const fallbackApiUrl = apiUrl.replace(/key=([^&]+)/, `key=${YOUTUBE_API_KEY}`);
+            const fallbackResponse = await fetch(fallbackApiUrl, options);
+            
+            if (fallbackResponse.ok) {
+              const fallbackData = await fallbackResponse.json();
+              console.log("Successfully fetched with fallback key");
+              
+              // Process the fallback response similarly to the primary response
+              if (!fallbackData.items || fallbackData.items.length === 0) {
+                return new Response(
+                  JSON.stringify({ error: 'Channel not found even with fallback key' }),
+                  { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 404 }
+                );
+              }
+              
+              const channel = fallbackData.items[0];
+              
+              // For GET request in preview mode, just return the channel data without inserting
+              if (isPreviewFetch || req.method === 'GET') {
+                return new Response(
+                  JSON.stringify({
+                    channel_id: channel.id,
+                    title: channel.snippet.title,
+                    description: channel.snippet.description,
+                    thumbnail_url: channel.snippet.thumbnails.default.url,
+                    usedFallbackKey: true
+                  }),
+                  { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
+                );
+              }
+              
+              // Insert the channel using the data from fallback API key
+              const { data: insertedChannel, error: insertError } = await supabaseClient
+                .from('youtube_channels')
+                .insert({
+                  channel_id: channel.id,
+                  title: channel.snippet.title,
+                  description: channel.snippet.description || '',
+                  thumbnail_url: channel.snippet.thumbnails.default.url,
+                  default_category: 'other'
+                })
+                .select()
+                .single();
+                
+              if (insertError) {
+                console.error('Error inserting channel with fallback data:', insertError);
+                return new Response(
+                  JSON.stringify({ error: 'Failed to add channel to database' }),
+                  { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+                );
+              }
+              
+              console.log('Channel added successfully using fallback key:', insertedChannel);
+              return new Response(
+                JSON.stringify({...insertedChannel, usedFallbackKey: true}),
+                { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
+              );
+            }
+          }
           
           try {
             // Get current date and calculate tomorrow's reset date
@@ -263,7 +351,8 @@ Deno.serve(async (req) => {
             channel_id: channel.id,
             title: channel.snippet.title,
             description: channel.snippet.description,
-            thumbnail_url: channel.snippet.thumbnails.default.url
+            thumbnail_url: channel.snippet.thumbnails.default.url,
+            usedFallbackKey
           }),
           { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
         );
@@ -305,7 +394,7 @@ Deno.serve(async (req) => {
       
       // Return the channel data with a 200 status
       return new Response(
-        JSON.stringify(insertedChannel),
+        JSON.stringify({...insertedChannel, usedFallbackKey}),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
       );
 
