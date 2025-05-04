@@ -36,14 +36,14 @@ export const StatsSection = () => {
       <div className="flex justify-between space-x-8">
         <button 
           onClick={() => handleAuthClick('signup')}
-          className="w-[calc(50%-1rem)] h-16 flex items-center justify-center rounded-3xl border-2 border-[#ddf9f2] bg-[#003c43] text-[#ddf9f2] text-2xl hover:bg-[#135d66] transition-colors duration-300"
+          className="w-[calc(50%-1rem)] h-16 flex items-center justify-center rounded-3xl border-2 border-[#ddf9f2] bg-transparent text-[#ddf9f2] text-2xl hover:bg-[#135d66] transition-colors duration-300"
         >
           Create account
         </button>
 
         <button 
           onClick={() => handleAuthClick('signin')}
-          className="w-[calc(50%-1rem)] h-16 flex items-center justify-center rounded-3xl border-2 border-[#ddf9f2] bg-[#003c43] text-[#ddf9f2] text-2xl hover:bg-[#135d66] transition-colors duration-300"
+          className="w-[calc(50%-1rem)] h-16 flex items-center justify-center rounded-3xl border-2 border-[#ddf9f2] bg-transparent text-[#ddf9f2] text-2xl hover:bg-[#135d66] transition-colors duration-300"
         >
           Login
         </button>
