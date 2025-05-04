@@ -19,7 +19,7 @@ body {
   color: var(--text-custom, #030303);
 }
 
-/* Global button styles - making sure buttons use primary red color except on homepage */
+/* Global button styles - making sure buttons use primary red color */
 button:not([class*="home-"]), 
 .button-custom:not([class*="home-"]),
 .btn:not([class*="home-"]),
@@ -66,7 +66,7 @@ a:not([class*="home-"]):hover,
   color: var(--button-custom) !important;
 }
 
-/* Add custom color classes */
+/* Add custom color classes that don't apply to homepage */
 .bg-custom:not([class*="home-"]) {
   background-color: var(--background-custom);
 }
@@ -81,4 +81,21 @@ a:not([class*="home-"]):hover,
 
 .logo-custom:not([class*="home-"]) {
   color: var(--logo-custom);
+}
+
+/* Override brand colors for pages other than home */
+:not(.home-page) .bg-brand-darkest {
+  background-color: var(--background-custom, #FFFFFF) !important;
+}
+
+:not(.home-page) .bg-brand-dark {
+  background-color: var(--background-custom, #FFFFFF) !important;
+}
+
+:not(.home-page) .text-brand-light {
+  color: var(--text-custom, #030303) !important;
+}
+
+:not(.home-page) .text-brand-lightest {
+  color: var(--text-custom, #030303) !important;
 }

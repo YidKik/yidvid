@@ -1,3 +1,4 @@
+
 /* Main CSS imports */
 @import './styles/index.css';
 @import './styles/mobile.css';
@@ -7,20 +8,29 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@400;500;600&display=swap');
 
-/* Add custom base styles */
-body {
+/* Homepage specific styles - only apply blue theme to home page */
+.home-page {
   background-color: #003c43;
   color: #e3fef7;
   font-family: 'Inter', sans-serif;
 }
 
-.glass-card {
+/* Default body styles for all other pages */
+body {
+  background-color: var(--background-custom, #FFFFFF);
+  color: var(--text-custom, #030303);
+  font-family: 'Inter', sans-serif;
+}
+
+/* Glass card styles - restrict to home page */
+.home-page .glass-card {
   background: rgba(19, 93, 102, 0.3);
   backdrop-filter: blur(10px);
   border: 2px solid #77b0aa;
   border-radius: 1.5rem;
 }
 
+/* Standard hover card for all pages */
 .hover-card {
   transition: all 0.3s ease;
 }
@@ -29,3 +39,4 @@ body {
   transform: translateY(-5px);
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
+
