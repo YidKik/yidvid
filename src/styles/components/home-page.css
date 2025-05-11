@@ -36,3 +36,12 @@ body.home-page {
 .home-page .DialogContent {
   z-index: 9999 !important;
 }
+
+/* Full-width about section on mobile */
+.home-page #about-section .bg-[#135d66] {
+  width: 100vw !important;
+  margin-left: calc(-50vw + 50%) !important;
+  margin-right: calc(-50vw + 50%) !important;
+  max-width: 100vw !important;
+  box-sizing: border-box !important;
+}

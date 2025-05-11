@@ -21,7 +21,8 @@ export const MobileDescriptionSection = () => {
         animate="visible"
         variants={fadeInVariants}
         transition={{ duration: 0.6 }}
-        className="text-sm text-[#e3fef7] leading-relaxed space-y-4 bg-[#135d66] py-6 w-full"
+        className="text-sm text-[#e3fef7] leading-relaxed space-y-4 bg-[#135d66] py-6 w-screen relative"
+        style={{ left: "50%", right: "50%", marginLeft: "-50vw", marginRight: "-50vw" }}
       >
         <div className="px-4 max-w-screen-sm mx-auto">
           <p>
