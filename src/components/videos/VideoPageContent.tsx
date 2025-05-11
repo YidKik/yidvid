@@ -5,15 +5,16 @@ import { MusicSection } from "@/components/content/MusicSection";
 import { VideoContent } from "@/components/content/VideoContent";
 import { useVideos } from "@/hooks/video/useVideos";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { ScrollToTopButton } from "./ScrollToTopButton";
 import { Header } from "@/components/Header";
 import { filterUnavailableVideos } from "@/hooks/video/utils/validation";
-import { WifiOff } from "lucide-react";
+import { useNetworkStatus } from "@/hooks/video/useNetworkStatus";
 
 export const VideoPageContent = () => {
   const [isMusic, setIsMusic] = useState(false);
-  const [networkOffline, setNetworkOffline] = useState(!navigator.onLine);
+  const { networkOffline } = useNetworkStatus();
+  
   const { 
     data: rawVideos, 
     isLoading, 
@@ -28,20 +29,6 @@ export const VideoPageContent = () => {
   const videos = filterUnavailableVideos(rawVideos || []);
   
   const { isMobile } = useIsMobile();
-
-  // Monitor network status
-  useEffect(() => {
-    const handleOnline = () => setNetworkOffline(false);
-    const handleOffline = () => setNetworkOffline(true);
-
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
-    
-    return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
-    };
-  }, []);
 
   // Optimize the refetch logic to be more selective and less frequent
   useEffect(() => {
@@ -63,14 +50,7 @@ export const VideoPageContent = () => {
   return (
     <div className="flex-1 videos-page">
       <Header />
-      {networkOffline && (
-        <div className="bg-amber-50 border-b border-amber-200 p-2">
-          <div className="flex items-center justify-center gap-2 text-amber-700 text-sm">
-            <WifiOff size={16} />
-            <p>You appear to be offline. Some features may be limited.</p>
-          </div>
-        </div>
-      )}
+      
       <motion.main 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

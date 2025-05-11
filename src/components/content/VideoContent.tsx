@@ -1,18 +1,20 @@
 
-import { useIsMobile } from "@/hooks/use-mobile";
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { MobileVideoView } from "./MobileVideoView";
 import { DesktopVideoView } from "./DesktopVideoView";
 import { VideoData } from "@/hooks/video/types/video-fetcher";
-import { useRefetchControl } from "@/hooks/video/useRefetchControl";
-import { useSampleVideos } from "@/hooks/video/useSampleVideos";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { AutoRefreshHandler } from "./AutoRefreshHandler";
 import { VideoEmptyState } from "./VideoEmptyState";
+import { useRefetchControl } from "@/hooks/video/useRefetchControl";
+import { useSampleVideos } from "@/hooks/video/useSampleVideos";
+import { useSessionManager } from "@/hooks/useSessionManager";
 import { clearApplicationCache } from "@/lib/query-client";
 import { toast } from "sonner";
-import { useSessionManager } from "@/hooks/useSessionManager";
-import { Button } from "@/components/ui/button";
-import { RefreshCw } from "lucide-react";
+import { NetworkStatusBanner } from "./NetworkStatusBanner";
+import { NetworkErrorAlert } from "./NetworkErrorAlert";
+import { useNetworkStatus } from "@/hooks/video/useNetworkStatus";
+import { useRecoveryRefresh } from "@/hooks/video/useRecoveryRefresh";
 
 interface VideoContentProps {
   videos: VideoData[];
@@ -33,7 +35,7 @@ export const VideoContent = ({
   forceRefetch,
   lastSuccessfulFetch,
   fetchAttempts,
-  networkOffline = false
+  networkOffline: externalNetworkOffline
 }: VideoContentProps) => {
   const { isMobile } = useIsMobile();
   const { 
@@ -48,13 +50,18 @@ export const VideoContent = ({
   } = useSampleVideos();
 
   const { session, isAuthenticated } = useSessionManager();
+  const { networkOffline } = useNetworkStatus();
+  
+  // Use external network status if provided, otherwise use the hook's value
+  const isOffline = externalNetworkOffline !== undefined ? externalNetworkOffline : networkOffline;
   
   // Track if we've already attempted background refresh
   const [hasAttemptedRefresh, setHasAttemptedRefresh] = useState(false);
   const initialLoadAttemptMade = useRef(false);
   const userChangedRef = useRef(session?.user?.id);
   const refreshTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const [isManualRefreshing, setIsManualRefreshing] = useState(false);
+  
+  const { isManualRefreshing, recoveryRefresh } = useRecoveryRefresh(forceRefetch, isOffline);
   
   // Clean up any existing timeouts
   useEffect(() => {
@@ -141,31 +148,6 @@ export const VideoContent = ({
   // Always show some content immediately, whether user is logged in or not
   const displayVideos = videos?.length ? videos : createSampleVideos(8);
   
-  const recoveryRefresh = useCallback(async () => {
-    if (!forceRefetch || networkOffline) return;
-    
-    setIsManualRefreshing(true);
-    
-    try {
-      // Clear cache first
-      clearApplicationCache();
-      toast.loading("Refreshing content...");
-      
-      // Short delay to let cache clear
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      await forceRefetch();
-      toast.success("Content refreshed successfully");
-    } catch (err) {
-      console.error("Recovery refresh failed:", err);
-      toast.error("Refresh failed", {
-        description: "Please check your connection and try again"
-      });
-    } finally {
-      setIsManualRefreshing(false);
-    }
-  }, [forceRefetch, networkOffline]);
-  
   // Show a more user-friendly message for network errors
   const isNetworkError = error && (
     error.message?.includes('fetch') || 
@@ -182,29 +164,17 @@ export const VideoContent = ({
         forceRefetch={navigator.onLine ? forceRefetch : undefined}
       />
       
+      {/* Network status banner */}
+      <NetworkStatusBanner networkOffline={isOffline} />
+      
       {/* Network or repeated fetch failure notice */}
-      {(isNetworkError || (fetchAttempts && fetchAttempts > 3)) && !isRefreshing && (
-        <div className="my-4 p-4 bg-amber-50 border border-amber-200 rounded-md">
-          <h3 className="font-medium text-amber-800">
-            {networkOffline 
-              ? "You appear to be offline" 
-              : "Having trouble loading content?"}
-          </h3>
-          <p className="text-amber-700 text-sm mb-3">
-            {networkOffline
-              ? "We're showing cached content while your connection is unavailable."
-              : "We're encountering some difficulties refreshing the content."}
-          </p>
-          <Button 
-            onClick={recoveryRefresh} 
-            className="text-sm bg-amber-100 hover:bg-amber-200 text-amber-800 font-medium py-1 px-3 rounded flex items-center gap-2"
-            disabled={isManualRefreshing || networkOffline}
-          >
-            <RefreshCw size={14} className={isManualRefreshing ? "animate-spin" : ""} />
-            {isManualRefreshing ? "Refreshing..." : "Refresh Content"}
-          </Button>
-        </div>
-      )}
+      <NetworkErrorAlert 
+        isNetworkError={isNetworkError || false}
+        fetchAttempts={fetchAttempts}
+        networkOffline={isOffline}
+        isManualRefreshing={isManualRefreshing}
+        onRefresh={recoveryRefresh}
+      />
       
       {/* Responsive video view based on device */}
       {isMobile ? (
