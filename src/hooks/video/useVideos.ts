@@ -25,9 +25,9 @@ export const useVideos = (): UseVideosResult => {
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
   const [offlineMode, setOfflineMode] = useState<boolean>(false);
   
-  // Set up real-time subscription for video changes (with performance optimization)
-  useVideoRealtime();
-
+  // Set up auth state listener to trigger refreshes on login/logout
+  useAuthStateListener(setAuthState);
+  
   // Initialize the video fetcher with optimized performance
   const {
     fetchAllVideos,
@@ -36,9 +36,6 @@ export const useVideos = (): UseVideosResult => {
     lastSuccessfulFetch,
     setFetchAttempts
   } = useVideoFetcher();
-
-  // Set up auth state listener to trigger refreshes on login/logout
-  useAuthStateListener(setAuthState);
 
   // Check network connection status
   const checkNetwork = () => {

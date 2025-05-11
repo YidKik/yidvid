@@ -2,7 +2,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState, useCallback, useEffect } from "react";
 import { VideoData } from "./types/video-fetcher";
-import { hasRealVideos } from "./utils/validation";
 
 interface UseVideoQueryProps {
   fetchAllVideos: () => Promise<VideoData[]>;
@@ -46,19 +45,13 @@ export const useVideoQuery = ({
     } catch (error) {
       console.log(`Error fetching videos (attempt ${networkRetries + 1}):`, error);
       
-      // Limit network retries to prevent infinite loops
-      if (networkRetries < 3) {
+      if (networkRetries < 2) {
         setNetworkRetries(prev => prev + 1);
-        
-        // Wait a bit longer for each retry
         const waitTime = 1000 * (networkRetries + 1);
-        console.log(`Will retry in ${waitTime}ms`);
-        
         await new Promise(resolve => setTimeout(resolve, waitTime));
         return safeFetchAllVideos();
       }
       
-      // If we've retried too many times, throw the error to let React Query handle it
       console.error("Maximum network retries reached, using cache or sample data");
       throw error;
     }
@@ -76,28 +69,23 @@ export const useVideoQuery = ({
       // Don't retry quota errors
       if (error?.message?.includes('quota')) return false;
       
-      // Don't retry RLS recursion errors - they need fixing at the DB level
+      // Don't retry RLS recursion errors
       if (error?.message?.includes('recursion') || 
-          error?.message?.includes('policy') || 
-          error?.message?.includes('permission') ||
-          error?.code === '42P07' ||
-          error?.code === '42P17') { // Added specific RLS recursion error code
+          error?.message?.includes('policy')) {
         console.log("Not retrying RLS error:", error.message);
-        // Instead of retrying, we'll trigger a recovery process
         setIsRecovering(true);
         return false;
       }
 
-      // Don't retry network errors after multiple failures
-      if (error?.message?.includes('fetch') && failureCount >= 2) {
+      // Only retry once for network errors
+      if (error?.message?.includes('fetch') && failureCount >= 1) {
         console.log("Network appears unstable, switching to offline mode");
         return false;
       }
       
-      // Only retry once for other errors
       return failureCount < 1;
     },
-    refetchOnMount: true, // Always ensure fresh data on mount
+    refetchOnMount: true, // Ensure fresh data on mount
     refetchOnWindowFocus: false
   });
 
@@ -108,7 +96,7 @@ export const useVideoQuery = ({
       
       // Use a timeout to prevent immediate retry
       const recoveryTimer = setTimeout(() => {
-        console.log("Attempting recovery via edge function...");
+        console.log("Attempting recovery...");
         handleForceRefetch().catch(err => {
           console.error("Recovery attempt failed:", err);
         });
@@ -117,24 +105,6 @@ export const useVideoQuery = ({
       return () => clearTimeout(recoveryTimer);
     }
   }, [isRecovering, isFetching]);
-
-  // Add network status monitoring
-  useEffect(() => {
-    const handleOnline = () => {
-      console.log("Network connection restored");
-      // Don't refetch immediately to avoid overwhelming the network
-      setTimeout(() => {
-        if (checkNetwork()) refetch();
-      }, 2000);
-    };
-
-    // Add event listeners for online/offline status
-    window.addEventListener('online', handleOnline);
-    
-    return () => {
-      window.removeEventListener('online', handleOnline);
-    };
-  }, [refetch, checkNetwork]);
 
   // Create a wrapper for forceRefetch with retry counter
   const handleForceRefetch = async () => {

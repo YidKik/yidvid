@@ -5,7 +5,7 @@ import { MusicSection } from "@/components/content/MusicSection";
 import { VideoContent } from "@/components/content/VideoContent";
 import { useVideos } from "@/hooks/video/useVideos";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { ScrollToTopButton } from "./ScrollToTopButton";
 import { Header } from "@/components/Header";
 import { filterUnavailableVideos } from "@/hooks/video/utils/validation";
@@ -24,7 +24,7 @@ export const VideoPageContent = () => {
     error 
   } = useVideos();
   
-  // Filter out unavailable videos with improved performance
+  // Filter out unavailable videos
   const videos = filterUnavailableVideos(rawVideos || []);
   
   const { isMobile } = useIsMobile();
@@ -42,23 +42,6 @@ export const VideoPageContent = () => {
       window.removeEventListener('offline', handleOffline);
     };
   }, []);
-
-  // Optimize the refetch logic to be more selective and less frequent
-  useEffect(() => {
-    if (rawVideos && rawVideos.length > 0) {
-      const filteredOutCount = rawVideos.length - videos.length;
-      // Only trigger refetch if significant filtering AND more than 10 minutes since last fetch
-      const significantFiltering = filteredOutCount > 5 || (filteredOutCount / rawVideos.length) > 0.3;
-      const shouldRefresh = significantFiltering && forceRefetch && 
-                           (!lastSuccessfulFetch || 
-                            (new Date().getTime() - lastSuccessfulFetch.getTime() > 10 * 60 * 1000));
-      
-      if (shouldRefresh) {
-        console.log(`Filtered out ${filteredOutCount} unavailable videos, triggering refetch`);
-        forceRefetch();
-      }
-    }
-  }, [rawVideos, videos.length, forceRefetch, lastSuccessfulFetch]);
 
   return (
     <div className="flex-1 videos-page">

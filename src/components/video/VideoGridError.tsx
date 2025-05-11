@@ -25,7 +25,7 @@ export const VideoGridError = ({
     try {
       await onRetry();
     } finally {
-      // Add a slight delay before removing loading state for better UX
+      // Add a slight delay for better UX
       setTimeout(() => setIsLoading(false), 800);
     }
   };

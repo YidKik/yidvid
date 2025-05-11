@@ -18,7 +18,6 @@ interface VideoGridProps {
   className?: string;
 }
 
-// Using React.memo to prevent unnecessary re-renders
 export const VideoGrid = memo(({
   videos: externalVideos,
   maxVideos = 12,
@@ -29,13 +28,12 @@ export const VideoGrid = memo(({
   className,
 }: VideoGridProps) => {
   const { isMobile, isTablet } = useIsMobile();
-  // Removed session dependency since we want the same behavior for all users
   const { videos: fetchedVideos, loading: internalLoading, error: internalError } = useVideoGridData(maxVideos);
   
   // Use external videos if provided, otherwise use fetched videos
   let videos = externalVideos || fetchedVideos;
   
-  // Filter out unavailable videos with improved performance
+  // Filter out unavailable videos
   videos = filterUnavailableVideos(videos);
   
   // Determine loading state
@@ -47,8 +45,7 @@ export const VideoGrid = memo(({
   // Determine if we have a network error
   const isNetworkError = error && (
     error.message?.includes('fetch') || 
-    error.message?.includes('network') ||
-    error.message?.includes('offline')
+    error.message?.includes('network')
   );
 
   // Handle retry with proper error handling
@@ -87,7 +84,7 @@ export const VideoGrid = memo(({
     gridCols = "grid-cols-3"; // Tablet always 3 columns
   }
   
-  const gridGap = isMobile ? "gap-x-2 gap-y-1" : "gap-4";
+  const gridGap = isMobile ? "gap-x-2 gap-y-4" : "gap-4";
   
   // Limit videos based on device
   const videoLimit = isMobile ? 4 : isTablet ? 9 : maxVideos;
@@ -104,7 +101,7 @@ export const VideoGrid = memo(({
         />
       )}
       
-      <div className={cn("grid video-grid-container", gridCols, gridGap)}>
+      <div className={cn("grid", gridCols, gridGap)}>
         {displayVideos.map((video) => (
           <VideoGridItem key={video.id} video={video} />
         ))}

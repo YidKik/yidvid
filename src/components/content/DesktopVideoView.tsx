@@ -1,12 +1,9 @@
 
 import { VideoGrid } from "@/components/VideoGrid";
 import { VideoGridPagination } from "@/components/video/VideoGridPagination";
-import { MostViewedVideos } from "@/components/video/MostViewedVideos";
 import { ChannelsGrid } from "@/components/youtube/ChannelsGrid";
 import { VideoData } from "@/hooks/video/types/video-fetcher";
 import { useVideoPagination } from "@/hooks/video/useVideoPagination";
-import { useLocation } from "react-router-dom";
-import { useEffect } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 interface DesktopVideoViewProps {
@@ -17,24 +14,21 @@ interface DesktopVideoViewProps {
   forceRefetch?: () => Promise<any>;
   lastSuccessfulFetch?: Date | null;
   fetchAttempts?: number;
+  error?: Error | null;
 }
 
 export const DesktopVideoView = ({
   videos,
   isLoading,
   isRefreshing,
-  refetch,
-  forceRefetch
+  forceRefetch,
+  error
 }: DesktopVideoViewProps) => {
   const { isTablet } = useIsMobile();
   
-  // For tablet: 9 videos (3 rows of 3)
-  // For desktop: 12 videos (3 rows of 4)
+  // For tablet: 9 videos (3 rows of 3), For desktop: 12 videos (3 rows of 4)
   const videosPerPage = isTablet ? 9 : 12;
   const rowSize = isTablet ? 3 : 4;
-  
-  const location = useLocation();
-  const isMainPage = location.pathname === "/";
   
   const {
     sortedVideos,
@@ -44,23 +38,8 @@ export const DesktopVideoView = ({
     setCurrentPage
   } = useVideoPagination({
     videos,
-    videosPerPage,
-    preloadNext: false // Don't preload to ensure we only show exactly the right number of videos
+    videosPerPage
   });
-
-  // More thorough check if we have real videos (not samples)
-  const hasRealVideos = videos.some(video => 
-    !video.id.toString().includes('sample') && 
-    !video.video_id.includes('sample') &&
-    video.channelName !== "Sample Channel" &&
-    video.title !== "Sample Video 1"
-  );
-
-  // Log for debugging
-  useEffect(() => {
-    console.log(`DesktopVideoView: ${videos.length} videos, hasRealVideos: ${hasRealVideos}, isLoading: ${isLoading}, isRefreshing: ${isRefreshing}`);
-    console.log(`Pagination: currentPage ${currentPage} of ${totalPages}, showing ${displayVideos.length} videos`);
-  }, [videos, hasRealVideos, isLoading, isRefreshing, currentPage, totalPages, displayVideos.length]);
 
   return (
     <div className="space-y-6">
@@ -70,6 +49,8 @@ export const DesktopVideoView = ({
           maxVideos={videosPerPage}
           rowSize={rowSize}
           isLoading={isLoading || isRefreshing}
+          error={error}
+          onRetry={forceRefetch}
           className={`${isTablet ? 'grid-cols-3' : 'grid-cols-4'} gap-4`}
         />
         
@@ -93,17 +74,6 @@ export const DesktopVideoView = ({
           console.error('Channel grid error');
         }} />
       </div>
-
-      {!hasRealVideos && !isLoading && !isRefreshing && !isMainPage && (
-        <div className="flex justify-center mt-6">
-          <button 
-            onClick={() => forceRefetch && forceRefetch()}
-            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
-          >
-            Refresh Content
-          </button>
-        </div>
-      )}
     </div>
   );
 };

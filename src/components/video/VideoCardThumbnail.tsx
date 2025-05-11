@@ -20,15 +20,12 @@ export const VideoCardThumbnail = memo(({
   const [isValidThumbnail, setIsValidThumbnail] = useState(true);
   const [isLoaded, setIsLoaded] = useState(false);
   
-  // Check thumbnail validity with optimized validation
+  // Quick validation for obviously invalid URLs
   useEffect(() => {
-    // Quick validation for obviously invalid URLs to prevent unnecessary loading attempts
     if (!thumbnail || 
-        thumbnail.includes('no_thumbnail') || 
-        thumbnail.includes('placeholder') ||
-        thumbnail.includes('unavailable') ||
         thumbnail === 'null' ||
-        thumbnail === 'undefined') {
+        thumbnail === 'undefined' ||
+        thumbnail.includes('unavailable')) {
       setIsValidThumbnail(false);
     } else {
       setIsValidThumbnail(true);
@@ -37,10 +34,6 @@ export const VideoCardThumbnail = memo(({
   }, [thumbnail]);
 
   const handleImageError = () => {
-    // Log error but avoid console spam
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`Image error for thumbnail: ${thumbnail}`);
-    }
     setImageError(true);
   };
 
@@ -68,7 +61,6 @@ export const VideoCardThumbnail = memo(({
       "relative aspect-video overflow-hidden rounded-lg bg-gray-100 shadow-sm group-hover:shadow-md transition-all",
       className
     )}>
-      {/* Placeholder until image loads */}
       {!isLoaded && (
         <div className="absolute inset-0 flex items-center justify-center bg-gray-50 animate-pulse">
           <div className="w-8 h-8 border-2 border-gray-200 border-t-gray-300 rounded-full animate-spin"></div>
@@ -84,7 +76,6 @@ export const VideoCardThumbnail = memo(({
         )}
         loading="lazy"
         decoding="async" 
-        fetchPriority="high"
         onError={handleImageError}
         onLoad={handleImageLoad}
       />

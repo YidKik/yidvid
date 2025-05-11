@@ -16,6 +16,7 @@ export interface MobileVideoViewProps {
   forceRefetch?: () => Promise<any>;
   lastSuccessfulFetch?: Date | null;
   fetchAttempts?: number;
+  error?: Error | null;
 }
 
 export const MobileVideoView: React.FC<MobileVideoViewProps> = ({
@@ -23,7 +24,8 @@ export const MobileVideoView: React.FC<MobileVideoViewProps> = ({
   isLoading,
   isRefreshing,
   refetch,
-  forceRefetch
+  forceRefetch,
+  error
 }) => {
   const { isMobile } = useIsMobile();
   
@@ -45,14 +47,14 @@ export const MobileVideoView: React.FC<MobileVideoViewProps> = ({
     isMobile: true
   });
 
-  // For a cleaner experience, let's use our loading component
+  // Show loading animation for better user experience
   if (isLoading || isRefreshing) {
     return (
       <div className="space-y-1">
         <DelayedLoadingAnimation
           size="small"
           text={isRefreshing ? "Refreshing videos..." : "Loading videos..."}
-          delayMs={3000}
+          delayMs={1000} // Show sooner for faster perceived performance
         />
       </div>
     );
@@ -65,6 +67,8 @@ export const MobileVideoView: React.FC<MobileVideoViewProps> = ({
         maxVideos={videosPerPage}
         rowSize={rowSize}
         isLoading={isLoading || isRefreshing}
+        error={error}
+        onRetry={forceRefetch}
         className="grid-cols-2 gap-1"
       />
       
