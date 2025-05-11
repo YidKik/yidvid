@@ -22,7 +22,7 @@ export const VideoGrid = ({
   isLoading: externalLoading,
   className,
 }: VideoGridProps) => {
-  const { isMobile } = useIsMobile();
+  const { isMobile, isTablet } = useIsMobile();
   const { session } = useSessionManager();
   const { videos: fetchedVideos, loading: internalLoading, error } = useVideoGridData(maxVideos, !!session);
   
@@ -41,12 +41,19 @@ export const VideoGrid = ({
   }
 
   // Create grid columns based on device and rowSize
-  // Always use 4 columns for desktop (rowSize = 4)
-  const gridCols = isMobile ? "grid-cols-2" : "grid-cols-4";
+  let gridCols = "grid-cols-4"; // Default desktop
+  
+  if (isMobile) {
+    gridCols = "grid-cols-2"; // Mobile always 2 columns
+  } else if (isTablet) {
+    gridCols = "grid-cols-3"; // Tablet always 3 columns
+  }
+  
   const gridGap = isMobile ? "gap-x-2 gap-y-1" : "gap-4";
   
-  // We want to limit to max 3 rows (12 videos) for desktop
-  const displayVideos = videos.slice(0, maxVideos);
+  // Limit videos based on device
+  const videoLimit = isMobile ? 4 : isTablet ? 9 : maxVideos;
+  const displayVideos = videos.slice(0, videoLimit);
 
   return (
     <div className={cn("grid video-grid-container", gridCols, gridGap, className)}>

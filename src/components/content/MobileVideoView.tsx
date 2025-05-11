@@ -25,7 +25,9 @@ export const MobileVideoView: React.FC<MobileVideoViewProps> = ({
   forceRefetch
 }) => {
   const { isMobile } = useIsMobile();
-  const videosPerPage = 6; // Increased from 4 to 6 videos per page
+  
+  // Set to exactly 4 videos (2 rows of 2 videos) for mobile
+  const videosPerPage = 4; 
   const rowSize = 2;
   
   const {

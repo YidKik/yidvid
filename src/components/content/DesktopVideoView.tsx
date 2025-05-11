@@ -7,6 +7,7 @@ import { VideoData } from "@/hooks/video/types/video-fetcher";
 import { useVideoPagination } from "@/hooks/video/useVideoPagination";
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface DesktopVideoViewProps {
   videos: VideoData[];
@@ -25,8 +26,13 @@ export const DesktopVideoView = ({
   refetch,
   forceRefetch
 }: DesktopVideoViewProps) => {
-  // Fixed to show exactly 3 rows of 4 videos (12 total)
-  const videosPerPage = 12;
+  const { isTablet } = useIsMobile();
+  
+  // For tablet: 9 videos (3 rows of 3)
+  // For desktop: 12 videos (3 rows of 4)
+  const videosPerPage = isTablet ? 9 : 12;
+  const rowSize = isTablet ? 3 : 4;
+  
   const location = useLocation();
   const isMainPage = location.pathname === "/";
   
@@ -39,7 +45,7 @@ export const DesktopVideoView = ({
   } = useVideoPagination({
     videos,
     videosPerPage,
-    preloadNext: false // Don't preload to ensure we only show exactly 12 videos
+    preloadNext: false // Don't preload to ensure we only show exactly the right number of videos
   });
 
   // More thorough check if we have real videos (not samples)
@@ -62,9 +68,9 @@ export const DesktopVideoView = ({
         <VideoGrid 
           videos={displayVideos}
           maxVideos={videosPerPage}
-          rowSize={4}
+          rowSize={rowSize}
           isLoading={isLoading || isRefreshing}
-          className="grid-cols-4 gap-4"
+          className={`${isTablet ? 'grid-cols-3' : 'grid-cols-4'} gap-4`}
         />
         
         {totalPages > 1 && (

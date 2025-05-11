@@ -14,16 +14,21 @@ export interface VideoViewProps {
   lastSuccessfulFetch?: Date | null;
   fetchAttempts?: number;
   isMobile?: boolean;
+  isTablet?: boolean;
 }
 
 export const VideoView = ({
   videos,
   isLoading,
   isRefreshing,
-  isMobile = false
+  isMobile = false,
+  isTablet = false
 }: VideoViewProps) => {
-  const videosPerPage = isMobile ? 4 : 12;
-  const rowSize = isMobile ? 2 : 4;
+  // For mobile: 4 videos (2 rows of 2)
+  // For tablet: 9 videos (3 rows of 3)
+  // For desktop: 12 videos (3 rows of 4)
+  const videosPerPage = isMobile ? 4 : (isTablet ? 9 : 12);
+  const rowSize = isMobile ? 2 : (isTablet ? 3 : 4);
   
   const {
     sortedVideos,

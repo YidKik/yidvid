@@ -89,8 +89,8 @@
   .channel-grid-mobile {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-    padding: 0 0.5rem;
+    gap: 0.5rem;
+    padding: 0 0.25rem;
   }
   
   /* Hide popular content section on mobile videos page */
@@ -140,7 +140,7 @@
   
   /* Reduce the gap between video cards in mobile view */
   .videos-page .grid {
-    gap: 8px;
+    gap: 6px !important;
   }
   
   /* Optimize video info spacing on mobile */
@@ -154,5 +154,12 @@
 @media (max-width: 480px) {
   .video-card-thumbnail {
     aspect-ratio: 16/9;
+  }
+}
+
+/* Tablet specific styles */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .videos-page .grid {
+    gap: 12px !important;
   }
 }

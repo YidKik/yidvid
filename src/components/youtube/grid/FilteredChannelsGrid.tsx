@@ -15,7 +15,7 @@ export const FilteredChannelsGrid = ({
 }: FilteredChannelsGridProps) => {
   const [displayChannels, setDisplayChannels] = useState<Channel[]>([]);
   const [initialized, setInitialized] = useState(false);
-  const { isMobile } = useIsMobile();
+  const { isMobile, isTablet } = useIsMobile();
   
   useEffect(() => {
     if (!initialized && channels.length > 0) {
@@ -37,9 +37,19 @@ export const FilteredChannelsGrid = ({
     }
   }, [channels, initialized, displayChannels]);
 
+  // Determine column count based on screen size
+  // Mobile: 2 columns
+  // Tablet: 3 columns 
+  // Desktop: 4-5 columns
+  const getGridColumns = () => {
+    if (isMobile) return 'grid-cols-2';
+    if (isTablet) return 'grid-cols-3';
+    return 'grid-cols-5'; // Default for desktop
+  };
+
   return (
     <div className="w-full">
-      <div className={`grid ${isMobile ? 'grid-cols-2' : 'grid-cols-5'} gap-4 mt-4 pb-8`}>
+      <div className={`grid ${getGridColumns()} gap-4 mt-4 pb-8`}>
         {displayChannels.map((channel, index) => (
           <ChannelCard 
             key={channel.id?.toString() || `channel-${index}`}
