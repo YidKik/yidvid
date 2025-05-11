@@ -45,13 +45,13 @@ export const VideoView = ({
     isMobile
   });
 
-  // If loading is taking longer than 3 seconds, show the gradient loading animation
+  // If loading is taking longer than 1 second, show the gradient loading animation
   if (isLoading || isRefreshing) {
     return (
       <DelayedLoadingAnimation
         size={isMobile ? "small" : "large"}
         text={isRefreshing ? "Refreshing videos..." : "Loading videos..."}
-        delayMs={3000}
+        delayMs={1000}
       />
     );
   }

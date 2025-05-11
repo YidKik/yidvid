@@ -20,7 +20,7 @@ export const VideoGridLoader = ({ text = "Loading videos..." }: VideoGridLoaderP
       <DelayedLoadingAnimation
         size={isMobile ? "small" : "medium"}
         text={text}
-        delayMs={3000}
+        delayMs={1000} // Reduced from 3000 to 1000 to show sooner
       />
     </div>
   );

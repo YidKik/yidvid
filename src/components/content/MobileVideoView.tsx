@@ -50,7 +50,7 @@ export const MobileVideoView: React.FC<MobileVideoViewProps> = ({
   // Show loading animation for better user experience
   if (isLoading || isRefreshing) {
     return (
-      <div className="space-y-1">
+      <div className="flex items-center justify-center min-h-[200px] my-8">
         <DelayedLoadingAnimation
           size="small"
           text={isRefreshing ? "Refreshing videos..." : "Loading videos..."}

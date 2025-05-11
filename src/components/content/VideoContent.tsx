@@ -5,12 +5,12 @@ import { MobileVideoView } from "./MobileVideoView";
 import { DesktopVideoView } from "./DesktopVideoView";
 import { VideoData } from "@/hooks/video/types/video-fetcher";
 import { useRefetchControl } from "@/hooks/video/useRefetchControl";
-import { useSampleVideos } from "@/hooks/video/useSampleVideos";
 import { AutoRefreshHandler } from "./AutoRefreshHandler";
 import { clearApplicationCache } from "@/lib/query-client";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { RefreshCw } from "lucide-react";
+import { DelayedLoadingAnimation } from "@/components/ui/DelayedLoadingAnimation";
 
 interface VideoContentProps {
   videos: VideoData[];
@@ -40,11 +40,7 @@ export const VideoContent = ({
     handleForceRefetch 
   } = useRefetchControl({ refetch, forceRefetch });
   
-  const { createSampleVideos } = useSampleVideos();
   const [isManualRefreshing, setIsManualRefreshing] = useState(false);
-  
-  // Always show some content immediately
-  const displayVideos = videos?.length ? videos : createSampleVideos(8);
   
   // Network error manual refresh handler
   const recoveryRefresh = useCallback(async () => {
@@ -77,12 +73,25 @@ export const VideoContent = ({
     error.message?.includes('fetch') || 
     error.message?.includes('network')
   );
+
+  // Show loading state when data is loading or refreshing
+  if (isLoading || isRefreshing) {
+    return (
+      <div className="flex items-center justify-center w-full py-12">
+        <DelayedLoadingAnimation
+          size={isMobile ? "small" : "large"}
+          text={isRefreshing ? "Refreshing videos..." : "Loading videos..."}
+          delayMs={1000} // Start showing sooner for better user experience
+        />
+      </div>
+    );
+  }
   
   return (
     <div className="space-y-4">
       {/* Component to handle automatic refresh of stale content */}
       <AutoRefreshHandler
-        videos={displayVideos}
+        videos={videos}
         isRefreshing={isRefreshing}
         lastSuccessfulFetch={lastSuccessfulFetch}
         forceRefetch={navigator.onLine ? forceRefetch : undefined}
@@ -115,7 +124,7 @@ export const VideoContent = ({
       {/* Responsive video view based on device */}
       {isMobile ? (
         <MobileVideoView
-          videos={displayVideos}
+          videos={videos}
           isLoading={isLoading}
           error={error}
           isRefreshing={isRefreshing}
@@ -126,7 +135,7 @@ export const VideoContent = ({
         />
       ) : (
         <DesktopVideoView
-          videos={displayVideos}
+          videos={videos}
           isLoading={isLoading}
           error={error}
           isRefreshing={isRefreshing}

@@ -5,6 +5,7 @@ import { ChannelsGrid } from "@/components/youtube/ChannelsGrid";
 import { VideoData } from "@/hooks/video/types/video-fetcher";
 import { useVideoPagination } from "@/hooks/video/useVideoPagination";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { DelayedLoadingAnimation } from "@/components/ui/DelayedLoadingAnimation";
 
 interface DesktopVideoViewProps {
   videos: VideoData[];
@@ -40,6 +41,19 @@ export const DesktopVideoView = ({
     videos,
     videosPerPage
   });
+
+  // Show loading animation when loading
+  if (isLoading || isRefreshing) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px] my-8">
+        <DelayedLoadingAnimation
+          size={isTablet ? "medium" : "large"}
+          text={isRefreshing ? "Refreshing videos..." : "Loading videos..."}
+          delayMs={1000}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

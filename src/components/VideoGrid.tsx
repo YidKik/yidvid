@@ -4,10 +4,11 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { VideoGridLoader } from "@/components/video/VideoGridLoader";
 import { VideoGridItem } from "@/components/video/VideoGridItem";
 import { VideoGridError } from "@/components/video/VideoGridError";
-import { useVideoGridData, VideoGridItem as VideoItemType } from "@/hooks/video/useVideoGridData";
+import { VideoGridItem as VideoItemType } from "@/hooks/video/useVideoGridData";
 import { filterUnavailableVideos } from "@/hooks/video/utils/validation";
 import { memo, useCallback } from "react";
 import { VideoData } from "@/hooks/video/types/video-fetcher";
+import { DelayedLoadingAnimation } from "@/components/ui/DelayedLoadingAnimation";
 
 interface VideoGridProps {
   videos?: VideoItemType[] | VideoData[];
@@ -60,9 +61,17 @@ export const VideoGrid = memo(({
     }
   }, [onRetry]);
 
-  // Show loader while loading
+  // Show loader while loading - replacement for VideoGridLoader
   if (isLoading && !videos?.length) {
-    return <VideoGridLoader />;
+    return (
+      <div className="w-full flex items-center justify-center">
+        <DelayedLoadingAnimation 
+          size={isMobile ? "small" : "medium"}
+          text="Loading videos..." 
+          delayMs={1000}
+        />
+      </div>
+    );
   }
 
   // Handle errors when we have no videos to show
@@ -110,5 +119,8 @@ export const VideoGrid = memo(({
     </div>
   );
 });
+
+// Re-add the import here for useVideoGridData
+import { useVideoGridData } from "@/hooks/video/useVideoGridData";
 
 export default VideoGrid;

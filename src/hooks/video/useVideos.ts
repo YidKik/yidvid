@@ -5,7 +5,7 @@ import { useVideoFetcher } from "./useVideoFetcher";
 import { useAuthStateListener } from "./useAuthStateListener";
 import { useVideoQuery } from "./useVideoQuery";
 import { useInitialVideoLoad } from "./useInitialVideoLoad";
-import { hasRealVideos, createSampleVideos, filterUnavailableVideos } from "./utils/validation";
+import { filterUnavailableVideos } from "./utils/validation";
 import { VideoData } from "./types/video-fetcher";
 
 export interface UseVideosResult {
@@ -76,11 +76,9 @@ export const useVideos = (): UseVideosResult => {
     setIsRefreshing
   });
 
-  // Always use real data if available, and fall back to sample data if needed
-  const ensuredData = hasRealVideos(data) ? data : (data?.length ? data : createSampleVideos());
-
+  // Return the data without falling back to sample data when loading
   return {
-    data: ensuredData,
+    data: data,
     isLoading,
     isFetching,
     isRefreshing,

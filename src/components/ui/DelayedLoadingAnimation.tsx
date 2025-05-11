@@ -4,6 +4,7 @@ import { GradientTracing } from "./gradient-tracing";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { LoadingSize, LoadingColor } from "@/hooks/useLoadingAnimations";
+import { LoadingAnimation } from "./LoadingAnimation";
 
 interface DelayedLoadingAnimationProps {
   size?: LoadingSize;
@@ -23,14 +24,15 @@ export const DelayedLoadingAnimation: React.FC<DelayedLoadingAnimationProps> = (
   const [showLoading, setShowLoading] = useState(false);
   const { isMobile } = useIsMobile();
   
-  // Only show loading animation after the specified delay
+  // Show loading animation immediately instead of waiting for a delay
   useEffect(() => {
+    // Only show after a short delay instead of the longer one
     const timer = setTimeout(() => {
       setShowLoading(true);
-    }, delayMs);
+    }, 100); // Reduced from delayMs to 100ms for immediate feedback
     
     return () => clearTimeout(timer);
-  }, [delayMs]);
+  }, []);
   
   if (!showLoading) {
     return null;
@@ -70,16 +72,14 @@ export const DelayedLoadingAnimation: React.FC<DelayedLoadingAnimationProps> = (
     return `M${centerX - radius},${centerY} a${radius},${radius} 0 1,1 ${radius * 2},0 a${radius},${radius} 0 1,1 -${radius * 2},0`;
   };
 
+  // Use regular LoadingAnimation instead of GradientTracing for consistency
   return (
-    <div className={cn("flex items-center justify-center", className)}>
-      <GradientTracing
-        width={isMobile ? 150 : 300}
-        height={isMobile ? 50 : 80}
+    <div className={cn("flex items-center justify-center my-4", className)}>
+      <LoadingAnimation
         size={actualSize}
+        color={color}
         text={text}
-        gradientColors={getGradientColors()}
-        path={getPath(actualSize)}
-        animationDuration={3}
+        className="py-6"
       />
     </div>
   );
