@@ -36,12 +36,12 @@ export const FeaturesSection = () => {
               whileHover={{ scale: 1.03, transition: { duration: 0.2 } }}
             >
               <GlowingEffect
-                spread={30}
+                spread={50}
                 glow={true}
                 disabled={false}
-                proximity={50}
+                proximity={80}
                 inactiveZone={0.01}
-                borderWidth={2}
+                borderWidth={3}
               />
               <h3 className="text-6xl font-display text-[#e3fef7] mb-6 font-bold relative z-10">{feature.title}</h3>
               <p className="text-lg text-[#77b0aa] leading-relaxed relative z-10">{feature.description}</p>
