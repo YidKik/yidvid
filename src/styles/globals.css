@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -196,5 +195,17 @@ body.home-page {
   .home-page header button, 
   .home-page header a {
     color: white !important;
+  }
+
+  /* Mobile header text size and spacing adjustments */
+  .home-page header nav {
+    gap: 1.5px !important;
+  }
+  
+  .home-page header button,
+  .home-page header a {
+    font-size: 0.75rem !important; /* xs text size for mobile */
+    padding: 0.15rem 0.3rem !important;
+    margin: -0.15rem -0.3rem !important;
   }
 }

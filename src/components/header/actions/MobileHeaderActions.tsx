@@ -32,7 +32,7 @@ export const MobileHeaderActions = ({
       : 'bg-[#222222] hover:bg-[#333333] text-white';
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-1.5">
       {session ? (
         <>
           <NotificationsMenu session={session} onMarkAsRead={onMarkNotificationsAsRead} />
@@ -43,7 +43,7 @@ export const MobileHeaderActions = ({
           <Button 
             variant="ghost" 
             size="icon"
-            className={`${buttonClass} h-7 w-7 rounded-md transition-all duration-300 mobile-button-animate`}
+            className={`${buttonClass} h-6 w-6 rounded-md transition-all duration-300 mobile-button-animate`}
             onClick={() => {
               const contactDialog = document.querySelector('[data-state="closed"][role="dialog"]');
               if (contactDialog) {
@@ -51,15 +51,15 @@ export const MobileHeaderActions = ({
               }
             }}
           >
-            <MessageSquare className="h-3.5 w-3.5" />
+            <MessageSquare className="h-3 w-3" />
           </Button>
           <Button
             onClick={onAuthOpen}
             variant="ghost" 
             size="icon"
-            className={`${buttonClass} h-7 w-7 rounded-md transition-all duration-300 mobile-button-animate`}
+            className={`${buttonClass} h-6 w-6 rounded-md transition-all duration-300 mobile-button-animate`}
           >
-            <LogIn className="h-3.5 w-3.5" />
+            <LogIn className="h-3 w-3" />
           </Button>
         </>
       )}
