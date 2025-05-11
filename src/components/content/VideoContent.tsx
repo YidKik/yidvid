@@ -1,41 +1,33 @@
 
-import { useState, useEffect, useRef } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { MobileVideoView } from "./MobileVideoView";
 import { DesktopVideoView } from "./DesktopVideoView";
 import { VideoData } from "@/hooks/video/types/video-fetcher";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { AutoRefreshHandler } from "./AutoRefreshHandler";
-import { VideoEmptyState } from "./VideoEmptyState";
 import { useRefetchControl } from "@/hooks/video/useRefetchControl";
 import { useSampleVideos } from "@/hooks/video/useSampleVideos";
-import { useSessionManager } from "@/hooks/useSessionManager";
+import { AutoRefreshHandler } from "./AutoRefreshHandler";
+import { VideoEmptyState } from "./VideoEmptyState";
 import { clearApplicationCache } from "@/lib/query-client";
 import { toast } from "sonner";
-import { NetworkStatusBanner } from "./NetworkStatusBanner";
-import { NetworkErrorAlert } from "./NetworkErrorAlert";
-import { useNetworkStatus } from "@/hooks/video/useNetworkStatus";
-import { useRecoveryRefresh } from "@/hooks/video/useRecoveryRefresh";
+import { useSessionManager } from "@/hooks/useSessionManager";
 
 interface VideoContentProps {
   videos: VideoData[];
   isLoading: boolean;
-  error?: Error | null;
   refetch?: () => Promise<any>;
   forceRefetch?: () => Promise<any>;
   lastSuccessfulFetch?: Date | null;
   fetchAttempts?: number;
-  networkOffline?: boolean;
 }
 
 export const VideoContent = ({ 
   videos, 
   isLoading, 
-  error,
   refetch,
   forceRefetch,
   lastSuccessfulFetch,
-  fetchAttempts,
-  networkOffline: externalNetworkOffline
+  fetchAttempts
 }: VideoContentProps) => {
   const { isMobile } = useIsMobile();
   const { 
@@ -50,18 +42,12 @@ export const VideoContent = ({
   } = useSampleVideos();
 
   const { session, isAuthenticated } = useSessionManager();
-  const { networkOffline } = useNetworkStatus();
-  
-  // Use external network status if provided, otherwise use the hook's value
-  const isOffline = externalNetworkOffline !== undefined ? externalNetworkOffline : networkOffline;
   
   // Track if we've already attempted background refresh
   const [hasAttemptedRefresh, setHasAttemptedRefresh] = useState(false);
   const initialLoadAttemptMade = useRef(false);
   const userChangedRef = useRef(session?.user?.id);
   const refreshTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  
-  const { isManualRefreshing, recoveryRefresh } = useRecoveryRefresh(forceRefetch, isOffline);
   
   // Clean up any existing timeouts
   useEffect(() => {
@@ -78,7 +64,7 @@ export const VideoContent = ({
       userChangedRef.current = session?.user?.id;
       console.log("User authentication state changed, refreshing videos...");
       
-      if (forceRefetch && navigator.onLine) {
+      if (forceRefetch) {
         // Clear any cached data first
         clearApplicationCache();
         
@@ -87,7 +73,7 @@ export const VideoContent = ({
           forceRefetch().catch(err => {
             console.error("Error refreshing after auth change:", err);
           });
-        }, 1000);
+        }, 500);
       }
     }
   }, [session?.user?.id, forceRefetch, isAuthenticated]);
@@ -95,7 +81,7 @@ export const VideoContent = ({
   // Add a check for infinite refresh loops
   useEffect(() => {
     // If we have a very high fetch attempt count, it likely indicates a loop
-    if (fetchAttempts && fetchAttempts > 10) {
+    if (fetchAttempts && fetchAttempts > 20) {
       // Check when we last recorded this issue
       const lastLoopDetection = localStorage.getItem('loopDetectionTime');
       const now = new Date().getTime();
@@ -115,10 +101,10 @@ export const VideoContent = ({
     }
   }, [fetchAttempts]);
 
-  // Actively trigger a refresh on first mount if needed (but only when online)
+  // Actively trigger a refresh on first mount if needed
   useEffect(() => {
     if (!initialLoadAttemptMade.current && !isLoading && !isRefreshing && 
-        forceRefetch && videos.length === 0 && navigator.onLine) {
+        forceRefetch && videos.length === 0) {
       initialLoadAttemptMade.current = true;
       
       // Check refresh rate limits
@@ -140,7 +126,7 @@ export const VideoContent = ({
               duration: 5000
             });
           });
-        }, 1000);
+        }, 500);
       }
     }
   }, [isLoading, isRefreshing, forceRefetch, videos.length]);
@@ -148,40 +134,56 @@ export const VideoContent = ({
   // Always show some content immediately, whether user is logged in or not
   const displayVideos = videos?.length ? videos : createSampleVideos(8);
   
-  // Show a more user-friendly message for network errors
-  const isNetworkError = error && (
-    error.message?.includes('fetch') || 
-    error.message?.includes('network')
-  );
+  const recoveryRefresh = useCallback(() => {
+    if (forceRefetch) {
+      // Clear cache first
+      clearApplicationCache();
+      toast.loading("Refreshing content...");
+      
+      // Short delay to let cache clear
+      setTimeout(() => {
+        forceRefetch()
+          .then(() => {
+            toast.success("Content refreshed successfully");
+          })
+          .catch(err => {
+            console.error("Recovery refresh failed:", err);
+            toast.error("Refresh failed", {
+              description: "Please try signing out and back in"
+            });
+          });
+      }, 500);
+    }
+  }, [forceRefetch]);
   
   return (
-    <div className="space-y-4">
+    <div>
       {/* Component to handle automatic refresh of stale content */}
       <AutoRefreshHandler
         videos={displayVideos}
         isRefreshing={isRefreshing}
         lastSuccessfulFetch={lastSuccessfulFetch}
-        forceRefetch={navigator.onLine ? forceRefetch : undefined}
+        forceRefetch={forceRefetch}
       />
       
-      {/* Network status banner */}
-      <NetworkStatusBanner networkOffline={isOffline} />
-      
-      {/* Network or repeated fetch failure notice */}
-      <NetworkErrorAlert 
-        isNetworkError={isNetworkError || false}
-        fetchAttempts={fetchAttempts}
-        networkOffline={isOffline}
-        isManualRefreshing={isManualRefreshing}
-        onRefresh={recoveryRefresh}
-      />
+      {fetchAttempts && fetchAttempts > 3 && !isRefreshing && (
+        <div className="my-4 p-4 bg-amber-50 border border-amber-200 rounded-md">
+          <h3 className="font-medium text-amber-800">Having trouble loading content?</h3>
+          <p className="text-amber-700 text-sm mb-2">We're encountering some difficulties refreshing the content.</p>
+          <button 
+            onClick={recoveryRefresh} 
+            className="text-sm bg-amber-100 hover:bg-amber-200 text-amber-800 font-medium py-1 px-3 rounded"
+          >
+            Refresh Content
+          </button>
+        </div>
+      )}
       
       {/* Responsive video view based on device */}
       {isMobile ? (
         <MobileVideoView
           videos={displayVideos}
           isLoading={isLoading}
-          error={error}
           isRefreshing={isRefreshing}
           refetch={handleRefetch}
           forceRefetch={handleForceRefetch}
@@ -192,7 +194,6 @@ export const VideoContent = ({
         <DesktopVideoView
           videos={displayVideos}
           isLoading={isLoading}
-          error={error}
           isRefreshing={isRefreshing}
           refetch={handleRefetch}
           forceRefetch={handleForceRefetch}

@@ -17,7 +17,6 @@ interface DesktopVideoViewProps {
   forceRefetch?: () => Promise<any>;
   lastSuccessfulFetch?: Date | null;
   fetchAttempts?: number;
-  error?: Error | null;
 }
 
 export const DesktopVideoView = ({
@@ -25,8 +24,7 @@ export const DesktopVideoView = ({
   isLoading,
   isRefreshing,
   refetch,
-  forceRefetch,
-  error
+  forceRefetch
 }: DesktopVideoViewProps) => {
   const { isTablet } = useIsMobile();
   
@@ -72,8 +70,6 @@ export const DesktopVideoView = ({
           maxVideos={videosPerPage}
           rowSize={rowSize}
           isLoading={isLoading || isRefreshing}
-          error={error}
-          onRetry={refetch}
           className={`${isTablet ? 'grid-cols-3' : 'grid-cols-4'} gap-4`}
         />
         

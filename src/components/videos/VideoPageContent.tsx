@@ -9,12 +9,9 @@ import { useState, useEffect } from "react";
 import { ScrollToTopButton } from "./ScrollToTopButton";
 import { Header } from "@/components/Header";
 import { filterUnavailableVideos } from "@/hooks/video/utils/validation";
-import { useNetworkStatus } from "@/hooks/video/useNetworkStatus";
 
 export const VideoPageContent = () => {
   const [isMusic, setIsMusic] = useState(false);
-  const { networkOffline } = useNetworkStatus();
-  
   const { 
     data: rawVideos, 
     isLoading, 
@@ -25,32 +22,28 @@ export const VideoPageContent = () => {
     error 
   } = useVideos();
   
-  // Filter out unavailable videos with improved performance
+  // Filter out unavailable videos
   const videos = filterUnavailableVideos(rawVideos || []);
   
   const { isMobile } = useIsMobile();
 
-  // Optimize the refetch logic to be more selective and less frequent
+  // If many videos were filtered out as unavailable, we should refetch
   useEffect(() => {
     if (rawVideos && rawVideos.length > 0) {
       const filteredOutCount = rawVideos.length - videos.length;
-      // Only trigger refetch if significant filtering AND more than 10 minutes since last fetch
-      const significantFiltering = filteredOutCount > 5 || (filteredOutCount / rawVideos.length) > 0.3;
-      const shouldRefresh = significantFiltering && forceRefetch && 
-                           (!lastSuccessfulFetch || 
-                            (new Date().getTime() - lastSuccessfulFetch.getTime() > 10 * 60 * 1000));
+      const significantFiltering = filteredOutCount > 3 || (filteredOutCount / rawVideos.length) > 0.2;
       
-      if (shouldRefresh) {
+      // If we filtered out a significant number of videos, trigger a refetch to get fresh content
+      if (significantFiltering && forceRefetch) {
         console.log(`Filtered out ${filteredOutCount} unavailable videos, triggering refetch`);
         forceRefetch();
       }
     }
-  }, [rawVideos, videos.length, forceRefetch, lastSuccessfulFetch]);
+  }, [rawVideos, videos.length, forceRefetch]);
 
   return (
     <div className="flex-1 videos-page">
       <Header />
-      
       <motion.main 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -82,12 +75,10 @@ export const VideoPageContent = () => {
               <VideoContent 
                 videos={videos} 
                 isLoading={isLoading} 
-                error={error}
                 refetch={refetch}
                 forceRefetch={forceRefetch}
                 lastSuccessfulFetch={lastSuccessfulFetch}
                 fetchAttempts={fetchAttempts}
-                networkOffline={networkOffline}
               />
             ) : (
               <MusicSection />

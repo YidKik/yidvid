@@ -7,15 +7,13 @@ import { useLocation } from "react-router-dom";
 import { VideoGridItem as VideoItemType } from "@/hooks/video/useVideoGridData";
 import { useVideoDate } from "./useVideoDate";
 import { isVideoAvailable } from "@/hooks/video/utils/validation";
-import { memo } from "react";
 
 interface VideoGridItemProps {
   video: VideoItemType;
   loading?: boolean;
 }
 
-// Use memo to prevent unnecessary re-renders
-export const VideoGridItem = memo(({ video, loading }: VideoGridItemProps) => {
+export const VideoGridItem = ({ video, loading }: VideoGridItemProps) => {
   const location = useLocation();
   const isVideosPage = location.pathname === "/videos";
   const { getFormattedDate } = useVideoDate();
@@ -26,6 +24,7 @@ export const VideoGridItem = memo(({ video, loading }: VideoGridItemProps) => {
   
   // Skip rendering if the video is not available
   if (!isVideoAvailable(video)) {
+    console.log("Skipping unavailable video:", video.title);
     return null;
   }
 
@@ -42,7 +41,14 @@ export const VideoGridItem = memo(({ video, loading }: VideoGridItemProps) => {
   // Extract from different possible sources, clean it and ensure it's not empty
   const channelIdForLink = video.channelId || "";
 
-  // Remove debug log to improve performance
+  // Add debug log to help troubleshoot routing issues
+  console.log("VideoGridItem rendering with data:", {
+    videoId: videoIdForLink,
+    channelId: channelIdForLink,
+    title: video.title,
+    thumbnail: video.thumbnail
+  });
+
   // Only create channel link if we have a valid channel ID
   const hasValidChannelId = !!channelIdForLink && channelIdForLink.trim() !== "";
 
@@ -69,4 +75,4 @@ export const VideoGridItem = memo(({ video, loading }: VideoGridItemProps) => {
       )}
     </Link>
   );
-});
+};

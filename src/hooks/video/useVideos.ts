@@ -23,12 +23,11 @@ export interface UseVideosResult {
 export const useVideos = (): UseVideosResult => {
   const [authState, setAuthState] = useState<string | null>(null);
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
-  const [offlineMode, setOfflineMode] = useState<boolean>(false);
   
-  // Set up real-time subscription for video changes (with performance optimization)
+  // Set up real-time subscription for video changes
   useVideoRealtime();
 
-  // Initialize the video fetcher with optimized performance
+  // Initialize the video fetcher with more reliable error handling
   const {
     fetchAllVideos,
     forceRefetch,
@@ -40,17 +39,7 @@ export const useVideos = (): UseVideosResult => {
   // Set up auth state listener to trigger refreshes on login/logout
   useAuthStateListener(setAuthState);
 
-  // Check network connection status
-  const checkNetwork = () => {
-    const isOnline = navigator.onLine;
-    if (offlineMode !== !isOnline) {
-      setOfflineMode(!isOnline);
-      console.log(`Network status changed: ${isOnline ? 'online' : 'offline'}`);
-    }
-    return isOnline;
-  };
-
-  // Set up React Query for videos with optimized caching
+  // Set up React Query for videos
   const { 
     data: unfilteredData, 
     isLoading, 
@@ -62,14 +51,13 @@ export const useVideos = (): UseVideosResult => {
   } = useVideoQuery({
     fetchAllVideos,
     forceRefetch,
-    authState,
-    checkNetwork
+    authState
   });
 
-  // Filter out unavailable videos with optimized performance
+  // Filter out unavailable videos
   const data = filterUnavailableVideos(unfilteredData || []);
 
-  // Handle initial data loading with less aggressive refreshing
+  // Handle initial data loading and refreshing
   useInitialVideoLoad({
     data,
     isLoading,
