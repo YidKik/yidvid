@@ -124,4 +124,11 @@
     background-color: #e3fef7 !important;
     color: #135d66 !important;
   }
+  
+  /* Full-width sections for mobile */
+  .home-page #about-section .bg-[#135d66] {
+    width: 100vw;
+    margin-left: -1rem;
+    margin-right: -1rem;
+  }
 }
