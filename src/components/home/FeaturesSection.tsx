@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
+import { GlowingEffect } from '@/components/ui/glowing-effect';
 
 export const FeaturesSection = () => {
   return (
@@ -28,14 +29,22 @@ export const FeaturesSection = () => {
           ].map((feature, i) => (
             <motion.div 
               key={feature.title}
-              className="rounded-xl border-2 border-[#70a9a4] bg-[#135d66] p-8 flex flex-col items-center justify-center text-center min-h-[300px]"
+              className="relative rounded-xl border-2 border-[#70a9a4] bg-[#135d66] p-8 flex flex-col items-center justify-center text-center min-h-[300px]"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: i * 0.2 }}
               whileHover={{ scale: 1.03, transition: { duration: 0.2 } }}
             >
-              <h3 className="text-6xl font-display text-[#e3fef7] mb-6 font-bold">{feature.title}</h3>
-              <p className="text-lg text-[#77b0aa] leading-relaxed">{feature.description}</p>
+              <GlowingEffect
+                spread={30}
+                glow={true}
+                disabled={false}
+                proximity={50}
+                inactiveZone={0.01}
+                borderWidth={2}
+              />
+              <h3 className="text-6xl font-display text-[#e3fef7] mb-6 font-bold relative z-10">{feature.title}</h3>
+              <p className="text-lg text-[#77b0aa] leading-relaxed relative z-10">{feature.description}</p>
             </motion.div>
           ))}
         </div>
