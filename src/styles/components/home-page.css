@@ -25,3 +25,14 @@ body.home-page {
   white-space: nowrap;
   color: #e3fef7;
 }
+
+/* Dialog and Sheet styling for mobile */
+.home-page [data-radix-popper-content-wrapper] {
+  z-index: 9999 !important;
+}
+
+/* Ensure dialogs have proper z-index on mobile */
+.home-page .DialogOverlay,
+.home-page .DialogContent {
+  z-index: 9999 !important;
+}

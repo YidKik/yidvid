@@ -3,6 +3,8 @@ import React from 'react';
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { fadeInVariants } from '@/components/home/mobile/animation-utils';
+import { ContactDialog } from '@/components/contact/ContactDialog';
+import { RequestChannelDialog } from '@/components/youtube/RequestChannelDialog';
 
 export const MobileContactSection = () => {
   return (
@@ -30,20 +32,35 @@ export const MobileContactSection = () => {
         >
           Send feedback
         </Button>
+        
         <Button 
           variant="default" 
           className="w-full py-4 text-base bg-[#135d66] text-[#e3fef7] border border-[#ddf9f2] hover:bg-[#135d66]/90 rounded-full"
+          onClick={() => {
+            const element = document.querySelector('[data-trigger="contact-dialog"]') as HTMLButtonElement;
+            if (element) element.click();
+          }}
         >
           Contact
         </Button>
+        
         <Button 
           variant="default" 
           className="w-full py-4 text-base bg-[#135d66] text-[#e3fef7] border border-[#ddf9f2] hover:bg-[#135d66]/90 rounded-full"
+          onClick={() => {
+            const element = document.querySelector('[data-trigger="request-channel-dialog"]') as HTMLButtonElement;
+            if (element) element.click();
+          }}
         >
           Request channel
         </Button>
       </motion.div>
+      
+      {/* Hidden dialogs that are triggered by the buttons */}
+      <div className="hidden">
+        <ContactDialog />
+        <RequestChannelDialog />
+      </div>
     </div>
   );
 };
-
