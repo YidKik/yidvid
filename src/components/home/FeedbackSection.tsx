@@ -40,28 +40,35 @@ export const FeedbackSection = () => {
     fetchTestimonials();
   }, []);
   
-  // Fall back to default content if no testimonials are available
+  // Fall back to new default content if no testimonials are available
   const displayTestimonials = testimonials.length > 0 ? testimonials : [
     {
       id: "default-1",
-      content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-      author_name: "Default User",
+      content: "Great selection of Jewish content, very user friendly.",
+      author_name: "User",
       is_visible: true,
       display_order: 1
     },
     {
       id: "default-2",
-      content: "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-      author_name: "Default User",
+      content: "This platform has become my go-to source for Jewish videos.",
+      author_name: "User",
       is_visible: true,
       display_order: 2
     },
     {
       id: "default-3",
-      content: "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam.",
-      author_name: "Default User",
+      content: "What an amazing platform! The content is exactly what I was looking for.",
+      author_name: "User",
       is_visible: true,
       display_order: 3
+    },
+    {
+      id: "default-4",
+      content: "Great selection of Jewish content, very user friendly.",
+      author_name: "User",
+      is_visible: true,
+      display_order: 4
     },
   ];
 
