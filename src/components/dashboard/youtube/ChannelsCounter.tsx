@@ -12,6 +12,7 @@ export const ChannelsCounter = () => {
       setIsLoading(true);
       
       // Try to get count directly from the database
+      // Using count: 'exact' with head: true gives us just the count without fetching all records
       const { count: directCount, error } = await supabase
         .from("youtube_channels")
         .select("*", { count: 'exact', head: true })
@@ -28,17 +29,18 @@ export const ChannelsCounter = () => {
         const { data: { session } } = await supabase.auth.getSession();
         if (!session) throw new Error("Not authenticated");
         
-        const { data: channelData, error: funcError } = await supabase.functions.invoke(
-          'get-public-channels',
+        // Call the count-channels endpoint which will return just the count
+        const { data: countData, error: funcError } = await supabase.functions.invoke(
+          'count-channels',
           { method: 'GET' }
         );
         
         if (funcError) throw funcError;
         
-        if (channelData && Array.isArray(channelData.data)) {
-          setCount(channelData.data.length);
+        if (countData && typeof countData.count === 'number') {
+          setCount(countData.count);
         } else {
-          console.log("No valid channel data received");
+          console.log("No valid count data received");
           setCount(0);
         }
       } catch (funcErr) {
