@@ -58,7 +58,7 @@ export const VideoCardThumbnail = memo(({
         className="h-full w-full object-cover transition-transform group-hover:scale-105 duration-300"
         loading="lazy"
         decoding="async" 
-        fetchpriority="high"
+        fetchPriority="high"
         onError={handleImageError}
       />
       
