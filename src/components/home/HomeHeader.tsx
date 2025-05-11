@@ -36,27 +36,27 @@ export const HomeHeader = () => {
         <nav className="flex items-center space-x-28">
           <button 
             onClick={() => scrollToSection('home-section')} 
-            className="text-white transition-colors bg-transparent border-none p-0 m-0 hover:bg-[#135d66] hover:text-white hover:px-3 hover:py-1 hover:rounded-md"
+            className="text-white bg-transparent border-none p-3 m-0 hover:bg-[#135d66] hover:text-white hover:rounded-md"
           >
-            Home
+            <span className="transform-none">Home</span>
           </button>
           <button 
             onClick={() => scrollToSection('about-section')} 
-            className="text-white transition-colors bg-transparent border-none p-0 m-0 hover:bg-[#135d66] hover:text-white hover:px-3 hover:py-1 hover:rounded-md"
+            className="text-white bg-transparent border-none p-3 m-0 hover:bg-[#135d66] hover:text-white hover:rounded-md"
           >
-            About
+            <span className="transform-none">About</span>
           </button>
           <button 
             onClick={() => scrollToSection('contact-section')} 
-            className="text-white transition-colors bg-transparent border-none p-0 m-0 hover:bg-[#135d66] hover:text-white hover:px-3 hover:py-1 hover:rounded-md"
+            className="text-white bg-transparent border-none p-3 m-0 hover:bg-[#135d66] hover:text-white hover:rounded-md"
           >
-            Contact
+            <span className="transform-none">Contact</span>
           </button>
           <button
             onClick={handleAuthClick}
-            className="text-white transition-colors bg-transparent border-none p-0 m-0 hover:bg-[#135d66] hover:text-white hover:px-3 hover:py-1 hover:rounded-md"
+            className="text-white bg-transparent border-none p-3 m-0 hover:bg-[#135d66] hover:text-white hover:rounded-md"
           >
-            {session ? 'Sign out' : 'Sign in'}
+            <span className="transform-none">{session ? 'Sign out' : 'Sign in'}</span>
           </button>
         </nav>
       </header>

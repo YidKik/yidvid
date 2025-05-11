@@ -29,10 +29,16 @@ header button {
   gap: 2.5rem !important; /* Consistent gap for all navigation menus */
 }
 
+.home-page header button,
+.home-page nav button {
+  transition: transform 0.3s ease !important;
+}
+
 .home-page header button:hover,
 .home-page nav button:hover {
   background-color: #135d66 !important;
   color: #ffffff !important; /* Keep text white on hover */
+  transform: scale(1.08); /* Scale button on hover */
 }
 
 /* Fix mobile header buttons in home page to prevent red background */
@@ -61,5 +67,10 @@ header button {
     font-size: 0.75rem !important; /* xs text size for mobile */
     padding: 0.15rem 0.4rem !important;
     margin: -0.15rem -0.4rem !important;
+  }
+  
+  .home-page header button:hover,
+  .home-page nav button:hover {
+    transform: scale(1.05); /* Smaller scale for mobile */
   }
 }

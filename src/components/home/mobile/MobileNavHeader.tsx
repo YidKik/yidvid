@@ -1,10 +1,12 @@
 
 import React, { useState } from 'react';
 import Auth from '@/pages/Auth';
+import { useAuth } from '@/hooks/useAuth';
 
 export const MobileNavHeader = () => {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'signin' | 'signup'>('signin');
+  const { session, handleLogout } = useAuth();
   
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -14,8 +16,12 @@ export const MobileNavHeader = () => {
   };
 
   const handleAuthClick = () => {
-    setActiveTab('signin');
-    setIsAuthOpen(true);
+    if (session) {
+      handleLogout();
+    } else {
+      setActiveTab('signin');
+      setIsAuthOpen(true);
+    }
   };
 
   return (
@@ -28,27 +34,27 @@ export const MobileNavHeader = () => {
         <nav className="flex items-center justify-end gap-2.5">
           <button
             onClick={() => scrollToSection('home-section')}
-            className="text-white text-xs font-medium transition-colors bg-transparent border-none p-0 m-0 hover:bg-[#135d66] hover:text-white hover:px-2 hover:py-1 hover:rounded-md"
+            className="text-white text-xs font-medium bg-transparent border-none p-2 m-0 hover:bg-[#135d66] hover:text-white hover:rounded-md"
           >
-            Home
+            <span className="transform-none">Home</span>
           </button>
           <button
             onClick={() => scrollToSection('about-section')}
-            className="text-white text-xs font-medium transition-colors bg-transparent border-none p-0 m-0 hover:bg-[#135d66] hover:text-white hover:px-2 hover:py-1 hover:rounded-md"
+            className="text-white text-xs font-medium bg-transparent border-none p-2 m-0 hover:bg-[#135d66] hover:text-white hover:rounded-md"
           >
-            About
+            <span className="transform-none">About</span>
           </button>
           <button
             onClick={() => scrollToSection('contact-section')}
-            className="text-white text-xs font-medium transition-colors bg-transparent border-none p-0 m-0 hover:bg-[#135d66] hover:text-white hover:px-2 hover:py-1 hover:rounded-md"
+            className="text-white text-xs font-medium bg-transparent border-none p-2 m-0 hover:bg-[#135d66] hover:text-white hover:rounded-md"
           >
-            Contact
+            <span className="transform-none">Contact</span>
           </button>
           <button
             onClick={handleAuthClick}
-            className="text-white text-xs font-medium transition-colors bg-transparent border-none p-0 m-0 hover:bg-[#135d66] hover:text-white hover:px-2 hover:py-1 hover:rounded-md"
+            className="text-white text-xs font-medium bg-transparent border-none p-2 m-0 hover:bg-[#135d66] hover:text-white hover:rounded-md"
           >
-            Sign in
+            <span className="transform-none">{session ? 'Sign out' : 'Sign in'}</span>
           </button>
         </nav>
       </div>
