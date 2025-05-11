@@ -120,11 +120,11 @@ export const Header = () => {
         <div className={`flex ${isMobile ? 'h-14' : 'h-14'} items-center relative`}>
           {isMobile ? (
             <div className="w-full flex items-center px-3">
-              <div className="w-1/4 flex justify-start">
-                {/* Logo completely removed from mobile view */}
+              <div className="w-1/5 flex justify-start">
+                {/* Logo removed from mobile view */}
               </div>
               
-              <div className="w-3/5 flex justify-center">
+              <div className="w-4/5 flex justify-center">
                 <SearchBar />
               </div>
 

@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { LogIn, MessageSquare, Settings } from "lucide-react";
+import { LogIn, Settings } from "lucide-react";
 import { NotificationsMenu } from "../NotificationsMenu";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -32,7 +32,7 @@ export const MobileHeaderActions = ({
       : 'bg-[#222222] hover:bg-[#333333] text-white';
 
   return (
-    <div className="flex items-center gap-2.5">
+    <div className="flex items-center gap-1">
       {session ? (
         <>
           <NotificationsMenu session={session} onMarkAsRead={onMarkNotificationsAsRead} />
@@ -40,33 +40,19 @@ export const MobileHeaderActions = ({
             onClick={handleSettingsClick}
             variant="ghost" 
             size="sm"
-            className={`${buttonClass} text-xs rounded-md flex items-center gap-1 px-2 py-1`}
+            className={`${buttonClass} text-[0.65rem] rounded-md flex items-center px-1.5 py-0.5`}
           >
-            <Settings className="h-3 w-3" />
+            <Settings className="h-2.5 w-2.5" />
           </Button>
         </>
       ) : (
         <>
-          <Button 
-            variant="ghost" 
-            size="icon"
-            className={`${buttonClass} h-6 w-6 rounded-md`}
-            onClick={() => {
-              const contactDialog = document.querySelector('[data-state="closed"][role="dialog"]');
-              if (contactDialog) {
-                (contactDialog as HTMLElement).click();
-              }
-            }}
-          >
-            <MessageSquare className="h-3 w-3" />
-          </Button>
           <Button
             onClick={onAuthOpen}
             variant="ghost" 
             size="sm"
-            className={`${buttonClass} text-xs rounded-md flex items-center gap-1 px-2 py-1`}
+            className={`${buttonClass} text-[0.65rem] rounded-md flex items-center px-1.5 py-0.5`}
           >
-            <LogIn className="h-3 w-3" />
             <span>Sign in</span>
           </Button>
         </>

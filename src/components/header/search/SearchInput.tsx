@@ -21,12 +21,12 @@ export const SearchInput = ({
   onClickSearch,
   onClose,
 }: SearchInputProps) => {
-  const isMobile = useIsMobile();
+  const { isMobile } = useIsMobile();
   const [isFocused, setIsFocused] = useState(false);
   
   return (
     <div className="relative w-full search-animated-border">
-      <div className={`relative flex items-center ${isMobile ? '' : 'w-full'}`}>
+      <div className={`relative flex items-center ${isMobile ? 'w-full' : 'w-full'}`}>
         <Search 
           className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 search-icon cursor-pointer" 
           onClick={onClickSearch}
@@ -44,7 +44,7 @@ export const SearchInput = ({
           onKeyDown={onSearch}
           className={`
             search-input py-2 pl-10 pr-4 rounded-lg border-gray-200
-            ${isMobile ? 'h-8 text-sm' : 'h-12 w-full'}
+            ${isMobile ? 'h-8 text-sm w-full' : 'h-12 w-full'}
             transition-all duration-300
           `}
         />
