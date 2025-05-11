@@ -9,6 +9,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { AnimatePresence, motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
+import { useLocation } from "react-router-dom";
 
 export const Header = () => {
   const { isMobile } = useIsMobile();
@@ -18,6 +19,10 @@ export const Header = () => {
   const { session, handleLogout } = useAuth();
   const queryClient = useQueryClient();
   const [isMarkingNotifications, setIsMarkingNotifications] = useState(false);
+  const location = useLocation();
+  
+  // Determine if we're on the home page
+  const isHomePage = location.pathname === "/";
   
   // Header animation states
   const [scrolled, setScrolled] = useState(false);
@@ -34,10 +39,15 @@ export const Header = () => {
       const direction = currentScrollY > lastScrollY ? 'down' : 'up';
       setScrollDirection(direction);
       
-      // Visibility logic - hide when scrolling down past threshold, show when scrolling up
-      if (direction === 'down' && currentScrollY > 100) {
-        setIsVisible(false);
-      } else if (direction === 'up') {
+      // Visibility logic - only hide header on homepage when scrolling down past threshold
+      if (isHomePage) {
+        if (direction === 'down' && currentScrollY > 100) {
+          setIsVisible(false);
+        } else if (direction === 'up') {
+          setIsVisible(true);
+        }
+      } else {
+        // Always visible on other pages
         setIsVisible(true);
       }
       
@@ -52,7 +62,7 @@ export const Header = () => {
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [lastScrollY]);
+  }, [lastScrollY, isHomePage]);
 
   const markNotificationsAsRead = async () => {
     if (!session?.user?.id || isMarkingNotifications) return;
