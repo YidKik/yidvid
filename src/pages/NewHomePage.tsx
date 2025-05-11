@@ -33,25 +33,31 @@ const NewHomePage = () => {
   return (
     <div className="min-h-screen">
       <HomeHeader />
+      <div className="pt-32"></div>
       <HeroSection />
       
       <ScrollReveal>
+        <div className="pt-16"></div>
         <FeaturesSection />
       </ScrollReveal>
       
       <ScrollReveal>
+        <div className="pt-12"></div>
         <AboutSection />
       </ScrollReveal>
       
       <ScrollReveal>
+        <div className="pt-12"></div>
         <StatsSection />
       </ScrollReveal>
       
       <ScrollReveal>
+        <div className="pt-12"></div>
         <FeedbackSection />
       </ScrollReveal>
       
       <ScrollReveal>
+        <div className="pt-12"></div>
         <Footer />
       </ScrollReveal>
     </div>

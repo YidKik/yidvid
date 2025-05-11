@@ -5,9 +5,9 @@ import { motion } from 'framer-motion';
 
 export const HeroSection = () => {
   return (
-    <section className="container mx-auto px-6 py-16 grid grid-cols-2 gap-8">
+    <section className="container mx-auto px-6 py-24 grid grid-cols-2 gap-8">
       <motion.div 
-        className="space-y-8 flex flex-col items-start justify-center"
+        className="space-y-10 flex flex-col items-start justify-center"
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.6 }}
