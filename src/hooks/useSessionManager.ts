@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/contexts/SessionContext";
@@ -10,6 +10,15 @@ export const useSessionManager = () => {
   
   // Check if user is authenticated
   const isAuthenticated = !!session?.user;
+
+  // Enhanced logging to debug authentication state
+  useEffect(() => {
+    if (session?.user) {
+      console.log("Session user detected:", session.user.email);
+    } else {
+      console.log("No session user detected in useSessionManager");
+    }
+  }, [session?.user]);
 
   // Session data query
   const { data: sessionData, refetch } = useQuery({

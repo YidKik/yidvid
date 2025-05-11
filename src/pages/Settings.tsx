@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BackButton } from "@/components/navigation/BackButton";
@@ -10,6 +11,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useAdminStatus } from "@/hooks/useAdminStatus";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 // Import section components
 import { ContentPreferencesSection } from "@/components/settings/sections/ContentPreferencesSection";
@@ -35,6 +37,16 @@ const Settings = () => {
   const { isMobile } = useIsMobile();
   const [authChecked, setAuthChecked] = useState(false);
   const [sectionsReady, setSectionsReady] = useState(false);
+
+  // Debug authentication state
+  useEffect(() => {
+    console.log("Settings page - Auth state:", { 
+      isAuthenticated, 
+      userId, 
+      email: session?.user?.email || "No email" 
+    });
+    setAuthChecked(true);
+  }, [isAuthenticated, userId, session]);
 
   // Immediately prefetch profile data when the user ID is available
   useEffect(() => {
@@ -78,26 +90,42 @@ const Settings = () => {
     }
   }, [userId, queryClient, session]);
 
-  // Check authentication and redirect as needed - but don't show auth dialog automatically
+  // Enhanced auth check
   useEffect(() => {
-    // Only check authentication status once
-    if (!authChecked) {
-      supabase.auth.getSession().then(({ data: { session } }) => {
-        console.log("Initial session check:", session ? "Authenticated" : "Not authenticated");
-        if (!session) {
-          // User is definitely not authenticated, redirect to home page
-          navigate("/");
+    const verifyAuth = async () => {
+      if (!authChecked) {
+        try {
+          const { data, error } = await supabase.auth.getSession();
+          
+          if (error) {
+            console.error("Error fetching session:", error);
+            toast.error("Authentication error. Please try logging in again.");
+          }
+          
+          const sessionExists = !!data.session;
+          console.log("Initial session check:", sessionExists ? "Authenticated" : "Not authenticated");
+          
+          if (!sessionExists) {
+            // Optional: Could redirect to home page or show message
+            // navigate("/");
+            console.log("No active session detected");
+          }
+          
+          setAuthChecked(true);
+        } catch (err) {
+          console.error("Unexpected error checking auth:", err);
+          setAuthChecked(true);
         }
-        setAuthChecked(true); 
-      });
-    }
+      }
+    };
+    
+    verifyAuth();
   }, [navigate, authChecked]);
 
   // Always check if session is lost during the component lifetime
   useEffect(() => {
     if (!isAuthenticated && session === null && authChecked) {
-      console.log("Session lost during component lifetime, redirecting");
-      navigate("/");
+      console.log("Session lost during component lifetime, but we'll stay on settings page");
     }
   }, [isAuthenticated, session, navigate, authChecked]);
 
@@ -150,7 +178,7 @@ const Settings = () => {
     navigate("/dashboard");
   };
 
-  // Show skeleton loading until we confirm login status
+  // Show loading state while verifying auth
   if (!authChecked) {
     return (
       <div className="min-h-screen bg-background text-foreground pt-16 px-4">

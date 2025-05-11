@@ -1,5 +1,7 @@
 
 import { useAuthentication } from "./useAuthentication";
+import { useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 /**
  * Simplified authentication hook for components that only need
@@ -7,6 +9,24 @@ import { useAuthentication } from "./useAuthentication";
  */
 export const useAuth = () => {
   const auth = useAuthentication();
+  
+  // Verify the auth session status whenever this hook is used
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const { data, error } = await supabase.auth.getSession();
+        if (error) {
+          console.error("Error checking session in useAuth:", error);
+        } else {
+          console.log("Session check in useAuth:", !!data.session?.user);
+        }
+      } catch (err) {
+        console.error("Unexpected error in session check:", err);
+      }
+    };
+    
+    checkSession();
+  }, []);
   
   return {
     session: auth.user,

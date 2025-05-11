@@ -5,6 +5,7 @@ import { ChannelListItem } from "@/components/youtube/ChannelListItem";
 import { YoutubeChannelsTable } from "@/integrations/supabase/types/youtube-channels";
 import { Channel } from "@/hooks/channel/useChannelsGrid";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useEffect } from "react";
 
 interface ChannelFilteredListProps {
   searchQuery: string;
@@ -29,6 +30,11 @@ export const ChannelFilteredList = ({
     console.log("Search query changed to:", value);
     setSearchQuery(value);
   };
+
+  // Log when hidden channels update
+  useEffect(() => {
+    console.log(`ChannelFilteredList - Hidden channels count: ${hiddenChannels.size}`);
+  }, [hiddenChannels]);
 
   return (
     <div className={`relative ${isLocked ? 'pointer-events-none' : ''}`}>

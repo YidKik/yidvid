@@ -9,6 +9,8 @@ import { useSessionManager } from "@/hooks/useSessionManager";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { LogIn } from "lucide-react";
+import { useState, useEffect } from "react";
+import { toast } from "sonner";
 
 export const ChannelControl = () => {
   const {
@@ -33,6 +35,27 @@ export const ChannelControl = () => {
   } = useChannelControl();
 
   const { session, isAuthenticated, handleSignInClick } = useSessionManager();
+  const [authChecked, setAuthChecked] = useState(false);
+
+  // Enhanced auth debugging
+  useEffect(() => {
+    // Log detailed auth information
+    console.log("Auth state in ChannelControl:", { 
+      isAuthenticated, 
+      hasUser: !!session?.user,
+      userId: session?.user?.id || "none" 
+    });
+    setAuthChecked(true);
+  }, [isAuthenticated, session]);
+
+  // Display a toast when authentication state changes
+  useEffect(() => {
+    if (authChecked) {
+      if (!isAuthenticated) {
+        toast.info("Please sign in to manage channel preferences", { duration: 3000 });
+      }
+    }
+  }, [authChecked, isAuthenticated]);
 
   if (isLoading) {
     return <div className="text-sm md:text-base">Loading channels...</div>;
