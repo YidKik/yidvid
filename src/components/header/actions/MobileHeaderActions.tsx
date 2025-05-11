@@ -22,6 +22,14 @@ export const MobileHeaderActions = ({
 }: MobileHeaderActionsProps) => {
   const location = useLocation();
   const isVideosPage = location.pathname === "/videos";
+  const isHomePage = location.pathname === "/" || location.pathname === "";
+  
+  // Use different styling for home page vs other pages
+  const buttonClass = isHomePage 
+    ? "bg-transparent hover:bg-[#135d66] text-white"
+    : isVideosPage 
+      ? 'bg-[#ea384c] hover:bg-[#c82d3f] text-white' 
+      : 'bg-[#222222] hover:bg-[#333333] text-white';
 
   return (
     <div className="flex items-center gap-2">
@@ -35,9 +43,7 @@ export const MobileHeaderActions = ({
           <Button 
             variant="ghost" 
             size="icon"
-            className={`${isVideosPage 
-              ? 'bg-[#ea384c] hover:bg-[#c82d3f]' 
-              : 'bg-[#222222] hover:bg-[#333333]'} text-white h-7 w-7 rounded-md transition-all duration-300 mobile-button-animate`}
+            className={`${buttonClass} h-7 w-7 rounded-md transition-all duration-300 mobile-button-animate`}
             onClick={() => {
               const contactDialog = document.querySelector('[data-state="closed"][role="dialog"]');
               if (contactDialog) {
@@ -51,9 +57,7 @@ export const MobileHeaderActions = ({
             onClick={onAuthOpen}
             variant="ghost" 
             size="icon"
-            className={`${isVideosPage 
-              ? 'bg-[#ea384c] hover:bg-[#c82d3f]' 
-              : 'bg-[#222222] hover:bg-[#333333]'} text-white h-7 w-7 rounded-md transition-all duration-300 mobile-button-animate`}
+            className={`${buttonClass} h-7 w-7 rounded-md transition-all duration-300 mobile-button-animate`}
           >
             <LogIn className="h-3.5 w-3.5" />
           </Button>

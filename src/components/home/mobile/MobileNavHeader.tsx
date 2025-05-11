@@ -1,7 +1,11 @@
 
-import React from 'react';
+import React, { useState } from 'react';
+import Auth from '@/pages/Auth';
 
 export const MobileNavHeader = () => {
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<'signin' | 'signup'>('signin');
+  
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
@@ -9,40 +13,51 @@ export const MobileNavHeader = () => {
     }
   };
 
+  const handleAuthClick = () => {
+    setActiveTab('signin');
+    setIsAuthOpen(true);
+  };
+
   return (
-    <header className="fixed top-0 left-0 right-0 z-50">
-      <div className="flex items-center justify-between px-4 h-16 bg-transparent">
-        <div className="flex items-center text-lg font-bold">
-          YidVid
+    <header className="fixed top-0 left-0 right-0 z-50 bg-[#003c43]">
+      <div className="flex items-center justify-between px-4 h-16">
+        <div className="flex items-center">
+          <span className="text-white text-lg font-bold">YidVid</span>
         </div>
         
-        <nav className="flex items-center gap-20">
+        <nav className="flex items-center gap-4">
           <button
             onClick={() => scrollToSection('home-section')}
-            className="text-sm font-medium transition-colors border-none p-0 m-0 bg-transparent hover:bg-[#135d66] hover:px-2 hover:py-1 hover:rounded-md"
+            className="text-white text-sm font-medium transition-colors bg-transparent border-none p-0 m-0 hover:bg-[#135d66] hover:text-white hover:px-2 hover:py-1 hover:rounded-md"
           >
             Home
           </button>
           <button
             onClick={() => scrollToSection('about-section')}
-            className="text-sm font-medium transition-colors border-none p-0 m-0 bg-transparent hover:bg-[#135d66] hover:px-2 hover:py-1 hover:rounded-md"
+            className="text-white text-sm font-medium transition-colors bg-transparent border-none p-0 m-0 hover:bg-[#135d66] hover:text-white hover:px-2 hover:py-1 hover:rounded-md"
           >
             About
           </button>
           <button
             onClick={() => scrollToSection('contact-section')}
-            className="text-sm font-medium transition-colors border-none p-0 m-0 bg-transparent hover:bg-[#135d66] hover:px-2 hover:py-1 hover:rounded-md"
+            className="text-white text-sm font-medium transition-colors bg-transparent border-none p-0 m-0 hover:bg-[#135d66] hover:text-white hover:px-2 hover:py-1 hover:rounded-md"
           >
             Contact
           </button>
           <button
-            onClick={() => {}}
-            className="text-sm font-medium transition-colors border-none p-0 m-0 bg-transparent hover:bg-[#135d66] hover:px-2 hover:py-1 hover:rounded-md"
+            onClick={handleAuthClick}
+            className="text-white text-sm font-medium transition-colors bg-transparent border-none p-0 m-0 hover:bg-[#135d66] hover:text-white hover:px-2 hover:py-1 hover:rounded-md"
           >
             Sign in
           </button>
         </nav>
       </div>
+      
+      <Auth 
+        isOpen={isAuthOpen} 
+        onOpenChange={setIsAuthOpen}
+        initialTab={activeTab}
+      />
     </header>
   );
 }

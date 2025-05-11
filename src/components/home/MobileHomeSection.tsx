@@ -6,6 +6,7 @@ import { MobileDescriptionSection } from './mobile/MobileDescriptionSection';
 import { MobileStatsSection } from './mobile/MobileStatsSection';
 import { MobileFeedbackSection } from './mobile/MobileFeedbackSection';
 import { MobileContactSection } from './mobile/MobileContactSection';
+import { MobileNavHeader } from './mobile/MobileNavHeader';
 import Auth from '@/pages/Auth';
 
 export const MobileHomeSection = () => {
@@ -21,43 +22,10 @@ export const MobileHomeSection = () => {
     };
   }, []);
 
-  const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
-  const handleAuthClick = (type: 'signin' | 'signup') => {
-    setActiveTab(type);
-    setIsAuthOpen(true);
-  };
-
   return (
     <div className="min-h-screen w-full overflow-y-auto">
-      <div className="flex justify-around items-center py-4 px-6">
-        <span className="text-[#e3fef7] text-sm font-medium">YidVid</span>
-        {[
-          { id: 'home-section', label: 'Home' },
-          { id: 'about-section', label: 'About' },
-          { id: 'contact-section', label: 'Contact' }
-        ].map(({ id, label }) => (
-          <button
-            key={id}
-            onClick={() => scrollToSection(id)}
-            className="text-[#e3fef7] text-sm font-medium bg-transparent border-none p-0 m-0 hover:text-[#77b0aa] hover:bg-transparent transition-colors"
-          >
-            {label}
-          </button>
-        ))}
-        <button
-          onClick={() => handleAuthClick('signin')}
-          className="text-[#e3fef7] text-sm font-medium bg-transparent border-none p-0 m-0 hover:text-[#77b0aa] hover:bg-transparent transition-colors"
-        >
-          Sign in
-        </button>
-      </div>
-      <div className="px-6">
+      <MobileNavHeader />
+      <div className="px-6 pt-16">
         <MobileHeroSection />
         <MobileFeaturesSection />
         <MobileDescriptionSection />

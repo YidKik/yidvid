@@ -50,6 +50,7 @@ header button {
 }
 
 /* Home page specific overrides to ensure no red backgrounds */
+.home-page header,
 .home-page header button,
 .home-page header a,
 .home-page nav button,
@@ -57,6 +58,11 @@ header button {
   background-color: transparent !important;
   border: none !important;
   color: inherit;
+}
+
+/* Specific override for the home page headers */
+.home-page header {
+  background-color: #003c43 !important;
 }
 
 /* Header button hover styles - use fixed padding to prevent layout shift */
@@ -174,4 +180,21 @@ body.home-page {
   width: 100%;
   height: 100%;
   overflow-x: hidden;
+}
+
+/* Fix mobile header buttons in home page to prevent red background */
+.home-page header button {
+  background-color: transparent !important;
+}
+
+/* Mobile-specific header styles for the home page */
+@media (max-width: 768px) {
+  .home-page header {
+    background-color: #003c43 !important;
+  }
+  
+  .home-page header button, 
+  .home-page header a {
+    color: white !important;
+  }
 }
