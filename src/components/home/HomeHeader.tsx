@@ -45,6 +45,7 @@ export const HomeHeader = () => {
         behavior: 'smooth',
         block: 'start'
       });
+      setActiveSection(sectionId.split('-')[0]);
     }
   };
 
