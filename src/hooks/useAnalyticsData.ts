@@ -2,6 +2,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { startOfWeek, startOfMonth, isWithinInterval } from "date-fns";
 
 export interface Session {
   session_start: string;
@@ -16,6 +17,9 @@ export interface AnalyticsStats {
   totalHours: number;
   mostPopularHour: number;
   anonymousUsers: number;
+  activeUsers: number;
+  weeklyUsers: number;
+  monthlyUsers: number;
 }
 
 export const useAnalyticsData = (userId: string | undefined) => {
@@ -114,6 +118,48 @@ export const useAnalyticsData = (userId: string | undefined) => {
           { hour: 0, count: 0 }
         );
 
+        // Get currently active users (sessions without an end time)
+        const { count: activeUsers, error: activeUsersError } = await supabase
+          .from("user_analytics")
+          .select("*", { count: "exact", head: true })
+          .is("session_end", null);
+
+        if (activeUsersError) throw activeUsersError;
+
+        // Calculate date ranges for weekly and monthly metrics
+        const now = new Date();
+        const weekStart = startOfWeek(now);
+        const monthStart = startOfMonth(now);
+
+        // Fetch all analytics from the beginning of the month to now
+        const { data: recentAnalytics, error: recentError } = await supabase
+          .from("user_analytics")
+          .select("user_id, session_start")
+          .gte("session_start", monthStart.toISOString());
+
+        if (recentError) throw recentError;
+
+        // Count unique users in each time period
+        const uniqueUserIds = new Set();
+        const weeklyUserIds = new Set();
+        const monthlyUserIds = new Set();
+
+        recentAnalytics?.forEach(session => {
+          const sessionDate = new Date(session.session_start);
+          
+          if (session.user_id) {
+            uniqueUserIds.add(session.user_id);
+            
+            // Check if in current week
+            if (sessionDate >= weekStart) {
+              weeklyUserIds.add(session.user_id);
+            }
+            
+            // All sessions are already filtered to be within the current month
+            monthlyUserIds.add(session.user_id);
+          }
+        });
+
         return {
           totalChannels: totalChannels || 0,
           totalVideos: totalVideos || 0,
@@ -122,6 +168,9 @@ export const useAnalyticsData = (userId: string | undefined) => {
           totalHours: Math.round(totalHours * 100) / 100,
           mostPopularHour: mostPopularHour.hour,
           anonymousUsers: anonymousUsers || 0,
+          activeUsers: activeUsers || 0,
+          weeklyUsers: weeklyUserIds.size,
+          monthlyUsers: monthlyUserIds.size
         };
       } catch (error) {
         console.error('Error fetching dashboard stats:', error);
@@ -132,6 +181,7 @@ export const useAnalyticsData = (userId: string | undefined) => {
     enabled: !!userId,
     retry: 2,
     retryDelay: 1000,
+    refetchInterval: 60000, // Refetch every minute to keep active user count updated
   });
 
   return { totalStats, isLoading };

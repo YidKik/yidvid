@@ -1,0 +1,53 @@
+
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Users, Clock, Calendar } from "lucide-react";
+import { AnalyticsStats } from "@/hooks/useAnalyticsData";
+
+interface UserStatsCardsProps {
+  stats: AnalyticsStats;
+}
+
+export const UserStatsCards = ({ stats }: UserStatsCardsProps) => {
+  return (
+    <div className="grid gap-4 md:grid-cols-3">
+      <Card className="bg-blue-50 border-blue-200">
+        <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+          <div>
+            <CardTitle className="text-lg font-semibold">Active Users</CardTitle>
+            <CardDescription>Currently viewing the site</CardDescription>
+          </div>
+          <Users className="h-5 w-5 text-blue-600" />
+        </CardHeader>
+        <CardContent>
+          <p className="text-3xl font-bold text-blue-700">{stats.activeUsers}</p>
+        </CardContent>
+      </Card>
+
+      <Card className="bg-green-50 border-green-200">
+        <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+          <div>
+            <CardTitle className="text-lg font-semibold">Weekly Users</CardTitle>
+            <CardDescription>Past 7 days</CardDescription>
+          </div>
+          <Clock className="h-5 w-5 text-green-600" />
+        </CardHeader>
+        <CardContent>
+          <p className="text-3xl font-bold text-green-700">{stats.weeklyUsers}</p>
+        </CardContent>
+      </Card>
+
+      <Card className="bg-purple-50 border-purple-200">
+        <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+          <div>
+            <CardTitle className="text-lg font-semibold">Monthly Users</CardTitle>
+            <CardDescription>This month</CardDescription>
+          </div>
+          <Calendar className="h-5 w-5 text-purple-600" />
+        </CardHeader>
+        <CardContent>
+          <p className="text-3xl font-bold text-purple-700">{stats.monthlyUsers}</p>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
