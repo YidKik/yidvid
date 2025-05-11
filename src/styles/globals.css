@@ -67,6 +67,15 @@ header button {
   color: #e3fef7 !important;
 }
 
+/* Active section styling for homepage header */
+.home-page header button.active,
+.home-page header a.active,
+.home-page nav button.active,
+.home-page nav a.active {
+  color: #e3fef7 !important;
+  font-weight: 500;
+}
+
 /* Stats section buttons in home page should never have red backgrounds */
 .home-page section button {
   background-color: transparent !important;

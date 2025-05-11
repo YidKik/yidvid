@@ -6,19 +6,17 @@ export const MobileNavHeader = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      const scrollPosition = window.scrollY;
+      const scrollPosition = window.scrollY + 100; // Add offset for better detection
       const sections = {
         home: 0,
         about: document.getElementById('about-section')?.offsetTop || 0,
         contact: document.getElementById('contact-section')?.offsetTop || 0
       };
       
-      // Add some offset to make the highlighting feel more natural
-      const offset = 100;
-      
-      if (scrollPosition < sections.about - offset) {
+      // Determine active section based on scroll position
+      if (scrollPosition < sections.about) {
         setActiveSection('home');
-      } else if (scrollPosition < sections.contact - offset) {
+      } else if (scrollPosition < sections.contact) {
         setActiveSection('about');
       } else {
         setActiveSection('contact');
@@ -26,6 +24,10 @@ export const MobileNavHeader = () => {
     };
 
     window.addEventListener('scroll', handleScroll);
+    
+    // Initial check for active section
+    handleScroll();
+    
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -55,7 +57,7 @@ export const MobileNavHeader = () => {
               onClick={() => scrollToSection(id)}
               className={`text-sm font-medium transition-colors border-none p-0 m-0 bg-transparent hover:bg-transparent ${
                 activeSection === id.split('-')[0]
-                  ? 'text-black'
+                  ? 'text-black font-medium'
                   : 'text-black/70 hover:text-black'
               }`}
             >

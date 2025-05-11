@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Auth from '@/pages/Auth';
 
@@ -7,6 +7,36 @@ export const HomeHeader = () => {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'signin' | 'signup'>('signin');
   const [activeSection, setActiveSection] = useState('home');
+
+  // Enhanced scroll detection to determine active section
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY + 200; // Add offset to make detection smoother
+      
+      // Get section positions
+      const homeSection = 0;
+      const aboutSection = document.getElementById('about-section')?.offsetTop || 0;
+      const contactSection = document.getElementById('contact-section')?.offsetTop || 0;
+      
+      // Determine active section based on scroll position
+      if (scrollPosition < aboutSection) {
+        setActiveSection('home');
+      } else if (scrollPosition < contactSection) {
+        setActiveSection('about');
+      } else {
+        setActiveSection('contact');
+      }
+    };
+    
+    // Add scroll event listener
+    window.addEventListener('scroll', handleScroll);
+    
+    // Initial check for active section
+    handleScroll();
+    
+    // Clean up
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -30,7 +60,7 @@ export const HomeHeader = () => {
             to="/" 
             className={`text-white transition-colors bg-transparent hover:bg-transparent ${
               activeSection === 'home' 
-                ? 'text-[#77b0aa]' 
+                ? 'text-[#e3fef7] font-medium' 
                 : 'hover:text-[#e3fef7]'
             }`}
           >
@@ -40,7 +70,7 @@ export const HomeHeader = () => {
             onClick={() => scrollToSection('about-section')} 
             className={`text-white transition-colors bg-transparent border-none p-0 m-0 hover:bg-transparent ${
               activeSection === 'about' 
-                ? 'text-[#77b0aa]' 
+                ? 'text-[#e3fef7] font-medium' 
                 : 'hover:text-[#e3fef7]'
             }`}
           >
@@ -50,7 +80,7 @@ export const HomeHeader = () => {
             onClick={() => scrollToSection('contact-section')} 
             className={`text-white transition-colors bg-transparent border-none p-0 m-0 hover:bg-transparent ${
               activeSection === 'contact' 
-                ? 'text-[#77b0aa]' 
+                ? 'text-[#e3fef7] font-medium' 
                 : 'hover:text-[#e3fef7]'
             }`}
           >
