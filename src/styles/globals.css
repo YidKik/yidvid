@@ -199,13 +199,13 @@ body.home-page {
 
   /* Mobile header text size and spacing adjustments */
   .home-page header nav {
-    gap: 1.5px !important;
+    gap: 2.5px !important;
   }
   
   .home-page header button,
   .home-page header a {
     font-size: 0.75rem !important; /* xs text size for mobile */
-    padding: 0.15rem 0.3rem !important;
-    margin: -0.15rem -0.3rem !important;
+    padding: 0.15rem 0.4rem !important;
+    margin: -0.15rem -0.4rem !important;
   }
 }
