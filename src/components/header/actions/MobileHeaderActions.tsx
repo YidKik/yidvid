@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { LogIn, MessageSquare } from "lucide-react";
+import { LogIn, MessageSquare, LogOut } from "lucide-react";
 import { NotificationsMenu } from "../NotificationsMenu";
 import { UserMenu } from "../UserMenu";
 import { useLocation } from "react-router-dom";
@@ -36,7 +36,15 @@ export const MobileHeaderActions = ({
       {session ? (
         <>
           <NotificationsMenu session={session} onMarkAsRead={onMarkNotificationsAsRead} />
-          <UserMenu onLogout={onLogout} />
+          <Button
+            onClick={onLogout}
+            variant="ghost" 
+            size="sm"
+            className={`${buttonClass} text-xs rounded-md transition-all duration-300 mobile-button-animate flex items-center gap-1 px-2 py-1`}
+          >
+            <LogOut className="h-3 w-3" />
+            <span>Sign out</span>
+          </Button>
         </>
       ) : (
         <>
@@ -56,10 +64,11 @@ export const MobileHeaderActions = ({
           <Button
             onClick={onAuthOpen}
             variant="ghost" 
-            size="icon"
-            className={`${buttonClass} h-6 w-6 rounded-md transition-all duration-300 mobile-button-animate`}
+            size="sm"
+            className={`${buttonClass} text-xs rounded-md transition-all duration-300 mobile-button-animate flex items-center gap-1 px-2 py-1`}
           >
             <LogIn className="h-3 w-3" />
+            <span>Sign in</span>
           </Button>
         </>
       )}

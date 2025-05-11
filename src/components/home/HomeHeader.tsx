@@ -1,10 +1,12 @@
 
 import React, { useState } from 'react';
 import Auth from '@/pages/Auth';
+import { useAuth } from '@/hooks/useAuth';
 
 export const HomeHeader = () => {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'signin' | 'signup'>('signin');
+  const { session, handleLogout } = useAuth();
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -13,6 +15,15 @@ export const HomeHeader = () => {
         behavior: 'smooth',
         block: 'start'
       });
+    }
+  };
+
+  const handleAuthClick = () => {
+    if (session) {
+      handleLogout();
+    } else {
+      setActiveTab('signin');
+      setIsAuthOpen(true);
     }
   };
 
@@ -42,13 +53,10 @@ export const HomeHeader = () => {
             Contact
           </button>
           <button
-            onClick={() => {
-              setActiveTab('signin');
-              setIsAuthOpen(true);
-            }}
+            onClick={handleAuthClick}
             className="text-white transition-colors bg-transparent border-none p-0 m-0 hover:bg-[#135d66] hover:text-white hover:px-3 hover:py-1 hover:rounded-md"
           >
-            Sign in
+            {session ? 'Sign out' : 'Sign in'}
           </button>
         </nav>
       </header>
