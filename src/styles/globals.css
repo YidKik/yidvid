@@ -97,7 +97,8 @@ header button {
 }
 
 .home-page footer button:hover {
-  background-color: rgba(0, 60, 67, 0.3) !important;
+  background-color: #e3fef7 !important;
+  color: #003c43 !important;
 }
 
 /* Global logo styles */
@@ -160,3 +161,4 @@ body.home-page {
   height: 100%;
   overflow-x: hidden;
 }
+
