@@ -31,18 +31,32 @@ export const useAnalyticsData = (userId: string | undefined) => {
       }
 
       try {
-        // Check if user is admin first - using direct query instead of profiles RLS
-        const { data: adminCheck, error: adminCheckError } = await supabase.rpc('check_admin_status', {
-          user_id_param: userId
-        });
-
-        if (adminCheckError) {
-          console.error('Admin check error:', adminCheckError);
-          throw adminCheckError;
+        // Check if user is admin first - using direct query instead of RPC
+        const { data: profile, error: profileError } = await supabase
+          .from("profiles")
+          .select("is_admin")
+          .eq("id", userId)
+          .maybeSingle();
+        
+        if (profileError) {
+          console.error('Admin check error:', profileError);
+          throw profileError;
         }
         
-        if (!adminCheck) {
-          throw new Error("Unauthorized access");
+        if (!profile?.is_admin) {
+          // Try edge function as fallback
+          try {
+            const { data: adminCheck, error: funcError } = await supabase.functions.invoke('check-admin-status', {
+              body: { userId },
+            });
+            
+            if (funcError || !adminCheck?.isAdmin) {
+              throw new Error("Unauthorized access");
+            }
+          } catch (edgeFuncError) {
+            console.error('Edge function error:', edgeFuncError);
+            throw new Error("Unauthorized access");
+          }
         }
 
         // Get total channels count
