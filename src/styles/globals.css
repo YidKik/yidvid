@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -106,6 +107,18 @@ header button {
 /* Homepage explore button - ensure it never turns red */
 .home-page a[href="/videos"] button,
 .home-page a[href="/videos"] button:hover {
+  color: #135d66 !important;
+}
+
+/* Mobile home page explore button - ensure consistent styling with desktop */
+.home-page .home-button {
+  background-color: #135d66 !important;  
+  color: #e3fef7 !important;
+}
+
+.home-page .home-button:hover,
+.home-page .home-button:active {
+  background-color: #e3fef7 !important;
   color: #135d66 !important;
 }
 

@@ -1,3 +1,4 @@
+
 /* Mobile-specific styles */
 @media (max-width: 768px) {
   .alert-compact-text {
@@ -100,5 +101,16 @@
   /* Ensure hero headings keep "Jewish Content" on one line */
   .home-page h1 span:last-child {
     white-space: nowrap;
+  }
+  
+  /* Make sure mobile home button doesn't have red background */
+  .home-page .home-button {
+    background-color: #135d66 !important;
+    color: #e3fef7 !important;
+  }
+  
+  .home-page .home-button:hover {
+    background-color: #e3fef7 !important;
+    color: #135d66 !important;
   }
 }

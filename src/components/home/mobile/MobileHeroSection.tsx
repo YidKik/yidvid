@@ -25,7 +25,7 @@ export const MobileHeroSection = () => {
       </p>
       <button 
         onClick={() => navigate('/videos')}
-        className="px-8 py-3 bg-[#135d66] border border-[#ddf9f2] text-[#e3fef7] rounded-full text-base hover:bg-[#e3fef7] hover:text-[#135d66] active:bg-[#e3fef7] active:text-[#135d66] transition-colors duration-300"
+        className="px-8 py-3 bg-[#135d66] border border-[#ddf9f2] text-[#e3fef7] rounded-full text-base hover:bg-[#e3fef7] hover:text-[#135d66] active:bg-[#e3fef7] active:text-[#135d66] transition-colors duration-300 home-button"
       >
         Explore
       </button>
