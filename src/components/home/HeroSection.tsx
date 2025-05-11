@@ -25,11 +25,18 @@ export const HeroSection = () => {
           Explore
         </Link>
       </motion.div>
-      <div className="rounded-3xl border-2 border-brand-light bg-brand-dark/30 p-4">
-        <div className="w-full h-full rounded-2xl bg-brand-dark/50 flex items-center justify-center text-white">
-          videos page pic
+      
+      {/* Removed the box outline and text, replaced with a clean, borderless design */}
+      <motion.div 
+        className="flex items-center justify-center"
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.7, delay: 0.2 }}
+      >
+        <div className="w-full h-full bg-gradient-to-br from-[#135d66]/30 to-[#77b0aa]/20 rounded-3xl overflow-hidden shadow-xl">
+          {/* Empty div for visual balance - content could be added here later */}
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 };
