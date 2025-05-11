@@ -1,0 +1,40 @@
+
+/* Global styles - apply to non-homepage */
+body:not(.home-page) {
+  background-color: var(--background-custom, #FFFFFF);
+  color: var(--text-custom, #030303);
+}
+
+/* Add custom color classes that don't apply to homepage */
+.bg-custom:not([class*="home-"]) {
+  background-color: var(--background-custom);
+}
+
+.text-custom:not([class*="home-"]) {
+  color: var(--text-custom);
+}
+
+.button-custom:not([class*="home-"]) {
+  background-color: var(--button-custom);
+}
+
+.logo-custom:not([class*="home-"]) {
+  color: var(--logo-custom);
+}
+
+/* Override brand colors for pages other than home */
+:not(.home-page) .bg-brand-darkest {
+  background-color: var(--background-custom, #FFFFFF) !important;
+}
+
+:not(.home-page) .bg-brand-dark {
+  background-color: var(--background-custom, #FFFFFF) !important;
+}
+
+:not(.home-page) .text-brand-light {
+  color: var(--text-custom, #030303) !important;
+}
+
+:not(.home-page) .text-brand-lightest {
+  color: var(--text-custom, #030303) !important;
+}

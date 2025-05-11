@@ -17,6 +17,8 @@
 
 /* Import component-specific styles */
 @import './components/search.css';
+@import './mobile.css';
+@import './desktop.css';
 
 /* Homepage full-screen background styles */
 .home-page {

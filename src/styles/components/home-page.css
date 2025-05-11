@@ -1,0 +1,27 @@
+
+/* Homepage specific styles */
+/* Full-screen styles for homepage only */
+html.home-page,
+body.home-page {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+}
+
+/* Ensure hero heading layout matches desktop version */
+.home-page h1 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.home-page h1 span:first-child {
+  margin-bottom: 0.25rem;
+}
+
+.home-page h1 span:last-child {
+  white-space: nowrap;
+  color: #e3fef7;
+}

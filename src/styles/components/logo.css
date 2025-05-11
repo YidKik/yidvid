@@ -1,0 +1,5 @@
+
+/* Global logo styles */
+.logo-custom:not([class*="home-"]) {
+  color: var(--logo-custom);
+}

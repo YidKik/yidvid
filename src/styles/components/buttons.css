@@ -1,0 +1,78 @@
+
+/* Global button styles - making sure buttons use primary red color */
+button:not([class*="home-"]), 
+.button-custom:not([class*="home-"]),
+.btn:not([class*="home-"]),
+[type='button']:not([class*="home-"]),
+[type='reset']:not([class*="home-"]),
+[type='submit']:not([class*="home-"]) {
+  background-color: var(--button-custom) !important;
+  color: white !important;
+  transition: filter 0.2s ease-in-out !important;
+}
+
+button:not([class*="home-"]):hover, 
+.button-custom:not([class*="home-"]):hover,
+.btn:not([class*="home-"]):hover,
+[type='button']:not([class*="home-"]):hover,
+[type='reset']:not([class*="home-"]):hover,
+[type='submit']:not([class*="home-"]):hover {
+  filter: brightness(90%) !important;
+}
+
+/* Header button hover styles - use fixed padding to prevent layout shift */
+.home-page header button,
+.home-page nav button {
+  padding: 0.25rem 0.75rem !important;
+  margin: -0.25rem -0.75rem !important; /* Negative margin to compensate for padding */
+  border-radius: 0.375rem !important;
+  transition: background-color 0.2s ease-in-out !important;
+}
+
+/* Home page hero button hover effect - specifically target the "Explore" button */
+.home-page .hero-content button:hover,
+.home-page a[href="/videos"] button:hover,
+.home-page button:hover {
+  background-color: #e3fef7 !important;
+  color: #135d66 !important;
+  /* Explicitly ensure no red color on hover */
+}
+
+/* Homepage explore button - ensure it never turns red */
+.home-page a[href="/videos"] button,
+.home-page a[href="/videos"] button:hover {
+  color: #135d66 !important;
+}
+
+/* Mobile home page explore button - ensure consistent styling with desktop */
+.home-page .home-button {
+  background-color: #135d66 !important;  
+  color: #e3fef7 !important;
+}
+
+.home-page .home-button:hover,
+.home-page .home-button:active {
+  background-color: #e3fef7 !important;
+  color: #135d66 !important;
+}
+
+/* Footer section buttons in home page should never have red backgrounds */
+.home-page footer button {
+  background-color: transparent !important;
+  border: 2px solid #ddf9f2 !important;
+}
+
+.home-page footer button:hover {
+  background-color: #e3fef7 !important;
+  color: #003c43 !important;
+}
+
+/* Stats section buttons in home page should never have red backgrounds */
+.home-page section button {
+  background-color: transparent !important;
+}
+
+.home-page section button:hover {
+  background-color: var(--hover-bg-custom, #135d66) !important;
+  color: #e3fef7 !important;
+}

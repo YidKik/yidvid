@@ -1,0 +1,65 @@
+
+/* Navigation links should not have background */
+nav a, 
+nav button,
+header a,
+header button {
+  background-color: transparent !important;
+  border: none !important;
+}
+
+/* Home page specific overrides to ensure no red backgrounds */
+.home-page header,
+.home-page header button,
+.home-page header a,
+.home-page nav button,
+.home-page nav a {
+  background-color: transparent !important;
+  border: none !important;
+  color: inherit;
+}
+
+/* Specific override for the home page headers */
+.home-page header {
+  background-color: #003c43 !important;
+}
+
+/* Navigation spacing for desktop */
+.home-page header nav {
+  gap: 2.5rem !important; /* Consistent gap for all navigation menus */
+}
+
+.home-page header button:hover,
+.home-page nav button:hover {
+  background-color: #135d66 !important;
+  color: #ffffff !important; /* Keep text white on hover */
+}
+
+/* Fix mobile header buttons in home page to prevent red background */
+.home-page header button {
+  background-color: transparent !important;
+}
+
+/* Mobile-specific header styles for the home page */
+@media (max-width: 768px) {
+  .home-page header {
+    background-color: #003c43 !important;
+  }
+  
+  .home-page header button, 
+  .home-page header a {
+    color: white !important;
+  }
+
+  /* Mobile header text size and spacing adjustments */
+  .home-page header nav {
+    gap: 2.5px !important;
+  }
+  
+  .home-page header button,
+  .home-page header a {
+    font-size: 0.75rem !important; /* xs text size for mobile */
+    padding: 0.15rem 0.4rem !important;
+    margin: -0.15rem -0.4rem !important;
+  }
+}

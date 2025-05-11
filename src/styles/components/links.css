@@ -1,0 +1,12 @@
+
+/* Global link and text hover styles */
+a:not([class*="home-"]):hover,
+.hover-text:not([class*="home-"]):hover {
+  color: var(--button-custom) !important;
+  transition: color 0.2s ease-in-out;
+}
+
+/* Video title hover effect */
+.text-youtube-title:hover {
+  color: var(--button-custom) !important;
+}
