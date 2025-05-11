@@ -68,6 +68,11 @@ header button {
   transition: background-color 0.2s ease-in-out !important;
 }
 
+/* Navigation spacing for desktop */
+.home-page header nav {
+  gap: 2.5rem !important; /* Consistent gap for all navigation menus */
+}
+
 .home-page header button:hover,
 .home-page nav button:hover {
   background-color: #135d66 !important;

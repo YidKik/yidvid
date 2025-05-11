@@ -16,7 +16,7 @@ export const MobileNavHeader = () => {
           YidVid
         </div>
         
-        <nav className="flex items-center gap-16">
+        <nav className="flex items-center gap-20">
           <button
             onClick={() => scrollToSection('home-section')}
             className="text-sm font-medium transition-colors border-none p-0 m-0 bg-transparent hover:bg-[#135d66] hover:px-2 hover:py-1 hover:rounded-md"
