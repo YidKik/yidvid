@@ -15,9 +15,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Input } from "@/components/ui/input";
 import { Lock } from "lucide-react";
 import { toast } from "sonner";
-
-// Updated Admin PIN - ensure it matches with AdminSection.tsx
-const ADMIN_PIN = "Moshe@4463";
+import { ADMIN_PIN } from "@/hooks/useAdminPinDialog";
 
 export default function Dashboard() {
   const navigate = useNavigate();
