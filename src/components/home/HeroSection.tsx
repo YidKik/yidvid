@@ -2,6 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { GlowingEffect } from '@/components/ui/glowing-effect';
 
 export const HeroSection = () => {
   return (
@@ -26,7 +27,7 @@ export const HeroSection = () => {
         </Link>
       </motion.div>
       
-      {/* Updated image with Link and hover effects */}
+      {/* Updated image with Link and glowing effect */}
       <motion.div 
         className="flex items-center justify-center"
         initial={{ opacity: 0, scale: 0.95 }}
@@ -35,14 +36,24 @@ export const HeroSection = () => {
       >
         <Link 
           to="/videos" 
-          className="w-full h-full transform transition-transform duration-300 hover:scale-105 cursor-pointer"
+          className="relative w-full h-full transform transition-all duration-700 hover:scale-[1.03] cursor-pointer rounded-3xl"
         >
-          <div className="w-full h-full rounded-3xl overflow-hidden shadow-xl">
+          <div className="relative w-full h-full rounded-3xl overflow-hidden shadow-xl">
             <img 
               src="/lovable-uploads/1daf0100-84f7-491c-b2d1-cd5e363cbd17.png" 
               alt="Collection of Jewish content videos" 
               className="w-full h-full object-cover"
             />
+            <div className="absolute inset-0">
+              <GlowingEffect
+                disabled={false}
+                spread={30}
+                blur={0}
+                proximity={80}
+                inactiveZone={0.1}
+                movementDuration={1.5}
+              />
+            </div>
           </div>
         </Link>
       </motion.div>
