@@ -24,10 +24,10 @@ export const useVideos = (): UseVideosResult => {
   const [authState, setAuthState] = useState<string | null>(null);
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
   
-  // Set up real-time subscription for video changes
+  // Set up real-time subscription for video changes (with performance optimization)
   useVideoRealtime();
 
-  // Initialize the video fetcher with more reliable error handling
+  // Initialize the video fetcher with optimized performance
   const {
     fetchAllVideos,
     forceRefetch,
@@ -39,7 +39,7 @@ export const useVideos = (): UseVideosResult => {
   // Set up auth state listener to trigger refreshes on login/logout
   useAuthStateListener(setAuthState);
 
-  // Set up React Query for videos
+  // Set up React Query for videos with optimized caching
   const { 
     data: unfilteredData, 
     isLoading, 
@@ -54,10 +54,10 @@ export const useVideos = (): UseVideosResult => {
     authState
   });
 
-  // Filter out unavailable videos
+  // Filter out unavailable videos with optimized performance
   const data = filterUnavailableVideos(unfilteredData || []);
 
-  // Handle initial data loading and refreshing
+  // Handle initial data loading with less aggressive refreshing
   useInitialVideoLoad({
     data,
     isLoading,
