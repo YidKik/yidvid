@@ -74,8 +74,8 @@ export function HeroGeometric({
                             <span className="bg-clip-text text-transparent bg-gradient-to-b from-white to-white/80">
                                 {title1}
                             </span>
-                            <br />
-                            <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-white to-primary">
+                            <br className="hidden xs:block" />
+                            <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-white to-primary whitespace-nowrap">
                                 {title2}
                             </span>
                         </h1>

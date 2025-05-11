@@ -127,8 +127,8 @@ export function AnimatedVideoHero({ videos }: AnimatedVideoHeroProps) {
               <span className="bg-clip-text text-transparent bg-gradient-to-b from-white to-white/80">
                 Your Gateway to
               </span>
-              <br />
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#ea384c] via-white/90 to-rose-300">
+              <br className="hidden xs:block" />
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#ea384c] via-white/90 to-rose-300 whitespace-nowrap">
                 Jewish Content
               </span>
             </h1>

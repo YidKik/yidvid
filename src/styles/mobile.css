@@ -96,4 +96,9 @@
   .videos-page .most-viewed-scroll {
     display: none;
   }
+  
+  /* Ensure hero headings keep "Jewish Content" on one line */
+  .home-page h1 span:last-child {
+    white-space: nowrap;
+  }
 }
