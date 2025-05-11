@@ -26,15 +26,19 @@ export const HeroSection = () => {
         </Link>
       </motion.div>
       
-      {/* Removed the box outline and text, replaced with a clean, borderless design */}
+      {/* Replaced empty div with the uploaded image */}
       <motion.div 
         className="flex items-center justify-center"
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.7, delay: 0.2 }}
       >
-        <div className="w-full h-full bg-gradient-to-br from-[#135d66]/30 to-[#77b0aa]/20 rounded-3xl overflow-hidden shadow-xl">
-          {/* Empty div for visual balance - content could be added here later */}
+        <div className="w-full h-full rounded-3xl overflow-hidden shadow-xl">
+          <img 
+            src="/lovable-uploads/1daf0100-84f7-491c-b2d1-cd5e363cbd17.png" 
+            alt="Collection of Jewish content videos" 
+            className="w-full h-full object-cover"
+          />
         </div>
       </motion.div>
     </section>
