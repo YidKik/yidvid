@@ -24,7 +24,7 @@ export const MobileHeaderActions = ({
   const isVideosPage = location.pathname === "/videos";
   const isHomePage = location.pathname === "/" || location.pathname === "";
   
-  // Use different styling for home page vs other pages
+  // Use different styling for home page vs videos page
   const buttonClass = isHomePage 
     ? "bg-transparent hover:bg-[#135d66] text-white"
     : isVideosPage 

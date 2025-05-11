@@ -73,4 +73,9 @@ header button {
   .home-page nav button:hover {
     transform: scale(1.05); /* Smaller scale for mobile */
   }
+  
+  /* Ensure buttons on videos page can have colored backgrounds */
+  .videos-page header button.bg-\[\#ea384c\] {
+    background-color: #ea384c !important;
+  }
 }

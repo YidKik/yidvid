@@ -39,6 +39,12 @@
   .search-animated-border::before {
     border-width: 1px;
   }
+  
+  /* Make search bar take up more space on mobile */
+  .search-input {
+    width: 100%;
+    min-width: 150px;
+  }
 }
 
 /* Focus styling - clean, simple focus effect */

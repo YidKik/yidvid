@@ -123,11 +123,11 @@ export const Header = () => {
                 {/* Logo completely removed from mobile view */}
               </div>
               
-              <div className="w-2/4 flex justify-center">
+              <div className="w-3/5 flex justify-center">
                 <SearchBar />
               </div>
 
-              <div className="w-1/4 flex justify-end">
+              <div className="w-1/5 flex justify-end">
                 <HeaderActions 
                   isMobile={isMobile}
                   isSearchExpanded={isSearchExpanded}
