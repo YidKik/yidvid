@@ -1,6 +1,8 @@
+
 import { VideoCard } from "@/components/VideoCard";
-import { LoadingAnimation } from "@/components/ui/LoadingAnimation";
+import { DelayedLoadingAnimation } from "@/components/ui/DelayedLoadingAnimation";
 import { useLocation } from "react-router-dom";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface ChannelVideosProps {
   videos: any[];
@@ -19,6 +21,7 @@ export const ChannelVideos = ({
 }: ChannelVideosProps) => {
   const location = useLocation();
   const isMainPage = location.pathname === "/";
+  const { isMobile } = useIsMobile();
 
   // Log video data for debugging
   console.log("ChannelVideos rendering with:", {
@@ -32,10 +35,11 @@ export const ChannelVideos = ({
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <LoadingAnimation
-          size="medium"
+        <DelayedLoadingAnimation
+          size={isMobile ? "small" : "medium"}
           color="primary"
           text="Loading channel videos..."
+          delayMs={3000}
         />
       </div>
     );
@@ -78,7 +82,7 @@ export const ChannelVideos = ({
       </div>
       {isLoadingMore && !isMainPage && (
         <div className="flex justify-center mt-6 md:mt-8">
-          <LoadingAnimation size="small" color="muted" />
+          <DelayedLoadingAnimation size="small" color="muted" delayMs={3000} />
         </div>
       )}
     </>

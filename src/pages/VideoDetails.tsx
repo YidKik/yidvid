@@ -10,7 +10,7 @@ import { useVideoQuery } from "@/components/video/details/VideoQuery";
 import { VideoComments } from "@/components/video/details/VideoComments";
 import { useRelatedVideosQuery } from "@/components/video/details/RelatedVideosQuery";
 import { VideoHistory } from "@/components/video/details/VideoHistory";
-import { LoadingAnimation } from "@/components/ui/LoadingAnimation";
+import { DelayedLoadingAnimation } from "@/components/ui/DelayedLoadingAnimation";
 import { VideoPlaceholder } from "@/components/video/VideoPlaceholder";
 import { toast } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -57,7 +57,12 @@ const VideoDetails = () => {
   if (isLoadingVideo) {
     return (
       <div className="container mx-auto p-4 mt-16 flex justify-center">
-        <LoadingAnimation size="medium" color="primary" text="Loading video..." />
+        <DelayedLoadingAnimation 
+          size={isMobile ? "medium" : "large"} 
+          color="primary" 
+          text="Loading video..." 
+          delayMs={3000}
+        />
       </div>
     );
   }
@@ -132,7 +137,12 @@ const VideoDetails = () => {
           <div className="lg:col-span-1">
             {isLoadingRelated ? (
               <div className="flex justify-center p-4">
-                <LoadingAnimation size="small" color="muted" text="Loading related videos..." />
+                <DelayedLoadingAnimation 
+                  size="small" 
+                  color="muted" 
+                  text="Loading related videos..." 
+                  delayMs={3000}
+                />
               </div>
             ) : (
               <div>

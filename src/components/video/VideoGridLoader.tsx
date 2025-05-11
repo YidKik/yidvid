@@ -1,7 +1,7 @@
 
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { MessageLoadingDots } from "@/components/ui/loading/MessageLoadingDots";
+import { DelayedLoadingAnimation } from "@/components/ui/DelayedLoadingAnimation";
 
 interface VideoGridLoaderProps {
   text?: string;
@@ -17,9 +17,10 @@ export const VideoGridLoader = ({ text = "Loading videos..." }: VideoGridLoaderP
         isMobile ? "min-h-[200px]" : "min-h-[400px]"
       )}
     >
-      <MessageLoadingDots
+      <DelayedLoadingAnimation
         size={isMobile ? "small" : "medium"}
         text={text}
+        delayMs={3000}
       />
     </div>
   );

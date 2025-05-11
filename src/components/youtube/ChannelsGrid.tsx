@@ -31,7 +31,8 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
 
           return <FilteredChannelsGrid 
             channels={displayChannels} 
-            isMainPage={isMainPage} 
+            isMainPage={isMainPage}
+            isLoading={isLoading}  // Pass loading state to FilteredChannelsGrid
           />;
         }}
       </ChannelDataProvider>

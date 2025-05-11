@@ -5,6 +5,7 @@ import { MostViewedVideos } from "@/components/video/MostViewedVideos";
 import { ChannelsGrid } from "@/components/youtube/ChannelsGrid";
 import { VideoData } from "@/hooks/video/types/video-fetcher";
 import { useVideoPagination } from "@/hooks/video/useVideoPagination";
+import { DelayedLoadingAnimation } from "@/components/ui/DelayedLoadingAnimation";
 
 export interface VideoViewProps {
   videos: VideoData[];
@@ -43,6 +44,17 @@ export const VideoView = ({
     videosPerPage,
     isMobile
   });
+
+  // If loading is taking longer than 3 seconds, show the gradient loading animation
+  if (isLoading || isRefreshing) {
+    return (
+      <DelayedLoadingAnimation
+        size={isMobile ? "small" : "large"}
+        text={isRefreshing ? "Refreshing videos..." : "Loading videos..."}
+        delayMs={3000}
+      />
+    );
+  }
 
   return {
     sortedVideos,

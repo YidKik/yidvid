@@ -3,15 +3,18 @@ import { useState, useEffect } from "react";
 import { Channel } from "@/hooks/channel/useChannelsGrid";
 import { ChannelCard } from "./ChannelCard";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { DelayedLoadingAnimation } from "@/components/ui/DelayedLoadingAnimation";
 
 interface FilteredChannelsGridProps {
   channels: Channel[];
   isMainPage?: boolean;
+  isLoading?: boolean; // Add loading prop
 }
 
 export const FilteredChannelsGrid = ({ 
   channels, 
-  isMainPage = false 
+  isMainPage = false,
+  isLoading = false
 }: FilteredChannelsGridProps) => {
   const [displayChannels, setDisplayChannels] = useState<Channel[]>([]);
   const [initialized, setInitialized] = useState(false);
@@ -36,6 +39,19 @@ export const FilteredChannelsGrid = ({
       setDisplayChannels(channels);
     }
   }, [channels, initialized, displayChannels]);
+
+  // Show loading animation if loading
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center my-8">
+        <DelayedLoadingAnimation 
+          size={isMobile ? "small" : "medium"} 
+          text="Loading channels..."
+          delayMs={3000}
+        />
+      </div>
+    );
+  }
 
   // Determine column count based on screen size
   // Mobile: 2 columns

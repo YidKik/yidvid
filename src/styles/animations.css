@@ -104,5 +104,38 @@
 
 .animate-border-flow {
   animation: border-flow 4s linear infinite;
+}
+
+/* Gradient loading animations */
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.gradient-bg {
   background-size: 200% 200%;
+  animation: gradient-shift 3s ease infinite;
+}
+
+/* Trace animation */
+@keyframes trace {
+  0% {
+    stroke-dashoffset: 1000;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+.trace-path {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: trace 2s linear forwards;
 }

@@ -6,6 +6,7 @@ import { ChannelsGrid } from "@/components/youtube/ChannelsGrid";
 import { VideoData } from "@/hooks/video/types/video-fetcher";
 import { useVideoPagination } from "@/hooks/video/useVideoPagination";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { DelayedLoadingAnimation } from "@/components/ui/DelayedLoadingAnimation";
 
 export interface MobileVideoViewProps {
   videos: VideoData[];
@@ -43,6 +44,19 @@ export const MobileVideoView: React.FC<MobileVideoViewProps> = ({
     videosPerPage,
     isMobile: true
   });
+
+  // For a cleaner experience, let's use our loading component
+  if (isLoading || isRefreshing) {
+    return (
+      <div className="space-y-1">
+        <DelayedLoadingAnimation
+          size="small"
+          text={isRefreshing ? "Refreshing videos..." : "Loading videos..."}
+          delayMs={3000}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-1">
