@@ -31,31 +31,19 @@ export const useAnalyticsData = (userId: string | undefined) => {
       }
 
       try {
-        // Check if user is admin first - using direct query instead of RPC
-        const { data: profile, error: profileError } = await supabase
-          .from("profiles")
-          .select("is_admin")
-          .eq("id", userId)
-          .maybeSingle();
-        
-        if (profileError) {
-          console.error('Admin check error:', profileError);
-          throw profileError;
-        }
-        
-        if (!profile?.is_admin) {
-          // Try edge function as fallback
-          try {
-            const { data: adminCheck, error: funcError } = await supabase.functions.invoke('check-admin-status', {
-              body: { userId },
-            });
-            
-            if (funcError || !adminCheck?.isAdmin) {
-              throw new Error("Unauthorized access");
-            }
-          } catch (edgeFuncError) {
-            console.error('Edge function error:', edgeFuncError);
-            throw new Error("Unauthorized access");
+        // First check for pin bypass which allows local admin access
+        const hasPinBypass = localStorage.getItem('admin-pin-bypass') === 'true';
+        if (hasPinBypass) {
+          console.log("Using PIN bypass for admin access");
+        } else {
+          // Check if user is admin using direct function call
+          const { data: isAdmin, error: adminCheckError } = await supabase.functions.invoke('check-admin-status', {
+            body: { userId },
+          });
+          
+          if (adminCheckError || !isAdmin?.isAdmin) {
+            console.error('Admin check error:', adminCheckError);
+            throw new Error("Unauthorized access - you must be an admin to view analytics");
           }
         }
 

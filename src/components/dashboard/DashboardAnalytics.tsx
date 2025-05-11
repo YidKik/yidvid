@@ -7,9 +7,12 @@ import { AnalyticsGrid } from "./analytics/AnalyticsGrid";
 import { UserStatsCards } from "./analytics/UserStatsCards";
 import { AuthRequiredMessage } from "./analytics/AuthRequiredMessage";
 import { toast } from "sonner";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 
 export const DashboardAnalytics = () => {
   const [session, setSession] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     // Get initial session
@@ -32,12 +35,27 @@ export const DashboardAnalytics = () => {
   // When loading is done but no stats are available
   useEffect(() => {
     if (!isLoading && !totalStats) {
-      toast.error("Failed to load analytics data. Please check your admin permissions.");
+      setError("Failed to load analytics data. Please check your admin permissions.");
+    } else if (totalStats) {
+      setError(null);
     }
   }, [isLoading, totalStats]);
 
   if (!session?.user?.id) {
     return <AuthRequiredMessage />;
+  }
+
+  if (error) {
+    return (
+      <div className="space-y-8">
+        <h2 className="text-2xl font-semibold mb-4">Analytics Dashboard</h2>
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      </div>
+    );
   }
 
   return (

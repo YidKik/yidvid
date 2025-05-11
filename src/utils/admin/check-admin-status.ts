@@ -11,7 +11,7 @@ export const checkAdminStatus = async () => {
     }
     
     if (!session?.user?.id) {
-      throw new Error("You must be signed in to add channels");
+      throw new Error("You must be signed in to access admin features");
     }
 
     try {
@@ -27,7 +27,7 @@ export const checkAdminStatus = async () => {
       }
       
       if (!adminCheck?.isAdmin) {
-        throw new Error("You don't have permission to add channels");
+        throw new Error("You don't have admin permissions");
       }
       
       console.log("Admin status confirmed via edge function");
@@ -35,37 +35,15 @@ export const checkAdminStatus = async () => {
     } catch (edgeFunctionError) {
       console.error("Edge function error:", edgeFunctionError);
       
-      try {
-        console.log("Attempting direct profile query");
-        const { data: profile, error: profileError } = await supabase
-          .from('profiles')
-          .select('is_admin')
-          .eq('id', session.user.id)
-          .maybeSingle();
-        
-        if (profileError) {
-          console.error("Profile query error:", profileError);
-          throw profileError;
-        }
-        
-        if (!profile?.is_admin) {
-          throw new Error("You don't have permission to add channels");
-        }
-        
-        console.log("Admin status confirmed via direct query");
+      // Check for PIN bypass as a fallback
+      const hasPinBypass = localStorage.getItem('admin-pin-bypass') === 'true';
+      
+      if (hasPinBypass) {
+        console.log("Using PIN bypass for admin access");
         return true;
-      } catch (dbError) {
-        console.error("Database query error:", dbError);
-        
-        const hasPinBypass = localStorage.getItem('admin-pin-bypass') === 'true';
-        
-        if (hasPinBypass) {
-          console.log("Using PIN bypass for admin access");
-          return true;
-        }
-        
-        throw new Error("You don't have permission to add channels");
       }
+      
+      throw new Error("You don't have admin permissions");
     }
   } catch (error) {
     console.error("Admin check error:", error);

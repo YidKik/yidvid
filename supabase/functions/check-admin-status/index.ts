@@ -1,57 +1,102 @@
 
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.47.0';
-import { corsHeaders } from '../_shared/cors.ts';
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.47.12";
 
-// Get environment variables
-const supabaseUrl = Deno.env.get('SUPABASE_URL') || '';
-const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+};
 
-// This is a service function, so we can bypass RLS with service role key
-const supabase = createClient(supabaseUrl, serviceRoleKey);
-
-Deno.serve(async (req) => {
+serve(async (req) => {
   // Handle CORS preflight requests
-  if (req.method === 'OPTIONS') {
+  if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    // Get the userId from the request body
-    const { userId } = await req.json();
-    
+    // Create a Supabase client with the Auth context of the logged in user
+    const supabaseClient = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_ANON_KEY") ?? "",
+      {
+        global: {
+          headers: { Authorization: req.headers.get("Authorization")! },
+        },
+      }
+    );
+
+    // Get the request body
+    const body = await req.json();
+    const { userId } = body;
+
     if (!userId) {
       return new Response(
-        JSON.stringify({ error: 'User ID is required' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+        JSON.stringify({ error: "Missing userId parameter" }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
       );
     }
 
-    console.log('Checking admin status for user:', userId);
-    
-    // Query the profiles table directly with service role to bypass RLS
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('is_admin')
-      .eq('id', userId)
-      .maybeSingle();
+    // First try with security definer function if available
+    try {
+      // Direct query to profiles table
+      const { data, error } = await supabaseClient
+        .from("profiles")
+        .select("is_admin")
+        .eq("id", userId)
+        .single();
+
+      if (error) throw error;
+
+      return new Response(
+        JSON.stringify({ isAdmin: data.is_admin === true }),
+        {
+          status: 200,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    } catch (err) {
+      console.error("Error checking admin status:", err);
       
-    if (error) {
-      console.error('Error querying admin status:', error);
-      throw error;
+      // As a fallback, use the service role client to bypass RLS
+      const supabaseAdmin = createClient(
+        Deno.env.get("SUPABASE_URL") ?? "",
+        Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+      );
+
+      const { data, error } = await supabaseAdmin
+        .from("profiles")
+        .select("is_admin")
+        .eq("id", userId)
+        .single();
+
+      if (error) {
+        return new Response(
+          JSON.stringify({ error: "Failed to check admin status" }),
+          {
+            status: 500,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          }
+        );
+      }
+
+      return new Response(
+        JSON.stringify({ isAdmin: data.is_admin === true }),
+        {
+          status: 200,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
     }
-    
-    const isAdmin = !!data?.is_admin;
-    console.log('Admin check result:', isAdmin);
-    
-    return new Response(
-      JSON.stringify({ isAdmin }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
-    );
   } catch (error) {
-    console.error('Error in check-admin-status:', error);
     return new Response(
       JSON.stringify({ error: error.message }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+      {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      }
     );
   }
 });
