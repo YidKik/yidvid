@@ -8,57 +8,93 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Youtube } from "lucide-react";
 import { Link } from "react-router-dom";
 import { BackButton } from "@/components/navigation/BackButton";
+import { useEffect, useState } from "react";
 
 const Search = () => {
   const [searchParams] = useSearchParams();
   const query = searchParams.get("q") || "";
+  const [isEdgeFunctionAvailable, setIsEdgeFunctionAvailable] = useState(true);
 
-  const { data: videos, isLoading: isLoadingVideos } = useQuery({
-    queryKey: ["search-videos", query],
-    queryFn: async () => {
-      if (!query.trim()) return [];
-      
-      const { data, error } = await supabase
+  // Check if edge function is available
+  useEffect(() => {
+    const checkEdgeFunction = async () => {
+      try {
+        const response = await fetch(`https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/quick-search?q=test`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1aW5ja3R2c2l1enRzeGN1cWZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY0ODgzNzcsImV4cCI6MjA1MjA2NDM3N30.zbReqHoAR33QoCi_wqNp8AtNofTX3JebM7jvjFAWbMg`
+          }
+        });
+        setIsEdgeFunctionAvailable(response.ok);
+      } catch (error) {
+        console.error("Edge function check failed:", error);
+        setIsEdgeFunctionAvailable(false);
+      }
+    };
+    
+    checkEdgeFunction();
+  }, []);
+
+  // Use edge function if available
+  const fetchSearchResults = async (searchQuery: string) => {
+    if (!searchQuery.trim()) return { videos: [], channels: [] };
+    
+    if (isEdgeFunctionAvailable) {
+      try {
+        const response = await fetch(`https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/quick-search?q=${encodeURIComponent(searchQuery)}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1aW5ja3R2c2l1enRzeGN1cWZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY0ODgzNzcsImV4cCI6MjA1MjA2NDM3N30.zbReqHoAR33QoCi_wqNp8AtNofTX3JebM7jvjFAWbMg`
+          }
+        });
+        
+        if (response.ok) {
+          const result = await response.json();
+          return result.data || { videos: [], channels: [] };
+        }
+      } catch (error) {
+        console.error("Edge function search error:", error);
+        // Fall back to direct queries
+      }
+    }
+    
+    // Direct query fallback
+    const [videosResult, channelsResult] = await Promise.all([
+      supabase
         .from("youtube_videos")
         .select("*")
         .filter('deleted_at', 'is', null)
-        .or(`title.ilike.%${query}%,channel_name.ilike.%${query}%`)
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        console.error("Error searching videos:", error);
-        throw error;
-      }
-
-      return data || [];
-    },
-    enabled: query.length > 0,
-    staleTime: 1000 * 60 * 5, // Cache search results for 5 minutes
-    gcTime: 1000 * 60 * 15,   // Keep them in cache for 15 minutes
-  });
-
-  const { data: channels, isLoading: isLoadingChannels } = useQuery({
-    queryKey: ["search-channels", query],
-    queryFn: async () => {
-      if (!query.trim()) return [];
-      
-      const { data, error } = await supabase
+        .or(`title.ilike.%${searchQuery}%,channel_name.ilike.%${searchQuery}%`)
+        .order('created_at', { ascending: false })
+        .limit(50),
+        
+      supabase
         .from("youtube_channels")
         .select("*")
-        .or(`title.ilike.%${query}%,description.ilike.%${query}%`)
-        .order('created_at', { ascending: false });
+        .filter('deleted_at', 'is', null)
+        .or(`title.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%`)
+        .order('created_at', { ascending: false })
+        .limit(50)
+    ]);
+    
+    return {
+      videos: videosResult.data || [],
+      channels: channelsResult.data || []
+    };
+  };
 
-      if (error) {
-        console.error("Error searching channels:", error);
-        throw error;
-      }
-
-      return data || [];
-    },
+  const { data, isLoading } = useQuery({
+    queryKey: ["search-results", query],
+    queryFn: async () => fetchSearchResults(query),
     enabled: query.length > 0,
-    staleTime: 1000 * 60 * 5, // Cache search results for 5 minutes
-    gcTime: 1000 * 60 * 15,   // Keep them in cache for 15 minutes
+    staleTime: 1000 * 60 * 5, // 5 minutes cache
+    gcTime: 1000 * 60 * 15,   // 15 minutes garbage collection
   });
+
+  const videos = data?.videos || [];
+  const channels = data?.channels || [];
 
   return (
     <div className="min-h-screen">
@@ -77,8 +113,16 @@ const Search = () => {
               <h2 className="text-lg md:text-xl font-semibold text-accent">Channels</h2>
               <span className="text-base text-muted-foreground">{channels?.length || 0}</span>
             </div>
-            {isLoadingChannels ? (
-              <div className="text-center">Loading channels...</div>
+            {isLoading ? (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                {[...Array(6)].map((_, i) => (
+                  <div key={i} className="flex flex-col items-center p-4 animate-pulse">
+                    <div className="w-20 h-20 rounded-full bg-gray-200 mb-3"></div>
+                    <div className="h-4 bg-gray-200 w-24 mb-1"></div>
+                    <div className="h-3 bg-gray-200 w-16"></div>
+                  </div>
+                ))}
+              </div>
             ) : channels?.length === 0 ? (
               <div className="text-center text-muted-foreground">
                 No channels found matching "{query}"
@@ -115,8 +159,16 @@ const Search = () => {
               <h2 className="text-lg md:text-xl font-semibold text-accent">Videos</h2>
               <span className="text-base text-muted-foreground">{videos?.length || 0}</span>
             </div>
-            {isLoadingVideos ? (
-              <div className="text-center">Loading videos...</div>
+            {isLoading ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {[...Array(8)].map((_, i) => (
+                  <div key={i} className="animate-pulse">
+                    <div className="bg-gray-200 aspect-video w-full rounded-lg mb-2"></div>
+                    <div className="h-4 bg-gray-200 w-3/4 mb-2"></div>
+                    <div className="h-3 bg-gray-200 w-1/2"></div>
+                  </div>
+                ))}
+              </div>
             ) : videos?.length === 0 ? (
               <div className="text-center text-muted-foreground">
                 No videos found matching "{query}"

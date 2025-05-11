@@ -2,13 +2,14 @@
 import { SearchInput } from "./search/SearchInput";
 import { SearchResults } from "./search/SearchResults";
 import { useSearch, SearchResults as SearchResultsType } from "./search/useSearch";
+import { memo } from "react";
 
 interface SearchBarProps {
   onFocus?: () => void;
   onClose?: () => void;
 }
 
-export const SearchBar = ({ onFocus, onClose }: SearchBarProps) => {
+export const SearchBar = memo(({ onFocus, onClose }: SearchBarProps) => {
   const {
     searchQuery,
     showResults,
@@ -21,10 +22,6 @@ export const SearchBar = ({ onFocus, onClose }: SearchBarProps) => {
     handleKeyDown,
     setShowResults
   } = useSearch();
-  
-  const hasResults = 
-    ((searchResults?.videos?.length || 0) + 
-    (searchResults?.channels?.length || 0)) > 0;
 
   // Handle the callback to parent component if needed
   const onSearchFocus = () => {
@@ -59,8 +56,10 @@ export const SearchBar = ({ onFocus, onClose }: SearchBarProps) => {
           handleResultClick();
           onClose?.();
         }}
-        showResults={showResults && (hasResults || isSearching)}
+        showResults={showResults}
       />
     </div>
   );
-};
+});
+
+SearchBar.displayName = 'SearchBar';

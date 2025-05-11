@@ -2,7 +2,7 @@
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { KeyboardEvent, useState } from "react";
+import { KeyboardEvent, useState, useRef } from "react";
 
 interface SearchInputProps {
   searchQuery: string;
@@ -23,17 +23,25 @@ export const SearchInput = ({
 }: SearchInputProps) => {
   const { isMobile } = useIsMobile();
   const [isFocused, setIsFocused] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+  
+  // Focus the input when the search icon is clicked
+  const handleSearchIconClick = () => {
+    inputRef.current?.focus();
+    onClickSearch();
+  };
   
   return (
     <div className="relative w-full search-animated-border">
       <div className={`relative flex items-center ${isMobile ? 'w-full' : 'w-full'}`}>
         <Search 
           className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 search-icon cursor-pointer" 
-          onClick={onClickSearch}
+          onClick={handleSearchIconClick}
         />
         <Input
+          ref={inputRef}
           type="text"
-          placeholder="Search..."
+          placeholder="Search videos, channels..."
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
           onFocus={() => {
@@ -44,9 +52,11 @@ export const SearchInput = ({
           onKeyDown={onSearch}
           className={`
             search-input py-2 pl-10 pr-4 rounded-lg border-gray-200
-            ${isMobile ? 'h-8 text-sm w-full' : 'h-10 w-full'}
+            ${isMobile ? 'h-8 text-sm w-full' : 'h-9 w-full'}
+            focus:ring-0 focus:outline-none focus:border-transparent
             transition-all duration-300
           `}
+          aria-label="Search"
         />
       </div>
     </div>

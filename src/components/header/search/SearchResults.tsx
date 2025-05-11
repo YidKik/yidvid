@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { SearchVideo, SearchChannel } from "./useSearch";
+import { memo } from "react";
 
 interface SearchResultsProps {
   isSearching: boolean;
@@ -19,12 +20,14 @@ export const SearchResults = ({
   onResultClick,
   showResults
 }: SearchResultsProps) => {
-  const isMobile = useIsMobile();
+  const { isMobile } = useIsMobile();
   
   if (!showResults || (!isSearching && videos.length === 0 && channels.length === 0)) {
     return null;
   }
 
+  const hasResults = (videos?.length > 0 || channels?.length > 0);
+  
   return (
     <div 
       className={`absolute top-full left-0 mt-1 bg-white rounded-md shadow-lg border border-gray-100 overflow-hidden z-50 ${
@@ -40,17 +43,22 @@ export const SearchResults = ({
         <div className="p-1">
           {isSearching ? (
             <div className="flex items-center justify-center p-4 text-sm text-muted-foreground">
-              Searching...
+              <div className="flex items-center">
+                <div className="w-4 h-4 mr-2 rounded-full border-2 border-t-transparent border-primary animate-spin"></div>
+                <span>Searching...</span>
+              </div>
+            </div>
+          ) : !hasResults ? (
+            <div className="flex items-center justify-center p-4 text-sm text-muted-foreground">
+              No results found
             </div>
           ) : (
             <>
-              {/* Channels Section */}
-              {channels && channels.length > 0 && (
+              {channels?.length > 0 && (
                 <ChannelResults channels={channels} onResultClick={onResultClick} />
               )}
 
-              {/* Videos Section */}
-              {videos && videos.length > 0 && (
+              {videos?.length > 0 && (
                 <VideoResults videos={videos} onResultClick={onResultClick} />
               )}
             </>
@@ -66,7 +74,7 @@ interface ChannelResultsProps {
   onResultClick: () => void;
 }
 
-const ChannelResults = ({ channels, onResultClick }: ChannelResultsProps) => {
+const ChannelResults = memo(({ channels, onResultClick }: ChannelResultsProps) => {
   if (!channels || channels.length === 0) return null;
   
   return (
@@ -85,6 +93,7 @@ const ChannelResults = ({ channels, onResultClick }: ChannelResultsProps) => {
             src={channel.thumbnail_url || '/placeholder.svg'}
             alt={channel.title}
             className="w-8 h-8 rounded-full object-cover"
+            loading="lazy"
           />
           <span className="text-sm text-[#555555] font-medium line-clamp-1">
             {channel.title}
@@ -93,14 +102,14 @@ const ChannelResults = ({ channels, onResultClick }: ChannelResultsProps) => {
       ))}
     </div>
   );
-};
+});
 
 interface VideoResultsProps {
   videos: SearchVideo[];
   onResultClick: () => void;
 }
 
-const VideoResults = ({ videos, onResultClick }: VideoResultsProps) => {
+const VideoResults = memo(({ videos, onResultClick }: VideoResultsProps) => {
   if (!videos || videos.length === 0) return null;
   
   return (
@@ -119,6 +128,7 @@ const VideoResults = ({ videos, onResultClick }: VideoResultsProps) => {
             src={video.thumbnail}
             alt={video.title}
             className="w-12 h-9 md:w-16 md:h-12 object-cover rounded"
+            loading="lazy"
           />
           <div className="flex-1 min-w-0">
             <p className="text-xs md:text-sm text-[#555555] font-medium line-clamp-2">
@@ -132,4 +142,7 @@ const VideoResults = ({ videos, onResultClick }: VideoResultsProps) => {
       ))}
     </div>
   );
-};
+});
+
+ChannelResults.displayName = 'ChannelResults';
+VideoResults.displayName = 'VideoResults';
