@@ -45,14 +45,14 @@ export const MobileHomeSection = () => {
           <button
             key={id}
             onClick={() => scrollToSection(id)}
-            className="text-[#e3fef7] text-sm font-medium bg-transparent border-none p-0 m-0 hover:text-[#77b0aa] transition-colors"
+            className="text-[#e3fef7] text-sm font-medium bg-transparent border-none p-0 m-0 hover:text-[#77b0aa] hover:bg-transparent transition-colors"
           >
             {label}
           </button>
         ))}
         <button
           onClick={() => handleAuthClick('signin')}
-          className="text-[#e3fef7] text-sm font-medium bg-transparent border-none p-0 m-0 hover:text-[#77b0aa] transition-colors"
+          className="text-[#e3fef7] text-sm font-medium bg-transparent border-none p-0 m-0 hover:text-[#77b0aa] hover:bg-transparent transition-colors"
         >
           Sign in
         </button>

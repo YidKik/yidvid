@@ -49,6 +49,23 @@ header button {
   border: none !important;
 }
 
+/* Home page specific overrides to ensure no red backgrounds */
+.home-page header button,
+.home-page header a,
+.home-page nav button,
+.home-page nav a {
+  background-color: transparent !important;
+  border: none !important;
+  color: inherit;
+}
+
+.home-page header button:hover,
+.home-page header a:hover,
+.home-page nav button:hover,
+.home-page nav a:hover {
+  background-color: transparent !important;
+}
+
 /* Global logo styles */
 .logo-custom:not([class*="home-"]) {
   color: var(--logo-custom);

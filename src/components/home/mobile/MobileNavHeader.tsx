@@ -38,7 +38,7 @@ export const MobileNavHeader = () => {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50">
-      <div className="flex items-center justify-between px-4 h-16">
+      <div className="flex items-center justify-between px-4 h-16 bg-transparent">
         <div className="flex items-center text-lg font-bold">
           YidVid
         </div>
@@ -53,7 +53,7 @@ export const MobileNavHeader = () => {
             <button
               key={id}
               onClick={() => scrollToSection(id)}
-              className={`text-sm font-medium transition-colors bg-transparent border-none p-0 m-0 ${
+              className={`text-sm font-medium transition-colors border-none p-0 m-0 bg-transparent hover:bg-transparent ${
                 activeSection === id.split('-')[0]
                   ? 'text-black'
                   : 'text-black/70 hover:text-black'

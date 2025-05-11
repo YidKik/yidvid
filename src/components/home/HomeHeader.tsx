@@ -28,7 +28,7 @@ export const HomeHeader = () => {
         <nav className="flex items-center space-x-8">
           <Link 
             to="/" 
-            className={`text-white transition-colors ${
+            className={`text-white transition-colors bg-transparent hover:bg-transparent ${
               activeSection === 'home' 
                 ? 'text-[#77b0aa]' 
                 : 'hover:text-[#77b0aa]'
@@ -38,7 +38,7 @@ export const HomeHeader = () => {
           </Link>
           <button 
             onClick={() => scrollToSection('about-section')} 
-            className={`text-white transition-colors bg-transparent border-none p-0 m-0 ${
+            className={`text-white transition-colors bg-transparent border-none p-0 m-0 hover:bg-transparent ${
               activeSection === 'about' 
                 ? 'text-[#77b0aa]' 
                 : 'hover:text-[#77b0aa]'
@@ -48,7 +48,7 @@ export const HomeHeader = () => {
           </button>
           <button 
             onClick={() => scrollToSection('contact-section')} 
-            className={`text-white transition-colors bg-transparent border-none p-0 m-0 ${
+            className={`text-white transition-colors bg-transparent border-none p-0 m-0 hover:bg-transparent ${
               activeSection === 'contact' 
                 ? 'text-[#77b0aa]' 
                 : 'hover:text-[#77b0aa]'
@@ -61,7 +61,7 @@ export const HomeHeader = () => {
               setActiveTab('signin');
               setIsAuthOpen(true);
             }}
-            className="text-white hover:text-[#77b0aa] transition-colors bg-transparent border-none p-0 m-0"
+            className="text-white hover:text-[#77b0aa] transition-colors bg-transparent border-none p-0 m-0 hover:bg-transparent"
           >
             Sign in
           </button>
