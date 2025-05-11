@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 
 // Admin PIN for backdoor access - make sure this matches with Dashboard.tsx
-export const ADMIN_PIN = "Moshe@4463";
+export const ADMIN_PIN = "Moshe@3448";
 
 export const useAdminPinDialog = (userId?: string) => {
   const [showPinDialog, setShowPinDialog] = useState(false);
