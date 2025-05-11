@@ -1,3 +1,4 @@
+
 import { Header } from "@/components/Header";
 import Auth from "@/pages/Auth";
 import { useState, useEffect } from "react";
@@ -37,6 +38,49 @@ const MainContent = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Generate video titles and channel names for SEO
+  const generateSeoKeywords = () => {
+    if (!videos || videos.length === 0) return DEFAULT_META_KEYWORDS;
+    
+    const videoKeywords = videos.slice(0, 10).map(video => video.title);
+    const channelKeywords = [...new Set(videos.slice(0, 10).map(video => video.channel_name))];
+    
+    const allKeywords = [
+      ...videoKeywords,
+      ...channelKeywords,
+      "Jewish videos",
+      "Yiddish videos",
+      "kosher content",
+      "Torah videos",
+      "Jewish music",
+      "Jewish lectures"
+    ];
+    
+    return allKeywords.join(", ");
+  };
+
+  // Generate structured data for videos
+  const generateVideoListStructuredData = () => {
+    if (!videos || videos.length === 0) return null;
+    
+    return {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      "itemListElement": videos.slice(0, 10).map((video, index) => ({
+        "@type": "ListItem",
+        "position": index + 1,
+        "item": {
+          "@type": "VideoObject",
+          "name": video.title,
+          "description": `${video.title} by ${video.channel_name} - Jewish video content`,
+          "thumbnailUrl": video.thumbnail,
+          "uploadDate": video.uploaded_at ? new Date(video.uploaded_at).toISOString() : new Date().toISOString(),
+          "contentUrl": `https://yidvid.com/video/${video.id}`
+        }
+      }))
+    };
+  };
 
   return (
     <div className="flex-1 videos-page">
@@ -117,25 +161,59 @@ const MainContent = () => {
 
 const Videos = () => {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const { data: videos } = useVideos();
+  
+  // Generate enhanced SEO content
+  const seoKeywords = videos && videos.length > 0
+    ? videos.slice(0, 10)
+        .map(v => [v.title, v.channel_name])
+        .flat()
+        .concat(["Jewish videos", "Yiddish videos", "kosher content", "Torah videos"]).join(", ")
+    : DEFAULT_META_KEYWORDS;
+
+  const seoDescription = `Browse our collection of Jewish videos including lectures, music, Torah videos and more. YidVid is your premier platform for kosher content from trusted Jewish sources.`;
+  
+  // Generate structured data
+  const structuredData = videos && videos.length > 0 ? {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "itemListElement": videos.slice(0, 10).map((video, index) => ({
+      "@type": "ListItem",
+      "position": index + 1,
+      "item": {
+        "@type": "VideoObject",
+        "name": video.title,
+        "description": `${video.title} - Jewish video content from ${video.channel_name}`,
+        "thumbnailUrl": video.thumbnail,
+        "uploadDate": video.uploaded_at ? new Date(video.uploaded_at).toISOString() : new Date().toISOString(),
+        "contentUrl": `https://yidvid.com/video/${video.id}`
+      }
+    }))
+  } : null;
 
   return (
     <>
       <Helmet>
         <title>{getPageTitle('/videos')}</title>
-        <meta name="description" content={DEFAULT_META_DESCRIPTION} />
-        <meta name="keywords" content={DEFAULT_META_KEYWORDS} />
+        <meta name="description" content={seoDescription} />
+        <meta name="keywords" content={seoKeywords} />
         <meta property="og:title" content={getPageTitle('/videos')} />
-        <meta property="og:description" content={DEFAULT_META_DESCRIPTION} />
+        <meta property="og:description" content={seoDescription} />
         <meta property="og:image" content={DEFAULT_META_IMAGE} />
         <meta property="og:type" content="website" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={getPageTitle('/videos')} />
-        <meta name="twitter:description" content={DEFAULT_META_DESCRIPTION} />
+        <meta name="twitter:description" content={seoDescription} />
         <meta name="twitter:image" content={DEFAULT_META_IMAGE} />
         <meta name="robots" content="index, follow" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="canonical" href={window.location.origin + "/videos"} />
         <link rel="icon" href="/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png" />
+        {structuredData && (
+          <script type="application/ld+json">
+            {JSON.stringify(structuredData)}
+          </script>
+        )}
       </Helmet>
       
       <div className="min-h-screen w-full bg-gradient-to-b from-white to-gray-50 videos-page">

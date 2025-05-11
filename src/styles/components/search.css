@@ -21,6 +21,8 @@
   background-color: white !important;
   color: #606060 !important;
   z-index: 1000;
+  will-change: transform, opacity; /* Optimize animations */
+  backface-visibility: hidden; /* Prevent flickering */
 }
 
 /* Default thin red outline for search bar */
@@ -111,4 +113,11 @@
 
 .animate-pulse {
   animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Add CSS for better rendering performance */
+.search-results {
+  transform: translateZ(0);
+  pointer-events: auto;
+  transition: opacity 0.2s ease, transform 0.2s ease;
 }

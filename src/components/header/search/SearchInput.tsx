@@ -2,7 +2,7 @@
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { KeyboardEvent, useState, useRef } from "react";
+import { KeyboardEvent, useState, useRef, useCallback, memo } from "react";
 
 interface SearchInputProps {
   searchQuery: string;
@@ -13,7 +13,7 @@ interface SearchInputProps {
   onClose?: () => void;
 }
 
-export const SearchInput = ({
+export const SearchInput = memo(({
   searchQuery,
   onSearchChange,
   onSearchFocus,
@@ -26,10 +26,21 @@ export const SearchInput = ({
   const inputRef = useRef<HTMLInputElement>(null);
   
   // Focus the input when the search icon is clicked
-  const handleSearchIconClick = () => {
+  const handleSearchIconClick = useCallback(() => {
     inputRef.current?.focus();
     onClickSearch();
-  };
+  }, [onClickSearch]);
+  
+  // Optimize the change handler to reduce rerenders
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    onSearchChange(e.target.value);
+  }, [onSearchChange]);
+  
+  // Optimize focus handling
+  const handleFocus = useCallback(() => {
+    setIsFocused(true);
+    onSearchFocus();
+  }, [onSearchFocus]);
   
   return (
     <div className="relative w-full search-animated-border">
@@ -43,11 +54,8 @@ export const SearchInput = ({
           type="text"
           placeholder="Search videos, channels..."
           value={searchQuery}
-          onChange={(e) => onSearchChange(e.target.value)}
-          onFocus={() => {
-            setIsFocused(true);
-            onSearchFocus();
-          }}
+          onChange={handleInputChange}
+          onFocus={handleFocus}
           onBlur={() => setIsFocused(false)}
           onKeyDown={onSearch}
           className={`
@@ -57,8 +65,11 @@ export const SearchInput = ({
             transition-all duration-300
           `}
           aria-label="Search"
+          data-testid="search-input"
         />
       </div>
     </div>
   );
-};
+});
+
+SearchInput.displayName = 'SearchInput';

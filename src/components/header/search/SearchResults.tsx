@@ -1,9 +1,8 @@
-
 import { Link } from "react-router-dom";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { SearchVideo, SearchChannel } from "./useSearch";
-import { memo } from "react";
+import { memo, useEffect, useRef } from "react";
 
 interface SearchResultsProps {
   isSearching: boolean;
@@ -13,7 +12,7 @@ interface SearchResultsProps {
   showResults: boolean;
 }
 
-export const SearchResults = ({
+export const SearchResults = memo(({
   isSearching,
   videos = [],
   channels = [],
@@ -21,6 +20,23 @@ export const SearchResults = ({
   showResults
 }: SearchResultsProps) => {
   const { isMobile } = useIsMobile();
+  const resultsRef = useRef<HTMLDivElement>(null);
+  
+  // Add effect to improve scrolling performance
+  useEffect(() => {
+    if (showResults && resultsRef.current) {
+      const handleClickOutside = (event: MouseEvent) => {
+        if (resultsRef.current && !resultsRef.current.contains(event.target as Node)) {
+          onResultClick();
+        }
+      };
+      
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }
+  }, [showResults, onResultClick]);
   
   if (!showResults || (!isSearching && videos.length === 0 && channels.length === 0)) {
     return null;
@@ -30,6 +46,7 @@ export const SearchResults = ({
   
   return (
     <div 
+      ref={resultsRef}
       className={`absolute top-full left-0 mt-1 bg-white rounded-md shadow-lg border border-gray-100 overflow-hidden z-50 ${
         isMobile ? 'w-full' : 'w-full max-h-[400px]'
       }`}
@@ -38,7 +55,40 @@ export const SearchResults = ({
         width: isMobile ? '100%' : undefined
       }}
       onMouseDown={(e) => e.preventDefault()}
+      role="region"
+      aria-label="Search results"
     >
+      {/* Add JSON-LD structured data for search results */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        "itemListElement": [
+          ...videos.map((video, index) => ({
+            "@type": "ListItem",
+            "position": index + 1,
+            "item": {
+              "@type": "VideoObject",
+              "name": video.title,
+              "description": `${video.title} by ${video.channel_name}`,
+              "thumbnailUrl": video.thumbnail,
+              "uploadDate": new Date().toISOString(),
+              "contentUrl": `/video/${video.id}`
+            }
+          })),
+          ...channels.map((channel, index) => ({
+            "@type": "ListItem",
+            "position": videos.length + index + 1,
+            "item": {
+              "@type": "Person",
+              "name": channel.title,
+              "image": channel.thumbnail_url,
+              "url": `/channel/${channel.channel_id}`
+            }
+          }))
+        ]
+      })} 
+      } />
+      
       <ScrollArea className={`${isMobile ? 'h-[35vh]' : 'h-[400px]'} overflow-y-auto scrollbar-hide`}>
         <div className="p-1">
           {isSearching ? (
@@ -67,7 +117,7 @@ export const SearchResults = ({
       </ScrollArea>
     </div>
   );
-};
+});
 
 interface ChannelResultsProps {
   channels: SearchChannel[];

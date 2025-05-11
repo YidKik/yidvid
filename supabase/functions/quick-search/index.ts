@@ -40,23 +40,23 @@ serve(async (req) => {
     
     // Run queries in parallel for better performance
     const [videosResult, channelsResult] = await Promise.all([
-      // Videos query
+      // Videos query - enhanced with more search terms
       supabaseClient
         .from('youtube_videos')
         .select('id, title, thumbnail, channel_name')
         .filter('deleted_at', 'is', null)
-        .or(`title.ilike.%${searchQuery}%,channel_name.ilike.%${searchQuery}%`)
+        .or(`title.ilike.%${searchQuery}%,channel_name.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%`)
         .order('uploaded_at', { ascending: false })
-        .limit(5),
+        .limit(10), // Increased limit for better search results
         
-      // Channels query  
+      // Channels query - enhanced search  
       supabaseClient
         .from('youtube_channels')
         .select('channel_id, title, thumbnail_url')
         .filter('deleted_at', 'is', null)
         .or(`title.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%`)
         .order('created_at', { ascending: false })
-        .limit(3)
+        .limit(5) // Increased limit for better results
     ]);
 
     // Check for errors
