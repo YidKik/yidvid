@@ -66,9 +66,9 @@ export const FeedbackSection = () => {
   ];
 
   return (
-    <section className="bg-[#135d66] py-8 overflow-hidden">
+    <section className="bg-[#135d66] py-6 overflow-hidden">
       <div className="container mx-auto px-6">
-        <h2 className="text-5xl font-sans font-bold text-[#ddf9f2] text-center mb-8">
+        <h2 className="text-4xl font-sans font-bold text-[#ddf9f2] text-center mb-6">
           Feedback
         </h2>
         
@@ -78,8 +78,8 @@ export const FeedbackSection = () => {
               key={testimonial.id}
               className="w-[300px] shrink-0"
             >
-              <div className="p-4 rounded-2xl border-2 border-[#ddf9f2] bg-[#003c43] h-40 flex flex-col items-center justify-center">
-                <p className="text-[#ddf9f2] text-sm mb-2 line-clamp-4">{testimonial.content}</p>
+              <div className="p-4 rounded-2xl border-2 border-[#ddf9f2] bg-[#003c43] h-24 flex flex-col items-center justify-center">
+                <p className="text-[#ddf9f2] text-xs mb-2 line-clamp-3">{testimonial.content}</p>
                 {testimonial.author_name && (
                   <p className="text-[#77b0aa] text-xs mt-auto">- {testimonial.author_name}</p>
                 )}
@@ -88,7 +88,7 @@ export const FeedbackSection = () => {
           ))}
         </InfiniteSlider>
 
-        <div className="flex justify-center gap-2 mt-4">
+        <div className="flex justify-center gap-2 mt-3">
           {[0, 1, 2, 3].map((dot) => (
             <div
               key={dot}
