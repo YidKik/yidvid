@@ -76,6 +76,7 @@ header button {
 .home-page header button:hover,
 .home-page nav button:hover {
   background-color: #135d66 !important;
+  color: #ffffff !important; /* Keep text white on hover */
 }
 
 /* Stats section buttons in home page should never have red backgrounds */
