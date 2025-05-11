@@ -54,10 +54,36 @@ export const ChannelDataProvider = ({ children, onError, searchQuery = "" }: Cha
     try {
       console.log("Direct database fetch for channels...");
       
+      // Use the edge function to fetch public channels
+      try {
+        console.log("Trying edge function to fetch channels...");
+        const urlWithSearch = `https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/get-public-channels${searchQuery ? `?search=${encodeURIComponent(searchQuery)}` : ''}`;
+        console.log("Fetching from URL:", urlWithSearch);
+        
+        const response = await fetch(urlWithSearch, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1aW5ja3R2c2l1enRzeGN1cWZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY0ODgzNzcsImV4cCI6MjA1MjA2NDM3N30.zbReqHoAR33QoCi_wqNp8AtNofTX3JebM7jvjFAWbMg`
+          }
+        });
+        
+        if (response.ok) {
+          const result = await response.json();
+          if (result.data && Array.isArray(result.data) && result.data.length > 0) {
+            console.log(`Retrieved ${result.data.length} channels with edge function`);
+            return result.data;
+          }
+        }
+      } catch (edgeError) {
+        console.error("Edge function error:", edgeError);
+      }
+      
+      // Fall back to direct query with simpler selection to avoid RLS issues
       // Build query with search filter if provided
       let query = supabase
         .from("youtube_channels")
-        .select("id, channel_id, title, thumbnail_url")
+        .select("id, channel_id, title, thumbnail_url, description")
         .is("deleted_at", null);
         
       if (searchQuery) {
@@ -69,30 +95,7 @@ export const ChannelDataProvider = ({ children, onError, searchQuery = "" }: Cha
       if (error) {
         console.error("Direct DB fetch error:", error);
         
-        try {
-          console.log("Trying edge function to fetch channels...");
-          const urlWithSearch = `https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/get-public-channels${searchQuery ? `?search=${encodeURIComponent(searchQuery)}` : ''}`;
-          console.log("Fetching from URL:", urlWithSearch);
-          
-          const response = await fetch(urlWithSearch, {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1aW5ja3R2c2l1enRzeGN1cWZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY0ODgzNzcsImV4cCI6MjA1MjA2NDM3N30.zbReqHoAR33QoCi_wqNp8AtNofTX3JebM7jvjFAWbMg`
-            }
-          });
-          
-          if (response.ok) {
-            const result = await response.json();
-            if (result.data && Array.isArray(result.data) && result.data.length > 0) {
-              console.log(`Retrieved ${result.data.length} channels with edge function`);
-              return result.data;
-            }
-          }
-        } catch (edgeError) {
-          console.error("Edge function error:", edgeError);
-        }
-        
+        // Try a different approach with minimal fields
         let simplifiedQuery = supabase
           .from("youtube_channels")
           .select("id, channel_id, title, thumbnail_url");
@@ -125,34 +128,42 @@ export const ChannelDataProvider = ({ children, onError, searchQuery = "" }: Cha
   const { data: channels, error, isLoading: isChannelsLoading, refetch } = useQuery({
     queryKey: ["youtube_channels", lastAuthEvent, searchQuery],
     queryFn: async () => {
+      // Try edge function first for best public access
+      try {
+        console.log("Fetching public channels via edge function...");
+        const urlWithSearch = `https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/get-public-channels${searchQuery ? `?search=${encodeURIComponent(searchQuery)}` : ''}`;
+        const response = await fetch(urlWithSearch, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1aW5ja3R2c2l1enRzeGN1cWZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY0ODgzNzcsImV4cCI6MjA1MjA2NDM3N30.zbReqHoAR33QoCi_wqNp8AtNofTX3JebM7jvjFAWbMg`
+          }
+        });
+        
+        if (response.ok) {
+          const result = await response.json();
+          if (result.data && Array.isArray(result.data) && result.data.length > 0) {
+            console.log(`Retrieved ${result.data.length} channels with edge function`);
+            return result.data;
+          }
+        }
+      } catch (edgeError) {
+        console.error("Edge function error:", edgeError);
+      }
+      
+      // Then try direct database fetch
       const dbChannels = await fetchChannelsFromDB();
       if (dbChannels && dbChannels.length > 0) {
         return dbChannels;
       }
       
+      // Then try manual fetch method
       const manualData = await fetchChannelsDirectly();
       if (manualData && manualData.length > 0) {
         return manualData;
       }
       
-      try {
-        let lastQuery = supabase
-          .from("youtube_channels")
-          .select("id, channel_id, title, thumbnail_url");
-          
-        if (searchQuery) {
-          lastQuery = lastQuery.ilike("title", `%${searchQuery}%`);
-        }
-          
-        const lastAttempt = await lastQuery.limit(30);
-          
-        if (!lastAttempt.error && lastAttempt.data?.length > 0) {
-          return lastAttempt.data;
-        }
-      } catch (e) {
-        console.error("Final attempt also failed:", e);
-      }
-      
+      // Last resort, use sample data
       const sampleChannels = createSampleChannels();
       if (searchQuery) {
         return sampleChannels.filter(channel => 

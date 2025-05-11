@@ -66,8 +66,9 @@ export const useVideos = (): UseVideosResult => {
     setIsRefreshing
   });
 
-  // Only use sample data when not authenticated
-  const ensuredData = hasRealVideos(data, !!session) ? data : (data?.length ? data : createSampleVideos());
+  // Ensure we always return data whether authenticated or not
+  // We no longer check authentication status - always show available content
+  const ensuredData = hasRealVideos(data) ? data : (data?.length ? data : createSampleVideos());
 
   return {
     data: ensuredData,
