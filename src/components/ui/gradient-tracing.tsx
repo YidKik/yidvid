@@ -1,6 +1,6 @@
 
 import React from "react";
-import { motion } from "framer-motion"; // Using framer-motion since it's already installed
+import { motion } from "framer-motion"; // Using framer-motion instead of motion/react
 
 interface GradientTracingProps {
   width: number;

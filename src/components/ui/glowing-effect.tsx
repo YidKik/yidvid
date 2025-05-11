@@ -3,7 +3,7 @@
 
 import { memo, useCallback, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
-import { animate } from "motion/react";
+import { animate } from "framer-motion"; // Changed from motion/react to framer-motion
 
 interface GlowingEffectProps {
   blur?: number;
