@@ -98,9 +98,20 @@
     display: none;
   }
   
-  /* Ensure hero headings keep "Jewish Content" on one line */
+  /* Ensure hero heading layout matches desktop version */
+  .home-page h1 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .home-page h1 span:first-child {
+    margin-bottom: 0.25rem;
+  }
+  
   .home-page h1 span:last-child {
     white-space: nowrap;
+    color: #e3fef7;
   }
   
   /* Make sure mobile home button doesn't have red background */
