@@ -11,6 +11,7 @@ import { AnimatedGridSection } from '@/components/home/AnimatedGridSection';
 import { useHomeAnimations } from '@/hooks/useHomeAnimations';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { MobileHomeSection } from '@/components/home/MobileHomeSection';
+import { usePrefetchData } from '@/hooks/usePrefetchData';
 
 const HomePage = () => {
   const { data: videos, isLoading: videosLoading } = useVideos();
@@ -18,6 +19,9 @@ const HomePage = () => {
   const channelsSectionRef = useRef(null);
   const { isMobile, isTablet } = useIsMobile();
   const showHeroParallax = !isMobile && !isTablet;
+
+  // Prefetch videos and channels for faster navigation to videos page
+  usePrefetchData();
 
   useHomeAnimations(channelsSectionRef);
 

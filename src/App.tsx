@@ -27,6 +27,9 @@ import NotificationsPage from './pages/admin/NotificationsPage';
 import LayoutCustomizationPage from './pages/admin/LayoutCustomizationPage';
 import TestimonialsPage from './pages/admin/TestimonialsPage';
 
+// Add the PagePreloader import
+import { PagePreloader } from './components/PagePreloader';
+
 function App() {
   const location = useLocation();
   
@@ -73,6 +76,9 @@ function App() {
           <Route path="/admin/layout" element={<LayoutCustomizationPage />} />
           <Route path="/admin/testimonials" element={<TestimonialsPage />} />
         </Routes>
+        
+        {/* Add the PagePreloader to prefetch the Videos page */}
+        <PagePreloader />
       </ColorProvider>
     </PlaybackProvider>
   );
