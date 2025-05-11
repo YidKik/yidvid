@@ -59,30 +59,24 @@ header button {
   color: inherit;
 }
 
-/* Override the bg-transparent for active section */
+/* Override for active section */
 .home-page header a[href="/"]:has(.active),
 .home-page header button.active,
-.home-page nav button.active,
-.home-page header .bg-[#135d66],
-.home-page nav .bg-[#135d66] {
+.home-page nav button.active {
+  background-color: transparent !important;
+}
+
+/* Important override for the #135d66 background color */
+.home-page header a[class*="bg-[#135d66]"],
+.home-page header button[class*="bg-[#135d66]"],
+.home-page nav a[class*="bg-[#135d66]"],
+.home-page nav button[class*="bg-[#135d66]"] {
   background-color: #135d66 !important;
 }
 
-.home-page header button:hover,
-.home-page header a:hover,
-.home-page nav button:hover,
-.home-page nav a:hover {
-  background-color: transparent !important;
-  color: #e3fef7 !important;
-}
-
-/* Active section styling for homepage header */
-.home-page header button.active,
-.home-page header a.active,
-.home-page nav button.active,
-.home-page nav a.active {
-  color: #e3fef7 !important;
-  font-weight: 500;
+.home-page header a[class*="bg-[#135d66]/20"],
+.home-page nav button[class*="bg-[#135d66]/20"] {
+  background-color: rgba(19, 93, 102, 0.2) !important;
 }
 
 /* Stats section buttons in home page should never have red backgrounds */

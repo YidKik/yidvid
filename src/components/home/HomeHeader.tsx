@@ -60,8 +60,8 @@ export const HomeHeader = () => {
             to="/" 
             className={`text-white transition-colors bg-transparent hover:bg-transparent ${
               activeSection === 'home' 
-                ? 'text-white font-medium bg-[#135d66] !important px-3 py-1 rounded-md' 
-                : 'hover:text-[#e3fef7]'
+                ? 'bg-[#135d66] px-3 py-1 rounded-md' 
+                : ''
             }`}
           >
             Home
@@ -70,8 +70,8 @@ export const HomeHeader = () => {
             onClick={() => scrollToSection('about-section')} 
             className={`text-white transition-colors bg-transparent border-none p-0 m-0 hover:bg-transparent ${
               activeSection === 'about' 
-                ? 'text-white font-medium bg-[#135d66] !important px-3 py-1 rounded-md' 
-                : 'hover:text-[#e3fef7]'
+                ? 'bg-[#135d66] px-3 py-1 rounded-md' 
+                : ''
             }`}
           >
             About
@@ -80,8 +80,8 @@ export const HomeHeader = () => {
             onClick={() => scrollToSection('contact-section')} 
             className={`text-white transition-colors bg-transparent border-none p-0 m-0 hover:bg-transparent ${
               activeSection === 'contact' 
-                ? 'text-white font-medium bg-[#135d66] !important px-3 py-1 rounded-md' 
-                : 'hover:text-[#e3fef7]'
+                ? 'bg-[#135d66] px-3 py-1 rounded-md' 
+                : ''
             }`}
           >
             Contact
@@ -91,7 +91,7 @@ export const HomeHeader = () => {
               setActiveTab('signin');
               setIsAuthOpen(true);
             }}
-            className="text-white hover:text-[#e3fef7] transition-colors bg-transparent border-none p-0 m-0 hover:bg-transparent"
+            className="text-white transition-colors bg-transparent border-none p-0 m-0 hover:bg-transparent"
           >
             Sign in
           </button>
