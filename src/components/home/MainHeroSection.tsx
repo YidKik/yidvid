@@ -45,7 +45,7 @@ export const MainHeroSection: React.FC = () => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            Explorer
+            Explore
           </motion.button>
         </Link>
       </div>

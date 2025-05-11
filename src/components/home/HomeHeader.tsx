@@ -31,7 +31,7 @@ export const HomeHeader = () => {
             className={`text-white transition-colors bg-transparent hover:bg-transparent ${
               activeSection === 'home' 
                 ? 'text-[#77b0aa]' 
-                : 'hover:text-[#77b0aa]'
+                : 'hover:text-[#e3fef7]'
             }`}
           >
             Home
@@ -41,7 +41,7 @@ export const HomeHeader = () => {
             className={`text-white transition-colors bg-transparent border-none p-0 m-0 hover:bg-transparent ${
               activeSection === 'about' 
                 ? 'text-[#77b0aa]' 
-                : 'hover:text-[#77b0aa]'
+                : 'hover:text-[#e3fef7]'
             }`}
           >
             About
@@ -51,7 +51,7 @@ export const HomeHeader = () => {
             className={`text-white transition-colors bg-transparent border-none p-0 m-0 hover:bg-transparent ${
               activeSection === 'contact' 
                 ? 'text-[#77b0aa]' 
-                : 'hover:text-[#77b0aa]'
+                : 'hover:text-[#e3fef7]'
             }`}
           >
             Contact
@@ -61,7 +61,7 @@ export const HomeHeader = () => {
               setActiveTab('signin');
               setIsAuthOpen(true);
             }}
-            className="text-white hover:text-[#77b0aa] transition-colors bg-transparent border-none p-0 m-0 hover:bg-transparent"
+            className="text-white hover:text-[#e3fef7] transition-colors bg-transparent border-none p-0 m-0 hover:bg-transparent"
           >
             Sign in
           </button>

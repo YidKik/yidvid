@@ -64,6 +64,7 @@ header button {
 .home-page nav button:hover,
 .home-page nav a:hover {
   background-color: transparent !important;
+  color: #e3fef7 !important;
 }
 
 /* Stats section buttons in home page should never have red backgrounds */
@@ -73,6 +74,14 @@ header button {
 
 .home-page section button:hover {
   background-color: var(--hover-bg-custom, #135d66) !important;
+  color: #e3fef7 !important;
+}
+
+/* Home page hero button hover effect */
+.home-page .hero-content button:hover,
+.home-page a[href="/videos"] button:hover {
+  background-color: #e3fef7 !important;
+  color: #135d66 !important;
 }
 
 /* Footer section buttons in home page should never have red backgrounds */

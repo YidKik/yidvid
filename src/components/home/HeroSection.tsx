@@ -22,7 +22,7 @@ export const HeroSection = () => {
           to="/videos"
           className="inline-flex items-center justify-center px-12 py-4 bg-transparent border-2 border-brand-light text-[#77b0aa] text-xl rounded-full hover:bg-brand-light hover:text-brand-darkest transition-all duration-300"
         >
-          Explorer
+          Explore
         </Link>
       </motion.div>
       <div className="rounded-3xl border-2 border-brand-light bg-brand-dark/30 p-4">

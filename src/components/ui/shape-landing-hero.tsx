@@ -96,9 +96,9 @@ export function HeroGeometric({
                             <Button 
                                 variant="default" 
                                 size="lg" 
-                                className="mx-auto mb-8 bg-primary hover:bg-primary/90 text-white font-medium"
+                                className="mx-auto mb-8 bg-primary hover:bg-white/20 text-white font-medium"
                             >
-                                Explore Videos
+                                Explore
                             </Button>
                         </Link>
                     </motion.div>
