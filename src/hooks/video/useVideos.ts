@@ -5,7 +5,7 @@ import { useVideoFetcher } from "./useVideoFetcher";
 import { useAuthStateListener } from "./useAuthStateListener";
 import { useVideoQuery } from "./useVideoQuery";
 import { useInitialVideoLoad } from "./useInitialVideoLoad";
-import { hasRealVideos, createSampleVideos } from "./utils/validation";
+import { hasRealVideos, createSampleVideos, filterUnavailableVideos } from "./utils/validation";
 import { VideoData } from "./types/video-fetcher";
 
 export interface UseVideosResult {
@@ -41,7 +41,7 @@ export const useVideos = (): UseVideosResult => {
 
   // Set up React Query for videos
   const { 
-    data, 
+    data: unfilteredData, 
     isLoading, 
     isFetching, 
     error, 
@@ -53,6 +53,9 @@ export const useVideos = (): UseVideosResult => {
     forceRefetch,
     authState
   });
+
+  // Filter out unavailable videos
+  const data = filterUnavailableVideos(unfilteredData || []);
 
   // Handle initial data loading and refreshing
   useInitialVideoLoad({

@@ -5,14 +5,15 @@ import { MusicSection } from "@/components/content/MusicSection";
 import { VideoContent } from "@/components/content/VideoContent";
 import { useVideos } from "@/hooks/video/useVideos";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ScrollToTopButton } from "./ScrollToTopButton";
 import { Header } from "@/components/Header";
+import { filterUnavailableVideos } from "@/hooks/video/utils/validation";
 
 export const VideoPageContent = () => {
   const [isMusic, setIsMusic] = useState(false);
   const { 
-    data: videos, 
+    data: rawVideos, 
     isLoading, 
     refetch, 
     forceRefetch,
@@ -21,7 +22,24 @@ export const VideoPageContent = () => {
     error 
   } = useVideos();
   
+  // Filter out unavailable videos
+  const videos = filterUnavailableVideos(rawVideos || []);
+  
   const { isMobile } = useIsMobile();
+
+  // If many videos were filtered out as unavailable, we should refetch
+  useEffect(() => {
+    if (rawVideos && rawVideos.length > 0) {
+      const filteredOutCount = rawVideos.length - videos.length;
+      const significantFiltering = filteredOutCount > 3 || (filteredOutCount / rawVideos.length) > 0.2;
+      
+      // If we filtered out a significant number of videos, trigger a refetch to get fresh content
+      if (significantFiltering && forceRefetch) {
+        console.log(`Filtered out ${filteredOutCount} unavailable videos, triggering refetch`);
+        forceRefetch();
+      }
+    }
+  }, [rawVideos, videos.length, forceRefetch]);
 
   return (
     <div className="flex-1 videos-page">
@@ -55,7 +73,7 @@ export const VideoPageContent = () => {
           >
             {!isMusic ? (
               <VideoContent 
-                videos={videos || []} 
+                videos={videos} 
                 isLoading={isLoading} 
                 refetch={refetch}
                 forceRefetch={forceRefetch}
