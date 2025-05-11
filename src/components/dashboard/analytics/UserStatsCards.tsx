@@ -4,10 +4,15 @@ import { Users, Clock, Calendar } from "lucide-react";
 import { AnalyticsStats } from "@/hooks/useAnalyticsData";
 
 interface UserStatsCardsProps {
-  stats: AnalyticsStats;
+  stats?: AnalyticsStats;
 }
 
 export const UserStatsCards = ({ stats }: UserStatsCardsProps) => {
+  // Default values in case stats is undefined
+  const activeUsers = stats?.activeUsers ?? 0;
+  const weeklyUsers = stats?.weeklyUsers ?? 0;
+  const monthlyUsers = stats?.monthlyUsers ?? 0;
+
   return (
     <div className="grid gap-4 md:grid-cols-3">
       <Card className="bg-blue-50 border-blue-200">
@@ -19,7 +24,7 @@ export const UserStatsCards = ({ stats }: UserStatsCardsProps) => {
           <Users className="h-5 w-5 text-blue-600" />
         </CardHeader>
         <CardContent>
-          <p className="text-3xl font-bold text-blue-700">{stats.activeUsers}</p>
+          <p className="text-3xl font-bold text-blue-700">{activeUsers}</p>
         </CardContent>
       </Card>
 
@@ -32,7 +37,7 @@ export const UserStatsCards = ({ stats }: UserStatsCardsProps) => {
           <Clock className="h-5 w-5 text-green-600" />
         </CardHeader>
         <CardContent>
-          <p className="text-3xl font-bold text-green-700">{stats.weeklyUsers}</p>
+          <p className="text-3xl font-bold text-green-700">{weeklyUsers}</p>
         </CardContent>
       </Card>
 
@@ -45,7 +50,7 @@ export const UserStatsCards = ({ stats }: UserStatsCardsProps) => {
           <Calendar className="h-5 w-5 text-purple-600" />
         </CardHeader>
         <CardContent>
-          <p className="text-3xl font-bold text-purple-700">{stats.monthlyUsers}</p>
+          <p className="text-3xl font-bold text-purple-700">{monthlyUsers}</p>
         </CardContent>
       </Card>
     </div>
