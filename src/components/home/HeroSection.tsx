@@ -26,20 +26,25 @@ export const HeroSection = () => {
         </Link>
       </motion.div>
       
-      {/* Replaced empty div with the uploaded image */}
+      {/* Updated image with Link and hover effects */}
       <motion.div 
         className="flex items-center justify-center"
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.7, delay: 0.2 }}
       >
-        <div className="w-full h-full rounded-3xl overflow-hidden shadow-xl">
-          <img 
-            src="/lovable-uploads/1daf0100-84f7-491c-b2d1-cd5e363cbd17.png" 
-            alt="Collection of Jewish content videos" 
-            className="w-full h-full object-cover"
-          />
-        </div>
+        <Link 
+          to="/videos" 
+          className="w-full h-full transform transition-transform duration-300 hover:scale-105 cursor-pointer"
+        >
+          <div className="w-full h-full rounded-3xl overflow-hidden shadow-xl">
+            <img 
+              src="/lovable-uploads/1daf0100-84f7-491c-b2d1-cd5e363cbd17.png" 
+              alt="Collection of Jewish content videos" 
+              className="w-full h-full object-cover"
+            />
+          </div>
+        </Link>
       </motion.div>
     </section>
   );
