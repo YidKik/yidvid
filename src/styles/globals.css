@@ -66,6 +66,15 @@ header button {
   background-color: transparent !important;
 }
 
+/* Stats section buttons in home page should never have red backgrounds */
+.home-page section button {
+  background-color: transparent !important;
+}
+
+.home-page section button:hover {
+  background-color: var(--hover-bg-custom, #135d66) !important;
+}
+
 /* Global logo styles */
 .logo-custom:not([class*="home-"]) {
   color: var(--logo-custom);
