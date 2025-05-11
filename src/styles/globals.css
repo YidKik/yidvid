@@ -94,6 +94,13 @@ header button {
 .home-page button:hover {
   background-color: #e3fef7 !important;
   color: #135d66 !important;
+  /* Explicitly ensure no red color on hover */
+}
+
+/* Homepage explore button - ensure it never turns red */
+.home-page a[href="/videos"] button,
+.home-page a[href="/videos"] button:hover {
+  color: #135d66 !important;
 }
 
 /* Footer section buttons in home page should never have red backgrounds */
