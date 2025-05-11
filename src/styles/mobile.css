@@ -134,12 +134,13 @@
   
   /* Video card mobile optimizations */
   .video-title {
-    margin-top: 4px;
+    margin-top: 2px;
+    font-size: 0.7rem !important;
   }
   
   /* Reduce the gap between video cards in mobile view */
   .videos-page .grid {
-    gap: 12px;
+    gap: 8px;
   }
   
   /* Optimize video info spacing on mobile */

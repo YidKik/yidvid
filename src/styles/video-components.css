@@ -33,12 +33,18 @@
 /* Mobile optimizations */
 @media (max-width: 768px) {
   .video-title {
-    font-size: 0.8rem;
-    line-height: 1.2;
-    margin-top: 0.25rem;
+    font-size: 0.7rem;
+    line-height: 1.1;
+    margin-top: 0.2rem;
+    margin-bottom: 0.1rem;
   }
   
   .video-meta-text {
     line-height: 1;
+    margin-top: 0;
+  }
+  
+  .videos-page .video-grid-container {
+    margin-bottom: 0.5rem;
   }
 }

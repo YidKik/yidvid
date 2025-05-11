@@ -46,8 +46,8 @@ export const VideoCardInfo = ({
 
   return (
     <div className="mt-2 flex items-start space-x-2">
-      {/* Channel avatar - wrap in Link only if valid channel ID exists */}
-      {channelThumbnail && (
+      {/* Channel avatar - only show if not mobile and we have a thumbnail */}
+      {channelThumbnail && !isMobile && (
         <>
           {hasValidChannelId ? (
             <Link 
@@ -94,7 +94,7 @@ export const VideoCardInfo = ({
         <h3 
           className={cn(
             "video-title line-clamp-2 group-hover:text-primary transition-colors duration-200", 
-            isMobile ? "text-xs font-medium" : "text-youtube-title"
+            isMobile ? "text-[0.7rem] font-medium" : "text-youtube-title"
           )}
         >
           {title}
@@ -120,7 +120,7 @@ export const VideoCardInfo = ({
             </>
           )}
           
-          <div className={cn("flex items-center", isMobile ? "text-[10px]" : "flex-col sm:flex-row sm:items-center")}>
+          <div className={cn("flex items-center", isMobile ? "text-[10px] flex-row" : "flex-col sm:flex-row sm:items-center")}>
             <span>{formatViews(views)}</span>
             <span className="mx-1 text-youtube-small">•</span>
             <span className="text-youtube-small">{formattedDate}</span>
