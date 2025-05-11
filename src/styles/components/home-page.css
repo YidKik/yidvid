@@ -37,8 +37,9 @@ body.home-page {
   z-index: 9999 !important;
 }
 
-/* Full-width about section on mobile */
-.home-page #about-section .bg-[#135d66] {
+/* Full-width sections on mobile */
+.home-page #about-section .bg-[#135d66],
+.home-page .mt-8.mb-6.bg-\[\#135d66\] {
   width: 100vw !important;
   margin-left: calc(-50vw + 50%) !important;
   margin-right: calc(-50vw + 50%) !important;

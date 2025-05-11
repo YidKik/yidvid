@@ -91,7 +91,7 @@ export const MobileFeedbackSection = () => {
       animate="visible"
       variants={fadeInVariants}
       transition={{ duration: 0.6 }}
-      className="mt-8 mb-6 bg-[#135d66] py-6"
+      className="mt-8 mb-6 bg-[#135d66] py-6 w-[100vw] mx-[calc(-50vw+50%)] overflow-hidden"
     >
       <h2 className="text-[#e3fef7] text-2xl font-bold text-center mb-4">Feedback</h2>
       
