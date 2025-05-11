@@ -96,7 +96,7 @@ export function HeroGeometric({
                             <Button 
                                 variant="default" 
                                 size="lg" 
-                                className="mx-auto mb-8 bg-primary hover:bg-white/20 text-white font-medium"
+                                className="mx-auto mb-8 bg-primary hover:bg-[#e3fef7] hover:text-[#135d66] text-white font-medium"
                             >
                                 Explore
                             </Button>

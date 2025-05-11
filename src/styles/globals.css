@@ -83,9 +83,10 @@ header button {
   color: #e3fef7 !important;
 }
 
-/* Home page hero button hover effect */
+/* Home page hero button hover effect - specifically target the "Explore" button */
 .home-page .hero-content button:hover,
-.home-page a[href="/videos"] button:hover {
+.home-page a[href="/videos"] button:hover,
+.home-page button:hover {
   background-color: #e3fef7 !important;
   color: #135d66 !important;
 }
@@ -161,4 +162,3 @@ body.home-page {
   height: 100%;
   overflow-x: hidden;
 }
-

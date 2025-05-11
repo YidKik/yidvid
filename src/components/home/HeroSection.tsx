@@ -20,7 +20,7 @@ export const HeroSection = () => {
         </p>
         <Link 
           to="/videos"
-          className="inline-flex items-center justify-center px-12 py-4 bg-transparent border-2 border-brand-light text-[#77b0aa] text-xl rounded-full hover:bg-brand-light hover:text-brand-darkest transition-all duration-300"
+          className="inline-flex items-center justify-center px-12 py-4 bg-transparent border-2 border-brand-light text-[#77b0aa] text-xl rounded-full hover:bg-[#e3fef7] hover:text-brand-darkest transition-all duration-300"
         >
           Explore
         </Link>

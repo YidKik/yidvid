@@ -34,7 +34,7 @@ export const HomeHero = () => {
         {/* CTA Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
           <motion.button
-            className="bg-[#ea384c] text-white px-6 py-3 rounded-full font-medium shadow-md hover:bg-[#d6293d] transition-colors"
+            className="bg-[#ea384c] text-white px-6 py-3 rounded-full font-medium shadow-md hover:bg-[#e3fef7] hover:text-[#135d66] transition-colors"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
