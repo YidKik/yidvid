@@ -66,33 +66,33 @@ export const FeedbackSection = () => {
   ];
 
   return (
-    <section className="bg-[#135d66] py-6 overflow-hidden">
-      <div className="container mx-auto px-6">
-        <h2 className="text-4xl font-sans font-bold text-[#ddf9f2] text-center mb-6">
+    <section className="bg-[#135d66] py-12 overflow-hidden">
+      <div className="container mx-auto px-8">
+        <h2 className="text-5xl font-sans font-bold text-[#ddf9f2] text-center mb-10">
           Feedback
         </h2>
         
-        <InfiniteSlider duration={50} gap={16} className="py-2">
+        <InfiniteSlider duration={50} gap={24} className="py-4">
           {displayTestimonials.map((testimonial) => (
             <div
               key={testimonial.id}
-              className="w-[300px] shrink-0"
+              className="w-[450px] shrink-0"
             >
-              <div className="p-4 rounded-2xl border-2 border-[#ddf9f2] bg-[#003c43] h-24 flex flex-col items-center justify-center">
-                <p className="text-[#ddf9f2] text-xs mb-2 line-clamp-3">{testimonial.content}</p>
+              <div className="p-6 rounded-2xl border-3 border-[#ddf9f2] bg-[#003c43] h-40 flex flex-col items-center justify-center">
+                <p className="text-[#ddf9f2] text-lg mb-4 line-clamp-4">{testimonial.content}</p>
                 {testimonial.author_name && (
-                  <p className="text-[#77b0aa] text-xs mt-auto">- {testimonial.author_name}</p>
+                  <p className="text-[#77b0aa] text-base mt-auto">- {testimonial.author_name}</p>
                 )}
               </div>
             </div>
           ))}
         </InfiniteSlider>
 
-        <div className="flex justify-center gap-2 mt-3">
+        <div className="flex justify-center gap-3 mt-5">
           {[0, 1, 2, 3].map((dot) => (
             <div
               key={dot}
-              className="w-2 h-2 rounded-full bg-[#ddf9f2]/40 first:bg-[#ddf9f2] first:scale-125"
+              className="w-3 h-3 rounded-full bg-[#ddf9f2]/40 first:bg-[#ddf9f2] first:scale-125"
             />
           ))}
         </div>
