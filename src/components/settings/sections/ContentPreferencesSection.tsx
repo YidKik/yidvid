@@ -4,8 +4,8 @@ import { ChannelSubscriptions } from "@/components/youtube/ChannelSubscriptions"
 import { ChannelControl } from "@/components/youtube/ChannelPreferences";
 import { PlaybackSettings } from "@/components/settings/PlaybackSettings";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useAuth } from "@/hooks/useAuth";
 import { useSessionManager } from "@/hooks/useSessionManager";
+import Auth from "@/pages/Auth";
 
 interface ContentPreferencesSectionProps {
   userId: string | null;
@@ -19,7 +19,7 @@ export const ContentPreferencesSection = ({
   setAutoplay,
 }: ContentPreferencesSectionProps) => {
   const isMobile = useIsMobile();
-  const { session, isAuthenticated } = useSessionManager();
+  const { session, isAuthenticated, isAuthOpen, setIsAuthOpen } = useSessionManager();
   const currentUserId = session?.user?.id || userId;
   
   return (
@@ -51,6 +51,9 @@ export const ContentPreferencesSection = ({
         autoplay={autoplay}
         setAutoplay={setAutoplay}
       />
+      
+      {/* Auth dialog */}
+      <Auth isOpen={isAuthOpen} onOpenChange={setIsAuthOpen} />
     </div>
   );
 };

@@ -1,3 +1,4 @@
+
 import { createContext, useContext, ReactNode, useEffect } from "react";
 import { Session } from "@supabase/supabase-js";
 import { useQueryClient } from "@tanstack/react-query";
@@ -19,6 +20,11 @@ export const useSession = () => useContext(SessionContext);
 export const SessionProvider = ({ children }: { children: ReactNode }) => {
   const queryClient = useQueryClient();
   const { session, isLoading } = useSessionState(queryClient);
+
+  // Log session state for debugging
+  useEffect(() => {
+    console.log("SessionContext - session state:", !!session?.user);
+  }, [session]);
 
   // Ensure content is preserved during auth state changes
   useEffect(() => {

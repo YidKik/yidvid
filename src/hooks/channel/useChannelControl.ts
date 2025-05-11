@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useChannelsGrid } from "./useChannelsGrid";
-import { useAuth } from "@/hooks/useAuth";
+import { useSessionManager } from "@/hooks/useSessionManager";
 
 export const useChannelControl = () => {
   const [hiddenChannels, setHiddenChannels] = useState<Set<string>>(new Set());
@@ -13,7 +13,7 @@ export const useChannelControl = () => {
   const [showSetPinDialog, setShowSetPinDialog] = useState(false);
   const [pin, setPin] = useState("");
   const [storedPin, setStoredPin] = useState("");
-  const { isAuthenticated, session } = useAuth();
+  const { session, isAuthenticated } = useSessionManager();
   
   // Use our enhanced channels grid hook
   const { 
@@ -32,7 +32,7 @@ export const useChannelControl = () => {
   }, [searchQuery, gridSearchQuery, setGridSearchQuery]);
 
   const loadLockStatus = async () => {
-    if (!isAuthenticated || !session?.user?.id) return;
+    if (!session?.user?.id) return;
     
     const { data, error } = await supabase
       .from('parental_locks')
@@ -48,27 +48,34 @@ export const useChannelControl = () => {
   };
 
   const loadHiddenChannels = async () => {
-    if (!isAuthenticated || !session?.user?.id) return;
+    if (!session?.user?.id) return;
 
-    const { data: hiddenChannelsData, error } = await supabase
-      .from('hidden_channels')
-      .select('channel_id')
-      .eq('user_id', session.user.id);
+    try {
+      const { data: hiddenChannelsData, error } = await supabase
+        .from('hidden_channels')
+        .select('channel_id')
+        .eq('user_id', session.user.id);
 
-    if (error) {
-      console.error('Error loading hidden channels:', error);
-      return;
+      if (error) {
+        console.error('Error loading hidden channels:', error);
+        return;
+      }
+
+      setHiddenChannels(new Set(hiddenChannelsData?.map(hc => hc.channel_id) || []));
+    } catch (err) {
+      console.error('Unexpected error loading hidden channels:', err);
     }
-
-    setHiddenChannels(new Set(hiddenChannelsData?.map(hc => hc.channel_id) || []));
   };
 
   useEffect(() => {
-    if (isAuthenticated) {
+    // Debug the session state
+    console.log("Session state in useChannelControl:", session?.user?.id, isAuthenticated);
+    
+    if (session?.user?.id) {
       loadHiddenChannels();
       loadLockStatus();
     }
-  }, [isAuthenticated, session]);
+  }, [session?.user?.id, isAuthenticated]);
 
   const toggleChannel = async (channelId: string) => {
     if (isLocked) {
@@ -76,7 +83,7 @@ export const useChannelControl = () => {
       return;
     }
 
-    if (!isAuthenticated || !session?.user?.id) {
+    if (!session?.user?.id) {
       toast.error("You must be logged in to manage channel preferences");
       return;
     }
@@ -85,6 +92,9 @@ export const useChannelControl = () => {
     const isCurrentlyHidden = newHiddenChannels.has(channelId);
 
     try {
+      // Debug user information
+      console.log("Toggle channel for user:", session.user.id, "Channel:", channelId);
+      
       if (isCurrentlyHidden) {
         const { error } = await supabase
           .from('hidden_channels')
@@ -92,7 +102,10 @@ export const useChannelControl = () => {
           .eq('user_id', session.user.id)
           .eq('channel_id', channelId);
 
-        if (error) throw error;
+        if (error) {
+          console.error('Error unhiding channel:', error);
+          throw error;
+        }
         newHiddenChannels.delete(channelId);
       } else {
         const { error } = await supabase
@@ -102,7 +115,10 @@ export const useChannelControl = () => {
             channel_id: channelId
           });
 
-        if (error) throw error;
+        if (error) {
+          console.error('Error hiding channel:', error);
+          throw error;
+        }
         newHiddenChannels.add(channelId);
       }
 

@@ -36,10 +36,11 @@ const Settings = () => {
   const [authChecked, setAuthChecked] = useState(false);
   const [sectionsReady, setSectionsReady] = useState(false);
 
-  // Immediately prefetch profile data - top priority
+  // Immediately prefetch profile data when the user ID is available
   useEffect(() => {
     if (userId) {
       setLoadingProfile(true);
+      console.log("Prefetching user profile for ID:", userId);
       
       // Force a direct fetch of minimal profile data
       queryClient.prefetchQuery({
@@ -82,6 +83,7 @@ const Settings = () => {
     // Only check authentication status once
     if (!authChecked) {
       supabase.auth.getSession().then(({ data: { session } }) => {
+        console.log("Initial session check:", session ? "Authenticated" : "Not authenticated");
         if (!session) {
           // User is definitely not authenticated, redirect to home page
           navigate("/");
@@ -94,6 +96,7 @@ const Settings = () => {
   // Always check if session is lost during the component lifetime
   useEffect(() => {
     if (!isAuthenticated && session === null && authChecked) {
+      console.log("Session lost during component lifetime, redirecting");
       navigate("/");
     }
   }, [isAuthenticated, session, navigate, authChecked]);
@@ -194,27 +197,31 @@ const Settings = () => {
           {/* Profile section always shows first, either real or skeleton */}
           {loadingProfile ? <ProfileSectionSkeleton /> : <ProfileSection />}
           
-          {/* Always render these sections, regardless of loading state */}
-          <ContentPreferencesSection 
-            userId={userId}
-            autoplay={autoplay}
-            setAutoplay={setAutoplay}
-          />
-          <ActivitySection />
-          <AppearanceSection 
-            backgroundColor={backgroundColor}
-            setBackgroundColor={setBackgroundColor}
-            textColor={textColor}
-            setTextColor={setTextColor}
-            buttonColor={buttonColor}
-            setButtonColor={setButtonColor}
-            logoColor={logoColor}
-            setLogoColor={setLogoColor}
-            saveColors={saveColors}
-            resetToDefaults={resetToDefaults}
-          />
-          {userId && <AdminSection userId={userId} />}
-          <SupportSection />
+          {/* Only render other sections once we're ready */}
+          {sectionsReady && (
+            <>
+              <ContentPreferencesSection 
+                userId={userId}
+                autoplay={autoplay}
+                setAutoplay={setAutoplay}
+              />
+              <ActivitySection />
+              <AppearanceSection 
+                backgroundColor={backgroundColor}
+                setBackgroundColor={setBackgroundColor}
+                textColor={textColor}
+                setTextColor={setTextColor}
+                buttonColor={buttonColor}
+                setButtonColor={setButtonColor}
+                logoColor={logoColor}
+                setLogoColor={setLogoColor}
+                saveColors={saveColors}
+                resetToDefaults={resetToDefaults}
+              />
+              {userId && <AdminSection userId={userId} />}
+              <SupportSection />
+            </>
+          )}
         </div>
       </main>
     </div>

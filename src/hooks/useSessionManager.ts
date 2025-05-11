@@ -1,55 +1,58 @@
 
-import { useAuth } from "@/hooks/useAuth";
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import type { Session } from "@supabase/supabase-js";
+import { useSession } from "@/contexts/SessionContext";
 
 export const useSessionManager = () => {
-  const { session, isAuthenticated, handleLogout, isLoggingOut, isLoading } = useAuth();
-  const [lastRefreshed, setLastRefreshed] = useState(Date.now());
+  const { session, isLoading } = useSession();
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
   
-  // Set up periodic session refresh 
-  useEffect(() => {
-    // Refresh session every 5 minutes to ensure token is valid
-    const refreshInterval = setInterval(async () => {
-      if (session) {
-        try {
-          const { data, error } = await supabase.auth.getSession();
-          if (error) {
-            console.error("Error refreshing session:", error);
-          } else if (data?.session) {
-            // Session is still valid, update last refreshed time
-            setLastRefreshed(Date.now());
-          }
-        } catch (err) {
-          console.error("Session refresh failed:", err);
-        }
-      }
-    }, 5 * 60 * 1000); // 5 minutes
-    
-    return () => clearInterval(refreshInterval);
-  }, [session]);
+  // Check if user is authenticated
+  const isAuthenticated = !!session?.user;
 
-  // Add more debugging to track authentication state
-  console.log("SessionManager state:", { 
-    hasSession: !!session, 
-    isAuthenticated, 
-    userId: session?.user?.id,
-    userEmail: session?.user?.email,
-    lastRefreshed: new Date(lastRefreshed).toISOString(),
-    isLoading
+  // Session data query
+  const { data: sessionData } = useQuery({
+    queryKey: ["session-data"],
+    queryFn: async () => {
+      if (!session?.user?.id) return null;
+      
+      try {
+        const { data, error } = await supabase.auth.getUser();
+        if (error) throw error;
+        return data;
+      } catch (err) {
+        console.error("Error fetching session data:", err);
+        return null;
+      }
+    },
+    enabled: !!session?.user?.id,
+    staleTime: 60000, // 1 minute
   });
 
-  return { 
-    session, 
-    isAuthenticated,
-    handleLogout,
-    isLoggingOut,
-    isLoading, // Expose isLoading from useAuth
-    refreshSession: async (): Promise<Session | null> => {
-      const { data } = await supabase.auth.getSession();
-      setLastRefreshed(Date.now());
-      return data?.session || null;
+  // Function to handle sign out
+  const handleSignOut = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+    } catch (err) {
+      console.error("Error signing out:", err);
     }
+  };
+
+  // Function to open sign in dialog
+  const handleSignInClick = () => {
+    setIsAuthOpen(true);
+  };
+
+  return {
+    session,
+    sessionData,
+    isLoading,
+    isAuthenticated,
+    handleSignOut,
+    handleSignInClick,
+    isAuthOpen,
+    setIsAuthOpen
   };
 };
