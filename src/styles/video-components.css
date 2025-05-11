@@ -29,3 +29,16 @@
 .video-card-thumbnail:hover {
   animation: subtle-glow 0.3s forwards;
 }
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .video-title {
+    font-size: 0.8rem;
+    line-height: 1.2;
+    margin-top: 0.25rem;
+  }
+  
+  .video-meta-text {
+    line-height: 1;
+  }
+}

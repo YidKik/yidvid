@@ -131,4 +131,27 @@
     margin-left: -1rem;
     margin-right: -1rem;
   }
+  
+  /* Video card mobile optimizations */
+  .video-title {
+    margin-top: 4px;
+  }
+  
+  /* Reduce the gap between video cards in mobile view */
+  .videos-page .grid {
+    gap: 12px;
+  }
+  
+  /* Optimize video info spacing on mobile */
+  .video-meta-text .mx-1 {
+    margin-left: 0.15rem !important;
+    margin-right: 0.15rem !important;
+  }
+}
+
+/* Video thumbnail optimization for mobile */
+@media (max-width: 480px) {
+  .video-card-thumbnail {
+    aspect-ratio: 16/9;
+  }
 }

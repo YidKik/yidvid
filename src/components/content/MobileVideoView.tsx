@@ -43,17 +43,17 @@ export const MobileVideoView: React.FC<MobileVideoViewProps> = ({
   });
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-2">
       <VideoGrid 
         videos={displayVideos}
         maxVideos={videosPerPage}
         rowSize={rowSize}
         isLoading={isLoading || isRefreshing}
-        className="grid-cols-2 gap-4"
+        className="grid-cols-2 gap-2"
       />
       
       {totalPages > 1 && (
-        <div className="mt-4">
+        <div className="mt-2">
           <VideoGridPagination
             showAll={showMoreMobile}
             currentPage={currentPage}
@@ -67,7 +67,7 @@ export const MobileVideoView: React.FC<MobileVideoViewProps> = ({
         </div>
       )}
 
-      <div className="mt-6">
+      <div className="mt-4">
         <ChannelsGrid />
       </div>
     </div>

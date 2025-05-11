@@ -94,14 +94,14 @@ export const VideoCardInfo = ({
         <h3 
           className={cn(
             "video-title line-clamp-2 group-hover:text-primary transition-colors duration-200", 
-            isMobile ? "text-sm" : "text-youtube-title"
+            isMobile ? "text-xs font-medium" : "text-youtube-title"
           )}
         >
           {title}
         </h3>
         
         <div className="mt-1 flex flex-col text-xs video-meta-text">
-          {!hideChannelName && (
+          {!hideChannelName && !isMobile && (
             <>
               {hasValidChannelId ? (
                 <Link 
@@ -120,9 +120,9 @@ export const VideoCardInfo = ({
             </>
           )}
           
-          <div className="flex flex-col sm:flex-row sm:items-center">
+          <div className={cn("flex items-center", isMobile ? "text-[10px]" : "flex-col sm:flex-row sm:items-center")}>
             <span>{formatViews(views)}</span>
-            <span className="hidden sm:inline mx-1 text-youtube-small">•</span>
+            <span className="mx-1 text-youtube-small">•</span>
             <span className="text-youtube-small">{formattedDate}</span>
           </div>
         </div>
