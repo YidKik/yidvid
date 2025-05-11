@@ -11,23 +11,29 @@ import { VideoEmptyState } from "./VideoEmptyState";
 import { clearApplicationCache } from "@/lib/query-client";
 import { toast } from "sonner";
 import { useSessionManager } from "@/hooks/useSessionManager";
+import { Button } from "@/components/ui/button";
+import { RefreshCw } from "lucide-react";
 
 interface VideoContentProps {
   videos: VideoData[];
   isLoading: boolean;
+  error?: Error | null;
   refetch?: () => Promise<any>;
   forceRefetch?: () => Promise<any>;
   lastSuccessfulFetch?: Date | null;
   fetchAttempts?: number;
+  networkOffline?: boolean;
 }
 
 export const VideoContent = ({ 
   videos, 
   isLoading, 
+  error,
   refetch,
   forceRefetch,
   lastSuccessfulFetch,
-  fetchAttempts
+  fetchAttempts,
+  networkOffline = false
 }: VideoContentProps) => {
   const { isMobile } = useIsMobile();
   const { 
@@ -48,6 +54,7 @@ export const VideoContent = ({
   const initialLoadAttemptMade = useRef(false);
   const userChangedRef = useRef(session?.user?.id);
   const refreshTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [isManualRefreshing, setIsManualRefreshing] = useState(false);
   
   // Clean up any existing timeouts
   useEffect(() => {
@@ -64,7 +71,7 @@ export const VideoContent = ({
       userChangedRef.current = session?.user?.id;
       console.log("User authentication state changed, refreshing videos...");
       
-      if (forceRefetch) {
+      if (forceRefetch && navigator.onLine) {
         // Clear any cached data first
         clearApplicationCache();
         
@@ -73,7 +80,7 @@ export const VideoContent = ({
           forceRefetch().catch(err => {
             console.error("Error refreshing after auth change:", err);
           });
-        }, 500);
+        }, 1000);
       }
     }
   }, [session?.user?.id, forceRefetch, isAuthenticated]);
@@ -81,7 +88,7 @@ export const VideoContent = ({
   // Add a check for infinite refresh loops
   useEffect(() => {
     // If we have a very high fetch attempt count, it likely indicates a loop
-    if (fetchAttempts && fetchAttempts > 20) {
+    if (fetchAttempts && fetchAttempts > 10) {
       // Check when we last recorded this issue
       const lastLoopDetection = localStorage.getItem('loopDetectionTime');
       const now = new Date().getTime();
@@ -101,10 +108,10 @@ export const VideoContent = ({
     }
   }, [fetchAttempts]);
 
-  // Actively trigger a refresh on first mount if needed
+  // Actively trigger a refresh on first mount if needed (but only when online)
   useEffect(() => {
     if (!initialLoadAttemptMade.current && !isLoading && !isRefreshing && 
-        forceRefetch && videos.length === 0) {
+        forceRefetch && videos.length === 0 && navigator.onLine) {
       initialLoadAttemptMade.current = true;
       
       // Check refresh rate limits
@@ -126,7 +133,7 @@ export const VideoContent = ({
               duration: 5000
             });
           });
-        }, 500);
+        }, 1000);
       }
     }
   }, [isLoading, isRefreshing, forceRefetch, videos.length]);
@@ -134,48 +141,68 @@ export const VideoContent = ({
   // Always show some content immediately, whether user is logged in or not
   const displayVideos = videos?.length ? videos : createSampleVideos(8);
   
-  const recoveryRefresh = useCallback(() => {
-    if (forceRefetch) {
+  const recoveryRefresh = useCallback(async () => {
+    if (!forceRefetch || networkOffline) return;
+    
+    setIsManualRefreshing(true);
+    
+    try {
       // Clear cache first
       clearApplicationCache();
       toast.loading("Refreshing content...");
       
       // Short delay to let cache clear
-      setTimeout(() => {
-        forceRefetch()
-          .then(() => {
-            toast.success("Content refreshed successfully");
-          })
-          .catch(err => {
-            console.error("Recovery refresh failed:", err);
-            toast.error("Refresh failed", {
-              description: "Please try signing out and back in"
-            });
-          });
-      }, 500);
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      await forceRefetch();
+      toast.success("Content refreshed successfully");
+    } catch (err) {
+      console.error("Recovery refresh failed:", err);
+      toast.error("Refresh failed", {
+        description: "Please check your connection and try again"
+      });
+    } finally {
+      setIsManualRefreshing(false);
     }
-  }, [forceRefetch]);
+  }, [forceRefetch, networkOffline]);
+  
+  // Show a more user-friendly message for network errors
+  const isNetworkError = error && (
+    error.message?.includes('fetch') || 
+    error.message?.includes('network')
+  );
   
   return (
-    <div>
+    <div className="space-y-4">
       {/* Component to handle automatic refresh of stale content */}
       <AutoRefreshHandler
         videos={displayVideos}
         isRefreshing={isRefreshing}
         lastSuccessfulFetch={lastSuccessfulFetch}
-        forceRefetch={forceRefetch}
+        forceRefetch={navigator.onLine ? forceRefetch : undefined}
       />
       
-      {fetchAttempts && fetchAttempts > 3 && !isRefreshing && (
+      {/* Network or repeated fetch failure notice */}
+      {(isNetworkError || (fetchAttempts && fetchAttempts > 3)) && !isRefreshing && (
         <div className="my-4 p-4 bg-amber-50 border border-amber-200 rounded-md">
-          <h3 className="font-medium text-amber-800">Having trouble loading content?</h3>
-          <p className="text-amber-700 text-sm mb-2">We're encountering some difficulties refreshing the content.</p>
-          <button 
+          <h3 className="font-medium text-amber-800">
+            {networkOffline 
+              ? "You appear to be offline" 
+              : "Having trouble loading content?"}
+          </h3>
+          <p className="text-amber-700 text-sm mb-3">
+            {networkOffline
+              ? "We're showing cached content while your connection is unavailable."
+              : "We're encountering some difficulties refreshing the content."}
+          </p>
+          <Button 
             onClick={recoveryRefresh} 
-            className="text-sm bg-amber-100 hover:bg-amber-200 text-amber-800 font-medium py-1 px-3 rounded"
+            className="text-sm bg-amber-100 hover:bg-amber-200 text-amber-800 font-medium py-1 px-3 rounded flex items-center gap-2"
+            disabled={isManualRefreshing || networkOffline}
           >
-            Refresh Content
-          </button>
+            <RefreshCw size={14} className={isManualRefreshing ? "animate-spin" : ""} />
+            {isManualRefreshing ? "Refreshing..." : "Refresh Content"}
+          </Button>
         </div>
       )}
       
@@ -184,6 +211,7 @@ export const VideoContent = ({
         <MobileVideoView
           videos={displayVideos}
           isLoading={isLoading}
+          error={error}
           isRefreshing={isRefreshing}
           refetch={handleRefetch}
           forceRefetch={handleForceRefetch}
@@ -194,6 +222,7 @@ export const VideoContent = ({
         <DesktopVideoView
           videos={displayVideos}
           isLoading={isLoading}
+          error={error}
           isRefreshing={isRefreshing}
           refetch={handleRefetch}
           forceRefetch={handleForceRefetch}

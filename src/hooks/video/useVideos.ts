@@ -23,6 +23,7 @@ export interface UseVideosResult {
 export const useVideos = (): UseVideosResult => {
   const [authState, setAuthState] = useState<string | null>(null);
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
+  const [offlineMode, setOfflineMode] = useState<boolean>(false);
   
   // Set up real-time subscription for video changes (with performance optimization)
   useVideoRealtime();
@@ -39,6 +40,16 @@ export const useVideos = (): UseVideosResult => {
   // Set up auth state listener to trigger refreshes on login/logout
   useAuthStateListener(setAuthState);
 
+  // Check network connection status
+  const checkNetwork = () => {
+    const isOnline = navigator.onLine;
+    if (offlineMode !== !isOnline) {
+      setOfflineMode(!isOnline);
+      console.log(`Network status changed: ${isOnline ? 'online' : 'offline'}`);
+    }
+    return isOnline;
+  };
+
   // Set up React Query for videos with optimized caching
   const { 
     data: unfilteredData, 
@@ -51,7 +62,8 @@ export const useVideos = (): UseVideosResult => {
   } = useVideoQuery({
     fetchAllVideos,
     forceRefetch,
-    authState
+    authState,
+    checkNetwork
   });
 
   // Filter out unavailable videos with optimized performance
