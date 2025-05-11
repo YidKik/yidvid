@@ -46,21 +46,21 @@ export const MobileFeedbackSection = () => {
   const displayTestimonials = testimonials.length > 0 ? testimonials : [
     {
       id: "default-1",
-      content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
       author_name: "Default User",
       is_visible: true,
       display_order: 1
     },
     {
       id: "default-2",
-      content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.",
+      content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
       author_name: "Default User",
       is_visible: true,
       display_order: 2
     },
     {
       id: "default-3",
-      content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.",
+      content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
       author_name: "Default User",
       is_visible: true,
       display_order: 3
@@ -84,13 +84,13 @@ export const MobileFeedbackSection = () => {
       animate="visible"
       variants={fadeInVariants}
       transition={{ duration: 0.6 }}
-      className="mt-12 mb-8 bg-[#135d66] py-8"
+      className="mt-8 mb-6 bg-[#135d66] py-6"
     >
-      <h2 className="text-[#e3fef7] text-2xl font-bold text-center mb-6">Feedback</h2>
+      <h2 className="text-[#e3fef7] text-xl font-bold text-center mb-4">Feedback</h2>
       
       <div className="relative">
         <div 
-          className="overflow-x-auto pb-8 snap-x snap-mandatory scrollbar-hide"
+          className="overflow-x-auto pb-6 snap-x snap-mandatory scrollbar-hide"
           onScroll={handleScroll}
         >
           <div className="flex gap-4">
@@ -99,12 +99,12 @@ export const MobileFeedbackSection = () => {
                 key={testimonial.id}
                 className="w-[75vw] flex-shrink-0 first:ml-4 last:mr-4 snap-center"
               >
-                <div className="border border-[#ddf9f2] rounded-3xl p-5 bg-[#135d66] min-h-[160px] flex flex-col">
-                  <p className="text-[#e3fef7] text-sm leading-relaxed">
+                <div className="border border-[#ddf9f2] rounded-2xl p-4 bg-[#135d66] min-h-[120px] flex flex-col">
+                  <p className="text-[#e3fef7] text-xs leading-relaxed line-clamp-4">
                     {testimonial.content}
                   </p>
                   {testimonial.author_name && (
-                    <p className="text-[#77b0aa] text-xs mt-auto pt-3">- {testimonial.author_name}</p>
+                    <p className="text-[#77b0aa] text-xs mt-auto pt-2">- {testimonial.author_name}</p>
                   )}
                 </div>
               </div>
@@ -112,11 +112,11 @@ export const MobileFeedbackSection = () => {
           </div>
         </div>
         
-        <div className="flex justify-center gap-2 mt-4">
+        <div className="flex justify-center gap-2 mt-3">
           {displayTestimonials.map((_, index) => (
             <div
               key={index}
-              className={`w-2 h-2 rounded-full ${index === activeIndex ? 'bg-[#e3fef7]' : 'bg-[#77b0aa]'}`}
+              className={`w-1.5 h-1.5 rounded-full ${index === activeIndex ? 'bg-[#e3fef7]' : 'bg-[#77b0aa]'}`}
             />
           ))}
         </div>
