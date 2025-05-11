@@ -44,7 +44,7 @@ const MainContent = () => {
     if (!videos || videos.length === 0) return DEFAULT_META_KEYWORDS;
     
     const videoKeywords = videos.slice(0, 10).map(video => video.title);
-    const channelKeywords = [...new Set(videos.slice(0, 10).map(video => video.channel_name))];
+    const channelKeywords = [...new Set(videos.slice(0, 10).map(video => video.channelName))];
     
     const allKeywords = [
       ...videoKeywords,
@@ -73,9 +73,9 @@ const MainContent = () => {
         "item": {
           "@type": "VideoObject",
           "name": video.title,
-          "description": `${video.title} by ${video.channel_name} - Jewish video content`,
+          "description": `${video.title} by ${video.channelName} - Jewish video content`,
           "thumbnailUrl": video.thumbnail,
-          "uploadDate": video.uploaded_at ? new Date(video.uploaded_at).toISOString() : new Date().toISOString(),
+          "uploadDate": video.uploadedAt ? new Date(video.uploadedAt).toISOString() : new Date().toISOString(),
           "contentUrl": `https://yidvid.com/video/${video.id}`
         }
       }))
@@ -166,7 +166,7 @@ const Videos = () => {
   // Generate enhanced SEO content
   const seoKeywords = videos && videos.length > 0
     ? videos.slice(0, 10)
-        .map(v => [v.title, v.channel_name])
+        .map(v => [v.title, v.channelName])
         .flat()
         .concat(["Jewish videos", "Yiddish videos", "kosher content", "Torah videos"]).join(", ")
     : DEFAULT_META_KEYWORDS;
@@ -183,9 +183,9 @@ const Videos = () => {
       "item": {
         "@type": "VideoObject",
         "name": video.title,
-        "description": `${video.title} - Jewish video content from ${video.channel_name}`,
+        "description": `${video.title} - Jewish video content from ${video.channelName}`,
         "thumbnailUrl": video.thumbnail,
-        "uploadDate": video.uploaded_at ? new Date(video.uploaded_at).toISOString() : new Date().toISOString(),
+        "uploadDate": video.uploadedAt ? new Date(video.uploadedAt).toISOString() : new Date().toISOString(),
         "contentUrl": `https://yidvid.com/video/${video.id}`
       }
     }))
