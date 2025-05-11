@@ -12,7 +12,7 @@ export const useSessionManager = () => {
   const isAuthenticated = !!session?.user;
 
   // Session data query
-  const { data: sessionData } = useQuery({
+  const { data: sessionData, refetch } = useQuery({
     queryKey: ["session-data"],
     queryFn: async () => {
       if (!session?.user?.id) return null;
@@ -29,6 +29,18 @@ export const useSessionManager = () => {
     enabled: !!session?.user?.id,
     staleTime: 60000, // 1 minute
   });
+
+  // Function to refresh session data
+  const refreshSession = async () => {
+    try {
+      console.log("Refreshing session data");
+      const result = await refetch();
+      return !!result.data;
+    } catch (error) {
+      console.error("Error refreshing session:", error);
+      return false;
+    }
+  };
 
   // Function to handle sign out
   const handleSignOut = async () => {
@@ -50,6 +62,7 @@ export const useSessionManager = () => {
     sessionData,
     isLoading,
     isAuthenticated,
+    refreshSession,
     handleSignOut,
     handleSignInClick,
     isAuthOpen,
