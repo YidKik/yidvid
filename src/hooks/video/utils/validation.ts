@@ -18,6 +18,7 @@ export const hasRealVideos = (videos: VideoData[]): boolean => {
  * Creates sample videos for fallback when no real videos are available
  */
 export const createSampleVideos = (count = 12): VideoData[] => {
+  const now = new Date().toISOString();
   return Array.from({ length: count }).map((_, i) => ({
     id: `sample-${i}`,
     video_id: `sample-video-id-${i}`,
@@ -27,9 +28,9 @@ export const createSampleVideos = (count = 12): VideoData[] => {
     channelName: "Sample Channel",
     channelId: "sample-channel",
     views: Math.floor(Math.random() * 10000),
-    uploadedAt: new Date().toISOString(),
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    uploadedAt: now,
+    createdAt: now,
+    updatedAt: now,
     duration: "0:30",
     channelThumbnail: null
   }));

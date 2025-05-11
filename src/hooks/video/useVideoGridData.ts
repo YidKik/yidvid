@@ -1,19 +1,11 @@
 
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { VideoData } from "./types/video-fetcher";
 
-export interface VideoGridItem {
-  id: string;
-  video_id: string;
-  title: string;
-  thumbnail: string;
-  channelName: string;
-  channelId: string;
-  views: number | null;
-  uploadedAt: string | Date;
+export type VideoGridItem = Omit<VideoData, "updatedAt" | "createdAt"> & {
   updated_at?: string | Date;
-  channelThumbnail?: string;
-}
+};
 
 export const useVideoGridData = (maxVideos: number = 12) => {
   const [videos, setVideos] = useState<VideoGridItem[]>([]);

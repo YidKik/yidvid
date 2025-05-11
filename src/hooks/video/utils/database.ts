@@ -1,5 +1,6 @@
 
 import { VideoData } from "../types/video-fetcher";
+import { supabase } from "@/integrations/supabase/client";
 
 /**
  * Formats raw database video data into the VideoData format
@@ -25,4 +26,75 @@ export const formatVideoData = (data: any[]): VideoData[] => {
     duration: video.duration || null,
     channelThumbnail: video.youtube_channels?.thumbnail_url || null
   }));
+};
+
+/**
+ * Fetch videos from the database
+ */
+export const fetchVideosFromDatabase = async (): Promise<any[]> => {
+  try {
+    const { data, error } = await supabase
+      .from("youtube_videos")
+      .select("*, youtube_channels(thumbnail_url)")
+      .is("deleted_at", null)
+      .order("uploaded_at", { ascending: false })
+      .limit(150);
+
+    if (error) {
+      console.error("Error fetching videos:", error);
+      return [];
+    }
+    
+    return data || [];
+  } catch (err) {
+    console.error("Failed to fetch videos:", err);
+    return [];
+  }
+};
+
+/**
+ * Fetch active channels from the database
+ */
+export const fetchActiveChannels = async (): Promise<any[]> => {
+  try {
+    const { data, error } = await supabase
+      .from("youtube_channels")
+      .select("channel_id, thumbnail_url")
+      .is("deleted_at", null)
+      .limit(50);
+
+    if (error) {
+      console.error("Error fetching channels:", error);
+      return [];
+    }
+    
+    return data || [];
+  } catch (err) {
+    console.error("Failed to fetch channels:", err);
+    return [];
+  }
+};
+
+/**
+ * Fetch updated videos after syncing with YouTube
+ */
+export const fetchUpdatedVideosAfterSync = async (): Promise<any[]> => {
+  try {
+    const { data, error } = await supabase
+      .from("youtube_videos")
+      .select("*, youtube_channels(thumbnail_url)")
+      .is("deleted_at", null)
+      .order("uploaded_at", { ascending: false })
+      .limit(150);
+
+    if (error) {
+      console.error("Error fetching updated videos:", error);
+      return [];
+    }
+    
+    return data || [];
+  } catch (err) {
+    console.error("Error fetching updated videos:", err);
+    return [];
+  }
 };

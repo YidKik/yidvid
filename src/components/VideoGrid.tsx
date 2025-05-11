@@ -7,9 +7,10 @@ import { VideoGridError } from "@/components/video/VideoGridError";
 import { useVideoGridData, VideoGridItem as VideoItemType } from "@/hooks/video/useVideoGridData";
 import { filterUnavailableVideos } from "@/hooks/video/utils/validation";
 import { memo, useCallback } from "react";
+import { VideoData } from "@/hooks/video/types/video-fetcher";
 
 interface VideoGridProps {
-  videos?: VideoItemType[];
+  videos?: VideoItemType[] | VideoData[];
   maxVideos?: number;
   rowSize?: number;
   isLoading?: boolean;
@@ -34,7 +35,7 @@ export const VideoGrid = memo(({
   let videos = externalVideos || fetchedVideos;
   
   // Filter out unavailable videos
-  videos = filterUnavailableVideos(videos);
+  videos = filterUnavailableVideos(videos as VideoData[]);
   
   // Determine loading state
   const isLoading = externalLoading !== undefined ? externalLoading : internalLoading;
@@ -103,7 +104,7 @@ export const VideoGrid = memo(({
       
       <div className={cn("grid", gridCols, gridGap)}>
         {displayVideos.map((video) => (
-          <VideoGridItem key={video.id} video={video} />
+          <VideoGridItem key={video.id} video={video as VideoData} />
         ))}
       </div>
     </div>
