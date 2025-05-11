@@ -14,7 +14,7 @@ interface AdminSectionProps {
   userId?: string;
 }
 
-// Admin PIN for backdoor access
+// Admin PIN for backdoor access - make sure this matches with Dashboard.tsx
 const ADMIN_PIN = "Moshe@4463";
 
 export const AdminSection = ({ userId }: AdminSectionProps) => {
@@ -116,7 +116,11 @@ export const AdminSection = ({ userId }: AdminSectionProps) => {
 
   const handleUnlockWithPin = () => {
     console.log("Validating PIN:", adminPin, "against expected:", ADMIN_PIN);
-    if (adminPin === ADMIN_PIN) {
+    
+    // Trim any whitespace and perform exact comparison
+    const cleanedInputPin = adminPin.trim();
+    
+    if (cleanedInputPin === ADMIN_PIN) {
       // Set PIN bypass for admin access
       localStorage.setItem(`admin-pin-bypass`, "true");
       

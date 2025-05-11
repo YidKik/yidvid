@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BackButton } from "@/components/navigation/BackButton";
@@ -15,7 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Lock } from "lucide-react";
 import { toast } from "sonner";
 
-// Updated Admin PIN
+// Updated Admin PIN - ensure it matches with AdminSection.tsx
 const ADMIN_PIN = "Moshe@4463";
 
 export default function Dashboard() {
@@ -41,8 +42,11 @@ export default function Dashboard() {
   const handlePinSubmit = () => {
     console.log("Checking PIN:", adminPin, "against expected:", ADMIN_PIN);
     
+    // Trim any whitespace and perform exact comparison
+    const cleanedInputPin = adminPin.trim();
+    
     // Always grant admin access if PIN is correct, regardless of session
-    if (adminPin === ADMIN_PIN) {
+    if (cleanedInputPin === ADMIN_PIN) {
       // Set PIN bypass flag in localStorage
       localStorage.setItem(`admin-pin-bypass`, "true");
       toast.success("Admin access granted via PIN");
