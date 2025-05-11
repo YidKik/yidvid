@@ -22,7 +22,7 @@ export const HomeHeader = () => {
         <div className="flex items-center space-x-2">
           <span className="text-white font-display text-2xl">YidVid</span>
         </div>
-        <nav className="flex items-center space-x-8">
+        <nav className="flex items-center space-x-12">
           <button 
             onClick={() => scrollToSection('home-section')} 
             className="text-white transition-colors bg-transparent border-none p-0 m-0 hover:bg-[#135d66] hover:px-3 hover:py-1 hover:rounded-md"
