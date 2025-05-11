@@ -56,16 +56,16 @@ export const HomeHeader = () => {
           <span className="text-white font-display text-2xl">YidVid</span>
         </div>
         <nav className="flex items-center space-x-8">
-          <Link 
-            to="/" 
-            className={`text-white transition-colors bg-transparent hover:bg-transparent ${
+          <button 
+            onClick={() => scrollToSection('home-section')} 
+            className={`text-white transition-colors bg-transparent border-none p-0 m-0 hover:bg-transparent ${
               activeSection === 'home' 
                 ? 'bg-[#135d66] px-3 py-1 rounded-md' 
                 : ''
             }`}
           >
             Home
-          </Link>
+          </button>
           <button 
             onClick={() => scrollToSection('about-section')} 
             className={`text-white transition-colors bg-transparent border-none p-0 m-0 hover:bg-transparent ${

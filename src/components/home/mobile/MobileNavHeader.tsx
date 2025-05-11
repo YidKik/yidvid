@@ -35,6 +35,7 @@ export const MobileNavHeader = () => {
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
+      setActiveSection(sectionId.split('-')[0]);
     }
   };
 
@@ -46,26 +47,38 @@ export const MobileNavHeader = () => {
         </div>
         
         <nav className="flex items-center gap-6">
-          {[
-            { id: 'home-section', label: 'Home' },
-            { id: 'about-section', label: 'About' },
-            { id: 'contact-section', label: 'Contact' },
-            { id: 'sign-in', label: 'Sign in' }
-          ].map(({ id, label }) => (
-            <button
-              key={id}
-              onClick={() => scrollToSection(id)}
-              className={`text-sm font-medium transition-colors border-none p-0 m-0 bg-transparent ${
-                activeSection === id.split('-')[0] && id !== 'sign-in'
-                  ? 'bg-[#135d66]/20 px-3 py-1 rounded-md'
-                  : ''
-              }`}
-            >
-              {label}
-            </button>
-          ))}
+          <button
+            onClick={() => scrollToSection('home-section')}
+            className={`text-sm font-medium transition-colors border-none p-0 m-0 bg-transparent ${
+              activeSection === 'home' ? 'bg-[#135d66]/20 px-3 py-1 rounded-md' : ''
+            }`}
+          >
+            Home
+          </button>
+          <button
+            onClick={() => scrollToSection('about-section')}
+            className={`text-sm font-medium transition-colors border-none p-0 m-0 bg-transparent ${
+              activeSection === 'about' ? 'bg-[#135d66]/20 px-3 py-1 rounded-md' : ''
+            }`}
+          >
+            About
+          </button>
+          <button
+            onClick={() => scrollToSection('contact-section')}
+            className={`text-sm font-medium transition-colors border-none p-0 m-0 bg-transparent ${
+              activeSection === 'contact' ? 'bg-[#135d66]/20 px-3 py-1 rounded-md' : ''
+            }`}
+          >
+            Contact
+          </button>
+          <button
+            onClick={() => {}}
+            className="text-sm font-medium transition-colors border-none p-0 m-0 bg-transparent"
+          >
+            Sign in
+          </button>
         </nav>
       </div>
     </header>
   );
-};
+}
