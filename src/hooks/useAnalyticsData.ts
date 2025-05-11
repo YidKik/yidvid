@@ -2,7 +2,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { startOfWeek, startOfMonth, isWithinInterval } from "date-fns";
+import { startOfWeek, startOfMonth } from "date-fns";
 
 export interface Session {
   session_start: string;
@@ -31,15 +31,19 @@ export const useAnalyticsData = (userId: string | undefined) => {
       }
 
       try {
-        // Check if user is admin first
-        const { data: profile, error: profileError } = await supabase
-          .from("profiles")
-          .select("is_admin")
-          .eq("id", userId)
-          .single();
+        // Check if user is admin first - using direct query instead of profiles RLS
+        const { data: adminCheck, error: adminCheckError } = await supabase.rpc('check_admin_status', {
+          user_id_param: userId
+        });
 
-        if (profileError) throw profileError;
-        if (!profile?.is_admin) throw new Error("Unauthorized access");
+        if (adminCheckError) {
+          console.error('Admin check error:', adminCheckError);
+          throw adminCheckError;
+        }
+        
+        if (!adminCheck) {
+          throw new Error("Unauthorized access");
+        }
 
         // Get total channels count
         const { count: totalChannels, error: channelsError } = await supabase
@@ -63,35 +67,32 @@ export const useAnalyticsData = (userId: string | undefined) => {
 
         if (viewsError) throw viewsError;
 
-        // Get total users count
+        // Get total users count directly
         const { count: totalUsers, error: usersError } = await supabase
           .from("profiles")
           .select("*", { count: "exact", head: true });
 
         if (usersError) throw usersError;
 
-        // Get session data for watch time calculation
+        // Get analytics data for sessions
         const { data: sessions, error: sessionsError } = await supabase
           .from("user_analytics")
-          .select("session_start, session_end")
-          .not('session_end', 'is', null);
+          .select("session_start, session_end");
 
         if (sessionsError) {
           console.error('Error fetching sessions:', sessionsError);
           throw sessionsError;
         }
 
-        // Calculate total watch time in hours with proper conversion
-        const totalHours = (sessions as Session[] || []).reduce((sum, session) => {
+        // Calculate total watch time in hours
+        const totalHours = (sessions || []).reduce((sum, session) => {
           if (!session.session_end || !session.session_start) return sum;
           
           const start = new Date(session.session_start);
           const end = new Date(session.session_end);
           
-          // Calculate duration in milliseconds and convert to hours
           const durationInHours = (end.getTime() - start.getTime()) / (1000 * 60 * 60);
           
-          // Only add if duration is positive and less than 24 hours (to filter out potentially invalid sessions)
           if (durationInHours > 0 && durationInHours < 24) {
             return sum + durationInHours;
           }
@@ -108,7 +109,7 @@ export const useAnalyticsData = (userId: string | undefined) => {
 
         // Calculate most popular hour
         const hourCounts: { [key: number]: number } = {};
-        (sessions as Session[] || []).forEach(session => {
+        (sessions || []).forEach(session => {
           const hour = new Date(session.session_start).getHours();
           hourCounts[hour] = (hourCounts[hour] || 0) + 1;
         });
@@ -131,32 +132,33 @@ export const useAnalyticsData = (userId: string | undefined) => {
         const weekStart = startOfWeek(now);
         const monthStart = startOfMonth(now);
 
-        // Fetch all analytics from the beginning of the month to now
-        const { data: recentAnalytics, error: recentError } = await supabase
+        // Fetch user analytics for the month
+        const { data: recentSessions, error: recentError } = await supabase
           .from("user_analytics")
           .select("user_id, session_start")
-          .gte("session_start", monthStart.toISOString());
+          .gte("session_start", monthStart.toISOString())
+          .not('user_id', 'is', null);
 
-        if (recentError) throw recentError;
+        if (recentError) {
+          console.error('Error fetching recent sessions:', recentError);
+          throw recentError;
+        }
 
-        // Count unique users in each time period
-        const uniqueUserIds = new Set();
+        // Count unique users by time period
         const weeklyUserIds = new Set();
         const monthlyUserIds = new Set();
 
-        recentAnalytics?.forEach(session => {
+        (recentSessions || []).forEach(session => {
           const sessionDate = new Date(session.session_start);
           
           if (session.user_id) {
-            uniqueUserIds.add(session.user_id);
+            // All sessions are already filtered to be within the current month
+            monthlyUserIds.add(session.user_id);
             
             // Check if in current week
             if (sessionDate >= weekStart) {
               weeklyUserIds.add(session.user_id);
             }
-            
-            // All sessions are already filtered to be within the current month
-            monthlyUserIds.add(session.user_id);
           }
         });
 
@@ -172,7 +174,7 @@ export const useAnalyticsData = (userId: string | undefined) => {
           weeklyUsers: weeklyUserIds.size,
           monthlyUsers: monthlyUserIds.size
         };
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error fetching dashboard stats:', error);
         toast.error(error.message || 'Failed to fetch dashboard statistics');
         throw error;
