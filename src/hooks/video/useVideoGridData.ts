@@ -15,7 +15,7 @@ export interface VideoGridItem {
   channelThumbnail?: string;
 }
 
-export const useVideoGridData = (maxVideos: number = 12, isAuthenticated: boolean = false) => {
+export const useVideoGridData = (maxVideos: number = 12) => {
   const [videos, setVideos] = useState<VideoGridItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
@@ -24,14 +24,55 @@ export const useVideoGridData = (maxVideos: number = 12, isAuthenticated: boolea
     const fetchVideos = async () => {
       setLoading(true);
       try {
-        // Skip fetching if not authenticated
-        if (!isAuthenticated) {
-          setLoading(false);
-          return;
-        }
-
-        console.log(`Fetching up to ${maxVideos} videos from Supabase`);
+        console.log(`Fetching up to ${maxVideos} videos from Supabase or edge function`);
         
+        // Try edge function first for better reliability
+        try {
+          const response = await fetch("https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/get-public-videos", {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1aW5ja3R2c2l1enRzeGN1cWZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY0ODgzNzcsImV4cCI6MjA1MjA2NDM3N30.zbReqHoAR33QoCi_wqNp8AtNofTX3JebM7jvjFAWbMg`
+            }
+          });
+          
+          if (response.ok) {
+            const result = await response.json();
+            if (result.data && Array.isArray(result.data)) {
+              console.log(`Retrieved ${result.data.length} videos with edge function`);
+              
+              // Map the edge function data to match our VideoGridItem interface
+              const mappedVideos = result.data.map(video => ({
+                id: video.id,
+                video_id: video.video_id,
+                title: video.title || "Untitled Video",
+                thumbnail: video.thumbnail || '/placeholder.svg',
+                channelName: video.channel_name || "Unknown Channel",
+                channelId: video.channel_id || "unknown-channel",
+                views: video.views !== null ? parseInt(String(video.views)) : null,
+                uploadedAt: video.uploaded_at || new Date().toISOString(),
+                updated_at: video.updated_at || video.uploaded_at,
+                channelThumbnail: video.youtube_channels?.thumbnail_url || null,
+              }));
+              
+              // Sort videos by uploaded_at in descending order
+              const sortedVideos = mappedVideos.sort((a, b) => {
+                const dateA = new Date(a.uploadedAt).getTime();
+                const dateB = new Date(b.uploadedAt).getTime();
+                return dateB - dateA; // Newest first
+              });
+              
+              setVideos(sortedVideos);
+              setLoading(false);
+              return;
+            }
+          }
+        } catch (edgeFnError) {
+          console.error("Edge function error:", edgeFnError);
+          // Continue to try database query as fallback
+        }
+        
+        // Fallback to direct database query
         const { data, error } = await supabase
           .from("youtube_videos")
           .select(`
@@ -41,7 +82,7 @@ export const useVideoGridData = (maxVideos: number = 12, isAuthenticated: boolea
             )
           `)
           .is("deleted_at", null)
-          .order("uploaded_at", { ascending: false }) // Sort by uploaded_at instead of updated_at
+          .order("uploaded_at", { ascending: false })
           .limit(maxVideos);
         
         if (error) {
@@ -83,7 +124,7 @@ export const useVideoGridData = (maxVideos: number = 12, isAuthenticated: boolea
     };
 
     fetchVideos();
-  }, [maxVideos, isAuthenticated]);
+  }, [maxVideos]);
 
   return { videos, loading, error };
 };

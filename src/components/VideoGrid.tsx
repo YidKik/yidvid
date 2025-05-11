@@ -5,7 +5,6 @@ import { VideoGridLoader } from "@/components/video/VideoGridLoader";
 import { VideoGridItem } from "@/components/video/VideoGridItem";
 import { VideoGridError } from "@/components/video/VideoGridError";
 import { useVideoGridData, VideoGridItem as VideoItemType } from "@/hooks/video/useVideoGridData";
-import { useSessionManager } from "@/hooks/useSessionManager";
 
 interface VideoGridProps {
   videos?: VideoItemType[];
@@ -23,8 +22,8 @@ export const VideoGrid = ({
   className,
 }: VideoGridProps) => {
   const { isMobile, isTablet } = useIsMobile();
-  const { session } = useSessionManager();
-  const { videos: fetchedVideos, loading: internalLoading, error } = useVideoGridData(maxVideos, !!session);
+  // Removed session dependency since we want the same behavior for all users
+  const { videos: fetchedVideos, loading: internalLoading, error } = useVideoGridData(maxVideos);
   
   // Use external videos if provided, otherwise use fetched videos
   const videos = externalVideos || fetchedVideos;
