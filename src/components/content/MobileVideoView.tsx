@@ -16,6 +16,7 @@ export interface MobileVideoViewProps {
   forceRefetch?: () => Promise<any>;
   lastSuccessfulFetch?: Date | null;
   fetchAttempts?: number;
+  error?: Error | null;
 }
 
 export const MobileVideoView: React.FC<MobileVideoViewProps> = ({
@@ -23,7 +24,8 @@ export const MobileVideoView: React.FC<MobileVideoViewProps> = ({
   isLoading,
   isRefreshing,
   refetch,
-  forceRefetch
+  forceRefetch,
+  error
 }) => {
   const { isMobile } = useIsMobile();
   
@@ -65,6 +67,8 @@ export const MobileVideoView: React.FC<MobileVideoViewProps> = ({
         maxVideos={videosPerPage}
         rowSize={rowSize}
         isLoading={isLoading || isRefreshing}
+        error={error}
+        onRetry={refetch}
         className="grid-cols-2 gap-1"
       />
       
