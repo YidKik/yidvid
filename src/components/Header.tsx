@@ -23,6 +23,7 @@ export const Header = () => {
   
   // Determine if we're on the home page
   const isHomePage = location.pathname === "/";
+  const isVideosPage = location.pathname === "/videos";
   
   // Header animation states
   const [scrolled, setScrolled] = useState(false);
@@ -104,7 +105,7 @@ export const Header = () => {
           : isMobile 
             ? 'h-14 bg-white/30 backdrop-blur-md' 
             : 'bg-white/30 backdrop-blur-md'
-      }`}
+      } ${isVideosPage ? 'videos-page' : isHomePage ? 'home-page' : ''}`}
       initial={{ opacity: 1, y: 0 }}
       animate={{ 
         opacity: isVisible ? 1 : 0, 

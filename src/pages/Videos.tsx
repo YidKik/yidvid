@@ -1,4 +1,3 @@
-
 import { Header } from "@/components/Header";
 import Auth from "@/pages/Auth";
 import { useState, useEffect } from "react";
@@ -40,7 +39,7 @@ const MainContent = () => {
   }, []);
 
   return (
-    <div className="flex-1">
+    <div className="flex-1 videos-page">
       <Header />
       <motion.main 
         initial={{ opacity: 0, y: 20 }}
@@ -139,7 +138,7 @@ const Videos = () => {
         <link rel="icon" href="/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png" />
       </Helmet>
       
-      <div className="min-h-screen w-full bg-gradient-to-b from-white to-gray-50">
+      <div className="min-h-screen w-full bg-gradient-to-b from-white to-gray-50 videos-page">
         <MainContent />
         <Auth isOpen={isAuthOpen} onOpenChange={setIsAuthOpen} />
       </div>

@@ -40,7 +40,7 @@ export const MobileHeaderActions = ({
             onClick={handleSettingsClick}
             variant="ghost" 
             size="sm"
-            className={`${buttonClass} text-xs rounded-md transition-all duration-300 mobile-button-animate flex items-center gap-1 px-2 py-1`}
+            className={`${buttonClass} text-xs rounded-md flex items-center gap-1 px-2 py-1`}
           >
             <Settings className="h-3 w-3" />
           </Button>
@@ -50,7 +50,7 @@ export const MobileHeaderActions = ({
           <Button 
             variant="ghost" 
             size="icon"
-            className={`${buttonClass} h-6 w-6 rounded-md transition-all duration-300 mobile-button-animate`}
+            className={`${buttonClass} h-6 w-6 rounded-md`}
             onClick={() => {
               const contactDialog = document.querySelector('[data-state="closed"][role="dialog"]');
               if (contactDialog) {
@@ -64,7 +64,7 @@ export const MobileHeaderActions = ({
             onClick={onAuthOpen}
             variant="ghost" 
             size="sm"
-            className={`${buttonClass} text-xs rounded-md transition-all duration-300 mobile-button-animate flex items-center gap-1 px-2 py-1`}
+            className={`${buttonClass} text-xs rounded-md flex items-center gap-1 px-2 py-1`}
           >
             <LogIn className="h-3 w-3" />
             <span>Sign in</span>
