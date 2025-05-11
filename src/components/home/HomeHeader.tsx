@@ -25,19 +25,19 @@ export const HomeHeader = () => {
         <nav className="flex items-center space-x-8">
           <button 
             onClick={() => scrollToSection('home-section')} 
-            className="text-white transition-colors bg-transparent border-none p-0 m-0 hover:bg-transparent"
+            className="text-white transition-colors bg-transparent border-none p-0 m-0 hover:bg-[#135d66] hover:px-3 hover:py-1 hover:rounded-md"
           >
             Home
           </button>
           <button 
             onClick={() => scrollToSection('about-section')} 
-            className="text-white transition-colors bg-transparent border-none p-0 m-0 hover:bg-transparent"
+            className="text-white transition-colors bg-transparent border-none p-0 m-0 hover:bg-[#135d66] hover:px-3 hover:py-1 hover:rounded-md"
           >
             About
           </button>
           <button 
             onClick={() => scrollToSection('contact-section')} 
-            className="text-white transition-colors bg-transparent border-none p-0 m-0 hover:bg-transparent"
+            className="text-white transition-colors bg-transparent border-none p-0 m-0 hover:bg-[#135d66] hover:px-3 hover:py-1 hover:rounded-md"
           >
             Contact
           </button>
@@ -46,7 +46,7 @@ export const HomeHeader = () => {
               setActiveTab('signin');
               setIsAuthOpen(true);
             }}
-            className="text-white transition-colors bg-transparent border-none p-0 m-0 hover:bg-transparent"
+            className="text-white transition-colors bg-transparent border-none p-0 m-0 hover:bg-[#135d66] hover:px-3 hover:py-1 hover:rounded-md"
           >
             Sign in
           </button>

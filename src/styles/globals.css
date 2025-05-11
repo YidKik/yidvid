@@ -59,19 +59,18 @@ header button {
   color: inherit;
 }
 
-/* Override for active section */
-.home-page header a[href="/"]:has(.active),
-.home-page header button.active,
-.home-page nav button.active {
-  background-color: transparent !important;
+/* Header button hover styles - use fixed padding to prevent layout shift */
+.home-page header button,
+.home-page nav button {
+  padding: 0.25rem 0.75rem !important;
+  margin: -0.25rem -0.75rem !important; /* Negative margin to compensate for padding */
+  border-radius: 0.375rem !important;
+  transition: background-color 0.2s ease-in-out !important;
 }
 
-/* Header button hover styles */
 .home-page header button:hover,
 .home-page nav button:hover {
   background-color: #135d66 !important;
-  padding: 0.25rem 0.75rem !important;
-  border-radius: 0.375rem !important;
 }
 
 /* Stats section buttons in home page should never have red backgrounds */
