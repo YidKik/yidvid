@@ -34,6 +34,13 @@ export const useAuthBase = () => {
    */
   const prefetchUserData = useCallback(async (userId: string) => {
     try {
+      // Check if we have a valid session before prefetching
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (!sessionData?.session?.access_token) {
+        console.warn("No active session found. Skipping data prefetch.");
+        return;
+      }
+      
       // Prefetch user profile - improves UX by having data ready when profile page loads
       queryClient.prefetchQuery({
         queryKey: ["profile", userId],
@@ -96,6 +103,33 @@ export const useAuthBase = () => {
     }
   }, [queryClient]);
 
+  /**
+   * Validates the current authentication session
+   * Returns true if valid, false otherwise
+   */
+  const validateSession = useCallback(async () => {
+    try {
+      const { data, error } = await supabase.auth.getSession();
+      
+      if (error || !data?.session?.user) {
+        console.warn("Invalid session detected:", error?.message);
+        return false;
+      }
+      
+      // Check that the access token isn't expired
+      const tokenExpiry = data.session.expires_at;
+      if (tokenExpiry && tokenExpiry * 1000 < Date.now()) {
+        console.warn("Session token expired");
+        return false;
+      }
+      
+      return true;
+    } catch (err) {
+      console.error("Error validating session:", err);
+      return false;
+    }
+  }, []);
+
   return {
     navigate,
     session,
@@ -108,6 +142,7 @@ export const useAuthBase = () => {
     setIsLoggingOut,
     clearErrors,
     prefetchUserData,
+    validateSession,
     isAuthenticated: !!session
   };
 };

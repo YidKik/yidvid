@@ -10,8 +10,8 @@ import { supabase } from "@/integrations/supabase/client";
  * @param queryClient React Query client to manage cache
  */
 export function prefetchUserData(session: Session, queryClient: QueryClient): Promise<boolean> {
-  if (!session?.user?.id) {
-    console.log("No session user ID available for prefetching");
+  if (!session?.user?.id || !session?.access_token) {
+    console.log("No valid session data available for prefetching");
     return Promise.resolve(false);
   }
   
@@ -19,20 +19,52 @@ export function prefetchUserData(session: Session, queryClient: QueryClient): Pr
   
   // Create a single prefetch Promise that won't fail the whole operation
   return new Promise((resolve) => {
-    // Direct query approach - simpler query to avoid RLS issues
-    queryClient.prefetchQuery({
-      queryKey: ["user-profile-minimal", session.user.id],
-      queryFn: async () => {
-        try {
-          // Use the simplest possible query to avoid RLS recursion
-          const { data, error } = await supabase
-            .from("profiles")
-            .select("id, email, is_admin")
-            .eq("id", session.user.id)
-            .maybeSingle();
-          
-          if (error) {
-            console.warn("Simple profile fetch failed:", error.message);
+    // Verify the session is valid before proceeding with data fetching
+    supabase.auth.getUser().then(({ data, error }) => {
+      if (error || !data?.user) {
+        console.error("Session validation failed:", error?.message);
+        resolve(false);
+        return;
+      }
+      
+      // Direct query approach - simpler query to avoid RLS issues
+      queryClient.prefetchQuery({
+        queryKey: ["user-profile-minimal", session.user.id],
+        queryFn: async () => {
+          try {
+            // Use the simplest possible query to avoid RLS recursion
+            const { data, error } = await supabase
+              .from("profiles")
+              .select("id, email, is_admin")
+              .eq("id", session.user.id)
+              .maybeSingle();
+            
+            if (error) {
+              console.warn("Simple profile fetch failed:", error.message);
+              // Return minimal data from session as fallback
+              return {
+                id: session.user.id,
+                email: session.user.email,
+                is_admin: false
+              };
+            }
+            
+            console.log("Admin status fetch result:", data?.is_admin);
+            
+            // Cache admin status specifically for quick access
+            if (data?.is_admin === true) {
+              queryClient.setQueryData(
+                ["admin-status", session.user.id],
+                { isAdmin: true }
+              );
+              
+              // Log successful admin cache
+              console.log("Admin status successfully cached for user:", session.user.id);
+            }
+            
+            return data;
+          } catch (err) {
+            console.error("Error in minimal profile fetch:", err);
             // Return minimal data from session as fallback
             return {
               id: session.user.id,
@@ -40,84 +72,61 @@ export function prefetchUserData(session: Session, queryClient: QueryClient): Pr
               is_admin: false
             };
           }
-          
-          console.log("Admin status fetch result:", data?.is_admin);
-          
-          // Cache admin status specifically for quick access
-          if (data?.is_admin === true) {
-            queryClient.setQueryData(
-              ["admin-status", session.user.id],
-              { isAdmin: true }
-            );
-            
-            // Log successful admin cache
-            console.log("Admin status successfully cached for user:", session.user.id);
-          }
-          
-          return data;
-        } catch (err) {
-          console.error("Error in minimal profile fetch:", err);
-          // Return minimal data from session as fallback
-          return {
-            id: session.user.id,
-            email: session.user.email,
-            is_admin: false
-          };
+        },
+        staleTime: 10000, // 10 seconds
+        retry: 2, // Increase retry attempts for this critical query
+        meta: {
+          suppressToasts: true
         }
-      },
-      staleTime: 10000, // 10 seconds
-      retry: 2, // Increase retry attempts for this critical query
-      meta: {
-        suppressToasts: true
-      }
-    })
-    .then(() => {
-      // Only attempt full profile fetch if minimal one succeeded
-      setTimeout(() => {
-        queryClient.prefetchQuery({
-          queryKey: ["user-profile-settings", session.user.id],
-          queryFn: async () => {
-            try {
-              // Attempt to get full profile data but don't block on it
-              const { data } = await supabase
-                .from("profiles")
-                .select("*")
-                .eq("id", session.user.id)
-                .maybeSingle();
-              
-              // Also cache the admin status from the full profile data
-              if (data?.is_admin === true) {
-                queryClient.setQueryData(
-                  ["admin-status", session.user.id],
-                  { isAdmin: true }
-                );
-                console.log("Admin status cached from full profile data");
+      })
+      .then(() => {
+        // Only attempt full profile fetch if minimal one succeeded
+        setTimeout(() => {
+          queryClient.prefetchQuery({
+            queryKey: ["user-profile-settings", session.user.id],
+            queryFn: async () => {
+              try {
+                // Attempt to get full profile data but don't block on it
+                const { data } = await supabase
+                  .from("profiles")
+                  .select("*")
+                  .eq("id", session.user.id)
+                  .maybeSingle();
+                
+                // Also cache the admin status from the full profile data
+                if (data?.is_admin === true) {
+                  queryClient.setQueryData(
+                    ["admin-status", session.user.id],
+                    { isAdmin: true }
+                  );
+                  console.log("Admin status cached from full profile data");
+                }
+                
+                return data || {
+                  id: session.user.id,
+                  email: session.user.email,
+                  is_admin: false
+                };
+              } catch (err) {
+                // Just log error and rely on minimal data
+                console.warn("Full profile fetch failed:", err);
+                return null;
               }
-              
-              return data || {
-                id: session.user.id,
-                email: session.user.email,
-                is_admin: false
-              };
-            } catch (err) {
-              // Just log error and rely on minimal data
-              console.warn("Full profile fetch failed:", err);
-              return null;
+            },
+            staleTime: 10000,
+            retry: 1,
+            meta: {
+              suppressToasts: true
             }
-          },
-          staleTime: 10000,
-          retry: 1,
-          meta: {
-            suppressToasts: true
-          }
-        });
-      }, 500); // Delay full fetch to prioritize minimal data
-      
-      resolve(true);
-    })
-    .catch(err => {
-      console.error("Critical error in profile prefetch:", err);
-      resolve(false);
+          });
+        }, 500); // Delay full fetch to prioritize minimal data
+        
+        resolve(true);
+      })
+      .catch(err => {
+        console.error("Critical error in profile prefetch:", err);
+        resolve(false);
+      });
     });
   });
 }

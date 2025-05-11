@@ -23,6 +23,7 @@ export const SignInForm = ({
 }: SignInFormProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loginAttempted, setLoginAttempted] = useState(false);
   const isMobile = useIsMobile();
   
   const { 
@@ -31,7 +32,10 @@ export const SignInForm = ({
     setLoginError,
     isLoading: isSigningIn
   } = useSignIn({ 
-    onSuccess: () => onOpenChange(false) 
+    onSuccess: () => {
+      toast.success("Signed in successfully!", { id: "signin-success" });
+      onOpenChange(false);
+    }
   });
 
   // Sync the parent's loading state with our internal state
@@ -46,6 +50,7 @@ export const SignInForm = ({
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoginAttempted(true);
     
     // Clear any previous errors
     setLoginError("");
@@ -57,8 +62,16 @@ export const SignInForm = ({
     
     try {
       const success = await signIn({ email, password });
+      
+      // Only close dialog and show success toast if sign-in was successful
       if (success) {
         toast.success("Signed in successfully!", { id: "signin-success" });
+        onOpenChange(false);
+      } else if (loginAttempted) {
+        // If login was attempted but not successful, ensure error is displayed
+        if (!loginError) {
+          setLoginError("Login failed. Please check your credentials and try again.");
+        }
       }
     } catch (error) {
       console.error("Sign in error:", error);

@@ -77,7 +77,8 @@ export const useAuthSignIn = () => {
         return false;
       }
 
-      if (signInData?.user) {
+      // Only consider authentication successful if we have both user and session data
+      if (signInData?.user && signInData?.session) {
         console.log("User signed in successfully:", signInData.user.email);
         
         // Clear stale user data from cache to ensure fresh data is loaded
@@ -106,10 +107,18 @@ export const useAuthSignIn = () => {
         
         setIsLoading(false);
         return true;
+      } else {
+        // Handle case where we get a response but missing user or session
+        console.error("Authentication response missing user or session data");
+        setAuthError("Authentication failed. Please try again.");
+        
+        if (options?.onError) {
+          options.onError("Authentication response incomplete");
+        }
+        
+        setIsLoading(false);
+        return false;
       }
-      
-      setIsLoading(false);
-      return false;
     } catch (error: any) {
       console.error("Sign in error:", error);
       const errorMessage = "An unexpected error occurred during sign in. Please try again.";

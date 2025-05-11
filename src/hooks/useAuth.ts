@@ -19,6 +19,19 @@ export const useAuth = () => {
           console.error("Error checking session in useAuth:", error);
         } else {
           console.log("Session check in useAuth:", !!data.session?.user);
+          
+          if (data.session?.user) {
+            // Verify the user actually exists in the database
+            const { data: profileData, error: profileError } = await supabase
+              .from("profiles")
+              .select("id, email")
+              .eq("id", data.session.user.id)
+              .single();
+              
+            console.log("Profile check result:", 
+              profileError ? "Error: " + profileError.message : 
+              profileData ? "Profile found" : "No profile found");
+          }
         }
       } catch (err) {
         console.error("Unexpected error in session check:", err);

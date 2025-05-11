@@ -29,14 +29,21 @@ export const useAuthentication = () => {
       try {
         // Set up the auth change listener first
         const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+          console.log("Auth state changed:", event, !!session);
+          
           if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
             // Important: use setTimeout to avoid recursive RLS policy triggers
             setTimeout(() => {
               setUser(session?.user || null);
               
-              // Invalidate all queries to refresh the data
-              queryClient.invalidateQueries({ queryKey: ["youtube_videos"] });
-              queryClient.invalidateQueries({ queryKey: ["youtube_channels"] });
+              // Only invalidate queries if we have a valid session
+              if (session?.access_token) {
+                // Invalidate all queries to refresh the data
+                queryClient.invalidateQueries({ queryKey: ["youtube_videos"] });
+                queryClient.invalidateQueries({ queryKey: ["youtube_channels"] });
+                queryClient.invalidateQueries({ queryKey: ["profile"] });
+                queryClient.invalidateQueries({ queryKey: ["user-profile"] });
+              }
             }, 0);
           } else if (event === 'SIGNED_OUT') {
             setTimeout(() => {
@@ -49,13 +56,17 @@ export const useAuthentication = () => {
         });
         
         // Then get the current session
-        const { data: { user }, error } = await supabase.auth.getUser();
+        const { data, error } = await supabase.auth.getSession();
 
         if (error) {
           setError(error);
           setUser(null);
+        } else if (data?.session) {
+          // Only set user if we have a valid session
+          setUser(data.session.user);
         } else {
-          setUser(user);
+          // No current session
+          setUser(null);
         }
       } catch (err: any) {
         setError(err);

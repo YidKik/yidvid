@@ -40,14 +40,34 @@ export const useSignIn = ({ onSuccess }: UseSignInProps = {}) => {
 
   /**
    * Wrapper function for signIn that handles the onSuccess callback
+   * and proper error handling
    */
   const handleSignIn = async (credentials: AuthCredentials) => {
     try {
       setIsLoading(true);
       setLoginError("");
-      await signIn(credentials);
-      if (onSuccess) onSuccess();
-      return true;
+      
+      // Validate that email and password are provided
+      if (!credentials.email?.trim() || !credentials.password?.trim()) {
+        setLoginError("Please enter both email and password");
+        setIsLoading(false);
+        return false;
+      }
+      
+      // Call the authentication handler
+      const result = await signIn(credentials);
+      
+      // Only trigger success callback if login was successful
+      if (result) {
+        if (onSuccess) onSuccess();
+        return true;
+      } else {
+        // If signIn returned false but no error was set, set a generic error
+        if (!loginError) {
+          setLoginError("Invalid email or password");
+        }
+        return false;
+      }
     } catch (error: any) {
       const errorMessage = error?.message || "Sign in failed. Please try again.";
       setLoginError(errorMessage);
