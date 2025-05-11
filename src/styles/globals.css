@@ -66,15 +66,12 @@ header button {
   background-color: transparent !important;
 }
 
-/* Important override for the #135d66 background color */
-.home-page header button[class*="bg-[#135d66]"],
-.home-page nav button[class*="bg-[#135d66]"] {
+/* Header button hover styles */
+.home-page header button:hover,
+.home-page nav button:hover {
   background-color: #135d66 !important;
-}
-
-.home-page header a[class*="bg-[#135d66]/20"],
-.home-page nav button[class*="bg-[#135d66]/20"] {
-  background-color: rgba(19, 93, 102, 0.2) !important;
+  padding: 0.25rem 0.75rem !important;
+  border-radius: 0.375rem !important;
 }
 
 /* Stats section buttons in home page should never have red backgrounds */

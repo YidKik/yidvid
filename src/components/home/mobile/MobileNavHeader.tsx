@@ -1,41 +1,11 @@
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
 export const MobileNavHeader = () => {
-  const [activeSection, setActiveSection] = useState('home');
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollPosition = window.scrollY + 100; // Add offset for better detection
-      const sections = {
-        home: 0,
-        about: document.getElementById('about-section')?.offsetTop || 0,
-        contact: document.getElementById('contact-section')?.offsetTop || 0
-      };
-      
-      // Determine active section based on scroll position
-      if (scrollPosition < sections.about) {
-        setActiveSection('home');
-      } else if (scrollPosition < sections.contact) {
-        setActiveSection('about');
-      } else {
-        setActiveSection('contact');
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    
-    // Initial check for active section
-    handleScroll();
-    
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
-      setActiveSection(sectionId.split('-')[0]);
     }
   };
 
@@ -49,25 +19,19 @@ export const MobileNavHeader = () => {
         <nav className="flex items-center gap-6">
           <button
             onClick={() => scrollToSection('home-section')}
-            className={`text-sm font-medium transition-colors border-none p-0 m-0 bg-transparent ${
-              activeSection === 'home' ? 'bg-[#135d66]/20 px-3 py-1 rounded-md' : ''
-            }`}
+            className="text-sm font-medium transition-colors border-none p-0 m-0 bg-transparent"
           >
             Home
           </button>
           <button
             onClick={() => scrollToSection('about-section')}
-            className={`text-sm font-medium transition-colors border-none p-0 m-0 bg-transparent ${
-              activeSection === 'about' ? 'bg-[#135d66]/20 px-3 py-1 rounded-md' : ''
-            }`}
+            className="text-sm font-medium transition-colors border-none p-0 m-0 bg-transparent"
           >
             About
           </button>
           <button
             onClick={() => scrollToSection('contact-section')}
-            className={`text-sm font-medium transition-colors border-none p-0 m-0 bg-transparent ${
-              activeSection === 'contact' ? 'bg-[#135d66]/20 px-3 py-1 rounded-md' : ''
-            }`}
+            className="text-sm font-medium transition-colors border-none p-0 m-0 bg-transparent"
           >
             Contact
           </button>
