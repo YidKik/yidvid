@@ -15,7 +15,7 @@ export const MobileActionsSection = () => {
       className="mt-8 space-y-3 mb-8"
     >
       <button 
-        className="w-full py-4 text-base bg-[#135d66] text-[#e3fef7] border border-[#ddf9f2] hover:bg-[#135d66]/90 rounded-full"
+        className="w-full py-4 text-base text-[#e3fef7] border border-[#ddf9f2] hover:bg-[#135d66]/90 rounded-full"
       >
         Send feedback
       </button>

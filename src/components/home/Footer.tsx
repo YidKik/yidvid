@@ -20,7 +20,7 @@ export const Footer = () => {
               const element = document.querySelector('[data-trigger="contact-dialog"]') as HTMLButtonElement;
               if (element) element.click();
             }}
-            className="px-14 py-5 rounded-3xl border-2 border-[#ddf9f2] text-[#ddf9f2] text-xl hover:bg-[#003c43]/30 transition-all duration-300"
+            className="px-14 py-5 rounded-3xl text-[#ddf9f2] text-xl transition-all duration-300"
           >
             Contact us
           </button>
@@ -30,13 +30,13 @@ export const Footer = () => {
               const element = document.querySelector('[data-trigger="request-channel-dialog"]') as HTMLButtonElement;
               if (element) element.click();
             }}
-            className="px-14 py-5 rounded-3xl border-2 border-[#ddf9f2] text-[#ddf9f2] text-xl hover:bg-[#003c43]/30 transition-all duration-300"
+            className="px-14 py-5 rounded-3xl text-[#ddf9f2] text-xl transition-all duration-300"
           >
             Request channel
           </button>
           
           <button
-            className="px-14 py-5 rounded-3xl border-2 border-[#ddf9f2] text-[#ddf9f2] text-xl hover:bg-[#003c43]/30 transition-all duration-300"
+            className="px-14 py-5 rounded-3xl text-[#ddf9f2] text-xl transition-all duration-300"
           >
             Send feedback
           </button>

@@ -75,6 +75,16 @@ header button {
   background-color: var(--hover-bg-custom, #135d66) !important;
 }
 
+/* Footer section buttons in home page should never have red backgrounds */
+.home-page footer button {
+  background-color: transparent !important;
+  border: 2px solid #ddf9f2 !important;
+}
+
+.home-page footer button:hover {
+  background-color: rgba(0, 60, 67, 0.3) !important;
+}
+
 /* Global logo styles */
 .logo-custom:not([class*="home-"]) {
   color: var(--logo-custom);
