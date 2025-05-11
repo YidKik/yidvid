@@ -44,14 +44,14 @@ export const useSettingsPageState = () => {
       setLoadingProfile(true);
       console.log("Prefetching user profile for ID:", userId);
       
-      // Force a direct fetch of minimal profile data
+      // Force a direct fetch of more complete profile data
       queryClient.prefetchQuery({
         queryKey: ["user-profile-settings", userId],
         queryFn: async () => {
           try {
             const { data, error } = await supabase
               .from("profiles")
-              .select("id, username, display_name, avatar_url, email")
+              .select("id, username, display_name, name, avatar_url, email, created_at")
               .eq("id", userId)
               .maybeSingle();
             

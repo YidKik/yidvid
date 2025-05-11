@@ -13,7 +13,7 @@ export const ProfileInfo = ({ profile }: ProfileInfoProps) => {
   
   // Handle null profile by providing default values
   const username = profile?.username || "";
-  const display_name = profile?.display_name || "User";
+  const display_name = profile?.display_name || profile?.name || "User";
   const email = profile?.email || "";
   const created_at = profile?.created_at || null;
   
@@ -24,7 +24,7 @@ export const ProfileInfo = ({ profile }: ProfileInfoProps) => {
   return (
     <div className="flex-1 min-w-0">
       <h3 className={`${isMobile ? 'text-xs font-semibold mb-0.5 truncate' : 'text-xl font-semibold mb-1'}`}>
-        {display_name || username || "User"}
+        {display_name}
       </h3>
       
       <div className={`${isMobile ? 'space-y-0' : 'space-y-0.5'}`}>
@@ -35,7 +35,7 @@ export const ProfileInfo = ({ profile }: ProfileInfoProps) => {
         />
         <ProfileField 
           label="Username" 
-          value={username} 
+          value={username || "No username"} 
           isMobile={isMobile}
         />
         <ProfileField 

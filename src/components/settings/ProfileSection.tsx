@@ -1,4 +1,3 @@
-
 import { Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -48,7 +47,7 @@ export const ProfileSection = () => {
       }).data
     : null;
 
-  // Use direct query with minimal fields for better performance
+  // Use direct query with a more complete fields selection
   const { data: profile, isLoading, error } = useQuery({
     queryKey: ["user-profile-settings", session?.user?.id],
     queryFn: async () => {
@@ -57,10 +56,10 @@ export const ProfileSection = () => {
       }
 
       try {
-        // Use simplest possible query to avoid RLS issues
+        // Fetch more complete profile data
         const { data, error } = await supabase
           .from("profiles")
-          .select("id, username, display_name, avatar_url, email")
+          .select("id, username, display_name, name, avatar_url, email, created_at")
           .eq("id", session.user.id)
           .maybeSingle();
 
@@ -104,13 +103,15 @@ export const ProfileSection = () => {
     }
   };
 
-  // Create a fallback profile for error cases
+  // Create a fallback profile for error cases ensuring it has all necessary fields
   const fallbackProfile = profile || (session?.user?.id ? {
     id: session.user.id,
     email: userEmail || session?.user?.email,
+    name: userEmail?.split('@')[0] || session?.user?.email?.split('@')[0],
     display_name: userEmail?.split('@')[0] || session?.user?.email?.split('@')[0] || 'User',
     username: null,
-    avatar_url: null
+    avatar_url: null,
+    created_at: new Date().toISOString()
   } : null);
 
   if (isLoading) {
