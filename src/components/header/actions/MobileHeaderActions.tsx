@@ -1,9 +1,8 @@
 
 import { Button } from "@/components/ui/button";
-import { LogIn, MessageSquare, LogOut } from "lucide-react";
+import { LogIn, MessageSquare, Settings } from "lucide-react";
 import { NotificationsMenu } from "../NotificationsMenu";
-import { UserMenu } from "../UserMenu";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 interface MobileHeaderActionsProps {
   session: any;
@@ -21,6 +20,7 @@ export const MobileHeaderActions = ({
   onLogout
 }: MobileHeaderActionsProps) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const isVideosPage = location.pathname === "/videos";
   const isHomePage = location.pathname === "/" || location.pathname === "";
   
@@ -37,13 +37,12 @@ export const MobileHeaderActions = ({
         <>
           <NotificationsMenu session={session} onMarkAsRead={onMarkNotificationsAsRead} />
           <Button
-            onClick={onLogout}
+            onClick={handleSettingsClick}
             variant="ghost" 
             size="sm"
             className={`${buttonClass} text-xs rounded-md transition-all duration-300 mobile-button-animate flex items-center gap-1 px-2 py-1`}
           >
-            <LogOut className="h-3 w-3" />
-            <span>Sign out</span>
+            <Settings className="h-3 w-3" />
           </Button>
         </>
       ) : (

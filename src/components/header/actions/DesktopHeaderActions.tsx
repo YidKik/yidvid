@@ -1,10 +1,11 @@
 
 import { Button } from "@/components/ui/button";
-import { LogIn, MessageSquare, LogOut } from "lucide-react";
+import { LogIn, MessageSquare, Settings } from "lucide-react";
 import { NotificationsMenu } from "../NotificationsMenu";
 import { UserMenu } from "../UserMenu";
 import { ContactDialog } from "../../contact/ContactDialog";
 import { useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 interface DesktopHeaderActionsProps {
   session: any;
@@ -22,6 +23,7 @@ export const DesktopHeaderActions = ({
   handleSettingsClick
 }: DesktopHeaderActionsProps) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const isVideosPage = location.pathname === "/videos";
 
   return (
@@ -46,14 +48,13 @@ export const DesktopHeaderActions = ({
       
       {session ? (
         <Button 
-          onClick={onLogout}
+          onClick={handleSettingsClick}
           className={`${isVideosPage 
             ? 'bg-[#ea384c] hover:bg-[#c82d3f] text-white' 
             : 'bg-[#222222] hover:bg-[#333333] text-white'} rounded-md flex items-center justify-center px-4`}
           variant="ghost"
         >
-          <LogOut className="h-5 w-5 mr-2" />
-          <span>Sign out</span>
+          <Settings className="h-5 w-5" />
         </Button>
       ) : (
         <Button 
