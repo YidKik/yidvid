@@ -67,9 +67,7 @@ header button {
 }
 
 /* Important override for the #135d66 background color */
-.home-page header a[class*="bg-[#135d66]"],
 .home-page header button[class*="bg-[#135d66]"],
-.home-page nav a[class*="bg-[#135d66]"],
 .home-page nav button[class*="bg-[#135d66]"] {
   background-color: #135d66 !important;
 }

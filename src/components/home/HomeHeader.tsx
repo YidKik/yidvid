@@ -1,6 +1,5 @@
 
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import Auth from '@/pages/Auth';
 
 export const HomeHeader = () => {
@@ -11,7 +10,7 @@ export const HomeHeader = () => {
   // Enhanced scroll detection to determine active section
   useEffect(() => {
     const handleScroll = () => {
-      const scrollPosition = window.scrollY + 200; // Add offset to make detection smoother
+      const scrollPosition = window.scrollY + 100; // Add offset for better detection
       
       // Get section positions
       const homeSection = 0;
