@@ -27,7 +27,7 @@ export const HeroSection = () => {
         </Link>
       </motion.div>
       
-      {/* Updated image with Link and glowing effect */}
+      {/* Image with enhanced smooth hover effect */}
       <motion.div 
         className="flex items-center justify-center"
         initial={{ opacity: 0, scale: 0.95 }}
@@ -36,9 +36,9 @@ export const HeroSection = () => {
       >
         <Link 
           to="/videos" 
-          className="relative w-full h-full transform transition-all duration-700 hover:scale-[1.03] cursor-pointer rounded-3xl"
+          className="relative w-full h-full cursor-pointer rounded-3xl"
         >
-          <div className="relative w-full h-full rounded-3xl overflow-hidden shadow-xl">
+          <div className="relative w-full h-full rounded-3xl overflow-hidden shadow-xl transform transition-all duration-1000 ease-in-out hover:scale-[1.05]">
             <img 
               src="/lovable-uploads/1daf0100-84f7-491c-b2d1-cd5e363cbd17.png" 
               alt="Collection of Jewish content videos" 
