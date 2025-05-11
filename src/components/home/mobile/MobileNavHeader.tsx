@@ -56,8 +56,8 @@ export const MobileNavHeader = () => {
               key={id}
               onClick={() => scrollToSection(id)}
               className={`text-sm font-medium transition-colors border-none p-0 m-0 bg-transparent hover:bg-transparent ${
-                activeSection === id.split('-')[0]
-                  ? 'text-black font-medium'
+                activeSection === id.split('-')[0] && id !== 'sign-in'
+                  ? 'text-black font-medium bg-[#135d66]/20 px-3 py-1 rounded-md'
                   : 'text-black/70 hover:text-black'
               }`}
             >

@@ -60,7 +60,7 @@ export const HomeHeader = () => {
             to="/" 
             className={`text-white transition-colors bg-transparent hover:bg-transparent ${
               activeSection === 'home' 
-                ? 'text-[#e3fef7] font-medium' 
+                ? 'text-white font-medium bg-[#135d66] !important px-3 py-1 rounded-md' 
                 : 'hover:text-[#e3fef7]'
             }`}
           >
@@ -70,7 +70,7 @@ export const HomeHeader = () => {
             onClick={() => scrollToSection('about-section')} 
             className={`text-white transition-colors bg-transparent border-none p-0 m-0 hover:bg-transparent ${
               activeSection === 'about' 
-                ? 'text-[#e3fef7] font-medium' 
+                ? 'text-white font-medium bg-[#135d66] !important px-3 py-1 rounded-md' 
                 : 'hover:text-[#e3fef7]'
             }`}
           >
@@ -80,7 +80,7 @@ export const HomeHeader = () => {
             onClick={() => scrollToSection('contact-section')} 
             className={`text-white transition-colors bg-transparent border-none p-0 m-0 hover:bg-transparent ${
               activeSection === 'contact' 
-                ? 'text-[#e3fef7] font-medium' 
+                ? 'text-white font-medium bg-[#135d66] !important px-3 py-1 rounded-md' 
                 : 'hover:text-[#e3fef7]'
             }`}
           >

@@ -59,6 +59,15 @@ header button {
   color: inherit;
 }
 
+/* Override the bg-transparent for active section */
+.home-page header a[href="/"]:has(.active),
+.home-page header button.active,
+.home-page nav button.active,
+.home-page header .bg-[#135d66],
+.home-page nav .bg-[#135d66] {
+  background-color: #135d66 !important;
+}
+
 .home-page header button:hover,
 .home-page header a:hover,
 .home-page nav button:hover,
