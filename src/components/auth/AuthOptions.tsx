@@ -14,7 +14,7 @@ export const AuthOptions = ({
   onClose,
   hideCloseButton = false 
 }: AuthOptionsProps) => {
-  const { isMobile } = useIsMobile();
+  const isMobile = useIsMobile();
   
   return (
     <div className="flex flex-col items-center justify-center p-12 space-y-10 backdrop-blur-md rounded-2xl relative">
@@ -24,11 +24,11 @@ export const AuthOptions = ({
         transition={{ duration: 0.5, ease: "easeOut" }}
         className="text-center space-y-3"
       >
-        <h2 className={`${isMobile ? 'text-3xl' : 'text-5xl'} font-bold text-white`}>Welcome</h2>
-        <p className={`${isMobile ? 'text-base' : 'text-2xl'} text-white font-medium`}>Choose an option to continue</p>
+        <h2 className={`${isMobile ? 'text-3xl' : 'text-4xl'} font-bold text-white`}>Welcome</h2>
+        <p className={`${isMobile ? 'text-base' : 'text-lg'} text-white font-medium`}>Choose an option to continue</p>
       </motion.div>
       
-      <div className={`flex flex-col w-full space-y-8 mt-6 ${isMobile ? 'max-w-[280px]' : 'max-w-[450px]'}`}>
+      <div className={`flex flex-col w-full space-y-6 mt-4 ${isMobile ? 'max-w-[280px]' : 'max-w-[350px]'}`}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -40,7 +40,7 @@ export const AuthOptions = ({
             onClick={() => onSelectOption('signin')}
             className={`w-full ${isMobile 
               ? 'h-12 text-base' 
-              : 'h-20 text-2xl'} 
+              : 'h-16 text-xl'} 
               bg-[#ea384c] hover:bg-red-700 text-white rounded-xl font-medium
               transition-all duration-300 shadow-lg hover:shadow-xl
               hover:shadow-red-300/20 relative overflow-hidden
@@ -66,7 +66,7 @@ export const AuthOptions = ({
             variant="outline"
             className={`w-full ${isMobile 
               ? 'h-12 text-base' 
-              : 'h-20 text-2xl'} 
+              : 'h-16 text-xl'} 
               border-2 border-white/70 text-white bg-white/10 hover:bg-white/20 
               rounded-xl font-medium transition-all duration-300
               shadow-md hover:shadow-lg hover:shadow-white/10`}
