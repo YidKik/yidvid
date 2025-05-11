@@ -47,6 +47,18 @@
   }
 }
 
+/* Desktop specific adjustments */
+@media (min-width: 768px) {
+  .search-input {
+    height: 38px !important; /* Match header buttons better */
+  }
+  
+  .search-icon {
+    height: 14px;
+    width: 14px;
+  }
+}
+
 /* Focus styling - clean, simple focus effect */
 .search-input:focus {
   outline: none !important;
