@@ -6,7 +6,7 @@ import { SearchBar } from "./header/SearchBar";
 import { HeaderActions } from "./header/HeaderActions";
 import { MobileMenu } from "./header/MobileMenu";
 import { useAuth } from "@/hooks/useAuth";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -18,41 +18,20 @@ export const Header = () => {
   const { session, handleLogout } = useAuth();
   const queryClient = useQueryClient();
   const [isMarkingNotifications, setIsMarkingNotifications] = useState(false);
-  
-  // Header animation states
   const [scrolled, setScrolled] = useState(false);
-  const [scrollDirection, setScrollDirection] = useState<'up' | 'down'>('up');
-  const [lastScrollY, setLastScrollY] = useState(0);
-  const [isVisible, setIsVisible] = useState(true);
 
-  // Enhanced scroll detection with direction and visibility
+  // Simple scroll detection for styling only, no hiding
   useEffect(() => {
     const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      
-      // Determine scroll direction
-      const direction = currentScrollY > lastScrollY ? 'down' : 'up';
-      setScrollDirection(direction);
-      
-      // Visibility logic - hide when scrolling down past threshold, show when scrolling up
-      if (direction === 'down' && currentScrollY > 100) {
-        setIsVisible(false);
-      } else if (direction === 'up') {
-        setIsVisible(true);
-      }
-      
-      // Set scrolled state for styling
-      setScrolled(currentScrollY > 20);
-      
-      // Update last scroll position
-      setLastScrollY(currentScrollY);
+      const position = window.scrollY;
+      setScrolled(position > 20);
     };
     
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [lastScrollY]);
+  }, []);
 
   const markNotificationsAsRead = async () => {
     if (!session?.user?.id || isMarkingNotifications) return;
@@ -87,7 +66,7 @@ export const Header = () => {
   };
 
   return (
-    <motion.header 
+    <header 
       className={`sticky top-0 z-50 w-full border-b transition-all duration-300 ${
         scrolled 
           ? 'bg-white/20 backdrop-blur-lg supports-[backdrop-filter]:bg-white/10 border-primary/50' 
@@ -95,15 +74,6 @@ export const Header = () => {
             ? 'h-14 bg-white/30 backdrop-blur-md' 
             : 'bg-white/30 backdrop-blur-md'
       }`}
-      initial={{ opacity: 1, y: 0 }}
-      animate={{ 
-        opacity: isVisible ? 1 : 0, 
-        y: isVisible ? 0 : -100,
-        transition: {
-          duration: 0.4,
-          ease: "easeInOut"
-        }
-      }}
     >
       <div className="container mx-auto px-0">
         <div className={`flex ${isMobile ? 'h-14' : 'h-14'} items-center relative`}>
@@ -166,6 +136,6 @@ export const Header = () => {
         </AnimatePresence>
       </div>
       <Auth isOpen={isAuthOpen} onOpenChange={setIsAuthOpen} />
-    </motion.header>
+    </header>
   );
 };
