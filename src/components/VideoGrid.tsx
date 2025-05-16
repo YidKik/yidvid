@@ -9,6 +9,7 @@ import { filterUnavailableVideos } from "@/hooks/video/utils/validation";
 import { memo, useCallback } from "react";
 import { VideoData } from "@/hooks/video/types/video-fetcher";
 import { DelayedLoadingAnimation } from "@/components/ui/DelayedLoadingAnimation";
+import { useVideoGridData } from "@/hooks/video/useVideoGridData"; // Make sure this is correctly imported
 
 interface VideoGridProps {
   videos?: VideoItemType[] | VideoData[];
@@ -30,6 +31,8 @@ export const VideoGrid = memo(({
   className,
 }: VideoGridProps) => {
   const { isMobile, isTablet } = useIsMobile();
+  
+  // Get local data if no external videos are provided
   const { videos: fetchedVideos, loading: internalLoading, error: internalError } = useVideoGridData(maxVideos);
   
   // Use external videos if provided, otherwise use fetched videos
@@ -61,7 +64,7 @@ export const VideoGrid = memo(({
     }
   }, [onRetry]);
 
-  // Show loader while loading - replacement for VideoGridLoader
+  // Show loader while loading - use DelayedLoadingAnimation
   if (isLoading && !videos?.length) {
     return (
       <div className="w-full flex items-center justify-center">
@@ -119,8 +122,5 @@ export const VideoGrid = memo(({
     </div>
   );
 });
-
-// Re-add the import here for useVideoGridData
-import { useVideoGridData } from "@/hooks/video/useVideoGridData";
 
 export default VideoGrid;
