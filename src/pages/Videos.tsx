@@ -7,6 +7,7 @@ import { SEOHelmet } from "@/components/videos/SEOHelmet";
 
 const Videos = () => {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  // Get videos data
   const { 
     data: videos, 
     isLoading,
@@ -19,12 +20,7 @@ const Videos = () => {
       <SEOHelmet videos={videos} path="/videos" />
       
       <div className="min-h-screen w-full bg-gradient-to-b from-white to-gray-50 videos-page">
-        <VideoPageContent 
-          videos={videos}
-          isLoading={isLoading}
-          isRefreshing={isRefreshing}
-          error={error}
-        />
+        <VideoPageContent />
         <Auth isOpen={isAuthOpen} onOpenChange={setIsAuthOpen} />
       </div>
     </>

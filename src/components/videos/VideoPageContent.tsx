@@ -8,24 +8,42 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useState, useEffect } from "react";
 import { ScrollToTopButton } from "./ScrollToTopButton";
 import { Header } from "@/components/Header";
-import { filterUnavailableVideos } from "@/hooks/video/utils/validation";
+import { VideoData } from "@/hooks/video/types/video-fetcher";
 import { WifiOff } from "lucide-react";
 
-export const VideoPageContent = () => {
+interface VideoPageContentProps {
+  videos?: VideoData[];
+  isLoading?: boolean;
+  isRefreshing?: boolean;
+  error?: Error | null;
+}
+
+export const VideoPageContent = ({
+  videos: externalVideos,
+  isLoading: externalLoading,
+  isRefreshing: externalRefreshing,
+  error: externalError
+}: VideoPageContentProps = {}) => {
   const [isMusic, setIsMusic] = useState(false);
   const [networkOffline, setNetworkOffline] = useState(!navigator.onLine);
+  
+  // Use local data if provided, otherwise fetch from hook
   const { 
-    data: rawVideos, 
-    isLoading, 
+    data: hookVideos, 
+    isLoading: hookLoading, 
     refetch, 
     forceRefetch,
     lastSuccessfulFetch, 
     fetchAttempts, 
-    error 
+    error: hookError,
+    isRefreshing: hookRefreshing
   } = useVideos();
   
-  // Filter out unavailable videos
-  const videos = filterUnavailableVideos(rawVideos || []);
+  // Use external props if provided, otherwise use hook data
+  const videos = externalVideos || hookVideos;
+  const isLoading = externalLoading !== undefined ? externalLoading : hookLoading;
+  const error = externalError || hookError;
+  const isRefreshing = externalRefreshing !== undefined ? externalRefreshing : hookRefreshing;
   
   const { isMobile } = useIsMobile();
 
@@ -91,6 +109,7 @@ export const VideoPageContent = () => {
                 lastSuccessfulFetch={lastSuccessfulFetch}
                 fetchAttempts={fetchAttempts}
                 networkOffline={networkOffline}
+                isRefreshing={isRefreshing}
               />
             ) : (
               <MusicSection />
