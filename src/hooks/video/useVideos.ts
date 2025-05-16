@@ -83,7 +83,7 @@ export const useVideos = (): UseVideosResult => {
       // After a short delay, allow loading of remaining pages
       const timer = setTimeout(() => {
         setProgressiveLoading(prev => ({ ...prev, remainingPagesLoading: false }));
-      }, 1000);
+      }, 500); // Reduced from 1000ms to 500ms for faster total loading
       
       return () => clearTimeout(timer);
     }

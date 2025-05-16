@@ -32,10 +32,8 @@ export const PagePreloader = () => {
         }
       };
       
-      // Delay preloading slightly to prioritize rendering the current page first
-      const timer = setTimeout(preloadVideosPage, 3000);
-      
-      return () => clearTimeout(timer);
+      // Start preloading sooner to prioritize loading
+      preloadVideosPage();
     }
   }, [isHomePage]);
   

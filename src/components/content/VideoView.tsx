@@ -60,7 +60,7 @@ export const VideoView = ({
       <DelayedLoadingAnimation
         size={isMobile ? "small" : "large"}
         text={isRefreshing ? "Refreshing videos..." : "Loading videos..."}
-        delayMs={500}
+        delayMs={300} // Reduced from 500ms to 300ms for faster feedback
       />
     );
   }

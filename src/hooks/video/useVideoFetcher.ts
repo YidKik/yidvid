@@ -16,43 +16,20 @@ export const useVideoFetcher = () => {
       // Clear local storage to force a refresh from the server
       localStorage.removeItem('supabase.cache.youtube_videos');
       
-      // Add delay before fetch to ensure cache is cleared
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
-      // Try direct database query with explicit sorting
-      try {
-        const { data, error } = await supabase
-          .from("youtube_videos")
-          .select("*")
-          .is("deleted_at", null)
-          .order("uploaded_at", { ascending: false })
-          .limit(50); // Reduced from 150 to improve performance
-        
-        if (!error && data && data.length > 0) {
-          console.log(`Successfully fetched ${data.length} videos directly from database`);
-          const formatted = formatVideoData(data);
-          setLastSuccessfulFetch(new Date());
-          setFetchAttempts(0);
-          return formatted;
-        }
-      } catch (directError) {
-        console.error("Direct database query failed:", directError);
-      }
-      
-      // Fallback query with simplified fields
-      const { data: fallbackData, error: fallbackError } = await supabase
+      // Simplified query with just the necessary fields for faster loading
+      const { data, error } = await supabase
         .from("youtube_videos")
         .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, updated_at")
         .is("deleted_at", null)
         .order("uploaded_at", { ascending: false })
-        .limit(50); // Reduced from 100 to improve performance
+        .limit(50); // Reduced from 150 to 50 for faster loading
         
-      if (fallbackError) {
-        throw fallbackError;
+      if (error) {
+        throw error;
       }
       
-      console.log(`Fallback query successful, retrieved ${fallbackData?.length || 0} videos`);
-      const formatted = formatVideoData(fallbackData);
+      console.log(`Fetched ${data?.length || 0} videos`);
+      const formatted = formatVideoData(data);
       setLastSuccessfulFetch(new Date());
       setFetchAttempts(0);
       return formatted;
@@ -83,7 +60,7 @@ export const useVideoFetcher = () => {
         .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, updated_at")
         .is("deleted_at", null)
         .order("uploaded_at", { ascending: false })
-        .limit(50); // Reduced from 150 to improve performance
+        .limit(50); // Reduced from 150 to 50 for faster loading
 
       if (error) {
         throw error;
