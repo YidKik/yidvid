@@ -16,6 +16,10 @@ interface DesktopVideoViewProps {
   lastSuccessfulFetch?: Date | null;
   fetchAttempts?: number;
   error?: Error | null;
+  progressiveLoading?: {
+    firstPageLoaded: boolean;
+    remainingPagesLoading: boolean;
+  };
 }
 
 export const DesktopVideoView = ({
@@ -23,7 +27,8 @@ export const DesktopVideoView = ({
   isLoading,
   isRefreshing,
   forceRefetch,
-  error
+  error,
+  progressiveLoading = { firstPageLoaded: false, remainingPagesLoading: true }
 }: DesktopVideoViewProps) => {
   const { isTablet } = useIsMobile();
   
@@ -39,7 +44,9 @@ export const DesktopVideoView = ({
     setCurrentPage
   } = useVideoPagination({
     videos,
-    videosPerPage
+    videosPerPage,
+    preloadNext: true,
+    progressiveLoading
   });
 
   // Show loading animation when loading
@@ -49,7 +56,7 @@ export const DesktopVideoView = ({
         <DelayedLoadingAnimation
           size={isTablet ? "medium" : "large"}
           text={isRefreshing ? "Refreshing videos..." : "Loading videos..."}
-          delayMs={1000}
+          delayMs={500}
         />
       </div>
     );

@@ -6,16 +6,22 @@ import { ChannelsGrid } from "@/components/youtube/ChannelsGrid";
 import { VideoData } from "@/hooks/video/types/video-fetcher";
 import { useVideoPagination } from "@/hooks/video/useVideoPagination";
 import { DelayedLoadingAnimation } from "@/components/ui/DelayedLoadingAnimation";
+import { useEffect } from "react";
 
 export interface VideoViewProps {
   videos: VideoData[];
   isLoading: boolean;
   isRefreshing: boolean;
   refetch?: () => Promise<any>;
+  forceRefetch?: () => Promise<any>;
   lastSuccessfulFetch?: Date | null;
   fetchAttempts?: number;
   isMobile?: boolean;
   isTablet?: boolean;
+  progressiveLoading?: {
+    firstPageLoaded: boolean;
+    remainingPagesLoading: boolean;
+  };
 }
 
 export const VideoView = ({
@@ -23,7 +29,8 @@ export const VideoView = ({
   isLoading,
   isRefreshing,
   isMobile = false,
-  isTablet = false
+  isTablet = false,
+  progressiveLoading = { firstPageLoaded: true, remainingPagesLoading: false }
 }: VideoViewProps) => {
   // For mobile: 4 videos (2 rows of 2)
   // For tablet: 9 videos (3 rows of 3)
@@ -42,16 +49,18 @@ export const VideoView = ({
   } = useVideoPagination({
     videos,
     videosPerPage,
-    isMobile
+    isMobile,
+    preloadNext: true,
+    progressiveLoading
   });
 
-  // If loading is taking longer than 1 second, show the gradient loading animation
+  // If loading is taking longer than 500ms, show the gradient loading animation
   if (isLoading || isRefreshing) {
     return (
       <DelayedLoadingAnimation
         size={isMobile ? "small" : "large"}
         text={isRefreshing ? "Refreshing videos..." : "Loading videos..."}
-        delayMs={1000}
+        delayMs={500}
       />
     );
   }

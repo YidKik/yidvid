@@ -17,15 +17,19 @@ export interface MobileVideoViewProps {
   lastSuccessfulFetch?: Date | null;
   fetchAttempts?: number;
   error?: Error | null;
+  progressiveLoading?: {
+    firstPageLoaded: boolean;
+    remainingPagesLoading: boolean;
+  };
 }
 
 export const MobileVideoView: React.FC<MobileVideoViewProps> = ({
   videos,
   isLoading,
   isRefreshing,
-  refetch,
   forceRefetch,
-  error
+  error,
+  progressiveLoading = { firstPageLoaded: false, remainingPagesLoading: true }
 }) => {
   const { isMobile } = useIsMobile();
   
@@ -44,7 +48,9 @@ export const MobileVideoView: React.FC<MobileVideoViewProps> = ({
   } = useVideoPagination({
     videos,
     videosPerPage,
-    isMobile: true
+    isMobile: true,
+    preloadNext: true,
+    progressiveLoading
   });
 
   // Show loading animation for better user experience
@@ -54,7 +60,7 @@ export const MobileVideoView: React.FC<MobileVideoViewProps> = ({
         <DelayedLoadingAnimation
           size="small"
           text={isRefreshing ? "Refreshing videos..." : "Loading videos..."}
-          delayMs={1000} // Show sooner for faster perceived performance
+          delayMs={500} // Show sooner for faster perceived performance
         />
       </div>
     );

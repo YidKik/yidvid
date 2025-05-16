@@ -15,12 +15,17 @@ import { DelayedLoadingAnimation } from "@/components/ui/DelayedLoadingAnimation
 interface VideoContentProps {
   videos: VideoData[];
   isLoading: boolean;
+  isRefreshing?: boolean;
   error?: Error | null;
   refetch?: () => Promise<any>;
   forceRefetch?: () => Promise<any>;
   lastSuccessfulFetch?: Date | null;
   fetchAttempts?: number;
   networkOffline?: boolean;
+  progressiveLoading?: {
+    firstPageLoaded: boolean;
+    remainingPagesLoading: boolean;
+  };
 }
 
 export const VideoContent = ({ 
@@ -31,11 +36,13 @@ export const VideoContent = ({
   forceRefetch,
   lastSuccessfulFetch,
   fetchAttempts,
-  networkOffline = false
+  networkOffline = false,
+  isRefreshing = false,
+  progressiveLoading = { firstPageLoaded: false, remainingPagesLoading: true }
 }: VideoContentProps) => {
   const { isMobile } = useIsMobile();
   const { 
-    isRefreshing, 
+    isRefreshing: controlledRefreshing, 
     handleRefetch, 
     handleForceRefetch 
   } = useRefetchControl({ refetch, forceRefetch });
@@ -75,13 +82,13 @@ export const VideoContent = ({
   );
 
   // Show loading state when data is loading or refreshing
-  if (isLoading || isRefreshing) {
+  if (isLoading || isRefreshing || controlledRefreshing) {
     return (
       <div className="flex items-center justify-center w-full py-12">
         <DelayedLoadingAnimation
           size={isMobile ? "small" : "large"}
           text={isRefreshing ? "Refreshing videos..." : "Loading videos..."}
-          delayMs={1000} // Start showing sooner for better user experience
+          delayMs={500} // Start showing sooner for better user experience
         />
       </div>
     );
@@ -92,13 +99,13 @@ export const VideoContent = ({
       {/* Component to handle automatic refresh of stale content */}
       <AutoRefreshHandler
         videos={videos}
-        isRefreshing={isRefreshing}
+        isRefreshing={controlledRefreshing}
         lastSuccessfulFetch={lastSuccessfulFetch}
         forceRefetch={navigator.onLine ? forceRefetch : undefined}
       />
       
       {/* Network or repeated fetch failure notice */}
-      {(isNetworkError || (fetchAttempts && fetchAttempts > 2)) && !isRefreshing && (
+      {(isNetworkError || (fetchAttempts && fetchAttempts > 2)) && !controlledRefreshing && (
         <div className="my-4 p-4 bg-amber-50 border border-amber-200 rounded-md">
           <h3 className="font-medium text-amber-800">
             {networkOffline 
@@ -127,22 +134,24 @@ export const VideoContent = ({
           videos={videos}
           isLoading={isLoading}
           error={error}
-          isRefreshing={isRefreshing}
+          isRefreshing={controlledRefreshing}
           refetch={handleRefetch}
           forceRefetch={handleForceRefetch}
           lastSuccessfulFetch={lastSuccessfulFetch}
           fetchAttempts={fetchAttempts || 0}
+          progressiveLoading={progressiveLoading}
         />
       ) : (
         <DesktopVideoView
           videos={videos}
           isLoading={isLoading}
           error={error}
-          isRefreshing={isRefreshing}
+          isRefreshing={controlledRefreshing}
           refetch={handleRefetch}
           forceRefetch={handleForceRefetch}
           lastSuccessfulFetch={lastSuccessfulFetch}
           fetchAttempts={fetchAttempts || 0}
+          progressiveLoading={progressiveLoading}
         />
       )}
     </div>
