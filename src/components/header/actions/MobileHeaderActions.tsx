@@ -20,7 +20,7 @@ export const MobileHeaderActions = ({
 }: MobileHeaderActionsProps) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { session, isAuthenticated } = useSessionManager();
+  const { isAuthenticated } = useSessionManager();
   const isVideosPage = location.pathname === "/videos";
   const isHomePage = location.pathname === "/" || location.pathname === "";
   
