@@ -22,7 +22,7 @@ export const SearchBar = ({ onFocus, onClose }: SearchBarProps) => {
     setShowResults
   } = useSearch();
   
-  const hasResults = 
+  const hasResults = searchResults && 
     ((searchResults?.videos?.length || 0) + 
     (searchResults?.channels?.length || 0)) > 0;
 

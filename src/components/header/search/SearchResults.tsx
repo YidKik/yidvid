@@ -19,28 +19,31 @@ export const SearchResults = ({
   onResultClick,
   showResults
 }: SearchResultsProps) => {
-  const isMobile = useIsMobile();
+  const { isMobile } = useIsMobile();
   
-  if (!showResults || (!isSearching && videos.length === 0 && channels.length === 0)) {
+  if (!showResults) {
     return null;
   }
 
   return (
     <div 
-      className={`absolute top-full left-0 mt-1 bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden z-50 ${
-        isMobile ? 'w-full' : 'w-full max-h-[400px]'
-      }`}
+      className="absolute top-full left-0 mt-1 bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden z-50 w-full"
       style={{
         top: isMobile ? '35px' : undefined,
-        width: isMobile ? '100%' : undefined
+        width: '100%',
+        maxHeight: isMobile ? '35vh' : '400px'
       }}
       onMouseDown={(e) => e.preventDefault()}
     >
-      <ScrollArea className={`${isMobile ? 'h-[35vh]' : 'h-[400px]'} overflow-y-auto scrollbar-hide`}>
+      <ScrollArea className={`${isMobile ? 'h-[35vh]' : 'h-[400px]'} overflow-y-auto`}>
         <div className="p-2">
           {isSearching ? (
             <div className="flex items-center justify-center p-4 text-sm text-muted-foreground">
               Searching...
+            </div>
+          ) : videos.length === 0 && channels.length === 0 ? (
+            <div className="flex items-center justify-center p-4 text-sm text-muted-foreground">
+              No results found
             </div>
           ) : (
             <>

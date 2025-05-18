@@ -29,7 +29,7 @@ export const useSearch = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [showResults, setShowResults] = useState(false);
-  const debouncedSearch = useDebounce(searchQuery, 250); // Increased debounce for better performance
+  const debouncedSearch = useDebounce(searchQuery, 150); // Better balance between responsiveness and performance
 
   // Check cache before making a new request
   const getSearchFromCache = (query: string): SearchResults | undefined => {
@@ -46,8 +46,7 @@ export const useSearch = () => {
       if (cachedResult) return cachedResult;
       
       try {
-        // Optimize the search query by using more specific conditions
-        // and adding limits earlier in the query to reduce processing
+        // Optimize query performance by limiting results earlier
         const { data: videos, error: videosError } = await supabase
           .from("youtube_videos")
           .select("id, title, thumbnail, channel_name")
@@ -67,6 +66,8 @@ export const useSearch = () => {
 
         if (channelsError) throw channelsError;
 
+        console.log("Search results:", { videos: videos?.length || 0, channels: channels?.length || 0 });
+        
         const result: SearchResults = {
           videos: videos || [],
           channels: channels || []
@@ -78,12 +79,12 @@ export const useSearch = () => {
         return { videos: [], channels: [] };
       }
     },
-    enabled: debouncedSearch.length > 2, // Only search when at least 3 characters are typed
-    staleTime: 1000 * 60 * 5, // Increase stale time to 5 minutes for longer caching
-    gcTime: 1000 * 60 * 15,   // Increase garbage collection time to 15 minutes
+    enabled: debouncedSearch.length > 1, // Search when at least 2 characters are typed for better responsiveness
+    staleTime: 1000 * 60 * 1, // Cache for 1 minute is enough for search results
+    gcTime: 1000 * 60 * 5,   // Garbage collection after 5 minutes
     refetchOnWindowFocus: false,
     meta: {
-      suppressToasts: true // Don't show toast notifications
+      suppressToasts: true
     }
   });
 
