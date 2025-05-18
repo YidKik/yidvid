@@ -117,11 +117,11 @@ export const Header = () => {
       }}
     >
       <div className="container mx-auto px-0">
-        <div className={`flex ${isMobile ? 'h-14' : 'h-14'} items-center relative`}>
+        <div className={`flex ${isMobile ? 'h-14' : 'h-14'} items-center justify-between relative px-4`}>
           {isMobile ? (
-            <div className="w-full flex items-center px-3">
+            <>
               <div className="w-1/5 flex justify-start">
-                {/* Logo removed from mobile view */}
+                {/* Logo position */}
               </div>
               
               <div className="w-3/5 flex justify-center">
@@ -139,26 +139,32 @@ export const Header = () => {
                   onSettingsClick={handleSettingsClick}
                 />
               </div>
-            </div>
+            </>
           ) : (
             <>
-              {/* Desktop view - single centered search bar with actions on the right */}
-              <div className="absolute left-1/2 transform -translate-x-1/2 w-full max-w-xl mx-auto px-4">
-                <div className="w-full max-w-md mx-auto">
-                  <SearchBar />
+              {/* Desktop view layout - restructured for cleaner display */}
+              <div className="w-full flex justify-between items-center">
+                <div className="flex-1">
+                  {/* Left section - could contain logo */}
                 </div>
-              </div>
-
-              <div className="ml-auto pr-4">
-                <HeaderActions 
-                  isMobile={isMobile}
-                  isSearchExpanded={isSearchExpanded}
-                  onSearchExpand={() => setIsSearchExpanded(true)}
-                  onAuthOpen={() => setIsAuthOpen(true)}
-                  onLogout={handleLogout}
-                  onMarkNotificationsAsRead={markNotificationsAsRead}
-                  onSettingsClick={handleSettingsClick}
-                />
+                
+                <div className="flex-1 flex justify-center">
+                  <div className="w-full max-w-md">
+                    <SearchBar />
+                  </div>
+                </div>
+                
+                <div className="flex-1 flex justify-end">
+                  <HeaderActions 
+                    isMobile={isMobile}
+                    isSearchExpanded={isSearchExpanded}
+                    onSearchExpand={() => setIsSearchExpanded(true)}
+                    onAuthOpen={() => setIsAuthOpen(true)}
+                    onLogout={handleLogout}
+                    onMarkNotificationsAsRead={markNotificationsAsRead}
+                    onSettingsClick={handleSettingsClick}
+                  />
+                </div>
               </div>
             </>
           )}

@@ -22,11 +22,11 @@ export function DesktopHeaderActions({
   const { isAuthenticated, isLoading } = useSessionManager();
 
   return (
-    <div className="hidden md:flex gap-2 items-center">
+    <div className="hidden md:flex gap-3 items-center">
       {!isLoading && (
         <>
           {isAuthenticated ? (
-            <div className="flex gap-2">
+            <div className="flex gap-3 items-center">
               <ContactDialog />
               <NotificationsMenu onMarkNotificationsAsRead={onMarkNotificationsAsRead} />
               <UserMenu onLogout={onLogout || (() => Promise.resolve())} />
