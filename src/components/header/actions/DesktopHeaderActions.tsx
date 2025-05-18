@@ -39,11 +39,11 @@ export const DesktopHeaderActions = ({
         }}
         variant="ghost" 
         size="icon"
-        className={`h-10 w-10 rounded-full ${isVideosPage 
+        className={`h-9 w-9 rounded-full ${isVideosPage 
           ? 'bg-[#ea384c] hover:bg-[#c82d3f] text-white' 
           : 'bg-[#222222] hover:bg-[#333333] text-white'}`}
       >
-        <MessageSquare className="h-5 w-5" />
+        <MessageSquare className="h-4 w-4" />
       </Button>
       
       {session ? (
@@ -51,21 +51,21 @@ export const DesktopHeaderActions = ({
           onClick={handleSettingsClick}
           className={`${isVideosPage 
             ? 'bg-[#ea384c] hover:bg-[#c82d3f] text-white' 
-            : 'bg-[#222222] hover:bg-[#333333] text-white'} rounded-full flex items-center justify-center px-4`}
+            : 'bg-[#222222] hover:bg-[#333333] text-white'} rounded-full flex items-center justify-center px-3 py-2 h-9`}
           variant="ghost"
         >
-          <Settings className="h-5 w-5" />
+          <Settings className="h-4 w-4" />
         </Button>
       ) : (
         <Button 
           onClick={onAuthOpen}
           className={`${isVideosPage 
             ? 'bg-[#ea384c] hover:bg-[#c82d3f] text-white' 
-            : 'bg-[#222222] hover:bg-[#333333] text-white'} rounded-full flex items-center justify-center px-4`}
+            : 'bg-[#222222] hover:bg-[#333333] text-white'} rounded-full flex items-center justify-center px-3 py-2 h-9`}
           variant="ghost"
         >
-          <LogIn className="h-5 w-5 mr-2" />
-          <span>Sign in</span>
+          <LogIn className="h-4 w-4 mr-1.5" />
+          <span className="text-sm">Sign in</span>
         </Button>
       )}
     </div>
