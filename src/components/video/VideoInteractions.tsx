@@ -120,10 +120,12 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
 
   return (
     <>
-      <LikeAnimation 
-        isVisible={showAnimation} 
-        onComplete={() => setShowAnimation(false)} 
-      />
+      <div className="relative">
+        <LikeAnimation 
+          isVisible={showAnimation} 
+          onComplete={() => setShowAnimation(false)} 
+        />
+      </div>
       <div className="flex gap-2 md:gap-4 mb-4 md:mb-8">
         <Button
           variant="outline"
