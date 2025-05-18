@@ -2,18 +2,15 @@
 import Auth from "@/pages/Auth";
 import { useState } from "react";
 import { useVideos } from "@/hooks/video/useVideos";
+import { useSessionManager } from "@/hooks/useSessionManager";
+import { useSearchParams } from "react-router-dom";
 import { VideoPageContent } from "@/components/videos/VideoPageContent";
 import { SEOHelmet } from "@/components/videos/SEOHelmet";
 
 const Videos = () => {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
-  // Get videos data
-  const { 
-    data: videos, 
-    isLoading,
-    isRefreshing,
-    error
-  } = useVideos();
+  const { data: videos } = useVideos();
+  const [searchParams] = useSearchParams();
   
   return (
     <>

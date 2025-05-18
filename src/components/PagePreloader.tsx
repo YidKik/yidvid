@@ -1,7 +1,6 @@
 
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { usePrefetchData } from '@/hooks/usePrefetchData';
 
 /**
  * This component preloads the Videos page code when the user is on the home page
@@ -9,11 +8,6 @@ import { usePrefetchData } from '@/hooks/usePrefetchData';
 export const PagePreloader = () => {
   const location = useLocation();
   const isHomePage = location.pathname === "/" || location.pathname === "/home";
-  
-  // Use the prefetch data hook when on home page
-  if (isHomePage) {
-    usePrefetchData();
-  }
   
   useEffect(() => {
     if (isHomePage) {

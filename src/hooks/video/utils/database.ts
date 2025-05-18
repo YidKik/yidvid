@@ -1,6 +1,5 @@
 
 import { VideoData } from "../types/video-fetcher";
-import { supabase } from "@/integrations/supabase/client";
 
 /**
  * Formats raw database video data into the VideoData format
@@ -29,72 +28,52 @@ export const formatVideoData = (data: any[]): VideoData[] => {
 };
 
 /**
- * Fetch videos from the database
+ * Fetches videos from database
  */
-export const fetchVideosFromDatabase = async (): Promise<any[]> => {
+export const fetchVideosFromDatabase = async () => {
+  // This function is imported and used elsewhere
+  // We're keeping it as a separate function for modularity
+  const { supabase } = await import("@/integrations/supabase/client");
+  
   try {
     const { data, error } = await supabase
       .from("youtube_videos")
       .select("*, youtube_channels(thumbnail_url)")
       .is("deleted_at", null)
-      .order("uploaded_at", { ascending: false })
+      .order("created_at", { ascending: false })
       .limit(150);
-
-    if (error) {
-      console.error("Error fetching videos:", error);
-      return [];
-    }
-    
+      
+    if (error) throw error;
     return data || [];
-  } catch (err) {
-    console.error("Failed to fetch videos:", err);
-    return [];
+  } catch (error) {
+    console.error("Error fetching videos from database:", error);
+    throw error;
   }
 };
 
 /**
- * Fetch active channels from the database
+ * Fetches active channels from database
  */
-export const fetchActiveChannels = async (): Promise<any[]> => {
+export const fetchActiveChannels = async () => {
+  const { supabase } = await import("@/integrations/supabase/client");
+  
   try {
     const { data, error } = await supabase
       .from("youtube_channels")
-      .select("channel_id, thumbnail_url")
-      .is("deleted_at", null)
-      .limit(50);
-
-    if (error) {
-      console.error("Error fetching channels:", error);
-      return [];
-    }
-    
+      .select("channel_id")
+      .is("deleted_at", null);
+      
+    if (error) throw error;
     return data || [];
-  } catch (err) {
-    console.error("Failed to fetch channels:", err);
-    return [];
+  } catch (error) {
+    console.error("Error fetching channels from database:", error);
+    throw error;
   }
 };
 
 /**
- * Fetch updated videos after syncing with YouTube
+ * Fetches updated videos after a sync operation
  */
-export const fetchUpdatedVideosAfterSync = async (): Promise<any[]> => {
-  try {
-    const { data, error } = await supabase
-      .from("youtube_videos")
-      .select("*, youtube_channels(thumbnail_url)")
-      .is("deleted_at", null)
-      .order("uploaded_at", { ascending: false })
-      .limit(150);
-
-    if (error) {
-      console.error("Error fetching updated videos:", error);
-      return [];
-    }
-    
-    return data || [];
-  } catch (err) {
-    console.error("Error fetching updated videos:", err);
-    return [];
-  }
+export const fetchUpdatedVideosAfterSync = async () => {
+  return fetchVideosFromDatabase();
 };

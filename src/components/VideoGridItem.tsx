@@ -6,14 +6,13 @@ import { VideoCardInfo } from "./video/VideoCardInfo";
 import { useLocation } from "react-router-dom";
 import { VideoGridItem as VideoItemType } from "@/hooks/video/useVideoGridData";
 import { useVideoDate } from "./video/useVideoDate";
-import { memo } from "react";
 
 interface VideoGridItemProps {
   video: VideoItemType;
   loading?: boolean;
 }
 
-export const VideoGridItem = memo(({ video, loading }: VideoGridItemProps) => {
+export const VideoGridItem = ({ video, loading }: VideoGridItemProps) => {
   const location = useLocation();
   const isVideosPage = location.pathname === "/videos";
   const { getFormattedDate } = useVideoDate();
@@ -23,18 +22,27 @@ export const VideoGridItem = memo(({ video, loading }: VideoGridItemProps) => {
   }
 
   // Format the date properly to avoid type mismatch
-  const uploadedDate = video.uploadedAt instanceof Date ? 
-    video.uploadedAt : new Date(video.uploadedAt);
-  const formattedDate = getFormattedDate(uploadedDate);
+  const formattedDate = getFormattedDate(video.uploadedAt);
   
-  // Make sure we have a valid ID for linking
+  // Make sure we have a valid video_id for the link
   const videoIdForLink = video.video_id || video.id;
+
+  // Ensure we have a valid channelId for the link
   const channelIdForLink = video.channelId || "";
+
+  // Add debug log to see what's being passed to the link
+  console.log("VideoGridItem rendering with video data:", {
+    id: video.id,
+    video_id: video.video_id,
+    videoIdForLink: videoIdForLink,
+    channelId: channelIdForLink
+  });
 
   return (
     <Link 
       to={`/video/${videoIdForLink}`}
       className="group block w-full"
+      onClick={() => console.log("Video link clicked:", videoIdForLink)}
     >
       <VideoCardThumbnail 
         thumbnail={video.thumbnail} 
@@ -54,4 +62,4 @@ export const VideoGridItem = memo(({ video, loading }: VideoGridItemProps) => {
       )}
     </Link>
   );
-});
+};

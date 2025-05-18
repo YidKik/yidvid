@@ -16,20 +16,14 @@ export interface MobileVideoViewProps {
   forceRefetch?: () => Promise<any>;
   lastSuccessfulFetch?: Date | null;
   fetchAttempts?: number;
-  error?: Error | null;
-  progressiveLoading?: {
-    firstPageLoaded: boolean;
-    remainingPagesLoading: boolean;
-  };
 }
 
 export const MobileVideoView: React.FC<MobileVideoViewProps> = ({
   videos,
   isLoading,
   isRefreshing,
-  forceRefetch,
-  error,
-  progressiveLoading = { firstPageLoaded: false, remainingPagesLoading: true }
+  refetch,
+  forceRefetch
 }) => {
   const { isMobile } = useIsMobile();
   
@@ -48,19 +42,17 @@ export const MobileVideoView: React.FC<MobileVideoViewProps> = ({
   } = useVideoPagination({
     videos,
     videosPerPage,
-    isMobile: true,
-    preloadNext: true,
-    progressiveLoading
+    isMobile: true
   });
 
-  // Show loading animation for better user experience
+  // For a cleaner experience, let's use our loading component
   if (isLoading || isRefreshing) {
     return (
-      <div className="flex items-center justify-center min-h-[200px] my-8">
+      <div className="space-y-1">
         <DelayedLoadingAnimation
           size="small"
           text={isRefreshing ? "Refreshing videos..." : "Loading videos..."}
-          delayMs={500} // Show sooner for faster perceived performance
+          delayMs={3000}
         />
       </div>
     );
@@ -73,8 +65,6 @@ export const MobileVideoView: React.FC<MobileVideoViewProps> = ({
         maxVideos={videosPerPage}
         rowSize={rowSize}
         isLoading={isLoading || isRefreshing}
-        error={error}
-        onRetry={forceRefetch}
         className="grid-cols-2 gap-1"
       />
       

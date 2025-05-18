@@ -1,4 +1,5 @@
 
-export * from "./format-data";
-export * from "./fetch-videos";
-export * from "./fetch-channels";
+// Export all database utility functions from a single entry point
+export { fetchVideosFromDatabase, fetchUpdatedVideosAfterSync } from './fetch-videos';
+export { fetchActiveChannels } from './fetch-channels';
+export { formatVideoData } from './format-data';

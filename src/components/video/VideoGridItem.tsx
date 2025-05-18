@@ -5,13 +5,12 @@ import { VideoCardThumbnail } from "./VideoCardThumbnail";
 import { VideoCardInfo } from "./VideoCardInfo";
 import { useLocation } from "react-router-dom";
 import { VideoGridItem as VideoItemType } from "@/hooks/video/useVideoGridData";
-import { VideoData } from "@/hooks/video/types/video-fetcher"; 
 import { useVideoDate } from "./useVideoDate";
 import { isVideoAvailable } from "@/hooks/video/utils/validation";
 import { memo } from "react";
 
 interface VideoGridItemProps {
-  video: VideoData | VideoItemType;
+  video: VideoItemType;
   loading?: boolean;
 }
 
@@ -26,7 +25,7 @@ export const VideoGridItem = memo(({ video, loading }: VideoGridItemProps) => {
   }
   
   // Skip rendering if the video is not available
-  if (!isVideoAvailable(video as VideoData)) {
+  if (!isVideoAvailable(video)) {
     return null;
   }
 

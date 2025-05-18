@@ -4,85 +4,46 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { VideoGridLoader } from "@/components/video/VideoGridLoader";
 import { VideoGridItem } from "@/components/video/VideoGridItem";
 import { VideoGridError } from "@/components/video/VideoGridError";
-import { VideoGridItem as VideoItemType } from "@/hooks/video/useVideoGridData";
+import { useVideoGridData, VideoGridItem as VideoItemType } from "@/hooks/video/useVideoGridData";
 import { filterUnavailableVideos } from "@/hooks/video/utils/validation";
-import { memo, useCallback } from "react";
-import { VideoData } from "@/hooks/video/types/video-fetcher";
-import { DelayedLoadingAnimation } from "@/components/ui/DelayedLoadingAnimation";
+import { memo } from "react";
 
 interface VideoGridProps {
-  videos?: VideoItemType[] | VideoData[];
+  videos?: VideoItemType[];
   maxVideos?: number;
   rowSize?: number;
   isLoading?: boolean;
-  error?: Error | null;
-  onRetry?: () => Promise<any>;
   className?: string;
 }
 
+// Using React.memo to prevent unnecessary re-renders
 export const VideoGrid = memo(({
   videos: externalVideos,
   maxVideos = 12,
   rowSize = 4,
   isLoading: externalLoading,
-  error: externalError,
-  onRetry,
   className,
 }: VideoGridProps) => {
   const { isMobile, isTablet } = useIsMobile();
-  const { videos: fetchedVideos, loading: internalLoading, error: internalError } = useVideoGridData(maxVideos);
+  // Removed session dependency since we want the same behavior for all users
+  const { videos: fetchedVideos, loading: internalLoading, error } = useVideoGridData(maxVideos);
   
   // Use external videos if provided, otherwise use fetched videos
   let videos = externalVideos || fetchedVideos;
   
-  // Filter out unavailable videos
-  videos = filterUnavailableVideos(videos as VideoData[]);
+  // Filter out unavailable videos with improved performance
+  videos = filterUnavailableVideos(videos);
   
-  // Determine loading state
   const isLoading = externalLoading !== undefined ? externalLoading : internalLoading;
-  
-  // Use external error if provided, otherwise use internal error
-  const error = externalError || internalError;
-  
-  // Determine if we have a network error
-  const isNetworkError = error && (
-    error.message?.includes('fetch') || 
-    error.message?.includes('network')
-  );
 
-  // Handle retry with proper error handling
-  const handleRetry = useCallback(async () => {
-    if (!onRetry) return;
-    
-    try {
-      await onRetry();
-    } catch (retryError) {
-      console.error("Error during retry:", retryError);
-    }
-  }, [onRetry]);
-
-  // Show loader while loading - replacement for VideoGridLoader
-  if (isLoading && !videos?.length) {
-    return (
-      <div className="w-full flex items-center justify-center">
-        <DelayedLoadingAnimation 
-          size={isMobile ? "small" : "medium"}
-          text="Loading videos..." 
-          delayMs={1000}
-        />
-      </div>
-    );
+  // Show loader while loading
+  if (isLoading) {
+    return <VideoGridLoader />;
   }
 
-  // Handle errors when we have no videos to show
-  if (error && !videos?.length) {
-    return (
-      <VideoGridError 
-        message={isNetworkError ? "Network connection issue" : error.message} 
-        onRetry={handleRetry}
-        networkError={isNetworkError}
-      />
-    );
+  // Handle errors
+  if (error && !videos.length) {
+    return <VideoGridError message={error.message} onRetry={() => window.location.reload()} />;
   }
 
   // Create grid columns based on device and rowSize
@@ -94,33 +55,19 @@ export const VideoGrid = memo(({
     gridCols = "grid-cols-3"; // Tablet always 3 columns
   }
   
-  const gridGap = isMobile ? "gap-x-2 gap-y-4" : "gap-4";
+  const gridGap = isMobile ? "gap-x-2 gap-y-1" : "gap-4";
   
   // Limit videos based on device
   const videoLimit = isMobile ? 4 : isTablet ? 9 : maxVideos;
-  const displayVideos = videos?.slice(0, videoLimit) || [];
+  const displayVideos = videos.slice(0, videoLimit);
 
-  // Show error notice above videos if we have videos but there was an error
   return (
-    <div className={cn("space-y-4", className)}>
-      {error && videos?.length > 0 && (
-        <VideoGridError 
-          message={isNetworkError ? "Limited connectivity - showing available videos" : "Showing limited content due to loading issues"} 
-          onRetry={handleRetry}
-          networkError={isNetworkError} 
-        />
-      )}
-      
-      <div className={cn("grid", gridCols, gridGap)}>
-        {displayVideos.map((video) => (
-          <VideoGridItem key={video.id} video={video as VideoData} />
-        ))}
-      </div>
+    <div className={cn("grid video-grid-container", gridCols, gridGap, className)}>
+      {displayVideos.map((video) => (
+        <VideoGridItem key={video.id} video={video} />
+      ))}
     </div>
   );
 });
-
-// Re-add the import here for useVideoGridData
-import { useVideoGridData } from "@/hooks/video/useVideoGridData";
 
 export default VideoGrid;

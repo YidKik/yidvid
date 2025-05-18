@@ -8,9 +8,9 @@ export interface VideoData {
   channelName: string;
   channelId: string;
   views: number;
-  uploadedAt: string | Date;
-  updatedAt: string | Date;
-  createdAt: string | Date;
+  uploadedAt: Date;
+  updatedAt: Date;
+  createdAt: Date;
   duration?: string | null;
   channelThumbnail?: string | null;
 }
