@@ -29,11 +29,12 @@ export const MobileBottomNav = ({
       <div className="flex items-center justify-around h-full max-w-lg mx-auto relative">
         {isAuthenticated && (
           <>
-            <NotificationsMenu />
+            <NotificationsMenu onMarkNotificationsAsRead={onMarkNotificationsAsRead} />
             <Separator orientation="vertical" className="h-8 bg-gray-200/60" />
           </>
         )}
         
+        <ContactDialog />
         <Separator orientation="vertical" className="h-8 bg-gray-200/60" />
         
         {isAuthenticated ? (

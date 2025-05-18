@@ -1,9 +1,7 @@
 
-import { Button } from "@/components/ui/button";
 import { NotificationsMenu } from "./NotificationsMenu";
 import { UserMenu } from "./UserMenu";
-import { ContactDialog } from "../contact/ContactDialog";
-import { LogIn, MessageSquare, Settings } from "lucide-react";
+import { LogIn } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { MobileHeaderActions } from "./actions/MobileHeaderActions";
 import { DesktopHeaderActions } from "./actions/DesktopHeaderActions";

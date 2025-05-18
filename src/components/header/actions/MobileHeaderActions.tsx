@@ -1,9 +1,10 @@
 
 import { Button } from "@/components/ui/button";
-import { LogIn, Settings } from "lucide-react";
+import { LogIn, MessageSquare, Settings } from "lucide-react";
 import { NotificationsMenu } from "../NotificationsMenu";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useSessionManager } from "@/hooks/useSessionManager";
+import { ContactDialog } from "@/components/contact/ContactDialog";
 
 interface MobileHeaderActionsProps {
   onAuthOpen: () => void;
@@ -35,7 +36,8 @@ export const MobileHeaderActions = ({
     <div className="flex items-center gap-1.5">
       {isAuthenticated ? (
         <>
-          <NotificationsMenu onMarkAsRead={onMarkNotificationsAsRead} />
+          <NotificationsMenu onMarkNotificationsAsRead={onMarkNotificationsAsRead} />
+          <ContactDialog />
           <Button
             onClick={handleSettingsClick}
             variant="ghost" 
@@ -47,6 +49,7 @@ export const MobileHeaderActions = ({
         </>
       ) : (
         <>
+          <ContactDialog />
           <Button
             onClick={onAuthOpen}
             variant="ghost" 
