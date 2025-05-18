@@ -13,17 +13,19 @@ export const MobileHomeSection = () => {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'signin' | 'signup'>('signin');
 
-  // Add class to body on mount, remove on unmount
+  // Add class to both html and body on mount, remove on unmount
   useEffect(() => {
+    document.documentElement.classList.add('home-page');
     document.body.classList.add('home-page');
     
     return () => {
+      document.documentElement.classList.remove('home-page');
       document.body.classList.remove('home-page');
     };
   }, []);
 
   return (
-    <div className="min-h-screen w-full overflow-y-auto">
+    <div className="min-h-screen w-full overflow-y-auto bg-[#003c43]">
       <MobileNavHeader />
       <div className="px-6 pt-16">
         <MobileHeroSection />

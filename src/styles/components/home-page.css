@@ -48,3 +48,28 @@ body.home-page {
   max-width: 100vw !important;
   box-sizing: border-box !important;
 }
+
+/* Force background color for all devices */
+@media (max-width: 1024px) {
+  html.home-page,
+  body.home-page,
+  .home-page {
+    background-color: #003c43 !important;
+  }
+  
+  .home-page > div {
+    background-color: #003c43 !important;
+  }
+  
+  /* Override any white backgrounds */
+  .home-page [class*="bg-white"],
+  .home-page [class*="bg-background"],
+  .home-page [style*="background-color: white"],
+  .home-page [style*="background-color: #fff"],
+  .home-page [style*="background-color: #ffffff"],
+  .home-page [style*="background: white"],
+  .home-page [style*="background: #fff"],
+  .home-page [style*="background: #ffffff"] {
+    background-color: #003c43 !important;
+  }
+}

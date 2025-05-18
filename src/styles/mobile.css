@@ -126,10 +126,13 @@
   }
   
   /* Full-width sections for mobile */
-  .home-page #about-section .bg-[#135d66] {
-    width: 100vw;
-    margin-left: -1rem;
-    margin-right: -1rem;
+  .home-page #about-section .bg-[#135d66],
+  .home-page .mt-8.mb-6.bg-[#135d66] {
+    width: 100vw !important;
+    margin-left: calc(-50vw + 50%) !important;
+    margin-right: calc(-50vw + 50%) !important;
+    max-width: 100vw !important;
+    box-sizing: border-box !important;
   }
   
   /* Video card mobile optimizations */
@@ -148,6 +151,19 @@
     margin-left: 0.15rem !important;
     margin-right: 0.15rem !important;
   }
+  
+  /* Make sure home page background is always green on mobile */
+  html.home-page,
+  body.home-page,
+  .home-page,
+  .home-page * {
+    background-color: #003c43 !important;
+  }
+  
+  /* Override any basic body styles in mobile view */
+  body.home-page:not([class*="videos-page"]):not([class*="auth-page"]) {
+    background-color: #003c43 !important;
+  }
 }
 
 /* Video thumbnail optimization for mobile */
@@ -161,5 +177,12 @@
 @media (min-width: 769px) and (max-width: 1024px) {
   .videos-page .grid {
     gap: 12px !important;
+  }
+  
+  /* Make sure home page background is always green on tablet */
+  html.home-page,
+  body.home-page,
+  .home-page {
+    background-color: #003c43 !important;
   }
 }

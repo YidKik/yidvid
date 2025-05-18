@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -62,3 +63,14 @@ body {
 
 /* Import desktop specific styles */
 @import './styles/desktop.css';
+
+/* Homepage specific override for ALL devices */
+html.home-page,
+body.home-page {
+  background-color: #003c43 !important;
+  color: #e3fef7;
+}
+
+.home-page {
+  background-color: #003c43 !important;
+}

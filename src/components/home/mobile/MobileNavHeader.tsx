@@ -34,27 +34,27 @@ export const MobileNavHeader = () => {
         <nav className="flex items-center justify-end gap-2.5">
           <button
             onClick={() => scrollToSection('home-section')}
-            className="text-white text-xs font-medium bg-transparent border-none p-2 m-0 hover:bg-[#135d66] hover:text-white hover:rounded-md"
+            className="text-white text-xs font-medium transition-colors bg-transparent border-none p-0 m-0 hover:bg-[#135d66] hover:text-white hover:px-2 hover:py-1 hover:rounded-md"
           >
-            <span className="transform-none">Home</span>
+            Home
           </button>
           <button
             onClick={() => scrollToSection('about-section')}
-            className="text-white text-xs font-medium bg-transparent border-none p-2 m-0 hover:bg-[#135d66] hover:text-white hover:rounded-md"
+            className="text-white text-xs font-medium transition-colors bg-transparent border-none p-0 m-0 hover:bg-[#135d66] hover:text-white hover:px-2 hover:py-1 hover:rounded-md"
           >
-            <span className="transform-none">About</span>
+            About
           </button>
           <button
             onClick={() => scrollToSection('contact-section')}
-            className="text-white text-xs font-medium bg-transparent border-none p-2 m-0 hover:bg-[#135d66] hover:text-white hover:rounded-md"
+            className="text-white text-xs font-medium transition-colors bg-transparent border-none p-0 m-0 hover:bg-[#135d66] hover:text-white hover:px-2 hover:py-1 hover:rounded-md"
           >
-            <span className="transform-none">Contact</span>
+            Contact
           </button>
           <button
             onClick={handleAuthClick}
-            className="text-white text-xs font-medium bg-transparent border-none p-2 m-0 hover:bg-[#135d66] hover:text-white hover:rounded-md"
+            className="text-white text-xs font-medium transition-colors bg-transparent border-none p-0 m-0 hover:bg-[#135d66] hover:text-white hover:px-2 hover:py-1 hover:rounded-md"
           >
-            <span className="transform-none">{session ? 'Sign out' : 'Sign in'}</span>
+            {session ? 'Sign out' : 'Sign in'}
           </button>
         </nav>
       </div>
