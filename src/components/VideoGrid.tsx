@@ -6,7 +6,6 @@ import { VideoGridItem } from "@/components/video/VideoGridItem";
 import { VideoGridError } from "@/components/video/VideoGridError";
 import { useVideoGridData, VideoGridItem as VideoItemType } from "@/hooks/video/useVideoGridData";
 import { filterUnavailableVideos } from "@/hooks/video/utils/validation";
-import { memo } from "react";
 
 interface VideoGridProps {
   videos?: VideoItemType[];
@@ -16,8 +15,7 @@ interface VideoGridProps {
   className?: string;
 }
 
-// Using React.memo to prevent unnecessary re-renders
-export const VideoGrid = memo(({
+export const VideoGrid = ({
   videos: externalVideos,
   maxVideos = 12,
   rowSize = 4,
@@ -31,7 +29,7 @@ export const VideoGrid = memo(({
   // Use external videos if provided, otherwise use fetched videos
   let videos = externalVideos || fetchedVideos;
   
-  // Filter out unavailable videos with improved performance
+  // Filter out unavailable videos
   videos = filterUnavailableVideos(videos);
   
   const isLoading = externalLoading !== undefined ? externalLoading : internalLoading;
@@ -68,6 +66,6 @@ export const VideoGrid = memo(({
       ))}
     </div>
   );
-});
+};
 
 export default VideoGrid;

@@ -5,7 +5,7 @@ import { MusicSection } from "@/components/content/MusicSection";
 import { VideoContent } from "@/components/content/VideoContent";
 import { useVideos } from "@/hooks/video/useVideos";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { ScrollToTopButton } from "./ScrollToTopButton";
 import { Header } from "@/components/Header";
 import { filterUnavailableVideos } from "@/hooks/video/utils/validation";
@@ -22,27 +22,24 @@ export const VideoPageContent = () => {
     error 
   } = useVideos();
   
-  // Filter out unavailable videos with improved performance
+  // Filter out unavailable videos
   const videos = filterUnavailableVideos(rawVideos || []);
   
   const { isMobile } = useIsMobile();
 
-  // Optimize the refetch logic to be more selective and less frequent
+  // If many videos were filtered out as unavailable, we should refetch
   useEffect(() => {
     if (rawVideos && rawVideos.length > 0) {
       const filteredOutCount = rawVideos.length - videos.length;
-      // Only trigger refetch if significant filtering AND more than 5 minutes since last fetch
-      const significantFiltering = filteredOutCount > 5 || (filteredOutCount / rawVideos.length) > 0.3;
-      const shouldRefresh = significantFiltering && forceRefetch && 
-                           (!lastSuccessfulFetch || 
-                            (new Date().getTime() - lastSuccessfulFetch.getTime() > 5 * 60 * 1000));
+      const significantFiltering = filteredOutCount > 3 || (filteredOutCount / rawVideos.length) > 0.2;
       
-      if (shouldRefresh) {
+      // If we filtered out a significant number of videos, trigger a refetch to get fresh content
+      if (significantFiltering && forceRefetch) {
         console.log(`Filtered out ${filteredOutCount} unavailable videos, triggering refetch`);
         forceRefetch();
       }
     }
-  }, [rawVideos, videos.length, forceRefetch, lastSuccessfulFetch]);
+  }, [rawVideos, videos.length, forceRefetch]);
 
   return (
     <div className="flex-1 videos-page">

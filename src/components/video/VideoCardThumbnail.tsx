@@ -1,5 +1,5 @@
 
-import { useState, useEffect, memo } from 'react';
+import { useState, useEffect } from 'react';
 import { cn } from "@/lib/utils";
 
 interface VideoCardThumbnailProps {
@@ -9,7 +9,7 @@ interface VideoCardThumbnailProps {
   className?: string;
 }
 
-export const VideoCardThumbnail = memo(({
+export const VideoCardThumbnail = ({
   thumbnail,
   title,
   isSample = false,
@@ -18,15 +18,12 @@ export const VideoCardThumbnail = memo(({
   const [imageError, setImageError] = useState(false);
   const [isValidThumbnail, setIsValidThumbnail] = useState(true);
   
-  // Check thumbnail validity with optimized validation
+  // Check thumbnail validity
   useEffect(() => {
-    // Quick validation for obviously invalid URLs to prevent unnecessary loading attempts
+    // Simple validation for obviously invalid URLs
     if (!thumbnail || 
         thumbnail.includes('no_thumbnail') || 
-        thumbnail.includes('placeholder') ||
-        thumbnail.includes('unavailable') ||
-        thumbnail === 'null' ||
-        thumbnail === 'undefined') {
+        thumbnail.includes('placeholder')) {
       setIsValidThumbnail(false);
     } else {
       setIsValidThumbnail(true);
@@ -35,10 +32,7 @@ export const VideoCardThumbnail = memo(({
   }, [thumbnail]);
 
   const handleImageError = () => {
-    // Log error but avoid console spam
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`Image error for thumbnail: ${thumbnail}`);
-    }
+    console.log(`Image error for thumbnail: ${thumbnail}`);
     setImageError(true);
   };
   
@@ -57,8 +51,6 @@ export const VideoCardThumbnail = memo(({
         alt={title}
         className="h-full w-full object-cover transition-transform group-hover:scale-105 duration-300"
         loading="lazy"
-        decoding="async" 
-        fetchpriority="high"
         onError={handleImageError}
       />
       
@@ -71,4 +63,4 @@ export const VideoCardThumbnail = memo(({
       <div className="absolute inset-0 bg-black/25 opacity-0 group-hover:opacity-100 transition-opacity" />
     </div>
   );
-});
+};
