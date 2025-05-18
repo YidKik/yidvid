@@ -26,6 +26,14 @@
     }
   }
   
+  /* Dialog positioning fixes */
+  .radix-dialog-content {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+  }
+  
   /* Custom scrollbar for desktop */
   ::-webkit-scrollbar {
     width: 8px;

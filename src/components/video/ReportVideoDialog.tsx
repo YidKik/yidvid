@@ -69,7 +69,7 @@ export function ReportVideoDialog({ videoId }: ReportVideoDialogProps) {
           </span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px] relative">
+      <DialogContent className="sm:max-w-[425px] relative fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
         <button 
           onClick={() => setIsOpen(false)}
           className="absolute right-4 top-4 text-[#ea384c]"
