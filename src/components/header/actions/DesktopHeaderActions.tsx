@@ -5,6 +5,7 @@ import { UserMenu } from "@/components/header/UserMenu";
 import { NotificationsMenu } from "@/components/header/NotificationsMenu";
 import { useSessionManager } from "@/hooks/useSessionManager";
 import { ContactDialog } from "@/components/contact/ContactDialog";
+import { LogIn } from "lucide-react";
 
 interface DesktopHeaderActionsProps {
   onAuthOpen?: () => void;
@@ -29,16 +30,20 @@ export function DesktopHeaderActions({
             <div className="flex gap-3 items-center">
               <ContactDialog />
               <NotificationsMenu onMarkNotificationsAsRead={onMarkNotificationsAsRead} />
-              <UserMenu onLogout={onLogout || (() => Promise.resolve())} />
+              <UserMenu onLogout={onLogout || (() => Promise.resolve())} handleSettingsClick={handleSettingsClick} />
             </div>
           ) : (
             <>
               <ContactDialog />
-              <Link to="/auth" onClick={onAuthOpen}>
-                <Button variant="outline" size="sm">
-                  Sign In
-                </Button>
-              </Link>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="flex items-center gap-1 px-3 py-1"
+                onClick={onAuthOpen}
+              >
+                <LogIn className="h-4 w-4" />
+                <span>Sign In</span>
+              </Button>
             </>
           )}
         </>
