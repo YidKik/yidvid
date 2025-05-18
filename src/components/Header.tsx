@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import Auth from "@/pages/Auth";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -131,7 +132,6 @@ export const Header = () => {
                 <HeaderActions 
                   isMobile={isMobile}
                   isSearchExpanded={isSearchExpanded}
-                  session={session}
                   onSearchExpand={() => {}}
                   onAuthOpen={() => setIsAuthOpen(true)}
                   onLogout={handleLogout}
@@ -154,7 +154,6 @@ export const Header = () => {
                 <HeaderActions 
                   isMobile={isMobile}
                   isSearchExpanded={isSearchExpanded}
-                  session={session}
                   onSearchExpand={() => setIsSearchExpanded(true)}
                   onAuthOpen={() => setIsAuthOpen(true)}
                   onLogout={handleLogout}
