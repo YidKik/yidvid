@@ -3,7 +3,7 @@ import { VideoCard } from "../VideoCard";
 
 interface Video {
   id: string;
-  video_id: string; // Add this field to ensure we have YouTube video ID
+  video_id: string;
   title: string;
   thumbnail: string;
   channel_name: string;
@@ -14,12 +14,15 @@ interface Video {
 
 interface RelatedVideosProps {
   videos?: Video[];
+  showHeading?: boolean; // Added optional prop to control heading visibility
 }
 
-export const RelatedVideos = ({ videos }: RelatedVideosProps) => {
+export const RelatedVideos = ({ videos, showHeading = false }: RelatedVideosProps) => {
   return (
     <div>
-      <h2 className="text-xl font-semibold mb-4">More videos</h2>
+      {showHeading && (
+        <h2 className="text-xl font-semibold mb-4">More videos</h2>
+      )}
       {videos && videos.length > 0 ? (
         <div className="h-[calc(3*240px)] overflow-y-auto pr-4 scrollbar-hide">
           <div className="space-y-4">

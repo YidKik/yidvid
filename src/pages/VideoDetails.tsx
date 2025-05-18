@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { useParams, Link, useLocation } from "react-router-dom";
 import { VideoPlayer } from "@/components/video/VideoPlayer";
@@ -147,7 +148,7 @@ const VideoDetails = () => {
             ) : (
               <div>
                 <h2 className="text-xl font-semibold mb-4 text-black">More videos</h2>
-                <RelatedVideos videos={channelVideos} />
+                <RelatedVideos videos={channelVideos} showHeading={false} />
               </div>
             )}
           </div>
