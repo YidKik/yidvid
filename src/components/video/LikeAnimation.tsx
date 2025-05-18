@@ -13,14 +13,17 @@ export const LikeAnimation = ({ isVisible, onComplete }: LikeAnimationProps) => 
 
   useEffect(() => {
     if (isVisible) {
-      const newIcons = Array.from({ length: 12 }, (_, i) => ({
+      console.log("Animation triggered - generating icons");
+      // Create more icons for a more visible effect
+      const newIcons = Array.from({ length: 20 }, (_, i) => ({
         id: i,
-        x: Math.random() * 200 - 100,
+        x: Math.random() * 300 - 150, // More horizontal spread
         delay: Math.random() * 0.5,
       }));
       setIcons(newIcons);
 
       const timer = setTimeout(() => {
+        console.log("Animation complete");
         onComplete();
         setIcons([]);
       }, 2000);
@@ -33,21 +36,21 @@ export const LikeAnimation = ({ isVisible, onComplete }: LikeAnimationProps) => 
     <AnimatePresence>
       {isVisible && (
         <div className="fixed inset-0 pointer-events-none z-50 flex items-center justify-center">
-          <div className="absolute top-0 left-0 right-0 bottom-0">
+          <div className="absolute inset-0 flex items-center justify-center">
             {icons.map((icon) => (
               <motion.div
                 key={icon.id}
                 initial={{ 
                   opacity: 0,
                   scale: 0,
-                  y: '80vh', 
-                  x: `calc(50vw + ${icon.x}px)`
+                  y: 200, 
+                  x: icon.x
                 }}
                 animate={{
                   opacity: [0, 1, 0],
                   scale: [0.5, 1.5, 0],
-                  y: ['80vh', '40vh', '10vh'],
-                  x: [`calc(50vw + ${icon.x}px)`, `calc(50vw + ${icon.x * 1.5}px)`],
+                  y: [200, -100, -300],
+                  x: [icon.x, icon.x * 1.2],
                 }}
                 transition={{
                   duration: 2,

@@ -60,6 +60,11 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
   } = useChannelSubscription(channelId || undefined);
 
   const handleLike = async () => {
+    console.log("Like button clicked!", { isAuthenticated, userId, videoId });
+    
+    // Always show animation regardless of auth state for better user feedback
+    setShowAnimation(true);
+    
     if (!isAuthenticated) {
       toast.error("Please sign in to like videos");
       return;
@@ -87,7 +92,6 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
       }
 
       setIsLiked(true);
-      setShowAnimation(true);
       toast.success("Video liked successfully");
     } catch (error) {
       console.error('Error liking video:', error);
@@ -131,7 +135,7 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
           variant="outline"
           onClick={handleLike}
           disabled={isAuthLoading}
-          className={`group relative rounded-full p-2 md:p-3 hover:bg-primary/10 transition-all duration-300 ${
+          className={`group relative rounded-full p-2 md:p-3 hover:bg-primary/10 transition-all duration-300 active:scale-90 ${
             isLiked 
               ? "bg-primary border-primary hover:bg-primary/90" 
               : "hover:border-gray-300"
@@ -156,7 +160,7 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
             variant={isSubscribed ? "default" : "outline"}
             onClick={handleSubscribeClick}
             disabled={buttonDisabled}
-            className={`relative group rounded-full px-6 py-2 text-xs md:text-sm transition-all duration-300
+            className={`relative group rounded-full px-6 py-2 text-xs md:text-sm transition-all duration-300 active:scale-95
               ${isSubscribed 
                 ? "bg-primary border-primary hover:bg-primary/90 text-white shadow-md" 
                 : "hover:bg-primary/10 hover:border-gray-300"

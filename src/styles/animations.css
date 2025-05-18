@@ -139,3 +139,34 @@
   stroke-dashoffset: 1000;
   animation: trace 2s linear forwards;
 }
+
+/* Thumb up button click animation */
+@keyframes click-pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.9); }
+  100% { transform: scale(1); }
+}
+
+.click-pulse {
+  animation: click-pulse 0.3s ease;
+}
+
+/* Like animation floating thumbs */
+@keyframes float-up {
+  0% { 
+    transform: translateY(0) scale(0.5);
+    opacity: 0;
+  }
+  25% { 
+    transform: translateY(-50px) scale(1.2);
+    opacity: 1;
+  }
+  100% { 
+    transform: translateY(-200px) scale(0.5);
+    opacity: 0;
+  }
+}
+
+.float-up {
+  animation: float-up 2s ease-out forwards;
+}

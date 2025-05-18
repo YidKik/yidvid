@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { useParams, Link, useLocation } from "react-router-dom";
 import { VideoPlayer } from "@/components/video/VideoPlayer";
@@ -119,7 +120,7 @@ const VideoDetails = () => {
               <ReportVideoDialog videoId={video?.id || ""} />
             </div>
             
-            {isAuthenticated && <VideoInteractions videoId={video?.id || ""} />}
+            <VideoInteractions videoId={video?.id || ""} />
             
             {isAuthenticated && <VideoComments videoId={video?.id || ""} />}
 
