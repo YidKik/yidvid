@@ -13,11 +13,13 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from "@/components/ui/alert-dialog";
-import { Loader2 } from "lucide-react";
+import { Loader2, RefreshCw } from "lucide-react";
 
 export const ChannelVideosFetcher = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [isUpdatingViews, setIsUpdatingViews] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [showViewsDialog, setShowViewsDialog] = useState(false);
   const [progress, setProgress] = useState<{current: number, total: number} | null>(null);
   const [processingStatus, setProcessingStatus] = useState<string | null>(null);
 
@@ -180,6 +182,51 @@ export const ChannelVideosFetcher = () => {
     }
   };
 
+  // New function to update video view counts
+  const handleUpdateViewCounts = async () => {
+    try {
+      setIsUpdatingViews(true);
+      setProcessingStatus("Updating video view counts...");
+      toast.loading("Updating video view counts...");
+      
+      // Call the edge function directly
+      const response = await fetch('https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/update-video-views', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1aW5ja3R2c2l1enRzeGN1cWZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY0ODgzNzcsImV4cCI6MjA1MjA2NDM3N30.zbReqHoAR33QoCi_wqNp8AtNofTX3JebM7jvjFAWbMg`
+        },
+        body: JSON.stringify({
+          batchSize: 50,
+          maxVideos: 300,
+          bypassQuotaCheck: true
+        })
+      });
+      
+      if (response.ok) {
+        const result = await response.json();
+        
+        if (result.success) {
+          toast.success(`Successfully updated ${result.updated} video view counts`, {
+            description: `Updated ${result.updated} videos, ${result.failed} failed`
+          });
+        } else {
+          toast.error(`Failed to update view counts: ${result.message}`);
+        }
+      } else {
+        toast.error("Error communicating with view count update service");
+      }
+    } catch (error) {
+      console.error("Error updating view counts:", error);
+      toast.error(`Error: ${error.message || "Unknown error occurred"}`);
+    } finally {
+      setIsUpdatingViews(false);
+      setShowViewsDialog(false);
+      setProcessingStatus(null);
+      toast.dismiss();
+    }
+  };
+
   // Helper function to fetch all channel IDs
   const fetchAllChannelIds = async (): Promise<string[]> => {
     try {
@@ -262,20 +309,40 @@ export const ChannelVideosFetcher = () => {
 
   return (
     <>
-      <Button
-        variant="outline"
-        onClick={() => setShowConfirmDialog(true)}
-        disabled={isLoading}
-      >
-        {isLoading ? (
-          <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            {processingStatus || "Processing..."}
-          </>
-        ) : (
-          "Fetch Channel Videos"
-        )}
-      </Button>
+      <div className="flex space-x-2">
+        <Button
+          variant="outline"
+          onClick={() => setShowConfirmDialog(true)}
+          disabled={isLoading || isUpdatingViews}
+        >
+          {isLoading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              {processingStatus || "Processing..."}
+            </>
+          ) : (
+            "Fetch Channel Videos"
+          )}
+        </Button>
+        
+        <Button
+          variant="outline"
+          onClick={() => setShowViewsDialog(true)}
+          disabled={isLoading || isUpdatingViews}
+        >
+          {isUpdatingViews ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Updating View Counts...
+            </>
+          ) : (
+            <>
+              <RefreshCw className="mr-2 h-4 w-4" />
+              Update View Counts
+            </>
+          )}
+        </Button>
+      </div>
 
       <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
         <AlertDialogContent>
@@ -298,6 +365,30 @@ export const ChannelVideosFetcher = () => {
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction onClick={handleFetchVideos}>Fetch All Videos</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+      
+      <AlertDialog open={showViewsDialog} onOpenChange={setShowViewsDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Update Video View Counts</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will connect to YouTube API and update view counts for videos in the database.
+              The process will:
+              <ul className="list-disc pl-5 mt-2">
+                <li>Process up to 300 videos starting with oldest updated first</li>
+                <li>Use both primary and fallback API keys as needed</li>
+                <li>Update view counts in the database</li>
+              </ul>
+              <div className="mt-2 text-yellow-600 font-medium">
+                This operation consumes YouTube API quota. It normally runs automatically twice daily.
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleUpdateViewCounts}>Update View Counts</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
