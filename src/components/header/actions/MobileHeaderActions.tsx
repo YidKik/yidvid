@@ -35,7 +35,7 @@ export const MobileHeaderActions = ({
     <div className="flex items-center gap-1.5">
       {isAuthenticated ? (
         <>
-          <NotificationsMenu />
+          <NotificationsMenu onMarkAsRead={onMarkNotificationsAsRead} />
           <Button
             onClick={handleSettingsClick}
             variant="ghost" 
@@ -53,7 +53,8 @@ export const MobileHeaderActions = ({
             size="sm"
             className={`${buttonClass} text-[0.7rem] rounded-full flex items-center px-2 py-1`}
           >
-            <span>Sign in</span>
+            <LogIn className="h-3 w-3" />
+            <span className="ml-1">Sign in</span>
           </Button>
         </>
       )}

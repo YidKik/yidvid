@@ -124,7 +124,7 @@ export const Header = () => {
                 {/* Logo removed from mobile view */}
               </div>
               
-              <div className="w-4/5 flex justify-center">
+              <div className="w-3/5 flex justify-center">
                 <SearchBar />
               </div>
 
