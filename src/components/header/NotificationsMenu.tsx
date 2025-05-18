@@ -1,99 +1,213 @@
 
-import { Bell } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Bell, BellOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import { NotificationHeader } from "../notifications/NotificationHeader";
-import { NotificationList } from "../notifications/NotificationList";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { useNotifications } from "../notifications/useNotifications";
-import { useMobileDrag } from "../notifications/useMobileDrag";
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
+import { useSessionManager } from "@/hooks/useSessionManager";
 
-interface NotificationsMenuProps {
-  session: any;
-  onMarkAsRead: () => Promise<void>;
-}
+export function NotificationsMenu() {
+  const [notifications, setNotifications] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const navigate = useNavigate();
+  const { session, isAuthenticated } = useSessionManager();
+  const userId = session?.user?.id;
 
-export const NotificationsMenu = ({ session, onMarkAsRead }: NotificationsMenuProps) => {
-  const { isMobile } = useIsMobile();
-  
-  const {
-    notifications,
-    isLoading,
-    isError,
-    refetch,
-    closeRef,
-    handleClose,
-    handleClearAll
-  } = useNotifications(session?.user?.id);
+  useEffect(() => {
+    if (!isAuthenticated || !userId) {
+      setNotifications([]);
+      setUnreadCount(0);
+      setIsLoading(false);
+      return;
+    }
 
-  const {
-    sheetContentRef,
-    handleTouchStart,
-    handleTouchMove,
-    handleTouchEnd
-  } = useMobileDrag(handleClose, isMobile);
+    const fetchNotifications = async () => {
+      setIsLoading(true);
+      try {
+        const { data: notificationsData, error } = await supabase
+          .from("video_notifications")
+          .select(`
+            id,
+            is_read,
+            created_at,
+            video_id,
+            youtube_videos (
+              id,
+              title,
+              thumbnail,
+              channel_name
+            )
+          `)
+          .eq("user_id", userId)
+          .order("created_at", { ascending: false })
+          .limit(10);
 
-  if (!session?.user?.id) {
+        if (error) throw error;
+
+        // Count unread notifications
+        const unread = notificationsData?.filter(n => !n.is_read).length || 0;
+        setUnreadCount(unread);
+        setNotifications(notificationsData || []);
+      } catch (error) {
+        console.error("Error fetching notifications:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchNotifications();
+
+    // Set up realtime subscription for new notifications
+    const channel = supabase
+      .channel("video_notifications_changes")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "video_notifications",
+          filter: `user_id=eq.${userId}`
+        },
+        () => {
+          fetchNotifications();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [userId, isAuthenticated]);
+
+  const handleNotificationClick = async (notification: any) => {
+    try {
+      // Mark as read
+      if (!notification.is_read) {
+        await supabase
+          .from("video_notifications")
+          .update({ is_read: true })
+          .eq("id", notification.id);
+        
+        // Update local state
+        setNotifications(prevNotifications => 
+          prevNotifications.map(n => 
+            n.id === notification.id ? { ...n, is_read: true } : n
+          )
+        );
+        setUnreadCount(prev => Math.max(0, prev - 1));
+      }
+      
+      // Navigate to video
+      navigate(`/video/${notification.youtube_videos.id}`);
+    } catch (error) {
+      console.error("Error updating notification:", error);
+    }
+  };
+
+  const markAllAsRead = async () => {
+    try {
+      await supabase
+        .from("video_notifications")
+        .update({ is_read: true })
+        .eq("user_id", userId)
+        .eq("is_read", false);
+      
+      // Update local state
+      setNotifications(prevNotifications => 
+        prevNotifications.map(n => ({ ...n, is_read: true }))
+      );
+      setUnreadCount(0);
+    } catch (error) {
+      console.error("Error marking all as read:", error);
+    }
+  };
+
+  if (!isAuthenticated) {
     return null;
   }
 
   return (
-    <Sheet>
-      <SheetTrigger asChild>
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          className="bg-[#222222] hover:bg-[#333333] text-white relative h-7 w-7 md:h-10 md:w-10"
-        >
-          <Bell className="h-3.5 w-3.5 md:h-5 md:w-5" />
-          {notifications && notifications.length > 0 && (
-            <Badge 
-              variant="destructive" 
-              className="absolute -top-1 -right-1 h-3 w-3 md:h-5 md:w-5 flex items-center justify-center p-0 text-[8px] md:text-xs"
-            >
-              {notifications.length}
-            </Badge>
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button variant="ghost" size="icon" className="relative">
+          <Bell className="h-5 w-5" />
+          {unreadCount > 0 && (
+            <span className="absolute -top-1 -right-1 bg-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+              {unreadCount > 9 ? '9+' : unreadCount}
+            </span>
           )}
         </Button>
-      </SheetTrigger>
-      <SheetClose ref={closeRef} className="hidden" />
-      <SheetContent 
-        side={isMobile ? "bottom" : "right"}
-        className={`
-          ${isMobile ? 'w-full h-[100vh] rounded-t-xl' : 'w-[240px] sm:w-[400px] max-h-[80vh]'} 
-          ${isMobile ? 'bg-[#222222]/90 backdrop-blur-md' : 'bg-[#222222] rounded-l-xl'} 
-          border-[#333333] p-0
-          ${isMobile ? 'animate-slide-up' : 'animate-slide-in-right'}
-        `}
-        ref={sheetContentRef}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-      >
-        <div className={isMobile ? 'relative' : ''}>
-          {isMobile && (
-            <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-10 h-1 bg-gray-500/50 rounded-full" />
+      </PopoverTrigger>
+      <PopoverContent className="w-80 p-0" align="end">
+        <div className="flex items-center justify-between p-4 border-b">
+          <h3 className="font-medium">Notifications</h3>
+          {notifications.length > 0 && (
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={markAllAsRead}
+              disabled={unreadCount === 0}
+            >
+              Mark all as read
+            </Button>
           )}
-          <NotificationHeader 
-            hasNotifications={!!notifications?.length}
-            onClearAll={handleClearAll}
-            onClose={handleClose}
-          />
-          <NotificationList
-            notifications={notifications || []}
-            isLoading={isLoading}
-            isError={isError}
-            onRetry={() => refetch()}
-            onNotificationClick={onMarkAsRead}
-          />
         </div>
-      </SheetContent>
-    </Sheet>
+        <div className="max-h-80 overflow-y-auto">
+          {isLoading ? (
+            <div className="flex items-center justify-center p-4">
+              <p className="text-sm text-muted-foreground">Loading notifications...</p>
+            </div>
+          ) : notifications.length > 0 ? (
+            <div>
+              {notifications.map(notification => (
+                <div 
+                  key={notification.id} 
+                  className={`p-4 border-b cursor-pointer hover:bg-gray-50 transition-colors ${!notification.is_read ? 'bg-blue-50/30' : ''}`}
+                  onClick={() => handleNotificationClick(notification)}
+                >
+                  <div className="flex gap-3">
+                    {notification.youtube_videos?.thumbnail && (
+                      <img 
+                        src={notification.youtube_videos.thumbnail} 
+                        alt="" 
+                        className="w-12 h-9 object-cover rounded"
+                      />
+                    )}
+                    <div className="flex-1">
+                      <p className={`text-sm ${!notification.is_read ? 'font-semibold' : ''}`}>
+                        New video: {notification.youtube_videos?.title}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {notification.youtube_videos?.channel_name}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        {new Date(notification.created_at).toLocaleString()}
+                      </p>
+                    </div>
+                    {!notification.is_read && (
+                      <div className="w-2 h-2 bg-primary rounded-full self-start mt-2"></div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center p-8 text-center">
+              <BellOff className="h-8 w-8 text-muted-foreground mb-2 opacity-60" />
+              <p className="text-sm text-muted-foreground">No notifications yet</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Subscribe to channels to get notified about new videos
+              </p>
+            </div>
+          )}
+        </div>
+      </PopoverContent>
+    </Popover>
   );
-};
+}

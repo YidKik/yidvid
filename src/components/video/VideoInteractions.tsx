@@ -32,6 +32,7 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
     });
   }, [session, isAuthenticated, isSessionLoading, userId]);
 
+  // Fetch the channel ID associated with this video
   useEffect(() => {
     const fetchChannelId = async () => {
       if (!videoId) return;
@@ -47,6 +48,7 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
         return;
       }
 
+      console.log("Fetched channel ID:", data.channel_id);
       setChannelId(data.channel_id);
     };
 
@@ -56,8 +58,17 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
   const { 
     isSubscribed, 
     handleSubscribe, 
-    isLoading: isLoadingSubscription 
+    isLoading: isLoadingSubscription,
+    checkSubscription
   } = useChannelSubscription(channelId || undefined);
+
+  // Verify subscription status when channelId changes or auth state changes
+  useEffect(() => {
+    if (channelId && isAuthenticated && !isSessionLoading) {
+      console.log("Verifying subscription status for channel:", channelId);
+      checkSubscription();
+    }
+  }, [channelId, isAuthenticated, isSessionLoading, checkSubscription]);
 
   const handleLike = async () => {
     console.log("Like button clicked!", { isAuthenticated, userId, videoId });
