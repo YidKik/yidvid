@@ -142,8 +142,7 @@ export const Header = () => {
             </div>
           ) : (
             <>
-              {/* Desktop view - logo completely removed */}
-              
+              {/* Desktop view - single centered search bar with actions on the right */}
               <div className="absolute left-1/2 transform -translate-x-1/2 w-full max-w-xl mx-auto px-4">
                 <div className="w-full max-w-md mx-auto">
                   <SearchBar />
