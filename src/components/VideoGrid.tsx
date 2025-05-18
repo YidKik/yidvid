@@ -98,7 +98,7 @@ export const VideoGrid = ({
     gridCols = "grid-cols-3"; // Tablet always 3 columns
   }
   
-  const gridGap = isMobile ? "gap-x-2 gap-y-1" : "gap-4";
+  const gridGap = isMobile ? "gap-x-3 gap-y-2" : "gap-5";
   
   // Limit videos based on device
   const videoLimit = isMobile ? 4 : isTablet ? 9 : maxVideos;

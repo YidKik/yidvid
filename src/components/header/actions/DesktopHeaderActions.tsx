@@ -39,7 +39,7 @@ export const DesktopHeaderActions = ({
         }}
         variant="ghost" 
         size="icon"
-        className={`h-10 w-10 ${isVideosPage 
+        className={`h-10 w-10 rounded-full ${isVideosPage 
           ? 'bg-[#ea384c] hover:bg-[#c82d3f] text-white' 
           : 'bg-[#222222] hover:bg-[#333333] text-white'}`}
       >
@@ -51,7 +51,7 @@ export const DesktopHeaderActions = ({
           onClick={handleSettingsClick}
           className={`${isVideosPage 
             ? 'bg-[#ea384c] hover:bg-[#c82d3f] text-white' 
-            : 'bg-[#222222] hover:bg-[#333333] text-white'} rounded-md flex items-center justify-center px-4`}
+            : 'bg-[#222222] hover:bg-[#333333] text-white'} rounded-full flex items-center justify-center px-4`}
           variant="ghost"
         >
           <Settings className="h-5 w-5" />
@@ -61,7 +61,7 @@ export const DesktopHeaderActions = ({
           onClick={onAuthOpen}
           className={`${isVideosPage 
             ? 'bg-[#ea384c] hover:bg-[#c82d3f] text-white' 
-            : 'bg-[#222222] hover:bg-[#333333] text-white'} rounded-md flex items-center justify-center px-4`}
+            : 'bg-[#222222] hover:bg-[#333333] text-white'} rounded-full flex items-center justify-center px-4`}
           variant="ghost"
         >
           <LogIn className="h-5 w-5 mr-2" />

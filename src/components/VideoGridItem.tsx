@@ -30,14 +30,6 @@ export const VideoGridItem = ({ video, loading }: VideoGridItemProps) => {
   // Ensure we have a valid channelId for the link
   const channelIdForLink = video.channelId || "";
 
-  // Add debug log to see what's being passed to the link
-  console.log("VideoGridItem rendering with video data:", {
-    id: video.id,
-    video_id: video.video_id,
-    videoIdForLink: videoIdForLink,
-    channelId: channelIdForLink
-  });
-
   return (
     <Link 
       to={`/video/${videoIdForLink}`}

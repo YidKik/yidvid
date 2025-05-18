@@ -33,10 +33,10 @@
 /* Mobile optimizations */
 @media (max-width: 768px) {
   .video-title {
-    font-size: 0.65rem;
+    font-size: 0.7rem;
     line-height: 1.1;
-    margin-top: 0.2rem;
-    margin-bottom: 0.1rem;
+    margin-top: 0.25rem;
+    margin-bottom: 0.15rem;
     max-height: 2.2em;
     overflow: hidden;
     display: -webkit-box;
@@ -45,7 +45,7 @@
   }
   
   .video-meta-text {
-    font-size: 0.6rem;
+    font-size: 0.65rem;
     line-height: 1;
     margin-top: 0;
   }
