@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import Auth from "@/pages/Auth";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -124,7 +123,7 @@ export const Header = () => {
                 {/* Logo removed from mobile view */}
               </div>
               
-              <div className="w-3/5 flex justify-center">
+              <div className="w-4/5 flex justify-center">
                 <SearchBar />
               </div>
 
@@ -132,6 +131,7 @@ export const Header = () => {
                 <HeaderActions 
                   isMobile={isMobile}
                   isSearchExpanded={isSearchExpanded}
+                  session={session}
                   onSearchExpand={() => {}}
                   onAuthOpen={() => setIsAuthOpen(true)}
                   onLogout={handleLogout}
@@ -154,6 +154,7 @@ export const Header = () => {
                 <HeaderActions 
                   isMobile={isMobile}
                   isSearchExpanded={isSearchExpanded}
+                  session={session}
                   onSearchExpand={() => setIsSearchExpanded(true)}
                   onAuthOpen={() => setIsAuthOpen(true)}
                   onLogout={handleLogout}

@@ -11,6 +11,7 @@ import { DesktopHeaderActions } from "./actions/DesktopHeaderActions";
 interface HeaderActionsProps {
   isMobile: boolean;
   isSearchExpanded: boolean;
+  session: any;
   onSearchExpand: () => void;
   onAuthOpen: () => void;
   onLogout: () => Promise<void>;
@@ -21,6 +22,7 @@ interface HeaderActionsProps {
 export const HeaderActions = ({
   isMobile,
   isSearchExpanded,
+  session,
   onSearchExpand,
   onAuthOpen,
   onLogout,
@@ -39,6 +41,7 @@ export const HeaderActions = ({
   if (isMobile) {
     return (
       <MobileHeaderActions
+        session={session}
         onAuthOpen={onAuthOpen}
         onMarkNotificationsAsRead={onMarkNotificationsAsRead}
         handleSettingsClick={handleSettingsClick}
@@ -49,6 +52,7 @@ export const HeaderActions = ({
 
   return (
     <DesktopHeaderActions
+      session={session}
       onAuthOpen={onAuthOpen}
       onLogout={onLogout}
       onMarkNotificationsAsRead={onMarkNotificationsAsRead}
