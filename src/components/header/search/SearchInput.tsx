@@ -45,7 +45,7 @@ export const SearchInput = ({
           className={`
             search-input py-2 pl-10 pr-4 rounded-full border-gray-200
             ${isMobile ? 'h-8 text-sm w-full' : 'h-10 w-full'}
-            transition-all duration-300
+            transition-all duration-150
           `}
         />
       </div>

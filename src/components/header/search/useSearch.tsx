@@ -29,7 +29,7 @@ export const useSearch = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [showResults, setShowResults] = useState(false);
-  const debouncedSearch = useDebounce(searchQuery, 50);
+  const debouncedSearch = useDebounce(searchQuery, 250); // Increased debounce for better performance
 
   // Check cache before making a new request
   const getSearchFromCache = (query: string): SearchResults | undefined => {
@@ -75,7 +75,6 @@ export const useSearch = () => {
         return result;
       } catch (error: any) {
         console.error("Search error:", error);
-        // Don't show any toast
         return { videos: [], channels: [] };
       }
     },

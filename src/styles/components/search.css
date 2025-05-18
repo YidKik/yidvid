@@ -19,7 +19,7 @@
   overflow: hidden;
 }
 
-/* Default thin red outline for search bar */
+/* Full-time red outline for search bar */
 .search-animated-border {
   position: relative;
   border-radius: 20px;
@@ -76,8 +76,8 @@
   opacity: 1;
 }
 
-/* When search bar is focused, make the search bar stand out */
-.search-animated-border input:focus + .search-animated-border::before {
+/* Always show red outline, not just on focus */
+.search-animated-border input:focus + .search-animated-border::before,
+.search-animated-border::before {
   border-color: #ea384c !important;
-  box-shadow: 0 0 0 2px rgba(234, 56, 76, 0.1) !important;
 }

@@ -1,7 +1,7 @@
 
 import { SearchInput } from "./search/SearchInput";
 import { SearchResults } from "./search/SearchResults";
-import { useSearch, SearchResults as SearchResultsType } from "./search/useSearch";
+import { useSearch } from "./search/useSearch";
 
 interface SearchBarProps {
   onFocus?: () => void;
