@@ -11,6 +11,7 @@ interface VideoCardInfoProps {
   formattedDate: string;
   channelThumbnail?: string;
   textColor?: string;
+  hideChannelName?: boolean;
 }
 
 export const VideoCardInfo = ({
@@ -20,7 +21,8 @@ export const VideoCardInfo = ({
   views,
   formattedDate,
   channelThumbnail,
-  textColor = "text-black"
+  textColor = "text-black",
+  hideChannelName = false
 }: VideoCardInfoProps) => {
   const { isTablet } = useIsMobile();
   
@@ -59,20 +61,24 @@ export const VideoCardInfo = ({
         )}
         
         <div className="flex flex-col">
-          {channelId ? (
-            <Link 
-              to={`/channel/${channelId}`}
-              className={`video-channel-name text-xs hover:text-black ${isTablet ? 'text-black' : 'text-gray-500'}`}
-              onClick={(e) => {
-                e.stopPropagation();
-              }}
-            >
-              {channelName}
-            </Link>
-          ) : (
-            <span className={`video-channel-name text-xs ${isTablet ? 'text-black' : 'text-gray-500'}`}>
-              {channelName}
-            </span>
+          {!hideChannelName && (
+            <>
+              {channelId ? (
+                <Link 
+                  to={`/channel/${channelId}`}
+                  className={`video-channel-name text-xs hover:text-black ${isTablet ? 'text-black' : 'text-gray-500'}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                >
+                  {channelName}
+                </Link>
+              ) : (
+                <span className={`video-channel-name text-xs ${isTablet ? 'text-black' : 'text-gray-500'}`}>
+                  {channelName}
+                </span>
+              )}
+            </>
           )}
           
           <div className="video-meta-text text-xs flex items-center">
