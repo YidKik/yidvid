@@ -11,7 +11,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { useSessionManager } from "@/hooks/useSessionManager";
 
-export function NotificationsMenu() {
+interface NotificationsMenuProps {
+  onMarkNotificationsAsRead?: () => Promise<void>;
+}
+
+export function NotificationsMenu({ onMarkNotificationsAsRead }: NotificationsMenuProps) {
   const [notifications, setNotifications] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -123,6 +127,11 @@ export function NotificationsMenu() {
         prevNotifications.map(n => ({ ...n, is_read: true }))
       );
       setUnreadCount(0);
+      
+      // Call the parent component's handler if provided
+      if (onMarkNotificationsAsRead) {
+        await onMarkNotificationsAsRead();
+      }
     } catch (error) {
       console.error("Error marking all as read:", error);
     }

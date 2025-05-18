@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { LogIn, MessageSquare, Settings } from "lucide-react";
+import { LogIn, Settings } from "lucide-react";
 import { NotificationsMenu } from "../NotificationsMenu";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useSessionManager } from "@/hooks/useSessionManager";
