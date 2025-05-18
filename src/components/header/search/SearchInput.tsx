@@ -2,7 +2,7 @@
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { KeyboardEvent, useState, useRef, useCallback, memo } from "react";
+import { KeyboardEvent, useState } from "react";
 
 interface SearchInputProps {
   searchQuery: string;
@@ -13,7 +13,7 @@ interface SearchInputProps {
   onClose?: () => void;
 }
 
-export const SearchInput = memo(({
+export const SearchInput = ({
   searchQuery,
   onSearchChange,
   onSearchFocus,
@@ -23,53 +23,32 @@ export const SearchInput = memo(({
 }: SearchInputProps) => {
   const { isMobile } = useIsMobile();
   const [isFocused, setIsFocused] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
-  
-  // Focus the input when the search icon is clicked
-  const handleSearchIconClick = useCallback(() => {
-    inputRef.current?.focus();
-    onClickSearch();
-  }, [onClickSearch]);
-  
-  // Optimize the change handler to reduce rerenders
-  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    onSearchChange(e.target.value);
-  }, [onSearchChange]);
-  
-  // Optimize focus handling
-  const handleFocus = useCallback(() => {
-    setIsFocused(true);
-    onSearchFocus();
-  }, [onSearchFocus]);
   
   return (
     <div className="relative w-full search-animated-border">
       <div className={`relative flex items-center ${isMobile ? 'w-full' : 'w-full'}`}>
         <Search 
           className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 search-icon cursor-pointer" 
-          onClick={handleSearchIconClick}
+          onClick={onClickSearch}
         />
         <Input
-          ref={inputRef}
           type="text"
-          placeholder="Search videos, channels..."
+          placeholder="Search..."
           value={searchQuery}
-          onChange={handleInputChange}
-          onFocus={handleFocus}
+          onChange={(e) => onSearchChange(e.target.value)}
+          onFocus={() => {
+            setIsFocused(true);
+            onSearchFocus();
+          }}
           onBlur={() => setIsFocused(false)}
           onKeyDown={onSearch}
           className={`
             search-input py-2 pl-10 pr-4 rounded-lg border-gray-200
-            ${isMobile ? 'h-8 text-sm w-full' : 'h-9 w-full'}
-            focus:ring-0 focus:outline-none focus:border-transparent
+            ${isMobile ? 'h-8 text-sm w-full' : 'h-10 w-full'}
             transition-all duration-300
           `}
-          aria-label="Search"
-          data-testid="search-input"
         />
       </div>
     </div>
   );
-});
-
-SearchInput.displayName = 'SearchInput';
+};

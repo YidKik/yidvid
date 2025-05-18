@@ -1,47 +1,64 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-/* Main CSS imports */
-@import './styles/index.css';
-@import './styles/mobile.css';
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 255, 255, 255;
+  --background-end-rgb: 255, 255, 255;
+  --search-text: #606060;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+    --search-text: #fff;
+  }
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: white;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.25);
+}
+
+/* Toast styles */
+[data-sonner-toast] {
+  background-color: white !important;
+  color: #606060 !important;
+  border: 1px solid #e5e7eb !important;
+}
+
+[data-sonner-toast]>.sonner-toast-background {
+  background-color: white !important;
+  color: #606060 !important;
+}
+
+/* Import components CSS */
+@import './components/theme.css';
+@import './components/buttons.css';
+@import './components/search.css';
+
+/* Import desktop specific styles */
 @import './styles/desktop.css';
-@import './styles/video-components.css';
-@import './styles/animations.css';
-
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@400;500;600&display=swap');
-
-/* Homepage specific styles - full screen background */
-.home-page {
-  background-color: #003c43;
-  color: #e3fef7;
-  font-family: 'Inter', sans-serif;
-  min-height: 100vh;
-  width: 100%;
-  margin: 0;
-  padding: 0;
-  position: relative;
-  overflow-x: hidden;
-}
-
-/* Default body styles for all other pages */
-body:not(.home-page) {
-  background-color: var(--background-custom, #FFFFFF);
-  color: var(--text-custom, #030303);
-  font-family: 'Inter', sans-serif;
-}
-
-/* Glass card styles - restrict to home page */
-.home-page .glass-card {
-  background: rgba(19, 93, 102, 0.3);
-  backdrop-filter: blur(10px);
-  border: 2px solid #77b0aa;
-  border-radius: 1.5rem;
-}
-
-/* Standard hover card for all pages */
-.hover-card {
-  transition: all 0.3s ease;
-}
-
-.hover-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-}

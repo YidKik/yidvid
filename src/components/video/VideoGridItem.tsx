@@ -6,7 +6,6 @@ import { VideoCardInfo } from "./VideoCardInfo";
 import { useLocation } from "react-router-dom";
 import { VideoGridItem as VideoItemType } from "@/hooks/video/useVideoGridData";
 import { useVideoDate } from "./useVideoDate";
-import { isVideoAvailable } from "@/hooks/video/utils/validation";
 
 interface VideoGridItemProps {
   video: VideoItemType;
@@ -21,12 +20,6 @@ export const VideoGridItem = ({ video, loading }: VideoGridItemProps) => {
   if (loading) {
     return <VideoCardSkeleton />;
   }
-  
-  // Skip rendering if the video is not available
-  if (!isVideoAvailable(video)) {
-    console.log("Skipping unavailable video:", video.title);
-    return null;
-  }
 
   // Format the date properly ensuring it's a Date object
   const uploadedDate = video.uploadedAt instanceof Date ? 
@@ -40,13 +33,12 @@ export const VideoGridItem = ({ video, loading }: VideoGridItemProps) => {
   // Always ensure we have a valid channelId for linking to the channel page
   // Extract from different possible sources, clean it and ensure it's not empty
   const channelIdForLink = video.channelId || "";
-
+  
   // Add debug log to help troubleshoot routing issues
   console.log("VideoGridItem rendering with data:", {
     videoId: videoIdForLink,
     channelId: channelIdForLink,
-    title: video.title,
-    thumbnail: video.thumbnail
+    title: video.title
   });
 
   // Only create channel link if we have a valid channel ID

@@ -32,7 +32,6 @@ export const ChannelDataProvider = ({ children, onError, searchQuery = "" }: Cha
       console.log("Auth state changed in ChannelDataProvider:", event);
       setLastAuthEvent(event);
       
-      // Refetch on auth state change
       if (event === 'SIGNED_IN' || event === 'SIGNED_OUT' || event === 'TOKEN_REFRESHED') {
         console.log("Auth event triggered refetch of channels");
         setIsLoading(true);
@@ -55,7 +54,7 @@ export const ChannelDataProvider = ({ children, onError, searchQuery = "" }: Cha
     try {
       console.log("Direct database fetch for channels...");
       
-      // Try edge function first for better reliability
+      // Use the edge function to fetch public channels
       try {
         console.log("Trying edge function to fetch channels...");
         const urlWithSearch = `https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/get-public-channels${searchQuery ? `?search=${encodeURIComponent(searchQuery)}` : ''}`;
@@ -80,10 +79,11 @@ export const ChannelDataProvider = ({ children, onError, searchQuery = "" }: Cha
         console.error("Edge function error:", edgeError);
       }
       
+      // Fall back to direct query with simpler selection to avoid RLS issues
       // Build query with search filter if provided
       let query = supabase
         .from("youtube_channels")
-        .select("id, channel_id, title, thumbnail_url")
+        .select("id, channel_id, title, thumbnail_url, description")
         .is("deleted_at", null);
         
       if (searchQuery) {
@@ -95,7 +95,7 @@ export const ChannelDataProvider = ({ children, onError, searchQuery = "" }: Cha
       if (error) {
         console.error("Direct DB fetch error:", error);
         
-        // Try with simplified query
+        // Try a different approach with minimal fields
         let simplifiedQuery = supabase
           .from("youtube_channels")
           .select("id, channel_id, title, thumbnail_url");
@@ -128,11 +128,10 @@ export const ChannelDataProvider = ({ children, onError, searchQuery = "" }: Cha
   const { data: channels, error, isLoading: isChannelsLoading, refetch } = useQuery({
     queryKey: ["youtube_channels", lastAuthEvent, searchQuery],
     queryFn: async () => {
-      // First try edge function which works for all users
+      // Try edge function first for best public access
       try {
-        console.log("Trying edge function for public channels...");
+        console.log("Fetching public channels via edge function...");
         const urlWithSearch = `https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/get-public-channels${searchQuery ? `?search=${encodeURIComponent(searchQuery)}` : ''}`;
-        
         const response = await fetch(urlWithSearch, {
           method: "GET",
           headers: {
@@ -152,19 +151,19 @@ export const ChannelDataProvider = ({ children, onError, searchQuery = "" }: Cha
         console.error("Edge function error:", edgeError);
       }
       
-      // Then try direct database access
+      // Then try direct database fetch
       const dbChannels = await fetchChannelsFromDB();
       if (dbChannels && dbChannels.length > 0) {
         return dbChannels;
       }
       
-      // Then try manual fetching method
+      // Then try manual fetch method
       const manualData = await fetchChannelsDirectly();
       if (manualData && manualData.length > 0) {
         return manualData;
       }
       
-      // Last resort is sample channels
+      // Last resort, use sample data
       const sampleChannels = createSampleChannels();
       if (searchQuery) {
         return sampleChannels.filter(channel => 

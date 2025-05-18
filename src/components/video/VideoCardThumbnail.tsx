@@ -1,66 +1,76 @@
 
-import { useState, useEffect } from 'react';
 import { cn } from "@/lib/utils";
+import { useState, useRef, useEffect } from "react";
 
 interface VideoCardThumbnailProps {
   thumbnail: string;
   title: string;
   isSample?: boolean;
-  className?: string;
 }
 
 export const VideoCardThumbnail = ({
   thumbnail,
   title,
-  isSample = false,
-  className
+  isSample = false
 }: VideoCardThumbnailProps) => {
   const [imageError, setImageError] = useState(false);
-  const [isValidThumbnail, setIsValidThumbnail] = useState(true);
+  const [isHovering, setIsHovering] = useState(false);
+  const timeoutRef = useRef<number | null>(null);
   
-  // Check thumbnail validity
+  // Clean up timeout on unmount
   useEffect(() => {
-    // Simple validation for obviously invalid URLs
-    if (!thumbnail || 
-        thumbnail.includes('no_thumbnail') || 
-        thumbnail.includes('placeholder')) {
-      setIsValidThumbnail(false);
-    } else {
-      setIsValidThumbnail(true);
-      setImageError(false);
-    }
-  }, [thumbnail]);
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
-  const handleImageError = () => {
-    console.log(`Image error for thumbnail: ${thumbnail}`);
-    setImageError(true);
+  const handleMouseEnter = () => {
+    setIsHovering(true);
   };
-  
-  // If thumbnail is invalid or errored, we won't render this component
-  if (!isValidThumbnail || imageError) {
-    return null;
-  }
+
+  const handleMouseLeave = () => {
+    setIsHovering(false);
+    
+    // Reset any animation timeouts when mouse leaves
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+  };
 
   return (
-    <div className={cn(
-      "relative aspect-video overflow-hidden rounded-lg bg-gray-100 shadow-sm group-hover:shadow-md transition-all",
-      className
-    )}>
+    <div 
+      className="relative overflow-hidden rounded-lg aspect-video w-full group"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      {/* Overlay with slight darkness that changes on hover */}
+      <div className="absolute inset-0 bg-black/5 group-hover:bg-black/0 transition-colors duration-300 z-10"></div>
+      
+      {/* Main thumbnail image */}
       <img
-        src={thumbnail}
+        src={imageError ? "/placeholder.svg" : thumbnail}
         alt={title}
-        className="h-full w-full object-cover transition-transform group-hover:scale-105 duration-300"
         loading="lazy"
-        onError={handleImageError}
+        className={cn(
+          "w-full h-full object-cover",
+          "transition-all duration-300 ease-out",
+          isHovering ? "scale-[1.02] translate-y-[-4px]" : "scale-100", // More subtle zoom and small lift effect
+        )}
+        onError={() => setImageError(true)}
       />
       
-      {isSample && (
-        <div className="absolute top-2 right-2 bg-amber-500 text-white text-xs px-2 py-1 rounded">
-          Sample
+      {/* Preview animation effect - shows on hover */}
+      {isHovering && (
+        <div className="absolute inset-0 z-20 overflow-hidden">
+          <div className={cn(
+            "absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent",
+            "animate-shimmer-preview" // Animation defined in global CSS
+          )} />
         </div>
       )}
-      
-      <div className="absolute inset-0 bg-black/25 opacity-0 group-hover:opacity-100 transition-opacity" />
     </div>
   );
 };

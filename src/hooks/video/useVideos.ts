@@ -5,8 +5,9 @@ import { useVideoFetcher } from "./useVideoFetcher";
 import { useAuthStateListener } from "./useAuthStateListener";
 import { useVideoQuery } from "./useVideoQuery";
 import { useInitialVideoLoad } from "./useInitialVideoLoad";
-import { hasRealVideos, createSampleVideos, filterUnavailableVideos } from "./utils/validation";
+import { hasRealVideos, createSampleVideos } from "./utils/validation";
 import { VideoData } from "./types/video-fetcher";
+import { useSessionManager } from "@/hooks/useSessionManager";
 
 export interface UseVideosResult {
   data: VideoData[];
@@ -23,6 +24,7 @@ export interface UseVideosResult {
 export const useVideos = (): UseVideosResult => {
   const [authState, setAuthState] = useState<string | null>(null);
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
+  const { session } = useSessionManager();
   
   // Set up real-time subscription for video changes
   useVideoRealtime();
@@ -41,7 +43,7 @@ export const useVideos = (): UseVideosResult => {
 
   // Set up React Query for videos
   const { 
-    data: unfilteredData, 
+    data, 
     isLoading, 
     isFetching, 
     error, 
@@ -54,9 +56,6 @@ export const useVideos = (): UseVideosResult => {
     authState
   });
 
-  // Filter out unavailable videos
-  const data = filterUnavailableVideos(unfilteredData || []);
-
   // Handle initial data loading and refreshing
   useInitialVideoLoad({
     data,
@@ -67,7 +66,8 @@ export const useVideos = (): UseVideosResult => {
     setIsRefreshing
   });
 
-  // Always use real data if available, and fall back to sample data if needed
+  // Ensure we always return data whether authenticated or not
+  // We no longer check authentication status - always show available content
   const ensuredData = hasRealVideos(data) ? data : (data?.length ? data : createSampleVideos());
 
   return {

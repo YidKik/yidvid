@@ -1,3 +1,4 @@
+
 import { VideoData } from "../types/video-fetcher";
 
 /**
@@ -56,42 +57,4 @@ export const formatVideoViews = (views: number): string => {
   if (views < 1000) return `${views} views`;
   if (views < 1000000) return `${(views / 1000).toFixed(1)}K views`;
   return `${(views / 1000000).toFixed(1)}M views`;
-};
-
-/**
- * Checks if a video has a valid, available thumbnail
- * @param video The video to check
- * @returns boolean indicating if the video appears to be available
- */
-export const isVideoAvailable = (video: any): boolean => {
-  if (!video) return false;
-  
-  // Check for placeholder thumbnails which indicate unavailable videos
-  // These typically contain 'hqdefault' with default YouTube placeholder
-  const hasBrokenThumbnail = video.thumbnail?.includes('hqdefault') && 
-    (video.thumbnail?.includes('default.jpg') || video.thumbnail?.includes('sddefault.jpg'));
-    
-  // Check for obvious placeholder URLs
-  const isPlaceholder = video.thumbnail?.includes('no_thumbnail') || 
-    video.thumbnail?.includes('placeholder') || 
-    !video.thumbnail || 
-    video.thumbnail === '';
-
-  // Check for deleted videos with placeholder text in title
-  const hasUnavailableTitle = video.title?.includes('[Deleted video]') || 
-    video.title?.includes('[Private video]') ||
-    video.title?.includes('[Unavailable video]');
-    
-  return !(hasBrokenThumbnail || isPlaceholder || hasUnavailableTitle);
-};
-
-/**
- * Further improves the video filtering with availability check
- * @param videos Array of videos to filter
- * @returns Filtered array of available videos
- */
-export const filterUnavailableVideos = (videos: any[]): any[] => {
-  if (!videos || !Array.isArray(videos)) return [];
-  
-  return videos.filter(video => isVideoAvailable(video));
 };

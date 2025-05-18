@@ -9,16 +9,16 @@ export const getPageTitle = (path: string): string => {
   // Handle root path
   if (segments[0] === '') return `Home | ${APP_NAME} - Jewish Content Platform`;
   
-  // Map route segments to readable titles with improved SEO keywords
+  // Map route segments to readable titles
   const pageTitles: { [key: string]: string | { [key: string]: string } } = {
-    'video': 'Watch Jewish Video',
-    'channel': 'Jewish Channel',
+    'video': 'Watch Video',
+    'channel': 'Channel',
     'dashboard': 'My Dashboard',
     'settings': 'Account Settings',
-    'music': 'Jewish Music Player',
-    'search': 'Search Jewish Videos & Content',
-    'category': 'Jewish Video Categories',
-    'auth': 'Sign In to YidVid',
+    'music': 'Music Player',
+    'search': 'Search Results',
+    'category': 'Category Videos',
+    'auth': 'Sign In',
     'admin': {
       'channels': 'Channel Management',
       'comments': 'Comment Management',
@@ -46,15 +46,15 @@ export const getPageTitle = (path: string): string => {
   
   // If there's an ID in the URL, try to make the title more descriptive
   if (segments[1]) {
-    return `${baseTitle} | ${APP_NAME} - Jewish Content Platform`;
+    return `${baseTitle} | ${APP_NAME}`;
   }
   
-  return `${baseTitle} | ${APP_NAME} - Jewish Content Platform`;
+  return `${baseTitle} | ${APP_NAME}`;
 };
 
 // Enhanced SEO metadata
-export const DEFAULT_META_DESCRIPTION = APP_DESCRIPTION + " - Find Jewish lectures, Torah videos, kosher music, Yiddish videos, and more religious content.";
-export const DEFAULT_META_KEYWORDS = "Jewish videos, Jewish content, Torah videos, Jewish music, Jewish lectures, Jewish education, Jewish media, Yiddish videos, kosher content, religious videos, Jewish channels";
+export const DEFAULT_META_DESCRIPTION = APP_DESCRIPTION;
+export const DEFAULT_META_KEYWORDS = "Jewish videos, Jewish content, Torah videos, Jewish music, Jewish lectures, Jewish education, Jewish media";
 export const DEFAULT_META_IMAGE = "/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png"; // Updated to use the official logo
 
 // New SEO utility functions
@@ -72,39 +72,5 @@ export const getSEOConfig = (path: string, customConfig?: {
     url: window.location.href,
     siteName: APP_NAME,
     type: path.includes('video/') ? 'video.other' : 'website'
-  };
-};
-
-// New function to generate structured data for rich search results
-export const generateVideoStructuredData = (video: any) => {
-  if (!video) return null;
-  
-  return {
-    "@context": "https://schema.org",
-    "@type": "VideoObject",
-    "name": video.title,
-    "description": video.description || `${video.title} - Jewish video content from ${video.channel_name}`,
-    "thumbnailUrl": video.thumbnail,
-    "uploadDate": video.uploaded_at || new Date().toISOString(),
-    "contentUrl": `https://yidvid.com/video/${video.id}`,
-    "embedUrl": `https://www.youtube.com/embed/${video.video_id}`,
-    "author": {
-      "@type": "Person",
-      "name": video.channel_name
-    }
-  };
-};
-
-// Generate channel structured data
-export const generateChannelStructuredData = (channel: any) => {
-  if (!channel) return null;
-  
-  return {
-    "@context": "https://schema.org",
-    "@type": "Person",
-    "name": channel.title,
-    "description": channel.description || `Jewish content creator: ${channel.title}`,
-    "image": channel.thumbnail_url,
-    "url": `https://yidvid.com/channel/${channel.channel_id}`
   };
 };

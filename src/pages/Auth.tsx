@@ -67,7 +67,7 @@ const Auth = ({ isOpen, onOpenChange, initialTab = 'signin' }: AuthProps) => {
         hideCloseButton={true}
         className={`p-0 gap-0 ${showOptions ? 'bg-transparent border-none' : 'bg-white border border-gray-200 shadow-lg'} ${isMobile 
           ? 'w-[95%] max-w-[350px] max-h-[85vh] overflow-auto rounded-xl' 
-          : 'sm:max-w-[500px] max-w-[500px] rounded-2xl overflow-hidden'
+          : 'sm:max-w-[600px] max-w-[600px] rounded-2xl overflow-hidden'
         }`}
       > 
         <AnimatePresence mode="wait">
