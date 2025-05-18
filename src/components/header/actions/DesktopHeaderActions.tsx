@@ -6,7 +6,19 @@ import { UserMenu } from "@/components/header/UserMenu";
 import { NotificationsMenu } from "@/components/header/NotificationsMenu";
 import { useSessionManager } from "@/hooks/useSessionManager";
 
-export function DesktopHeaderActions() {
+interface DesktopHeaderActionsProps {
+  onAuthOpen?: () => void;
+  onLogout?: () => Promise<void>;
+  onMarkNotificationsAsRead?: () => Promise<void>;
+  handleSettingsClick?: () => void;
+}
+
+export function DesktopHeaderActions({
+  onLogout,
+  onAuthOpen,
+  onMarkNotificationsAsRead,
+  handleSettingsClick
+}: DesktopHeaderActionsProps) {
   const { isAuthenticated, isLoading } = useSessionManager();
 
   return (
@@ -18,10 +30,10 @@ export function DesktopHeaderActions() {
           {isAuthenticated ? (
             <div className="flex gap-2">
               <NotificationsMenu />
-              <UserMenu />
+              <UserMenu onLogout={onLogout || (() => Promise.resolve())} />
             </div>
           ) : (
-            <Link to="/auth">
+            <Link to="/auth" onClick={onAuthOpen}>
               <Button variant="outline" size="sm">
                 Sign In
               </Button>
