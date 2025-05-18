@@ -10,8 +10,10 @@ export const PagePreloader = () => {
   const location = useLocation();
   const isHomePage = location.pathname === "/" || location.pathname === "/home";
   
-  // Call usePrefetchData regardless of route, but only perform prefetching when on homepage
-  const prefetchData = usePrefetchData();
+  // Use the prefetch data hook when on home page
+  if (isHomePage) {
+    usePrefetchData();
+  }
   
   useEffect(() => {
     if (isHomePage) {

@@ -6,7 +6,7 @@ import { ChannelsGrid } from "@/components/youtube/ChannelsGrid";
 import { VideoData } from "@/hooks/video/types/video-fetcher";
 import { useVideoPagination } from "@/hooks/video/useVideoPagination";
 import { DelayedLoadingAnimation } from "@/components/ui/DelayedLoadingAnimation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 export interface VideoViewProps {
   videos: VideoData[];
@@ -65,29 +65,17 @@ export const VideoView = ({
     );
   }
 
-  // Always return a JSX element rather than an object
-  return (
-    <div className="video-content">
-      <VideoGrid
-        videos={displayVideos}
-        maxVideos={videosPerPage}
-        rowSize={rowSize}
-        isLoading={isLoading}
-        className="mb-6"
-      />
-      
-      {totalPages > 1 && (
-        <VideoGridPagination
-          showAll={showMoreMobile}
-          currentPage={currentPage}
-          totalPages={totalPages}
-          filteredVideosLength={sortedVideos.length}
-          maxVideos={videosPerPage}
-          isMobile={isMobile}
-          onShowAll={() => setShowMoreMobile(true)}
-          onPageChange={(page) => setCurrentPage(page)}
-        />
-      )}
-    </div>
-  );
+  return {
+    sortedVideos,
+    displayVideos,
+    currentPage,
+    totalPages,
+    setCurrentPage,
+    showMoreMobile,
+    setShowMoreMobile,
+    videosPerPage,
+    rowSize,
+    isLoading,
+    isRefreshing
+  };
 };
