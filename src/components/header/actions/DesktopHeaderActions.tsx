@@ -28,7 +28,7 @@ export function DesktopHeaderActions({
           {isAuthenticated ? (
             <div className="flex gap-2">
               <ContactDialog />
-              <NotificationsMenu onMarkNotificationsAsRead={onMarkNotificationsAsRead || (() => Promise.resolve())} />
+              <NotificationsMenu onMarkNotificationsAsRead={onMarkNotificationsAsRead} />
               <UserMenu onLogout={onLogout || (() => Promise.resolve())} />
             </div>
           ) : (
