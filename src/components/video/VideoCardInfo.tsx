@@ -1,16 +1,16 @@
 
 import { Link } from "react-router-dom";
-import { cn } from "@/lib/utils";
+import { formatDistanceToNow } from "date-fns";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 interface VideoCardInfoProps {
   title: string;
   channelName: string;
-  channelId: string;
-  views?: number | null;
+  channelId?: string;
+  views: number;
   formattedDate: string;
   channelThumbnail?: string;
-  hideChannelName?: boolean;
+  textColor?: string;
 }
 
 export const VideoCardInfo = ({
@@ -20,110 +20,65 @@ export const VideoCardInfo = ({
   views,
   formattedDate,
   channelThumbnail,
-  hideChannelName = false
+  textColor = "text-black"
 }: VideoCardInfoProps) => {
-  const { isMobile } = useIsMobile();
+  const { isTablet } = useIsMobile();
   
-  // Format views count with improved handling
-  const formatViews = (count: number | null | undefined) => {
-    // Check if we have a valid number greater than 0
-    if (count === null || count === undefined || isNaN(Number(count))) {
-      return "No views yet";
+  // Format view count with appropriate suffix (K, M)
+  const formatViewCount = (count: number): string => {
+    if (count >= 1000000) {
+      return `${(count / 1000000).toFixed(1)}M`;
+    } else if (count >= 1000) {
+      return `${(count / 1000).toFixed(1)}K`;
+    } else {
+      return count.toString();
     }
-    
-    const viewCount = Number(count);
-    
-    // Format numbers appropriately
-    if (viewCount === 0) return "No views yet";
-    if (viewCount === 1) return "1 view";
-    if (viewCount < 1000) return `${viewCount} views`;
-    if (viewCount < 1000000) return `${(viewCount / 1000).toFixed(1)}K views`;
-    return `${(viewCount / 1000000).toFixed(1)}M views`;
   };
 
-  // Only create channel link if we have a valid channel ID
-  const hasValidChannelId = !!channelId && channelId.trim() !== "";
+  const formattedViews = formatViewCount(views);
 
   return (
-    <div className="mt-2 flex items-start space-x-2">
-      {/* Channel avatar - only show if not mobile and we have a thumbnail */}
-      {channelThumbnail && !isMobile && (
-        <>
-          {hasValidChannelId ? (
+    <div className="mt-2">
+      <h3 
+        className={`video-title text-sm font-medium line-clamp-2 ${textColor}`}
+        title={title}
+      >
+        {title}
+      </h3>
+      
+      <div className="flex items-center mt-1 space-x-1">
+        {channelThumbnail && (
+          <img 
+            src={channelThumbnail} 
+            alt={channelName} 
+            className="w-5 h-5 rounded-full" 
+            onError={(e) => {
+              e.currentTarget.src = "/lovable-uploads/e425cacb-4c3a-4d81-b4e0-77fcbf10f61c.png";
+            }}
+          />
+        )}
+        
+        <div className="flex flex-col">
+          {channelId ? (
             <Link 
-              to={`/channel/${channelId}`} 
-              className="flex-shrink-0 mt-0.5"
+              to={`/channel/${channelId}`}
+              className={`video-channel-name text-xs hover:text-black ${isTablet ? 'text-black' : 'text-gray-500'}`}
               onClick={(e) => {
-                e.stopPropagation(); // Prevent triggering parent link
-                console.log("Navigating to channel:", channelId);
+                e.stopPropagation();
               }}
             >
-              <div className="h-6 w-6 overflow-hidden rounded-full">
-                <img
-                  src={channelThumbnail}
-                  alt={channelName}
-                  className="h-full w-full object-cover"
-                  loading="lazy"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.src = "/lovable-uploads/efca5adc-d9d2-4c5b-8900-e078f9d49b6a.png";
-                  }}
-                />
-              </div>
+              {channelName}
             </Link>
           ) : (
-            <span className="flex-shrink-0 mt-0.5">
-              <div className="h-6 w-6 overflow-hidden rounded-full">
-                <img
-                  src={channelThumbnail}
-                  alt={channelName}
-                  className="h-full w-full object-cover"
-                  loading="lazy"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.src = "/lovable-uploads/efca5adc-d9d2-4c5b-8900-e078f9d49b6a.png";
-                  }}
-                />
-              </div>
+            <span className={`video-channel-name text-xs ${isTablet ? 'text-black' : 'text-gray-500'}`}>
+              {channelName}
             </span>
           )}
-        </>
-      )}
-      
-      <div className="flex-1 min-w-0">
-        <h3 
-          className={cn(
-            "video-title line-clamp-2 group-hover:text-primary transition-colors duration-200", 
-            isMobile ? "text-[0.7rem] font-medium" : "text-youtube-title"
-          )}
-        >
-          {title}
-        </h3>
-        
-        <div className="mt-1 flex flex-col text-xs video-meta-text">
-          {!hideChannelName && !isMobile && (
-            <>
-              {hasValidChannelId ? (
-                <Link 
-                  to={`/channel/${channelId}`}
-                  className="video-channel-name hover:underline"
-                  onClick={(e) => {
-                    e.stopPropagation(); // Prevent triggering parent link
-                    console.log("Channel name clicked:", channelId);
-                  }}
-                >
-                  {channelName}
-                </Link>
-              ) : (
-                <span className="video-channel-name">{channelName}</span>
-              )}
-            </>
-          )}
           
-          <div className={cn("flex items-center", isMobile ? "text-[10px] flex-row" : "flex-col sm:flex-row sm:items-center")}>
-            <span>{formatViews(views)}</span>
-            <span className="mx-1 text-youtube-small">•</span>
-            <span className="text-youtube-small">{formattedDate}</span>
+          <div className="video-meta-text text-xs flex items-center">
+            <span className={`${isTablet ? 'text-black' : 'text-gray-500'}`}>{formattedViews} views</span>
+            <span className={`mx-1 ${isTablet ? 'text-black' : 'text-gray-500'}`}>•</span>
+            <span className={`${isTablet ? 'text-black' : 'text-gray-500'}`}>{formattedDate}</span>
           </div>
         </div>
       </div>
