@@ -27,7 +27,7 @@ export const SearchResults = ({
 
   return (
     <div 
-      className="absolute top-full left-0 mt-1 bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden z-50 w-full"
+      className="absolute top-full left-0 mt-1 bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden z-50 w-full search-results"
       style={{
         top: isMobile ? '35px' : undefined,
         width: '100%',
