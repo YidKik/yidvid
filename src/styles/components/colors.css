@@ -38,3 +38,13 @@ body:not(.home-page) {
 :not(.home-page) .text-brand-lightest {
   color: var(--text-custom, #030303) !important;
 }
+
+/* Ensure home page always has green background */
+.home-page {
+  background-color: #003c43 !important;
+}
+
+html.home-page,
+body.home-page {
+  background-color: #003c43 !important;
+}

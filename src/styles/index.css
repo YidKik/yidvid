@@ -19,14 +19,23 @@
 @import './components/search.css';
 @import './mobile.css';
 @import './desktop.css';
+@import './components/home-page.css';
+@import './components/colors.css';
 
 /* Homepage full-screen background styles */
 .home-page {
   min-height: 100vh;
   min-width: 100vw;
-  background-color: #003c43;
+  background-color: #003c43 !important;
   margin: 0;
   padding: 0;
+}
+
+html.home-page,
+body.home-page {
+  background-color: #003c43 !important;
+  color: #e3fef7;
+  overflow-x: hidden;
 }
 
 /* Mobile specific adjustments */

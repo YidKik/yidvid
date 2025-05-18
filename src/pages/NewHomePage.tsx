@@ -16,10 +16,12 @@ const NewHomePage = () => {
   
   // Add home-page class to body element when component mounts
   useEffect(() => {
+    document.documentElement.classList.add('home-page');
     document.body.classList.add('home-page');
     
     // Remove the class when component unmounts
     return () => {
+      document.documentElement.classList.remove('home-page');
       document.body.classList.remove('home-page');
     };
   }, []);
@@ -31,7 +33,7 @@ const NewHomePage = () => {
 
   // Only desktop views will see the full content
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-[#003c43]">
       <HomeHeader />
       <div className="pt-32"></div>
       <HeroSection />

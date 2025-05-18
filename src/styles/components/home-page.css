@@ -8,6 +8,8 @@ body.home-page {
   width: 100%;
   height: 100%;
   overflow-x: hidden;
+  background-color: #003c43 !important;
+  color: #e3fef7;
 }
 
 /* Ensure hero heading layout matches desktop version */

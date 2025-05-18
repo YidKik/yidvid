@@ -48,7 +48,7 @@ const HomePage = () => {
   // Only desktop views will see the full content
   return (
     <motion.div 
-      className="min-h-screen w-full overflow-x-hidden relative"
+      className="min-h-screen w-full overflow-x-hidden relative bg-[#003c43]"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
