@@ -18,7 +18,7 @@ export const DelayedLoadingAnimation: React.FC<DelayedLoadingAnimationProps> = (
   color = "primary",
   text,
   className,
-  delayMs = 300, // Reduced from 1000 to 300ms for faster feedback
+  delayMs = 1000, // Default 1 second delay
 }) => {
   const [showLoading, setShowLoading] = useState(false);
   const { isMobile } = useIsMobile();

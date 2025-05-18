@@ -68,7 +68,7 @@ export const VideoGrid = memo(({
         <DelayedLoadingAnimation 
           size={isMobile ? "small" : "medium"}
           text="Loading videos..." 
-          delayMs={300} // Reduced from 1000ms to 300ms for faster feedback
+          delayMs={1000}
         />
       </div>
     );

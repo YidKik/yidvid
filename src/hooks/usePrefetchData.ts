@@ -25,7 +25,7 @@ export const usePrefetchData = () => {
               .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at")
               .is("deleted_at", null)
               .order("uploaded_at", { ascending: false })
-              .limit(50); // Reduced from 150 to 50 for faster initial load
+              .limit(150);
               
             if (error) {
               console.warn("Error prefetching videos:", error);
@@ -44,7 +44,7 @@ export const usePrefetchData = () => {
               .from("youtube_channels")
               .select("id, channel_id, title, thumbnail_url, description")
               .is("deleted_at", null)
-              .limit(20); // Reduced from 100 to 20 for faster initial load
+              .limit(100);
               
             if (error) {
               console.warn("Error prefetching channels:", error);
@@ -59,7 +59,11 @@ export const usePrefetchData = () => {
       }
     };
     
-    // Execute prefetch immediately to maximize time for data loading
-    prefetchVideos();
+    // Execute prefetch after a short delay to prioritize loading the homepage first
+    const prefetchTimer = setTimeout(() => {
+      prefetchVideos();
+    }, 2000);
+    
+    return () => clearTimeout(prefetchTimer);
   }, [queryClient]);
 };
