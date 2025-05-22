@@ -16,12 +16,12 @@ import { Input } from "@/components/ui/input";
 import { Lock } from "lucide-react";
 import { toast } from "sonner";
 import { ADMIN_PIN } from "@/hooks/useAdminPinDialog";
-import { AdminPinDialog } from "@/components/settings/sections/admin/AdminPinDialog";
-import { useAdminPinDialog } from "@/hooks/useAdminPinDialog";
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const { session } = useAuth();
+  const [showPinDialog, setShowPinDialog] = useState(false);
+  const [adminPin, setAdminPin] = useState("");
   
   // Use our custom hooks to manage state and data fetching
   const { 
@@ -35,15 +35,30 @@ export default function Dashboard() {
   
   const { stats, isStatsLoading } = useDashboardStats(isAdmin || hasPinBypass, session?.user?.id);
   const { notifications } = useAdminNotifications(isAdmin || hasPinBypass);
-  
-  // Use the centralized admin PIN dialog hook
-  const {
-    showPinDialog,
-    setShowPinDialog,
-    adminPin,
-    setAdminPin,
-    handleUnlockWithPin
-  } = useAdminPinDialog(session?.user?.id);
+
+  // Handle PIN validation
+  const handlePinSubmit = () => {
+    console.log("Checking PIN:", adminPin, "against expected:", ADMIN_PIN);
+    
+    // Trim any whitespace and perform exact comparison
+    const cleanedInputPin = adminPin.trim();
+    
+    // Always grant admin access if PIN is correct, regardless of session
+    if (cleanedInputPin === ADMIN_PIN) {
+      // Set PIN bypass flag in localStorage
+      localStorage.setItem(`admin-pin-bypass`, "true");
+      toast.success("Admin access granted via PIN");
+      setShowPinDialog(false);
+      setAdminPin("");
+      
+      // Force a refresh to update the UI with admin content
+      // Using setTimeout to ensure the state is updated before reloading
+      setTimeout(() => window.location.reload(), 100);
+    } else {
+      toast.error("Incorrect PIN");
+      setAdminPin("");
+    }
+  };
 
   // Show loading state while checking session and profile
   if (isSessionLoading || isProfileLoading || isStatsLoading || !isAdminCheckComplete) {
@@ -76,14 +91,33 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* Use the shared AdminPinDialog component */}
-      <AdminPinDialog
-        showDialog={showPinDialog}
-        setShowDialog={setShowPinDialog}
-        pinValue={adminPin}
-        setPinValue={setAdminPin}
-        onUnlock={handleUnlockWithPin}
-      />
+      {/* Admin PIN Dialog */}
+      <Dialog open={showPinDialog} onOpenChange={setShowPinDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Admin Access</DialogTitle>
+            <DialogDescription>
+              Enter the admin PIN to access the dashboard
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col gap-4 py-4">
+            <Input
+              type="password"
+              placeholder="Enter PIN"
+              value={adminPin}
+              onChange={(e) => setAdminPin(e.target.value)}
+              maxLength={10}
+              className="text-center text-lg tracking-widest"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handlePinSubmit();
+                }
+              }}
+            />
+            <Button onClick={handlePinSubmit}>Unlock</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

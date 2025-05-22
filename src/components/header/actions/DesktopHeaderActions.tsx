@@ -1,53 +1,73 @@
 
-import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { UserMenu } from "@/components/header/UserMenu";
-import { NotificationsMenu } from "@/components/header/NotificationsMenu";
-import { useSessionManager } from "@/hooks/useSessionManager";
-import { ContactDialog } from "@/components/contact/ContactDialog";
-import { LogIn } from "lucide-react";
+import { LogIn, MessageSquare, Settings } from "lucide-react";
+import { NotificationsMenu } from "../NotificationsMenu";
+import { UserMenu } from "../UserMenu";
+import { ContactDialog } from "../../contact/ContactDialog";
+import { useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 interface DesktopHeaderActionsProps {
-  onAuthOpen?: () => void;
-  onLogout?: () => Promise<void>;
-  onMarkNotificationsAsRead?: () => Promise<void>;
-  handleSettingsClick?: () => void;
+  session: any;
+  onAuthOpen: () => void;
+  onLogout: () => Promise<void>;
+  onMarkNotificationsAsRead: () => Promise<void>;
+  handleSettingsClick: () => void;
 }
 
-export function DesktopHeaderActions({
-  onLogout,
+export const DesktopHeaderActions = ({
+  session,
   onAuthOpen,
+  onLogout,
   onMarkNotificationsAsRead,
   handleSettingsClick
-}: DesktopHeaderActionsProps) {
-  const { isAuthenticated, isLoading } = useSessionManager();
+}: DesktopHeaderActionsProps) => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const isVideosPage = location.pathname === "/videos";
 
   return (
-    <div className="hidden md:flex gap-3 items-center">
-      {!isLoading && (
-        <>
-          {isAuthenticated ? (
-            <div className="flex gap-3 items-center">
-              <ContactDialog />
-              <NotificationsMenu onMarkNotificationsAsRead={onMarkNotificationsAsRead} />
-              <UserMenu onLogout={onLogout || (() => Promise.resolve())} handleSettingsClick={handleSettingsClick} />
-            </div>
-          ) : (
-            <>
-              <ContactDialog />
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="flex items-center gap-1 px-3 py-1"
-                onClick={onAuthOpen}
-              >
-                <LogIn className="h-4 w-4" />
-                <span>Sign In</span>
-              </Button>
-            </>
-          )}
-        </>
+    <div className="flex items-center gap-3">
+      {session && <NotificationsMenu session={session} onMarkAsRead={onMarkNotificationsAsRead} />}
+      
+      <Button 
+        onClick={() => {
+          const contactDialog = document.querySelector('[data-state="closed"][role="dialog"]');
+          if (contactDialog) {
+            (contactDialog as HTMLElement).click();
+          }
+        }}
+        variant="ghost" 
+        size="icon"
+        className={`h-9 w-9 rounded-full ${isVideosPage 
+          ? 'bg-[#ea384c] hover:bg-[#c82d3f] text-white' 
+          : 'bg-[#222222] hover:bg-[#333333] text-white'}`}
+      >
+        <MessageSquare className="h-4 w-4" />
+      </Button>
+      
+      {session ? (
+        <Button 
+          onClick={handleSettingsClick}
+          className={`${isVideosPage 
+            ? 'bg-[#ea384c] hover:bg-[#c82d3f] text-white' 
+            : 'bg-[#222222] hover:bg-[#333333] text-white'} rounded-full flex items-center justify-center px-3 py-2 h-9`}
+          variant="ghost"
+        >
+          <Settings className="h-4 w-4" />
+        </Button>
+      ) : (
+        <Button 
+          onClick={onAuthOpen}
+          className={`${isVideosPage 
+            ? 'bg-[#ea384c] hover:bg-[#c82d3f] text-white' 
+            : 'bg-[#222222] hover:bg-[#333333] text-white'} rounded-full flex items-center justify-center px-3 py-2 h-9`}
+          variant="ghost"
+        >
+          <LogIn className="h-4 w-4 mr-1.5" />
+          <span className="text-sm">Sign in</span>
+        </Button>
       )}
     </div>
   );
-}
+};

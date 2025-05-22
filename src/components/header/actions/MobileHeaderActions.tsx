@@ -3,10 +3,9 @@ import { Button } from "@/components/ui/button";
 import { LogIn, Settings } from "lucide-react";
 import { NotificationsMenu } from "../NotificationsMenu";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useSessionManager } from "@/hooks/useSessionManager";
-import { ContactDialog } from "@/components/contact/ContactDialog";
 
 interface MobileHeaderActionsProps {
+  session: any;
   onAuthOpen: () => void;
   onMarkNotificationsAsRead: () => Promise<void>;
   handleSettingsClick: () => void;
@@ -14,6 +13,7 @@ interface MobileHeaderActionsProps {
 }
 
 export const MobileHeaderActions = ({
+  session,
   onAuthOpen,
   onMarkNotificationsAsRead,
   handleSettingsClick,
@@ -21,7 +21,6 @@ export const MobileHeaderActions = ({
 }: MobileHeaderActionsProps) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { isAuthenticated } = useSessionManager();
   const isVideosPage = location.pathname === "/videos";
   const isHomePage = location.pathname === "/" || location.pathname === "";
   
@@ -34,10 +33,9 @@ export const MobileHeaderActions = ({
 
   return (
     <div className="flex items-center gap-1.5">
-      {isAuthenticated ? (
+      {session ? (
         <>
-          <NotificationsMenu onMarkNotificationsAsRead={onMarkNotificationsAsRead} />
-          <ContactDialog />
+          <NotificationsMenu session={session} onMarkAsRead={onMarkNotificationsAsRead} />
           <Button
             onClick={handleSettingsClick}
             variant="ghost" 
@@ -49,15 +47,13 @@ export const MobileHeaderActions = ({
         </>
       ) : (
         <>
-          <ContactDialog />
           <Button
             onClick={onAuthOpen}
             variant="ghost" 
             size="sm"
             className={`${buttonClass} text-[0.7rem] rounded-full flex items-center px-2 py-1`}
           >
-            <LogIn className="h-3 w-3" />
-            <span className="ml-1">Sign in</span>
+            <span>Sign in</span>
           </Button>
         </>
       )}

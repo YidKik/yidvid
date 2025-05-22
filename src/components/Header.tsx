@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import Auth from "@/pages/Auth";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -117,14 +116,14 @@ export const Header = () => {
       }}
     >
       <div className="container mx-auto px-0">
-        <div className={`flex ${isMobile ? 'h-14' : 'h-14'} items-center justify-between relative px-4`}>
+        <div className={`flex ${isMobile ? 'h-14' : 'h-14'} items-center relative`}>
           {isMobile ? (
-            <>
+            <div className="w-full flex items-center px-3">
               <div className="w-1/5 flex justify-start">
-                {/* Logo position */}
+                {/* Logo removed from mobile view */}
               </div>
               
-              <div className="w-3/5 flex justify-center">
+              <div className="w-4/5 flex justify-center">
                 <SearchBar />
               </div>
 
@@ -132,6 +131,7 @@ export const Header = () => {
                 <HeaderActions 
                   isMobile={isMobile}
                   isSearchExpanded={isSearchExpanded}
+                  session={session}
                   onSearchExpand={() => {}}
                   onAuthOpen={() => setIsAuthOpen(true)}
                   onLogout={handleLogout}
@@ -139,32 +139,28 @@ export const Header = () => {
                   onSettingsClick={handleSettingsClick}
                 />
               </div>
-            </>
+            </div>
           ) : (
             <>
-              {/* Desktop view layout - restructured for cleaner display */}
-              <div className="w-full flex justify-between items-center">
-                <div className="flex-1">
-                  {/* Left section - could contain logo */}
+              {/* Desktop view - logo completely removed */}
+              
+              <div className="absolute left-1/2 transform -translate-x-1/2 w-full max-w-xl mx-auto px-4">
+                <div className="w-full max-w-md mx-auto">
+                  <SearchBar />
                 </div>
-                
-                <div className="flex-1 flex justify-center">
-                  <div className="w-full max-w-md">
-                    <SearchBar />
-                  </div>
-                </div>
-                
-                <div className="flex-1 flex justify-end">
-                  <HeaderActions 
-                    isMobile={isMobile}
-                    isSearchExpanded={isSearchExpanded}
-                    onSearchExpand={() => setIsSearchExpanded(true)}
-                    onAuthOpen={() => setIsAuthOpen(true)}
-                    onLogout={handleLogout}
-                    onMarkNotificationsAsRead={markNotificationsAsRead}
-                    onSettingsClick={handleSettingsClick}
-                  />
-                </div>
+              </div>
+
+              <div className="ml-auto pr-4">
+                <HeaderActions 
+                  isMobile={isMobile}
+                  isSearchExpanded={isSearchExpanded}
+                  session={session}
+                  onSearchExpand={() => setIsSearchExpanded(true)}
+                  onAuthOpen={() => setIsAuthOpen(true)}
+                  onLogout={handleLogout}
+                  onMarkNotificationsAsRead={markNotificationsAsRead}
+                  onSettingsClick={handleSettingsClick}
+                />
               </div>
             </>
           )}

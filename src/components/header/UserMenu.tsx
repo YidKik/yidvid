@@ -7,20 +7,15 @@ import { useQueryClient } from "@tanstack/react-query";
 
 interface UserMenuProps {
   onLogout: () => Promise<void>;
-  handleSettingsClick?: () => void;
 }
 
-export const UserMenu = ({ onLogout, handleSettingsClick }: UserMenuProps) => {
+export const UserMenu = ({ onLogout }: UserMenuProps) => {
   const navigate = useNavigate();
   const { isLoggingOut } = useAuth();
   const queryClient = useQueryClient();
   
-  const handleSettingsButtonClick = () => {
-    if (handleSettingsClick) {
-      handleSettingsClick();
-    } else {
-      navigate("/settings");
-    }
+  const handleSettingsClick = () => {
+    navigate("/settings");
   };
   
   const handleFastLogout = async () => {
@@ -37,7 +32,7 @@ export const UserMenu = ({ onLogout, handleSettingsClick }: UserMenuProps) => {
       size="icon"
       className="h-10 w-10"
       title="Settings"
-      onClick={handleSettingsButtonClick}
+      onClick={handleSettingsClick}
     >
       <Settings className="h-5 w-5" />
     </Button>

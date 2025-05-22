@@ -1,64 +1,99 @@
 
 import { Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { useNotificationsMenu } from "@/hooks/useNotificationsMenu";
-import { NotificationsList } from "./notifications/NotificationsList";
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { NotificationHeader } from "../notifications/NotificationHeader";
+import { NotificationList } from "../notifications/NotificationList";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { useNotifications } from "../notifications/useNotifications";
+import { useMobileDrag } from "../notifications/useMobileDrag";
 
 interface NotificationsMenuProps {
-  onMarkNotificationsAsRead?: () => Promise<void>;
+  session: any;
+  onMarkAsRead: () => Promise<void>;
 }
 
-export function NotificationsMenu({ onMarkNotificationsAsRead }: NotificationsMenuProps) {
+export const NotificationsMenu = ({ session, onMarkAsRead }: NotificationsMenuProps) => {
+  const { isMobile } = useIsMobile();
+  
   const {
     notifications,
     isLoading,
-    unreadCount,
-    handleNotificationClick,
-    markAllAsRead,
-    isAuthenticated
-  } = useNotificationsMenu(onMarkNotificationsAsRead);
+    isError,
+    refetch,
+    closeRef,
+    handleClose,
+    handleClearAll
+  } = useNotifications(session?.user?.id);
 
-  if (!isAuthenticated) {
+  const {
+    sheetContentRef,
+    handleTouchStart,
+    handleTouchMove,
+    handleTouchEnd
+  } = useMobileDrag(handleClose, isMobile);
+
+  if (!session?.user?.id) {
     return null;
   }
 
   return (
-    <Popover>
-      <PopoverTrigger asChild>
-        <Button variant="ghost" size="icon" className="relative">
-          <Bell className="h-5 w-5" />
-          {unreadCount > 0 && (
-            <span className="absolute -top-1 -right-1 bg-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-              {unreadCount > 9 ? '9+' : unreadCount}
-            </span>
+    <Sheet>
+      <SheetTrigger asChild>
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="bg-[#222222] hover:bg-[#333333] text-white relative h-7 w-7 md:h-10 md:w-10"
+        >
+          <Bell className="h-3.5 w-3.5 md:h-5 md:w-5" />
+          {notifications && notifications.length > 0 && (
+            <Badge 
+              variant="destructive" 
+              className="absolute -top-1 -right-1 h-3 w-3 md:h-5 md:w-5 flex items-center justify-center p-0 text-[8px] md:text-xs"
+            >
+              {notifications.length}
+            </Badge>
           )}
         </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-80 p-0" align="end">
-        <div className="flex items-center justify-between p-4 border-b">
-          <h3 className="font-medium">Notifications</h3>
-          {notifications.length > 0 && (
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={markAllAsRead}
-              disabled={unreadCount === 0}
-            >
-              Mark all as read
-            </Button>
+      </SheetTrigger>
+      <SheetClose ref={closeRef} className="hidden" />
+      <SheetContent 
+        side={isMobile ? "bottom" : "right"}
+        className={`
+          ${isMobile ? 'w-full h-[100vh] rounded-t-xl' : 'w-[240px] sm:w-[400px] max-h-[80vh]'} 
+          ${isMobile ? 'bg-[#222222]/90 backdrop-blur-md' : 'bg-[#222222] rounded-l-xl'} 
+          border-[#333333] p-0
+          ${isMobile ? 'animate-slide-up' : 'animate-slide-in-right'}
+        `}
+        ref={sheetContentRef}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
+        <div className={isMobile ? 'relative' : ''}>
+          {isMobile && (
+            <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-10 h-1 bg-gray-500/50 rounded-full" />
           )}
+          <NotificationHeader 
+            hasNotifications={!!notifications?.length}
+            onClearAll={handleClearAll}
+            onClose={handleClose}
+          />
+          <NotificationList
+            notifications={notifications || []}
+            isLoading={isLoading}
+            isError={isError}
+            onRetry={() => refetch()}
+            onNotificationClick={onMarkAsRead}
+          />
         </div>
-        <NotificationsList 
-          notifications={notifications}
-          isLoading={isLoading}
-          onNotificationClick={handleNotificationClick}
-        />
-      </PopoverContent>
-    </Popover>
+      </SheetContent>
+    </Sheet>
   );
-}
+};
