@@ -8,6 +8,8 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { AdminPinDialog } from "@/components/settings/sections/admin/AdminPinDialog";
+import { useAdminPinDialog } from "@/hooks/useAdminPinDialog";
 
 export default function UsersPage() {
   const navigate = useNavigate();
@@ -15,6 +17,15 @@ export default function UsersPage() {
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [hasPinBypass, setHasPinBypass] = useState(false);
+
+  // Use the centralized admin PIN dialog hook
+  const {
+    showPinDialog,
+    setShowPinDialog,
+    adminPin,
+    setAdminPin,
+    handleUnlockWithPin
+  } = useAdminPinDialog(currentUserId);
 
   // Get current user session
   const { data: session, isLoading: isSessionLoading } = useQuery({
@@ -33,6 +44,7 @@ export default function UsersPage() {
     
     if (pinBypass) {
       setIsLoading(false);
+      setIsAdmin(true);
     }
   }, []);
 
@@ -137,6 +149,15 @@ export default function UsersPage() {
       </div>
       <h1 className="text-3xl font-bold">User Management</h1>
       {(isAdmin || hasPinBypass) && <UserManagementSection currentUserId={currentUserId} />}
+      
+      {/* Add the PIN dialog to the users page too */}
+      <AdminPinDialog
+        showDialog={showPinDialog}
+        setShowDialog={setShowPinDialog}
+        pinValue={adminPin}
+        setPinValue={setAdminPin}
+        onUnlock={handleUnlockWithPin}
+      />
     </div>
   );
 }

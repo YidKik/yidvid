@@ -14,6 +14,8 @@ interface AdminSectionProps {
 export const AdminSection = ({ userId }: AdminSectionProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const { isMobile } = useIsMobile();
+  
+  // Use the centralized admin PIN dialog hook
   const {
     showPinDialog,
     setShowPinDialog,
