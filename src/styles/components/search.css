@@ -80,4 +80,6 @@
 .search-animated-border input:focus + .search-animated-border::before,
 .search-animated-border::before {
   border-color: #ea384c !important;
+  opacity: 1 !important;
+  visibility: visible !important;
 }
