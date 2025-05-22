@@ -17,9 +17,13 @@ export const HeaderLogo = ({ isMobile, isMobileMenuOpen, onMobileMenuToggle }: H
   }
 
   return (
-    <div className={`flex items-center ${isMobile ? '' : 'absolute left-0 top-1/2 -translate-y-1/2 ml-0 pl-0'}`}>
-      <Link to="/" className="flex items-center text-xl font-bold text-gray-800">
-        YidVid
+    <div className={`flex items-center ${isMobile ? 'ml-2' : 'absolute left-0 top-1/2 -translate-y-1/2 ml-4'}`}>
+      <Link to="/" className="flex items-center">
+        <img 
+          src="/yidkik-logo.png" 
+          alt="YidVid Logo" 
+          className={`${isMobile ? 'h-8' : 'h-10'} w-auto`} 
+        />
       </Link>
     </div>
   );

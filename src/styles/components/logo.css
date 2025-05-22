@@ -3,3 +3,17 @@
 .logo-custom:not([class*="home-"]) {
   color: var(--logo-custom);
 }
+
+/* Logo sizing */
+.header-logo img {
+  height: auto;
+  max-height: 40px;
+  object-fit: contain;
+}
+
+/* Different sizes based on device */
+@media (max-width: 768px) {
+  .header-logo img {
+    max-height: 32px;
+  }
+}

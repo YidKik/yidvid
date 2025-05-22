@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import Auth from "@/pages/Auth";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -9,6 +10,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "react-router-dom";
+import { HeaderLogo } from "./header/HeaderLogo";
 
 export const Header = () => {
   const { isMobile } = useIsMobile();
@@ -120,10 +122,14 @@ export const Header = () => {
           {isMobile ? (
             <div className="w-full flex items-center px-3">
               <div className="w-1/5 flex justify-start">
-                {/* Logo removed from mobile view */}
+                <HeaderLogo
+                  isMobile={isMobile}
+                  isMobileMenuOpen={isMobileMenuOpen}
+                  onMobileMenuToggle={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                />
               </div>
               
-              <div className="w-4/5 flex justify-center">
+              <div className="w-3/5 flex justify-center">
                 <SearchBar />
               </div>
 
@@ -142,7 +148,11 @@ export const Header = () => {
             </div>
           ) : (
             <>
-              {/* Desktop view - logo completely removed */}
+              <HeaderLogo
+                isMobile={isMobile}
+                isMobileMenuOpen={isMobileMenuOpen}
+                onMobileMenuToggle={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              />
               
               <div className="absolute left-1/2 transform -translate-x-1/2 w-full max-w-xl mx-auto px-4">
                 <div className="w-full max-w-md mx-auto">
