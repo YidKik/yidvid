@@ -65,6 +65,19 @@ export const Header = () => {
     };
   }, [lastScrollY, isHomePage]);
 
+  // Listen for the custom auth dialog event
+  useEffect(() => {
+    const handleOpenAuthDialog = () => {
+      setIsAuthOpen(true);
+    };
+    
+    document.addEventListener('openAuthDialog', handleOpenAuthDialog);
+    
+    return () => {
+      document.removeEventListener('openAuthDialog', handleOpenAuthDialog);
+    };
+  }, []);
+
   const markNotificationsAsRead = async () => {
     if (!session?.user?.id || isMarkingNotifications) return;
 

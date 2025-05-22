@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import VideoDetails from './pages/VideoDetails';
@@ -12,6 +13,7 @@ import { ColorProvider } from './contexts/ColorContext';
 import Settings from './pages/Settings';
 import Dashboard from './pages/Dashboard';
 import { recordNavigation, setupScrollRestoration } from './utils/scrollRestoration';
+import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 
 // Admin Pages
 import ChannelsPage from './pages/admin/ChannelsPage';
@@ -32,6 +34,9 @@ import { PagePreloader } from './components/PagePreloader';
 
 function App() {
   const location = useLocation();
+  
+  // Initialize keyboard shortcuts
+  useKeyboardShortcuts();
   
   // Set up navigation tracking
   useEffect(() => {

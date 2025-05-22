@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Auth from '@/pages/Auth';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -7,6 +7,20 @@ export const HomeHeader = () => {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'signin' | 'signup'>('signin');
   const { session, handleLogout } = useAuth();
+
+  // Listen for the custom auth dialog event
+  useEffect(() => {
+    const handleOpenAuthDialog = () => {
+      setActiveTab('signin');
+      setIsAuthOpen(true);
+    };
+    
+    document.addEventListener('openAuthDialog', handleOpenAuthDialog);
+    
+    return () => {
+      document.removeEventListener('openAuthDialog', handleOpenAuthDialog);
+    };
+  }, []);
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
