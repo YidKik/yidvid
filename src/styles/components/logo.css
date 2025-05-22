@@ -9,6 +9,7 @@
   height: auto;
   max-height: 40px;
   object-fit: contain;
+  display: block; /* Ensure the image displays properly */
 }
 
 /* Different sizes based on device */
@@ -16,4 +17,10 @@
   .header-logo img {
     max-height: 32px;
   }
+}
+
+/* Fix for image alignment */
+.header-logo {
+  display: flex;
+  align-items: center;
 }

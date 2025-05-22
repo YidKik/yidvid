@@ -17,12 +17,16 @@ export const HeaderLogo = ({ isMobile, isMobileMenuOpen, onMobileMenuToggle }: H
   }
 
   return (
-    <div className={`flex items-center ${isMobile ? 'ml-2' : 'absolute left-0 top-1/2 -translate-y-1/2 ml-4'}`}>
+    <div className={`flex items-center header-logo ${isMobile ? 'ml-2' : 'absolute left-0 top-1/2 -translate-y-1/2 ml-4'}`}>
       <Link to="/" className="flex items-center">
         <img 
           src="/yidkik-logo.png" 
           alt="YidVid Logo" 
-          className={`${isMobile ? 'h-8' : 'h-10'} w-auto`} 
+          className={`${isMobile ? 'h-8' : 'h-10'} w-auto`}
+          onError={(e) => {
+            console.error("Logo failed to load:", e);
+            e.currentTarget.src = "/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png";
+          }} 
         />
       </Link>
     </div>
