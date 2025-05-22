@@ -8,7 +8,7 @@ import { DelayedLoadingAnimation } from "@/components/ui/DelayedLoadingAnimation
 interface FilteredChannelsGridProps {
   channels: Channel[];
   isMainPage?: boolean;
-  isLoading?: boolean; // Add loading prop
+  isLoading?: boolean;
 }
 
 export const FilteredChannelsGrid = ({ 
@@ -54,17 +54,22 @@ export const FilteredChannelsGrid = ({
   }
 
   // Determine column count based on screen size
-  // Mobile: 2 columns
-  // Tablet: 3 columns 
-  // Desktop: 4-5 columns
   const getGridColumns = () => {
     if (isMobile) return 'grid-cols-2';
     if (isTablet) return 'grid-cols-3';
     return 'grid-cols-5'; // Default for desktop
   };
 
+  // Display total channel count
+  const totalChannels = displayChannels.length;
+
   return (
     <div className="w-full">
+      {totalChannels > 0 && (
+        <div className="text-sm text-gray-500 mb-2">
+          Showing all {totalChannels} channels
+        </div>
+      )}
       <div className={`grid ${getGridColumns()} gap-4 mt-4 pb-8`}>
         {displayChannels.map((channel, index) => (
           <ChannelCard 

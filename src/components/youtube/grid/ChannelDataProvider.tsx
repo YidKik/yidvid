@@ -56,7 +56,7 @@ export const ChannelDataProvider = ({ children, onError, searchQuery = "" }: Cha
       
       // Use the edge function to fetch public channels
       try {
-        console.log("Trying edge function to fetch channels...");
+        console.log("Trying edge function to fetch ALL channels...");
         const urlWithSearch = `https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/get-public-channels${searchQuery ? `?search=${encodeURIComponent(searchQuery)}` : ''}`;
         console.log("Fetching from URL:", urlWithSearch);
         
@@ -70,7 +70,7 @@ export const ChannelDataProvider = ({ children, onError, searchQuery = "" }: Cha
         
         if (response.ok) {
           const result = await response.json();
-          if (result.data && Array.isArray(result.data) && result.data.length > 0) {
+          if (result.data && Array.isArray(result.data)) {
             console.log(`Retrieved ${result.data.length} channels with edge function`);
             return result.data;
           }
@@ -79,8 +79,7 @@ export const ChannelDataProvider = ({ children, onError, searchQuery = "" }: Cha
         console.error("Edge function error:", edgeError);
       }
       
-      // Fall back to direct query with simpler selection to avoid RLS issues
-      // Build query with search filter if provided
+      // Fall back to direct query with no limit
       let query = supabase
         .from("youtube_channels")
         .select("id, channel_id, title, thumbnail_url, description")
@@ -90,12 +89,12 @@ export const ChannelDataProvider = ({ children, onError, searchQuery = "" }: Cha
         query = query.ilike("title", `%${searchQuery}%`);
       }
       
-      const { data, error } = await query.limit(50);
+      const { data, error } = await query;
         
       if (error) {
         console.error("Direct DB fetch error:", error);
         
-        // Try a different approach with minimal fields
+        // Try a different approach with minimal fields and no limit
         let simplifiedQuery = supabase
           .from("youtube_channels")
           .select("id, channel_id, title, thumbnail_url");
@@ -104,7 +103,7 @@ export const ChannelDataProvider = ({ children, onError, searchQuery = "" }: Cha
           simplifiedQuery = simplifiedQuery.ilike("title", `%${searchQuery}%`);
         }
           
-        const simplifiedResult = await simplifiedQuery.limit(50);
+        const simplifiedResult = await simplifiedQuery;
           
         if (!simplifiedResult.error && simplifiedResult.data?.length > 0) {
           return simplifiedResult.data;
@@ -130,7 +129,7 @@ export const ChannelDataProvider = ({ children, onError, searchQuery = "" }: Cha
     queryFn: async () => {
       // Try edge function first for best public access
       try {
-        console.log("Fetching public channels via edge function...");
+        console.log("Fetching ALL public channels via edge function...");
         const urlWithSearch = `https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/get-public-channels${searchQuery ? `?search=${encodeURIComponent(searchQuery)}` : ''}`;
         const response = await fetch(urlWithSearch, {
           method: "GET",
@@ -142,7 +141,7 @@ export const ChannelDataProvider = ({ children, onError, searchQuery = "" }: Cha
         
         if (response.ok) {
           const result = await response.json();
-          if (result.data && Array.isArray(result.data) && result.data.length > 0) {
+          if (result.data && Array.isArray(result.data)) {
             console.log(`Retrieved ${result.data.length} channels with edge function`);
             return result.data;
           }
@@ -157,7 +156,7 @@ export const ChannelDataProvider = ({ children, onError, searchQuery = "" }: Cha
         return dbChannels;
       }
       
-      // Then try manual fetch method
+      // Then try manual fetch method with no limit
       const manualData = await fetchChannelsDirectly();
       if (manualData && manualData.length > 0) {
         return manualData;

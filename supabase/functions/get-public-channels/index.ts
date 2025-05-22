@@ -28,7 +28,7 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_ANON_KEY') ?? 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1aW5ja3R2c2l1enRzeGN1cWZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY0ODgzNzcsImV4cCI6MjA1MjA2NDM3N30.zbReqHoAR33QoCi_wqNp8AtNofTX3JebM7jvjFAWbMg'
     );
 
-    // Build query
+    // Build query - don't limit the number of channels
     let query = supabaseClient
       .from('youtube_channels')
       .select('id, channel_id, title, description, thumbnail_url, created_at, updated_at')
@@ -40,8 +40,8 @@ serve(async (req) => {
       query = query.ilike('title', `%${searchQuery}%`);
     }
 
-    // Execute query with limit
-    const { data, error } = await query.limit(100);
+    // Execute query without limit to retrieve all channels
+    const { data, error } = await query;
 
     if (error) {
       console.error("Database error:", error);

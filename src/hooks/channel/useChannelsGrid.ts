@@ -26,7 +26,7 @@ export const useChannelsGrid = () => {
   const fetchChannelsDirectly = async (searchTerm: string = ""): Promise<Channel[]> => {
     try {
       setIsLoading(true);
-      console.log("Attempting to fetch channels directly with search:", searchTerm);
+      console.log("Attempting to fetch ALL channels directly with search:", searchTerm);
       
       // First try with edge function which supports search
       try {
@@ -43,7 +43,7 @@ export const useChannelsGrid = () => {
         
         if (response.ok) {
           const result = await response.json();
-          if (result.data && Array.isArray(result.data) && result.data.length > 0) {
+          if (result.data && Array.isArray(result.data)) {
             console.log(`Retrieved ${result.data.length} channels with edge function`);
             setManuallyFetchedChannels(result.data);
             setFetchError(null);
@@ -54,7 +54,7 @@ export const useChannelsGrid = () => {
         console.error("Edge function error:", edgeError);
       }
       
-      // Fall back to regular database query
+      // Fall back to regular database query without limit
       let query = supabase.from("youtube_channels")
         .select("id, channel_id, title, thumbnail_url, description, created_at, updated_at, deleted_at, default_category, fetch_error, last_fetch")
         .is("deleted_at", null);
@@ -63,7 +63,7 @@ export const useChannelsGrid = () => {
         query = query.ilike("title", `%${searchTerm}%`);
       }
       
-      const { data: channelsData, error: channelsError } = await query.limit(100);
+      const { data: channelsData, error: channelsError } = await query;
       
       if (!channelsError && channelsData && channelsData.length > 0) {
         console.log(`Successfully fetched ${channelsData.length} channels directly`);
@@ -84,7 +84,7 @@ export const useChannelsGrid = () => {
           simplifiedQuery = simplifiedQuery.ilike("title", `%${searchTerm}%`);
         }
         
-        const { data: simplifiedData, error: simplifiedError } = await simplifiedQuery.limit(50);
+        const { data: simplifiedData, error: simplifiedError } = await simplifiedQuery;
         
         if (!simplifiedError && simplifiedData && simplifiedData.length > 0) {
           console.log(`Retrieved ${simplifiedData.length} channels with simplified query`);
