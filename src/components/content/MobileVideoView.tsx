@@ -48,7 +48,7 @@ export const MobileVideoView: React.FC<MobileVideoViewProps> = ({
   // For a cleaner experience, let's use our loading component
   if (isLoading || isRefreshing) {
     return (
-      <div className="space-y-1">
+      <div className="space-y-1 px-4">
         <DelayedLoadingAnimation
           size="small"
           text={isRefreshing ? "Refreshing videos..." : "Loading videos..."}
@@ -65,11 +65,11 @@ export const MobileVideoView: React.FC<MobileVideoViewProps> = ({
         maxVideos={videosPerPage}
         rowSize={rowSize}
         isLoading={isLoading || isRefreshing}
-        className="grid-cols-2 gap-1"
+        className="grid-cols-2 gap-2 px-4 max-w-[85%] mx-auto"
       />
       
       {totalPages > 1 && (
-        <div className="mt-1">
+        <div className="mt-1 px-4">
           <VideoGridPagination
             showAll={showMoreMobile}
             currentPage={currentPage}
@@ -83,7 +83,7 @@ export const MobileVideoView: React.FC<MobileVideoViewProps> = ({
         </div>
       )}
 
-      <div className="mt-2">
+      <div className="mt-2 px-4">
         <ChannelsGrid />
       </div>
     </div>
