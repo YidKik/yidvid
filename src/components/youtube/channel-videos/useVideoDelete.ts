@@ -24,8 +24,7 @@ export const useVideoDelete = (refetchVideos: () => void) => {
       if (quotaData?.quota_remaining <= 0) {
         console.error("Cannot delete video: YouTube API quota exceeded");
         toast.error("Cannot delete video: YouTube API quota exceeded", { 
-          id: "quota-exceeded",
-          position: "bottom-center" 
+          id: "quota-exceeded"
         });
         return;
       }
@@ -102,15 +101,13 @@ export const useVideoDelete = (refetchVideos: () => void) => {
       }
 
       toast.success("Video deleted successfully", { 
-        id: `video-deleted-${videoId}`,
-        position: "bottom-center" 
+        id: `video-deleted-${videoId}`
       });
       refetchVideos();
     } catch (error: any) {
       console.error("Error in deletion process:", error);
       toast.error("Error deleting video: " + (error.message || "Unknown error"), { 
-        id: "video-delete-error",
-        position: "bottom-center" 
+        id: "video-delete-error"
       });
     } finally {
       setIsDeleting(false);

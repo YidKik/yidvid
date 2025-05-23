@@ -30,7 +30,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
       }}
       richColors={false}
       expand={false}
-      position={isMobile ? "bottom-center" : "bottom-right"}
+      position="bottom-center" // Always use bottom-center for consistency
       visibleToasts={3}
       closeButton={false}
       toastDeduplication={true} // Enable toast deduplication

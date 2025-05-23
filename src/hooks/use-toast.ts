@@ -58,19 +58,19 @@ interface State {
 // Empty state - no toasts
 const memoryState: State = { toasts: [] }
 
-// Create our forwarding functions to sonner
+// Create our forwarding functions to sonner with consistent bottom positioning
 function toast(props: { title?: string; description?: string; variant?: "default" | "destructive"; id?: string }) {
   const { title, description, variant, id } = props
-  if (variant === "destructive") {
-    return sonnerToast.error(title || description || "", {
-      description: title ? description : undefined,
-      id
-    })
-  }
-  return sonnerToast(title || description || "", {
+  const toastOptions = {
     description: title ? description : undefined,
-    id
-  })
+    id,
+    position: "bottom-center" as const
+  }
+  
+  if (variant === "destructive") {
+    return sonnerToast.error(title || description || "", toastOptions)
+  }
+  return sonnerToast(title || description || "", toastOptions)
 }
 
 // Hook that forwards to sonner but maintains interface compatibility
@@ -88,15 +88,15 @@ function useToast() {
   }
 }
 
-// Add these extensions to make the toast function work as expected
-toast.success = (message: string, opts?: { id?: string }) => sonnerToast.success(message, opts)
-toast.error = (message: string, opts?: { id?: string }) => sonnerToast.error(message, opts)
-toast.warning = (message: string, opts?: { id?: string }) => sonnerToast.warning(message, opts)
-toast.info = (message: string, opts?: { id?: string }) => sonnerToast.info(message, opts)
-toast.loading = (message: string, opts?: { id?: string }) => sonnerToast.loading(message, opts)
+// Add these extensions to make the toast function work as expected with consistent positioning
+toast.success = (message: string, opts?: { id?: string }) => sonnerToast.success(message, { ...opts, position: "bottom-center" })
+toast.error = (message: string, opts?: { id?: string }) => sonnerToast.error(message, { ...opts, position: "bottom-center" })
+toast.warning = (message: string, opts?: { id?: string }) => sonnerToast.warning(message, { ...opts, position: "bottom-center" })
+toast.info = (message: string, opts?: { id?: string }) => sonnerToast.info(message, { ...opts, position: "bottom-center" })
+toast.loading = (message: string, opts?: { id?: string }) => sonnerToast.loading(message, { ...opts, position: "bottom-center" })
 toast.dismiss = (id?: string) => sonnerToast.dismiss(id)
 // Fix the custom method type - using React.createElement instead of JSX
 toast.custom = (content: React.ReactNode, opts?: { id?: string }) => 
-  sonnerToast.custom(() => React.createElement(React.Fragment, null, content), opts)
+  sonnerToast.custom(() => React.createElement(React.Fragment, null, content), { ...opts, position: "bottom-center" })
 
 export { useToast, toast }
