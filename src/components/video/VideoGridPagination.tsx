@@ -33,18 +33,18 @@ export const VideoGridPagination = ({
   onShowAll,
   onPageChange,
 }: VideoGridPaginationProps) => {
-  // For mobile view with pagination arrows
-  if (isMobile && (usePaginationArrows || totalPages > 1)) {
+  // Use pagination arrows for both mobile and desktop when usePaginationArrows is true
+  if (usePaginationArrows && totalPages > 1) {
     return (
-      <div className="flex items-center justify-center space-x-4 mt-2">
+      <div className={`flex items-center justify-center space-x-4 ${isMobile ? 'mt-2' : 'mt-6'}`}>
         <CustomPaginationArrow 
           direction="left" 
           disabled={currentPage === 1} 
           onClick={() => onPageChange(currentPage - 1)}
-          className="transform scale-75"
+          className={isMobile ? "transform scale-75" : ""}
         />
         
-        <span className="text-xs font-medium">
+        <span className={`font-medium ${isMobile ? 'text-xs' : 'text-sm'}`}>
           {currentPage} / {totalPages}
         </span>
         
@@ -52,7 +52,7 @@ export const VideoGridPagination = ({
           direction="right" 
           disabled={currentPage === totalPages} 
           onClick={() => onPageChange(currentPage + 1)}
-          className="transform scale-75"
+          className={isMobile ? "transform scale-75" : ""}
         />
       </div>
     );

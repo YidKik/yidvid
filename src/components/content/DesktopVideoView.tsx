@@ -75,15 +75,17 @@ export const DesktopVideoView = ({
         />
         
         {totalPages > 1 && (
-          <div className="mt-6">
+          <div className="mt-6 flex justify-center">
             <VideoGridPagination
-              showAll={true}
+              showAll={false}  // Always use pagination arrows for consistency
               currentPage={currentPage}
               totalPages={totalPages}
               filteredVideosLength={sortedVideos.length}
               maxVideos={videosPerPage}
+              isMobile={false}
               onShowAll={() => {}}
               onPageChange={(page) => setCurrentPage(page)}
+              usePaginationArrows={true} // Use arrows for desktop too
             />
           </div>
         )}
