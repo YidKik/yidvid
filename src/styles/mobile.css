@@ -144,7 +144,7 @@
   
   /* Increase horizontal spacing and reduce video grid size on mobile */
   .videos-page .grid {
-    gap: 8px !important; /* Slightly increased gap */
+    gap: 12px !important; /* Increased from 8px to push videos more towards sides */
     padding: 0 1.5rem !important; /* Add horizontal padding for side spacing */
     max-width: 85% !important; /* Reduce overall width to create side spacing */
     margin: 0 auto !important; /* Center the grid */
@@ -190,6 +190,7 @@
   .videos-page .grid {
     padding: 0 2rem !important; /* More side padding on very small screens */
     max-width: 80% !important; /* Even more side spacing */
+    gap: 16px !important; /* Even larger gap for smaller screens */
   }
 }
 
