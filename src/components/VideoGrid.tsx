@@ -104,6 +104,8 @@ export const VideoGrid = ({
   const videoLimit = isMobile ? 4 : isTablet ? 9 : maxVideos;
   const displayVideos = videos.slice(0, videoLimit);
 
+  console.log(`VideoGrid: Device - isMobile: ${isMobile}, isTablet: ${isTablet}, gridCols: ${gridCols}, videoLimit: ${videoLimit}`);
+
   return (
     <div className={cn("grid video-grid-container", gridCols, gridGap, className)}>
       {displayVideos.map((video) => (

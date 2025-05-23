@@ -56,12 +56,14 @@ export const FilteredChannelsGrid = ({
   // Determine column count based on screen size
   const getGridColumns = () => {
     if (isMobile) return 'grid-cols-2';
-    if (isTablet) return 'grid-cols-3';
+    if (isTablet) return 'grid-cols-3'; // Ensure tablet shows 3 columns
     return 'grid-cols-5'; // Default for desktop
   };
 
   // Display total channel count
   const totalChannels = displayChannels.length;
+
+  console.log(`FilteredChannelsGrid: Device - isMobile: ${isMobile}, isTablet: ${isTablet}, gridColumns: ${getGridColumns()}`);
 
   return (
     <div className="w-full">

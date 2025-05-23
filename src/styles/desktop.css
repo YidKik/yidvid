@@ -77,3 +77,27 @@
     font-size: 0.8125rem;
   }
 }
+
+/* Tablet specific styles */
+@media (min-width: 769px) and (max-width: 1024px) {
+  /* Ensure tablet video grid shows 3 columns */
+  .videos-page .video-grid-container.grid-cols-3 {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+  
+  /* Ensure tablet channel grid shows 3 columns */
+  .grid-cols-3 {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+  
+  .videos-page .grid {
+    gap: 12px !important;
+  }
+  
+  /* Make sure home page background is always green on tablet */
+  html.home-page,
+  body.home-page,
+  .home-page {
+    background-color: #003c43 !important;
+  }
+}

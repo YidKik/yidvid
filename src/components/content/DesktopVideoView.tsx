@@ -60,7 +60,8 @@ export const DesktopVideoView = ({
   useEffect(() => {
     console.log(`DesktopVideoView: ${videos.length} videos, hasRealVideos: ${hasRealVideos}, isLoading: ${isLoading}, isRefreshing: ${isRefreshing}`);
     console.log(`Pagination: currentPage ${currentPage} of ${totalPages}, showing ${displayVideos.length} videos`);
-  }, [videos, hasRealVideos, isLoading, isRefreshing, currentPage, totalPages, displayVideos.length]);
+    console.log(`Device: isTablet: ${isTablet}, videosPerPage: ${videosPerPage}, rowSize: ${rowSize}`);
+  }, [videos, hasRealVideos, isLoading, isRefreshing, currentPage, totalPages, displayVideos.length, isTablet, videosPerPage, rowSize]);
 
   return (
     <div className="space-y-6">
