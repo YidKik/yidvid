@@ -69,16 +69,17 @@ export const MobileVideoView: React.FC<MobileVideoViewProps> = ({
       />
       
       {totalPages > 1 && (
-        <div className="mt-1 px-4">
+        <div className="mt-1 px-4 flex justify-center">
           <VideoGridPagination
-            showAll={showMoreMobile}
+            showAll={false}  // Always use pagination arrows instead of "Show All"
             currentPage={currentPage}
             totalPages={totalPages}
             filteredVideosLength={sortedVideos.length}
             maxVideos={videosPerPage}
             isMobile={true}
-            onShowAll={() => setShowMoreMobile(true)}
+            onShowAll={() => {}} // We don't need this functionality anymore
             onPageChange={(page) => setCurrentPage(page)}
+            usePaginationArrows={true} // Add this prop to force arrow pagination
           />
         </div>
       )}

@@ -17,6 +17,7 @@ interface VideoGridPaginationProps {
   filteredVideosLength: number;
   maxVideos: number;
   isMobile?: boolean;
+  usePaginationArrows?: boolean;
   onShowAll: () => void;
   onPageChange: (page: number) => void;
 }
@@ -28,9 +29,35 @@ export const VideoGridPagination = ({
   filteredVideosLength,
   maxVideos,
   isMobile = false,
+  usePaginationArrows = false,
   onShowAll,
   onPageChange,
 }: VideoGridPaginationProps) => {
+  // For mobile view with pagination arrows
+  if (isMobile && (usePaginationArrows || totalPages > 1)) {
+    return (
+      <div className="flex items-center justify-center space-x-4 mt-2">
+        <CustomPaginationArrow 
+          direction="left" 
+          disabled={currentPage === 1} 
+          onClick={() => onPageChange(currentPage - 1)}
+          className="transform scale-75"
+        />
+        
+        <span className="text-xs font-medium">
+          {currentPage} / {totalPages}
+        </span>
+        
+        <CustomPaginationArrow 
+          direction="right" 
+          disabled={currentPage === totalPages} 
+          onClick={() => onPageChange(currentPage + 1)}
+          className="transform scale-75"
+        />
+      </div>
+    );
+  }
+
   if (!showAll) {
     return (
       <div className={`flex justify-center ${isMobile ? 'mt-1' : 'mt-8'}`}>
