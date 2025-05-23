@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { LogIn, Settings } from "lucide-react";
+import { LogIn, Settings, User } from "lucide-react";
 import { NotificationsMenu } from "../NotificationsMenu";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -51,8 +51,9 @@ export const MobileHeaderActions = ({
             onClick={onAuthOpen}
             variant="ghost" 
             size="sm"
-            className={`${buttonClass} text-[0.7rem] rounded-full flex items-center px-2 py-1`}
+            className={`${buttonClass} text-[0.7rem] rounded-full flex items-center px-2 py-1 gap-1`}
           >
+            <User className="h-3 w-3" />
             <span>Sign in</span>
           </Button>
         </>
