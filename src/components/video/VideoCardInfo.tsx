@@ -24,7 +24,7 @@ export const VideoCardInfo = ({
   textColor = "text-black",
   hideChannelName = false
 }: VideoCardInfoProps) => {
-  const { isTablet } = useIsMobile();
+  const { isMobile, isTablet } = useIsMobile();
   
   // Format view count with appropriate suffix (K, M)
   const formatViewCount = (count: number): string => {

@@ -65,7 +65,7 @@ export const MobileVideoView: React.FC<MobileVideoViewProps> = ({
         maxVideos={videosPerPage}
         rowSize={rowSize}
         isLoading={isLoading || isRefreshing}
-        className="grid-cols-2 gap-2 px-4 max-w-[85%] mx-auto"
+        className="grid-cols-2 gap-2 px-4 max-w-[85%] mx-auto mobile-view"
       />
       
       {totalPages > 1 && (

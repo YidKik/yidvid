@@ -50,6 +50,9 @@
     line-height: 1;
     margin-top: 0;
     color: #030303;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   
   .videos-page .video-grid-container {
