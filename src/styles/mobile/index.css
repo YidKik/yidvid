@@ -1,0 +1,11 @@
+
+/* Mobile styles index file */
+
+/* Import all mobile styles */
+@import './base.css';
+@import './toast.css';
+@import './categories.css';
+@import './scroll.css'; 
+@import './layout.css';
+@import './videos.css';
+@import './tablet.css';

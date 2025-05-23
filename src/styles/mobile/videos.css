@@ -1,0 +1,67 @@
+
+/* Mobile video styles */
+@media (max-width: 768px) {
+  /* Video card mobile optimizations - make videos smaller with more side spacing */
+  .video-title {
+    margin-top: 2px;
+    font-size: 0.65rem !important; /* Reduced from 0.7rem */
+    line-height: 1;
+  }
+  
+  /* Increase horizontal spacing and reduce video grid size on mobile */
+  .videos-page .grid {
+    gap: 12px !important; /* Increased from 8px to push videos more towards sides */
+    padding: 0 1.5rem !important; /* Add horizontal padding for side spacing */
+    max-width: 85% !important; /* Reduce overall width to create side spacing */
+    margin: 0 auto !important; /* Center the grid */
+  }
+  
+  /* Make video thumbnails smaller on mobile */
+  .videos-page .video-card-thumbnail {
+    transform: scale(0.95); /* Slightly reduce thumbnail size */
+    border-radius: 0.75rem; /* Maintain border radius proportion */
+  }
+  
+  /* Optimize video info spacing on mobile */
+  .video-meta-text {
+    font-size: 0.6rem !important; /* Reduced from 0.65rem */
+  }
+  
+  /* Fix for video meta information to display on a single line */
+  .mobile-view .video-meta-text {
+    display: flex;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .mobile-view .video-meta-text .mx-1 {
+    margin-left: 0.15rem !important;
+    margin-right: 0.15rem !important;
+  }
+}
+
+/* Video thumbnail optimization for mobile */
+@media (max-width: 480px) {
+  .video-card-thumbnail {
+    aspect-ratio: 16/9;
+  }
+  
+  /* Additional mobile video grid optimizations for smaller screens */
+  .videos-page .grid {
+    padding: 0 2rem !important; /* More side padding on very small screens */
+    max-width: 80% !important; /* Even more side spacing */
+    gap: 16px !important; /* Even larger gap for smaller screens */
+  }
+  
+  /* Further optimizations for very small screens */
+  .mobile-view .video-meta-text {
+    font-size: 0.55rem !important;
+  }
+  
+  .mobile-view .video-meta-text .mx-1 {
+    margin-left: 0.1rem !important;
+    margin-right: 0.1rem !important;
+  }
+}

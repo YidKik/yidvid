@@ -1,0 +1,53 @@
+
+/* Mobile layout styles */
+@media (max-width: 768px) {
+  /* Channel grid optimization for mobile */
+  .channel-grid-mobile {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+    padding: 0 0.25rem;
+  }
+  
+  /* Hide popular content section on mobile videos page */
+  .videos-page .most-viewed-scroll {
+    display: none;
+  }
+  
+  /* Ensure hero heading layout matches desktop version */
+  .home-page h1 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .home-page h1 span:first-child {
+    margin-bottom: 0.25rem;
+  }
+  
+  .home-page h1 span:last-child {
+    white-space: nowrap;
+    color: #e3fef7;
+  }
+  
+  /* Make sure mobile home button doesn't have red background */
+  .home-page .home-button {
+    background-color: #135d66 !important;
+    color: #e3fef7 !important;
+  }
+  
+  .home-page .home-button:hover {
+    background-color: #e3fef7 !important;
+    color: #135d66 !important;
+  }
+  
+  /* Full-width sections for mobile */
+  .home-page #about-section .bg-[#135d66],
+  .home-page .mt-8.mb-6.bg-[#135d66] {
+    width: 100vw !important;
+    margin-left: calc(-50vw + 50%) !important;
+    margin-right: calc(-50vw + 50%) !important;
+    max-width: 100vw !important;
+    box-sizing: border-box !important;
+  }
+}

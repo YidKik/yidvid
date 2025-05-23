@@ -1,0 +1,43 @@
+
+/* Base mobile styles */
+@media (max-width: 768px) {
+  .alert-compact-text {
+    font-size: 0.7rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    line-height: 1;
+  }
+  
+  /* Fix scrollbar visibility on Safari */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    scroll-behavior: smooth;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Auto-scrolling container */
+  .auto-scroll-container {
+    scroll-behavior: smooth;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Make sure home page background is always green on mobile */
+  html.home-page,
+  body.home-page,
+  .home-page,
+  .home-page * {
+    background-color: #003c43 !important;
+  }
+  
+  /* Override any basic body styles in mobile view */
+  body.home-page:not([class*="videos-page"]):not([class*="auth-page"]) {
+    background-color: #003c43 !important;
+  }
+}

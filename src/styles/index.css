@@ -19,7 +19,7 @@
 @import './components/search.css';
 @import './components/logo.css';
 @import './components/navigation.css';
-@import './mobile.css';
+@import './mobile/index.css';
 @import './desktop.css';
 @import './components/home-page.css';
 @import './components/colors.css';

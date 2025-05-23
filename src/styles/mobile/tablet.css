@@ -1,0 +1,14 @@
+
+/* Tablet specific styles */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .videos-page .grid {
+    gap: 12px !important;
+  }
+  
+  /* Make sure home page background is always green on tablet */
+  html.home-page,
+  body.home-page,
+  .home-page {
+    background-color: #003c43 !important;
+  }
+}

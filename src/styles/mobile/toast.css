@@ -1,0 +1,17 @@
+
+/* Mobile toast notifications */
+@media (max-width: 768px) {
+  /* Toast mobile optimizations */
+  [data-sonner-toast] {
+    --toast-width: 90% !important;
+    --toast-padding: 0.5rem !important;
+    --toast-font-size: 0.75rem !important;
+    transform: scale(0.9) !important;
+    transform-origin: bottom right !important;
+    animation: toast-enter 0.4s cubic-bezier(0.21, 1.02, 0.73, 1) forwards !important;
+  }
+  
+  [data-sonner-toast][data-removing="true"] {
+    animation: toast-exit 0.4s cubic-bezier(0.06, 0.71, 0.55, 1) forwards !important;
+  }
+}
