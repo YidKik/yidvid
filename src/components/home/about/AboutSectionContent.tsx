@@ -6,9 +6,9 @@ interface AboutSectionContentProps {
 }
 
 export const AboutSectionContent: React.FC<AboutSectionContentProps> = ({ scrollProgress }) => {
-  // Calculate transforms based on scroll progress - slide further left to completely disappear
-  const aboutTextTransform = `translateX(${scrollProgress * -150}%)`;
-  const aboutTextOpacity = Math.max(0, 1 - (scrollProgress * 1.5));
+  // Calculate transforms based on scroll progress - slide much further left to completely disappear
+  const aboutTextTransform = `translateX(${scrollProgress * -200}%)`;
+  const aboutTextOpacity = Math.max(0, 1 - (scrollProgress * 2));
 
   return (
     <div 
@@ -17,7 +17,7 @@ export const AboutSectionContent: React.FC<AboutSectionContentProps> = ({ scroll
         opacity: aboutTextOpacity,
         transition: 'none' // Disable default transitions for smooth scroll control
       }}
-      className="w-full"
+      className="w-full relative z-10"
     >
       <div className="mt-8 mb-6 bg-[#135d66] rounded-3xl p-12 mx-auto max-w-6xl">
         <div className="grid grid-cols-2 gap-12 items-center">

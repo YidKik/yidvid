@@ -7,16 +7,19 @@ interface AuthButtonsProps {
 }
 
 export const AuthButtons: React.FC<AuthButtonsProps> = ({ scrollProgress, onAuthClick }) => {
-  // Cards slide up from bottom based on scroll progress
-  const cardsTransform = `translateY(${100 - (scrollProgress * 100)}%)`;
-  const cardsOpacity = scrollProgress;
+  // Buttons slide up from bottom but only after stats cards are visible
+  const slideThreshold = 0.6; // Start sliding auth buttons at 60% of about section slide
+  const adjustedProgress = Math.max(0, (scrollProgress - slideThreshold) / (1 - slideThreshold));
+  const buttonsTransform = `translateY(${100 - (adjustedProgress * 100)}%)`;
+  const buttonsOpacity = adjustedProgress;
 
   return (
     <div 
       style={{ 
-        transform: cardsTransform, 
-        opacity: cardsOpacity,
-        transition: 'none' // Disable default transitions for smooth scroll control
+        transform: buttonsTransform, 
+        opacity: buttonsOpacity,
+        transition: 'none', // Disable default transitions for smooth scroll control
+        pointerEvents: scrollProgress < slideThreshold ? 'none' : 'auto' // Prevent interaction when hidden
       }}
       className="absolute inset-0 flex items-center w-full"
     >

@@ -8,15 +8,19 @@ interface StatsCardsProps {
 
 export const StatsCards: React.FC<StatsCardsProps> = ({ scrollProgress }) => {
   // Cards slide up from bottom based on scroll progress
-  const cardsTransform = `translateY(${100 - (scrollProgress * 100)}%)`;
-  const cardsOpacity = scrollProgress;
+  // Only start sliding up when the about content is halfway out
+  const slideThreshold = 0.3; // Start sliding stats at 30% of about section slide
+  const adjustedProgress = Math.max(0, (scrollProgress - slideThreshold) / (1 - slideThreshold));
+  const cardsTransform = `translateY(${100 - (adjustedProgress * 100)}%)`;
+  const cardsOpacity = adjustedProgress;
 
   return (
     <div 
       style={{ 
         transform: cardsTransform, 
         opacity: cardsOpacity,
-        transition: 'none' // Disable default transitions for smooth scroll control
+        transition: 'none', // Disable default transitions for smooth scroll control
+        pointerEvents: scrollProgress < slideThreshold ? 'none' : 'auto' // Prevent interaction when hidden
       }}
       className="absolute inset-0 flex items-center w-full"
     >

@@ -7,7 +7,7 @@ export const useAboutSectionScroll = (sectionRef: RefObject<HTMLElement>) => {
 
   useEffect(() => {
     let accumulatedScroll = 0;
-    const maxScroll = 500; // Increased scroll distance for fuller slide-out
+    const maxScroll = 700; // Increased scroll distance for complete slide-out
 
     const handleWheel = (e: WheelEvent) => {
       if (!sectionRef.current) return;
@@ -26,10 +26,10 @@ export const useAboutSectionScroll = (sectionRef: RefObject<HTMLElement>) => {
         // Handle scroll direction for sliding
         if (e.deltaY > 0) {
           // Scrolling down - slide about section out to the left
-          accumulatedScroll += Math.abs(e.deltaY);
+          accumulatedScroll += Math.abs(e.deltaY * 1.5); // Accelerate scroll effect
         } else {
           // Scrolling up - bring about section back from the left
-          accumulatedScroll -= Math.abs(e.deltaY);
+          accumulatedScroll -= Math.abs(e.deltaY * 1.5);
         }
         
         // Clamp the scroll value
