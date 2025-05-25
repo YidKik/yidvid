@@ -7,7 +7,7 @@ export const useAboutSectionScroll = (sectionRef: RefObject<HTMLElement>) => {
 
   useEffect(() => {
     let accumulatedScroll = 0;
-    const maxScroll = 1200; // Increased for slower, smoother animation
+    const maxScroll = 1500; // Increased for even slower, smoother animation
 
     const handleWheel = (e: WheelEvent) => {
       if (!sectionRef.current) return;
@@ -23,13 +23,13 @@ export const useAboutSectionScroll = (sectionRef: RefObject<HTMLElement>) => {
         document.body.style.overflow = 'hidden';
         setIsScrollLocked(true);
         
-        // Handle scroll direction for sliding - reduced sensitivity for smoother animation
+        // Handle scroll direction for sliding - even slower for smoother animation
         if (e.deltaY > 0) {
-          // Scrolling down - slide about section out to the left (slower)
-          accumulatedScroll += Math.abs(e.deltaY * 0.8); // Reduced from 1.5 to 0.8 for slower animation
+          // Scrolling down - slide about section out to the left (very slow)
+          accumulatedScroll += Math.abs(e.deltaY * 0.6); // Further reduced for slower animation
         } else {
-          // Scrolling up - bring about section back from the left (slower)
-          accumulatedScroll -= Math.abs(e.deltaY * 0.8); // Reduced from 1.5 to 0.8 for slower animation
+          // Scrolling up - bring about section back from the left (very slow)
+          accumulatedScroll -= Math.abs(e.deltaY * 0.6); // Further reduced for slower animation
         }
         
         // Clamp the scroll value
