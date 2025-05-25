@@ -7,7 +7,7 @@ export const useAboutSectionScroll = (sectionRef: RefObject<HTMLElement>) => {
 
   useEffect(() => {
     let accumulatedScroll = 0;
-    const maxScroll = 1500; // Increased for even slower, smoother animation
+    const maxScroll = 2000; // Increased for slower, more controlled animation
 
     const handleWheel = (e: WheelEvent) => {
       if (!sectionRef.current) return;
@@ -23,21 +23,23 @@ export const useAboutSectionScroll = (sectionRef: RefObject<HTMLElement>) => {
         document.body.style.overflow = 'hidden';
         setIsScrollLocked(true);
         
-        // Handle scroll direction for sliding - even slower for smoother animation
+        // Handle scroll direction for sliding - very slow for smooth animation
         if (e.deltaY > 0) {
-          // Scrolling down - slide about section out to the left (very slow)
-          accumulatedScroll += Math.abs(e.deltaY * 0.6); // Further reduced for slower animation
+          // Scrolling down - slide about section out to the left
+          accumulatedScroll += Math.abs(e.deltaY * 0.5); // Slower animation
         } else {
-          // Scrolling up - bring about section back from the left (very slow)
-          accumulatedScroll -= Math.abs(e.deltaY * 0.6); // Further reduced for slower animation
+          // Scrolling up - bring about section back from the left
+          accumulatedScroll -= Math.abs(e.deltaY * 0.5); // Slower animation
         }
         
         // Clamp the scroll value
         accumulatedScroll = Math.max(0, Math.min(maxScroll, accumulatedScroll));
         
-        // Convert to progress (0 to 1) with smoother curve
+        // Convert to progress (0 to 1) - this is the key fix
         const newProgress = accumulatedScroll / maxScroll;
         setScrollProgress(newProgress);
+        
+        console.log('Scroll Progress:', newProgress, 'Accumulated:', accumulatedScroll); // Debug log
         
         // If scrolled back to beginning, allow normal scrolling
         if (newProgress === 0 && e.deltaY < 0) {

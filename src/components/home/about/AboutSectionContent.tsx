@@ -7,9 +7,11 @@ interface AboutSectionContentProps {
 
 export const AboutSectionContent: React.FC<AboutSectionContentProps> = ({ scrollProgress }) => {
   // Calculate transforms based on scroll progress - slide completely off screen to the left
-  // The entire container (including the light blue background) should slide out
-  const containerTransform = `translateX(${scrollProgress * -120}%)`;
-  const containerOpacity = Math.max(0, 1 - (scrollProgress * 1.2));
+  // Increased transform distance to ensure complete slide out
+  const containerTransform = `translateX(${scrollProgress * -150}%)`;
+  const containerOpacity = Math.max(0, 1 - (scrollProgress * 1.5));
+
+  console.log('AboutSectionContent - ScrollProgress:', scrollProgress, 'Transform:', containerTransform); // Debug log
 
   return (
     <div className="w-full relative z-10">
