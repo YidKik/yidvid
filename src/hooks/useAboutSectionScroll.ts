@@ -7,7 +7,7 @@ export const useAboutSectionScroll = (sectionRef: RefObject<HTMLElement>) => {
 
   useEffect(() => {
     let accumulatedScroll = 0;
-    const maxScroll = 700; // Increased scroll distance for complete slide-out
+    const maxScroll = 1200; // Increased for slower, smoother animation
 
     const handleWheel = (e: WheelEvent) => {
       if (!sectionRef.current) return;
@@ -23,19 +23,19 @@ export const useAboutSectionScroll = (sectionRef: RefObject<HTMLElement>) => {
         document.body.style.overflow = 'hidden';
         setIsScrollLocked(true);
         
-        // Handle scroll direction for sliding
+        // Handle scroll direction for sliding - reduced sensitivity for smoother animation
         if (e.deltaY > 0) {
-          // Scrolling down - slide about section out to the left
-          accumulatedScroll += Math.abs(e.deltaY * 1.5); // Accelerate scroll effect
+          // Scrolling down - slide about section out to the left (slower)
+          accumulatedScroll += Math.abs(e.deltaY * 0.8); // Reduced from 1.5 to 0.8 for slower animation
         } else {
-          // Scrolling up - bring about section back from the left
-          accumulatedScroll -= Math.abs(e.deltaY * 1.5);
+          // Scrolling up - bring about section back from the left (slower)
+          accumulatedScroll -= Math.abs(e.deltaY * 0.8); // Reduced from 1.5 to 0.8 for slower animation
         }
         
         // Clamp the scroll value
         accumulatedScroll = Math.max(0, Math.min(maxScroll, accumulatedScroll));
         
-        // Convert to progress (0 to 1)
+        // Convert to progress (0 to 1) with smoother curve
         const newProgress = accumulatedScroll / maxScroll;
         setScrollProgress(newProgress);
         

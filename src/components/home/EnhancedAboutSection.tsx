@@ -23,6 +23,9 @@ export const EnhancedAboutSection = () => {
       ref={sectionRef} 
       id="about-section" 
       className="bg-[#003c43] px-6 py-16 relative min-h-screen overflow-hidden"
+      style={{
+        willChange: 'transform' // Optimize for smooth animations
+      }}
     >
       <div className="container mx-auto relative h-screen flex items-center">
         {/* About Content slides out to the left */}

@@ -6,16 +6,18 @@ interface AboutSectionContentProps {
 }
 
 export const AboutSectionContent: React.FC<AboutSectionContentProps> = ({ scrollProgress }) => {
-  // Calculate transforms based on scroll progress - slide much further left to completely disappear
-  const aboutTextTransform = `translateX(${scrollProgress * -200}%)`;
-  const aboutTextOpacity = Math.max(0, 1 - (scrollProgress * 2));
+  // Calculate transforms based on scroll progress - slide completely off screen to the left
+  // Increased distance to ensure complete disappearance including background
+  const aboutTextTransform = `translateX(${scrollProgress * -120}%)`;
+  const aboutTextOpacity = Math.max(0, 1 - (scrollProgress * 1.5));
 
   return (
     <div 
       style={{ 
         transform: aboutTextTransform, 
         opacity: aboutTextOpacity,
-        transition: 'none' // Disable default transitions for smooth scroll control
+        transition: 'none', // Disable default transitions for smooth scroll control
+        willChange: 'transform, opacity' // Optimize for smooth animations
       }}
       className="w-full relative z-10"
     >
