@@ -8,19 +8,70 @@ export const EnhancedAboutSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'signin' | 'signup'>('signin');
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [isScrollLocked, setIsScrollLocked] = useState(false);
   
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start end", "end start"]
   });
 
-  // About text slides out to the left when scrolling in the locked section
-  const aboutTextX = useTransform(scrollYProgress, [0.3, 0.6], [0, -100]);
-  const aboutTextOpacity = useTransform(scrollYProgress, [0.3, 0.6], [1, 0]);
+  useEffect(() => {
+    let accumulatedScroll = 0;
+    const maxScroll = 200; // Maximum scroll distance before transition completes
+
+    const handleWheel = (e: WheelEvent) => {
+      if (!sectionRef.current) return;
+      
+      const rect = sectionRef.current.getBoundingClientRect();
+      const isInView = rect.top <= window.innerHeight / 2 && rect.bottom >= window.innerHeight / 2;
+      
+      if (isInView && scrollProgress < 1) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        setIsScrollLocked(true);
+        
+        // Accumulate scroll delta
+        accumulatedScroll += e.deltaY;
+        accumulatedScroll = Math.max(0, Math.min(maxScroll, accumulatedScroll));
+        
+        // Convert to progress (0 to 1)
+        const newProgress = accumulatedScroll / maxScroll;
+        setScrollProgress(newProgress);
+        
+        // When animation is complete, allow normal scrolling again
+        if (newProgress >= 1) {
+          setIsScrollLocked(false);
+        }
+      } else if (scrollProgress >= 1) {
+        setIsScrollLocked(false);
+      }
+    };
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (isScrollLocked && (e.key === 'ArrowDown' || e.key === 'ArrowUp' || e.key === ' ' || e.key === 'PageDown' || e.key === 'PageUp')) {
+        e.preventDefault();
+      }
+    };
+
+    // Add event listeners with passive: false to allow preventDefault
+    document.addEventListener('wheel', handleWheel, { passive: false });
+    document.addEventListener('keydown', handleKeyDown);
+    
+    return () => {
+      document.removeEventListener('wheel', handleWheel);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [scrollProgress, isScrollLocked]);
+
+  // About text slides out to the left based on scroll progress
+  const aboutTextX = useTransform(() => scrollProgress * -100);
+  const aboutTextOpacity = useTransform(() => 1 - scrollProgress);
   
-  // Cards slide up from bottom after about text slides out
-  const cardsY = useTransform(scrollYProgress, [0.6, 0.9], [100, 0]);
-  const cardsOpacity = useTransform(scrollYProgress, [0.6, 0.9], [0, 1]);
+  // Cards slide up from bottom based on scroll progress
+  const cardsY = useTransform(() => 100 - (scrollProgress * 100));
+  const cardsOpacity = useTransform(() => scrollProgress);
 
   const handleAuthClick = (tab: 'signin' | 'signup') => {
     setActiveTab(tab);
