@@ -13,7 +13,7 @@ export const EnhancedAboutSection = () => {
 
   useEffect(() => {
     let accumulatedScroll = 0;
-    const maxScroll = 300; // Maximum scroll distance before transition completes
+    const maxScroll = 500; // Increased scroll distance for fuller slide-out
 
     const handleWheel = (e: WheelEvent) => {
       if (!sectionRef.current) return;
@@ -85,9 +85,9 @@ export const EnhancedAboutSection = () => {
     };
   }, [scrollProgress, isScrollLocked]);
 
-  // Calculate transforms based on scroll progress
-  const aboutTextTransform = `translateX(${scrollProgress * -100}%)`;
-  const aboutTextOpacity = 1 - scrollProgress;
+  // Calculate transforms based on scroll progress - slide further left to completely disappear
+  const aboutTextTransform = `translateX(${scrollProgress * -150}%)`;
+  const aboutTextOpacity = Math.max(0, 1 - (scrollProgress * 1.5));
   
   // Cards slide up from bottom based on scroll progress
   const cardsTransform = `translateY(${100 - (scrollProgress * 100)}%)`;
