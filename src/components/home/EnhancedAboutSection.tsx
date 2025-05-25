@@ -12,7 +12,7 @@ export const EnhancedAboutSection = () => {
   
   useEffect(() => {
     let accumulatedScroll = 0;
-    const maxScroll = 400; // Maximum scroll distance for complete transition
+    const maxScroll = 500; // Increased for more control
 
     const handleWheel = (e: WheelEvent) => {
       if (!sectionRef.current) return;
@@ -31,10 +31,10 @@ export const EnhancedAboutSection = () => {
         // Handle scroll direction for horizontal sliding
         if (e.deltaY > 0) {
           // Scrolling down - slide about section out to the left, cards in from right
-          accumulatedScroll += Math.abs(e.deltaY) * 0.8; // Slower, smoother scroll
+          accumulatedScroll += Math.abs(e.deltaY) * 0.6; // Adjusted for smoother scroll
         } else {
           // Scrolling up - bring about section back from left, cards out to right
-          accumulatedScroll -= Math.abs(e.deltaY) * 0.8;
+          accumulatedScroll -= Math.abs(e.deltaY) * 0.6;
         }
         
         // Clamp the scroll value
@@ -43,6 +43,8 @@ export const EnhancedAboutSection = () => {
         // Convert to progress (0 to 1)
         const newProgress = accumulatedScroll / maxScroll;
         setScrollProgress(newProgress);
+        
+        console.log('Scroll progress:', newProgress, 'Accumulated:', accumulatedScroll);
         
         // If scrolled back to beginning, allow normal scrolling
         if (newProgress === 0 && e.deltaY < 0) {
@@ -77,13 +79,13 @@ export const EnhancedAboutSection = () => {
     };
   }, [scrollProgress]);
 
-  // About section slides out to the left
-  const aboutTransformX = useTransform(() => -scrollProgress * 120); // Slides fully off screen
-  const aboutOpacity = useTransform(() => Math.max(0, 1 - scrollProgress * 1.2));
+  // About section slides out to the left - increased distance to ensure full slide-out
+  const aboutTransformX = useTransform(() => -scrollProgress * 150); // Increased from 120 to 150
+  const aboutOpacity = useTransform(() => Math.max(0, 1 - scrollProgress * 1.5)); // Faster fade-out
   
   // Cards slide in from the right
-  const cardsTransformX = useTransform(() => 100 - (scrollProgress * 120)); // Starts off-screen right, slides to center
-  const cardsOpacity = useTransform(() => Math.min(1, scrollProgress * 1.5));
+  const cardsTransformX = useTransform(() => 120 - (scrollProgress * 150)); // Adjusted for better timing
+  const cardsOpacity = useTransform(() => Math.min(1, scrollProgress * 1.8)); // Faster fade-in
 
   const handleAuthClick = (tab: 'signin' | 'signup') => {
     setActiveTab(tab);
@@ -106,7 +108,13 @@ export const EnhancedAboutSection = () => {
           className="absolute inset-0 flex items-center w-full"
         >
           <div className="w-full">
-            <div className="mt-8 mb-6 bg-[#135d66] rounded-3xl p-12 mx-auto max-w-6xl">
+            <motion.div 
+              style={{ 
+                x: aboutTransformX, 
+                opacity: aboutOpacity 
+              }}
+              className="mt-8 mb-6 bg-[#135d66] rounded-3xl p-12 mx-auto max-w-6xl"
+            >
               <div className="grid grid-cols-2 gap-12 items-center">
                 <div className="space-y-8">
                   <h2 className="text-6xl font-display text-white">About</h2>
@@ -142,7 +150,7 @@ export const EnhancedAboutSection = () => {
                   />
                 </div>
               </div>
-            </div>
+            </motion.div>
           </div>
         </motion.div>
 
@@ -155,7 +163,13 @@ export const EnhancedAboutSection = () => {
           className="absolute inset-0 flex items-center w-full"
         >
           <div className="container mx-auto">
-            <div className="mt-8 mb-6 bg-[#135d66] rounded-3xl p-12 mx-auto max-w-6xl">
+            <motion.div 
+              style={{ 
+                x: cardsTransformX, 
+                opacity: cardsOpacity 
+              }}
+              className="mt-8 mb-6 bg-[#135d66] rounded-3xl p-12 mx-auto max-w-6xl"
+            >
               <div className="space-y-12">
                 <div className="grid grid-cols-2 gap-8">
                   <div className="h-80 rounded-3xl border-2 border-[#ddf9f2] bg-[#003c43] flex flex-col items-center justify-center p-8 transform transition-all duration-500 hover:scale-105">
@@ -191,7 +205,7 @@ export const EnhancedAboutSection = () => {
                   </button>
                 </div>
               </div>
-            </div>
+            </motion.div>
           </div>
         </motion.div>
 
