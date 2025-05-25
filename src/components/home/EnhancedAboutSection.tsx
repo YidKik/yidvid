@@ -18,7 +18,7 @@ export const EnhancedAboutSection = () => {
 
   useEffect(() => {
     let accumulatedScroll = 0;
-    const maxScroll = 200; // Maximum scroll distance before transition completes
+    const maxScroll = 300; // Maximum scroll distance before transition completes
 
     const handleWheel = (e: WheelEvent) => {
       if (!sectionRef.current) return;
@@ -26,25 +26,48 @@ export const EnhancedAboutSection = () => {
       const rect = sectionRef.current.getBoundingClientRect();
       const isInView = rect.top <= window.innerHeight / 2 && rect.bottom >= window.innerHeight / 2;
       
-      if (isInView && scrollProgress < 1) {
+      if (isInView) {
         e.preventDefault();
         e.stopPropagation();
         
+        // Lock the page scroll completely
+        document.body.style.overflow = 'hidden';
         setIsScrollLocked(true);
         
-        // Accumulate scroll delta
-        accumulatedScroll += e.deltaY;
+        // Handle scroll direction for sliding
+        if (e.deltaY > 0) {
+          // Scrolling down - slide about section out to the left
+          accumulatedScroll += Math.abs(e.deltaY);
+        } else {
+          // Scrolling up - bring about section back from the left
+          accumulatedScroll -= Math.abs(e.deltaY);
+        }
+        
+        // Clamp the scroll value
         accumulatedScroll = Math.max(0, Math.min(maxScroll, accumulatedScroll));
         
         // Convert to progress (0 to 1)
         const newProgress = accumulatedScroll / maxScroll;
         setScrollProgress(newProgress);
         
-        // When animation is complete, allow normal scrolling again
-        if (newProgress >= 1) {
+        // If scrolled back to beginning, allow normal scrolling
+        if (newProgress === 0 && e.deltaY < 0) {
+          document.body.style.overflow = 'auto';
           setIsScrollLocked(false);
         }
-      } else if (scrollProgress >= 1) {
+        
+        // If fully scrolled out and scrolling down more, continue to next section
+        if (newProgress >= 1 && e.deltaY > 0) {
+          document.body.style.overflow = 'auto';
+          setIsScrollLocked(false);
+          // Allow the scroll to continue to next section
+          setTimeout(() => {
+            window.scrollBy(0, e.deltaY);
+          }, 10);
+        }
+      } else {
+        // Not in view, allow normal scrolling
+        document.body.style.overflow = 'auto';
         setIsScrollLocked(false);
       }
     };
@@ -62,6 +85,8 @@ export const EnhancedAboutSection = () => {
     return () => {
       document.removeEventListener('wheel', handleWheel);
       document.removeEventListener('keydown', handleKeyDown);
+      // Restore normal scrolling on cleanup
+      document.body.style.overflow = 'auto';
     };
   }, [scrollProgress, isScrollLocked]);
 
@@ -82,7 +107,7 @@ export const EnhancedAboutSection = () => {
     <section 
       ref={sectionRef} 
       id="about-section" 
-      className="bg-[#003c43] px-6 py-16 relative min-h-[300vh] sticky top-0"
+      className="bg-[#003c43] px-6 py-16 relative min-h-screen"
     >
       <div className="container mx-auto relative h-screen flex items-center">
         {/* About Content with smaller blue background - slides out to the left */}
