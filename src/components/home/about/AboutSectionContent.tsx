@@ -7,21 +7,21 @@ interface AboutSectionContentProps {
 
 export const AboutSectionContent: React.FC<AboutSectionContentProps> = ({ scrollProgress }) => {
   // Calculate transforms based on scroll progress - slide completely off screen to the left
-  // The entire container (including the light blue background) should slide out
-  const containerTransform = `translateX(${scrollProgress * -120}%)`;
-  const containerOpacity = Math.max(0, 1 - (scrollProgress * 1.2));
+  // Increased distance to ensure complete disappearance including background
+  const aboutTextTransform = `translateX(${scrollProgress * -120}%)`;
+  const aboutTextOpacity = Math.max(0, 1 - (scrollProgress * 1.5));
 
   return (
-    <div className="w-full relative z-10">
-      <div 
-        style={{ 
-          transform: containerTransform, 
-          opacity: containerOpacity,
-          transition: 'none', // Disable default transitions for smooth scroll control
-          willChange: 'transform, opacity' // Optimize for smooth animations
-        }}
-        className="mt-8 mb-6 bg-[#135d66] rounded-3xl p-12 mx-auto max-w-6xl"
-      >
+    <div 
+      style={{ 
+        transform: aboutTextTransform, 
+        opacity: aboutTextOpacity,
+        transition: 'none', // Disable default transitions for smooth scroll control
+        willChange: 'transform, opacity' // Optimize for smooth animations
+      }}
+      className="w-full relative z-10"
+    >
+      <div className="mt-8 mb-6 bg-[#135d66] rounded-3xl p-12 mx-auto max-w-6xl">
         <div className="grid grid-cols-2 gap-12 items-center">
           <div className="space-y-8">
             <h2 className="text-6xl font-display text-white">About</h2>
