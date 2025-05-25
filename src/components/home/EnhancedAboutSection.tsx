@@ -14,11 +14,14 @@ export const EnhancedAboutSection = () => {
     offset: ["start end", "end start"]
   });
 
-  // Transform values for animations
-  const aboutTextX = useTransform(scrollYProgress, [0.3, 0.7], [0, -100]);
-  const aboutTextOpacity = useTransform(scrollYProgress, [0.3, 0.7], [1, 0]);
-  const cardsY = useTransform(scrollYProgress, [0.3, 0.7], [100, 0]);
-  const cardsOpacity = useTransform(scrollYProgress, [0.3, 0.7], [0, 1]);
+  // Create scroll-based animations
+  // About text fades out to the left after section is locked in center
+  const aboutTextX = useTransform(scrollYProgress, [0.4, 0.6], [0, -100]);
+  const aboutTextOpacity = useTransform(scrollYProgress, [0.4, 0.6], [1, 0]);
+  
+  // Cards slide up from bottom to replace about text
+  const cardsY = useTransform(scrollYProgress, [0.4, 0.6], [100, 0]);
+  const cardsOpacity = useTransform(scrollYProgress, [0.4, 0.6], [0, 1]);
 
   const handleAuthClick = (tab: 'signin' | 'signup') => {
     setActiveTab(tab);
@@ -26,12 +29,16 @@ export const EnhancedAboutSection = () => {
   };
 
   return (
-    <section ref={sectionRef} id="about-section" className="bg-[#135d66] px-6 py-16 relative overflow-hidden min-h-screen flex items-center">
+    <section 
+      ref={sectionRef} 
+      id="about-section" 
+      className="bg-[#135d66] px-6 py-16 relative overflow-hidden min-h-screen flex items-center sticky top-0"
+    >
       <div className="container mx-auto relative">
-        {/* About Content - slides out to the left */}
+        {/* About Content - fades out to the left */}
         <motion.div 
           style={{ x: aboutTextX, opacity: aboutTextOpacity }}
-          className="grid grid-cols-2 gap-12 items-center absolute inset-0"
+          className="grid grid-cols-2 gap-12 items-center"
         >
           <div className="space-y-8">
             <h2 className="text-6xl font-display text-white">About</h2>
@@ -68,10 +75,10 @@ export const EnhancedAboutSection = () => {
           </div>
         </motion.div>
 
-        {/* Stats and Auth Cards - slide up from bottom */}
+        {/* Stats and Auth Cards - slide up from bottom to replace about content */}
         <motion.div 
           style={{ y: cardsY, opacity: cardsOpacity }}
-          className="space-y-12 relative z-10"
+          className="space-y-12 absolute inset-0 flex flex-col justify-center"
         >
           <div className="grid grid-cols-2 gap-8">
             <div className="h-80 rounded-3xl border-2 border-[#ddf9f2] bg-[#003c43] flex flex-col items-center justify-center p-8">
@@ -106,9 +113,9 @@ export const EnhancedAboutSection = () => {
               Login
             </button>
           </div>
-
-          <Auth isOpen={isAuthOpen} onOpenChange={setIsAuthOpen} initialTab={activeTab} />
         </motion.div>
+
+        <Auth isOpen={isAuthOpen} onOpenChange={setIsAuthOpen} initialTab={activeTab} />
       </div>
     </section>
   );
