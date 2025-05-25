@@ -1,6 +1,6 @@
 
 import React, { useRef, useEffect, useState } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { NumberTicker } from '@/components/ui/number-ticker';
 import Auth from '@/pages/Auth';
 
@@ -10,11 +10,6 @@ export const EnhancedAboutSection = () => {
   const [activeTab, setActiveTab] = useState<'signin' | 'signup'>('signin');
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isScrollLocked, setIsScrollLocked] = useState(false);
-  
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "end start"]
-  });
 
   useEffect(() => {
     let accumulatedScroll = 0;
@@ -90,13 +85,13 @@ export const EnhancedAboutSection = () => {
     };
   }, [scrollProgress, isScrollLocked]);
 
-  // About text slides out to the left based on scroll progress
-  const aboutTextX = useTransform(() => scrollProgress * -100);
-  const aboutTextOpacity = useTransform(() => 1 - scrollProgress);
+  // Calculate transforms based on scroll progress
+  const aboutTextTransform = `translateX(${scrollProgress * -100}%)`;
+  const aboutTextOpacity = 1 - scrollProgress;
   
   // Cards slide up from bottom based on scroll progress
-  const cardsY = useTransform(() => 100 - (scrollProgress * 100));
-  const cardsOpacity = useTransform(() => scrollProgress);
+  const cardsTransform = `translateY(${100 - (scrollProgress * 100)}%)`;
+  const cardsOpacity = scrollProgress;
 
   const handleAuthClick = (tab: 'signin' | 'signup') => {
     setActiveTab(tab);
@@ -112,7 +107,11 @@ export const EnhancedAboutSection = () => {
       <div className="container mx-auto relative h-screen flex items-center">
         {/* About Content with smaller blue background - slides out to the left */}
         <motion.div 
-          style={{ x: aboutTextX, opacity: aboutTextOpacity }}
+          style={{ 
+            transform: aboutTextTransform, 
+            opacity: aboutTextOpacity,
+            transition: 'none' // Disable default transitions for smooth scroll control
+          }}
           className="w-full"
         >
           <div className="mt-8 mb-6 bg-[#135d66] rounded-3xl p-12 mx-auto max-w-6xl">
@@ -156,7 +155,11 @@ export const EnhancedAboutSection = () => {
 
         {/* Stats and Auth Cards - slide up from bottom in the same blue background area */}
         <motion.div 
-          style={{ y: cardsY, opacity: cardsOpacity }}
+          style={{ 
+            transform: cardsTransform, 
+            opacity: cardsOpacity,
+            transition: 'none' // Disable default transitions for smooth scroll control
+          }}
           className="absolute inset-0 flex items-center w-full"
         >
           <div className="container mx-auto">
