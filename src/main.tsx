@@ -15,7 +15,7 @@ initializeCursor();
 
 // Initialize Google Analytics
 // Replace 'GA_MEASUREMENT_ID' with your actual Google Analytics Measurement ID
-const GA_MEASUREMENT_ID = 'GA_MEASUREMENT_ID'; // You'll need to replace this with your actual ID
+const GA_MEASUREMENT_ID = 'G-EB95XJNCCD'; // You'll need to replace this with your actual ID
 initGA(GA_MEASUREMENT_ID);
 
 // Set favicon programmatically to ensure it's always the correct one

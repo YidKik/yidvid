@@ -24,7 +24,7 @@ export const initGA = (measurementId: string) => {
 // Track page views
 export const trackPageView = (url: string) => {
   if (typeof window.gtag !== 'undefined') {
-    window.gtag('config', 'GA_MEASUREMENT_ID', {
+    window.gtag('config', 'G-EB95XJNCCD', {
       page_path: url,
     });
   }
