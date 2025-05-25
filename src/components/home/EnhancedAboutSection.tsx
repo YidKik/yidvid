@@ -1,6 +1,6 @@
 
 import React, { useRef, useEffect, useState } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { NumberTicker } from '@/components/ui/number-ticker';
 import Auth from '@/pages/Auth';
 
@@ -10,15 +10,10 @@ export const EnhancedAboutSection = () => {
   const [activeTab, setActiveTab] = useState<'signin' | 'signup'>('signin');
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isScrollLocked, setIsScrollLocked] = useState(false);
-  
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "end start"]
-  });
 
   useEffect(() => {
     let accumulatedScroll = 0;
-    const maxScroll = 200; // Maximum scroll distance before transition completes
+    const maxScroll = 500; // Increased scroll distance for fuller slide-out
 
     const handleWheel = (e: WheelEvent) => {
       if (!sectionRef.current) return;
@@ -26,25 +21,48 @@ export const EnhancedAboutSection = () => {
       const rect = sectionRef.current.getBoundingClientRect();
       const isInView = rect.top <= window.innerHeight / 2 && rect.bottom >= window.innerHeight / 2;
       
-      if (isInView && scrollProgress < 1) {
+      if (isInView) {
         e.preventDefault();
         e.stopPropagation();
         
+        // Lock the page scroll completely
+        document.body.style.overflow = 'hidden';
         setIsScrollLocked(true);
         
-        // Accumulate scroll delta
-        accumulatedScroll += e.deltaY;
+        // Handle scroll direction for sliding
+        if (e.deltaY > 0) {
+          // Scrolling down - slide about section out to the left
+          accumulatedScroll += Math.abs(e.deltaY);
+        } else {
+          // Scrolling up - bring about section back from the left
+          accumulatedScroll -= Math.abs(e.deltaY);
+        }
+        
+        // Clamp the scroll value
         accumulatedScroll = Math.max(0, Math.min(maxScroll, accumulatedScroll));
         
         // Convert to progress (0 to 1)
         const newProgress = accumulatedScroll / maxScroll;
         setScrollProgress(newProgress);
         
-        // When animation is complete, allow normal scrolling again
-        if (newProgress >= 1) {
+        // If scrolled back to beginning, allow normal scrolling
+        if (newProgress === 0 && e.deltaY < 0) {
+          document.body.style.overflow = 'auto';
           setIsScrollLocked(false);
         }
-      } else if (scrollProgress >= 1) {
+        
+        // If fully scrolled out and scrolling down more, continue to next section
+        if (newProgress >= 1 && e.deltaY > 0) {
+          document.body.style.overflow = 'auto';
+          setIsScrollLocked(false);
+          // Allow the scroll to continue to next section
+          setTimeout(() => {
+            window.scrollBy(0, e.deltaY);
+          }, 10);
+        }
+      } else {
+        // Not in view, allow normal scrolling
+        document.body.style.overflow = 'auto';
         setIsScrollLocked(false);
       }
     };
@@ -62,16 +80,18 @@ export const EnhancedAboutSection = () => {
     return () => {
       document.removeEventListener('wheel', handleWheel);
       document.removeEventListener('keydown', handleKeyDown);
+      // Restore normal scrolling on cleanup
+      document.body.style.overflow = 'auto';
     };
   }, [scrollProgress, isScrollLocked]);
 
-  // About text slides out to the left based on scroll progress
-  const aboutTextX = useTransform(() => scrollProgress * -100);
-  const aboutTextOpacity = useTransform(() => 1 - scrollProgress);
+  // Calculate transforms based on scroll progress - slide further left to completely disappear
+  const aboutTextTransform = `translateX(${scrollProgress * -150}%)`;
+  const aboutTextOpacity = Math.max(0, 1 - (scrollProgress * 1.5));
   
   // Cards slide up from bottom based on scroll progress
-  const cardsY = useTransform(() => 100 - (scrollProgress * 100));
-  const cardsOpacity = useTransform(() => scrollProgress);
+  const cardsTransform = `translateY(${100 - (scrollProgress * 100)}%)`;
+  const cardsOpacity = scrollProgress;
 
   const handleAuthClick = (tab: 'signin' | 'signup') => {
     setActiveTab(tab);
@@ -82,12 +102,16 @@ export const EnhancedAboutSection = () => {
     <section 
       ref={sectionRef} 
       id="about-section" 
-      className="bg-[#003c43] px-6 py-16 relative min-h-[300vh] sticky top-0"
+      className="bg-[#003c43] px-6 py-16 relative min-h-screen"
     >
       <div className="container mx-auto relative h-screen flex items-center">
         {/* About Content with smaller blue background - slides out to the left */}
         <motion.div 
-          style={{ x: aboutTextX, opacity: aboutTextOpacity }}
+          style={{ 
+            transform: aboutTextTransform, 
+            opacity: aboutTextOpacity,
+            transition: 'none' // Disable default transitions for smooth scroll control
+          }}
           className="w-full"
         >
           <div className="mt-8 mb-6 bg-[#135d66] rounded-3xl p-12 mx-auto max-w-6xl">
@@ -131,7 +155,11 @@ export const EnhancedAboutSection = () => {
 
         {/* Stats and Auth Cards - slide up from bottom in the same blue background area */}
         <motion.div 
-          style={{ y: cardsY, opacity: cardsOpacity }}
+          style={{ 
+            transform: cardsTransform, 
+            opacity: cardsOpacity,
+            transition: 'none' // Disable default transitions for smooth scroll control
+          }}
           className="absolute inset-0 flex items-center w-full"
         >
           <div className="container mx-auto">
