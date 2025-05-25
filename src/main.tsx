@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
 import { initializeCursor } from './utils/cursor.ts'
+import { initGA } from './utils/analytics.ts'
 import { BrowserRouter } from 'react-router-dom'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClient } from './lib/query-client'
@@ -11,6 +12,11 @@ import { Toaster } from 'sonner'
 
 // Initialize custom cursor
 initializeCursor();
+
+// Initialize Google Analytics
+// Replace 'GA_MEASUREMENT_ID' with your actual Google Analytics Measurement ID
+const GA_MEASUREMENT_ID = 'GA_MEASUREMENT_ID'; // You'll need to replace this with your actual ID
+initGA(GA_MEASUREMENT_ID);
 
 // Set favicon programmatically to ensure it's always the correct one
 const setFavicon = () => {
