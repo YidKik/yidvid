@@ -3,8 +3,7 @@ import React, { useEffect } from 'react';
 import { HomeHeader } from '@/components/home/HomeHeader';
 import { HeroSection } from '@/components/home/HeroSection';
 import { FeaturesSection } from '@/components/home/FeaturesSection';
-import { AboutSection } from '@/components/home/AboutSection';
-import { StatsSection } from '@/components/home/StatsSection';
+import { EnhancedAboutSection } from '@/components/home/EnhancedAboutSection';
 import { FeedbackSection } from '@/components/home/FeedbackSection';
 import { Footer } from '@/components/home/Footer';
 import { ScrollReveal } from '@/components/ui/scroll-reveal';
@@ -43,15 +42,8 @@ const NewHomePage = () => {
         <FeaturesSection />
       </ScrollReveal>
       
-      <ScrollReveal>
-        <div className="pt-12"></div>
-        <AboutSection />
-      </ScrollReveal>
-      
-      <ScrollReveal>
-        <div className="pt-12"></div>
-        <StatsSection />
-      </ScrollReveal>
+      {/* Use the enhanced about section with scroll animations */}
+      <EnhancedAboutSection />
       
       <ScrollReveal>
         <div className="pt-12"></div>
