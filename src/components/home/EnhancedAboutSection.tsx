@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect, useState } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { NumberTicker } from '@/components/ui/number-ticker';
@@ -14,14 +13,14 @@ export const EnhancedAboutSection = () => {
     offset: ["start end", "end start"]
   });
 
-  // Create scroll-based animations
-  // About text fades out to the left after section is locked in center
-  const aboutTextX = useTransform(scrollYProgress, [0.4, 0.6], [0, -100]);
-  const aboutTextOpacity = useTransform(scrollYProgress, [0.4, 0.6], [1, 0]);
+  // Create scroll-based animations with more refined timing
+  // First phase: About text slides out to the left when user scrolls in the sticky section
+  const aboutTextX = useTransform(scrollYProgress, [0.2, 0.5], [0, -100]);
+  const aboutTextOpacity = useTransform(scrollYProgress, [0.2, 0.5], [1, 0]);
   
-  // Cards slide up from bottom to replace about text
-  const cardsY = useTransform(scrollYProgress, [0.4, 0.6], [100, 0]);
-  const cardsOpacity = useTransform(scrollYProgress, [0.4, 0.6], [0, 1]);
+  // Second phase: Cards slide up from bottom after about text is gone
+  const cardsY = useTransform(scrollYProgress, [0.5, 0.8], [100, 0]);
+  const cardsOpacity = useTransform(scrollYProgress, [0.5, 0.8], [0, 1]);
 
   const handleAuthClick = (tab: 'signin' | 'signup') => {
     setActiveTab(tab);
@@ -32,10 +31,10 @@ export const EnhancedAboutSection = () => {
     <section 
       ref={sectionRef} 
       id="about-section" 
-      className="bg-[#135d66] px-6 py-16 relative overflow-hidden min-h-screen flex items-center sticky top-0"
+      className="bg-[#135d66] px-6 py-16 relative overflow-hidden min-h-[200vh] flex items-center sticky top-0"
     >
       <div className="container mx-auto relative">
-        {/* About Content - fades out to the left */}
+        {/* About Content - slides out to the left */}
         <motion.div 
           style={{ x: aboutTextX, opacity: aboutTextOpacity }}
           className="grid grid-cols-2 gap-12 items-center"
@@ -75,7 +74,7 @@ export const EnhancedAboutSection = () => {
           </div>
         </motion.div>
 
-        {/* Stats and Auth Cards - slide up from bottom to replace about content */}
+        {/* Stats and Auth Cards - slide up from bottom after about text disappears */}
         <motion.div 
           style={{ y: cardsY, opacity: cardsOpacity }}
           className="space-y-12 absolute inset-0 flex flex-col justify-center"
