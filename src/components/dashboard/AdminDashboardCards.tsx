@@ -1,170 +1,165 @@
+
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Users, Video, MessageSquare, Tv, Database, Film, Mail, Grid3X3, Flag, Bell, LayoutDashboard } from "lucide-react";
-import { DashboardStats, AdminNotification } from "@/types/dashboard";
+import { 
+  Users, 
+  MessageSquare, 
+  Mail, 
+  Youtube, 
+  Music,
+  Bell,
+  AlertTriangle,
+  BarChart3
+} from "lucide-react";
 
 interface AdminDashboardCardsProps {
-  stats?: DashboardStats;
-  notifications?: AdminNotification[];
+  stats: any;
+  notifications: any[];
 }
 
-export const AdminDashboardCards = ({ stats, notifications }: AdminDashboardCardsProps) => {
+export function AdminDashboardCards({ stats, notifications }: AdminDashboardCardsProps) {
   const navigate = useNavigate();
 
-  const getNotificationCount = (type: string) => {
-    return notifications?.filter(n => n.type === type).length || 0;
-  };
-
-  const adminCards = [
-    {
-      title: "Channel Management",
-      description: "Add, remove, and manage YouTube channels",
-      icon: <Tv className="h-7 w-7" />,
-      onClick: () => navigate("/admin/channels"),
-      stats: stats?.totalChannels ? `${stats.totalChannels} channels` : undefined,
-      notifications: getNotificationCount("new_channel_request"),
-      bgColor: "bg-[#F2FCE2]",
-      iconColor: "text-green-600"
-    },
-    {
-      title: "Category Management",
-      description: "Manage video categories",
-      icon: <Grid3X3 className="h-7 w-7" />,
-      onClick: () => navigate("/admin/categories"),
-      bgColor: "bg-[#E8F7FF]",
-      iconColor: "text-blue-600"
-    },
-    {
-      title: "Comments Management",
-      description: "View and moderate comments",
-      icon: <MessageSquare className="h-7 w-7" />,
-      onClick: () => navigate("/admin/comments"),
-      stats: stats?.totalComments ? `${stats.totalComments} comments` : undefined,
-      notifications: getNotificationCount("new_comment"),
-      bgColor: "bg-[#FEF7CD]",
-      iconColor: "text-yellow-600"
-    },
-    {
-      title: "Layout Customization",
-      description: "Customize website layout and sections",
-      icon: <LayoutDashboard className="h-7 w-7" />,
-      onClick: () => navigate("/admin/layout"),
-      bgColor: "bg-[#E2F5EA]",
-      iconColor: "text-emerald-600"
-    },
-    {
-      title: "Channel Requests",
-      description: "Review and manage channel requests",
-      icon: <Video className="h-7 w-7" />,
-      onClick: () => navigate("/admin/requests"),
-      notifications: getNotificationCount("new_channel_request"),
-      bgColor: "bg-[#FEC6A1]",
-      iconColor: "text-orange-600"
-    },
-    {
-      title: "User Management",
-      description: "Manage users and admins",
-      icon: <Users className="h-7 w-7" />,
-      onClick: () => navigate("/admin/users"),
-      stats: stats?.totalUsers ? `${stats.totalUsers} users` : undefined,
-      notifications: getNotificationCount("new_user"),
-      bgColor: "bg-[#E5DEFF]",
-      iconColor: "text-purple-600"
-    },
-    {
-      title: "Dashboard Analytics",
-      description: "View overall statistics and analytics",
-      icon: <Database className="h-7 w-7" />,
-      onClick: () => navigate("/admin/analytics"),
-      stats: stats?.totalVideos ? `${stats.totalVideos} videos` : undefined,
-      bgColor: "bg-[#FFDEE2]",
-      iconColor: "text-pink-600"
-    },
-    {
-      title: "Video Management",
-      description: "View and manage all videos on the platform",
-      icon: <Film className="h-7 w-7" />,
-      onClick: () => navigate("/admin/videos"),
-      stats: stats?.totalVideos ? `${stats.totalVideos} videos` : undefined,
-      bgColor: "bg-[#E0F7FF]",
-      iconColor: "text-blue-600"
-    },
-    {
-      title: "Reported Videos",
-      description: "Review reported videos and take action",
-      icon: <Flag className="h-7 w-7" />,
-      onClick: () => navigate("/admin/reported-videos"),
-      bgColor: "bg-[#FFE0E0]",
-      iconColor: "text-red-600"
-    },
-    {
-      title: "Contact Requests",
-      description: "Manage user contact and support requests",
-      icon: <Mail className="h-7 w-7" />,
-      onClick: () => navigate("/admin/contact-requests"),
-      notifications: getNotificationCount("new_contact_request"),
-      bgColor: "bg-[#FFE0FB]",
-      iconColor: "text-purple-600"
-    },
-    {
-      title: "Global Notifications",
-      description: "Manage site-wide notifications and announcements",
-      icon: <Bell className="h-7 w-7" />,
-      onClick: () => navigate("/admin/notifications"),
-      bgColor: "bg-[#FFF4E5]",
-      iconColor: "text-orange-600"
-    },
-    {
-      title: "Testimonials Management",
-      description: "Manage feedback and testimonials shown on the main page",
-      icon: <MessageSquare className="h-7 w-7" />,
-      onClick: () => navigate("/admin/testimonials"),
-      bgColor: "bg-[#E0F7FF]",
-      iconColor: "text-blue-600"
-    }
-  ];
+  const unreadNotifications = notifications?.filter(n => !n.is_read).length || 0;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      {adminCards.map((card, index) => (
-        <Card 
-          key={index}
-          className={`relative transform transition-all duration-300 hover:scale-105 cursor-pointer border-none shadow-lg ${card.bgColor}`}
-          onClick={card.onClick}
-        >
-          {card.notifications > 0 && (
-            <div className="absolute -top-2 -right-2 z-10">
-              <Badge 
-                variant="destructive"
-                className="rounded-full px-2.5 py-0.5 text-xs font-semibold"
-              >
-                {card.notifications}
-              </Badge>
-            </div>
-          )}
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div className={`p-3 rounded-lg ${card.bgColor} ${card.iconColor}`}>
-                {card.icon}
-              </div>
-              {card.stats && (
-                <span className="text-sm font-medium text-gray-600 bg-white/50 px-3 py-1 rounded-full">
-                  {card.stats}
-                </span>
-              )}
-            </div>
-            <CardTitle className="mt-4 text-xl font-semibold text-gray-800">
-              {card.title}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-gray-600 font-medium">
-              {card.description}
-            </p>
-          </CardContent>
-        </Card>
-      ))}
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* User Management */}
+      <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate('/admin/users')}>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">User Management</CardTitle>
+          <Users className="h-4 w-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">{stats?.totalUsers || 0}</div>
+          <p className="text-xs text-muted-foreground">
+            Total users registered
+          </p>
+          <Button variant="outline" size="sm" className="mt-2">
+            Manage Users
+          </Button>
+        </CardContent>
+      </Card>
+
+      {/* Comments Management */}
+      <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate('/admin/comments')}>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">Comments</CardTitle>
+          <MessageSquare className="h-4 w-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">{stats?.totalComments || 0}</div>
+          <p className="text-xs text-muted-foreground">
+            Total comments posted
+          </p>
+          <Button variant="outline" size="sm" className="mt-2">
+            Manage Comments
+          </Button>
+        </CardContent>
+      </Card>
+
+      {/* Contact Requests */}
+      <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate('/admin/contact-requests')}>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">Contact Requests</CardTitle>
+          <Mail className="h-4 w-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">{stats?.pendingContactRequests || 0}</div>
+          <p className="text-xs text-muted-foreground">
+            Pending contact requests
+          </p>
+          <Button variant="outline" size="sm" className="mt-2">
+            View Requests
+          </Button>
+        </CardContent>
+      </Card>
+
+      {/* YouTube Channels */}
+      <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate('/admin/youtube-channels')}>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">YouTube Channels</CardTitle>
+          <Youtube className="h-4 w-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">{stats?.totalChannels || 0}</div>
+          <p className="text-xs text-muted-foreground">
+            Active YouTube channels
+          </p>
+          <Button variant="outline" size="sm" className="mt-2">
+            Manage Channels
+          </Button>
+        </CardContent>
+      </Card>
+
+      {/* Music Artists */}
+      <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate('/admin/music-artists')}>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">Music Artists</CardTitle>
+          <Music className="h-4 w-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">{stats?.totalArtists || 0}</div>
+          <p className="text-xs text-muted-foreground">
+            Music artists managed
+          </p>
+          <Button variant="outline" size="sm" className="mt-2">
+            Manage Artists
+          </Button>
+        </CardContent>
+      </Card>
+
+      {/* Global Notifications */}
+      <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate('/admin/notifications')}>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">Notifications</CardTitle>
+          <Bell className="h-4 w-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">{unreadNotifications}</div>
+          <p className="text-xs text-muted-foreground">
+            Unread notifications
+          </p>
+          <Button variant="outline" size="sm" className="mt-2">
+            Manage Notifications
+          </Button>
+        </CardContent>
+      </Card>
+
+      {/* Reported Videos */}
+      <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate('/admin/reported-videos')}>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">Reported Videos</CardTitle>
+          <AlertTriangle className="h-4 w-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">{stats?.reportedVideos || 0}</div>
+          <p className="text-xs text-muted-foreground">
+            Videos awaiting review
+          </p>
+          <Button variant="outline" size="sm" className="mt-2">
+            Review Reports
+          </Button>
+        </CardContent>
+      </Card>
+
+      {/* Analytics */}
+      <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate('/admin/analytics')}>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">Analytics</CardTitle>
+          <BarChart3 className="h-4 w-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">{stats?.totalVideos || 0}</div>
+          <p className="text-xs text-muted-foreground">
+            Total videos in system
+          </p>
+          <Button variant="outline" size="sm" className="mt-2">
+            View Analytics
+          </Button>
+        </CardContent>
+      </Card>
     </div>
   );
-};
+}

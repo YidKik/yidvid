@@ -41,22 +41,11 @@ serve(async (req) => {
       throw channelsError;
     }
 
-    // Fetch custom categories
-    const { data: customCategories, error: categoriesError } = await supabase
-      .from("custom_categories")
-      .select("*")
-      .order("name", { ascending: true });
-
-    if (categoriesError) {
-      throw categoriesError;
-    }
-
-    // Return all data in one response
+    // Return only videos and channels data
     return new Response(
       JSON.stringify({
         videos: videos || [],
-        channels: channels || [],
-        customCategories: customCategories || []
+        channels: channels || []
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

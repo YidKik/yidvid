@@ -6,7 +6,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { BackButton } from "@/components/navigation/BackButton";
 import { VideoCategoryManagement } from "@/components/dashboard/VideoCategoryManagement";
 import { ChannelCategoryManagement } from "@/components/dashboard/ChannelCategoryManagement";
-import { CustomCategoryManagement } from "@/components/dashboard/CustomCategoryManagement";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function CategoriesPage() {
@@ -14,8 +13,7 @@ export default function CategoriesPage() {
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState({
     videos: [],
-    channels: [],
-    customCategories: []
+    channels: []
   });
 
   const fetchData = async () => {
@@ -31,7 +29,10 @@ export default function CategoriesPage() {
       }
       
       if (responseData) {
-        setData(responseData);
+        setData({
+          videos: responseData.videos || [],
+          channels: responseData.channels || []
+        });
       }
     } catch (edgeFunctionError) {
       console.error("Edge function error:", edgeFunctionError);
@@ -56,18 +57,9 @@ export default function CategoriesPage() {
 
         if (channelsError) throw channelsError;
 
-        // Fetch custom categories
-        const { data: customCategories, error: categoriesError } = await supabase
-          .from("custom_categories")
-          .select("*")
-          .order("name", { ascending: true });
-
-        if (categoriesError) throw categoriesError;
-
         setData({
           videos: videos || [],
-          channels: channels || [],
-          customCategories: customCategories || []
+          channels: channels || []
         });
       } catch (dbError) {
         console.error("Database error:", dbError);
@@ -93,11 +85,6 @@ export default function CategoriesPage() {
   const refetchChannels = async () => {
     await fetchData();
     toast.success("Channels data refreshed");
-  };
-
-  const refetchCategories = async () => {
-    await fetchData();
-    toast.success("Categories data refreshed");
   };
 
   if (error) {
@@ -133,12 +120,6 @@ export default function CategoriesPage() {
             >
               Channels
             </TabsTrigger>
-            <TabsTrigger 
-              value="categories" 
-              className="rounded-full px-8 py-2.5 data-[state=active]:shadow-lg transition-all duration-200"
-            >
-              Categories
-            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="videos">
@@ -161,19 +142,6 @@ export default function CategoriesPage() {
                 refetchChannels();
                 refetchVideos();
               }} />
-            )}
-          </TabsContent>
-
-          <TabsContent value="categories">
-            {isLoading ? (
-              <div className="flex justify-center py-8">
-                <Loader2 className="h-8 w-8 animate-spin" />
-              </div>
-            ) : (
-              <CustomCategoryManagement 
-                categories={data.customCategories} 
-                onUpdate={refetchCategories} 
-              />
             )}
           </TabsContent>
         </Tabs>
