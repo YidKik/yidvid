@@ -3,7 +3,6 @@ import Auth from "@/pages/Auth";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ContentToggle } from "@/components/content/ContentToggle";
-import { MusicSection } from "@/components/content/MusicSection";
 import { VideoContent } from "@/components/content/VideoContent";
 import { useVideos } from "@/hooks/video/useVideos";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -33,10 +32,6 @@ const MainContent = () => {
   // Filter videos based on selected category
   const filteredVideos = videos?.filter(video => {
     if (selectedCategory === "all") return true;
-    if (selectedCategory === "music") {
-      // Show music videos and music tracks
-      return video.category === "music" || selectedCategory === "music";
-    }
     return video.category === selectedCategory;
   }) || [];
 
@@ -78,18 +73,14 @@ const MainContent = () => {
             transition={{ duration: 0.3 }}
             className={isMobile ? 'mt-2' : 'mt-4'}
           >
-            {selectedCategory === "music" ? (
-              <MusicSection />
-            ) : (
-              <VideoContent 
-                videos={filteredVideos} 
-                isLoading={isLoading} 
-                refetch={refetch}
-                forceRefetch={forceRefetch}
-                lastSuccessfulFetch={lastSuccessfulFetch}
-                fetchAttempts={fetchAttempts}
-              />
-            )}
+            <VideoContent 
+              videos={filteredVideos} 
+              isLoading={isLoading} 
+              refetch={refetch}
+              forceRefetch={forceRefetch}
+              lastSuccessfulFetch={lastSuccessfulFetch}
+              fetchAttempts={fetchAttempts}
+            />
           </motion.div>
         </div>
       </motion.main>

@@ -11,12 +11,6 @@ export const useVideos = (category?: string) => {
     queryKey: ["videos", category],
     queryFn: async () => {
       const allVideos = await fetchAllVideos();
-      
-      // Filter by category if specified
-      if (category && category !== "all") {
-        return allVideos.filter((video: VideoData) => video.category === category);
-      }
-      
       return allVideos;
     },
     refetchInterval: 5 * 60 * 1000, // 5 minutes
