@@ -23,7 +23,8 @@ export const formatVideoData = (data: any[]): VideoData[] => {
     createdAt: video.created_at || new Date().toISOString(),
     updatedAt: video.updated_at || new Date().toISOString(),
     duration: video.duration || null,
-    channelThumbnail: video.youtube_channels?.thumbnail_url || null
+    channelThumbnail: video.youtube_channels?.thumbnail_url || null,
+    category: video.category || null
   }));
 };
 

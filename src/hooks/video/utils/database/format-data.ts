@@ -33,7 +33,8 @@ export const formatVideoData = (videosData: any[]): VideoData[] => {
       createdAt: createdAt,
       updatedAt: updatedAt,
       description: video.description || null,
-      channelThumbnail: video.youtube_channels?.thumbnail_url || null
+      channelThumbnail: video.youtube_channels?.thumbnail_url || null,
+      category: video.category || null
     };
   });
 };

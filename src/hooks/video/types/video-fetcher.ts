@@ -13,6 +13,7 @@ export interface VideoData {
   createdAt: Date;
   duration?: string | null;
   channelThumbnail?: string | null;
+  category?: "music" | "torah" | "inspiration" | "podcast" | "education" | "entertainment" | "other" | "custom" | null;
 }
 
 export interface ChannelData {

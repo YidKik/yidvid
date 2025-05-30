@@ -7,7 +7,6 @@ import { VideoData } from "./types/video-fetcher";
 
 export const useVideos = (category?: string) => {
   const { fetchAllVideos, forceRefetch, fetchAttempts, lastSuccessfulFetch } = useVideoFetcher();
-  const { shouldAllowRefetch } = useRefetchControl();
   
   useAuthStateListener();
 
@@ -23,7 +22,7 @@ export const useVideos = (category?: string) => {
       
       return allVideos;
     },
-    refetchInterval: shouldAllowRefetch ? 5 * 60 * 1000 : false,
+    refetchInterval: 5 * 60 * 1000, // 5 minutes
     refetchIntervalInBackground: false,
     refetchOnWindowFocus: false,
     staleTime: 2 * 60 * 1000,
@@ -31,10 +30,16 @@ export const useVideos = (category?: string) => {
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
   });
 
+  const { isRefreshing, handleRefetch, handleForceRefetch } = useRefetchControl({
+    refetch: query.refetch,
+    forceRefetch: forceRefetch
+  });
+
   return {
     ...query,
-    forceRefetch,
+    forceRefetch: handleForceRefetch,
     fetchAttempts,
-    lastSuccessfulFetch
+    lastSuccessfulFetch,
+    isRefreshing
   };
 };
