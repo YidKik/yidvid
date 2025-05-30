@@ -22,13 +22,13 @@ const categories = [
 export const CategorySelector = ({ selectedCategory, onCategoryChange }: CategorySelectorProps) => {
   return (
     <div className="w-full">
-      <div className="relative flex flex-wrap gap-1 justify-center p-2 bg-transparent rounded-full shadow-lg max-w-4xl mx-auto">
+      <div className="relative flex flex-wrap gap-1 justify-center p-2 bg-transparent rounded-full shadow-lg border border-primary/20 max-w-4xl mx-auto">
         {categories.map((category) => (
           <motion.button
             key={category.id}
             onClick={() => onCategoryChange(category.id)}
             className={cn(
-              "relative px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ease-in-out",
+              "relative px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-300 ease-in-out",
               "focus:outline-none",
               selectedCategory === category.id
                 ? "bg-primary text-white shadow-md z-10"
