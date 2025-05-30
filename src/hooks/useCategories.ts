@@ -1,7 +1,13 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { CustomCategory } from "@/types/custom-categories";
+
+interface CustomCategory {
+  id: string;
+  name: string;
+  icon: string;
+  is_emoji?: boolean;
+}
 
 interface Category {
   id: string;
@@ -70,7 +76,7 @@ export const useCategories = (): UseCategories => {
   // Always ensure we have the default categories, even if custom ones fail to load
   const allCategories: Category[] = [
     ...defaultCategories,
-    ...(customCategories?.map(cat => ({
+    ...(customCategories?.map((cat: CustomCategory) => ({
       id: cat.id,
       label: cat.name,
       icon: cat.icon,
