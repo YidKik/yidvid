@@ -2,13 +2,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { useVideoFetcher } from "./useVideoFetcher";
 import { useRefetchControl } from "./useRefetchControl";
-import { useAuthStateListener } from "./useAuthStateListener";
 import { VideoData } from "./types/video-fetcher";
 
 export const useVideos = (category?: string) => {
   const { fetchAllVideos, forceRefetch, fetchAttempts, lastSuccessfulFetch } = useVideoFetcher();
-  
-  useAuthStateListener();
 
   const query = useQuery({
     queryKey: ["videos", category],
