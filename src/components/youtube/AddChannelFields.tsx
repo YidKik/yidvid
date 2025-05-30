@@ -80,7 +80,7 @@ export const AddChannelFields = ({ form, isLoading }: AddChannelFieldsProps) => 
         name="default_category"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Default Category (Optional)</FormLabel>
+            <FormLabel>Default Category</FormLabel>
             <Select onValueChange={field.onChange} defaultValue={field.value}>
               <FormControl>
                 <SelectTrigger className="bg-white">
@@ -88,13 +88,13 @@ export const AddChannelFields = ({ form, isLoading }: AddChannelFieldsProps) => 
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
-                <SelectItem value="music">Music</SelectItem>
-                <SelectItem value="torah">Torah</SelectItem>
-                <SelectItem value="inspiration">Inspiration</SelectItem>
-                <SelectItem value="podcast">Podcast</SelectItem>
-                <SelectItem value="education">Education</SelectItem>
-                <SelectItem value="entertainment">Entertainment</SelectItem>
-                <SelectItem value="other">Other</SelectItem>
+                <SelectItem value="music">🎵 Music</SelectItem>
+                <SelectItem value="torah">📖 Torah</SelectItem>
+                <SelectItem value="inspiration">✨ Inspiration</SelectItem>
+                <SelectItem value="podcast">🎙️ Podcast</SelectItem>
+                <SelectItem value="education">📚 Education</SelectItem>
+                <SelectItem value="entertainment">🎬 Entertainment</SelectItem>
+                <SelectItem value="other">📌 Other</SelectItem>
               </SelectContent>
             </Select>
             <FormMessage />

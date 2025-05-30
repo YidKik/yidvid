@@ -14,7 +14,7 @@ import { getPageTitle, DEFAULT_META_DESCRIPTION, DEFAULT_META_KEYWORDS, DEFAULT_
 import { isWelcomePage } from "@/utils/scrollRestoration";
 
 const MainContent = () => {
-  const [isMusic, setIsMusic] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState("all");
   const { 
     data: videos, 
     isLoading, 
@@ -29,6 +29,16 @@ const MainContent = () => {
   const { session } = useSessionManager();
   const [searchParams] = useSearchParams();
   const [hasScrolled, setHasScrolled] = useState(false);
+
+  // Filter videos based on selected category
+  const filteredVideos = videos?.filter(video => {
+    if (selectedCategory === "all") return true;
+    if (selectedCategory === "music") {
+      // Show music videos and music tracks
+      return video.category === "music" || selectedCategory === "music";
+    }
+    return video.category === selectedCategory;
+  }) || [];
 
   useEffect(() => {
     const handleScroll = () => {
@@ -55,30 +65,30 @@ const MainContent = () => {
             transition={{ delay: 0.2, duration: 0.3 }}
           >
             <ContentToggle 
-              isMusic={isMusic} 
-              onToggle={() => setIsMusic(!isMusic)} 
+              selectedCategory={selectedCategory} 
+              onCategoryChange={setSelectedCategory} 
             />
           </motion.div>
 
           <motion.div
-            key={isMusic ? "music" : "videos"}
+            key={selectedCategory}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.3 }}
             className={isMobile ? 'mt-2' : 'mt-4'}
           >
-            {!isMusic ? (
+            {selectedCategory === "music" ? (
+              <MusicSection />
+            ) : (
               <VideoContent 
-                videos={videos || []} 
+                videos={filteredVideos} 
                 isLoading={isLoading} 
                 refetch={refetch}
                 forceRefetch={forceRefetch}
                 lastSuccessfulFetch={lastSuccessfulFetch}
                 fetchAttempts={fetchAttempts}
               />
-            ) : (
-              <MusicSection />
             )}
           </motion.div>
         </div>
