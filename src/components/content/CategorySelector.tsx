@@ -9,37 +9,47 @@ interface CategorySelectorProps {
 }
 
 const categories = [
-  { id: 'all', label: 'All Videos', icon: '🎬' },
-  { id: 'music', label: 'Music', icon: '🎵' },
-  { id: 'torah', label: 'Torah', icon: '📖' },
-  { id: 'inspiration', label: 'Inspiration', icon: '✨' },
-  { id: 'podcast', label: 'Podcasts', icon: '🎙️' },
-  { id: 'education', label: 'Education', icon: '📚' },
-  { id: 'entertainment', label: 'Entertainment', icon: '🎬' },
-  { id: 'other', label: 'Other', icon: '📌' },
+  { id: 'all', label: 'All Videos' },
+  { id: 'music', label: 'Music' },
+  { id: 'torah', label: 'Torah' },
+  { id: 'inspiration', label: 'Inspiration' },
+  { id: 'podcast', label: 'Podcasts' },
+  { id: 'education', label: 'Education' },
+  { id: 'entertainment', label: 'Entertainment' },
+  { id: 'other', label: 'Other' },
 ];
 
 export const CategorySelector = ({ selectedCategory, onCategoryChange }: CategorySelectorProps) => {
   return (
     <div className="w-full">
-      <div className="flex flex-wrap gap-2 justify-center p-4 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-100">
+      <div className="relative flex flex-wrap gap-1 justify-center p-2 bg-gray-100 rounded-full shadow-inner max-w-4xl mx-auto">
         {categories.map((category) => (
           <motion.button
             key={category.id}
             onClick={() => onCategoryChange(category.id)}
             className={cn(
-              "flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200",
-              "hover:scale-105 hover:shadow-md",
+              "relative px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ease-in-out",
+              "hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary/20",
               selectedCategory === category.id
-                ? "bg-primary text-primary-foreground shadow-lg"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                ? "bg-white text-primary shadow-md z-10"
+                : "text-gray-600 hover:text-gray-800 hover:bg-white/50"
             )}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <span className="text-base">{category.icon}</span>
-            <span className="hidden sm:inline">{category.label}</span>
-            <span className="sm:hidden">{category.label.split(' ')[0]}</span>
+            <span className="relative z-10">{category.label}</span>
+            {selectedCategory === category.id && (
+              <motion.div
+                className="absolute inset-0 bg-white rounded-full shadow-md"
+                layoutId="activeCategory"
+                initial={false}
+                transition={{
+                  type: "spring",
+                  stiffness: 500,
+                  damping: 30
+                }}
+              />
+            )}
           </motion.button>
         ))}
       </div>
