@@ -10,34 +10,32 @@ export const useKeyboardShortcuts = () => {
   
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      // Check if Ctrl key is pressed
-      if (event.ctrlKey) {
+      // Check if Ctrl+Shift keys are pressed
+      if (event.ctrlKey && event.shiftKey) {
         // Only capture our specific shortcuts
         if (['s', 'd', 'h', 'v'].includes(event.key.toLowerCase())) {
-          // Prevent the default browser behavior (like Ctrl+S for save)
+          // Prevent the default browser behavior
           event.preventDefault();
           
           // Handle different shortcuts
           switch (event.key.toLowerCase()) {
             case 's':
-              if (!event.shiftKey) {
-                // Ctrl+S => Settings
-                navigate('/settings');
-                toast.success('Navigated to Settings');
-              }
+              // Ctrl+Shift+S => Settings
+              navigate('/settings');
+              toast.success('Navigated to Settings');
               break;
             case 'd':
-              // Ctrl+D => Admin Dashboard
+              // Ctrl+Shift+D => Admin Dashboard
               navigate('/dashboard');
               toast.success('Navigated to Dashboard');
               break;
             case 'h':
-              // Ctrl+H => Home
+              // Ctrl+Shift+H => Home
               navigate('/');
               toast.success('Navigated to Home');
               break;
             case 'v':
-              // Ctrl+V => Videos
+              // Ctrl+Shift+V => Videos
               navigate('/videos');
               toast.success('Navigated to Videos');
               break;
@@ -45,8 +43,8 @@ export const useKeyboardShortcuts = () => {
         }
       }
       
-      // Check for Ctrl+Shift+S (sign in popup)
-      if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === 's') {
+      // Check for Ctrl+Shift+A (auth dialog)
+      if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === 'a') {
         event.preventDefault();
         // We'll use a custom event to trigger the auth dialog
         document.dispatchEvent(new CustomEvent('openAuthDialog'));
