@@ -4,5 +4,5 @@ export interface ManualChannelData {
   title: string;
   description?: string;
   thumbnail_url?: string;
-  default_category?: "music" | "torah" | "inspiration" | "podcast" | "education" | "entertainment" | "other" | "custom";
+  default_category?: "music" | "torah" | "inspiration" | "podcast" | "education" | "entertainment" | "other";
 }

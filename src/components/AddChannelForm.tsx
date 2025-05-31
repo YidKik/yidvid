@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,19 +19,21 @@ interface AddChannelFormProps {
   onSuccess: () => void;
 }
 
+type VideoCategory = "music" | "torah" | "inspiration" | "podcast" | "education" | "entertainment" | "other";
+
 export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
   const [channelId, setChannelId] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("other");
+  const [selectedCategory, setSelectedCategory] = useState<VideoCategory>("other");
   const [isLoading, setIsLoading] = useState(false);
 
   const categories = [
-    { value: 'music', label: 'Music' },
-    { value: 'torah', label: 'Torah' },
-    { value: 'inspiration', label: 'Inspiration' },
-    { value: 'podcast', label: 'Podcasts' },
-    { value: 'education', label: 'Education' },
-    { value: 'entertainment', label: 'Entertainment' },
-    { value: 'other', label: 'Other' },
+    { value: 'music' as const, label: 'Music' },
+    { value: 'torah' as const, label: 'Torah' },
+    { value: 'inspiration' as const, label: 'Inspiration' },
+    { value: 'podcast' as const, label: 'Podcasts' },
+    { value: 'education' as const, label: 'Education' },
+    { value: 'entertainment' as const, label: 'Entertainment' },
+    { value: 'other' as const, label: 'Other' },
   ];
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -92,7 +95,7 @@ export const AddChannelForm = ({ onClose, onSuccess }: AddChannelFormProps) => {
         <label htmlFor="category" className="text-sm font-medium">
           Category
         </label>
-        <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+        <Select value={selectedCategory} onValueChange={(value) => setSelectedCategory(value as VideoCategory)}>
           <SelectTrigger>
             <SelectValue placeholder="Select category" />
           </SelectTrigger>

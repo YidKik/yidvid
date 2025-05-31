@@ -23,20 +23,21 @@ interface Channel {
   default_category?: string;
 }
 
+type VideoCategory = "music" | "torah" | "inspiration" | "podcast" | "education" | "entertainment" | "other";
+
 const categories = [
-  { value: 'all', label: 'All Videos' },
-  { value: 'music', label: 'Music' },
-  { value: 'torah', label: 'Torah' },
-  { value: 'inspiration', label: 'Inspiration' },
-  { value: 'podcast', label: 'Podcasts' },
-  { value: 'education', label: 'Education' },
-  { value: 'entertainment', label: 'Entertainment' },
-  { value: 'other', label: 'Other' },
+  { value: 'music' as const, label: 'Music' },
+  { value: 'torah' as const, label: 'Torah' },
+  { value: 'inspiration' as const, label: 'Inspiration' },
+  { value: 'podcast' as const, label: 'Podcasts' },
+  { value: 'education' as const, label: 'Education' },
+  { value: 'entertainment' as const, label: 'Entertainment' },
+  { value: 'other' as const, label: 'Other' },
 ];
 
 export const ChannelCategoryManager = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [selectedCategory, setSelectedCategory] = useState<VideoCategory | "">("");
   const [isUpdating, setIsUpdating] = useState(false);
 
   const { data: channels = [], isLoading, refetch } = useQuery({
@@ -54,9 +55,7 @@ export const ChannelCategoryManager = () => {
     },
   });
 
-  const handleUpdateChannelCategory = async (channelId: string, category: string) => {
-    if (!category) return;
-    
+  const handleUpdateChannelCategory = async (channelId: string, category: VideoCategory) => {
     setIsUpdating(true);
     try {
       // Update the channel's default category
@@ -70,7 +69,7 @@ export const ChannelCategoryManager = () => {
       // Update all videos from this channel to match the category
       const { error: videosError } = await supabase
         .from("youtube_videos")
-        .update({ category })
+        .update({ category: category })
         .eq("channel_id", channelId)
         .is("deleted_at", null);
 
@@ -139,12 +138,12 @@ export const ChannelCategoryManager = () => {
             />
           </div>
           <div className="w-full md:w-48">
-            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+            <Select value={selectedCategory} onValueChange={(value) => setSelectedCategory(value as VideoCategory)}>
               <SelectTrigger>
                 <SelectValue placeholder="Select category" />
               </SelectTrigger>
               <SelectContent>
-                {categories.filter(cat => cat.value !== 'all').map((category) => (
+                {categories.map((category) => (
                   <SelectItem key={category.value} value={category.value}>
                     {category.label}
                   </SelectItem>
@@ -204,7 +203,7 @@ export const ChannelCategoryManager = () => {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => handleUpdateChannelCategory(channel.channel_id, selectedCategory)}
+                          onClick={() => selectedCategory && handleUpdateChannelCategory(channel.channel_id, selectedCategory as VideoCategory)}
                           disabled={!selectedCategory || isUpdating}
                         >
                           {isUpdating ? (

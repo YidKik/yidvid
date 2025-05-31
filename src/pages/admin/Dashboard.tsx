@@ -109,7 +109,7 @@ const Dashboard = () => {
           </TabsList>
 
           <TabsContent value="overview" className="space-y-8">
-            <AdminDashboardCards />
+            <AdminDashboardCards stats={{}} notifications={[]} />
             <DashboardAnalytics />
           </TabsContent>
 
@@ -124,7 +124,7 @@ const Dashboard = () => {
           </TabsContent>
 
           <TabsContent value="users" className="space-y-8">
-            <UserManagementSection />
+            <UserManagementSection currentUserId={session?.user?.id || ""} />
           </TabsContent>
 
           <TabsContent value="categories" className="space-y-8">

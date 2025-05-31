@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -38,7 +39,7 @@ const formSchema = z.object({
   }),
   description: z.string().optional(),
   thumbnail_url: z.string().optional(),
-  default_category: z.string().optional(),
+  default_category: z.enum(["music", "torah", "inspiration", "podcast", "education", "entertainment", "other"]).optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -46,6 +47,7 @@ type FormValues = z.infer<typeof formSchema>;
 export const AddChannelManuallyForm = ({ onClose, onSuccess }: AddChannelManuallyFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       channel_id: "",
       title: "",
@@ -56,13 +58,13 @@ export const AddChannelManuallyForm = ({ onClose, onSuccess }: AddChannelManuall
   });
 
   const categories = [
-    { value: 'music', label: 'Music' },
-    { value: 'torah', label: 'Torah' },
-    { value: 'inspiration', label: 'Inspiration' },
-    { value: 'podcast', label: 'Podcasts' },
-    { value: 'education', label: 'Education' },
-    { value: 'entertainment', label: 'Entertainment' },
-    { value: 'other', label: 'Other' },
+    { value: 'music' as const, label: 'Music' },
+    { value: 'torah' as const, label: 'Torah' },
+    { value: 'inspiration' as const, label: 'Inspiration' },
+    { value: 'podcast' as const, label: 'Podcasts' },
+    { value: 'education' as const, label: 'Education' },
+    { value: 'entertainment' as const, label: 'Entertainment' },
+    { value: 'other' as const, label: 'Other' },
   ];
 
   const onSubmit = async (values: FormValues) => {
@@ -70,7 +72,16 @@ export const AddChannelManuallyForm = ({ onClose, onSuccess }: AddChannelManuall
       setIsLoading(true);
       console.log("Adding channel manually with values:", values);
 
-      const result = await addChannelManually(values);
+      // Ensure required fields are present
+      const channelData = {
+        channel_id: values.channel_id,
+        title: values.title,
+        description: values.description || "",
+        thumbnail_url: values.thumbnail_url || "",
+        default_category: values.default_category || "other"
+      };
+
+      const result = await addChannelManually(channelData);
       console.log("Channel added manually successfully:", result);
       
       toast.success(`Channel "${values.title}" added successfully and categorized as ${categories.find(c => c.value === values.default_category)?.label}`);
