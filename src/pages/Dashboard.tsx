@@ -13,9 +13,10 @@ import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Lock } from "lucide-react";
+import { Lock, Settings, Users, FileText, BarChart3 } from "lucide-react";
 import { toast } from "sonner";
 import { ADMIN_PIN } from "@/hooks/useAdminPinDialog";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -74,7 +75,67 @@ export default function Dashboard() {
       <DashboardHeader title="Welcome to Your Dashboard" />
       
       {(isAdmin || hasPinBypass) ? (
-        <AdminDashboardCards stats={stats} notifications={notifications} />
+        <div className="space-y-8">
+          <AdminDashboardCards stats={stats} notifications={notifications} />
+          
+          {/* Admin Quick Actions */}
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold">Admin Quick Actions</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate('/admin/channels')}>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Channels</CardTitle>
+                  <Settings className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <CardDescription>Manage YouTube channels and videos</CardDescription>
+                  <Button variant="outline" size="sm" className="mt-2 w-full">
+                    Manage Channels
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate('/admin/users')}>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Users</CardTitle>
+                  <Users className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <CardDescription>User management and permissions</CardDescription>
+                  <Button variant="outline" size="sm" className="mt-2 w-full">
+                    Manage Users
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate('/admin/comments')}>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Comments</CardTitle>
+                  <FileText className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <CardDescription>Moderate comments and feedback</CardDescription>
+                  <Button variant="outline" size="sm" className="mt-2 w-full">
+                    Manage Comments
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate('/admin')}>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Full Dashboard</CardTitle>
+                  <BarChart3 className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <CardDescription>Access the complete admin dashboard</CardDescription>
+                  <Button variant="outline" size="sm" className="mt-2 w-full">
+                    Open Dashboard
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </div>
       ) : (
         <div className="space-y-6">
           <NonAdminContent />

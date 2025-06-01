@@ -16,6 +16,7 @@ import { recordNavigation, setupScrollRestoration } from './utils/scrollRestorat
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 
 // Admin Pages
+import AdminDashboard from './pages/admin/Dashboard';
 import ChannelsPage from './pages/admin/ChannelsPage';
 import CategoriesPage from './pages/admin/CategoriesPage';
 import CommentsPage from './pages/admin/CommentsPage';
