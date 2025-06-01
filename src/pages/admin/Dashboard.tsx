@@ -26,6 +26,7 @@ import { Settings, Users, FileText, BarChart3 } from "lucide-react";
 const Dashboard = () => {
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [showNotificationsDialog, setShowNotificationsDialog] = useState(false);
   const { session } = useSessionManager();
   const navigate = useNavigate();
 
@@ -177,7 +178,10 @@ const Dashboard = () => {
             <ReportedVideosSection />
             <ContactRequestsSection />
             <ChannelRequestsSection />
-            <GlobalNotificationsSection />
+            <GlobalNotificationsSection 
+              isOpen={showNotificationsDialog} 
+              onClose={() => setShowNotificationsDialog(false)} 
+            />
           </TabsContent>
 
           <TabsContent value="users" className="space-y-8">
