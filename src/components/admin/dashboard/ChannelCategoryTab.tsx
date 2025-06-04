@@ -199,6 +199,7 @@ export const ChannelCategoryTab = () => {
 
       if (channelError) throw channelError;
 
+      // For videos, ensure we always use a valid VideoCategory (never null)
       const videoCategory = categoryToRevert || 'other' as VideoCategory;
       const { error: videosError } = await supabase
         .from("youtube_videos")
