@@ -3,34 +3,51 @@
 @media (max-width: 768px) {
   /* Category card optimization */
   .category-card-mobile {
-    height: 45px !important;
-    padding: 0.25rem !important;
+    height: 40px !important; /* Reduced from 45px */
+    padding: 0.15rem !important; /* Reduced padding */
+    min-width: 70px !important; /* Set minimum width to control size */
+    max-width: 80px !important; /* Set maximum width */
   }
   
   .category-card-mobile .icon {
-    transform: scale(0.75);
+    transform: scale(0.65); /* Reduced from 0.75 */
   }
   
   .category-card-mobile .label {
-    font-size: 0.7rem;
+    font-size: 0.6rem !important; /* Reduced from 0.7rem */
     font-weight: 600;
-    line-height: 1.1;
-    letter-spacing: -0.01em;
-    max-width: 65px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    max-width: 60px; /* Reduced from 65px */
     text-shadow: 0 0 1px rgba(255,255,255,0.5);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   
   /* Specific category optimizations */
   .category-entertainment .label,
   .category-advertisement .label {
-    font-size: 0.65rem !important;
+    font-size: 0.55rem !important; /* Further reduced */
     letter-spacing: -0.03em !important;
   }
   
   /* Content toggle for mobile */
   .content-toggle-mobile {
-    transform: scale(0.85);
+    transform: scale(0.8); /* Reduced from 0.85 */
     margin-top: -4px;
     margin-bottom: -4px;
+  }
+  
+  /* Ensure single line display */
+  .mobile-category-container {
+    white-space: nowrap !important;
+    overflow-x: auto !important;
+    flex-wrap: nowrap !important;
+  }
+  
+  /* Reduce gaps between categories */
+  .mobile-category-scroll {
+    gap: 0.25rem !important; /* Reduced gap */
   }
 }

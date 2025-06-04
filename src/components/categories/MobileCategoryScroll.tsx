@@ -52,10 +52,10 @@ export const MobileCategoryScroll: React.FC<MobileCategoryScrollProps> = ({
   };
 
   return (
-    <div className="h-full flex items-center overflow-hidden">
+    <div className="h-full flex items-center overflow-hidden mobile-category-container">
       <div 
         ref={scrollContainerRef}
-        className="flex gap-1.5 overflow-x-auto touch-pan-x scrollbar-hide no-scrollbar scroll-smooth"
+        className="flex gap-1 overflow-x-auto touch-pan-x scrollbar-hide no-scrollbar scroll-smooth mobile-category-scroll"
         style={{ 
           WebkitOverflowScrolling: 'touch',
           scrollBehavior: 'smooth',
@@ -63,7 +63,8 @@ export const MobileCategoryScroll: React.FC<MobileCategoryScrollProps> = ({
           msOverflowStyle: 'none',
           minWidth: "100%",
           paddingBottom: "4px",
-          cursor: isDragging ? 'grabbing' : 'grab'
+          cursor: isDragging ? 'grabbing' : 'grab',
+          whiteSpace: 'nowrap'
         }}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
@@ -72,7 +73,8 @@ export const MobileCategoryScroll: React.FC<MobileCategoryScrollProps> = ({
         {infiniteCategories.map((category, index) => (
           <div
             key={`${category.id}-${index}`}
-            className="flex-shrink-0 w-[90px] relative"
+            className="flex-shrink-0 w-[75px] relative"
+            style={{ minWidth: '75px', maxWidth: '75px' }}
           >
             <CategoryCard
               id={category.id}
