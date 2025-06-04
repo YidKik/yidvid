@@ -1,9 +1,9 @@
 
-/* Clean YouTube-inspired search bar styles */
+/* Clean YouTube-inspired search bar styles with red outline */
 .search-input {
   background-color: white !important;
   color: #1a1a1a !important;
-  border: 1px solid #e5e7eb !important;
+  border: 2px solid #ea384c !important; /* Red primary color outline */
   border-radius: 24px !important;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
   transition: all 200ms ease !important;
@@ -12,14 +12,14 @@
 }
 
 .search-input:hover {
-  border-color: #d1d5db !important;
+  border-color: #d6293d !important; /* Darker red on hover */
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) !important;
 }
 
 .search-input:focus {
   outline: none !important;
-  border-color: #d1d5db !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+  border-color: #ea384c !important; /* Keep red on focus */
+  box-shadow: 0 2px 8px rgba(234, 56, 76, 0.3) !important; /* Red shadow on focus */
 }
 
 .search-input::placeholder {
@@ -37,7 +37,7 @@
   color: #4b5563 !important;
 }
 
-/* Remove the old red outline design */
+/* Remove the old animated border design */
 .search-animated-border {
   position: relative;
   border-radius: 24px;
@@ -58,6 +58,7 @@
     min-width: 300px;
     max-width: 500px;
     width: 100%;
+    border: 2px solid #ea384c !important; /* Ensure red border on desktop */
   }
   
   .search-icon {
@@ -77,6 +78,7 @@
     font-size: 14px !important;
     min-width: 200px;
     width: 100%;
+    border: 2px solid #ea384c !important; /* Ensure red border on mobile */
   }
   
   .search-icon {
@@ -92,10 +94,11 @@
   }
 }
 
-/* Focus styling - clean, simple focus effect */
+/* Focus styling - clean, simple focus effect with red theme */
 .search-input:focus {
   outline: none !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+  border-color: #ea384c !important;
+  box-shadow: 0 2px 8px rgba(234, 56, 76, 0.3) !important;
 }
 
 /* Search results dropdown styling */
@@ -119,6 +122,7 @@
   .search-input {
     min-width: 160px;
     font-size: 14px !important;
+    border: 2px solid #ea384c !important; /* Ensure red border on extra small screens */
   }
   
   .search-animated-border {
