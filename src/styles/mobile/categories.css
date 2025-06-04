@@ -3,22 +3,22 @@
 @media (max-width: 768px) {
   /* Category card optimization */
   .category-card-mobile {
-    height: 40px !important; /* Reduced from 45px */
-    padding: 0.15rem !important; /* Reduced padding */
-    min-width: 70px !important; /* Set minimum width to control size */
-    max-width: 80px !important; /* Set maximum width */
+    height: 35px !important; /* Further reduced from 40px */
+    padding: 0.1rem !important; /* Further reduced padding */
+    min-width: 60px !important; /* Reduced from 70px */
+    max-width: 65px !important; /* Reduced from 80px */
   }
   
   .category-card-mobile .icon {
-    transform: scale(0.65); /* Reduced from 0.75 */
+    transform: scale(0.55); /* Further reduced from 0.65 */
   }
   
   .category-card-mobile .label {
-    font-size: 0.6rem !important; /* Reduced from 0.7rem */
+    font-size: 0.5rem !important; /* Further reduced from 0.6rem */
     font-weight: 600;
     line-height: 1;
-    letter-spacing: -0.02em;
-    max-width: 60px; /* Reduced from 65px */
+    letter-spacing: -0.03em;
+    max-width: 55px; /* Reduced from 60px */
     text-shadow: 0 0 1px rgba(255,255,255,0.5);
     white-space: nowrap;
     overflow: hidden;
@@ -28,15 +28,15 @@
   /* Specific category optimizations */
   .category-entertainment .label,
   .category-advertisement .label {
-    font-size: 0.55rem !important; /* Further reduced */
-    letter-spacing: -0.03em !important;
+    font-size: 0.45rem !important; /* Further reduced */
+    letter-spacing: -0.04em !important;
   }
   
   /* Content toggle for mobile */
   .content-toggle-mobile {
-    transform: scale(0.8); /* Reduced from 0.85 */
-    margin-top: -4px;
-    margin-bottom: -4px;
+    transform: scale(0.75); /* Further reduced from 0.8 */
+    margin-top: -6px;
+    margin-bottom: -6px;
   }
   
   /* Ensure single line display */
@@ -44,10 +44,38 @@
     white-space: nowrap !important;
     overflow-x: auto !important;
     flex-wrap: nowrap !important;
+    height: 35px !important; /* Set fixed height */
   }
   
   /* Reduce gaps between categories */
   .mobile-category-scroll {
-    gap: 0.25rem !important; /* Reduced gap */
+    gap: 0.15rem !important; /* Further reduced gap */
+    align-items: center !important;
+    height: 35px !important;
+  }
+  
+  /* Force single line for category selector */
+  .videos-page .category-selector-mobile {
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    white-space: nowrap !important;
+  }
+  
+  /* Additional mobile optimizations for very small screens */
+  @media (max-width: 480px) {
+    .category-card-mobile {
+      min-width: 55px !important;
+      max-width: 58px !important;
+      height: 32px !important;
+    }
+    
+    .category-card-mobile .label {
+      font-size: 0.45rem !important;
+      max-width: 50px;
+    }
+    
+    .category-card-mobile .icon {
+      transform: scale(0.5);
+    }
   }
 }
