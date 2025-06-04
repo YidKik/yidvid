@@ -1,5 +1,4 @@
 
-
 /* Clean YouTube-inspired search bar styles with red outline */
 .search-input {
   background-color: white !important;
@@ -52,7 +51,7 @@
 @media (min-width: 768px) {
   .search-input {
     height: 40px !important;
-    padding-left: 40px !important; /* Reduced from 44px to give icon more space */
+    padding-left: 36px !important; /* Reduced further to give more space */
     padding-right: 16px !important;
     border-radius: 24px !important;
     font-size: 16px !important;
@@ -63,9 +62,9 @@
   }
   
   .search-icon {
-    height: 16px !important; /* Reduced from 18px */
-    width: 16px !important; /* Reduced from 18px */
-    left: 12px !important; /* Moved further left from 14px */
+    height: 14px !important; /* Made even smaller */
+    width: 14px !important; /* Made even smaller */
+    left: 8px !important; /* Moved much further left */
   }
 }
 
@@ -73,7 +72,7 @@
 @media (max-width: 768px) {
   .search-input {
     height: 36px !important;
-    padding-left: 34px !important; /* Reduced from 38px */
+    padding-left: 30px !important; /* Reduced further for mobile */
     padding-right: 12px !important;
     border-radius: 20px !important;
     font-size: 14px !important;
@@ -83,9 +82,9 @@
   }
   
   .search-icon {
-    height: 14px !important; /* Reduced from 16px */
-    width: 14px !important; /* Reduced from 16px */
-    left: 10px !important; /* Moved further left from 12px */
+    height: 12px !important; /* Made even smaller for mobile */
+    width: 12px !important; /* Made even smaller for mobile */
+    left: 6px !important; /* Moved much further left */
   }
   
   /* Ensure proper spacing in mobile header */
@@ -124,10 +123,16 @@
     min-width: 160px;
     font-size: 14px !important;
     border: 2px solid #ea384c !important; /* Ensure red border on extra small screens */
+    padding-left: 28px !important; /* Even more space for text */
+  }
+  
+  .search-icon {
+    height: 10px !important; /* Very small for tiny screens */
+    width: 10px !important;
+    left: 4px !important; /* Very far left */
   }
   
   .search-animated-border {
     max-width: 240px;
   }
 }
-
