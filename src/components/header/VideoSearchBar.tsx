@@ -18,7 +18,8 @@ export const VideoSearchBar = () => {
     setIsSearchOpen,
     searchResults,
     isLoading,
-    hasResults
+    hasResults,
+    debouncedQuery
   } = useVideoSearch();
 
   // Close search when clicking outside
@@ -34,12 +35,14 @@ export const VideoSearchBar = () => {
   }, [setIsSearchOpen]);
 
   const handleVideoClick = (videoId: string) => {
+    console.log('Video clicked:', videoId);
     navigate(`/video/${videoId}`);
     setIsSearchOpen(false);
     setSearchQuery('');
   };
 
   const handleChannelClick = (channelId: string) => {
+    console.log('Channel clicked:', channelId);
     navigate(`/channel/${channelId}`);
     setIsSearchOpen(false);
     setSearchQuery('');
@@ -51,13 +54,42 @@ export const VideoSearchBar = () => {
     inputRef.current?.focus();
   };
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    console.log('Search input changed:', value);
+    setSearchQuery(value);
+    if (value.trim().length > 0) {
+      setIsSearchOpen(true);
+    }
+  };
+
+  const handleInputFocus = () => {
+    console.log('Search input focused, query:', searchQuery);
+    if (searchQuery.trim().length > 0) {
+      setIsSearchOpen(true);
+    }
+  };
+
+  // Show dropdown when we have a query or are loading
+  const shouldShowDropdown = isSearchOpen && (searchQuery.trim().length > 0 || isLoading);
+
+  console.log('VideoSearchBar state:', {
+    searchQuery,
+    debouncedQuery,
+    isSearchOpen,
+    shouldShowDropdown,
+    isLoading,
+    hasResults,
+    resultsCount: searchResults ? (searchResults.videos?.length || 0) + (searchResults.channels?.length || 0) : 0
+  });
+
   return (
     <div ref={searchRef} className="relative w-full max-w-md mx-auto">
       <div className="relative">
         <div className={`
           relative flex items-center bg-white/90 backdrop-blur-sm rounded-full
           border-2 border-red-300 transition-all duration-200
-          ${isSearchOpen ? 'border-red-500 shadow-lg' : 'hover:border-red-400'}
+          ${shouldShowDropdown ? 'border-red-500 shadow-lg' : 'hover:border-red-400'}
           ${isMobile ? 'h-9' : 'h-11'}
         `}>
           <Search className={`
@@ -69,11 +101,8 @@ export const VideoSearchBar = () => {
             ref={inputRef}
             type="text"
             value={searchQuery}
-            onChange={(e) => {
-              setSearchQuery(e.target.value);
-              setIsSearchOpen(true);
-            }}
-            onFocus={() => setIsSearchOpen(true)}
+            onChange={handleInputChange}
+            onFocus={handleInputFocus}
             placeholder="Search videos..."
             className={`
               w-full bg-transparent outline-none text-gray-800 placeholder-gray-500
@@ -96,7 +125,7 @@ export const VideoSearchBar = () => {
         </div>
 
         {/* Search Results Dropdown */}
-        {isSearchOpen && (searchQuery.trim() || isLoading) && (
+        {shouldShowDropdown && (
           <div className={`
             absolute left-0 right-0 bg-white/95 backdrop-blur-sm
             border-2 border-red-300 border-t-0 rounded-b-2xl shadow-xl z-50
@@ -117,14 +146,14 @@ export const VideoSearchBar = () => {
             {!isLoading && hasResults && (
               <div className="max-h-80 overflow-y-auto">
                 {/* Videos Section */}
-                {searchResults.videos.length > 0 && (
+                {searchResults.videos && searchResults.videos.length > 0 && (
                   <div>
                     <div className={`
                       flex items-center space-x-2 text-gray-600 font-medium border-b border-red-100
                       ${isMobile ? 'px-3 py-2 text-sm' : 'px-4 py-3 text-base'}
                     `}>
                       <Play className={isMobile ? 'h-4 w-4' : 'h-5 w-5'} />
-                      <span>Videos</span>
+                      <span>Videos ({searchResults.videos.length})</span>
                     </div>
                     {searchResults.videos.map((video) => (
                       <button
@@ -143,10 +172,14 @@ export const VideoSearchBar = () => {
                             object-cover rounded-lg flex-shrink-0
                             ${isMobile ? 'w-16 h-12' : 'w-20 h-14'}
                           `}
+                          onError={(e) => {
+                            console.error('Failed to load thumbnail:', video.thumbnail);
+                            e.currentTarget.style.display = 'none';
+                          }}
                         />
                         <div className="flex-1 text-left overflow-hidden">
                           <h4 className={`
-                            font-medium text-gray-800 truncate
+                            font-medium text-gray-800 line-clamp-2
                             ${isMobile ? 'text-sm' : 'text-base'}
                           `}>
                             {video.title}
@@ -164,14 +197,14 @@ export const VideoSearchBar = () => {
                 )}
 
                 {/* Channels Section */}
-                {searchResults.channels.length > 0 && (
+                {searchResults.channels && searchResults.channels.length > 0 && (
                   <div>
                     <div className={`
                       flex items-center space-x-2 text-gray-600 font-medium border-b border-red-100
                       ${isMobile ? 'px-3 py-2 text-sm' : 'px-4 py-3 text-base'}
                     `}>
                       <Users className={isMobile ? 'h-4 w-4' : 'h-5 w-5'} />
-                      <span>Channels</span>
+                      <span>Channels ({searchResults.channels.length})</span>
                     </div>
                     {searchResults.channels.map((channel) => (
                       <button
@@ -192,6 +225,10 @@ export const VideoSearchBar = () => {
                               src={channel.thumbnail_url}
                               alt={channel.title}
                               className="w-full h-full object-cover rounded-full"
+                              onError={(e) => {
+                                console.error('Failed to load channel thumbnail:', channel.thumbnail_url);
+                                e.currentTarget.style.display = 'none';
+                              }}
                             />
                           ) : (
                             <Users className={`text-red-500 ${isMobile ? 'h-6 w-6' : 'h-8 w-8'}`} />
