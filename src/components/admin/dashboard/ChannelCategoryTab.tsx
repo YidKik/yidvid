@@ -184,7 +184,13 @@ export const ChannelCategoryTab = () => {
   const handleUndoChange = async (change: RecentChange) => {
     setIsUpdating(true);
     try {
-      const categoryToRevert = change.old_category === 'no_category' ? null : change.old_category as VideoCategory;
+      // Validate the old category before casting
+      const validCategories: VideoCategory[] = ['music', 'torah', 'inspiration', 'podcast', 'education', 'entertainment', 'other'];
+      const categoryToRevert = change.old_category === 'no_category' 
+        ? null 
+        : validCategories.includes(change.old_category as VideoCategory)
+          ? change.old_category as VideoCategory
+          : 'other' as VideoCategory;
       
       const { error: channelError } = await supabase
         .from("youtube_channels")
@@ -212,23 +218,6 @@ export const ChannelCategoryTab = () => {
     } finally {
       setIsUpdating(false);
     }
-  };
-
-  const handleChannelSelect = (channelId: string) => {
-    setSelectedChannels(prev => 
-      prev.includes(channelId) 
-        ? prev.filter(id => id !== channelId)
-        : [...prev, channelId]
-    );
-  };
-
-  const handleSelectAll = () => {
-    const filteredChannelIds = channels.map(channel => channel.channel_id);
-    setSelectedChannels(prev => 
-      prev.length === filteredChannelIds.length 
-        ? []
-        : filteredChannelIds
-    );
   };
 
   const getRecentlyUpdatedChannels = () => {
