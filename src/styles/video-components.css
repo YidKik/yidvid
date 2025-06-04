@@ -33,11 +33,11 @@
 /* Mobile optimizations */
 @media (max-width: 768px) {
   .video-title {
-    font-size: 0.7rem;
-    line-height: 1.1;
+    font-size: 0.8rem;
+    line-height: 1.2;
     margin-top: 0.25rem;
-    margin-bottom: 0.15rem;
-    max-height: 2.2em;
+    margin-bottom: 0.2rem;
+    max-height: 2.4em;
     overflow: hidden;
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -46,17 +46,23 @@
   }
   
   .video-meta-text {
-    font-size: 0.65rem;
-    line-height: 1;
+    font-size: 0.7rem;
+    line-height: 1.1;
     margin-top: 0;
-    color: #030303;
+    color: #606060;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
   
   .videos-page .video-grid-container {
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  /* Channel name should stay black for better readability */
+  .video-channel-name {
+    color: #030303;
+    font-weight: 500;
   }
 }
 

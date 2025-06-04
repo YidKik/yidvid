@@ -6,6 +6,7 @@ import { VideoCardSkeleton } from "./video/VideoCardSkeleton";
 import { VideoCardThumbnail } from "./video/VideoCardThumbnail";
 import { VideoCardInfo } from "./video/VideoCardInfo";
 import { useVideoDate } from "./video/useVideoDate";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface VideoCardProps {
   id: string;
@@ -42,6 +43,7 @@ export const VideoCard = ({
 }: VideoCardProps) => {
   const [isLoaded, setIsLoaded] = useState(!isLazy);
   const { getFormattedDate } = useVideoDate();
+  const { isMobile } = useIsMobile();
   
   // When isLazy changes (e.g., when the component becomes visible), update the loaded state
   useEffect(() => {
@@ -56,7 +58,6 @@ export const VideoCard = ({
   }
   
   // Determine the correct ID to use for navigation - prioritize video_id over id
-  // video_id is the YouTube video ID, which is what our VideoPlayer component will use
   const videoIdForLink = video_id || id;
   
   // Format the date
@@ -68,17 +69,12 @@ export const VideoCard = ({
   // Convert views to a number if it's not already
   const viewsNumber = typeof views === 'number' ? views : Number(views) || 0;
 
-  console.log("VideoCard rendering with:", {
-    title,
-    views: viewsNumber,
-    videoIdForLink
-  }); // Debug log
-
   return (
     <Link 
       to={`/video/${videoIdForLink}`} 
       className={cn(
         "block w-full cursor-pointer group",
+        isMobile ? "transform-none" : "",
         className
       )}
       aria-label={`Watch ${title}`}

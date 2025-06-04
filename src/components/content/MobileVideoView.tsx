@@ -27,8 +27,8 @@ export const MobileVideoView: React.FC<MobileVideoViewProps> = ({
 }) => {
   const { isMobile } = useIsMobile();
   
-  // Set to exactly 4 videos (2 rows of 2 videos) for mobile
-  const videosPerPage = 4; 
+  // Use 6 videos (3 rows of 2 videos) for mobile instead of just 4
+  const videosPerPage = 6; 
   const rowSize = 2;
   
   const {
@@ -59,17 +59,17 @@ export const MobileVideoView: React.FC<MobileVideoViewProps> = ({
   }
 
   return (
-    <div className="space-y-1">
+    <div className="space-y-2">
       <VideoGrid 
         videos={displayVideos}
         maxVideos={videosPerPage}
         rowSize={rowSize}
         isLoading={isLoading || isRefreshing}
-        className="grid-cols-2 gap-2 px-4 max-w-[85%] mx-auto mobile-view"
+        className="grid-cols-2 gap-3 px-1 max-w-[98%] mx-auto mobile-view"
       />
       
       {totalPages > 1 && (
-        <div className="mt-1 px-4 flex justify-center">
+        <div className="mt-2 px-4 flex justify-center">
           <VideoGridPagination
             showAll={false}  // Always use pagination arrows instead of "Show All"
             currentPage={currentPage}
@@ -84,7 +84,7 @@ export const MobileVideoView: React.FC<MobileVideoViewProps> = ({
         </div>
       )}
 
-      <div className="mt-2 px-4">
+      <div className="mt-4 px-2">
         <ChannelsGrid />
       </div>
     </div>

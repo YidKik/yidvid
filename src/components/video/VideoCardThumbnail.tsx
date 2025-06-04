@@ -1,6 +1,7 @@
 
 import { cn } from "@/lib/utils";
 import { useState, useRef, useEffect } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface VideoCardThumbnailProps {
   thumbnail: string;
@@ -16,6 +17,7 @@ export const VideoCardThumbnail = ({
   const [imageError, setImageError] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
   const timeoutRef = useRef<number | null>(null);
+  const { isMobile } = useIsMobile();
   
   // Clean up timeout on unmount
   useEffect(() => {
@@ -27,7 +29,9 @@ export const VideoCardThumbnail = ({
   }, []);
 
   const handleMouseEnter = () => {
-    setIsHovering(true);
+    if (!isMobile) {
+      setIsHovering(true);
+    }
   };
 
   const handleMouseLeave = () => {
@@ -42,7 +46,7 @@ export const VideoCardThumbnail = ({
 
   return (
     <div 
-      className="relative overflow-hidden rounded-xl aspect-video w-full group"
+      className="relative overflow-hidden rounded-lg aspect-video w-full group video-card-thumbnail"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
@@ -57,13 +61,13 @@ export const VideoCardThumbnail = ({
         className={cn(
           "w-full h-full object-cover",
           "transition-all duration-300 ease-out",
-          isHovering ? "scale-[1.05]" : "scale-100", // More pronounced zoom effect
+          isHovering && !isMobile ? "scale-[1.05]" : "scale-100", // Only apply scale effect on desktop
         )}
         onError={() => setImageError(true)}
       />
       
-      {/* Preview animation effect - shows on hover */}
-      {isHovering && (
+      {/* Preview animation effect - shows on hover on desktop only */}
+      {isHovering && !isMobile && (
         <div className="absolute inset-0 z-20 overflow-hidden">
           <div className={cn(
             "absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent",

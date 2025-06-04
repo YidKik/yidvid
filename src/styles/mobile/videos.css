@@ -1,33 +1,36 @@
 
 /* Mobile video styles */
 @media (max-width: 768px) {
-  /* Video card mobile optimizations - make videos smaller with more side spacing */
+  /* Video card mobile optimizations - improved title size and spacing */
   .video-title {
-    margin-top: 2px;
-    font-size: 0.65rem !important; /* Reduced from 0.7rem */
-    line-height: 1;
+    margin-top: 4px;
+    font-size: 0.8rem !important; /* Increased from 0.65rem for better readability */
+    line-height: 1.2;
+    margin-bottom: 2px;
   }
   
-  /* Increase horizontal spacing and reduce video grid size on mobile */
+  /* Better horizontal spacing with less side padding */
   .videos-page .grid {
-    gap: 12px !important; /* Increased from 8px to push videos more towards sides */
-    padding: 0 1.5rem !important; /* Add horizontal padding for side spacing */
-    max-width: 85% !important; /* Reduce overall width to create side spacing */
+    gap: 10px !important; /* Optimized gap */
+    padding: 0 0.5rem !important; /* Reduced side padding to use more screen width */
+    max-width: 98% !important; /* Use almost full width */
     margin: 0 auto !important; /* Center the grid */
   }
   
-  /* Make video thumbnails smaller on mobile */
+  /* Remove scale reduction on thumbnails */
   .videos-page .video-card-thumbnail {
-    transform: scale(0.95); /* Slightly reduce thumbnail size */
-    border-radius: 0.75rem; /* Maintain border radius proportion */
+    transform: scale(1); /* Full size thumbnails */
+    border-radius: 0.5rem; /* Slightly reduced radius for better proportions */
   }
   
-  /* Optimize video info spacing on mobile */
+  /* Optimize video info spacing and text size on mobile */
   .video-meta-text {
-    font-size: 0.6rem !important; /* Reduced from 0.65rem */
+    font-size: 0.7rem !important; /* Increased from 0.6rem for better readability */
+    line-height: 1.2;
+    margin-top: 1px;
   }
   
-  /* Fix for video meta information to display on a single line */
+  /* Fix for video meta information to display properly */
   .mobile-view .video-meta-text {
     display: flex;
     flex-wrap: nowrap;
@@ -37,8 +40,8 @@
   }
   
   .mobile-view .video-meta-text .mx-1 {
-    margin-left: 0.15rem !important;
-    margin-right: 0.15rem !important;
+    margin-left: 0.2rem !important;
+    margin-right: 0.2rem !important;
   }
   
   /* Pagination styling for mobile */
@@ -46,35 +49,44 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
   }
   
-  .videos-page .custom-pagination-arrow {
-    transform: scale(0.85);
+  /* Proper thumbnail aspect ratio */
+  .video-card-thumbnail {
+    aspect-ratio: 16/9;
+    width: 100%;
+  }
+  
+  /* Enhance visual hierarchy for video cards */
+  .videos-page .video-grid-container {
+    margin-bottom: 1rem;
+  }
+  
+  /* Channel thumbnail optimization */
+  .mobile-view img.rounded-full {
+    width: 6px;
+    height: 6px;
+    margin-right: 3px;
   }
 }
 
-/* Video thumbnail optimization for mobile */
+/* Very small mobile screens */
 @media (max-width: 480px) {
-  .video-card-thumbnail {
-    aspect-ratio: 16/9;
-  }
-  
-  /* Additional mobile video grid optimizations for smaller screens */
+  /* Maintain good proportions on very small screens */
   .videos-page .grid {
-    padding: 0 2rem !important; /* More side padding on very small screens */
-    max-width: 80% !important; /* Even more side spacing */
-    gap: 16px !important; /* Even larger gap for smaller screens */
+    padding: 0 0.3rem !important; /* Even less padding on very small screens */
+    max-width: 100% !important; /* Full width */
+    gap: 8px !important; /* Smaller gap for small screens */
   }
   
-  /* Further optimizations for very small screens */
+  /* Smaller but still readable text */
+  .video-title {
+    font-size: 0.75rem !important;
+  }
+  
   .mobile-view .video-meta-text {
-    font-size: 0.55rem !important;
-  }
-  
-  .mobile-view .video-meta-text .mx-1 {
-    margin-left: 0.1rem !important;
-    margin-right: 0.1rem !important;
+    font-size: 0.65rem !important;
   }
 }

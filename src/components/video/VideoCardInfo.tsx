@@ -48,8 +48,8 @@ export const VideoCardInfo = ({
         {title}
       </h3>
       
-      <div className="flex items-center mt-1 space-x-1">
-        {channelThumbnail && (
+      <div className={`flex items-center ${isMobile ? 'mt-1' : 'mt-1.5'} space-x-1`}>
+        {channelThumbnail && !isMobile && (
           <img 
             src={channelThumbnail} 
             alt={channelName} 
@@ -66,7 +66,7 @@ export const VideoCardInfo = ({
               {channelId ? (
                 <Link 
                   to={`/channel/${channelId}`}
-                  className={`video-channel-name text-xs hover:text-black ${isTablet ? 'text-black' : 'text-gray-500'}`}
+                  className={`video-channel-name text-xs hover:text-black ${isMobile ? 'font-medium' : 'text-gray-500'}`}
                   onClick={(e) => {
                     e.stopPropagation();
                   }}
@@ -74,7 +74,7 @@ export const VideoCardInfo = ({
                   {channelName}
                 </Link>
               ) : (
-                <span className={`video-channel-name text-xs ${isTablet ? 'text-black' : 'text-gray-500'}`}>
+                <span className={`video-channel-name text-xs ${isMobile ? 'font-medium' : 'text-gray-500'}`}>
                   {channelName}
                 </span>
               )}
@@ -82,9 +82,9 @@ export const VideoCardInfo = ({
           )}
           
           <div className="video-meta-text text-xs flex items-center">
-            <span className={`${isTablet ? 'text-black' : 'text-gray-500'}`}>{formattedViews} views</span>
-            <span className={`mx-1 ${isTablet ? 'text-black' : 'text-gray-500'}`}>•</span>
-            <span className={`${isTablet ? 'text-black' : 'text-gray-500'}`}>{formattedDate}</span>
+            <span className={`${isMobile ? 'text-gray-600' : 'text-gray-500'}`}>{formattedViews} views</span>
+            <span className={`mx-1 ${isMobile ? 'text-gray-600' : 'text-gray-500'}`}>•</span>
+            <span className={`${isMobile ? 'text-gray-600' : 'text-gray-500'}`}>{formattedDate}</span>
           </div>
         </div>
       </div>
