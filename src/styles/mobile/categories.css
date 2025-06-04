@@ -1,24 +1,25 @@
 
+
 /* Mobile category styles */
 @media (max-width: 768px) {
   /* Category card optimization */
   .category-card-mobile {
-    height: 35px !important; /* Further reduced from 40px */
-    padding: 0.1rem !important; /* Further reduced padding */
-    min-width: 60px !important; /* Reduced from 70px */
-    max-width: 65px !important; /* Reduced from 80px */
+    height: 30px !important; /* Further reduced from 35px */
+    padding: 0.05rem !important; /* Further reduced padding */
+    min-width: 50px !important; /* Reduced from 60px */
+    max-width: 55px !important; /* Reduced from 65px */
   }
   
   .category-card-mobile .icon {
-    transform: scale(0.55); /* Further reduced from 0.65 */
+    transform: scale(0.45); /* Further reduced from 0.55 */
   }
   
   .category-card-mobile .label {
-    font-size: 0.5rem !important; /* Further reduced from 0.6rem */
+    font-size: 0.4rem !important; /* Further reduced from 0.5rem */
     font-weight: 600;
     line-height: 1;
-    letter-spacing: -0.03em;
-    max-width: 55px; /* Reduced from 60px */
+    letter-spacing: -0.04em;
+    max-width: 45px; /* Reduced from 55px */
     text-shadow: 0 0 1px rgba(255,255,255,0.5);
     white-space: nowrap;
     overflow: hidden;
@@ -28,15 +29,15 @@
   /* Specific category optimizations */
   .category-entertainment .label,
   .category-advertisement .label {
-    font-size: 0.45rem !important; /* Further reduced */
-    letter-spacing: -0.04em !important;
+    font-size: 0.35rem !important; /* Further reduced */
+    letter-spacing: -0.05em !important;
   }
   
   /* Content toggle for mobile */
   .content-toggle-mobile {
-    transform: scale(0.75); /* Further reduced from 0.8 */
-    margin-top: -6px;
-    margin-bottom: -6px;
+    transform: scale(0.7); /* Further reduced from 0.75 */
+    margin-top: -8px;
+    margin-bottom: -8px;
   }
   
   /* Ensure single line display */
@@ -44,14 +45,14 @@
     white-space: nowrap !important;
     overflow-x: auto !important;
     flex-wrap: nowrap !important;
-    height: 35px !important; /* Set fixed height */
+    height: 30px !important; /* Reduced height */
   }
   
   /* Reduce gaps between categories */
   .mobile-category-scroll {
-    gap: 0.15rem !important; /* Further reduced gap */
+    gap: 0.1rem !important; /* Further reduced gap */
     align-items: center !important;
-    height: 35px !important;
+    height: 30px !important;
   }
   
   /* Force single line for category selector */
@@ -64,18 +65,37 @@
   /* Additional mobile optimizations for very small screens */
   @media (max-width: 480px) {
     .category-card-mobile {
-      min-width: 55px !important;
-      max-width: 58px !important;
-      height: 32px !important;
+      min-width: 45px !important;
+      max-width: 48px !important;
+      height: 28px !important;
     }
     
     .category-card-mobile .label {
-      font-size: 0.45rem !important;
-      max-width: 50px;
+      font-size: 0.35rem !important;
+      max-width: 40px;
     }
     
     .category-card-mobile .icon {
-      transform: scale(0.5);
+      transform: scale(0.4);
+    }
+  }
+  
+  /* Extra small screens */
+  @media (max-width: 360px) {
+    .category-card-mobile {
+      min-width: 42px !important;
+      max-width: 45px !important;
+      height: 26px !important;
+    }
+    
+    .category-card-mobile .label {
+      font-size: 0.3rem !important;
+      max-width: 38px;
+    }
+    
+    .category-card-mobile .icon {
+      transform: scale(0.35);
     }
   }
 }
+
