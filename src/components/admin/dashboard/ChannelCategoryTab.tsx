@@ -214,6 +214,23 @@ export const ChannelCategoryTab = () => {
     }
   };
 
+  const handleChannelSelect = (channelId: string) => {
+    setSelectedChannels(prev => 
+      prev.includes(channelId) 
+        ? prev.filter(id => id !== channelId)
+        : [...prev, channelId]
+    );
+  };
+
+  const handleSelectAll = () => {
+    const filteredChannelIds = channels.map(channel => channel.channel_id);
+    setSelectedChannels(prev => 
+      prev.length === filteredChannelIds.length 
+        ? []
+        : filteredChannelIds
+    );
+  };
+
   const getRecentlyUpdatedChannels = () => {
     const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
     return channels.filter(channel => new Date(channel.updated_at) > oneDayAgo);
