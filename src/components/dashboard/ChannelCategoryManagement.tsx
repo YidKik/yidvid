@@ -19,7 +19,7 @@ interface ChannelCategoryManagementProps {
   onUpdate: () => void;
 }
 
-type VideoCategory = "music" | "torah" | "inspiration" | "podcast" | "education" | "entertainment" | "other" | "custom";
+type VideoCategory = "music" | "torah" | "inspiration" | "podcast" | "education" | "entertainment" | "other";
 
 const defaultCategories: { value: VideoCategory; label: string }[] = [
   { value: "music", label: "Music" },
@@ -60,7 +60,6 @@ export function ChannelCategoryManagement({ channels, onUpdate }: ChannelCategor
     try {
       if (defaultCategories.some(cat => cat.value === selectedCategory)) {
         // Handle default category update
-        // 1. Update the channel's default category
         const { error } = await supabase
           .from("youtube_channels")
           .update({ default_category: selectedCategory as VideoCategory })
@@ -68,17 +67,23 @@ export function ChannelCategoryManagement({ channels, onUpdate }: ChannelCategor
 
         if (error) throw error;
         
-        // 2. Update all existing videos from this channel to match the channel's category
-        // Note: This will be automatically handled by the database trigger we'll create
+        // Update all existing videos from this channel to match the channel's category
+        const { error: videoError } = await supabase
+          .from("youtube_videos")
+          .update({ category: selectedCategory as VideoCategory })
+          .eq("channel_id", channelId)
+          .is("deleted_at", null);
+
+        if (videoError) throw videoError;
+        
       } else {
-        // Handle custom category mapping
-        // First, remove any existing custom category mappings
+        // Handle custom category mapping - first remove existing mappings
         await supabase
           .from("channel_custom_category_mappings")
           .delete()
           .eq("channel_id", channelId);
 
-        // Then add the new mapping
+        // Add new mapping
         const { error } = await supabase
           .from("channel_custom_category_mappings")
           .insert({
@@ -89,7 +94,6 @@ export function ChannelCategoryManagement({ channels, onUpdate }: ChannelCategor
         if (error) throw error;
 
         // Update videos with custom category mapping
-        // First, remove any existing video custom category mappings for videos of this channel
         const { data: channelVideos } = await supabase
           .from("youtube_videos")
           .select("id")
@@ -99,13 +103,13 @@ export function ChannelCategoryManagement({ channels, onUpdate }: ChannelCategor
         if (channelVideos && channelVideos.length > 0) {
           const videoIds = channelVideos.map(video => video.id);
           
-          // Delete any existing mappings for these videos
+          // Delete existing mappings
           await supabase
             .from("video_custom_category_mappings")
             .delete()
             .in("video_id", videoIds);
           
-          // Create new mappings for all videos
+          // Create new mappings
           const newMappings = videoIds.map(videoId => ({
             video_id: videoId,
             category_id: selectedCategory

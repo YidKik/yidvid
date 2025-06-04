@@ -10,6 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
@@ -43,13 +44,17 @@ export const ChannelCategoryManager = () => {
   const { data: channels = [], isLoading, refetch } = useQuery({
     queryKey: ["admin-channels", searchQuery],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from("youtube_channels")
         .select("*")
         .is("deleted_at", null)
-        .ilike("title", `%${searchQuery}%`)
         .order("title", { ascending: true });
 
+      if (searchQuery.trim()) {
+        query = query.ilike("title", `%${searchQuery}%`);
+      }
+
+      const { data, error } = await query;
       if (error) throw error;
       return data || [];
     },
@@ -122,9 +127,9 @@ export const ChannelCategoryManager = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Channel Category Management</CardTitle>
+        <CardTitle>Individual Channel Management</CardTitle>
         <p className="text-sm text-muted-foreground">
-          Assign categories to channels. All videos from a channel will automatically inherit its category.
+          Manage categories for individual channels. All videos from a channel will inherit its category.
         </p>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -195,9 +200,9 @@ export const ChannelCategoryManager = () => {
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100">
+                        <Badge variant="outline">
                           {channel.default_category || "No category"}
-                        </span>
+                        </Badge>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap space-x-2">
                         <Button
@@ -228,6 +233,12 @@ export const ChannelCategoryManager = () => {
                 </tbody>
               </table>
             </div>
+          </div>
+        )}
+
+        {filteredChannels.length === 0 && !isLoading && (
+          <div className="text-center py-8 text-gray-500">
+            {searchQuery ? "No channels found matching your search" : "No channels available"}
           </div>
         )}
       </CardContent>
