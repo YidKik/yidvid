@@ -70,6 +70,14 @@ export const VideoSearchBar = () => {
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && searchQuery.trim().length > 0) {
+      console.log('Enter pressed, navigating to search page with query:', searchQuery);
+      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+      setIsSearchOpen(false);
+    }
+  };
+
   // Show dropdown when we have a query or are loading
   const shouldShowDropdown = isSearchOpen && (searchQuery.trim().length > 0 || isLoading);
 
@@ -103,6 +111,7 @@ export const VideoSearchBar = () => {
             value={searchQuery}
             onChange={handleInputChange}
             onFocus={handleInputFocus}
+            onKeyDown={handleKeyDown}
             placeholder="Search videos..."
             className={`
               w-full bg-transparent outline-none text-gray-800 placeholder-gray-500
@@ -265,6 +274,16 @@ export const VideoSearchBar = () => {
                 <p className={`text-gray-400 ${isMobile ? 'text-xs' : 'text-sm'}`}>
                   Try searching with different keywords
                 </p>
+              </div>
+            )}
+
+            {/* Press Enter hint */}
+            {searchQuery.trim() && (
+              <div className={`
+                text-center text-gray-400 border-t border-red-100
+                ${isMobile ? 'py-2 px-3 text-xs' : 'py-3 px-4 text-sm'}
+              `}>
+                Press Enter to see all results
               </div>
             )}
           </div>
