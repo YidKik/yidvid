@@ -180,8 +180,8 @@ export const useChannelCategoryManagement = () => {
       const categoryToRevert = change.old_category === 'no_category' 
         ? null 
         : validCategories.includes(change.old_category as VideoCategory)
-          ? change.old_category as VideoCategory
-          : 'other';
+          ? (change.old_category as VideoCategory)
+          : ('other' as VideoCategory);
       
       const { error: channelError } = await supabase
         .from("youtube_channels")
@@ -191,7 +191,7 @@ export const useChannelCategoryManagement = () => {
       if (channelError) throw channelError;
 
       // For videos, ensure we always use a valid VideoCategory (never null)
-      const videoCategory = categoryToRevert || 'other';
+      const videoCategory: VideoCategory = categoryToRevert || 'other';
       const { error: videosError } = await supabase
         .from("youtube_videos")
         .update({ category: videoCategory })
