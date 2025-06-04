@@ -1,0 +1,95 @@
+
+/* Video Search Bar Styles */
+.video-search-container {
+  position: relative;
+  width: 100%;
+}
+
+.video-search-input {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(8px);
+  border: 2px solid rgb(252, 165, 165);
+  border-radius: 9999px;
+  transition: all 0.2s ease-in-out;
+}
+
+.video-search-input:focus-within {
+  border-color: rgb(239, 68, 68);
+  box-shadow: 0 10px 25px -5px rgba(239, 68, 68, 0.1), 0 10px 10px -5px rgba(239, 68, 68, 0.04);
+}
+
+.video-search-input:hover {
+  border-color: rgb(248, 113, 113);
+}
+
+.video-search-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  border: 2px solid rgb(252, 165, 165);
+  border-top: none;
+  border-bottom-left-radius: 1rem;
+  border-bottom-right-radius: 1rem;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  z-index: 50;
+  max-height: 20rem;
+  overflow-y: auto;
+}
+
+.video-search-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  transition: background-color 0.2s ease-in-out;
+  border-bottom: 1px solid rgb(254, 226, 226);
+}
+
+.video-search-item:last-child {
+  border-bottom: none;
+}
+
+.video-search-item:hover {
+  background-color: rgb(254, 242, 242);
+}
+
+.video-search-thumbnail {
+  width: 5rem;
+  height: 3.5rem;
+  object-fit: cover;
+  border-radius: 0.5rem;
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .video-search-thumbnail {
+    width: 4rem;
+    height: 3rem;
+  }
+  
+  .video-search-item {
+    padding: 0.75rem;
+  }
+}
+
+/* Scrollbar styling for search dropdown */
+.video-search-dropdown::-webkit-scrollbar {
+  width: 6px;
+}
+
+.video-search-dropdown::-webkit-scrollbar-track {
+  background: rgba(252, 165, 165, 0.1);
+}
+
+.video-search-dropdown::-webkit-scrollbar-thumb {
+  background: rgba(239, 68, 68, 0.3);
+  border-radius: 3px;
+}
+
+.video-search-dropdown::-webkit-scrollbar-thumb:hover {
+  background: rgba(239, 68, 68, 0.5);
+}

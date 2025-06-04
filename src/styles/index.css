@@ -1,96 +1,26 @@
 
-/* Import theme variables */
-@import './theme.css';
-
-/* Import global styles */
+/* Base styles */
 @import './globals.css';
+@import './theme.css';
+@import './animations.css';
 
-/* Import animations */
-@import './animations/theme-animations.css';
-@import './animations/pulse.css';
-@import './animations/slide.css';
-@import './animations/fade.css';
-@import './animations/glow.css';
-@import './animations/border.css';
-@import './animations/transitions.css';
-@import './animations/mobile-animations.css';
-
-/* Import component-specific styles */
-@import './components/search.css';
+/* Component styles */
+@import './components/buttons.css';
+@import './components/colors.css';
+@import './components/home-page.css';
+@import './components/links.css';
 @import './components/logo.css';
 @import './components/navigation.css';
+@import './components/video-search.css';
+
+/* Layout styles */
+@import './layouts/page-layouts.css';
+
+/* Video components */
+@import './video-components.css';
+
+/* Mobile styles */
 @import './mobile/index.css';
+
+/* Desktop styles */
 @import './desktop.css';
-@import './components/home-page.css';
-@import './components/colors.css';
-
-/* Homepage full-screen background styles */
-.home-page {
-  min-height: 100vh;
-  min-width: 100vw;
-  background-color: #003c43 !important;
-  margin: 0;
-  padding: 0;
-}
-
-html.home-page,
-body.home-page {
-  background-color: #003c43 !important;
-  color: #e3fef7;
-  overflow-x: hidden;
-}
-
-/* Mobile specific adjustments */
-@media (max-width: 768px) {
-  .settings-container {
-    max-width: 95%;
-    padding-left: 0.75rem;
-    padding-right: 0.75rem;
-  }
-  
-  .category-radio-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 0.5rem;
-  }
-  
-  .category-radio-item {
-    height: 100%;
-    margin-bottom: 0.5rem;
-  }
-  
-  .category-radio-item label {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    padding: 0.75rem 0.5rem;
-  }
-  
-  .category-radio-item label div {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    width: 100%;
-  }
-  
-  .settings-section-card {
-    margin-left: 0.125rem;
-    margin-right: 0.125rem;
-  }
-}
-
-@keyframes scroll-x-loop {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-
-/* Optionally, for right-to-left scrolling row, you could define:
-@keyframes scroll-x-loop-rtl {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(50%); }
-}
-*/

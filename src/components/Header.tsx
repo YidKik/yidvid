@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "react-router-dom";
 import { HeaderLogo } from "./header/HeaderLogo";
+import { VideoSearchBar } from "./header/VideoSearchBar";
 
 export const Header = () => {
   const { isMobile } = useIsMobile();
@@ -132,16 +133,22 @@ export const Header = () => {
       <div className="container mx-auto px-0">
         <div className={`flex ${isMobile ? 'h-14' : 'h-14'} items-center relative`}>
           {isMobile ? (
-            <div className="w-full flex items-center px-3 justify-between">
-              <div className="flex justify-start">
+            <div className="w-full flex items-center px-3">
+              <div className="w-1/5 flex justify-start">
                 <HeaderLogo
                   isMobile={isMobile}
                   isMobileMenuOpen={isMobileMenuOpen}
                   onMobileMenuToggle={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 />
               </div>
+              
+              {isVideosPage && (
+                <div className="w-3/5 flex justify-center px-2">
+                  <VideoSearchBar />
+                </div>
+              )}
 
-              <div className="flex justify-end">
+              <div className="w-1/5 flex justify-end">
                 <HeaderActions 
                   isMobile={isMobile}
                   isSearchExpanded={isSearchExpanded}
@@ -161,6 +168,14 @@ export const Header = () => {
                 isMobileMenuOpen={isMobileMenuOpen}
                 onMobileMenuToggle={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               />
+              
+              {isVideosPage && (
+                <div className="absolute left-1/2 transform -translate-x-1/2 w-full max-w-2xl mx-auto px-6">
+                  <div className="w-full max-w-lg mx-auto">
+                    <VideoSearchBar />
+                  </div>
+                </div>
+              )}
 
               <div className="ml-auto pr-4">
                 <HeaderActions 
