@@ -53,17 +53,17 @@ export const FilteredChannelsGrid = ({
     );
   }
 
-  // Determine column count based on screen size
+  // Determine column count based on screen size - ENFORCED TABLET LOGIC
   const getGridColumns = () => {
     if (isMobile) return 'grid-cols-2';
-    if (isTablet) return 'grid-cols-3'; // Ensure tablet shows 3 columns
+    if (isTablet) return 'grid-cols-3'; // ENFORCED: Tablet shows exactly 3 columns
     return 'grid-cols-5'; // Default for desktop
   };
 
   // Display total channel count
   const totalChannels = displayChannels.length;
 
-  console.log(`FilteredChannelsGrid: Device - isMobile: ${isMobile}, isTablet: ${isTablet}, gridColumns: ${getGridColumns()}`);
+  console.log(`FilteredChannelsGrid: Device - isMobile: ${isMobile}, isTablet: ${isTablet}, gridColumns: ${getGridColumns()}, totalChannels: ${totalChannels}`);
 
   return (
     <div className="w-full">
@@ -72,7 +72,7 @@ export const FilteredChannelsGrid = ({
           Showing all {totalChannels} channels
         </div>
       )}
-      <div className={`grid ${getGridColumns()} gap-4 mt-4 pb-8`}>
+      <div className={`grid ${getGridColumns()} gap-4 mt-4 pb-8 tablet-channels-grid`}>
         {displayChannels.map((channel, index) => (
           <ChannelCard 
             key={channel.id?.toString() || `channel-${index}`}

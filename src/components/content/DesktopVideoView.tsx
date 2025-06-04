@@ -71,7 +71,7 @@ export const DesktopVideoView = ({
           maxVideos={videosPerPage}
           rowSize={rowSize}
           isLoading={isLoading || isRefreshing}
-          className={`${isTablet ? 'grid-cols-3' : 'grid-cols-4'} gap-4`}
+          className={`${isTablet ? 'grid-cols-3 gap-4 tablet-video-grid' : 'grid-cols-4 gap-4'}`}
         />
         
         {totalPages > 1 && (

@@ -89,25 +89,31 @@ export const VideoGrid = ({
     return <VideoGridError message={error.message} onRetry={() => window.location.reload()} />;
   }
 
-  // Create grid columns based on device and rowSize
+  // Create grid columns based on device and rowSize - FIXED TABLET LOGIC
   let gridCols = "grid-cols-4"; // Default desktop
   
   if (isMobile) {
     gridCols = "grid-cols-2"; // Mobile always 2 columns
   } else if (isTablet) {
-    gridCols = "grid-cols-3"; // Tablet always 3 columns
+    gridCols = "grid-cols-3"; // Tablet always 3 columns - ENFORCED
   }
   
-  const gridGap = isMobile ? "gap-x-3 gap-y-2" : "gap-5";
+  const gridGap = isMobile ? "gap-x-3 gap-y-4" : isTablet ? "gap-4" : "gap-5";
   
-  // Limit videos based on device
+  // Limit videos based on device - FIXED TABLET LOGIC
   const videoLimit = isMobile ? 4 : isTablet ? 9 : maxVideos;
   const displayVideos = videos.slice(0, videoLimit);
 
-  console.log(`VideoGrid: Device - isMobile: ${isMobile}, isTablet: ${isTablet}, gridCols: ${gridCols}, videoLimit: ${videoLimit}`);
+  console.log(`VideoGrid: Device - isMobile: ${isMobile}, isTablet: ${isTablet}, gridCols: ${gridCols}, videoLimit: ${videoLimit}, displayVideos: ${displayVideos.length}`);
 
   return (
-    <div className={cn("grid video-grid-container", gridCols, gridGap, className)}>
+    <div className={cn(
+      "grid video-grid-container", 
+      gridCols, 
+      gridGap, 
+      isTablet && "tablet-video-grid-enforce",
+      className
+    )}>
       {displayVideos.map((video) => (
         <VideoGridItem key={video.id} video={video} />
       ))}

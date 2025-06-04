@@ -26,7 +26,7 @@ export const VideoView = ({
   isTablet = false
 }: VideoViewProps) => {
   // For mobile: 4 videos (2 rows of 2)
-  // For tablet: 9 videos (3 rows of 3)
+  // For tablet: 9 videos (3 rows of 3) 
   // For desktop: 12 videos (3 rows of 4)
   const videosPerPage = isMobile ? 4 : (isTablet ? 9 : 12);
   const rowSize = isMobile ? 2 : (isTablet ? 3 : 4);
@@ -49,7 +49,7 @@ export const VideoView = ({
   if (isLoading || isRefreshing) {
     return (
       <DelayedLoadingAnimation
-        size={isMobile ? "small" : "large"}
+        size={isMobile ? "small" : isTablet ? "medium" : "large"}
         text={isRefreshing ? "Refreshing videos..." : "Loading videos..."}
         delayMs={3000}
       />

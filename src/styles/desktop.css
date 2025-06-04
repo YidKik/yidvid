@@ -78,20 +78,64 @@
   }
 }
 
-/* Tablet specific styles */
-@media (min-width: 769px) and (max-width: 1024px) {
-  /* Ensure tablet video grid shows 3 columns */
-  .videos-page .video-grid-container.grid-cols-3 {
+/* ENHANCED TABLET SPECIFIC STYLES - ENFORCED */
+@media (min-width: 768px) and (max-width: 1024px) {
+  /* FORCE tablet video grid to show exactly 3 columns */
+  .videos-page .video-grid-container,
+  .tablet-video-grid,
+  .tablet-video-grid-enforce,
+  .video-grid-container.grid-cols-3 {
     grid-template-columns: repeat(3, 1fr) !important;
+    gap: 16px !important;
   }
   
-  /* Ensure tablet channel grid shows 3 columns */
+  /* FORCE tablet channel grid to show exactly 3 columns */
+  .tablet-channels-grid,
   .grid-cols-3 {
     grid-template-columns: repeat(3, 1fr) !important;
+    gap: 16px !important;
+  }
+  
+  /* Enhanced tablet spacing */
+  .videos-page {
+    padding: 0 16px !important;
   }
   
   .videos-page .grid {
-    gap: 12px !important;
+    gap: 16px !important;
+  }
+  
+  /* Better tablet typography */
+  .video-title {
+    font-size: 0.9rem !important;
+    line-height: 1.3 !important;
+  }
+  
+  .video-channel-name {
+    font-size: 0.85rem !important;
+  }
+  
+  /* Enhanced tablet video cards */
+  .tablet-video-grid .video-card,
+  .video-grid-container.grid-cols-3 .video-card {
+    margin-bottom: 1rem !important;
+  }
+  
+  /* Enhanced tablet channel cards */
+  .tablet-channels-grid .channel-card {
+    padding: 1rem !important;
+    border-radius: 12px !important;
+  }
+  
+  /* Tablet header improvements */
+  .header-tablet {
+    padding: 0.75rem 1rem !important;
+  }
+  
+  /* Tablet search bar */
+  .search-bar-tablet {
+    max-width: 400px !important;
+    height: 44px !important;
   }
   
   /* Make sure home page background is always green on tablet */
@@ -99,5 +143,28 @@
   body.home-page,
   .home-page {
     background-color: #003c43 !important;
+  }
+  
+  /* Tablet content containers */
+  .tablet-content-container {
+    max-width: 100% !important;
+    padding: 0 1rem !important;
+  }
+  
+  /* Enhanced tablet touch targets */
+  .tablet-touch-target {
+    min-height: 44px !important;
+    min-width: 44px !important;
+  }
+}
+
+/* Desktop only styles (above tablet) */
+@media (min-width: 1025px) {
+  .video-grid-container:not(.grid-cols-3) {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+  
+  .grid-cols-5 {
+    grid-template-columns: repeat(5, 1fr) !important;
   }
 }
