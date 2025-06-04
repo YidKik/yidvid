@@ -4,6 +4,7 @@ import { OverviewTab } from "./OverviewTab";
 import { ContentTab } from "./ContentTab";
 import { UsersTab } from "./UsersTab";
 import { CategoriesTab } from "./CategoriesTab";
+import { ChannelCategoryTab } from "./ChannelCategoryTab";
 
 interface DashboardTabsProps {
   currentUserId: string;
@@ -32,10 +33,16 @@ export const DashboardTabs = ({ currentUserId }: DashboardTabsProps) => {
           Users
         </TabsTrigger>
         <TabsTrigger 
+          value="channel-categories" 
+          className="rounded-full px-8 py-2.5 data-[state=active]:shadow-lg transition-all duration-200"
+        >
+          Channel Categories
+        </TabsTrigger>
+        <TabsTrigger 
           value="categories" 
           className="rounded-full px-8 py-2.5 data-[state=active]:shadow-lg transition-all duration-200"
         >
-          Categories
+          Video Categories
         </TabsTrigger>
       </TabsList>
 
@@ -49,6 +56,10 @@ export const DashboardTabs = ({ currentUserId }: DashboardTabsProps) => {
 
       <TabsContent value="users">
         <UsersTab currentUserId={currentUserId} />
+      </TabsContent>
+
+      <TabsContent value="channel-categories">
+        <ChannelCategoryTab />
       </TabsContent>
 
       <TabsContent value="categories">
