@@ -141,7 +141,7 @@ export const Header = () => {
                 />
               </div>
               
-              <div className="w-3/5 flex justify-center">
+              <div className="w-3/5 flex justify-center px-2">
                 <SearchBar />
               </div>
 
@@ -166,8 +166,8 @@ export const Header = () => {
                 onMobileMenuToggle={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               />
               
-              <div className="absolute left-1/2 transform -translate-x-1/2 w-full max-w-xl mx-auto px-4">
-                <div className="w-full max-w-md mx-auto">
+              <div className="absolute left-1/2 transform -translate-x-1/2 w-full max-w-2xl mx-auto px-6">
+                <div className="w-full max-w-lg mx-auto">
                   <SearchBar />
                 </div>
               </div>

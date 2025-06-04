@@ -26,9 +26,9 @@ export const SearchInput = ({
   
   return (
     <div className="relative w-full search-animated-border">
-      <div className={`relative flex items-center ${isMobile ? 'w-full' : 'w-full'}`}>
+      <div className="relative flex items-center w-full">
         <Search 
-          className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 search-icon cursor-pointer" 
+          className="absolute search-icon cursor-pointer z-10" 
           onClick={onClickSearch}
         />
         <Input
@@ -42,11 +42,7 @@ export const SearchInput = ({
           }}
           onBlur={() => setIsFocused(false)}
           onKeyDown={onSearch}
-          className={`
-            search-input py-2 pl-10 pr-4 rounded-full border-gray-200
-            ${isMobile ? 'h-8 text-sm w-full' : 'h-10 w-full'}
-            transition-all duration-100
-          `}
+          className="search-input w-full"
         />
       </div>
     </div>
