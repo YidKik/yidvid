@@ -23,6 +23,8 @@ export const useVideoSearch = () => {
     queryFn: async () => {
       if (!debouncedQuery.trim()) return [];
 
+      console.log('Searching for:', debouncedQuery);
+
       const { data, error } = await supabase
         .from('youtube_videos')
         .select(`
@@ -30,11 +32,9 @@ export const useVideoSearch = () => {
           title,
           thumbnail,
           channel_id,
-          youtube_channels!inner(
-            title
-          )
+          channel_name
         `)
-        .or(`title.ilike.%${debouncedQuery}%,youtube_channels.title.ilike.%${debouncedQuery}%`)
+        .or(`title.ilike.%${debouncedQuery}%,channel_name.ilike.%${debouncedQuery}%`)
         .is('deleted_at', null)
         .limit(6);
 
@@ -43,6 +43,7 @@ export const useVideoSearch = () => {
         return [];
       }
 
+      console.log('Search results:', data);
       return data || [];
     },
     enabled: debouncedQuery.trim().length > 0,

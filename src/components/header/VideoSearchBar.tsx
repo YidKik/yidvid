@@ -139,7 +139,7 @@ export const VideoSearchBar = () => {
                         text-gray-500 truncate
                         ${isMobile ? 'text-xs' : 'text-sm'}
                       `}>
-                        {(video.youtube_channels as any)?.title}
+                        {video.channel_name}
                       </p>
                     </div>
                   </button>
