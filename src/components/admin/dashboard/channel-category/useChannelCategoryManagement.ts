@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -38,7 +37,11 @@ export const useChannelCategoryManagement = () => {
         if (categoryFilter === 'no_category') {
           query = query.is("default_category", null);
         } else {
-          query = query.eq("default_category", categoryFilter);
+          // Ensure the categoryFilter is a valid VideoCategory before using it
+          const validCategories: VideoCategory[] = ['music', 'torah', 'inspiration', 'podcast', 'education', 'entertainment', 'other', 'custom'];
+          if (validCategories.includes(categoryFilter as VideoCategory)) {
+            query = query.eq("default_category", categoryFilter as VideoCategory);
+          }
         }
       }
 
@@ -176,7 +179,7 @@ export const useChannelCategoryManagement = () => {
     setIsUpdating(true);
     try {
       // Validate the old category before casting
-      const validCategories: VideoCategory[] = ['music', 'torah', 'inspiration', 'podcast', 'education', 'entertainment', 'other'];
+      const validCategories: VideoCategory[] = ['music', 'torah', 'inspiration', 'podcast', 'education', 'entertainment', 'other', 'custom'];
       const categoryToRevert = change.old_category === 'no_category' 
         ? null 
         : validCategories.includes(change.old_category as VideoCategory)
