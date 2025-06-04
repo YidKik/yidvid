@@ -12,59 +12,65 @@ interface DashboardTabsProps {
 
 export const DashboardTabs = ({ currentUserId }: DashboardTabsProps) => {
   return (
-    <Tabs defaultValue="overview" className="space-y-8">
-      <TabsList className="bg-muted p-1 rounded-full w-full sm:w-auto flex justify-center gap-2">
-        <TabsTrigger 
-          value="overview" 
-          className="rounded-full px-8 py-2.5 data-[state=active]:shadow-lg transition-all duration-200"
-        >
-          Overview
-        </TabsTrigger>
-        <TabsTrigger 
-          value="content" 
-          className="rounded-full px-8 py-2.5 data-[state=active]:shadow-lg transition-all duration-200"
-        >
-          Content
-        </TabsTrigger>
-        <TabsTrigger 
-          value="users" 
-          className="rounded-full px-8 py-2.5 data-[state=active]:shadow-lg transition-all duration-200"
-        >
-          Users
-        </TabsTrigger>
-        <TabsTrigger 
-          value="channel-categories" 
-          className="rounded-full px-8 py-2.5 data-[state=active]:shadow-lg transition-all duration-200"
-        >
-          Channel Categories
-        </TabsTrigger>
-        <TabsTrigger 
-          value="categories" 
-          className="rounded-full px-8 py-2.5 data-[state=active]:shadow-lg transition-all duration-200"
-        >
-          Video Categories
-        </TabsTrigger>
-      </TabsList>
+    <div className="w-full">
+      <Tabs defaultValue="overview" className="space-y-6">
+        <div className="sticky top-0 bg-white z-10 pb-4 border-b">
+          <TabsList className="bg-muted p-1 rounded-full w-full flex justify-start overflow-x-auto gap-1 min-w-max">
+            <TabsTrigger 
+              value="overview" 
+              className="rounded-full px-6 py-2.5 data-[state=active]:shadow-lg transition-all duration-200 whitespace-nowrap"
+            >
+              Overview
+            </TabsTrigger>
+            <TabsTrigger 
+              value="content" 
+              className="rounded-full px-6 py-2.5 data-[state=active]:shadow-lg transition-all duration-200 whitespace-nowrap"
+            >
+              Content
+            </TabsTrigger>
+            <TabsTrigger 
+              value="users" 
+              className="rounded-full px-6 py-2.5 data-[state=active]:shadow-lg transition-all duration-200 whitespace-nowrap"
+            >
+              Users
+            </TabsTrigger>
+            <TabsTrigger 
+              value="channel-categories" 
+              className="rounded-full px-6 py-2.5 data-[state=active]:shadow-lg transition-all duration-200 whitespace-nowrap"
+            >
+              Channel Categories
+            </TabsTrigger>
+            <TabsTrigger 
+              value="categories" 
+              className="rounded-full px-6 py-2.5 data-[state=active]:shadow-lg transition-all duration-200 whitespace-nowrap"
+            >
+              Video Categories
+            </TabsTrigger>
+          </TabsList>
+        </div>
 
-      <TabsContent value="overview">
-        <OverviewTab />
-      </TabsContent>
+        <div className="mt-6">
+          <TabsContent value="overview" className="mt-0">
+            <OverviewTab />
+          </TabsContent>
 
-      <TabsContent value="content">
-        <ContentTab />
-      </TabsContent>
+          <TabsContent value="content" className="mt-0">
+            <ContentTab />
+          </TabsContent>
 
-      <TabsContent value="users">
-        <UsersTab currentUserId={currentUserId} />
-      </TabsContent>
+          <TabsContent value="users" className="mt-0">
+            <UsersTab currentUserId={currentUserId} />
+          </TabsContent>
 
-      <TabsContent value="channel-categories">
-        <ChannelCategoryTab />
-      </TabsContent>
+          <TabsContent value="channel-categories" className="mt-0">
+            <ChannelCategoryTab />
+          </TabsContent>
 
-      <TabsContent value="categories">
-        <CategoriesTab />
-      </TabsContent>
-    </Tabs>
+          <TabsContent value="categories" className="mt-0">
+            <CategoriesTab />
+          </TabsContent>
+        </div>
+      </Tabs>
+    </div>
   );
 };
