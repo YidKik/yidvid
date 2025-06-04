@@ -121,7 +121,7 @@ export const VideoSearchBar = () => {
                     `}
                   >
                     <img
-                      src={video.thumbnail_url}
+                      src={video.thumbnail}
                       alt={video.title}
                       className={`
                         object-cover rounded-lg flex-shrink-0
@@ -139,7 +139,7 @@ export const VideoSearchBar = () => {
                         text-gray-500 truncate
                         ${isMobile ? 'text-xs' : 'text-sm'}
                       `}>
-                        {(video.youtube_channels as any)?.channel_name}
+                        {(video.youtube_channels as any)?.title}
                       </p>
                     </div>
                   </button>

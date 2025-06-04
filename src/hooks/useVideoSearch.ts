@@ -28,13 +28,14 @@ export const useVideoSearch = () => {
         .select(`
           id,
           title,
-          thumbnail_url,
+          thumbnail,
           channel_id,
           youtube_channels!inner(
-            name as channel_name
+            title
           )
         `)
-        .or(`title.ilike.%${debouncedQuery}%,youtube_channels.name.ilike.%${debouncedQuery}%`)
+        .or(`title.ilike.%${debouncedQuery}%,youtube_channels.title.ilike.%${debouncedQuery}%`)
+        .is('deleted_at', null)
         .limit(6);
 
       if (error) {
