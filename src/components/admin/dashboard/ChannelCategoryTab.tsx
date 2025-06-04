@@ -184,7 +184,7 @@ export const ChannelCategoryTab = () => {
   const handleUndoChange = async (change: RecentChange) => {
     setIsUpdating(true);
     try {
-      const categoryToRevert = change.old_category === 'no_category' ? null : change.old_category;
+      const categoryToRevert = change.old_category === 'no_category' ? null : change.old_category as VideoCategory;
       
       const { error: channelError } = await supabase
         .from("youtube_channels")
@@ -193,9 +193,10 @@ export const ChannelCategoryTab = () => {
 
       if (channelError) throw channelError;
 
+      const videoCategory = categoryToRevert || 'other' as VideoCategory;
       const { error: videosError } = await supabase
         .from("youtube_videos")
-        .update({ category: categoryToRevert || 'other' })
+        .update({ category: videoCategory })
         .eq("channel_id", change.channel_id)
         .is("deleted_at", null);
 
