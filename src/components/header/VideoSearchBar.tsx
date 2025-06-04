@@ -1,6 +1,6 @@
 
 import { useRef, useEffect } from 'react';
-import { Search, X } from 'lucide-react';
+import { Search, X, Play, Users } from 'lucide-react';
 import { useVideoSearch } from '@/hooks/useVideoSearch';
 import { useNavigate } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -35,6 +35,12 @@ export const VideoSearchBar = () => {
 
   const handleVideoClick = (videoId: string) => {
     navigate(`/video/${videoId}`);
+    setIsSearchOpen(false);
+    setSearchQuery('');
+  };
+
+  const handleChannelClick = (channelId: string) => {
+    navigate(`/channel/${channelId}`);
     setIsSearchOpen(false);
     setSearchQuery('');
   };
@@ -92,9 +98,9 @@ export const VideoSearchBar = () => {
         {/* Search Results Dropdown */}
         {isSearchOpen && (searchQuery.trim() || isLoading) && (
           <div className={`
-            absolute top-full left-0 right-0 bg-white/95 backdrop-blur-sm
+            absolute left-0 right-0 bg-white/95 backdrop-blur-sm
             border-2 border-red-300 border-t-0 rounded-b-2xl shadow-xl z-50
-            ${isMobile ? 'mt-0' : 'mt-0'}
+            ${isMobile ? 'top-10' : 'top-12'}
           `}>
             {isLoading && (
               <div className={`
@@ -110,40 +116,105 @@ export const VideoSearchBar = () => {
 
             {!isLoading && hasResults && (
               <div className="max-h-80 overflow-y-auto">
-                {searchResults.map((video) => (
-                  <button
-                    key={video.id}
-                    onClick={() => handleVideoClick(video.id)}
-                    className={`
-                      w-full flex items-center space-x-3 hover:bg-red-50 transition-colors
-                      border-b border-red-100 last:border-b-0
-                      ${isMobile ? 'p-3' : 'p-4'}
-                    `}
-                  >
-                    <img
-                      src={video.thumbnail}
-                      alt={video.title}
-                      className={`
-                        object-cover rounded-lg flex-shrink-0
-                        ${isMobile ? 'w-16 h-12' : 'w-20 h-14'}
-                      `}
-                    />
-                    <div className="flex-1 text-left overflow-hidden">
-                      <h4 className={`
-                        font-medium text-gray-800 truncate
-                        ${isMobile ? 'text-sm' : 'text-base'}
-                      `}>
-                        {video.title}
-                      </h4>
-                      <p className={`
-                        text-gray-500 truncate
-                        ${isMobile ? 'text-xs' : 'text-sm'}
-                      `}>
-                        {video.channel_name}
-                      </p>
+                {/* Videos Section */}
+                {searchResults.videos.length > 0 && (
+                  <div>
+                    <div className={`
+                      flex items-center space-x-2 text-gray-600 font-medium border-b border-red-100
+                      ${isMobile ? 'px-3 py-2 text-sm' : 'px-4 py-3 text-base'}
+                    `}>
+                      <Play className={isMobile ? 'h-4 w-4' : 'h-5 w-5'} />
+                      <span>Videos</span>
                     </div>
-                  </button>
-                ))}
+                    {searchResults.videos.map((video) => (
+                      <button
+                        key={video.id}
+                        onClick={() => handleVideoClick(video.id)}
+                        className={`
+                          w-full flex items-center space-x-3 hover:bg-red-50 transition-colors
+                          border-b border-red-100 last:border-b-0
+                          ${isMobile ? 'p-3' : 'p-4'}
+                        `}
+                      >
+                        <img
+                          src={video.thumbnail}
+                          alt={video.title}
+                          className={`
+                            object-cover rounded-lg flex-shrink-0
+                            ${isMobile ? 'w-16 h-12' : 'w-20 h-14'}
+                          `}
+                        />
+                        <div className="flex-1 text-left overflow-hidden">
+                          <h4 className={`
+                            font-medium text-gray-800 truncate
+                            ${isMobile ? 'text-sm' : 'text-base'}
+                          `}>
+                            {video.title}
+                          </h4>
+                          <p className={`
+                            text-gray-500 truncate
+                            ${isMobile ? 'text-xs' : 'text-sm'}
+                          `}>
+                            {video.channel_name}
+                          </p>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {/* Channels Section */}
+                {searchResults.channels.length > 0 && (
+                  <div>
+                    <div className={`
+                      flex items-center space-x-2 text-gray-600 font-medium border-b border-red-100
+                      ${isMobile ? 'px-3 py-2 text-sm' : 'px-4 py-3 text-base'}
+                    `}>
+                      <Users className={isMobile ? 'h-4 w-4' : 'h-5 w-5'} />
+                      <span>Channels</span>
+                    </div>
+                    {searchResults.channels.map((channel) => (
+                      <button
+                        key={channel.id}
+                        onClick={() => handleChannelClick(channel.channel_id)}
+                        className={`
+                          w-full flex items-center space-x-3 hover:bg-red-50 transition-colors
+                          border-b border-red-100 last:border-b-0
+                          ${isMobile ? 'p-3' : 'p-4'}
+                        `}
+                      >
+                        <div className={`
+                          rounded-full bg-red-100 flex items-center justify-center flex-shrink-0
+                          ${isMobile ? 'w-12 h-12' : 'w-14 h-14'}
+                        `}>
+                          {channel.thumbnail_url ? (
+                            <img
+                              src={channel.thumbnail_url}
+                              alt={channel.title}
+                              className="w-full h-full object-cover rounded-full"
+                            />
+                          ) : (
+                            <Users className={`text-red-500 ${isMobile ? 'h-6 w-6' : 'h-8 w-8'}`} />
+                          )}
+                        </div>
+                        <div className="flex-1 text-left overflow-hidden">
+                          <h4 className={`
+                            font-medium text-gray-800 truncate
+                            ${isMobile ? 'text-sm' : 'text-base'}
+                          `}>
+                            {channel.title}
+                          </h4>
+                          <p className={`
+                            text-gray-500
+                            ${isMobile ? 'text-xs' : 'text-sm'}
+                          `}>
+                            Channel
+                          </p>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
 
@@ -153,7 +224,7 @@ export const VideoSearchBar = () => {
                 ${isMobile ? 'py-6' : 'py-8'}
               `}>
                 <Search className="h-8 w-8 mx-auto mb-2 text-gray-300" />
-                <p className={isMobile ? 'text-sm' : 'text-base'}>No videos found</p>
+                <p className={isMobile ? 'text-sm' : 'text-base'}>No results found</p>
                 <p className={`text-gray-400 ${isMobile ? 'text-xs' : 'text-sm'}`}>
                   Try searching with different keywords
                 </p>

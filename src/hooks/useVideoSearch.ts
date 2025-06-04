@@ -17,15 +17,16 @@ export const useVideoSearch = () => {
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  // Fetch search results
+  // Fetch search results for both videos and channels
   const { data: searchResults, isLoading } = useQuery({
     queryKey: ['video-search', debouncedQuery],
     queryFn: async () => {
-      if (!debouncedQuery.trim()) return [];
+      if (!debouncedQuery.trim()) return { videos: [], channels: [] };
 
       console.log('Searching for:', debouncedQuery);
 
-      const { data, error } = await supabase
+      // Search videos
+      const { data: videos, error: videosError } = await supabase
         .from('youtube_videos')
         .select(`
           id,
@@ -36,27 +37,48 @@ export const useVideoSearch = () => {
         `)
         .or(`title.ilike.%${debouncedQuery}%,channel_name.ilike.%${debouncedQuery}%`)
         .is('deleted_at', null)
-        .limit(6);
+        .limit(4);
 
-      if (error) {
-        console.error('Search error:', error);
-        return [];
+      // Search channels
+      const { data: channels, error: channelsError } = await supabase
+        .from('youtube_channels')
+        .select(`
+          id,
+          title,
+          thumbnail_url,
+          channel_id
+        `)
+        .ilike('title', `%${debouncedQuery}%`)
+        .is('deleted_at', null)
+        .limit(3);
+
+      if (videosError) {
+        console.error('Videos search error:', videosError);
       }
 
-      console.log('Search results:', data);
-      return data || [];
+      if (channelsError) {
+        console.error('Channels search error:', channelsError);
+      }
+
+      const result = {
+        videos: videos || [],
+        channels: channels || []
+      };
+
+      console.log('Search results:', result);
+      return result;
     },
     enabled: debouncedQuery.trim().length > 0,
   });
 
-  const hasResults = searchResults && searchResults.length > 0;
+  const hasResults = searchResults && (searchResults.videos.length > 0 || searchResults.channels.length > 0);
 
   return {
     searchQuery,
     setSearchQuery,
     isSearchOpen,
     setIsSearchOpen,
-    searchResults: searchResults || [],
+    searchResults: searchResults || { videos: [], channels: [] },
     isLoading,
     hasResults,
     debouncedQuery
