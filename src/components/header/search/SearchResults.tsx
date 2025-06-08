@@ -34,6 +34,17 @@ export const SearchResults = ({
   onChannelClick,
   isMobile
 }: SearchResultsProps) => {
+  
+  // Debug logging
+  console.log('🎭 SearchResults render:', {
+    isLoading,
+    hasResults,
+    searchQuery,
+    videosCount: searchResults?.videos?.length || 0,
+    channelsCount: searchResults?.channels?.length || 0,
+    searchResults
+  });
+
   return (
     <div className={`
       absolute left-0 right-0 bg-white/95 backdrop-blur-sm
@@ -69,7 +80,10 @@ export const SearchResults = ({
                   key={video.id}
                   type="video"
                   item={video}
-                  onClick={() => onVideoClick(video.id)}
+                  onClick={() => {
+                    console.log('🎥 Video clicked:', video);
+                    onVideoClick(video.video_id || video.id);
+                  }}
                   isMobile={isMobile}
                 />
               ))}
@@ -91,7 +105,10 @@ export const SearchResults = ({
                   key={channel.id}
                   type="channel"
                   item={channel}
-                  onClick={() => onChannelClick(channel.channel_id)}
+                  onClick={() => {
+                    console.log('📺 Channel clicked:', channel);
+                    onChannelClick(channel.channel_id);
+                  }}
                   isMobile={isMobile}
                 />
               ))}
@@ -106,10 +123,13 @@ export const SearchResults = ({
           ${isMobile ? 'py-6' : 'py-8'}
         `}>
           <Search className="h-8 w-8 mx-auto mb-2 text-gray-300" />
-          <p className={isMobile ? 'text-sm' : 'text-base'}>No results found</p>
+          <p className={isMobile ? 'text-sm' : 'text-base'}>No results found for "{searchQuery}"</p>
           <p className={`text-gray-400 ${isMobile ? 'text-xs' : 'text-sm'}`}>
             Try searching with different keywords
           </p>
+          <div className="mt-2 text-xs text-gray-400">
+            Debug: Videos({searchResults?.videos?.length || 0}), Channels({searchResults?.channels?.length || 0})
+          </div>
         </div>
       )}
 

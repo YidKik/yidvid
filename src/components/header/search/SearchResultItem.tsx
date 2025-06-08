@@ -3,6 +3,7 @@ import { Play, Users } from 'lucide-react';
 
 interface VideoResult {
   id: string;
+  video_id?: string;
   title: string;
   thumbnail: string;
   channel_name: string;
@@ -25,9 +26,19 @@ interface SearchResultItemProps {
 export const SearchResultItem = ({ type, item, onClick, isMobile }: SearchResultItemProps) => {
   if (type === 'video') {
     const video = item as VideoResult;
+    
+    console.log('🎥 Rendering video item:', {
+      id: video.id,
+      video_id: video.video_id,
+      title: video.title
+    });
+    
     return (
       <button
-        onClick={onClick}
+        onClick={() => {
+          console.log('🎬 Video item clicked:', video);
+          onClick();
+        }}
         className={`
           w-full flex items-center space-x-3 hover:bg-red-50 transition-colors
           border-b border-red-100 last:border-b-0
@@ -65,9 +76,19 @@ export const SearchResultItem = ({ type, item, onClick, isMobile }: SearchResult
   }
 
   const channel = item as ChannelResult;
+  
+  console.log('📺 Rendering channel item:', {
+    id: channel.id,
+    channel_id: channel.channel_id,
+    title: channel.title
+  });
+  
   return (
     <button
-      onClick={onClick}
+      onClick={() => {
+        console.log('📺 Channel item clicked:', channel);
+        onClick();
+      }}
       className={`
         w-full flex items-center space-x-3 hover:bg-red-50 transition-colors
         border-b border-red-100 last:border-b-0

@@ -10,21 +10,29 @@ export const useSearchHandlers = ({ setIsSearchOpen, setSearchQuery }: UseSearch
   const navigate = useNavigate();
 
   const handleVideoClick = (videoId: string) => {
-    console.log('Video clicked:', videoId);
+    console.log('🎬 Video clicked in handler:', videoId);
+    if (!videoId) {
+      console.error('❌ No video ID provided');
+      return;
+    }
     navigate(`/video/${videoId}`);
     setIsSearchOpen(false);
     setSearchQuery('');
   };
 
   const handleChannelClick = (channelId: string) => {
-    console.log('Channel clicked:', channelId);
+    console.log('📺 Channel clicked in handler:', channelId);
+    if (!channelId) {
+      console.error('❌ No channel ID provided');
+      return;
+    }
     navigate(`/channel/${channelId}`);
     setIsSearchOpen(false);
     setSearchQuery('');
   };
 
   const handleInputChange = (value: string, setIsSearchOpen: (open: boolean) => void) => {
-    console.log('Search input changed:', value);
+    console.log('⌨️ Search input changed:', value);
     setSearchQuery(value);
     if (value.trim().length > 0) {
       setIsSearchOpen(true);
@@ -32,7 +40,7 @@ export const useSearchHandlers = ({ setIsSearchOpen, setSearchQuery }: UseSearch
   };
 
   const handleInputFocus = (searchQuery: string, setIsSearchOpen: (open: boolean) => void) => {
-    console.log('Search input focused, query:', searchQuery);
+    console.log('🎯 Search input focused, query:', searchQuery);
     if (searchQuery.trim().length > 0) {
       setIsSearchOpen(true);
     }
@@ -40,13 +48,14 @@ export const useSearchHandlers = ({ setIsSearchOpen, setSearchQuery }: UseSearch
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, searchQuery: string) => {
     if (e.key === 'Enter' && searchQuery.trim().length > 0) {
-      console.log('Enter pressed, navigating to search page with query:', searchQuery);
+      console.log('⏎ Enter pressed, navigating to search page with query:', searchQuery);
       navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
       setIsSearchOpen(false);
     }
   };
 
   const clearSearch = () => {
+    console.log('🧹 Clearing search');
     setSearchQuery('');
     setIsSearchOpen(false);
   };
