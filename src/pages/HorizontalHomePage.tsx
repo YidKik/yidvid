@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 import { useAuth } from '@/hooks/useAuth';
@@ -12,6 +11,7 @@ import { AuthButtons } from '@/components/home/horizontal/AuthButtons';
 import { FeedbackCarousel } from '@/components/home/horizontal/FeedbackCarousel';
 import { LogoSection } from '@/components/home/horizontal/LogoSection';
 import { NavigationDots } from '@/components/home/horizontal/NavigationDots';
+import { TemporaryDisclaimer } from '@/components/home/TemporaryDisclaimer';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const HorizontalHomePage = () => {
@@ -116,6 +116,9 @@ const HorizontalHomePage = () => {
   if (isMobile) {
     return (
       <div className="min-h-screen bg-[#003c43]">
+        {/* Temporary disclaimer overlay */}
+        <TemporaryDisclaimer />
+        
         {/* Mobile sections stacked vertically */}
         <div id="section-0" className="min-h-screen">
           <HeroSection />
@@ -155,6 +158,9 @@ const HorizontalHomePage = () => {
   // Desktop view - horizontal scrolling only with proper section locking
   return (
     <div className="fixed inset-0 bg-[#003c43] overflow-hidden">
+      {/* Temporary disclaimer overlay */}
+      <TemporaryDisclaimer />
+      
       {/* Horizontal container */}
       <motion.div 
         className="flex h-full"
