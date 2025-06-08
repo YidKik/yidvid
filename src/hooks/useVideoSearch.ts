@@ -26,36 +26,26 @@ export const useVideoSearch = () => {
       console.log('Searching for:', debouncedQuery);
 
       try {
-        // Search videos with better error handling
+        // Simplified video search query without complex joins
         const { data: videos, error: videosError } = await supabase
           .from('youtube_videos')
-          .select(`
-            id,
-            video_id,
-            title,
-            thumbnail,
-            channel_id,
-            channel_name
-          `)
+          .select('id, video_id, title, thumbnail, channel_id, channel_name')
           .or(`title.ilike.%${debouncedQuery}%,channel_name.ilike.%${debouncedQuery}%`)
           .is('deleted_at', null)
+          .order('created_at', { ascending: false })
           .limit(5);
 
         if (videosError) {
           console.error('Videos search error:', videosError);
         }
 
-        // Search channels with better error handling
+        // Simplified channel search query
         const { data: channels, error: channelsError } = await supabase
           .from('youtube_channels')
-          .select(`
-            id,
-            title,
-            thumbnail_url,
-            channel_id
-          `)
+          .select('id, title, thumbnail_url, channel_id')
           .ilike('title', `%${debouncedQuery}%`)
           .is('deleted_at', null)
+          .order('created_at', { ascending: false })
           .limit(4);
 
         if (channelsError) {
@@ -77,6 +67,7 @@ export const useVideoSearch = () => {
     enabled: debouncedQuery.trim().length > 0,
     staleTime: 30000, // Cache results for 30 seconds
     retry: 1,
+    gcTime: 1000 * 60 * 5, // Keep in cache for 5 minutes
   });
 
   const hasResults = useMemo(() => {
