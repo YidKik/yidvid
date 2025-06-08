@@ -38,7 +38,7 @@ const HorizontalHomePage = () => {
     };
   }, [isMobile]);
 
-  // Handle scroll events with strict section locking - desktop only
+  // Handle scroll events with mandatory section 2 locking - desktop only
   useEffect(() => {
     if (isMobile) return;
 
@@ -53,21 +53,37 @@ const HorizontalHomePage = () => {
       
       const delta = e.deltaY;
       
-      // Much lower threshold but ensure it's a deliberate scroll
+      // Detect deliberate scroll
       if (Math.abs(delta) > 10) {
         isScrolling = true;
         
-        // Only move one section per scroll, regardless of scroll magnitude
-        if (delta > 0 && currentSection < 2) {
-          setCurrentSection(prev => prev + 1);
-        } else if (delta < 0 && currentSection > 0) {
-          setCurrentSection(prev => prev - 1);
+        // Mandatory section 2 locking logic
+        if (delta > 0) {
+          // Scrolling down
+          if (currentSection === 0) {
+            // From section 0, always go to section 1 (mandatory stop)
+            setCurrentSection(1);
+          } else if (currentSection === 1) {
+            // From section 1, can go to section 2
+            setCurrentSection(2);
+          }
+          // If already at section 2, stay there
+        } else if (delta < 0) {
+          // Scrolling up
+          if (currentSection === 2) {
+            // From section 2, always go to section 1 (mandatory stop)
+            setCurrentSection(1);
+          } else if (currentSection === 1) {
+            // From section 1, can go to section 0
+            setCurrentSection(0);
+          }
+          // If already at section 0, stay there
         }
         
-        // Longer timeout to ensure strict section locking
+        // Extended timeout to ensure strict section locking
         scrollTimeout = setTimeout(() => {
           isScrolling = false;
-        }, 2000); // 2 second lock to prevent any multi-section jumping
+        }, 2500); // 2.5 second lock to prevent any multi-section jumping
       }
     };
 
@@ -79,15 +95,25 @@ const HorizontalHomePage = () => {
     };
   }, [currentSection, isMobile]);
 
-  // Handle keyboard navigation (desktop only)
+  // Handle keyboard navigation (desktop only) with same mandatory section 2 logic
   useEffect(() => {
     if (isMobile) return;
 
     const handleKeyPress = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowRight' && currentSection < 2) {
-        setCurrentSection(prev => prev + 1);
-      } else if (e.key === 'ArrowLeft' && currentSection > 0) {
-        setCurrentSection(prev => prev - 1);
+      if (e.key === 'ArrowRight') {
+        // Moving right
+        if (currentSection === 0) {
+          setCurrentSection(1); // Mandatory stop at section 1
+        } else if (currentSection === 1) {
+          setCurrentSection(2);
+        }
+      } else if (e.key === 'ArrowLeft') {
+        // Moving left
+        if (currentSection === 2) {
+          setCurrentSection(1); // Mandatory stop at section 1
+        } else if (currentSection === 1) {
+          setCurrentSection(0);
+        }
       }
     };
 
@@ -155,7 +181,7 @@ const HorizontalHomePage = () => {
     );
   }
 
-  // Desktop view - horizontal scrolling only with strict section locking
+  // Desktop view - horizontal scrolling with mandatory section 2 locking
   return (
     <div className="fixed inset-0 bg-[#003c43] overflow-hidden">
       {/* Temporary disclaimer overlay */}
