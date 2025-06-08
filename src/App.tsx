@@ -7,7 +7,7 @@ import ChannelDetails from './pages/ChannelDetails';
 import WritingVideos from './pages/WritingVideos';
 import ResetPassword from './pages/ResetPassword';
 import Videos from './pages/Videos';
-import NewHomePage from './pages/NewHomePage';
+import HorizontalHomePage from './pages/HorizontalHomePage';
 import { PlaybackProvider } from './contexts/PlaybackContext';
 import { ColorProvider } from './contexts/ColorContext';
 import Settings from './pages/Settings';
@@ -58,7 +58,7 @@ function App() {
     <PlaybackProvider>
       <ColorProvider>
         <Routes>
-          <Route path="/" element={<NewHomePage />} />
+          <Route path="/" element={<HorizontalHomePage />} />
           <Route path="/videos" element={<Videos />} />
           <Route path="/video/:videoId" element={<VideoDetails />} />
           <Route path="/search" element={<Search />} />
