@@ -13,8 +13,6 @@ const HorizontalHomePage = () => {
   const { session } = useAuth();
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
-  const [isContactOpen, setIsContactOpen] = useState(false);
-  const [isRequestChannelOpen, setIsRequestChannelOpen] = useState(false);
   const [currentSection, setCurrentSection] = useState(0);
   
   const controls = useAnimation();
@@ -65,14 +63,8 @@ const HorizontalHomePage = () => {
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, [currentSection]);
 
-  const handleContactClick = () => {
-    setIsContactOpen(true);
-  };
-
   const handleRequestChannelClick = () => {
-    if (session) {
-      setIsRequestChannelOpen(true);
-    } else {
+    if (!session) {
       setAuthMode('signin');
       setIsAuthOpen(true);
     }
@@ -204,12 +196,7 @@ const HorizontalHomePage = () => {
               animate={currentSection >= 2 ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              <button
-                onClick={handleContactClick}
-                className="block w-64 py-4 bg-[#135d66] border-2 border-[#ddf9f2] text-[#e3fef7] rounded-2xl text-lg font-medium hover:bg-[#77b0aa] transition-colors"
-              >
-                Contact
-              </button>
+              <ContactDialog />
               <button className="block w-64 py-4 bg-[#135d66] border-2 border-[#ddf9f2] text-[#e3fef7] rounded-2xl text-lg font-medium hover:bg-[#77b0aa] transition-colors">
                 Send feedback
               </button>
@@ -219,6 +206,7 @@ const HorizontalHomePage = () => {
               >
                 Request channel
               </button>
+              <RequestChannelDialog />
             </motion.div>
 
             {/* Copyright */}
@@ -317,21 +305,11 @@ const HorizontalHomePage = () => {
         ))}
       </div>
 
-      {/* Dialogs */}
+      {/* Auth Dialog */}
       <Auth 
         isOpen={isAuthOpen} 
         onOpenChange={setIsAuthOpen}
         initialTab={authMode}
-      />
-      
-      <ContactDialog 
-        isOpen={isContactOpen}
-        onOpenChange={setIsContactOpen}
-      />
-      
-      <RequestChannelDialog
-        isOpen={isRequestChannelOpen}
-        onOpenChange={setIsRequestChannelOpen}
       />
     </div>
   );
