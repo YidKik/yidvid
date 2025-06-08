@@ -6,12 +6,12 @@ interface AboutSectionProps {
 }
 
 export const AboutSection = ({ currentSection }: AboutSectionProps) => {
-  // Only show in section 2 (index 1)
+  // Always show in section 2 (index 1) - no conditional rendering
   if (currentSection !== 1) return null;
 
   return (
     <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-[#135d66] p-12 flex flex-col justify-center">
-      <h2 className="text-[#e3fef7] text-6xl font-bold mb-8 text-center opacity-50">About</h2>
+      <h2 className="text-[#e3fef7] text-6xl font-bold mb-8 text-center">About</h2>
       
       <div className="space-y-6 text-[#e3fef7] max-w-6xl mx-auto">
         <p className="text-lg leading-relaxed">

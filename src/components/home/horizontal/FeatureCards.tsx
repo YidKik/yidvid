@@ -14,8 +14,8 @@ export const FeatureCards = ({ currentSection }: FeatureCardsProps) => {
   ];
 
   return (
-    <div className="pt-16 pb-4">
-      <div className="flex justify-center gap-12 mb-8">
+    <div className="pt-32 pb-16">
+      <div className="flex justify-center gap-12 mb-16">
         {features.map((card, index) => (
           <motion.div
             key={card.title}
@@ -24,8 +24,8 @@ export const FeatureCards = ({ currentSection }: FeatureCardsProps) => {
             animate={currentSection >= 1 ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.6, delay: index * 0.2 }}
           >
-            <h3 className="text-[#e3fef7] text-4xl font-bold mb-6">{card.title}</h3>
-            <p className="text-[#e3fef7] text-base leading-relaxed">{card.description}</p>
+            <h3 className="text-[#e3fef7] text-5xl font-bold mb-8">{card.title}</h3>
+            <p className="text-[#e3fef7] text-lg leading-relaxed">{card.description}</p>
           </motion.div>
         ))}
       </div>
