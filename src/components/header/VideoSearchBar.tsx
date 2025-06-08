@@ -95,13 +95,13 @@ export const VideoSearchBar = () => {
     <div ref={searchRef} className="relative w-full max-w-md mx-auto">
       <div className="relative">
         <div className={`
-          relative flex items-center bg-white/90 backdrop-blur-sm rounded-full
-          border-2 border-red-300 transition-all duration-200
-          ${shouldShowDropdown ? 'border-red-500 shadow-lg' : 'hover:border-red-400'}
+          relative flex items-center bg-transparent backdrop-blur-sm rounded-full
+          border-2 border-white/30 transition-all duration-200
+          ${shouldShowDropdown ? 'border-white/50 shadow-lg' : 'hover:border-white/40'}
           ${isMobile ? 'h-9' : 'h-11'}
         `}>
           <Search className={`
-            absolute left-3 text-red-500/70
+            absolute left-3 text-white/70
             ${isMobile ? 'h-4 w-4' : 'h-5 w-5'}
           `} />
           
@@ -114,7 +114,7 @@ export const VideoSearchBar = () => {
             onKeyDown={handleKeyDown}
             placeholder="Search videos..."
             className={`
-              w-full bg-transparent outline-none text-gray-800 placeholder-gray-500
+              w-full bg-transparent outline-none text-white placeholder-white/60
               ${isMobile ? 'pl-10 pr-8 text-sm' : 'pl-12 pr-10 text-base'}
               ${isMobile ? 'py-2' : 'py-3'}
             `}
@@ -124,7 +124,7 @@ export const VideoSearchBar = () => {
             <button
               onClick={clearSearch}
               className={`
-                absolute right-3 text-gray-400 hover:text-gray-600 transition-colors
+                absolute right-3 text-white/60 hover:text-white transition-colors
                 ${isMobile ? 'p-1' : 'p-1.5'}
               `}
             >
