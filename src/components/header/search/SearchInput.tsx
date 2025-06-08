@@ -36,7 +36,7 @@ export const SearchInput = ({
       ${isMobile ? 'h-9' : 'h-11'}
     `}>
       <Search className={`
-        absolute left-3 text-white/70
+        absolute left-3 text-black/70
         ${isMobile ? 'h-4 w-4' : 'h-5 w-5'}
       `} />
       
@@ -49,7 +49,7 @@ export const SearchInput = ({
         onKeyDown={onKeyDown}
         placeholder="Search videos..."
         className={`
-          w-full bg-transparent outline-none text-white placeholder-white/60
+          w-full bg-transparent outline-none text-black placeholder-black/60
           ${isMobile ? 'pl-10 pr-8 text-sm' : 'pl-12 pr-10 text-base'}
           ${isMobile ? 'py-2' : 'py-3'}
         `}
@@ -59,7 +59,7 @@ export const SearchInput = ({
         <button
           onClick={handleClear}
           className={`
-            absolute right-3 text-white/60 hover:text-white transition-colors
+            absolute right-3 text-black/60 hover:text-black transition-colors
             ${isMobile ? 'p-1' : 'p-1.5'}
           `}
         >
