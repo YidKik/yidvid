@@ -6,6 +6,7 @@ interface SearchResultsProps {
   searchResults: {
     videos?: Array<{
       id: string;
+      video_id?: string;
       title: string;
       thumbnail: string;
       channel_name: string;
