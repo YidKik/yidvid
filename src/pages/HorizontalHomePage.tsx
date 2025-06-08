@@ -38,7 +38,7 @@ const HorizontalHomePage = () => {
     };
   }, [isMobile]);
 
-  // Handle scroll events with proper section locking - desktop only
+  // Handle scroll events with strict section locking - desktop only
   useEffect(() => {
     if (isMobile) return;
 
@@ -53,21 +53,21 @@ const HorizontalHomePage = () => {
       
       const delta = e.deltaY;
       
-      // Lower threshold for more sensitive detection, but ensure it's a deliberate scroll
-      if (Math.abs(delta) > 20) {
+      // Much lower threshold but ensure it's a deliberate scroll
+      if (Math.abs(delta) > 10) {
         isScrolling = true;
         
-        // Only move one section per scroll
+        // Only move one section per scroll, regardless of scroll magnitude
         if (delta > 0 && currentSection < 2) {
           setCurrentSection(prev => prev + 1);
         } else if (delta < 0 && currentSection > 0) {
           setCurrentSection(prev => prev - 1);
         }
         
-        // Extended timeout to ensure proper section locking
+        // Longer timeout to ensure strict section locking
         scrollTimeout = setTimeout(() => {
           isScrolling = false;
-        }, 3000); // 3 second lock to prevent rapid scrolling
+        }, 2000); // 2 second lock to prevent any multi-section jumping
       }
     };
 
@@ -155,7 +155,7 @@ const HorizontalHomePage = () => {
     );
   }
 
-  // Desktop view - horizontal scrolling only with proper section locking
+  // Desktop view - horizontal scrolling only with strict section locking
   return (
     <div className="fixed inset-0 bg-[#003c43] overflow-hidden">
       {/* Temporary disclaimer overlay */}
