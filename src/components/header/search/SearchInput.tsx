@@ -31,8 +31,8 @@ export const SearchInput = ({
   return (
     <div className={`
       relative flex items-center bg-transparent backdrop-blur-sm rounded-full
-      border-2 border-white/30 transition-all duration-200
-      ${shouldShowDropdown ? 'border-white/50 shadow-lg' : 'hover:border-white/40'}
+      border-2 border-red-300 transition-all duration-200
+      ${shouldShowDropdown ? 'border-red-500 shadow-lg' : 'hover:border-red-400'}
       ${isMobile ? 'h-9' : 'h-11'}
     `}>
       <Search className={`
