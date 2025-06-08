@@ -2,7 +2,6 @@
 import React from 'react';
 import { Video, Info, LogIn } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { useNavigate } from 'react-router-dom';
 
 interface NavigationDotsWithIconsProps {
   currentSection: number;
@@ -15,12 +14,10 @@ export const NavigationDotsWithIcons = ({
   onSectionChange, 
   onLoginClick 
 }: NavigationDotsWithIconsProps) => {
-  const navigate = useNavigate();
-
   const handleDotClick = (index: number) => {
     if (index === 0) {
-      // Videos page
-      navigate('/videos');
+      // Videos page - use window.location instead of useNavigate to avoid context issues
+      window.location.href = '/videos';
     } else if (index === 1) {
       // About section - navigate to section 1 (the features/about section)
       onSectionChange(1);
