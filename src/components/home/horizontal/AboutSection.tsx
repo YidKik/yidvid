@@ -9,7 +9,7 @@ interface AboutSectionProps {
 export const AboutSection = ({ currentSection }: AboutSectionProps) => {
   return (
     <motion.div 
-      className="bg-[#135d66] mx-8 rounded-3xl p-12"
+      className="bg-[#135d66] fixed bottom-0 left-0 right-0 h-1/2 p-12 flex flex-col justify-center"
       initial={{ opacity: 0, y: 100 }}
       animate={currentSection >= 1 ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.8, delay: 0.8 }}

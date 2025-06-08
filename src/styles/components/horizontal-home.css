@@ -27,7 +27,7 @@
 
 /* Feedback carousel smooth animation */
 .feedback-carousel {
-  animation: scrollRightToLeft 15s linear infinite;
+  animation: scrollRightToLeft 40s linear infinite;
 }
 
 @keyframes scrollRightToLeft {
@@ -91,6 +91,12 @@
   backdrop-filter: blur(10px);
 }
 
+/* Slower scroll behavior */
+.horizontal-scroll-container {
+  scroll-behavior: smooth;
+  transition: transform 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
 /* Responsive adjustments */
 @media (max-width: 1024px) {
   .horizontal-home-page {
@@ -131,7 +137,8 @@
   .horizontal-container,
   .feature-card,
   .action-button,
-  .stats-card {
+  .stats-card,
+  .horizontal-scroll-container {
     transition: none !important;
     animation: none !important;
   }
