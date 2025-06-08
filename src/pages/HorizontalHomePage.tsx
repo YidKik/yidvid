@@ -20,6 +20,7 @@ const HorizontalHomePage = () => {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
   const [currentSection, setCurrentSection] = useState(0);
+  const [verticalScrollPosition, setVerticalScrollPosition] = useState(0);
   
   const controls = useAnimation();
 
@@ -38,7 +39,7 @@ const HorizontalHomePage = () => {
     };
   }, [isMobile]);
 
-  // Handle scroll events for section detection (desktop only) - Made much slower
+  // Handle scroll events with section locking and vertical scrolling in section 3
   useEffect(() => {
     if (isMobile) return;
 
@@ -51,22 +52,57 @@ const HorizontalHomePage = () => {
       // Prevent rapid scrolling
       if (isScrolling) return;
       
-      const delta = e.deltaY || e.deltaX;
+      const delta = e.deltaY;
       
-      // Increased threshold for much slower scrolling
-      if (Math.abs(delta) > 100) {
+      // Section 3 has vertical scrolling capability
+      if (currentSection === 2) {
+        if (delta > 0) {
+          // Scrolling down in section 3
+          if (verticalScrollPosition < 100) {
+            setVerticalScrollPosition(prev => Math.min(prev + 25, 100));
+            isScrolling = true;
+            scrollTimeout = setTimeout(() => {
+              isScrolling = false;
+            }, 800);
+            return;
+          }
+        } else {
+          // Scrolling up in section 3
+          if (verticalScrollPosition > 0) {
+            setVerticalScrollPosition(prev => Math.max(prev - 25, 0));
+            isScrolling = true;
+            scrollTimeout = setTimeout(() => {
+              isScrolling = false;
+            }, 800);
+            return;
+          } else {
+            // At top of section 3, go back to section 2
+            setCurrentSection(1);
+            isScrolling = true;
+            scrollTimeout = setTimeout(() => {
+              isScrolling = false;
+            }, 2000);
+            return;
+          }
+        }
+      }
+      
+      // Horizontal section navigation with threshold
+      if (Math.abs(delta) > 50) {
         isScrolling = true;
         
         if (delta > 0 && currentSection < 2) {
           setCurrentSection(prev => prev + 1);
+          setVerticalScrollPosition(0); // Reset vertical position
         } else if (delta < 0 && currentSection > 0) {
           setCurrentSection(prev => prev - 1);
+          setVerticalScrollPosition(0); // Reset vertical position
         }
         
-        // Much longer timeout for slower scrolling
+        // Much longer timeout for section transitions
         scrollTimeout = setTimeout(() => {
           isScrolling = false;
-        }, 1500);
+        }, 2000);
       }
     };
 
@@ -76,7 +112,7 @@ const HorizontalHomePage = () => {
       window.removeEventListener('wheel', handleScroll);
       if (scrollTimeout) clearTimeout(scrollTimeout);
     };
-  }, [currentSection, isMobile]);
+  }, [currentSection, verticalScrollPosition, isMobile]);
 
   // Handle keyboard navigation (desktop only)
   useEffect(() => {
@@ -85,8 +121,10 @@ const HorizontalHomePage = () => {
     const handleKeyPress = (e: KeyboardEvent) => {
       if (e.key === 'ArrowRight' && currentSection < 2) {
         setCurrentSection(prev => prev + 1);
+        setVerticalScrollPosition(0);
       } else if (e.key === 'ArrowLeft' && currentSection > 0) {
         setCurrentSection(prev => prev - 1);
+        setVerticalScrollPosition(0);
       }
     };
 
@@ -125,7 +163,6 @@ const HorizontalHomePage = () => {
         </div>
         <div id="section-2" className="min-h-screen relative">
           <div className="p-8 flex flex-col items-center">
-            <LogoSection currentSection={2} />
             <ActionButtons 
               currentSection={2}
               onRequestChannelClick={handleRequestChannelClick}
@@ -152,14 +189,17 @@ const HorizontalHomePage = () => {
     );
   }
 
-  // Desktop view - horizontal scrolling
+  // Desktop view - horizontal scrolling with vertical in section 3
   return (
     <div className="fixed inset-0 bg-[#003c43] overflow-hidden">
       {/* Horizontal container */}
       <motion.div 
         className="flex h-full"
-        animate={{ x: `${-currentSection * 100}vw` }}
-        transition={{ duration: 2.0, ease: "easeInOut" }} // Much slower transition
+        animate={{ 
+          x: `${-currentSection * 100}vw`,
+          y: currentSection === 2 ? `${-verticalScrollPosition}vh` : '0vh'
+        }}
+        transition={{ duration: 1.5, ease: "easeInOut" }}
       >
         {/* Section 1: Hero */}
         <HeroSection />
@@ -171,48 +211,42 @@ const HorizontalHomePage = () => {
         </div>
 
         {/* Section 3: Stats & Actions */}
-        <div className="w-screen h-screen flex-shrink-0 bg-[#003c43] p-8 flex relative">
-          {/* Left Side */}
-          <div className="w-1/2 flex flex-col justify-center items-start pl-16">
-            <LogoSection currentSection={currentSection} />
-            <ActionButtons 
-              currentSection={currentSection}
-              onRequestChannelClick={handleRequestChannelClick}
-            />
+        <div className="w-screen flex-shrink-0 bg-[#003c43] relative" style={{ height: '200vh' }}>
+          {/* Main content area */}
+          <div className="h-screen p-8 flex relative">
+            {/* Left Side */}
+            <div className="w-1/2 flex flex-col justify-center items-start pl-16">
+              <ActionButtons 
+                currentSection={currentSection}
+                onRequestChannelClick={handleRequestChannelClick}
+              />
 
-            {/* Copyright at bottom */}
-            <motion.p 
-              className="text-[#e3fef7] text-sm absolute bottom-8 left-16"
-              initial={{ opacity: 0 }}
-              animate={currentSection >= 2 ? { opacity: 1 } : {}}
-              transition={{ duration: 0.6, delay: 0.6 }}
-            >
-              All rights reserved @YidVid
-            </motion.p>
-          </div>
+              {/* Copyright at bottom */}
+              <motion.p 
+                className="text-[#e3fef7] text-sm absolute bottom-8 left-16"
+                initial={{ opacity: 0 }}
+                animate={currentSection >= 2 ? { opacity: 1 } : {}}
+                transition={{ duration: 0.6, delay: 0.6 }}
+              >
+                All rights reserved @YidVid
+              </motion.p>
+            </div>
 
-          {/* Right Side - Moved more to the right with better spacing */}
-          <div className="w-1/2 flex flex-col items-center justify-start pt-12 pr-8">
-            {/* Container for stats and auth buttons */}
-            <div className="flex flex-col items-center space-y-8">
-              {/* Stats Cards Container */}
-              <div className="flex flex-col items-center">
-                <StatsCards currentSection={currentSection} />
-              </div>
-              
-              {/* Auth Buttons positioned under stats cards */}
-              <div className="flex flex-col items-center mt-8">
-                <AuthButtons 
-                  currentSection={currentSection}
-                  onCreateAccountClick={handleCreateAccountClick}
-                  onLoginClick={handleLoginClick}
-                />
-              </div>
+            {/* Right Side */}
+            <div className="w-1/2 flex flex-col items-end justify-center pr-16 space-y-12">
+              <StatsCards currentSection={currentSection} />
+              <AuthButtons 
+                currentSection={currentSection}
+                onCreateAccountClick={handleCreateAccountClick}
+                onLoginClick={handleLoginClick}
+              />
             </div>
           </div>
 
-          {/* Feedback carousel at bottom - only visible in section 3 */}
-          {currentSection === 2 && <FeedbackCarousel currentSection={currentSection} />}
+          {/* Feedback section at bottom */}
+          <div className="h-screen">
+            <FeedbackCarousel currentSection={currentSection} />
+          </div>
         </div>
       </motion.div>
 

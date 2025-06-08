@@ -91,10 +91,34 @@
   backdrop-filter: blur(10px);
 }
 
-/* Much slower scroll behavior */
+/* Section locking scroll behavior */
 .horizontal-scroll-container {
   scroll-behavior: smooth;
-  transition: transform 2.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: transform 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Section 3 vertical scrolling */
+.section-3-container {
+  height: 200vh;
+  transition: transform 1.5s ease-in-out;
+}
+
+/* Home page specific button styles */
+.home-page-action-button {
+  background-color: #135d66 !important;
+  border: 2px solid #ddf9f2 !important;
+  color: #e3fef7 !important;
+  border-radius: 1rem !important;
+  padding: 2rem !important;
+  font-size: 1.5rem !important;
+  font-weight: 500 !important;
+  transition: all 0.3s ease !important;
+  width: 24rem !important;
+}
+
+.home-page-action-button:hover {
+  background-color: #77b0aa !important;
+  color: #003c43 !important;
 }
 
 /* Responsive adjustments */
@@ -138,7 +162,8 @@
   .feature-card,
   .action-button,
   .stats-card,
-  .horizontal-scroll-container {
+  .horizontal-scroll-container,
+  .section-3-container {
     transition: none !important;
     animation: none !important;
   }

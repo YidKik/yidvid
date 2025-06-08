@@ -17,7 +17,7 @@ export const ActionButtons = ({ currentSection, onRequestChannelClick }: ActionB
       animate={currentSection >= 2 ? { opacity: 1, x: 0 } : {}}
       transition={{ duration: 0.6, delay: 0.2 }}
     >
-      {/* Contact Button */}
+      {/* Contact Button - Custom design for home page */}
       <div className="w-96 py-8 bg-[#135d66] border-2 border-[#ddf9f2] text-[#e3fef7] rounded-2xl text-2xl font-medium hover:bg-[#77b0aa] transition-colors flex items-center justify-center cursor-pointer">
         <ContactDialog />
         <span className="ml-2">Contact</span>
@@ -28,7 +28,7 @@ export const ActionButtons = ({ currentSection, onRequestChannelClick }: ActionB
         Send Feedback
       </button>
 
-      {/* Request Channel Button */}
+      {/* Request Channel Button - Custom design for home page */}
       <div className="w-96 py-8 bg-[#135d66] border-2 border-[#ddf9f2] text-[#e3fef7] rounded-2xl text-2xl font-medium hover:bg-[#77b0aa] transition-colors flex items-center justify-center cursor-pointer">
         <RequestChannelDialog />
         <span className="ml-2">Request Channel</span>

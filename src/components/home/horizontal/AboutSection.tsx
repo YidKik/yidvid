@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { motion } from 'framer-motion';
 
 interface AboutSectionProps {
   currentSection: number;
@@ -11,13 +10,7 @@ export const AboutSection = ({ currentSection }: AboutSectionProps) => {
   if (currentSection !== 1) return null;
 
   return (
-    <motion.div 
-      className="bg-[#135d66] fixed bottom-0 left-0 right-0 h-1/2 p-12 flex flex-col justify-center"
-      initial={{ opacity: 0, y: 100 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 100 }}
-      transition={{ duration: 0.8, delay: 0.3 }}
-    >
+    <div className="fixed bottom-0 left-0 right-0 h-1/2 bg-[#135d66] p-12 flex flex-col justify-center">
       <h2 className="text-[#e3fef7] text-6xl font-bold mb-8 text-center opacity-50">About</h2>
       
       <div className="space-y-6 text-[#e3fef7] max-w-6xl mx-auto">
@@ -33,6 +26,6 @@ export const AboutSection = ({ currentSection }: AboutSectionProps) => {
           At YidVid, we take pride in our attention to detail and commitment to providing top-quality entertainment options for our users. We strive to maintain the highest level of standards in everything we do, so you can trust that you are getting nothing but the best when you visit our site. Thank you for choosing YidVid as your go-to source for kosher entertainment content.
         </p>
       </div>
-    </motion.div>
+    </div>
   );
 };
