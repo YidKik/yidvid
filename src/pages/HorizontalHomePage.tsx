@@ -20,7 +20,6 @@ const HorizontalHomePage = () => {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
   const [currentSection, setCurrentSection] = useState(0);
-  const [verticalScrollPosition, setVerticalScrollPosition] = useState(0);
   
   const controls = useAnimation();
 
@@ -39,7 +38,7 @@ const HorizontalHomePage = () => {
     };
   }, [isMobile]);
 
-  // Handle scroll events with section locking and vertical scrolling in section 3
+  // Handle scroll events with section locking - horizontal only
   useEffect(() => {
     if (isMobile) return;
 
@@ -54,55 +53,20 @@ const HorizontalHomePage = () => {
       
       const delta = e.deltaY;
       
-      // Section 3 has vertical scrolling capability
-      if (currentSection === 2) {
-        if (delta > 0) {
-          // Scrolling down in section 3
-          if (verticalScrollPosition < 100) {
-            setVerticalScrollPosition(prev => Math.min(prev + 25, 100));
-            isScrolling = true;
-            scrollTimeout = setTimeout(() => {
-              isScrolling = false;
-            }, 800);
-            return;
-          }
-        } else {
-          // Scrolling up in section 3
-          if (verticalScrollPosition > 0) {
-            setVerticalScrollPosition(prev => Math.max(prev - 25, 0));
-            isScrolling = true;
-            scrollTimeout = setTimeout(() => {
-              isScrolling = false;
-            }, 800);
-            return;
-          } else {
-            // At top of section 3, go back to section 2
-            setCurrentSection(1);
-            isScrolling = true;
-            scrollTimeout = setTimeout(() => {
-              isScrolling = false;
-            }, 2000);
-            return;
-          }
-        }
-      }
-      
       // Horizontal section navigation with threshold
       if (Math.abs(delta) > 50) {
         isScrolling = true;
         
         if (delta > 0 && currentSection < 2) {
           setCurrentSection(prev => prev + 1);
-          setVerticalScrollPosition(0); // Reset vertical position
         } else if (delta < 0 && currentSection > 0) {
           setCurrentSection(prev => prev - 1);
-          setVerticalScrollPosition(0); // Reset vertical position
         }
         
-        // Much longer timeout for section transitions
+        // Long timeout for section transitions to make scrolling slower
         scrollTimeout = setTimeout(() => {
           isScrolling = false;
-        }, 2000);
+        }, 2500);
       }
     };
 
@@ -112,7 +76,7 @@ const HorizontalHomePage = () => {
       window.removeEventListener('wheel', handleScroll);
       if (scrollTimeout) clearTimeout(scrollTimeout);
     };
-  }, [currentSection, verticalScrollPosition, isMobile]);
+  }, [currentSection, isMobile]);
 
   // Handle keyboard navigation (desktop only)
   useEffect(() => {
@@ -121,10 +85,8 @@ const HorizontalHomePage = () => {
     const handleKeyPress = (e: KeyboardEvent) => {
       if (e.key === 'ArrowRight' && currentSection < 2) {
         setCurrentSection(prev => prev + 1);
-        setVerticalScrollPosition(0);
       } else if (e.key === 'ArrowLeft' && currentSection > 0) {
         setCurrentSection(prev => prev - 1);
-        setVerticalScrollPosition(0);
       }
     };
 
@@ -189,17 +151,14 @@ const HorizontalHomePage = () => {
     );
   }
 
-  // Desktop view - horizontal scrolling with vertical in section 3
+  // Desktop view - horizontal scrolling only
   return (
     <div className="fixed inset-0 bg-[#003c43] overflow-hidden">
       {/* Horizontal container */}
       <motion.div 
         className="flex h-full"
-        animate={{ 
-          x: `${-currentSection * 100}vw`,
-          y: currentSection === 2 ? `${-verticalScrollPosition}vh` : '0vh'
-        }}
-        transition={{ duration: 1.5, ease: "easeInOut" }}
+        animate={{ x: `${-currentSection * 100}vw` }}
+        transition={{ duration: 2, ease: "easeInOut" }}
       >
         {/* Section 1: Hero */}
         <HeroSection />
@@ -211,7 +170,7 @@ const HorizontalHomePage = () => {
         </div>
 
         {/* Section 3: Stats & Actions */}
-        <div className="w-screen flex-shrink-0 bg-[#003c43] relative" style={{ height: '200vh' }}>
+        <div className="w-screen h-screen flex-shrink-0 bg-[#003c43] relative overflow-hidden">
           {/* Main content area */}
           <div className="h-screen p-8 flex relative">
             {/* Left Side */}
@@ -243,8 +202,8 @@ const HorizontalHomePage = () => {
             </div>
           </div>
 
-          {/* Feedback section at bottom */}
-          <div className="h-screen">
+          {/* Feedback section at bottom - always visible in section 3 */}
+          <div className="absolute bottom-0 left-0 right-0 h-1/3">
             <FeedbackCarousel currentSection={currentSection} />
           </div>
         </div>

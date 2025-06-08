@@ -94,13 +94,7 @@
 /* Section locking scroll behavior */
 .horizontal-scroll-container {
   scroll-behavior: smooth;
-  transition: transform 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-/* Section 3 vertical scrolling */
-.section-3-container {
-  height: 200vh;
-  transition: transform 1.5s ease-in-out;
+  transition: transform 2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 /* Home page specific button styles */
@@ -162,8 +156,7 @@
   .feature-card,
   .action-button,
   .stats-card,
-  .horizontal-scroll-container,
-  .section-3-container {
+  .horizontal-scroll-container {
     transition: none !important;
     animation: none !important;
   }
