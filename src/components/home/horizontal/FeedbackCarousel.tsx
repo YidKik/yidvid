@@ -21,22 +21,22 @@ export const FeedbackCarousel = ({ currentSection }: FeedbackCarouselProps) => {
 
   return (
     <motion.div 
-      className="fixed bottom-0 left-0 right-0 h-1/2 overflow-hidden flex items-center"
+      className="fixed bottom-0 left-0 right-0 h-1/2 overflow-hidden flex items-center bg-transparent"
       initial={{ opacity: 0 }}
       animate={currentSection >= 2 ? { opacity: 1 } : {}}
       transition={{ duration: 0.6, delay: 0.8 }}
     >
       <motion.div 
-        className="flex gap-8"
-        animate={{ x: [0, -600, -1200, 0] }}
-        transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+        className="flex gap-12"
+        animate={{ x: [0, -800, -1600, 0] }}
+        transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
       >
-        {[...feedbackData, ...feedbackData, ...feedbackData].map((feedback, index) => (
+        {[...feedbackData, ...feedbackData, ...feedbackData, ...feedbackData].map((feedback, index) => (
           <div
             key={index}
-            className="bg-transparent border-2 border-[#77b0aa] rounded-2xl p-8 w-96 h-40 flex-shrink-0 flex items-center"
+            className="bg-transparent border-2 border-[#77b0aa] rounded-2xl p-10 w-[500px] h-48 flex-shrink-0 flex items-center"
           >
-            <p className="text-[#e3fef7] text-sm leading-relaxed">{feedback.text}</p>
+            <p className="text-[#e3fef7] text-lg leading-relaxed">{feedback.text}</p>
           </div>
         ))}
       </motion.div>

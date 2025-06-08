@@ -7,12 +7,16 @@ interface AboutSectionProps {
 }
 
 export const AboutSection = ({ currentSection }: AboutSectionProps) => {
+  // Only show in section 2 (index 1)
+  if (currentSection !== 1) return null;
+
   return (
     <motion.div 
       className="bg-[#135d66] fixed bottom-0 left-0 right-0 h-1/2 p-12 flex flex-col justify-center"
       initial={{ opacity: 0, y: 100 }}
-      animate={currentSection >= 1 ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.8, delay: 0.8 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 100 }}
+      transition={{ duration: 0.8, delay: 0.3 }}
     >
       <h2 className="text-[#e3fef7] text-6xl font-bold mb-8 text-center opacity-50">About</h2>
       

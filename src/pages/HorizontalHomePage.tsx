@@ -38,25 +38,44 @@ const HorizontalHomePage = () => {
     };
   }, [isMobile]);
 
-  // Handle scroll events for section detection (desktop only)
+  // Handle scroll events for section detection (desktop only) - Made much slower
   useEffect(() => {
     if (isMobile) return;
 
+    let isScrolling = false;
+    let scrollTimeout: NodeJS.Timeout;
+
     const handleScroll = (e: WheelEvent) => {
       e.preventDefault();
+      
+      // Prevent rapid scrolling
+      if (isScrolling) return;
+      
       const delta = e.deltaY || e.deltaX;
       
-      if (Math.abs(delta) > 30) { // Reduced threshold for slower scrolling
+      // Increased threshold for much slower scrolling
+      if (Math.abs(delta) > 100) {
+        isScrolling = true;
+        
         if (delta > 0 && currentSection < 2) {
           setCurrentSection(prev => prev + 1);
         } else if (delta < 0 && currentSection > 0) {
           setCurrentSection(prev => prev - 1);
         }
+        
+        // Much longer timeout for slower scrolling
+        scrollTimeout = setTimeout(() => {
+          isScrolling = false;
+        }, 1500);
       }
     };
 
     window.addEventListener('wheel', handleScroll, { passive: false });
-    return () => window.removeEventListener('wheel', handleScroll);
+    
+    return () => {
+      window.removeEventListener('wheel', handleScroll);
+      if (scrollTimeout) clearTimeout(scrollTimeout);
+    };
   }, [currentSection, isMobile]);
 
   // Handle keyboard navigation (desktop only)
@@ -140,7 +159,7 @@ const HorizontalHomePage = () => {
       <motion.div 
         className="flex h-full"
         animate={{ x: `${-currentSection * 100}vw` }}
-        transition={{ duration: 1.2, ease: "easeInOut" }} // Slower, smoother transition
+        transition={{ duration: 2.0, ease: "easeInOut" }} // Much slower transition
       >
         {/* Section 1: Hero */}
         <HeroSection />
@@ -172,18 +191,28 @@ const HorizontalHomePage = () => {
             </motion.p>
           </div>
 
-          {/* Right Side */}
-          <div className="w-1/2 flex flex-col items-center pt-16 pr-16">
-            <StatsCards currentSection={currentSection} />
-            <AuthButtons 
-              currentSection={currentSection}
-              onCreateAccountClick={handleCreateAccountClick}
-              onLoginClick={handleLoginClick}
-            />
+          {/* Right Side - Moved more to the right with better spacing */}
+          <div className="w-1/2 flex flex-col items-center justify-start pt-12 pr-8">
+            {/* Container for stats and auth buttons */}
+            <div className="flex flex-col items-center space-y-8">
+              {/* Stats Cards Container */}
+              <div className="flex flex-col items-center">
+                <StatsCards currentSection={currentSection} />
+              </div>
+              
+              {/* Auth Buttons positioned under stats cards */}
+              <div className="flex flex-col items-center mt-8">
+                <AuthButtons 
+                  currentSection={currentSection}
+                  onCreateAccountClick={handleCreateAccountClick}
+                  onLoginClick={handleLoginClick}
+                />
+              </div>
+            </div>
           </div>
 
-          {/* Feedback carousel at bottom */}
-          <FeedbackCarousel currentSection={currentSection} />
+          {/* Feedback carousel at bottom - only visible in section 3 */}
+          {currentSection === 2 && <FeedbackCarousel currentSection={currentSection} />}
         </div>
       </motion.div>
 
