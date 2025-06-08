@@ -38,7 +38,7 @@ const HorizontalHomePage = () => {
     };
   }, [isMobile]);
 
-  // Handle scroll events with section locking - horizontal only
+  // Handle scroll events with proper section locking - desktop only
   useEffect(() => {
     if (isMobile) return;
 
@@ -48,25 +48,26 @@ const HorizontalHomePage = () => {
     const handleScroll = (e: WheelEvent) => {
       e.preventDefault();
       
-      // Prevent rapid scrolling
+      // Prevent any scrolling while transitioning
       if (isScrolling) return;
       
       const delta = e.deltaY;
       
-      // Horizontal section navigation with threshold
-      if (Math.abs(delta) > 50) {
+      // Lower threshold for more sensitive detection, but ensure it's a deliberate scroll
+      if (Math.abs(delta) > 20) {
         isScrolling = true;
         
+        // Only move one section per scroll
         if (delta > 0 && currentSection < 2) {
           setCurrentSection(prev => prev + 1);
         } else if (delta < 0 && currentSection > 0) {
           setCurrentSection(prev => prev - 1);
         }
         
-        // Long timeout for section transitions to make scrolling slower
+        // Extended timeout to ensure proper section locking
         scrollTimeout = setTimeout(() => {
           isScrolling = false;
-        }, 2500);
+        }, 3000); // 3 second lock to prevent rapid scrolling
       }
     };
 
@@ -151,14 +152,14 @@ const HorizontalHomePage = () => {
     );
   }
 
-  // Desktop view - horizontal scrolling only
+  // Desktop view - horizontal scrolling only with proper section locking
   return (
     <div className="fixed inset-0 bg-[#003c43] overflow-hidden">
       {/* Horizontal container */}
       <motion.div 
         className="flex h-full"
         animate={{ x: `${-currentSection * 100}vw` }}
-        transition={{ duration: 2, ease: "easeInOut" }}
+        transition={{ duration: 2.5, ease: "easeInOut" }} // Slower transition
       >
         {/* Section 1: Hero */}
         <HeroSection />

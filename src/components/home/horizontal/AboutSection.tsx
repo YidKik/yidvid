@@ -10,7 +10,7 @@ export const AboutSection = ({ currentSection }: AboutSectionProps) => {
   if (currentSection !== 1) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 h-1/2 bg-[#135d66] p-12 flex flex-col justify-center">
+    <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-[#135d66] p-12 flex flex-col justify-center">
       <h2 className="text-[#e3fef7] text-6xl font-bold mb-8 text-center opacity-50">About</h2>
       
       <div className="space-y-6 text-[#e3fef7] max-w-6xl mx-auto">
