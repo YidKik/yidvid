@@ -8,7 +8,7 @@ import { ActionButtons } from '@/components/home/horizontal/ActionButtons';
 import { StatsCards } from '@/components/home/horizontal/StatsCards';
 import { AuthButtons } from '@/components/home/horizontal/AuthButtons';
 import { FeedbackCarousel } from '@/components/home/horizontal/FeedbackCarousel';
-import { NavigationDots } from '@/components/home/horizontal/NavigationDots';
+import { NavigationDotsWithIcons } from '@/components/home/horizontal/NavigationDotsWithIcons';
 import { TemporaryDisclaimer } from '@/components/home/TemporaryDisclaimer';
 
 interface DesktopHorizontalLayoutProps {
@@ -86,9 +86,10 @@ export const DesktopHorizontalLayout = ({
         </div>
       </motion.div>
 
-      <NavigationDots 
+      <NavigationDotsWithIcons 
         currentSection={currentSection}
         onSectionChange={setCurrentSection}
+        onLoginClick={onLoginClick}
       />
     </div>
   );
