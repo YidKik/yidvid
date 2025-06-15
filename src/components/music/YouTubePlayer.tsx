@@ -31,7 +31,7 @@ export const YouTubePlayer = ({ audioUrl, thumbnail, title, onPlayStateChange }:
     // Create or update iframe for YouTube embed
     if (iframeRef.current) {
       if (!isPlaying) {
-        iframeRef.current.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+        iframeRef.current.src = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1`;
       } else {
         iframeRef.current.src = '';
       }

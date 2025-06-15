@@ -42,6 +42,15 @@ export const Footer = () => {
         <p className="text-center text-[#ddf9f2] text-lg mt-8">
           © {new Date().getFullYear()} YidVid. All Rights Reserved.
         </p>
+        <div className="text-center text-[#ddf9f2] text-sm mt-6 max-w-4xl mx-auto">
+          <p className="font-semibold mb-2">Our Mission: Safe & Kosher Content</p>
+          <p>
+            YidVid is dedicated to providing a safe, manually-curated platform for kosher video content. We are actively working to ensure our site is compatible with all major content filters.
+          </p>
+          <p className="mt-2">
+            <strong>For Filter Administrators:</strong> This site uses `youtube-nocookie.com` for video embeds to respect user privacy and improve filter compatibility. Please contact us for whitelisting or any technical questions.
+          </p>
+        </div>
       </div>
       {/* Hidden dialogs that are triggered by the buttons */}
       <ContactDialog open={isContactOpen} onOpenChange={setIsContactOpen} />

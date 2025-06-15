@@ -50,8 +50,8 @@ export const VideoPlayer = ({ videoId }: VideoPlayerProps) => {
   // Create a function to set up multiple URL formats
   const setupVideoUrls = () => {
     try {
-      // Primary embed URL with standard parameters
-      const baseUrl = `https://www.youtube.com/embed/${videoId}`;
+      // Primary embed URL with standard parameters, using youtube-nocookie.com for better filter compatibility
+      const baseUrl = `https://www.youtube-nocookie.com/embed/${videoId}`;
       const primaryParams = new URLSearchParams({
         autoplay: "1",
         rel: "0",
