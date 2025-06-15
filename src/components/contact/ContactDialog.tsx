@@ -1,4 +1,4 @@
-import { useState } from "react";
+
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import {
@@ -7,7 +7,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Form } from "@/components/ui/form";
 import { MessageSquare, X } from "lucide-react";
@@ -18,8 +17,12 @@ import { ContactFormFields } from "./ContactFormFields";
 import { FormValues, formSchema } from "./types";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-export const ContactDialog = () => {
-  const [isOpen, setIsOpen] = useState(false);
+interface ContactDialogProps {
+  open: boolean;
+  onOpenChange: (isOpen: boolean) => void;
+}
+
+export const ContactDialog = ({ open, onOpenChange }: ContactDialogProps) => {
   const { isMobile } = useIsMobile();
   
   const form = useForm<FormValues>({
@@ -47,7 +50,7 @@ export const ContactDialog = () => {
 
       if (error) throw error;
 
-      setIsOpen(false);
+      onOpenChange(false);
       form.reset();
     } catch (error) {
       console.error("Error submitting contact request:", error);
@@ -55,17 +58,7 @@ export const ContactDialog = () => {
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        <Button 
-          variant="ghost" 
-          size="icon"
-          data-trigger="contact-dialog"
-          className={isMobile ? 'bg-[#222222] hover:bg-[#333333] text-white h-7 w-7 rounded-md' : 'h-10 w-10'}
-        >
-          <MessageSquare className={isMobile ? 'h-3.5 w-3.5' : 'h-5 w-5'} />
-        </Button>
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className={`${isMobile ? 'w-[calc(100%-2rem)]' : 'w-[550px]'} p-0 bg-[#333333] text-white border-gray-600 rounded-lg`}>
         <DialogHeader className="p-4 border-b border-gray-600 relative">
           <DialogTitle className="text-base md:text-lg text-white">Contact Us</DialogTitle>
@@ -73,7 +66,7 @@ export const ContactDialog = () => {
             How can we help you today? Choose a category below and send us your message.
           </DialogDescription>
           <button 
-            onClick={() => setIsOpen(false)}
+            onClick={() => onOpenChange(false)}
             className="absolute right-4 top-4 text-[#ea384c]"
           >
             <X className="h-5 w-5" />
