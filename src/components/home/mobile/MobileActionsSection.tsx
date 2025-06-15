@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from "framer-motion";
 import { fadeInVariants } from '@/components/home/mobile/animation-utils';
 import { Button } from "@/components/ui/button";
@@ -7,6 +7,9 @@ import { ContactDialog } from '@/components/contact/ContactDialog';
 import { RequestChannelDialog } from '@/components/youtube/RequestChannelDialog';
 
 export const MobileActionsSection = () => {
+  const [isContactOpen, setIsContactOpen] = useState(false);
+  const [isRequestChannelOpen, setIsRequestChannelOpen] = useState(false);
+
   return (
     <motion.div 
       initial="hidden"
@@ -17,34 +20,27 @@ export const MobileActionsSection = () => {
     >
       <Button 
         className="w-full py-4 text-base text-[#e3fef7] border border-[#ddf9f2] hover:bg-[#135d66]/90 rounded-full"
+        onClick={() => setIsContactOpen(true)}
       >
         Send feedback
       </Button>
       
       <Button 
         className="w-full py-4 text-base text-[#e3fef7] border border-[#ddf9f2] hover:bg-[#135d66]/90 rounded-full"
-        onClick={() => {
-          const element = document.querySelector('[data-trigger="contact-dialog"]') as HTMLButtonElement;
-          if (element) element.click();
-        }}
+        onClick={() => setIsContactOpen(true)}
       >
         Contact us
       </Button>
       
       <Button 
         className="w-full py-4 text-base text-[#e3fef7] border border-[#ddf9f2] hover:bg-[#135d66]/90 rounded-full"
-        onClick={() => {
-          const element = document.querySelector('[data-trigger="request-channel-dialog"]') as HTMLButtonElement;
-          if (element) element.click();
-        }}
+        onClick={() => setIsRequestChannelOpen(true)}
       >
         Request channel
       </Button>
       
-      <div className="hidden">
-        <ContactDialog />
-        <RequestChannelDialog />
-      </div>
+      <ContactDialog open={isContactOpen} onOpenChange={setIsContactOpen} />
+      <RequestChannelDialog open={isRequestChannelOpen} onOpenChange={setIsRequestChannelOpen} />
     </motion.div>
   );
 };

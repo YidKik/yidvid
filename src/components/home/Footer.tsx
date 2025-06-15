@@ -1,10 +1,13 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ContactDialog } from '@/components/contact/ContactDialog';
 import { RequestChannelDialog } from '@/components/youtube/RequestChannelDialog';
 
 export const Footer = () => {
+  const [isContactOpen, setIsContactOpen] = useState(false);
+  const [isRequestChannelOpen, setIsRequestChannelOpen] = useState(false);
+
   return (
     <motion.footer 
       id="contact-section"
@@ -16,26 +19,21 @@ export const Footer = () => {
       <div className="container mx-auto px-6">
         <div className="flex justify-center space-x-10 mb-12">
           <button
-            onClick={() => {
-              const element = document.querySelector('[data-trigger="contact-dialog"]') as HTMLButtonElement;
-              if (element) element.click();
-            }}
+            onClick={() => setIsContactOpen(true)}
             className="px-14 py-5 rounded-3xl text-[#ddf9f2] text-xl transition-all duration-300"
           >
             Contact us
           </button>
           
           <button
-            onClick={() => {
-              const element = document.querySelector('[data-trigger="request-channel-dialog"]') as HTMLButtonElement;
-              if (element) element.click();
-            }}
+            onClick={() => setIsRequestChannelOpen(true)}
             className="px-14 py-5 rounded-3xl text-[#ddf9f2] text-xl transition-all duration-300"
           >
             Request channel
           </button>
           
           <button
+            onClick={() => setIsContactOpen(true)}
             className="px-14 py-5 rounded-3xl text-[#ddf9f2] text-xl transition-all duration-300"
           >
             Send feedback
@@ -46,10 +44,8 @@ export const Footer = () => {
         </p>
       </div>
       {/* Hidden dialogs that are triggered by the buttons */}
-      <div className="hidden">
-        <ContactDialog />
-        <RequestChannelDialog />
-      </div>
+      <ContactDialog open={isContactOpen} onOpenChange={setIsContactOpen} />
+      <RequestChannelDialog open={isRequestChannelOpen} onOpenChange={setIsRequestChannelOpen} />
     </motion.footer>
   );
 };

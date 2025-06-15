@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { fadeInVariants } from '@/components/home/mobile/animation-utils';
@@ -7,6 +7,9 @@ import { ContactDialog } from '@/components/contact/ContactDialog';
 import { RequestChannelDialog } from '@/components/youtube/RequestChannelDialog';
 
 export const MobileContactSection = () => {
+  const [isContactOpen, setIsContactOpen] = useState(false);
+  const [isRequestChannelOpen, setIsRequestChannelOpen] = useState(false);
+
   return (
     <div id="contact-section" className="py-12">
       <motion.h2
@@ -29,6 +32,7 @@ export const MobileContactSection = () => {
         <Button 
           variant="default" 
           className="w-full py-4 text-base bg-[#135d66] text-[#e3fef7] border border-[#ddf9f2] hover:bg-[#135d66]/90 rounded-full"
+          onClick={() => setIsContactOpen(true)}
         >
           Send feedback
         </Button>
@@ -36,10 +40,7 @@ export const MobileContactSection = () => {
         <Button 
           variant="default" 
           className="w-full py-4 text-base bg-[#135d66] text-[#e3fef7] border border-[#ddf9f2] hover:bg-[#135d66]/90 rounded-full"
-          onClick={() => {
-            const element = document.querySelector('[data-trigger="contact-dialog"]') as HTMLButtonElement;
-            if (element) element.click();
-          }}
+          onClick={() => setIsContactOpen(true)}
         >
           Contact
         </Button>
@@ -47,20 +48,15 @@ export const MobileContactSection = () => {
         <Button 
           variant="default" 
           className="w-full py-4 text-base bg-[#135d66] text-[#e3fef7] border border-[#ddf9f2] hover:bg-[#135d66]/90 rounded-full"
-          onClick={() => {
-            const element = document.querySelector('[data-trigger="request-channel-dialog"]') as HTMLButtonElement;
-            if (element) element.click();
-          }}
+          onClick={() => setIsRequestChannelOpen(true)}
         >
           Request channel
         </Button>
       </motion.div>
       
       {/* Hidden dialogs that are triggered by the buttons */}
-      <div className="hidden">
-        <ContactDialog />
-        <RequestChannelDialog />
-      </div>
+      <ContactDialog open={isContactOpen} onOpenChange={setIsContactOpen} />
+      <RequestChannelDialog open={isRequestChannelOpen} onOpenChange={setIsRequestChannelOpen} />
     </div>
   );
 };
