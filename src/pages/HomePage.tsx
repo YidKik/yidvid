@@ -10,6 +10,7 @@ import { FeaturesSection } from '@/components/home/FeaturesSection';
 import { AnimatedGridSection } from '@/components/home/AnimatedGridSection';
 import { StatsSection } from '@/components/home/StatsSection';
 import { FeedbackSection } from '@/components/home/FeedbackSection';
+import { Footer } from '@/components/home/Footer';
 import { useHomeAnimations } from '@/hooks/useHomeAnimations';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { MobileHomeSection } from '@/components/home/MobileHomeSection';
@@ -87,6 +88,7 @@ const HomePage = () => {
         <AnimatedGridSection channelItems={extendedChannelItems} />
         <StatsSection />
         <FeedbackSection />
+        <Footer />
       </div>
     </motion.div>
   );
