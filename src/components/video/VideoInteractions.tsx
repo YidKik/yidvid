@@ -1,4 +1,3 @@
-
 import { ThumbsUp, UserPlus, Check, Loader2, Share } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
@@ -66,9 +65,6 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
     // Trigger click animation
     setIsClickAnimating(true);
     setTimeout(() => setIsClickAnimating(false), 2000);
-    
-    // Don't show floating animation anymore
-    // setShowAnimation(true);
     
     // Allow all users to like videos (no authentication required)
     setIsLiked(true);
@@ -162,10 +158,10 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
           variant="outline"
           onClick={handleLike}
           disabled={false} // Never disable the like button
-          className={`group relative rounded-full p-2 md:p-3 transition-all duration-300 active:scale-90 border-2 ${
+          className={`group relative rounded-full p-2 md:p-3 transition-all duration-300 active:scale-90 border ${
             isLiked 
               ? "bg-white border-red-500 hover:bg-gray-50" 
-              : "bg-white border-black hover:bg-gray-50 hover:border-red-500"
+              : "bg-white border-gray-300 hover:bg-gray-50 hover:border-red-500"
           } ${isClickAnimating ? 'like-click-animation' : ''}`}
         >
           <ThumbsUp 
@@ -176,7 +172,7 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
             }`}
           />
           <span className={`absolute -bottom-8 left-1/2 -translate-x-1/2 text-xs font-medium transition-opacity duration-200 ${
-            isLiked ? "opacity-100 text-red-500" : "opacity-0 group-hover:opacity-100"
+            isLiked ? "opacity-100 text-red-500" : "opacity-0 group-hover:opacity-100 group-hover:text-red-500"
           }`}>
             {isLiked ? "Liked" : "Like"}
           </span>
@@ -185,7 +181,7 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
         <Button
           variant="outline"
           onClick={handleShare}
-          className="group relative rounded-full p-2 md:p-3 transition-all duration-300 active:scale-90 border-2 bg-white border-black hover:bg-gray-50 hover:border-red-500"
+          className="group relative rounded-full p-2 md:p-3 transition-all duration-300 active:scale-90 border bg-white border-gray-300 hover:bg-gray-50 hover:border-red-500"
         >
           <Share 
             className="w-5 h-5 md:w-6 md:h-6 transition-all duration-300 stroke-2 text-gray-600 group-hover:text-red-500 group-hover:stroke-red-500 group-hover:scale-110"

@@ -60,11 +60,11 @@ export function ReportVideoDialog({ videoId }: ReportVideoDialogProps) {
         <Button 
           variant="outline" 
           size="sm" 
-          className="group relative rounded-full px-3 py-1.5 text-xs text-muted-foreground hover:bg-muted/50 hover:border-gray-300 transition-all duration-300"
+          className="group relative rounded-full px-3 py-1.5 text-xs text-muted-foreground border border-gray-300 hover:bg-gray-50 hover:border-red-500 transition-all duration-300"
         >
-          <Flag className="h-3.5 w-3.5 mr-1" />
-          Report
-          <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          <Flag className="h-3.5 w-3.5 mr-1 group-hover:text-red-500 transition-colors duration-300" />
+          <span className="group-hover:text-red-500 transition-colors duration-300">Report</span>
+          <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200 group-hover:text-red-500">
             Report this video
           </span>
         </Button>
