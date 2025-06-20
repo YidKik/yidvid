@@ -1,6 +1,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import { useParams, Link, useLocation } from "react-router-dom";
+import { Helmet } from "react-helmet";
 import { VideoPlayer } from "@/components/video/VideoPlayer";
 import { VideoInfo } from "@/components/video/VideoInfo";
 import { RelatedVideos } from "@/components/video/RelatedVideos";
@@ -54,37 +55,50 @@ const VideoDetails = () => {
     videoId
   );
 
+  // Set page title based on video data
+  const pageTitle = video?.title ? `${video.title} | YidVid` : "Loading Video | YidVid";
+
   if (isLoadingVideo) {
     return (
-      <div className="container mx-auto p-4 mt-16 flex justify-center">
-        <DelayedLoadingAnimation 
-          size={isMobile ? "medium" : "large"} 
-          color="primary" 
-          text="Loading video..." 
-          delayMs={3000}
-        />
-      </div>
+      <>
+        <Helmet>
+          <title>Loading Video | YidVid</title>
+        </Helmet>
+        <div className="container mx-auto p-4 mt-16 flex justify-center">
+          <DelayedLoadingAnimation 
+            size={isMobile ? "medium" : "large"} 
+            color="primary" 
+            text="Loading video..." 
+            delayMs={3000}
+          />
+        </div>
+      </>
     );
   }
 
   if (!video || error) {
     console.error("Video not found or error:", error, "for videoId:", videoId);
     return (
-      <div className="container mx-auto p-4 mt-16">
-        <BackButton />
-        <div className="p-8 text-center">
-          <div className="mx-auto mb-6 w-full max-w-md aspect-video flex items-center justify-center">
-            <VideoPlaceholder size="large" />
+      <>
+        <Helmet>
+          <title>Video Not Found | YidVid</title>
+        </Helmet>
+        <div className="container mx-auto p-4 mt-16">
+          <BackButton />
+          <div className="p-8 text-center">
+            <div className="mx-auto mb-6 w-full max-w-md aspect-video flex items-center justify-center">
+              <VideoPlaceholder size="large" />
+            </div>
+            <h2 className="text-xl font-semibold text-destructive">Video not found</h2>
+            <p className="mt-2 text-muted-foreground">
+              {error ? `Error: ${error.message}` : "The video you're looking for doesn't exist or has been removed."}
+            </p>
+            <Link to="/videos" className="mt-4 inline-block px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 transition-colors">
+              Return to videos
+            </Link>
           </div>
-          <h2 className="text-xl font-semibold text-destructive">Video not found</h2>
-          <p className="mt-2 text-muted-foreground">
-            {error ? `Error: ${error.message}` : "The video you're looking for doesn't exist or has been removed."}
-          </p>
-          <Link to="/videos" className="mt-4 inline-block px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 transition-colors">
-            Return to videos
-          </Link>
         </div>
-      </div>
+      </>
     );
   }
 
@@ -98,58 +112,68 @@ const VideoDetails = () => {
   });
 
   return (
-    <div className="w-full min-h-screen bg-white text-black">
-      <div className="container mx-auto p-4 pt-16">
-        <BackButton />
-        {isAuthenticated && <VideoHistory videoId={video?.id || ""} />}
-        
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2">
-            <div className="relative">
-              <VideoPlayer videoId={video?.video_id || ""} />
-            </div>
-            <div className="flex justify-between items-start mb-4">
-              <h1 className="text-base md:text-2xl font-bold text-black">{video?.title}</h1>
-              <ReportVideoDialog videoId={video?.id || ""} />
-            </div>
-            
-            <VideoInteractions videoId={video?.id || ""} />
-            
-            {isAuthenticated && <VideoComments videoId={video?.id || ""} />}
-
-            <div className="mt-8 border-t pt-8">
-              <VideoInfo
-                title={video?.title || ""}
-                channelName={video?.channel_name || ""}
-                channelId={video?.channel_id || ""}
-                channelThumbnail={video?.youtube_channels?.thumbnail_url || ""}
-                views={video?.views || 0}
-                uploadedAt={video?.uploaded_at || ""}
-                description={video?.description || ""}
-              />
-            </div>
-          </div>
+    <>
+      <Helmet>
+        <title>{pageTitle}</title>
+        <meta name="description" content={video?.description || `Watch ${video?.title} on YidVid - Your source for Jewish content`} />
+        <meta property="og:title" content={video?.title || "Video"} />
+        <meta property="og:description" content={video?.description || `Watch ${video?.title} on YidVid`} />
+        <meta property="og:image" content={video?.thumbnail || "/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png"} />
+        <meta property="og:type" content="video.other" />
+      </Helmet>
+      <div className="w-full min-h-screen bg-white text-black">
+        <div className="container mx-auto p-4 pt-16">
+          <BackButton />
+          {isAuthenticated && <VideoHistory videoId={video?.id || ""} />}
           
-          <div className="lg:col-span-1">
-            {isLoadingRelated ? (
-              <div className="flex justify-center p-4">
-                <DelayedLoadingAnimation 
-                  size="small" 
-                  color="muted" 
-                  text="Loading related videos..." 
-                  delayMs={3000}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2">
+              <div className="relative">
+                <VideoPlayer videoId={video?.video_id || ""} />
+              </div>
+              <div className="flex justify-between items-start mb-4">
+                <h1 className="text-base md:text-2xl font-bold text-black">{video?.title}</h1>
+                <ReportVideoDialog videoId={video?.id || ""} />
+              </div>
+              
+              <VideoInteractions videoId={video?.id || ""} />
+              
+              {isAuthenticated && <VideoComments videoId={video?.id || ""} />}
+
+              <div className="mt-8 border-t pt-8">
+                <VideoInfo
+                  title={video?.title || ""}
+                  channelName={video?.channel_name || ""}
+                  channelId={video?.channel_id || ""}
+                  channelThumbnail={video?.youtube_channels?.thumbnail_url || ""}
+                  views={video?.views || 0}
+                  uploadedAt={video?.uploaded_at || ""}
+                  description={video?.description || ""}
                 />
               </div>
-            ) : (
-              <div>
-                <h2 className="text-xl font-semibold mb-4 text-black">More videos</h2>
-                <RelatedVideos videos={channelVideos} showHeading={false} />
-              </div>
-            )}
+            </div>
+            
+            <div className="lg:col-span-1">
+              {isLoadingRelated ? (
+                <div className="flex justify-center p-4">
+                  <DelayedLoadingAnimation 
+                    size="small" 
+                    color="muted" 
+                    text="Loading related videos..." 
+                    delayMs={3000}
+                  />
+                </div>
+              ) : (
+                <div>
+                  <h2 className="text-xl font-semibold mb-4 text-black">More videos</h2>
+                  <RelatedVideos videos={channelVideos} showHeading={false} />
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
