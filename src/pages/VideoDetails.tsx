@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useParams, Link, useLocation } from "react-router-dom";
 import { VideoPlayer } from "@/components/video/VideoPlayer";
 import { VideoInfo } from "@/components/video/VideoInfo";
@@ -24,15 +24,23 @@ const VideoDetails = () => {
   const { isMobile } = useIsMobile();
   const { isAuthenticated, session } = useAuth();
   const incrementView = useIncrementVideoView();
+  const viewIncrementedRef = useRef<string | null>(null);
 
+  // Single effect for logging and view increment
   useEffect(() => {
+    if (!videoId) return;
+    
     console.log("VideoDetails page route:", location.pathname);
     console.log("VideoDetails page received videoId:", videoId);
     console.log("User authentication status:", isAuthenticated ? "logged in" : "logged out");
-    if (isAuthenticated && session) {
-      console.log("User session exists:", !!session);
+    
+    // Only increment view once per video
+    if (viewIncrementedRef.current !== videoId) {
+      viewIncrementedRef.current = videoId;
+      console.log("Incrementing view for video:", videoId);
+      incrementView(videoId);
     }
-  }, [location.pathname, videoId, isAuthenticated, session]);
+  }, [videoId, location.pathname, isAuthenticated, incrementView]);
 
   if (!videoId) {
     toast.error("Video ID not provided");
@@ -45,15 +53,6 @@ const VideoDetails = () => {
     video?.channel_id || "", 
     videoId
   );
-
-  // Increment view count only once after we have the video data
-  useEffect(() => {
-    if (videoId && video?.id) {
-      const idToIncrement = video?.id || videoId;
-      console.log("Incrementing view for video:", idToIncrement);
-      incrementView(idToIncrement);
-    }
-  }, [video?.id, videoId, incrementView]);
 
   if (isLoadingVideo) {
     return (
@@ -97,12 +96,6 @@ const VideoDetails = () => {
     views: video.views,
     authStatus: isAuthenticated ? "logged in" : "logged out"
   });
-
-  console.log("Related videos:", channelVideos?.length || 0, "videos found");
-  
-  if (channelVideos?.length === 0 && !isLoadingRelated) {
-    console.log("No related videos found, channel ID:", video.channel_id);
-  }
 
   return (
     <div className="w-full min-h-screen bg-white text-black">
