@@ -67,8 +67,8 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
     setIsClickAnimating(true);
     setTimeout(() => setIsClickAnimating(false), 2000);
     
-    // Always show animation for better user feedback
-    setShowAnimation(true);
+    // Don't show floating animation anymore
+    // setShowAnimation(true);
     
     // Allow all users to like videos (no authentication required)
     setIsLiked(true);
@@ -138,16 +138,16 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
           variant="outline"
           onClick={handleLike}
           disabled={false} // Never disable the like button
-          className={`group relative rounded-full p-2 md:p-3 transition-all duration-300 active:scale-90 border-2 border-black ${
+          className={`group relative rounded-full p-2 md:p-3 transition-all duration-300 active:scale-90 border-2 ${
             isLiked 
-              ? "bg-red-50 border-black hover:bg-red-100" 
-              : "hover:bg-gray-50 hover:border-red-500"
+              ? "bg-white border-red-500 hover:bg-gray-50" 
+              : "bg-white border-black hover:bg-gray-50 hover:border-red-500"
           } ${isClickAnimating ? 'like-click-animation' : ''}`}
         >
           <ThumbsUp 
             className={`w-5 h-5 md:w-6 md:h-6 transition-all duration-300 stroke-2 ${
               isLiked 
-                ? "text-red-500 fill-red-500 stroke-black" 
+                ? "text-red-500 fill-red-500 stroke-red-500" 
                 : "text-gray-600 group-hover:text-red-500 group-hover:stroke-red-500 group-hover:scale-110"
             }`}
           />
