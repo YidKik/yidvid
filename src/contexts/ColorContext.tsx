@@ -19,10 +19,10 @@ interface ColorContextType {
 }
 
 const DEFAULT_COLORS = {
-  backgroundColor: '#FFFFFF',
-  textColor: '#030303',
-  buttonColor: '#FF0000',
-  logoColor: '#030303',
+  backgroundColor: '#e3fef7',
+  textColor: '#003c43',
+  buttonColor: '#135d66',
+  logoColor: '#003c43',
 };
 
 const ColorContext = createContext<ColorContextType | null>(null);

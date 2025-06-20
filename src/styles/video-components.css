@@ -4,25 +4,25 @@
   font-family: 'Roboto', 'Arial', sans-serif;
   font-weight: 500;
   letter-spacing: 0;
-  color: #030303;
+  color: #003c43;
   line-height: 1.4;
 }
 
 /* Add hover effect for video title */
 .group:hover .video-title {
-  color: #ea384c;
+  color: #135d66;
 }
 
 .video-channel-name {
   font-family: 'Roboto', 'Arial', sans-serif;
   font-weight: 400;
-  color: #606060;
+  color: #77b0aa;
 }
 
 .video-meta-text {
   font-family: 'Roboto', 'Arial', sans-serif;
   font-weight: 400;
-  color: #606060;
+  color: #77b0aa;
 }
 
 /* Video thumbnail hover animation */
@@ -42,14 +42,14 @@
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
-    color: #030303;
+    color: #003c43;
   }
   
   .video-meta-text {
     font-size: 0.7rem;
     line-height: 1.1;
     margin-top: 0;
-    color: #606060;
+    color: #77b0aa;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -59,9 +59,9 @@
     margin-bottom: 0.75rem;
   }
   
-  /* Channel name should stay black for better readability */
+  /* Channel name should use brand colors */
   .video-channel-name {
-    color: #030303;
+    color: #77b0aa;
     font-weight: 500;
   }
 }
@@ -72,18 +72,18 @@
     font-size: 0.85rem;
     line-height: 1.2;
     margin-bottom: 0.15rem;
-    color: #030303;
+    color: #003c43;
   }
   
   .video-meta-text {
     font-size: 0.7rem;
-    color: #030303;
+    color: #77b0aa;
   }
   
-  /* Ensure view count and date are black on tablet */
+  /* Ensure view count and date use brand colors on tablet */
   .video-meta-text .text-gray-500,
   .video-meta-text .text-muted-foreground,
   .video-channel-name {
-    color: #030303 !important;
+    color: #77b0aa !important;
   }
 }

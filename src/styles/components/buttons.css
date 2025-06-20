@@ -1,5 +1,5 @@
 
-/* Global button styles - making sure buttons use primary red color */
+/* Global button styles - making sure buttons use primary brand color */
 button:not([class*="home-"]), 
 .button-custom:not([class*="home-"]),
 .btn:not([class*="home-"]),
@@ -35,7 +35,6 @@ button:not([class*="home-"]):hover,
 .home-page button:hover {
   background-color: #e3fef7 !important;
   color: #135d66 !important;
-  /* Explicitly ensure no red color on hover */
 }
 
 /* Homepage explore button - ensure it never turns red */

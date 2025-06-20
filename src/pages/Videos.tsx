@@ -1,3 +1,4 @@
+
 import { Header } from "@/components/Header";
 import Auth from "@/pages/Auth";
 import { useState, useEffect } from "react";
@@ -86,7 +87,7 @@ const MainContent = () => {
       </motion.main>
 
       <motion.div 
-        className="fixed bottom-4 right-4 p-3 bg-white/80 backdrop-blur-sm rounded-full shadow-lg"
+        className="fixed bottom-4 right-4 p-3 bg-card/80 backdrop-blur-sm rounded-full shadow-lg"
         initial={{ opacity: 0, scale: 0.5 }}
         animate={{ 
           opacity: hasScrolled ? 1 : 0,
@@ -139,7 +140,7 @@ const Videos = () => {
         <link rel="icon" href="/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png" />
       </Helmet>
       
-      <div className="min-h-screen w-full bg-gradient-to-b from-white to-gray-50 videos-page">
+      <div className="min-h-screen w-full bg-gradient-to-b from-card to-muted videos-page">
         <MainContent />
         <Auth isOpen={isAuthOpen} onOpenChange={setIsAuthOpen} />
       </div>
