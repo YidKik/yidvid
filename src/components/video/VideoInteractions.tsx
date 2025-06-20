@@ -17,6 +17,7 @@ type InteractionType = 'view' | 'like' | 'dislike' | 'save';
 export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
   const [isLiked, setIsLiked] = useState(false);
   const [showAnimation, setShowAnimation] = useState(false);
+  const [isClickAnimating, setIsClickAnimating] = useState(false);
   const [channelId, setChannelId] = useState<string | null>(null);
   const { session, isAuthenticated, isLoading: isSessionLoading } = useSessionManager();
   const userId = session?.user?.id;
@@ -61,6 +62,10 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
 
   const handleLike = async () => {
     console.log("Like button clicked!", { isAuthenticated, userId, videoId });
+    
+    // Trigger click animation
+    setIsClickAnimating(true);
+    setTimeout(() => setIsClickAnimating(false), 2000);
     
     // Always show animation for better user feedback
     setShowAnimation(true);
@@ -136,14 +141,14 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
           className={`group relative rounded-full p-2 md:p-3 transition-all duration-300 active:scale-90 border-2 border-black ${
             isLiked 
               ? "bg-red-50 border-black hover:bg-red-100" 
-              : "hover:bg-gray-50 hover:border-gray-400"
-          }`}
+              : "hover:bg-gray-50 hover:border-red-500"
+          } ${isClickAnimating ? 'like-click-animation' : ''}`}
         >
           <ThumbsUp 
             className={`w-5 h-5 md:w-6 md:h-6 transition-all duration-300 stroke-2 ${
               isLiked 
-                ? "text-red-500 fill-red-500 stroke-black animate-pulse" 
-                : "text-gray-600 group-hover:text-blue-500 group-hover:scale-110"
+                ? "text-red-500 fill-red-500 stroke-black" 
+                : "text-gray-600 group-hover:text-red-500 group-hover:stroke-red-500 group-hover:scale-110"
             }`}
           />
           <span className={`absolute -bottom-8 left-1/2 -translate-x-1/2 text-xs font-medium transition-opacity duration-200 ${
