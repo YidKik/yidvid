@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef } from 'react';
 import { useParams, Link, useLocation } from "react-router-dom";
 import { Helmet } from "react-helmet";
@@ -108,7 +107,8 @@ const VideoDetails = () => {
     title: video.title,
     channelId: video.channel_id,
     views: video.views,
-    authStatus: isAuthenticated ? "logged in" : "logged out"
+    authStatus: isAuthenticated ? "logged in" : "logged out",
+    relatedVideosCount: channelVideos.length
   });
 
   return (
@@ -154,21 +154,14 @@ const VideoDetails = () => {
             </div>
             
             <div className="lg:col-span-1">
-              {isLoadingRelated ? (
-                <div className="flex justify-center p-4">
-                  <DelayedLoadingAnimation 
-                    size="small" 
-                    color="muted" 
-                    text="Loading related videos..." 
-                    delayMs={3000}
-                  />
-                </div>
-              ) : (
-                <div>
-                  <h2 className="text-xl font-semibold mb-4 text-black">More from this channel</h2>
-                  <RelatedVideos videos={channelVideos} showHeading={false} />
-                </div>
-              )}
+              <div>
+                <h2 className="text-xl font-semibold mb-4 text-black">More from this channel</h2>
+                <RelatedVideos 
+                  videos={channelVideos} 
+                  showHeading={false} 
+                  isLoading={isLoadingRelated}
+                />
+              </div>
             </div>
           </div>
         </div>

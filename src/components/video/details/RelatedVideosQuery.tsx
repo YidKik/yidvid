@@ -14,7 +14,7 @@ export const useRelatedVideosQuery = (channelId: string, currentVideoId: string)
       console.log("Auth status:", isAuthenticated ? "logged in" : "logged out");
       
       try {
-        // Only try direct database query for videos from the same channel
+        // Try direct database query first using the video's UUID id
         let { data, error } = await supabase
           .from("youtube_videos")
           .select("*")
@@ -25,18 +25,17 @@ export const useRelatedVideosQuery = (channelId: string, currentVideoId: string)
           .limit(12);
 
         if (error) {
-          console.error("Error fetching related videos from database:", error);
-          throw error;
+          console.error("Error fetching related videos with UUID:", error);
         }
 
-        // If we found videos from the channel, return them
+        // If we found videos, return them
         if (data && data.length > 0) {
-          console.log(`Found ${data.length} related videos from the same channel`);
+          console.log(`Found ${data.length} related videos using UUID exclusion`);
           return data;
         }
         
-        // Second attempt: try with video_id instead of id for current video exclusion
-        console.log("No videos found with ID match, trying video_id exclusion");
+        // Try excluding by video_id instead of UUID
+        console.log("No videos found with UUID exclusion, trying video_id exclusion");
         const { data: videoIdData, error: videoIdError } = await supabase
           .from("youtube_videos")
           .select("*")
@@ -46,13 +45,44 @@ export const useRelatedVideosQuery = (channelId: string, currentVideoId: string)
           .order("uploaded_at", { ascending: false })
           .limit(12);
             
-        if (!videoIdError && videoIdData && videoIdData.length > 0) {
+        if (videoIdError) {
+          console.error("Error fetching related videos with video_id:", videoIdError);
+        }
+
+        if (videoIdData && videoIdData.length > 0) {
           console.log(`Found ${videoIdData.length} related videos using video_id exclusion`);
           return videoIdData;
         }
-        
-        // If still no videos from direct queries, try the edge function for this specific channel
-        console.log("No videos found from direct queries, trying edge function for channel");
+
+        // Try without any exclusion to see if there are ANY videos from this channel
+        console.log("No videos found with exclusions, checking if channel has any videos");
+        const { data: allChannelData, error: allChannelError } = await supabase
+          .from("youtube_videos")
+          .select("*")
+          .eq("channel_id", channelId)
+          .is("deleted_at", null)
+          .order("uploaded_at", { ascending: false })
+          .limit(12);
+
+        if (allChannelError) {
+          console.error("Error fetching all channel videos:", allChannelError);
+        }
+
+        if (allChannelData && allChannelData.length > 0) {
+          console.log(`Found ${allChannelData.length} total videos from channel, filtering current video`);
+          // Filter out current video manually
+          const filteredVideos = allChannelData.filter(video => 
+            video.id !== currentVideoId && video.video_id !== currentVideoId
+          );
+          
+          if (filteredVideos.length > 0) {
+            console.log(`Returning ${filteredVideos.length} filtered videos`);
+            return filteredVideos;
+          }
+        }
+
+        // If still no videos, try the edge function as final fallback
+        console.log("No direct database results, trying edge function");
         const edgeFunctionUrl = `https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/get-public-videos?channel_id=${channelId}`;
         console.log("Calling edge function:", edgeFunctionUrl);
         
@@ -66,7 +96,7 @@ export const useRelatedVideosQuery = (channelId: string, currentVideoId: string)
 
         if (!response.ok) {
           console.error(`Edge function error: ${response.statusText}`);
-          throw new Error(`Edge function error: ${response.statusText}`);
+          return [];
         }
         
         const result = await response.json();
@@ -80,17 +110,15 @@ export const useRelatedVideosQuery = (channelId: string, currentVideoId: string)
           );
           
           if (filteredVideos.length > 0) {
-            console.log(`Returning ${filteredVideos.length} filtered channel videos`);
+            console.log(`Returning ${filteredVideos.length} filtered edge function videos`);
             return filteredVideos;
           }
         }
 
-        // NO FALLBACK - only return channel videos or empty array
-        console.log("No videos found from this channel - returning empty array");
+        console.log("No videos found from this channel");
         return [];
       } catch (error) {
         console.error("Error in useRelatedVideosQuery:", error);
-        // No fallback - return empty array if there's an error
         return [];
       }
     },
