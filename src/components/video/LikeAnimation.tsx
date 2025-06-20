@@ -14,11 +14,11 @@ export const LikeAnimation = ({ isVisible, onComplete }: LikeAnimationProps) => 
   useEffect(() => {
     if (isVisible) {
       console.log("Animation triggered - generating icons");
-      // Create more icons for a more visible effect
-      const newIcons = Array.from({ length: 20 }, (_, i) => ({
+      // Create more icons for a more spectacular effect
+      const newIcons = Array.from({ length: 25 }, (_, i) => ({
         id: i,
-        x: Math.random() * 300 - 150, // More horizontal spread
-        delay: Math.random() * 0.5,
+        x: Math.random() * 400 - 200, // Even wider horizontal spread
+        delay: Math.random() * 0.7,
       }));
       setIcons(newIcons);
 
@@ -26,7 +26,7 @@ export const LikeAnimation = ({ isVisible, onComplete }: LikeAnimationProps) => 
         console.log("Animation complete");
         onComplete();
         setIcons([]);
-      }, 2000);
+      }, 2500);
 
       return () => clearTimeout(timer);
     }
@@ -43,23 +43,25 @@ export const LikeAnimation = ({ isVisible, onComplete }: LikeAnimationProps) => 
                 initial={{ 
                   opacity: 0,
                   scale: 0,
-                  y: 200, 
-                  x: icon.x
+                  y: 250, 
+                  x: icon.x,
+                  rotate: 0
                 }}
                 animate={{
-                  opacity: [0, 1, 0],
-                  scale: [0.5, 1.5, 0],
-                  y: [200, -100, -300],
-                  x: [icon.x, icon.x * 1.2],
+                  opacity: [0, 1, 1, 0],
+                  scale: [0.3, 1.8, 1.5, 0],
+                  y: [250, -50, -200, -400],
+                  x: [icon.x, icon.x * 1.3, icon.x * 1.1],
+                  rotate: [0, 360, 720]
                 }}
                 transition={{
-                  duration: 2,
+                  duration: 2.5,
                   delay: icon.delay,
                   ease: [0.4, 0, 0.2, 1],
                 }}
                 className="absolute"
               >
-                <ThumbsUp className="text-primary fill-primary w-8 h-8 md:w-10 md:h-10" />
+                <ThumbsUp className="text-red-500 fill-red-500 stroke-black stroke-2 w-8 h-8 md:w-12 md:h-12 drop-shadow-lg" />
               </motion.div>
             ))}
           </div>

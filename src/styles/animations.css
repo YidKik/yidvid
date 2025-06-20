@@ -140,33 +140,59 @@
   animation: trace 2s linear forwards;
 }
 
-/* Thumb up button click animation */
-@keyframes click-pulse {
+/* Enhanced thumb up button hover and click animations */
+@keyframes like-click-pulse {
   0% { transform: scale(1); }
-  50% { transform: scale(0.9); }
+  50% { transform: scale(0.85); }
   100% { transform: scale(1); }
 }
 
-.click-pulse {
-  animation: click-pulse 0.3s ease;
+@keyframes like-glow {
+  0% { 
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+  }
+  70% { 
+    box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+  }
+  100% { 
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  }
+}
+
+.like-click-pulse {
+  animation: like-click-pulse 0.3s ease, like-glow 0.6s ease;
 }
 
 /* Like animation floating thumbs */
 @keyframes float-up {
   0% { 
-    transform: translateY(0) scale(0.5);
+    transform: translateY(0) scale(0.5) rotate(0deg);
     opacity: 0;
   }
   25% { 
-    transform: translateY(-50px) scale(1.2);
+    transform: translateY(-50px) scale(1.2) rotate(90deg);
     opacity: 1;
   }
+  75% { 
+    transform: translateY(-150px) scale(1) rotate(270deg);
+    opacity: 0.8;
+  }
   100% { 
-    transform: translateY(-200px) scale(0.5);
+    transform: translateY(-250px) scale(0.3) rotate(360deg);
     opacity: 0;
   }
 }
 
 .float-up {
-  animation: float-up 2s ease-out forwards;
+  animation: float-up 2.5s ease-out forwards;
+}
+
+/* Hover effect for like button */
+@keyframes hover-bounce {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-2px) scale(1.05); }
+}
+
+.hover-bounce {
+  animation: hover-bounce 0.6s ease-in-out;
 }
