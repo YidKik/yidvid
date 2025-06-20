@@ -14,6 +14,8 @@ import Settings from './pages/Settings';
 import Dashboard from './pages/Dashboard';
 import { recordNavigation, setupScrollRestoration } from './utils/scrollRestoration';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
+import { WelcomeAnimation } from './components/welcome/WelcomeAnimation';
+import { useWelcomeAnimation } from './hooks/useWelcomeAnimation';
 
 // Admin Pages
 import AdminDashboard from './pages/admin/Dashboard';
@@ -35,6 +37,7 @@ import { PagePreloader } from './components/PagePreloader';
 
 function App() {
   const location = useLocation();
+  const { showWelcome, markWelcomeAsShown } = useWelcomeAnimation();
   
   // Initialize keyboard shortcuts
   useKeyboardShortcuts();
@@ -54,11 +57,22 @@ function App() {
     recordNavigation(currentPath);
   }, [location]);
 
+  // Show welcome animation on first visit to root path
+  const shouldShowWelcome = showWelcome && location.pathname === '/';
+
   return (
     <PlaybackProvider>
       <ColorProvider>
+        {shouldShowWelcome && (
+          <WelcomeAnimation
+            onComplete={markWelcomeAsShown}
+            onSkip={markWelcomeAsShown}
+          />
+        )}
+        
         <Routes>
-          <Route path="/" element={<HorizontalHomePage />} />
+          <Route path="/" element={shouldShowWelcome ? <div /> : <Videos />} />
+          <Route path="/home" element={<HorizontalHomePage />} />
           <Route path="/videos" element={<Videos />} />
           <Route path="/video/:videoId" element={<VideoDetails />} />
           <Route path="/search" element={<Search />} />
