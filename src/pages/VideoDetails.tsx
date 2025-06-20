@@ -13,6 +13,7 @@ import { useRelatedVideosQuery } from "@/components/video/details/RelatedVideosQ
 import { VideoHistory } from "@/components/video/details/VideoHistory";
 import { DelayedLoadingAnimation } from "@/components/ui/DelayedLoadingAnimation";
 import { VideoPlaceholder } from "@/components/video/VideoPlaceholder";
+import { VideoSEO } from "@/components/seo/VideoSEO";
 import { toast } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useAuth } from "@/hooks/useAuth";
@@ -60,9 +61,7 @@ const VideoDetails = () => {
   if (isLoadingVideo) {
     return (
       <>
-        <Helmet>
-          <title>Loading Video | YidVid</title>
-        </Helmet>
+        <VideoSEO video={{ title: "Loading Video", video_id: videoId }} />
         <div className="container mx-auto p-4 mt-16 flex justify-center">
           <DelayedLoadingAnimation 
             size={isMobile ? "medium" : "large"} 
@@ -79,9 +78,7 @@ const VideoDetails = () => {
     console.error("Video not found or error:", error, "for videoId:", videoId);
     return (
       <>
-        <Helmet>
-          <title>Video Not Found | YidVid</title>
-        </Helmet>
+        <VideoSEO video={{ title: "Video Not Found", video_id: videoId }} />
         <div className="container mx-auto p-4 mt-16">
           <BackButton />
           <div className="p-8 text-center">
@@ -113,14 +110,7 @@ const VideoDetails = () => {
 
   return (
     <>
-      <Helmet>
-        <title>{pageTitle}</title>
-        <meta name="description" content={video?.description || `Watch ${video?.title} on YidVid - Your source for Jewish content`} />
-        <meta property="og:title" content={video?.title || "Video"} />
-        <meta property="og:description" content={video?.description || `Watch ${video?.title} on YidVid`} />
-        <meta property="og:image" content={video?.thumbnail || "/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png"} />
-        <meta property="og:type" content="video.other" />
-      </Helmet>
+      <VideoSEO video={video} />
       <div className="w-full min-h-screen bg-white text-black">
         <div className="container mx-auto p-4 pt-16">
           <BackButton />

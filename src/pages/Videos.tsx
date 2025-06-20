@@ -10,8 +10,6 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useSessionManager } from "@/hooks/useSessionManager";
 import { Helmet } from "react-helmet";
 import { useSearchParams } from "react-router-dom";
-import { getPageTitle, DEFAULT_META_DESCRIPTION, DEFAULT_META_KEYWORDS, DEFAULT_META_IMAGE } from "@/utils/pageTitle";
-import { isWelcomePage } from "@/utils/scrollRestoration";
 
 const MainContent = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -123,21 +121,40 @@ const Videos = () => {
   return (
     <>
       <Helmet>
-        <title>{getPageTitle('/videos')}</title>
-        <meta name="description" content={DEFAULT_META_DESCRIPTION} />
-        <meta name="keywords" content={DEFAULT_META_KEYWORDS} />
-        <meta property="og:title" content={getPageTitle('/videos')} />
-        <meta property="og:description" content={DEFAULT_META_DESCRIPTION} />
-        <meta property="og:image" content={DEFAULT_META_IMAGE} />
+        <title>Jewish Videos | YidVid - Premier Jewish Video Platform</title>
+        <meta name="description" content="Discover thousands of Jewish videos, Torah lectures, Jewish music, and educational content. Watch curated Jewish media from trusted sources on YidVid - Your premier Jewish video platform." />
+        <meta name="keywords" content="Jewish videos, Torah videos, Jewish lectures, Jewish education, Jewish music, Jewish content, Torah study, Jewish learning, Jewish media, kosher videos" />
+        <meta name="robots" content="index, follow, max-image-preview:large" />
+        <link rel="canonical" href={`${window.location.origin}/videos`} />
+        
+        {/* Open Graph */}
+        <meta property="og:title" content="Jewish Videos | YidVid - Premier Jewish Video Platform" />
+        <meta property="og:description" content="Discover thousands of Jewish videos, Torah lectures, Jewish music, and educational content on YidVid." />
+        <meta property="og:image" content="/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png" />
         <meta property="og:type" content="website" />
+        <meta property="og:url" content={`${window.location.origin}/videos`} />
+        
+        {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={getPageTitle('/videos')} />
-        <meta name="twitter:description" content={DEFAULT_META_DESCRIPTION} />
-        <meta name="twitter:image" content={DEFAULT_META_IMAGE} />
-        <meta name="robots" content="index, follow" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="canonical" href={window.location.origin + "/videos"} />
-        <link rel="icon" href="/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png" />
+        <meta name="twitter:title" content="Jewish Videos | YidVid - Premier Jewish Video Platform" />
+        <meta name="twitter:description" content="Discover thousands of Jewish videos, Torah lectures, and educational content." />
+        <meta name="twitter:image" content="/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png" />
+        
+        {/* Structured Data */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "VideoGallery",
+            "name": "Jewish Videos Collection",
+            "description": "Curated collection of Jewish videos, Torah lectures, and educational content",
+            "url": `${window.location.origin}/videos`,
+            "publisher": {
+              "@type": "Organization",
+              "name": "YidVid",
+              "logo": "/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png"
+            }
+          })}
+        </script>
       </Helmet>
       
       <div className="min-h-screen w-full bg-white videos-page">
