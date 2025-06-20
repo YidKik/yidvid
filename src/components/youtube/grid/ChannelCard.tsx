@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -26,7 +25,7 @@ export const ChannelCard = ({
         "block opacity-0 animate-[fadeIn_0.5s_ease-out_forwards]",
         "relative group rounded-lg overflow-hidden transition-all duration-200",
         "hover:scale-[1.03] hover:shadow-md text-center p-4",
-        "bg-gray-100 hover:bg-gray-200 mx-auto w-full border border-gray-200"
+        "bg-white/5 mx-auto w-full border border-white/10"
       )}
       style={{ animationDelay }}
       onMouseEnter={() => setShowControls(true)}
@@ -35,8 +34,8 @@ export const ChannelCard = ({
     >
       <div className="flex flex-col items-center justify-center">
         <div className="w-24 h-24 md:w-28 md:h-28 rounded-full flex items-center justify-center overflow-hidden mb-4 mx-auto 
-                      border-2 border-gray-300 group-hover:border-primary transition-all duration-300
-                      group-hover:shadow-lg shadow-gray-200">
+                      border-2 border-white/20 group-hover:border-[#ea384c] transition-all duration-300
+                      group-hover:shadow-lg shadow-white/10">
           {thumbnail_url ? (
             <img
               src={thumbnail_url}
@@ -49,17 +48,17 @@ export const ChannelCard = ({
               }}
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-300 to-gray-400">
+            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900">
               <img src="/lovable-uploads/efca5adc-d9d2-4c5b-8900-e078f9d49b6a.png" alt="YidVid" className="w-10 h-10" />
             </div>
           )}
         </div>
         
-        <h3 className="text-sm md:text-base font-medium text-center mb-1 text-gray-800 group-hover:text-primary transition-colors">
+        <h3 className="text-sm md:text-base font-medium text-center mb-1 text-black group-hover:text-[#ea384c] transition-colors">
           {title}
         </h3>
         
-        <p className="text-xs text-gray-500">
+        <p className="text-xs text-white/60">
           View Channel
         </p>
       </div>
