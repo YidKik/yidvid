@@ -1,8 +1,8 @@
 
 /* Global styles - apply to non-homepage */
 body:not(.home-page) {
-  background-color: var(--background-custom, #e3fef7);
-  color: var(--text-custom, #003c43);
+  background-color: var(--background-custom, #ffffff);
+  color: var(--text-custom, #000000);
 }
 
 /* Add custom color classes that don't apply to homepage */
@@ -24,19 +24,19 @@ body:not(.home-page) {
 
 /* Override brand colors for pages other than home */
 :not(.home-page) .bg-brand-darkest {
-  background-color: var(--background-custom, #e3fef7) !important;
+  background-color: var(--background-custom, #ffffff) !important;
 }
 
 :not(.home-page) .bg-brand-dark {
-  background-color: var(--background-custom, #e3fef7) !important;
+  background-color: var(--background-custom, #ffffff) !important;
 }
 
 :not(.home-page) .text-brand-light {
-  color: var(--text-custom, #003c43) !important;
+  color: var(--text-custom, #000000) !important;
 }
 
 :not(.home-page) .text-brand-lightest {
-  color: var(--text-custom, #003c43) !important;
+  color: var(--text-custom, #000000) !important;
 }
 
 /* Ensure home page always has green background */

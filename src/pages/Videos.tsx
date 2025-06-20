@@ -140,7 +140,7 @@ const Videos = () => {
         <link rel="icon" href="/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png" />
       </Helmet>
       
-      <div className="min-h-screen w-full bg-gradient-to-b from-card to-muted videos-page">
+      <div className="min-h-screen w-full bg-white videos-page">
         <MainContent />
         <Auth isOpen={isAuthOpen} onOpenChange={setIsAuthOpen} />
       </div>
