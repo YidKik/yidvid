@@ -7,10 +7,10 @@ export interface VideoGridItem {
   video_id: string;
   title: string;
   thumbnail: string;
-  channelName: string;
-  channelId: string;
+  channel_name: string;
+  channel_id: string;
   views: number | null;
-  uploadedAt: string | Date;
+  uploaded_at: string | Date;
   updated_at?: string | Date;
   channelThumbnail?: string;
 }
@@ -56,17 +56,17 @@ export const useVideoGridData = (maxVideos: number = 12, shouldFetch: boolean = 
                 video_id: video.video_id,
                 title: video.title || "Untitled Video",
                 thumbnail: video.thumbnail || '/placeholder.svg',
-                channelName: video.channel_name || "Unknown Channel",
-                channelId: video.channel_id || "unknown-channel",
+                channel_name: video.channel_name || "Unknown Channel",
+                channel_id: video.channel_id || "unknown-channel",
                 views: video.views !== null ? parseInt(String(video.views)) : null,
-                uploadedAt: video.uploaded_at || new Date().toISOString(),
+                uploaded_at: video.uploaded_at || new Date().toISOString(),
                 updated_at: video.updated_at || video.uploaded_at,
               }));
               
               // Ensure videos are sorted by uploaded_at in descending order
               const sortedVideos = mappedVideos.sort((a, b) => {
-                const dateA = new Date(a.uploadedAt).getTime();
-                const dateB = new Date(b.uploadedAt).getTime();
+                const dateA = new Date(a.uploaded_at).getTime();
+                const dateB = new Date(b.uploaded_at).getTime();
                 return dateB - dateA; // Newest first
               });
               
@@ -114,10 +114,10 @@ export const useVideoGridData = (maxVideos: number = 12, shouldFetch: boolean = 
               video_id: video.video_id,
               title: video.title || "Untitled Video",
               thumbnail: video.thumbnail || '/placeholder.svg',
-              channelName: video.channel_name || "Unknown Channel",
-              channelId: video.channel_id || "unknown-channel",
+              channel_name: video.channel_name || "Unknown Channel",
+              channel_id: video.channel_id || "unknown-channel",
               views: video.views !== null ? parseInt(String(video.views)) : null,
-              uploadedAt: video.uploaded_at || new Date().toISOString(),
+              uploaded_at: video.uploaded_at || new Date().toISOString(),
               updated_at: video.updated_at || video.uploaded_at,
               channelThumbnail: null,
             }));
@@ -138,18 +138,18 @@ export const useVideoGridData = (maxVideos: number = 12, shouldFetch: boolean = 
           video_id: video.video_id,
           title: video.title || "Untitled Video",
           thumbnail: video.thumbnail || '/placeholder.svg',
-          channelName: video.channel_name || "Unknown Channel",
-          channelId: video.channel_id || "unknown-channel",
+          channel_name: video.channel_name || "Unknown Channel",
+          channel_id: video.channel_id || "unknown-channel",
           views: video.views !== null ? parseInt(String(video.views)) : null,
-          uploadedAt: video.uploaded_at || new Date().toISOString(),
+          uploaded_at: video.uploaded_at || new Date().toISOString(),
           updated_at: video.updated_at || video.uploaded_at,
           channelThumbnail: video.youtube_channels?.thumbnail_url || null,
         }));
         
         // Ensure videos are sorted by uploaded_at in descending order
         const sortedVideos = mappedVideos.sort((a, b) => {
-          const dateA = new Date(a.uploadedAt).getTime();
-          const dateB = new Date(b.uploadedAt).getTime();
+          const dateA = new Date(a.uploaded_at).getTime();
+          const dateB = new Date(b.uploaded_at).getTime();
           return dateB - dateA; // Newest first
         });
         

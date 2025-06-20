@@ -17,7 +17,7 @@ export const hasRealVideos = (videos?: VideoData[] | null, isAuthenticated?: boo
     const video = videos[i];
     if (!video.id.toString().includes('sample') && 
         !video.video_id.includes('sample') &&
-        video.channelName !== "Sample Channel") {
+        video.channel_name !== "Sample Channel") {
       return true; // Found at least one real video
     }
   }
@@ -38,12 +38,12 @@ export const createSampleVideos = (count = 12): VideoData[] => {
     video_id: `sample-vid-${i}`,
     title: `Sample Video ${i+1}`,
     thumbnail: '/placeholder.svg',
-    channelName: "Sample Channel",
-    channelId: "sample-channel",
+    channel_name: "Sample Channel",
+    channel_id: "sample-channel",
     views: 1000 * (i+1),
-    uploadedAt: new Date(baseTime - (i * 86400000)),
-    createdAt: new Date(baseTime - (i * 86400000)),
-    updatedAt: new Date(baseTime - (i * 86400000)),
+    uploaded_at: new Date(baseTime - (i * 86400000)),
+    created_at: new Date(baseTime - (i * 86400000)),
+    updated_at: new Date(baseTime - (i * 86400000)),
     description: "This is a sample video until real content loads.",
     channelThumbnail: '/placeholder.svg'
   }));

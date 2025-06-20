@@ -17,21 +17,21 @@ export const formatVideoData = (videosData: any[]): VideoData[] => {
     }
     
     // Parse dates properly
-    const uploadedAt = video.uploaded_at ? new Date(video.uploaded_at) : new Date();
-    const createdAt = video.created_at ? new Date(video.created_at) : new Date();
-    const updatedAt = video.updated_at ? new Date(video.updated_at) : new Date();
+    const uploaded_at = video.uploaded_at ? new Date(video.uploaded_at) : new Date();
+    const created_at = video.created_at ? new Date(video.created_at) : new Date();
+    const updated_at = video.updated_at ? new Date(video.updated_at) : new Date();
     
     return {
       id: video.id,
       video_id: video.video_id || "Untitled Video",
       title: video.title || "Untitled Video",
       thumbnail: video.thumbnail || '/placeholder.svg',
-      channelName: video.channel_name || "Unknown Channel",
-      channelId: video.channel_id || "unknown-channel",
+      channel_name: video.channel_name || "Unknown Channel",
+      channel_id: video.channel_id || "unknown-channel",
       views: viewsCount,
-      uploadedAt: uploadedAt,
-      createdAt: createdAt,
-      updatedAt: updatedAt,
+      uploaded_at: uploaded_at,
+      created_at: created_at,
+      updated_at: updated_at,
       description: video.description || null,
       channelThumbnail: video.youtube_channels?.thumbnail_url || null,
       category: video.category || null

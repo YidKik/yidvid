@@ -78,7 +78,7 @@ export const AutoRefreshHandler: React.FC<AutoRefreshHandlerProps> = ({
       videos.every(v => 
         v.id.toString().includes('sample') || 
         v.video_id.includes('sample') ||
-        v.channelName === "Sample Channel"
+        v.channel_name === "Sample Channel"
       );
     
     // Only trigger if we have missing or sample data and haven't triggered before

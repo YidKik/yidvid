@@ -113,9 +113,20 @@ const VideoDetails = () => {
     relatedVideosCount: channelVideos.length
   });
 
+  // Convert the database video to VideoData format for SEO component
+  const videoForSEO = {
+    ...video,
+    channel_name: video.channel_name || "Unknown Channel",
+    channel_id: video.channel_id || "unknown-channel",
+    uploaded_at: video.uploaded_at || new Date().toISOString(),
+    updated_at: video.updated_at || new Date().toISOString(),
+    created_at: video.created_at || new Date().toISOString(),
+    views: video.views || 0
+  };
+
   return (
     <>
-      <VideoSEO video={video} />
+      <VideoSEO video={videoForSEO} />
       <div className="w-full min-h-screen bg-white text-black">
         <div className="container mx-auto p-4 pt-16">
           <BackButton />
