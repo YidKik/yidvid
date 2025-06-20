@@ -1,5 +1,5 @@
 
-import { ThumbsUp, UserPlus, Check, Loader2 } from "lucide-react";
+import { ThumbsUp, UserPlus, Check, Loader2, Share } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -102,6 +102,28 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
     }
   };
 
+  const handleShare = async () => {
+    const currentUrl = window.location.href;
+    
+    try {
+      // Copy to clipboard
+      await navigator.clipboard.writeText(currentUrl);
+      toast.success("Link copied to clipboard!");
+      
+      // Try to use Web Share API if available
+      if (navigator.share) {
+        await navigator.share({
+          title: document.title,
+          url: currentUrl,
+        });
+      }
+    } catch (error) {
+      console.error('Error sharing:', error);
+      // Fallback: just copy to clipboard (already done above)
+      toast.success("Link copied to clipboard!");
+    }
+  };
+
   // Determine if we should disable buttons due to auth loading
   const isAuthLoading = isSessionLoading;
   const buttonDisabled = isLoadingSubscription || isAuthLoading;
@@ -155,6 +177,19 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
             isLiked ? "opacity-100 text-red-500" : "opacity-0 group-hover:opacity-100"
           }`}>
             {isLiked ? "Liked" : "Like"}
+          </span>
+        </Button>
+
+        <Button
+          variant="outline"
+          onClick={handleShare}
+          className="group relative rounded-full p-2 md:p-3 transition-all duration-300 active:scale-90 border-2 bg-white border-black hover:bg-gray-50 hover:border-blue-500"
+        >
+          <Share 
+            className="w-5 h-5 md:w-6 md:h-6 transition-all duration-300 stroke-2 text-gray-600 group-hover:text-blue-500 group-hover:stroke-blue-500 group-hover:scale-110"
+          />
+          <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+            Share
           </span>
         </Button>
         

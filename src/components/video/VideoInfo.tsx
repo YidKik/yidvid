@@ -2,7 +2,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatDistanceToNow } from "date-fns";
 import { useState } from "react";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronRight, ChevronDown } from "lucide-react";
 import { Link } from "react-router-dom";
 
 interface VideoInfoProps {
@@ -98,33 +98,30 @@ export const VideoInfo = ({
       </div>
 
       {description && (
-        <div 
-          className="relative bg-card/50 rounded-lg shadow-sm overflow-hidden transition-all duration-300"
-          style={{ maxHeight: isExpanded ? '1000px' : '100px' }}
-        >
-          <div className="p-4">
-            <p className="text-sm text-card-foreground/90 whitespace-pre-wrap">
-              {description}
-            </p>
-          </div>
-          
-          {description.length > 200 && (
-            <div className="absolute bottom-0 left-0 right-0 pt-6 pb-2 bg-gradient-to-t from-background via-background/95 to-transparent">
+        <div className="bg-card/50 rounded-lg shadow-sm p-4">
+          <div className="flex justify-between items-start">
+            <div className="flex-1 pr-4">
+              <p className={`text-sm text-card-foreground/90 whitespace-pre-wrap transition-all duration-300 ${
+                isExpanded ? '' : 'line-clamp-3'
+              }`}>
+                {description}
+              </p>
+            </div>
+            
+            {description.length > 200 && (
               <button
                 onClick={() => setIsExpanded(!isExpanded)}
-                className="mx-auto flex items-center gap-2 px-4 py-1.5 rounded-full bg-gray-100 hover:bg-gray-200 border border-gray-200 shadow-sm transition-all duration-200 group"
+                className="flex-shrink-0 p-1 hover:bg-gray-100 rounded-full transition-colors duration-200"
+                aria-label={isExpanded ? "Show less" : "Show more"}
               >
-                <span className="text-sm font-medium text-gray-700">
-                  {isExpanded ? "Show less" : "Show more"}
-                </span>
                 {isExpanded ? (
-                  <ChevronUp className="h-4 w-4 text-gray-500 group-hover:text-gray-700 transition-colors" />
+                  <ChevronDown className="h-5 w-5 text-gray-500 hover:text-gray-700 transition-colors" />
                 ) : (
-                  <ChevronDown className="h-4 w-4 text-gray-500 group-hover:text-gray-700 transition-colors" />
+                  <ChevronRight className="h-5 w-5 text-gray-500 hover:text-gray-700 transition-colors" />
                 )}
               </button>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       )}
     </div>
