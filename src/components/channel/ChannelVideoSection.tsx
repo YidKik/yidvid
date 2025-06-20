@@ -1,3 +1,4 @@
+
 import { VideoPlaceholder } from "@/components/video/VideoPlaceholder";
 import { ChannelVideos } from "@/components/channel/ChannelVideos";
 import { Button } from "@/components/ui/button";
@@ -64,20 +65,17 @@ export const ChannelVideoSection = ({
   }
 
   // Log sorted videos for debugging
-  console.log("Rendering videos sorted by uploaded_at:", 
+  console.log("Rendering ALL videos sorted by uploaded_at:", 
     displayedVideos?.length > 0 ? 
-    displayedVideos.map(v => ({
-      title: v.title,
-      uploaded_at: v.uploaded_at
-    })) : "No videos");
+    `${displayedVideos.length} total videos` : "No videos");
 
-  // Otherwise show videos (or loading state within the ChannelVideos component)
+  // Show ALL videos (no limit applied)
   return (
     <ChannelVideos
       videos={displayedVideos}
       isLoading={isLoadingVideos}
       channelThumbnail={channelThumbnail}
-      initialCount={INITIAL_VIDEOS_COUNT}
+      initialCount={displayedVideos.length} // Show all videos
       isLoadingMore={isLoadingMore}
     />
   );

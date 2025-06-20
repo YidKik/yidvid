@@ -110,12 +110,12 @@ async function fetchChannelVideos(
 
     const channelTitle = channelData.items[0].snippet.title;
     const channelThumbnail = channelData.items[0].snippet.thumbnails?.default?.url || null;
-    console.log(`Fetching videos for channel: ${channelTitle} (${channelId})`);
+    console.log(`Fetching ALL videos for channel: ${channelTitle} (${channelId})`);
 
     // Use the successful domain for subsequent requests
     const successfulDomain = refererDomains[successfulDomainIndex];
 
-    // Fetch videos with pagination
+    // Fetch ALL videos with pagination - increased maxResults to 50 for efficiency
     let playlistUrl = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${uploadsPlaylistId}&key=${currentApiKey}`;
     
     if (nextPageToken) {
@@ -364,7 +364,7 @@ serve(async (req) => {
 
     for (const channel of channels || []) {
       try {
-        console.log(`Fetching videos for channel: ${channel.title} (${channel.channel_id})`);
+        console.log(`Fetching ALL videos for channel: ${channel.title} (${channel.channel_id})`);
         
         // Check quota before each channel if using primary key
         if (currentApiKey === youtubeApiKey) {
@@ -383,7 +383,7 @@ serve(async (req) => {
         let nextPageToken: string | null = null;
         let allVideos = [];
         let pageCount = 0;
-        const MAX_PAGES = allChannels ? 1 : 2; // Limit pages per channel more strictly when processing all channels
+        // Removed MAX_PAGES limit - fetch ALL pages/videos
 
         do {
           const result = await fetchChannelVideos(channel.channel_id, currentApiKey, nextPageToken);
@@ -408,12 +408,12 @@ serve(async (req) => {
           pageCount++;
 
           // Small delay between requests
-          if (nextPageToken && pageCount < MAX_PAGES) {
+          if (nextPageToken) {
             await new Promise(resolve => setTimeout(resolve, 1500));
           }
-        } while (nextPageToken && pageCount < MAX_PAGES);
+        } while (nextPageToken); // Continue until no more pages - fetch ALL videos
 
-        console.log(`Found ${allVideos.length} videos for channel ${channel.channel_id}`);
+        console.log(`Found ALL ${allVideos.length} videos for channel ${channel.channel_id}`);
         totalVideosFound += allVideos.length;
 
         if (allVideos.length > 0) {
@@ -491,7 +491,8 @@ serve(async (req) => {
         results,
         processedChannels: totalChannelsProcessed,
         totalVideos: totalVideosFound,
-        usedFallbackKey: currentApiKey === fallbackApiKey
+        usedFallbackKey: currentApiKey === fallbackApiKey,
+        message: `Fetched ALL videos from ${totalChannelsProcessed} channels (${totalVideosFound} total videos)`
       }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

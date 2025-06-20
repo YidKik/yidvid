@@ -3,7 +3,6 @@ import { useState, useEffect, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
-const INITIAL_VIDEOS_COUNT = 12;
 const FETCH_TIMEOUT = 8000; // 8 seconds timeout
 
 export const useChannelVideos = (channelId: string | undefined) => {
@@ -21,7 +20,7 @@ export const useChannelVideos = (channelId: string | undefined) => {
     queryFn: async () => {
       if (!channelId) throw new Error("Channel ID is required");
 
-      console.log("Fetching videos for channel:", channelId);
+      console.log("Fetching ALL videos for channel:", channelId);
       
       try {
         // Call the edge function directly with proper authorization
@@ -84,7 +83,7 @@ export const useChannelVideos = (channelId: string | undefined) => {
     }
   });
 
-  // Set displayed videos when initial fetch completes
+  // Set displayed videos when initial fetch completes - show ALL videos
   useEffect(() => {
     if (initialVideos) {
       // Ensure videos are sorted by uploaded_at before setting state
@@ -94,14 +93,14 @@ export const useChannelVideos = (channelId: string | undefined) => {
         return dateB - dateA; // Newest first
       });
       
-      setDisplayedVideos(sortedVideos);
-      console.log("Set displayed videos:", sortedVideos.length);
+      setDisplayedVideos(sortedVideos); // Show ALL videos, no limit
+      console.log("Set displayed videos (ALL):", sortedVideos.length);
     }
   }, [initialVideos]);
 
   // Add refetch function to allow parent components to trigger refreshes
   const refetchVideos = useCallback(async () => {
-    console.log("Manually refetching videos for channel:", channelId);
+    console.log("Manually refetching ALL videos for channel:", channelId);
     return await refetchInitialVideos();
   }, [channelId, refetchInitialVideos]);
 
@@ -109,7 +108,7 @@ export const useChannelVideos = (channelId: string | undefined) => {
     displayedVideos,
     isLoadingInitialVideos,
     isLoadingMore,
-    INITIAL_VIDEOS_COUNT,
+    INITIAL_VIDEOS_COUNT: displayedVideos.length, // Return actual count, not a fixed limit
     refetchVideos,
     error
   };
