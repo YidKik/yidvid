@@ -14,14 +14,14 @@ interface Video {
 
 interface RelatedVideosProps {
   videos?: Video[];
-  showHeading?: boolean; // Added optional prop to control heading visibility
+  showHeading?: boolean;
 }
 
 export const RelatedVideos = ({ videos, showHeading = false }: RelatedVideosProps) => {
   return (
     <div>
       {showHeading && (
-        <h2 className="text-xl font-semibold mb-4">More videos</h2>
+        <h2 className="text-xl font-semibold mb-4">More from this channel</h2>
       )}
       {videos && videos.length > 0 ? (
         <div className="h-[calc(3*240px)] overflow-y-auto pr-4 scrollbar-hide">
@@ -43,7 +43,7 @@ export const RelatedVideos = ({ videos, showHeading = false }: RelatedVideosProp
         </div>
       ) : (
         <div className="text-center p-4 text-muted-foreground">
-          No related videos found
+          No other videos found from this channel
         </div>
       )}
     </div>

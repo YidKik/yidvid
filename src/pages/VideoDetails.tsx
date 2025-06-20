@@ -132,7 +132,7 @@ const VideoDetails = () => {
                 <VideoPlayer videoId={video?.video_id || ""} />
               </div>
               <div className="flex justify-between items-start mb-4">
-                <h1 className="text-base md:text-2xl font-bold text-black">{video?.title}</h1>
+                <h1 className="text-xl md:text-2xl font-normal text-black leading-tight">{video?.title}</h1>
                 <ReportVideoDialog videoId={video?.id || ""} />
               </div>
               
@@ -165,7 +165,7 @@ const VideoDetails = () => {
                 </div>
               ) : (
                 <div>
-                  <h2 className="text-xl font-semibold mb-4 text-black">More videos</h2>
+                  <h2 className="text-xl font-semibold mb-4 text-black">More from this channel</h2>
                   <RelatedVideos videos={channelVideos} showHeading={false} />
                 </div>
               )}
