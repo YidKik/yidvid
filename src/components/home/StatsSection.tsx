@@ -1,6 +1,5 @@
 
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
 import { NumberTicker } from '@/components/ui/number-ticker';
 import Auth from '@/pages/Auth';
 

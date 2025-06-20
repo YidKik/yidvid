@@ -1,5 +1,5 @@
 
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useVideos } from '@/hooks/video/useVideos';
 import { useChannelsGrid } from '@/hooks/channel/useChannelsGrid';
@@ -8,6 +8,8 @@ import { BackgroundGradientAnimation } from '@/components/ui/background-gradient
 import { MainHeroSection } from '@/components/home/MainHeroSection';
 import { FeaturesSection } from '@/components/home/FeaturesSection';
 import { AnimatedGridSection } from '@/components/home/AnimatedGridSection';
+import { StatsSection } from '@/components/home/StatsSection';
+import { FeedbackSection } from '@/components/home/FeedbackSection';
 import { useHomeAnimations } from '@/hooks/useHomeAnimations';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { MobileHomeSection } from '@/components/home/MobileHomeSection';
@@ -83,6 +85,8 @@ const HomePage = () => {
 
         <FeaturesSection />
         <AnimatedGridSection channelItems={extendedChannelItems} />
+        <StatsSection />
+        <FeedbackSection />
       </div>
     </motion.div>
   );
