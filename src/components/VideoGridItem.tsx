@@ -22,13 +22,13 @@ export const VideoGridItem = ({ video, loading }: VideoGridItemProps) => {
   }
 
   // Format the date properly to avoid type mismatch
-  const formattedDate = getFormattedDate(video.uploadedAt);
+  const formattedDate = getFormattedDate(video.uploaded_at);
   
   // Make sure we have a valid video_id for the link
   const videoIdForLink = video.video_id || video.id;
 
   // Ensure we have a valid channelId for the link
-  const channelIdForLink = video.channelId || "";
+  const channelIdForLink = video.channel_id || "";
 
   return (
     <Link 
@@ -45,7 +45,7 @@ export const VideoGridItem = ({ video, loading }: VideoGridItemProps) => {
       {isVideosPage && (
         <VideoCardInfo
           title={video.title}
-          channelName={video.channelName}
+          channelName={video.channel_name}
           channelId={channelIdForLink}
           views={video.views}
           formattedDate={formattedDate}

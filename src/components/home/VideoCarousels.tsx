@@ -1,3 +1,4 @@
+
 import React from "react";
 import { VideoGridItem as VideoGridItemType } from "@/hooks/video/useVideoGridData";
 import { VideoCarousel } from "./VideoCarousel";
@@ -12,8 +13,8 @@ interface VideoCarouselsProps {
 function getSortedVideos(videos: VideoGridItemType[]): VideoGridItemType[] {
   return [...videos].sort((a, b) => {
     // Sort by uploaded_at timestamp (newest first)
-    const dateA = new Date(a.uploadedAt).getTime();
-    const dateB = new Date(b.uploadedAt).getTime();
+    const dateA = new Date(a.uploaded_at).getTime();
+    const dateB = new Date(b.uploaded_at).getTime();
     return dateB - dateA;
   });
 }

@@ -22,8 +22,8 @@ export const VideoGridItem = ({ video, loading }: VideoGridItemProps) => {
   }
 
   // Format the date properly ensuring it's a Date object
-  const uploadedDate = video.uploadedAt instanceof Date ? 
-    video.uploadedAt : new Date(video.uploadedAt);
+  const uploadedDate = video.uploaded_at instanceof Date ? 
+    video.uploaded_at : new Date(video.uploaded_at);
   const formattedDate = getFormattedDate(uploadedDate);
   
   // Make sure we have a valid ID for linking - prioritize video_id over id
@@ -32,7 +32,7 @@ export const VideoGridItem = ({ video, loading }: VideoGridItemProps) => {
   
   // Always ensure we have a valid channelId for linking to the channel page
   // Extract from different possible sources, clean it and ensure it's not empty
-  const channelIdForLink = video.channelId || "";
+  const channelIdForLink = video.channel_id || "";
 
   return (
     <Link 
@@ -48,7 +48,7 @@ export const VideoGridItem = ({ video, loading }: VideoGridItemProps) => {
       {isVideosPage && (
         <VideoCardInfo
           title={video.title}
-          channelName={video.channelName}
+          channelName={video.channel_name}
           channelId={channelIdForLink}
           views={video.views}
           formattedDate={formattedDate}

@@ -51,19 +51,19 @@ export function TiltedVideoScroll({
                   video_id={video.video_id}
                   title={video.title}
                   thumbnail={video.thumbnail}
-                  channelName={video.channelName}
-                  channelId={video.channelId}
+                  channelName={video.channel_name}
+                  channelId={video.channel_id}
                   views={video.views}
-                  uploadedAt={video.uploadedAt}
+                  uploadedAt={video.uploaded_at}
                   hideInfo={true}
                 />
               </FlipCardFront>
               <FlipCardBack className="rounded-lg overflow-hidden bg-gradient-to-br from-black/90 to-gray-800/90 p-4 flex flex-col justify-center text-white backdrop-blur-sm">
                 <h3 className="text-lg font-semibold mb-2 line-clamp-2">{video.title}</h3>
                 <div className="space-y-2 text-sm opacity-90">
-                  <p>{video.channelName}</p>
+                  <p>{video.channel_name}</p>
                   <p>{formatViews(video.views)}</p>
-                  <p>Uploaded {formatDate(video.uploadedAt)}</p>
+                  <p>Uploaded {formatDate(video.uploaded_at)}</p>
                 </div>
               </FlipCardBack>
             </FlipCard>

@@ -52,7 +52,7 @@ const VideoDetails = () => {
   const { data: video, isLoading: isLoadingVideo, error } = useVideoQuery(videoId);
   
   const { data: channelVideos = [], isLoading: isLoadingRelated } = useRelatedVideosQuery(
-    video?.channel_id || "", 
+    video?.channel_id || "",
     videoId
   );
 
@@ -121,7 +121,9 @@ const VideoDetails = () => {
     uploaded_at: video.uploaded_at || new Date().toISOString(),
     updated_at: video.updated_at || new Date().toISOString(),
     created_at: video.created_at || new Date().toISOString(),
-    views: video.views || 0
+    views: video.views || 0,
+    // Ensure category is properly typed
+    category: (video.category as "music" | "torah" | "inspiration" | "podcast" | "education" | "entertainment" | "other" | "custom" | null) || null
   };
 
   return (

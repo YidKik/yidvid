@@ -77,7 +77,7 @@ export const AnimatedVideoRows: React.FC<{
   // Sort by newest, then shuffle for the lower rows
   const sortedVideos = useMemo(
     () => [...videos].sort((a, b) =>
-      new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime()
+      new Date(b.uploaded_at).getTime() - new Date(a.uploaded_at).getTime()
     ),
     [videos]
   );

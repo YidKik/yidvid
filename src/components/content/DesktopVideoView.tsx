@@ -52,7 +52,7 @@ export const DesktopVideoView = ({
   const hasRealVideos = videos.some(video => 
     !video.id.toString().includes('sample') && 
     !video.video_id.includes('sample') &&
-    video.channelName !== "Sample Channel" &&
+    video.channel_name !== "Sample Channel" &&
     video.title !== "Sample Video 1"
   );
 
