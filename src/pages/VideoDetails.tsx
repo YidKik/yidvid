@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef } from 'react';
 import { useParams, Link, useLocation } from "react-router-dom";
 import { Helmet } from "react-helmet";
@@ -61,7 +62,9 @@ const VideoDetails = () => {
   if (isLoadingVideo) {
     return (
       <>
-        <VideoSEO video={{ title: "Loading Video", video_id: videoId }} />
+        <Helmet>
+          <title>Loading Video | YidVid</title>
+        </Helmet>
         <div className="container mx-auto p-4 mt-16 flex justify-center">
           <DelayedLoadingAnimation 
             size={isMobile ? "medium" : "large"} 
@@ -78,7 +81,9 @@ const VideoDetails = () => {
     console.error("Video not found or error:", error, "for videoId:", videoId);
     return (
       <>
-        <VideoSEO video={{ title: "Video Not Found", video_id: videoId }} />
+        <Helmet>
+          <title>Video Not Found | YidVid</title>
+        </Helmet>
         <div className="container mx-auto p-4 mt-16">
           <BackButton />
           <div className="p-8 text-center">
@@ -122,7 +127,7 @@ const VideoDetails = () => {
                 <VideoPlayer videoId={video?.video_id || ""} />
               </div>
               <div className="flex justify-between items-start mb-4">
-                <h1 className="text-xl md:text-2xl font-normal text-black leading-tight">{video?.title}</h1>
+                <h1 className="text-xl md:text-2xl font-light text-black leading-tight">{video?.title}</h1>
                 <ReportVideoDialog videoId={video?.id || ""} />
               </div>
               
