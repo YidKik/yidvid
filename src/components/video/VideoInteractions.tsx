@@ -103,18 +103,20 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
   };
 
   const handleShare = async () => {
-    const currentUrl = window.location.href;
+    // Generate a shorter, cleaner link
+    const baseUrl = window.location.origin;
+    const shortUrl = `${baseUrl}/video/${videoId}`;
     
     try {
       // Copy to clipboard
-      await navigator.clipboard.writeText(currentUrl);
+      await navigator.clipboard.writeText(shortUrl);
       toast.success("Link copied to clipboard!");
       
       // Try to use Web Share API if available
       if (navigator.share) {
         await navigator.share({
           title: document.title,
-          url: currentUrl,
+          url: shortUrl,
         });
       }
     } catch (error) {
@@ -183,12 +185,12 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
         <Button
           variant="outline"
           onClick={handleShare}
-          className="group relative rounded-full p-2 md:p-3 transition-all duration-300 active:scale-90 border-2 bg-white border-black hover:bg-gray-50 hover:border-blue-500"
+          className="group relative rounded-full p-2 md:p-3 transition-all duration-300 active:scale-90 border-2 bg-white border-black hover:bg-gray-50 hover:border-red-500"
         >
           <Share 
-            className="w-5 h-5 md:w-6 md:h-6 transition-all duration-300 stroke-2 text-gray-600 group-hover:text-blue-500 group-hover:stroke-blue-500 group-hover:scale-110"
+            className="w-5 h-5 md:w-6 md:h-6 transition-all duration-300 stroke-2 text-gray-600 group-hover:text-red-500 group-hover:stroke-red-500 group-hover:scale-110"
           />
-          <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200 group-hover:text-red-500">
             Share
           </span>
         </Button>
