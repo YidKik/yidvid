@@ -35,9 +35,24 @@ import TestimonialsPage from './pages/admin/TestimonialsPage';
 // Add the PagePreloader import
 import { PagePreloader } from './components/PagePreloader';
 
+// Homepage component that shows the welcome animation
+const HomePage = () => {
+  const { showWelcome, markWelcomeAsShown } = useWelcomeAnimation();
+
+  return (
+    <>
+      {showWelcome && (
+        <WelcomeAnimation
+          onComplete={markWelcomeAsShown}
+          onSkip={markWelcomeAsShown}
+        />
+      )}
+    </>
+  );
+};
+
 function App() {
   const location = useLocation();
-  const { showWelcome, markWelcomeAsShown } = useWelcomeAnimation();
   
   // Initialize keyboard shortcuts
   useKeyboardShortcuts();
@@ -57,21 +72,11 @@ function App() {
     recordNavigation(currentPath);
   }, [location]);
 
-  // Show welcome animation on first visit to root path
-  const shouldShowWelcome = showWelcome && location.pathname === '/';
-
   return (
     <PlaybackProvider>
       <ColorProvider>
-        {shouldShowWelcome && (
-          <WelcomeAnimation
-            onComplete={markWelcomeAsShown}
-            onSkip={markWelcomeAsShown}
-          />
-        )}
-        
         <Routes>
-          <Route path="/" element={shouldShowWelcome ? <div /> : <Videos />} />
+          <Route path="/" element={<HomePage />} />
           <Route path="/home" element={<HorizontalHomePage />} />
           <Route path="/videos" element={<Videos />} />
           <Route path="/video/:videoId" element={<VideoDetails />} />
