@@ -5,13 +5,24 @@ import { VideoData } from "@/hooks/video/types/video-fetcher";
 export const generateVideoKeywords = (video: VideoData): string => {
   const baseKeywords = [
     "Jewish videos",
-    "Jewish content",
     "Torah videos",
-    "Jewish education",
     "Jewish lectures",
-    "Jewish media",
+    "Jewish education",
+    "Jewish music",
+    "Jewish content",
+    "Torah study",
     "Jewish learning",
-    "Torah study"
+    "Jewish media",
+    "kosher videos",
+    "Jewish platform",
+    "Torah classes",
+    "Jewish spirituality",
+    "Yiddish videos",
+    "chasdesh videos",
+    "Jewish youtube",
+    "kosher you tube",
+    "kosher content",
+    "yiddish content"
   ];
   
   // Extract keywords from title and channel
@@ -31,7 +42,7 @@ export const generateVideoKeywords = (video: VideoData): string => {
 export const generateVideoMetaTitle = (video: VideoData): string => {
   const title = video.title || 'Jewish Video';
   const channel = video.channel_name || 'YidVid';
-  return `${title} | ${channel} | YidVid - Jewish Video Platform`;
+  return `${title} | ${channel} | YidVid kosher content`;
 };
 
 export const generateVideoMetaDescription = (video: VideoData): string => {
@@ -39,14 +50,14 @@ export const generateVideoMetaDescription = (video: VideoData): string => {
   const channel = video.channel_name || 'Unknown Channel';
   const views = video.views || 0;
   
-  let description = `Watch "${title}" by ${channel} on YidVid - Your premier Jewish video platform. `;
+  let description = `Watch "${title}" by ${channel} on YidVid - Your premier Jewish kosher Yiddish platform. `;
   
   if (video.description) {
     const shortDesc = video.description.substring(0, 100);
     description += `${shortDesc}... `;
   }
   
-  description += `Join ${views.toLocaleString()} viewers and explore our curated collection of Jewish content, Torah videos, and educational media.`;
+  description += `Join ${views.toLocaleString()} viewers and explore our curated collection of kosher content and Yiddish videos.`;
   
   return description.substring(0, 160); // Keep under 160 characters for SEO
 };
@@ -120,7 +131,7 @@ export const generateOrganizationSchema = () => {
     "@context": "https://schema.org",
     "@type": "Organization",
     "name": "YidVid",
-    "description": "Your Premier Jewish Video Platform - Watch, Share, and Connect with curated Jewish content",
+    "description": "bringing kosher content for the Jewish Yiddish community",
     "url": "https://yidvid.com",
     "logo": "/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png",
     "sameAs": [

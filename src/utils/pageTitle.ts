@@ -1,13 +1,13 @@
 
 const APP_NAME = "YidVid";
-const APP_DESCRIPTION = "Your source for Jewish content - Access curated Jewish videos and music from trusted sources";
+const APP_DESCRIPTION = "Your source for kosher content - Access curated Jewish Yiddish videos from trusted sources";
 
 export const getPageTitle = (path: string): string => {
   // Remove leading slash and split path into segments
   const segments = path.replace(/^\//, '').split('/');
   
   // Handle root path
-  if (segments[0] === '') return `Home | ${APP_NAME} - Jewish Content Platform`;
+  if (segments[0] === '') return `Home | ${APP_NAME} kosher content`;
   
   // Map route segments to readable titles
   const pageTitles: { [key: string]: string | { [key: string]: string } } = {
@@ -54,7 +54,7 @@ export const getPageTitle = (path: string): string => {
 
 // Enhanced SEO metadata
 export const DEFAULT_META_DESCRIPTION = APP_DESCRIPTION;
-export const DEFAULT_META_KEYWORDS = "Jewish videos, Jewish content, Torah videos, Jewish music, Jewish lectures, Jewish education, Jewish media";
+export const DEFAULT_META_KEYWORDS = "Jewish videos, Torah videos, Jewish lectures, Jewish education, Jewish music, Jewish content, Torah study, Jewish learning, Jewish media, kosher videos, Jewish platform, Torah classes, Jewish spirituality, Yiddish videos, kosher videos, Jewish videos, chasdesh videos, Jewish youtube, kosher you tube, Jewish youtube, kosher content, yiddish content";
 export const DEFAULT_META_IMAGE = "/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png"; // Updated to use the official logo
 
 // New SEO utility functions

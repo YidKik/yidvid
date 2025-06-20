@@ -121,23 +121,23 @@ const Videos = () => {
   return (
     <>
       <Helmet>
-        <title>Jewish Videos | YidVid - Premier Jewish Video Platform</title>
-        <meta name="description" content="Discover thousands of Jewish videos, Torah lectures, Jewish music, and educational content. Watch curated Jewish media from trusted sources on YidVid - Your premier Jewish video platform." />
-        <meta name="keywords" content="Jewish videos, Torah videos, Jewish lectures, Jewish education, Jewish music, Jewish content, Torah study, Jewish learning, Jewish media, kosher videos" />
+        <title>Kosher videos | YidVid kosher content</title>
+        <meta name="description" content="YidVid is your premier Jewish kosher Yiddish platform featuring thousands of videos, content from trusted sources." />
+        <meta name="keywords" content="Jewish videos, Torah videos, Jewish lectures, Jewish education, Jewish music, Jewish content, Torah study, Jewish learning, Jewish media, kosher videos, Jewish platform, Torah classes, Jewish spirituality, Yiddish videos, chasdesh videos, Jewish youtube, kosher you tube, kosher content, yiddish content" />
         <meta name="robots" content="index, follow, max-image-preview:large" />
         <link rel="canonical" href={`${window.location.origin}/videos`} />
         
         {/* Open Graph */}
-        <meta property="og:title" content="Jewish Videos | YidVid - Premier Jewish Video Platform" />
-        <meta property="og:description" content="Discover thousands of Jewish videos, Torah lectures, Jewish music, and educational content on YidVid." />
+        <meta property="og:title" content="Kosher videos | YidVid kosher content" />
+        <meta property="og:description" content="YidVid is your premier Jewish kosher Yiddish platform featuring thousands of videos, content from trusted sources." />
         <meta property="og:image" content="/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content={`${window.location.origin}/videos`} />
         
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Jewish Videos | YidVid - Premier Jewish Video Platform" />
-        <meta name="twitter:description" content="Discover thousands of Jewish videos, Torah lectures, and educational content." />
+        <meta name="twitter:title" content="Kosher videos | YidVid kosher content" />
+        <meta name="twitter:description" content="YidVid is your premier Jewish kosher Yiddish platform featuring thousands of videos, content from trusted sources." />
         <meta name="twitter:image" content="/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png" />
         
         {/* Structured Data */}
@@ -145,8 +145,8 @@ const Videos = () => {
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "VideoGallery",
-            "name": "Jewish Videos Collection",
-            "description": "Curated collection of Jewish videos, Torah lectures, and educational content",
+            "name": "Kosher Videos Collection",
+            "description": "Curated collection of kosher Jewish Yiddish videos and content",
             "url": `${window.location.origin}/videos`,
             "publisher": {
               "@type": "Organization",
