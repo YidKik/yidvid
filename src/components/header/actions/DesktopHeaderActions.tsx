@@ -61,11 +61,11 @@ export const DesktopHeaderActions = ({
       ) : (
         <Button 
           onClick={onAuthOpen}
-          className={`${buttonBaseClass} px-3`}
+          className={buttonBaseClass}
           variant="ghost"
+          size="icon"
         >
-          <LogIn className="h-4 w-4 mr-1.5" />
-          <span className="text-sm">Sign in</span>
+          <LogIn className="h-4 w-4" />
         </Button>
       )}
     </div>
