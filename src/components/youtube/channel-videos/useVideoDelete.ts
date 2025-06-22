@@ -19,8 +19,8 @@ export const useVideoDelete = (refetchVideos: () => void) => {
       setIsDeleting(true);
       console.log("Starting video deletion process for:", videoId);
 
-      // Use the new secure admin function with proper typing
-      const { data, error } = await supabase.rpc('admin_delete_video' as any, {
+      // Use the admin_delete_video function with correct parameter order
+      const { data, error } = await supabase.rpc('admin_delete_video', {
         video_id_param: videoId,
         admin_user_id: user.id
       });

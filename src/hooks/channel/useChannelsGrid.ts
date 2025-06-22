@@ -28,7 +28,33 @@ export const useChannelsGrid = () => {
       setIsLoading(true);
       console.log("Attempting to fetch ALL channels directly with search:", searchTerm);
       
-      // First try with edge function which supports search
+      // First try direct database query - only get non-deleted channels
+      try {
+        let query = supabase.from("youtube_channels")
+          .select("id, channel_id, title, thumbnail_url, description, created_at, updated_at, deleted_at, default_category, fetch_error, last_fetch")
+          .is("deleted_at", null); // Filter out deleted channels
+          
+        if (searchTerm) {
+          query = query.ilike("title", `%${searchTerm}%`);
+        }
+        
+        const { data: channelsData, error: channelsError } = await query;
+        
+        if (!channelsError && channelsData && channelsData.length > 0) {
+          console.log(`Successfully fetched ${channelsData.length} channels directly`);
+          setManuallyFetchedChannels(channelsData);
+          setFetchError(null);
+          return channelsData;
+        }
+        
+        if (channelsError) {
+          console.warn("Direct DB fetch error:", channelsError);
+        }
+      } catch (directError) {
+        console.error("Error in direct fetch:", directError);
+      }
+      
+      // Try edge function as fallback
       try {
         const urlWithSearch = `https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/get-public-channels${searchTerm ? `?search=${encodeURIComponent(searchTerm)}` : ''}`;
         console.log("Fetching from edge function:", urlWithSearch);
@@ -52,46 +78,6 @@ export const useChannelsGrid = () => {
         }
       } catch (edgeError) {
         console.error("Edge function error:", edgeError);
-      }
-      
-      // Fall back to regular database query without limit
-      let query = supabase.from("youtube_channels")
-        .select("id, channel_id, title, thumbnail_url, description, created_at, updated_at, deleted_at, default_category, fetch_error, last_fetch")
-        .is("deleted_at", null);
-        
-      if (searchTerm) {
-        query = query.ilike("title", `%${searchTerm}%`);
-      }
-      
-      const { data: channelsData, error: channelsError } = await query;
-      
-      if (!channelsError && channelsData && channelsData.length > 0) {
-        console.log(`Successfully fetched ${channelsData.length} channels directly`);
-        setManuallyFetchedChannels(channelsData);
-        setFetchError(null);
-        return channelsData;
-      }
-      
-      if (channelsError) {
-        console.warn("Direct DB fetch error:", channelsError);
-        
-        // Try fallback with simplified query
-        let simplifiedQuery = supabase
-          .from("youtube_channels")
-          .select("id, channel_id, title, thumbnail_url, description, created_at, updated_at");
-          
-        if (searchTerm) {
-          simplifiedQuery = simplifiedQuery.ilike("title", `%${searchTerm}%`);
-        }
-        
-        const { data: simplifiedData, error: simplifiedError } = await simplifiedQuery;
-        
-        if (!simplifiedError && simplifiedData && simplifiedData.length > 0) {
-          console.log(`Retrieved ${simplifiedData.length} channels with simplified query`);
-          setManuallyFetchedChannels(simplifiedData);
-          setFetchError(null);
-          return simplifiedData;
-        }
       }
       
       console.error("All channel fetch methods failed");

@@ -21,7 +21,7 @@ export default function VideosPage() {
       let query = supabase
         .from("youtube_videos")
         .select("*")
-        .is("deleted_at", null)
+        .is("deleted_at", null) // Only get non-deleted videos
         .order("updated_at", { ascending: false });
 
       if (timeRange !== "all") {
@@ -58,8 +58,8 @@ export default function VideosPage() {
     try {
       setIsDeleting(true);
       
-      // Use the new secure admin function with proper typing
-      const { data, error } = await supabase.rpc('admin_delete_video' as any, {
+      // Use the admin_delete_video function with correct parameter order
+      const { data, error } = await supabase.rpc('admin_delete_video', {
         video_id_param: videoId,
         admin_user_id: user.id
       });

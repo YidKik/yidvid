@@ -23,13 +23,13 @@ export const useYouTubeChannels = () => {
       try {
         console.log("Fetching channels for admin management...");
         
-        // First try direct database query
+        // First try direct database query - only get non-deleted channels
         try {
           const { data, error } = await supabase
             .from("youtube_channels")
             .select("*")
             .order("created_at", { ascending: false })
-            .is("deleted_at", null);
+            .is("deleted_at", null); // Filter out deleted channels
             
           if (!error && data && data.length > 0) {
             console.log(`Successfully fetched ${data.length} channels directly`);
@@ -100,8 +100,8 @@ export const useYouTubeChannels = () => {
       setChannelToDelete(channelId);
       console.log("Starting channel deletion process for:", channelId);
 
-      // Use the new secure admin function with proper typing
-      const { data, error } = await supabase.rpc('admin_delete_channel' as any, {
+      // Use the admin_delete_channel function with correct parameter order
+      const { data, error } = await supabase.rpc('admin_delete_channel', {
         channel_id_param: channelId,
         admin_user_id: user.id
       });

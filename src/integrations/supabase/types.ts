@@ -1232,6 +1232,22 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_delete_channel: {
+        Args: { channel_id_param: string; admin_user_id: string }
+        Returns: Json
+      }
+      admin_delete_video: {
+        Args: { video_id_param: string; admin_user_id: string }
+        Returns: Json
+      }
+      admin_restore_channel: {
+        Args: { channel_id_param: string; admin_user_id: string }
+        Returns: Json
+      }
+      admin_restore_video: {
+        Args: { video_id_param: string; admin_user_id: string }
+        Returns: Json
+      }
       delete_user: {
         Args: Record<PropertyKey, never>
         Returns: undefined
@@ -1243,6 +1259,10 @@ export type Database = {
       get_next_midnight_utc: {
         Args: Record<PropertyKey, never>
         Returns: string
+      }
+      is_admin_user: {
+        Args: { user_id: string }
+        Returns: boolean
       }
       trigger_youtube_video_fetch: {
         Args: Record<PropertyKey, never>

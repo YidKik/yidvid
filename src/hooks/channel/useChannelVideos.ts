@@ -23,7 +23,20 @@ export const useChannelVideos = (channelId: string | undefined) => {
       console.log("Fetching ALL videos for channel:", channelId);
       
       try {
-        // Call the edge function directly with proper authorization
+        // First try direct database query - only get non-deleted videos
+        const { data: dbVideos, error: dbError } = await supabase
+          .from("youtube_videos")
+          .select("*")
+          .eq("channel_id", channelId)
+          .is("deleted_at", null) // Filter out deleted videos
+          .order("uploaded_at", { ascending: false });
+
+        if (!dbError && dbVideos && dbVideos.length > 0) {
+          console.log(`Found ${dbVideos.length} videos from database for channel ${channelId}`);
+          return dbVideos;
+        }
+
+        // Fallback to edge function
         const response = await fetch(`https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/get-public-videos?channel_id=${channelId}`, {
           method: "GET",
           headers: {

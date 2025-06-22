@@ -29,7 +29,7 @@ export const formatVideoData = (data: any[]): VideoData[] => {
 };
 
 /**
- * Fetches videos from database
+ * Fetches videos from database - only non-deleted videos
  */
 export const fetchVideosFromDatabase = async () => {
   // This function is imported and used elsewhere
@@ -40,7 +40,7 @@ export const fetchVideosFromDatabase = async () => {
     const { data, error } = await supabase
       .from("youtube_videos")
       .select("*, youtube_channels(thumbnail_url)")
-      .is("deleted_at", null)
+      .is("deleted_at", null) // Only get non-deleted videos
       .order("created_at", { ascending: false })
       .limit(150);
       
@@ -53,7 +53,7 @@ export const fetchVideosFromDatabase = async () => {
 };
 
 /**
- * Fetches active channels from database
+ * Fetches active channels from database - only non-deleted channels
  */
 export const fetchActiveChannels = async () => {
   const { supabase } = await import("@/integrations/supabase/client");
@@ -62,7 +62,7 @@ export const fetchActiveChannels = async () => {
     const { data, error } = await supabase
       .from("youtube_channels")
       .select("channel_id")
-      .is("deleted_at", null);
+      .is("deleted_at", null); // Only get non-deleted channels
       
     if (error) throw error;
     return data || [];
