@@ -67,11 +67,6 @@ export const FilteredChannelsGrid = ({
 
   return (
     <div className="w-full">
-      {totalChannels > 0 && (
-        <div className="text-sm text-gray-500 mb-2">
-          Showing all {totalChannels} channels
-        </div>
-      )}
       <div className={`grid ${getGridColumns()} gap-4 mt-4 pb-8 tablet-channels-grid`}>
         {displayChannels.map((channel, index) => (
           <ChannelCard 

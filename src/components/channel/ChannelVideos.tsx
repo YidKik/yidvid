@@ -1,4 +1,3 @@
-
 import { VideoCard } from "@/components/VideoCard";
 import { DelayedLoadingAnimation } from "@/components/ui/DelayedLoadingAnimation";
 import { useLocation } from "react-router-dom";
@@ -57,11 +56,6 @@ export const ChannelVideos = ({
 
   return (
     <>
-      <div className="mb-4">
-        <p className="text-sm text-muted-foreground">
-          Showing all {videos.length} videos from this channel
-        </p>
-      </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
         {videos.map((video, index) => (
           <div 
