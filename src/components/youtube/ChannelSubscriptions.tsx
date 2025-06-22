@@ -78,7 +78,7 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
     enabled: !!userId && isAuthenticated,
   });
 
-  const handleUnsubscribe = async (channelId: string) => {
+  const handleUnsubscribe = async (channelId: string, channelTitle: string) => {
     if (!userId) {
       toast.error("You need to be logged in to manage subscriptions");
       return;
@@ -87,19 +87,22 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
     try {
       setProcessingUnsubscribe(channelId);
       
-      const { error } = await supabase
-        .from("channel_subscriptions")
-        .delete()
-        .eq("user_id", userId)
-        .eq("channel_id", channelId);
+      // Use the edge function for consistency
+      const { error } = await supabase.functions.invoke('channel-subscribe', {
+        body: {
+          channelId: channelId,
+          userId: userId,
+          action: 'unsubscribe'
+        }
+      });
 
       if (error) throw error;
 
-      toast.success("Unsubscribed from channel");
+      toast.success(`Unsubscribed from ${channelTitle}`);
       await refetch();
     } catch (error: any) {
       console.error("Error unsubscribing:", error);
-      toast.error("Error unsubscribing from channel");
+      toast.error(`Error unsubscribing from ${channelTitle}`);
     } finally {
       setProcessingUnsubscribe(null);
     }
@@ -138,7 +141,7 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
             Channel Subscriptions
           </CardTitle>
           <CardDescription>
-            Error loading subscriptions. Please try again.
+            Error loading subscriptions. Please try refreshing the page.
           </CardDescription>
         </CardHeader>
       </Card>
@@ -153,7 +156,7 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
             <Bell className="w-5 h-5 text-primary" />
             Channel Subscriptions
           </CardTitle>
-          <CardDescription>Loading subscriptions...</CardDescription>
+          <CardDescription>Loading your subscriptions...</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex justify-center py-8">
@@ -174,7 +177,7 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
             Channel Subscriptions
           </CardTitle>
           <CardDescription>
-            Please sign in to manage your subscriptions.
+            Please sign in to manage your channel subscriptions and get notified of new videos.
           </CardDescription>
         </CardHeader>
       </Card>
@@ -189,7 +192,7 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
           Channel Subscriptions
         </CardTitle>
         <CardDescription>
-          Manage your channel subscriptions and stay updated with your favorite content creators
+          Manage your channel subscriptions and stay updated with your favorite content creators. You'll receive notifications whenever these channels upload new videos.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -246,14 +249,14 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => handleUnsubscribe(subscription.channel.channel_id)}
+                        onClick={() => handleUnsubscribe(subscription.channel.channel_id, subscription.channel.title)}
                         disabled={processingUnsubscribe === subscription.channel.channel_id}
                         className="w-full text-red-600 hover:text-red-700 hover:bg-red-50 gap-1.5 text-xs"
                       >
                         {processingUnsubscribe === subscription.channel.channel_id ? (
                           <>
                             <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                            Processing...
+                            Unsubscribing...
                           </>
                         ) : (
                           <>
@@ -270,9 +273,12 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center py-8 px-4">
-            <Youtube className="w-10 h-10 text-gray-300 mb-3" />
-            <p className="text-muted-foreground text-center text-sm">
-              You are not subscribed to any channels yet.
+            <Bell className="w-12 h-12 text-gray-300 mb-3" />
+            <p className="text-muted-foreground text-center text-sm mb-2">
+              You haven't subscribed to any channels yet.
+            </p>
+            <p className="text-muted-foreground text-center text-xs">
+              Subscribe to channels to get notified when they upload new videos!
             </p>
           </div>
         )}

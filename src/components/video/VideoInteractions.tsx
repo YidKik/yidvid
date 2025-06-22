@@ -1,3 +1,4 @@
+
 import { ThumbsUp, UserPlus, Check, Loader2, Share } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
@@ -18,6 +19,7 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
   const [showAnimation, setShowAnimation] = useState(false);
   const [isClickAnimating, setIsClickAnimating] = useState(false);
   const [channelId, setChannelId] = useState<string | null>(null);
+  const [channelName, setChannelName] = useState<string>("");
   const { session, isAuthenticated, isLoading: isSessionLoading } = useSessionManager();
   const userId = session?.user?.id;
 
@@ -33,24 +35,25 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
   }, [session, isAuthenticated, isSessionLoading, userId]);
 
   useEffect(() => {
-    const fetchChannelId = async () => {
+    const fetchChannelInfo = async () => {
       if (!videoId) return;
 
       const { data, error } = await supabase
         .from('youtube_videos')
-        .select('channel_id')
+        .select('channel_id, channel_name')
         .eq('id', videoId)
         .single();
 
       if (error) {
-        console.error('Error fetching channel ID:', error);
+        console.error('Error fetching channel info:', error);
         return;
       }
 
       setChannelId(data.channel_id);
+      setChannelName(data.channel_name || "");
     };
 
-    fetchChannelId();
+    fetchChannelInfo();
   }, [videoId]);
 
   const { 
@@ -134,14 +137,21 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
       }
       
       if (!isAuthenticated) {
-        toast.error("Please sign in to subscribe");
+        toast.error("Please sign in to subscribe to channels");
         return;
       }
       
       await handleSubscribe();
+      
+      // Show success message with channel name
+      if (!isSubscribed) {
+        toast.success(`Successfully subscribed to ${channelName}! You'll be notified of new videos.`);
+      } else {
+        toast.success(`Unsubscribed from ${channelName}`);
+      }
     } catch (error) {
       console.error("Subscribe error:", error);
-      // Error is already handled in handleSubscribe
+      toast.error("Failed to update subscription. Please try again.");
     }
   };
 
@@ -191,15 +201,15 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
           </span>
         </Button>
         
-        {channelId && (
+        {channelId && isAuthenticated && (
           <Button
             variant={isSubscribed ? "default" : "outline"}
             onClick={handleSubscribeClick}
             disabled={buttonDisabled}
-            className={`relative group rounded-full px-6 py-2 text-xs md:text-sm transition-all duration-300 active:scale-95
+            className={`relative group rounded-full px-4 md:px-6 py-2 text-xs md:text-sm transition-all duration-300 active:scale-95 font-medium
               ${isSubscribed 
-                ? "bg-primary border-primary hover:bg-primary/90 text-white shadow-md" 
-                : "hover:bg-primary/10 hover:border-gray-300"
+                ? "bg-red-500 border-red-500 hover:bg-red-600 text-white shadow-md" 
+                : "bg-white border-gray-300 hover:bg-gray-50 hover:border-red-500 text-gray-700 hover:text-red-500"
               }
             `}
           >
@@ -210,7 +220,7 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
               </>
             ) : isSubscribed ? (
               <>
-                <Check className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2 animate-in" />
+                <Check className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" />
                 <span>Subscribed</span>
               </>
             ) : (
@@ -219,8 +229,24 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
                 <span>Subscribe</span>
               </>
             )}
-            <span className={`absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200`}>
-              {isSubscribed ? "Subscribed" : "Subscribe to channel"}
+            <span className={`absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200 ${
+              isSubscribed ? "text-red-500" : "text-red-500"
+            }`}>
+              {isSubscribed ? `Subscribed to ${channelName}` : `Subscribe to ${channelName}`}
+            </span>
+          </Button>
+        )}
+        
+        {!isAuthenticated && channelId && (
+          <Button
+            variant="outline"
+            onClick={() => toast.info("Please sign in to subscribe to channels")}
+            className="relative group rounded-full px-4 md:px-6 py-2 text-xs md:text-sm transition-all duration-300 active:scale-95 font-medium bg-white border-gray-300 hover:bg-gray-50 hover:border-red-500 text-gray-700 hover:text-red-500"
+          >
+            <UserPlus className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" />
+            <span>Subscribe</span>
+            <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-red-500">
+              Sign in to subscribe
             </span>
           </Button>
         )}

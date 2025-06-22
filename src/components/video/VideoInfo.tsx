@@ -2,8 +2,12 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatDistanceToNow } from "date-fns";
 import { useState } from "react";
-import { ChevronRight, ChevronDown } from "lucide-react";
+import { ChevronRight, ChevronDown, UserPlus, Check, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { useChannelSubscription } from "@/hooks/channel/useChannelSubscription";
+import { useSessionManager } from "@/hooks/useSessionManager";
+import { toast } from "sonner";
 
 interface VideoInfoProps {
   title: string;
@@ -24,6 +28,13 @@ export const VideoInfo = ({
   uploadedAt
 }: VideoInfoProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const { session, isAuthenticated, isLoading: isSessionLoading } = useSessionManager();
+  
+  const { 
+    isSubscribed, 
+    handleSubscribe, 
+    isLoading: isLoadingSubscription 
+  } = useChannelSubscription(channelId || undefined);
 
   // Format the date with robust error handling
   const getFormattedDate = () => {
@@ -56,10 +67,36 @@ export const VideoInfo = ({
   const formattedDate = getFormattedDate();
   const formattedViews = views?.toLocaleString() || "0";
 
+  const handleSubscribeClick = async () => {
+    try {
+      if (isSessionLoading) {
+        toast.info("Please wait while we verify your account");
+        return;
+      }
+      
+      if (!isAuthenticated) {
+        toast.error("Please sign in to subscribe to channels");
+        return;
+      }
+      
+      await handleSubscribe();
+      
+      // Show success message with channel name
+      if (!isSubscribed) {
+        toast.success(`Successfully subscribed to ${channelName}! You'll be notified of new videos.`);
+      } else {
+        toast.success(`Unsubscribed from ${channelName}`);
+      }
+    } catch (error) {
+      console.error("Subscribe error:", error);
+      toast.error("Failed to update subscription. Please try again.");
+    }
+  };
+
   return (
     <div className="space-y-4 animate-fade-in">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-1">
           {channelId ? (
             <Link to={`/channel/${channelId}`} className="hover:opacity-80 transition-opacity">
               <Avatar className="h-10 w-10 md:h-12 md:w-12 ring-2 ring-background shadow-lg">
@@ -77,7 +114,7 @@ export const VideoInfo = ({
               </AvatarFallback>
             </Avatar>
           )}
-          <div className="flex flex-col">
+          <div className="flex flex-col flex-1">
             {channelId ? (
               <Link 
                 to={`/channel/${channelId}`}
@@ -95,6 +132,50 @@ export const VideoInfo = ({
             </div>
           </div>
         </div>
+
+        {/* Subscribe button for authenticated users */}
+        {channelId && isAuthenticated && (
+          <Button
+            variant={isSubscribed ? "default" : "outline"}
+            onClick={handleSubscribeClick}
+            disabled={isLoadingSubscription || isSessionLoading}
+            className={`ml-4 rounded-full px-4 py-2 text-sm transition-all duration-300 active:scale-95 font-medium
+              ${isSubscribed 
+                ? "bg-red-500 border-red-500 hover:bg-red-600 text-white shadow-md" 
+                : "bg-white border-gray-300 hover:bg-gray-50 hover:border-red-500 text-gray-700 hover:text-red-500"
+              }
+            `}
+          >
+            {isLoadingSubscription || isSessionLoading ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                <span>Loading...</span>
+              </>
+            ) : isSubscribed ? (
+              <>
+                <Check className="w-4 h-4 mr-2" />
+                <span>Subscribed</span>
+              </>
+            ) : (
+              <>
+                <UserPlus className="w-4 h-4 mr-2" />
+                <span>Subscribe</span>
+              </>
+            )}
+          </Button>
+        )}
+
+        {/* Sign in prompt for non-authenticated users */}
+        {channelId && !isAuthenticated && (
+          <Button
+            variant="outline"
+            onClick={() => toast.info("Please sign in to subscribe to channels")}
+            className="ml-4 rounded-full px-4 py-2 text-sm transition-all duration-300 active:scale-95 font-medium bg-white border-gray-300 hover:bg-gray-50 hover:border-red-500 text-gray-700 hover:text-red-500"
+          >
+            <UserPlus className="w-4 h-4 mr-2" />
+            <span>Subscribe</span>
+          </Button>
+        )}
       </div>
 
       {description && (

@@ -13,6 +13,7 @@ import { NotificationList } from "../notifications/NotificationList";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useNotifications } from "../notifications/useNotifications";
 import { useMobileDrag } from "../notifications/useMobileDrag";
+import { useLocation } from "react-router-dom";
 
 interface NotificationsMenuProps {
   session: any;
@@ -21,6 +22,8 @@ interface NotificationsMenuProps {
 
 export const NotificationsMenu = ({ session, onMarkAsRead }: NotificationsMenuProps) => {
   const { isMobile } = useIsMobile();
+  const location = useLocation();
+  const isVideosPage = location.pathname === "/videos";
   
   const {
     notifications,
@@ -43,21 +46,26 @@ export const NotificationsMenu = ({ session, onMarkAsRead }: NotificationsMenuPr
     return null;
   }
 
+  // Determine button styling based on current page
+  const buttonClass = isVideosPage
+    ? "bg-[#ea384c] hover:bg-[#c82d3f] text-white"
+    : "bg-[#222222] hover:bg-[#333333] text-white";
+
   return (
     <Sheet>
       <SheetTrigger asChild>
         <Button 
           variant="ghost" 
           size="icon" 
-          className="bg-[#222222] hover:bg-[#333333] text-white relative h-7 w-7 md:h-10 md:w-10"
+          className={`${buttonClass} relative h-7 w-7 md:h-10 md:w-10 rounded-full transition-all duration-300`}
         >
           <Bell className="h-3.5 w-3.5 md:h-5 md:w-5" />
           {notifications && notifications.length > 0 && (
             <Badge 
               variant="destructive" 
-              className="absolute -top-1 -right-1 h-3 w-3 md:h-5 md:w-5 flex items-center justify-center p-0 text-[8px] md:text-xs"
+              className="absolute -top-1 -right-1 h-4 w-4 md:h-5 md:w-5 flex items-center justify-center p-0 text-[10px] md:text-xs font-medium bg-red-500 text-white rounded-full"
             >
-              {notifications.length}
+              {notifications.length > 9 ? '9+' : notifications.length}
             </Badge>
           )}
         </Button>
