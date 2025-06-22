@@ -35,7 +35,7 @@ export const MobileHeaderActions = ({
     <div className="flex items-center gap-1.5">
       {session ? (
         <>
-          <NotificationsMenu session={session} onMarkAsRead={onMarkNotificationsAsRead} />
+          <NotificationsMenu onMarkAsRead={onMarkNotificationsAsRead} />
           <Button
             onClick={handleSettingsClick}
             variant="ghost" 

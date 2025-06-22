@@ -28,7 +28,7 @@ export const DesktopHeaderActions = ({
 
   return (
     <div className="flex items-center gap-3">
-      {session && <NotificationsMenu session={session} onMarkAsRead={onMarkNotificationsAsRead} />}
+      {session && <NotificationsMenu onMarkAsRead={onMarkNotificationsAsRead} />}
       
       <Button 
         onClick={() => {
