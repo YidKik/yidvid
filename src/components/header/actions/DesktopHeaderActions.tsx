@@ -26,6 +26,11 @@ export const DesktopHeaderActions = ({
   const navigate = useNavigate();
   const isVideosPage = location.pathname === "/videos";
 
+  // Consistent button styling for all buttons
+  const buttonBaseClass = `h-9 w-9 rounded-full ${isVideosPage 
+    ? 'bg-[#ea384c] hover:bg-[#c82d3f] text-white' 
+    : 'bg-[#222222] hover:bg-[#333333] text-white'}`;
+
   return (
     <div className="flex items-center gap-3">
       {session && <NotificationsMenu onMarkAsRead={onMarkNotificationsAsRead} />}
@@ -39,9 +44,7 @@ export const DesktopHeaderActions = ({
         }}
         variant="ghost" 
         size="icon"
-        className={`h-9 w-9 rounded-full ${isVideosPage 
-          ? 'bg-[#ea384c] hover:bg-[#c82d3f] text-white' 
-          : 'bg-[#222222] hover:bg-[#333333] text-white'}`}
+        className={buttonBaseClass}
       >
         <MessageSquare className="h-4 w-4" />
       </Button>
@@ -49,19 +52,16 @@ export const DesktopHeaderActions = ({
       {session ? (
         <Button 
           onClick={handleSettingsClick}
-          className={`${isVideosPage 
-            ? 'bg-[#ea384c] hover:bg-[#c82d3f] text-white' 
-            : 'bg-[#222222] hover:bg-[#333333] text-white'} rounded-full flex items-center justify-center px-3 py-2 h-9`}
+          className={buttonBaseClass}
           variant="ghost"
+          size="icon"
         >
           <Settings className="h-4 w-4" />
         </Button>
       ) : (
         <Button 
           onClick={onAuthOpen}
-          className={`${isVideosPage 
-            ? 'bg-[#ea384c] hover:bg-[#c82d3f] text-white' 
-            : 'bg-[#222222] hover:bg-[#333333] text-white'} rounded-full flex items-center justify-center px-3 py-2 h-9`}
+          className={`${buttonBaseClass} px-3`}
           variant="ghost"
         >
           <LogIn className="h-4 w-4 mr-1.5" />

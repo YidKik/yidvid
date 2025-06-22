@@ -54,10 +54,10 @@ export const NotificationsMenu = ({ onMarkAsRead }: NotificationsMenuProps) => {
     return null;
   }
 
-  // Determine button styling based on current page
-  const buttonClass = isVideosPage
+  // Consistent button styling to match other header buttons
+  const buttonClass = `h-9 w-9 rounded-full ${isVideosPage
     ? "bg-[#ea384c] hover:bg-[#c82d3f] text-white"
-    : "bg-[#222222] hover:bg-[#333333] text-white";
+    : "bg-[#222222] hover:bg-[#333333] text-white"} transition-all duration-300`;
 
   return (
     <Sheet>
@@ -65,13 +65,13 @@ export const NotificationsMenu = ({ onMarkAsRead }: NotificationsMenuProps) => {
         <Button 
           variant="ghost" 
           size="icon" 
-          className={`${buttonClass} relative h-7 w-7 md:h-10 md:w-10 rounded-full transition-all duration-300`}
+          className={`${buttonClass} relative`}
         >
-          <Bell className="h-3.5 w-3.5 md:h-5 md:w-5" />
+          <Bell className="h-4 w-4" />
           {notifications && notifications.length > 0 && (
             <Badge 
               variant="destructive" 
-              className="absolute -top-1 -right-1 h-4 w-4 md:h-5 md:w-5 flex items-center justify-center p-0 text-[10px] md:text-xs font-medium bg-red-500 text-white rounded-full"
+              className="absolute -top-1 -right-1 h-4 w-4 flex items-center justify-center p-0 text-[10px] font-medium bg-red-500 text-white rounded-full"
             >
               {notifications.length > 9 ? '9+' : notifications.length}
             </Badge>
