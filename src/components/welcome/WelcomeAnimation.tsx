@@ -247,7 +247,7 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ onComplete, 
                 <div className="w-2 h-2 bg-[#ea384c] rounded-full" />
               </motion.div>
             ))}
-          </div>
+          </motion.div>
         </motion.div>
       )}
     </AnimatePresence>
