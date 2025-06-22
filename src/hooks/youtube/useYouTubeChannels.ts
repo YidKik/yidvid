@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -99,8 +100,8 @@ export const useYouTubeChannels = () => {
       setChannelToDelete(channelId);
       console.log("Starting channel deletion process for:", channelId);
 
-      // Use the new secure admin function
-      const { data, error } = await supabase.rpc('admin_delete_channel', {
+      // Use the new secure admin function with proper typing
+      const { data, error } = await supabase.rpc('admin_delete_channel' as any, {
         channel_id_param: channelId,
         admin_user_id: user.id
       });
@@ -110,9 +111,12 @@ export const useYouTubeChannels = () => {
         throw new Error(error.message);
       }
 
-      if (!data?.success) {
-        console.error("Channel deletion failed:", data?.error);
-        throw new Error(data?.error || "Failed to delete channel");
+      // Type assertion for the response
+      const response = data as { success: boolean; error?: string; message?: string };
+
+      if (!response?.success) {
+        console.error("Channel deletion failed:", response?.error);
+        throw new Error(response?.error || "Failed to delete channel");
       }
 
       toast.success("Channel deleted successfully");

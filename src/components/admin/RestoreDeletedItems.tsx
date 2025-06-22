@@ -54,15 +54,19 @@ export const RestoreDeletedItems = () => {
     try {
       setIsRestoring(true);
       
-      const { data, error } = await supabase.rpc('admin_restore_video', {
+      // Use the admin restore function with proper typing
+      const { data, error } = await supabase.rpc('admin_restore_video' as any, {
         video_id_param: videoId,
         admin_user_id: user.id
       });
 
       if (error) throw new Error(error.message);
       
-      if (!data?.success) {
-        throw new Error(data?.error || "Failed to restore video");
+      // Type assertion for the response
+      const response = data as { success: boolean; error?: string; message?: string };
+      
+      if (!response?.success) {
+        throw new Error(response?.error || "Failed to restore video");
       }
 
       toast.success("Video restored successfully");
@@ -84,15 +88,19 @@ export const RestoreDeletedItems = () => {
     try {
       setIsRestoring(true);
       
-      const { data, error } = await supabase.rpc('admin_restore_channel', {
+      // Use the admin restore function with proper typing
+      const { data, error } = await supabase.rpc('admin_restore_channel' as any, {
         channel_id_param: channelId,
         admin_user_id: user.id
       });
 
       if (error) throw new Error(error.message);
       
-      if (!data?.success) {
-        throw new Error(data?.error || "Failed to restore channel");
+      // Type assertion for the response
+      const response = data as { success: boolean; error?: string; message?: string };
+      
+      if (!response?.success) {
+        throw new Error(response?.error || "Failed to restore channel");
       }
 
       toast.success("Channel and its videos restored successfully");

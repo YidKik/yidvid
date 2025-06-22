@@ -19,8 +19,8 @@ export const useVideoDelete = (refetchVideos: () => void) => {
       setIsDeleting(true);
       console.log("Starting video deletion process for:", videoId);
 
-      // Use the new secure admin function
-      const { data, error } = await supabase.rpc('admin_delete_video', {
+      // Use the new secure admin function with proper typing
+      const { data, error } = await supabase.rpc('admin_delete_video' as any, {
         video_id_param: videoId,
         admin_user_id: user.id
       });
@@ -30,9 +30,12 @@ export const useVideoDelete = (refetchVideos: () => void) => {
         throw new Error(error.message);
       }
 
-      if (!data?.success) {
-        console.error("Video deletion failed:", data?.error);
-        throw new Error(data?.error || "Failed to delete video");
+      // Type assertion for the response
+      const response = data as { success: boolean; error?: string; message?: string };
+
+      if (!response?.success) {
+        console.error("Video deletion failed:", response?.error);
+        throw new Error(response?.error || "Failed to delete video");
       }
 
       console.log("Video deleted successfully");
