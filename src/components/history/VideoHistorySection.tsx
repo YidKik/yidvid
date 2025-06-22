@@ -14,22 +14,29 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useSessionManager } from "@/hooks/useSessionManager";
+import { useUnifiedAuth } from "@/hooks/useUnifiedAuth";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export const VideoHistorySection = () => {
   const queryClient = useQueryClient();
-  const { session, isAuthenticated } = useSessionManager();
+  const { isAuthenticated, user, isLoading: authLoading } = useUnifiedAuth();
+
+  console.log("VideoHistorySection auth state:", {
+    isAuthenticated,
+    userId: user?.id,
+    authLoading
+  });
 
   const { data: history, isLoading, error } = useQuery({
-    queryKey: ["video-history", session?.user?.id],
+    queryKey: ["video-history", user?.id],
     queryFn: async () => {
-      try {
-        if (!isAuthenticated || !session?.user) {
-          console.log("User not authenticated, skipping history fetch");
-          return [];
-        }
+      if (!isAuthenticated || !user?.id) {
+        console.log("User not authenticated, skipping history fetch");
+        return [];
+      }
 
+      try {
+        console.log("Fetching video history for user:", user.id);
         const { data, error } = await supabase
           .from("video_history")
           .select(`
@@ -41,33 +48,34 @@ export const VideoHistorySection = () => {
               id
             )
           `)
-          .eq("user_id", session.user.id)
+          .eq("user_id", user.id)
           .order("watched_at", { ascending: false });
 
         if (error) {
           console.error("Error fetching history:", error);
-          toast.error("Failed to load video history");
           throw error;
         }
 
+        console.log("Video history fetched successfully:", data?.length || 0, "entries");
         return data || [];
       } catch (err) {
         console.error("Error in video history query:", err);
-        return [];
+        throw err;
       }
     },
-    enabled: isAuthenticated && !!session?.user,
+    enabled: isAuthenticated && !!user?.id && !authLoading,
     staleTime: 60000, // 1 minute
+    retry: 2,
   });
 
   const clearHistoryMutation = useMutation({
     mutationFn: async () => {
-      if (!isAuthenticated || !session?.user) throw new Error("Not authenticated");
+      if (!isAuthenticated || !user?.id) throw new Error("Not authenticated");
 
       const { error } = await supabase
         .from("video_history")
         .delete()
-        .eq("user_id", session.user.id);
+        .eq("user_id", user.id);
 
       if (error) throw error;
     },
@@ -86,6 +94,31 @@ export const VideoHistorySection = () => {
       clearHistoryMutation.mutate();
     }
   };
+
+  // Show loading while auth is loading
+  if (authLoading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-bold">Watch History</h2>
+          <Button variant="destructive" disabled>
+            Clear History
+          </Button>
+        </div>
+        <div className="h-[400px] rounded-md border p-4">
+          <div className="space-y-4">
+            {Array(5).fill(0).map((_, i) => (
+              <div key={i} className="flex justify-between items-center">
+                <Skeleton className="h-6 w-1/3" />
+                <Skeleton className="h-6 w-1/4" />
+                <Skeleton className="h-6 w-1/5" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // If not authenticated, show appropriate message
   if (!isAuthenticated) {
@@ -146,9 +179,9 @@ export const VideoHistorySection = () => {
         <Button 
           variant="destructive" 
           onClick={handleClearHistory}
-          disabled={!history?.length}
+          disabled={!history?.length || clearHistoryMutation.isPending}
         >
-          Clear History
+          {clearHistoryMutation.isPending ? "Clearing..." : "Clear History"}
         </Button>
       </div>
 

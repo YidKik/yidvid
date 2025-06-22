@@ -5,9 +5,8 @@ import { ChannelSubscriptions } from "@/components/youtube/ChannelSubscriptions"
 import { ChannelControl } from "@/components/youtube/ChannelPreferences";
 import { PlaybackSettings } from "@/components/settings/PlaybackSettings";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useSessionManager } from "@/hooks/useSessionManager";
+import { useUnifiedAuth } from "@/hooks/useUnifiedAuth";
 import Auth from "@/pages/Auth";
-import { toast } from "sonner";
 
 interface ContentPreferencesSectionProps {
   userId: string | null;
@@ -21,25 +20,18 @@ export const ContentPreferencesSection = ({
   setAutoplay,
 }: ContentPreferencesSectionProps) => {
   const isMobile = useIsMobile();
-  const { session, isAuthenticated, isAuthOpen, setIsAuthOpen } = useSessionManager();
-  const [authChecked, setAuthChecked] = useState(false);
-  const currentUserId = session?.user?.id || userId;
+  const { isAuthenticated, user, isLoading: authLoading } = useUnifiedAuth();
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
 
   // Log authentication state when component mounts
   useEffect(() => {
     console.log("ContentPreferencesSection - Auth state:", {
       isAuthenticated,
-      userId: currentUserId,
-      sessionEmail: session?.user?.email || "No email"
+      userId: user?.id,
+      userEmail: user?.email || "No email",
+      authLoading
     });
-    setAuthChecked(true);
-
-    // Check if authentication is working correctly
-    if (!isAuthenticated && sessionStorage.getItem('supabase.auth.token')) {
-      console.warn("Potential auth state mismatch - token exists but not authenticated");
-      toast.info("Refreshing authentication state...");
-    }
-  }, [isAuthenticated, currentUserId, session]);
+  }, [isAuthenticated, user, authLoading]);
   
   return (
     <div className="space-y-6 md:space-y-8">
@@ -47,13 +39,7 @@ export const ContentPreferencesSection = ({
       
       <div>
         <h3 className={`${isMobile ? 'text-base' : 'text-xl'} font-semibold mb-3 md:mb-4`}>Channel Subscriptions</h3>
-        {isAuthenticated && currentUserId ? (
-          <ChannelSubscriptions userId={currentUserId} />
-        ) : (
-          <Card className={`${isMobile ? 'p-3 text-sm' : 'p-6'}`}>
-            <p className="text-muted-foreground">Please sign in to manage your subscriptions.</p>
-          </Card>
-        )}
+        <ChannelSubscriptions />
       </div>
 
       <div>

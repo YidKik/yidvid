@@ -23,21 +23,17 @@ interface ChannelSubscription {
   };
 }
 
-export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
+export const ChannelSubscriptions = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(false);
-  const { isAuthenticated, user } = useUnifiedAuth();
+  const { isAuthenticated, user, isLoading: authLoading } = useUnifiedAuth();
   const [processingUnsubscribe, setProcessingUnsubscribe] = useState<string | null>(null);
 
-  const currentUserId = user?.id;
-  const shouldFetchSubscriptions = isAuthenticated && currentUserId && currentUserId === userId;
-
   console.log("ChannelSubscriptions state:", {
-    userId,
-    currentUserId,
+    userId: user?.id,
     isAuthenticated,
-    shouldFetchSubscriptions
+    authLoading
   });
 
   useEffect(() => {
@@ -56,14 +52,14 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
   }, []);
 
   const { data: subscriptions, refetch, isLoading, error } = useQuery({
-    queryKey: ["channel-subscriptions", currentUserId],
+    queryKey: ["channel-subscriptions", user?.id],
     queryFn: async () => {
-      if (!currentUserId) {
+      if (!user?.id) {
         console.log("No userId provided for subscriptions");
         return [];
       }
 
-      console.log("Fetching subscriptions for user:", currentUserId);
+      console.log("Fetching subscriptions for user:", user.id);
       const { data, error } = await supabase
         .from("channel_subscriptions")
         .select(`
@@ -73,22 +69,23 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
             channel_id
           )
         `)
-        .eq("user_id", currentUserId);
+        .eq("user_id", user.id);
 
       if (error) {
         console.error("Error fetching subscriptions:", error);
-        toast.error("Error fetching subscriptions");
-        return [];
+        throw error;
       }
 
-      console.log("Fetched subscriptions:", data);
+      console.log("Fetched subscriptions:", data?.length || 0, "subscriptions");
       return data as ChannelSubscription[];
     },
-    enabled: shouldFetchSubscriptions,
+    enabled: isAuthenticated && !!user?.id && !authLoading,
+    staleTime: 30000, // 30 seconds
+    retry: 2,
   });
 
   const handleUnsubscribe = async (channelId: string, channelTitle: string) => {
-    if (!currentUserId) {
+    if (!user?.id) {
       toast.error("You need to be logged in to manage subscriptions");
       return;
     }
@@ -99,7 +96,7 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
       const { error } = await supabase.functions.invoke('channel-subscribe', {
         body: {
           channelId: channelId,
-          userId: currentUserId,
+          userId: user.id,
           action: 'unsubscribe'
         }
       });
@@ -139,6 +136,42 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
     );
   };
 
+  // Show loading while auth is loading
+  if (authLoading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-2xl font-semibold flex items-center gap-2">
+            <Bell className="w-5 h-5 text-primary" />
+            Channel Subscriptions
+          </CardTitle>
+          <CardDescription>Loading your authentication state...</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex justify-center py-8">
+            <Loader2 className="h-8 w-8 animate-spin text-primary/70" />
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-2xl font-semibold flex items-center gap-2">
+            <Bell className="w-5 h-5 text-primary" />
+            Channel Subscriptions
+          </CardTitle>
+          <CardDescription>
+            Please sign in to manage your channel subscriptions and get notified of new videos.
+          </CardDescription>
+        </CardHeader>
+      </Card>
+    );
+  }
+
   if (error) {
     console.error("Subscription fetch error:", error);
     return (
@@ -152,6 +185,15 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
             Error loading subscriptions. Please try refreshing the page.
           </CardDescription>
         </CardHeader>
+        <CardContent>
+          <Button 
+            variant="outline" 
+            onClick={() => refetch()}
+            className="mt-2"
+          >
+            Retry
+          </Button>
+        </CardContent>
       </Card>
     );
   }
@@ -171,22 +213,6 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
             <Loader2 className="h-8 w-8 animate-spin text-primary/70" />
           </div>
         </CardContent>
-      </Card>
-    );
-  }
-
-  if (!shouldFetchSubscriptions) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-2xl font-semibold flex items-center gap-2">
-            <Bell className="w-5 h-5 text-primary" />
-            Channel Subscriptions
-          </CardTitle>
-          <CardDescription>
-            Please sign in to manage your channel subscriptions and get notified of new videos.
-          </CardDescription>
-        </CardHeader>
       </Card>
     );
   }

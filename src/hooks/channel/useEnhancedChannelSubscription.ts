@@ -3,12 +3,14 @@ import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useUnifiedAuth } from "@/hooks/useUnifiedAuth";
 import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const useEnhancedChannelSubscription = (channelId: string | undefined) => {
   const { isAuthenticated, user, profile, isLoading: authLoading, isProfileLoading } = useUnifiedAuth();
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [isCheckingSubscription, setIsCheckingSubscription] = useState(false);
   const [subscriptionError, setSubscriptionError] = useState<string | null>(null);
+  const queryClient = useQueryClient();
 
   const userId = user?.id;
   const isUserDataReady = isAuthenticated && userId && profile && !authLoading && !isProfileLoading;
@@ -126,6 +128,9 @@ export const useEnhancedChannelSubscription = (channelId: string | undefined) =>
       // Update local state
       setIsSubscribed(!isSubscribed);
       
+      // Invalidate related queries to refresh subscription lists
+      queryClient.invalidateQueries({ queryKey: ["channel-subscriptions"] });
+      
       const action = isSubscribed ? 'unsubscribed from' : 'subscribed to';
       toast.success(`Successfully ${action} this channel!`);
       
@@ -137,7 +142,7 @@ export const useEnhancedChannelSubscription = (channelId: string | undefined) =>
     } finally {
       setIsCheckingSubscription(false);
     }
-  }, [channelId, isAuthenticated, isUserDataReady, userId, isSubscribed]);
+  }, [channelId, isAuthenticated, isUserDataReady, userId, isSubscribed, queryClient]);
 
   return {
     isSubscribed,

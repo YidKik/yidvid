@@ -2,11 +2,11 @@
 import { VideoHistorySection } from "@/components/history/VideoHistorySection";
 import { UserAnalyticsSection } from "@/components/analytics/UserAnalyticsSection";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useAuth } from "@/hooks/useAuth";
+import { useUnifiedAuth } from "@/hooks/useUnifiedAuth";
 
 export const ActivitySection = () => {
   const { isMobile } = useIsMobile();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated } = useUnifiedAuth();
   
   return (
     <div className="space-y-6 md:space-y-8">
