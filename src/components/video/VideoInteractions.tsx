@@ -4,9 +4,9 @@ import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { useChannelSubscription } from "@/hooks/channel/useChannelSubscription";
+import { useEnhancedChannelSubscription } from "@/hooks/channel/useEnhancedChannelSubscription";
 import { LikeAnimation } from "./LikeAnimation";
-import { useSessionManager } from "@/hooks/useSessionManager";
+import { useUnifiedAuth } from "@/hooks/useUnifiedAuth";
 
 interface VideoInteractionsProps {
   videoId: string;
@@ -20,59 +20,67 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
   const [isClickAnimating, setIsClickAnimating] = useState(false);
   const [channelId, setChannelId] = useState<string | null>(null);
   const [channelName, setChannelName] = useState<string>("");
-  const { session, isAuthenticated, isLoading: isSessionLoading } = useSessionManager();
-  const userId = session?.user?.id;
+  
+  const { isAuthenticated, user, isLoading: authLoading, isProfileLoading } = useUnifiedAuth();
+  const userId = user?.id;
 
-  // Debug logging for authentication state
-  useEffect(() => {
-    console.log("VideoInteractions auth state:", { 
-      isAuthenticated, 
-      isSessionLoading,
-      hasSession: !!session, 
-      userId,
-      userObj: session?.user
-    });
-  }, [session, isAuthenticated, isSessionLoading, userId]);
+  // Get subscription state for this channel
+  const {
+    isSubscribed,
+    isLoading: subscriptionLoading,
+    handleSubscribe,
+    error: subscriptionError,
+    isUserDataReady
+  } = useEnhancedChannelSubscription(channelId || undefined);
 
+  console.log("VideoInteractions state:", {
+    videoId,
+    channelId,
+    isAuthenticated,
+    userId,
+    isUserDataReady,
+    isSubscribed,
+    subscriptionLoading,
+    authLoading,
+    isProfileLoading
+  });
+
+  // Fetch channel info
   useEffect(() => {
     const fetchChannelInfo = async () => {
       if (!videoId) return;
 
-      const { data, error } = await supabase
-        .from('youtube_videos')
-        .select('channel_id, channel_name')
-        .eq('id', videoId)
-        .single();
+      try {
+        const { data, error } = await supabase
+          .from('youtube_videos')
+          .select('channel_id, channel_name')
+          .eq('id', videoId)
+          .single();
 
-      if (error) {
-        console.error('Error fetching channel info:', error);
-        return;
+        if (error) {
+          console.error('Error fetching channel info:', error);
+          return;
+        }
+
+        console.log("Channel info fetched:", data);
+        setChannelId(data.channel_id);
+        setChannelName(data.channel_name || "");
+      } catch (err) {
+        console.error("Unexpected error fetching channel info:", err);
       }
-
-      setChannelId(data.channel_id);
-      setChannelName(data.channel_name || "");
     };
 
     fetchChannelInfo();
   }, [videoId]);
 
-  const { 
-    isSubscribed, 
-    handleSubscribe, 
-    isLoading: isLoadingSubscription 
-  } = useChannelSubscription(channelId || undefined);
-
   const handleLike = async () => {
     console.log("Like button clicked!", { isAuthenticated, userId, videoId });
     
-    // Trigger click animation
     setIsClickAnimating(true);
     setTimeout(() => setIsClickAnimating(false), 2000);
     
-    // Allow all users to like videos (no authentication required)
     setIsLiked(true);
     
-    // If user is authenticated, save to database
     if (isAuthenticated && userId) {
       try {
         const interactionData = {
@@ -86,32 +94,26 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
           .insert(interactionData);
 
         if (error) {
-          console.error('Error details:', error);
-          // Don't throw error, just log it - user can still see the like effect
+          console.error('Error saving like:', error);
         }
 
         toast.success("Video liked successfully");
       } catch (error) {
         console.error('Error liking video:', error);
-        // Don't show error toast - user experience should remain smooth
       }
     } else {
-      // Show success message even for non-authenticated users
       toast.success("Video liked!");
     }
   };
 
   const handleShare = async () => {
-    // Generate a shorter, cleaner link
     const baseUrl = window.location.origin;
     const shortUrl = `${baseUrl}/video/${videoId}`;
     
     try {
-      // Copy to clipboard
       await navigator.clipboard.writeText(shortUrl);
       toast.success("Link copied to clipboard!");
       
-      // Try to use Web Share API if available
       if (navigator.share) {
         await navigator.share({
           title: document.title,
@@ -120,40 +122,11 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
       }
     } catch (error) {
       console.error('Error sharing:', error);
-      // Fallback: just copy to clipboard (already done above)
       toast.success("Link copied to clipboard!");
     }
   };
 
-  // Determine if we should disable buttons due to auth loading
-  const isAuthLoading = isSessionLoading;
-  const buttonDisabled = isLoadingSubscription || isAuthLoading;
-
-  const handleSubscribeClick = async () => {
-    try {
-      if (isAuthLoading) {
-        toast.info("Please wait while we verify your account");
-        return;
-      }
-      
-      if (!isAuthenticated) {
-        toast.error("Please sign in to subscribe to channels");
-        return;
-      }
-      
-      await handleSubscribe();
-      
-      // Show success message with channel name
-      if (!isSubscribed) {
-        toast.success(`Successfully subscribed to ${channelName}! You'll be notified of new videos.`);
-      } else {
-        toast.success(`Unsubscribed from ${channelName}`);
-      }
-    } catch (error) {
-      console.error("Subscribe error:", error);
-      toast.error("Failed to update subscription. Please try again.");
-    }
-  };
+  const isLoading = authLoading || isProfileLoading || subscriptionLoading;
 
   return (
     <>
@@ -167,7 +140,6 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
         <Button
           variant="outline"
           onClick={handleLike}
-          disabled={false} // Never disable the like button
           className={`group relative rounded-full p-2 md:p-3 transition-all duration-300 active:scale-90 border ${
             isLiked 
               ? "bg-white border-red-500 hover:bg-gray-50" 
@@ -181,11 +153,6 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
                 : "text-gray-600 group-hover:text-red-500 group-hover:stroke-red-500 group-hover:scale-110"
             }`}
           />
-          <span className={`absolute -bottom-8 left-1/2 -translate-x-1/2 text-xs font-medium transition-opacity duration-200 ${
-            isLiked ? "opacity-100 text-red-500" : "opacity-0 group-hover:opacity-100 group-hover:text-red-500"
-          }`}>
-            {isLiked ? "Liked" : "Like"}
-          </span>
         </Button>
 
         <Button
@@ -193,64 +160,59 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
           onClick={handleShare}
           className="group relative rounded-full p-2 md:p-3 transition-all duration-300 active:scale-90 border bg-white border-gray-300 hover:bg-gray-50 hover:border-red-500"
         >
-          <Share 
-            className="w-5 h-5 md:w-6 md:h-6 transition-all duration-300 stroke-2 text-gray-600 group-hover:text-red-500 group-hover:stroke-red-500 group-hover:scale-110"
-          />
-          <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200 group-hover:text-red-500">
-            Share
-          </span>
+          <Share className="w-5 h-5 md:w-6 md:h-6 transition-all duration-300 stroke-2 text-gray-600 group-hover:text-red-500 group-hover:stroke-red-500 group-hover:scale-110" />
         </Button>
         
-        {channelId && isAuthenticated && (
-          <Button
-            variant={isSubscribed ? "default" : "outline"}
-            onClick={handleSubscribeClick}
-            disabled={buttonDisabled}
-            className={`relative group rounded-full px-4 md:px-6 py-2 text-xs md:text-sm transition-all duration-300 active:scale-95 font-medium
-              ${isSubscribed 
-                ? "bg-red-500 border-red-500 hover:bg-red-600 text-white shadow-md" 
-                : "bg-white border-gray-300 hover:bg-gray-50 hover:border-red-500 text-gray-700 hover:text-red-500"
-              }
-            `}
-          >
-            {isLoadingSubscription || isAuthLoading ? (
-              <>
-                <Loader2 className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2 animate-spin" />
-                <span>Loading...</span>
-              </>
-            ) : isSubscribed ? (
-              <>
-                <Check className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" />
-                <span>Subscribed</span>
-              </>
+        {channelId && (
+          <>
+            {isAuthenticated ? (
+              <Button
+                variant={isSubscribed ? "default" : "outline"}
+                onClick={handleSubscribe}
+                disabled={isLoading}
+                className={`relative group rounded-full px-4 md:px-6 py-2 text-xs md:text-sm transition-all duration-300 active:scale-95 font-medium
+                  ${isSubscribed 
+                    ? "bg-red-500 border-red-500 hover:bg-red-600 text-white shadow-md" 
+                    : "bg-white border-gray-300 hover:bg-gray-50 hover:border-red-500 text-gray-700 hover:text-red-500"
+                  }
+                `}
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2 animate-spin" />
+                    <span>Loading...</span>
+                  </>
+                ) : isSubscribed ? (
+                  <>
+                    <Check className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" />
+                    <span>Subscribed</span>
+                  </>
+                ) : (
+                  <>
+                    <UserPlus className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" />
+                    <span>Subscribe</span>
+                  </>
+                )}
+              </Button>
             ) : (
-              <>
+              <Button
+                variant="outline"
+                onClick={() => toast.info("Please sign in to subscribe to channels")}
+                className="relative group rounded-full px-4 md:px-6 py-2 text-xs md:text-sm transition-all duration-300 active:scale-95 font-medium bg-white border-gray-300 hover:bg-gray-50 hover:border-red-500 text-gray-700 hover:text-red-500"
+              >
                 <UserPlus className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" />
                 <span>Subscribe</span>
-              </>
+              </Button>
             )}
-            <span className={`absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200 ${
-              isSubscribed ? "text-red-500" : "text-red-500"
-            }`}>
-              {isSubscribed ? `Subscribed to ${channelName}` : `Subscribe to ${channelName}`}
-            </span>
-          </Button>
-        )}
-        
-        {!isAuthenticated && channelId && (
-          <Button
-            variant="outline"
-            onClick={() => toast.info("Please sign in to subscribe to channels")}
-            className="relative group rounded-full px-4 md:px-6 py-2 text-xs md:text-sm transition-all duration-300 active:scale-95 font-medium bg-white border-gray-300 hover:bg-gray-50 hover:border-red-500 text-gray-700 hover:text-red-500"
-          >
-            <UserPlus className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" />
-            <span>Subscribe</span>
-            <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-red-500">
-              Sign in to subscribe
-            </span>
-          </Button>
+          </>
         )}
       </div>
+
+      {subscriptionError && (
+        <div className="text-red-500 text-sm mb-2">
+          Error: {subscriptionError}
+        </div>
+      )}
     </>
   );
 };

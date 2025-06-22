@@ -13,7 +13,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useSessionManager } from "@/hooks/useSessionManager";
+import { useUnifiedAuth } from "@/hooks/useUnifiedAuth";
 
 interface ChannelSubscription {
   channel: {
@@ -27,8 +27,18 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(false);
-  const { session, isAuthenticated } = useSessionManager();
+  const { isAuthenticated, user } = useUnifiedAuth();
   const [processingUnsubscribe, setProcessingUnsubscribe] = useState<string | null>(null);
+
+  const currentUserId = user?.id;
+  const shouldFetchSubscriptions = isAuthenticated && currentUserId && currentUserId === userId;
+
+  console.log("ChannelSubscriptions state:", {
+    userId,
+    currentUserId,
+    isAuthenticated,
+    shouldFetchSubscriptions
+  });
 
   useEffect(() => {
     const checkScrollability = () => {
@@ -39,7 +49,6 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
       }
     };
 
-    // Check initially and whenever window resizes
     checkScrollability();
     window.addEventListener('resize', checkScrollability);
 
@@ -47,14 +56,14 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
   }, []);
 
   const { data: subscriptions, refetch, isLoading, error } = useQuery({
-    queryKey: ["channel-subscriptions", userId],
+    queryKey: ["channel-subscriptions", currentUserId],
     queryFn: async () => {
-      if (!userId) {
+      if (!currentUserId) {
         console.log("No userId provided for subscriptions");
         return [];
       }
 
-      console.log("Fetching subscriptions for user:", userId);
+      console.log("Fetching subscriptions for user:", currentUserId);
       const { data, error } = await supabase
         .from("channel_subscriptions")
         .select(`
@@ -64,7 +73,7 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
             channel_id
           )
         `)
-        .eq("user_id", userId);
+        .eq("user_id", currentUserId);
 
       if (error) {
         console.error("Error fetching subscriptions:", error);
@@ -75,11 +84,11 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
       console.log("Fetched subscriptions:", data);
       return data as ChannelSubscription[];
     },
-    enabled: !!userId && isAuthenticated,
+    enabled: shouldFetchSubscriptions,
   });
 
   const handleUnsubscribe = async (channelId: string, channelTitle: string) => {
-    if (!userId) {
+    if (!currentUserId) {
       toast.error("You need to be logged in to manage subscriptions");
       return;
     }
@@ -87,11 +96,10 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
     try {
       setProcessingUnsubscribe(channelId);
       
-      // Use the edge function for consistency
       const { error } = await supabase.functions.invoke('channel-subscribe', {
         body: {
           channelId: channelId,
-          userId: userId,
+          userId: currentUserId,
           action: 'unsubscribe'
         }
       });
@@ -167,8 +175,7 @@ export const ChannelSubscriptions = ({ userId }: { userId: string }) => {
     );
   }
 
-  const currentUserId = session?.user?.id;
-  if (!isAuthenticated || !currentUserId) {
+  if (!shouldFetchSubscriptions) {
     return (
       <Card>
         <CardHeader>

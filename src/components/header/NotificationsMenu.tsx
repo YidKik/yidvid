@@ -14,26 +14,27 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useNotifications } from "../notifications/useNotifications";
 import { useMobileDrag } from "../notifications/useMobileDrag";
 import { useLocation } from "react-router-dom";
+import { useUnifiedAuth } from "@/hooks/useUnifiedAuth";
 
 interface NotificationsMenuProps {
-  session: any;
   onMarkAsRead: () => Promise<void>;
 }
 
-export const NotificationsMenu = ({ session, onMarkAsRead }: NotificationsMenuProps) => {
+export const NotificationsMenu = ({ onMarkAsRead }: NotificationsMenuProps) => {
   const { isMobile } = useIsMobile();
   const location = useLocation();
   const isVideosPage = location.pathname === "/videos";
+  const { isAuthenticated, user, isLoading } = useUnifiedAuth();
   
   const {
     notifications,
-    isLoading,
+    isLoading: notificationsLoading,
     isError,
     refetch,
     closeRef,
     handleClose,
     handleClearAll
-  } = useNotifications(session?.user?.id);
+  } = useNotifications(user?.id);
 
   const {
     sheetContentRef,
@@ -42,7 +43,14 @@ export const NotificationsMenu = ({ session, onMarkAsRead }: NotificationsMenuPr
     handleTouchEnd
   } = useMobileDrag(handleClose, isMobile);
 
-  if (!session?.user?.id) {
+  console.log("NotificationsMenu state:", {
+    isAuthenticated,
+    userId: user?.id,
+    isLoading,
+    notificationsCount: notifications?.length || 0
+  });
+
+  if (!isAuthenticated || isLoading) {
     return null;
   }
 
@@ -95,7 +103,7 @@ export const NotificationsMenu = ({ session, onMarkAsRead }: NotificationsMenuPr
           />
           <NotificationList
             notifications={notifications || []}
-            isLoading={isLoading}
+            isLoading={notificationsLoading}
             isError={isError}
             onRetry={() => refetch()}
             onNotificationClick={onMarkAsRead}

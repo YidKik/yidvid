@@ -5,8 +5,8 @@ import { useState } from "react";
 import { ChevronRight, ChevronDown, UserPlus, Check, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { useChannelSubscription } from "@/hooks/channel/useChannelSubscription";
-import { useSessionManager } from "@/hooks/useSessionManager";
+import { useEnhancedChannelSubscription } from "@/hooks/channel/useEnhancedChannelSubscription";
+import { useUnifiedAuth } from "@/hooks/useUnifiedAuth";
 import { toast } from "sonner";
 
 interface VideoInfoProps {
@@ -28,13 +28,14 @@ export const VideoInfo = ({
   uploadedAt
 }: VideoInfoProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const { session, isAuthenticated, isLoading: isSessionLoading } = useSessionManager();
+  const { isAuthenticated, isLoading: authLoading, isProfileLoading } = useUnifiedAuth();
   
   const { 
     isSubscribed, 
     handleSubscribe, 
-    isLoading: isLoadingSubscription 
-  } = useChannelSubscription(channelId || undefined);
+    isLoading: subscriptionLoading,
+    isUserDataReady
+  } = useEnhancedChannelSubscription(channelId);
 
   // Format the date with robust error handling
   const getFormattedDate = () => {
@@ -48,10 +49,9 @@ export const VideoInfo = ({
       } else if (uploadedAt instanceof Date) {
         dateToFormat = uploadedAt;
       } else {
-        return "recently"; // Fallback for unexpected types
+        return "recently";
       }
       
-      // Check if date is valid
       if (isNaN(dateToFormat.getTime())) {
         console.warn("Invalid date in VideoInfo:", uploadedAt);
         return "recently";
@@ -68,30 +68,20 @@ export const VideoInfo = ({
   const formattedViews = views?.toLocaleString() || "0";
 
   const handleSubscribeClick = async () => {
-    try {
-      if (isSessionLoading) {
-        toast.info("Please wait while we verify your account");
-        return;
-      }
-      
-      if (!isAuthenticated) {
-        toast.error("Please sign in to subscribe to channels");
-        return;
-      }
-      
-      await handleSubscribe();
-      
-      // Show success message with channel name
-      if (!isSubscribed) {
-        toast.success(`Successfully subscribed to ${channelName}! You'll be notified of new videos.`);
-      } else {
-        toast.success(`Unsubscribed from ${channelName}`);
-      }
-    } catch (error) {
-      console.error("Subscribe error:", error);
-      toast.error("Failed to update subscription. Please try again.");
+    if (!isAuthenticated) {
+      toast.info("Please sign in to subscribe to channels");
+      return;
     }
+    
+    if (!isUserDataReady) {
+      toast.info("Please wait while we load your profile...");
+      return;
+    }
+    
+    await handleSubscribe();
   };
+
+  const isLoading = authLoading || isProfileLoading || subscriptionLoading;
 
   return (
     <div className="space-y-4 animate-fade-in">
@@ -107,7 +97,7 @@ export const VideoInfo = ({
               </Avatar>
             </Link>
           ) : (
-            <Avatar className="h-10 w-10 md:h-12 md:w-12 ring-2 ring-background shadow-lg">
+            <Avatar className="h-10 w-10 md:h-12 m d:w-12 ring-2 ring-background shadow-lg">
               <AvatarImage src={channelThumbnail || ''} alt={channelName} />
               <AvatarFallback className="bg-primary/10 text-primary">
                 <img src="/lovable-uploads/efca5adc-d9d2-4c5b-8900-e078f9d49b6a.png" alt="YidVid Logo" className="h-8 w-8" />
@@ -133,48 +123,49 @@ export const VideoInfo = ({
           </div>
         </div>
 
-        {/* Subscribe button for authenticated users */}
-        {channelId && isAuthenticated && (
-          <Button
-            variant={isSubscribed ? "default" : "outline"}
-            onClick={handleSubscribeClick}
-            disabled={isLoadingSubscription || isSessionLoading}
-            className={`ml-4 rounded-full px-4 py-2 text-sm transition-all duration-300 active:scale-95 font-medium
-              ${isSubscribed 
-                ? "bg-red-500 border-red-500 hover:bg-red-600 text-white shadow-md" 
-                : "bg-white border-gray-300 hover:bg-gray-50 hover:border-red-500 text-gray-700 hover:text-red-500"
-              }
-            `}
-          >
-            {isLoadingSubscription || isSessionLoading ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                <span>Loading...</span>
-              </>
-            ) : isSubscribed ? (
-              <>
-                <Check className="w-4 h-4 mr-2" />
-                <span>Subscribed</span>
-              </>
+        {/* Subscribe button */}
+        {channelId && (
+          <>
+            {isAuthenticated ? (
+              <Button
+                variant={isSubscribed ? "default" : "outline"}
+                onClick={handleSubscribeClick}
+                disabled={isLoading}
+                className={`ml-4 rounded-full px-4 py-2 text-sm transition-all duration-300 active:scale-95 font-medium
+                  ${isSubscribed 
+                    ? "bg-red-500 border-red-500 hover:bg-red-600 text-white shadow-md" 
+                    : "bg-white border-gray-300 hover:bg-gray-50 hover:border-red-500 text-gray-700 hover:text-red-500"
+                  }
+                `}
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    <span>Loading...</span>
+                  </>
+                ) : isSubscribed ? (
+                  <>
+                    <Check className="w-4 h-4 mr-2" />
+                    <span>Subscribed</span>
+                  </>
+                ) : (
+                  <>
+                    <UserPlus className="w-4 h-4 mr-2" />
+                    <span>Subscribe</span>
+                  </>
+                )}
+              </Button>
             ) : (
-              <>
+              <Button
+                variant="outline"
+                onClick={() => toast.info("Please sign in to subscribe to channels")}
+                className="ml-4 rounded-full px-4 py-2 text-sm transition-all duration-300 active:scale-95 font-medium bg-white border-gray-300 hover:bg-gray-50 hover:border-red-500 text-gray-700 hover:text-red-500"
+              >
                 <UserPlus className="w-4 h-4 mr-2" />
                 <span>Subscribe</span>
-              </>
+              </Button>
             )}
-          </Button>
-        )}
-
-        {/* Sign in prompt for non-authenticated users */}
-        {channelId && !isAuthenticated && (
-          <Button
-            variant="outline"
-            onClick={() => toast.info("Please sign in to subscribe to channels")}
-            className="ml-4 rounded-full px-4 py-2 text-sm transition-all duration-300 active:scale-95 font-medium bg-white border-gray-300 hover:bg-gray-50 hover:border-red-500 text-gray-700 hover:text-red-500"
-          >
-            <UserPlus className="w-4 h-4 mr-2" />
-            <span>Subscribe</span>
-          </Button>
+          </>
         )}
       </div>
 
