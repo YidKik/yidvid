@@ -4,7 +4,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { X, Play, Users, Video } from 'lucide-react';
 import { NumberTicker } from '@/components/ui/number-ticker';
-import { BackgroundGradientAnimation } from '@/components/ui/background-gradient-animation';
 
 interface WelcomeAnimationProps {
   onComplete: () => void;
@@ -77,18 +76,74 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ onComplete, 
           exit={{ opacity: 0 }}
           className="fixed inset-0 z-50 flex items-center justify-center"
         >
-          <BackgroundGradientAnimation 
-            interactive={false}
-            gradientBackgroundStart="#1a0000"
-            gradientBackgroundEnd="#2d1114"
-            firstColor="234, 56, 76"
-            secondColor="220, 38, 127"
-            thirdColor="255, 255, 255"
-            fourthColor="234, 56, 76"
-            fifthColor="255, 255, 255"
-            blendingValue="soft-light"
-            containerClassName="absolute inset-0"
-          />
+          {/* Soft, subtle background with light gradients */}
+          <div className="absolute inset-0 bg-gradient-to-br from-red-50/95 via-pink-50/95 to-white/95 backdrop-blur-sm" />
+          
+          {/* Subtle animated circles for visual interest */}
+          <div className="absolute inset-0 overflow-hidden">
+            {/* Large subtle background circles */}
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ 
+                scale: [0.8, 1.2, 0.8], 
+                opacity: [0, 0.1, 0],
+                x: [0, 100, 0],
+                y: [0, -50, 0]
+              }}
+              transition={{ 
+                duration: 8, 
+                repeat: Infinity, 
+                repeatType: "reverse",
+                ease: "easeInOut"
+              }}
+              className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-gradient-to-r from-red-200/20 to-pink-200/20"
+            />
+            
+            <motion.div
+              initial={{ scale: 0.6, opacity: 0 }}
+              animate={{ 
+                scale: [0.6, 1, 0.6], 
+                opacity: [0, 0.08, 0],
+                x: [0, -80, 0],
+                y: [0, 60, 0]
+              }}
+              transition={{ 
+                duration: 10, 
+                repeat: Infinity, 
+                repeatType: "reverse",
+                ease: "easeInOut",
+                delay: 2
+              }}
+              className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full bg-gradient-to-r from-pink-200/15 to-red-200/15"
+            />
+            
+            {/* Small floating dots for subtle movement */}
+            {[...Array(8)].map((_, i) => (
+              <motion.div
+                key={i}
+                initial={{ 
+                  opacity: 0, 
+                  scale: 0,
+                  x: Math.random() * window.innerWidth,
+                  y: Math.random() * window.innerHeight
+                }}
+                animate={{ 
+                  opacity: [0, 0.3, 0],
+                  scale: [0, 1, 0],
+                  y: [null, -200],
+                }}
+                transition={{
+                  duration: 6,
+                  delay: i * 0.8,
+                  repeat: Infinity,
+                  repeatDelay: 3
+                }}
+                className="absolute"
+              >
+                <div className="w-1 h-1 bg-red-300/40 rounded-full" />
+              </motion.div>
+            ))}
+          </div>
           
           {/* Skip Button */}
           <motion.button
@@ -96,7 +151,7 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ onComplete, 
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.5 }}
             onClick={handleSkip}
-            className="absolute top-6 right-6 z-10 p-3 rounded-full bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-colors text-white"
+            className="absolute top-6 right-6 z-10 p-3 rounded-full bg-white/80 backdrop-blur-sm hover:bg-white/90 transition-colors text-gray-600 shadow-lg"
           >
             <X className="w-6 h-6" />
           </motion.button>
@@ -113,7 +168,7 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ onComplete, 
               <img 
                 src="/lovable-uploads/dd4fbfcb-aeb9-4cd3-a7b1-9dbf07b81a43.png" 
                 alt="YidVid Logo" 
-                className="w-32 h-32 mx-auto object-contain"
+                className="w-32 h-32 mx-auto object-contain drop-shadow-lg"
               />
             </motion.div>
 
@@ -132,7 +187,7 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ onComplete, 
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-                  className="flex justify-center text-[#ea384c]"
+                  className="flex justify-center text-[#ea384c] drop-shadow-sm"
                 >
                   {steps[currentStep].icon}
                 </motion.div>
@@ -142,7 +197,7 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ onComplete, 
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.3 }}
-                  className="text-4xl md:text-6xl font-bold text-white"
+                  className="text-4xl md:text-6xl font-bold text-gray-800 drop-shadow-sm"
                 >
                   {steps[currentStep].title}
                 </motion.h1>
@@ -152,11 +207,11 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ onComplete, 
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.4 }}
-                  className="text-2xl md:text-3xl text-[#ea384c] font-medium"
+                  className="text-2xl md:text-3xl text-[#ea384c] font-medium drop-shadow-sm"
                 >
                   {currentStep === 1 ? (
                     <span className="flex items-center justify-center gap-2">
-                      Over <NumberTicker value={400} className="text-white" /> Channels
+                      Over <NumberTicker value={400} className="text-gray-800 font-bold" /> Channels
                     </span>
                   ) : (
                     steps[currentStep].subtitle
@@ -168,7 +223,7 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ onComplete, 
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.5 }}
-                  className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto leading-relaxed"
+                  className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed drop-shadow-sm"
                 >
                   {steps[currentStep].description}
                 </motion.p>
@@ -184,7 +239,7 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ onComplete, 
                     <div
                       key={index}
                       className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                        index === currentStep ? 'bg-[#ea384c] scale-125' : 'bg-white/30'
+                        index === currentStep ? 'bg-[#ea384c] scale-125 shadow-md' : 'bg-gray-300'
                       }`}
                     />
                   ))}
@@ -200,10 +255,10 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ onComplete, 
                 transition={{ delay: 1 }}
                 className="mt-8"
               >
-                <p className="text-white/80 text-sm">
+                <p className="text-gray-600 text-sm">
                   Redirecting to videos in a moment...
                 </p>
-                <div className="w-32 h-1 bg-white/20 rounded-full mx-auto mt-2 overflow-hidden">
+                <div className="w-32 h-1 bg-gray-200 rounded-full mx-auto mt-2 overflow-hidden shadow-sm">
                   <motion.div
                     initial={{ width: '0%' }}
                     animate={{ width: '100%' }}
@@ -214,40 +269,6 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ onComplete, 
               </motion.div>
             )}
           </div>
-
-          {/* Floating Elements */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.8 }}
-            className="absolute inset-0 pointer-events-none overflow-hidden"
-          >
-            {[...Array(6)].map((_, i) => (
-              <motion.div
-                key={i}
-                initial={{ 
-                  opacity: 0, 
-                  scale: 0,
-                  x: Math.random() * window.innerWidth,
-                  y: Math.random() * window.innerHeight
-                }}
-                animate={{ 
-                  opacity: [0, 0.6, 0],
-                  scale: [0, 1, 0],
-                  y: [null, -100],
-                }}
-                transition={{
-                  duration: 4,
-                  delay: i * 0.5,
-                  repeat: Infinity,
-                  repeatDelay: 2
-                }}
-                className="absolute"
-              >
-                <div className="w-2 h-2 bg-[#ea384c] rounded-full" />
-              </motion.div>
-            ))}
-          </motion.div>
         </motion.div>
       )}
     </AnimatePresence>
