@@ -1,9 +1,10 @@
+
 import { Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
-import { useAuth } from "@/hooks/useAuth";
+import { useUnifiedAuth } from "@/hooks/useUnifiedAuth";
 import { useIsMobile } from "@/hooks/use-mobile";
 import type { ProfilesTable } from "@/integrations/supabase/types/profiles";
 import { ProfileAvatar } from "./profile/ProfileAvatar";
@@ -25,66 +26,47 @@ import { Trash2 } from "lucide-react";
 
 export const ProfileSection = () => {
   const navigate = useNavigate();
-  const { handleLogout, isLoggingOut, session } = useAuth();
+  const { user, profile, signOut, isLoading: authLoading } = useUnifiedAuth();
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const { isMobile } = useIsMobile();
   
-  // Immediately get user email from session for fallback display
+  // Set user email from unified auth
   useEffect(() => {
-    if (session?.user?.email) {
-      setUserEmail(session.user.email);
+    if (user?.email) {
+      setUserEmail(user.email);
     }
-  }, [session]);
+  }, [user]);
 
-  // First check if we have cached minimal profile data
-  const cachedProfile = session?.user?.id
-    ? useQuery({
-        queryKey: ["user-profile-minimal", session.user.id],
-        queryFn: async () => null, // Just access cache
-        staleTime: Infinity,
-        enabled: false, // Don't actually run a query
-      }).data
-    : null;
-
-  // Use direct query with a more complete fields selection
-  const { data: profile, isLoading, error } = useQuery({
-    queryKey: ["user-profile-settings", session?.user?.id],
+  // Use a single query for additional profile data if needed
+  const { data: additionalProfileData, isLoading: profileLoading, error } = useQuery({
+    queryKey: ["user-profile-settings", user?.id],
     queryFn: async () => {
-      if (!session?.user?.id) {
-        return cachedProfile || null;
+      if (!user?.id) {
+        return null;
       }
 
       try {
-        // Fetch more complete profile data
         const { data, error } = await supabase
           .from("profiles")
           .select("id, username, display_name, name, avatar_url, email, created_at")
-          .eq("id", session.user.id)
+          .eq("id", user.id)
           .maybeSingle();
 
         if (error) {
-          console.error("Error fetching profile:", error);
-          return cachedProfile || { 
-            id: session.user.id, 
-            email: session.user.email,
-            display_name: session.user.email?.split('@')[0]
-          };
+          console.error("Error fetching additional profile data:", error);
+          return null;
         }
 
         return data as ProfilesTable["Row"];
       } catch (err) {
-        console.error("Unexpected error fetching profile:", err);
-        return cachedProfile || { 
-          id: session.user.id, 
-          email: session.user.email,
-          display_name: session.user.email?.split('@')[0]
-        };
+        console.error("Unexpected error fetching additional profile data:", err);
+        return null;
       }
     },
-    enabled: !!session?.user?.id,
-    staleTime: 10000, // Shorter stale time
-    retry: 1, // Reduce retry attempts
+    enabled: !!user?.id,
+    staleTime: 10000,
+    retry: 1,
   });
 
   // Handle account deletion
@@ -103,12 +85,14 @@ export const ProfileSection = () => {
     }
   };
 
-  // Create a fallback profile for error cases ensuring it has all necessary fields
-  const fallbackProfile = profile || (session?.user?.id ? {
-    id: session.user.id,
-    email: userEmail || session?.user?.email,
-    name: userEmail?.split('@')[0] || session?.user?.email?.split('@')[0],
-    display_name: userEmail?.split('@')[0] || session?.user?.email?.split('@')[0] || 'User',
+  const isLoading = authLoading || profileLoading;
+
+  // Use profile data from unified auth or additional data as fallback
+  const displayProfile = profile || additionalProfileData || (user?.id ? {
+    id: user.id,
+    email: userEmail || user?.email,
+    name: userEmail?.split('@')[0] || user?.email?.split('@')[0],
+    display_name: userEmail?.split('@')[0] || user?.email?.split('@')[0] || 'User',
     username: null,
     avatar_url: null,
     created_at: new Date().toISOString()
@@ -119,18 +103,18 @@ export const ProfileSection = () => {
   }
 
   // Show error UI only if no fallback is available
-  if (error && !fallbackProfile) {
+  if (error && !displayProfile) {
     return (
       <ProfileErrorState
-        userEmail={userEmail || session?.user?.email || null}
-        isLoggingOut={isLoggingOut}
-        handleLogout={handleLogout}
+        userEmail={userEmail || user?.email || null}
+        isLoggingOut={false}
+        handleLogout={signOut}
       />
     );
   }
 
   // If we have fallback data but no proper profile, show limited UI with warning
-  const showingFallback = !!error && !!fallbackProfile;
+  const showingFallback = !!error && !!displayProfile;
 
   return (
     <section className={`mb-${isMobile ? '2' : '8'}`}>
@@ -143,17 +127,17 @@ export const ProfileSection = () => {
           )}
           <div className={`flex ${isMobile ? 'items-start gap-2' : 'items-center gap-4'}`}>
             <ProfileAvatar 
-              avatarUrl={fallbackProfile?.avatar_url || ""}
-              displayName={fallbackProfile?.display_name || ""}
-              username={fallbackProfile?.username || ""}
-              profile={fallbackProfile as ProfilesTable["Row"]}
+              avatarUrl={displayProfile?.avatar_url || ""}
+              displayName={displayProfile?.display_name || ""}
+              username={displayProfile?.username || ""}
+              profile={displayProfile as ProfilesTable["Row"]}
             />
-            <ProfileInfo profile={fallbackProfile as ProfilesTable["Row"]} />
+            <ProfileInfo profile={displayProfile as ProfilesTable["Row"]} />
           </div>
           <div className="space-y-2">
             <AccountActions
-              isLoggingOut={isLoggingOut}
-              handleLogout={handleLogout}
+              isLoggingOut={false}
+              handleLogout={signOut}
             />
             
             <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
