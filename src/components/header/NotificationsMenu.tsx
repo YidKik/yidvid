@@ -50,6 +50,7 @@ export const NotificationsMenu = ({ onMarkAsRead }: NotificationsMenuProps) => {
     notificationsCount: notifications?.length || 0
   });
 
+  // Only show notifications menu for authenticated users
   if (!isAuthenticated || isLoading) {
     return null;
   }

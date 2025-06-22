@@ -18,19 +18,25 @@ const Search = () => {
     queryFn: async () => {
       if (!query.trim()) return [];
       
-      const { data, error } = await supabase
-        .from("youtube_videos")
-        .select("*")
-        .filter('deleted_at', 'is', null)
-        .or(`title.ilike.%${query}%,channel_name.ilike.%${query}%`)
-        .order('created_at', { ascending: false });
+      try {
+        const { data, error } = await supabase
+          .from("youtube_videos")
+          .select("*")
+          .filter('deleted_at', 'is', null)
+          .or(`title.ilike.%${query}%,channel_name.ilike.%${query}%`)
+          .order('created_at', { ascending: false });
 
-      if (error) {
-        console.error("Error searching videos:", error);
-        throw error;
+        if (error) {
+          console.error("Error searching videos:", error);
+          // Return empty array instead of throwing to prevent search failure
+          return [];
+        }
+
+        return data || [];
+      } catch (error) {
+        console.error("Unexpected error searching videos:", error);
+        return [];
       }
-
-      return data || [];
     },
     enabled: query.length > 0,
     staleTime: 1000 * 60 * 5, // Cache search results for 5 minutes
@@ -42,18 +48,25 @@ const Search = () => {
     queryFn: async () => {
       if (!query.trim()) return [];
       
-      const { data, error } = await supabase
-        .from("youtube_channels")
-        .select("*")
-        .or(`title.ilike.%${query}%,description.ilike.%${query}%`)
-        .order('created_at', { ascending: false });
+      try {
+        const { data, error } = await supabase
+          .from("youtube_channels")
+          .select("*")
+          .filter('deleted_at', 'is', null)
+          .or(`title.ilike.%${query}%,description.ilike.%${query}%`)
+          .order('created_at', { ascending: false });
 
-      if (error) {
-        console.error("Error searching channels:", error);
-        throw error;
+        if (error) {
+          console.error("Error searching channels:", error);
+          // Return empty array instead of throwing to prevent search failure
+          return [];
+        }
+
+        return data || [];
+      } catch (error) {
+        console.error("Unexpected error searching channels:", error);
+        return [];
       }
-
-      return data || [];
     },
     enabled: query.length > 0,
     staleTime: 1000 * 60 * 5, // Cache search results for 5 minutes
