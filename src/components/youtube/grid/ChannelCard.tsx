@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -23,9 +24,10 @@ export const ChannelCard = ({
       to={`/channel/${channel_id}`}
       className={cn(
         "block opacity-0 animate-[fadeIn_0.5s_ease-out_forwards]",
-        "relative group rounded-lg overflow-hidden transition-all duration-200",
-        "hover:scale-[1.03] hover:shadow-md text-center p-4",
-        "bg-white/5 mx-auto w-full border border-white/10"
+        "relative group rounded-xl overflow-hidden transition-all duration-300",
+        "hover:scale-[1.05] hover:shadow-lg text-center p-4 md:p-6",
+        "bg-white/80 backdrop-blur-sm mx-auto w-full border border-gray-100",
+        "shadow-sm hover:shadow-md hover:bg-white/90"
       )}
       style={{ animationDelay }}
       onMouseEnter={() => setShowControls(true)}
@@ -34,8 +36,8 @@ export const ChannelCard = ({
     >
       <div className="flex flex-col items-center justify-center">
         <div className="w-24 h-24 md:w-28 md:h-28 rounded-full flex items-center justify-center overflow-hidden mb-4 mx-auto 
-                      border-2 border-white/20 group-hover:border-[#ea384c] transition-all duration-300
-                      group-hover:shadow-lg shadow-white/10">
+                      border-2 border-white/30 group-hover:border-[#ea384c] transition-all duration-300
+                      group-hover:shadow-lg shadow-white/20">
           {thumbnail_url ? (
             <img
               src={thumbnail_url}
@@ -48,17 +50,17 @@ export const ChannelCard = ({
               }}
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900">
+            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
               <img src="/lovable-uploads/efca5adc-d9d2-4c5b-8900-e078f9d49b6a.png" alt="YidVid" className="w-10 h-10" />
             </div>
           )}
         </div>
         
-        <h3 className="text-sm md:text-base font-medium text-center mb-1 text-black group-hover:text-[#ea384c] transition-colors">
+        <h3 className="text-sm md:text-base font-medium text-center mb-1 text-gray-800 group-hover:text-[#ea384c] transition-colors">
           {title}
         </h3>
         
-        <p className="text-xs text-white/60">
+        <p className="text-xs text-gray-500 group-hover:text-gray-600 transition-colors">
           View Channel
         </p>
       </div>
