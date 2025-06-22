@@ -79,12 +79,12 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ onComplete, 
         >
           <BackgroundGradientAnimation 
             interactive={false}
-            gradientBackgroundStart="#003c43"
-            gradientBackgroundEnd="#003c43"
-            firstColor="119, 176, 170"
-            secondColor="119, 176, 170"
+            gradientBackgroundStart="#1a0000"
+            gradientBackgroundEnd="#2d1114"
+            firstColor="234, 56, 76"
+            secondColor="220, 38, 127"
             thirdColor="255, 255, 255"
-            fourthColor="119, 176, 170"
+            fourthColor="234, 56, 76"
             fifthColor="255, 255, 255"
             blendingValue="soft-light"
             containerClassName="absolute inset-0"
@@ -132,7 +132,7 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ onComplete, 
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-                  className="flex justify-center text-[#77b0aa]"
+                  className="flex justify-center text-[#ea384c]"
                 >
                   {steps[currentStep].icon}
                 </motion.div>
@@ -142,7 +142,7 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ onComplete, 
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.3 }}
-                  className="text-4xl md:text-6xl font-bold text-[#e3fef7]"
+                  className="text-4xl md:text-6xl font-bold text-white"
                 >
                   {steps[currentStep].title}
                 </motion.h1>
@@ -152,11 +152,11 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ onComplete, 
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.4 }}
-                  className="text-2xl md:text-3xl text-[#77b0aa] font-medium"
+                  className="text-2xl md:text-3xl text-[#ea384c] font-medium"
                 >
                   {currentStep === 1 ? (
                     <span className="flex items-center justify-center gap-2">
-                      Over <NumberTicker value={400} className="text-[#e3fef7]" /> Channels
+                      Over <NumberTicker value={400} className="text-white" /> Channels
                     </span>
                   ) : (
                     steps[currentStep].subtitle
@@ -168,7 +168,7 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ onComplete, 
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.5 }}
-                  className="text-lg md:text-xl text-[#ddf9f2] max-w-2xl mx-auto leading-relaxed"
+                  className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto leading-relaxed"
                 >
                   {steps[currentStep].description}
                 </motion.p>
@@ -184,7 +184,7 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ onComplete, 
                     <div
                       key={index}
                       className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                        index === currentStep ? 'bg-[#77b0aa] scale-125' : 'bg-white/30'
+                        index === currentStep ? 'bg-[#ea384c] scale-125' : 'bg-white/30'
                       }`}
                     />
                   ))}
@@ -200,7 +200,7 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ onComplete, 
                 transition={{ delay: 1 }}
                 className="mt-8"
               >
-                <p className="text-[#ddf9f2] text-sm">
+                <p className="text-white/80 text-sm">
                   Redirecting to videos in a moment...
                 </p>
                 <div className="w-32 h-1 bg-white/20 rounded-full mx-auto mt-2 overflow-hidden">
@@ -208,7 +208,7 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ onComplete, 
                     initial={{ width: '0%' }}
                     animate={{ width: '100%' }}
                     transition={{ duration: 2, ease: "linear" }}
-                    className="h-full bg-[#77b0aa] rounded-full"
+                    className="h-full bg-[#ea384c] rounded-full"
                   />
                 </div>
               </motion.div>
@@ -244,10 +244,10 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ onComplete, 
                 }}
                 className="absolute"
               >
-                <div className="w-2 h-2 bg-[#77b0aa] rounded-full" />
+                <div className="w-2 h-2 bg-[#ea384c] rounded-full" />
               </motion.div>
             ))}
-          </motion.div>
+          </div>
         </motion.div>
       )}
     </AnimatePresence>
