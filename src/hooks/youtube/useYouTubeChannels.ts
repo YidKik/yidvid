@@ -1,12 +1,13 @@
-
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { useUnifiedAuth } from "@/hooks/useUnifiedAuth";
 
 export const useYouTubeChannels = () => {
   const navigate = useNavigate();
+  const { user } = useUnifiedAuth();
   const [isChannelDialogOpen, setIsChannelDialogOpen] = useState(false);
   const [isVideoDialogOpen, setIsVideoDialogOpen] = useState(false);
   const [selectedChannelId, setSelectedChannelId] = useState<string | null>(null);
@@ -87,100 +88,31 @@ export const useYouTubeChannels = () => {
   });
 
   const handleDeleteChannel = async (channelId: string) => {
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session) {
-        toast.error("Please sign in to perform this action");
-        navigate("/auth");
-        return;
-      }
+    if (!user?.id) {
+      toast.error("Please sign in to perform this action");
+      navigate("/auth");
+      return;
+    }
 
+    try {
       setIsDeleting(true);
       setChannelToDelete(channelId);
       console.log("Starting channel deletion process for:", channelId);
 
-      // First try direct database update to mark as deleted
-      try {
-        // Soft delete the channel by updating deleted_at
-        const { error: channelError } = await supabase
-          .from("youtube_channels")
-          .update({ deleted_at: new Date().toISOString() })
-          .eq("channel_id", channelId);
+      // Use the new secure admin function
+      const { data, error } = await supabase.rpc('admin_delete_channel', {
+        channel_id_param: channelId,
+        admin_user_id: user.id
+      });
 
-        if (channelError) {
-          console.error("Error soft deleting channel:", channelError);
-          
-          // If error mentions recursion in profiles, use alternative approach
-          if (channelError.message?.includes("infinite recursion") || 
-              channelError.message?.includes("profiles")) {
-            console.log("Using alternative approach to delete channel");
-            
-            // Use a different approach - try direct delete from videos first
-            const { error: videoError } = await supabase
-              .from("youtube_videos")
-              .update({ deleted_at: new Date().toISOString() })
-              .eq("channel_id", channelId);
-              
-            if (videoError && !videoError.message?.includes("No rows")) {
-              console.warn("Error updating videos:", videoError);
-            }
-            
-            // Try channel update again after videos are marked as deleted
-            const { error: retryError } = await supabase
-              .from("youtube_channels")
-              .update({ deleted_at: new Date().toISOString() })
-              .eq("channel_id", channelId);
-              
-            if (retryError) {
-              console.error("Error in retry delete channel:", retryError);
-              throw new Error(`Error deleting channel: ${retryError.message}`);
-            }
-          } else {
-            throw new Error(`Error deleting channel: ${channelError.message}`);
-          }
-        } else {
-          // If channel was deleted successfully, also mark videos as deleted
-          const { error: videoError } = await supabase
-            .from("youtube_videos")
-            .update({ deleted_at: new Date().toISOString() })
-            .eq("channel_id", channelId);
+      if (error) {
+        console.error("Error calling admin_delete_channel:", error);
+        throw new Error(error.message);
+      }
 
-          if (videoError) {
-            console.warn("Error soft deleting videos:", videoError);
-            // Continue anyway, the channel was successfully marked as deleted
-          }
-        }
-      } catch (dbError: any) {
-        console.error("Database operation failed:", dbError);
-        
-        // Fall back to using an anonymous function which bypasses RLS
-        // This uses the service role key through an edge function
-        try {
-          console.log("Trying alternative delete method");
-          const response = await fetch(
-            "https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/delete-channel-admin",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1aW5ja3R2c2l1enRzeGN1cWZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY0ODgzNzcsImV4cCI6MjA1MjA2NDM3N30.zbReqHoAR33QoCi_wqNp8AtNofTX3JebM7jvjFAWbMg`
-              },
-              body: JSON.stringify({ 
-                channelId,
-                userId: session.user.id
-              })
-            }
-          );
-          
-          if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || "Failed to delete channel");
-          }
-        } catch (fetchError: any) {
-          console.error("Edge function error:", fetchError);
-          throw fetchError;
-        }
+      if (!data?.success) {
+        console.error("Channel deletion failed:", data?.error);
+        throw new Error(data?.error || "Failed to delete channel");
       }
 
       toast.success("Channel deleted successfully");

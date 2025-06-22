@@ -9,6 +9,7 @@ import { ReportedVideosSection } from "@/components/dashboard/ReportedVideosSect
 import { ContactRequestsSection } from "@/components/dashboard/ContactRequestsSection";
 import { ChannelRequestsSection } from "@/components/dashboard/ChannelRequestsSection";
 import { GlobalNotificationsSection } from "@/components/dashboard/GlobalNotificationsSection";
+import { RestoreDeletedItems } from "@/components/admin/RestoreDeletedItems";
 
 export const ContentTab = () => {
   const [isReportedVideosOpen, setIsReportedVideosOpen] = useState(false);
@@ -35,6 +36,9 @@ export const ContentTab = () => {
       <ContactRequestsSection />
       <ChannelRequestsSection />
       <GlobalNotificationsSection />
+      
+      {/* Add Restore Deleted Items Section */}
+      <RestoreDeletedItems />
 
       {/* Reported Videos Dialog */}
       <ReportedVideosSection 

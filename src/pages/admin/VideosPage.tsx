@@ -8,10 +8,12 @@ import { BackButton } from "@/components/navigation/BackButton";
 import { TimeRangeSelect } from "@/components/admin/TimeRangeSelect";
 import { VideosTable } from "@/components/admin/VideosTable";
 import { TimeRange, timeRanges } from "@/types/admin";
+import { useUnifiedAuth } from "@/hooks/useUnifiedAuth";
 
 export default function VideosPage() {
   const [timeRange, setTimeRange] = useState<TimeRange>("all");
   const [isDeleting, setIsDeleting] = useState(false);
+  const { user } = useUnifiedAuth();
 
   const { data: videos, isLoading, error, refetch } = useQuery({
     queryKey: ["admin-videos", timeRange],
@@ -48,21 +50,35 @@ export default function VideosPage() {
   });
 
   const handleDeleteVideo = async (videoId: string) => {
+    if (!user?.id) {
+      toast.error("Authentication required to delete videos");
+      return;
+    }
+
     try {
       setIsDeleting(true);
       
-      const { error } = await supabase
-        .from("youtube_videos")
-        .update({ deleted_at: new Date().toISOString() })
-        .eq("id", videoId);
+      // Use the new secure admin function
+      const { data, error } = await supabase.rpc('admin_delete_video', {
+        video_id_param: videoId,
+        admin_user_id: user.id
+      });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error calling admin_delete_video:", error);
+        throw new Error(error.message);
+      }
+
+      if (!data?.success) {
+        console.error("Video deletion failed:", data?.error);
+        throw new Error(data?.error || "Failed to delete video");
+      }
 
       toast.success("Video deleted successfully");
       refetch();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error deleting video:", error);
-      toast.error("Failed to delete video");
+      toast.error("Failed to delete video: " + (error.message || "Unknown error"));
     } finally {
       setIsDeleting(false);
     }

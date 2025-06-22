@@ -2,104 +2,40 @@
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner"; 
+import { useUnifiedAuth } from "@/hooks/useUnifiedAuth";
 
 export const useVideoDelete = (refetchVideos: () => void) => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [videoToDelete, setVideoToDelete] = useState<string | null>(null);
+  const { user } = useUnifiedAuth();
 
   const handleDeleteVideo = async (videoId: string) => {
-    if (!videoId) return;
+    if (!videoId || !user?.id) {
+      toast.error("Authentication required to delete videos");
+      return;
+    }
     
     try {
       setIsDeleting(true);
       console.log("Starting video deletion process for:", videoId);
 
-      // First check if we can even execute the operation
-      const { data: quotaData } = await supabase
-        .from('api_quota_tracking')
-        .select('quota_remaining')
-        .eq('api_name', 'youtube')
-        .single();
+      // Use the new secure admin function
+      const { data, error } = await supabase.rpc('admin_delete_video', {
+        video_id_param: videoId,
+        admin_user_id: user.id
+      });
 
-      if (quotaData?.quota_remaining <= 0) {
-        console.error("Cannot delete video: YouTube API quota exceeded");
-        toast.error("Cannot delete video: YouTube API quota exceeded", { 
-          id: "quota-exceeded"
-        });
-        return;
+      if (error) {
+        console.error("Error calling admin_delete_video:", error);
+        throw new Error(error.message);
       }
 
-      // Delete video custom category mappings first
-      const { error: categoryMappingsError } = await supabase
-        .from("video_custom_category_mappings")
-        .delete()
-        .eq("video_id", videoId);
-
-      if (categoryMappingsError) {
-        console.error("Error deleting category mappings:", categoryMappingsError);
-        throw categoryMappingsError;
+      if (!data?.success) {
+        console.error("Video deletion failed:", data?.error);
+        throw new Error(data?.error || "Failed to delete video");
       }
 
-      const { error: notificationsError } = await supabase
-        .from("video_notifications")
-        .delete()
-        .eq("video_id", videoId);
-
-      if (notificationsError) {
-        console.error("Error deleting notifications:", notificationsError);
-        throw notificationsError;
-      }
-
-      const { error: reportsError } = await supabase
-        .from("video_reports")
-        .delete()
-        .eq("video_id", videoId);
-
-      if (reportsError) {
-        console.error("Error deleting reports:", reportsError);
-        throw reportsError;
-      }
-
-      const { error: commentsError } = await supabase
-        .from("video_comments")
-        .delete()
-        .eq("video_id", videoId);
-
-      if (commentsError) {
-        console.error("Error deleting comments:", commentsError);
-        throw commentsError;
-      }
-
-      const { error: historyError } = await supabase
-        .from("video_history")
-        .delete()
-        .eq("video_id", videoId);
-
-      if (historyError) {
-        console.error("Error deleting history:", historyError);
-        throw historyError;
-      }
-
-      const { error: interactionsError } = await supabase
-        .from("user_video_interactions")
-        .delete()
-        .eq("video_id", videoId);
-
-      if (interactionsError) {
-        console.error("Error deleting interactions:", interactionsError);
-        throw interactionsError;
-      }
-
-      const { error: videoError } = await supabase
-        .from("youtube_videos")
-        .delete()
-        .eq("id", videoId);
-
-      if (videoError) {
-        console.error("Error deleting video:", videoError);
-        throw videoError;
-      }
-
+      console.log("Video deleted successfully");
       toast.success("Video deleted successfully", { 
         id: `video-deleted-${videoId}`
       });
