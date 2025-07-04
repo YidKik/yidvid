@@ -68,57 +68,25 @@ export const AutoRefreshHandler: React.FC<AutoRefreshHandlerProps> = ({
     }
   };
   
-  // Optimize refresh logic to immediately load real content
+  // DISABLED: Auto-refresh to prevent excessive function calls
+  // Only allow manual refresh to reduce API usage
   useEffect(() => {
-    // Skip if we're already refreshing or if we've already triggered an initial fetch
+    // Skip all automatic refreshing - only manual refresh allowed
     if (isRefreshing || !forceRefetch || hasTriggeredInitialFetch.current) return;
     
-    // Check if we have only sample videos (not real ones)
-    const hasOnlySampleVideos = videos.length > 0 && 
-      videos.every(v => 
-        v.id.toString().includes('sample') || 
-        v.video_id.includes('sample') ||
-        v.channel_name === "Sample Channel"
-      );
-    
-    // Only trigger if we have missing or sample data and haven't triggered before
-    if (videos.length === 0 || hasOnlySampleVideos) {
-      console.log("No real videos detected, triggering immediate cache clear and refresh...");
-      // Mark that we've triggered an initial fetch
+    // Only refresh once on initial load if absolutely no data
+    if (videos.length === 0) {
+      console.log("No videos detected on initial load - single refresh attempt");
       hasTriggeredInitialFetch.current = true;
-      // Clear cache and force refresh to get real content
-      clearCacheAndRefresh();
-    } else if (lastSuccessfulFetch && 
-        (new Date().getTime() - new Date(lastSuccessfulFetch).getTime() > 1800000) && // More than 30 minutes
-        forceRefetch) {
-      console.log("Content is stale (>30 minutes). Triggering automatic refresh...");
-      // Add a small delay to avoid interfering with initial page load
-      setTimeout(() => {
-        if (!isRefreshing) {
-          forceRefetch().catch(error => {
-            console.error("Failed to refresh stale content:", error);
-          });
-        }
-      }, 500);
+      forceRefetch().catch(error => {
+        console.error("Initial refresh failed:", error);
+      });
     }
-  }, [videos, lastSuccessfulFetch, forceRefetch, isRefreshing]);
+    // Remove all other auto-refresh logic
+  }, [videos, forceRefetch, isRefreshing]);
   
-  // Handle cache clearing for any content over 1 hour (reduced from 2 hours)
-  useEffect(() => {
-    if (lastSuccessfulFetch && 
-        new Date().getTime() - new Date(lastSuccessfulFetch).getTime() > 3600000 && // More than 1 hour
-        !isRefreshing &&
-        forceRefetch) {
-      const lastRefresh = localStorage.getItem('lastHourlyRefresh');
-      const now = new Date().getTime();
-      
-      if (!lastRefresh || now - parseInt(lastRefresh) > 30 * 60 * 1000) {
-        console.log("Content is stale (>1 hour). Clearing cache automatically...");
-        clearCacheAndRefresh();
-        localStorage.setItem('lastHourlyRefresh', now.toString());
-      }
-    }
-  }, [lastSuccessfulFetch, isRefreshing, forceRefetch]);
+  // DISABLED: Hourly cache clearing to prevent excessive function calls
+  // Content will only be refreshed manually to stay within limits
   
   // This component intentionally has no UI
   return null;

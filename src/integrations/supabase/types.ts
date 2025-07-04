@@ -646,39 +646,51 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          child_name: string | null
           created_at: string
           display_name: string | null
           email: string
+          email_notifications: boolean | null
           id: string
           is_admin: boolean | null
           name: string | null
           updated_at: string
+          user_type: string | null
           username: string | null
           welcome_name: string | null
+          welcome_popup_shown: boolean | null
         }
         Insert: {
           avatar_url?: string | null
+          child_name?: string | null
           created_at?: string
           display_name?: string | null
           email: string
+          email_notifications?: boolean | null
           id: string
           is_admin?: boolean | null
           name?: string | null
           updated_at?: string
+          user_type?: string | null
           username?: string | null
           welcome_name?: string | null
+          welcome_popup_shown?: boolean | null
         }
         Update: {
           avatar_url?: string | null
+          child_name?: string | null
           created_at?: string
           display_name?: string | null
           email?: string
+          email_notifications?: boolean | null
           id?: string
           is_admin?: boolean | null
           name?: string | null
           updated_at?: string
+          user_type?: string | null
           username?: string | null
           welcome_name?: string | null
+          welcome_popup_shown?: boolean | null
         }
         Relationships: []
       }

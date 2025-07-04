@@ -13,79 +13,31 @@ export const useVideoFetcher = () => {
     try {
       console.log("Force refetching all videos...");
       
-      // Clear local storage to force a refresh from the server
-      localStorage.removeItem('supabase.cache.youtube_videos');
-      
-      // Add delay before fetch to ensure cache is cleared
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
-      // Try direct database query first with higher limit and explicit uploaded_at sorting
-      try {
-        console.log("Attempting direct database query first...");
-        const { data, error } = await supabase
-          .from("youtube_videos")
-          .select("*")
-          .is("deleted_at", null)
-          .order("uploaded_at", { ascending: false })  // Sort by uploaded_at
-          .limit(150);
-        
-        if (!error && data && data.length > 0) {
-          console.log(`Successfully fetched ${data.length} videos directly from database, sorted by uploaded_at`);
-          const formatted = formatVideoData(data);
-          setLastSuccessfulFetch(new Date());
-          setFetchAttempts(0);
-          return formatted;
-        } else {
-          console.log("Direct query resulted in error or no data:", error);
-        }
-      } catch (directError) {
-        console.error("Direct database query failed:", directError);
+      // Rate limiting - only allow one refetch per 10 minutes
+      const lastRefetch = localStorage.getItem('lastForceRefetch');
+      const now = Date.now();
+      if (lastRefetch && (now - parseInt(lastRefetch)) < 600000) { // 10 minutes
+        console.log("Skipping refetch - too recent");
+        return [];
       }
+      localStorage.setItem('lastForceRefetch', now.toString());
       
-      // If direct query fails, try edge function as backup
-      try {
-        console.log("Attempting to fetch videos via edge function...");
-        const response = await fetch("https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/get-public-videos", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1aW5ja3R2c2l1enRzeGN1cWZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY0ODgzNzcsImV4cCI6MjA1MjA2NDM3N30.zbReqHoAR33QoCi_wqNp8AtNofTX3JebM7jvjFAWbMg`
-          }
-        });
-        
-        if (response.ok) {
-          const result = await response.json();
-          if (result.data && result.data.length > 0) {
-            console.log(`Successfully fetched ${result.data.length} videos from edge function`);
-            const formatted = formatVideoData(result.data);
-            setLastSuccessfulFetch(new Date());
-            setFetchAttempts(0);
-            return formatted;
-          } else {
-            console.log("Edge function returned no videos");
-          }
-        } else {
-          console.log("Edge function response not OK:", response.status);
-        }
-      } catch (edgeError) {
-        console.log("Edge function approach failed", edgeError);
-      }
-      
-      // Use a direct query approach with more robust error handling as last resort
-      const { data: fallbackData, error: fallbackError } = await supabase
+      // ONLY use direct database query - no edge function calls
+      console.log("Using direct database query only...");
+      const { data, error } = await supabase
         .from("youtube_videos")
-        .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, updated_at")
+        .select("*")
         .is("deleted_at", null)
-        .order("uploaded_at", { ascending: false })  // Ensure sorting by uploaded_at here too
-        .limit(100);
-        
-      if (fallbackError) {
-        console.error("Fallback query failed:", fallbackError);
-        throw fallbackError;
+        .order("uploaded_at", { ascending: false })
+        .limit(150);
+      
+      if (error) {
+        console.error("Database query failed:", error);
+        throw error;
       }
       
-      console.log(`Fallback query successful, retrieved ${fallbackData?.length || 0} videos, sorted by uploaded_at`);
-      const formatted = formatVideoData(fallbackData);
+      console.log(`Successfully fetched ${data?.length || 0} videos directly from database`);
+      const formatted = formatVideoData(data || []);
       setLastSuccessfulFetch(new Date());
       setFetchAttempts(0);
       return formatted;
@@ -112,89 +64,26 @@ export const useVideoFetcher = () => {
     try {
       console.log("Fetching all videos");
       
-      // Try direct database query first with higher limit and explicit uploaded_at sorting
-      try {
-        console.log("Attempting direct database query first for all videos...");
-        const { data, error } = await supabase
-          .from("youtube_videos")
-          .select("*, youtube_channels(thumbnail_url)")
-          .is("deleted_at", null)
-          .order("uploaded_at", { ascending: false })  // Ensure sorting by uploaded_at
-          .limit(150);
-        
-        if (!error && data && data.length > 0) {
-          console.log(`Successfully fetched ${data.length} videos directly from database, sorted by uploaded_at`);
-          setLastSuccessfulFetch(new Date());
-          setFetchAttempts(0);
-          return formatVideoData(data);
-        } else {
-          console.log("Direct query resulted in error or no data:", error);
-        }
-      } catch (directError) {
-        console.error("Direct database query failed:", directError);
-      }
-      
-      // If direct query fails, try simplified query with explicit uploaded_at sorting
-      const { data: simpleData, error: simpleError } = await supabase
+      // ONLY use direct database query - remove all edge function calls
+      const { data, error } = await supabase
         .from("youtube_videos")
         .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, updated_at, category, description")
         .is("deleted_at", null)
-        .order("uploaded_at", { ascending: false })  // Sort by uploaded_at
+        .order("uploaded_at", { ascending: false })
         .limit(150);
-        
-      if (!simpleError && simpleData && simpleData.length > 0) {
-        console.log(`Successfully fetched ${simpleData.length} videos with simplified query, sorted by uploaded_at`);
-        const formatted = formatVideoData(simpleData);
-        setLastSuccessfulFetch(new Date());
-        setFetchAttempts(0);
-        return formatted;
-      }
-      
-      // Try edge function only if database queries fail
-      try {
-        console.log("Database queries failed, trying edge function...");
-        const response = await fetch("https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/get-public-videos", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1aW5ja3R2c2l1enRzeGN1cWZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY0ODgzNzcsImV4cCI6MjA1MjA2NDM3N30.zbReqHoAR33QoCi_wqNp8AtNofTX3JebM7jvjFAWbMg`
-          }
-        });
-        
-        if (response.ok) {
-          const result = await response.json();
-          if (result.data && result.data.length > 0) {
-            console.log(`Successfully fetched ${result.data.length} videos from edge function`);
-            const formatted = formatVideoData(result.data);
-            setLastSuccessfulFetch(new Date());
-            setFetchAttempts(0);
-            return formatted;
-          }
-        }
-      } catch (edgeError) {
-        console.log("Edge function approach failed", edgeError);
+
+      if (error) {
+        console.error("Error fetching videos:", error);
+        throw error;
       }
 
-      // Last resort fallback query with uploaded_at sorting
-      const { data: fallbackData, error: fallbackError } = await supabase
-        .from("youtube_videos")
-        .select("*")
-        .is("deleted_at", null)
-        .order("uploaded_at", { ascending: false })  // Ensure sorting by uploaded_at
-        .limit(100);
-
-      if (fallbackError) {
-        console.error("Error fetching videos:", fallbackError);
-        throw fallbackError;
-      }
-
-      if (!fallbackData || fallbackData.length === 0) {
+      if (!data || data.length === 0) {
         console.log("No videos found in database");
         throw new Error("No videos found");
       }
 
-      console.log(`Successfully fetched ${fallbackData.length} videos from final fallback, sorted by uploaded_at`);
-      const formatted = formatVideoData(fallbackData);
+      console.log(`Successfully fetched ${data.length} videos from database`);
+      const formatted = formatVideoData(data);
       setLastSuccessfulFetch(new Date());
       setFetchAttempts(0);
       return formatted;

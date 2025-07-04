@@ -233,63 +233,26 @@ export const ChannelVideosFetcher = () => {
       // Try multiple approaches to get channel IDs, starting with direct database query
       let channelIds: string[] = [];
       
-      // Method 1: Direct database query - get ALL active channels
-      try {
-        const { data: channels, error: channelsError } = await supabase
-          .from('youtube_channels')
-          .select('channel_id')
-          .is('deleted_at', null)
-          .order('last_fetch', { ascending: true }); // Prioritize channels that haven't been fetched recently
-          
-        if (!channelsError && channels && channels.length > 0) {
-          console.log(`Successfully fetched ${channels.length} channel IDs directly from database`);
-          return channels.map(channel => channel.channel_id);
-        } else if (channelsError) {
-          console.warn("Direct channel fetch failed, trying alternative methods:", channelsError);
-        } else {
-          console.warn("Direct channel fetch returned no channels, trying alternative methods");
-        }
-      } catch (directQueryError) {
-        console.error('Error in direct channel query:', directQueryError);
+      // ONLY use direct database query to avoid excessive function calls
+      const { data: channels, error: channelsError } = await supabase
+        .from('youtube_channels')
+        .select('channel_id')
+        .is('deleted_at', null)
+        .order('last_fetch', { ascending: true })
+        .limit(50); // Limit to reduce processing load
+        
+      if (channelsError) {
+        console.error('Error fetching channels:', channelsError);
+        throw channelsError;
       }
       
-      // Method 2: Use edge function
-      try {
-        const { data: edgeResponse, error: edgeError } = await supabase.functions.invoke('get-public-channels', {
-          body: { limit: 500 } // Increased limit to get all channels
-        });
-        
-        if (!edgeError && edgeResponse?.data && Array.isArray(edgeResponse.data) && edgeResponse.data.length > 0) {
-          console.log(`Retrieved ${edgeResponse.data.length} channels via edge function`);
-          return edgeResponse.data.map(c => c.channel_id);
-        } else {
-          console.warn("Edge function channel fetch failed", edgeError);
-        }
-      } catch (edgeError) {
-        console.error('Edge function error:', edgeError);
+      if (!channels || channels.length === 0) {
+        console.warn("No channels found in database");
+        return [];
       }
       
-      // Method 3: Use public endpoint as last resort
-      try {
-        const response = await fetch('https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/get-public-channels', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1aW5ja3R2c2l1enRzeGN1cWZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY0ODgzNzcsImV4cCI6MjA1MjA2NDM3N30.zbReqHoAR33QoCi_wqNp8AtNofTX3JebM7jvjFAWbMg`
-          },
-          body: JSON.stringify({ limit: 500 }) // Increased limit
-        });
-        
-        if (response.ok) {
-          const result = await response.json();
-          if (result?.data && Array.isArray(result.data) && result.data.length > 0) {
-            console.log(`Retrieved ${result.data.length} channels via public endpoint`);
-            return result.data.map(c => c.channel_id);
-          }
-        }
-      } catch (fetchError) {
-        console.error('Public endpoint error:', fetchError);
-      }
+      console.log(`Successfully fetched ${channels.length} channel IDs directly from database`);
+      return channels.map(channel => channel.channel_id);
       
       // Method 4: Hardcode a few test channel IDs as absolute fallback
       const fallbackChannels = [
