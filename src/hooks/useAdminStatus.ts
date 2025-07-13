@@ -91,7 +91,7 @@ export const useAdminStatus = (userId: string | undefined) => {
 
         if (error) {
           console.error("Error fetching admin status:", error);
-          toast.error("Failed to verify admin permissions");
+          // Remove toast notification for admin check errors
           throw error;
         }
 

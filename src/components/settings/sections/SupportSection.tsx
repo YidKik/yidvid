@@ -45,17 +45,28 @@ export const SupportSection = () => {
   };
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-2xl font-semibold text-primary/80">Help & Support</h2>
-      <Card className={`p-6 border-primary/20 shadow-sm`}>
-        <div className="text-center mb-6">
-          <p className="text-muted-foreground">
-            Need help or have suggestions? We're here to assist you.
-          </p>
+    <Card className="w-full border-2 border-primary/20 shadow-lg rounded-3xl bg-gradient-to-br from-white to-primary/5">
+      <div className="p-4 md:p-6 space-y-6">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-primary/10 rounded-2xl">
+            <div className="w-6 h-6 text-primary">🎧</div>
+          </div>
+          <div>
+            <h2 className="text-xl md:text-2xl font-bold text-primary">Help & Support</h2>
+            <p className="text-sm text-muted-foreground">Get help or send us your feedback</p>
+          </div>
         </div>
         
-        <ContactForm form={form} onSubmit={onSubmit} />
-      </Card>
-    </div>
+        <div className="space-y-4">
+          <div className="text-center">
+            <p className="text-muted-foreground">
+              Need help or have suggestions? We're here to assist you.
+            </p>
+          </div>
+          
+          <ContactForm form={form} onSubmit={onSubmit} />
+        </div>
+      </div>
+    </Card>
   );
 };

@@ -117,66 +117,64 @@ export const ProfileSection = () => {
   const showingFallback = !!error && !!displayProfile;
 
   return (
-    <section className={`mb-${isMobile ? '2' : '8'}`}>
-      <Card className={`${isMobile ? 'p-2' : 'p-6'} overflow-hidden`}>
-        <div className="flex flex-col gap-2">
-          {showingFallback && (
-            <div className="text-amber-500 text-xs mb-2 px-1">
-              Using limited profile data. Some features may be unavailable.
-            </div>
-          )}
-          <div className={`flex ${isMobile ? 'items-start gap-2' : 'items-center gap-4'}`}>
-            <ProfileAvatar 
-              avatarUrl={displayProfile?.avatar_url || ""}
-              displayName={displayProfile?.display_name || ""}
-              username={displayProfile?.username || ""}
-              profile={displayProfile as ProfilesTable["Row"]}
-            />
-            <ProfileInfo profile={displayProfile as ProfilesTable["Row"]} />
+    <Card className="w-full border-2 border-primary/20 shadow-lg rounded-3xl bg-gradient-to-br from-white to-primary/5">
+      <div className="p-4 md:p-6">
+        {showingFallback && (
+          <div className="text-amber-500 text-xs mb-4 px-1 bg-amber-50 rounded-lg p-2">
+            Using limited profile data. Some features may be unavailable.
           </div>
-          <div className="space-y-2">
-            <AccountActions
-              isLoggingOut={false}
-              handleLogout={signOut}
-            />
-            
-            <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-              <DialogTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="w-full flex items-center justify-center gap-2 text-red-600 hover:text-red-700 border-red-200 hover:border-red-300 hover:bg-red-50 transition-colors"
-                >
-                  <Trash2 className="h-4 w-4" />
-                  <span>Delete Account</span>
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Delete Account</DialogTitle>
-                  <DialogDescription>
-                    Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently deleted.
-                  </DialogDescription>
-                </DialogHeader>
-                <DialogFooter className="flex flex-col sm:flex-row gap-2 sm:gap-0">
-                  <Button
-                    variant="ghost"
-                    onClick={() => setIsDeleteDialogOpen(false)}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    onClick={handleDeleteAccount}
-                    className="bg-red-600 hover:bg-red-700"
-                  >
-                    Yes, Delete My Account
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-          </div>
+        )}
+        <div className={`flex ${isMobile ? 'items-start gap-3' : 'items-center gap-4'} mb-4`}>
+          <ProfileAvatar 
+            avatarUrl={displayProfile?.avatar_url || ""}
+            displayName={displayProfile?.display_name || ""}
+            username={displayProfile?.username || ""}
+            profile={displayProfile as ProfilesTable["Row"]}
+          />
+          <ProfileInfo profile={displayProfile as ProfilesTable["Row"]} />
         </div>
-      </Card>
-    </section>
+        <div className="space-y-3">
+          <AccountActions
+            isLoggingOut={false}
+            handleLogout={signOut}
+          />
+          
+          <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+            <DialogTrigger asChild>
+              <Button
+                variant="outline"
+                className="w-full flex items-center justify-center gap-2 text-red-600 hover:text-red-700 border-red-200 hover:border-red-300 hover:bg-red-50 transition-colors rounded-xl"
+              >
+                <Trash2 className="h-4 w-4" />
+                <span>Delete Account</span>
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Delete Account</DialogTitle>
+                <DialogDescription>
+                  Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently deleted.
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter className="flex flex-col sm:flex-row gap-2 sm:gap-0">
+                <Button
+                  variant="ghost"
+                  onClick={() => setIsDeleteDialogOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="destructive"
+                  onClick={handleDeleteAccount}
+                  className="bg-red-600 hover:bg-red-700"
+                >
+                  Yes, Delete My Account
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </div>
+      </div>
+    </Card>
   );
 };

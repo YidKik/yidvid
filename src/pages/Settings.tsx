@@ -43,18 +43,22 @@ const Settings = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-gradient-to-br from-background to-primary/5">
       <BackButton />
       <main className={`container mx-auto ${isMobile ? 'pt-14 px-4 md:px-6 max-w-[95%]' : 'pt-24 px-4'} pb-16 max-w-4xl`}>
-        <div className={`mb-3 md:mb-8 flex items-center gap-2`}>
-          <SettingsIcon className={`${isMobile ? 'w-5 h-5' : 'w-8 h-8'} text-primary`} />
-          <h1 className={`${isMobile ? 'text-lg' : 'text-3xl'} font-bold`}>Settings</h1>
+        <div className={`mb-6 md:mb-8 flex items-center gap-3 p-4 bg-white rounded-3xl border-2 border-primary/20 shadow-lg`}>
+          <div className="p-2 bg-primary/10 rounded-2xl">
+            <SettingsIcon className={`${isMobile ? 'w-5 h-5' : 'w-6 h-6'} text-primary`} />
+          </div>
+          <div>
+            <h1 className={`${isMobile ? 'text-lg' : 'text-2xl'} font-bold text-primary`}>Settings</h1>
+            <p className="text-sm text-muted-foreground">Manage your preferences and account</p>
+          </div>
         </div>
 
-        {/* Admin Dashboard Card if user is admin */}
-        {(isAdmin || hasPinBypass) && <AdminDashboardCard />}
+        {/* Removed Admin Dashboard Card */}
 
-        <div className="space-y-4 md:space-y-12">
+        <div className="space-y-6 md:space-y-8">
           {/* Profile section always shows first, either real or skeleton */}
           {loadingProfile ? <ProfileSectionSkeleton /> : <ProfileSection />}
           

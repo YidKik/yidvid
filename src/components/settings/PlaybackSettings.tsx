@@ -23,12 +23,18 @@ export const PlaybackSettings = ({
   const { isMobile } = useIsMobile();
 
   return (
-    <section className={`mb-8 ${isMobile ? 'mb-6' : 'mb-12'}`}>
-      <h2 className={`${isMobile ? 'text-lg' : 'text-2xl'} font-semibold mb-2 md:mb-4 flex items-center gap-2`}>
-        <Volume2 className={`${isMobile ? 'h-5 w-5' : 'h-6 w-6'}`} />
-        {t('playbackSettings')}
-      </h2>
-      <Card className={`${isMobile ? 'p-3 space-y-4' : 'p-6 space-y-6'}`}>
+    <div className="space-y-4">
+      <div className="flex items-center gap-3">
+        <div className="p-2 bg-primary/10 rounded-2xl">
+          <Volume2 className="w-5 h-5 text-primary" />
+        </div>
+        <div>
+          <h3 className="text-lg font-semibold text-primary/90">Playback Settings</h3>
+          <p className="text-sm text-muted-foreground">Configure video playback preferences</p>
+        </div>
+      </div>
+      
+      <div className="p-4 bg-white/70 rounded-2xl border border-primary/10 space-y-4">
         <div className="space-y-2">
           <Label htmlFor="volume" className={`${isMobile ? 'text-sm' : ''}`}>{t('defaultVolume')} ({volume}%)</Label>
           <Slider
@@ -45,10 +51,10 @@ export const PlaybackSettings = ({
         <div className="space-y-2">
           <Label htmlFor="playback-speed" className={`${isMobile ? 'text-sm' : ''}`}>{t('defaultPlaybackSpeed')}</Label>
           <Select value={playbackSpeed} onValueChange={setPlaybackSpeed}>
-            <SelectTrigger className={`${isMobile ? 'w-[120px] h-8 text-sm' : 'w-[140px]'} bg-background border-input`}>
+            <SelectTrigger className={`${isMobile ? 'w-[120px] h-8 text-sm' : 'w-[140px]'} bg-background border-input rounded-xl`}>
               <SelectValue placeholder="Select speed" />
             </SelectTrigger>
-            <SelectContent className="bg-background border-2 border-input shadow-lg min-w-[120px]">
+            <SelectContent className="bg-background border-2 border-input shadow-lg min-w-[120px] rounded-xl">
               <SelectItem value="0.25">0.25x</SelectItem>
               <SelectItem value="0.5">0.5x</SelectItem>
               <SelectItem value="0.75">0.75x</SelectItem>
@@ -73,7 +79,7 @@ export const PlaybackSettings = ({
             onCheckedChange={setAutoplay}
           />
         </div>
-      </Card>
-    </section>
+      </div>
+    </div>
   );
 };

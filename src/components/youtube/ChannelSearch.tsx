@@ -10,7 +10,7 @@ interface ChannelSearchProps {
 
 export const ChannelSearch = ({ value, onChange }: ChannelSearchProps) => {
   const [inputValue, setInputValue] = useState(value);
-  const debouncedValue = useDebounce(inputValue, 300);
+  const debouncedValue = useDebounce(inputValue, 150); // Faster search
   
   useEffect(() => {
     if (debouncedValue !== value) {
