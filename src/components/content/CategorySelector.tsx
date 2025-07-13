@@ -66,10 +66,10 @@ export const CategorySelector = ({ selectedCategory, onCategoryChange }: Categor
     <div className="w-full">
       <motion.div 
         className={cn(
-          "relative flex gap-2 justify-center p-3 rounded-2xl shadow-md border border-primary/20 mx-auto overflow-x-auto scrollbar-hide",
+          "relative flex gap-2 justify-center p-3 mx-auto overflow-x-auto scrollbar-hide",
           isMobile 
             ? "flex-nowrap max-w-full px-2" 
-            : "flex-nowrap max-w-fit bg-card/90 backdrop-blur-sm"
+            : "flex-nowrap max-w-fit"
         )}
         initial={{ opacity: 0, y: -20 }}
         animate={{ 
