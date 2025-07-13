@@ -48,10 +48,10 @@ export const CategorySelector = ({ selectedCategory, onCategoryChange }: Categor
     <div className="w-full">
       <motion.div 
         className={cn(
-          "relative flex gap-2 justify-center p-3 rounded-xl shadow-lg border-2 border-primary/30 mx-auto overflow-x-auto scrollbar-hide",
+          "relative flex gap-2 justify-center p-3 rounded-2xl shadow-md border border-primary/20 mx-auto overflow-x-auto scrollbar-hide",
           isMobile 
             ? "flex-nowrap max-w-full px-2" 
-            : "flex-nowrap max-w-fit bg-card/95 backdrop-blur-md"
+            : "flex-nowrap max-w-fit bg-card/90 backdrop-blur-sm"
         )}
         initial={{ opacity: 0, y: -20 }}
         animate={{ 
@@ -68,11 +68,11 @@ export const CategorySelector = ({ selectedCategory, onCategoryChange }: Categor
             key={category.id}
             onClick={() => onCategoryChange(category.id)}
             className={cn(
-              "relative rounded-lg font-semibold transition-all duration-300 ease-in-out flex-shrink-0 border-2",
+              "relative rounded-2xl font-medium transition-all duration-300 ease-in-out flex-shrink-0 border",
               "focus:outline-none whitespace-nowrap",
               isMobile 
-                ? "px-2 py-1 text-xs" 
-                : "px-4 py-2 text-sm min-w-[100px]",
+                ? "px-3 py-2 text-xs" 
+                : "px-6 py-3 text-sm min-w-[100px]",
               selectedCategory === category.id
                 ? "bg-primary text-primary-foreground border-primary shadow-lg scale-105"
                 : "text-muted-foreground bg-background/80 border-border/50 hover:border-primary/50 hover:bg-primary/5"
@@ -80,10 +80,10 @@ export const CategorySelector = ({ selectedCategory, onCategoryChange }: Categor
             whileTap={{ scale: isMobile ? 0.95 : 0.98 }}
             whileHover={{ scale: selectedCategory === category.id ? 1.05 : 1.02 }}
           >
-            <span className="relative z-10 font-bold">{category.label}</span>
+            <span className="relative z-10 font-medium">{category.label}</span>
             {selectedCategory === category.id && (
               <motion.div
-                className="absolute inset-0 bg-primary rounded-lg shadow-lg"
+                className="absolute inset-0 bg-primary rounded-2xl shadow-lg"
                 layoutId="activeCategory"
                 initial={false}
                 transition={{

@@ -29,7 +29,7 @@ export const useVideoFetcher = () => {
         .select("*")
         .is("deleted_at", null)
         .order("uploaded_at", { ascending: false })
-        .limit(150);
+        .limit(500);
       
       if (error) {
         console.error("Database query failed:", error);
@@ -70,7 +70,7 @@ export const useVideoFetcher = () => {
         .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, updated_at, category, description")
         .is("deleted_at", null)
         .order("uploaded_at", { ascending: false })
-        .limit(150);
+        .limit(500);
 
       if (error) {
         console.error("Error fetching videos:", error);
