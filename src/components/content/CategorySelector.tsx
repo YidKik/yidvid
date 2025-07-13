@@ -30,11 +30,9 @@ export const CategorySelector = ({ selectedCategory, onCategoryChange }: Categor
       const scrolled = window.scrollY > 100;
       setHasScrolled(scrolled);
       
-      // Show after user has scrolled a bit
+      // Show after user has scrolled a bit and keep visible
       if (scrolled && !isVisible) {
         setTimeout(() => setIsVisible(true), 300);
-      } else if (!scrolled) {
-        setIsVisible(false);
       }
     };
 
@@ -50,10 +48,10 @@ export const CategorySelector = ({ selectedCategory, onCategoryChange }: Categor
     <div className="w-full">
       <motion.div 
         className={cn(
-          "relative flex gap-1 justify-center p-2 rounded-lg shadow-lg border border-primary/20 mx-auto overflow-x-auto scrollbar-hide",
+          "relative flex gap-2 justify-center p-3 rounded-xl shadow-lg border-2 border-primary/30 mx-auto overflow-x-auto scrollbar-hide",
           isMobile 
             ? "flex-nowrap max-w-full px-2" 
-            : "flex-wrap max-w-3xl bg-card/90 backdrop-blur-sm"
+            : "flex-nowrap max-w-fit bg-card/95 backdrop-blur-md"
         )}
         initial={{ opacity: 0, y: -20 }}
         animate={{ 
