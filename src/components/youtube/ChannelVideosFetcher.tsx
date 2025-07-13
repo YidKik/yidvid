@@ -23,12 +23,12 @@ export const ChannelVideosFetcher = () => {
   const [progress, setProgress] = useState<{current: number, total: number} | null>(null);
   const [processingStatus, setProcessingStatus] = useState<string | null>(null);
 
-  // Main function to fetch videos from YouTube and update the database
+  // Optimized function to fetch videos with smart batching and minimal edge function calls
   const handleFetchVideos = async () => {
     try {
       setIsLoading(true);
-      setProcessingStatus("Fetching all active channels...");
-      toast.loading("Fetching all active channels...");
+      setProcessingStatus("Fetching active channels...");
+      toast.loading("Fetching active channels...");
       
       // Step 1: Get all active channel IDs
       const channelIds = await fetchAllChannelIds();
@@ -40,137 +40,79 @@ export const ChannelVideosFetcher = () => {
         return;
       }
       
-      console.log(`Successfully retrieved ${channelIds.length} channels`);
-      setProcessingStatus(`Processing ${channelIds.length} channels from YouTube...`);
-      toast.loading(`Processing ${channelIds.length} channels from YouTube...`);
+      console.log(`Found ${channelIds.length} channels to process`);
       
-      // Try up to 3 methods to fetch videos, starting with most direct
-      let fetchResult = null;
-      let successfulMethod = "";
-      let usedFallbackKey = false;
+      // OPTIMIZED: Process channels in smart batches to reduce edge function calls
+      const BATCH_SIZE = 25; // Process 25 channels per edge function call
+      const batches = [];
+      for (let i = 0; i < channelIds.length; i += BATCH_SIZE) {
+        batches.push(channelIds.slice(i, i + BATCH_SIZE));
+      }
       
-      // Method 1: Try with direct edge function
-      try {
-        setProcessingStatus("Processing all channels via edge function...");
-        const { data: directData, error: directError } = await supabase.functions.invoke('fetch-youtube-videos', {
-          body: { 
-            channels: channelIds, 
-            forceUpdate: true,
-            quotaConservative: false,
-            maxChannelsPerRun: channelIds.length, // Process all channels
-            bypassQuotaCheck: true
-          }
-        });
+      console.log(`Will process ${batches.length} batches of ~${BATCH_SIZE} channels each`);
+      
+      let totalProcessed = 0;
+      let totalNewVideos = 0;
+      let successfulBatches = 0;
+      
+      // Process batches with delays to avoid overwhelming the system
+      for (let batchIndex = 0; batchIndex < batches.length; batchIndex++) {
+        const batch = batches[batchIndex];
+        const batchNumber = batchIndex + 1;
         
-        if (!directError && directData?.success) {
-          fetchResult = directData;
-          successfulMethod = "direct edge function";
-          usedFallbackKey = directData.usedFallbackKey;
-        } else if (directError) {
-          console.warn("Method 1 failed:", directError);
-        } else {
-          console.warn("Method 1 returned unsuccessful result");
-        }
-      } catch (method1Error) {
-        console.error("Method 1 error:", method1Error);
-      }
-      
-      // Method 2: Try alternate edge function if first method failed
-      if (!fetchResult) {
+        setProcessingStatus(`Processing batch ${batchNumber}/${batches.length} (${batch.length} channels)...`);
+        toast.loading(`Processing batch ${batchNumber}/${batches.length} (${batch.length} channels)...`);
+        
         try {
-          setProcessingStatus("Trying alternate method for all channels...");
-          const { data: altData, error: altError } = await supabase.functions.invoke('fetch-channel-videos', {
+          // SINGLE edge function call per batch
+          const { data: batchData, error: batchError } = await supabase.functions.invoke('fetch-youtube-videos', {
             body: { 
-              force: true,
-              allChannels: true  // Signal to process all channels
-            }
-          });
-          
-          if (!altError && altData?.success) {
-            fetchResult = altData;
-            successfulMethod = "channel videos edge function";
-            usedFallbackKey = altData.usedFallbackKey;
-          } else if (altError) {
-            console.warn("Method 2 failed:", altError);
-          } else {
-            console.warn("Method 2 returned unsuccessful result");
-          }
-        } catch (method2Error) {
-          console.error("Method 2 error:", method2Error);
-        }
-      }
-      
-      // Method 3: Try direct fetch as last resort
-      if (!fetchResult) {
-        try {
-          setProcessingStatus("Trying direct API call for all channels...");
-          const response = await fetch('https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/fetch-youtube-videos', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1aW5ja3R2c2l1enRzeGN1cWZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY0ODgzNzcsImV4cCI6MjA1MjA2NDM3N30.zbReqHoAR33QoCi_wqNp8AtNofTX3JebM7jvjFAWbMg`
-            },
-            body: JSON.stringify({
-              channels: channelIds,
+              channels: batch,
               forceUpdate: true,
-              bypassQuotaCheck: true,
-              maxChannelsPerRun: channelIds.length // Process all channels
-            })
+              maxChannelsPerRun: batch.length,
+              bypassQuotaCheck: true
+            }
           });
           
-          if (response.ok) {
-            const data = await response.json();
-            if (data?.success) {
-              fetchResult = data;
-              successfulMethod = "direct fetch API";
-              usedFallbackKey = data.usedFallbackKey;
-            }
+          if (!batchError && batchData?.success) {
+            totalProcessed += batchData.processed || 0;
+            totalNewVideos += batchData.newVideos || 0;
+            successfulBatches++;
+            
+            console.log(`Batch ${batchNumber} completed: ${batchData.processed} channels, ${batchData.newVideos} new videos`);
+          } else {
+            console.warn(`Batch ${batchNumber} failed:`, batchError || batchData);
           }
-        } catch (method3Error) {
-          console.error("Method 3 error:", method3Error);
+          
+          // Add delay between batches to prevent overwhelming
+          if (batchIndex < batches.length - 1) {
+            await new Promise(resolve => setTimeout(resolve, 3000)); // 3 second delay
+          }
+          
+        } catch (batchError) {
+          console.error(`Error processing batch ${batchNumber}:`, batchError);
         }
       }
       
-      // Process the result
-      if (!fetchResult) {
-        toast.error("All methods to fetch videos failed", {
-          description: "Try again later or contact support",
-        });
-        setProcessingStatus(null);
-        return;
-      }
-
-      // Display results
+      // Show final results
       toast.dismiss();
       
-      if (fetchResult.success) {
-        if (fetchResult.processed > 0) {
-          if (fetchResult.newVideos > 0) {
-            toast.success(`Successfully processed ${fetchResult.processed} channels and found ${fetchResult.newVideos} new videos`, {
-              description: `Using ${usedFallbackKey ? 'fallback' : 'primary'} API key via ${successfulMethod}`
-            });
-          } else {
-            toast.info(`Processed ${fetchResult.processed} channels but no new videos were found`, {
-              description: `Using ${usedFallbackKey ? 'fallback' : 'primary'} API key via ${successfulMethod}`
-            });
-          }
+      if (successfulBatches > 0) {
+        if (totalNewVideos > 0) {
+          toast.success(`Successfully processed ${totalProcessed} channels across ${successfulBatches} batches and found ${totalNewVideos} new videos`, {
+            description: `Completed ${successfulBatches}/${batches.length} batches successfully`
+          });
         } else {
-          // Videos fetching was attempted but no channels were processed
-          toast.info("No channels were processed. API limits may be active.", {
-            description: "The system attempted to use fallback API keys"
+          toast.info(`Processed ${totalProcessed} channels across ${successfulBatches} batches but no new videos were found`, {
+            description: "All channels are up to date"
           });
         }
-        
-        // Show detailed results for debugging
-        console.log("Channel processing results:", fetchResult.results);
-        
-        // Show quota information
-        if (fetchResult.quotaRemaining !== undefined) {
-          console.log(`YouTube API quota remaining: ${fetchResult.quotaRemaining}`);
-        }
       } else {
-        toast.error(`Failed to fetch videos: ${fetchResult.message || 'Unknown error'}`);
+        toast.error("No batches processed successfully", {
+          description: "Check your connection and try again"
+        });
       }
+
     } catch (error) {
       console.error('Error in handleFetchVideos:', error);
       toast.error(`Error: ${error.message || 'Unknown error occurred'}`);
@@ -227,19 +169,16 @@ export const ChannelVideosFetcher = () => {
     }
   };
 
-  // Helper function to fetch all channel IDs
+  // Helper function to fetch all channel IDs with smart batching
   const fetchAllChannelIds = async (): Promise<string[]> => {
     try {
-      // Try multiple approaches to get channel IDs, starting with direct database query
-      let channelIds: string[] = [];
-      
       // ONLY use direct database query to avoid excessive function calls
       const { data: channels, error: channelsError } = await supabase
         .from('youtube_channels')
-        .select('channel_id')
+        .select('channel_id, last_fetch')
         .is('deleted_at', null)
-        .order('last_fetch', { ascending: true })
-        .limit(50); // Limit to reduce processing load
+        .order('last_fetch', { ascending: true, nullsFirst: true }) // Prioritize channels never fetched
+        .limit(100); // Increased limit for better coverage
         
       if (channelsError) {
         console.error('Error fetching channels:', channelsError);
@@ -312,16 +251,16 @@ export const ChannelVideosFetcher = () => {
           <AlertDialogHeader>
             <AlertDialogTitle>Fetch YouTube Videos</AlertDialogTitle>
             <AlertDialogDescription>
-              This will connect to YouTube and fetch the latest videos for ALL channels.
+              This will connect to YouTube and fetch the latest videos for ALL channels using an optimized approach.
               The process will:
               <ul className="list-disc pl-5 mt-2">
-                <li>Process all available channels in the system</li>
-                <li>Try multiple methods to bypass API restrictions</li>
-                <li>Use different referer domains to overcome blocks</li>
+                <li>Process up to 100 channels prioritizing least recently fetched</li>
+                <li>Use smart batching (25 channels per edge function call)</li>
+                <li>Minimize edge function usage with delays between batches</li>
                 <li>Use backup API key if quota is exceeded</li>
               </ul>
-              <div className="mt-2 text-yellow-600 font-medium">
-                This may take several minutes depending on the number of channels.
+              <div className="mt-2 text-green-600 font-medium">
+                ✅ Optimized to minimize Supabase edge function usage and costs
               </div>
             </AlertDialogDescription>
           </AlertDialogHeader>
