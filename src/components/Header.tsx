@@ -25,6 +25,7 @@ export const Header = () => {
   // Determine if we're on the home page
   const isHomePage = location.pathname === "/";
   const isVideosPage = location.pathname === "/videos";
+  const isSearchPage = location.pathname === "/search";
   
   // Header animation states
   const [scrolled, setScrolled] = useState(false);
@@ -142,7 +143,7 @@ export const Header = () => {
                 />
               </div>
               
-              {isVideosPage && (
+              {(isVideosPage || isSearchPage) && (
                 <div className="w-3/5 flex justify-center px-2">
                   <VideoSearchBar />
                 </div>
@@ -169,7 +170,7 @@ export const Header = () => {
                 onMobileMenuToggle={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               />
               
-              {isVideosPage && (
+              {(isVideosPage || isSearchPage) && (
                 <div className="absolute left-1/2 transform -translate-x-1/2 w-full max-w-2xl mx-auto px-6">
                   <div className="w-full max-w-lg mx-auto">
                     <VideoSearchBar />

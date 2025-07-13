@@ -25,10 +25,11 @@ export const DesktopHeaderActions = ({
   const location = useLocation();
   const navigate = useNavigate();
   const isVideosPage = location.pathname === "/videos";
+  const isSearchPage = location.pathname === "/search";
 
-  // Consistent button styling for all buttons
-  const buttonBaseClass = `h-9 w-9 rounded-full ${isVideosPage 
-    ? 'bg-[#ea384c] hover:bg-[#c82d3f] text-white' 
+  // Consistent button styling for all buttons - use primary colors on videos and search pages
+  const buttonBaseClass = `h-9 w-9 rounded-full ${(isVideosPage || isSearchPage)
+    ? 'bg-primary hover:bg-primary/90 text-primary-foreground' 
     : 'bg-[#222222] hover:bg-[#333333] text-white'}`;
 
   return (

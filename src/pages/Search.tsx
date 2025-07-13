@@ -74,84 +74,94 @@ const Search = () => {
   });
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-gradient-to-br from-background to-secondary/20">
       <Header />
       <BackButton className="z-50" />
       <main className="container mx-auto px-4 py-8">
-        <h1 className="mb-6 flex items-baseline gap-2">
-          <span className="text-lg text-muted-foreground font-normal">Search results for:</span>
-          <span className="text-xl font-semibold">{query}</span>
-        </h1>
+        <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-primary/10">
+          <h1 className="mb-8 flex items-baseline gap-2">
+            <span className="text-lg text-muted-foreground font-normal">Search results for:</span>
+            <span className="text-2xl font-bold text-primary">{query}</span>
+          </h1>
 
-        <div className="space-y-12">
-          {/* Channels Section */}
-          <section>
-            <div className="flex items-baseline gap-2 mb-6">
-              <h2 className="text-lg md:text-xl font-semibold text-accent">Channels</h2>
-              <span className="text-base text-muted-foreground">{channels?.length || 0}</span>
-            </div>
-            {isLoadingChannels ? (
-              <div className="text-center">Loading channels...</div>
-            ) : channels?.length === 0 ? (
-              <div className="text-center text-muted-foreground">
-                No channels found matching "{query}"
+          <div className="space-y-12">
+            {/* Channels Section */}
+            <section>
+              <div className="flex items-baseline gap-3 mb-6">
+                <h2 className="text-xl md:text-2xl font-bold text-primary">Channels</h2>
+                <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium">
+                  {channels?.length || 0}
+                </span>
               </div>
-            ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-                {channels?.map((channel) => (
-                  <Link
-                    key={channel.id}
-                    to={`/channel/${channel.channel_id}`}
-                    className="group flex flex-col items-center p-4 rounded-lg hover:bg-accent/5 transition-all duration-300"
-                  >
-                    <Avatar className="w-20 h-20 mb-3 transition-transform duration-300 group-hover:scale-110">
-                      <AvatarImage
-                        src={channel.thumbnail_url}
-                        alt={channel.title}
-                      />
-                      <AvatarFallback>
-                        <Youtube className="w-10 h-10 text-primary" />
-                      </AvatarFallback>
-                    </Avatar>
-                    <span className="text-sm font-medium text-center line-clamp-2 group-hover:text-primary transition-colors duration-300">
-                      {channel.title}
-                    </span>
-                  </Link>
-                ))}
-              </div>
-            )}
-          </section>
+              {isLoadingChannels ? (
+                <div className="flex items-center justify-center py-12">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                </div>
+              ) : channels?.length === 0 ? (
+                <div className="text-center py-12 bg-secondary/20 rounded-2xl">
+                  <p className="text-muted-foreground">No channels found matching "{query}"</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
+                  {channels?.map((channel) => (
+                    <Link
+                      key={channel.id}
+                      to={`/channel/${channel.channel_id}`}
+                      className="group flex flex-col items-center p-6 rounded-2xl hover:bg-primary/5 transition-all duration-300 hover:shadow-lg border border-transparent hover:border-primary/20"
+                    >
+                      <Avatar className="w-24 h-24 mb-4 transition-transform duration-300 group-hover:scale-110 shadow-lg">
+                        <AvatarImage
+                          src={channel.thumbnail_url}
+                          alt={channel.title}
+                        />
+                        <AvatarFallback className="bg-primary/10">
+                          <Youtube className="w-12 h-12 text-primary" />
+                        </AvatarFallback>
+                      </Avatar>
+                      <span className="text-sm font-semibold text-center line-clamp-2 group-hover:text-primary transition-colors duration-300">
+                        {channel.title}
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </section>
 
-          {/* Videos Section */}
-          <section>
-            <div className="flex items-baseline gap-2 mb-6">
-              <h2 className="text-lg md:text-xl font-semibold text-accent">Videos</h2>
-              <span className="text-base text-muted-foreground">{videos?.length || 0}</span>
-            </div>
-            {isLoadingVideos ? (
-              <div className="text-center">Loading videos...</div>
-            ) : videos?.length === 0 ? (
-              <div className="text-center text-muted-foreground">
-                No videos found matching "{query}"
+            {/* Videos Section */}
+            <section>
+              <div className="flex items-baseline gap-3 mb-6">
+                <h2 className="text-xl md:text-2xl font-bold text-primary">Videos</h2>
+                <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium">
+                  {videos?.length || 0}
+                </span>
               </div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                {videos?.map((video) => (
-                  <VideoCard
-                    key={video.id}
-                    id={video.video_id}
-                    uuid={video.id}
-                    title={video.title}
-                    thumbnail={video.thumbnail}
-                    channelName={video.channel_name}
-                    channelId={video.channel_id}
-                    views={video.views}
-                    uploadedAt={video.uploaded_at}
-                  />
-                ))}
-              </div>
-            )}
-          </section>
+              {isLoadingVideos ? (
+                <div className="flex items-center justify-center py-12">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                </div>
+              ) : videos?.length === 0 ? (
+                <div className="text-center py-12 bg-secondary/20 rounded-2xl">
+                  <p className="text-muted-foreground">No videos found matching "{query}"</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  {videos?.map((video) => (
+                    <VideoCard
+                      key={video.id}
+                      id={video.video_id}
+                      uuid={video.id}
+                      title={video.title}
+                      thumbnail={video.thumbnail}
+                      channelName={video.channel_name}
+                      channelId={video.channel_id}
+                      views={video.views}
+                      uploadedAt={video.uploaded_at}
+                    />
+                  ))}
+                </div>
+              )}
+            </section>
+          </div>
         </div>
       </main>
     </div>
