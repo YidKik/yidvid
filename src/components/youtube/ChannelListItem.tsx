@@ -17,43 +17,46 @@ export const ChannelListItem = ({ channel, isHidden, onToggle }: ChannelListItem
   const isMobile = useIsMobile();
   
   return (
-    <div className="flex items-center justify-between p-1.5 md:p-3 rounded-lg border border-gray-100 bg-white hover:bg-gray-50 transition-colors">
-      <div className="flex items-center gap-1.5 md:gap-3 min-w-0">
-        <Avatar className="h-6 w-6 md:h-10 md:w-10 border border-gray-100 flex-shrink-0">
+    <div className="flex items-center justify-between p-3 md:p-4 rounded-2xl border border-primary/10 bg-white hover:bg-primary/5 transition-all duration-300 hover:shadow-md">
+      <div className="flex items-center gap-3 min-w-0">
+        <Avatar className="h-8 w-8 md:h-12 md:w-12 border-2 border-primary/20 flex-shrink-0 shadow-sm">
           <AvatarImage
             src={channel.thumbnail_url || ''}
             alt={channel.title}
+            className="object-cover"
           />
-          <AvatarFallback>
-            <Youtube className="h-2.5 w-2.5 md:h-4 md:w-4 text-gray-400" />
+          <AvatarFallback className="bg-primary/10">
+            <Youtube className="h-3 w-3 md:h-5 md:w-5 text-primary" />
           </AvatarFallback>
         </Avatar>
-        <div className="min-w-0">
-          <p className="font-medium text-gray-900 text-xs md:text-base truncate max-w-[140px] md:max-w-full">
+        <div className="min-w-0 flex-1">
+          <p className="font-semibold text-gray-900 text-sm md:text-base truncate">
             {channel.title}
           </p>
-          {!isMobile ? (
-            <p className="text-xs md:text-sm text-gray-500 truncate max-w-[140px] md:max-w-[200px]">
-              {'description' in channel ? (channel.description || "No description") : "No description"}
+          {!isMobile && (
+            <p className="text-xs md:text-sm text-muted-foreground truncate max-w-[300px]">
+              {'description' in channel ? (channel.description || "No description available") : "No description available"}
             </p>
-          ) : null}
+          )}
         </div>
       </div>
-      <div className="flex items-center gap-1 md:gap-2 flex-shrink-0">
+      <div className="flex items-center gap-3 flex-shrink-0">
         <Switch
           id={`channel-${channel.channel_id}`}
           checked={!isHidden}
           onCheckedChange={() => onToggle(channel.channel_id)}
-          className="data-[state=checked]:bg-green-600 h-3 w-6 md:h-5 md:w-10"
+          className="h-5 w-9 md:h-6 md:w-11"
         />
-        <Label 
-          htmlFor={`channel-${channel.channel_id}`}
-          className={`text-[9px] md:text-sm font-medium ${
-            isHidden ? 'text-red-600' : 'text-green-600'
-          } hidden xs:inline-block`}
-        >
-          {isHidden ? "Not Allowed" : "Allowed"}
-        </Label>
+        <div className="hidden sm:flex flex-col items-end">
+          <span className={`text-xs md:text-sm font-semibold ${
+            isHidden ? 'text-primary/70' : 'text-primary'
+          }`}>
+            {isHidden ? "Hidden" : "Visible"}
+          </span>
+          <span className="text-xs text-muted-foreground">
+            {isHidden ? "Not shown" : "In feed"}
+          </span>
+        </div>
       </div>
     </div>
   );

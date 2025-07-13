@@ -81,9 +81,9 @@ export const ChannelControl = () => {
   }
 
   return (
-    <Card className="p-3 md:p-6 bg-[#F6F6F7]">
-      <div className="space-y-3 md:space-y-6">
-        <ChannelControlHeader 
+    <Card className="p-4 md:p-8 bg-gradient-to-br from-white to-primary/5 border-2 border-primary/20 shadow-lg rounded-3xl">
+      <div className="space-y-6">
+        <ChannelControlHeader
           isLocked={isLocked}
           storedPin={storedPin}
           onLock={handleLock}
