@@ -31,7 +31,7 @@ export const VideoPlayer = ({ videoId }: VideoPlayerProps) => {
   }
 
   return (
-    <div className="aspect-video w-full mb-4 relative rounded-2xl overflow-hidden">
+    <div className="aspect-video w-full mb-4 relative rounded-lg overflow-hidden">
       <VideoPlayerLoading isLoading={isLoading} />
       <VideoPlayerIframe
         embedUrl={embedUrl}

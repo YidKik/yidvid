@@ -84,11 +84,11 @@ export const CategorySelector = ({ selectedCategory, onCategoryChange }: Categor
         {/* Hide button */}
         <motion.button
           onClick={() => setIsHidden(true)}
-          className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center transition-all duration-200 z-20"
+          className="absolute -top-3 -right-3 w-7 h-7 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center transition-all duration-200 z-30 shadow-lg border-2 border-white"
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
         >
-          <X className="h-3 w-3" />
+          <X className="h-4 w-4" />
         </motion.button>
         {categories.map((category) => (
           <motion.button
@@ -98,8 +98,8 @@ export const CategorySelector = ({ selectedCategory, onCategoryChange }: Categor
               "relative rounded-2xl font-medium transition-all duration-300 ease-in-out flex-shrink-0 border",
               "focus:outline-none whitespace-nowrap",
               isMobile 
-                ? "px-3 py-2 text-xs" 
-                : "px-6 py-3 text-sm min-w-[100px]",
+                ? "px-2 py-1 text-xs" 
+                : "px-4 py-2 text-sm min-w-[80px]",
               selectedCategory === category.id
                 ? "bg-primary text-primary-foreground border-primary shadow-lg scale-105"
                 : "text-muted-foreground bg-background/80 border-border/50 hover:border-primary/50 hover:bg-primary/5"
