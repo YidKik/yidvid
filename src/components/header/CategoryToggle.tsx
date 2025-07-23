@@ -38,8 +38,8 @@ export const CategoryToggle = ({ selectedCategory, onCategoryChange }: CategoryT
         onClick={toggleCategories}
         className={cn(
           "h-8 w-8 p-0 rounded-lg transition-all duration-300",
-          "hover:bg-accent/50 hover:text-accent-foreground",
-          isOpen ? "bg-accent text-accent-foreground" : "text-muted-foreground"
+          "hover:bg-red-50 hover:text-red-600 border border-transparent hover:border-red-200",
+          isOpen ? "bg-red-50 text-red-600 border-red-200" : "text-gray-500"
         )}
       >
         <Filter className="h-4 w-4" />
@@ -54,10 +54,11 @@ export const CategoryToggle = ({ selectedCategory, onCategoryChange }: CategoryT
             exit={{ opacity: 0, y: -10, scale: 0.95 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
             className={cn(
-              "absolute top-full mt-2 z-50 bg-background/95 backdrop-blur-lg border border-border/50 rounded-xl shadow-lg overflow-hidden",
+              "absolute top-full mt-2 z-50 backdrop-blur-md border border-gray-200 rounded-xl shadow-xl overflow-hidden",
+              "bg-white/95 dark:bg-gray-900/95",
               isMobile 
-                ? "right-0 w-48" 
-                : "left-1/2 -translate-x-1/2 w-56"
+                ? "right-0 w-48 -mr-2" // Better mobile positioning - moved slightly left
+                : "left-0 w-56" // Changed from center to left alignment for desktop
             )}
           >
             <div className="p-2 space-y-1">
@@ -70,10 +71,10 @@ export const CategoryToggle = ({ selectedCategory, onCategoryChange }: CategoryT
                   }}
                   className={cn(
                     "w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
-                    "hover:bg-accent/50 hover:text-accent-foreground",
+                    "hover:bg-red-50 hover:text-red-600",
                     selectedCategory === category.id
-                      ? "bg-primary text-primary-foreground shadow-sm"
-                      : "text-muted-foreground"
+                      ? "bg-red-500 text-white shadow-sm"
+                      : "text-gray-700 dark:text-gray-300"
                   )}
                   whileHover={{ x: 2 }}
                   whileTap={{ scale: 0.98 }}
@@ -81,7 +82,7 @@ export const CategoryToggle = ({ selectedCategory, onCategoryChange }: CategoryT
                   {category.label}
                   {selectedCategory === category.id && (
                     <motion.div
-                      className="ml-auto inline-block w-2 h-2 bg-primary-foreground rounded-full"
+                      className="ml-auto inline-block w-2 h-2 bg-white rounded-full"
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                       transition={{ delay: 0.1 }}
@@ -94,14 +95,14 @@ export const CategoryToggle = ({ selectedCategory, onCategoryChange }: CategoryT
         )}
       </AnimatePresence>
 
-      {/* Backdrop */}
+      {/* Backdrop with blurred dark background */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-40"
+            className="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm"
             onClick={() => setIsOpen(false)}
           />
         )}
