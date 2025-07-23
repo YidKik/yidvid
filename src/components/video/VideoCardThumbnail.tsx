@@ -46,7 +46,12 @@ export const VideoCardThumbnail = ({
 
   return (
     <div 
-      className="relative overflow-hidden rounded-xl aspect-video w-full group video-card-thumbnail"
+      className={cn(
+        "relative overflow-hidden aspect-video w-full group video-card-thumbnail",
+        "rounded-lg transition-all duration-300", // More boxy with rounded-lg instead of rounded-xl
+        "hover:scale-[1.05] hover:shadow-lg", // Add same hover effects as channel cards
+        !isMobile && "shadow-sm hover:shadow-md" // Add shadow effects on desktop
+      )}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
