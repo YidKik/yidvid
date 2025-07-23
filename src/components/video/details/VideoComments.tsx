@@ -8,6 +8,8 @@ import { toast } from "sonner";
 type Comment = VideoCommentsTable["Row"] & {
   profiles: {
     email: string;
+    name?: string;
+    display_name?: string;
   } | null;
 };
 
@@ -25,7 +27,9 @@ export const VideoComments = ({ videoId }: VideoCommentsProps) => {
         .select(`
           *,
           profiles (
-            email
+            email,
+            name,
+            display_name
           ),
           youtube_videos (
             title
@@ -63,10 +67,12 @@ export const VideoComments = ({ videoId }: VideoCommentsProps) => {
   };
 
   return (
-    <div className="mt-8">
-      <h2 className="text-xl font-semibold mb-4">Comments</h2>
+    <div className="bg-card/30 rounded-xl p-6 border border-border/50 shadow-sm">
+      <h2 className="text-lg font-semibold mb-6 text-foreground">Comments</h2>
       <CommentForm onSubmit={handleSubmitComment} />
-      <CommentList comments={comments} />
+      <div className="mt-6">
+        <CommentList comments={comments} />
+      </div>
     </div>
   );
 };

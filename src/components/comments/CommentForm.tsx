@@ -40,20 +40,17 @@ export const CommentForm = ({ onSubmit }: CommentFormProps) => {
       <Textarea
         value={comment}
         onChange={(e) => setComment(e.target.value)}
-        placeholder="Write a comment..."
-        className="mb-2"
+        placeholder="Add a comment..."
+        className="mb-3 bg-background/50 border-border/60 focus:border-primary/50 rounded-lg"
       />
       <Button 
         type="submit" 
         disabled={isSubmitting}
-        variant="outline"
+        variant="default"
         size="sm"
-        className="group relative rounded-full px-4 py-1.5 text-xs text-muted-foreground hover:bg-muted/50 hover:border-gray-300 transition-all duration-300"
+        className="rounded-full px-6 py-2 text-sm font-medium bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-300"
       >
-        {isSubmitting ? "Posting..." : "Post Comment"}
-        <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-          Post your comment
-        </span>
+        {isSubmitting ? "Posting..." : "Comment"}
       </Button>
     </form>
   );

@@ -4,6 +4,8 @@ import { Helmet } from "react-helmet";
 import { VideoPlayer } from "@/components/video/VideoPlayer";
 import { VideoInfo } from "@/components/video/VideoInfo";
 import { RelatedVideos } from "@/components/video/RelatedVideos";
+import { ChannelSection } from "@/components/video/details/ChannelSection";
+import { VideoDescription } from "@/components/video/details/VideoDescription";
 import { BackButton } from "@/components/navigation/BackButton";
 import { VideoInteractions } from "@/components/video/VideoInteractions";
 import { ReportVideoDialog } from "@/components/video/ReportVideoDialog";
@@ -134,30 +136,29 @@ const VideoDetails = () => {
           {isAuthenticated && <VideoHistory videoId={video?.id || ""} />}
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2">
+            <div className="lg:col-span-2 space-y-6">
               <div className="relative">
                 <VideoPlayer videoId={video?.video_id || ""} />
               </div>
-              <div className="flex justify-between items-start mb-4">
-                <h1 className="text-xl md:text-2xl font-light text-black leading-tight">{video?.title}</h1>
+              
+              <div className="flex justify-between items-start">
+                <h1 className="text-xl md:text-2xl font-semibold text-foreground leading-tight">{video?.title}</h1>
                 <ReportVideoDialog videoId={video?.id || ""} />
               </div>
               
               <VideoInteractions videoId={video?.id || ""} />
               
+              <ChannelSection
+                channelName={video?.channel_name || ""}
+                channelId={video?.channel_id || ""}
+                channelThumbnail={video?.youtube_channels?.thumbnail_url || ""}
+                views={video?.views || 0}
+                uploadedAt={video?.uploaded_at || ""}
+              />
+              
               {isAuthenticated && <VideoComments videoId={video?.id || ""} />}
 
-              <div className="mt-8 border-t pt-8">
-                <VideoInfo
-                  title={video?.title || ""}
-                  channelName={video?.channel_name || ""}
-                  channelId={video?.channel_id || ""}
-                  channelThumbnail={video?.youtube_channels?.thumbnail_url || ""}
-                  views={video?.views || 0}
-                  uploadedAt={video?.uploaded_at || ""}
-                  description={video?.description || ""}
-                />
-              </div>
+              <VideoDescription description={video?.description || ""} />
             </div>
             
             <div className="lg:col-span-1">
