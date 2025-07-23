@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useEnhancedChannelSubscription } from "@/hooks/channel/useEnhancedChannelSubscription";
 import { useUnifiedAuth } from "@/hooks/useUnifiedAuth";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "sonner";
 
 interface ChannelSectionProps {
@@ -23,6 +24,7 @@ export const ChannelSection = ({
   uploadedAt
 }: ChannelSectionProps) => {
   const { isAuthenticated, isLoading: authLoading, isProfileLoading } = useUnifiedAuth();
+  const { isMobile } = useIsMobile();
   
   const { 
     isSubscribed, 
@@ -103,17 +105,25 @@ export const ChannelSection = ({
             {channelId ? (
               <Link 
                 to={`/channel/${channelId}`}
-                className="font-semibold text-lg hover:text-primary transition-colors"
+                className={`font-semibold hover:text-primary transition-colors ${
+                  isMobile ? "text-sm truncate" : "text-lg"
+                }`}
               >
                 {channelName}
               </Link>
             ) : (
-              <h3 className="font-semibold text-lg">{channelName}</h3>
+              <h3 className={`font-semibold ${isMobile ? "text-sm truncate" : "text-lg"}`}>
+                {channelName}
+              </h3>
             )}
-            <div className="flex items-center gap-3 text-sm text-muted-foreground mt-1">
-              <span className="font-medium">{formattedViews} views</span>
-              <span className="w-1 h-1 bg-muted-foreground/60 rounded-full"></span>
-              <span>{formattedDate}</span>
+            <div className={`flex ${isMobile ? "flex-col gap-1" : "items-center gap-3"} text-muted-foreground mt-1`}>
+              <span className={`font-medium ${isMobile ? "text-xs truncate" : "text-sm"}`}>
+                {formattedViews} views
+              </span>
+              {!isMobile && <span className="w-1 h-1 bg-muted-foreground/60 rounded-full"></span>}
+              <span className={`${isMobile ? "text-xs truncate" : "text-sm"}`}>
+                {formattedDate}
+              </span>
             </div>
           </div>
         </div>
@@ -126,7 +136,9 @@ export const ChannelSection = ({
                 variant={isSubscribed ? "default" : "outline"}
                 onClick={handleSubscribeClick}
                 disabled={isLoading}
-                className={`rounded-full px-6 py-2.5 text-sm font-semibold transition-all duration-300 active:scale-95 shadow-sm
+                className={`rounded-full transition-all duration-300 active:scale-95 shadow-sm ${
+                  isMobile ? "px-4 py-2 text-xs" : "px-6 py-2.5 text-sm"
+                } font-semibold
                   ${isSubscribed 
                     ? "bg-red-500 hover:bg-red-600 text-white border-red-500 hover:border-red-600 shadow-md" 
                     : "bg-white hover:bg-red-50 hover:text-red-500 border-border hover:border-red-500"
@@ -135,18 +147,18 @@ export const ChannelSection = ({
               >
                 {isLoading ? (
                   <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    <span>Loading...</span>
+                    <Loader2 className={`animate-spin mr-2 ${isMobile ? "w-3 h-3" : "w-4 h-4"}`} />
+                    <span className={isMobile ? "text-xs" : "text-sm"}>Loading...</span>
                   </>
                 ) : isSubscribed ? (
                   <>
-                    <Check className="w-4 h-4 mr-2" />
-                    <span>Subscribed</span>
+                    <Check className={`mr-2 ${isMobile ? "w-3 h-3" : "w-4 h-4"}`} />
+                    <span className={isMobile ? "text-xs" : "text-sm"}>Subscribed</span>
                   </>
                 ) : (
                   <>
-                    <UserPlus className="w-4 h-4 mr-2" />
-                    <span>Subscribe</span>
+                    <UserPlus className={`mr-2 ${isMobile ? "w-3 h-3" : "w-4 h-4"}`} />
+                    <span className={isMobile ? "text-xs" : "text-sm"}>Subscribe</span>
                   </>
                 )}
               </Button>
@@ -154,10 +166,12 @@ export const ChannelSection = ({
               <Button
                 variant="outline"
                 onClick={() => {}} // No toast notification as requested
-                className="rounded-full px-6 py-2.5 text-sm font-semibold transition-all duration-300 active:scale-95 shadow-sm bg-white hover:bg-red-50 hover:text-red-500 border-border hover:border-red-500"
+                className={`rounded-full transition-all duration-300 active:scale-95 shadow-sm ${
+                  isMobile ? "px-4 py-2 text-xs" : "px-6 py-2.5 text-sm"
+                } font-semibold bg-white hover:bg-red-50 hover:text-red-500 border-border hover:border-red-500`}
               >
-                <UserPlus className="w-4 h-4 mr-2" />
-                <span>Subscribe</span>
+                <UserPlus className={`mr-2 ${isMobile ? "w-3 h-3" : "w-4 h-4"}`} />
+                <span className={isMobile ? "text-xs" : "text-sm"}>Subscribe</span>
               </Button>
             )}
           </>

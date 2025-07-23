@@ -143,8 +143,14 @@ const VideoDetails = () => {
                 <VideoPlayer videoId={video?.video_id || ""} />
               </div>
               
-              <div className="flex justify-between items-start">
-                <h1 className="text-xl md:text-2xl font-semibold text-foreground leading-tight">{video?.title}</h1>
+              <div className="flex justify-between items-start gap-3">
+                <h1 className={`font-semibold text-foreground leading-tight flex-1 ${
+                  isMobile 
+                    ? "text-sm sm:text-base line-clamp-2 min-h-[2.5rem] text-[0.875rem] leading-tight" 
+                    : "text-xl md:text-2xl"
+                }`}>
+                  {video?.title}
+                </h1>
                 <ReportVideoDialog videoId={video?.id || ""} />
               </div>
               
