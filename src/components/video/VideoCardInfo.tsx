@@ -66,7 +66,7 @@ export const VideoCardInfo = ({
               {channelId ? (
                 <Link 
                   to={`/channel/${channelId}`}
-                  className={`video-channel-name text-xs hover:text-black ${isMobile ? 'font-medium' : 'text-gray-500'}`}
+                  className={`video-channel-name text-xs hover:text-black ${isMobile ? 'font-medium truncate' : 'text-gray-500'} line-clamp-1`}
                   onClick={(e) => {
                     e.stopPropagation();
                   }}
@@ -74,7 +74,7 @@ export const VideoCardInfo = ({
                   {channelName}
                 </Link>
               ) : (
-                <span className={`video-channel-name text-xs ${isMobile ? 'font-medium' : 'text-gray-500'}`}>
+                <span className={`video-channel-name text-xs ${isMobile ? 'font-medium truncate' : 'text-gray-500'} line-clamp-1`}>
                   {channelName}
                 </span>
               )}
