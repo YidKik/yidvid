@@ -28,10 +28,9 @@ export const DesktopVideoView = ({
 }: DesktopVideoViewProps) => {
   const { isTablet } = useIsMobile();
   
-  // Reduce videos per page to ensure multiple pages
-  // For tablet: 6 videos (2 rows of 3)
-  // For desktop: 8 videos (2 rows of 4)
-  const videosPerPage = isTablet ? 6 : 8;
+  // For tablet: 9 videos (3 rows of 3)
+  // For desktop: 12 videos (3 rows of 4)
+  const videosPerPage = isTablet ? 9 : 12;
   const rowSize = isTablet ? 3 : 4;
   
   const location = useLocation();
