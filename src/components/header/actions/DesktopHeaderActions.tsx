@@ -13,6 +13,7 @@ interface DesktopHeaderActionsProps {
   onLogout: () => Promise<void>;
   onMarkNotificationsAsRead: () => Promise<void>;
   handleSettingsClick: () => void;
+  onContactOpen: () => void;
 }
 
 export const DesktopHeaderActions = ({
@@ -20,7 +21,8 @@ export const DesktopHeaderActions = ({
   onAuthOpen,
   onLogout,
   onMarkNotificationsAsRead,
-  handleSettingsClick
+  handleSettingsClick,
+  onContactOpen
 }: DesktopHeaderActionsProps) => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -37,12 +39,7 @@ export const DesktopHeaderActions = ({
       {session && <NotificationsMenu onMarkAsRead={onMarkNotificationsAsRead} />}
       
       <Button 
-        onClick={() => {
-          const contactDialog = document.querySelector('[data-state="closed"][role="dialog"]');
-          if (contactDialog) {
-            (contactDialog as HTMLElement).click();
-          }
-        }}
+        onClick={onContactOpen}
         variant="ghost" 
         size="icon"
         className={buttonBaseClass}

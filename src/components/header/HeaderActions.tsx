@@ -1,4 +1,5 @@
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { NotificationsMenu } from "./NotificationsMenu";
 import { UserMenu } from "./UserMenu";
@@ -30,6 +31,7 @@ export const HeaderActions = ({
   onSettingsClick
 }: HeaderActionsProps) => {
   const navigate = useNavigate();
+  const [isContactOpen, setIsContactOpen] = useState(false);
 
   const handleSettingsClick = () => {
     navigate("/settings");
@@ -51,12 +53,16 @@ export const HeaderActions = ({
   }
 
   return (
-    <DesktopHeaderActions
-      session={session}
-      onAuthOpen={onAuthOpen}
-      onLogout={onLogout}
-      onMarkNotificationsAsRead={onMarkNotificationsAsRead}
-      handleSettingsClick={handleSettingsClick}
-    />
+    <>
+      <DesktopHeaderActions
+        session={session}
+        onAuthOpen={onAuthOpen}
+        onLogout={onLogout}
+        onMarkNotificationsAsRead={onMarkNotificationsAsRead}
+        handleSettingsClick={handleSettingsClick}
+        onContactOpen={() => setIsContactOpen(true)}
+      />
+      <ContactDialog open={isContactOpen} onOpenChange={setIsContactOpen} />
+    </>
   );
 };
