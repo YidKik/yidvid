@@ -48,9 +48,8 @@ export const VideoCardThumbnail = ({
     <div 
       className={cn(
         "relative overflow-hidden aspect-video w-full group video-card-thumbnail",
-        "rounded-lg transition-all duration-300", // More boxy with rounded-lg instead of rounded-xl
-        "hover:scale-[1.05] hover:shadow-lg", // Add same hover effects as channel cards
-        !isMobile && "shadow-sm hover:shadow-md" // Add shadow effects on desktop
+        "rounded-lg transition-all duration-300", // More boxy with rounded-lg
+        "hover:scale-[1.02] border-2 border-transparent hover:border-red-500", // Very small rise and thin red outline
       )}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
@@ -63,23 +62,9 @@ export const VideoCardThumbnail = ({
         src={imageError ? "/placeholder.svg" : thumbnail}
         alt={title}
         loading="lazy"
-        className={cn(
-          "w-full h-full object-cover",
-          "transition-all duration-300 ease-out",
-          isHovering && !isMobile ? "scale-[1.05]" : "scale-100", // Only apply scale effect on desktop
-        )}
+        className="w-full h-full object-cover transition-all duration-300 ease-out"
         onError={() => setImageError(true)}
       />
-      
-      {/* Preview animation effect - shows on hover on desktop only */}
-      {isHovering && !isMobile && (
-        <div className="absolute inset-0 z-20 overflow-hidden">
-          <div className={cn(
-            "absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent",
-            "animate-shimmer-preview" // Animation defined in global CSS
-          )} />
-        </div>
-      )}
     </div>
   );
 };
