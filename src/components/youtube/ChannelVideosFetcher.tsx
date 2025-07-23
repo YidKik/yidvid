@@ -64,33 +64,46 @@ export const ChannelVideosFetcher = () => {
         toast.loading(`Processing batch ${batchNumber}/${batches.length} (${batch.length} channels)...`);
         
         try {
+          console.log(`Starting batch ${batchNumber} with channels:`, batch.slice(0, 3));
+          
           // SINGLE edge function call per batch
           const { data: batchData, error: batchError } = await supabase.functions.invoke('fetch-youtube-videos', {
             body: { 
               channels: batch,
               forceUpdate: true,
               maxChannelsPerRun: batch.length,
-              bypassQuotaCheck: true
+              bypassQuotaCheck: true,
+              prioritizeRecent: false
             }
           });
           
-          if (!batchError && batchData?.success) {
-            totalProcessed += batchData.processed || 0;
-            totalNewVideos += batchData.newVideos || 0;
+          console.log(`Batch ${batchNumber} response:`, { batchData, batchError });
+          
+          if (batchError) {
+            console.error(`Batch ${batchNumber} edge function error:`, batchError);
+            toast.error(`Batch ${batchNumber} failed: ${batchError.message || 'Unknown error'}`);
+          } else if (batchData?.success) {
+            const processed = batchData.processed || 0;
+            const newVideos = batchData.newVideos || 0;
+            totalProcessed += processed;
+            totalNewVideos += newVideos;
             successfulBatches++;
             
-            console.log(`Batch ${batchNumber} completed: ${batchData.processed} channels, ${batchData.newVideos} new videos`);
+            console.log(`Batch ${batchNumber} completed successfully: ${processed} channels processed, ${newVideos} new videos found`);
           } else {
-            console.warn(`Batch ${batchNumber} failed:`, batchError || batchData);
+            console.warn(`Batch ${batchNumber} failed with response:`, batchData);
+            toast.error(`Batch ${batchNumber} failed: ${batchData?.message || 'No success response'}`);
           }
           
           // Add delay between batches to prevent overwhelming
           if (batchIndex < batches.length - 1) {
-            await new Promise(resolve => setTimeout(resolve, 3000)); // 3 second delay
+            console.log(`Waiting 2 seconds before next batch...`);
+            await new Promise(resolve => setTimeout(resolve, 2000)); // Reduced to 2 seconds
           }
           
         } catch (batchError) {
           console.error(`Error processing batch ${batchNumber}:`, batchError);
+          toast.error(`Batch ${batchNumber} error: ${batchError.message || 'Unknown error'}`);
         }
       }
       
@@ -172,39 +185,35 @@ export const ChannelVideosFetcher = () => {
   // Helper function to fetch all channel IDs with smart batching
   const fetchAllChannelIds = async (): Promise<string[]> => {
     try {
+      console.log("Fetching channel IDs from database...");
+      
       // ONLY use direct database query to avoid excessive function calls
       const { data: channels, error: channelsError } = await supabase
         .from('youtube_channels')
-        .select('channel_id, last_fetch')
+        .select('channel_id, last_fetch, title')
         .is('deleted_at', null)
         .order('last_fetch', { ascending: true, nullsFirst: true }) // Prioritize channels never fetched
-        .limit(100); // Increased limit for better coverage
+        .limit(200); // Increased limit for better coverage
         
       if (channelsError) {
-        console.error('Error fetching channels:', channelsError);
+        console.error('Database error fetching channels:', channelsError);
+        toast.error(`Database error: ${channelsError.message}`);
         throw channelsError;
       }
       
       if (!channels || channels.length === 0) {
         console.warn("No channels found in database");
+        toast.error("No channels found in database to fetch videos for");
         return [];
       }
       
-      console.log(`Successfully fetched ${channels.length} channel IDs directly from database`);
+      console.log(`Successfully fetched ${channels.length} channel IDs from database:`, 
+                  channels.slice(0, 3).map(c => c.title || c.channel_id));
       return channels.map(channel => channel.channel_id);
-      
-      // Method 4: Hardcode a few test channel IDs as absolute fallback
-      const fallbackChannels = [
-        "UCsT0YIqwnpJCM-mx7-gSA4Q", // TEDx Talks
-        "UC3XTzVzaHQEd30rQbuvCtTQ", // LastWeekTonight
-        "UCsvqVGtbbyHaMoevxPAq9Fg"  // PBS Space Time
-      ];
-      
-      console.log("Using fallback channel IDs as last resort");
-      return fallbackChannels;
       
     } catch (error) {
       console.error("Error fetching channel IDs:", error);
+      toast.error(`Failed to fetch channels: ${error.message || 'Unknown error'}`);
       throw error;
     }
   };
