@@ -1,6 +1,6 @@
 
 /* Mobile layout styles */
-@media (max-width: 768px) {
+@media (max-width: 480px) {
   /* Channel grid optimization for mobile */
   .channel-grid-mobile {
     display: grid;

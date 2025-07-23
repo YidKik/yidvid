@@ -1,6 +1,6 @@
 
 /* Base mobile styles */
-@media (max-width: 768px) {
+@media (max-width: 480px) {
   .alert-compact-text {
     font-size: 0.7rem;
     white-space: nowrap;

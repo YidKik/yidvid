@@ -1,6 +1,6 @@
 
 /* Mobile video styles */
-@media (max-width: 768px) {
+@media (max-width: 480px) {
   /* Video card mobile optimizations - improved title size and spacing */
   .video-title {
     margin-top: 4px;

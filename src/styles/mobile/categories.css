@@ -1,7 +1,7 @@
 
 
 /* Mobile category styles */
-@media (max-width: 768px) {
+@media (max-width: 480px) {
   /* Category card optimization */
   .category-card-mobile {
     height: 30px !important; /* Further reduced from 35px */

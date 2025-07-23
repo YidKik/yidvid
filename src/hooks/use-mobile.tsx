@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 
 // ENHANCED STANDARDIZED BREAKPOINTS FOR BETTER TABLET DETECTION
-const MOBILE_BREAKPOINT = 768;  // Below this is mobile
+const MOBILE_BREAKPOINT = 480;  // Below this is mobile (only phones)
 const TABLET_BREAKPOINT = 1024; // Between mobile and this is tablet, above is desktop
 
 /**

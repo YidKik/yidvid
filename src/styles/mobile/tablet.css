@@ -1,6 +1,6 @@
 
 /* Tablet specific styles */
-@media (min-width: 769px) and (max-width: 1024px) {
+@media (min-width: 481px) and (max-width: 1024px) {
   .videos-page .grid {
     gap: 12px !important;
   }
