@@ -32,7 +32,23 @@ export const useVideoPagination = ({
     });
   }, [videos]);
 
-  const totalPages = Math.ceil(sortedVideos.length / videosPerPage);
+  // Ensure we have at least 15 pages by adjusting videos per page if needed
+  const adjustedVideosPerPage = useMemo(() => {
+    if (sortedVideos.length === 0) return videosPerPage;
+    
+    const minPages = 15;
+    const naturalPages = Math.ceil(sortedVideos.length / videosPerPage);
+    
+    if (naturalPages < minPages) {
+      // Calculate videos per page to get exactly 15 pages (or close to it)
+      const adjustedPerPage = Math.max(1, Math.floor(sortedVideos.length / minPages));
+      return adjustedPerPage;
+    }
+    
+    return videosPerPage;
+  }, [sortedVideos.length, videosPerPage]);
+
+  const totalPages = Math.ceil(sortedVideos.length / adjustedVideosPerPage);
 
   // Get videos for current page
   const displayVideos = useMemo(() => {
@@ -40,11 +56,11 @@ export const useVideoPagination = ({
       return sortedVideos; // Show all videos on mobile when "show more" is clicked
     }
 
-    const startIdx = (currentPage - 1) * videosPerPage;
-    const endIdx = startIdx + videosPerPage;
+    const startIdx = (currentPage - 1) * adjustedVideosPerPage;
+    const endIdx = startIdx + adjustedVideosPerPage;
       
     return sortedVideos.slice(startIdx, endIdx);
-  }, [sortedVideos, currentPage, videosPerPage, isMobile, showMoreMobile, preloadNext]);
+  }, [sortedVideos, currentPage, adjustedVideosPerPage, isMobile, showMoreMobile, preloadNext]);
 
   return {
     sortedVideos,
