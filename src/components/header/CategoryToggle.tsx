@@ -57,8 +57,8 @@ export const CategoryToggle = ({ selectedCategory, onCategoryChange }: CategoryT
               "absolute top-full mt-2 z-50 backdrop-blur-md border border-gray-200 rounded-xl shadow-xl overflow-hidden",
               "bg-white/95 dark:bg-gray-900/95",
               isMobile 
-                ? "right-0 w-48 -mr-2" // Better mobile positioning - moved slightly left
-                : "left-0 w-56" // Changed from center to left alignment for desktop
+                ? "left-1/2 -translate-x-1/2 w-48" // Centered on mobile
+                : "left-0 w-56" // Left aligned on desktop
             )}
           >
             <div className="p-2 space-y-1">
@@ -95,14 +95,14 @@ export const CategoryToggle = ({ selectedCategory, onCategoryChange }: CategoryT
         )}
       </AnimatePresence>
 
-      {/* Backdrop with blurred dark background */}
+      {/* Invisible backdrop for click outside */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm"
+            className="fixed inset-0 z-40 bg-transparent"
             onClick={() => setIsOpen(false)}
           />
         )}
