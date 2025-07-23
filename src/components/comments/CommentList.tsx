@@ -21,25 +21,31 @@ export const CommentList = ({ comments }: CommentListProps) => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {comments?.map((comment) => (
-        <div key={comment.id} className="bg-card/20 rounded-lg p-4 border border-border/30">
-          <div className="flex justify-between items-start mb-3">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
-                <span className="text-xs font-semibold text-primary">
-                  {getDisplayName(comment.profiles).charAt(0).toUpperCase()}
-                </span>
+        <div key={comment.id} className="group hover:bg-accent/20 rounded-lg p-4 transition-all duration-200 border-l-2 border-l-primary/20 hover:border-l-primary/50">
+          <div className="flex items-start gap-3">
+            <div className="w-10 h-10 bg-gradient-to-br from-primary/20 to-primary/10 rounded-full flex items-center justify-center flex-shrink-0 ring-2 ring-background shadow-sm">
+              <span className="text-sm font-bold text-primary">
+                {getDisplayName(comment.profiles).charAt(0).toUpperCase()}
+              </span>
+            </div>
+            
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="font-semibold text-foreground group-hover:text-primary transition-colors">
+                  {getDisplayName(comment.profiles)}
+                </h4>
+                <time className="text-xs text-muted-foreground bg-muted/50 px-2 py-1 rounded-full">
+                  {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}
+                </time>
               </div>
-              <p className="font-semibold text-foreground">
-                {getDisplayName(comment.profiles)}
+              
+              <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap break-words">
+                {comment.content}
               </p>
             </div>
-            <p className="text-xs text-muted-foreground">
-              {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}
-            </p>
           </div>
-          <p className="text-sm text-muted-foreground leading-relaxed pl-10">{comment.content}</p>
         </div>
       ))}
     </div>

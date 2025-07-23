@@ -67,7 +67,7 @@ export const VideoComments = ({ videoId }: VideoCommentsProps) => {
   };
 
   return (
-    <div className="bg-card/30 rounded-xl p-6 border border-border/50 shadow-sm">
+    <div className="py-6 border-t border-border/30">
       <h2 className="text-lg font-semibold mb-6 text-foreground">Comments</h2>
       <CommentForm onSubmit={handleSubmitComment} />
       <div className="mt-6">

@@ -8,6 +8,7 @@ import { ChannelSection } from "@/components/video/details/ChannelSection";
 import { VideoDescription } from "@/components/video/details/VideoDescription";
 import { BackButton } from "@/components/navigation/BackButton";
 import { VideoInteractions } from "@/components/video/VideoInteractions";
+import { StickyRelatedVideos } from "@/components/video/details/StickyRelatedVideos";
 import { ReportVideoDialog } from "@/components/video/ReportVideoDialog";
 import { useVideoQuery } from "@/components/video/details/VideoQuery";
 import { VideoComments } from "@/components/video/details/VideoComments";
@@ -28,6 +29,7 @@ const VideoDetails = () => {
   const { isAuthenticated, session } = useAuth();
   const incrementView = useIncrementVideoView();
   const viewIncrementedRef = useRef<string | null>(null);
+  const pageContentRef = useRef<HTMLDivElement>(null);
 
   // Single effect for logging and view increment
   useEffect(() => {
@@ -136,7 +138,7 @@ const VideoDetails = () => {
           {isAuthenticated && <VideoHistory videoId={video?.id || ""} />}
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2 space-y-6">
+            <div ref={pageContentRef} className="lg:col-span-2 space-y-6">
               <div className="relative">
                 <VideoPlayer videoId={video?.video_id || ""} />
               </div>
@@ -162,16 +164,27 @@ const VideoDetails = () => {
             </div>
             
             <div className="lg:col-span-1">
-              <div>
-                <h2 className="text-xl font-semibold mb-4 text-black">More from this channel</h2>
-                <RelatedVideos 
+              {!isMobile && (
+                <StickyRelatedVideos 
                   videos={channelVideos} 
-                  showHeading={false} 
                   isLoading={isLoadingRelated}
+                  pageContentRef={pageContentRef}
                 />
-              </div>
+              )}
             </div>
           </div>
+          
+          {/* Mobile related videos */}
+          {isMobile && (
+            <div className="mt-8">
+              <h2 className="text-xl font-semibold mb-4 text-foreground">More from this channel</h2>
+              <RelatedVideos 
+                videos={channelVideos} 
+                showHeading={false} 
+                isLoading={isLoadingRelated}
+              />
+            </div>
+          )}
         </div>
       </div>
     </>

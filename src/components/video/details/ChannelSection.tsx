@@ -78,7 +78,7 @@ export const ChannelSection = ({
   const isLoading = authLoading || isProfileLoading || subscriptionLoading;
 
   return (
-    <div className="bg-card/30 rounded-xl p-6 border border-border/50 shadow-sm">
+    <div className="py-4 border-t border-border/30">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4 flex-1">
           {channelId ? (
@@ -118,7 +118,7 @@ export const ChannelSection = ({
           </div>
         </div>
 
-        {/* Subscribe button */}
+        {/* Subscribe button with improved styling */}
         {channelId && (
           <>
             {isAuthenticated ? (
@@ -128,8 +128,8 @@ export const ChannelSection = ({
                 disabled={isLoading}
                 className={`rounded-full px-6 py-2.5 text-sm font-semibold transition-all duration-300 active:scale-95 shadow-sm
                   ${isSubscribed 
-                    ? "bg-destructive hover:bg-destructive/90 text-destructive-foreground border-destructive" 
-                    : "bg-background hover:bg-accent hover:text-accent-foreground border-border hover:border-primary/50"
+                    ? "bg-red-500 hover:bg-red-600 text-white border-red-500 hover:border-red-600 shadow-md" 
+                    : "bg-white hover:bg-red-50 hover:text-red-500 border-border hover:border-red-500"
                   }
                 `}
               >
@@ -153,8 +153,8 @@ export const ChannelSection = ({
             ) : (
               <Button
                 variant="outline"
-                onClick={() => toast.info("Please sign in to subscribe to channels")}
-                className="rounded-full px-6 py-2.5 text-sm font-semibold transition-all duration-300 active:scale-95 shadow-sm bg-background hover:bg-accent hover:text-accent-foreground border-border hover:border-primary/50"
+                onClick={() => {}} // No toast notification as requested
+                className="rounded-full px-6 py-2.5 text-sm font-semibold transition-all duration-300 active:scale-95 shadow-sm bg-white hover:bg-red-50 hover:text-red-500 border-border hover:border-red-500"
               >
                 <UserPlus className="w-4 h-4 mr-2" />
                 <span>Subscribe</span>
