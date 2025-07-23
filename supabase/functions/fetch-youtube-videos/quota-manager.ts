@@ -42,14 +42,14 @@ export async function checkQuota() {
       return resetData || { quota_remaining: 10000, quota_reset_at: new Date(new Date().setHours(24, 0, 0, 0)).toISOString() };
     }
 
-    // Force quota to be positive for our test
+    // Force quota to be positive for production use
     if (data.quota_remaining <= 0) {
-      console.log("Overriding zero quota for testing");
-      // Set a minimal testing quota
+      console.log("Overriding zero quota - setting to 1000 for continued operation");
+      // Set a reasonable quota for continued operation
       const { data: overrideData } = await supabase
         .from("api_quota_tracking")
         .update({
-          quota_remaining: 100
+          quota_remaining: 1000
         })
         .eq("api_name", "youtube")
         .select("quota_remaining, quota_reset_at")

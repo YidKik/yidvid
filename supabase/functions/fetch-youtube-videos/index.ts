@@ -31,7 +31,7 @@ serve(async (req) => {
     
     // Check if we have quota remaining before starting
     const { quota_remaining, quota_reset_at } = bypassQuotaCheck ? 
-      { quota_remaining: 500, quota_reset_at: new Date().toISOString() } : 
+      { quota_remaining: 10000, quota_reset_at: new Date().toISOString() } : 
       await checkQuota();
     
     if (quota_remaining <= 0 && !bypassQuotaCheck) {
@@ -156,8 +156,8 @@ serve(async (req) => {
           break; // If both keys have quota issues, stop processing
         }
         
-        // Add delay even after error
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        // Add shorter delay even after error to prevent overwhelming
+        await new Promise(resolve => setTimeout(resolve, 1000));
       }
     }
 
