@@ -11,8 +11,9 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "react-router-dom";
 import { HeaderLogo } from "./header/HeaderLogo";
 import { VideoSearchBar } from "./header/VideoSearchBar";
+import { CategoryToggle } from "./header/CategoryToggle";
 
-export const Header = () => {
+export const Header = ({ selectedCategory, onCategoryChange }: { selectedCategory?: string; onCategoryChange?: (category: string) => void } = {}) => {
   const { isMobile } = useIsMobile();
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
@@ -144,8 +145,16 @@ export const Header = () => {
               </div>
               
               {(isVideosPage || isSearchPage) && (
-                <div className="w-3/5 flex justify-center px-2">
-                  <VideoSearchBar />
+                <div className="w-3/5 flex justify-center items-center gap-2 px-2">
+                  {isVideosPage && selectedCategory && onCategoryChange && (
+                    <CategoryToggle 
+                      selectedCategory={selectedCategory}
+                      onCategoryChange={onCategoryChange}
+                    />
+                  )}
+                  <div className="flex-1">
+                    <VideoSearchBar />
+                  </div>
                 </div>
               )}
 
@@ -172,8 +181,16 @@ export const Header = () => {
               
               {(isVideosPage || isSearchPage) && (
                 <div className="absolute left-1/2 transform -translate-x-1/2 w-full max-w-2xl mx-auto px-6">
-                  <div className="w-full max-w-lg mx-auto">
-                    <VideoSearchBar />
+                  <div className="w-full max-w-lg mx-auto flex items-center gap-3">
+                    {isVideosPage && selectedCategory && onCategoryChange && (
+                      <CategoryToggle 
+                        selectedCategory={selectedCategory}
+                        onCategoryChange={onCategoryChange}
+                      />
+                    )}
+                    <div className="flex-1">
+                      <VideoSearchBar />
+                    </div>
                   </div>
                 </div>
               )}

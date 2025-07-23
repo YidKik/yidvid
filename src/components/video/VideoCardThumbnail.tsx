@@ -46,7 +46,7 @@ export const VideoCardThumbnail = ({
 
   return (
     <div 
-      className="relative overflow-hidden rounded-lg aspect-video w-full group video-card-thumbnail"
+      className="relative overflow-hidden rounded-xl aspect-video w-full group video-card-thumbnail"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >

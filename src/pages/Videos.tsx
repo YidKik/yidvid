@@ -60,7 +60,10 @@ const MainContent = () => {
 
   return (
     <div className="flex-1 videos-page">
-      <Header />
+      <Header 
+        selectedCategory={selectedCategory}
+        onCategoryChange={setSelectedCategory}
+      />
       <motion.main 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -68,18 +71,6 @@ const MainContent = () => {
         className="mt-4 mx-auto px-2 md:px-6 max-w-[1400px]"
       >
         <div className="space-y-2 md:space-y-4">
-          <motion.div 
-            className="space-y-0"
-            initial={{ scale: 0.95 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.2, duration: 0.3 }}
-          >
-            <ContentToggle 
-              selectedCategory={selectedCategory} 
-              onCategoryChange={setSelectedCategory} 
-            />
-          </motion.div>
-
           <motion.div
             key={selectedCategory}
             initial={{ opacity: 0, y: 10 }}
