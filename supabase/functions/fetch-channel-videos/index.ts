@@ -25,8 +25,8 @@ async function fetchChannelVideos(
   nextPageToken: string | null = null
 ): Promise<VideoResult> {
   try {
-    // Fallback API key to use if primary fails
-    const fallbackApiKey = "AIzaSyDeEEZoXZfGHiNvl9pMf18N43TECw07ANk";
+    // Use environment variable for fallback API key
+    const fallbackApiKey = Deno.env.get('YOUTUBE_FALLBACK_API_KEY') || "";
     let currentApiKey = apiKey;
     
     // Try each referer domain for the channel request
@@ -195,7 +195,7 @@ async function processVideoItems(
   successfulDomain: string,
   nextToken: string | null
 ): Promise<VideoResult> {
-  const fallbackApiKey = "AIzaSyDeEEZoXZfGHiNvl9pMf18N43TECw07ANk";
+  const fallbackApiKey = Deno.env.get('YOUTUBE_FALLBACK_API_KEY') || "";
   
   // Get video IDs and fetch statistics in a single batch
   const videoIds = data.items
@@ -297,7 +297,7 @@ serve(async (req) => {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const youtubeApiKey = Deno.env.get('YOUTUBE_API_KEY')!;
-    const fallbackApiKey = "AIzaSyDeEEZoXZfGHiNvl9pMf18N43TECw07ANk";
+    const fallbackApiKey = Deno.env.get('YOUTUBE_FALLBACK_API_KEY') || "";
     
     const supabase = createClient(supabaseUrl, supabaseKey);
     

@@ -26,8 +26,8 @@ serve(async (req) => {
     
     // Get primary API key from environment variables
     const primaryApiKey = Deno.env.get("YOUTUBE_API_KEY") || "";
-    // Fallback API key when quota is exceeded
-    const fallbackApiKey = "AIzaSyDeEEZoXZfGHiNvl9pMf18N43TECw07ANk";
+    // Use environment variable for fallback API key
+    const fallbackApiKey = Deno.env.get('YOUTUBE_FALLBACK_API_KEY') || "";
     
     // Check if we have quota remaining before starting
     const { quota_remaining, quota_reset_at } = bypassQuotaCheck ? 

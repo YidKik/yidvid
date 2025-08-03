@@ -80,8 +80,8 @@ serve(async (req) => {
       );
     }
     
-    // If we have a backup API key, provide it in the response
-    const fallbackApiKey = "AIzaSyDeEEZoXZfGHiNvl9pMf18N43TECw07ANk";
+    // Use environment variable for fallback API key
+    const fallbackApiKey = Deno.env.get('YOUTUBE_FALLBACK_API_KEY') || "";
     
     return new Response(
       JSON.stringify({

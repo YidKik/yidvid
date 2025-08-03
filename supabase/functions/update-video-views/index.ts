@@ -11,8 +11,8 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey);
 // YouTube API key for fetching video statistics
 const youtubeApiKey = Deno.env.get("YOUTUBE_API_KEY") || "";
 
-// Alternative API key for fallback
-const fallbackApiKey = "AIzaSyDeEEZoXZfGHiNvl9pMf18N43TECw07ANk";
+// Use environment variable for fallback API key
+const fallbackApiKey = Deno.env.get('YOUTUBE_FALLBACK_API_KEY') || "";
 
 serve(async (req) => {
   // Handle CORS

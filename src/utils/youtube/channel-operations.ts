@@ -5,10 +5,7 @@ import { extractChannelId } from "./extract-channel-id";
 import type { ManualChannelData } from "./channel-types";
 import { hasSufficientQuota } from "@/hooks/video/utils/quota-manager";
 
-// Define the anon key as a constant since it's already in the client file
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1aW5ja3R2c2l1enRzeGN1cWZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY0ODgzNzcsImV4cCI6MjA1MjA2NDM3N30.zbReqHoAR33QoCi_wqNp8AtNofTX3JebM7jvjFAWbMg";
-// Fallback API key for quota issues
-const FALLBACK_API_KEY = "AIzaSyDeEEZoXZfGHiNvl9pMf18N43TECw07ANk";
+// Note: Supabase keys are available from the client, no hardcoding needed
 
 export const addChannelManually = async (channelData: ManualChannelData) => {
   try {
@@ -49,6 +46,9 @@ export const addChannelManually = async (channelData: ManualChannelData) => {
       // Continue with insertion attempt even if check failed
     }
 
+    // Get auth session for API calls
+    const { data: { session } } = await supabase.auth.getSession();
+    
     // Use service-role edge function to insert the channel
     // This bypasses RLS policies that might be causing recursion
     try {
@@ -58,7 +58,7 @@ export const addChannelManually = async (channelData: ManualChannelData) => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+            'Authorization': `Bearer ${session?.access_token || ''}`
           },
           body: JSON.stringify({
             channel_id: channelId,
@@ -143,12 +143,12 @@ export const addChannel = async (channelInput: string) => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+            'Authorization': `Bearer ${session?.access_token || ''}`
           },
           body: JSON.stringify({ 
             channelId,
             useFallbackKey: !hasQuota,
-            fallbackApiKey: FALLBACK_API_KEY
+            // Note: fallback key handled by edge function
           }),
         }
       );
@@ -183,12 +183,12 @@ export const addChannel = async (channelInput: string) => {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',
-                  'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                  'Authorization': `Bearer ${session?.access_token || ''}`
                 },
                 body: JSON.stringify({ 
                   channelId,
                   useFallbackKey: true,
-                  fallbackApiKey: FALLBACK_API_KEY
+                  // Note: fallback key handled by edge function
                 }),
               }
             );
@@ -291,7 +291,7 @@ export const getChannelById = async (channelId: string | undefined) => {
           body: { 
             channelId, 
             useFallbackKey: true,
-            fallbackApiKey: FALLBACK_API_KEY
+            // Note: fallback key handled by edge function
           },
         }
       );

@@ -11,8 +11,8 @@ export async function fetchChannelVideos(
   try {
     console.log(`[YouTube API] Fetching videos for channel ${channelId}`);
     
-    // Use provided fallback API key if quota is exceeded
-    const fallbackApiKey = "AIzaSyDeEEZoXZfGHiNvl9pMf18N43TECw07ANk";
+    // Use environment variable for fallback API key
+    const fallbackApiKey = Deno.env.get('YOUTUBE_FALLBACK_API_KEY') || "";
     
     // Define a list of referer domains to try
     const refererDomains = [
