@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { secureStorage } from "@/utils/security/storageEncryption";
 
 interface AdminSession {
   adminToken: string;
@@ -15,21 +16,39 @@ export const useSecureAdminAuth = () => {
   const [adminSession, setAdminSession] = useState<AdminSession | null>(null);
   const navigate = useNavigate();
 
-  // Check for existing admin session on mount
+  // Check for existing admin session on mount - validate server-side
   useEffect(() => {
-    const stored = localStorage.getItem('secure-admin-session');
-    if (stored) {
+    const validateStoredSession = async () => {
+      const session = secureStorage.getSecureItem('admin-session');
+      if (!session) return;
+      
       try {
-        const session = JSON.parse(stored);
-        if (new Date(session.expiresAt) > new Date()) {
-          setAdminSession(session);
+        if (new Date(session.expiresAt) <= new Date()) {
+          secureStorage.removeSecureItem('admin-session');
+          return;
+        }
+        
+        // Always validate session with server - prevent client-side tampering
+        const { data, error } = await supabase.functions.invoke('secure-admin-auth', {
+          body: { 
+            action: 'verify-admin',
+            adminToken: session.adminToken
+          }
+        });
+        
+        if (error || !data?.isAdmin) {
+          secureStorage.removeSecureItem('admin-session');
+          setAdminSession(null);
         } else {
-          localStorage.removeItem('secure-admin-session');
+          setAdminSession(session);
         }
       } catch {
-        localStorage.removeItem('secure-admin-session');
+        secureStorage.removeSecureItem('admin-session');
+        setAdminSession(null);
       }
-    }
+    };
+    
+    validateStoredSession();
   }, []);
 
   const handlePinVerification = async () => {
@@ -107,7 +126,8 @@ export const useSecureAdminAuth = () => {
         };
         
         setAdminSession(session);
-        localStorage.setItem('secure-admin-session', JSON.stringify(session));
+        // Store session with encryption and 60-minute expiration
+        secureStorage.setSecureItem('admin-session', session, 60);
         
         toast.success("Admin access granted");
         setShowPinDialog(false);
@@ -178,9 +198,32 @@ export const useSecureAdminAuth = () => {
     }
   };
 
-  const clearAdminSession = () => {
+  const clearAdminSession = async () => {
+    // Invalidate session on server if we have one
+    if (adminSession?.adminToken) {
+      try {
+        await supabase.functions.invoke('secure-session-manager', {
+          body: {
+            action: 'invalidate-admin-session',
+            sessionToken: adminSession.adminToken
+          }
+        });
+      } catch (error) {
+        console.error('Failed to invalidate admin session on server:', error);
+      }
+    }
+    
     setAdminSession(null);
+    secureStorage.removeSecureItem('admin-session');
+    
+    // Remove any legacy bypass flags and clean up localStorage
+    localStorage.removeItem('admin-pin-bypass');
     localStorage.removeItem('secure-admin-session');
+    Object.keys(localStorage).forEach(key => {
+      if (key.startsWith('admin-status-')) {
+        localStorage.removeItem(key);
+      }
+    });
   };
 
   return {

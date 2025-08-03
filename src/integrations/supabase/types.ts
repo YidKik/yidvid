@@ -1358,6 +1358,10 @@ export type Database = {
         Args: { video_id_param: string; admin_user_id: string }
         Returns: Json
       }
+      check_admin_rate_limit: {
+        Args: { operation_type: string }
+        Returns: boolean
+      }
       cleanup_expired_admin_sessions: {
         Args: Record<PropertyKey, never>
         Returns: undefined
@@ -1377,6 +1381,10 @@ export type Database = {
       get_next_midnight_utc: {
         Args: Record<PropertyKey, never>
         Returns: string
+      }
+      invalidate_admin_session: {
+        Args: { session_token: string }
+        Returns: boolean
       }
       is_admin_user: {
         Args: { user_id: string }

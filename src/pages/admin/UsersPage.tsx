@@ -14,8 +14,6 @@ export default function UsersPage() {
   const [currentUserId, setCurrentUserId] = useState<string>("");
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [hasPinBypass, setHasPinBypass] = useState(false);
-
   // Get current user session
   const { data: session, isLoading: isSessionLoading } = useQuery({
     queryKey: ["session"],
@@ -25,61 +23,25 @@ export default function UsersPage() {
     },
   });
 
-  // Check for PIN bypass on mount
-  useEffect(() => {
-    const pinBypass = localStorage.getItem('admin-pin-bypass') === 'true';
-    console.log("User Management: PIN bypass check from localStorage:", pinBypass);
-    setHasPinBypass(pinBypass);
-    
-    if (pinBypass) {
-      setIsLoading(false);
-    }
-  }, []);
-
-  // Fetch user admin status using direct query instead of RLS-protected query
+  // Fetch user admin status using secure server-side validation
   useEffect(() => {
     const checkAdminStatus = async () => {
-      if (!session?.user?.id && !hasPinBypass) {
+      if (!session?.user?.id) {
         setIsLoading(false);
         return;
       }
 
-      if (session?.user?.id) {
-        setCurrentUserId(session.user.id);
-      }
-      
-      if (hasPinBypass) {
-        console.log("Admin access granted via PIN bypass");
-        setIsAdmin(true);
-        setIsLoading(false);
-        return;
-      }
+      setCurrentUserId(session.user.id);
       
       try {
         console.log("Checking admin status for:", session.user.id);
         
-        // Try to use edge function to bypass RLS issues
-        try {
-          const { data: adminCheckData, error: funcError } = await supabase.functions.invoke('check-admin-status', {
-            body: { userId: session.user.id }
-          });
-          
-          if (!funcError && adminCheckData?.isAdmin) {
-            console.log("Admin status confirmed via edge function");
-            setIsAdmin(true);
-            setIsLoading(false);
-            return;
-          }
-        } catch (edgeFuncError) {
-          console.log("Edge function not available, falling back to direct query");
-        }
-        
-        // Use a simpler query without joins to avoid RLS issues
+        // Use secure server-side admin verification
         const { data, error } = await supabase
           .from("profiles")
           .select("is_admin")
           .eq("id", session.user.id)
-          .maybeSingle();
+          .single();
         
         if (error) {
           console.error("Admin check error:", error);
@@ -100,15 +62,15 @@ export default function UsersPage() {
     if (!isSessionLoading) {
       checkAdminStatus();
     }
-  }, [session, isSessionLoading, hasPinBypass]);
+  }, [session, isSessionLoading]);
 
   // Redirect non-admin users
   useEffect(() => {
-    if (!isLoading && !isAdmin && !hasPinBypass) {
+    if (!isLoading && !isAdmin) {
       toast.error("You don't have permission to access this page");
       navigate("/");
     }
-  }, [isAdmin, isLoading, navigate, hasPinBypass]);
+  }, [isAdmin, isLoading, navigate]);
 
   if (isLoading || isSessionLoading) {
     return (
@@ -136,7 +98,7 @@ export default function UsersPage() {
         </Button>
       </div>
       <h1 className="text-3xl font-bold">User Management</h1>
-      {(isAdmin || hasPinBypass) && <UserManagementSection currentUserId={currentUserId} />}
+      {isAdmin && <UserManagementSection currentUserId={currentUserId} />}
     </div>
   );
 }
