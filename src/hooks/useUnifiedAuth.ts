@@ -177,7 +177,18 @@ export const useUnifiedAuth = () => {
       // Clear cache first
       queryClient.clear();
       
-      const { error } = await supabase.auth.signOut();
+      // Clean up admin sessions and sensitive data
+      localStorage.removeItem('secure-admin-session');
+      localStorage.removeItem('admin-pin-bypass');
+      
+      // Clear all auth-related localStorage keys
+      Object.keys(localStorage).forEach(key => {
+        if (key.startsWith('supabase.auth.') || key.includes('sb-') || key.startsWith('admin-')) {
+          localStorage.removeItem(key);
+        }
+      });
+      
+      const { error } = await supabase.auth.signOut({ scope: 'global' });
       if (error) {
         console.error("Sign out error:", error);
         setError(error.message);
@@ -186,9 +197,16 @@ export const useUnifiedAuth = () => {
         setSession(null);
         setError(null);
       }
+      
+      // Force navigation to auth page and reload for clean state
+      setTimeout(() => {
+        window.location.href = '/auth';
+      }, 100);
     } catch (err: any) {
       console.error("Unexpected sign out error:", err);
       setError(err.message);
+      // Force navigation even if signOut fails
+      window.location.href = '/auth';
     } finally {
       setIsLoading(false);
     }
