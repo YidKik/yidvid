@@ -101,17 +101,17 @@ const ContentDetail: React.FC<{ item: ContentItem; onBack: () => void }> = ({ it
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -20 }}
-      className="h-full flex flex-col"
+      className="h-full flex flex-col p-2 md:p-4 space-y-3 md:space-y-4"
     >
       <button
         onClick={onBack}
-        className="self-start mb-4 text-muted-foreground hover:text-foreground transition-colors"
+        className="self-start mb-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
       >
         ← Back to content
       </button>
       
-      <div className="flex-1 space-y-6">
-        <div className="aspect-video overflow-hidden rounded-lg">
+      <div className="flex-1 flex flex-col justify-between min-h-0">
+        <div className="aspect-video max-h-[140px] sm:max-h-[160px] md:max-h-[180px] lg:max-h-[200px] overflow-hidden rounded-lg shadow-md">
           <img 
             src={item.image} 
             alt={item.name}
@@ -119,9 +119,11 @@ const ContentDetail: React.FC<{ item: ContentItem; onBack: () => void }> = ({ it
           />
         </div>
         
-        <div className="space-y-4">
-          <h2 className="text-2xl font-bold text-card-foreground">{item.name}</h2>
-          <p className="text-muted-foreground leading-relaxed">{item.description}</p>
+        <div className="space-y-2 md:space-y-3 flex-1 flex flex-col justify-between">
+          <div className="space-y-2">
+            <h2 className="text-lg md:text-xl lg:text-2xl font-bold text-card-foreground leading-tight">{item.name}</h2>
+            <p className="text-xs md:text-sm text-muted-foreground leading-relaxed line-clamp-3 md:line-clamp-4">{item.description}</p>
+          </div>
           
           <motion.a
             href={item.link}
@@ -129,10 +131,10 @@ const ContentDetail: React.FC<{ item: ContentItem; onBack: () => void }> = ({ it
             rel="noopener noreferrer"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-lg font-semibold hover:bg-primary/90 transition-colors"
+            className="inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-4 py-2 md:px-6 md:py-3 rounded-lg font-semibold hover:bg-primary/90 transition-colors text-sm md:text-base w-full md:w-auto"
           >
             Visit Site
-            <ExternalLink size={16} />
+            <ExternalLink size={14} className="md:w-4 md:h-4" />
           </motion.a>
         </div>
       </div>
