@@ -16,35 +16,56 @@ interface TishaBavContentPopupProps {
   onClose: () => void;
 }
 
-// Placeholder content - will be replaced with user's data
+// Tisha B'av content with actual images and links
 const contentItems: ContentItem[] = [
   {
     id: '1',
-    name: 'Sample Content 1',
-    image: '/placeholder.svg',
-    description: 'This is a sample description for the first content item. It provides meaningful entertainment for this special day.',
-    link: 'https://example.com'
+    name: 'Mostly Music',
+    image: '/lovable-uploads/0af85e42-46da-4c1c-945b-b8dd8dfe0d46.png',
+    description: 'Discover beautiful Jewish music and content perfect for reflection during Tisha B\'av. A comprehensive collection of meaningful songs and spiritual content.',
+    link: 'https://mostlymusic.com/'
   },
   {
     id: '2',
-    name: 'Sample Content 2', 
-    image: '/placeholder.svg',
-    description: 'This is a sample description for the second content item. Perfect for reflection and learning.',
-    link: 'https://example.com'
+    name: 'Torah Anytime - Tisha B\'av 2025',
+    image: '/lovable-uploads/4deb8072-6c34-40f8-8862-d37dcfe70c8f.png',
+    description: '25 Life-Changing Hours - Join 700K+ viewers across 120+ cities with 60+ speakers for an absolutely FREE Tisha B\'av experience.',
+    link: '#' // Placeholder - waiting for link
   },
   {
     id: '3',
-    name: 'Sample Content 3',
-    image: '/placeholder.svg', 
-    description: 'This is a sample description for the third content item. Engaging and thoughtful content.',
-    link: 'https://example.com'
+    name: 'Hidden Courage',
+    image: '/lovable-uploads/77f41bcc-ffde-4140-a4c2-c8a91853c329.png',
+    description: 'A powerful Tisha B\'av original film by Yad L\'Achim. Experience stories of courage and faith during challenging times.',
+    link: '#' // Placeholder - waiting for link
   },
   {
     id: '4',
-    name: 'Sample Content 4',
-    image: '/placeholder.svg',
-    description: 'This is a sample description for the fourth content item. Inspiring and meaningful.',
-    link: 'https://example.com'
+    name: 'Chofetz Chaim Heritage Foundation',
+    image: '/lovable-uploads/04f9fa7e-128e-4d18-9758-066ed3f78e6c.png',
+    description: 'Inspiring content and teachings from the Chofetz Chaim Heritage Foundation, focusing on character development and spiritual growth.',
+    link: '#' // Placeholder - waiting for link
+  },
+  {
+    id: '5',
+    name: 'Hidden Light',
+    image: '/lovable-uploads/5c4096e3-490d-4ad8-bd25-ae9da5ba7c7f.png',
+    description: 'Uncovering the Vatican\'s Darkest Secret - A compelling documentary exploring hidden historical truths and their relevance today.',
+    link: '#' // Placeholder - waiting for link
+  },
+  {
+    id: '6',
+    name: 'Bounce Back',
+    image: '/lovable-uploads/6b380080-c99b-4d32-b9d6-41abe2393426.png',
+    description: 'Project Inspire presents an uplifting story about a basketball team that rose to the top, demonstrating how we can lift each other higher.',
+    link: '#' // Placeholder - waiting for link
+  },
+  {
+    id: '7',
+    name: 'The Yizkor Foundation',
+    image: '/lovable-uploads/e38fc853-d773-470e-9512-c12f56a9296d.png',
+    description: 'Meaningful memorial and remembrance content from The Yizkor Foundation, helping preserve memory and honor those we\'ve lost.',
+    link: '#' // Placeholder - waiting for link
   }
 ];
 
