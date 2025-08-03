@@ -14,6 +14,44 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_email_settings: {
+        Row: {
+          admin_id: string
+          created_at: string
+          email: string
+          id: string
+          receive_contact_notifications: boolean | null
+          receive_general_notifications: boolean | null
+          updated_at: string
+        }
+        Insert: {
+          admin_id: string
+          created_at?: string
+          email: string
+          id?: string
+          receive_contact_notifications?: boolean | null
+          receive_general_notifications?: boolean | null
+          updated_at?: string
+        }
+        Update: {
+          admin_id?: string
+          created_at?: string
+          email?: string
+          id?: string
+          receive_contact_notifications?: boolean | null
+          receive_general_notifications?: boolean | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "admin_email_settings_admin_id_fkey"
+            columns: ["admin_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       admin_notifications: {
         Row: {
           content: string
@@ -281,34 +319,43 @@ export type Database = {
       }
       contact_requests: {
         Row: {
+          admin_reply: string | null
           category: string
           created_at: string
           email: string
           id: string
           message: string
           name: string
+          replied_at: string | null
+          replied_by: string | null
           responded_at: string | null
           status: string
           user_id: string | null
         }
         Insert: {
+          admin_reply?: string | null
           category?: string
           created_at?: string
           email: string
           id?: string
           message: string
           name: string
+          replied_at?: string | null
+          replied_by?: string | null
           responded_at?: string | null
           status?: string
           user_id?: string | null
         }
         Update: {
+          admin_reply?: string | null
           category?: string
           created_at?: string
           email?: string
           id?: string
           message?: string
           name?: string
+          replied_at?: string | null
+          replied_by?: string | null
           responded_at?: string | null
           status?: string
           user_id?: string | null

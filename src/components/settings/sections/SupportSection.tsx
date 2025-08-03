@@ -24,7 +24,7 @@ export const SupportSection = () => {
   const onSubmit = async (data: FormValues) => {
     try {
       const user = await supabase.auth.getUser();
-      const { error } = await supabase
+      const { data: insertedRequest, error } = await supabase
         .from("contact_requests")
         .insert({
           category: data.category,
@@ -32,9 +32,26 @@ export const SupportSection = () => {
           email: data.email,
           message: data.message,
           user_id: user.data.user?.id,
-        });
+        })
+        .select()
+        .single();
 
       if (error) throw error;
+
+      // Send email notification to admins
+      if (insertedRequest) {
+        const { error: emailError } = await supabase.functions.invoke("send-contact-notifications", {
+          body: {
+            type: "new_request",
+            requestId: insertedRequest.id
+          }
+        });
+
+        if (emailError) {
+          console.error("Email notification error:", emailError);
+          // Don't fail the whole operation if email fails
+        }
+      }
 
       form.reset();
       toast.success("Your message has been sent!");
