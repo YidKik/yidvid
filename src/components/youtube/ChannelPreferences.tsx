@@ -48,14 +48,7 @@ export const ChannelControl = () => {
     setAuthChecked(true);
   }, [isAuthenticated, session]);
 
-  // Display a toast when authentication state changes
-  useEffect(() => {
-    if (authChecked) {
-      if (!isAuthenticated) {
-        toast.info("Please sign in to manage channel preferences", { duration: 3000 });
-      }
-    }
-  }, [authChecked, isAuthenticated]);
+  // Removed toast notification for authentication state
 
   if (isLoading) {
     return <div className="text-sm md:text-base">Loading channels...</div>;
@@ -63,14 +56,14 @@ export const ChannelControl = () => {
 
   if (!isAuthenticated || !session?.user?.id) {
     return (
-      <Card className="p-3 md:p-6 bg-[#F6F6F7]">
+      <Card className="p-3 md:p-6 bg-gradient-to-br from-red-50 to-white border-2 border-red-200 shadow-lg rounded-3xl">
         <div className="space-y-4 text-center py-6">
-          <AlertDescription className="text-gray-700 mb-4">
+          <AlertDescription className="text-gray-800 mb-4 font-medium">
             You need to be signed in to manage your channel preferences.
           </AlertDescription>
           <Button 
             onClick={handleSignInClick}
-            className="flex mx-auto items-center gap-2"
+            className="flex mx-auto items-center gap-2 bg-red-500 hover:bg-red-600 text-white shadow-lg"
           >
             <LogIn className="h-4 w-4" />
             Sign in to continue
@@ -81,7 +74,7 @@ export const ChannelControl = () => {
   }
 
   return (
-    <Card className="p-4 md:p-8 bg-gradient-to-br from-white to-primary/5 border-2 border-primary/20 shadow-lg rounded-3xl">
+    <Card className="p-4 md:p-8 bg-gradient-to-br from-red-50/50 to-white border-2 border-red-200 shadow-lg rounded-3xl">
       <div className="space-y-6">
         <ChannelControlHeader
           isLocked={isLocked}

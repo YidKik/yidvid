@@ -5,7 +5,7 @@ import { Settings as SettingsIcon } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useAdminStatus } from "@/hooks/useAdminStatus";
 import { useSettingsPageState } from "@/hooks/useSettingsPageState";
-import { AdminDashboardCard } from "@/components/settings/sections/AdminDashboardCard";
+// Removed AdminDashboardCard import - dashboard access via shortcuts only
 import { ProfileSection } from "@/components/settings/ProfileSection";
 import { ProfileSectionSkeleton } from "@/components/settings/profile/ProfileSectionSkeleton";
 import { ContentPreferencesSection } from "@/components/settings/sections/ContentPreferencesSection";

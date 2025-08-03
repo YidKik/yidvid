@@ -86,7 +86,7 @@ export const ChannelSubscriptions = () => {
 
   const handleUnsubscribe = async (channelId: string, channelTitle: string) => {
     if (!user?.id) {
-      toast.error("You need to be logged in to manage subscriptions");
+      // Removed toast notification for subscriptions management
       return;
     }
     
@@ -103,11 +103,11 @@ export const ChannelSubscriptions = () => {
 
       if (error) throw error;
 
-      toast.success(`Unsubscribed from ${channelTitle}`);
+      // Removed toast notification for successful unsubscribe
       await refetch();
     } catch (error: any) {
       console.error("Error unsubscribing:", error);
-      toast.error(`Error unsubscribing from ${channelTitle}`);
+      // Removed toast notification for unsubscribe errors
     } finally {
       setProcessingUnsubscribe(null);
     }
