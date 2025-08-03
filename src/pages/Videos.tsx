@@ -40,9 +40,9 @@ const MainContent = () => {
     return new Date(b.uploaded_at).getTime() - new Date(a.uploaded_at).getTime();
   }) || [];
 
-  // Get videos to display with pagination
-  const displayVideos = filteredVideos.slice(0, visibleVideos);
-  const hasMoreVideos = filteredVideos.length > visibleVideos;
+  // Pass all filtered videos to let internal pagination handle display
+  const displayVideos = filteredVideos;
+  const hasMoreVideos = false; // Remove "Load More" since we'll use pagination arrows
 
   // Reset pagination when category changes
   useEffect(() => {
