@@ -101,7 +101,7 @@ const ContentDetail: React.FC<{ item: ContentItem; onBack: () => void }> = ({ it
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -20 }}
-      className="h-full flex flex-col p-2 md:p-4 space-y-3 md:space-y-4"
+      className="h-full flex flex-col p-2 md:p-4 space-y-3 md:space-y-4 overflow-y-auto"
     >
       <button
         onClick={onBack}
@@ -187,7 +187,7 @@ export const TishaBavContentPopup: React.FC<TishaBavContentPopupProps> = ({ isOp
           </div>
 
           {/* Content */}
-          <div className="p-4 md:p-6 h-[calc(100%-5rem)] overflow-y-auto">
+          <div className="p-4 md:p-6 h-[calc(100%-5rem)] overflow-y-auto scrollbar-thin scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent hover:scrollbar-thumb-muted-foreground/40">
             <AnimatePresence mode="wait">
               {selectedItem ? (
                 <ContentDetail key="detail" item={selectedItem} onBack={handleBack} />
