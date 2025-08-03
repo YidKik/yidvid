@@ -39,3 +39,6 @@ port = 54329
 
 [functions.update-video-views]
 verify_jwt = false
+
+[functions.send-contact-notifications]
+verify_jwt = true
