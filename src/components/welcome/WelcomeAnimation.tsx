@@ -2,8 +2,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { X, Play, Users, Video } from 'lucide-react';
+import { X, Play, Users, Video, Loader2 } from 'lucide-react';
 import { NumberTicker } from '@/components/ui/number-ticker';
+import { useContentPreloader } from '@/hooks/useContentPreloader';
 
 interface WelcomeAnimationProps {
   onComplete: () => void;
@@ -14,6 +15,9 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ onComplete, 
   const [currentStep, setCurrentStep] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
   const navigate = useNavigate();
+  
+  // Start preloading content immediately
+  const { preloadComplete, isPreloading } = useContentPreloader(true);
 
   const steps = [
     {
@@ -41,25 +45,41 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ onComplete, 
       if (currentStep < steps.length - 1) {
         setCurrentStep(currentStep + 1);
       } else {
-        // Auto-redirect after showing all steps
+        // Auto-redirect after showing all steps, but only if preloading is complete
         setTimeout(() => {
-          handleComplete();
+          if (preloadComplete) {
+            handleComplete();
+          } else {
+            // Keep waiting for preload to complete
+            const checkPreload = setInterval(() => {
+              if (preloadComplete) {
+                clearInterval(checkPreload);
+                handleComplete();
+              }
+            }, 500);
+          }
         }, 2000);
       }
     }, 3000);
 
     return () => clearTimeout(timer);
-  }, [currentStep]);
+  }, [currentStep, preloadComplete]);
 
   const handleComplete = () => {
-    setIsVisible(false);
-    setTimeout(() => {
-      onComplete();
-      navigate('/videos');
-    }, 500);
+    // Only complete if preloading is done
+    if (preloadComplete) {
+      setIsVisible(false);
+      setTimeout(() => {
+        onComplete();
+        navigate('/videos');
+      }, 500);
+    } else {
+      console.info('Welcome animation: Waiting for preload to complete before navigation...');
+    }
   };
 
   const handleSkip = () => {
+    // Allow skip but show loading if not complete
     setIsVisible(false);
     setTimeout(() => {
       onSkip();
@@ -255,14 +275,17 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ onComplete, 
                 transition={{ delay: 1 }}
                 className="mt-8"
               >
-                <p className="text-gray-600 text-sm">
-                  Redirecting to videos in a moment...
-                </p>
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  {isPreloading && <Loader2 className="w-4 h-4 animate-spin text-primary" />}
+                  <p className="text-gray-600 text-sm">
+                    {isPreloading ? 'Preparing your content...' : 'Ready to explore!'}
+                  </p>
+                </div>
                 <div className="w-32 h-1 bg-gray-200 rounded-full mx-auto mt-2 overflow-hidden shadow-sm">
                   <motion.div
                     initial={{ width: '0%' }}
-                    animate={{ width: '100%' }}
-                    transition={{ duration: 2, ease: "linear" }}
+                    animate={{ width: preloadComplete ? '100%' : '60%' }}
+                    transition={{ duration: preloadComplete ? 0.5 : 2, ease: "linear" }}
                     className="h-full bg-[#ea384c] rounded-full"
                   />
                 </div>
