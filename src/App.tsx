@@ -16,6 +16,7 @@ import { recordNavigation, setupScrollRestoration } from './utils/scrollRestorat
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { WelcomeAnimation } from './components/welcome/WelcomeAnimation';
 import { useWelcomeAnimation } from './hooks/useWelcomeAnimation';
+import { SiteImprovementNotification } from './components/SiteImprovementNotification';
 
 // Admin Pages
 import AdminDashboard from './pages/admin/Dashboard';
@@ -104,6 +105,9 @@ function App() {
         
         {/* Add the PagePreloader to prefetch the Videos page */}
         <PagePreloader />
+        
+        {/* Site-wide improvement notification */}
+        <SiteImprovementNotification />
       </ColorProvider>
     </PlaybackProvider>
   );
