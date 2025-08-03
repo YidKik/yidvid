@@ -76,18 +76,18 @@ const ContentCard: React.FC<{ item: ContentItem; onClick: () => void }> = ({ ite
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ scale: 1.02, y: -2 }}
       whileTap={{ scale: 0.98 }}
-      className="bg-card rounded-xl shadow-lg overflow-hidden cursor-pointer group h-full flex flex-col border border-border/10"
+      className="bg-card rounded-xl shadow-lg overflow-hidden cursor-pointer group h-full flex flex-col border border-border/10 max-w-[280px]"
       onClick={onClick}
     >
-      <div className="h-32 md:h-36 overflow-hidden bg-muted/20 flex items-center justify-center p-3">
+      <div className="h-28 sm:h-32 md:h-36 lg:h-40 overflow-hidden bg-muted/20 flex items-center justify-center p-2 md:p-3">
         <img 
           src={item.image} 
           alt={item.name}
           className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-300"
         />
       </div>
-      <div className="p-3 md:p-4 flex-1 flex flex-col justify-center">
-        <h3 className="font-semibold text-card-foreground text-center text-sm md:text-base group-hover:text-primary transition-colors min-h-[2.5rem] flex items-center justify-center">
+      <div className="p-2 md:p-3 lg:p-4 flex-1 flex flex-col justify-center">
+        <h3 className="font-semibold text-card-foreground text-center text-xs sm:text-sm md:text-base group-hover:text-primary transition-colors min-h-[2rem] sm:min-h-[2.5rem] flex items-center justify-center leading-tight">
           {item.name}
         </h3>
       </div>
@@ -154,12 +154,12 @@ export const TishaBavContentPopup: React.FC<TishaBavContentPopupProps> = ({ isOp
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent 
-        className="max-w-4xl w-[95vw] h-[85vh] p-0 overflow-hidden"
+        className="max-w-5xl w-[95vw] h-[70vh] md:h-[65vh] lg:h-[60vh] p-0 overflow-hidden"
         hideCloseButton
       >
         <div className="relative h-full bg-gradient-to-br from-background to-muted/20">
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-border/50 bg-gradient-to-r from-primary/5 to-primary/10">
+          <div className="flex items-center justify-between p-4 md:p-6 border-b border-border/50 bg-gradient-to-r from-primary/5 to-primary/10">
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-1">
                 <Heart className="w-5 h-5 text-red-500" />
@@ -185,7 +185,7 @@ export const TishaBavContentPopup: React.FC<TishaBavContentPopupProps> = ({ isOp
           </div>
 
           {/* Content */}
-          <div className="p-6 h-[calc(100%-5rem)] overflow-y-auto">
+          <div className="p-4 md:p-6 h-[calc(100%-5rem)] overflow-y-auto">
             <AnimatePresence mode="wait">
               {selectedItem ? (
                 <ContentDetail key="detail" item={selectedItem} onBack={handleBack} />
@@ -195,7 +195,7 @@ export const TishaBavContentPopup: React.FC<TishaBavContentPopupProps> = ({ isOp
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-3 md:gap-4"
+                  className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-4 gap-3 md:gap-4 lg:gap-6"
                 >
                   {contentItems.map((item, index) => (
                     <motion.div
