@@ -10,6 +10,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useSessionManager } from "@/hooks/useSessionManager";
 import { Helmet } from "react-helmet";
 import { useSearchParams } from "react-router-dom";
+import { TishaBavContentPopup } from "@/components/TishaBavContentPopup";
 
 const MainContent = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -141,6 +142,7 @@ const MainContent = () => {
 
 const Videos = () => {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [isTishaBavPopupOpen, setIsTishaBavPopupOpen] = useState(true);
 
   return (
     <>
@@ -184,6 +186,10 @@ const Videos = () => {
       <div className="min-h-screen w-full bg-white videos-page">
         <MainContent />
         <Auth isOpen={isAuthOpen} onOpenChange={setIsAuthOpen} />
+        <TishaBavContentPopup 
+          isOpen={isTishaBavPopupOpen} 
+          onClose={() => setIsTishaBavPopupOpen(false)} 
+        />
       </div>
     </>
   );
