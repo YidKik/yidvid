@@ -3,7 +3,7 @@ import { Header } from "@/components/Header";
 import Auth from "@/pages/Auth";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Heart } from "lucide-react";
+import { Building2 } from "lucide-react";
 import { ContentToggle } from "@/components/content/ContentToggle";
 import { VideoContent } from "@/components/content/VideoContent";
 import { useVideos } from "@/hooks/video/useVideos";
@@ -202,7 +202,7 @@ const Videos = () => {
           onClick={() => setIsTishaBavPopupOpen(true)}
           title="Special Tisha B'av Content"
         >
-          <Heart className="w-5 h-5 text-white" fill="white" />
+          <Building2 className="w-5 h-5 text-white" />
         </motion.div>
       </div>
     </>
