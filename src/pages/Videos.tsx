@@ -3,6 +3,7 @@ import { Header } from "@/components/Header";
 import Auth from "@/pages/Auth";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { Heart } from "lucide-react";
 import { ContentToggle } from "@/components/content/ContentToggle";
 import { VideoContent } from "@/components/content/VideoContent";
 import { useVideos } from "@/hooks/video/useVideos";
@@ -190,6 +191,19 @@ const Videos = () => {
           isOpen={isTishaBavPopupOpen} 
           onClose={() => setIsTishaBavPopupOpen(false)} 
         />
+        
+        {/* Tisha B'av Floating Icon */}
+        <motion.div 
+          className="fixed bottom-4 left-4 p-3 bg-red-500/90 backdrop-blur-sm rounded-full shadow-lg cursor-pointer z-50"
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={{ opacity: 1, scale: 1 }}
+          whileHover={{ scale: 1.1, y: -2 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => setIsTishaBavPopupOpen(true)}
+          title="Special Tisha B'av Content"
+        >
+          <Heart className="w-5 h-5 text-white" fill="white" />
+        </motion.div>
       </div>
     </>
   );
