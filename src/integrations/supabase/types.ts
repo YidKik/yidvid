@@ -41,6 +41,33 @@ export type Database = {
         }
         Relationships: []
       }
+      admin_sessions: {
+        Row: {
+          admin_token: string
+          created_at: string
+          expires_at: string
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          admin_token: string
+          created_at?: string
+          expires_at: string
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          admin_token?: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       api_quota_tracking: {
         Row: {
           api_name: string
@@ -1264,6 +1291,10 @@ export type Database = {
       admin_restore_video: {
         Args: { video_id_param: string; admin_user_id: string }
         Returns: Json
+      }
+      cleanup_expired_admin_sessions: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
       }
       delete_user: {
         Args: Record<PropertyKey, never>

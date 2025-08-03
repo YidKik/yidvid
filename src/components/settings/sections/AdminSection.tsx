@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { AdminPinDialog } from "./admin/AdminPinDialog";
 import { AdminDashboardAccess } from "./admin/AdminDashboardAccess";
-import { useAdminPinDialog } from "@/hooks/useAdminPinDialog";
+import { useSecureAdminAuth } from "@/hooks/useSecureAdminAuth";
 
 interface AdminSectionProps {
   userId?: string;
@@ -19,8 +19,10 @@ export const AdminSection = ({ userId }: AdminSectionProps) => {
     setShowPinDialog,
     adminPin,
     setAdminPin,
-    handleUnlockWithPin
-  } = useAdminPinDialog(userId);
+    handlePinVerification,
+    checkAdminStatus,
+    hasAdminSession
+  } = useSecureAdminAuth();
 
   // First check if we have cached admin status
   const { data: cachedAdminStatus } = useQuery({
@@ -137,7 +139,7 @@ export const AdminSection = ({ userId }: AdminSectionProps) => {
         setShowDialog={setShowPinDialog}
         pinValue={adminPin}
         setPinValue={setAdminPin}
-        onUnlock={handleUnlockWithPin}
+        onUnlock={handlePinVerification}
       />
     </section>
   );

@@ -15,14 +15,20 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Input } from "@/components/ui/input";
 import { Lock, Settings, Users, FileText, BarChart3 } from "lucide-react";
 import { toast } from "sonner";
-import { ADMIN_PIN } from "@/hooks/useAdminPinDialog";
+import { useSecureAdminAuth } from "@/hooks/useSecureAdminAuth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const { session } = useAuth();
-  const [showPinDialog, setShowPinDialog] = useState(false);
-  const [adminPin, setAdminPin] = useState("");
+  const {
+    showPinDialog,
+    setShowPinDialog,
+    adminPin,
+    setAdminPin,
+    handlePinVerification,
+    hasAdminSession
+  } = useSecureAdminAuth();
   
   // Use our custom hooks to manage state and data fetching
   const { 
@@ -37,28 +43,9 @@ export default function Dashboard() {
   const { stats, isStatsLoading } = useDashboardStats(isAdmin || hasPinBypass, session?.user?.id);
   const { notifications } = useAdminNotifications(isAdmin || hasPinBypass);
 
-  // Handle PIN validation
+  // Use secure PIN verification
   const handlePinSubmit = () => {
-    console.log("Checking PIN:", adminPin, "against expected:", ADMIN_PIN);
-    
-    // Trim any whitespace and perform exact comparison
-    const cleanedInputPin = adminPin.trim();
-    
-    // Always grant admin access if PIN is correct, regardless of session
-    if (cleanedInputPin === ADMIN_PIN) {
-      // Set PIN bypass flag in localStorage
-      localStorage.setItem(`admin-pin-bypass`, "true");
-      toast.success("Admin access granted via PIN");
-      setShowPinDialog(false);
-      setAdminPin("");
-      
-      // Force a refresh to update the UI with admin content
-      // Using setTimeout to ensure the state is updated before reloading
-      setTimeout(() => window.location.reload(), 100);
-    } else {
-      toast.error("Incorrect PIN");
-      setAdminPin("");
-    }
+    handlePinVerification();
   };
 
   // Show loading state while checking session and profile
@@ -74,7 +61,7 @@ export default function Dashboard() {
       
       <DashboardHeader title="Welcome to Your Dashboard" />
       
-      {(isAdmin || hasPinBypass) ? (
+      {(isAdmin || hasPinBypass || hasAdminSession) ? (
         <div className="space-y-8">
           <AdminDashboardCards stats={stats} notifications={notifications} />
           
