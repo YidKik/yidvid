@@ -61,12 +61,14 @@ const handler = async (req: Request): Promise<Response> => {
         const emails = adminEmails.map(admin => admin.email);
         
         await resend.emails.send({
-          from: "Your Site <onboarding@resend.dev>",
+          from: "YidVid <onboarding@resend.dev>",
+          replyTo: "yidvid.info@gmail.com",
           to: emails,
           subject: `New Contact Request: ${request.category.replace("_", " ")}`,
           html: `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
               <div style="text-align: center; padding: 20px; background-color: #f8f9fa;">
+                <img src="https://yidvid.co/logo.png" alt="YidVid Logo" style="height: 50px; margin-bottom: 10px;" />
                 <h1 style="color: #333; margin: 0;">New Contact Request</h1>
               </div>
               
@@ -84,7 +86,7 @@ const handler = async (req: Request): Promise<Response> => {
                 </div>
                 
                 <div style="text-align: center; margin-top: 30px;">
-                  <a href="${supabaseUrl.replace('supabase.co', 'lovable.app')}/admin/contact-requests" 
+                  <a href="https://yidvid.co/admin/contact-requests" 
                      style="background-color: #007bff; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block;">
                     View in Admin Dashboard
                   </a>
@@ -92,7 +94,50 @@ const handler = async (req: Request): Promise<Response> => {
               </div>
               
               <div style="text-align: center; padding: 20px; background-color: #f8f9fa; color: #666; font-size: 14px;">
-                <p>This is an automated notification from your site admin panel.</p>
+                <p>This is an automated notification from YidVid admin panel.</p>
+              </div>
+            </div>
+          `,
+        });
+
+        // Send confirmation email to the user who submitted the request
+        await resend.emails.send({
+          from: "YidVid <onboarding@resend.dev>",
+          replyTo: "yidvid.info@gmail.com",
+          to: [request.email],
+          subject: "We received your contact request",
+          html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+              <div style="text-align: center; padding: 20px; background-color: #f8f9fa;">
+                <img src="https://yidvid.co/logo.png" alt="YidVid Logo" style="height: 50px; margin-bottom: 10px;" />
+                <h1 style="color: #333; margin: 0;">Thank You for Contacting Us</h1>
+              </div>
+              
+              <div style="padding: 20px; background-color: white;">
+                <p>Dear ${request.name},</p>
+                
+                <p>Thank you for reaching out to us! We have received your contact request and our team will review it shortly.</p>
+                
+                <div style="background-color: #e7f3ff; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #007bff;">
+                  <h3 style="color: #333; margin-top: 0;">Your Request Details:</h3>
+                  <p><strong>Category:</strong> ${request.category.replace("_", " ")}</p>
+                  <p><strong>Message:</strong> ${request.message}</p>
+                  <p><strong>Submitted:</strong> ${new Date(request.created_at).toLocaleDateString()}</p>
+                </div>
+                
+                <p>We aim to respond to all inquiries within 24-48 hours. If you have any urgent matters, please don't hesitate to contact us directly at yidvid.info@gmail.com.</p>
+                
+                <div style="text-align: center; margin-top: 30px;">
+                  <a href="https://yidvid.co" 
+                     style="background-color: #007bff; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block;">
+                    Visit YidVid
+                  </a>
+                </div>
+              </div>
+              
+              <div style="text-align: center; padding: 20px; background-color: #f8f9fa; color: #666; font-size: 14px;">
+                <p>Best regards,<br>The YidVid Team</p>
+                <p>For any questions, reply to: yidvid.info@gmail.com</p>
               </div>
             </div>
           `,
@@ -102,12 +147,14 @@ const handler = async (req: Request): Promise<Response> => {
     } else if (type === "admin_reply" && adminReply) {
       // Send reply to user
       await resend.emails.send({
-        from: "Your Site Support <onboarding@resend.dev>",
+        from: "YidVid Support <onboarding@resend.dev>",
+        replyTo: "yidvid.info@gmail.com",
         to: [request.email],
         subject: `Re: Your ${request.category.replace("_", " ")} request`,
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <div style="text-align: center; padding: 20px; background-color: #f8f9fa;">
+              <img src="https://yidvid.co/logo.png" alt="YidVid Logo" style="height: 50px; margin-bottom: 10px;" />
               <h1 style="color: #333; margin: 0;">Response to Your Request</h1>
             </div>
             
@@ -125,18 +172,19 @@ const handler = async (req: Request): Promise<Response> => {
                 ${request.message}
               </div>
               
-              <p>If you have any further questions, please don't hesitate to contact us again.</p>
+              <p>If you have any further questions, please don't hesitate to contact us again at yidvid.info@gmail.com.</p>
               
               <div style="text-align: center; margin-top: 30px;">
-                <a href="${supabaseUrl.replace('supabase.co', 'lovable.app')}" 
+                <a href="https://yidvid.co" 
                    style="background-color: #007bff; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block;">
-                  Visit Our Site
+                  Visit YidVid
                 </a>
               </div>
             </div>
             
             <div style="text-align: center; padding: 20px; background-color: #f8f9fa; color: #666; font-size: 14px;">
-              <p>Best regards,<br>Your Support Team</p>
+              <p>Best regards,<br>The YidVid Support Team</p>
+              <p>For any questions, reply to: yidvid.info@gmail.com</p>
             </div>
           </div>
         `,
