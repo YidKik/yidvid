@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ArrowLeft, HelpCircle, Video, Music, Search, Users, Bell, Shield } from "lucide-react";
+import { X, ArrowLeft, HelpCircle, Video, Search, Users, Bell, Shield, Settings, Heart } from "lucide-react";
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 
 interface FeatureCard {
@@ -34,23 +34,7 @@ const features: FeatureCard[] = [
         "Personalized recommendations based on your interests",
         "Regular content updates from trusted channels"
       ],
-      image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?auto=format&fit=crop&w=800&q=80"
-    }
-  },
-  {
-    id: "music-streaming",
-    title: "Music Streaming",
-    description: "Enjoy high-quality music streaming with personalized playlists",
-    icon: <Music className="h-8 w-8 text-primary" />,
-    details: {
-      howToUse: "Navigate to the music section, create custom playlists, search for your favorite artists and tracks, or explore curated music collections by genre.",
-      benefits: [
-        "High-quality audio streaming",
-        "Custom playlist creation and management",
-        "Extensive library of music across all genres",
-        "Offline listening capabilities"
-      ],
-      image: "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?auto=format&fit=crop&w=800&q=80"
+      image: "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?auto=format&fit=crop&w=800&q=80"
     }
   },
   {
@@ -66,23 +50,39 @@ const features: FeatureCard[] = [
         "Search history and suggestions",
         "Cross-platform content discovery"
       ],
-      image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=800&q=80"
+      image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=80"
     }
   },
   {
-    id: "community",
-    title: "Community Features",
-    description: "Connect with other users and share your favorite content",
-    icon: <Users className="h-8 w-8 text-primary" />,
+    id: "settings",
+    title: "Settings & Preferences",
+    description: "Customize your viewing experience with personalized settings",
+    icon: <Settings className="h-8 w-8 text-primary" />,
     details: {
-      howToUse: "Create your profile, follow other users, share content, leave comments, and participate in community discussions. Subscribe to channels to stay updated.",
+      howToUse: "Access the settings page from your profile menu. Customize video quality, language preferences, notification settings, and privacy controls to match your needs.",
       benefits: [
-        "Interactive community platform",
-        "User profiles and social features",
-        "Content sharing and recommendations",
-        "Community-driven content curation"
+        "Personalized viewing experience",
+        "Quality and language controls",
+        "Privacy and security settings",
+        "Notification customization"
       ],
-      image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=800&q=80"
+      image: "https://images.unsplash.com/photo-1483058712412-4245e9b90334?auto=format&fit=crop&w=800&q=80"
+    }
+  },
+  {
+    id: "favorites",
+    title: "Favorites & Bookmarks",
+    description: "Save and organize your favorite videos for easy access",
+    icon: <Heart className="h-8 w-8 text-primary" />,
+    details: {
+      howToUse: "Click the heart icon on any video to add it to your favorites. Create custom playlists and organize your saved content by categories or themes.",
+      benefits: [
+        "Personal video library",
+        "Custom playlist creation",
+        "Easy content organization",
+        "Quick access to saved videos"
+      ],
+      image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80"
     }
   },
   {
@@ -98,7 +98,7 @@ const features: FeatureCard[] = [
         "Channel-specific notifications",
         "Never miss your favorite content"
       ],
-      image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?auto=format&fit=crop&w=800&q=80"
+      image: "https://images.unsplash.com/photo-1472396961693-142e6e269027?auto=format&fit=crop&w=800&q=80"
     }
   },
   {
@@ -253,11 +253,16 @@ export const TishaBavContentPopup: React.FC<WelcomePopupProps> = ({ isOpen, onCl
                           key={feature.id}
                           initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: index * 0.1 }}
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
+                          transition={{ delay: index * 0.15, type: "spring", stiffness: 300, damping: 20 }}
+                          whileHover={{ 
+                            scale: 1.03, 
+                            y: -5,
+                            boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
+                            transition: { type: "spring", stiffness: 400, damping: 10 }
+                          }}
+                          whileTap={{ scale: 0.97 }}
                           onClick={() => handleFeatureClick(feature)}
-                          className="p-4 border border-border rounded-lg cursor-pointer hover:bg-muted/50 transition-all duration-200 hover:shadow-lg hover:border-primary/20"
+                          className="p-5 border border-border rounded-xl cursor-pointer bg-gradient-to-br from-background to-muted/10 hover:from-primary/5 hover:to-secondary/5 transition-all duration-300 hover:border-primary/30 shadow-sm"
                         >
                           <div className="space-y-3">
                             <div className="flex items-center gap-3">

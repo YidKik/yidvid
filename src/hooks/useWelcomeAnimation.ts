@@ -10,12 +10,27 @@ export const useWelcomeAnimation = () => {
   const { preloadComplete, isPreloading: contentPreloading } = useContentPreloader(showWelcome === true);
 
   useEffect(() => {
-    // Always show welcome animation on the home page
-    setShowWelcome(true);
-    setIsPreloading(true);
+    // Check if user has seen welcome before
+    const hasSeenWelcome = localStorage.getItem('hasSeenWelcome');
+    
+    if (!hasSeenWelcome) {
+      // Show welcome after 10 seconds for new users
+      const timer = setTimeout(() => {
+        setShowWelcome(true);
+        setIsPreloading(true);
+      }, 10000);
+
+      return () => clearTimeout(timer);
+    } else {
+      // Don't show for returning users
+      setShowWelcome(false);
+    }
   }, []);
 
   const markWelcomeAsShown = () => {
+    // Mark as seen in localStorage
+    localStorage.setItem('hasSeenWelcome', 'true');
+    
     // Don't hide welcome until preloading is complete
     if (preloadComplete || !isPreloading) {
       setShowWelcome(false);
