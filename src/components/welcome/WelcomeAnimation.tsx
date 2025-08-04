@@ -45,32 +45,31 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ onComplete, 
       if (currentStep < steps.length - 1) {
         setCurrentStep(currentStep + 1);
       } else {
-        // Auto-complete after shorter time
+        // Auto-complete after shorter time, don't wait for preloading
         setTimeout(() => {
           handleComplete();
-        }, 1000);
+        }, 1500);
       }
-    }, 1500); // Faster step transitions
+    }, 2000); // Reduced from 3000 to 2000
 
     return () => clearTimeout(timer);
   }, [currentStep]);
 
   const handleComplete = () => {
-    // Complete animation and navigate to videos
+    // Complete animation without waiting for preloading
     setIsVisible(false);
     setTimeout(() => {
       onComplete();
-      navigate('/videos');
-    }, 300);
+      // Don't navigate since we're already on the videos page
+    }, 500);
   };
 
   const handleSkip = () => {
-    // Skip animation and navigate to videos
+    // Skip animation without navigation
     setIsVisible(false);
     setTimeout(() => {
       onSkip();
-      navigate('/videos');
-    }, 200);
+    }, 300);
   };
 
   return (

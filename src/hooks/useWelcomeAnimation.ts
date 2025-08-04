@@ -13,19 +13,17 @@ export const useWelcomeAnimation = () => {
     // Check if user has seen welcome before
     const hasSeenWelcome = localStorage.getItem('hasSeenWelcome');
     
-    console.log('Welcome Animation Hook - hasSeenWelcome:', hasSeenWelcome);
-    
     if (!hasSeenWelcome) {
-      // Show welcome immediately for new users (no delay)
-      console.log('Welcome Animation Hook - Setting showWelcome to true for new user');
-      setShowWelcome(true);
-      setIsPreloading(true);
+      // Show welcome after 3 seconds for new users (reduced from 10 seconds)
+      const timer = setTimeout(() => {
+        setShowWelcome(true);
+        setIsPreloading(true);
+      }, 3000);
+
+      return () => clearTimeout(timer);
     } else {
-      // Don't show for returning users, but immediately redirect
-      console.log('Welcome Animation Hook - User has seen welcome, redirecting to videos');
+      // Don't show for returning users
       setShowWelcome(false);
-      // Redirect returning users to videos page immediately
-      window.location.replace('/videos');
     }
   }, []);
 
@@ -51,8 +49,6 @@ export const useWelcomeAnimation = () => {
   };
 
   const resetWelcome = () => {
-    // Clear localStorage and reset welcome for testing
-    localStorage.removeItem('hasSeenWelcome');
     setShowWelcome(true);
     setIsPreloading(true);
   };
