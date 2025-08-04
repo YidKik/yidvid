@@ -1,6 +1,6 @@
 
 import { supabase } from "@/integrations/supabase/client";
-import { checkAdminStatus } from "../admin/check-admin-status";
+import { checkBasicAdminStatus } from "../admin/check-admin-status";
 import { extractChannelId } from "./extract-channel-id";
 import type { ManualChannelData } from "./channel-types";
 import { hasSufficientQuota } from "@/hooks/video/utils/quota-manager";
@@ -9,7 +9,7 @@ import { hasSufficientQuota } from "@/hooks/video/utils/quota-manager";
 
 export const addChannelManually = async (channelData: ManualChannelData) => {
   try {
-    await checkAdminStatus();
+    await checkBasicAdminStatus();
     
     if (!channelData.channel_id) {
       throw new Error('Channel ID is required');
@@ -92,7 +92,7 @@ export const addChannelManually = async (channelData: ManualChannelData) => {
 
 export const addChannel = async (channelInput: string) => {
   try {
-    await checkAdminStatus();
+    await checkBasicAdminStatus();
     
     const channelId = extractChannelId(channelInput);
     console.log('Attempting to add channel with ID:', channelId);
