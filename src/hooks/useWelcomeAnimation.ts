@@ -14,13 +14,9 @@ export const useWelcomeAnimation = () => {
     const hasSeenWelcome = localStorage.getItem('hasSeenWelcome');
     
     if (!hasSeenWelcome) {
-      // Show welcome after 3 seconds for new users (reduced from 10 seconds)
-      const timer = setTimeout(() => {
-        setShowWelcome(true);
-        setIsPreloading(true);
-      }, 3000);
-
-      return () => clearTimeout(timer);
+      // Show welcome immediately for new users
+      setShowWelcome(true);
+      setIsPreloading(true);
     } else {
       // Don't show for returning users
       setShowWelcome(false);

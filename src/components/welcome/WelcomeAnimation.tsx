@@ -48,19 +48,18 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ onComplete, 
         // Auto-complete after shorter time, don't wait for preloading
         setTimeout(() => {
           handleComplete();
-        }, 1500);
+        }, 1000);
       }
-    }, 2000); // Reduced from 3000 to 2000
+    }, 1500); // Fast animation steps
 
     return () => clearTimeout(timer);
   }, [currentStep]);
 
   const handleComplete = () => {
-    // Complete animation without waiting for preloading
+    // Complete animation and navigate to videos
     setIsVisible(false);
     setTimeout(() => {
       onComplete();
-      // Don't navigate since we're already on the videos page
     }, 500);
   };
 
