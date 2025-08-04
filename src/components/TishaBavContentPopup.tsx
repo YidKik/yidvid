@@ -1,178 +1,211 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { X, ExternalLink, Heart, Star } from 'lucide-react';
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { X, ArrowLeft, HelpCircle, Video, Music, Search, Users, Bell, Shield } from "lucide-react";
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 
-interface ContentItem {
+interface FeatureCard {
   id: string;
-  name: string;
-  image: string;
+  title: string;
   description: string;
-  link: string;
+  icon: React.ReactNode;
+  details: {
+    howToUse: string;
+    benefits: string[];
+    image: string;
+  };
 }
 
-interface TishaBavContentPopupProps {
+interface WelcomePopupProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-// Tisha B'av content with actual images and links
-const contentItems: ContentItem[] = [
+const features: FeatureCard[] = [
   {
-    id: '1',
-    name: 'Mostly Music',
-    image: '/lovable-uploads/0af85e42-46da-4c1c-945b-b8dd8dfe0d46.png',
-    description: 'Discover beautiful Jewish music and content perfect for reflection during Tisha B\'av. A comprehensive collection of meaningful songs and spiritual content.',
-    link: 'https://mostlymusic.com/'
+    id: "video-discovery",
+    title: "Video Discovery",
+    description: "Explore a vast collection of curated videos across multiple categories",
+    icon: <Video className="h-8 w-8 text-primary" />,
+    details: {
+      howToUse: "Browse through different categories on the main page, use the search function to find specific content, or discover new videos through our recommendation system.",
+      benefits: [
+        "Access to thousands of curated videos",
+        "Smart categorization for easy navigation", 
+        "Personalized recommendations based on your interests",
+        "Regular content updates from trusted channels"
+      ],
+      image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?auto=format&fit=crop&w=800&q=80"
+    }
   },
   {
-    id: '2',
-    name: 'Torah Anytime - Tisha B\'av 2025',
-    image: '/lovable-uploads/4deb8072-6c34-40f8-8862-d37dcfe70c8f.png',
-    description: '25 Life-Changing Hours - Join 700K+ viewers across 120+ cities with 60+ speakers for an absolutely FREE Tisha B\'av experience.',
-    link: 'https://torahanytime.com/tisha-bav'
+    id: "music-streaming",
+    title: "Music Streaming",
+    description: "Enjoy high-quality music streaming with personalized playlists",
+    icon: <Music className="h-8 w-8 text-primary" />,
+    details: {
+      howToUse: "Navigate to the music section, create custom playlists, search for your favorite artists and tracks, or explore curated music collections by genre.",
+      benefits: [
+        "High-quality audio streaming",
+        "Custom playlist creation and management",
+        "Extensive library of music across all genres",
+        "Offline listening capabilities"
+      ],
+      image: "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?auto=format&fit=crop&w=800&q=80"
+    }
   },
   {
-    id: '3',
-    name: 'Hidden Courage',
-    image: '/lovable-uploads/77f41bcc-ffde-4140-a4c2-c8a91853c329.png',
-    description: 'A powerful Tisha B\'av original film by Yad L\'Achim. Experience stories of courage and faith during challenging times.',
-    link: 'https://yadfilms.com/'
+    id: "smart-search",
+    title: "Smart Search",
+    description: "Advanced search functionality to find exactly what you're looking for",
+    icon: <Search className="h-8 w-8 text-primary" />,
+    details: {
+      howToUse: "Use the search bar at the top of any page. You can search by keywords, channel names, categories, or even specific topics. Use filters to narrow down results.",
+      benefits: [
+        "Intelligent search algorithms",
+        "Advanced filtering options",
+        "Search history and suggestions",
+        "Cross-platform content discovery"
+      ],
+      image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=800&q=80"
+    }
   },
   {
-    id: '4',
-    name: 'Tisha B\'av Global',
-    image: '/lovable-uploads/04f9fa7e-128e-4d18-9758-066ed3f78e6c.png',
-    description: 'A comprehensive global resource for Tisha B\'av observance, featuring content and resources from around the world.',
-    link: 'https://www.tishabav.global/'
+    id: "community",
+    title: "Community Features",
+    description: "Connect with other users and share your favorite content",
+    icon: <Users className="h-8 w-8 text-primary" />,
+    details: {
+      howToUse: "Create your profile, follow other users, share content, leave comments, and participate in community discussions. Subscribe to channels to stay updated.",
+      benefits: [
+        "Interactive community platform",
+        "User profiles and social features",
+        "Content sharing and recommendations",
+        "Community-driven content curation"
+      ],
+      image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=800&q=80"
+    }
   },
   {
-    id: '5',
-    name: 'Hidden Light',
-    image: '/lovable-uploads/5c4096e3-490d-4ad8-bd25-ae9da5ba7c7f.png',
-    description: 'Uncovering the Vatican\'s Darkest Secret - A compelling documentary exploring hidden historical truths and their relevance today.',
-    link: 'https://hashkifa.com/'
+    id: "notifications",
+    title: "Smart Notifications",
+    description: "Stay updated with personalized notifications for new content",
+    icon: <Bell className="h-8 w-8 text-primary" />,
+    details: {
+      howToUse: "Enable notifications in your settings, choose what types of updates you want to receive, and customize notification preferences for different channels and content types.",
+      benefits: [
+        "Real-time content updates",
+        "Customizable notification preferences",
+        "Channel-specific notifications",
+        "Never miss your favorite content"
+      ],
+      image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?auto=format&fit=crop&w=800&q=80"
+    }
   },
   {
-    id: '6',
-    name: 'Bounce Back',
-    image: '/lovable-uploads/6b380080-c99b-4d32-b9d6-41abe2393426.png',
-    description: 'Project Inspire presents an uplifting story about a basketball team that rose to the top, demonstrating how we can lift each other higher.',
-    link: 'https://www.projectinspire.com/events/tisha/'
-  },
-  {
-    id: '7',
-    name: 'The Yizkor Foundation',
-    image: '/lovable-uploads/e38fc853-d773-470e-9512-c12f56a9296d.png',
-    description: 'Meaningful memorial and remembrance content from The Yizkor Foundation, helping preserve memory and honor those we\'ve lost.',
-    link: 'https://www.youtube.com/@theyizkorfoundation2620'
+    id: "parental-controls",
+    title: "Parental Controls",
+    description: "Safe browsing experience with comprehensive parental control features",
+    icon: <Shield className="h-8 w-8 text-primary" />,
+    details: {
+      howToUse: "Set up parental controls in your account settings, create PIN-protected profiles for children, and customize content filters based on age-appropriate categories.",
+      benefits: [
+        "PIN-protected child profiles",
+        "Age-appropriate content filtering",
+        "Safe browsing environment",
+        "Customizable restriction levels"
+      ],
+      image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=800&q=80"
+    }
   }
 ];
 
-const ContentCard: React.FC<{ item: ContentItem; onClick: () => void }> = ({ item, onClick }) => {
+const FeatureDetail: React.FC<{ 
+  feature: FeatureCard; 
+  onBack: () => void; 
+}> = ({ feature, onBack }) => {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      whileHover={{ scale: 1.02, y: -2 }}
-      whileTap={{ scale: 0.98 }}
-      className="bg-card rounded-xl shadow-lg overflow-hidden cursor-pointer group h-full flex flex-col border border-border/10 max-w-[280px]"
-      onClick={onClick}
-    >
-      <div className="h-28 sm:h-32 md:h-36 lg:h-40 overflow-hidden bg-muted/20 flex items-center justify-center p-2 md:p-3">
-        <img 
-          src={item.image} 
-          alt={item.name}
-          className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-300"
-        />
-      </div>
-      <div className="p-2 md:p-3 lg:p-4 flex-1 flex flex-col justify-center">
-        <h3 className="font-semibold text-card-foreground text-center text-xs sm:text-sm md:text-base group-hover:text-primary transition-colors min-h-[2rem] sm:min-h-[2.5rem] flex items-center justify-center leading-tight">
-          {item.name}
-        </h3>
-      </div>
-    </motion.div>
-  );
-};
-
-const ContentDetail: React.FC<{ item: ContentItem; onBack: () => void }> = ({ item, onBack }) => {
-  return (
-    <motion.div
+      key="detail"
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -20 }}
-      className="h-full flex flex-col p-2 md:p-4 space-y-3 md:space-y-4 overflow-y-auto"
+      className="h-full flex flex-col p-2 md:p-4 space-y-3 md:space-y-4 overflow-y-auto scrollbar-thin scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent hover:scrollbar-thumb-muted-foreground/40"
     >
       <button
         onClick={onBack}
-        className="self-start mb-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+        className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors self-start"
       >
-        ← Back to content
+        <ArrowLeft className="h-4 w-4" />
+        Back to Features
       </button>
-      
-      <div className="flex-1 flex flex-col justify-between min-h-0">
-        <div className="aspect-video max-h-[140px] sm:max-h-[160px] md:max-h-[180px] lg:max-h-[200px] overflow-hidden rounded-lg shadow-md">
-          <img 
-            src={item.image} 
-            alt={item.name}
-            className="w-full h-full object-cover"
-          />
+
+      <div className="space-y-4">
+        <div className="flex items-center gap-3">
+          {feature.icon}
+          <h3 className="text-xl md:text-2xl font-bold">{feature.title}</h3>
         </div>
-        
-        <div className="space-y-2 md:space-y-3 flex-1 flex flex-col justify-between">
-          <div className="space-y-2">
-            <h2 className="text-lg md:text-xl lg:text-2xl font-bold text-card-foreground leading-tight">{item.name}</h2>
-            <p className="text-xs md:text-sm text-muted-foreground leading-relaxed line-clamp-3 md:line-clamp-4">{item.description}</p>
+
+        <img
+          src={feature.details.image}
+          alt={feature.title}
+          className="w-full h-32 md:h-48 object-cover rounded-lg"
+        />
+
+        <div className="space-y-4">
+          <div>
+            <h4 className="font-semibold text-lg mb-2">How to Use</h4>
+            <p className="text-muted-foreground leading-relaxed">
+              {feature.details.howToUse}
+            </p>
           </div>
-          
-          <motion.a
-            href={item.link}
-            target="_blank"
-            rel="noopener noreferrer"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className="inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-4 py-2 md:px-6 md:py-3 rounded-lg font-semibold hover:bg-primary/90 transition-colors text-sm md:text-base w-full md:w-auto"
-          >
-            Visit Site
-            <ExternalLink size={14} className="md:w-4 md:h-4" />
-          </motion.a>
+
+          <div>
+            <h4 className="font-semibold text-lg mb-2">Benefits</h4>
+            <ul className="space-y-2">
+              {feature.details.benefits.map((benefit, index) => (
+                <li key={index} className="flex items-start gap-2 text-muted-foreground">
+                  <div className="w-1.5 h-1.5 bg-primary rounded-full mt-2 flex-shrink-0" />
+                  <span className="leading-relaxed">{benefit}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
     </motion.div>
   );
 };
 
-export const TishaBavContentPopup: React.FC<TishaBavContentPopupProps> = ({ isOpen, onClose }) => {
-  const [selectedItem, setSelectedItem] = useState<ContentItem | null>(null);
+export const TishaBavContentPopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose }) => {
+  const [selectedFeature, setSelectedFeature] = useState<FeatureCard | null>(null);
 
-  const handleCardClick = (item: ContentItem) => {
-    setSelectedItem(item);
+  const handleFeatureClick = (feature: FeatureCard) => {
+    setSelectedFeature(feature);
   };
 
   const handleBack = () => {
-    setSelectedItem(null);
+    setSelectedFeature(null);
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent 
-        className="max-w-5xl w-[95vw] h-[70vh] md:h-[65vh] lg:h-[60vh] p-0 overflow-hidden"
+        className="max-w-5xl w-[95vw] h-[80vh] p-0 overflow-hidden"
         hideCloseButton
       >
         <div className="relative h-full bg-gradient-to-br from-background to-muted/20">
           {/* Header */}
           <div className="flex items-center justify-between p-4 md:p-6 border-b border-border/50 bg-gradient-to-r from-primary/5 to-primary/10">
             <div className="flex items-center gap-3">
-              <div className="flex items-center gap-1">
-                <Heart className="w-5 h-5 text-red-500" />
-                <Star className="w-4 h-4 text-yellow-500" />
+              <div className="p-2 bg-primary/10 rounded-lg">
+                <HelpCircle className="h-6 w-6 text-primary" />
               </div>
               <div>
                 <h1 className="text-xl md:text-2xl font-bold text-foreground">
-                  Special Tisha B'Av Content
+                  Welcome to YidVid!
                 </h1>
                 <p className="text-sm text-muted-foreground mt-1">
-                  🕯️ Meaningful content for reflection and learning
+                  Your all-in-one platform for video content discovery
                 </p>
               </div>
             </div>
@@ -189,26 +222,68 @@ export const TishaBavContentPopup: React.FC<TishaBavContentPopupProps> = ({ isOp
           {/* Content */}
           <div className="p-4 md:p-6 h-[calc(100%-5rem)] overflow-y-auto scrollbar-thin scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent hover:scrollbar-thumb-muted-foreground/40">
             <AnimatePresence mode="wait">
-              {selectedItem ? (
-                <ContentDetail key="detail" item={selectedItem} onBack={handleBack} />
+              {selectedFeature ? (
+                <FeatureDetail key="detail" feature={selectedFeature} onBack={handleBack} />
               ) : (
                 <motion.div
-                  key="grid"
+                  key="main"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-4 gap-3 md:gap-4 lg:gap-6"
+                  className="space-y-6"
                 >
-                  {contentItems.map((item, index) => (
-                    <motion.div
-                      key={item.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                    >
-                      <ContentCard item={item} onClick={() => handleCardClick(item)} />
-                    </motion.div>
-                  ))}
+                  {/* Site Description */}
+                  <div className="text-center space-y-4 p-6 bg-gradient-to-r from-primary/5 to-secondary/5 rounded-xl border border-primary/10">
+                    <h3 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                      Discover, Stream, Connect
+                    </h3>
+                    <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+                      YidVid is your comprehensive platform for discovering amazing video content, streaming high-quality music, 
+                      and connecting with a vibrant community. Whether you're looking for educational content, entertainment, 
+                      or inspiration, we've got everything you need in one place.
+                    </p>
+                  </div>
+
+                  {/* Features Grid */}
+                  <div>
+                    <h3 className="text-xl font-semibold mb-4">Explore Our Features</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {features.map((feature, index) => (
+                        <motion.div
+                          key={feature.id}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: index * 0.1 }}
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={() => handleFeatureClick(feature)}
+                          className="p-4 border border-border rounded-lg cursor-pointer hover:bg-muted/50 transition-all duration-200 hover:shadow-lg hover:border-primary/20"
+                        >
+                          <div className="space-y-3">
+                            <div className="flex items-center gap-3">
+                              {feature.icon}
+                              <h4 className="font-semibold">{feature.title}</h4>
+                            </div>
+                            <p className="text-sm text-muted-foreground leading-relaxed">
+                              {feature.description}
+                            </p>
+                            <div className="flex items-center gap-1 text-xs text-primary font-medium">
+                              <span>Learn more</span>
+                              <ArrowLeft className="h-3 w-3 rotate-180" />
+                            </div>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Call to Action */}
+                  <div className="text-center space-y-4 p-6 bg-muted/30 rounded-xl">
+                    <h3 className="text-lg font-semibold">Ready to Get Started?</h3>
+                    <p className="text-muted-foreground">
+                      Click on any feature above to learn more about how it works and how it can enhance your experience on YidVid.
+                    </p>
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>

@@ -3,7 +3,7 @@ import { Header } from "@/components/Header";
 import Auth from "@/pages/Auth";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Building2 } from "lucide-react";
+import { HelpCircle } from "lucide-react";
 import { ContentToggle } from "@/components/content/ContentToggle";
 import { VideoContent } from "@/components/content/VideoContent";
 import { useVideos } from "@/hooks/video/useVideos";
@@ -143,7 +143,7 @@ const MainContent = () => {
 
 const Videos = () => {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
-  const [isTishaBavPopupOpen, setIsTishaBavPopupOpen] = useState(true);
+  const [isWelcomePopupOpen, setIsWelcomePopupOpen] = useState(false);
 
   return (
     <>
@@ -188,21 +188,21 @@ const Videos = () => {
         <MainContent />
         <Auth isOpen={isAuthOpen} onOpenChange={setIsAuthOpen} />
         <TishaBavContentPopup 
-          isOpen={isTishaBavPopupOpen} 
-          onClose={() => setIsTishaBavPopupOpen(false)} 
+          isOpen={isWelcomePopupOpen} 
+          onClose={() => setIsWelcomePopupOpen(false)} 
         />
         
-        {/* Tisha B'av Floating Icon */}
+        {/* Welcome Help Icon */}
         <motion.div 
-          className="fixed bottom-4 left-4 p-3 bg-red-500/90 backdrop-blur-sm rounded-full shadow-lg cursor-pointer z-50"
+          className="fixed bottom-4 left-4 p-3 bg-primary/90 backdrop-blur-sm rounded-full shadow-lg cursor-pointer z-50 border border-primary/20"
           initial={{ opacity: 0, scale: 0.5 }}
           animate={{ opacity: 1, scale: 1 }}
           whileHover={{ scale: 1.1, y: -2 }}
           whileTap={{ scale: 0.95 }}
-          onClick={() => setIsTishaBavPopupOpen(true)}
-          title="Special Tisha B'av Content"
+          onClick={() => setIsWelcomePopupOpen(true)}
+          title="Welcome to YidVid - Get Help"
         >
-          <Building2 className="w-5 h-5 text-white" />
+          <HelpCircle className="w-5 h-5 text-white" />
         </motion.div>
       </div>
     </>
