@@ -48,9 +48,9 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ onComplete, 
         // Auto-complete after shorter time, don't wait for preloading
         setTimeout(() => {
           handleComplete();
-        }, 1000);
+        }, 2500);
       }
-    }, 1500); // Fast animation steps
+    }, 3000); // Proper timing for users to read content
 
     return () => clearTimeout(timer);
   }, [currentStep]);
@@ -183,14 +183,14 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ onComplete, 
                 initial={{ opacity: 0, y: 30, scale: 0.9 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -30, scale: 0.9 }}
-                transition={{ duration: 0.6 }}
+                transition={{ duration: 0.8 }}
                 className="space-y-6"
               >
                 {/* Icon */}
                 <motion.div
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+                  transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
                   className="flex justify-center text-[#ea384c] drop-shadow-sm"
                 >
                   {steps[currentStep].icon}
@@ -200,7 +200,7 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ onComplete, 
                 <motion.h1
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={{ delay: 0.3 }}
+                  transition={{ delay: 0.5 }}
                   className="text-4xl md:text-6xl font-bold text-gray-800 drop-shadow-sm"
                 >
                   {steps[currentStep].title}
@@ -210,7 +210,7 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ onComplete, 
                 <motion.h2
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={{ delay: 0.4 }}
+                  transition={{ delay: 0.7 }}
                   className="text-2xl md:text-3xl text-[#ea384c] font-medium drop-shadow-sm"
                 >
                   {currentStep === 1 ? (
@@ -226,7 +226,7 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ onComplete, 
                 <motion.p
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={{ delay: 0.5 }}
+                  transition={{ delay: 0.9 }}
                   className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed drop-shadow-sm"
                 >
                   {steps[currentStep].description}
@@ -236,7 +236,7 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ onComplete, 
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={{ delay: 0.6 }}
+                  transition={{ delay: 1.1 }}
                   className="flex justify-center space-x-2 mt-8"
                 >
                   {steps.map((_, index) => (
@@ -256,7 +256,7 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ onComplete, 
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1 }}
+                transition={{ delay: 1.5 }}
                 className="mt-8"
               >
                 <div className="flex items-center justify-center gap-2 mb-2">
