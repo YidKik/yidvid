@@ -24,97 +24,97 @@ const features: FeatureCard[] = [
   {
     id: "video-discovery",
     title: "Video Discovery",
-    description: "Explore a vast collection of curated videos across multiple categories",
+    description: "Browse curated Jewish educational and entertainment content",
     icon: <Video className="h-8 w-8 text-primary" />,
     details: {
-      howToUse: "Browse through different categories on the main page, use the search function to find specific content, or discover new videos through our recommendation system.",
+      howToUse: "Navigate through our organized categories like Torah classes, Jewish history, holidays, and family content. Use the category filters to find content that matches your interests and learning level.",
       benefits: [
-        "Access to thousands of curated videos",
-        "Smart categorization for easy navigation", 
-        "Personalized recommendations based on your interests",
-        "Regular content updates from trusted channels"
+        "Carefully curated Jewish content",
+        "Educational and entertaining videos", 
+        "Content suitable for all ages",
+        "Regular updates from trusted educators"
       ],
-      image: "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?auto=format&fit=crop&w=800&q=80"
+      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80"
     }
   },
   {
     id: "smart-search",
     title: "Smart Search",
-    description: "Advanced search functionality to find exactly what you're looking for",
+    description: "Find specific topics, rabbis, or Jewish content quickly",
     icon: <Search className="h-8 w-8 text-primary" />,
     details: {
-      howToUse: "Use the search bar at the top of any page. You can search by keywords, channel names, categories, or even specific topics. Use filters to narrow down results.",
+      howToUse: "Use our search bar to find videos by topic (like 'Shabbat', 'Passover'), rabbi names, or specific Jewish concepts. Filter results by content type, duration, or difficulty level.",
       benefits: [
-        "Intelligent search algorithms",
-        "Advanced filtering options",
-        "Search history and suggestions",
-        "Cross-platform content discovery"
+        "Search in Hebrew and English",
+        "Topic-based filtering",
+        "Find content by specific rabbis",
+        "Quick access to relevant videos"
       ],
-      image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=80"
+      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80"
     }
   },
   {
     id: "settings",
     title: "Settings & Preferences",
-    description: "Customize your viewing experience with personalized settings",
+    description: "Customize your learning experience and preferences",
     icon: <Settings className="h-8 w-8 text-primary" />,
     details: {
-      howToUse: "Access the settings page from your profile menu. Customize video quality, language preferences, notification settings, and privacy controls to match your needs.",
+      howToUse: "Access settings from your profile to set video quality, enable subtitles, choose preferred languages (Hebrew/English), and configure content filters for your family.",
       benefits: [
-        "Personalized viewing experience",
-        "Quality and language controls",
-        "Privacy and security settings",
-        "Notification customization"
+        "Multi-language support",
+        "Video quality controls",
+        "Subtitle preferences",
+        "Family-friendly content filters"
       ],
-      image: "https://images.unsplash.com/photo-1483058712412-4245e9b90334?auto=format&fit=crop&w=800&q=80"
+      image: "https://images.unsplash.com/photo-1558655146-9f40138edfeb?auto=format&fit=crop&w=800&q=80"
     }
   },
   {
-    id: "favorites",
-    title: "Favorites & Bookmarks",
-    description: "Save and organize your favorite videos for easy access",
-    icon: <Heart className="h-8 w-8 text-primary" />,
+    id: "smart-subscribe",
+    title: "Smart Subscribe",
+    description: "Subscribe to your favorite rabbis and content creators",
+    icon: <Users className="h-8 w-8 text-primary" />,
     details: {
-      howToUse: "Click the heart icon on any video to add it to your favorites. Create custom playlists and organize your saved content by categories or themes.",
+      howToUse: "Click the subscribe button on any channel page to follow your favorite rabbis and educators. Get notified when they upload new content and access their complete video libraries.",
       benefits: [
-        "Personal video library",
-        "Custom playlist creation",
-        "Easy content organization",
-        "Quick access to saved videos"
+        "Follow your favorite teachers",
+        "Get notified of new uploads",
+        "Access complete channel libraries",
+        "Personalized content recommendations"
       ],
-      image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80"
+      image: "https://images.unsplash.com/photo-1553877522-43269d4ea984?auto=format&fit=crop&w=800&q=80"
     }
   },
   {
     id: "notifications",
     title: "Smart Notifications",
-    description: "Stay updated with personalized notifications for new content",
+    description: "Stay updated with new Jewish content and learning opportunities",
     icon: <Bell className="h-8 w-8 text-primary" />,
     details: {
-      howToUse: "Enable notifications in your settings, choose what types of updates you want to receive, and customize notification preferences for different channels and content types.",
+      howToUse: "Enable notifications to get updates when subscribed channels upload new content, when there are special holiday programs, or when new educational series begin.",
       benefits: [
-        "Real-time content updates",
-        "Customizable notification preferences",
-        "Channel-specific notifications",
-        "Never miss your favorite content"
+        "New content alerts",
+        "Holiday and special event notifications",
+        "Weekly learning schedule updates",
+        "Customizable notification frequency"
       ],
-      image: "https://images.unsplash.com/photo-1472396961693-142e6e269027?auto=format&fit=crop&w=800&q=80"
+      image: "https://images.unsplash.com/photo-1611224923853-80b023f02d71?auto=format&fit=crop&w=800&q=80"
     }
   },
   {
     id: "parental-controls",
-    title: "Parental Controls",
-    description: "Safe browsing experience with comprehensive parental control features",
+    title: "Family Safe Viewing",
+    description: "Ensure age-appropriate content for your entire family",
     icon: <Shield className="h-8 w-8 text-primary" />,
     details: {
-      howToUse: "Set up parental controls in your account settings, create PIN-protected profiles for children, and customize content filters based on age-appropriate categories.",
+      howToUse: "Set up family profiles with age-appropriate content filters. Create PIN-protected adult accounts and child-safe viewing modes that automatically filter content suitable for different age groups.",
       benefits: [
-        "PIN-protected child profiles",
         "Age-appropriate content filtering",
-        "Safe browsing environment",
-        "Customizable restriction levels"
+        "Family-friendly viewing modes",
+        "PIN-protected parental controls",
+        "Safe learning environment for children"
       ],
-      image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=800&q=80"
+      image: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?auto=format&fit=crop&w=800&q=80"
     }
   }
 ];
