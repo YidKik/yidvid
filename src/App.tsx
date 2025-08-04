@@ -38,7 +38,12 @@ import { PagePreloader } from './components/PagePreloader';
 
 // Homepage component that shows the welcome animation
 const HomePage = () => {
-  const { showWelcome, markWelcomeAsShown } = useWelcomeAnimation();
+  const { showWelcome, markWelcomeAsShown, resetWelcome } = useWelcomeAnimation();
+
+  // Debug: Add a button to reset welcome for testing (remove in production)
+  const handleResetWelcome = () => {
+    resetWelcome();
+  };
 
   return (
     <>
@@ -47,6 +52,20 @@ const HomePage = () => {
           onComplete={markWelcomeAsShown}
           onSkip={markWelcomeAsShown}
         />
+      )}
+      {/* Debug button - remove this in production */}
+      {showWelcome === false && (
+        <div className="fixed inset-0 flex items-center justify-center bg-background">
+          <div className="text-center space-y-4">
+            <p className="text-muted-foreground">You've already seen the welcome animation.</p>
+            <button 
+              onClick={handleResetWelcome}
+              className="px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-primary/90"
+            >
+              Reset Welcome Animation (for testing)
+            </button>
+          </div>
+        </div>
       )}
     </>
   );

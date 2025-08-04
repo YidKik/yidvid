@@ -13,13 +13,19 @@ export const useWelcomeAnimation = () => {
     // Check if user has seen welcome before
     const hasSeenWelcome = localStorage.getItem('hasSeenWelcome');
     
+    console.log('Welcome Animation Hook - hasSeenWelcome:', hasSeenWelcome);
+    
     if (!hasSeenWelcome) {
       // Show welcome immediately for new users (no delay)
+      console.log('Welcome Animation Hook - Setting showWelcome to true for new user');
       setShowWelcome(true);
       setIsPreloading(true);
     } else {
-      // Don't show for returning users
+      // Don't show for returning users, but immediately redirect
+      console.log('Welcome Animation Hook - User has seen welcome, redirecting to videos');
       setShowWelcome(false);
+      // Redirect returning users to videos page immediately
+      window.location.replace('/videos');
     }
   }, []);
 
@@ -45,6 +51,8 @@ export const useWelcomeAnimation = () => {
   };
 
   const resetWelcome = () => {
+    // Clear localStorage and reset welcome for testing
+    localStorage.removeItem('hasSeenWelcome');
     setShowWelcome(true);
     setIsPreloading(true);
   };
