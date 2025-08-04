@@ -36,20 +36,13 @@ import TestimonialsPage from './pages/admin/TestimonialsPage';
 // Add the PagePreloader import
 import { PagePreloader } from './components/PagePreloader';
 
-// Homepage component that shows the welcome animation
+// Redirect homepage directly to videos
 const HomePage = () => {
-  const { showWelcome, markWelcomeAsShown } = useWelcomeAnimation();
+  useEffect(() => {
+    window.location.replace('/videos');
+  }, []);
 
-  return (
-    <>
-      {showWelcome && (
-        <WelcomeAnimation
-          onComplete={markWelcomeAsShown}
-          onSkip={markWelcomeAsShown}
-        />
-      )}
-    </>
-  );
+  return null;
 };
 
 function App() {

@@ -14,11 +14,11 @@ export const useWelcomeAnimation = () => {
     const hasSeenWelcome = localStorage.getItem('hasSeenWelcome');
     
     if (!hasSeenWelcome) {
-      // Show welcome after 10 seconds for new users
+      // Show welcome after 3 seconds for new users (reduced from 10 seconds)
       const timer = setTimeout(() => {
         setShowWelcome(true);
         setIsPreloading(true);
-      }, 10000);
+      }, 3000);
 
       return () => clearTimeout(timer);
     } else {

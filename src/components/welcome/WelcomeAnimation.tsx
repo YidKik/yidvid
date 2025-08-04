@@ -45,45 +45,30 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ onComplete, 
       if (currentStep < steps.length - 1) {
         setCurrentStep(currentStep + 1);
       } else {
-        // Auto-redirect after showing all steps, but only if preloading is complete
+        // Auto-complete after shorter time, don't wait for preloading
         setTimeout(() => {
-          if (preloadComplete) {
-            handleComplete();
-          } else {
-            // Keep waiting for preload to complete
-            const checkPreload = setInterval(() => {
-              if (preloadComplete) {
-                clearInterval(checkPreload);
-                handleComplete();
-              }
-            }, 500);
-          }
-        }, 2000);
+          handleComplete();
+        }, 1500);
       }
-    }, 3000);
+    }, 2000); // Reduced from 3000 to 2000
 
     return () => clearTimeout(timer);
-  }, [currentStep, preloadComplete]);
+  }, [currentStep]);
 
   const handleComplete = () => {
-    // Only complete if preloading is done
-    if (preloadComplete) {
-      setIsVisible(false);
-      setTimeout(() => {
-        onComplete();
-        navigate('/videos');
-      }, 500);
-    } else {
-      console.info('Welcome animation: Waiting for preload to complete before navigation...');
-    }
+    // Complete animation without waiting for preloading
+    setIsVisible(false);
+    setTimeout(() => {
+      onComplete();
+      // Don't navigate since we're already on the videos page
+    }, 500);
   };
 
   const handleSkip = () => {
-    // Allow skip but show loading if not complete
+    // Skip animation without navigation
     setIsVisible(false);
     setTimeout(() => {
       onSkip();
-      navigate('/videos');
     }, 300);
   };
 
