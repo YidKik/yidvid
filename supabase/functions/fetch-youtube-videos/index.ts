@@ -12,6 +12,9 @@ serve(async (req) => {
   }
 
   try {
+    const requestBody = await req.json();
+    console.log('Raw request body:', JSON.stringify(requestBody, null, 2));
+    
     const { 
       channels = [], 
       forceUpdate = false, 
@@ -20,9 +23,13 @@ serve(async (req) => {
       maxChannelsPerRun = 20,
       bypassQuotaCheck = false,
       singleChannelMode = false  // Flag to handle individual channel operations
-    } = await req.json();
+    } = requestBody;
     
     console.log(`Received request to fetch videos for ${channels.length} channels with forceUpdate=${forceUpdate} and singleChannelMode=${singleChannelMode}`);
+    
+    if (channels.length > 0) {
+      console.log('First 5 channels:', channels.slice(0, 5));
+    }
     
     // Get primary API key from environment variables
     const primaryApiKey = Deno.env.get("YOUTUBE_API_KEY") || "";

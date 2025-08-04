@@ -40,7 +40,7 @@ export const ChannelVideosFetcher = () => {
         return;
       }
       
-      console.log(`Found ${channelIds.length} channels to process`);
+      console.log(`Found ${channelIds.length} channels to process:`, channelIds.slice(0, 5));
       
       // OPTIMIZED: Process channels in smart batches to reduce edge function calls
       const BATCH_SIZE = 25; // Process 25 channels per edge function call
@@ -65,6 +65,7 @@ export const ChannelVideosFetcher = () => {
         
         try {
           console.log(`Starting batch ${batchNumber} with channels:`, batch.slice(0, 3));
+          console.log(`Sending ${batch.length} channels to edge function:`, batch);
           
           // SINGLE edge function call per batch
           const { data: batchData, error: batchError } = await supabase.functions.invoke('fetch-youtube-videos', {
