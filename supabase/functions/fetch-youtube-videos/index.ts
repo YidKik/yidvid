@@ -12,8 +12,27 @@ serve(async (req) => {
   }
 
   try {
-    const requestBody = await req.json();
-    console.log('Raw request body:', JSON.stringify(requestBody, null, 2));
+    // Check content type and method
+    console.log('Request method:', req.method);
+    console.log('Request headers:', req.headers.get('content-type'));
+    
+    let requestBody;
+    try {
+      const bodyText = await req.text();
+      console.log('Raw request text:', bodyText);
+      
+      if (!bodyText || bodyText.trim() === '') {
+        console.error('Empty request body received');
+        requestBody = {};
+      } else {
+        requestBody = JSON.parse(bodyText);
+      }
+    } catch (parseError) {
+      console.error('Error parsing request body:', parseError);
+      requestBody = {};
+    }
+    
+    console.log('Parsed request body:', JSON.stringify(requestBody, null, 2));
     
     const { 
       channels = [], 
