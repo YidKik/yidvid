@@ -1,8 +1,9 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useSessionManager } from "@/hooks/useSessionManager";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -22,9 +23,33 @@ export const ChannelVideosFetcher = () => {
   const [showViewsDialog, setShowViewsDialog] = useState(false);
   const [progress, setProgress] = useState<{current: number, total: number} | null>(null);
   const [processingStatus, setProcessingStatus] = useState<string | null>(null);
+  const { session, isAuthenticated } = useSessionManager();
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  // Check if user is admin
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      if (!session?.user?.id) return;
+      
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('is_admin')
+        .eq('id', session.user.id)
+        .single();
+        
+      setIsAdmin(profile?.is_admin || false);
+    };
+    
+    checkAdminStatus();
+  }, [session]);
 
   // Optimized function to fetch videos with smart batching and minimal edge function calls
   const handleFetchVideos = async () => {
+    if (!isAuthenticated || !isAdmin) {
+      toast.error("You must be logged in as an admin to fetch videos");
+      return;
+    }
+
     try {
       setIsLoading(true);
       setProcessingStatus("Fetching active channels...");
@@ -67,7 +92,13 @@ export const ChannelVideosFetcher = () => {
           console.log(`Starting batch ${batchNumber} with channels:`, batch.slice(0, 3));
           console.log(`Sending ${batch.length} channels to edge function:`, batch);
           
-          // SINGLE edge function call per batch
+          // Ensure we have a valid session token
+          const { data: { session: currentSession } } = await supabase.auth.getSession();
+          if (!currentSession) {
+            throw new Error("Authentication session expired. Please log in again.");
+          }
+          
+          // SINGLE edge function call per batch with proper headers
           const { data: batchData, error: batchError } = await supabase.functions.invoke('fetch-youtube-videos', {
             body: { 
               channels: batch,
@@ -75,6 +106,10 @@ export const ChannelVideosFetcher = () => {
               maxChannelsPerRun: batch.length,
               bypassQuotaCheck: true,
               prioritizeRecent: false
+            },
+            headers: {
+              'Authorization': `Bearer ${currentSession.access_token}`,
+              'Content-Type': 'application/json'
             }
           });
           
@@ -140,37 +175,44 @@ export const ChannelVideosFetcher = () => {
 
   // New function to update video view counts
   const handleUpdateViewCounts = async () => {
+    if (!isAuthenticated || !isAdmin) {
+      toast.error("You must be logged in as an admin to update view counts");
+      return;
+    }
+
     try {
       setIsUpdatingViews(true);
       setProcessingStatus("Updating video view counts...");
       toast.loading("Updating video view counts...");
       
-      // Call the edge function directly
-      const response = await fetch('https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/update-video-views', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          // Use Supabase client instead of direct fetch
-        },
-        body: JSON.stringify({
+      // Get current session for authentication
+      const { data: { session: currentSession } } = await supabase.auth.getSession();
+      if (!currentSession) {
+        throw new Error("Authentication session expired. Please log in again.");
+      }
+      
+      // Use Supabase client instead of direct fetch
+      const { data: result, error } = await supabase.functions.invoke('update-video-views', {
+        body: {
           batchSize: 50,
           maxVideos: 300,
           bypassQuotaCheck: true
-        })
+        },
+        headers: {
+          'Authorization': `Bearer ${currentSession.access_token}`,
+          'Content-Type': 'application/json'
+        }
       });
       
-      if (response.ok) {
-        const result = await response.json();
-        
-        if (result.success) {
-          toast.success(`Successfully updated ${result.updated} video view counts`, {
-            description: `Updated ${result.updated} videos, ${result.failed} failed`
-          });
-        } else {
-          toast.error(`Failed to update view counts: ${result.message}`);
-        }
+      if (error) {
+        console.error("Edge function error:", error);
+        toast.error(`Failed to update view counts: ${error.message}`);
+      } else if (result && result.success) {
+        toast.success(`Successfully updated ${result.updated} video view counts`, {
+          description: `Updated ${result.updated} videos, ${result.failed} failed`
+        });
       } else {
-        toast.error("Error communicating with view count update service");
+        toast.error(`Failed to update view counts: ${result?.message || 'Unknown error'}`);
       }
     } catch (error) {
       console.error("Error updating view counts:", error);
@@ -225,13 +267,17 @@ export const ChannelVideosFetcher = () => {
         <Button
           variant="outline"
           onClick={() => setShowConfirmDialog(true)}
-          disabled={isLoading || isUpdatingViews}
+          disabled={isLoading || isUpdatingViews || !isAuthenticated || !isAdmin}
         >
           {isLoading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               {processingStatus || "Processing..."}
             </>
+          ) : !isAuthenticated ? (
+            "Login Required"
+          ) : !isAdmin ? (
+            "Admin Access Required"
           ) : (
             "Fetch Channel Videos"
           )}
@@ -240,13 +286,17 @@ export const ChannelVideosFetcher = () => {
         <Button
           variant="outline"
           onClick={() => setShowViewsDialog(true)}
-          disabled={isLoading || isUpdatingViews}
+          disabled={isLoading || isUpdatingViews || !isAuthenticated || !isAdmin}
         >
           {isUpdatingViews ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               Updating View Counts...
             </>
+          ) : !isAuthenticated ? (
+            "Login Required"
+          ) : !isAdmin ? (
+            "Admin Access Required"
           ) : (
             <>
               <RefreshCw className="mr-2 h-4 w-4" />
