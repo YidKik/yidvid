@@ -3,7 +3,6 @@ import { Header } from "@/components/Header";
 import Auth from "@/pages/Auth";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { HelpCircle } from "lucide-react";
 import { ContentToggle } from "@/components/content/ContentToggle";
 import { VideoContent } from "@/components/content/VideoContent";
 import { useVideos } from "@/hooks/video/useVideos";
@@ -11,7 +10,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useSessionManager } from "@/hooks/useSessionManager";
 import { Helmet } from "react-helmet";
 import { useSearchParams } from "react-router-dom";
-import { TishaBavContentPopup } from "@/components/TishaBavContentPopup";
+import { SiteMaintenancePopup } from "@/components/SiteMaintenancePopup";
 
 const MainContent = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -143,7 +142,7 @@ const MainContent = () => {
 
 const Videos = () => {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
-  const [isWelcomePopupOpen, setIsWelcomePopupOpen] = useState(false);
+  const [isMaintenancePopupOpen, setIsMaintenancePopupOpen] = useState(true);
 
   return (
     <>
@@ -187,23 +186,10 @@ const Videos = () => {
       <div className="min-h-screen w-full bg-white videos-page">
         <MainContent />
         <Auth isOpen={isAuthOpen} onOpenChange={setIsAuthOpen} />
-        <TishaBavContentPopup 
-          isOpen={isWelcomePopupOpen} 
-          onClose={() => setIsWelcomePopupOpen(false)} 
+        <SiteMaintenancePopup 
+          isOpen={isMaintenancePopupOpen} 
+          onClose={() => setIsMaintenancePopupOpen(false)} 
         />
-        
-        {/* Welcome Help Icon */}
-        <motion.div 
-          className="fixed bottom-4 left-4 p-3 bg-primary/90 backdrop-blur-sm rounded-full shadow-lg cursor-pointer z-50 border border-primary/20"
-          initial={{ opacity: 0, scale: 0.5 }}
-          animate={{ opacity: 1, scale: 1 }}
-          whileHover={{ scale: 1.1, y: -2 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={() => setIsWelcomePopupOpen(true)}
-          title="Welcome to YidVid - Get Help"
-        >
-          <HelpCircle className="w-5 h-5 text-white" />
-        </motion.div>
       </div>
     </>
   );
