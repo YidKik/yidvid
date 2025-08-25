@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)"
@@ -1390,19 +1390,19 @@ export type Database = {
     }
     Functions: {
       admin_delete_channel: {
-        Args: { channel_id_param: string; admin_user_id: string }
+        Args: { admin_user_id: string; channel_id_param: string }
         Returns: Json
       }
       admin_delete_video: {
-        Args: { video_id_param: string; admin_user_id: string }
+        Args: { admin_user_id: string; video_id_param: string }
         Returns: Json
       }
       admin_restore_channel: {
-        Args: { channel_id_param: string; admin_user_id: string }
+        Args: { admin_user_id: string; channel_id_param: string }
         Returns: Json
       }
       admin_restore_video: {
-        Args: { video_id_param: string; admin_user_id: string }
+        Args: { admin_user_id: string; video_id_param: string }
         Returns: Json
       }
       check_admin_rate_limit: {
