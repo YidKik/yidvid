@@ -5,9 +5,30 @@ import { useContentPreloader } from './useContentPreloader';
 export const useWelcomeAnimation = () => {
   const [showWelcome, setShowWelcome] = useState<boolean | null>(null);
   const [isPreloading, setIsPreloading] = useState(false);
+  const [loadingProgress, setLoadingProgress] = useState(0);
 
   // Start preloading when welcome animation is shown
-  const { preloadComplete, isPreloading: contentPreloading } = useContentPreloader(showWelcome === true);
+  const { preloadComplete, isPreloading: contentPreloading, imagesCached, videosReady, channelsReady } = useContentPreloader(showWelcome === true);
+
+  // Calculate loading progress based on preloading state
+  useEffect(() => {
+    if (showWelcome === true) {
+      let progress = 0;
+      
+      // Initial progress
+      if (videosReady) progress += 30;
+      if (channelsReady) progress += 30;
+      if (imagesCached) progress += 30;
+      if (preloadComplete) progress = 100;
+      
+      // Smooth progress animation
+      const timer = setTimeout(() => {
+        setLoadingProgress(progress);
+      }, 100);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [showWelcome, videosReady, channelsReady, imagesCached, preloadComplete]);
 
   useEffect(() => {
     // Check if user has seen welcome before
@@ -54,6 +75,7 @@ export const useWelcomeAnimation = () => {
     markWelcomeAsShown,
     resetWelcome,
     isPreloading: contentPreloading,
-    preloadComplete
+    preloadComplete,
+    loadingProgress
   };
 };

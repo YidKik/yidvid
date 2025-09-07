@@ -14,7 +14,7 @@ import Settings from './pages/Settings';
 import Dashboard from './pages/Dashboard';
 import { recordNavigation, setupScrollRestoration } from './utils/scrollRestoration';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
-import { WelcomeAnimation } from './components/welcome/WelcomeAnimation';
+import { YidVidLoadingAnimation } from './components/ui/loading/YidVidLoadingAnimation';
 import { useWelcomeAnimation } from './hooks/useWelcomeAnimation';
 import { SiteImprovementNotification } from './components/SiteImprovementNotification';
 
@@ -38,7 +38,7 @@ import { PagePreloader } from './components/PagePreloader';
 
 // Homepage with welcome animation
 const HomePage = () => {
-  const { showWelcome, markWelcomeAsShown } = useWelcomeAnimation();
+  const { showWelcome, markWelcomeAsShown, loadingProgress, preloadComplete } = useWelcomeAnimation();
   const navigate = useNavigate();
 
   // If welcome animation should not be shown, redirect to videos
@@ -48,22 +48,18 @@ const HomePage = () => {
     }
   }, [showWelcome, navigate]);
 
-  const handleWelcomeComplete = () => {
+  const handleLoadingComplete = () => {
     markWelcomeAsShown();
     navigate('/videos', { replace: true });
   };
 
-  const handleWelcomeSkip = () => {
-    markWelcomeAsShown();
-    navigate('/videos', { replace: true });
-  };
-
-  // Show welcome animation or loading
+  // Show loading animation while preloading content
   if (showWelcome === true) {
     return (
-      <WelcomeAnimation 
-        onComplete={handleWelcomeComplete}
-        onSkip={handleWelcomeSkip}
+      <YidVidLoadingAnimation 
+        isVisible={true}
+        progress={loadingProgress}
+        onComplete={handleLoadingComplete}
       />
     );
   }
