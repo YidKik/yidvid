@@ -18,15 +18,14 @@ export const ChannelRefreshButton = ({ channelId, channelTitle }: ChannelRefresh
       setIsLoading(true);
       const loadingToast = toast.loading(`Fetching videos for ${channelTitle || channelId}...`);
 
-      // Invoke the edge function to fetch videos for this specific channel
       const { data, error } = await supabase.functions.invoke('fetch-youtube-videos', {
-        body: { 
+        body: JSON.stringify({ 
           channels: [channelId],
           forceUpdate: true,
           bypassQuotaCheck: true,
           prioritizeRecent: true,
           singleChannelMode: true // Flag to indicate this is a single channel request
-        }
+        })
       });
 
       toast.dismiss(loadingToast);

@@ -98,15 +98,20 @@ export const ChannelVideosFetcher = () => {
             throw new Error("Authentication session expired. Please log in again.");
           }
           
-          // SINGLE edge function call per batch with proper headers
+          // SINGLE edge function call per batch with proper body serialization
+          console.log('Sending batch to edge function:', { 
+            channels: batch, 
+            channelCount: batch.length 
+          });
+          
           const { data: batchData, error: batchError } = await supabase.functions.invoke('fetch-youtube-videos', {
-            body: { 
+            body: JSON.stringify({ 
               channels: batch,
               forceUpdate: true,
               maxChannelsPerRun: batch.length,
               bypassQuotaCheck: true,
               prioritizeRecent: false
-            },
+            }),
             headers: {
               'Authorization': `Bearer ${currentSession.access_token}`,
               'Content-Type': 'application/json'
@@ -191,13 +196,13 @@ export const ChannelVideosFetcher = () => {
         throw new Error("Authentication session expired. Please log in again.");
       }
       
-      // Use Supabase client instead of direct fetch
+      // Use Supabase client with proper body serialization
       const { data: result, error } = await supabase.functions.invoke('update-video-views', {
-        body: {
+        body: JSON.stringify({
           batchSize: 50,
           maxVideos: 300,
           bypassQuotaCheck: true
-        },
+        }),
         headers: {
           'Authorization': `Bearer ${currentSession.access_token}`,
           'Content-Type': 'application/json'

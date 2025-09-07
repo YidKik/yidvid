@@ -20,16 +20,19 @@ serve(async (req) => {
     let requestBody;
     try {
       const bodyText = await req.text();
-      console.log('Raw request text:', bodyText);
+      console.log('Raw request text length:', bodyText.length);
+      console.log('Raw request text:', bodyText.substring(0, 200));
       
       if (!bodyText || bodyText.trim() === '') {
         console.error('Empty request body received');
         requestBody = {};
       } else {
         requestBody = JSON.parse(bodyText);
+        console.log('Successfully parsed body with', requestBody.channels?.length || 0, 'channels');
       }
     } catch (parseError) {
       console.error('Error parsing request body:', parseError);
+      console.error('Body text that failed to parse:', bodyText.substring(0, 100));
       requestBody = {};
     }
     
