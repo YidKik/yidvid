@@ -22,12 +22,13 @@ export async function checkQuota() {
 
     // If we're past reset time, reset the quota
     if (new Date() > new Date(data.quota_reset_at)) {
-      console.log("Reset time reached, resetting quota");
+      console.log("Reset time reached, resetting quota to 10000");
       const { data: resetData, error: resetError } = await supabase
         .from("api_quota_tracking")
         .update({
           quota_remaining: 10000,
-          quota_reset_at: new Date(new Date().setHours(24, 0, 0, 0)).toISOString()
+          quota_reset_at: new Date(new Date().setHours(24, 0, 0, 0)).toISOString(),
+          last_reset: new Date().toISOString()
         })
         .eq("api_name", "youtube")
         .select("quota_remaining, quota_reset_at")
@@ -35,29 +36,14 @@ export async function checkQuota() {
 
       if (resetError) {
         console.error("Error resetting quota:", resetError);
-        // Return the data we have anyway
-        return data;
+        // Return default values
+        return { quota_remaining: 10000, quota_reset_at: new Date(new Date().setHours(24, 0, 0, 0)).toISOString() };
       }
 
       return resetData || { quota_remaining: 10000, quota_reset_at: new Date(new Date().setHours(24, 0, 0, 0)).toISOString() };
     }
 
-    // Force quota to be positive for production use
-    if (data.quota_remaining <= 0) {
-      console.log("Overriding zero quota - setting to 1000 for continued operation");
-      // Set a reasonable quota for continued operation
-      const { data: overrideData } = await supabase
-        .from("api_quota_tracking")
-        .update({
-          quota_remaining: 1000
-        })
-        .eq("api_name", "youtube")
-        .select("quota_remaining, quota_reset_at")
-        .single();
-        
-      return overrideData || data;
-    }
-
+    console.log(`Current quota: ${data.quota_remaining}`);
     return data;
   } catch (error) {
     console.error("Error in checkQuota:", error);

@@ -4,6 +4,7 @@ import { corsHeaders } from "../_shared/cors.ts";
 import { checkQuota, updateQuotaUsage } from "./quota-manager.ts";
 import { processChannel } from "./channel-processor.ts";
 import { fetchChannelVideos } from "./youtube-api.ts";
+import { logFetchAttempt } from "./logger.ts";
 
 serve(async (req) => {
   // Handle CORS
@@ -102,18 +103,20 @@ serve(async (req) => {
     // Process channels sequentially to better manage quota
     for (const channelId of channelsSubset) {
       try {
-        console.log(`Processing channel ${channelId}`);
+    console.log(`Processing channel ${channelId} (${processedCount + 1}/${channelsToProcess})`);
         
         // Use primary API key first, fallback if needed
         const apiKey = ((quota_remaining <= 0) && !bypassQuotaCheck) ? fallbackApiKey : primaryApiKey;
         
         // Fetch channel videos directly from YouTube
         const { videos, quotaExceeded } = await fetchChannelVideos(channelId, apiKey);
+        console.log(`Channel ${channelId}: Found ${videos?.length || 0} videos, quotaExceeded: ${quotaExceeded}`);
         
         if (quotaExceeded && apiKey === primaryApiKey) {
           // Try again with fallback key if primary key quota is exceeded
           console.log("Primary API key quota exceeded, trying with fallback key");
           const fallbackResult = await fetchChannelVideos(channelId, fallbackApiKey);
+          console.log(`Fallback attempt for ${channelId}: Found ${fallbackResult.videos?.length || 0} videos`);
           
           if (fallbackResult.videos.length > 0) {
             // Process videos from fallback result
@@ -192,6 +195,9 @@ serve(async (req) => {
       await updateQuotaUsage(quotaUsed);
     }
 
+    // Log the fetch attempt for debugging
+    await logFetchAttempt(processedCount, newVideosCount, quota_remaining - quotaUsed);
+
     console.log(`Completed processing ${processedCount} channels, found ${newVideosCount} new videos`);
 
     return new Response(
@@ -208,6 +214,9 @@ serve(async (req) => {
     );
   } catch (error) {
     console.error("Error in fetch-youtube-videos:", error);
+    
+    // Log the error
+    await logFetchAttempt(0, 0, undefined, error.message);
     
     return new Response(
       JSON.stringify({

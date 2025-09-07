@@ -11,69 +11,28 @@ export async function fetchChannelVideos(
   try {
     console.log(`[YouTube API] Fetching videos for channel ${channelId}`);
     
-    // Use environment variable for fallback API key
-    const fallbackApiKey = Deno.env.get('YOUTUBE_FALLBACK_API_KEY') || "";
+    // Use primary API key as fallback if no separate fallback key is configured
+    const fallbackApiKey = Deno.env.get('YOUTUBE_FALLBACK_API_KEY') || apiKey;
     
-    // Define a list of referer domains to try
-    const refererDomains = [
-      'https://yidvid.com',
-      'https://lovable.dev',
-      'https://app.yidvid.com',
-      'https://youtube-viewer.com',
-      'https://videohub.app'
-    ];
+    // Simplified approach - remove complex referer switching that might be causing issues
+    const defaultHeaders = {
+      'Accept': 'application/json',
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+    };
     
-    // First try with the primary referer
+    // Simplified API call - try primary key first
     let channelResponse = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=contentDetails,snippet,status&id=${channelId}&key=${apiKey}`, {
-      headers: {
-        'Accept': 'application/json',
-        'Referer': refererDomains[0],
-        'Origin': refererDomains[0],
-        'User-Agent': 'Mozilla/5.0 (compatible; VideoFetchBot/1.0)'
-      }
+      headers: defaultHeaders
     });
     
     // If quota exceeded or forbidden response, try with fallback API key
-    if (channelResponse.status === 403 || !channelResponse.ok) {
-      console.log(`[YouTube API] Quota exceeded or error with primary key, trying fallback API key`);
-      channelResponse = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=contentDetails,snippet,status&id=${channelId}&key=${fallbackApiKey}`, {
-        headers: {
-          'Accept': 'application/json',
-          'Referer': refererDomains[0],
-          'Origin': refererDomains[0],
-          'User-Agent': 'Mozilla/5.0 (compatible; VideoFetchBot/1.0)'
-        }
-      });
-    }
-    
-    // If still failed, try with alternative referers
-    let domainIndex = 1;
-    while (!channelResponse.ok && domainIndex < refererDomains.length) {
-      console.log(`[YouTube API] Trying alternative referer domain: ${refererDomains[domainIndex]}`);
-      
-      // Try with regular API key first
-      channelResponse = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=contentDetails,snippet,status&id=${channelId}&key=${apiKey}`, {
-        headers: {
-          'Accept': 'application/json',
-          'Referer': refererDomains[domainIndex],
-          'Origin': refererDomains[domainIndex],
-          'User-Agent': 'Mozilla/5.0 (compatible; VideoFetchBot/1.0)'
-        }
-      });
-      
-      // If still failing, try with fallback API key
-      if (!channelResponse.ok) {
+    if (channelResponse.status === 403 || channelResponse.status === 429) {
+      console.log(`[YouTube API] Primary key failed (${channelResponse.status}), trying fallback API key`);
+      if (fallbackApiKey !== apiKey) {
         channelResponse = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=contentDetails,snippet,status&id=${channelId}&key=${fallbackApiKey}`, {
-          headers: {
-            'Accept': 'application/json',
-            'Referer': refererDomains[domainIndex],
-            'Origin': refererDomains[domainIndex],
-            'User-Agent': 'Mozilla/5.0 (compatible; VideoFetchBot/1.0)'
-          }
+          headers: defaultHeaders
         });
       }
-      
-      domainIndex++;
     }
     
     if (!channelResponse.ok) {
@@ -114,19 +73,13 @@ export async function fetchChannelVideos(
     const channelThumbnail = channelData.items[0].snippet.thumbnails?.default?.url || null;
     console.log(`[YouTube API] Found channel: ${channelTitle} (${channelId})`);
 
-    // Use the same referer that worked for the channel request
-    const successfulReferer = refererDomains[Math.min(domainIndex - 1, refererDomains.length - 1)];
-    const currentApiKey = channelResponse.url.includes(fallbackApiKey) ? fallbackApiKey : apiKey;
+    // Determine which API key to use based on previous response
+    const currentApiKey = channelResponse.status === 200 ? apiKey : fallbackApiKey;
     
     // Fetch videos from uploads playlist - maximum of 50 per request (API limit)
     const playlistUrl = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${uploadsPlaylistId}&key=${currentApiKey}`;
     const response = await fetch(playlistUrl, {
-      headers: {
-        'Accept': 'application/json',
-        'Referer': successfulReferer,
-        'Origin': successfulReferer,
-        'User-Agent': 'Mozilla/5.0 (compatible; VideoFetchBot/1.0)'
-      }
+      headers: defaultHeaders
     });
     
     if (!response.ok) {
@@ -134,19 +87,12 @@ export async function fetchChannelVideos(
       console.error(`[YouTube API] Playlist API error for channel ${channelId}:`, errorText);
       console.error(`[YouTube API] Status: ${response.status} ${response.statusText}`);
       
-      // Try with fallback key if main key failed
-      if (currentApiKey !== fallbackApiKey) {
+      // Try with fallback key if main key failed and we have a different fallback key
+      if (currentApiKey !== fallbackApiKey && fallbackApiKey !== apiKey) {
         console.log(`[YouTube API] Trying fallback API key for playlist request`);
         const fallbackResponse = await fetch(
           `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${uploadsPlaylistId}&key=${fallbackApiKey}`, 
-          {
-            headers: {
-              'Accept': 'application/json',
-              'Referer': successfulReferer,
-              'Origin': successfulReferer,
-              'User-Agent': 'Mozilla/5.0 (compatible; VideoFetchBot/1.0)'
-            }
-          }
+          { headers: defaultHeaders }
         );
         
         if (!fallbackResponse.ok) {
@@ -160,7 +106,7 @@ export async function fetchChannelVideos(
         }
         
         // Process with the fallback response data
-        return await processVideoItems(fallbackData, channelId, channelTitle, fallbackApiKey, successfulReferer);
+        return await processVideoItems(fallbackData, channelId, channelTitle, fallbackApiKey);
       }
       
       // Check for quota exceeded
@@ -179,7 +125,7 @@ export async function fetchChannelVideos(
       return { videos: [] };
     }
 
-    return await processVideoItems(data, channelId, channelTitle, currentApiKey, successfulReferer);
+    return await processVideoItems(data, channelId, channelTitle, currentApiKey);
   } catch (error) {
     console.error(`[YouTube API] Error processing channel ${channelId}:`, error);
     // Return empty result instead of throwing to prevent cascade failures
@@ -188,7 +134,7 @@ export async function fetchChannelVideos(
 }
 
 // Helper function to process video items and get statistics
-async function processVideoItems(data: any, channelId: string, channelTitle: string, apiKey: string, referer: string): Promise<VideoResult> {
+async function processVideoItems(data: any, channelId: string, channelTitle: string, apiKey: string): Promise<VideoResult> {
   // Get video IDs and fetch statistics in a single batch
   const videoIds = data.items
     .map((item: any) => item.snippet?.resourceId?.videoId)
@@ -200,16 +146,13 @@ async function processVideoItems(data: any, channelId: string, channelTitle: str
     return { videos: [] };
   }
 
-  // Get detailed video information including statistics - Update referer header
+  // Get detailed video information including statistics
   const statsUrl = `https://www.googleapis.com/youtube/v3/videos?part=statistics,snippet&id=${videoIds.join(',')}&key=${apiKey}`;
-  const statsResponse = await fetch(statsUrl, {
-    headers: {
-      'Accept': 'application/json',
-      'Referer': referer,
-      'Origin': referer,
-      'User-Agent': 'Mozilla/5.0 (compatible; VideoFetchBot/1.0)'
-    }
-  });
+  const defaultHeaders = {
+    'Accept': 'application/json',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+  };
+  const statsResponse = await fetch(statsUrl, { headers: defaultHeaders });
   
   if (!statsResponse.ok) {
     const errorText = await statsResponse.text();
