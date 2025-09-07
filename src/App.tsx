@@ -36,48 +36,13 @@ import TestimonialsPage from './pages/admin/TestimonialsPage';
 // Add the PagePreloader import
 import { PagePreloader } from './components/PagePreloader';
 
-// Homepage with welcome animation
+// Homepage redirects to videos
 const HomePage = () => {
-  const { showWelcome, markWelcomeAsShown, loadingProgress, preloadComplete } = useWelcomeAnimation();
   const navigate = useNavigate();
-
-  // If welcome animation should not be shown, redirect to videos
+  
   useEffect(() => {
-    if (showWelcome === false) {
-      navigate('/videos', { replace: true });
-    }
-  }, [showWelcome, navigate]);
-
-  const handleLoadingComplete = () => {
-    markWelcomeAsShown();
     navigate('/videos', { replace: true });
-  };
-
-  // Show loading animation while preloading content
-  if (showWelcome === true) {
-    return (
-      <YidVidLoadingAnimation 
-        isVisible={true}
-        progress={loadingProgress}
-        onComplete={handleLoadingComplete}
-      />
-    );
-  }
-
-  // Show loading while determining welcome state
-  if (showWelcome === null) {
-    return (
-      <div className="fixed inset-0 bg-gradient-to-br from-red-50/95 via-pink-50/95 to-white/95 flex items-center justify-center">
-        <div className="flex flex-col items-center space-y-4">
-          <img 
-            src="/lovable-uploads/dd4fbfcb-aeb9-4cd3-a7b1-9dbf07b81a43.png" 
-            alt="YidVid Logo" 
-            className="w-32 h-32 object-contain drop-shadow-lg animate-pulse"
-          />
-        </div>
-      </div>
-    );
-  }
+  }, [navigate]);
 
   return null;
 };
@@ -85,6 +50,7 @@ const HomePage = () => {
 function App() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { showWelcome, markWelcomeAsShown, loadingProgress } = useWelcomeAnimation();
   
   // Initialize keyboard shortcuts
   useKeyboardShortcuts();
@@ -103,6 +69,36 @@ function App() {
     const currentPath = location.pathname + location.search;
     recordNavigation(currentPath);
   }, [location]);
+
+  const handleLoadingComplete = () => {
+    markWelcomeAsShown();
+  };
+
+  // Show loading animation as the first thing on any page visit
+  if (showWelcome === true) {
+    return (
+      <YidVidLoadingAnimation 
+        isVisible={true}
+        progress={loadingProgress}
+        onComplete={handleLoadingComplete}
+      />
+    );
+  }
+
+  // Show loading while determining welcome state
+  if (showWelcome === null) {
+    return (
+      <div className="fixed inset-0 bg-background flex items-center justify-center">
+        <div className="flex flex-col items-center space-y-4">
+          <img 
+            src="/lovable-uploads/e425cacb-4c3a-4d81-b4e0-77fcbf10f61c.png" 
+            alt="YidVid Logo" 
+            className="w-20 h-20 object-contain drop-shadow-lg animate-pulse"
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <PlaybackProvider>

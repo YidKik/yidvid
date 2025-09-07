@@ -31,17 +31,9 @@ export const useWelcomeAnimation = () => {
   }, [showWelcome, videosReady, channelsReady, imagesCached, preloadComplete]);
 
   useEffect(() => {
-    // Check if user has seen welcome before
-    const hasSeenWelcome = localStorage.getItem('hasSeenWelcome');
-    
-    if (!hasSeenWelcome) {
-      // Show welcome immediately for new users
-      setShowWelcome(true);
-      setIsPreloading(true);
-    } else {
-      // Don't show for returning users
-      setShowWelcome(false);
-    }
+    // Always show welcome animation on app startup to preload content
+    setShowWelcome(true);
+    setIsPreloading(true);
   }, []);
 
   const markWelcomeAsShown = () => {
