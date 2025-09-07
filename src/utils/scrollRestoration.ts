@@ -38,13 +38,23 @@ export const recordNavigation = (path: string) => {
     if (history.length === 0 || history[history.length - 1] !== path) {
       // Save current scroll position for the previous path before recording new path
       if (history.length > 0) {
-        saveScrollPosition(history[history.length - 1]);
+        const previousPath = history[history.length - 1];
+        // Only save if we haven't already saved for this path recently
+        const scrollPositions = JSON.parse(sessionStorage.getItem('scrollPositions') || '{}');
+        if (!scrollPositions[previousPath] || scrollPositions[previousPath] === 0) {
+          saveScrollPosition(previousPath);
+        }
+      }
+      
+      // Limit history to prevent memory issues (keep last 20 entries)
+      if (history.length >= 20) {
+        history.shift();
       }
       
       // Add the path to history
       history.push(path);
       sessionStorage.setItem('navigationHistory', JSON.stringify(history));
-      console.log(`Recorded navigation to: ${path}, history:`, history);
+      console.log(`Recorded navigation to: ${path}, history length: ${history.length}`);
     }
   } catch (e) {
     console.warn('Could not record navigation:', e);
@@ -99,6 +109,11 @@ export const isWelcomePage = (path: string) => {
 
 // Initialize navigation history tracking
 export const setupScrollRestoration = () => {
+  // Disable browser's default scroll restoration to prevent conflicts
+  if ('scrollRestoration' in history) {
+    history.scrollRestoration = 'manual';
+  }
+  
   // Track initial page load
   recordNavigation(window.location.pathname + window.location.search);
   
@@ -106,5 +121,17 @@ export const setupScrollRestoration = () => {
   window.addEventListener('beforeunload', () => {
     saveScrollPosition(window.location.pathname + window.location.search);
   });
+  
+  // Save scroll position periodically for long-lived pages
+  let lastSaveTime = 0;
+  const handleScroll = () => {
+    const now = Date.now();
+    if (now - lastSaveTime > 1000) { // Throttle to every second
+      saveScrollPosition(window.location.pathname + window.location.search);
+      lastSaveTime = now;
+    }
+  };
+  
+  window.addEventListener('scroll', handleScroll, { passive: true });
 };
 

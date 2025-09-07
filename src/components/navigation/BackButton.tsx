@@ -57,12 +57,28 @@ export const BackButton = ({ className }: BackButtonProps) => {
       
       navigate(previousPath);
       
-      setTimeout(() => {
+      // Use multiple restoration attempts for more reliable scroll restoration
+      const restoreScroll = () => {
         window.scrollTo({
           top: scrollPosition,
           behavior: 'auto'
         });
-      }, 100);
+        console.log(`Restored scroll position to: ${scrollPosition}px for path: ${previousPath}`);
+      };
+      
+      // Immediate attempt
+      setTimeout(restoreScroll, 50);
+      
+      // Follow-up attempts to ensure restoration works
+      setTimeout(restoreScroll, 200);
+      setTimeout(restoreScroll, 500);
+      
+      // Final attempt after page is fully loaded
+      setTimeout(() => {
+        if (Math.abs(window.scrollY - scrollPosition) > 10) {
+          restoreScroll();
+        }
+      }, 1000);
     } else {
       console.log("No previous path found, navigating to home with skipWelcome");
       navigate("/?skipWelcome=true");
