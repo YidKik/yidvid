@@ -124,58 +124,72 @@ export const ChannelDataProvider = ({ children, onError, searchQuery = "" }: Cha
     }
   };
 
-  const { data: channels, error, isLoading: isChannelsLoading, refetch } = useQuery({
-    queryKey: ["youtube_channels", lastAuthEvent, searchQuery],
-    queryFn: async () => {
-      // Try edge function first for best public access
-      try {
-        console.log("Fetching ALL public channels via edge function...");
-        const urlWithSearch = `https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/get-public-channels${searchQuery ? `?search=${encodeURIComponent(searchQuery)}` : ''}`;
-        const response = await fetch(urlWithSearch, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            // Use Supabase client instead of direct fetch
-          }
-        });
-        
-        if (response.ok) {
-          const result = await response.json();
-          if (result.data && Array.isArray(result.data)) {
-            console.log(`Retrieved ${result.data.length} channels with edge function`);
-            return result.data;
-          }
+  // Memoized query function to prevent unnecessary re-renders
+  const queryFn = async () => {
+    // Try edge function first for best public access
+    try {
+      console.log("Fetching channels via edge function...");
+      const urlWithSearch = `https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/get-public-channels${searchQuery ? `?search=${encodeURIComponent(searchQuery)}` : ''}`;
+      const response = await fetch(urlWithSearch, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
         }
-      } catch (edgeError) {
-        console.error("Edge function error:", edgeError);
-      }
+      });
       
-      // Then try direct database fetch
-      const dbChannels = await fetchChannelsFromDB();
-      if (dbChannels && dbChannels.length > 0) {
-        return dbChannels;
+      if (response.ok) {
+        const result = await response.json();
+        if (result.data && Array.isArray(result.data)) {
+          // Sort channels by title for consistent ordering
+          const sortedChannels = result.data.sort((a: Channel, b: Channel) => 
+            (a.title || '').localeCompare(b.title || '')
+          );
+          console.log(`Retrieved ${sortedChannels.length} channels with edge function`);
+          return sortedChannels;
+        }
       }
-      
-      // Then try manual fetch method with no limit
-      const manualData = await fetchChannelsDirectly();
-      if (manualData && manualData.length > 0) {
-        return manualData;
-      }
-      
-      // Last resort, use sample data
-      const sampleChannels = createSampleChannels();
-      if (searchQuery) {
-        return sampleChannels.filter(channel => 
+    } catch (edgeError) {
+      console.error("Edge function error:", edgeError);
+    }
+    
+    // Then try direct database fetch
+    const dbChannels = await fetchChannelsFromDB();
+    if (dbChannels && dbChannels.length > 0) {
+      // Sort for consistent ordering
+      return dbChannels.sort((a: Channel, b: Channel) => 
+        (a.title || '').localeCompare(b.title || '')
+      );
+    }
+    
+    // Then try manual fetch method
+    const manualData = await fetchChannelsDirectly();
+    if (manualData && manualData.length > 0) {
+      return manualData.sort((a: Channel, b: Channel) => 
+        (a.title || '').localeCompare(b.title || '')
+      );
+    }
+    
+    // Last resort, use sample data
+    const sampleChannels = createSampleChannels();
+    const filteredSamples = searchQuery 
+      ? sampleChannels.filter(channel => 
           channel.title.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-      }
-      return sampleChannels;
-    },
-    retry: 3,
+        )
+      : sampleChannels;
+      
+    return filteredSamples.sort((a: Channel, b: Channel) => 
+      (a.title || '').localeCompare(b.title || '')
+    );
+  };
+
+  const { data: channels, error, isLoading: isChannelsLoading, refetch } = useQuery({
+    queryKey: ["youtube_channels", searchQuery],
+    queryFn,
+    retry: 2,
     retryDelay: 1000,
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
-    refetchOnMount: true,
+    refetchOnMount: false, // Prevent unnecessary refetches
     refetchOnWindowFocus: false,
     meta: {
       errorMessage: "Failed to load channels",
@@ -183,46 +197,51 @@ export const ChannelDataProvider = ({ children, onError, searchQuery = "" }: Cha
     },
   });
 
+  // Single useEffect to handle data changes and prevent race conditions
   useEffect(() => {
-    console.log("ChannelDataProvider mounted or searchQuery changed:", searchQuery);
-    refetch().catch(err => {
-      console.error("Error fetching channels on mount/search change:", err);
-      if (onError) onError(err);
-    });
-  }, [refetch, error, searchQuery]);
-
-  useEffect(() => {
-    if (channels?.length || manuallyFetchedChannels?.length) {
-      setIsLoading(false);
-    }
-  }, [channels, manuallyFetchedChannels, setIsLoading]);
-
-  useEffect(() => {
-    let bestChannels: Channel[] = [];
+    let finalChannels: Channel[] = [];
     
-    if (hasRealChannels(channels)) {
-      console.log("Using real channels data from react-query cache");
-      bestChannels = channels || [];
-    } else if (hasRealChannels(manuallyFetchedChannels)) {
-      console.log("Using real channels data from manual fetch");
-      bestChannels = manuallyFetchedChannels;
-    } else if (channels?.length) {
-      bestChannels = channels;
-    } else if (manuallyFetchedChannels?.length) {
-      bestChannels = manuallyFetchedChannels;
-    } else {
-      const sampleChannels = createSampleChannels();
-      if (searchQuery) {
-        bestChannels = sampleChannels.filter(channel => 
-          channel.title.toLowerCase().includes(searchQuery.toLowerCase())
+    if (channels && channels.length > 0) {
+      if (hasRealChannels(channels)) {
+        console.log(`Using ${channels.length} real channels from react-query`);
+        finalChannels = channels;
+      } else {
+        console.log(`Using ${channels.length} sample channels from react-query`);
+        finalChannels = channels;
+      }
+    } else if (manuallyFetchedChannels && manuallyFetchedChannels.length > 0) {
+      if (hasRealChannels(manuallyFetchedChannels)) {
+        console.log(`Using ${manuallyFetchedChannels.length} real channels from manual fetch`);
+        finalChannels = manuallyFetchedChannels.sort((a: Channel, b: Channel) => 
+          (a.title || '').localeCompare(b.title || '')
         );
       } else {
-        bestChannels = sampleChannels;
+        finalChannels = manuallyFetchedChannels;
       }
+    } else {
+      // Fallback to sample channels
+      const sampleChannels = createSampleChannels();
+      finalChannels = searchQuery 
+        ? sampleChannels.filter(channel => 
+            channel.title.toLowerCase().includes(searchQuery.toLowerCase())
+          )
+        : sampleChannels;
     }
     
-    setDisplayChannels(bestChannels);
-  }, [channels, manuallyFetchedChannels, hasRealChannels, createSampleChannels, searchQuery]);
+    // Only update if the channels have actually changed
+    setDisplayChannels(prev => {
+      if (prev.length !== finalChannels.length) {
+        return finalChannels;
+      }
+      // Check if content is different
+      const isDifferent = prev.some((channel, index) => 
+        channel.id !== finalChannels[index]?.id
+      );
+      return isDifferent ? finalChannels : prev;
+    });
+    
+    setIsLoading(false);
+  }, [channels, manuallyFetchedChannels, hasRealChannels, createSampleChannels, searchQuery, setIsLoading]);
 
   return (
     <>
