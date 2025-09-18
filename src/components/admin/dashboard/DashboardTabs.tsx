@@ -2,6 +2,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { OverviewTab } from "./OverviewTab";
 import { ContentTab } from "./ContentTab";
+import { ContentAnalysisTab } from "./ContentAnalysisTab";
 import { UsersTab } from "./UsersTab";
 import { CategoriesTab } from "./CategoriesTab";
 import { ChannelCategoryTab } from "./ChannelCategoryTab";
@@ -27,6 +28,12 @@ export const DashboardTabs = ({ currentUserId }: DashboardTabsProps) => {
               className="rounded-full px-6 py-2.5 data-[state=active]:shadow-lg transition-all duration-200 whitespace-nowrap"
             >
               Content
+            </TabsTrigger>
+            <TabsTrigger 
+              value="content-analysis" 
+              className="rounded-full px-6 py-2.5 data-[state=active]:shadow-lg transition-all duration-200 whitespace-nowrap"
+            >
+              AI Filtering
             </TabsTrigger>
             <TabsTrigger 
               value="users" 
@@ -56,6 +63,10 @@ export const DashboardTabs = ({ currentUserId }: DashboardTabsProps) => {
 
           <TabsContent value="content" className="mt-0">
             <ContentTab />
+          </TabsContent>
+
+          <TabsContent value="content-analysis" className="mt-0">
+            <ContentAnalysisTab />
           </TabsContent>
 
           <TabsContent value="users" className="mt-0">
