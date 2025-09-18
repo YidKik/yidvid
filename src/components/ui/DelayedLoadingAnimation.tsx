@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from "react";
 import { GradientTracing } from "./gradient-tracing";
+import { YouTubeStyleLoading } from "./YouTubeStyleLoading";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { LoadingSize, LoadingColor } from "@/hooks/useLoadingAnimations";
@@ -71,16 +72,18 @@ export const DelayedLoadingAnimation: React.FC<DelayedLoadingAnimationProps> = (
   };
 
   return (
-    <div className={cn("flex items-center justify-center", className)}>
-      <GradientTracing
-        width={isMobile ? 150 : 300}
-        height={isMobile ? 50 : 80}
+    <div className={cn("flex flex-col items-center justify-center gap-4", className)}>
+      <YouTubeStyleLoading 
         size={actualSize}
-        text={text}
-        gradientColors={getGradientColors()}
-        path={getPath(actualSize)}
-        animationDuration={3}
       />
+      {text && (
+        <p className={cn(
+          "text-center text-muted-foreground animate-fade-in",
+          isMobile ? "text-sm" : "text-base"
+        )}>
+          {text}
+        </p>
+      )}
     </div>
   );
 };
