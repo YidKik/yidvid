@@ -18,13 +18,22 @@ export const ChannelRefreshButton = ({ channelId, channelTitle }: ChannelRefresh
       setIsLoading(true);
       const loadingToast = toast.loading(`Fetching videos for ${channelTitle || channelId}...`);
 
+      // Ensure auth token for function (if required)
+      const { data: { session } } = await supabase.auth.getSession();
+
+      const payload = {
+        channels: [channelId],
+        forceUpdate: true,
+        bypassQuotaCheck: true,
+        prioritizeRecent: true,
+        singleChannelMode: true
+      };
+
       const { data, error } = await supabase.functions.invoke('fetch-youtube-videos', {
-        body: { 
-          channels: [channelId],
-          forceUpdate: true,
-          bypassQuotaCheck: true,
-          prioritizeRecent: true,
-          singleChannelMode: true // Flag to indicate this is a single channel request
+        body: payload,
+        headers: {
+          ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
+          'Content-Type': 'application/json'
         }
       });
 

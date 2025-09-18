@@ -31,13 +31,15 @@ export const ChannelVideosFetcher = () => {
     const checkAdminStatus = async () => {
       if (!session?.user?.id) return;
       
-      const { data: profile } = await supabase
+      const { data: profile, error } = await supabase
         .from('profiles')
         .select('is_admin')
         .eq('id', session.user.id)
-        .single();
-        
-      setIsAdmin(profile?.is_admin || false);
+        .maybeSingle();
+      if (error) {
+        console.warn('Admin check error:', error.message);
+      }
+      setIsAdmin(Boolean(profile?.is_admin));
     };
     
     checkAdminStatus();
@@ -92,29 +94,45 @@ export const ChannelVideosFetcher = () => {
         });
 
         const { data: result, error: invokeError } = await supabase.functions.invoke('fetch-youtube-videos', {
-          body: requestPayload, // Send as object, not JSON string - Supabase client handles serialization
+          body: requestPayload,
           headers: {
+            'Authorization': `Bearer ${currentSession.access_token}`,
             'Content-Type': 'application/json'
           }
         });
 
-        console.log('Fetch all channels response:', { result, invokeError });
+        console.log('Fetch all channels response (invoke):', { result, invokeError });
+
+        // Fallback: if body didn't arrive (e.g., "No channels provided"), retry with direct fetch
+        const needsFallback = invokeError || !result || result?.message?.toLowerCase()?.includes('no channels provided');
+        let finalResult = result;
+        if (needsFallback) {
+          console.warn('Invoke returned empty/invalid body, retrying via direct fetch...');
+          const directUrl = 'https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/fetch-youtube-videos';
+          const res = await fetch(directUrl, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${currentSession.access_token}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestPayload)
+          });
+          finalResult = await res.json();
+          console.log('Fetch all channels response (direct):', finalResult);
+        }
 
         toast.dismiss();
 
-        if (invokeError) {
-          console.error('Edge function error:', invokeError);
-          toast.error(`Failed: ${invokeError.message || 'Unknown error'}`);
-        } else if (result?.success) {
-          const processed = result.processed || 0;
-          const newVideos = result.newVideos || 0;
+        if (finalResult?.success) {
+          const processed = finalResult.processed || 0;
+          const newVideos = finalResult.newVideos || 0;
           if (newVideos > 0) {
             toast.success(`Fetched ${newVideos} new videos from ${processed} channels`);
           } else {
             toast.info(`Processed ${processed} channels — no new videos found`);
           }
         } else {
-          toast.error(result?.message || 'Fetch did not succeed');
+          toast.error(finalResult?.message || 'Fetch did not succeed');
         }
       } catch (singleError) {
         console.error('Error invoking fetch-youtube-videos:', singleError);
