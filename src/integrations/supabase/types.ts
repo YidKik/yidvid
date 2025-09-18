@@ -376,6 +376,44 @@ export type Database = {
         }
         Relationships: []
       }
+      content_analysis_logs: {
+        Row: {
+          analysis_stage: string
+          created_at: string | null
+          error_message: string | null
+          id: string
+          processing_time_ms: number | null
+          stage_result: Json
+          video_id: string | null
+        }
+        Insert: {
+          analysis_stage: string
+          created_at?: string | null
+          error_message?: string | null
+          id?: string
+          processing_time_ms?: number | null
+          stage_result: Json
+          video_id?: string | null
+        }
+        Update: {
+          analysis_stage?: string
+          created_at?: string | null
+          error_message?: string | null
+          id?: string
+          processing_time_ms?: number | null
+          stage_result?: Json
+          video_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "content_analysis_logs_video_id_fkey"
+            columns: ["video_id"]
+            isOneToOne: false
+            referencedRelation: "youtube_videos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cron_job_logs: {
         Row: {
           created_at: string
@@ -1355,14 +1393,22 @@ export type Database = {
       }
       youtube_videos: {
         Row: {
+          analysis_details: Json | null
+          analysis_score: number | null
+          analysis_timestamp: string | null
+          approved_by_admin: string | null
           category: Database["public"]["Enums"]["video_category"] | null
           channel_id: string
           channel_name: string
+          content_analysis_status:
+            | Database["public"]["Enums"]["content_analysis_status"]
+            | null
           created_at: string
           deleted_at: string | null
           description: string | null
           id: string
           last_viewed_at: string | null
+          manual_review_required: boolean | null
           thumbnail: string
           title: string
           updated_at: string
@@ -1371,14 +1417,22 @@ export type Database = {
           views: number | null
         }
         Insert: {
+          analysis_details?: Json | null
+          analysis_score?: number | null
+          analysis_timestamp?: string | null
+          approved_by_admin?: string | null
           category?: Database["public"]["Enums"]["video_category"] | null
           channel_id: string
           channel_name: string
+          content_analysis_status?:
+            | Database["public"]["Enums"]["content_analysis_status"]
+            | null
           created_at?: string
           deleted_at?: string | null
           description?: string | null
           id?: string
           last_viewed_at?: string | null
+          manual_review_required?: boolean | null
           thumbnail: string
           title: string
           updated_at: string
@@ -1387,14 +1441,22 @@ export type Database = {
           views?: number | null
         }
         Update: {
+          analysis_details?: Json | null
+          analysis_score?: number | null
+          analysis_timestamp?: string | null
+          approved_by_admin?: string | null
           category?: Database["public"]["Enums"]["video_category"] | null
           channel_id?: string
           channel_name?: string
+          content_analysis_status?:
+            | Database["public"]["Enums"]["content_analysis_status"]
+            | null
           created_at?: string
           deleted_at?: string | null
           description?: string | null
           id?: string
           last_viewed_at?: string | null
+          manual_review_required?: boolean | null
           thumbnail?: string
           title?: string
           updated_at?: string
@@ -1502,8 +1564,23 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: Json
       }
+      update_video_analysis_status: {
+        Args: {
+          p_details?: Json
+          p_manual_review?: boolean
+          p_score?: number
+          p_status: Database["public"]["Enums"]["content_analysis_status"]
+          p_video_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
+      content_analysis_status:
+        | "pending"
+        | "approved"
+        | "rejected"
+        | "manual_review"
       interaction_type_enum: "view" | "like" | "dislike" | "save"
       lock_type: "channel_control"
       music_genre:
@@ -1650,6 +1727,12 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      content_analysis_status: [
+        "pending",
+        "approved",
+        "rejected",
+        "manual_review",
+      ],
       interaction_type_enum: ["view", "like", "dislike", "save"],
       lock_type: ["channel_control"],
       music_genre: [
