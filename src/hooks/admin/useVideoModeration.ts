@@ -18,6 +18,44 @@ export const useVideoModeration = () => {
   const { user } = useAuth();
   const qc = useQueryClient();
 
+  // Get total statistics
+  const statsQuery = useQuery({
+    queryKey: ["moderation","stats"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("youtube_videos")
+        .select("content_analysis_status, deleted_at")
+        .order("created_at", { ascending: false });
+      
+      if (error) {
+        console.error("Error fetching video stats:", error);
+        throw error;
+      }
+
+      const stats = {
+        total: data?.length || 0,
+        pending: data?.filter(v => 
+          (v.content_analysis_status === 'pending' || !v.content_analysis_status) && 
+          !v.deleted_at
+        ).length || 0,
+        approved: data?.filter(v => 
+          v.content_analysis_status === 'approved' && 
+          !v.deleted_at
+        ).length || 0,
+        rejected: data?.filter(v => 
+          v.content_analysis_status === 'rejected'
+        ).length || 0,
+        manualReview: data?.filter(v => 
+          v.content_analysis_status === 'pending' && 
+          !v.deleted_at
+        ).length || 0,
+      };
+
+      console.log("Video moderation stats:", stats);
+      return stats;
+    }
+  });
+
   const approvedQuery = useQuery({
     queryKey: ["moderation","approved"],
     queryFn: async () => {
@@ -27,7 +65,10 @@ export const useVideoModeration = () => {
         .eq("content_analysis_status", "approved")
         .is("deleted_at", null)
         .order("updated_at", { ascending: false });
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching approved videos:", error);
+        throw error;
+      }
       return (data || []) as ModerationVideo[];
     }
   });
@@ -40,7 +81,10 @@ export const useVideoModeration = () => {
         .select(selectFields)
         .eq("content_analysis_status", "rejected")
         .order("updated_at", { ascending: false });
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching rejected videos:", error);
+        throw error;
+      }
       return (data || []) as ModerationVideo[];
     }
   });
@@ -52,8 +96,12 @@ export const useVideoModeration = () => {
         .from("youtube_videos")
         .select(selectFields)
         .or("content_analysis_status.eq.pending,content_analysis_status.eq.flagged,manual_review_required.eq.true")
+        .is("deleted_at", null)
         .order("updated_at", { ascending: false });
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching review queue:", error);
+        throw error;
+      }
       return (data || []) as ModerationVideo[];
     }
   });
@@ -121,8 +169,9 @@ export const useVideoModeration = () => {
     approved: approvedQuery.data || [],
     rejected: rejectedQuery.data || [],
     reviewQueue: reviewQueueQuery.data || [],
-    isLoading: approvedQuery.isLoading || rejectedQuery.isLoading || reviewQueueQuery.isLoading,
-    error: approvedQuery.error || rejectedQuery.error || reviewQueueQuery.error,
+    stats: statsQuery.data || { total: 0, pending: 0, approved: 0, rejected: 0, manualReview: 0 },
+    isLoading: approvedQuery.isLoading || rejectedQuery.isLoading || reviewQueueQuery.isLoading || statsQuery.isLoading,
+    error: approvedQuery.error || rejectedQuery.error || reviewQueueQuery.error || statsQuery.error,
     approve: (v: ModerationVideo) => approveMutation.mutate(v),
     reject: (v: ModerationVideo) => rejectMutation.mutate(v),
   };

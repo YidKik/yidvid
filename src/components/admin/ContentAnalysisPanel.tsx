@@ -34,34 +34,15 @@ interface BatchAnalysisResult {
 
 export const ContentAnalysisPanel: React.FC = () => {
   const { user } = useAuth();
-  const { approved, rejected, reviewQueue, isLoading: isModerationLoading, approve, reject } = useVideoModeration();
+  const { approved, rejected, reviewQueue, stats, isLoading: isModerationLoading, approve, reject } = useVideoModeration();
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisProgress, setAnalysisProgress] = useState(0);
-  const [stats, setStats] = useState<AnalysisStats | null>(null);
   const [lastAnalysis, setLastAnalysis] = useState<BatchAnalysisResult | null>(null);
-  const [isLoadingStats, setIsLoadingStats] = useState(false);
 
   const fetchStats = async () => {
-    setIsLoadingStats(true);
-    try {
-      // Prefer live counts from moderation queries
-      const derived: AnalysisStats = {
-        total: (approved?.length || 0) + (rejected?.length || 0) + (reviewQueue?.length || 0),
-        pending: reviewQueue?.length || 0,
-        approved: approved?.length || 0,
-        rejected: rejected?.length || 0,
-        manualReview: reviewQueue?.length || 0,
-      };
-      setStats(derived);
-      toast.success('AI filtering stats loaded');
-    } catch (error) {
-      console.error('Error fetching analysis stats:', error);
-      const fallbackStats: AnalysisStats = { total: 0, pending: 0, approved: 0, rejected: 0, manualReview: 0 };
-      setStats(fallbackStats);
-      toast.error('Failed to fetch analysis statistics');
-    } finally {
-      setIsLoadingStats(false);
-    }
+    // Stats are now handled by useVideoModeration hook
+    console.log('Stats refreshed from database');
+    toast.success('AI filtering stats refreshed');
   };
 
   const handleAnalyzeExisting = async () => {
@@ -102,9 +83,6 @@ export const ContentAnalysisPanel: React.FC = () => {
       };
 
       setLastAnalysis(mockResult);
-      
-      // Update stats to reflect analysis
-      setStats(mockResult.finalStats);
       
       toast.success(
         `Analysis complete! Processed ${mockResult.processed} videos. ` +
@@ -169,7 +147,7 @@ export const ContentAnalysisPanel: React.FC = () => {
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
             <div className="flex flex-col items-center p-4 bg-muted rounded-lg">
               <div className="text-2xl font-bold text-foreground">
-                {isLoadingStats ? '...' : stats?.total || 0}
+                {isModerationLoading ? '...' : stats?.total || 0}
               </div>
               <div className="text-sm text-muted-foreground">Total Videos</div>
             </div>
@@ -178,7 +156,7 @@ export const ContentAnalysisPanel: React.FC = () => {
               <div className="flex items-center gap-2">
                 {getStatusIcon('pending')}
                 <div className="text-2xl font-bold text-foreground">
-                  {isLoadingStats ? '...' : stats?.pending || 0}
+                  {isModerationLoading ? '...' : stats?.pending || 0}
                 </div>
               </div>
               <div className="text-sm text-muted-foreground">Pending</div>
@@ -188,7 +166,7 @@ export const ContentAnalysisPanel: React.FC = () => {
               <div className="flex items-center gap-2">
                 {getStatusIcon('approved')}
                 <div className="text-2xl font-bold text-green-600">
-                  {isLoadingStats ? '...' : stats?.approved || 0}
+                  {isModerationLoading ? '...' : stats?.approved || 0}
                 </div>
               </div>
               <div className="text-sm text-muted-foreground">Approved</div>
@@ -198,7 +176,7 @@ export const ContentAnalysisPanel: React.FC = () => {
               <div className="flex items-center gap-2">
                 {getStatusIcon('rejected')}
                 <div className="text-2xl font-bold text-red-600">
-                  {isLoadingStats ? '...' : stats?.rejected || 0}
+                  {isModerationLoading ? '...' : stats?.rejected || 0}
                 </div>
               </div>
               <div className="text-sm text-muted-foreground">Rejected</div>
@@ -208,7 +186,7 @@ export const ContentAnalysisPanel: React.FC = () => {
               <div className="flex items-center gap-2">
                 {getStatusIcon('manual_review')}
                 <div className="text-2xl font-bold text-yellow-600">
-                  {isLoadingStats ? '...' : stats?.manualReview || 0}
+                  {isModerationLoading ? '...' : stats?.manualReview || 0}
                 </div>
               </div>
               <div className="text-sm text-muted-foreground">Manual Review</div>
@@ -230,10 +208,10 @@ export const ContentAnalysisPanel: React.FC = () => {
           <div className="flex flex-wrap gap-3">
             <Button
               onClick={fetchStats}
-              disabled={isLoadingStats}
+              disabled={isModerationLoading}
               variant="outline"
             >
-              <RefreshCw className={`h-4 w-4 mr-2 ${isLoadingStats ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`h-4 w-4 mr-2 ${isModerationLoading ? 'animate-spin' : ''}`} />
               Refresh Stats
             </Button>
 

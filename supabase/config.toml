@@ -54,3 +54,6 @@ verify_jwt = false
 
 [functions.send-contact-notifications]
 verify_jwt = true
+
+[functions.video-content-analyzer]
+verify_jwt = true
