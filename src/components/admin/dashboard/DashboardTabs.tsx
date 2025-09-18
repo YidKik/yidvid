@@ -6,15 +6,18 @@ import { ContentAnalysisTab } from "./ContentAnalysisTab";
 import { UsersTab } from "./UsersTab";
 import { CategoriesTab } from "./CategoriesTab";
 import { ChannelCategoryTab } from "./ChannelCategoryTab";
+import { useSearchParams } from "react-router-dom";
 
 interface DashboardTabsProps {
   currentUserId: string;
 }
 
 export const DashboardTabs = ({ currentUserId }: DashboardTabsProps) => {
+  const [searchParams] = useSearchParams();
+  const initialTab = searchParams.get('tab') || 'overview';
   return (
     <div className="w-full">
-      <Tabs defaultValue="overview" className="space-y-6">
+      <Tabs defaultValue={initialTab} className="space-y-6">
         <div className="sticky top-0 bg-white z-10 pb-4 border-b">
           <TabsList className="bg-muted p-1 rounded-full w-full flex justify-start overflow-x-auto gap-1 min-w-max">
             <TabsTrigger 
