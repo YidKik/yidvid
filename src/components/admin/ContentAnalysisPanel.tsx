@@ -6,7 +6,7 @@ import { Progress } from '@/components/ui/progress';
 import { RefreshCw, Play, Pause, Filter, Eye, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { useUser } from '@/hooks/auth/useUser';
+import { useAuth } from '@/hooks/useAuth';
 
 interface AnalysisStats {
   total: number;
@@ -31,7 +31,7 @@ interface BatchAnalysisResult {
 }
 
 export const ContentAnalysisPanel: React.FC = () => {
-  const { user } = useUser();
+  const { user } = useAuth();
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisProgress, setAnalysisProgress] = useState(0);
   const [stats, setStats] = useState<AnalysisStats | null>(null);
@@ -138,7 +138,7 @@ export const ContentAnalysisPanel: React.FC = () => {
   const getStatusBadgeVariant = (status: string) => {
     switch (status) {
       case 'approved':
-        return 'success' as const;
+        return 'default' as const;
       case 'rejected':
         return 'destructive' as const;
       case 'manual_review':
@@ -290,7 +290,7 @@ export const ContentAnalysisPanel: React.FC = () => {
           <div className="border rounded-lg p-4">
             <div className="flex items-center justify-between mb-2">
               <h3 className="font-semibold">AI Filtering System Status</h3>
-              <Badge variant="success" className="bg-green-100 text-green-800">
+              <Badge variant="default" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">
                 <div className="w-2 h-2 bg-green-500 rounded-full mr-2" />
                 Active
               </Badge>
