@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { VideoCard } from "../../VideoCard";
+import { useSize } from "@/hooks/use-size";
 
 interface Video {
   id: string;
@@ -19,56 +20,53 @@ interface StickyRelatedVideosProps {
 }
 
 export const StickyRelatedVideos = ({ videos, isLoading = false, pageContentRef }: StickyRelatedVideosProps) => {
-  const [stickyTop, setStickyTop] = useState(80);
-  const [maxHeight, setMaxHeight] = useState('calc(100vh - 120px)');
+  const [setMainContentRef, mainContentSize] = useSize();
+  const [calculatedHeight, setCalculatedHeight] = useState('calc(100vh - 200px)');
   const sidebarRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const updateStickyPosition = () => {
-      if (!pageContentRef?.current || !sidebarRef.current) return;
+    if (!pageContentRef?.current) return;
+    
+    // Set the reference to track the main content size
+    setMainContentRef(pageContentRef.current);
+  }, [pageContentRef, setMainContentRef]);
 
-      const pageContent = pageContentRef.current;
-      const sidebar = sidebarRef.current;
-      const sidebarRect = sidebar.getBoundingClientRect();
-      const pageRect = pageContent.getBoundingClientRect();
+  useEffect(() => {
+    const calculateHeight = () => {
+      if (!pageContentRef?.current || !mainContentSize) return;
+
+      const videoPlayer = pageContentRef.current.querySelector('[class*="relative"]') as HTMLElement;
+      const description = pageContentRef.current.querySelector('[class*="space-y-6"] > div:last-child') as HTMLElement;
       
-      // Calculate how much content is below the fold
-      const pageHeight = pageRect.height;
-      const viewportHeight = window.innerHeight;
-      const scrollY = window.scrollY;
-      
-      // Dynamic top position based on scroll
-      const newTop = Math.max(80, 120 - scrollY);
-      setStickyTop(newTop);
-      
-      // Calculate available height for videos
-      const availableHeight = Math.min(
-        viewportHeight - newTop - 40, // 40px bottom padding
-        pageHeight - scrollY + pageRect.top - newTop
-      );
-      
-      setMaxHeight(`${Math.max(300, availableHeight)}px`);
+      if (videoPlayer && description) {
+        const videoRect = videoPlayer.getBoundingClientRect();
+        const descRect = description.getBoundingClientRect();
+        
+        // Calculate height from video top to description bottom
+        const height = descRect.bottom - videoRect.top - 20; // 20px padding
+        setCalculatedHeight(`${Math.max(400, height)}px`);
+      }
     };
 
-    updateStickyPosition();
-    window.addEventListener('scroll', updateStickyPosition, { passive: true });
-    window.addEventListener('resize', updateStickyPosition);
-
+    calculateHeight();
+    window.addEventListener('resize', calculateHeight);
+    
     return () => {
-      window.removeEventListener('scroll', updateStickyPosition);
-      window.removeEventListener('resize', updateStickyPosition);
+      window.removeEventListener('resize', calculateHeight);
     };
-  }, [pageContentRef]);
+  }, [pageContentRef, mainContentSize]);
 
   if (isLoading) {
     return (
       <div 
         ref={sidebarRef}
-        className="sticky transition-all duration-300 ease-out"
-        style={{ top: `${stickyTop}px` }}
+        className="relative"
       >
-        <div className="bg-card/20 rounded-xl p-4 backdrop-blur-sm border border-border/30">
-          <div className="animate-pulse space-y-4">
+        <div 
+          className="bg-card/20 rounded-xl p-4 backdrop-blur-sm border border-border/30"
+          style={{ height: calculatedHeight }}
+        >
+          <div className="animate-pulse space-y-4 h-full">
             {[...Array(3)].map((_, i) => (
               <div key={i} className="flex gap-3">
                 <div className="w-32 h-18 bg-muted rounded-lg"></div>
@@ -88,10 +86,12 @@ export const StickyRelatedVideos = ({ videos, isLoading = false, pageContentRef 
     return (
       <div 
         ref={sidebarRef}
-        className="sticky transition-all duration-300 ease-out"
-        style={{ top: `${stickyTop}px` }}
+        className="relative"
       >
-        <div className="bg-card/20 rounded-xl p-6 backdrop-blur-sm border border-border/30 text-center">
+        <div 
+          className="bg-card/20 rounded-xl p-6 backdrop-blur-sm border border-border/30 text-center flex items-center justify-center"
+          style={{ height: calculatedHeight }}
+        >
           <p className="text-muted-foreground text-sm">No other videos found from this channel</p>
         </div>
       </div>
@@ -101,18 +101,17 @@ export const StickyRelatedVideos = ({ videos, isLoading = false, pageContentRef 
   return (
     <div 
       ref={sidebarRef}
-      className="sticky transition-all duration-300 ease-out"
-      style={{ top: `${stickyTop}px` }}
+      className="relative"
     >
-      <div className="bg-card/10 rounded-xl backdrop-blur-sm border border-border/20 overflow-hidden shadow-sm">
-        <div className="p-4 border-b border-border/20">
+      <div 
+        className="bg-card/10 rounded-xl backdrop-blur-sm border border-border/20 overflow-hidden shadow-sm"
+        style={{ height: calculatedHeight }}
+      >
+        <div className="p-4 border-b border-border/20 flex-shrink-0">
           <h2 className="text-lg font-semibold text-foreground">More from this channel</h2>
         </div>
         
-        <div 
-          className="overflow-y-auto scrollbar-thin scrollbar-thumb-border/40 scrollbar-track-transparent hover:scrollbar-thumb-border/60 transition-colors"
-          style={{ maxHeight }}
-        >
+        <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-border/40 scrollbar-track-transparent hover:scrollbar-thumb-border/60 transition-colors h-[calc(100%-4rem)]">
           <div className="p-2 space-y-3">
             {videos.map((video, index) => (
               <div 
