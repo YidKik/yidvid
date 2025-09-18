@@ -47,7 +47,7 @@ export const ChannelFilters = ({
             <SelectValue placeholder="Filter by category" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All Categories</SelectItem>
+            <SelectItem value="all">All Categories</SelectItem>
             <SelectItem value="no_category">No Category</SelectItem>
             {categories.map((category) => (
               <SelectItem key={category.value} value={category.value}>

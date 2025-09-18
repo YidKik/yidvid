@@ -17,7 +17,7 @@ export const useChannelQueries = (searchQuery: string, categoryFilter: string) =
         query = query.ilike("title", `%${searchQuery}%`);
       }
 
-      if (categoryFilter) {
+      if (categoryFilter && categoryFilter !== "all") {
         if (categoryFilter === 'no_category') {
           query = query.is("default_category", null);
         } else {

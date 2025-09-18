@@ -4,7 +4,7 @@ import { VideoCategory, Channel } from "./channelCategoryTypes";
 
 export const useChannelUIState = (channels: Channel[]) => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState<string>("");
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [selectedChannels, setSelectedChannels] = useState<string[]>([]);
   const [bulkCategory, setBulkCategory] = useState<VideoCategory | "">("");
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
