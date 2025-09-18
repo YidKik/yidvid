@@ -118,6 +118,7 @@ function App() {
           {/* Admin routes */}
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/channels" element={<ChannelsPage />} />
+          <Route path="/admin/youtube-channels" element={<ChannelsPage />} />
           <Route path="/admin/categories" element={<CategoriesPage />} />
           <Route path="/admin/comments" element={<CommentsPage />} />
           <Route path="/admin/analytics" element={<AnalyticsPage />} />
