@@ -116,6 +116,7 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           
           {/* Admin routes */}
+          <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/channels" element={<ChannelsPage />} />
           <Route path="/admin/categories" element={<CategoriesPage />} />
           <Route path="/admin/comments" element={<CommentsPage />} />
