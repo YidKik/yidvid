@@ -77,17 +77,23 @@ export const ChannelVideosFetcher = () => {
           throw new Error("Authentication session expired. Please log in again.");
         }
 
+        const requestPayload = {
+          channels: channelIds,
+          forceUpdate: true,
+          maxChannelsPerRun: channelIds.length,
+          bypassQuotaCheck: true,
+          prioritizeRecent: false
+        };
+
+        console.log('About to send request payload:', {
+          channelCount: channelIds.length,
+          firstThree: channelIds.slice(0, 3),
+          payload: requestPayload
+        });
+
         const { data: result, error: invokeError } = await supabase.functions.invoke('fetch-youtube-videos', {
-          body: JSON.stringify({
-            channels: channelIds,
-            forceUpdate: true,
-            // Process all provided channels in this run; server still respects YouTube quota
-            maxChannelsPerRun: channelIds.length,
-            bypassQuotaCheck: true,
-            prioritizeRecent: false
-          }),
+          body: requestPayload, // Send as object, not JSON string - Supabase client handles serialization
           headers: {
-            'Authorization': `Bearer ${currentSession.access_token}`,
             'Content-Type': 'application/json'
           }
         });
@@ -146,13 +152,12 @@ export const ChannelVideosFetcher = () => {
       
       // Use Supabase client with proper body serialization
       const { data: result, error } = await supabase.functions.invoke('update-video-views', {
-        body: JSON.stringify({
+        body: {
           batchSize: 50,
           maxVideos: 300,
           bypassQuotaCheck: true
-        }),
+        },
         headers: {
-          'Authorization': `Bearer ${currentSession.access_token}`,
           'Content-Type': 'application/json'
         }
       });

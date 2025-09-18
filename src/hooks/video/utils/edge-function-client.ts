@@ -17,13 +17,13 @@ export const invokeYouTubeEdgeFunction = async (
     console.log(`Calling edge function to fetch new videos with ${options.forceUpdate ? 'HIGH' : 'normal'} priority...`);
     
     const { data: response, error: fetchError } = await supabase.functions.invoke('fetch-youtube-videos', {
-      body: JSON.stringify({ 
+      body: {
         channels: channelIds,
         forceUpdate: options.forceUpdate,
         quotaConservative: options.quotaConservative,
         prioritizeRecent: options.prioritizeRecent,
         maxChannelsPerRun: options.maxChannelsPerRun
-      })
+      }
     });
 
     if (fetchError) {
