@@ -7,6 +7,8 @@ import { RefreshCw, Play, Pause, Filter, Eye, CheckCircle, XCircle, AlertCircle 
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
+import { useVideoModeration } from '@/hooks/admin/useVideoModeration';
+import { VideoModerationList } from '@/components/admin/VideoModerationList';
 
 interface AnalysisStats {
   total: number;
@@ -32,6 +34,7 @@ interface BatchAnalysisResult {
 
 export const ContentAnalysisPanel: React.FC = () => {
   const { user } = useAuth();
+  const { approved, rejected, reviewQueue, isLoading: isModerationLoading, approve, reject } = useVideoModeration();
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisProgress, setAnalysisProgress] = useState(0);
   const [stats, setStats] = useState<AnalysisStats | null>(null);
@@ -41,45 +44,21 @@ export const ContentAnalysisPanel: React.FC = () => {
   const fetchStats = async () => {
     setIsLoadingStats(true);
     try {
-      // For now, simulate stats data since youtube_videos table doesn't exist yet
-      // In a real implementation, this would query your video content tables
-      console.log('Fetching AI filtering stats...');
-      
-      // Check if we have any content analysis logs
-      const { data: logsData, error: logsError } = await supabase
-        .from('content_analysis_logs')
-        .select('stage_result');
-
-      if (logsError) {
-        console.warn('Content analysis logs table not accessible:', logsError);
-      }
-
-      // Mock realistic stats for demonstration
-      const mockStats: AnalysisStats = {
-        total: 150,
-        pending: 23,
-        approved: 112,
-        rejected: 8,
-        manualReview: 7
+      // Prefer live counts from moderation queries
+      const derived: AnalysisStats = {
+        total: (approved?.length || 0) + (rejected?.length || 0) + (reviewQueue?.length || 0),
+        pending: reviewQueue?.length || 0,
+        approved: approved?.length || 0,
+        rejected: rejected?.length || 0,
+        manualReview: reviewQueue?.length || 0,
       };
-
-      setStats(mockStats);
-      
-      toast.success('AI filtering stats loaded successfully');
+      setStats(derived);
+      toast.success('AI filtering stats loaded');
     } catch (error) {
       console.error('Error fetching analysis stats:', error);
-      
-      // Fallback to basic mock data
-      const fallbackStats: AnalysisStats = {
-        total: 0,
-        pending: 0,
-        approved: 0,
-        rejected: 0,
-        manualReview: 0
-      };
-      
+      const fallbackStats: AnalysisStats = { total: 0, pending: 0, approved: 0, rejected: 0, manualReview: 0 };
       setStats(fallbackStats);
-      toast.error('Failed to fetch analysis statistics - using demo data');
+      toast.error('Failed to fetch analysis statistics');
     } finally {
       setIsLoadingStats(false);
     }
@@ -326,6 +305,31 @@ export const ContentAnalysisPanel: React.FC = () => {
               <p>✅ Video Content Analysis: Frame-by-frame scanning</p>
               <p>✅ Multi-stage filtering with confidence scoring</p>
             </div>
+          </div>
+
+          {/* Moderation Lists */}
+          <div className="space-y-6">
+            <VideoModerationList
+              title="Manual Review Queue"
+              videos={reviewQueue}
+              emptyText="No videos awaiting manual review."
+              primaryAction={{ label: "Approve", onClick: approve }}
+              secondaryAction={{ label: "Reject", onClick: reject, variant: "outline" }}
+            />
+
+            <VideoModerationList
+              title="Approved Videos"
+              videos={approved}
+              emptyText="No approved videos yet."
+              secondaryAction={{ label: "Reject", onClick: reject, variant: "destructive" }}
+            />
+
+            <VideoModerationList
+              title="Rejected Videos"
+              videos={rejected}
+              emptyText="No rejected videos."
+              primaryAction={{ label: "Approve", onClick: approve }}
+            />
           </div>
         </CardContent>
       </Card>
