@@ -11,12 +11,12 @@ import { DashboardTabs } from "@/components/admin/dashboard/DashboardTabs";
 const Dashboard = () => {
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const { session } = useSessionManager();
+  const { session, isLoading: authLoading, isAuthenticated } = useSessionManager();
 
   useEffect(() => {
     const verifyAdminStatus = async () => {
       if (!session) {
-        setIsLoading(false);
+        // Wait for auth to resolve before showing non-admin state
         return;
       }
 
@@ -34,11 +34,11 @@ const Dashboard = () => {
     verifyAdminStatus();
   }, [session]);
 
-  if (isLoading) {
+  if (authLoading || isLoading) {
     return <DashboardLoading />;
   }
 
-  if (!isAdmin) {
+  if (isAdmin === false) {
     return <NonAdminContent />;
   }
 
