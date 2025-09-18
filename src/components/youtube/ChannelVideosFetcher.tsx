@@ -67,104 +67,52 @@ export const ChannelVideosFetcher = () => {
       
       console.log(`Found ${channelIds.length} channels to process:`, channelIds.slice(0, 5));
       
-      // OPTIMIZED: Process channels in smart batches to reduce edge function calls
-      const BATCH_SIZE = 25; // Process 25 channels per edge function call
-      const batches = [];
-      for (let i = 0; i < channelIds.length; i += BATCH_SIZE) {
-        batches.push(channelIds.slice(i, i + BATCH_SIZE));
-      }
-      
-      console.log(`Will process ${batches.length} batches of ~${BATCH_SIZE} channels each`);
-      
-      let totalProcessed = 0;
-      let totalNewVideos = 0;
-      let successfulBatches = 0;
-      
-      // Process batches with delays to avoid overwhelming the system
-      for (let batchIndex = 0; batchIndex < batches.length; batchIndex++) {
-        const batch = batches[batchIndex];
-        const batchNumber = batchIndex + 1;
-        
-        setProcessingStatus(`Processing batch ${batchNumber}/${batches.length} (${batch.length} channels)...`);
-        toast.loading(`Processing batch ${batchNumber}/${batches.length} (${batch.length} channels)...`);
-        
-        try {
-          console.log(`Starting batch ${batchNumber} with channels:`, batch.slice(0, 3));
-          console.log(`Sending ${batch.length} channels to edge function:`, batch);
-          
-          // Ensure we have a valid session token
-          const { data: { session: currentSession } } = await supabase.auth.getSession();
-          if (!currentSession) {
-            throw new Error("Authentication session expired. Please log in again.");
-          }
-          
-          // SINGLE edge function call per batch with proper body serialization
-          console.log('Sending batch to edge function:', { 
-            channels: batch, 
-            channelCount: batch.length 
-          });
-          
-          const { data: batchData, error: batchError } = await supabase.functions.invoke('fetch-youtube-videos', {
-            body: JSON.stringify({ 
-              channels: batch,
-              forceUpdate: true,
-              maxChannelsPerRun: batch.length,
-              bypassQuotaCheck: true,
-              prioritizeRecent: false
-            }),
-            headers: {
-              'Authorization': `Bearer ${currentSession.access_token}`,
-              'Content-Type': 'application/json'
-            }
-          });
-          
-          console.log(`Batch ${batchNumber} response:`, { batchData, batchError });
-          
-          if (batchError) {
-            console.error(`Batch ${batchNumber} edge function error:`, batchError);
-            toast.error(`Batch ${batchNumber} failed: ${batchError.message || 'Unknown error'}`);
-          } else if (batchData?.success) {
-            const processed = batchData.processed || 0;
-            const newVideos = batchData.newVideos || 0;
-            totalProcessed += processed;
-            totalNewVideos += newVideos;
-            successfulBatches++;
-            
-            console.log(`Batch ${batchNumber} completed successfully: ${processed} channels processed, ${newVideos} new videos found`);
-          } else {
-            console.warn(`Batch ${batchNumber} failed with response:`, batchData);
-            toast.error(`Batch ${batchNumber} failed: ${batchData?.message || 'No success response'}`);
-          }
-          
-          // Add delay between batches to prevent overwhelming
-          if (batchIndex < batches.length - 1) {
-            console.log(`Waiting 2 seconds before next batch...`);
-            await new Promise(resolve => setTimeout(resolve, 2000)); // Reduced to 2 seconds
-          }
-          
-        } catch (batchError) {
-          console.error(`Error processing batch ${batchNumber}:`, batchError);
-          toast.error(`Batch ${batchNumber} error: ${batchError.message || 'Unknown error'}`);
+      // Process all channels in a single edge function call (no client-side batching)
+      setProcessingStatus(`Processing ${channelIds.length} channels...`);
+      toast.loading(`Fetching latest videos for ${channelIds.length} channels...`);
+
+      try {
+        const { data: { session: currentSession } } = await supabase.auth.getSession();
+        if (!currentSession) {
+          throw new Error("Authentication session expired. Please log in again.");
         }
-      }
-      
-      // Show final results
-      toast.dismiss();
-      
-      if (successfulBatches > 0) {
-        if (totalNewVideos > 0) {
-          toast.success(`Successfully processed ${totalProcessed} channels across ${successfulBatches} batches and found ${totalNewVideos} new videos`, {
-            description: `Completed ${successfulBatches}/${batches.length} batches successfully`
-          });
-        } else {
-          toast.info(`Processed ${totalProcessed} channels across ${successfulBatches} batches but no new videos were found`, {
-            description: "All channels are up to date"
-          });
-        }
-      } else {
-        toast.error("No batches processed successfully", {
-          description: "Check your connection and try again"
+
+        const { data: result, error: invokeError } = await supabase.functions.invoke('fetch-youtube-videos', {
+          body: JSON.stringify({
+            channels: channelIds,
+            forceUpdate: true,
+            // Process all provided channels in this run; server still respects YouTube quota
+            maxChannelsPerRun: channelIds.length,
+            bypassQuotaCheck: true,
+            prioritizeRecent: false
+          }),
+          headers: {
+            'Authorization': `Bearer ${currentSession.access_token}`,
+            'Content-Type': 'application/json'
+          }
         });
+
+        console.log('Fetch all channels response:', { result, invokeError });
+
+        toast.dismiss();
+
+        if (invokeError) {
+          console.error('Edge function error:', invokeError);
+          toast.error(`Failed: ${invokeError.message || 'Unknown error'}`);
+        } else if (result?.success) {
+          const processed = result.processed || 0;
+          const newVideos = result.newVideos || 0;
+          if (newVideos > 0) {
+            toast.success(`Fetched ${newVideos} new videos from ${processed} channels`);
+          } else {
+            toast.info(`Processed ${processed} channels — no new videos found`);
+          }
+        } else {
+          toast.error(result?.message || 'Fetch did not succeed');
+        }
+      } catch (singleError) {
+        console.error('Error invoking fetch-youtube-videos:', singleError);
+        toast.error(singleError.message || 'Unknown error');
       }
 
     } catch (error) {
@@ -240,6 +188,7 @@ export const ChannelVideosFetcher = () => {
         .from('youtube_channels')
         .select('channel_id, last_fetch, title')
         .is('deleted_at', null)
+        .is('fetch_error', null)
         .order('last_fetch', { ascending: true, nullsFirst: true }) // Prioritize channels never fetched
         .limit(200); // Increased limit for better coverage
         
@@ -316,16 +265,15 @@ export const ChannelVideosFetcher = () => {
           <AlertDialogHeader>
             <AlertDialogTitle>Fetch YouTube Videos</AlertDialogTitle>
             <AlertDialogDescription>
-              This will connect to YouTube and fetch the latest videos for ALL channels using an optimized approach.
+              This will fetch the latest videos for ALL channels in one run (no client-side batching).
               The process will:
               <ul className="list-disc pl-5 mt-2">
-                <li>Process up to 100 channels prioritizing least recently fetched</li>
-                <li>Use smart batching (25 channels per edge function call)</li>
-                <li>Minimize edge function usage with delays between batches</li>
-                <li>Use backup API key if quota is exceeded</li>
+                <li>Prioritize channels least recently fetched</li>
+                <li>Use a fallback API key automatically if needed</li>
+                <li>Respect YouTube API limits; this may take a few minutes</li>
               </ul>
               <div className="mt-2 text-green-600 font-medium">
-                ✅ Optimized to minimize Supabase edge function usage and costs
+                ✅ Single call for reliability; server handles sequencing and quotas
               </div>
             </AlertDialogDescription>
           </AlertDialogHeader>

@@ -38,11 +38,15 @@ serve(async (req) => {
     
     console.log('Parsed request body:', JSON.stringify(requestBody, null, 2));
     
-    const { 
-      channels = [], 
-      forceUpdate = false, 
-      quotaConservative = false, 
-      prioritizeRecent = true, 
+    // Support both "channels" and legacy "channelIds" keys
+    const channels: string[] = Array.isArray(requestBody.channels)
+      ? requestBody.channels
+      : (Array.isArray(requestBody.channelIds) ? requestBody.channelIds : []);
+    
+    const {
+      forceUpdate = false,
+      quotaConservative = false,
+      prioritizeRecent = true,
       maxChannelsPerRun = 20,
       bypassQuotaCheck = false,
       singleChannelMode = false  // Flag to handle individual channel operations
