@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { NonAdminContent } from "@/components/dashboard/NonAdminContent";
 import { DashboardLoading } from "@/components/dashboard/DashboardLoading";
 import { useSessionManager } from "@/hooks/useSessionManager";
-import { checkAdminStatus } from "@/utils/admin/check-admin-status";
+// Admin check handled via profile.is_admin to avoid race with secure session
 import { Helmet } from "react-helmet";
 import { getPageTitle, DEFAULT_META_DESCRIPTION, DEFAULT_META_KEYWORDS, DEFAULT_META_IMAGE } from "@/utils/pageTitle";
 import { DashboardTabs } from "@/components/admin/dashboard/DashboardTabs";
@@ -11,18 +11,20 @@ import { DashboardTabs } from "@/components/admin/dashboard/DashboardTabs";
 const Dashboard = () => {
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const { session, isLoading: authLoading, isAuthenticated } = useSessionManager();
+  const { session, isLoading: authLoading, isAuthenticated, profile } = useSessionManager();
 
   useEffect(() => {
     const verifyAdminStatus = async () => {
-      if (!session) {
-        // Wait for auth to resolve before showing non-admin state
+      if (!session || authLoading) {
         return;
       }
 
       try {
-        await checkAdminStatus();
-        setIsAdmin(true);
+        if (profile?.is_admin) {
+          setIsAdmin(true);
+        } else {
+          setIsAdmin(false);
+        }
       } catch (error) {
         console.error("Admin check failed:", error);
         setIsAdmin(false);
@@ -32,7 +34,7 @@ const Dashboard = () => {
     };
 
     verifyAdminStatus();
-  }, [session]);
+  }, [session, profile, authLoading]);
 
   if (authLoading || isLoading) {
     return <DashboardLoading />;
