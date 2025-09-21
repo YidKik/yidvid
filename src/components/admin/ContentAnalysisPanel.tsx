@@ -29,7 +29,7 @@ export const ContentAnalysisPanel = () => {
         .select('id')
         .or('content_analysis_status.is.null,content_analysis_status.eq.pending')
         .is('deleted_at', null)
-        .limit(50); // Process up to 50 videos at a time
+        .limit(100); // Process up to 100 videos at a time
 
       if (error) throw error;
 
@@ -38,11 +38,13 @@ export const ContentAnalysisPanel = () => {
         return;
       }
 
+      toast.info(`Processing ${pendingVideos.length} videos...`);
+
       // Update progress during processing
       const steps = 20;
       for (let i = 0; i <= steps; i++) {
         setAnalysisProgress((i / steps) * 100);
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise(resolve => setTimeout(resolve, 50));
       }
 
       const { data: result, error: analysisError } = await supabase.functions.invoke('video-content-analyzer', {
@@ -61,6 +63,33 @@ export const ContentAnalysisPanel = () => {
     } catch (error: any) {
       console.error('Analysis error:', error);
       toast.error('Failed to analyze videos: ' + error.message);
+    } finally {
+      setIsAnalyzing(false);
+      setAnalysisProgress(0);
+    }
+  };
+
+  const handleFixPendingVideos = async () => {
+    setIsAnalyzing(true);
+    setAnalysisProgress(0);
+    
+    try {
+      // Fix videos that have been analyzed but are stuck in pending status
+      const { data: result, error } = await supabase.functions.invoke('video-content-analyzer', {
+        body: {
+          action: 'fix-pending-videos'
+        }
+      });
+
+      if (error) throw error;
+
+      toast.success(`Fixed ${result.fixed} videos that were stuck in pending status`);
+      
+      // Refresh data
+      window.location.reload();
+    } catch (error: any) {
+      console.error('Fix error:', error);
+      toast.error('Failed to fix pending videos: ' + error.message);
     } finally {
       setIsAnalyzing(false);
       setAnalysisProgress(0);
@@ -305,10 +334,29 @@ export const ContentAnalysisPanel = () => {
                 ) : (
                   <>
                     <Play className="h-4 w-4 mr-2" />
-                    Analyze Pending Videos
+                    Analyze New Videos
                   </>
                 )}
               </Button>
+              {stats.pending > 100 && (
+                <Button 
+                  onClick={handleFixPendingVideos} 
+                  disabled={isAnalyzing}
+                  variant="destructive"
+                >
+                  {isAnalyzing ? (
+                    <>
+                      <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                      Fixing...
+                    </>
+                  ) : (
+                    <>
+                      <AlertTriangle className="h-4 w-4 mr-2" />
+                      Fix {stats.pending} Pending Videos
+                    </>
+                  )}
+                </Button>
+              )}
             </div>
           </div>
         </CardHeader>
@@ -362,6 +410,18 @@ export const ContentAnalysisPanel = () => {
               <p>✅ <strong>All new videos are automatically filtered before display</strong></p>
               <p>✅ <strong>Educational/religious content gets auto-approved</strong></p>
               <p>⚠️ <strong>Ambiguous content requires manual review</strong></p>
+              
+              {stats.pending > 100 && (
+                <div className="mt-3 p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
+                  <p className="text-yellow-800 dark:text-yellow-200 font-medium">
+                    ⚠️ <strong>{stats.pending.toLocaleString()} videos are stuck in pending status</strong>
+                  </p>
+                  <p className="text-yellow-700 dark:text-yellow-300 text-xs mt-1">
+                    These videos were analyzed but not properly categorized. Click "Fix Pending Videos" to resolve this automatically.
+                    This is a one-time fix needed due to a previous system update.
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </CardContent>

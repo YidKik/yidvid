@@ -120,6 +120,124 @@ serve(async (req) => {
       });
     }
 
+    // Handle fixing videos stuck in pending status
+    if (action === 'fix-pending-videos') {
+      console.log('Fixing videos stuck in pending status...');
+      
+      // Get videos that have analysis results but are still marked as pending
+      const { data: pendingVideos, error: fetchError } = await supabase
+        .from('youtube_videos')
+        .select('id, analysis_score, analysis_details, manual_review_required')
+        .eq('content_analysis_status', 'pending')
+        .not('analysis_score', 'is', null)
+        .is('deleted_at', null);
+
+      if (fetchError) {
+        console.error('Error fetching pending videos:', fetchError);
+        return new Response(JSON.stringify({ error: 'Failed to fetch pending videos' }), {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+
+      let fixed = 0;
+      for (const video of pendingVideos || []) {
+        try {
+          let newStatus: 'approved' | 'rejected' | 'manual_review' = 'manual_review';
+          
+          // Determine correct status based on analysis score
+          if (video.analysis_score >= 7.0) {
+            newStatus = 'approved';
+          } else if (video.analysis_score <= 3.0) {
+            newStatus = 'rejected';
+          } else {
+            newStatus = 'manual_review';
+          }
+
+          // Update the video status
+          const { error: updateError } = await supabase
+            .from('youtube_videos')
+            .update({
+              content_analysis_status: newStatus,
+              manual_review_required: newStatus === 'manual_review'
+            })
+            .eq('id', video.id);
+
+          if (!updateError) {
+            fixed++;
+          } else {
+            console.error('Error updating video:', video.id, updateError);
+          }
+        } catch (error) {
+          console.error('Error processing video:', video.id, error);
+        }
+      }
+
+      console.log(`Fixed ${fixed} videos that were stuck in pending status`);
+      return new Response(JSON.stringify({ success: true, fixed }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    // Handle fixing videos stuck in pending status
+    if (action === 'fix-pending-videos') {
+      console.log('Fixing videos stuck in pending status...');
+      
+      // Get videos that have analysis results but are still marked as pending
+      const { data: pendingVideos, error: fetchError } = await supabase
+        .from('youtube_videos')
+        .select('id, analysis_score, analysis_details, manual_review_required')
+        .eq('content_analysis_status', 'pending')
+        .not('analysis_score', 'is', null)
+        .is('deleted_at', null);
+
+      if (fetchError) {
+        console.error('Error fetching pending videos:', fetchError);
+        return new Response(JSON.stringify({ error: 'Failed to fetch pending videos' }), {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+
+      let fixed = 0;
+      for (const video of pendingVideos || []) {
+        try {
+          let newStatus: 'approved' | 'rejected' | 'manual_review' = 'manual_review';
+          
+          // Determine correct status based on analysis score
+          if (video.analysis_score >= 7.0) {
+            newStatus = 'approved';
+          } else if (video.analysis_score <= 3.0) {
+            newStatus = 'rejected';
+          } else {
+            newStatus = 'manual_review';
+          }
+
+          // Update the video status
+          const { error: updateError } = await supabase
+            .from('youtube_videos')
+            .update({
+              content_analysis_status: newStatus,
+              manual_review_required: newStatus === 'manual_review'
+            })
+            .eq('id', video.id);
+
+          if (!updateError) {
+            fixed++;
+          } else {
+            console.error('Error updating video:', video.id, updateError);
+          }
+        } catch (error) {
+          console.error('Error processing video:', video.id, error);
+        }
+      }
+
+      console.log(`Fixed ${fixed} videos that were stuck in pending status`);
+      return new Response(JSON.stringify({ success: true, fixed }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
     // Handle single video analysis (called from channel processor)
     if (!action && videoId && title !== undefined) {
       console.log(`Analyzing single video: ${title} (${videoId})`);
