@@ -34,6 +34,7 @@ export const useVideoSearch = () => {
           .select('id, video_id, title, thumbnail, channel_id, channel_name')
           .or(`title.ilike.%${debouncedQuery}%,channel_name.ilike.%${debouncedQuery}%`)
           .is('deleted_at', null)
+          .eq('content_analysis_status', 'approved')
           .order('created_at', { ascending: false })
           .limit(10);
 

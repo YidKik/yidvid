@@ -10,9 +10,12 @@ export interface ModerationVideo {
   channel_name: string | null;
   content_analysis_status?: string | null;
   deleted_at?: string | null;
+  analysis_details?: any | null;
+  analysis_score?: number | null;
+  reasoning?: string;
 }
 
-const selectFields = "id,title,thumbnail,channel_name,content_analysis_status,deleted_at";
+const selectFields = "id,title,thumbnail,channel_name,content_analysis_status,deleted_at,analysis_details,analysis_score";
 
 export const useVideoModeration = () => {
   const { user } = useAuth();
@@ -46,7 +49,7 @@ export const useVideoModeration = () => {
           v.content_analysis_status === 'rejected'
         ).length || 0,
         manualReview: data?.filter(v => 
-          v.content_analysis_status === 'pending' && 
+          v.content_analysis_status === 'manual_review' && 
           !v.deleted_at
         ).length || 0,
       };
@@ -95,7 +98,7 @@ export const useVideoModeration = () => {
       const { data, error } = await supabase
         .from("youtube_videos")
         .select(selectFields)
-        .or("content_analysis_status.eq.pending,content_analysis_status.eq.flagged,manual_review_required.eq.true")
+        .or("content_analysis_status.eq.pending,content_analysis_status.eq.manual_review,manual_review_required.eq.true")
         .is("deleted_at", null)
         .order("updated_at", { ascending: false });
       if (error) {

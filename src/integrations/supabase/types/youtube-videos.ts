@@ -15,6 +15,13 @@ export interface YoutubeVideosTable {
     deleted_at?: Date | null;
     description?: string | null;
     last_viewed_at?: Date | null;
+    content_analysis_status?: "pending" | "approved" | "rejected" | "manual_review" | null;
+    analysis_details?: any | null;
+    analysis_score?: number | null;
+    analysis_timestamp?: string | null;
+    manual_review_required?: boolean | null;
+    reviewed_by?: string | null;
+    reviewed_at?: Date | null;
   };
   Insert: {
     channel_id: string;
@@ -31,6 +38,13 @@ export interface YoutubeVideosTable {
     deleted_at?: Date | null;
     description?: string | null;
     last_viewed_at?: Date | null;
+    content_analysis_status?: "pending" | "approved" | "rejected" | "manual_review" | null;
+    analysis_details?: any | null;
+    analysis_score?: number | null;
+    analysis_timestamp?: string | null;
+    manual_review_required?: boolean | null;
+    reviewed_by?: string | null;
+    reviewed_at?: Date | null;
   };
   Update: {
     channel_id?: string;
@@ -47,6 +61,13 @@ export interface YoutubeVideosTable {
     deleted_at?: Date | null;
     description?: string | null;
     last_viewed_at?: Date | null;
+    content_analysis_status?: "pending" | "approved" | "rejected" | "manual_review" | null;
+    analysis_details?: any | null;
+    analysis_score?: number | null;
+    analysis_timestamp?: string | null;
+    manual_review_required?: boolean | null;
+    reviewed_by?: string | null;
+    reviewed_at?: Date | null;
   };
   Relationships: [
     {

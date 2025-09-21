@@ -9,7 +9,7 @@ const corsHeaders = {
 
 interface AnalysisResult {
   finalScore: number;
-  status: 'approved' | 'rejected' | 'pending';
+  status: 'approved' | 'rejected' | 'pending' | 'manual_review';
   approved: boolean;
   manualReview: boolean;
   reasoning: string;
@@ -41,6 +41,8 @@ serve(async (req) => {
     const { action, videoIds, videoId, title, description, thumbnailUrl, channelName, storeResults } = body;
 
     if (action === 'analyze-batch') {
+      console.log(`Starting batch analysis of ${videoIds.length} videos`);
+      
       const results = {
         processed: 0,
         approved: 0,
@@ -112,6 +114,7 @@ serve(async (req) => {
         }
       }
 
+      console.log('Batch analysis completed:', results);
       return new Response(JSON.stringify({ success: true, results }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
@@ -133,25 +136,18 @@ serve(async (req) => {
       // Perform AI analysis
       const analysisResult = await analyzeVideo(videoData);
       
-      // Optionally store results if requested
-      if (storeResults && videoId) {
-        const { error: updateError } = await supabase
-          .from('youtube_videos')
-          .update({
-            content_analysis_status: analysisResult.status,
-            analysis_details: analysisResult.details,
-            analysis_score: analysisResult.finalScore,
-            analysis_timestamp: new Date().toISOString(),
-            manual_review_required: analysisResult.manualReview
-          })
-          .eq('video_id', videoId);
-
-        if (updateError) {
-          console.error('Failed to store analysis results:', updateError);
-        }
-      }
-
-      return new Response(JSON.stringify(analysisResult), {
+      console.log(`Analysis result for ${title}:`, {
+        status: analysisResult.status,
+        score: analysisResult.finalScore,
+        approved: analysisResult.approved,
+        reasoning: analysisResult.reasoning
+      });
+      
+      // Return result WITHOUT storing - let the calling function decide
+      return new Response(JSON.stringify({
+        ...analysisResult,
+        shouldStore: analysisResult.approved || analysisResult.status === 'manual_review'
+      }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
@@ -216,7 +212,7 @@ async function analyzeVideo(video: any): Promise<AnalysisResult> {
   console.log('Analyzing video:', video.title);
   
   let finalScore = 7.0; // Default neutral score
-  let status: 'approved' | 'rejected' | 'pending' = 'approved';
+  let status: 'approved' | 'rejected' | 'pending' | 'manual_review' = 'approved';
   let manualReview = false;
   let reasoning = 'Standard automated analysis';
   
@@ -279,7 +275,7 @@ async function analyzeVideo(video: any): Promise<AnalysisResult> {
   } else {
     // Ambiguous content - manual review needed
     finalScore = 5.5;
-    status = 'pending';
+    status = 'manual_review';
     manualReview = true;
     reasoning = 'Content requires manual review - no clear educational or inspirational markers';
   }
@@ -304,7 +300,7 @@ async function analyzeVideo(video: any): Promise<AnalysisResult> {
     status = 'rejected';
     manualReview = false;
   } else {
-    status = 'pending';
+    status = 'manual_review';
     manualReview = true;
   }
 

@@ -22,12 +22,12 @@ export const useVideoFetcher = () => {
       }
       localStorage.setItem('lastForceRefetch', now.toString());
       
-      // ONLY use direct database query - no edge function calls
       console.log("Using direct database query only...");
       const { data, error } = await supabase
         .from("youtube_videos")
         .select("*")
         .is("deleted_at", null)
+        .eq("content_analysis_status", "approved")
         .order("uploaded_at", { ascending: false })
         .limit(500);
       
@@ -64,11 +64,11 @@ export const useVideoFetcher = () => {
     try {
       console.log("Fetching all videos");
       
-      // ONLY use direct database query - remove all edge function calls
       const { data, error } = await supabase
         .from("youtube_videos")
         .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, updated_at, category, description")
         .is("deleted_at", null)
+        .eq("content_analysis_status", "approved")
         .order("uploaded_at", { ascending: false })
         .limit(500);
 
