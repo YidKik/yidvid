@@ -8,14 +8,16 @@ const corsHeaders = {
 };
 
 interface AnalysisResult {
-  score: number;
+  finalScore: number;
   status: 'approved' | 'rejected' | 'pending';
+  approved: boolean;
+  manualReview: boolean;
+  reasoning: string;
   details: {
-    textAnalysis?: any;
-    thumbnailAnalysis?: any;
-    overallAssessment: string;
+    textAnalysis: any;
+    thumbnailAnalysis: any;
+    videoAnalysis: any;
   };
-  requiresManualReview: boolean;
 }
 
 serve(async (req) => {
@@ -35,7 +37,8 @@ serve(async (req) => {
       }
     });
 
-    const { action, videoIds } = await req.json();
+    const body = await req.json();
+    const { action, videoIds, videoId, title, description, thumbnailUrl, channelName, storeResults } = body;
 
     if (action === 'analyze-batch') {
       const results = {
@@ -75,9 +78,9 @@ serve(async (req) => {
               .update({
                 content_analysis_status: analysisResult.status,
                 analysis_details: analysisResult.details,
-                analysis_score: analysisResult.score,
+                analysis_score: analysisResult.finalScore,
                 analysis_timestamp: new Date().toISOString(),
-                manual_review_required: analysisResult.requiresManualReview
+                manual_review_required: analysisResult.manualReview
               })
               .eq('id', videoId);
 
@@ -90,7 +93,7 @@ serve(async (req) => {
             results.processed++;
             if (analysisResult.status === 'approved') results.approved++;
             else if (analysisResult.status === 'rejected') results.rejected++;
-            else if (analysisResult.requiresManualReview) results.manualReview++;
+            else if (analysisResult.manualReview) results.manualReview++;
 
             // Log the analysis
             await supabase
@@ -114,10 +117,47 @@ serve(async (req) => {
       });
     }
 
-    if (action === 'analyze-single') {
-      const { videoId } = await req.json();
+    // Handle single video analysis (called from channel processor)
+    if (!action && videoId && title !== undefined) {
+      console.log(`Analyzing single video: ${title} (${videoId})`);
       
-      // Fetch video details
+      // Create mock video object for analysis
+      const videoData = {
+        video_id: videoId,
+        title: title,
+        description: description || '',
+        thumbnail: thumbnailUrl || '',
+        channel_name: channelName || ''
+      };
+
+      // Perform AI analysis
+      const analysisResult = await analyzeVideo(videoData);
+      
+      // Optionally store results if requested
+      if (storeResults && videoId) {
+        const { error: updateError } = await supabase
+          .from('youtube_videos')
+          .update({
+            content_analysis_status: analysisResult.status,
+            analysis_details: analysisResult.details,
+            analysis_score: analysisResult.finalScore,
+            analysis_timestamp: new Date().toISOString(),
+            manual_review_required: analysisResult.manualReview
+          })
+          .eq('video_id', videoId);
+
+        if (updateError) {
+          console.error('Failed to store analysis results:', updateError);
+        }
+      }
+
+      return new Response(JSON.stringify(analysisResult), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    if (action === 'analyze-single') {
+      // Fetch video details from database
       const { data: video, error: fetchError } = await supabase
         .from('youtube_videos')
         .select('*')
@@ -140,9 +180,9 @@ serve(async (req) => {
         .update({
           content_analysis_status: analysisResult.status,
           analysis_details: analysisResult.details,
-          analysis_score: analysisResult.score,
+          analysis_score: analysisResult.finalScore,
           analysis_timestamp: new Date().toISOString(),
-          manual_review_required: analysisResult.requiresManualReview
+          manual_review_required: analysisResult.manualReview
         })
         .eq('id', videoId);
 
@@ -175,14 +215,15 @@ serve(async (req) => {
 async function analyzeVideo(video: any): Promise<AnalysisResult> {
   console.log('Analyzing video:', video.title);
   
-  let score = 7.0; // Default neutral score
+  let finalScore = 7.0; // Default neutral score
   let status: 'approved' | 'rejected' | 'pending' = 'approved';
-  let requiresManualReview = false;
+  let manualReview = false;
+  let reasoning = 'Standard automated analysis';
   
   const details = {
     textAnalysis: {},
     thumbnailAnalysis: {},
-    overallAssessment: 'Automated analysis completed'
+    videoAnalysis: {}
   };
 
   // Text-based analysis
@@ -190,68 +231,114 @@ async function analyzeVideo(video: any): Promise<AnalysisResult> {
   const description = video.description?.toLowerCase() || '';
   const channelName = video.channel_name?.toLowerCase() || '';
   
-  // Define flagged keywords (customize based on your content policy)
+  // Define content analysis keywords
   const flaggedKeywords = [
     'inappropriate', 'explicit', 'adult', 'violent', 'harmful',
-    'hate', 'abuse', 'discrimination', 'spam', 'scam'
+    'hate', 'abuse', 'discrimination', 'spam', 'scam', 'nudity',
+    'sexual', 'drug', 'alcohol', 'gambling', 'violence', 'weapon'
   ];
   
   const educationalKeywords = [
+    'torah', 'talmud', 'jewish', 'kosher', 'rabbi', 'synagogue', 'shabbat',
     'learn', 'education', 'tutorial', 'lesson', 'study', 'teach',
-    'knowledge', 'school', 'academic', 'family', 'kids', 'children'
+    'knowledge', 'school', 'academic', 'family', 'kids', 'children',
+    'parsha', 'mitzvah', 'prayer', 'yeshiva', 'chassidus', 'halacha'
   ];
 
-  // Check for flagged content
+  const inspirationalKeywords = [
+    'inspire', 'motivation', 'spiritual', 'faith', 'hope', 'blessing',
+    'community', 'charity', 'kindness', 'wisdom', 'growth', 'healing'
+  ];
+
+  // Content analysis
   const hasFlaggedContent = flaggedKeywords.some(keyword => 
     title.includes(keyword) || description.includes(keyword) || channelName.includes(keyword)
   );
   
-  // Check for educational content
   const hasEducationalContent = educationalKeywords.some(keyword =>
     title.includes(keyword) || description.includes(keyword) || channelName.includes(keyword)
   );
 
+  const hasInspirationalContent = inspirationalKeywords.some(keyword =>
+    title.includes(keyword) || description.includes(keyword) || channelName.includes(keyword)
+  );
+
+  // Determine content status and score
   if (hasFlaggedContent) {
-    score = 2.0;
+    finalScore = 2.0;
     status = 'rejected';
-    details.overallAssessment = 'Flagged for inappropriate content';
+    reasoning = 'Content contains flagged keywords that violate content policy';
   } else if (hasEducationalContent) {
-    score = 9.0;
+    finalScore = 9.0;
     status = 'approved';
-    details.overallAssessment = 'Approved - Educational content detected';
+    reasoning = 'Educational/religious content approved for kosher platform';
+  } else if (hasInspirationalContent) {
+    finalScore = 8.0;
+    status = 'approved';
+    reasoning = 'Inspirational content approved';
   } else {
-    // Default case - needs manual review for ambiguous content
-    score = 6.0;
+    // Ambiguous content - manual review needed
+    finalScore = 5.5;
     status = 'pending';
-    requiresManualReview = true;
-    details.overallAssessment = 'Requires manual review - Ambiguous content';
+    manualReview = true;
+    reasoning = 'Content requires manual review - no clear educational or inspirational markers';
   }
 
-  // Additional checks based on channel reputation, view count, etc.
-  if (video.view_count && video.view_count > 10000) {
-    score += 0.5; // Popular videos get slight boost
+  // Channel reputation adjustments
+  if (video.views && video.views > 10000) {
+    finalScore += 0.3; // Popular videos get slight boost
   }
   
-  if (video.channel_name && video.channel_name.includes('Education')) {
-    score += 1.0; // Educational channels get boost
+  if (channelName.includes('rabbi') || channelName.includes('yeshiva') || channelName.includes('torah')) {
+    finalScore += 0.5; // Religious channels get boost
   }
 
   // Ensure score is within bounds
-  score = Math.max(0, Math.min(10, score));
+  finalScore = Math.max(0, Math.min(10, finalScore));
+
+  // Final status determination based on score
+  if (finalScore >= 7.0 && !hasFlaggedContent) {
+    status = 'approved';
+    manualReview = false;
+  } else if (finalScore <= 3.0 || hasFlaggedContent) {
+    status = 'rejected';
+    manualReview = false;
+  } else {
+    status = 'pending';
+    manualReview = true;
+  }
 
   details.textAnalysis = {
     title_score: hasEducationalContent ? 9 : hasFlaggedContent ? 1 : 6,
     description_score: hasEducationalContent ? 9 : hasFlaggedContent ? 1 : 6,
-    flagged_keywords: hasFlaggedContent,
-    educational_keywords: hasEducationalContent
+    flagged_content: hasFlaggedContent,
+    educational_content: hasEducationalContent,
+    inspirational_content: hasInspirationalContent,
+    keywords_found: {
+      flagged: flaggedKeywords.filter(k => title.includes(k) || description.includes(k)),
+      educational: educationalKeywords.filter(k => title.includes(k) || description.includes(k)),
+      inspirational: inspirationalKeywords.filter(k => title.includes(k) || description.includes(k))
+    }
   };
 
-  console.log(`Analysis complete for "${video.title}": Score ${score}, Status ${status}`);
+  details.thumbnailAnalysis = {
+    analyzed: false,
+    message: 'Thumbnail analysis not implemented in this version'
+  };
+
+  details.videoAnalysis = {
+    analyzed: false,
+    message: 'Video content analysis not implemented in this version'
+  };
+
+  console.log(`Analysis complete for "${video.title}": Score ${finalScore}, Status ${status}, Manual Review: ${manualReview}`);
 
   return {
-    score,
+    finalScore,
     status,
-    details,
-    requiresManualReview
+    approved: status === 'approved',
+    manualReview,
+    reasoning,
+    details
   };
 }

@@ -3,12 +3,13 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { RefreshCw, Play, Pause, Filter, Eye, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
+import { RefreshCw, Play, Pause, Filter, Eye, CheckCircle, XCircle, AlertCircle, Download } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
 import { useVideoModeration } from '@/hooks/admin/useVideoModeration';
 import { VideoModerationList } from '@/components/admin/VideoModerationList';
+import { VideoFetchButton } from '@/components/admin/VideoFetchButton';
 
 interface AnalysisStats {
   total: number;
@@ -52,44 +53,77 @@ export const ContentAnalysisPanel: React.FC = () => {
     setAnalysisProgress(0);
     
     try {
-      toast.info('Starting batch analysis simulation...');
+      toast.info('Starting batch analysis of pending videos...');
       
-      // Simulate analysis progress
-      const steps = 10;
+      // Get list of pending video IDs
+      const { data: pendingVideos, error: fetchError } = await supabase
+        .from('youtube_videos')
+        .select('id')
+        .or('content_analysis_status.is.null,content_analysis_status.eq.pending')
+        .is('deleted_at', null)
+        .limit(50); // Process up to 50 videos at a time
+      
+      if (fetchError) {
+        throw new Error(`Failed to fetch pending videos: ${fetchError.message}`);
+      }
+
+      if (!pendingVideos || pendingVideos.length === 0) {
+        toast.info('No pending videos found to analyze');
+        return;
+      }
+
+      const initialStats = stats || { total: 0, pending: 0, approved: 0, rejected: 0, manualReview: 0 };
+      
+      // Call the video content analyzer edge function
+      const { data: analysisResult, error: analysisError } = await supabase.functions.invoke('video-content-analyzer', {
+        body: {
+          action: 'analyze-batch',
+          videoIds: pendingVideos.map(v => v.id)
+        }
+      });
+
+      if (analysisError) {
+        throw new Error(`Analysis failed: ${analysisError.message}`);
+      }
+
+      // Update progress during processing
+      const steps = 20;
       for (let i = 0; i <= steps; i++) {
         setAnalysisProgress((i / steps) * 100);
-        await new Promise(resolve => setTimeout(resolve, 300));
+        await new Promise(resolve => setTimeout(resolve, 150));
       }
-      
-      // Mock successful analysis results
-      const mockResult: BatchAnalysisResult = {
-        success: true,
-        processed: 23,
+
+      const result: BatchAnalysisResult = {
+        success: analysisResult.success,
+        processed: analysisResult.results.processed,
         batchResults: {
-          total: 23,
-          approved: 18,
-          rejected: 3,
-          manualReview: 2,
-          errors: 0
+          total: analysisResult.results.processed,
+          approved: analysisResult.results.approved,
+          rejected: analysisResult.results.rejected,
+          manualReview: analysisResult.results.manualReview,
+          errors: analysisResult.results.errors
         },
-        initialStats: stats || { total: 0, pending: 0, approved: 0, rejected: 0, manualReview: 0 },
+        initialStats,
         finalStats: {
-          total: 150,
-          pending: 0,
-          approved: 130,
-          rejected: 11,
-          manualReview: 9
+          total: initialStats.total,
+          pending: Math.max(0, initialStats.pending - analysisResult.results.processed),
+          approved: initialStats.approved + analysisResult.results.approved,
+          rejected: initialStats.rejected + analysisResult.results.rejected,
+          manualReview: initialStats.manualReview + analysisResult.results.manualReview
         }
       };
 
-      setLastAnalysis(mockResult);
+      setLastAnalysis(result);
       
       toast.success(
-        `Analysis complete! Processed ${mockResult.processed} videos. ` +
-        `Approved: ${mockResult.batchResults.approved}, ` +
-        `Rejected: ${mockResult.batchResults.rejected}, ` +
-        `Manual Review: ${mockResult.batchResults.manualReview}`
+        `Analysis complete! Processed ${result.processed} videos. ` +
+        `Approved: ${result.batchResults.approved}, ` +
+        `Rejected: ${result.batchResults.rejected}, ` +
+        `Manual Review: ${result.batchResults.manualReview}`
       );
+
+      // Refresh the moderation data
+      window.location.reload();
 
     } catch (error) {
       console.error('Error in batch analysis:', error);
@@ -206,6 +240,8 @@ export const ContentAnalysisPanel: React.FC = () => {
 
           {/* Action Buttons */}
           <div className="flex flex-wrap gap-3">
+            <VideoFetchButton onFetchComplete={() => window.location.reload()} />
+            
             <Button
               onClick={fetchStats}
               disabled={isModerationLoading}
@@ -224,7 +260,7 @@ export const ContentAnalysisPanel: React.FC = () => {
               ) : (
                 <Play className="h-4 w-4 mr-2" />
               )}
-              Analyze Pending Videos
+              Analyze Pending Videos ({stats?.pending || 0})
             </Button>
 
             <Button
@@ -274,14 +310,16 @@ export const ContentAnalysisPanel: React.FC = () => {
               <h3 className="font-semibold">AI Filtering System Status</h3>
               <Badge variant="default" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">
                 <div className="w-2 h-2 bg-green-500 rounded-full mr-2" />
-                Active
+                Active & Processing New Videos
               </Badge>
             </div>
             <div className="text-sm text-muted-foreground space-y-1">
-              <p>✅ Text Analysis: Enhanced keyword filtering</p>
-              <p>✅ Thumbnail Analysis: Sightengine AI detection</p>
-              <p>✅ Video Content Analysis: Frame-by-frame scanning</p>
-              <p>✅ Multi-stage filtering with confidence scoring</p>
+              <p>✅ <strong>NEW Video Processing:</strong> All new videos from YouTube are automatically filtered</p>
+              <p>✅ <strong>Content Analysis:</strong> Enhanced keyword filtering for kosher content</p>
+              <p>✅ <strong>Auto-Approval:</strong> Educational/religious content gets automatically approved</p>
+              <p>✅ <strong>Auto-Rejection:</strong> Inappropriate content gets automatically rejected</p>
+              <p>✅ <strong>Manual Review Queue:</strong> Ambiguous content requires admin review</p>
+              <p>⚠️  <strong>Note:</strong> Only NEW videos are processed. Existing videos require manual analysis.</p>
             </div>
           </div>
 

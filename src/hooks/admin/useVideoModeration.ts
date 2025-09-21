@@ -33,7 +33,7 @@ export const useVideoModeration = () => {
       }
 
       const stats = {
-        total: data?.length || 0,
+        total: data?.filter(v => !v.deleted_at).length || 0,
         pending: data?.filter(v => 
           (v.content_analysis_status === 'pending' || !v.content_analysis_status) && 
           !v.deleted_at
