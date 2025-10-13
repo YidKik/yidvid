@@ -329,23 +329,79 @@ serve(async (req) => {
 async function analyzeVideo(video: any): Promise<AnalysisResult> {
   console.log('Analyzing video:', video.title);
   
-  let finalScore = 7.0; // Default neutral score
-  let status: 'approved' | 'rejected' | 'pending' | 'manual_review' = 'approved';
-  let manualReview = false;
-  let reasoning = 'Standard automated analysis';
+  const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+  const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
   
-  const details = {
-    textAnalysis: {},
-    thumbnailAnalysis: {},
-    videoAnalysis: {}
-  };
+  const supabase = createClient(supabaseUrl, supabaseServiceKey, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false
+    }
+  });
 
-  // Text-based analysis
+  try {
+    // Call the advanced analyze-video-content edge function
+    const { data: advancedAnalysis, error: analysisError } = await supabase.functions.invoke('analyze-video-content', {
+      body: {
+        title: video.title || '',
+        description: video.description || '',
+        videoId: video.video_id || '',
+        thumbnailUrl: video.thumbnail || '',
+        channelName: video.channel_name || ''
+      }
+    });
+
+    if (analysisError) {
+      console.error('Error calling analyze-video-content:', analysisError);
+      // Fallback to basic analysis if advanced analysis fails
+      return fallbackBasicAnalysis(video);
+    }
+
+    console.log('Advanced analysis result:', advancedAnalysis);
+
+    // Convert advanced analysis result to our format
+    const finalScore = advancedAnalysis.finalScore * 10; // Convert 0-1 scale to 0-10 scale
+    let status: 'approved' | 'rejected' | 'pending' | 'manual_review';
+    let manualReview = false;
+
+    if (advancedAnalysis.approved) {
+      status = 'approved';
+      manualReview = false;
+    } else if (finalScore <= 3.0) {
+      status = 'rejected';
+      manualReview = false;
+    } else {
+      status = 'manual_review';
+      manualReview = true;
+    }
+
+    return {
+      finalScore,
+      status,
+      approved: advancedAnalysis.approved,
+      manualReview,
+      reasoning: advancedAnalysis.reasoning,
+      details: {
+        textAnalysis: advancedAnalysis.textAnalysis,
+        thumbnailAnalysis: advancedAnalysis.thumbnailAnalysis,
+        videoAnalysis: advancedAnalysis.videoAnalysis
+      }
+    };
+
+  } catch (error) {
+    console.error('Error in advanced video analysis:', error);
+    return fallbackBasicAnalysis(video);
+  }
+}
+
+// Fallback basic analysis if advanced analysis fails
+function fallbackBasicAnalysis(video: any): AnalysisResult {
+  console.log('Using fallback basic analysis for:', video.title);
+  
   const title = video.title?.toLowerCase() || '';
   const description = video.description?.toLowerCase() || '';
   const channelName = video.channel_name?.toLowerCase() || '';
   
-  // Define content analysis keywords
   const flaggedKeywords = [
     'inappropriate', 'explicit', 'adult', 'violent', 'harmful',
     'hate', 'abuse', 'discrimination', 'spam', 'scam', 'nudity',
@@ -359,12 +415,6 @@ async function analyzeVideo(video: any): Promise<AnalysisResult> {
     'parsha', 'mitzvah', 'prayer', 'yeshiva', 'chassidus', 'halacha'
   ];
 
-  const inspirationalKeywords = [
-    'inspire', 'motivation', 'spiritual', 'faith', 'hope', 'blessing',
-    'community', 'charity', 'kindness', 'wisdom', 'growth', 'healing'
-  ];
-
-  // Content analysis
   const hasFlaggedContent = flaggedKeywords.some(keyword => 
     title.includes(keyword) || description.includes(keyword) || channelName.includes(keyword)
   );
@@ -373,86 +423,30 @@ async function analyzeVideo(video: any): Promise<AnalysisResult> {
     title.includes(keyword) || description.includes(keyword) || channelName.includes(keyword)
   );
 
-  const hasInspirationalContent = inspirationalKeywords.some(keyword =>
-    title.includes(keyword) || description.includes(keyword) || channelName.includes(keyword)
-  );
+  let finalScore = 5.5;
+  let status: 'approved' | 'rejected' | 'pending' | 'manual_review' = 'manual_review';
+  let reasoning = 'Fallback basic analysis - advanced analysis unavailable';
 
-  // Determine content status and score
   if (hasFlaggedContent) {
     finalScore = 2.0;
     status = 'rejected';
-    reasoning = 'Content contains flagged keywords that violate content policy';
+    reasoning = 'Content contains flagged keywords';
   } else if (hasEducationalContent) {
     finalScore = 9.0;
     status = 'approved';
-    reasoning = 'Educational/religious content approved for kosher platform';
-  } else if (hasInspirationalContent) {
-    finalScore = 8.0;
-    status = 'approved';
-    reasoning = 'Inspirational content approved';
-  } else {
-    // Ambiguous content - manual review needed
-    finalScore = 5.5;
-    status = 'manual_review';
-    manualReview = true;
-    reasoning = 'Content requires manual review - no clear educational or inspirational markers';
+    reasoning = 'Educational/religious content approved';
   }
-
-  // Channel reputation adjustments
-  if (video.views && video.views > 10000) {
-    finalScore += 0.3; // Popular videos get slight boost
-  }
-  
-  if (channelName.includes('rabbi') || channelName.includes('yeshiva') || channelName.includes('torah')) {
-    finalScore += 0.5; // Religious channels get boost
-  }
-
-  // Ensure score is within bounds
-  finalScore = Math.max(0, Math.min(10, finalScore));
-
-  // Final status determination based on score
-  if (finalScore >= 7.0 && !hasFlaggedContent) {
-    status = 'approved';
-    manualReview = false;
-  } else if (finalScore <= 3.0 || hasFlaggedContent) {
-    status = 'rejected';
-    manualReview = false;
-  } else {
-    status = 'manual_review';
-    manualReview = true;
-  }
-
-  details.textAnalysis = {
-    title_score: hasEducationalContent ? 9 : hasFlaggedContent ? 1 : 6,
-    description_score: hasEducationalContent ? 9 : hasFlaggedContent ? 1 : 6,
-    flagged_content: hasFlaggedContent,
-    educational_content: hasEducationalContent,
-    inspirational_content: hasInspirationalContent,
-    keywords_found: {
-      flagged: flaggedKeywords.filter(k => title.includes(k) || description.includes(k)),
-      educational: educationalKeywords.filter(k => title.includes(k) || description.includes(k)),
-      inspirational: inspirationalKeywords.filter(k => title.includes(k) || description.includes(k))
-    }
-  };
-
-  details.thumbnailAnalysis = {
-    analyzed: false,
-    message: 'Thumbnail analysis not implemented in this version'
-  };
-
-  details.videoAnalysis = {
-    analyzed: false,
-    message: 'Video content analysis not implemented in this version'
-  };
-
-  console.log(`Analysis complete for "${video.title}": Score ${finalScore}, Status ${status}, Manual Review: ${manualReview}`);
 
   return {
     finalScore,
     status,
     approved: status === 'approved',
-    manualReview,
+    manualReview: status === 'manual_review',
     reasoning,
-    details
+    details: {
+      textAnalysis: { flagged_content: hasFlaggedContent, educational_content: hasEducationalContent },
+      thumbnailAnalysis: { analyzed: false, message: 'Advanced analysis unavailable' },
+      videoAnalysis: { analyzed: false, message: 'Advanced analysis unavailable' }
+    }
   };
 }
