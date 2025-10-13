@@ -18,6 +18,7 @@ interface AnalysisResult {
     thumbnailAnalysis: any;
     videoAnalysis: any;
   };
+  category: string;
 }
 
 serve(async (req) => {
@@ -82,7 +83,8 @@ serve(async (req) => {
                 analysis_details: analysisResult.details,
                 analysis_score: analysisResult.finalScore,
                 analysis_timestamp: new Date().toISOString(),
-                manual_review_required: analysisResult.manualReview
+                manual_review_required: analysisResult.manualReview,
+                category: analysisResult.category || 'other'
               })
               .eq('id', videoId);
 
@@ -296,7 +298,8 @@ serve(async (req) => {
           analysis_details: analysisResult.details,
           analysis_score: analysisResult.finalScore,
           analysis_timestamp: new Date().toISOString(),
-          manual_review_required: analysisResult.manualReview
+          manual_review_required: analysisResult.manualReview,
+          category: analysisResult.category || 'other'
         })
         .eq('id', videoId);
 
@@ -385,7 +388,8 @@ async function analyzeVideo(video: any): Promise<AnalysisResult> {
         textAnalysis: advancedAnalysis.textAnalysis,
         thumbnailAnalysis: advancedAnalysis.thumbnailAnalysis,
         videoAnalysis: advancedAnalysis.videoAnalysis
-      }
+      },
+      category: advancedAnalysis.category || 'other'
     };
 
   } catch (error) {
@@ -447,6 +451,7 @@ function fallbackBasicAnalysis(video: any): AnalysisResult {
       textAnalysis: { flagged_content: hasFlaggedContent, educational_content: hasEducationalContent },
       thumbnailAnalysis: { analyzed: false, message: 'Advanced analysis unavailable' },
       videoAnalysis: { analyzed: false, message: 'Advanced analysis unavailable' }
-    }
+    },
+    category: 'other'
   };
 }

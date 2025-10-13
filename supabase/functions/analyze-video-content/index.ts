@@ -26,6 +26,7 @@ interface AnalysisResult {
   };
   finalScore: number;
   reasoning: string;
+  category: string;
 }
 
 const createSupabaseClient = () => {
@@ -223,6 +224,38 @@ const analyzeVideoContent = async (videoId: string): Promise<any> => {
   }
 };
 
+const determineCategory = (title: string, description: string, channelName: string): string => {
+  const fullText = `${title || ''} ${description || ''} ${channelName || ''}`.toLowerCase();
+  
+  // Category keywords
+  const musicKeywords = ['music', 'song', 'album', 'singer', 'artist', 'concert', 'performance', 'acoustic', 'cover', 'remix', 'lyrics', 'band', 'musical'];
+  const torahKeywords = ['torah', 'parsha', 'shiur', 'rabbi', 'talmud', 'gemara', 'jewish', 'judaism', 'halacha', 'mitzvah', 'shabbat', 'kosher', 'prayer', 'synagogue', 'yeshiva', 'chassidus'];
+  const inspirationKeywords = ['inspiration', 'motivational', 'inspire', 'wisdom', 'life lessons', 'personal growth', 'success', 'mindset', 'positive', 'encouragement', 'faith', 'spiritual'];
+  const podcastKeywords = ['podcast', 'interview', 'discussion', 'talk show', 'conversation', 'episode', 'guest', 'host'];
+  const educationKeywords = ['education', 'tutorial', 'lesson', 'learning', 'teach', 'course', 'lecture', 'study', 'guide', 'how to', 'explanation', 'academic'];
+  const entertainmentKeywords = ['entertainment', 'comedy', 'funny', 'humor', 'sketch', 'vlog', 'challenge', 'reaction', 'gaming', 'movie', 'film', 'show'];
+  
+  // Count matches for each category
+  const scores = {
+    music: musicKeywords.filter(k => fullText.includes(k)).length,
+    torah: torahKeywords.filter(k => fullText.includes(k)).length,
+    inspiration: inspirationKeywords.filter(k => fullText.includes(k)).length,
+    podcast: podcastKeywords.filter(k => fullText.includes(k)).length,
+    education: educationKeywords.filter(k => fullText.includes(k)).length,
+    entertainment: entertainmentKeywords.filter(k => fullText.includes(k)).length,
+  };
+  
+  // Find category with highest score
+  const maxScore = Math.max(...Object.values(scores));
+  
+  if (maxScore === 0) {
+    return 'other';
+  }
+  
+  const category = Object.entries(scores).find(([_, score]) => score === maxScore)?.[0] || 'other';
+  return category;
+};
+
 const analyzeText = (title: string, description: string, channelName: string): any => {
   // Enhanced forbidden words list
   const forbiddenWords = [
@@ -301,6 +334,10 @@ serve(async (req) => {
 
     const startTime = Date.now();
     const supabase = createSupabaseClient();
+
+    // Determine category from text
+    const category = determineCategory(title, description, channelName);
+    console.log('Determined category:', category);
 
     // Stage 1: Text Analysis
     const textStartTime = Date.now();
@@ -382,7 +419,8 @@ serve(async (req) => {
       thumbnailAnalysis: thumbnailAnalysis,
       videoAnalysis: videoAnalysis,
       finalScore: finalScore,
-      reasoning: reasoning
+      reasoning: reasoning,
+      category: category
     };
 
     console.log('Final analysis result:', response);
