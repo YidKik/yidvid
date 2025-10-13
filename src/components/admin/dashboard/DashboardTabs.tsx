@@ -18,48 +18,48 @@ export const DashboardTabs = ({ currentUserId }: DashboardTabsProps) => {
   return (
     <div className="w-full">
       <Tabs defaultValue={initialTab} className="space-y-6">
-        <div className="sticky top-0 bg-white z-10 pb-4 border-b">
-          <TabsList className="bg-muted p-1 rounded-full w-full flex justify-start overflow-x-auto gap-1 min-w-max">
+        <div className="sticky top-0 bg-white z-10 pb-4 rounded-xl shadow-sm border border-gray-200 p-4">
+          <TabsList className="bg-gradient-to-r from-gray-100 to-gray-50 p-1.5 rounded-xl w-full flex justify-start overflow-x-auto gap-2 min-w-max border border-gray-200">
             <TabsTrigger 
               value="overview" 
-              className="rounded-full px-6 py-2.5 data-[state=active]:shadow-lg transition-all duration-200 whitespace-nowrap"
+              className="rounded-lg px-6 py-3 data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border data-[state=active]:border-primary/20 transition-all duration-200 whitespace-nowrap font-medium"
             >
-              Overview
-            </TabsTrigger>
-            <TabsTrigger 
-              value="content" 
-              className="rounded-full px-6 py-2.5 data-[state=active]:shadow-lg transition-all duration-200 whitespace-nowrap"
-            >
-              Content
+              📊 Overview
             </TabsTrigger>
             <TabsTrigger 
               value="content-analysis" 
-              className="rounded-full px-6 py-2.5 data-[state=active]:shadow-lg transition-all duration-200 whitespace-nowrap"
+              className="rounded-lg px-6 py-3 data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border data-[state=active]:border-primary/20 transition-all duration-200 whitespace-nowrap font-medium"
             >
-              AI Filtering
+              🛡️ AI Filtering
+            </TabsTrigger>
+            <TabsTrigger 
+              value="content" 
+              className="rounded-lg px-6 py-3 data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border data-[state=active]:border-primary/20 transition-all duration-200 whitespace-nowrap font-medium"
+            >
+              📁 Content
             </TabsTrigger>
             <TabsTrigger 
               value="users" 
-              className="rounded-full px-6 py-2.5 data-[state=active]:shadow-lg transition-all duration-200 whitespace-nowrap"
+              className="rounded-lg px-6 py-3 data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border data-[state=active]:border-primary/20 transition-all duration-200 whitespace-nowrap font-medium"
             >
-              Users
+              👥 Users
             </TabsTrigger>
             <TabsTrigger 
               value="channel-categories" 
-              className="rounded-full px-6 py-2.5 data-[state=active]:shadow-lg transition-all duration-200 whitespace-nowrap"
+              className="rounded-lg px-6 py-3 data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border data-[state=active]:border-primary/20 transition-all duration-200 whitespace-nowrap font-medium"
             >
-              Channel Categories
+              🏷️ Channel Categories
             </TabsTrigger>
             <TabsTrigger 
               value="categories" 
-              className="rounded-full px-6 py-2.5 data-[state=active]:shadow-lg transition-all duration-200 whitespace-nowrap"
+              className="rounded-lg px-6 py-3 data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border data-[state=active]:border-primary/20 transition-all duration-200 whitespace-nowrap font-medium"
             >
-              Video Categories
+              🎬 Video Categories
             </TabsTrigger>
           </TabsList>
         </div>
 
-        <div className="mt-6">
+        <div className="mt-6 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <TabsContent value="overview" className="mt-0">
             <OverviewTab />
           </TabsContent>

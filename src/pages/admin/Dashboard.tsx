@@ -64,12 +64,25 @@ const Dashboard = () => {
         <link rel="icon" href="/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png" />
       </Helmet>
       
-      <div className="container mx-auto py-8 px-4 space-y-8">
-        <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-        </div>
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+        <div className="container mx-auto py-8 px-4 space-y-8">
+          <div className="flex items-center justify-between bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+            <div>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
+                Admin Dashboard
+              </h1>
+              <p className="text-muted-foreground mt-1">
+                Manage your platform with advanced tools and insights
+              </p>
+            </div>
+            <div className="text-right">
+              <p className="text-sm text-muted-foreground">Welcome back,</p>
+              <p className="font-semibold">{profile?.email || 'Admin'}</p>
+            </div>
+          </div>
 
-        <DashboardTabs currentUserId={session?.user?.id || ""} />
+          <DashboardTabs currentUserId={session?.user?.id || ""} />
+        </div>
       </div>
     </>
   );
