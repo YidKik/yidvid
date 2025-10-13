@@ -3,7 +3,6 @@ import React from 'react';
 import { ChannelsHeader } from "./ChannelsHeader";
 import { ChannelsSearch } from "./ChannelsSearch";
 import { ChannelsMainView } from "./ChannelsMainView";
-import { ChannelVideosFetcher } from "@/components/youtube/ChannelVideosFetcher";
 import { ChannelsLoading } from "./ChannelsLoading";
 import { ChannelsError } from "./ChannelsError";
 import { useYouTubeChannels } from "@/hooks/youtube/useYouTubeChannels";
@@ -40,16 +39,13 @@ export const ChannelsContainer: React.FC = () => {
   return (
     <div className="bg-white rounded-lg shadow max-h-[calc(100vh-12rem)]">
       <div className="p-6 border-b">
-        <div className="flex items-center justify-between">
-          <ChannelsHeader
-            isVideoDialogOpen={isVideoDialogOpen}
-            setIsVideoDialogOpen={setIsVideoDialogOpen}
-            isChannelDialogOpen={isChannelDialogOpen}
-            setIsChannelDialogOpen={setIsChannelDialogOpen}
-            refetchChannels={refetch}
-          />
-          <ChannelVideosFetcher />
-        </div>
+        <ChannelsHeader
+          isVideoDialogOpen={isVideoDialogOpen}
+          setIsVideoDialogOpen={setIsVideoDialogOpen}
+          isChannelDialogOpen={isChannelDialogOpen}
+          setIsChannelDialogOpen={setIsChannelDialogOpen}
+          refetchChannels={refetch}
+        />
         <div className="mt-4">
           <ChannelsSearch
             searchQuery={searchQuery}

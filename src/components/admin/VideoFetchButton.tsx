@@ -15,7 +15,7 @@ export const VideoFetchButton: React.FC<VideoFetchButtonProps> = ({ onFetchCompl
     setIsFetching(true);
     
     try {
-      toast.info('Starting YouTube video fetch with AI filtering...');
+      toast.info('Fetching YouTube videos with AI filtering...');
       
       // Get all active channel IDs
       const { data: channels, error: channelError } = await supabase
@@ -49,8 +49,7 @@ export const VideoFetchButton: React.FC<VideoFetchButtonProps> = ({ onFetchCompl
 
       if (result.success) {
         toast.success(
-          `Successfully processed ${result.processed || 0} channels. ` +
-          `Found ${result.newVideos || 0} new videos. All videos were processed through AI filtering.`
+          `Successfully fetched and filtered ${result.newVideos || 0} new videos from ${result.processed || 0} channels through AI analysis.`
         );
         
         if (onFetchComplete) {
@@ -79,7 +78,7 @@ export const VideoFetchButton: React.FC<VideoFetchButtonProps> = ({ onFetchCompl
       ) : (
         <Download className="h-4 w-4" />
       )}
-      {isFetching ? 'Fetching & Filtering...' : 'Fetch YouTube Videos (with AI Filtering)'}
+      {isFetching ? 'Fetching & Filtering...' : 'Fetch YouTube Videos'}
     </Button>
   );
 };

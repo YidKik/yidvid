@@ -3,12 +3,13 @@ import { useNavigate } from "react-router-dom";
 import { 
   Shield, Users, FileText, BarChart3, Settings, 
   Video, MessageSquare, Bell, TrendingUp, AlertTriangle,
-  CheckCircle, XCircle, Clock, Activity
+  CheckCircle, XCircle, Clock, Activity, Download
 } from "lucide-react";
 import { useDashboardStats } from "@/hooks/useDashboardStats";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSessionManager } from "@/hooks/useSessionManager";
+import { VideoFetchButton } from "@/components/admin/VideoFetchButton";
 
 export const OverviewTab = () => {
   const navigate = useNavigate();
@@ -78,6 +79,32 @@ export const OverviewTab = () => {
 
   return (
     <div className="space-y-8 pb-8">
+      {/* Fetch Videos Button - Prominent Placement */}
+      <Card className="border-2 border-primary/20 bg-gradient-to-r from-primary/5 to-purple-500/5">
+        <CardContent className="pt-6">
+          <div className="flex items-center justify-between">
+            <div className="flex-1">
+              <h3 className="text-lg font-semibold mb-1 flex items-center gap-2">
+                <Download className="h-5 w-5 text-primary" />
+                Fetch New YouTube Videos
+              </h3>
+              <p className="text-sm text-muted-foreground mb-3">
+                Fetch latest videos from all YouTube channels and automatically process them through AI content filtering. 
+                All new videos will be analyzed for inappropriate content before being added to the platform.
+              </p>
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <Shield className="h-3 w-3 text-green-600" />
+                <span>AI automatically detects women/girls, inappropriate content, and flags videos requiring manual review</span>
+              </div>
+            </div>
+            <VideoFetchButton onFetchComplete={() => {
+              // Refresh stats after fetch
+              window.location.reload();
+            }} />
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Top Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard
