@@ -141,10 +141,10 @@ export const ContentAnalysisTab: React.FC = () => {
   const VideoCard = ({ video, onClick }: { video: Video; onClick: () => void }) => {
     const getStatusColor = (status: string) => {
       switch (status) {
-        case 'approved': return 'bg-green-100 text-green-800';
-        case 'rejected': return 'bg-red-100 text-red-800';
-        case 'manual_review': return 'bg-orange-100 text-orange-800';
-        default: return 'bg-yellow-100 text-yellow-800';
+        case 'approved': return 'bg-green-100 text-green-800 border-green-300';
+        case 'rejected': return 'bg-red-100 text-red-800 border-red-300';
+        case 'manual_review': return 'bg-orange-100 text-orange-800 border-orange-300';
+        default: return 'bg-yellow-100 text-yellow-800 border-yellow-300';
       }
     };
 
@@ -156,56 +156,97 @@ export const ContentAnalysisTab: React.FC = () => {
           ? JSON.parse(video.analysis_details) 
           : video.analysis_details;
         
-        return details.rejection_reason || details.thumbnailAnalysis?.rejection_reason || details.frameAnalysis?.rejection_reason;
+        const reasons = [];
+        
+        // Get thumbnail rejection reason
+        if (details.thumbnailAnalysis?.rejection_reason) {
+          reasons.push(details.thumbnailAnalysis.rejection_reason);
+        }
+        
+        // Get video frame issues
+        if (details.videoAnalysis?.problematic_frames && details.videoAnalysis.problematic_frames.length > 0) {
+          const frameIssues = details.videoAnalysis.problematic_frames
+            .flatMap((f: any) => f.issues || [])
+            .slice(0, 2); // Show first 2 issues
+          if (frameIssues.length > 0) {
+            reasons.push(...frameIssues);
+          }
+        }
+        
+        // Get general reasoning
+        if (details.reasoning && !reasons.length) {
+          reasons.push(details.reasoning);
+        }
+        
+        return reasons.length > 0 ? reasons[0] : null; // Show first reason
       } catch {
         return null;
       }
     };
 
+    const rejectionReason = getRejectionReason();
+
     return (
-      <Card className="hover:shadow-lg transition-all cursor-pointer" onClick={onClick}>
+      <Card className="hover:shadow-lg transition-all cursor-pointer border-l-4" onClick={onClick}>
         <CardContent className="p-4">
           <div className="flex gap-4">
-            <div className="relative w-40 h-24 flex-shrink-0">
+            <div className="relative w-48 h-28 flex-shrink-0">
               <img 
                 src={video.thumbnail} 
                 alt={video.title}
                 className="w-full h-full object-cover rounded-lg"
               />
               {video.manual_review_required && (
-                <div className="absolute top-1 right-1 bg-orange-500 text-white p-1 rounded-full">
+                <div className="absolute top-2 right-2 bg-orange-500 text-white px-2 py-1 rounded-md shadow-lg flex items-center gap-1">
                   <AlertTriangle className="h-3 w-3" />
+                  <span className="text-xs font-semibold">Review</span>
                 </div>
               )}
             </div>
             
             <div className="flex-1 min-w-0">
-              <h4 className="font-semibold truncate">{video.title}</h4>
-              <p className="text-sm text-muted-foreground truncate">{video.channel_name}</p>
+              <h4 className="font-semibold text-base line-clamp-2 mb-1">{video.title}</h4>
+              <p className="text-sm text-muted-foreground truncate mb-3">{video.channel_name}</p>
               
-              <div className="flex items-center gap-2 mt-2">
-                <Badge className={getStatusColor(video.content_analysis_status || 'pending')}>
+              <div className="flex items-center gap-2 mb-3">
+                <Badge className={`${getStatusColor(video.content_analysis_status || 'pending')} border`}>
                   {video.content_analysis_status || 'pending'}
                 </Badge>
                 
                 {video.analysis_score !== null && (
-                  <Badge variant="outline" className="font-mono">
-                    Score: {(video.analysis_score * 100).toFixed(0)}%
+                  <Badge variant="outline" className="font-mono text-xs">
+                    {(video.analysis_score * 100).toFixed(0)}% confidence
                   </Badge>
                 )}
               </div>
               
-              {getRejectionReason() && (
-                <p className="text-xs text-red-600 mt-2 line-clamp-2">
-                  {getRejectionReason()}
-                </p>
+              {rejectionReason && (
+                <div className="mt-2 p-3 bg-red-50 rounded-lg border-l-3 border-red-400">
+                  <p className="text-xs font-semibold text-red-800 mb-1">🚫 Reason:</p>
+                  <p className="text-xs text-red-700 line-clamp-2">
+                    {rejectionReason}
+                  </p>
+                </div>
               )}
               
               {video.analysis_timestamp && (
-                <p className="text-xs text-muted-foreground mt-1">
+                <p className="text-xs text-muted-foreground mt-2">
                   Analyzed: {new Date(video.analysis_timestamp).toLocaleString()}
                 </p>
               )}
+              
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="mt-3"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onClick();
+                }}
+              >
+                <Eye className="h-3 w-3 mr-1" />
+                View Full Analysis
+              </Button>
             </div>
           </div>
         </CardContent>
@@ -223,30 +264,72 @@ export const ContentAnalysisTab: React.FC = () => {
         : video.analysis_details;
     } catch {}
 
+    const getRejectionReason = () => {
+      if (!details) return 'No analysis details available';
+      
+      const reasons = [];
+      if (details.thumbnailAnalysis?.rejection_reason) {
+        reasons.push(details.thumbnailAnalysis.rejection_reason);
+      }
+      if (details.videoAnalysis?.problematic_frames && details.videoAnalysis.problematic_frames.length > 0) {
+        reasons.push(`${details.videoAnalysis.problematic_frames.length} problematic frame(s) detected in video`);
+      }
+      if (details.reasoning) {
+        reasons.push(details.reasoning);
+      }
+      
+      return reasons.length > 0 ? reasons.join(' ') : 'No specific reason provided';
+    };
+
     return (
       <Dialog open={!!video} onOpenChange={onClose}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Shield className="h-5 w-5" />
-              AI Analysis Details
+              AI Analysis Details - Detailed Review
             </DialogTitle>
           </DialogHeader>
           
           <div className="space-y-6">
+            {/* Video Info */}
             <div>
-              <img src={video.thumbnail} alt={video.title} className="w-full rounded-lg" />
+              <img src={video.thumbnail} alt={video.title} className="w-full rounded-lg shadow-md" />
               <h3 className="font-bold text-lg mt-4">{video.title}</h3>
               <p className="text-muted-foreground">{video.channel_name}</p>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-sm">Analysis Status</CardTitle>
+            {/* Rejection Reason Card */}
+            {(video.content_analysis_status === 'rejected' || video.manual_review_required) && (
+              <Card className="border-2 border-red-500 bg-red-50">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-red-800">
+                    <AlertTriangle className="h-5 w-5" />
+                    Rejection / Review Reason
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <Badge className="text-sm">{video.content_analysis_status || 'pending'}</Badge>
+                  <p className="text-red-900 font-medium whitespace-pre-wrap">
+                    {getRejectionReason()}
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Stats Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm">Status</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Badge className={`text-sm ${
+                    video.content_analysis_status === 'approved' ? 'bg-green-100 text-green-800' :
+                    video.content_analysis_status === 'rejected' ? 'bg-red-100 text-red-800' :
+                    'bg-yellow-100 text-yellow-800'
+                  }`}>
+                    {video.content_analysis_status || 'pending'}
+                  </Badge>
                 </CardContent>
               </Card>
 
@@ -260,10 +343,22 @@ export const ContentAnalysisTab: React.FC = () => {
                   </p>
                 </CardContent>
               </Card>
+
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm">Analyzed On</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm">
+                    {video.analysis_timestamp ? new Date(video.analysis_timestamp).toLocaleString() : 'N/A'}
+                  </p>
+                </CardContent>
+              </Card>
             </div>
 
             {details && (
               <>
+                {/* Thumbnail Analysis */}
                 {details.thumbnailAnalysis && (
                   <Card className="border-2 border-blue-100">
                     <CardHeader>
@@ -274,35 +369,36 @@ export const ContentAnalysisTab: React.FC = () => {
                     </CardHeader>
                     <CardContent className="space-y-3">
                       {details.thumbnailAnalysis.rejection_reason && (
-                        <div className="p-3 bg-red-50 rounded-lg">
-                          <p className="text-sm font-semibold text-red-800">Rejection Reason:</p>
+                        <div className="p-4 bg-red-50 rounded-lg border-l-4 border-red-500">
+                          <p className="text-sm font-semibold text-red-800 mb-1">Rejection Reason:</p>
                           <p className="text-sm text-red-700">{details.thumbnailAnalysis.rejection_reason}</p>
                         </div>
                       )}
                       
                       {details.thumbnailAnalysis.faces && details.thumbnailAnalysis.faces.length > 0 && (
-                        <div className="p-3 bg-orange-50 rounded-lg">
-                          <p className="text-sm font-semibold text-orange-800">Faces Detected:</p>
-                          <p className="text-sm text-orange-700">{details.thumbnailAnalysis.faces.length} face(s) found</p>
-                          <p className="text-xs text-orange-600 mt-1">
-                            All videos with detected faces are flagged for review
+                        <div className="p-4 bg-orange-50 rounded-lg border-l-4 border-orange-500">
+                          <p className="text-sm font-semibold text-orange-800 mb-1">👤 Faces Detected:</p>
+                          <p className="text-sm text-orange-700">
+                            {details.thumbnailAnalysis.faces.length} face(s) found in thumbnail
+                          </p>
+                          <p className="text-xs text-orange-600 mt-2">
+                            ⚠️ All videos with detected faces (especially women/girls) are automatically flagged for review
                           </p>
                         </div>
                       )}
                       
-                      {details.thumbnailAnalysis.safety && (
+                      {details.thumbnailAnalysis.score !== undefined && (
                         <div className="text-sm space-y-1">
-                          <p><span className="font-medium">Safety Score:</span> {(details.thumbnailAnalysis.safety.safe * 100).toFixed(0)}%</p>
-                          {details.thumbnailAnalysis.safety.medical && (
-                            <p><span className="font-medium">Medical Content:</span> {(details.thumbnailAnalysis.safety.medical * 100).toFixed(0)}%</p>
-                          )}
+                          <p><span className="font-medium">Safety Score:</span> {(details.thumbnailAnalysis.score * 100).toFixed(0)}%</p>
+                          <p><span className="font-medium">Status:</span> {details.thumbnailAnalysis.safe ? '✅ Safe' : '❌ Unsafe'}</p>
                         </div>
                       )}
                     </CardContent>
                   </Card>
                 )}
 
-                {details.frameAnalysis && (
+                {/* Video Frame Analysis with Problematic Frames */}
+                {details.videoAnalysis && (
                   <Card className="border-2 border-purple-100">
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
@@ -310,43 +406,97 @@ export const ContentAnalysisTab: React.FC = () => {
                         Video Frame Analysis
                       </CardTitle>
                     </CardHeader>
-                    <CardContent className="space-y-3">
-                      {details.frameAnalysis.rejection_reason && (
-                        <div className="p-3 bg-red-50 rounded-lg">
-                          <p className="text-sm font-semibold text-red-800">Rejection Reason:</p>
-                          <p className="text-sm text-red-700">{details.frameAnalysis.rejection_reason}</p>
+                    <CardContent className="space-y-4">
+                      <div className="grid grid-cols-2 gap-4 text-sm">
+                        <div>
+                          <p className="font-medium">Frames Analyzed:</p>
+                          <p className="text-2xl font-bold">{details.videoAnalysis.frames_analyzed || 0}</p>
                         </div>
-                      )}
-                      
-                      {details.frameAnalysis.faces && details.frameAnalysis.faces.length > 0 && (
-                        <div className="p-3 bg-orange-50 rounded-lg">
-                          <p className="text-sm font-semibold text-orange-800">Faces in Video:</p>
-                          <p className="text-sm text-orange-700">{details.frameAnalysis.faces.length} face(s) detected in frames</p>
-                          <p className="text-xs text-orange-600 mt-1">
-                            Videos with women/girls detected are automatically flagged
+                        <div>
+                          <p className="font-medium">Issues Detected:</p>
+                          <p className="text-2xl font-bold text-red-600">
+                            {details.videoAnalysis.issues_detected?.length || 0}
                           </p>
                         </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                )}
+                      </div>
 
-                {details.classification && (
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="text-sm">Content Classification</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <pre className="text-xs bg-gray-50 p-3 rounded-lg overflow-x-auto">
-                        {JSON.stringify(details.classification, null, 2)}
-                      </pre>
+                      {details.videoAnalysis.issues_detected && details.videoAnalysis.issues_detected.length > 0 && (
+                        <div className="p-3 bg-red-50 rounded-lg">
+                          <p className="text-sm font-semibold text-red-800 mb-2">Issues Found:</p>
+                          <div className="flex flex-wrap gap-2">
+                            {details.videoAnalysis.issues_detected.map((issue: string, idx: number) => (
+                              <Badge key={idx} variant="destructive">{issue.replace('_', ' ')}</Badge>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Problematic Frames Display */}
+                      {details.videoAnalysis.problematic_frames && details.videoAnalysis.problematic_frames.length > 0 && (
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between">
+                            <h4 className="font-semibold text-red-800">🚫 Problematic Frames Detected:</h4>
+                            <Badge variant="destructive">
+                              {details.videoAnalysis.problematic_frames.length} frame(s)
+                            </Badge>
+                          </div>
+                          
+                          <div className="space-y-4">
+                            {details.videoAnalysis.problematic_frames.map((frame: any, idx: number) => (
+                              <Card key={idx} className="border-2 border-red-200 bg-red-50/50">
+                                <CardContent className="p-4">
+                                  <div className="flex gap-4">
+                                    <div className="flex-shrink-0">
+                                      <img 
+                                        src={frame.frameUrl || video.thumbnail} 
+                                        alt={`Frame at ${frame.time}s`}
+                                        className="w-32 h-20 object-cover rounded border-2 border-red-300"
+                                      />
+                                      <p className="text-xs text-center mt-1 font-medium">
+                                        @ {frame.time?.toFixed(1)}s
+                                      </p>
+                                    </div>
+                                    <div className="flex-1">
+                                      <p className="text-sm font-semibold text-red-800 mb-2">
+                                        Issues in this frame:
+                                      </p>
+                                      <ul className="text-sm space-y-1">
+                                        {frame.issues?.map((issue: string, issueIdx: number) => (
+                                          <li key={issueIdx} className="text-red-700 flex items-start gap-2">
+                                            <span className="text-red-500">•</span>
+                                            <span>{issue}</span>
+                                          </li>
+                                        ))}
+                                      </ul>
+                                      {frame.faces > 0 && (
+                                        <p className="text-xs text-orange-600 mt-2">
+                                          👤 {frame.faces} face(s) detected in this frame
+                                        </p>
+                                      )}
+                                    </div>
+                                  </div>
+                                </CardContent>
+                              </Card>
+                            ))}
+                          </div>
+                          
+                          <div className="p-3 bg-orange-50 rounded-lg border-l-4 border-orange-500">
+                            <p className="text-xs text-orange-800">
+                              <strong>Note:</strong> These frames show where women, girls, or inappropriate content was detected. 
+                              The AI automatically flags any video with female presence for manual review to ensure compliance 
+                              with content guidelines.
+                            </p>
+                          </div>
+                        </div>
+                      )}
                     </CardContent>
                   </Card>
                 )}
               </>
             )}
 
-            <div className="flex gap-3">
+            {/* Action Buttons */}
+            <div className="flex gap-3 sticky bottom-0 bg-white pt-4 border-t">
               <Button 
                 onClick={() => approveMutation.mutate(video.id)}
                 disabled={approveMutation.isPending}
@@ -354,7 +504,7 @@ export const ContentAnalysisTab: React.FC = () => {
                 variant="default"
               >
                 <CheckCircle className="h-4 w-4 mr-2" />
-                Approve Video
+                {approveMutation.isPending ? 'Approving...' : 'Approve Video'}
               </Button>
               
               <Button 
@@ -364,7 +514,7 @@ export const ContentAnalysisTab: React.FC = () => {
                 variant="destructive"
               >
                 <XCircle className="h-4 w-4 mr-2" />
-                Reject Video
+                {rejectMutation.isPending ? 'Rejecting...' : 'Reject & Delete'}
               </Button>
             </div>
           </div>

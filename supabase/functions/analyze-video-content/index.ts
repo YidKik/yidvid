@@ -72,11 +72,13 @@ const analyzeThumbnail = async (thumbnailUrl: string): Promise<any> => {
 
     // Check for inappropriate content
     const issues = [];
+    const detailedReasons = [];
     let score = 1.0;
 
     // Check nudity
     if (result.nudity && result.nudity.sexual_activity > 0.3) {
       issues.push('sexual_content');
+      detailedReasons.push(`Sexual content detected in thumbnail (confidence: ${(result.nudity.sexual_activity * 100).toFixed(0)}%)`);
       score = Math.min(score, 0.2);
     }
 
@@ -87,6 +89,7 @@ const analyzeThumbnail = async (thumbnailUrl: string): Promise<any> => {
           const confidence = face.attributes.gender.female;
           if (confidence > 0.7) {
             issues.push('female_detected');
+            detailedReasons.push(`Female/woman detected in thumbnail (confidence: ${(confidence * 100).toFixed(0)}%). All videos with women/girls are flagged for review.`);
             score = Math.min(score, 0.1);
           }
         }
@@ -96,18 +99,22 @@ const analyzeThumbnail = async (thumbnailUrl: string): Promise<any> => {
     // Check weapons and drugs
     if (result.weapon && result.weapon > 0.5) {
       issues.push('weapon_detected');
+      detailedReasons.push(`Weapon detected in thumbnail (confidence: ${(result.weapon * 100).toFixed(0)}%)`);
       score = Math.min(score, 0.3);
     }
 
     if (result.drugs && result.drugs > 0.5) {
       issues.push('drugs_detected');
+      detailedReasons.push(`Drugs detected in thumbnail (confidence: ${(result.drugs * 100).toFixed(0)}%)`);
       score = Math.min(score, 0.3);
     }
 
     return {
       safe: score > 0.5,
       score: score,
-      detected: issues
+      detected: issues,
+      rejection_reason: detailedReasons.join(' '),
+      faces: result.faces || []
     };
 
   } catch (error) {
@@ -151,6 +158,7 @@ const analyzeVideoContent = async (videoId: string): Promise<any> => {
     console.log('Video analysis result:', result);
 
     const issues = [];
+    const problematicFrames = [];
     let score = 1.0;
     let framesAnalyzed = 0;
 
@@ -158,9 +166,12 @@ const analyzeVideoContent = async (videoId: string): Promise<any> => {
       framesAnalyzed = result.data.frames.length;
       
       for (const frame of result.data.frames) {
+        const frameIssues = [];
+        
         // Check nudity in each frame
         if (frame.nudity && frame.nudity.sexual_activity > 0.3) {
           issues.push('sexual_content');
+          frameIssues.push(`Sexual content detected (confidence: ${(frame.nudity.sexual_activity * 100).toFixed(0)}%)`);
           score = Math.min(score, 0.1);
         }
 
@@ -171,6 +182,7 @@ const analyzeVideoContent = async (videoId: string): Promise<any> => {
               const confidence = face.attributes.gender.female;
               if (confidence > 0.7) {
                 issues.push('female_detected');
+                frameIssues.push(`Female/woman detected (confidence: ${(confidence * 100).toFixed(0)}%)`);
                 score = Math.min(score, 0.1);
               }
             }
@@ -180,7 +192,19 @@ const analyzeVideoContent = async (videoId: string): Promise<any> => {
         // Check weapons and drugs
         if (frame.weapon && frame.weapon > 0.5) {
           issues.push('weapon_detected');
+          frameIssues.push(`Weapon detected (confidence: ${(frame.weapon * 100).toFixed(0)}%)`);
           score = Math.min(score, 0.3);
+        }
+
+        // If this frame has issues, store it
+        if (frameIssues.length > 0) {
+          problematicFrames.push({
+            time: frame.time || 0,
+            issues: frameIssues,
+            // Generate frame URL from video ID and timestamp
+            frameUrl: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
+            faces: frame.faces?.length || 0
+          });
         }
       }
     }
@@ -189,7 +213,8 @@ const analyzeVideoContent = async (videoId: string): Promise<any> => {
       safe: score > 0.5,
       score: score,
       frames_analyzed: framesAnalyzed,
-      issues_detected: [...new Set(issues)]
+      issues_detected: [...new Set(issues)],
+      problematic_frames: problematicFrames
     };
 
   } catch (error) {
@@ -322,16 +347,30 @@ serve(async (req) => {
                      thumbnailAnalysis.safe && 
                      videoAnalysis.safe;
 
-    // Generate reasoning
+    // Generate detailed reasoning
     const issues = [
       ...textAnalysis.issues || [],
       ...thumbnailAnalysis.detected || [],
       ...videoAnalysis.issues_detected || []
     ];
 
+    const reasoningParts = [];
+    
+    if (!isApproved) {
+      if (thumbnailAnalysis.rejection_reason) {
+        reasoningParts.push(thumbnailAnalysis.rejection_reason);
+      }
+      if (videoAnalysis.problematic_frames && videoAnalysis.problematic_frames.length > 0) {
+        reasoningParts.push(`Video contains ${videoAnalysis.problematic_frames.length} problematic frame(s) with detected issues.`);
+      }
+      if (textAnalysis.issues && textAnalysis.issues.length > 0) {
+        reasoningParts.push(`Text contains: ${textAnalysis.issues.join(', ')}`);
+      }
+    }
+
     let reasoning = isApproved ? 
       'Content passed all kosher filtering checks.' :
-      `Content failed filtering due to: ${issues.join(', ')}`;
+      reasoningParts.join(' ');
 
     const response: AnalysisResult = {
       approved: isApproved,
