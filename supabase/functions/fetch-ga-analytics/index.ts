@@ -1,25 +1,10 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { create, getNumericDate } from "https://deno.land/x/djwt@v2.8/mod.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
-
-interface GAMetric {
-  name: string;
-  values: string[];
-}
-
-interface GADimension {
-  name: string;
-  values: string[];
-}
-
-interface GAResponse {
-  dimensionHeaders: GADimension[];
-  metricHeaders: GAMetric[];
-  rows: any[];
-}
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -32,43 +17,49 @@ serve(async (req) => {
     const serviceAccountJson = Deno.env.get('GOOGLE_ANALYTICS_SERVICE_ACCOUNT');
     const propertyId = Deno.env.get('GA_PROPERTY_ID');
 
+    console.log('Service Account exists:', !!serviceAccountJson);
+    console.log('Property ID:', propertyId);
+
     if (!serviceAccountJson || !propertyId) {
       throw new Error('Missing Google Analytics credentials');
     }
 
     const serviceAccount = JSON.parse(serviceAccountJson);
     
-    // Get OAuth2 access token
-    const jwtHeader = btoa(JSON.stringify({ alg: 'RS256', typ: 'JWT' }));
+    // Create JWT using djwt library
     const now = Math.floor(Date.now() / 1000);
-    const jwtClaimSet = {
-      iss: serviceAccount.client_email,
-      scope: 'https://www.googleapis.com/auth/analytics.readonly',
-      aud: 'https://oauth2.googleapis.com/token',
-      exp: now + 3600,
-      iat: now,
-    };
     
-    const jwtClaimSetEncoded = btoa(JSON.stringify(jwtClaimSet));
-    const signatureInput = `${jwtHeader}.${jwtClaimSetEncoded}`;
+    // Import private key
+    const privateKeyPem = serviceAccount.private_key
+      .replace(/-----BEGIN PRIVATE KEY-----/, '')
+      .replace(/-----END PRIVATE KEY-----/, '')
+      .replace(/\s/g, '');
     
-    // Import private key for signing
-    const privateKey = await crypto.subtle.importKey(
+    const binaryKey = Uint8Array.from(atob(privateKeyPem), c => c.charCodeAt(0));
+    
+    const cryptoKey = await crypto.subtle.importKey(
       'pkcs8',
-      pemToArrayBuffer(serviceAccount.private_key),
+      binaryKey,
       { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' },
       false,
       ['sign']
     );
-    
-    const signature = await crypto.subtle.sign(
-      'RSASSA-PKCS1-v1_5',
-      privateKey,
-      new TextEncoder().encode(signatureInput)
+
+    // Create JWT
+    const jwt = await create(
+      { alg: 'RS256', typ: 'JWT' },
+      {
+        iss: serviceAccount.client_email,
+        scope: 'https://www.googleapis.com/auth/analytics.readonly',
+        aud: 'https://oauth2.googleapis.com/token',
+        exp: getNumericDate(3600),
+        iat: getNumericDate(0),
+      },
+      cryptoKey
     );
-    
-    const jwt = `${signatureInput}.${arrayBufferToBase64(signature)}`;
-    
+
+    console.log('JWT created successfully');
+
     // Exchange JWT for access token
     const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
       method: 'POST',
@@ -78,11 +69,25 @@ serve(async (req) => {
         assertion: jwt,
       }),
     });
-    
-    const tokenData = await tokenResponse.json();
-    if (!tokenData.access_token) {
-      throw new Error('Failed to obtain access token');
+
+    console.log('Token response status:', tokenResponse.status);
+    const tokenText = await tokenResponse.text();
+    console.log('Token response body:', tokenText.substring(0, 200));
+
+    let tokenData;
+    try {
+      tokenData = JSON.parse(tokenText);
+    } catch (e) {
+      console.error('Failed to parse token response:', e);
+      throw new Error(`Invalid token response: ${tokenText.substring(0, 100)}`);
     }
+
+    if (!tokenData.access_token) {
+      console.error('Token error:', tokenData);
+      throw new Error(tokenData.error_description || 'Failed to obtain access token');
+    }
+
+    console.log('Access token obtained');
 
     // Determine metrics and dimensions based on type
     let reportRequest: any = {
@@ -146,6 +151,8 @@ serve(async (req) => {
         break;
     }
 
+    console.log('Fetching GA data for property:', propertyId);
+
     // Fetch GA4 data
     const gaResponse = await fetch(
       `https://analyticsdata.googleapis.com/v1beta/${propertyId}:runReport`,
@@ -160,11 +167,14 @@ serve(async (req) => {
     );
 
     const gaData = await gaResponse.json();
+    console.log('GA response status:', gaResponse.status);
     
     if (!gaResponse.ok) {
       console.error('GA API error:', gaData);
       throw new Error(gaData.error?.message || 'Failed to fetch GA data');
     }
+
+    console.log('GA data fetched successfully');
 
     return new Response(JSON.stringify(gaData), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -180,26 +190,3 @@ serve(async (req) => {
     );
   }
 });
-
-// Helper functions
-function pemToArrayBuffer(pem: string): ArrayBuffer {
-  const b64 = pem
-    .replace(/-----BEGIN PRIVATE KEY-----/, '')
-    .replace(/-----END PRIVATE KEY-----/, '')
-    .replace(/\s/g, '');
-  const binary = atob(b64);
-  const bytes = new Uint8Array(binary.length);
-  for (let i = 0; i < binary.length; i++) {
-    bytes[i] = binary.charCodeAt(i);
-  }
-  return bytes.buffer;
-}
-
-function arrayBufferToBase64(buffer: ArrayBuffer): string {
-  const bytes = new Uint8Array(buffer);
-  let binary = '';
-  for (let i = 0; i < bytes.byteLength; i++) {
-    binary += String.fromCharCode(bytes[i]);
-  }
-  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
-}
