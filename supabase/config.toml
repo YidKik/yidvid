@@ -57,3 +57,6 @@ verify_jwt = true
 
 [functions.video-content-analyzer]
 verify_jwt = true
+
+[functions.fetch-ga-analytics]
+verify_jwt = false

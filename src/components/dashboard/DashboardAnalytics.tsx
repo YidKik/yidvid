@@ -9,6 +9,10 @@ import { AuthRequiredMessage } from "./analytics/AuthRequiredMessage";
 import { toast } from "sonner";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
+import { GoogleAnalyticsOverview } from "@/components/admin/analytics/GoogleAnalyticsOverview";
+import { TrafficSourcesChart } from "@/components/admin/analytics/TrafficSourcesChart";
+import { TopPagesTable } from "@/components/admin/analytics/TopPagesTable";
+import { DeviceBreakdown } from "@/components/admin/analytics/DeviceBreakdown";
 
 export const DashboardAnalytics = () => {
   const [session, setSession] = useState(null);
@@ -60,7 +64,19 @@ export const DashboardAnalytics = () => {
 
   return (
     <div className="space-y-8">
-      <h2 className="text-2xl font-semibold mb-4">User Activity</h2>
+      <h2 className="text-2xl font-semibold mb-4">Google Analytics - Site Traffic</h2>
+      <GoogleAnalyticsOverview />
+      
+      <div className="grid gap-6 md:grid-cols-2 mt-8">
+        <TrafficSourcesChart />
+        <DeviceBreakdown />
+      </div>
+      
+      <div className="mt-8">
+        <TopPagesTable />
+      </div>
+      
+      <h2 className="text-2xl font-semibold mt-12 mb-4">User Activity</h2>
       {isLoading ? (
         <div className="w-full p-4 bg-gray-50 rounded-lg">
           <p className="text-center text-gray-500">Loading user statistics...</p>
