@@ -18,19 +18,19 @@ export const YouTubeStyleLoading: React.FC<YouTubeStyleLoadingProps> = ({
       containerWidth: 200, 
       logoSize: 28, 
       lineHeight: 3,
-      containerHeight: 60,
+      containerHeight: 80,
     },
     medium: { 
       containerWidth: 300, 
       logoSize: 36, 
       lineHeight: 4,
-      containerHeight: 80,
+      containerHeight: 100,
     },
     large: { 
       containerWidth: 400, 
       logoSize: 48, 
       lineHeight: 5,
-      containerHeight: 100,
+      containerHeight: 120,
     },
   };
 
@@ -46,27 +46,24 @@ export const YouTubeStyleLoading: React.FC<YouTubeStyleLoadingProps> = ({
           height: config.containerHeight 
         }}
       >
-        {/* Logo that slides from center to left */}
+        {/* Logo with gentle pulse */}
         <motion.div
-          className="absolute z-10 flex items-center justify-center rounded-full bg-background shadow-lg border"
+          className="absolute z-10 flex items-center justify-center rounded-full bg-white shadow-xl border-2 border-primary/20"
           style={{
-            width: config.logoSize + 8,
-            height: config.logoSize + 8,
+            width: config.logoSize + 12,
+            height: config.logoSize + 12,
+            left: "50%",
+            transform: "translateX(-50%)"
           }}
-          initial={{ 
-            left: "50%", 
-            x: "-50%",
-            scale: 1.2
-          }}
+          initial={{ scale: 0.8, opacity: 0 }}
           animate={{ 
-            left: "0px", 
-            x: "0%",
-            scale: 1
+            scale: [0.8, 1, 1, 0.95, 1],
+            opacity: 1
           }}
           transition={{
-            duration: 0.8,
-            delay: 0.3,
-            ease: [0.4, 0, 0.2, 1]
+            duration: 2,
+            repeat: Infinity,
+            ease: "easeInOut"
           }}
         >
           <img 
@@ -80,83 +77,28 @@ export const YouTubeStyleLoading: React.FC<YouTubeStyleLoadingProps> = ({
           />
         </motion.div>
 
-        {/* Animated line that extends from the logo */}
+        {/* Single smooth animated progress bar below logo */}
         <motion.div
-          className="absolute left-0 top-1/2 -translate-y-1/2 bg-gradient-to-r from-primary via-primary to-transparent rounded-full"
-          style={{ height: config.lineHeight }}
-          initial={{ 
-            width: 0,
-            x: config.logoSize / 2 + 4
-          }}
-          animate={{ 
-            width: [
-              0,
-              config.containerWidth - config.logoSize - 8,
-              config.containerWidth - config.logoSize - 8,
-              0
-            ],
-            x: config.logoSize / 2 + 4
-          }}
-          transition={{
-            duration: 2.4,
-            delay: 1.1,
-            repeat: Infinity,
-            ease: "easeInOut",
-            times: [0, 0.4, 0.6, 1]
-          }}
-        />
-
-        {/* Pulsing gradient overlay on the line */}
-        <motion.div
-          className="absolute left-0 top-1/2 -translate-y-1/2 rounded-full overflow-hidden"
+          className="absolute left-1/2 -translate-x-1/2 rounded-full overflow-hidden bg-gray-100"
           style={{ 
             height: config.lineHeight,
-            width: config.containerWidth - config.logoSize - 8,
-            marginLeft: config.logoSize + 4
+            width: config.containerWidth * 0.6,
+            top: config.logoSize + 24
           }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.1 }}
         >
           <motion.div
-            className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/60 to-transparent"
-            style={{ width: "40%" }}
-            animate={{
-              x: ["-100%", "350%"]
+            className="h-full bg-gradient-to-r from-primary via-red-400 to-primary rounded-full"
+            initial={{ x: "-100%" }}
+            animate={{ 
+              x: ["100%", "-100%"]
             }}
             transition={{
-              duration: 1.8,
-              delay: 1.1,
+              duration: 1.5,
               repeat: Infinity,
               ease: "easeInOut"
             }}
           />
         </motion.div>
-
-        {/* Secondary glow effect */}
-        <motion.div
-          className="absolute left-0 top-1/2 -translate-y-1/2 bg-primary/20 rounded-full blur-sm"
-          style={{ 
-            height: config.lineHeight * 2,
-            marginLeft: config.logoSize / 2 + 4
-          }}
-          initial={{ width: 0 }}
-          animate={{ 
-            width: [
-              0,
-              config.containerWidth - config.logoSize - 8,
-              config.containerWidth - config.logoSize - 8,
-              0
-            ]
-          }}
-          transition={{
-            duration: 2.4,
-            delay: 1.1,
-            repeat: Infinity,
-            ease: "easeInOut",
-            times: [0, 0.4, 0.6, 1]
-          }}
-        />
       </div>
     </div>
   );
