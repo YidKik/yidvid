@@ -48,10 +48,10 @@ export const SearchResults = ({
 
   return (
     <div className={`
-      absolute left-0 right-0 bg-white/95 backdrop-blur-sm
-      border-2 border-red-300 border-t-0 rounded-b-2xl shadow-xl z-50
+      absolute left-0 right-0 bg-white backdrop-blur-md
+      border-2 border-red-300 border-t-0 rounded-b-2xl shadow-2xl z-[100]
       ${isMobile ? 'top-10' : 'top-12'}
-    `}>
+    `} style={{ maxHeight: '80vh' }}>
       {isLoading && (
         <div className={`
           flex items-center justify-center text-gray-500

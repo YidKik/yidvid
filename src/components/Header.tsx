@@ -34,28 +34,12 @@ export const Header = ({ selectedCategory, onCategoryChange }: { selectedCategor
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
 
-  // Enhanced scroll detection with direction and visibility
+  // Enhanced scroll detection for blurred background effect
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       
-      // Determine scroll direction
-      const direction = currentScrollY > lastScrollY ? 'down' : 'up';
-      setScrollDirection(direction);
-      
-      // Visibility logic - only hide header on homepage when scrolling down past threshold
-      if (isHomePage) {
-        if (direction === 'down' && currentScrollY > 100) {
-          setIsVisible(false);
-        } else if (direction === 'up') {
-          setIsVisible(true);
-        }
-      } else {
-        // Always visible on other pages
-        setIsVisible(true);
-      }
-      
-      // Set scrolled state for styling
+      // Set scrolled state for styling - always show with blur when scrolled
       setScrolled(currentScrollY > 20);
       
       // Update last scroll position
@@ -66,7 +50,7 @@ export const Header = ({ selectedCategory, onCategoryChange }: { selectedCategor
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [lastScrollY, isHomePage]);
+  }, [lastScrollY]);
 
   // Listen for the custom auth dialog event
   useEffect(() => {
@@ -115,24 +99,17 @@ export const Header = ({ selectedCategory, onCategoryChange }: { selectedCategor
 
   return (
     <motion.header 
-      className={`sticky top-0 z-50 w-full max-w-[100vw] overflow-x-hidden border-b transition-all duration-300 ${
+      className={`sticky top-0 z-50 w-full max-w-[100vw] border-b transition-all duration-300 ${
         scrolled 
           ? 'bg-white/20 backdrop-blur-lg supports-[backdrop-filter]:bg-white/10 border-primary/50' 
           : isMobile 
             ? 'h-14 bg-white/30 backdrop-blur-md' 
             : 'bg-white/30 backdrop-blur-md'
       } ${isVideosPage ? 'videos-page' : isHomePage ? 'home-page' : ''}`}
-      initial={{ opacity: 1, y: 0 }}
-      animate={{ 
-        opacity: isVisible ? 1 : 0, 
-        y: isVisible ? 0 : -100,
-        transition: {
-          duration: 0.4,
-          ease: "easeInOut"
-        }
-      }}
+      initial={{ opacity: 1 }}
+      animate={{ opacity: 1 }}
     >
-      <div className="container mx-auto px-0 max-w-[100vw] overflow-x-hidden">
+      <div className="container mx-auto px-0 max-w-[100vw]">
         <div className={`flex ${isMobile ? 'h-14' : 'h-14'} items-center relative max-w-[100vw]`}>
           {isMobile ? (
             <div className="w-full flex items-center px-3">
