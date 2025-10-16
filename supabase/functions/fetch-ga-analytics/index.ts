@@ -160,8 +160,13 @@ serve(async (req) => {
 
     console.log('Normalized property id:', normalizedPropertyId);
 
+    // Choose correct Analytics Data API endpoint
+    const endpointPath = metricType === 'realtime'
+      ? `${normalizedPropertyId}:runRealtimeReport`
+      : `${normalizedPropertyId}:runReport`;
+
     const gaResponse = await fetch(
-      `https://analyticsdata.googleapis.com/v1beta/${normalizedPropertyId}:runReport`,
+      `https://analyticsdata.googleapis.com/v1beta/${endpointPath}`,
       {
         method: 'POST',
         headers: {
@@ -187,6 +192,27 @@ serve(async (req) => {
     
     if (!gaResponse.ok) {
       console.error('GA API error JSON:', gaData);
+
+      const details = Array.isArray(gaData?.error?.details)
+        ? gaData.error.details.find((d: any) => d?.reason === 'SERVICE_DISABLED' || d?.metadata?.service === 'analyticsdata.googleapis.com')
+        : undefined;
+
+      if (gaData?.error?.status === 'PERMISSION_DENIED' && details) {
+        const activationUrl = details?.metadata?.activationUrl || 'https://console.developers.google.com/apis/api/analyticsdata.googleapis.com/overview';
+        return new Response(
+          JSON.stringify({
+            error: 'Google Analytics Data API is disabled for the Google Cloud project used by your service account.',
+            gcp_project: details?.metadata?.containerInfo,
+            ga_property: normalizedPropertyId,
+            next_steps: [
+              `Enable the API here: ${activationUrl}`,
+              `Add the service account (${serviceAccount.client_email}) to GA4 property ${normalizedPropertyId.replace('properties/', '')} with at least Viewer access.`,
+            ],
+          }),
+          { status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
       throw new Error(gaData.error?.message || 'Failed to fetch GA data');
     }
 
