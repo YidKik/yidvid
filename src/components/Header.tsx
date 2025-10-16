@@ -115,7 +115,7 @@ export const Header = ({ selectedCategory, onCategoryChange }: { selectedCategor
 
   return (
     <motion.header 
-      className={`sticky top-0 z-50 w-full border-b transition-all duration-300 ${
+      className={`sticky top-0 z-50 w-full max-w-[100vw] overflow-x-hidden border-b transition-all duration-300 ${
         scrolled 
           ? 'bg-white/20 backdrop-blur-lg supports-[backdrop-filter]:bg-white/10 border-primary/50' 
           : isMobile 
@@ -132,8 +132,8 @@ export const Header = ({ selectedCategory, onCategoryChange }: { selectedCategor
         }
       }}
     >
-      <div className="container mx-auto px-0">
-        <div className={`flex ${isMobile ? 'h-14' : 'h-14'} items-center relative`}>
+      <div className="container mx-auto px-0 max-w-[100vw] overflow-x-hidden">
+        <div className={`flex ${isMobile ? 'h-14' : 'h-14'} items-center relative max-w-[100vw]`}>
           {isMobile ? (
             <div className="w-full flex items-center px-3">
               <div className="w-1/5 flex justify-start">
