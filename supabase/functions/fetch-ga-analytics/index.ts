@@ -154,23 +154,39 @@ serve(async (req) => {
     console.log('Fetching GA data for property:', propertyId);
 
     // Fetch GA4 data
+    const normalizedPropertyId = propertyId.startsWith('properties/')
+      ? propertyId
+      : `properties/${propertyId}`;
+
+    console.log('Normalized property id:', normalizedPropertyId);
+
     const gaResponse = await fetch(
-      `https://analyticsdata.googleapis.com/v1beta/${propertyId}:runReport`,
+      `https://analyticsdata.googleapis.com/v1beta/${normalizedPropertyId}:runReport`,
       {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${tokenData.access_token}`,
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
         },
         body: JSON.stringify(reportRequest),
       }
     );
 
-    const gaData = await gaResponse.json();
-    console.log('GA response status:', gaResponse.status);
+    const contentType = gaResponse.headers.get('content-type') || '';
+    const gaText = await gaResponse.text();
+    console.log('GA response status:', gaResponse.status, 'content-type:', contentType);
+
+    let gaData: any;
+    try {
+      gaData = JSON.parse(gaText);
+    } catch (_e) {
+      console.error('Non-JSON GA response snippet:', gaText.slice(0, 300));
+      throw new Error(`Google Analytics returned non-JSON (status ${gaResponse.status}). Check property access and ID format.`);
+    }
     
     if (!gaResponse.ok) {
-      console.error('GA API error:', gaData);
+      console.error('GA API error JSON:', gaData);
       throw new Error(gaData.error?.message || 'Failed to fetch GA data');
     }
 
