@@ -59,17 +59,17 @@ export const CategoryToggle = ({ selectedCategory, onCategoryChange }: CategoryT
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 bg-black/50"
+              className="fixed inset-0 z-40 bg-black/50"
               onClick={() => setIsOpen(false)}
             />
 
-            {/* Slide-in Panel */}
+            {/* Slide-in Panel - starts from left edge of page, below header */}
             <motion.div
               initial={{ x: -320 }}
               animate={{ x: 0 }}
               exit={{ x: -320 }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="fixed left-0 top-0 bottom-0 z-50 w-80 bg-white dark:bg-gray-900 shadow-2xl overflow-y-auto"
+              className="fixed left-0 top-[73px] bottom-0 z-50 w-80 bg-white dark:bg-gray-900 shadow-2xl overflow-y-auto"
             >
               <div className="p-6">
                 <div className="flex items-center justify-between mb-6">
