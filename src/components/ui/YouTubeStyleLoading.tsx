@@ -40,30 +40,27 @@ export const YouTubeStyleLoading: React.FC<YouTubeStyleLoadingProps> = ({
   return (
     <div className={cn("flex items-center justify-center", className)}>
       <div 
-        className="relative flex items-center"
+        className="relative flex items-center gap-4"
         style={{ 
           width: config.containerWidth, 
           height: config.containerHeight 
         }}
       >
-        {/* Logo with gentle pulse */}
+        {/* Logo on the left side - static position */}
         <motion.div
-          className="absolute z-10 flex items-center justify-center rounded-full bg-white shadow-xl border-2 border-primary/20"
+          className="flex-shrink-0 flex items-center justify-center rounded-full bg-white shadow-xl border-2 border-primary/20"
           style={{
             width: config.logoSize + 12,
             height: config.logoSize + 12,
-            left: "50%",
-            transform: "translateX(-50%)"
           }}
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ 
-            scale: [0.8, 1, 1, 0.95, 1],
+            scale: 1,
             opacity: 1
           }}
           transition={{
-            duration: 2,
-            repeat: Infinity,
-            ease: "easeInOut"
+            duration: 0.6,
+            ease: "easeOut"
           }}
         >
           <img 
@@ -77,14 +74,15 @@ export const YouTubeStyleLoading: React.FC<YouTubeStyleLoadingProps> = ({
           />
         </motion.div>
 
-        {/* Single smooth animated progress bar below logo - made larger */}
+        {/* Animated progress bar next to logo */}
         <motion.div
-          className="absolute left-1/2 -translate-x-1/2 rounded-full overflow-hidden bg-gray-200"
+          className="flex-1 rounded-full overflow-hidden bg-gray-200"
           style={{ 
             height: config.lineHeight * 1.5,
-            width: config.containerWidth * 0.7,
-            top: config.logoSize + 28
           }}
+          initial={{ opacity: 0, scaleX: 0 }}
+          animate={{ opacity: 1, scaleX: 1 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
         >
           <motion.div
             className="h-full bg-gradient-to-r from-primary via-red-400 to-primary rounded-full shadow-lg"
