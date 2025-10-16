@@ -1,132 +1,138 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { hash, compare } from 'https://deno.land/x/bcrypt@v0.4.1/mod.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
+// Input validation
+const validateUUID = (uuid: string): boolean => {
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  return uuidRegex.test(uuid);
+}
+
+const validatePIN = (pin: string): boolean => {
+  return typeof pin === 'string' && pin.length >= 4 && pin.length <= 50;
+}
+
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const supabaseClient = createClient(
+    const supabaseAdmin = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
     const authHeader = req.headers.get('Authorization')
     if (!authHeader) {
-      console.log('No authorization header provided')
       return new Response(
-        JSON.stringify({ error: 'No authorization header' }),
-        { 
-          status: 401, 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-        }
+        JSON.stringify({ error: 'Unauthorized' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
 
-    // Verify the JWT token
     const token = authHeader.replace('Bearer ', '')
-    const { data: { user }, error: userError } = await supabaseClient.auth.getUser(token)
+    const { data: { user }, error: userError } = await supabaseAdmin.auth.getUser(token)
     
     if (userError || !user) {
-      console.log('Invalid or expired token:', userError)
       return new Response(
-        JSON.stringify({ error: 'Invalid or expired token' }),
-        { 
-          status: 401, 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-        }
+        JSON.stringify({ error: 'Unauthorized' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
 
-    const { action, pin } = await req.json()
+    const body = await req.json()
+    const { action, pin, adminToken } = body
 
     if (action === 'verify-pin') {
-      // Secure PIN verification
-      const ADMIN_PIN = Deno.env.get('ADMIN_PIN')
+      // Validate PIN input
+      if (!pin || !validatePIN(pin)) {
+        return new Response(
+          JSON.stringify({ isValid: false }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        )
+      }
       
-      if (!ADMIN_PIN) {
-        console.log('Admin PIN not configured in environment')
+      // Get hashed PIN from database
+      const { data: adminConfig, error: configError } = await supabaseAdmin
+        .from('admin_config')
+        .select('pin_hash')
+        .limit(1)
+        .single()
+      
+      if (configError || !adminConfig) {
+        console.error('Admin configuration not found')
         return new Response(
-          JSON.stringify({ error: 'Admin PIN not configured' }),
-          { 
-            status: 500, 
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-          }
+          JSON.stringify({ error: 'Configuration error' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        )
+      }
+      
+      // Use constant-time comparison via bcrypt
+      const isValid = await compare(pin, adminConfig.pin_hash)
+      
+      if (!isValid) {
+        console.log('Invalid PIN attempt')
+        return new Response(
+          JSON.stringify({ isValid: false }),
+          { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         )
       }
 
-      if (pin !== ADMIN_PIN) {
-        console.log('Invalid PIN attempt for user:', user.id)
+      // Verify admin status using secure function
+      const { data: isAdmin, error: adminCheckError } = await supabaseAdmin
+        .rpc('has_role', { _user_id: user.id, _role: 'admin' })
+
+      if (adminCheckError || !isAdmin) {
+        console.error('User is not an admin')
         return new Response(
-          JSON.stringify({ success: false, error: 'Invalid PIN' }),
-          { 
-            status: 403, 
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-          }
+          JSON.stringify({ isValid: false }),
+          { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         )
       }
 
-      // Generate a secure admin session token (valid for 1 hour)
-      const adminToken = crypto.randomUUID()
-      const expiresAt = new Date(Date.now() + 60 * 60 * 1000) // 1 hour from now
+      const sessionToken = crypto.randomUUID()
+      const expiresAt = new Date(Date.now() + 60 * 60 * 1000)
 
-      // Store the admin session in the database
-      const { error: insertError } = await supabaseClient
+      const { error: insertError } = await supabaseAdmin
         .from('admin_sessions')
         .insert({
           user_id: user.id,
-          admin_token: adminToken,
-          expires_at: expiresAt.toISOString(),
-          created_at: new Date().toISOString()
+          admin_token: sessionToken,
+          expires_at: expiresAt.toISOString()
         })
 
       if (insertError) {
-        console.log('Failed to create admin session:', insertError)
         return new Response(
-          JSON.stringify({ error: 'Failed to create admin session' }),
-          { 
-            status: 500, 
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-          }
+          JSON.stringify({ error: 'Operation failed' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         )
       }
 
-      console.log('Admin access granted for user:', user.id)
       return new Response(
         JSON.stringify({ 
-          success: true, 
-          adminToken,
+          isValid: true, 
+          adminToken: sessionToken,
           expiresAt: expiresAt.toISOString()
         }),
-        { 
-          status: 200, 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-        }
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
 
     if (action === 'verify-admin') {
-      const { adminToken } = await req.json()
-      
-      if (!adminToken) {
+      if (!adminToken || !validateUUID(adminToken)) {
         return new Response(
           JSON.stringify({ isAdmin: false }),
-          { 
-            status: 200, 
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-          }
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         )
       }
 
-      // Check if the admin token is valid and not expired
-      const { data: adminSession, error: sessionError } = await supabaseClient
+      const { data: session, error: sessionError } = await supabaseAdmin
         .from('admin_sessions')
         .select('*')
         .eq('user_id', user.id)
@@ -134,52 +140,40 @@ serve(async (req) => {
         .gt('expires_at', new Date().toISOString())
         .single()
 
-      if (sessionError || !adminSession) {
-        console.log('Invalid or expired admin token for user:', user.id)
+      if (sessionError || !session) {
         return new Response(
           JSON.stringify({ isAdmin: false }),
-          { 
-            status: 200, 
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-          }
+          { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         )
       }
 
-      // Also check if user has admin privileges in the profiles table
-      const { data: profile, error: profileError } = await supabaseClient
-        .from('profiles')
-        .select('is_admin')
-        .eq('id', user.id)
-        .single()
+      // Verify admin status using secure function
+      const { data: isAdmin, error: adminCheckError } = await supabaseAdmin
+        .rpc('has_role', { _user_id: user.id, _role: 'admin' })
 
-      const isAdmin = adminSession && (profile?.is_admin === true)
-      
-      console.log('Admin verification result for user:', user.id, 'isAdmin:', isAdmin)
+      if (adminCheckError || !isAdmin) {
+        console.error('User is not an admin')
+        return new Response(
+          JSON.stringify({ isAdmin: false }),
+          { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        )
+      }
+
       return new Response(
-        JSON.stringify({ isAdmin }),
-        { 
-          status: 200, 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-        }
+        JSON.stringify({ isAdmin: true }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
 
     return new Response(
       JSON.stringify({ error: 'Invalid action' }),
-      { 
-        status: 400, 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-      }
+      { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
-
   } catch (error) {
-    console.error('Secure admin auth error:', error)
+    console.error('Error in secure-admin-auth function:', error)
     return new Response(
-      JSON.stringify({ error: 'Internal server error' }),
-      { 
-        status: 500, 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-      }
+      JSON.stringify({ error: 'Operation failed' }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   }
 })

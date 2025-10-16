@@ -14,19 +14,16 @@ export const checkBasicAdminStatus = async (): Promise<boolean> => {
       throw new Error("You must be signed in to access admin features");
     }
 
-    // Check if user has admin privileges in profile
-    const { data: profile, error: profileError } = await supabase
-      .from('profiles')
-      .select('is_admin')
-      .eq('id', session.user.id)
-      .single();
+    // Check if user has admin role using secure server-side function
+    const { data: hasAdminRole, error: roleError } = await supabase
+      .rpc('has_role', { _user_id: session.user.id, _role: 'admin' });
 
-    if (profileError) {
-      console.error("Error checking admin status:", profileError);
+    if (roleError) {
+      console.error("Error checking admin status:", roleError);
       throw new Error("Error verifying admin permissions");
     }
 
-    if (!profile?.is_admin) {
+    if (!hasAdminRole) {
       throw new Error("You don't have admin permissions");
     }
 
@@ -51,29 +48,11 @@ export const checkAdminStatus = async (): Promise<boolean> => {
       throw new Error("You must be signed in to access admin features");
     }
 
-    // Check for secure admin session
-    const storedSession = localStorage.getItem('secure-admin-session');
-    if (!storedSession) {
-      throw new Error("No admin session found");
-    }
-
-    let adminSession;
-    try {
-      adminSession = JSON.parse(storedSession);
-      if (new Date(adminSession.expiresAt) <= new Date()) {
-        localStorage.removeItem('secure-admin-session');
-        throw new Error("Admin session expired");
-      }
-    } catch {
-      localStorage.removeItem('secure-admin-session');
-      throw new Error("Invalid admin session");
-    }
-
-    // Verify admin session with secure edge function
+    // Server-side verification only - no client-side session checks
     const { data: adminCheck, error: adminCheckError } = await supabase.functions.invoke('secure-admin-auth', {
       body: { 
         action: 'verify-admin',
-        adminToken: adminSession.adminToken
+        adminToken: session.user.id // Use user ID for verification
       }
     });
     
