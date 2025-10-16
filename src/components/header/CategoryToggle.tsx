@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { Filter } from "lucide-react";
+import { LayoutGrid } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useLocation } from "react-router-dom";
 
 interface CategoryToggleProps {
   selectedCategory: string;
@@ -24,89 +25,102 @@ const categories = [
 export const CategoryToggle = ({ selectedCategory, onCategoryChange }: CategoryToggleProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const { isMobile } = useIsMobile();
+  const location = useLocation();
+  const isVideosPage = location.pathname === "/videos";
+  const isSearchPage = location.pathname === "/search";
 
   const toggleCategories = () => {
     setIsOpen(!isOpen);
   };
 
+  // Match the header icon button styling
+  const buttonClass = `h-9 w-9 rounded-full ${(isVideosPage || isSearchPage)
+    ? 'bg-primary hover:bg-primary/90 text-primary-foreground' 
+    : 'bg-[#222222] hover:bg-[#333333] text-white'}`;
+
   return (
-    <div className="relative">
-      {/* Toggle Button */}
+    <>
+      {/* Toggle Button - matches other header icons */}
       <Button
         variant="ghost"
-        size="sm"
+        size="icon"
         onClick={toggleCategories}
-        className={cn(
-          "h-8 w-8 p-0 rounded-lg transition-all duration-300",
-          "hover:bg-red-50 hover:text-red-600 border border-transparent hover:border-red-200",
-          isOpen ? "bg-red-50 text-red-600 border-red-200" : "text-gray-500"
-        )}
+        className={buttonClass}
       >
-        <Filter className="h-4 w-4" />
+        <LayoutGrid className="h-4 w-4" />
       </Button>
 
-      {/* Categories Dropdown */}
+      {/* Categories Slide-in Panel from Left */}
       <AnimatePresence>
         {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -10, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -10, scale: 0.95 }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
-            className={cn(
-              "absolute top-full mt-2 z-50 backdrop-blur-md border border-gray-200 rounded-xl shadow-xl overflow-hidden",
-              "bg-white/95 dark:bg-gray-900/95",
-              isMobile 
-                ? "left-1/2 -translate-x-1/2 w-48" // Centered on mobile
-                : "left-0 w-56" // Left aligned on desktop
-            )}
-          >
-            <div className="p-2 space-y-1">
-              {categories.map((category) => (
-                <motion.button
-                  key={category.id}
-                  onClick={() => {
-                    onCategoryChange(category.id);
-                    setIsOpen(false);
-                  }}
-                  className={cn(
-                    "w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
-                    "hover:bg-red-50 hover:text-red-600",
-                    selectedCategory === category.id
-                      ? "bg-red-500 text-white shadow-sm"
-                      : "text-gray-700 dark:text-gray-300"
-                  )}
-                  whileHover={{ x: 2 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  {category.label}
-                  {selectedCategory === category.id && (
-                    <motion.div
-                      className="ml-auto inline-block w-2 h-2 bg-white rounded-full"
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{ delay: 0.1 }}
-                    />
-                  )}
-                </motion.button>
-              ))}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 bg-black/50"
+              onClick={() => setIsOpen(false)}
+            />
 
-      {/* Invisible backdrop for click outside */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-40 bg-transparent"
-            onClick={() => setIsOpen(false)}
-          />
+            {/* Slide-in Panel */}
+            <motion.div
+              initial={{ x: -320 }}
+              animate={{ x: 0 }}
+              exit={{ x: -320 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="fixed left-0 top-0 bottom-0 z-50 w-80 bg-white dark:bg-gray-900 shadow-2xl overflow-y-auto"
+            >
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Categories</h2>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setIsOpen(false)}
+                    className="h-8 w-8 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
+                  >
+                    <span className="text-xl">×</span>
+                  </Button>
+                </div>
+
+                <div className="space-y-2">
+                  {categories.map((category) => (
+                    <motion.button
+                      key={category.id}
+                      onClick={() => {
+                        onCategoryChange(category.id);
+                        setIsOpen(false);
+                      }}
+                      className={cn(
+                        "w-full text-left px-4 py-3 rounded-lg text-base font-medium transition-all duration-200",
+                        "hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20",
+                        selectedCategory === category.id
+                          ? "bg-red-500 text-white shadow-md"
+                          : "text-gray-700 dark:text-gray-300 hover:shadow-sm"
+                      )}
+                      whileHover={{ x: 4 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span>{category.label}</span>
+                        {selectedCategory === category.id && (
+                          <motion.div
+                            className="w-2 h-2 bg-white rounded-full"
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            transition={{ delay: 0.1 }}
+                          />
+                        )}
+                      </div>
+                    </motion.button>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
-    </div>
+    </>
   );
 };
