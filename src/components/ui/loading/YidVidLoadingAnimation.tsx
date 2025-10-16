@@ -65,8 +65,8 @@ export const YidVidLoadingAnimation: React.FC<YidVidLoadingAnimationProps> = ({
           animate="visible"
           exit="exit"
         >
-          <div className="flex flex-col items-center space-y-6">
-            {/* YouTube-style loading animation */}
+          <div className="flex flex-col items-center space-y-8">
+            {/* YouTube-style loading animation with logo and progress bar */}
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -77,27 +77,12 @@ export const YidVidLoadingAnimation: React.FC<YidVidLoadingAnimationProps> = ({
 
             {/* Loading Text */}
             <motion.div
-              className="text-center text-muted-foreground font-medium"
+              className="text-center text-muted-foreground font-friendly font-medium text-lg"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.8, duration: 0.5 }}
+              transition={{ delay: 0.5, duration: 0.5 }}
             >
               Loading your videos...
-            </motion.div>
-
-            {/* Progress indicator (optional visual feedback) */}
-            <motion.div
-              className="w-64 h-1 bg-muted rounded-full overflow-hidden"
-              initial={{ opacity: 0, scaleX: 0 }}
-              animate={{ opacity: 1, scaleX: 1 }}
-              transition={{ delay: 1, duration: 0.4 }}
-            >
-              <motion.div
-                className="h-full bg-primary rounded-full"
-                initial={{ width: "0%" }}
-                animate={{ width: `${Math.min(animationProgress, 100)}%` }}
-                transition={{ duration: 0.3, ease: "easeOut" }}
-              />
             </motion.div>
           </div>
         </motion.div>

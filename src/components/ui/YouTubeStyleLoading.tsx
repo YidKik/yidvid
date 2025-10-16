@@ -77,17 +77,17 @@ export const YouTubeStyleLoading: React.FC<YouTubeStyleLoadingProps> = ({
           />
         </motion.div>
 
-        {/* Single smooth animated progress bar below logo */}
+        {/* Single smooth animated progress bar below logo - made larger */}
         <motion.div
-          className="absolute left-1/2 -translate-x-1/2 rounded-full overflow-hidden bg-gray-100"
+          className="absolute left-1/2 -translate-x-1/2 rounded-full overflow-hidden bg-gray-200"
           style={{ 
-            height: config.lineHeight,
-            width: config.containerWidth * 0.6,
-            top: config.logoSize + 24
+            height: config.lineHeight * 1.5,
+            width: config.containerWidth * 0.7,
+            top: config.logoSize + 28
           }}
         >
           <motion.div
-            className="h-full bg-gradient-to-r from-primary via-red-400 to-primary rounded-full"
+            className="h-full bg-gradient-to-r from-primary via-red-400 to-primary rounded-full shadow-lg"
             initial={{ x: "-100%" }}
             animate={{ 
               x: ["100%", "-100%"]
