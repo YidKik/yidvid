@@ -65,28 +65,28 @@ export const CategoryToggle = ({ selectedCategory, onCategoryChange }: CategoryT
                 onClick={() => setIsOpen(false)}
               />
 
-              {/* Slide-in Panel - starts from left edge of page, below header */}
+              {/* Slide-in Panel - compact size with blurred background and red outline */}
               <motion.div
-                initial={{ x: -320 }}
+                initial={{ x: -280 }}
                 animate={{ x: 0 }}
-                exit={{ x: -320 }}
+                exit={{ x: -280 }}
                 transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                className="fixed left-0 top-[73px] bottom-0 z-50 w-80 bg-white dark:bg-gray-900 shadow-2xl overflow-y-auto"
+                className="fixed left-0 top-[80px] z-50 w-64 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl shadow-2xl rounded-r-3xl border-2 border-red-400"
               >
-                <div className="p-6">
-                  <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Categories</h2>
+                <div className="p-5">
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-xl font-friendly font-semibold text-gray-900 dark:text-white">Categories</h2>
                     <Button
                       variant="ghost"
                       size="icon"
                       onClick={() => setIsOpen(false)}
-                      className="h-8 w-8 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
+                      className="h-7 w-7 rounded-full hover:bg-red-50 dark:hover:bg-red-900/20"
                     >
-                      <span className="text-xl">×</span>
+                      <span className="text-lg text-red-500">×</span>
                     </Button>
                   </div>
 
-                  <div className="space-y-2">
+                  <div className="space-y-1.5">
                     {categories.map((category) => (
                       <motion.button
                         key={category.id}
@@ -95,7 +95,7 @@ export const CategoryToggle = ({ selectedCategory, onCategoryChange }: CategoryT
                           setIsOpen(false);
                         }}
                         className={cn(
-                          "w-full text-left px-4 py-3 rounded-lg text-base font-medium transition-all duration-200",
+                          "w-full text-left px-3.5 py-2.5 rounded-xl text-sm font-friendly font-medium transition-all duration-200",
                           "hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20",
                           selectedCategory === category.id
                             ? "bg-red-500 text-white shadow-md"
@@ -108,7 +108,7 @@ export const CategoryToggle = ({ selectedCategory, onCategoryChange }: CategoryT
                           <span>{category.label}</span>
                           {selectedCategory === category.id && (
                             <motion.div
-                              className="w-2 h-2 bg-white rounded-full"
+                              className="w-1.5 h-1.5 bg-white rounded-full"
                               initial={{ scale: 0 }}
                               animate={{ scale: 1 }}
                               transition={{ delay: 0.1 }}

@@ -62,6 +62,7 @@ export default {
       fontFamily: {
         'display': ['Playfair Display', 'serif'],
         'sans': ['Inter', 'sans-serif'],
+        'friendly': ['Quicksand', 'sans-serif'],
       },
       fontSize: {
         'youtube-title': ['14px', '20px'],
