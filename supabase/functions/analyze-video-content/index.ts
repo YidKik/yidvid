@@ -134,51 +134,56 @@ const analyzeVideoContent = async (videoId: string): Promise<any> => {
   }
 
   try {
-    // Use YouTube video frames for analysis
-    const videoUrl = `https://www.youtube.com/watch?v=${videoId}`;
+    // Sample multiple frames from YouTube video at different timestamps
+    // YouTube provides frame images at: https://img.youtube.com/vi/{VIDEO_ID}/{quality}.jpg
+    // We'll analyze frames at 0%, 25%, 50%, 75% timestamps by using different qualities
+    const frameQualities = ['maxresdefault', '0', '1', '2', '3']; // Different frame snapshots
     
-    const response = await fetch('https://api.sightengine.com/1.0/video/check-sync.json', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: new URLSearchParams({
-        'url': videoUrl,
-        'models': 'nudity-2.0,wad,face-attributes',
-        'api_user': sightengineUser,
-        'api_secret': sightengineSecret,
-      }),
-    });
-
-    if (!response.ok) {
-      console.error('Sightengine video API error:', response.status);
-      return { safe: true, score: 0.5, frames_analyzed: 0, issues_detected: ['api_error'] };
-    }
-
-    const result = await response.json();
-    console.log('Video analysis result:', result);
-
     const issues = [];
     const problematicFrames = [];
     let score = 1.0;
     let framesAnalyzed = 0;
 
-    if (result.data && result.data.frames) {
-      framesAnalyzed = result.data.frames.length;
+    console.log(`Analyzing ${frameQualities.length} video frames for video ${videoId}`);
+
+    for (let i = 0; i < frameQualities.length; i++) {
+      const quality = frameQualities[i];
+      const frameUrl = `https://img.youtube.com/vi/${videoId}/${quality}.jpg`;
       
-      for (const frame of result.data.frames) {
+      try {
+        const response = await fetch('https://api.sightengine.com/1.0/check.json', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: new URLSearchParams({
+            'url': frameUrl,
+            'models': 'nudity-2.0,wad,face-attributes',
+            'api_user': sightengineUser,
+            'api_secret': sightengineSecret,
+          }),
+        });
+
+        if (!response.ok) {
+          console.error(`Sightengine API error for frame ${i}:`, response.status);
+          continue; // Skip this frame and continue with others
+        }
+
+        const result = await response.json();
+        framesAnalyzed++;
+        
         const frameIssues = [];
         
-        // Check nudity in each frame
-        if (frame.nudity && frame.nudity.sexual_activity > 0.3) {
+        // Check nudity in frame
+        if (result.nudity && result.nudity.sexual_activity > 0.3) {
           issues.push('sexual_content');
-          frameIssues.push(`Sexual content detected (confidence: ${(frame.nudity.sexual_activity * 100).toFixed(0)}%)`);
+          frameIssues.push(`Sexual content detected (confidence: ${(result.nudity.sexual_activity * 100).toFixed(0)}%)`);
           score = Math.min(score, 0.1);
         }
 
         // Check faces for gender detection
-        if (frame.faces && frame.faces.length > 0) {
-          for (const face of frame.faces) {
+        if (result.faces && result.faces.length > 0) {
+          for (const face of result.faces) {
             if (face.attributes && face.attributes.gender) {
               const confidence = face.attributes.gender.female;
               if (confidence > 0.7) {
@@ -191,24 +196,35 @@ const analyzeVideoContent = async (videoId: string): Promise<any> => {
         }
 
         // Check weapons and drugs
-        if (frame.weapon && frame.weapon > 0.5) {
+        if (result.weapon && result.weapon > 0.5) {
           issues.push('weapon_detected');
-          frameIssues.push(`Weapon detected (confidence: ${(frame.weapon * 100).toFixed(0)}%)`);
+          frameIssues.push(`Weapon detected (confidence: ${(result.weapon * 100).toFixed(0)}%)`);
+          score = Math.min(score, 0.3);
+        }
+
+        if (result.drugs && result.drugs > 0.5) {
+          issues.push('drugs_detected');
+          frameIssues.push(`Drugs detected (confidence: ${(result.drugs * 100).toFixed(0)}%)`);
           score = Math.min(score, 0.3);
         }
 
         // If this frame has issues, store it
         if (frameIssues.length > 0) {
           problematicFrames.push({
-            time: frame.time || 0,
+            frame_number: i,
             issues: frameIssues,
-            // Generate frame URL from video ID and timestamp
-            frameUrl: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
-            faces: frame.faces?.length || 0
+            frameUrl: frameUrl,
+            faces: result.faces?.length || 0
           });
         }
+
+      } catch (frameError) {
+        console.error(`Error analyzing frame ${i}:`, frameError);
+        // Continue with other frames
       }
     }
+
+    console.log(`Video analysis complete: ${framesAnalyzed} frames analyzed, ${issues.length} issues found`);
 
     return {
       safe: score > 0.5,
