@@ -37,45 +37,73 @@ export const VideoFetchButton: React.FC<VideoFetchButtonProps> = ({ onFetchCompl
       const channelIds = channels.map(c => c.channel_id);
       console.log(`Starting fetch for ${channelIds.length} channels`);
 
-      toast.loading(`Processing ${channelIds.length} channels with AI filtering...`);
+      // Process channels in batches of 50 to avoid timeouts
+      const BATCH_SIZE = 50;
+      const batches = [];
+      for (let i = 0; i < channelIds.length; i += BATCH_SIZE) {
+        batches.push(channelIds.slice(i, i + BATCH_SIZE));
+      }
 
-      // Call the fetch-youtube-videos edge function with ALL channels
-      const { data: result, error: fetchError } = await supabase.functions.invoke('fetch-youtube-videos', {
-        body: {
-          channels: channelIds,
-          forceUpdate: true,
-          quotaConservative: false,
-          prioritizeRecent: false,
-          maxChannelsPerRun: channelIds.length, // Process ALL channels
-          bypassQuotaCheck: true // Admin operation - bypass quota limits
+      console.log(`Processing ${channelIds.length} channels in ${batches.length} batches`);
+      
+      let totalProcessed = 0;
+      let totalNewVideos = 0;
+      let batchNum = 0;
+
+      // Process each batch sequentially
+      for (const batch of batches) {
+        batchNum++;
+        toast.loading(`Processing batch ${batchNum}/${batches.length} (${batch.length} channels)...`);
+        
+        try {
+          const { data: result, error: fetchError } = await supabase.functions.invoke('fetch-youtube-videos', {
+            body: {
+              channels: batch,
+              forceUpdate: true,
+              quotaConservative: false,
+              prioritizeRecent: false,
+              maxChannelsPerRun: batch.length,
+              bypassQuotaCheck: true
+            }
+          });
+
+          if (fetchError) {
+            console.error(`Error in batch ${batchNum}:`, fetchError);
+            toast.error(`Batch ${batchNum} failed: ${fetchError.message}. Continuing...`);
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            continue;
+          }
+
+          if (result?.success) {
+            totalProcessed += result.processed || 0;
+            totalNewVideos += result.newVideos || 0;
+            console.log(`Batch ${batchNum} complete: ${result.processed} channels, ${result.newVideos} new videos`);
+          }
+        } catch (batchError) {
+          console.error(`Batch ${batchNum} error:`, batchError);
+          toast.error(`Batch ${batchNum} failed. Continuing with next batch...`);
         }
-      });
+
+        // Small delay between batches
+        if (batchNum < batches.length) {
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+      }
 
       toast.dismiss();
 
-      if (fetchError) {
-        throw new Error(`Fetch failed: ${fetchError.message}`);
-      }
-
-      if (result?.success) {
-        const processed = result.processed || 0;
-        const newVideos = result.newVideos || 0;
-        
-        if (newVideos > 0) {
-          toast.success(
-            `Successfully fetched and AI-filtered ${newVideos} new videos from ${processed} channels!`
-          );
-        } else {
-          toast.info(
-            `Processed ${processed} channels - no new videos found. All channels are up to date.`
-          );
-        }
-        
-        if (onFetchComplete) {
-          onFetchComplete();
-        }
+      if (totalNewVideos > 0) {
+        toast.success(
+          `Successfully fetched and AI-filtered ${totalNewVideos} new videos from ${totalProcessed} channels!`
+        );
       } else {
-        throw new Error(result?.message || 'Fetch operation failed');
+        toast.info(
+          `Processed ${totalProcessed} channels - no new videos found. All channels are up to date.`
+        );
+      }
+      
+      if (onFetchComplete) {
+        onFetchComplete();
       }
 
     } catch (error) {
