@@ -99,13 +99,11 @@ export const Header = ({ selectedCategory, onCategoryChange }: { selectedCategor
 
   return (
     <motion.header 
-      className={`sticky top-0 z-50 w-full max-w-[100vw] border-b transition-all duration-300 ${
+      className={`sticky top-0 z-50 w-full max-w-[100vw] border-b bg-white/25 backdrop-blur-lg supports-[backdrop-filter]:bg-white/20 transition-all duration-300 ${
         scrolled 
-          ? 'bg-white/20 backdrop-blur-lg supports-[backdrop-filter]:bg-white/10 border-primary/50' 
-          : isMobile 
-            ? 'h-14 bg-white/30 backdrop-blur-md' 
-            : 'bg-white/30 backdrop-blur-md'
-      } ${isVideosPage ? 'videos-page' : isHomePage ? 'home-page' : ''}`}
+          ? 'border-primary/50' 
+          : 'border-border/40'
+      } ${isMobile ? 'h-14' : ''} ${isVideosPage ? 'videos-page' : isHomePage ? 'home-page' : ''}`}
       initial={{ opacity: 1 }}
       animate={{ opacity: 1 }}
     >
