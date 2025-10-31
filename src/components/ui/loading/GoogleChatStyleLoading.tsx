@@ -21,11 +21,11 @@ export const GoogleChatStyleLoading: React.FC<GoogleChatStyleLoadingProps> = ({
     // Once reveal starts, schedule exit and completion
     const exitTimer = setTimeout(() => {
       setShouldExit(true);
-    }, 1600);
+    }, 2000);
 
     const completeTimer = setTimeout(() => {
       onComplete?.();
-    }, 2100);
+    }, 2500);
 
     return () => {
       clearTimeout(exitTimer);
@@ -56,7 +56,10 @@ export const GoogleChatStyleLoading: React.FC<GoogleChatStyleLoadingProps> = ({
               duration: 3.5,
               ease: [0.22, 1, 0.36, 1], // Very smooth easing
             }}
-            onAnimationComplete={() => setStartColorReveal(true)}
+            onAnimationComplete={() => {
+              // Start color reveal immediately when scale completes
+              setStartColorReveal(true);
+            }}
           >
             <div className="relative w-80 h-80 md:w-96 md:h-96">
               {/* Grayish version (base layer) */}
@@ -71,36 +74,49 @@ export const GoogleChatStyleLoading: React.FC<GoogleChatStyleLoadingProps> = ({
 
               {/* Color + glow reveal masked strictly to logo shape */}
               <motion.div
-                className="absolute top-0 left-0 w-full h-full"
+                className="absolute top-0 left-0 w-full h-full overflow-hidden"
                 initial={{ clipPath: "inset(0 100% 0 0)" }}
                 animate={{ clipPath: startColorReveal ? "inset(0 0% 0 0)" : "inset(0 100% 0 0)" }}
-                transition={{ duration: 1.1, ease: [0.65, 0, 0.35, 1] }}
-                style={{
-                  WebkitMaskImage: `url(${logoImage})`,
-                  maskImage: `url(${logoImage})`,
-                  WebkitMaskRepeat: 'no-repeat',
-                  maskRepeat: 'no-repeat',
-                  WebkitMaskSize: 'contain',
-                  maskSize: 'contain',
-                  WebkitMaskPosition: 'center',
-                  maskPosition: 'center',
-                }}
+                transition={{ duration: 1.8, ease: [0.45, 0, 0.55, 1] }}
               >
-                {/* Solid color image */}
-                <img src={logoImage} alt="YidVid Logo" className="w-full h-full object-contain" />
+                <div className="relative w-full h-full">
+                  {/* Color logo */}
+                  <img 
+                    src={logoImage} 
+                    alt="YidVid Logo" 
+                    className="w-full h-full object-contain absolute top-0 left-0" 
+                  />
 
-                {/* Glow sweep inside logo only */}
-                <motion.div
-                  className="absolute inset-0"
-                  initial={{ x: '-40%' }}
-                  animate={{ x: startColorReveal ? '110%' : '-40%' }}
-                  transition={{ duration: 1.1, ease: 'easeInOut' }}
-                  style={{
-                    background: 'linear-gradient(90deg, rgba(239,68,68,0) 0%, rgba(239,68,68,0.55) 40%, rgba(239,68,68,0.95) 50%, rgba(239,68,68,0.55) 60%, rgba(239,68,68,0) 100%)',
-                    filter: 'blur(24px) saturate(1.15)',
-                    mixBlendMode: 'screen'
-                  }}
-                />
+                  {/* Glow sweep masked to logo shape only */}
+                  <motion.div
+                    className="absolute inset-0 pointer-events-none"
+                    initial={{ x: '-50%', opacity: 0 }}
+                    animate={{ 
+                      x: startColorReveal ? '150%' : '-50%',
+                      opacity: startColorReveal ? [0, 1, 1, 0] : 0
+                    }}
+                    transition={{ 
+                      duration: 1.8, 
+                      ease: 'easeInOut',
+                      times: [0, 0.15, 0.85, 1]
+                    }}
+                    style={{
+                      width: '60%',
+                      height: '100%',
+                      background: 'radial-gradient(ellipse, rgba(255,100,100,0.75) 0%, rgba(239,68,68,0.5) 30%, rgba(239,68,68,0) 70%)',
+                      filter: 'blur(20px)',
+                      mixBlendMode: 'screen',
+                      maskImage: `url(${logoImage})`,
+                      WebkitMaskImage: `url(${logoImage})`,
+                      maskSize: 'contain',
+                      WebkitMaskSize: 'contain',
+                      maskRepeat: 'no-repeat',
+                      WebkitMaskRepeat: 'no-repeat',
+                      maskPosition: 'center',
+                      WebkitMaskPosition: 'center',
+                    }}
+                  />
+                </div>
               </motion.div>
             </div>
           </motion.div>
