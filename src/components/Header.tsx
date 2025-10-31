@@ -30,9 +30,6 @@ export const Header = ({ selectedCategory, onCategoryChange }: { selectedCategor
   
   // Header animation states
   const [scrolled, setScrolled] = useState(false);
-  const [scrollDirection, setScrollDirection] = useState<'up' | 'down'>('up');
-  const [lastScrollY, setLastScrollY] = useState(0);
-  const [isVisible, setIsVisible] = useState(true);
 
   // Enhanced scroll detection for blurred background effect
   useEffect(() => {
@@ -41,16 +38,13 @@ export const Header = ({ selectedCategory, onCategoryChange }: { selectedCategor
       
       // Set scrolled state for styling - always show with blur when scrolled
       setScrolled(currentScrollY > 20);
-      
-      // Update last scroll position
-      setLastScrollY(currentScrollY);
     };
     
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [lastScrollY]);
+  }, []);
 
   // Listen for the custom auth dialog event
   useEffect(() => {
@@ -104,8 +98,9 @@ export const Header = ({ selectedCategory, onCategoryChange }: { selectedCategor
           ? 'border-primary/50' 
           : 'border-border/40'
       } ${isMobile ? 'h-14' : ''} ${isVideosPage ? 'videos-page' : isHomePage ? 'home-page' : ''}`}
-      initial={{ opacity: 1 }}
-      animate={{ opacity: 1 }}
+      initial={{ opacity: 1, y: 0 }}
+      animate={{ opacity: 1, y: 0 }}
+      style={{ position: 'sticky', top: 0 }}
     >
       <div className="container mx-auto px-0 max-w-[100vw]">
         <div className={`flex ${isMobile ? 'h-14' : 'h-14'} items-center relative max-w-[100vw]`}>
