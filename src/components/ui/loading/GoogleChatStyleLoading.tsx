@@ -72,52 +72,55 @@ export const GoogleChatStyleLoading: React.FC<GoogleChatStyleLoadingProps> = ({
                 }}
               />
 
-              {/* Color + glow reveal masked strictly to logo shape */}
-              <motion.div
+              {/* Entire color layer masked to logo shape */}
+              <div 
                 className="absolute top-0 left-0 w-full h-full overflow-hidden"
-                initial={{ clipPath: "inset(0 100% 0 0)" }}
-                animate={{ clipPath: startColorReveal ? "inset(0 0% 0 0)" : "inset(0 100% 0 0)" }}
-                transition={{ duration: 1.8, ease: [0.45, 0, 0.55, 1] }}
+                style={{
+                  maskImage: `url(${logoImage})`,
+                  WebkitMaskImage: `url(${logoImage})`,
+                  maskSize: 'contain',
+                  WebkitMaskSize: 'contain',
+                  maskRepeat: 'no-repeat',
+                  WebkitMaskRepeat: 'no-repeat',
+                  maskPosition: 'center',
+                  WebkitMaskPosition: 'center',
+                }}
               >
-                <div className="relative w-full h-full">
+                {/* Left-to-right reveal of colored content */}
+                <motion.div
+                  className="absolute top-0 left-0 w-full h-full"
+                  initial={{ clipPath: "inset(0 100% 0 0)" }}
+                  animate={{ clipPath: startColorReveal ? "inset(0 0% 0 0)" : "inset(0 100% 0 0)" }}
+                  transition={{ duration: 1.8, ease: [0.45, 0, 0.55, 1] }}
+                >
                   {/* Color logo */}
                   <img 
                     src={logoImage} 
                     alt="YidVid Logo" 
-                    className="w-full h-full object-contain absolute top-0 left-0" 
+                    className="w-full h-full object-contain" 
                   />
 
-                  {/* Glow sweep masked to logo shape only */}
+                  {/* Glow sweep - now fully contained by parent mask */}
                   <motion.div
-                    className="absolute inset-0 pointer-events-none"
-                    initial={{ x: '-50%', opacity: 0 }}
+                    className="absolute top-0 pointer-events-none"
+                    initial={{ left: '-60%' }}
                     animate={{ 
-                      x: startColorReveal ? '150%' : '-50%',
-                      opacity: startColorReveal ? [0, 1, 1, 0] : 0
+                      left: startColorReveal ? '100%' : '-60%',
                     }}
                     transition={{ 
                       duration: 1.8, 
                       ease: 'easeInOut',
-                      times: [0, 0.15, 0.85, 1]
                     }}
                     style={{
-                      width: '60%',
+                      width: '70%',
                       height: '100%',
-                      background: 'radial-gradient(ellipse, rgba(255,100,100,0.75) 0%, rgba(239,68,68,0.5) 30%, rgba(239,68,68,0) 70%)',
-                      filter: 'blur(20px)',
+                      background: 'radial-gradient(ellipse 60% 100%, rgba(255,120,120,0.85) 0%, rgba(239,68,68,0.6) 25%, rgba(255,100,100,0.3) 50%, rgba(239,68,68,0) 100%)',
+                      filter: 'blur(22px)',
                       mixBlendMode: 'screen',
-                      maskImage: `url(${logoImage})`,
-                      WebkitMaskImage: `url(${logoImage})`,
-                      maskSize: 'contain',
-                      WebkitMaskSize: 'contain',
-                      maskRepeat: 'no-repeat',
-                      WebkitMaskRepeat: 'no-repeat',
-                      maskPosition: 'center',
-                      WebkitMaskPosition: 'center',
                     }}
                   />
-                </div>
-              </motion.div>
+                </motion.div>
+              </div>
             </div>
           </motion.div>
         </motion.div>
