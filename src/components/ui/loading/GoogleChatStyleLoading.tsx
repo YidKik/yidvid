@@ -16,20 +16,20 @@ export const GoogleChatStyleLoading: React.FC<GoogleChatStyleLoadingProps> = ({
 
   useEffect(() => {
     if (isVisible) {
-      // After logo scales up (3.5s), start color reveal
+      // Start color reveal immediately after logo scales up (3.5s)
       const colorTimer = setTimeout(() => {
         setStartColorReveal(true);
       }, 3500);
 
-      // After color reveal (5.5s total), start exit
+      // After color reveal (5s total), start exit
       const exitTimer = setTimeout(() => {
         setShouldExit(true);
-      }, 5500);
+      }, 5000);
 
       // Complete callback after exit animation
       const completeTimer = setTimeout(() => {
         onComplete?.();
-      }, 6000);
+      }, 5500);
 
       return () => {
         clearTimeout(colorTimer);
@@ -74,46 +74,39 @@ export const GoogleChatStyleLoading: React.FC<GoogleChatStyleLoadingProps> = ({
                 }}
               />
 
-              {/* Color version with left-to-right reveal */}
-              <div className="absolute top-0 left-0 w-full h-full overflow-hidden">
-                <motion.div
-                  className="absolute top-0 left-0 w-full h-full"
-                  initial={{ clipPath: "inset(0 100% 0 0)" }}
-                  animate={{ 
-                    clipPath: startColorReveal ? "inset(0 0% 0 0)" : "inset(0 100% 0 0)"
+              {/* Color version with left-to-right reveal - masked to logo shape */}
+              <motion.div
+                className="absolute top-0 left-0 w-full h-full"
+                initial={{ clipPath: "inset(0 100% 0 0)" }}
+                animate={{ 
+                  clipPath: startColorReveal ? "inset(0 0% 0 0)" : "inset(0 100% 0 0)"
+                }}
+                transition={{
+                  duration: 1.2,
+                  ease: [0.65, 0, 0.35, 1],
+                }}
+              >
+                <motion.img
+                  src={logoImage}
+                  alt="YidVid Logo"
+                  className="w-full h-full object-contain"
+                  animate={{
+                    filter: startColorReveal 
+                      ? [
+                          "drop-shadow(0 0 0px rgba(239, 68, 68, 0))",
+                          "drop-shadow(0 0 35px rgba(239, 68, 68, 0.9))",
+                          "drop-shadow(0 0 18px rgba(239, 68, 68, 0.5))",
+                          "drop-shadow(0 0 0px rgba(239, 68, 68, 0))"
+                        ]
+                      : "drop-shadow(0 0 0px rgba(239, 68, 68, 0))"
                   }}
                   transition={{
-                    duration: 1.5,
-                    ease: [0.65, 0, 0.35, 1],
+                    duration: 1.2,
+                    times: [0, 0.3, 0.7, 1],
+                    ease: "easeInOut"
                   }}
-                >
-                  {/* Glow effect during transition */}
-                  <motion.div
-                    className="absolute top-0 left-0 w-full h-full"
-                    animate={{
-                      filter: startColorReveal 
-                        ? [
-                            "drop-shadow(0 0 0px rgba(239, 68, 68, 0))",
-                            "drop-shadow(0 0 40px rgba(239, 68, 68, 0.8))",
-                            "drop-shadow(0 0 20px rgba(239, 68, 68, 0.4))",
-                            "drop-shadow(0 0 0px rgba(239, 68, 68, 0))"
-                          ]
-                        : "drop-shadow(0 0 0px rgba(239, 68, 68, 0))"
-                    }}
-                    transition={{
-                      duration: 1.5,
-                      times: [0, 0.3, 0.7, 1],
-                      ease: "easeInOut"
-                    }}
-                  >
-                    <img
-                      src={logoImage}
-                      alt="YidVid Logo"
-                      className="w-full h-full object-contain"
-                    />
-                  </motion.div>
-                </motion.div>
-              </div>
+                />
+              </motion.div>
             </div>
           </motion.div>
         </motion.div>
