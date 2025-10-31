@@ -11,25 +11,25 @@ export const GoogleChatStyleLoading: React.FC<GoogleChatStyleLoadingProps> = ({
   isVisible,
   onComplete
 }) => {
-  const [showColorBubble, setShowColorBubble] = useState(false);
+  const [startColorReveal, setStartColorReveal] = useState(false);
   const [shouldExit, setShouldExit] = useState(false);
 
   useEffect(() => {
     if (isVisible) {
-      // After logo scales up (2s), start bubble color transition
+      // After logo scales up (3.5s), start color reveal
       const colorTimer = setTimeout(() => {
-        setShowColorBubble(true);
-      }, 2000);
+        setStartColorReveal(true);
+      }, 3500);
 
-      // After bubble animation (3s total), start exit
+      // After color reveal (5.5s total), start exit
       const exitTimer = setTimeout(() => {
         setShouldExit(true);
-      }, 3000);
+      }, 5500);
 
       // Complete callback after exit animation
       const completeTimer = setTimeout(() => {
         onComplete?.();
-      }, 3500);
+      }, 6000);
 
       return () => {
         clearTimeout(colorTimer);
@@ -50,67 +50,70 @@ export const GoogleChatStyleLoading: React.FC<GoogleChatStyleLoadingProps> = ({
             transition: { duration: 0.5, ease: "easeInOut" }
           }}
         >
-          {/* Logo container with scale animation */}
+          {/* Logo container with slow scale animation */}
           <motion.div
             className="relative"
-            initial={{ scale: 0.2, opacity: 0 }}
+            initial={{ scale: 0.1, opacity: 0 }}
             animate={{ 
               scale: 1,
               opacity: 1
             }}
             transition={{
-              duration: 2,
-              ease: [0.16, 1, 0.3, 1], // Smooth elastic easing
+              duration: 3.5,
+              ease: [0.22, 1, 0.36, 1], // Very smooth easing
             }}
           >
-            <div className="relative w-56 h-56 md:w-72 md:h-72">
-              {/* Two-tone grayish version */}
+            <div className="relative w-80 h-80 md:w-96 md:h-96">
+              {/* Grayish version (base layer) */}
               <img
                 src={logoImage}
                 alt="YidVid Logo"
                 className="w-full h-full object-contain absolute top-0 left-0"
                 style={{
-                  filter: "grayscale(100%) brightness(1.1) contrast(0.9)",
+                  filter: "grayscale(100%) brightness(1.2) contrast(0.85)",
                 }}
               />
 
-              {/* Color version underneath */}
-              <img
-                src={logoImage}
-                alt="YidVid Logo"
-                className="w-full h-full object-contain absolute top-0 left-0"
-              />
-
-              {/* Bubble mask that reveals color */}
-              <motion.div
-                className="absolute top-0 left-0 w-full h-full overflow-hidden"
-                style={{
-                  maskImage: showColorBubble 
-                    ? "radial-gradient(circle, black 100%, transparent 100%)"
-                    : "radial-gradient(circle, black 0%, transparent 0%)",
-                  WebkitMaskImage: showColorBubble
-                    ? "radial-gradient(circle, black 100%, transparent 100%)"
-                    : "radial-gradient(circle, black 0%, transparent 0%)",
-                }}
-              >
+              {/* Color version with left-to-right reveal */}
+              <div className="absolute top-0 left-0 w-full h-full overflow-hidden">
                 <motion.div
-                  className="w-full h-full"
-                  initial={{ scale: 0 }}
+                  className="absolute top-0 left-0 w-full h-full"
+                  initial={{ clipPath: "inset(0 100% 0 0)" }}
                   animate={{ 
-                    scale: showColorBubble ? 2.5 : 0
+                    clipPath: startColorReveal ? "inset(0 0% 0 0)" : "inset(0 100% 0 0)"
                   }}
                   transition={{
-                    duration: 0.8,
-                    ease: [0.34, 1.56, 0.64, 1],
+                    duration: 1.5,
+                    ease: [0.65, 0, 0.35, 1],
                   }}
                 >
-                  <img
-                    src={logoImage}
-                    alt="YidVid Logo"
-                    className="w-full h-full object-contain"
-                  />
+                  {/* Glow effect during transition */}
+                  <motion.div
+                    className="absolute top-0 left-0 w-full h-full"
+                    animate={{
+                      filter: startColorReveal 
+                        ? [
+                            "drop-shadow(0 0 0px rgba(239, 68, 68, 0))",
+                            "drop-shadow(0 0 40px rgba(239, 68, 68, 0.8))",
+                            "drop-shadow(0 0 20px rgba(239, 68, 68, 0.4))",
+                            "drop-shadow(0 0 0px rgba(239, 68, 68, 0))"
+                          ]
+                        : "drop-shadow(0 0 0px rgba(239, 68, 68, 0))"
+                    }}
+                    transition={{
+                      duration: 1.5,
+                      times: [0, 0.3, 0.7, 1],
+                      ease: "easeInOut"
+                    }}
+                  >
+                    <img
+                      src={logoImage}
+                      alt="YidVid Logo"
+                      className="w-full h-full object-contain"
+                    />
+                  </motion.div>
                 </motion.div>
-              </motion.div>
+              </div>
             </div>
           </motion.div>
         </motion.div>
