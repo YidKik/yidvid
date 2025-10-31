@@ -15,29 +15,23 @@ export const GoogleChatStyleLoading: React.FC<GoogleChatStyleLoadingProps> = ({
   const [shouldExit, setShouldExit] = useState(false);
 
   useEffect(() => {
-    if (isVisible) {
-      // Start color reveal immediately after logo scales up (3.5s)
-      const colorTimer = setTimeout(() => {
-        setStartColorReveal(true);
-      }, 3500);
+    if (!isVisible) return;
+    if (!startColorReveal) return;
 
-      // After color reveal (5s total), start exit
-      const exitTimer = setTimeout(() => {
-        setShouldExit(true);
-      }, 5000);
+    // Once reveal starts, schedule exit and completion
+    const exitTimer = setTimeout(() => {
+      setShouldExit(true);
+    }, 1600);
 
-      // Complete callback after exit animation
-      const completeTimer = setTimeout(() => {
-        onComplete?.();
-      }, 5500);
+    const completeTimer = setTimeout(() => {
+      onComplete?.();
+    }, 2100);
 
-      return () => {
-        clearTimeout(colorTimer);
-        clearTimeout(exitTimer);
-        clearTimeout(completeTimer);
-      };
-    }
-  }, [isVisible, onComplete]);
+    return () => {
+      clearTimeout(exitTimer);
+      clearTimeout(completeTimer);
+    };
+  }, [isVisible, startColorReveal, onComplete]);
 
   return (
     <AnimatePresence>
@@ -62,6 +56,7 @@ export const GoogleChatStyleLoading: React.FC<GoogleChatStyleLoadingProps> = ({
               duration: 3.5,
               ease: [0.22, 1, 0.36, 1], // Very smooth easing
             }}
+            onAnimationComplete={() => setStartColorReveal(true)}
           >
             <div className="relative w-80 h-80 md:w-96 md:h-96">
               {/* Grayish version (base layer) */}
@@ -74,36 +69,36 @@ export const GoogleChatStyleLoading: React.FC<GoogleChatStyleLoadingProps> = ({
                 }}
               />
 
-              {/* Color version with left-to-right reveal - masked to logo shape */}
+              {/* Color + glow reveal masked strictly to logo shape */}
               <motion.div
                 className="absolute top-0 left-0 w-full h-full"
                 initial={{ clipPath: "inset(0 100% 0 0)" }}
-                animate={{ 
-                  clipPath: startColorReveal ? "inset(0 0% 0 0)" : "inset(0 100% 0 0)"
-                }}
-                transition={{
-                  duration: 1.2,
-                  ease: [0.65, 0, 0.35, 1],
+                animate={{ clipPath: startColorReveal ? "inset(0 0% 0 0)" : "inset(0 100% 0 0)" }}
+                transition={{ duration: 1.1, ease: [0.65, 0, 0.35, 1] }}
+                style={{
+                  WebkitMaskImage: `url(${logoImage})`,
+                  maskImage: `url(${logoImage})`,
+                  WebkitMaskRepeat: 'no-repeat',
+                  maskRepeat: 'no-repeat',
+                  WebkitMaskSize: 'contain',
+                  maskSize: 'contain',
+                  WebkitMaskPosition: 'center',
+                  maskPosition: 'center',
                 }}
               >
-                <motion.img
-                  src={logoImage}
-                  alt="YidVid Logo"
-                  className="w-full h-full object-contain"
-                  animate={{
-                    filter: startColorReveal 
-                      ? [
-                          "drop-shadow(0 0 0px rgba(239, 68, 68, 0))",
-                          "drop-shadow(0 0 35px rgba(239, 68, 68, 0.9))",
-                          "drop-shadow(0 0 18px rgba(239, 68, 68, 0.5))",
-                          "drop-shadow(0 0 0px rgba(239, 68, 68, 0))"
-                        ]
-                      : "drop-shadow(0 0 0px rgba(239, 68, 68, 0))"
-                  }}
-                  transition={{
-                    duration: 1.2,
-                    times: [0, 0.3, 0.7, 1],
-                    ease: "easeInOut"
+                {/* Solid color image */}
+                <img src={logoImage} alt="YidVid Logo" className="w-full h-full object-contain" />
+
+                {/* Glow sweep inside logo only */}
+                <motion.div
+                  className="absolute inset-0"
+                  initial={{ x: '-40%' }}
+                  animate={{ x: startColorReveal ? '110%' : '-40%' }}
+                  transition={{ duration: 1.1, ease: 'easeInOut' }}
+                  style={{
+                    background: 'linear-gradient(90deg, rgba(239,68,68,0) 0%, rgba(239,68,68,0.55) 40%, rgba(239,68,68,0.95) 50%, rgba(239,68,68,0.55) 60%, rgba(239,68,68,0) 100%)',
+                    filter: 'blur(24px) saturate(1.15)',
+                    mixBlendMode: 'screen'
                   }}
                 />
               </motion.div>
