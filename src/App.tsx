@@ -14,7 +14,7 @@ import Settings from './pages/Settings';
 import Dashboard from './pages/Dashboard';
 import { recordNavigation, setupScrollRestoration } from './utils/scrollRestoration';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
-import { YidVidLoadingAnimation } from './components/ui/loading/YidVidLoadingAnimation';
+import { GoogleChatStyleLoading } from './components/ui/loading/GoogleChatStyleLoading';
 import { useWelcomeAnimation } from './hooks/useWelcomeAnimation';
 import { SiteImprovementNotification } from './components/SiteImprovementNotification';
 
@@ -77,9 +77,8 @@ function App() {
   // Show loading animation as the first thing on any page visit
   if (showWelcome === true) {
     return (
-      <YidVidLoadingAnimation 
+      <GoogleChatStyleLoading 
         isVisible={true}
-        progress={loadingProgress}
         onComplete={handleLoadingComplete}
       />
     );
