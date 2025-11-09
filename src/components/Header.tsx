@@ -30,6 +30,9 @@ export const Header = ({ selectedCategory, onCategoryChange }: { selectedCategor
   
   // Header animation states
   const [scrolled, setScrolled] = useState(false);
+  // Use fixed header on desktop videos page to guarantee persistent visibility
+  const headerPositionClass = isVideosPage && !isMobile ? 'fixed top-0 left-0 right-0' : 'sticky top-0';
+  const needsSpacer = isVideosPage && !isMobile;
 
   // Enhanced scroll detection for blurred background effect
   useEffect(() => {
@@ -92,16 +95,16 @@ export const Header = ({ selectedCategory, onCategoryChange }: { selectedCategor
   };
 
   return (
-    <motion.header 
-      className={`sticky top-0 z-50 w-full max-w-[100vw] border-b bg-white/25 backdrop-blur-lg supports-[backdrop-filter]:bg-white/20 transition-all duration-300 ${
-        scrolled 
-          ? 'border-primary/50' 
-          : 'border-border/40'
-      } ${isMobile ? 'h-14' : ''} ${isVideosPage ? 'videos-page' : isHomePage ? 'home-page' : ''}`}
-      initial={{ opacity: 1, y: 0 }}
-      animate={{ opacity: 1, y: 0 }}
-      style={{ position: 'sticky', top: 0 }}
-    >
+    <>
+      <motion.header 
+        className={`${headerPositionClass} z-50 w-full max-w-[100vw] border-b bg-white/25 backdrop-blur-lg supports-[backdrop-filter]:bg-white/20 transition-all duration-300 ${
+          scrolled 
+            ? 'border-primary/50' 
+            : 'border-border/40'
+        } ${isMobile ? 'h-14' : ''} ${isVideosPage ? 'videos-page' : isHomePage ? 'home-page' : ''}`}
+        initial={{ opacity: 1, y: 0 }}
+        animate={{ opacity: 1, y: 0 }}
+      >
       <div className="container mx-auto px-0 max-w-[100vw]">
         <div className={`flex ${isMobile ? 'h-14' : 'h-14'} items-center relative max-w-[100vw]`}>
           {isMobile ? (
@@ -192,5 +195,7 @@ export const Header = ({ selectedCategory, onCategoryChange }: { selectedCategor
       </div>
       <Auth isOpen={isAuthOpen} onOpenChange={setIsAuthOpen} />
     </motion.header>
+    {needsSpacer && !isMobile && <div className="h-14 w-full" aria-hidden="true" />}
+    </>
   );
 };
