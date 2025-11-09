@@ -12,6 +12,7 @@ import { useLocation } from "react-router-dom";
 import { HeaderLogo } from "./header/HeaderLogo";
 import { VideoSearchBar } from "./header/VideoSearchBar";
 import { CategoryToggle } from "./header/CategoryToggle";
+import { MobileVideosHeader } from "./header/mobile/MobileVideosHeader";
 
 export const Header = ({ selectedCategory, onCategoryChange }: { selectedCategory?: string; onCategoryChange?: (category: string) => void } = {}) => {
   const { isMobile } = useIsMobile();
@@ -108,42 +109,51 @@ export const Header = ({ selectedCategory, onCategoryChange }: { selectedCategor
       <div className="container mx-auto px-0 max-w-[100vw]">
         <div className={`flex ${isMobile ? 'h-14' : 'h-14'} items-center relative max-w-[100vw]`}>
           {isMobile ? (
-            <div className="w-full flex items-center px-3">
-              <div className="w-1/5 flex justify-start">
-                <HeaderLogo
-                  isMobile={isMobile}
-                  isMobileMenuOpen={isMobileMenuOpen}
-                  onMobileMenuToggle={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                />
-              </div>
-              
-              {(isVideosPage || isSearchPage) && (
-                <div className="w-3/5 flex justify-center items-center gap-2 px-2">
-                  {isVideosPage && selectedCategory && onCategoryChange && (
-                    <CategoryToggle 
-                      selectedCategory={selectedCategory}
-                      onCategoryChange={onCategoryChange}
+            <>
+              {isVideosPage ? (
+                <div className="w-full flex flex-col">
+                  <MobileVideosHeader
+                    session={session}
+                    selectedCategory={selectedCategory}
+                    onCategoryChange={onCategoryChange}
+                    onAuthOpen={() => setIsAuthOpen(true)}
+                    handleSettingsClick={handleSettingsClick}
+                    onMarkNotificationsAsRead={markNotificationsAsRead}
+                  />
+                </div>
+              ) : (
+                <div className="w-full flex items-center px-3">
+                  <div className="w-1/5 flex justify-start">
+                    <HeaderLogo
+                      isMobile={isMobile}
+                      isMobileMenuOpen={isMobileMenuOpen}
+                      onMobileMenuToggle={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                     />
+                  </div>
+                  
+                  {isSearchPage && (
+                    <div className="w-3/5 flex justify-center items-center gap-2 px-2">
+                      <div className="flex-1">
+                        <VideoSearchBar />
+                      </div>
+                    </div>
                   )}
-                  <div className="flex-1">
-                    <VideoSearchBar />
+
+                  <div className="w-1/5 flex justify-end">
+                    <HeaderActions 
+                      isMobile={isMobile}
+                      isSearchExpanded={isSearchExpanded}
+                      session={session}
+                      onSearchExpand={() => {}}
+                      onAuthOpen={() => setIsAuthOpen(true)}
+                      onLogout={handleLogout}
+                      onMarkNotificationsAsRead={markNotificationsAsRead}
+                      onSettingsClick={handleSettingsClick}
+                    />
                   </div>
                 </div>
               )}
-
-              <div className="w-1/5 flex justify-end">
-                <HeaderActions 
-                  isMobile={isMobile}
-                  isSearchExpanded={isSearchExpanded}
-                  session={session}
-                  onSearchExpand={() => {}}
-                  onAuthOpen={() => setIsAuthOpen(true)}
-                  onLogout={handleLogout}
-                  onMarkNotificationsAsRead={markNotificationsAsRead}
-                  onSettingsClick={handleSettingsClick}
-                />
-              </div>
-            </div>
+            </>
           ) : (
             <>
               <HeaderLogo
