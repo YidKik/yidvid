@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Home } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { 
@@ -29,9 +29,11 @@ export const BackButton = ({ className }: BackButtonProps) => {
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
+      // Show when at top or when scrolling up
       if (currentScrollY <= 100) {
         setVisible(true);
-      } else if (currentScrollY < lastScrollY && currentScrollY <= 250) {
+      } else if (currentScrollY < lastScrollY) {
+        // Show whenever scrolling up, regardless of distance
         setVisible(true);
       } else {
         setVisible(false);
@@ -85,20 +87,47 @@ export const BackButton = ({ className }: BackButtonProps) => {
     }
   };
 
+  const handleGoHome = () => {
+    saveScrollPosition(location.pathname + location.search);
+    navigate("/videos");
+  };
+
   return (
-    <button
-      onClick={handleGoBack}
+    <div
       className={cn(
-        "bg-primary hover:bg-primary/90 text-white font-bold py-2 px-4 rounded-full", // Updated to use theme colors
-        "fixed top-12 left-4 transition-all duration-200",
-        "group hover:scale-105 active:scale-95",
-        "z-[100]",
+        "fixed top-12 left-4 z-[100] flex gap-2",
         visible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-10 pointer-events-none",
-        "transition-all duration-300 ease-in-out",
-        className
+        "transition-all duration-300 ease-in-out"
       )}
     >
-      <ArrowLeft className="h-4 w-4" />
-    </button>
+      <button
+        onClick={handleGoBack}
+        className={cn(
+          "bg-background/80 backdrop-blur-sm border-2 border-border",
+          "text-foreground hover:bg-accent hover:border-accent-foreground/20",
+          "p-2.5 rounded-lg shadow-md",
+          "transition-all duration-200",
+          "hover:scale-105 active:scale-95",
+          className
+        )}
+        aria-label="Go back"
+      >
+        <ArrowLeft className="h-5 w-5" />
+      </button>
+      
+      <button
+        onClick={handleGoHome}
+        className={cn(
+          "bg-background/80 backdrop-blur-sm border-2 border-border",
+          "text-foreground hover:bg-accent hover:border-accent-foreground/20",
+          "p-2.5 rounded-lg shadow-md",
+          "transition-all duration-200",
+          "hover:scale-105 active:scale-95"
+        )}
+        aria-label="Go to videos page"
+      >
+        <Home className="h-5 w-5" />
+      </button>
+    </div>
   );
 };
