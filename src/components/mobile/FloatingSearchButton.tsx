@@ -1,5 +1,4 @@
 import { motion } from "framer-motion";
-import { Search } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 interface FloatingSearchButtonProps {
@@ -12,13 +11,6 @@ export const FloatingSearchButton = ({ hasScrolled }: FloatingSearchButtonProps)
   const handleClick = () => {
     // Scroll to top smoothly
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    
-    // Wait for scroll to complete, then focus the search input
-    setTimeout(() => {
-      // Dispatch custom event to focus the search input
-      const focusSearchEvent = new CustomEvent('focusSearchBar');
-      document.dispatchEvent(focusSearchEvent);
-    }, 500);
   };
 
   // Only show on mobile devices
@@ -26,7 +18,7 @@ export const FloatingSearchButton = ({ hasScrolled }: FloatingSearchButtonProps)
 
   return (
     <motion.button
-      className="fixed bottom-20 right-4 p-4 bg-primary text-primary-foreground rounded-full shadow-2xl z-40 hover:bg-primary/90 transition-colors"
+      className="fixed bottom-24 right-4 p-2.5 bg-card/80 backdrop-blur-sm rounded-full shadow-lg z-40 hover:bg-card transition-colors"
       initial={{ opacity: 0, scale: 0.5 }}
       animate={{ 
         opacity: hasScrolled ? 1 : 0,
@@ -36,9 +28,24 @@ export const FloatingSearchButton = ({ hasScrolled }: FloatingSearchButtonProps)
       transition={{ duration: 0.3 }}
       onClick={handleClick}
       whileTap={{ scale: 0.9 }}
-      aria-label="Search videos"
+      aria-label="Scroll to top"
     >
-      <Search className="h-5 w-5" />
+      <motion.svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="text-foreground"
+        whileHover={{ y: -2 }}
+        transition={{ duration: 0.2 }}
+      >
+        <path d="m18 15-6-6-6 6"/>
+      </motion.svg>
     </motion.button>
   );
 };
