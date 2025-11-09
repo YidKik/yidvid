@@ -44,19 +44,7 @@ export const ApiQuotaStatus = () => {
     refetchInterval: 30000,
   });
 
-  if (quotaLoading || fetchLoading) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>YouTube API Quota Status</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="h-40 animate-pulse bg-muted rounded" />
-        </CardContent>
-      </Card>
-    );
-  }
-
+  // Calculate quota values (even during loading, for hook consistency)
   const quotaLimit = 10000;
   const quotaRemaining = quotaData?.quota_remaining || 0;
   const quotaUsed = quotaLimit - quotaRemaining;
@@ -76,8 +64,9 @@ export const ApiQuotaStatus = () => {
   const alertLevel = getAlertLevel();
   const showAlert = quotaPercentage <= 20;
 
-  // Toast notification when crossing thresholds
+  // Toast notification when crossing thresholds - MUST be before early return
   useEffect(() => {
+    // Only run if we have data (not during initial load)
     if (quotaData && previousPercentageRef.current !== null) {
       const previous = previousPercentageRef.current;
       
@@ -106,8 +95,25 @@ export const ApiQuotaStatus = () => {
       }
     }
     
-    previousPercentageRef.current = quotaPercentage;
+    // Update ref with current percentage
+    if (quotaData) {
+      previousPercentageRef.current = quotaPercentage;
+    }
   }, [quotaPercentage, quotaData]);
+
+  // Early return for loading state - AFTER all hooks
+  if (quotaLoading || fetchLoading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>YouTube API Quota Status</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="h-40 animate-pulse bg-muted rounded" />
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className={showAlert ? "border-2 border-destructive" : ""}>
