@@ -201,8 +201,32 @@ Deno.serve(async (req) => {
         console.error('YouTube API fetch error status:', response.status, response.statusText);
         console.error('Error response body:', errorText);
         
-        // Handle quota exceeded error
-        if (errorText.toLowerCase().includes('quota') || response.status === 403) {
+        // Parse error response to check the actual error type
+        let errorData: any = {};
+        try {
+          errorData = JSON.parse(errorText);
+        } catch (e) {
+          // If not JSON, treat as generic error
+        }
+        
+        // Check for API key referrer blocking
+        if (response.status === 403 && errorText.includes('API_KEY_HTTP_REFERRER_BLOCKED')) {
+          console.error("YouTube API key referrer restriction detected");
+          return new Response(
+            JSON.stringify({ 
+              error: 'YouTube API key has referrer restrictions. Please update your API key settings in Google Cloud Console to allow requests from *.supabase.co or remove HTTP referrer restrictions.',
+              errorType: 'API_KEY_REFERRER_BLOCKED',
+              manualAddRequired: true
+            }),
+            { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 403 }
+          );
+        }
+        
+        // Handle actual quota exceeded error
+        const isQuotaError = errorText.toLowerCase().includes('quota') || 
+                           errorData?.error?.errors?.some((e: any) => e.reason === 'quotaExceeded');
+        
+        if (isQuotaError) {
           console.error("YouTube quota exceeded detected");
           
           // Try with fallback key if available and not already using it
