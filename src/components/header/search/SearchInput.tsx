@@ -61,9 +61,10 @@ export const SearchInput = ({
         placeholder="Search videos..."
         className={`
           w-full bg-transparent outline-none text-black placeholder-black/60
-          ${isMobile ? 'pl-10 pr-8 text-sm' : 'pl-12 pr-10 text-base'}
+          ${isMobile ? 'pl-10 pr-8 text-base' : 'pl-12 pr-10 text-base'}
           ${isMobile ? 'py-2' : 'py-3'}
         `}
+        style={{ fontSize: '16px' }}
       />
       
       {searchQuery && (
