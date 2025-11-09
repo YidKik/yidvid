@@ -35,6 +35,8 @@ Deno.serve(async (req) => {
     let isPreviewFetch = false;
     let useFallbackKey = false;
     let fallbackApiKey = "";
+    // Track whether the fallback key is actually used for this request
+    let usedFallbackKey = false;
     
     if (req.method === 'GET') {
       const url = new URL(req.url);
@@ -62,11 +64,18 @@ Deno.serve(async (req) => {
 
     // Get the appropriate API key
     let YOUTUBE_API_KEY = Deno.env.get('YOUTUBE_API_KEY');
-    
+    const ENV_FALLBACK_KEY = Deno.env.get('YOUTUBE_FALLBACK_API_KEY') || '';
+
+    // If client asked to use fallback but didn't pass one, use env fallback
+    if (useFallbackKey && !fallbackApiKey && ENV_FALLBACK_KEY) {
+      fallbackApiKey = ENV_FALLBACK_KEY;
+    }
+
     // Use fallback key if specified and provided
     if (useFallbackKey && fallbackApiKey) {
-      console.log('Using provided fallback API key');
+      console.log('Using fallback API key');
       YOUTUBE_API_KEY = fallbackApiKey;
+      usedFallbackKey = true;
     } else if (!YOUTUBE_API_KEY) {
       console.error('YouTube API key not found in environment variables');
       return new Response(
@@ -145,6 +154,7 @@ Deno.serve(async (req) => {
             console.log('Primary API key quota exceeded, switching to fallback key');
             YOUTUBE_API_KEY = fallbackApiKey;
             useFallbackKey = true;
+            usedFallbackKey = true;
           } else {
             return new Response(
               JSON.stringify({ 
@@ -233,6 +243,7 @@ Deno.serve(async (req) => {
           if (fallbackApiKey && !useFallbackKey) {
             console.log("Retrying with fallback API key");
             YOUTUBE_API_KEY = fallbackApiKey;
+            usedFallbackKey = true;
             
             const fallbackApiUrl = apiUrl.replace(/key=([^&]+)/, `key=${YOUTUBE_API_KEY}`);
             const fallbackResponse = await fetch(fallbackApiUrl, options);
