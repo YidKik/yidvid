@@ -2,6 +2,16 @@
 export const extractChannelId = (input: string): string => {
   let channelId = input.trim();
   
+  // Remove /videos or any path segments after the channel ID
+  channelId = channelId.replace(/\/(videos|featured|playlists|community|channels|about).*$/i, '');
+  
+  // Decode URL encoding
+  try {
+    channelId = decodeURIComponent(channelId);
+  } catch (e) {
+    // If decoding fails, continue with original
+  }
+  
   // Handle full URLs
   if (channelId.includes('youtube.com/')) {
     // Handle channel URLs with channel ID format (UC...)
@@ -32,9 +42,10 @@ export const extractChannelId = (input: string): string => {
     }
   }
   
-  // Handle direct UC... channel IDs
-  if (/^UC[\w-]{22}$/i.test(channelId)) {
-    return channelId;
+  // Extract UC channel ID even if there's junk after it
+  const ucMatch = channelId.match(/(UC[\w-]{22})/i);
+  if (ucMatch && ucMatch[1]) {
+    return ucMatch[1];
   }
   
   // Handle @username format

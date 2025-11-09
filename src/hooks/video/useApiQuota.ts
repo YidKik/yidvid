@@ -19,7 +19,7 @@ export const checkApiQuota = async (): Promise<QuotaInfo | null> => {
       .from("api_quota_tracking")
       .select("*")
       .eq("api_name", "youtube")
-      .single();
+      .maybeSingle();
 
     if (error) {
       console.error("Error checking API quota:", error);
