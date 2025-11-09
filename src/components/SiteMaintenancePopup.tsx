@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X } from 'lucide-react';
+import { X, Sparkles } from 'lucide-react';
 
 interface SiteMaintenancePopupProps {
   isOpen: boolean;
@@ -8,70 +8,92 @@ interface SiteMaintenancePopupProps {
 }
 
 export const SiteMaintenancePopup: React.FC<SiteMaintenancePopupProps> = ({ isOpen, onClose }) => {
-  if (!isOpen) return null;
+  const [shouldShow, setShouldShow] = useState(false);
+
+  useEffect(() => {
+    // Check if this is a first-time visitor
+    const hasSeenWelcome = localStorage.getItem('hasSeenWelcomeMessage');
+    if (!hasSeenWelcome && isOpen) {
+      setShouldShow(true);
+    }
+  }, [isOpen]);
+
+  const handleClose = () => {
+    localStorage.setItem('hasSeenWelcomeMessage', 'true');
+    setShouldShow(false);
+    onClose();
+  };
+
+  if (!shouldShow) return null;
 
   return (
     <AnimatePresence>
       <motion.div
-        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+        className="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-4"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        onClick={onClose}
+        onClick={handleClose}
       >
         <motion.div
-          className="bg-card border border-border rounded-lg shadow-2xl w-full max-w-md mx-auto relative"
+          className="bg-gradient-to-br from-background via-background to-muted/30 border-2 border-primary/20 rounded-2xl shadow-2xl w-full max-w-lg mx-auto relative overflow-hidden"
           initial={{ opacity: 0, scale: 0.9, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.9, y: 20 }}
           transition={{ type: "spring", duration: 0.5 }}
           onClick={(e) => e.stopPropagation()}
         >
+          {/* Decorative gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 pointer-events-none" />
+          
           {/* Close Button */}
           <button
-            onClick={onClose}
-            className="absolute top-3 right-3 p-1 rounded-full hover:bg-muted transition-colors duration-200 z-10"
-            aria-label="Close notification"
+            onClick={handleClose}
+            className="absolute top-4 right-4 p-2 rounded-full bg-muted/80 hover:bg-muted transition-all duration-200 z-10 backdrop-blur-sm border border-border/50"
+            aria-label="Close welcome message"
           >
-            <X className="w-5 h-5 text-muted-foreground hover:text-foreground" />
+            <X className="w-5 h-5 text-foreground" />
           </button>
 
           {/* Content */}
-          <div className="p-6 pr-10">
-            <div className="text-center space-y-4">
+          <div className="relative p-8">
+            <div className="text-center space-y-5">
               {/* Icon */}
-              <div className="mx-auto w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-                <motion.div
-                  className="w-6 h-6 bg-primary rounded-full"
-                  animate={{ scale: [1, 1.2, 1] }}
-                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                />
+              <div className="mx-auto w-16 h-16 bg-gradient-to-br from-primary to-primary/70 rounded-2xl flex items-center justify-center shadow-lg">
+                <Sparkles className="w-8 h-8 text-white" />
               </div>
 
               {/* Title */}
-              <h2 className="text-xl font-semibold text-card-foreground">
-                We're Making Improvements!
-              </h2>
+              <div className="space-y-2">
+                <h2 className="text-3xl font-bold bg-gradient-to-r from-primary via-primary to-secondary bg-clip-text text-transparent">
+                  Welcome to YidVid!
+                </h2>
+                <p className="text-lg text-muted-foreground font-medium">
+                  Your destination for quality video content
+                </p>
+              </div>
 
               {/* Message */}
-              <div className="space-y-3 text-muted-foreground">
-                <p className="text-sm leading-relaxed">
-                  We're currently making changes to our site and are aware of a few problems. 
+              <div className="space-y-4 text-foreground/90 bg-muted/30 rounded-xl p-5 border border-border/50">
+                <p className="text-base leading-relaxed">
+                  Thank you for visiting! We're excited to have you here as we continue building and enhancing your experience.
                 </p>
-                <p className="text-sm leading-relaxed">
-                  You can still browse the channels and videos that have already been added. 
-                  We're aware that videos are not getting updated right now, but this will be available shortly.
+                <p className="text-sm leading-relaxed text-muted-foreground">
+                  Our platform is actively growing with new features, improved video organization, and enhanced browsing capabilities. While we're making ongoing improvements, you can explore our curated collection of channels and videos right away.
+                </p>
+                <p className="text-sm leading-relaxed text-muted-foreground">
+                  Stay tuned for exciting updates coming soon!
                 </p>
               </div>
 
               {/* Continue Button */}
               <motion.button
-                onClick={onClose}
-                className="w-full mt-6 px-6 py-3 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-all duration-300 shadow-lg hover:shadow-xl"
+                onClick={handleClose}
+                className="w-full mt-6 px-8 py-4 bg-gradient-to-r from-primary to-primary/90 text-white rounded-xl font-semibold hover:from-primary/90 hover:to-primary transition-all duration-300 shadow-lg hover:shadow-xl border border-primary/20"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
-                Continue Browsing
+                Start Exploring
               </motion.button>
             </div>
           </div>
