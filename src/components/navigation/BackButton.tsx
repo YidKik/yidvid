@@ -95,7 +95,8 @@ export const BackButton = ({ className }: BackButtonProps) => {
   return (
     <div
       className={cn(
-        "fixed top-12 left-4 z-[100] flex gap-2",
+        "fixed left-4 z-[100] flex gap-2",
+        "top-16 md:top-12", // Higher on mobile, normal on desktop
         visible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-10 pointer-events-none",
         "transition-all duration-300 ease-in-out"
       )}
@@ -105,14 +106,15 @@ export const BackButton = ({ className }: BackButtonProps) => {
         className={cn(
           "bg-transparent backdrop-blur-sm border-2 border-primary",
           "text-primary hover:bg-primary/10 hover:shadow-lg",
-          "p-2.5 rounded-full shadow-sm",
+          "rounded-full shadow-sm",
+          "p-1.5 md:p-2.5", // Smaller on mobile
           "transition-all duration-200",
           "hover:scale-105 active:scale-95",
           className
         )}
         aria-label="Go back"
       >
-        <ArrowLeft className="h-5 w-5" />
+        <ArrowLeft className="h-4 w-4 md:h-5 md:w-5" />
       </button>
       
       <button
@@ -120,13 +122,14 @@ export const BackButton = ({ className }: BackButtonProps) => {
         className={cn(
           "bg-transparent backdrop-blur-sm border-2 border-primary",
           "text-primary hover:bg-primary/10 hover:shadow-lg",
-          "p-2.5 rounded-full shadow-sm",
+          "rounded-full shadow-sm",
+          "p-1.5 md:p-2.5", // Smaller on mobile
           "transition-all duration-200",
           "hover:scale-105 active:scale-95"
         )}
         aria-label="Go to videos page"
       >
-        <Home className="h-5 w-5" />
+        <Home className="h-4 w-4 md:h-5 md:w-5" />
       </button>
     </div>
   );
