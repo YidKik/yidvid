@@ -60,7 +60,7 @@ const MainContent = () => {
   }, []);
 
   return (
-    <div className="flex-1 videos-page overflow-x-hidden">
+    <div className="flex-1 videos-page">
       <Header 
         selectedCategory={selectedCategory}
         onCategoryChange={setSelectedCategory}
@@ -69,7 +69,7 @@ const MainContent = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1, duration: 0.5 }}
-        className="mt-4 mx-auto px-2 md:px-6 max-w-[1400px] w-full overflow-x-hidden"
+        className="mt-4 mx-auto px-2 md:px-6 max-w-[1400px] w-full"
       >
         <div className="space-y-2 md:space-y-4">
           <motion.div
