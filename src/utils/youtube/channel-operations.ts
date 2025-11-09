@@ -158,9 +158,9 @@ export const addChannel = async (channelInput: string) => {
         console.error('Edge function error response:', response.status, errorText);
         
         let errorMessage = 'Error from edge function';
-        
+        let errorObj: any = null;
         try {
-          const errorObj = JSON.parse(errorText);
+          errorObj = JSON.parse(errorText);
           if (errorObj && errorObj.error) {
             errorMessage = errorObj.error;
           }
@@ -168,11 +168,25 @@ export const addChannel = async (channelInput: string) => {
           errorMessage = errorText || response.statusText;
         }
         
+        // Special-case: API key restricted by HTTP referrer
+        if (
+          response.status === 403 &&
+          (errorObj?.errorType === 'API_KEY_REFERRER_BLOCKED' || errorText.includes('API_KEY_HTTP_REFERRER_BLOCKED'))
+        ) {
+          throw new Error(
+            'YouTube API key is restricted by HTTP referrers. Please add a server key in Supabase secrets (YOUTUBE_API_KEY) without referrer restrictions or allow *.supabase.co in Google Cloud Console.'
+          );
+        }
+        
+        // Handle quota exceeded (include reset time if provided)
+        const quotaResetAt = errorObj?.quotaResetAt || errorObj?.quota_reset_at;
         if (response.status === 429 || errorMessage.toLowerCase().includes('quota')) {
           // Try again with explicit fallback key if not already used
           if (!hasQuota) {
-            console.error('Both primary and fallback YouTube API keys have exceeded quota');
-            throw new Error('All YouTube API keys have exceeded their quota. Please try again tomorrow.');
+            const resetMsg = quotaResetAt ? ` Quota resets at ${new Date(quotaResetAt).toLocaleString()}.` : '';
+            throw new Error(
+              `YouTube API quota exceeded for all keys.${resetMsg} You can try again tomorrow or add the channel manually.`
+            );
           } else {
             // Try once more with explicit fallback key
             console.log('Primary API key quota exceeded, retrying with fallback key');
@@ -188,7 +202,6 @@ export const addChannel = async (channelInput: string) => {
                 body: JSON.stringify({ 
                   channelId,
                   useFallbackKey: true,
-                  // Note: fallback key handled by edge function
                 }),
               }
             );
@@ -208,7 +221,12 @@ export const addChannel = async (channelInput: string) => {
                 console.error('Failed to update quota tracking:', updateErr);
               }
               
-              throw new Error('YouTube API quota exceeded for all keys. Please try again tomorrow or add the channel manually.');
+              const fbText = await fallbackResponse.text().catch(() => '');
+              let fbObj: any = null;
+              try { fbObj = JSON.parse(fbText); } catch {}
+              const fbReset = fbObj?.quotaResetAt || fbObj?.quota_reset_at || quotaResetAt;
+              const resetMsg = fbReset ? ` Quota resets at ${new Date(fbReset).toLocaleString()}.` : '';
+              throw new Error('YouTube API quota exceeded for all keys.' + resetMsg + ' Please try again tomorrow or add the channel manually.');
             }
           }
         } else if (response.status === 403) {
