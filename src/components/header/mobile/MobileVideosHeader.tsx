@@ -1,11 +1,10 @@
 import { useState } from "react";
-import { Search, Menu, X } from "lucide-react";
+import { Search, Menu, X, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { VideoSearchBar } from "../VideoSearchBar";
-import { CategoryToggle } from "../CategoryToggle";
 import { NotificationsMenu } from "../NotificationsMenu";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Settings, LogIn } from "lucide-react";
 
 interface MobileVideosHeaderProps {
@@ -17,6 +16,17 @@ interface MobileVideosHeaderProps {
   onMarkNotificationsAsRead: () => Promise<void>;
 }
 
+const categories = [
+  { id: 'all', label: 'All Videos' },
+  { id: 'music', label: 'Music' },
+  { id: 'torah', label: 'Torah' },
+  { id: 'inspiration', label: 'Inspiration' },
+  { id: 'podcast', label: 'Podcasts' },
+  { id: 'education', label: 'Education' },
+  { id: 'entertainment', label: 'Entertainment' },
+  { id: 'other', label: 'Other' },
+];
+
 export const MobileVideosHeader = ({
   session,
   selectedCategory,
@@ -27,6 +37,7 @@ export const MobileVideosHeader = ({
 }: MobileVideosHeaderProps) => {
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <>
@@ -80,7 +91,7 @@ export const MobileVideosHeader = ({
 
       {/* Menu Sheet */}
       <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
-        <SheetContent side="right" className="w-[280px] bg-background text-foreground">
+        <SheetContent side="right" className="w-[280px] bg-gray-50">
           <SheetHeader>
             <SheetTitle className="text-left text-foreground">Menu</SheetTitle>
           </SheetHeader>
@@ -89,19 +100,19 @@ export const MobileVideosHeader = ({
             {session ? (
               <>
                 {/* Notifications */}
-                <div className="flex items-center justify-between py-2">
-                  <span className="text-sm font-medium">Notifications</span>
+                <div className="space-y-2">
+                  <span className="text-sm font-medium text-foreground block mb-2">Notifications</span>
                   <NotificationsMenu onMarkAsRead={onMarkNotificationsAsRead} />
                 </div>
 
                 {/* Settings */}
                 <Button
                   onClick={() => {
-                    handleSettingsClick();
+                    navigate('/settings');
                     setIsMenuOpen(false);
                   }}
                   variant="ghost"
-                  className="w-full justify-start gap-2"
+                  className="w-full justify-start gap-2 text-foreground"
                 >
                   <Settings className="h-4 w-4" />
                   Settings
@@ -123,39 +134,22 @@ export const MobileVideosHeader = ({
 
             {/* Category Selection - Only show if category props are available */}
             {selectedCategory && onCategoryChange && (
-              <div className="pt-4 border-t">
-                <p className="text-sm font-medium mb-3">Categories</p>
+              <div className="pt-4 border-t border-gray-200">
+                <p className="text-sm font-medium mb-3 text-foreground">Categories</p>
                 <div className="space-y-2">
-                  <Button
-                    variant={selectedCategory === "all" ? "default" : "ghost"}
-                    onClick={() => {
-                      onCategoryChange("all");
-                      setIsMenuOpen(false);
-                    }}
-                    className="w-full justify-start"
-                  >
-                    All Videos
-                  </Button>
-                  <Button
-                    variant={selectedCategory === "kosher" ? "default" : "ghost"}
-                    onClick={() => {
-                      onCategoryChange("kosher");
-                      setIsMenuOpen(false);
-                    }}
-                    className="w-full justify-start"
-                  >
-                    Kosher
-                  </Button>
-                  <Button
-                    variant={selectedCategory === "news" ? "default" : "ghost"}
-                    onClick={() => {
-                      onCategoryChange("news");
-                      setIsMenuOpen(false);
-                    }}
-                    className="w-full justify-start"
-                  >
-                    News
-                  </Button>
+                  {categories.map((category) => (
+                    <Button
+                      key={category.id}
+                      variant={selectedCategory === category.id ? "default" : "ghost"}
+                      onClick={() => {
+                        onCategoryChange(category.id);
+                        setIsMenuOpen(false);
+                      }}
+                      className="w-full justify-start text-foreground"
+                    >
+                      {category.label}
+                    </Button>
+                  ))}
                 </div>
               </div>
             )}
