@@ -72,7 +72,7 @@ export const ProfileErrorState = ({ userEmail, isLoggingOut, handleLogout }: Pro
       // Cancel any in-flight queries
       queryClient.cancelQueries();
       
-      const { error } = await supabase.rpc('delete_user', {});
+      const { error } = await supabase.rpc('delete_user');
       if (error) {
         console.error("Error deleting account:", error);
         return;

@@ -96,7 +96,7 @@ export const ProfileSettings = () => {
 
     if (confirmDelete) {
       try {
-        const { error } = await supabase.rpc('delete_user', {});
+        const { error } = await supabase.rpc('delete_user');
         if (error) {
           toast.error("Error deleting account");
           return;

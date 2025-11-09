@@ -10,6 +10,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSessionManager } from "@/hooks/useSessionManager";
 import { VideoFetchButton } from "@/components/admin/VideoFetchButton";
+import { ApiQuotaStatus } from "./ApiQuotaStatus";
 
 export const OverviewTab = () => {
   const navigate = useNavigate();
@@ -104,6 +105,9 @@ export const OverviewTab = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* API Quota Status */}
+      <ApiQuotaStatus />
 
       {/* Top Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

@@ -72,7 +72,7 @@ export const ProfileSection = () => {
   // Handle account deletion
   const handleDeleteAccount = async () => {
     try {
-      const { error } = await supabase.rpc('delete_user', {});
+      const { error } = await supabase.rpc('delete_user');
       if (error) {
         console.error("Error deleting account:", error);
         return;
