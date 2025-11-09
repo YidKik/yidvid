@@ -77,21 +77,12 @@ export const MobileVideosHeader = ({
         </div>
       </div>
 
-      {/* Category toggle below header when search is not expanded */}
-      {!isSearchExpanded && selectedCategory && onCategoryChange && (
-        <div className="px-3 pb-2 border-b border-gray-200">
-          <CategoryToggle 
-            selectedCategory={selectedCategory}
-            onCategoryChange={onCategoryChange}
-          />
-        </div>
-      )}
 
       {/* Menu Sheet */}
       <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
-        <SheetContent side="right" className="w-[280px] bg-white">
+        <SheetContent side="right" className="w-[280px] bg-background text-foreground">
           <SheetHeader>
-            <SheetTitle className="text-left">Menu</SheetTitle>
+            <SheetTitle className="text-left text-foreground">Menu</SheetTitle>
           </SheetHeader>
           
           <div className="mt-6 space-y-4">
