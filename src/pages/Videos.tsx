@@ -11,6 +11,7 @@ import { useSessionManager } from "@/hooks/useSessionManager";
 import { Helmet } from "react-helmet";
 import { useSearchParams } from "react-router-dom";
 import { SiteMaintenancePopup } from "@/components/SiteMaintenancePopup";
+import { FloatingSearchButton } from "@/components/mobile/FloatingSearchButton";
 
 const MainContent = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -109,33 +110,39 @@ const MainContent = () => {
         </div>
       </motion.main>
 
-      <motion.div 
-        className="fixed bottom-4 right-4 p-3 bg-card/80 backdrop-blur-sm rounded-full shadow-lg"
-        initial={{ opacity: 0, scale: 0.5 }}
-        animate={{ 
-          opacity: hasScrolled ? 1 : 0,
-          scale: hasScrolled ? 1 : 0.5,
-          y: hasScrolled ? 0 : 20
-        }}
-        transition={{ duration: 0.3 }}
-        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-      >
-        <motion.svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          whileHover={{ scale: 1.2 }}
-          className="cursor-pointer text-primary"
+      {/* Desktop scroll to top button */}
+      {!isMobile && (
+        <motion.div 
+          className="fixed bottom-4 right-4 p-3 bg-card/80 backdrop-blur-sm rounded-full shadow-lg cursor-pointer"
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={{ 
+            opacity: hasScrolled ? 1 : 0,
+            scale: hasScrolled ? 1 : 0.5,
+            y: hasScrolled ? 0 : 20
+          }}
+          transition={{ duration: 0.3 }}
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         >
-          <path d="m18 15-6-6-6 6"/>
-        </motion.svg>
-      </motion.div>
+          <motion.svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            whileHover={{ scale: 1.2 }}
+            className="text-primary"
+          >
+            <path d="m18 15-6-6-6 6"/>
+          </motion.svg>
+        </motion.div>
+      )}
+
+      {/* Mobile floating search button */}
+      <FloatingSearchButton hasScrolled={hasScrolled} />
     </div>
   );
 };

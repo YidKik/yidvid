@@ -1,6 +1,6 @@
 
 import { Search, X } from 'lucide-react';
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 
 interface SearchInputProps {
   searchQuery: string;
@@ -22,6 +22,17 @@ export const SearchInput = ({
   isMobile
 }: SearchInputProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Listen for custom focus event from floating search button
+  useEffect(() => {
+    const handleFocusSearch = () => {
+      inputRef.current?.focus();
+      onFocus();
+    };
+
+    document.addEventListener('focusSearchBar', handleFocusSearch);
+    return () => document.removeEventListener('focusSearchBar', handleFocusSearch);
+  }, [onFocus]);
 
   const handleClear = () => {
     onClear();
