@@ -49,13 +49,47 @@ serve(async (req) => {
       prioritizeRecent = true,
       maxChannelsPerRun = 20,
       bypassQuotaCheck = false,
-      singleChannelMode = false  // Flag to handle individual channel operations
+      singleChannelMode = false,  // Flag to handle individual channel operations
+      dailyAutoMode = false  // Flag for daily automatic fetch of all active channels
     } = requestBody;
     
-    console.log(`Received request to fetch videos for ${channels.length} channels with forceUpdate=${forceUpdate} and singleChannelMode=${singleChannelMode}`);
+    console.log(`Received request to fetch videos for ${channels.length} channels with forceUpdate=${forceUpdate}, singleChannelMode=${singleChannelMode}, dailyAutoMode=${dailyAutoMode}`);
     
     if (channels.length > 0) {
       console.log('First 5 channels:', channels.slice(0, 5));
+    }
+    
+    // If dailyAutoMode is enabled and no channels provided, fetch all active channels from database
+    let channelsToFetch = channels;
+    if (dailyAutoMode && channels.length === 0) {
+      console.log("Daily auto mode: Fetching all active channels from database...");
+      const { createClient } = await import("https://esm.sh/@supabase/supabase-js@2");
+      const supabaseUrl = Deno.env.get("SUPABASE_URL") || "";
+      const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
+      const supabase = createClient(supabaseUrl, supabaseServiceKey);
+      
+      // Fetch all active channels (not deleted, no fetch errors, and recently active)
+      const { data: activeChannels, error: channelError } = await supabase
+        .from("youtube_channels")
+        .select("channel_id, last_fetch")
+        .is("deleted_at", null)
+        .is("fetch_error", null)
+        .or(`last_fetch.is.null,last_fetch.gte.${new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()}`)
+        .order("last_fetch", { ascending: true, nullsFirst: true });
+      
+      if (channelError) {
+        console.error("Error fetching active channels:", channelError);
+        return new Response(
+          JSON.stringify({
+            success: false,
+            message: "Failed to fetch active channels from database"
+          }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 }
+        );
+      }
+      
+      channelsToFetch = activeChannels?.map(ch => ch.channel_id) || [];
+      console.log(`Found ${channelsToFetch.length} active channels to process in daily auto mode`);
     }
     
     // Get primary API key from environment variables
@@ -73,8 +107,8 @@ serve(async (req) => {
       // We will use the fallback key instead of immediately failing
     }
 
-    // If no channels provided, return early
-    if (!channels || channels.length === 0) {
+    // If no channels provided and not in daily auto mode, return early
+    if (!channelsToFetch || channelsToFetch.length === 0) {
       console.log("No channels provided in the request");
       return new Response(
         JSON.stringify({
@@ -85,19 +119,19 @@ serve(async (req) => {
       );
     }
 
-    // For individual channel fetches or when bypassing quota check, we'll process all channels
-    const channelsToProcess = bypassQuotaCheck || singleChannelMode ? 
-      channels.length : 
+    // For daily auto mode, individual channel fetches, or when bypassing quota check, process all channels
+    const channelsToProcess = dailyAutoMode || bypassQuotaCheck || singleChannelMode ? 
+      channelsToFetch.length : 
       Math.min(
         Math.max(3, Math.floor(quota_remaining / 10)), // Ensure we can process at least 3 channels
         maxChannelsPerRun,
-        channels.length
+        channelsToFetch.length
       );
 
-    console.log(`Processing ${channelsToProcess} channels out of ${channels.length} requested`);
+    console.log(`Processing ${channelsToProcess} channels out of ${channelsToFetch.length} requested`);
     
     // Only process the number of channels we can handle
-    const channelsSubset = channels.slice(0, channelsToProcess);
+    const channelsSubset = channelsToFetch.slice(0, channelsToProcess);
     
     // Process channels in parallel with concurrency limit
     const results = [];

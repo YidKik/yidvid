@@ -27,8 +27,12 @@ serve(async (req) => {
     const { 
       batchSize = 50,
       maxVideos = 500,
-      bypassQuotaCheck = false
+      bypassQuotaCheck = false,
+      processAllVideos = false  // Flag for daily full update
     } = await req.json().catch(() => ({}));
+    
+    // If processAllVideos is enabled, remove the maxVideos limit
+    const videoLimit = processAllVideos ? null : maxVideos;
     
     // Check if we have quota remaining before starting
     if (!bypassQuotaCheck) {
@@ -52,12 +56,18 @@ serve(async (req) => {
     
     // Fetch videos from database, prioritizing most recently updated videos
     // that haven't had their views updated recently
-    const { data: videos, error: fetchError } = await supabase
+    let query = supabase
       .from("youtube_videos")
       .select("id, video_id")
       .is("deleted_at", null)
-      .order("updated_at", { ascending: true })
-      .limit(maxVideos);
+      .order("updated_at", { ascending: true });
+    
+    // Only apply limit if not processing all videos
+    if (videoLimit !== null) {
+      query = query.limit(videoLimit);
+    }
+    
+    const { data: videos, error: fetchError } = await query;
     
     if (fetchError) {
       console.error("Error fetching videos:", fetchError);
