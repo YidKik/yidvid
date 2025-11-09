@@ -65,23 +65,23 @@ export const SiteMaintenancePopup: React.FC<SiteMaintenancePopupProps> = ({ isOp
 
               {/* Title */}
               <div className="space-y-2">
-                <h2 className="text-3xl font-bold bg-gradient-to-r from-primary via-primary to-secondary bg-clip-text text-transparent">
+                <h2 className="text-3xl font-bold text-foreground">
                   Welcome to YidVid!
                 </h2>
-                <p className="text-lg text-muted-foreground font-medium">
+                <p className="text-lg text-foreground/80 font-medium">
                   Your destination for quality video content
                 </p>
               </div>
 
               {/* Message */}
-              <div className="space-y-4 text-foreground/90 bg-muted/30 rounded-xl p-5 border border-border/50">
-                <p className="text-base leading-relaxed">
+              <div className="space-y-4 bg-white/80 dark:bg-black/20 rounded-xl p-5 border border-border/50">
+                <p className="text-base leading-relaxed text-foreground font-medium">
                   Thank you for visiting! We're excited to have you here as we continue building and enhancing your experience.
                 </p>
-                <p className="text-sm leading-relaxed text-muted-foreground">
+                <p className="text-sm leading-relaxed text-foreground/70">
                   Our platform is actively growing with new features, improved video organization, and enhanced browsing capabilities. While we're making ongoing improvements, you can explore our curated collection of channels and videos right away.
                 </p>
-                <p className="text-sm leading-relaxed text-muted-foreground">
+                <p className="text-sm leading-relaxed text-foreground/70">
                   Stay tuned for exciting updates coming soon!
                 </p>
               </div>
