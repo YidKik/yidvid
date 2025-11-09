@@ -32,6 +32,7 @@ import ContactRequestsPage from './pages/admin/ContactRequestsPage';
 import NotificationsPage from './pages/admin/NotificationsPage';
 import LayoutCustomizationPage from './pages/admin/LayoutCustomizationPage';
 import TestimonialsPage from './pages/admin/TestimonialsPage';
+import AdminSEO from './pages/AdminSEO';
 
 // Add the PagePreloader import
 import { PagePreloader } from './components/PagePreloader';
@@ -129,6 +130,7 @@ function App() {
           <Route path="/admin/notifications" element={<NotificationsPage />} />
           <Route path="/admin/layout" element={<LayoutCustomizationPage />} />
           <Route path="/admin/testimonials" element={<TestimonialsPage />} />
+          <Route path="/admin/seo" element={<AdminSEO />} />
         </Routes>
         
         {/* Add the PagePreloader to prefetch the Videos page */}

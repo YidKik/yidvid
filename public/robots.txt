@@ -1,0 +1,16 @@
+# robots.txt for YidVid
+# Allow all search engines to crawl the site
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://yidvid.com/sitemap.xml
+
+# Optional: Crawl-delay for polite crawling
+Crawl-delay: 1
+
+# Disallow admin or sensitive areas if any
+Disallow: /admin/
+Disallow: /api/
+Disallow: /settings/
