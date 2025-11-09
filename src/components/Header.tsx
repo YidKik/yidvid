@@ -99,8 +99,8 @@ export const Header = ({ selectedCategory, onCategoryChange }: { selectedCategor
       <motion.header 
         className={`${headerPositionClass} z-50 w-full max-w-[100vw] border-b bg-white/25 backdrop-blur-lg supports-[backdrop-filter]:bg-white/20 transition-all duration-300 ${
           scrolled 
-            ? 'border-primary/50' 
-            : 'border-border/40'
+            ? 'border-primary/60 shadow-sm' 
+            : 'border-gray-200'
         } ${isMobile ? 'h-14' : ''} ${isVideosPage ? 'videos-page' : isHomePage ? 'home-page' : ''}`}
         initial={{ opacity: 1, y: 0 }}
         animate={{ opacity: 1, y: 0 }}
