@@ -892,7 +892,7 @@ export type Database = {
           details: Json | null
           event_type: string
           id: string
-          ip_address: unknown | null
+          ip_address: unknown
           severity: string | null
           user_agent: string | null
           user_id: string | null
@@ -902,7 +902,7 @@ export type Database = {
           details?: Json | null
           event_type: string
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           severity?: string | null
           user_agent?: string | null
           user_id?: string | null
@@ -912,7 +912,7 @@ export type Database = {
           details?: Json | null
           event_type?: string
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           severity?: string | null
           user_agent?: string | null
           user_id?: string | null
@@ -1573,26 +1573,25 @@ export type Database = {
         Args: { operation_type: string }
         Returns: boolean
       }
-      cleanup_expired_admin_sessions: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
+      cleanup_expired_admin_sessions: { Args: never; Returns: undefined }
+      cleanup_expired_sessions: { Args: never; Returns: undefined }
+      delete_user: { Args: never; Returns: undefined }
+      fetch_overdue_channels: { Args: never; Returns: Json }
+      get_cron_jobs: {
+        Args: never
+        Returns: {
+          active: boolean
+          command: string
+          database: string
+          jobid: number
+          jobname: string
+          nodename: string
+          nodeport: number
+          schedule: string
+          username: string
+        }[]
       }
-      cleanup_expired_sessions: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      delete_user: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      fetch_overdue_channels: {
-        Args: Record<PropertyKey, never>
-        Returns: Json
-      }
-      get_next_midnight_utc: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
+      get_next_midnight_utc: { Args: never; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -1604,18 +1603,9 @@ export type Database = {
         Args: { session_token: string }
         Returns: boolean
       }
-      is_admin_user: {
-        Args: { user_id: string }
-        Returns: boolean
-      }
-      is_user_admin: {
-        Args: { user_id: string }
-        Returns: boolean
-      }
-      trigger_youtube_video_fetch: {
-        Args: Record<PropertyKey, never>
-        Returns: Json
-      }
+      is_admin_user: { Args: { user_id: string }; Returns: boolean }
+      is_user_admin: { Args: { user_id: string }; Returns: boolean }
+      trigger_youtube_video_fetch: { Args: never; Returns: Json }
       update_video_analysis_status: {
         Args: {
           p_details?: Json
