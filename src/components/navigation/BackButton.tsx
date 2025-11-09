@@ -103,9 +103,9 @@ export const BackButton = ({ className }: BackButtonProps) => {
       <button
         onClick={handleGoBack}
         className={cn(
-          "bg-primary/90 backdrop-blur-sm border-2 border-primary",
-          "text-white hover:bg-primary hover:shadow-lg",
-          "p-2.5 rounded-full shadow-md",
+          "bg-transparent backdrop-blur-sm border-2 border-primary",
+          "text-primary hover:bg-primary/10 hover:shadow-lg",
+          "p-2.5 rounded-full shadow-sm",
           "transition-all duration-200",
           "hover:scale-105 active:scale-95",
           className
@@ -118,9 +118,9 @@ export const BackButton = ({ className }: BackButtonProps) => {
       <button
         onClick={handleGoHome}
         className={cn(
-          "bg-primary/90 backdrop-blur-sm border-2 border-primary",
-          "text-white hover:bg-primary hover:shadow-lg",
-          "p-2.5 rounded-full shadow-md",
+          "bg-transparent backdrop-blur-sm border-2 border-primary",
+          "text-primary hover:bg-primary/10 hover:shadow-lg",
+          "p-2.5 rounded-full shadow-sm",
           "transition-all duration-200",
           "hover:scale-105 active:scale-95"
         )}
