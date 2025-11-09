@@ -36,7 +36,7 @@ export const SiteMaintenancePopup: React.FC<SiteMaintenancePopupProps> = ({ isOp
         onClick={handleClose}
       >
         <motion.div
-          className="bg-gradient-to-br from-background via-background to-muted/30 border-2 border-primary/20 rounded-2xl shadow-2xl w-full max-w-lg mx-auto relative overflow-hidden"
+          className="bg-gradient-to-br from-background via-background to-muted/30 border-2 border-primary/20 rounded-2xl shadow-2xl w-full max-w-sm md:max-w-lg mx-auto relative overflow-hidden"
           initial={{ opacity: 0, scale: 0.9, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -56,32 +56,32 @@ export const SiteMaintenancePopup: React.FC<SiteMaintenancePopupProps> = ({ isOp
           </button>
 
           {/* Content */}
-          <div className="relative p-8">
-            <div className="text-center space-y-5">
+          <div className="relative p-5 md:p-8">
+            <div className="text-center space-y-4 md:space-y-5">
               {/* Icon */}
-              <div className="mx-auto w-16 h-16 bg-gradient-to-br from-primary to-primary/70 rounded-2xl flex items-center justify-center shadow-lg">
-                <Sparkles className="w-8 h-8 text-white" />
+              <div className="mx-auto w-14 h-14 md:w-16 md:h-16 bg-gradient-to-br from-primary to-primary/70 rounded-2xl flex items-center justify-center shadow-lg">
+                <Sparkles className="w-7 h-7 md:w-8 md:h-8 text-white" />
               </div>
 
               {/* Title */}
-              <div className="space-y-2">
-                <h2 className="text-3xl font-bold text-foreground">
+              <div className="space-y-1.5 md:space-y-2">
+                <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
                   Welcome to YidVid!
                 </h2>
-                <p className="text-lg text-foreground/80 font-medium">
+                <p className="text-base md:text-lg text-gray-700 dark:text-gray-300 font-medium">
                   Your destination for quality video content
                 </p>
               </div>
 
               {/* Message */}
-              <div className="space-y-4 bg-white/80 dark:bg-black/20 rounded-xl p-5 border border-border/50">
-                <p className="text-base leading-relaxed text-foreground font-medium">
+              <div className="space-y-3 md:space-y-4 bg-white/80 dark:bg-black/20 rounded-xl p-4 md:p-5 border border-border/50">
+                <p className="text-sm md:text-base leading-relaxed text-gray-900 dark:text-gray-100 font-medium">
                   Thank you for visiting! We're excited to have you here as we continue building and enhancing your experience.
                 </p>
-                <p className="text-sm leading-relaxed text-foreground/70">
+                <p className="text-xs md:text-sm leading-relaxed text-gray-700 dark:text-gray-300">
                   Our platform is actively growing with new features, improved video organization, and enhanced browsing capabilities. While we're making ongoing improvements, you can explore our curated collection of channels and videos right away.
                 </p>
-                <p className="text-sm leading-relaxed text-foreground/70">
+                <p className="text-xs md:text-sm leading-relaxed text-gray-700 dark:text-gray-300">
                   Stay tuned for exciting updates coming soon!
                 </p>
               </div>
@@ -89,7 +89,7 @@ export const SiteMaintenancePopup: React.FC<SiteMaintenancePopupProps> = ({ isOp
               {/* Continue Button */}
               <motion.button
                 onClick={handleClose}
-                className="w-full mt-6 px-8 py-4 bg-gradient-to-r from-primary to-primary/90 text-white rounded-xl font-semibold hover:from-primary/90 hover:to-primary transition-all duration-300 shadow-lg hover:shadow-xl border border-primary/20"
+                className="w-full mt-4 md:mt-6 px-6 md:px-8 py-3 md:py-4 bg-gradient-to-r from-primary to-primary/90 text-white rounded-xl font-semibold hover:from-primary/90 hover:to-primary transition-all duration-300 shadow-lg hover:shadow-xl border border-primary/20 text-sm md:text-base"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
