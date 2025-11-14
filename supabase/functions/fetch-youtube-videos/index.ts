@@ -68,13 +68,13 @@ serve(async (req) => {
       const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
       const supabase = createClient(supabaseUrl, supabaseServiceKey);
       
-      // Fetch all active channels (not deleted, no fetch errors, and recently active)
+      // Fetch all active channels that are not deleted and have no errors
+      // Order by last_fetch to prioritize channels that haven't been updated recently
       const { data: activeChannels, error: channelError } = await supabase
         .from("youtube_channels")
-        .select("channel_id, last_fetch")
+        .select("channel_id, last_fetch, title")
         .is("deleted_at", null)
         .is("fetch_error", null)
-        .or(`last_fetch.is.null,last_fetch.gte.${new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()}`)
         .order("last_fetch", { ascending: true, nullsFirst: true });
       
       if (channelError) {
@@ -90,6 +90,19 @@ serve(async (req) => {
       
       channelsToFetch = activeChannels?.map(ch => ch.channel_id) || [];
       console.log(`Found ${channelsToFetch.length} active channels to process in daily auto mode`);
+      
+      if (channelsToFetch.length === 0) {
+        console.log("No active channels found in database");
+        return new Response(
+          JSON.stringify({
+            success: true,
+            message: "No active channels found to process",
+            processed: 0,
+            newVideos: 0
+          }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
     }
     
     // Get primary API key from environment variables
