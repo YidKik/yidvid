@@ -1,0 +1,120 @@
+
+/* Dark mode overrides for specific components */
+
+/* Toast styles for dark mode */
+.dark [data-sonner-toast] {
+  background-color: hsl(var(--card)) !important;
+  color: hsl(var(--foreground)) !important;
+  border: 1px solid hsl(var(--border)) !important;
+}
+
+.dark [data-sonner-toast]>.sonner-toast-background {
+  background-color: hsl(var(--card)) !important;
+  color: hsl(var(--foreground)) !important;
+}
+
+/* Ensure dropdowns and popovers have proper background in dark mode */
+.dark [data-radix-popper-content-wrapper] {
+  background-color: hsl(var(--popover));
+  color: hsl(var(--popover-foreground));
+  border: 1px solid hsl(var(--border));
+}
+
+/* Dialog overlays */
+.dark [data-radix-dialog-overlay] {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.dark [data-radix-dialog-content] {
+  background-color: hsl(var(--card));
+  color: hsl(var(--card-foreground));
+  border: 1px solid hsl(var(--border));
+}
+
+/* Video cards and thumbnails */
+.dark .video-card {
+  background-color: hsl(var(--card));
+  border-color: hsl(var(--border));
+}
+
+.dark .video-card:hover {
+  background-color: hsl(var(--accent));
+}
+
+/* Channel cards */
+.dark .channel-card {
+  background-color: hsl(var(--card));
+  border-color: hsl(var(--border));
+}
+
+/* Ensure buttons remain visible */
+.dark button {
+  color: hsl(var(--foreground));
+}
+
+.dark button:disabled {
+  opacity: 0.5;
+}
+
+/* Input fields */
+.dark input,
+.dark textarea,
+.dark select {
+  background-color: hsl(var(--input));
+  border-color: hsl(var(--border));
+  color: hsl(var(--foreground));
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: hsl(var(--muted-foreground));
+}
+
+/* Cards */
+.dark .card {
+  background-color: hsl(var(--card));
+  border-color: hsl(var(--border));
+  color: hsl(var(--card-foreground));
+}
+
+/* Scrollbar in dark mode */
+.dark ::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Ensure text is always visible */
+.dark {
+  color: hsl(var(--foreground));
+}
+
+.dark a {
+  color: hsl(var(--foreground));
+}
+
+.dark a:hover {
+  color: var(--button-custom);
+}
+
+/* Header in dark mode */
+.dark header {
+  background-color: hsl(var(--background) / 0.8);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid hsl(var(--border));
+}
+
+/* Navigation items */
+.dark nav a {
+  color: hsl(var(--foreground));
+}
+
+.dark nav a:hover {
+  color: var(--button-custom);
+}
