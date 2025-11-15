@@ -28,7 +28,7 @@ html {
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: white;
+  background: hsl(var(--background));
   overflow-x: hidden;
   width: 100%;
   max-width: 100vw;

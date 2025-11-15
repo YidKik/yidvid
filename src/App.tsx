@@ -10,6 +10,7 @@ import Videos from './pages/Videos';
 import HorizontalHomePage from './pages/HorizontalHomePage';
 import { PlaybackProvider } from './contexts/PlaybackContext';
 import { ColorProvider } from './contexts/ColorContext';
+import { ThemeProvider } from './components/providers/ThemeProvider';
 import Settings from './pages/Settings';
 import Dashboard from './pages/Dashboard';
 import { recordNavigation, setupScrollRestoration } from './utils/scrollRestoration';
@@ -101,9 +102,10 @@ function App() {
   }
 
   return (
-    <PlaybackProvider>
-      <ColorProvider>
-        <Routes>
+    <ThemeProvider>
+      <PlaybackProvider>
+        <ColorProvider>
+          <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/home" element={<HorizontalHomePage />} />
           <Route path="/videos" element={<Videos />} />
@@ -140,6 +142,7 @@ function App() {
         <SiteImprovementNotification />
       </ColorProvider>
     </PlaybackProvider>
+    </ThemeProvider>
   );
 }
 

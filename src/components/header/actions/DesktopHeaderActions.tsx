@@ -7,6 +7,7 @@ import { ContactDialog } from "../../contact/ContactDialog";
 import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 interface DesktopHeaderActionsProps {
   session: any;
@@ -51,6 +52,7 @@ export const DesktopHeaderActions = ({
 
   return (
     <div className="flex items-center gap-3">
+      <ThemeToggle />
       {session && <NotificationsMenu onMarkAsRead={onMarkNotificationsAsRead} />}
       
       {/* Hide contact button on tablet to prevent overlap with search bar */}
