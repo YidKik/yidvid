@@ -1,0 +1,31 @@
+:root {}
+
+/* Settings page scoped theme: only black or red text/icons/buttons (no white) */
+.settings-theme {
+  /* Force text color to black by default */
+  color: hsl(0 0% 0%);
+
+  /* Override semantic tokens within this scope */
+  --foreground: 0 0% 0%;              /* black */
+  --card-foreground: 0 0% 0%;         /* black */
+  --popover-foreground: 0 0% 0%;      /* black */
+  --muted-foreground: 0 0% 0%;        /* black */
+  --accent-foreground: 0 0% 0%;       /* black */
+  --secondary-foreground: 0 0% 0%;    /* black */
+
+  /* Primary stays red, but its foreground becomes black */
+  --primary: 352 82% 57%;             /* red */
+  --primary-foreground: 0 0% 0%;      /* black */
+
+  /* Destructive stays red with black text */
+  --destructive: 0 84% 60%;           /* red */
+  --destructive-foreground: 0 0% 0%;  /* black */
+}
+
+/* Neutralize any lingering utility classes that enforce white in this page */
+.settings-theme .text-white { color: hsl(0 0% 0%) !important; }
+.settings-theme .fill-white { fill: #000 !important; }
+.settings-theme .stroke-white { stroke: #000 !important; }
+
+/* Avoid pure white cards inside settings; keep card backgrounds readable */
+.settings-theme .bg-white { background-color: hsl(var(--card)) !important; }
