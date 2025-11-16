@@ -57,7 +57,7 @@ export const NotificationsMenu = ({ onMarkAsRead }: NotificationsMenuProps) => {
 
   // Consistent button styling to match other header buttons
   const buttonClass = `h-9 w-9 rounded-full ${isVideosPage
-    ? "bg-[#ea384c] hover:bg-[#c82d3f] text-white"
+    ? "bg-white/90 hover:bg-white text-primary"
     : "bg-[#222222] hover:bg-[#333333] text-white"} transition-all duration-300`;
 
   return (
