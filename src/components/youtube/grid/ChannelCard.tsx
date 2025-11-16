@@ -26,8 +26,8 @@ export const ChannelCard = ({
         "block opacity-0 animate-[fadeIn_0.5s_ease-out_forwards]",
         "relative group rounded-xl overflow-hidden transition-all duration-300",
         "hover:scale-[1.05] hover:shadow-lg text-center p-4 md:p-6",
-        "bg-white/80 backdrop-blur-sm mx-auto w-full border border-gray-100",
-        "shadow-sm hover:shadow-md hover:bg-white/90"
+        "bg-card/80 backdrop-blur-sm mx-auto w-full border border-primary/20",
+        "shadow-sm hover:shadow-md hover:bg-card/90"
       )}
       style={{ animationDelay }}
       onMouseEnter={() => setShowControls(true)}
@@ -36,8 +36,8 @@ export const ChannelCard = ({
     >
       <div className="flex flex-col items-center justify-center">
         <div className="w-24 h-24 md:w-28 md:h-28 rounded-full flex items-center justify-center overflow-hidden mb-4 mx-auto 
-                      border-2 border-white/30 group-hover:border-[#ea384c] transition-all duration-300
-                      group-hover:shadow-lg shadow-white/20">
+                      border-2 border-primary/30 group-hover:border-[#ea384c] transition-all duration-300
+                      group-hover:shadow-lg shadow-primary/20">
           {thumbnail_url ? (
             <img
               src={thumbnail_url}
@@ -56,11 +56,11 @@ export const ChannelCard = ({
           )}
         </div>
         
-        <h3 className="text-sm md:text-base font-medium text-center mb-1 text-primary group-hover:text-primary/80 transition-colors">
+        <h3 className="text-sm md:text-base font-medium text-center mb-1 !text-[#ea384c] group-hover:!text-[#c82d3f] transition-colors">
           {title}
         </h3>
         
-        <p className="text-xs text-primary/70 group-hover:text-primary transition-colors">
+        <p className="text-xs !text-[#ea384c]/70 group-hover:!text-[#ea384c] transition-colors">
           View Channel
         </p>
       </div>
