@@ -37,7 +37,7 @@ export const ChannelsContainer: React.FC = () => {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow max-h-[calc(100vh-12rem)]">
+    <div className="bg-card text-card-foreground rounded-lg shadow max-h-[calc(100vh-12rem)] border border-border">
       <div className="p-6 border-b">
         <ChannelsHeader
           isVideoDialogOpen={isVideoDialogOpen}

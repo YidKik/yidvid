@@ -117,7 +117,7 @@ export const ProfileSection = () => {
   const showingFallback = !!error && !!displayProfile;
 
   return (
-    <Card className="w-full border-2 border-primary/20 shadow-lg rounded-3xl bg-gradient-to-br from-white to-primary/5">
+    <Card className="w-full border-2 border-primary/20 shadow-lg rounded-3xl bg-gradient-to-br from-card to-primary/5">
       <div className="p-4 md:p-6">
         {showingFallback && (
           <div className="text-amber-500 text-xs mb-4 px-1 bg-amber-50 rounded-lg p-2">

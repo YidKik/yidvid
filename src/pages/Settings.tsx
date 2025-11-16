@@ -46,7 +46,7 @@ const Settings = () => {
     <div className="min-h-screen bg-gradient-to-br from-background to-primary/5">
       <BackButton />
       <main className={`container mx-auto ${isMobile ? 'pt-14 px-4 md:px-6 max-w-[95%]' : 'pt-24 px-4'} pb-16 max-w-4xl`}>
-        <div className={`mb-6 md:mb-8 flex items-center gap-3 p-4 bg-white rounded-3xl border-2 border-primary/20 shadow-lg`}>
+        <div className={`mb-6 md:mb-8 flex items-center gap-3 p-4 bg-card text-card-foreground rounded-3xl border-2 border-primary/20 shadow-lg`}>
           <div className="p-2 bg-primary/10 rounded-2xl">
             <SettingsIcon className={`${isMobile ? 'w-5 h-5' : 'w-6 h-6'} text-primary`} />
           </div>

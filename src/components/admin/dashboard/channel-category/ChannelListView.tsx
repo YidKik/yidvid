@@ -40,7 +40,7 @@ export const ChannelListView = ({
       case 'podcast': return 'bg-green-100 text-green-800 border-green-200';
       case 'education': return 'bg-indigo-100 text-indigo-800 border-indigo-200';
       case 'entertainment': return 'bg-pink-100 text-pink-800 border-pink-200';
-      case 'other': return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'other': return 'bg-muted text-muted-foreground border-border';
       default: return 'bg-red-100 text-red-800 border-red-200';
     }
   };
@@ -138,7 +138,7 @@ export const ChannelListView = ({
     <div className="overflow-x-auto">
       <table className="w-full border-collapse">
         <thead>
-          <tr className="border-b bg-gray-50">
+          <tr className="border-b bg-muted/50">
             <th className="text-left p-3 font-medium text-sm">Channel</th>
             <th className="text-left p-3 font-medium text-sm">Current Category</th>
             <th className="text-left p-3 font-medium text-sm">Actions</th>
@@ -147,7 +147,7 @@ export const ChannelListView = ({
         </thead>
         <tbody>
           {channels.map((channel: Channel) => (
-            <tr key={channel.id} className="border-b hover:bg-gray-50">
+            <tr key={channel.id} className="border-b hover:bg-muted/50">
               <td className="p-3">
                 <div className="flex items-center space-x-3">
                   <img

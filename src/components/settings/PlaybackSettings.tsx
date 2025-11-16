@@ -34,7 +34,7 @@ export const PlaybackSettings = ({
         </div>
       </div>
       
-      <div className="p-4 bg-white/70 rounded-2xl border border-primary/10 space-y-4">
+      <div className="p-4 bg-card/70 rounded-2xl border border-primary/10 space-y-4">
         <div className="space-y-2">
           <Label htmlFor="volume" className={`${isMobile ? 'text-sm' : ''}`}>{t('defaultVolume')} ({volume}%)</Label>
           <Slider

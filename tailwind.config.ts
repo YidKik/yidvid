@@ -33,9 +33,9 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "#ea384c",
-          hover: "#dc2626",
-          foreground: "#ffffff",
+          DEFAULT: "hsl(var(--primary))",
+          hover: "hsl(0 84% 50%)",
+          foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",

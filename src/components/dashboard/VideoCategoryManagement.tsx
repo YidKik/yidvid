@@ -132,7 +132,7 @@ export function VideoCategoryManagement({ videos, onUpdate }: VideoCategoryManag
             <SelectTrigger>
               <SelectValue placeholder="Select category" />
             </SelectTrigger>
-            <SelectContent className="bg-white shadow-lg border rounded-md z-50">
+            <SelectContent className="bg-popover text-popover-foreground shadow-lg border border-border rounded-md z-50">
               {defaultCategories.map((category) => (
                 <SelectItem key={category.value} value={category.value}>
                   {category.label}
@@ -148,7 +148,7 @@ export function VideoCategoryManagement({ videos, onUpdate }: VideoCategoryManag
         </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow">
+      <div className="bg-card text-card-foreground rounded-lg shadow border border-border">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>

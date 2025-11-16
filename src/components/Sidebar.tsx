@@ -65,9 +65,9 @@ export const Sidebar = () => {
   }, [isMobile, isMenuOpen]);
 
   return (
-    <ShadcnSidebar className="border-r border-gray-200 bg-white sidebar">
+    <ShadcnSidebar className="border-r border-border bg-card text-card-foreground sidebar">
       <motion.button
-        className="fixed top-4 left-4 z-50 p-2 rounded-lg bg-white shadow-md hover:shadow-lg transition-shadow"
+        className="fixed top-4 left-4 z-50 p-2 rounded-lg bg-card text-card-foreground shadow-md hover:shadow-lg transition-shadow border border-border"
         onClick={() => setIsMenuOpen(!isMenuOpen)}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
@@ -86,7 +86,7 @@ export const Sidebar = () => {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.2 }}
-            className={`mt-16 ${isMobile ? 'fixed inset-y-0 left-0 w-64 bg-white shadow-lg z-40' : ''}`}
+            className={`mt-16 ${isMobile ? 'fixed inset-y-0 left-0 w-64 bg-card text-card-foreground shadow-lg z-40 border-r border-border' : ''}`}
           >
             <SidebarContent>
               <SidebarGroup>

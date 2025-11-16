@@ -24,11 +24,11 @@ export const CategoryStats = ({ categoryStats }: CategoryStatsProps) => {
       <CardContent>
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
           {categoryStats.map((stat) => (
-            <div key={stat.category} className="text-center p-3 bg-gray-50 rounded-lg border">
+            <div key={stat.category} className="text-center p-3 bg-muted rounded-lg border border-border">
               <div className="text-2xl mb-1">
                 {stat.category === 'no_category' ? '❓' : getCategoryIcon(stat.category)}
               </div>
-              <div className="text-sm font-medium text-gray-700">
+              <div className="text-sm font-medium text-foreground">
                 {stat.category === 'no_category' ? 'No Category' : 
                  categories.find(c => c.value === stat.category)?.label}
               </div>

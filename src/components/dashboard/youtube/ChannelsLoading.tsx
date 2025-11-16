@@ -3,7 +3,7 @@ import React from "react";
 
 export const ChannelsLoading: React.FC = () => {
   return (
-    <div className="bg-white rounded-lg shadow p-6">
+    <div className="bg-card text-card-foreground rounded-lg shadow p-6 border border-border">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-semibold">YouTube Channels</h2>
       </div>

@@ -21,7 +21,7 @@ export const ContentTab = () => {
       <CommentsManagementSection />
       
       {/* Reported Videos Section with Button Trigger */}
-      <div className="bg-white rounded-lg shadow mb-8">
+      <div className="bg-card text-card-foreground rounded-lg shadow mb-8 border border-border">
         <div className="p-4 border-b flex items-center justify-between">
           <h2 className="text-lg font-semibold flex items-center gap-2">
             <AlertTriangle className="w-5 h-5 text-orange-500" />

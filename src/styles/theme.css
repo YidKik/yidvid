@@ -2,23 +2,23 @@
 :root {
   --background: 0 0% 100%;
   --foreground: 222.2 84% 4.9%;
-  --background-custom: #ffffff;
-  --text-custom: #000000;
-  --button-custom: #ea384c;
-  --logo-custom: #000000;
-  --search-background: #ffffff;
-  --search-text: #000000;
-  --search-border: #e5e7eb;
-  --auth-background: #ffffff;
-  --auth-text: #000000;
-  --auth-primary: #ea384c;
-  --auth-secondary: #f3f4f6;
-  --auth-border: #e5e7eb;
-  --auth-input-bg: #ffffff;
-  --auth-footer-bg: #f9fafb;
-  --auth-footer-text: #6b7280;
-  --auth-link: #ea384c;
-  --auth-link-hover: #dc2626;
+  --background-custom: 0 0% 100%;
+  --text-custom: 0 0% 0%;
+  --button-custom: 352 82% 57%;
+  --logo-custom: 0 0% 0%;
+  --search-background: 0 0% 100%;
+  --search-text: 0 0% 0%;
+  --search-border: 220 13% 91%;
+  --auth-background: 0 0% 100%;
+  --auth-text: 0 0% 0%;
+  --auth-primary: 352 82% 57%;
+  --auth-secondary: 220 14% 96%;
+  --auth-border: 220 13% 91%;
+  --auth-input-bg: 0 0% 100%;
+  --auth-footer-bg: 210 20% 98%;
+  --auth-footer-text: 220 9% 46%;
+  --auth-link: 352 82% 57%;
+  --auth-link-hover: 0 84% 50%;
 
   --card: 0 0% 100%;
   --card-foreground: 222.2 84% 4.9%;
@@ -26,8 +26,8 @@
   --popover: 0 0% 100%;
   --popover-foreground: 222.2 84% 4.9%;
 
-  --primary: #ea384c;
-  --primary-foreground: #ffffff;
+  --primary: 352 82% 57%;
+  --primary-foreground: 0 0% 100%;
 
   --secondary: 240 4.8% 95.9%;
   --secondary-foreground: 222.2 47.4% 11.2%;

@@ -163,7 +163,7 @@ export const ChannelCategoryManager = () => {
             <Loader2 className="h-8 w-8 animate-spin" />
           </div>
         ) : (
-          <div className="bg-white rounded-lg border">
+          <div className="bg-card text-card-foreground rounded-lg border border-border">
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
@@ -190,7 +190,7 @@ export const ChannelCategoryManager = () => {
                             className="h-10 w-10 rounded-full mr-3"
                           />
                           <div>
-                            <div className="text-sm font-medium text-gray-900">
+                            <div className="text-sm font-medium text-foreground">
                               {channel.title}
                             </div>
                             <div className="text-sm text-gray-500">

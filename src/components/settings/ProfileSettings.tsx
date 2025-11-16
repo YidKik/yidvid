@@ -139,7 +139,7 @@ export const ProfileSettings = () => {
               <Button
                 onClick={handleLogout}
                 variant="outline"
-                className="w-full flex items-center justify-center gap-2 py-6 text-gray-700 hover:text-gray-900 border-2 hover:border-gray-300 transition-all duration-200"
+                className="w-full flex items-center justify-center gap-2 py-6 text-foreground hover:text-primary border-2 hover:border-primary/30 transition-all duration-200"
               >
                 <LogOut className="h-5 w-5" />
                 <span className="font-medium">Sign Out</span>
