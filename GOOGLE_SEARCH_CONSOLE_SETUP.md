@@ -6,7 +6,7 @@ Your YidVid site now has the following SEO foundations in place:
 
 ### 1. robots.txt ✓
 - **Location**: `public/robots.txt`
-- **Status**: Live and accessible at `https://yidvid.com/robots.txt`
+- **Status**: Live and accessible at `https://yidvid.co/robots.txt`
 - **Purpose**: Guides search engine crawlers on what to index
 
 ### 2. sitemap.xml ✓
@@ -34,7 +34,7 @@ Your YidVid site now has the following SEO foundations in place:
 
 2. **Add Your Property**
    - Choose "URL prefix" method
-   - Enter: `https://yidvid.com`
+   - Enter: `https://yidvid.co`
 
 3. **Verify Ownership** (Choose one method):
    
@@ -57,7 +57,7 @@ Your YidVid site now has the following SEO foundations in place:
 
 4. **Submit Your Sitemap**
    - After verification, go to "Sitemaps" in the left menu
-   - Submit: `https://yidvid.com/sitemap.xml`
+   - Submit: `https://yidvid.co/sitemap.xml`
    - Click "Submit"
 
 ---
@@ -70,7 +70,7 @@ Your YidVid site now has the following SEO foundations in place:
 
 2. **Add Your Site**
    - Click "Add a site"
-   - Enter: `https://yidvid.com`
+   - Enter: `https://yidvid.co`
 
 3. **Verify Ownership**
    - Choose XML file upload or meta tag method
@@ -78,7 +78,7 @@ Your YidVid site now has the following SEO foundations in place:
 
 4. **Submit Your Sitemap**
    - Go to "Sitemaps" section
-   - Submit: `https://yidvid.com/sitemap.xml`
+   - Submit: `https://yidvid.co/sitemap.xml`
 
 ---
 
