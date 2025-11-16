@@ -33,6 +33,8 @@ import NotificationsPage from './pages/admin/NotificationsPage';
 import LayoutCustomizationPage from './pages/admin/LayoutCustomizationPage';
 import TestimonialsPage from './pages/admin/TestimonialsPage';
 import AdminSEO from './pages/AdminSEO';
+import { EmailPreferences } from './pages/EmailPreferences';
+import { Unsubscribe } from './pages/Unsubscribe';
 
 // Add the PagePreloader import
 import { PagePreloader } from './components/PagePreloader';
@@ -113,6 +115,8 @@ function App() {
           <Route path="/writing-videos" element={<WritingVideos />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/settings/email-preferences" element={<EmailPreferences />} />
+          <Route path="/unsubscribe" element={<Unsubscribe />} />
           <Route path="/dashboard" element={<Dashboard />} />
           
           {/* Admin routes */}

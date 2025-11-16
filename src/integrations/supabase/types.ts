@@ -486,6 +486,78 @@ export type Database = {
         }
         Relationships: []
       }
+      email_logs: {
+        Row: {
+          email_type: string
+          error_message: string | null
+          id: string
+          recipient_email: string
+          resend_message_id: string | null
+          sent_at: string | null
+          status: string | null
+          subject: string
+          user_id: string | null
+        }
+        Insert: {
+          email_type: string
+          error_message?: string | null
+          id?: string
+          recipient_email: string
+          resend_message_id?: string | null
+          sent_at?: string | null
+          status?: string | null
+          subject: string
+          user_id?: string | null
+        }
+        Update: {
+          email_type?: string
+          error_message?: string | null
+          id?: string
+          recipient_email?: string
+          resend_message_id?: string | null
+          sent_at?: string | null
+          status?: string | null
+          subject?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      email_preferences: {
+        Row: {
+          created_at: string | null
+          general_emails: boolean | null
+          id: string
+          new_video_emails: boolean | null
+          unsubscribe_token: string
+          unsubscribed_at: string | null
+          updated_at: string | null
+          user_id: string
+          welcome_emails: boolean | null
+        }
+        Insert: {
+          created_at?: string | null
+          general_emails?: boolean | null
+          id?: string
+          new_video_emails?: boolean | null
+          unsubscribe_token?: string
+          unsubscribed_at?: string | null
+          updated_at?: string | null
+          user_id: string
+          welcome_emails?: boolean | null
+        }
+        Update: {
+          created_at?: string | null
+          general_emails?: boolean | null
+          id?: string
+          new_video_emails?: boolean | null
+          unsubscribe_token?: string
+          unsubscribed_at?: string | null
+          updated_at?: string | null
+          user_id?: string
+          welcome_emails?: boolean | null
+        }
+        Relationships: []
+      }
       global_notifications: {
         Row: {
           created_at: string
