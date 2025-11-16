@@ -27,8 +27,8 @@ export const ChannelCard = ({
         "relative group rounded-xl overflow-hidden transition-all duration-300",
         "hover:scale-[1.05] text-center p-4 md:p-6",
         "bg-white backdrop-blur-sm mx-auto w-full",
-        "shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1),0_4px_6px_-1px_rgba(0,0,0,0.1)]",
-        "hover:shadow-[0_-6px_12px_-2px_rgba(0,0,0,0.15),0_6px_12px_-2px_rgba(0,0,0,0.15)]"
+        "shadow-[0_-2px_4px_-1px_rgba(0,0,0,0.06),0_6px_10px_-1px_rgba(0,0,0,0.15)]",
+        "hover:shadow-[0_-3px_6px_-1px_rgba(0,0,0,0.1),0_8px_14px_-2px_rgba(0,0,0,0.25)]"
       )}
       style={{ animationDelay }}
       onMouseEnter={() => setShowControls(true)}
