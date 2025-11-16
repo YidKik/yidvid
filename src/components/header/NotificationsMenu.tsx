@@ -23,7 +23,7 @@ interface NotificationsMenuProps {
 export const NotificationsMenu = ({ onMarkAsRead }: NotificationsMenuProps) => {
   const { isMobile } = useIsMobile();
   const location = useLocation();
-  const isVideosPage = location.pathname === "/videos";
+  const isVideosPage = location.pathname.startsWith("/videos");
   const { isAuthenticated, user, isLoading } = useUnifiedAuth();
   
   const {
@@ -57,7 +57,7 @@ export const NotificationsMenu = ({ onMarkAsRead }: NotificationsMenuProps) => {
 
   // Consistent button styling to match other header buttons
   const buttonClass = `h-9 w-9 rounded-full ${isVideosPage
-    ? "bg-white/90 hover:bg-white text-primary"
+    ? "bg-primary hover:bg-primary text-primary-foreground"
     : "bg-[#222222] hover:bg-[#333333] text-white"} transition-all duration-300`;
 
   return (
@@ -68,7 +68,7 @@ export const NotificationsMenu = ({ onMarkAsRead }: NotificationsMenuProps) => {
           size="icon" 
           className={`${buttonClass} relative`}
         >
-          <Bell className={`h-4 w-4 ${isVideosPage ? 'text-primary' : 'text-white'}`} />
+          <Bell className="h-4 w-4" />
           {notifications && notifications.length > 0 && (
             <Badge 
               variant="destructive" 
