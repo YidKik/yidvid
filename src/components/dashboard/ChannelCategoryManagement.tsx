@@ -154,7 +154,7 @@ export function ChannelCategoryManagement({ channels, onUpdate }: ChannelCategor
             <SelectTrigger>
               <SelectValue placeholder="Select category" />
             </SelectTrigger>
-            <SelectContent className="bg-white shadow-lg border rounded-md z-50">
+            <SelectContent className="bg-popover text-popover-foreground shadow-lg border border-border rounded-md z-50">
               {defaultCategories.map((category) => (
                 <SelectItem key={category.value} value={category.value}>
                   {category.label}
@@ -170,7 +170,7 @@ export function ChannelCategoryManagement({ channels, onUpdate }: ChannelCategor
         </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow">
+      <div className="bg-card text-card-foreground rounded-lg shadow border border-border">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
@@ -200,10 +200,10 @@ export function ChannelCategoryManagement({ channels, onUpdate }: ChannelCategor
                     />
                   </td>
                   <td className="px-6 py-4">
-                    <div className="text-sm text-gray-900">{channel.title}</div>
+                    <div className="text-sm text-foreground">{channel.title}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100">
+                    <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-muted text-muted-foreground">
                       {channel.default_category || "No category"}
                     </span>
                   </td>

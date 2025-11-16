@@ -24,7 +24,7 @@ export const RecentChanges = ({ recentChanges, onUndoChange, isUpdating }: Recen
       <CardContent>
         <div className="space-y-2 max-h-32 overflow-y-auto">
           {recentChanges.map((change) => (
-            <div key={change.id} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+            <div key={change.id} className="flex items-center justify-between p-2 bg-muted rounded border border-border">
               <div className="text-sm">
                 <span className="font-medium">{change.channel_title}</span>
                 <span className="text-gray-500 mx-2">→</span>

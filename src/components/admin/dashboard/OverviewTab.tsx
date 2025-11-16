@@ -217,7 +217,7 @@ export const OverviewTab = () => {
           </CardHeader>
           <CardContent className="space-y-3 max-h-[300px] overflow-y-auto">
             {recentActivity?.videos.slice(0, 3).map((video, idx) => (
-              <div key={idx} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+              <div key={idx} className="flex items-start gap-3 p-3 bg-muted rounded-lg border border-border">
                 <Video className="h-4 w-4 text-gray-500 mt-1" />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium truncate">{video.title}</p>
@@ -235,7 +235,7 @@ export const OverviewTab = () => {
               </div>
             ))}
             {recentActivity?.comments.slice(0, 2).map((comment, idx) => (
-              <div key={idx} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+              <div key={idx} className="flex items-start gap-3 p-3 bg-muted rounded-lg border border-border">
                 <MessageSquare className="h-4 w-4 text-gray-500 mt-1" />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm truncate">{comment.content}</p>

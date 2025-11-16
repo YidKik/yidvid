@@ -28,7 +28,7 @@ export function VideosTable({ videos, isDeleting, onDeleteVideo }: VideoTablePro
   const [videoToDelete, setVideoToDelete] = useState<string | null>(null);
 
   return (
-    <div className="bg-white rounded-lg shadow">
+    <div className="bg-card text-card-foreground rounded-lg shadow border border-border">
       <Table>
         <TableHeader>
           <TableRow>

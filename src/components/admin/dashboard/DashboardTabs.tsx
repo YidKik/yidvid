@@ -18,48 +18,48 @@ export const DashboardTabs = ({ currentUserId }: DashboardTabsProps) => {
   return (
     <div className="w-full">
       <Tabs defaultValue={initialTab} className="space-y-6">
-        <div className="sticky top-0 bg-white z-10 pb-4 rounded-xl shadow-sm border border-gray-200 p-4">
+        <div className="sticky top-0 bg-card text-card-foreground z-10 pb-4 rounded-xl shadow-sm border border-border p-4">
           <TabsList className="bg-gradient-to-r from-gray-100 to-gray-50 p-1.5 rounded-xl w-full flex justify-start overflow-x-auto gap-2 min-w-max border border-gray-200">
             <TabsTrigger 
               value="overview" 
-              className="rounded-lg px-6 py-3 data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border data-[state=active]:border-primary/20 transition-all duration-200 whitespace-nowrap font-medium"
+              className="rounded-lg px-6 py-3 data-[state=active]:bg-card data-[state=active]:text-card-foreground data-[state=active]:shadow-md data-[state=active]:border data-[state=active]:border-primary/20 transition-all duration-200 whitespace-nowrap font-medium"
             >
               📊 Overview
             </TabsTrigger>
             <TabsTrigger 
               value="content-analysis" 
-              className="rounded-lg px-6 py-3 data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border data-[state=active]:border-primary/20 transition-all duration-200 whitespace-nowrap font-medium"
+              className="rounded-lg px-6 py-3 data-[state=active]:bg-card data-[state=active]:text-card-foreground data-[state=active]:shadow-md data-[state=active]:border data-[state=active]:border-primary/20 transition-all duration-200 whitespace-nowrap font-medium"
             >
               🛡️ AI Filtering
             </TabsTrigger>
             <TabsTrigger 
               value="content" 
-              className="rounded-lg px-6 py-3 data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border data-[state=active]:border-primary/20 transition-all duration-200 whitespace-nowrap font-medium"
+              className="rounded-lg px-6 py-3 data-[state=active]:bg-card data-[state=active]:text-card-foreground data-[state=active]:shadow-md data-[state=active]:border data-[state=active]:border-primary/20 transition-all duration-200 whitespace-nowrap font-medium"
             >
               📁 Content
             </TabsTrigger>
             <TabsTrigger 
               value="users" 
-              className="rounded-lg px-6 py-3 data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border data-[state=active]:border-primary/20 transition-all duration-200 whitespace-nowrap font-medium"
+              className="rounded-lg px-6 py-3 data-[state=active]:bg-card data-[state=active]:text-card-foreground data-[state=active]:shadow-md data-[state=active]:border data-[state=active]:border-primary/20 transition-all duration-200 whitespace-nowrap font-medium"
             >
               👥 Users
             </TabsTrigger>
             <TabsTrigger 
               value="channel-categories" 
-              className="rounded-lg px-6 py-3 data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border data-[state=active]:border-primary/20 transition-all duration-200 whitespace-nowrap font-medium"
+              className="rounded-lg px-6 py-3 data-[state=active]:bg-card data-[state=active]:text-card-foreground data-[state=active]:shadow-md data-[state=active]:border data-[state=active]:border-primary/20 transition-all duration-200 whitespace-nowrap font-medium"
             >
               🏷️ Channel Categories
             </TabsTrigger>
             <TabsTrigger 
               value="categories" 
-              className="rounded-lg px-6 py-3 data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border data-[state=active]:border-primary/20 transition-all duration-200 whitespace-nowrap font-medium"
+              className="rounded-lg px-6 py-3 data-[state=active]:bg-card data-[state=active]:text-card-foreground data-[state=active]:shadow-md data-[state=active]:border data-[state=active]:border-primary/20 transition-all duration-200 whitespace-nowrap font-medium"
             >
               🎬 Video Categories
             </TabsTrigger>
           </TabsList>
         </div>
 
-        <div className="mt-6 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div className="mt-6 bg-card text-card-foreground rounded-xl shadow-sm border border-border p-6">
           <TabsContent value="overview" className="mt-0">
             <OverviewTab />
           </TabsContent>

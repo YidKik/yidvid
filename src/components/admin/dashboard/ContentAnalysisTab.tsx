@@ -496,7 +496,7 @@ export const ContentAnalysisTab: React.FC = () => {
             )}
 
             {/* Action Buttons */}
-            <div className="flex gap-3 sticky bottom-0 bg-white pt-4 border-t">
+            <div className="flex gap-3 sticky bottom-0 bg-card text-card-foreground pt-4 border-t border-border">
               <Button 
                 onClick={() => approveMutation.mutate(video.id)}
                 disabled={approveMutation.isPending}

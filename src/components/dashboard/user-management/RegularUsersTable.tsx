@@ -70,7 +70,7 @@ export const RegularUsersTable = ({
   };
 
   return (
-    <div className="bg-white rounded-md border shadow-sm overflow-hidden">
+    <div className="bg-card text-card-foreground rounded-md border border-border shadow-sm overflow-hidden">
       <Table>
         <TableHeader>
           <TableRow>

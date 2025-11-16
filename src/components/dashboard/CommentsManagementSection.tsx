@@ -47,7 +47,7 @@ const CommentsManagementContent = ({
   }, [refetchComments, refetchNotifications]);
 
   return (
-    <div className="bg-white rounded-lg shadow mb-8">
+    <div className="bg-card text-card-foreground rounded-lg shadow mb-8 border border-border">
       <div className="p-4 border-b flex items-center justify-between">
         <div className="flex items-center gap-2">
           <h2 className="text-lg font-semibold">Comments Management</h2>
