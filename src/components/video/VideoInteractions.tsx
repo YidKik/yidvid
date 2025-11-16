@@ -87,8 +87,8 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
           onClick={handleLike}
           className={`group relative rounded-full p-2 md:p-3 transition-all duration-300 active:scale-90 border ${
             isLiked 
-              ? "bg-white border-red-500 hover:bg-gray-50" 
-              : "bg-white border-gray-300 hover:bg-gray-50 hover:border-red-500"
+              ? "bg-card border-red-500 hover:bg-muted" 
+              : "bg-card border-border hover:bg-muted hover:border-red-500"
           } ${isClickAnimating ? 'like-click-animation' : ''}`}
         >
           <ThumbsUp 
@@ -105,7 +105,7 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
         <Button
           variant="outline"
           onClick={handleShare}
-          className="group relative rounded-full p-2 md:p-3 transition-all duration-300 active:scale-90 border bg-white border-gray-300 hover:bg-gray-50 hover:border-red-500"
+          className="group relative rounded-full p-2 md:p-3 transition-all duration-300 active:scale-90 border bg-card border-border hover:bg-muted hover:border-red-500"
         >
           <Share className="w-5 h-5 md:w-6 md:h-6 transition-all duration-300 stroke-2 text-gray-600 group-hover:text-red-500 group-hover:stroke-red-500 group-hover:scale-110" />
         </Button>

@@ -84,7 +84,7 @@ export const CategorySelector = ({ selectedCategory, onCategoryChange }: Categor
         {/* Hide button */}
         <motion.button
           onClick={() => setIsHidden(true)}
-          className="absolute -top-3 -right-3 w-7 h-7 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center transition-all duration-200 z-30 shadow-lg border-2 border-white"
+          className="absolute -top-3 -right-3 w-7 h-7 bg-red-500 hover:bg-red-600 text-primary-foreground rounded-full flex items-center justify-center transition-all duration-200 z-30 shadow-lg border-2 border-primary/20"
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
         >

@@ -140,8 +140,8 @@ export const ChannelSection = ({
                   isMobile ? "px-4 py-2 text-xs" : "px-6 py-2.5 text-sm"
                 } font-semibold
                   ${isSubscribed 
-                    ? "bg-red-500 hover:bg-red-600 text-white border-red-500 hover:border-red-600 shadow-md" 
-                    : "bg-white hover:bg-red-50 hover:text-red-500 border-border hover:border-red-500"
+                    ? "bg-red-500 hover:bg-red-600 text-primary-foreground border-red-500 hover:border-red-600 shadow-md" 
+                    : "bg-card hover:bg-muted hover:text-red-500 border-border hover:border-red-500"
                   }
                 `}
               >
@@ -168,7 +168,7 @@ export const ChannelSection = ({
                 onClick={() => {}} // No toast notification as requested
                 className={`rounded-full transition-all duration-300 active:scale-95 shadow-sm ${
                   isMobile ? "px-4 py-2 text-xs" : "px-6 py-2.5 text-sm"
-                } font-semibold bg-white hover:bg-red-50 hover:text-red-500 border-border hover:border-red-500`}
+                } font-semibold bg-card hover:bg-muted hover:text-red-500 border-border hover:border-red-500`}
               >
                 <UserPlus className={`mr-2 ${isMobile ? "w-3 h-3" : "w-4 h-4"}`} />
                 <span className={isMobile ? "text-xs" : "text-sm"}>Subscribe</span>

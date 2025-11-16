@@ -11,7 +11,7 @@ export const VideoPlayerError = () => {
       <div className="absolute bottom-4 left-0 right-0 flex justify-center">
         <button 
           onClick={() => navigate("/videos")}
-          className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors"
+          className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
         >
           Return to Videos
         </button>
