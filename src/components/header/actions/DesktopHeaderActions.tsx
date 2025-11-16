@@ -46,7 +46,7 @@ export const DesktopHeaderActions = ({
 
   // Consistent button styling for all buttons - use primary colors on videos and search pages
   const buttonBaseClass = `h-9 w-9 rounded-full ${(isVideosPage || isSearchPage)
-    ? 'bg-primary hover:bg-primary/90 text-primary-foreground' 
+    ? 'bg-white/90 hover:bg-white text-primary' 
     : 'bg-[#222222] hover:bg-[#333333] text-primary'}`;
 
   return (

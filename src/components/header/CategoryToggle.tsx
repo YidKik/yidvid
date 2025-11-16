@@ -36,7 +36,7 @@ export const CategoryToggle = ({ selectedCategory, onCategoryChange }: CategoryT
 
   // Match the header icon button styling
   const buttonClass = `h-9 w-9 rounded-full ${(isVideosPage || isSearchPage)
-    ? 'bg-primary hover:bg-primary/90 text-primary-foreground' 
+    ? 'bg-white/90 hover:bg-white text-primary' 
     : 'bg-[#222222] hover:bg-[#333333] text-white'}`;
 
   return (
