@@ -83,7 +83,7 @@ export const AddChannelFields = ({ form, isLoading }: AddChannelFieldsProps) => 
             <FormLabel>Default Category</FormLabel>
             <Select onValueChange={field.onChange} defaultValue={field.value}>
               <FormControl>
-                <SelectTrigger className="bg-white">
+                <SelectTrigger className="bg-popover">
                   <SelectValue placeholder="Select a category" />
                 </SelectTrigger>
               </FormControl>

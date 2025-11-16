@@ -43,9 +43,9 @@ export const ChannelVideosManagement = ({ channelId }: ChannelVideosManagementPr
     return (
       <div className="p-8 text-center">
         <div className="flex items-center justify-center mb-4">
-          <AlertCircle className="h-8 w-8 text-red-500" />
+          <AlertCircle className="h-8 w-8 text-destructive" />
         </div>
-        <p className="text-red-500 font-medium mb-2">Error loading videos</p>
+        <p className="text-destructive font-medium mb-2">Error loading videos</p>
         <p className="text-sm text-muted-foreground mb-4">
           {error instanceof Error ? error.message : "Please try again later."}
         </p>

@@ -17,20 +17,20 @@ export const ChannelListItem = ({ channel, isHidden, onToggle }: ChannelListItem
   const isMobile = useIsMobile();
   
   return (
-    <div className="flex items-center justify-between p-3 md:p-4 rounded-2xl border border-red-200 bg-gradient-to-r from-white to-red-50/30 hover:bg-red-50/50 transition-all duration-300 hover:shadow-md hover:border-red-300">
+    <div className="flex items-center justify-between p-3 md:p-4 rounded-2xl border border-primary/30 bg-gradient-to-r from-card to-primary/5 hover:bg-primary/10 transition-all duration-300 hover:shadow-md hover:border-primary/40">
       <div className="flex items-center gap-3 min-w-0">
-        <Avatar className="h-8 w-8 md:h-12 md:w-12 border-2 border-red-200 flex-shrink-0 shadow-sm">
+        <Avatar className="h-8 w-8 md:h-12 md:w-12 border-2 border-primary/30 flex-shrink-0 shadow-sm">
           <AvatarImage
             src={channel.thumbnail_url || ''}
             alt={channel.title}
             className="object-cover"
           />
-          <AvatarFallback className="bg-red-100">
-            <Youtube className="h-3 w-3 md:h-5 md:w-5 text-red-500" />
+          <AvatarFallback className="bg-primary/20">
+            <Youtube className="h-3 w-3 md:h-5 md:w-5 text-primary" />
           </AvatarFallback>
         </Avatar>
         <div className="min-w-0 flex-1">
-          <p className="font-semibold text-gray-900 text-sm md:text-base truncate">
+          <p className="font-semibold text-foreground text-sm md:text-base truncate">
             {channel.title}
           </p>
           {!isMobile && (
@@ -49,7 +49,7 @@ export const ChannelListItem = ({ channel, isHidden, onToggle }: ChannelListItem
         />
         <div className="hidden sm:flex flex-col items-end">
           <span className={`text-xs md:text-sm font-semibold ${
-            isHidden ? 'text-red-400' : 'text-red-600'
+            isHidden ? 'text-muted-foreground' : 'text-primary'
           }`}>
             {isHidden ? "Hidden" : "Visible"}
           </span>

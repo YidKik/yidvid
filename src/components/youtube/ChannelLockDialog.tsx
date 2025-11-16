@@ -45,10 +45,10 @@ export const ChannelLockDialog = ({ isOpen, onClose, onUnlock, onDelete, storedP
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Lock className="w-5 h-5 text-indigo-600" />
+            <Lock className="w-5 h-5 text-primary" />
             {showDeleteConfirm ? "Remove Parental Control" : "Enter Parental Control PIN"}
           </DialogTitle>
-          <DialogDescription className="text-gray-500">
+          <DialogDescription className="text-muted-foreground">
             {showDeleteConfirm 
               ? "Enter your PIN to remove the parental control. This will permanently remove the lock."
               : "This section is locked. Please enter your PIN to access Channel Control settings."
@@ -58,7 +58,7 @@ export const ChannelLockDialog = ({ isOpen, onClose, onUnlock, onDelete, storedP
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-3">
-            <Label htmlFor="pin" className="text-sm font-medium text-gray-700">
+            <Label htmlFor="pin" className="text-sm font-medium text-foreground">
               PIN
             </Label>
             <Input
@@ -78,9 +78,9 @@ export const ChannelLockDialog = ({ isOpen, onClose, onUnlock, onDelete, storedP
                 type="button" 
                 variant="outline"
                 onClick={() => setShowDeleteConfirm(true)}
-                className="w-full max-w-sm py-2 px-4 bg-white border-2 border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 flex items-center justify-center gap-2 group"
+                className="w-full max-w-sm py-2 px-4 bg-card border-2 border-border rounded-lg text-foreground hover:bg-muted hover:border-border transition-all duration-200 flex items-center justify-center gap-2 group"
               >
-                <Trash2 className="h-4 w-4 text-gray-400 group-hover:text-gray-500 transition-colors" />
+                <Trash2 className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
                 <span className="font-medium">Remove Parental Control</span>
               </Button>
             </div>
@@ -98,11 +98,7 @@ export const ChannelLockDialog = ({ isOpen, onClose, onUnlock, onDelete, storedP
             <Button 
               type="submit" 
               variant={showDeleteConfirm ? "destructive" : "default"}
-              className={`px-4 py-2 text-sm font-medium shadow-sm transition-all ${
-                showDeleteConfirm 
-                  ? 'bg-red-600 hover:bg-red-700 text-white' 
-                  : 'bg-indigo-600 hover:bg-indigo-700 text-white'
-              }`}
+              className="px-4 py-2 text-sm font-medium shadow-sm transition-all"
             >
               {showDeleteConfirm ? "Remove Lock" : "Unlock"}
             </Button>

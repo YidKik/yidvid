@@ -53,7 +53,7 @@ export const ChannelFilteredList = ({
         {isLoading ? (
           <div className="space-y-3">
             {Array(6).fill(0).map((_, i) => (
-              <div key={i} className="p-4 border border-primary/10 rounded-2xl bg-white animate-pulse">
+              <div key={i} className="p-4 border border-primary/10 rounded-2xl bg-card animate-pulse">
                 <div className="flex items-center gap-3">
                   <Skeleton className="h-10 w-10 rounded-full" />
                   <div className="space-y-2 flex-1">

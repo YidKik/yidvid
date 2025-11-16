@@ -147,7 +147,7 @@ export const ProfileErrorState = ({ userEmail, isLoggingOut, handleLogout }: Pro
               <DialogTrigger asChild>
                 <Button
                   variant="outline"
-                  className="flex items-center justify-center gap-2 text-red-600 hover:text-red-700 border-red-200 hover:border-red-300 hover:bg-red-50"
+                  className="flex items-center justify-center gap-2 text-destructive hover:text-destructive/90 border-destructive/30 hover:border-destructive/50 hover:bg-destructive/10"
                 >
                   <Trash2 className="h-4 w-4" />
                   <span>Delete Account</span>

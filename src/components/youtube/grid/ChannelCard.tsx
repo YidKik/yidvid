@@ -56,11 +56,11 @@ export const ChannelCard = ({
           )}
         </div>
         
-        <h3 className="text-sm md:text-base font-medium text-center mb-1 text-gray-800 group-hover:text-[#ea384c] transition-colors">
+        <h3 className="text-sm md:text-base font-medium text-center mb-1 text-foreground group-hover:text-primary transition-colors">
           {title}
         </h3>
         
-        <p className="text-xs text-gray-500 group-hover:text-gray-600 transition-colors">
+        <p className="text-xs text-muted-foreground group-hover:text-foreground transition-colors">
           View Channel
         </p>
       </div>

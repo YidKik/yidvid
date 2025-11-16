@@ -268,23 +268,11 @@ export const ChannelSubscriptions = () => {
                 {subscriptions.map((subscription) => (
                   <div
                     key={subscription.channel.channel_id}
-                    className="flex-shrink-0 w-[200px] bg-white rounded-2xl shadow-md border-2 border-primary/10 hover:shadow-xl hover:border-primary/30 transition-all duration-300 group"
+                    className="flex-shrink-0 w-[200px] bg-card rounded-2xl shadow-md border-2 border-primary/10 hover:shadow-xl hover:border-primary/30 transition-all duration-300 group"
                   >
                     <div className="p-4 flex flex-col h-[220px]">
-                      <div className="relative mb-3 w-16 h-16 mx-auto rounded-2xl overflow-hidden bg-primary/10 flex items-center justify-center shadow-md">
-                        {subscription.channel.thumbnail_url ? (
-                          <img
-                            src={subscription.channel.thumbnail_url}
-                            alt={subscription.channel.title}
-                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                          />
-                        ) : (
-                          <div className="w-full h-full bg-primary/10 flex items-center justify-center">
-                            <Youtube className="w-8 h-8 text-primary" />
-                          </div>
-                        )}
-                      </div>
-                      <h4 className="font-semibold text-sm text-gray-900 text-center line-clamp-2 mb-3 flex-grow">
+...
+                      <h4 className="font-semibold text-sm text-foreground text-center line-clamp-2 mb-3 flex-grow">
                         {subscription.channel.title}
                       </h4>
                       <Button
@@ -292,7 +280,7 @@ export const ChannelSubscriptions = () => {
                         size="sm"
                         onClick={() => handleUnsubscribe(subscription.channel.channel_id, subscription.channel.title)}
                         disabled={processingUnsubscribe === subscription.channel.channel_id}
-                        className="w-full text-red-600 hover:text-red-700 hover:bg-red-50 gap-2 text-xs border border-red-200 hover:border-red-300 rounded-xl"
+                        className="w-full text-destructive hover:text-destructive/90 hover:bg-destructive/10 gap-2 text-xs border border-destructive/30 hover:border-destructive/50 rounded-xl"
                       >
                         {processingUnsubscribe === subscription.channel.channel_id ? (
                           <>
