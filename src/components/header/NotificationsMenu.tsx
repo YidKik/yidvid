@@ -68,7 +68,7 @@ export const NotificationsMenu = ({ onMarkAsRead }: NotificationsMenuProps) => {
           size="icon" 
           className={`${buttonClass} relative`}
         >
-          <Bell className="h-4 w-4" />
+          <Bell className={`h-4 w-4 ${isVideosPage ? 'text-primary' : 'text-white'}`} />
           {notifications && notifications.length > 0 && (
             <Badge 
               variant="destructive" 
