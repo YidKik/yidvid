@@ -35,15 +35,14 @@ export const CategoryToggle = ({ selectedCategory, onCategoryChange }: CategoryT
   };
 
   // Match the header icon button styling
-  const buttonClass = `h-9 w-9 rounded-full ${(isVideosPage || isSearchPage)
-    ? 'bg-primary hover:bg-primary text-primary-foreground' 
-    : 'bg-[#222222] hover:bg-[#333333] text-white'}`;
+  const isFilled = isVideosPage || isSearchPage;
+  const buttonClass = `h-9 w-9 rounded-full ${isFilled ? '' : 'bg-[#222222] hover:bg-[#333333] text-white'}`;
 
   return (
     <>
       {/* Toggle Button - matches other header icons */}
       <Button
-        variant="ghost"
+        variant={isFilled ? "default" : "ghost"}
         size="icon"
         onClick={toggleCategories}
         className={buttonClass}
