@@ -60,3 +60,12 @@ verify_jwt = true
 
 [functions.fetch-ga-analytics]
 verify_jwt = false
+
+[functions.send-welcome-email]
+verify_jwt = true
+
+[functions.send-video-notifications]
+verify_jwt = true
+
+[functions.handle-unsubscribe]
+verify_jwt = false
