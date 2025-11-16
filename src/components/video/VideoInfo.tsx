@@ -133,8 +133,8 @@ export const VideoInfo = ({
                 disabled={isLoading}
                 className={`ml-4 rounded-full px-4 py-2 text-sm transition-all duration-300 active:scale-95 font-medium
                   ${isSubscribed 
-                    ? "bg-red-500 border-red-500 hover:bg-red-600 text-white shadow-md" 
-                    : "bg-white border-gray-300 hover:bg-gray-50 hover:border-red-500 text-gray-700 hover:text-red-500"
+                    ? "bg-red-500 border-red-500 hover:bg-red-600 text-primary-foreground shadow-md" 
+                    : "bg-card border-border hover:bg-muted hover:border-red-500 text-foreground hover:text-red-500"
                   }
                 `}
               >
@@ -159,7 +159,7 @@ export const VideoInfo = ({
               <Button
                 variant="outline"
                 onClick={() => toast.info("Please sign in to subscribe to channels")}
-                className="ml-4 rounded-full px-4 py-2 text-sm transition-all duration-300 active:scale-95 font-medium bg-white border-gray-300 hover:bg-gray-50 hover:border-red-500 text-gray-700 hover:text-red-500"
+                className="ml-4 rounded-full px-4 py-2 text-sm transition-all duration-300 active:scale-95 font-medium bg-card border-border hover:bg-muted hover:border-red-500 text-foreground hover:text-red-500"
               >
                 <UserPlus className="w-4 h-4 mr-2" />
                 <span>Subscribe</span>

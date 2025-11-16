@@ -53,8 +53,8 @@ export const DislikeButton = ({ videoId }: DislikeButtonProps) => {
       onClick={handleDislike}
       className={`group relative rounded-full p-2 md:p-3 transition-all duration-300 active:scale-90 border ${
         isDisliked 
-          ? "bg-white border-red-500 hover:bg-gray-50" 
-          : "bg-white border-gray-300 hover:bg-gray-50 hover:border-red-500"
+          ? "bg-card border-red-500 hover:bg-muted" 
+          : "bg-card border-border hover:bg-muted hover:border-red-500"
       } ${isClickAnimating ? 'dislike-click-animation' : ''}`}
     >
       <ThumbsDown 

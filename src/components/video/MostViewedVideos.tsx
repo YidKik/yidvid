@@ -86,7 +86,7 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
         <div className="px-3 md:px-6 pt-4 md:pt-6 pb-6 md:pb-8">
           <div className="flex items-center gap-2 mb-3 md:mb-6">
             <div className="bg-[#333333] p-1.5 md:p-2 rounded-full">
-              <Sparkle className="h-3 w-3 md:h-4 md:w-4 text-white" />
+              <Sparkle className="h-3 w-3 md:h-4 md:w-4 text-primary" />
             </div>
             <h2 className="text-sm md:text-xl font-bold text-[#333333]">
               Popular content

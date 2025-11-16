@@ -26,10 +26,10 @@ export const MobileHeaderActions = ({
   
   // Use different styling for home page vs videos page
   const buttonClass = isHomePage 
-    ? "bg-transparent hover:bg-[#135d66] text-white"
+    ? "bg-transparent hover:bg-[#135d66] text-primary"
     : isVideosPage 
-      ? 'bg-[#ea384c] hover:bg-[#c82d3f] text-white' 
-      : 'bg-[#222222] hover:bg-[#333333] text-white';
+      ? 'bg-[#ea384c] hover:bg-[#c82d3f] text-primary-foreground' 
+      : 'bg-[#222222] hover:bg-[#333333] text-primary';
 
   return (
     <div className="flex items-center gap-1.5">
