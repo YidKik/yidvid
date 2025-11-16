@@ -27,8 +27,8 @@ export const CategoryToggle = ({ selectedCategory, onCategoryChange }: CategoryT
   const [isOpen, setIsOpen] = useState(false);
   const { isMobile } = useIsMobile();
   const location = useLocation();
-  const isVideosPage = location.pathname === "/videos";
-  const isSearchPage = location.pathname === "/search";
+  const isVideosPage = location.pathname.startsWith("/videos");
+  const isSearchPage = location.pathname.startsWith("/search");
 
   const toggleCategories = () => {
     setIsOpen(!isOpen);
@@ -36,7 +36,7 @@ export const CategoryToggle = ({ selectedCategory, onCategoryChange }: CategoryT
 
   // Match the header icon button styling
   const buttonClass = `h-9 w-9 rounded-full ${(isVideosPage || isSearchPage)
-    ? 'bg-white/90 hover:bg-white text-primary' 
+    ? 'bg-primary hover:bg-primary text-primary-foreground' 
     : 'bg-[#222222] hover:bg-[#333333] text-white'}`;
 
   return (
@@ -48,7 +48,7 @@ export const CategoryToggle = ({ selectedCategory, onCategoryChange }: CategoryT
         onClick={toggleCategories}
         className={buttonClass}
       >
-        <LayoutGrid className={`h-4 w-4 ${(isVideosPage || isSearchPage) ? 'text-primary' : 'text-white'}`} />
+        <LayoutGrid className="h-4 w-4" />
       </Button>
 
       {/* Categories Slide-in Panel from Left - Rendered using Portal */}

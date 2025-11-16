@@ -27,8 +27,8 @@ export const DesktopHeaderActions = ({
 }: DesktopHeaderActionsProps) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const isVideosPage = location.pathname === "/videos";
-  const isSearchPage = location.pathname === "/search";
+  const isVideosPage = location.pathname.startsWith("/videos");
+  const isSearchPage = location.pathname.startsWith("/search");
   
   // Detect tablet view (768px - 1024px)
   const [isTablet, setIsTablet] = useState(false);
@@ -46,7 +46,7 @@ export const DesktopHeaderActions = ({
 
   // Consistent button styling for all buttons - use primary colors on videos and search pages
   const buttonBaseClass = `h-9 w-9 rounded-full ${(isVideosPage || isSearchPage)
-    ? 'bg-white/90 hover:bg-white text-primary' 
+    ? 'bg-primary hover:bg-primary text-primary-foreground' 
     : 'bg-[#222222] hover:bg-[#333333] text-primary'}`;
 
   return (
@@ -61,7 +61,7 @@ export const DesktopHeaderActions = ({
           size="icon"
           className={buttonBaseClass}
         >
-          <MessageSquare className={`h-4 w-4 ${(isVideosPage || isSearchPage) ? 'text-primary' : 'text-primary'}`} />
+          <MessageSquare className="h-4 w-4" />
         </Button>
       )}
       
@@ -72,7 +72,7 @@ export const DesktopHeaderActions = ({
           variant="ghost"
           size="icon"
         >
-          <Settings className={`h-4 w-4 ${(isVideosPage || isSearchPage) ? 'text-primary' : 'text-primary'}`} />
+          <Settings className="h-4 w-4" />
         </Button>
       ) : (
         <Button 
@@ -81,7 +81,7 @@ export const DesktopHeaderActions = ({
           variant="ghost"
           size="icon"
         >
-          <LogIn className={`h-4 w-4 ${(isVideosPage || isSearchPage) ? 'text-primary' : 'text-primary'}`} />
+          <LogIn className="h-4 w-4" />
         </Button>
       )}
     </div>
