@@ -44,10 +44,10 @@ export const DesktopHeaderActions = ({
     return () => window.removeEventListener('resize', checkTablet);
   }, []);
 
-  // Consistent button styling for all buttons - use primary colors on videos and search pages
-  const buttonBaseClass = `h-9 w-9 rounded-full ${(isVideosPage || isSearchPage)
-    ? 'bg-primary hover:bg-primary text-primary-foreground' 
-    : 'bg-[#222222] hover:bg-[#333333] text-primary'}`;
+  // Use filled style (solid red circle) on videos and search pages
+  const isFilled = isVideosPage || isSearchPage;
+  // Keep only sizing/rounding here; background comes from variant when filled
+  const buttonBaseClass = `h-9 w-9 rounded-full ${!isFilled ? 'bg-[#222222] hover:bg-[#333333] text-primary' : ''}`;
 
   return (
     <div className="flex items-center gap-3">
@@ -57,7 +57,7 @@ export const DesktopHeaderActions = ({
       {!isTablet && (
         <Button 
           onClick={onContactOpen}
-          variant="ghost" 
+          variant={isFilled ? "default" : "ghost"}
           size="icon"
           className={buttonBaseClass}
         >
@@ -69,7 +69,7 @@ export const DesktopHeaderActions = ({
         <Button 
           onClick={handleSettingsClick}
           className={buttonBaseClass}
-          variant="ghost"
+          variant={isFilled ? "default" : "ghost"}
           size="icon"
         >
           <Settings className="h-4 w-4" />
@@ -78,7 +78,7 @@ export const DesktopHeaderActions = ({
         <Button 
           onClick={onAuthOpen}
           className={buttonBaseClass}
-          variant="ghost"
+          variant={isFilled ? "default" : "ghost"}
           size="icon"
         >
           <LogIn className="h-4 w-4" />
