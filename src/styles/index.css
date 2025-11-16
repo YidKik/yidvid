@@ -3,7 +3,6 @@
 @import './globals.css';
 @import './theme.css';
 @import './animations.css';
-@import './dark-mode.css';
 
 /* Component styles */
 @import './components/buttons.css';

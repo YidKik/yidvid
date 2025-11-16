@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { LogIn, Settings, User } from "lucide-react";
 import { NotificationsMenu } from "../NotificationsMenu";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ThemeToggle } from "@/components/ThemeToggle";
 
 interface MobileHeaderActionsProps {
   session: any;
@@ -34,7 +33,6 @@ export const MobileHeaderActions = ({
 
   return (
     <div className="flex items-center gap-1.5">
-      <ThemeToggle />
       {session ? (
         <>
           <NotificationsMenu onMarkAsRead={onMarkNotificationsAsRead} />
