@@ -48,7 +48,7 @@ export const CategoryToggle = ({ selectedCategory, onCategoryChange }: CategoryT
         onClick={toggleCategories}
         className={buttonClass}
       >
-        <LayoutGrid className="h-4 w-4" />
+        <LayoutGrid className={`h-4 w-4 ${(isVideosPage || isSearchPage) ? 'text-primary' : 'text-white'}`} />
       </Button>
 
       {/* Categories Slide-in Panel from Left - Rendered using Portal */}
