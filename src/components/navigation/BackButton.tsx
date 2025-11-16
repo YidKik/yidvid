@@ -20,6 +20,8 @@ export const BackButton = ({ className }: BackButtonProps) => {
   const location = useLocation();
   const [visible, setVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const isVideosPage = location.pathname.startsWith("/videos");
+  const isSearchPage = location.pathname.startsWith("/search");
   
   useEffect(() => {
     const currentPath = location.pathname + location.search;
@@ -92,6 +94,13 @@ export const BackButton = ({ className }: BackButtonProps) => {
     navigate("/videos");
   };
 
+  // Match header button styling on videos/search pages
+  const buttonClass = `rounded-full shadow-sm p-1.5 md:p-2.5 transition-all duration-200 hover:scale-105 active:scale-95 ${
+    isVideosPage || isSearchPage
+      ? 'bg-primary hover:bg-primary text-primary-foreground'
+      : 'bg-transparent backdrop-blur-sm border-2 border-primary text-primary hover:bg-primary/10 hover:shadow-lg'
+  }`;
+
   return (
     <div
       className={cn(
@@ -103,15 +112,7 @@ export const BackButton = ({ className }: BackButtonProps) => {
     >
       <button
         onClick={handleGoBack}
-        className={cn(
-          "bg-transparent backdrop-blur-sm border-2 border-primary",
-          "text-primary hover:bg-primary/10 hover:shadow-lg",
-          "rounded-full shadow-sm",
-          "p-1.5 md:p-2.5", // Smaller on mobile
-          "transition-all duration-200",
-          "hover:scale-105 active:scale-95",
-          className
-        )}
+        className={cn(buttonClass, className)}
         aria-label="Go back"
       >
         <ArrowLeft className="h-4 w-4 md:h-5 md:w-5" />
@@ -119,14 +120,7 @@ export const BackButton = ({ className }: BackButtonProps) => {
       
       <button
         onClick={handleGoHome}
-        className={cn(
-          "bg-transparent backdrop-blur-sm border-2 border-primary",
-          "text-primary hover:bg-primary/10 hover:shadow-lg",
-          "rounded-full shadow-sm",
-          "p-1.5 md:p-2.5", // Smaller on mobile
-          "transition-all duration-200",
-          "hover:scale-105 active:scale-95"
-        )}
+        className={buttonClass}
         aria-label="Go to videos page"
       >
         <Home className="h-4 w-4 md:h-5 md:w-5" />
