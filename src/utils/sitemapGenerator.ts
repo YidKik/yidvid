@@ -8,7 +8,7 @@ interface SitemapUrl {
 }
 
 export const generateSitemapXML = (videos: VideoData[]): string => {
-  const baseUrl = 'https://yidvid.com';
+  const baseUrl = 'https://yidvid.co';
   const currentDate = new Date().toISOString().split('T')[0];
   
   // Static pages
