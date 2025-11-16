@@ -61,7 +61,7 @@ export const DesktopHeaderActions = ({
           size="icon"
           className={buttonBaseClass}
         >
-          <MessageSquare className="h-4 w-4" />
+          <MessageSquare className={`h-4 w-4 ${(isVideosPage || isSearchPage) ? 'text-primary' : 'text-primary'}`} />
         </Button>
       )}
       
@@ -72,7 +72,7 @@ export const DesktopHeaderActions = ({
           variant="ghost"
           size="icon"
         >
-          <Settings className="h-4 w-4" />
+          <Settings className={`h-4 w-4 ${(isVideosPage || isSearchPage) ? 'text-primary' : 'text-primary'}`} />
         </Button>
       ) : (
         <Button 
@@ -81,7 +81,7 @@ export const DesktopHeaderActions = ({
           variant="ghost"
           size="icon"
         >
-          <LogIn className="h-4 w-4" />
+          <LogIn className={`h-4 w-4 ${(isVideosPage || isSearchPage) ? 'text-primary' : 'text-primary'}`} />
         </Button>
       )}
     </div>
