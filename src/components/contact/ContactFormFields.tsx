@@ -22,7 +22,7 @@ export const ContactFormFields = ({ form }: ContactFormFieldsProps) => {
               <Input 
                 placeholder="Enter your name" 
                 {...field} 
-                className="border-2 border-gray-400/30 hover:border-primary/50 focus:border-primary transition-colors bg-transparent text-white"
+                className="border-2 border-border hover:border-primary/50 focus:border-primary transition-colors"
               />
             </FormControl>
             <FormMessage />
@@ -40,7 +40,7 @@ export const ContactFormFields = ({ form }: ContactFormFieldsProps) => {
                 placeholder="Enter your email" 
                 type="email" 
                 {...field} 
-                className="border-2 border-gray-400/30 hover:border-primary/50 focus:border-primary transition-colors bg-transparent text-white"
+                className="border-2 border-border hover:border-primary/50 focus:border-primary transition-colors"
               />
             </FormControl>
             <FormMessage />
@@ -56,7 +56,7 @@ export const ContactFormFields = ({ form }: ContactFormFieldsProps) => {
             <FormControl>
               <Textarea 
                 placeholder="What would you like to tell us?" 
-                className="min-h-[120px] resize-none border-2 border-gray-400/30 hover:border-primary/50 focus:border-primary transition-colors bg-transparent text-white"
+                className="min-h-[120px] resize-none border-2 border-border hover:border-primary/50 focus:border-primary transition-colors"
                 {...field} 
               />
             </FormControl>

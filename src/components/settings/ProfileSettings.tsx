@@ -148,7 +148,7 @@ export const ProfileSettings = () => {
               <Button
                 onClick={handleDeleteAccount}
                 variant="outline"
-                className="w-full flex items-center justify-center gap-2 py-6 text-red-600 hover:text-red-700 border-2 border-red-200 hover:border-red-300 hover:bg-red-50 transition-all duration-200"
+                className="w-full flex items-center justify-center gap-2 py-6 text-destructive hover:text-destructive/90 border-2 border-destructive/30 hover:border-destructive/50 hover:bg-destructive/10 transition-all duration-200"
               >
                 <Trash2 className="h-5 w-5" />
                 <span className="font-medium">Delete Account</span>
