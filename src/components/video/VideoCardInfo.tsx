@@ -114,7 +114,7 @@ export const VideoCardInfo = ({
     <div className="mt-3 px-1">
       {/* Title - Quicksand/Rubik for both English and Hebrew */}
       <h3 
-        className="text-sm font-bold line-clamp-2 text-gray-800 leading-snug"
+        className="text-sm font-bold line-clamp-2 text-foreground leading-snug"
         style={{ fontFamily: "'Quicksand', 'Rubik', 'Varela Round', sans-serif" }}
         title={cleanTitle}
       >
@@ -123,15 +123,15 @@ export const VideoCardInfo = ({
       
       {/* Meta info - date and views with icons */}
       <div 
-        className="flex items-center gap-3 mt-1.5 text-gray-500"
+        className="flex items-center gap-3 mt-1.5 text-muted-foreground"
         style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
       >
         <div className="flex items-center gap-1 text-xs">
-          <Clock size={12} className="text-gray-400" />
+          <Clock size={12} className="text-muted-foreground" />
           <span>{formattedDate}</span>
         </div>
         <div className="flex items-center gap-1 text-xs">
-          <Eye size={12} className="text-gray-400" />
+          <Eye size={12} className="text-muted-foreground" />
           <span>{formatViewCount(views)}</span>
         </div>
       </div>

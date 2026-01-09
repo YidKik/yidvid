@@ -97,18 +97,18 @@ const VideoDetails = () => {
       <VideoSEO video={videoForSEO} />
       {isAuthenticated && <VideoHistory videoId={video?.id || ""} />}
       
-      <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
+      <div className="min-h-screen bg-muted/30">
         <div className="container mx-auto px-4 pt-20 pb-12">
           <BackButton />
           
           {/* Main content wrapper - card style like reference */}
-          <div className="mt-6 bg-card rounded-2xl shadow-lg border border-border/30 overflow-hidden">
+          <div className="mt-6 bg-card rounded-2xl shadow-lg border border-border overflow-hidden">
             
             {/* Desktop/Tablet: Side by side layout */}
             {!isMobile && (
               <div className="flex">
                 {/* Left: Channel Card */}
-                <div className="w-80 flex-shrink-0 p-6 border-r border-border/20">
+                <div className="w-80 flex-shrink-0 p-6 border-r border-border bg-muted/20">
                   <VideoChannelCard
                     channelName={video?.channel_name || ""}
                     channelId={video?.channel_id || ""}
