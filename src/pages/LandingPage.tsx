@@ -91,8 +91,8 @@ const LandingPage = () => {
         >
           <motion.h2
             variants={itemVariants}
-            className="text-3xl md:text-4xl font-extrabold text-center mb-4"
-            style={{ fontFamily: "'Montserrat', 'Inter', sans-serif", color: '#1a1a1a', letterSpacing: '-0.02em' }}
+            className="text-4xl md:text-5xl font-extrabold text-center mb-4"
+            style={{ fontFamily: "'Nunito', 'Poppins', sans-serif", color: '#1a1a1a', letterSpacing: '-0.02em' }}
           >
             Built for <span style={{ color: 'hsl(0, 100%, 50%)' }}>You</span>
           </motion.h2>
@@ -112,7 +112,7 @@ const LandingPage = () => {
                 className="group relative rounded-2xl p-6 border-2 transition-all duration-300 hover:shadow-lg cursor-pointer"
                 style={{
                   backgroundColor: 'rgba(255, 0, 0, 0.08)',
-                  borderColor: 'rgba(255, 0, 0, 0.2)'
+                  borderColor: 'hsl(0, 100%, 35%)'
                 }}
                 initial="rest"
                 whileHover="hover"
@@ -133,7 +133,7 @@ const LandingPage = () => {
                 </motion.div>
                 <h3 
                   className="text-xl font-bold mb-2"
-                  style={{ fontFamily: "'Quicksand', sans-serif", color: '#1a1a1a' }}
+                  style={{ fontFamily: "'Quicksand', sans-serif", color: 'hsl(50, 100%, 45%)' }}
                 >
                   {feature.title}
                 </h3>
