@@ -13,29 +13,37 @@ const LandingPage = () => {
       icon: RefreshCw,
       title: "Auto-Updated",
       description: "Fresh content added automatically every day",
-      hoverAnimation: { rotate: 360 },
-      hoverTransition: { duration: 0.6, ease: "easeInOut" }
+      iconVariants: {
+        rest: { rotate: 0 },
+        hover: { rotate: 360, transition: { duration: 1, ease: "easeInOut" } }
+      }
     },
     {
       icon: Shield,
       title: "100% Kosher",
       description: "Curated and verified family-friendly content",
-      hoverAnimation: { rotateY: 360 },
-      hoverTransition: { duration: 0.6, ease: "easeInOut" }
+      iconVariants: {
+        rest: { rotateY: 0 },
+        hover: { rotateY: 360, transition: { duration: 0.8, ease: "easeInOut" } }
+      }
     },
     {
       icon: Heart,
       title: "Free Forever",
       description: "No subscriptions, no hidden fees",
-      hoverAnimation: { scale: [1, 1.3, 1, 1.3, 1] },
-      hoverTransition: { duration: 0.8, ease: "easeInOut" }
+      iconVariants: {
+        rest: { scale: 1 },
+        hover: { scale: [1, 1.3, 1, 1.3, 1], transition: { duration: 1, ease: "easeInOut" } }
+      }
     },
     {
       icon: Users,
       title: "Many Channels",
       description: "Wide variety of creators and content",
-      hoverAnimation: { x: [0, -3, 3, -3, 3, 0] },
-      hoverTransition: { duration: 0.5, ease: "easeInOut" }
+      iconVariants: {
+        rest: { x: 0 },
+        hover: { x: [0, -4, 4, -4, 4, 0], transition: { duration: 0.8, ease: "easeInOut" } }
+      }
     }
   ];
 
@@ -106,20 +114,23 @@ const LandingPage = () => {
                   backgroundColor: 'rgba(255, 0, 0, 0.08)',
                   borderColor: 'rgba(255, 0, 0, 0.2)'
                 }}
-                whileHover={{ y: -5 }}
+                initial="rest"
+                whileHover="hover"
+                animate="rest"
               >
-                <div 
+                <motion.div 
                   className="w-14 h-14 rounded-xl flex items-center justify-center mb-4"
                   style={{ backgroundColor: 'rgba(255, 0, 0, 0.15)' }}
+                  variants={{ rest: { y: 0 }, hover: { y: -5 } }}
+                  transition={{ duration: 0.3 }}
                 >
                   <motion.div
-                    whileHover={feature.hoverAnimation}
-                    transition={feature.hoverTransition}
+                    variants={feature.iconVariants}
                     style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                   >
                     <feature.icon className="w-7 h-7" style={{ color: 'hsl(0, 100%, 50%)' }} strokeWidth={2} />
                   </motion.div>
-                </div>
+                </motion.div>
                 <h3 
                   className="text-xl font-bold mb-2"
                   style={{ fontFamily: "'Quicksand', sans-serif", color: '#1a1a1a' }}
