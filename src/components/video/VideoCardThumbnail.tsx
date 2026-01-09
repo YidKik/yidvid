@@ -73,35 +73,36 @@ export const VideoCardThumbnail = ({
         onError={() => setImageError(true)}
       />
       
-      {/* Hover overlay with channel name and duration */}
+      {/* Hover overlay with channel name and duration at top */}
       <div 
         className={cn(
-          "absolute inset-0 bg-black/40 transition-opacity duration-300 rounded-xl flex flex-col justify-between p-2",
+          "absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-transparent transition-opacity duration-300 rounded-xl",
           isHovering ? "opacity-100" : "opacity-0"
         )}
       >
-        {/* Channel name at top */}
-        {channelName && (
-          <div 
-            className="bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 self-start"
-            style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
-          >
-            <span className="text-xs font-semibold text-gray-800">{channelName}</span>
-          </div>
-        )}
-        
-        {/* Duration at bottom right */}
-        {duration && (
-          <div className="flex justify-end">
+        {/* Top bar with channel name and duration */}
+        <div className="absolute top-0 left-0 right-0 p-2.5 flex items-center justify-between">
+          {/* Channel name */}
+          {channelName && (
             <div 
-              className="bg-white/90 backdrop-blur-sm rounded-full px-2 py-1 flex items-center gap-1"
+              className="bg-white/95 backdrop-blur-sm rounded-full px-3 py-1.5 shadow-sm border border-gray-100"
               style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
             >
-              <Clock size={12} className="text-gray-600" />
-              <span className="text-xs font-medium text-gray-800">{duration}</span>
+              <span className="text-xs font-bold text-gray-700">{channelName}</span>
             </div>
-          </div>
-        )}
+          )}
+          
+          {/* Duration */}
+          {duration && (
+            <div 
+              className="bg-white/95 backdrop-blur-sm rounded-full px-2.5 py-1.5 flex items-center gap-1.5 shadow-sm border border-gray-100"
+              style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
+            >
+              <Clock size={11} className="text-blue-500" />
+              <span className="text-xs font-bold text-gray-700">{duration}</span>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
