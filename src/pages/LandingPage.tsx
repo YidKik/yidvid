@@ -112,7 +112,7 @@ const LandingPage = () => {
                 className="group relative rounded-2xl p-6 border-2 transition-all duration-300 hover:shadow-lg cursor-pointer"
                 style={{
                   backgroundColor: 'rgba(255, 0, 0, 0.08)',
-                  borderColor: 'hsl(0, 100%, 35%)'
+                  borderColor: 'hsl(0, 100%, 50%)'
                 }}
                 initial="rest"
                 whileHover="hover"
@@ -133,7 +133,7 @@ const LandingPage = () => {
                 </motion.div>
                 <h3 
                   className="text-xl font-bold mb-2"
-                  style={{ fontFamily: "'Quicksand', sans-serif", color: 'hsl(50, 100%, 45%)' }}
+                  style={{ fontFamily: "'Quicksand', sans-serif", color: 'hsl(0, 100%, 50%)' }}
                 >
                   {feature.title}
                 </h3>
