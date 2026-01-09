@@ -13,29 +13,29 @@ const LandingPage = () => {
       icon: RefreshCw,
       title: "Auto-Updated",
       description: "Fresh content added automatically every day",
-      animation: { rotate: 360 },
-      animationDuration: 2
+      hoverAnimation: { rotate: 360 },
+      hoverTransition: { duration: 0.6, ease: "easeInOut" }
     },
     {
       icon: Shield,
       title: "100% Kosher",
       description: "Curated and verified family-friendly content",
-      animation: { scale: [1, 1.2, 1] },
-      animationDuration: 1.5
+      hoverAnimation: { rotateY: 360 },
+      hoverTransition: { duration: 0.6, ease: "easeInOut" }
     },
     {
       icon: Heart,
       title: "Free Forever",
       description: "No subscriptions, no hidden fees",
-      animation: { scale: [1, 1.15, 1, 1.15, 1] },
-      animationDuration: 1.2
+      hoverAnimation: { scale: [1, 1.3, 1, 1.3, 1] },
+      hoverTransition: { duration: 0.8, ease: "easeInOut" }
     },
     {
       icon: Users,
       title: "Many Channels",
       description: "Wide variety of creators and content",
-      animation: { opacity: [0.4, 1, 0.4], pathLength: [0, 1, 0] },
-      animationDuration: 2
+      hoverAnimation: { x: [0, -3, 3, -3, 3, 0] },
+      hoverTransition: { duration: 0.5, ease: "easeInOut" }
     }
   ];
 
@@ -101,7 +101,7 @@ const LandingPage = () => {
               <motion.div
                 key={feature.title}
                 variants={itemVariants}
-                className="group relative rounded-2xl p-6 border-2 transition-all duration-300 hover:shadow-lg"
+                className="group relative rounded-2xl p-6 border-2 transition-all duration-300 hover:shadow-lg cursor-pointer"
                 style={{
                   backgroundColor: 'rgba(255, 0, 0, 0.08)',
                   borderColor: 'rgba(255, 0, 0, 0.2)'
@@ -113,12 +113,9 @@ const LandingPage = () => {
                   style={{ backgroundColor: 'rgba(255, 0, 0, 0.15)' }}
                 >
                   <motion.div
-                    animate={feature.animation}
-                    transition={{ 
-                      duration: feature.animationDuration, 
-                      repeat: Infinity, 
-                      ease: "easeInOut" 
-                    }}
+                    whileHover={feature.hoverAnimation}
+                    transition={feature.hoverTransition}
+                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                   >
                     <feature.icon className="w-7 h-7" style={{ color: 'hsl(0, 100%, 50%)' }} strokeWidth={2} />
                   </motion.div>
