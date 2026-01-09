@@ -2,7 +2,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Play, Users, RefreshCw, Shield, Sparkles, ArrowRight, Music, BookOpen, Mic, Gamepad2, Film, Grid3X3 } from 'lucide-react';
+import { Play, Users, RefreshCw, Shield, Heart, ArrowRight, Music, BookOpen, Mic, Gamepad2, Film, Grid3X3 } from 'lucide-react';
 import HeroSearchSection from '@/components/home/HeroSearchSection';
 
 const LandingPage = () => {
@@ -12,22 +12,30 @@ const LandingPage = () => {
     {
       icon: RefreshCw,
       title: "Auto-Updated",
-      description: "Fresh content added automatically every day"
+      description: "Fresh content added automatically every day",
+      animation: { rotate: [0, 360] },
+      animationDuration: 3
     },
     {
       icon: Shield,
       title: "100% Kosher",
-      description: "Curated and verified family-friendly content"
+      description: "Curated and verified family-friendly content",
+      animation: { scale: [1, 1.15, 1] },
+      animationDuration: 2
     },
     {
-      icon: Sparkles,
-      title: "Free to Use",
-      description: "No subscriptions, no hidden fees"
+      icon: Heart,
+      title: "Free Forever",
+      description: "No subscriptions, no hidden fees",
+      animation: { rotate: [0, 15, -15, 0], scale: [1, 1.1, 1] },
+      animationDuration: 2.5
     },
     {
       icon: Users,
       title: "Many Channels",
-      description: "Wide variety of creators and content"
+      description: "Wide variety of creators and content",
+      animation: { y: [0, -5, 0] },
+      animationDuration: 1.5
     }
   ];
 
@@ -78,14 +86,14 @@ const LandingPage = () => {
             className="text-3xl md:text-4xl font-bold text-center mb-4"
             style={{ fontFamily: "'Quicksand', sans-serif", color: '#1a1a1a' }}
           >
-            Why Choose <span style={{ color: 'hsl(0, 100%, 50%)' }}>YidVid</span>?
+            Built for <span style={{ color: 'hsl(0, 100%, 50%)' }}>You</span>
           </motion.h2>
           <motion.p
             variants={itemVariants}
             className="text-center mb-12 max-w-xl mx-auto"
             style={{ fontFamily: "'Quicksand', sans-serif", color: '#666666' }}
           >
-            We're different from other platforms. Here's what makes us special.
+            Everything you need for quality Jewish entertainment, all in one place.
           </motion.p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -100,12 +108,18 @@ const LandingPage = () => {
                 }}
                 whileHover={{ y: -5 }}
               >
-                <div 
+                <motion.div 
                   className="w-14 h-14 rounded-xl flex items-center justify-center mb-4"
                   style={{ backgroundColor: 'rgba(255, 0, 0, 0.15)' }}
+                  animate={feature.animation}
+                  transition={{ 
+                    duration: feature.animationDuration, 
+                    repeat: Infinity, 
+                    ease: "easeInOut" 
+                  }}
                 >
                   <feature.icon className="w-7 h-7" style={{ color: 'hsl(0, 100%, 50%)' }} strokeWidth={2} />
-                </div>
+                </motion.div>
                 <h3 
                   className="text-xl font-bold mb-2"
                   style={{ fontFamily: "'Quicksand', sans-serif", color: '#1a1a1a' }}

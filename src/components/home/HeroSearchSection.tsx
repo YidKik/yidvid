@@ -99,8 +99,8 @@ const HeroSearchSection = () => {
           transition={{ delay: 0.4 }}
         >
           <h1 
-            className="text-3xl md:text-5xl lg:text-6xl font-bold min-h-[80px] md:min-h-[100px] flex items-center justify-center"
-            style={{ fontFamily: "'Quicksand', sans-serif", color: '#1a1a1a' }}
+            className="text-2xl md:text-4xl lg:text-5xl font-semibold min-h-[60px] md:min-h-[70px] flex items-center justify-center whitespace-nowrap"
+            style={{ fontFamily: "'Nunito', 'Poppins', sans-serif", color: '#1a1a1a', letterSpacing: '-0.01em' }}
           >
             <span>{displayText}</span>
             <motion.span
