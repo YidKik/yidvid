@@ -60,22 +60,22 @@ const MainContent = () => {
 
   return (
     <div className="flex-1 videos-page pt-14">
-      {/* Category Filter Bar */}
-      <div className="sticky top-14 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-200/50 py-3 px-4">
-        <div className="max-w-[1400px] mx-auto">
-          <CategoryToggle 
-            selectedCategory={selectedCategory}
-            onCategoryChange={setSelectedCategory}
-          />
-        </div>
-      </div>
-
       <motion.main 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1, duration: 0.5 }}
         className="mt-4 mx-auto px-2 md:px-6 max-w-[1400px] w-full"
       >
+        {/* Category Toggle - inline with content */}
+        <div className="mb-4 flex items-center gap-3">
+          <CategoryToggle 
+            selectedCategory={selectedCategory}
+            onCategoryChange={setSelectedCategory}
+          />
+          <span className="text-sm text-gray-500 font-medium" style={{ fontFamily: "'Quicksand', sans-serif" }}>
+            {selectedCategory === 'all' ? 'All Videos' : selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)}
+          </span>
+        </div>
         <div className="space-y-2 md:space-y-4">
           <motion.div
             key={selectedCategory}
