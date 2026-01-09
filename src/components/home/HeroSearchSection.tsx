@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
-import { Search, ArrowRight } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Search, ArrowRight, TrendingUp, Clock, Eye } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const typingPhrases = [
@@ -12,13 +12,36 @@ const typingPhrases = [
   "Listen to the latest podcasts...",
 ];
 
+const trendingSuggestions = [
+  { type: 'trending', icon: TrendingUp, label: 'Trending:', value: 'Benny Friedman Music' },
+  { type: 'recent', icon: Clock, label: 'Recently Added:', value: 'Torah Anytime Lectures' },
+  { type: 'popular', icon: Eye, label: 'Most Viewed:', value: 'Shmuel Kunda Stories' },
+  { type: 'trending', icon: TrendingUp, label: 'Popular Now:', value: 'Avraham Fried Classics' },
+  { type: 'recent', icon: Clock, label: 'New Today:', value: 'Daily Halacha Videos' },
+];
+
 const HeroSearchSection = () => {
   const navigate = useNavigate();
   const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
   const [displayText, setDisplayText] = useState('');
   const [isTyping, setIsTyping] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [currentSuggestionIndex, setCurrentSuggestionIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Rotate trending suggestions every 4 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSuggestionIndex((prev) => (prev + 1) % trendingSuggestions.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleSuggestionClick = () => {
+    const suggestion = trendingSuggestions[currentSuggestionIndex];
+    setSearchQuery(suggestion.value);
+    inputRef.current?.focus();
+  };
 
   useEffect(() => {
     const currentPhrase = typingPhrases[currentPhraseIndex];
@@ -161,39 +184,57 @@ const HeroSearchSection = () => {
           </div>
         </motion.form>
 
-        {/* Quick Links */}
+        {/* Trending Suggestion Card */}
         <motion.div
-          className="mt-8 flex flex-wrap justify-center gap-3"
+          className="mt-8 w-full max-w-xl mx-auto"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8 }}
         >
-          <span 
-            className="text-sm"
-            style={{ fontFamily: "'Quicksand', sans-serif", color: '#888888' }}
+          <motion.button
+            onClick={handleSuggestionClick}
+            className="w-full px-6 py-4 rounded-2xl flex items-center justify-center gap-3 transition-all cursor-pointer"
+            style={{ 
+              fontFamily: "'Quicksand', sans-serif",
+              backgroundColor: 'rgba(255, 255, 255, 0.9)',
+              border: '2px solid rgba(255, 0, 0, 0.15)',
+              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)'
+            }}
+            whileHover={{ 
+              scale: 1.02,
+              boxShadow: '0 6px 25px rgba(255, 0, 0, 0.15)',
+              borderColor: 'rgba(255, 0, 0, 0.3)'
+            }}
+            whileTap={{ scale: 0.98 }}
           >
-            Popular:
-          </span>
-          {['Music', 'Torah', 'Podcasts', 'Entertainment'].map((tag) => (
-            <motion.button
-              key={tag}
-              onClick={() => navigate(`/videos?category=${tag.toLowerCase()}`)}
-              className="text-sm px-4 py-1.5 rounded-full transition-all"
-              style={{ 
-                fontFamily: "'Quicksand', sans-serif",
-                backgroundColor: 'rgba(255, 0, 0, 0.1)',
-                color: '#1a1a1a',
-                border: '1px solid rgba(255, 0, 0, 0.2)'
-              }}
-              whileHover={{ 
-                backgroundColor: 'rgba(255, 0, 0, 0.2)',
-                scale: 1.05 
-              }}
-              whileTap={{ scale: 0.95 }}
-            >
-              {tag}
-            </motion.button>
-          ))}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentSuggestionIndex}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.4, ease: "easeOut" }}
+                className="flex items-center gap-3"
+              >
+                {React.createElement(trendingSuggestions[currentSuggestionIndex].icon, {
+                  className: "w-5 h-5",
+                  style: { color: 'hsl(0, 100%, 50%)' }
+                })}
+                <span style={{ color: '#888888', fontSize: '0.9rem' }}>
+                  {trendingSuggestions[currentSuggestionIndex].label}
+                </span>
+                <span style={{ color: '#1a1a1a', fontWeight: 600, fontSize: '0.95rem' }}>
+                  {trendingSuggestions[currentSuggestionIndex].value}
+                </span>
+              </motion.div>
+            </AnimatePresence>
+          </motion.button>
+          <p 
+            className="text-center mt-3 text-xs"
+            style={{ color: '#aaaaaa', fontFamily: "'Quicksand', sans-serif" }}
+          >
+            Click to search
+          </p>
         </motion.div>
       </motion.div>
 
