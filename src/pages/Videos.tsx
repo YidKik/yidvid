@@ -113,7 +113,11 @@ const MainContent = () => {
       {/* Desktop scroll to top button */}
       {!isMobile && (
         <motion.div 
-          className="fixed bottom-4 right-4 p-3 bg-card/80 backdrop-blur-sm rounded-full shadow-lg cursor-pointer"
+          className="fixed bottom-4 right-4 p-3 rounded-full cursor-pointer"
+          style={{
+            backgroundColor: 'transparent',
+            border: '2px solid hsl(50, 100%, 50%)'
+          }}
           initial={{ opacity: 0, scale: 0.5 }}
           animate={{ 
             opacity: hasScrolled ? 1 : 0,
@@ -122,6 +126,7 @@ const MainContent = () => {
           }}
           transition={{ duration: 0.3 }}
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          whileHover={{ scale: 1.1 }}
         >
           <motion.svg
             xmlns="http://www.w3.org/2000/svg"
@@ -129,12 +134,10 @@ const MainContent = () => {
             height="24"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
+            stroke="hsl(50, 100%, 50%)"
+            strokeWidth="2.5"
             strokeLinecap="round"
             strokeLinejoin="round"
-            whileHover={{ scale: 1.2 }}
-            className="text-primary"
           >
             <path d="m18 15-6-6-6 6"/>
           </motion.svg>
