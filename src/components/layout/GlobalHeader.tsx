@@ -27,14 +27,11 @@ export const GlobalHeader = () => {
   const lastScrollY = useRef(0);
   
   const isHomePage = location.pathname === "/";
-  
-  // Don't show header on homepage - it has its own hero section
-  if (isHomePage) {
-    return null;
-  }
 
   // Handle scroll to show/hide header
   useEffect(() => {
+    if (isHomePage) return; // Skip scroll handling on homepage
+    
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       const scrollingDown = currentScrollY > lastScrollY.current;
@@ -51,7 +48,7 @@ export const GlobalHeader = () => {
     
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [isHomePage]);
 
   // Close mobile menu on route change
   useEffect(() => {
@@ -67,6 +64,11 @@ export const GlobalHeader = () => {
     }
     return location.pathname === path;
   };
+
+  // Don't show header on homepage - it has its own hero section
+  if (isHomePage) {
+    return null;
+  }
 
   return (
     <>
