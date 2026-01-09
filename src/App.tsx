@@ -14,9 +14,6 @@ import Settings from './pages/Settings';
 import Dashboard from './pages/Dashboard';
 import { recordNavigation, setupScrollRestoration } from './utils/scrollRestoration';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
-import { GoogleChatStyleLoading } from './components/ui/loading/GoogleChatStyleLoading';
-import { useWelcomeAnimation } from './hooks/useWelcomeAnimation';
-import { SiteImprovementNotification } from './components/SiteImprovementNotification';
 
 // Admin Pages
 import AdminDashboard from './pages/admin/Dashboard';
@@ -36,14 +33,12 @@ import AdminSEO from './pages/AdminSEO';
 import { EmailPreferences } from './pages/EmailPreferences';
 import { Unsubscribe } from './pages/Unsubscribe';
 
-// Add the PagePreloader import
 import { PagePreloader } from './components/PagePreloader';
 import { TopLoadingBar } from './components/ui/TopLoadingBar';
 
 
 function App() {
   const location = useLocation();
-  const { showWelcome, markWelcomeAsShown, loadingProgress } = useWelcomeAnimation();
   
   // Initialize keyboard shortcuts
   useKeyboardShortcuts();
@@ -62,35 +57,6 @@ function App() {
     const currentPath = location.pathname + location.search;
     recordNavigation(currentPath);
   }, [location]);
-
-  const handleLoadingComplete = () => {
-    markWelcomeAsShown();
-  };
-
-  // Show loading animation as the first thing on any page visit
-  if (showWelcome === true) {
-    return (
-      <GoogleChatStyleLoading 
-        isVisible={true}
-        onComplete={handleLoadingComplete}
-      />
-    );
-  }
-
-  // Show loading while determining welcome state
-  if (showWelcome === null) {
-    return (
-      <div className="fixed inset-0 bg-background flex items-center justify-center">
-        <div className="flex flex-col items-center space-y-4">
-          <img 
-            src="/lovable-uploads/e425cacb-4c3a-4d81-b4e0-77fcbf10f61c.png" 
-            alt="YidVid Logo" 
-            className="w-20 h-20 object-contain drop-shadow-lg animate-pulse"
-          />
-        </div>
-      </div>
-    );
-  }
 
   return (
     <PlaybackProvider>
@@ -129,9 +95,6 @@ function App() {
         
         {/* Add the PagePreloader to prefetch the Videos page */}
         <PagePreloader />
-        
-        {/* Site-wide improvement notification */}
-        <SiteImprovementNotification />
       </ColorProvider>
     </PlaybackProvider>
   );
