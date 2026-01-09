@@ -1,7 +1,7 @@
 
 import { Link } from "react-router-dom";
-import { formatDistanceToNow } from "date-fns";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Eye, Clock, User } from "lucide-react";
 
 interface VideoCardInfoProps {
   title: string;
@@ -41,8 +41,10 @@ export const VideoCardInfo = ({
 
   return (
     <div className="mt-2">
+      {/* Title - Georgia serif for classic feel */}
       <h3 
-        className={`video-title text-sm font-medium line-clamp-2 ${textColor}`}
+        className={`text-sm font-medium line-clamp-2 ${textColor}`}
+        style={{ fontFamily: "'Georgia', 'Times New Roman', serif" }}
         title={title}
       >
         {title}
@@ -60,31 +62,43 @@ export const VideoCardInfo = ({
           />
         )}
         
-        <div className="flex flex-col">
+        <div className="flex flex-col gap-0.5">
           {!hideChannelName && (
             <>
               {channelId ? (
                 <Link 
                   to={`/channel/${channelId}`}
-                  className={`video-channel-name text-xs hover:text-black ${isMobile ? 'font-medium truncate' : 'text-gray-500'} line-clamp-1`}
+                  className={`text-xs hover:text-primary flex items-center gap-1 ${isMobile ? 'font-medium truncate' : 'text-muted-foreground'} line-clamp-1`}
+                  style={{ fontFamily: "'Verdana', 'Trebuchet MS', sans-serif" }}
                   onClick={(e) => {
                     e.stopPropagation();
                   }}
                 >
+                  <User size={10} className="text-muted-foreground/70 flex-shrink-0" />
                   {channelName}
                 </Link>
               ) : (
-                <span className={`video-channel-name text-xs ${isMobile ? 'font-medium truncate' : 'text-gray-500'} line-clamp-1`}>
+                <span 
+                  className={`text-xs flex items-center gap-1 ${isMobile ? 'font-medium truncate' : 'text-muted-foreground'} line-clamp-1`}
+                  style={{ fontFamily: "'Verdana', 'Trebuchet MS', sans-serif" }}
+                >
+                  <User size={10} className="text-muted-foreground/70 flex-shrink-0" />
                   {channelName}
                 </span>
               )}
             </>
           )}
           
-          <div className="video-meta-text text-xs flex items-center">
-            <span className={`${isMobile ? 'text-gray-600' : 'text-gray-500'}`}>{formattedViews} views</span>
-            <span className={`mx-1 ${isMobile ? 'text-gray-600' : 'text-gray-500'}`}>•</span>
-            <span className={`${isMobile ? 'text-gray-600' : 'text-gray-500'}`}>{formattedDate}</span>
+          {/* Views and Date - Tahoma for friendly readability */}
+          <div 
+            className="text-[11px] flex items-center text-muted-foreground"
+            style={{ fontFamily: "'Tahoma', 'Arial', sans-serif" }}
+          >
+            <Eye size={10} className="mr-0.5 text-muted-foreground/60" />
+            <span>{formattedViews}</span>
+            <span className="mx-1.5">•</span>
+            <Clock size={10} className="mr-0.5 text-muted-foreground/60" />
+            <span>{formattedDate}</span>
           </div>
         </div>
       </div>
