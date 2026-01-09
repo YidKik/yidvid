@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, ArrowRight, TrendingUp, Clock, Eye } from 'lucide-react';
+import { Search, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const typingPhrases = [
@@ -12,12 +12,14 @@ const typingPhrases = [
   "Listen to the latest podcasts...",
 ];
 
-const trendingSuggestions = [
-  { type: 'trending', icon: TrendingUp, label: 'Trending:', value: 'Benny Friedman Music' },
-  { type: 'recent', icon: Clock, label: 'Recently Added:', value: 'Torah Anytime Lectures' },
-  { type: 'popular', icon: Eye, label: 'Most Viewed:', value: 'Shmuel Kunda Stories' },
-  { type: 'trending', icon: TrendingUp, label: 'Popular Now:', value: 'Avraham Fried Classics' },
-  { type: 'recent', icon: Clock, label: 'New Today:', value: 'Daily Halacha Videos' },
+const searchSuggestions = [
+  "Benny Friedman Music",
+  "Torah Anytime Lectures",
+  "Shmuel Kunda Stories",
+  "Avraham Fried Classics",
+  "Daily Halacha Videos",
+  "Jewish Podcasts",
+  "Kids Entertainment",
 ];
 
 const HeroSearchSection = () => {
@@ -29,19 +31,15 @@ const HeroSearchSection = () => {
   const [currentSuggestionIndex, setCurrentSuggestionIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Rotate trending suggestions every 4 seconds
+  // Rotate search suggestions every 3 seconds
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentSuggestionIndex((prev) => (prev + 1) % trendingSuggestions.length);
-    }, 4000);
+      setCurrentSuggestionIndex((prev) => (prev + 1) % searchSuggestions.length);
+    }, 3000);
     return () => clearInterval(interval);
   }, []);
 
-  const handleSuggestionClick = () => {
-    const suggestion = trendingSuggestions[currentSuggestionIndex];
-    setSearchQuery(suggestion.value);
-    inputRef.current?.focus();
-  };
+  const currentPlaceholder = searchSuggestions[currentSuggestionIndex];
 
   useEffect(() => {
     const currentPhrase = typingPhrases[currentPhraseIndex];
@@ -151,22 +149,44 @@ const HeroSearchSection = () => {
             }}
           >
             <Search 
-              className="absolute left-5 w-6 h-6"
+              className="absolute left-5 w-6 h-6 z-10"
               style={{ color: '#999999' }}
             />
-            <input
-              ref={inputRef}
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder="Search videos, channels, music..."
-              className="w-full py-5 pl-14 pr-36 text-lg outline-none bg-transparent"
-              style={{ 
-                fontFamily: "'Quicksand', sans-serif",
-                color: '#1a1a1a'
-              }}
-            />
+            <div className="relative w-full">
+              <input
+                ref={inputRef}
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={handleKeyDown}
+                className="w-full py-5 pl-14 pr-36 text-lg outline-none bg-transparent relative z-10"
+                style={{ 
+                  fontFamily: "'Quicksand', sans-serif",
+                  color: '#1a1a1a'
+                }}
+              />
+              {/* Animated placeholder */}
+              {!searchQuery && (
+                <div className="absolute inset-0 flex items-center pl-14 pointer-events-none">
+                  <AnimatePresence mode="wait">
+                    <motion.span
+                      key={currentSuggestionIndex}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.3, ease: "easeOut" }}
+                      style={{ 
+                        fontFamily: "'Quicksand', sans-serif",
+                        color: '#999999',
+                        fontSize: '1.125rem'
+                      }}
+                    >
+                      {currentPlaceholder}
+                    </motion.span>
+                  </AnimatePresence>
+                </div>
+              )}
+            </div>
             <motion.button
               type="submit"
               className="absolute right-2 flex items-center gap-2 px-6 py-3 rounded-full font-bold transition-colors"
@@ -184,58 +204,6 @@ const HeroSearchSection = () => {
           </div>
         </motion.form>
 
-        {/* Trending Suggestion Card */}
-        <motion.div
-          className="mt-8 w-full max-w-xl mx-auto"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.8 }}
-        >
-          <motion.button
-            onClick={handleSuggestionClick}
-            className="w-full px-6 py-4 rounded-2xl flex items-center justify-center gap-3 transition-all cursor-pointer"
-            style={{ 
-              fontFamily: "'Quicksand', sans-serif",
-              backgroundColor: 'rgba(255, 255, 255, 0.9)',
-              border: '2px solid rgba(255, 0, 0, 0.15)',
-              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)'
-            }}
-            whileHover={{ 
-              scale: 1.02,
-              boxShadow: '0 6px 25px rgba(255, 0, 0, 0.15)',
-              borderColor: 'rgba(255, 0, 0, 0.3)'
-            }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={currentSuggestionIndex}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.4, ease: "easeOut" }}
-                className="flex items-center gap-3"
-              >
-                {React.createElement(trendingSuggestions[currentSuggestionIndex].icon, {
-                  className: "w-5 h-5",
-                  style: { color: 'hsl(0, 100%, 50%)' }
-                })}
-                <span style={{ color: '#888888', fontSize: '0.9rem' }}>
-                  {trendingSuggestions[currentSuggestionIndex].label}
-                </span>
-                <span style={{ color: '#1a1a1a', fontWeight: 600, fontSize: '0.95rem' }}>
-                  {trendingSuggestions[currentSuggestionIndex].value}
-                </span>
-              </motion.div>
-            </AnimatePresence>
-          </motion.button>
-          <p 
-            className="text-center mt-3 text-xs"
-            style={{ color: '#aaaaaa', fontFamily: "'Quicksand', sans-serif" }}
-          >
-            Click to search
-          </p>
-        </motion.div>
       </motion.div>
 
       {/* Scroll indicator */}
