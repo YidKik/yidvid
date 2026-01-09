@@ -162,7 +162,7 @@ const HeroSearchSection = () => {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={handleKeyDown}
                 onClick={handleInputClick}
-                className="w-full py-5 pl-14 pr-36 text-lg outline-none bg-transparent relative z-10 cursor-text"
+                className="w-full py-5 pl-14 pr-36 text-lg outline-none bg-transparent cursor-text"
                 style={{ 
                   fontFamily: "'Quicksand', sans-serif",
                   color: '#1a1a1a'
@@ -170,7 +170,7 @@ const HeroSearchSection = () => {
               />
               {/* Animated placeholder */}
               {!searchQuery && !isLoading && suggestions.length > 0 && (
-                <div className="absolute inset-0 flex items-center pl-14 pointer-events-none">
+                <div className="absolute inset-0 flex items-center pl-14 pr-36 pointer-events-none">
                   <AnimatePresence mode="wait">
                     <motion.span
                       key={currentSuggestionIndex}
