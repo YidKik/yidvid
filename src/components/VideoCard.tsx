@@ -82,7 +82,9 @@ export const VideoCard = ({
       <VideoCardThumbnail 
         thumbnail={thumbnail} 
         title={title} 
-        isSample={isSample} 
+        isSample={isSample}
+        views={viewsNumber}
+        formattedDate={formattedDate}
       />
       
       {!hideInfo && (
