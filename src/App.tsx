@@ -38,6 +38,7 @@ import { Unsubscribe } from './pages/Unsubscribe';
 
 // Add the PagePreloader import
 import { PagePreloader } from './components/PagePreloader';
+import { TopLoadingBar } from './components/ui/TopLoadingBar';
 
 
 function App() {
@@ -94,6 +95,7 @@ function App() {
   return (
     <PlaybackProvider>
       <ColorProvider>
+        <TopLoadingBar />
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/videos" element={<Videos />} />
