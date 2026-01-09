@@ -1,7 +1,7 @@
 
 import { Link } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Eye, Clock, User } from "lucide-react";
+import { User } from "lucide-react";
 
 interface VideoCardInfoProps {
   title: string;
@@ -25,26 +25,13 @@ export const VideoCardInfo = ({
   hideChannelName = false
 }: VideoCardInfoProps) => {
   const { isMobile, isTablet } = useIsMobile();
-  
-  // Format view count with appropriate suffix (K, M)
-  const formatViewCount = (count: number): string => {
-    if (count >= 1000000) {
-      return `${(count / 1000000).toFixed(1)}M`;
-    } else if (count >= 1000) {
-      return `${(count / 1000).toFixed(1)}K`;
-    } else {
-      return count.toString();
-    }
-  };
-
-  const formattedViews = formatViewCount(views);
 
   return (
     <div className="mt-2">
-      {/* Title - Rounded, friendly font */}
+      {/* Title - Bold, friendly, strong font */}
       <h3 
-        className={`text-sm font-semibold line-clamp-2 text-gray-900`}
-        style={{ fontFamily: "'Comic Sans MS', 'Chalkboard', 'Marker Felt', cursive", letterSpacing: '0.01em' }}
+        className="text-sm font-bold line-clamp-2 text-gray-900"
+        style={{ fontFamily: "'Arial Black', 'Helvetica Bold', sans-serif", letterSpacing: '-0.01em' }}
         title={title}
       >
         {title}
@@ -68,7 +55,7 @@ export const VideoCardInfo = ({
               {channelId ? (
                 <Link 
                   to={`/channel/${channelId}`}
-                  className={`text-xs hover:text-primary flex items-center gap-1 text-gray-700 line-clamp-1`}
+                  className="text-xs flex items-center gap-1 text-gray-600 hover:text-red-500 transition-colors line-clamp-1"
                   style={{ fontFamily: "'Verdana', 'Trebuchet MS', sans-serif" }}
                   onClick={(e) => {
                     e.stopPropagation();
@@ -79,7 +66,7 @@ export const VideoCardInfo = ({
                 </Link>
               ) : (
                 <span 
-                  className={`text-xs flex items-center gap-1 text-gray-700 line-clamp-1`}
+                  className="text-xs flex items-center gap-1 text-gray-600 line-clamp-1"
                   style={{ fontFamily: "'Verdana', 'Trebuchet MS', sans-serif" }}
                 >
                   <User size={10} className="text-gray-500 flex-shrink-0" />
@@ -88,18 +75,6 @@ export const VideoCardInfo = ({
               )}
             </>
           )}
-          
-          {/* Views and Date - Tahoma for friendly readability */}
-          <div 
-            className="text-[11px] flex items-center text-gray-600"
-            style={{ fontFamily: "'Tahoma', 'Arial', sans-serif" }}
-          >
-            <Eye size={10} className="mr-0.5 text-gray-500" />
-            <span>{formattedViews}</span>
-            <span className="mx-1.5">•</span>
-            <Clock size={10} className="mr-0.5 text-gray-500" />
-            <span>{formattedDate}</span>
-          </div>
         </div>
       </div>
     </div>
