@@ -3,6 +3,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Play, Users, RefreshCw, Shield, Sparkles, ArrowRight, Music, BookOpen, Mic, Gamepad2, Film, Grid3X3 } from 'lucide-react';
+import HeroSearchSection from '@/components/home/HeroSearchSection';
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -60,91 +61,8 @@ const LandingPage = () => {
 
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
-      {/* Hero Section */}
-      <section className="relative min-h-[90vh] flex flex-col items-center justify-center px-6 py-16">
-        {/* Background decoration */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-primary/5 rounded-full blur-3xl" />
-          <div className="absolute bottom-20 right-10 w-96 h-96 bg-highlight/5 rounded-full blur-3xl" />
-        </div>
-
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6 }}
-          className="relative z-10 text-center max-w-4xl mx-auto"
-        >
-          {/* Logo */}
-          <motion.img
-            src="/lovable-uploads/e425cacb-4c3a-4d81-b4e0-77fcbf10f61c.png"
-            alt="YidVid Logo"
-            className="w-24 h-24 mx-auto mb-8 drop-shadow-lg"
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ type: "spring", stiffness: 200, delay: 0.2 }}
-          />
-
-          {/* Main Heading */}
-          <motion.h1
-            className="text-5xl md:text-7xl font-bold mb-6"
-            style={{ fontFamily: "'Quicksand', sans-serif", color: '#1a1a1a' }}
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-          >
-            Welcome to{' '}
-            <span style={{ color: 'hsl(0, 100%, 50%)' }}>YidVid</span>
-          </motion.h1>
-
-          {/* Subtitle */}
-          <motion.p
-            className="text-xl md:text-2xl mb-12 max-w-2xl mx-auto"
-            style={{ fontFamily: "'Quicksand', sans-serif", color: '#666666' }}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-          >
-            Your trusted destination for quality Jewish content.
-            <br />
-            <span style={{ color: '#1a1a1a', fontWeight: 500 }}>Safe, curated, and always up to date.</span>
-          </motion.p>
-
-          {/* Main CTA Button */}
-          <motion.button
-            onClick={() => navigate('/videos')}
-            className="group inline-flex items-center gap-3 px-10 py-5 text-xl font-bold rounded-full shadow-lg"
-            style={{ 
-              fontFamily: "'Quicksand', sans-serif",
-              backgroundColor: 'hsl(0, 100%, 50%)',
-              color: 'white'
-            }}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.5 }}
-            whileHover={{ scale: 1.05, backgroundColor: 'hsl(50, 100%, 50%)', color: 'black' }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <Play className="w-6 h-6" strokeWidth={2.5} />
-            Start Watching
-            <ArrowRight className="w-5 h-5" />
-          </motion.button>
-        </motion.div>
-
-        {/* Scroll indicator */}
-        <motion.div
-          className="absolute bottom-8 left-1/2 -translate-x-1/2"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1, y: [0, 10, 0] }}
-          transition={{ 
-            opacity: { delay: 1 },
-            y: { repeat: Infinity, duration: 1.5 }
-          }}
-        >
-          <div className="w-6 h-10 border-2 border-muted-foreground/30 rounded-full flex justify-center pt-2">
-            <div className="w-1.5 h-3 bg-primary rounded-full" />
-          </div>
-        </motion.div>
-      </section>
+      {/* Hero Search Section with Typing Effect */}
+      <HeroSearchSection />
 
       {/* Features Section */}
       <section className="py-20 px-6 bg-primary/5">
