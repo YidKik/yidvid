@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, ArrowRight } from 'lucide-react';
+import { Search, ArrowRight, Play } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useSearchSuggestions } from '@/hooks/useSearchSuggestions';
 
@@ -206,6 +206,35 @@ const HeroSearchSection = () => {
             </motion.button>
           </div>
         </motion.form>
+
+        {/* Quick access to videos */}
+        <motion.div
+          className="mt-6"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.9 }}
+        >
+          <motion.button
+            onClick={() => navigate('/videos')}
+            className="group flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300"
+            style={{ 
+              fontFamily: "'Quicksand', sans-serif",
+              backgroundColor: 'rgba(0, 0, 0, 0.04)',
+              color: '#555555',
+              border: '1px solid rgba(0, 0, 0, 0.08)'
+            }}
+            whileHover={{ 
+              backgroundColor: 'rgba(255, 0, 0, 0.08)',
+              borderColor: 'rgba(255, 0, 0, 0.2)',
+              color: 'hsl(0, 100%, 45%)'
+            }}
+            whileTap={{ scale: 0.97 }}
+          >
+            <Play className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
+            <span>or browse all videos</span>
+            <ArrowRight className="w-3 h-3 opacity-0 -ml-1 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300" />
+          </motion.button>
+        </motion.div>
 
       </motion.div>
 
