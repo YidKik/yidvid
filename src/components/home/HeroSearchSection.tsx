@@ -207,56 +207,53 @@ const HeroSearchSection = () => {
           </div>
         </motion.form>
 
-        {/* Quick access to videos */}
-        <motion.div
-          className="mt-6"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.9 }}
-        >
-          <motion.button
-            onClick={() => navigate('/videos')}
-            className="group flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300"
-            style={{ 
-              fontFamily: "'Quicksand', sans-serif",
-              backgroundColor: 'rgba(0, 0, 0, 0.04)',
-              color: '#555555',
-              border: '1px solid rgba(0, 0, 0, 0.08)'
-            }}
-            whileHover={{ 
-              backgroundColor: 'rgba(255, 0, 0, 0.08)',
-              borderColor: 'rgba(255, 0, 0, 0.2)',
-              color: 'hsl(0, 100%, 45%)'
-            }}
-            whileTap={{ scale: 0.97 }}
-          >
-            <Play className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
-            <span>or browse all videos</span>
-            <ArrowRight className="w-3 h-3 opacity-0 -ml-1 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300" />
-          </motion.button>
-        </motion.div>
-
       </motion.div>
 
-      {/* Scroll indicator */}
+      {/* Browse videos button - centered at bottom */}
       <motion.div
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1, y: [0, 10, 0] }}
-        transition={{ 
-          opacity: { delay: 1.2 },
-          y: { repeat: Infinity, duration: 1.5 }
-        }}
+        className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1, duration: 0.5 }}
       >
-        <div 
-          className="w-6 h-10 rounded-full flex justify-center pt-2"
-          style={{ border: '2px solid rgba(0, 0, 0, 0.2)' }}
+        <motion.button
+          onClick={() => navigate('/videos')}
+          className="group flex items-center gap-3 px-8 py-4 rounded-full font-semibold transition-all duration-300"
+          style={{ 
+            fontFamily: "'Quicksand', sans-serif",
+            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+            color: '#333333',
+            border: '1px solid rgba(0, 0, 0, 0.1)',
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)'
+          }}
+          whileHover={{ 
+            backgroundColor: 'rgba(255, 255, 255, 1)',
+            boxShadow: '0 8px 30px rgba(0, 0, 0, 0.12)',
+            scale: 1.02
+          }}
+          whileTap={{ scale: 0.98 }}
+        >
+          <Play className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" style={{ color: 'hsl(0, 100%, 50%)' }} />
+          <span>Browse All Videos</span>
+          <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" style={{ color: 'hsl(0, 100%, 50%)' }} />
+        </motion.button>
+        
+        {/* Subtle scroll hint */}
+        <motion.div
+          animate={{ y: [0, 5, 0] }}
+          transition={{ repeat: Infinity, duration: 1.5 }}
+          className="opacity-40"
         >
           <div 
-            className="w-1.5 h-3 rounded-full"
-            style={{ backgroundColor: 'hsl(0, 100%, 50%)' }}
-          />
-        </div>
+            className="w-5 h-8 rounded-full flex justify-center pt-1.5"
+            style={{ border: '1.5px solid rgba(0, 0, 0, 0.3)' }}
+          >
+            <div 
+              className="w-1 h-2 rounded-full"
+              style={{ backgroundColor: 'rgba(0, 0, 0, 0.4)' }}
+            />
+          </div>
+        </motion.div>
       </motion.div>
     </section>
   );
