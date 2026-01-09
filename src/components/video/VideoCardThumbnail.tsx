@@ -58,8 +58,8 @@ export const VideoCardThumbnail = ({
       className={cn(
         "relative overflow-hidden aspect-video w-full group video-card-thumbnail",
         "rounded-xl transition-all duration-300",
-        "border border-gray-200 hover:border-blue-400 hover:shadow-md",
-        "bg-gradient-to-br from-blue-50 to-gray-50"
+        "border-2 border-gray-200 hover:border-highlight",
+        "bg-gray-50"
       )}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
