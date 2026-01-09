@@ -73,14 +73,17 @@ export const GlobalHeader = () => {
       <motion.header
         initial={{ y: 0, opacity: 1 }}
         animate={{ 
-          y: isVisible ? 0 : -100, 
+          y: isVisible ? 0 : -70, 
           opacity: isVisible ? 1 : 0 
         }}
         transition={{ 
-          duration: 0.3, 
-          ease: [0.4, 0, 0.2, 1]
+          duration: 0.5, 
+          ease: [0.25, 0.1, 0.25, 1]
         }}
-        className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100"
+        className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md"
+        style={{ 
+          boxShadow: '0 2px 12px rgba(0, 0, 0, 0.04)'
+        }}
       >
         <div className="w-full px-4 md:px-8">
           <div className="flex items-center justify-between h-14">
@@ -131,12 +134,13 @@ export const GlobalHeader = () => {
                       to={link.path}
                       className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 ${
                         isActive(link.path)
-                          ? 'text-white'
-                          : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                          ? 'border'
+                          : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50 border border-transparent'
                       }`}
                       style={{ 
                         fontFamily: "'Quicksand', sans-serif",
-                        backgroundColor: isActive(link.path) ? 'hsl(0, 70%, 55%)' : undefined
+                        borderColor: isActive(link.path) ? 'hsl(0, 70%, 55%)' : undefined,
+                        color: isActive(link.path) ? 'hsl(0, 70%, 50%)' : undefined
                       }}
                     >
                       {link.name}
@@ -215,7 +219,8 @@ export const GlobalHeader = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
-              className="fixed top-14 left-0 right-0 z-50 bg-white shadow-lg border-b border-gray-100"
+              className="fixed top-14 left-0 right-0 z-50 bg-white shadow-lg"
+              style={{ boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)' }}
             >
               <nav className="px-4 py-3 space-y-1">
                 {navLinks.map((link) => (
@@ -223,14 +228,15 @@ export const GlobalHeader = () => {
                     key={link.path}
                     to={link.path}
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className={`block px-4 py-3 rounded-xl text-base font-medium transition-all ${
+                    className={`block px-4 py-3 rounded-xl text-base font-medium transition-all border ${
                       isActive(link.path)
-                        ? 'text-white'
-                        : 'text-gray-600 hover:bg-gray-50'
+                        ? 'border-current'
+                        : 'text-gray-600 hover:bg-gray-50 border-transparent'
                     }`}
                     style={{ 
                       fontFamily: "'Quicksand', sans-serif",
-                      backgroundColor: isActive(link.path) ? 'hsl(0, 70%, 55%)' : undefined
+                      borderColor: isActive(link.path) ? 'hsl(0, 70%, 55%)' : undefined,
+                      color: isActive(link.path) ? 'hsl(0, 70%, 50%)' : undefined
                     }}
                   >
                     {link.name}
