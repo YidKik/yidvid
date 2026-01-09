@@ -176,35 +176,49 @@ const LandingPage = () => {
           {/* Category Buttons */}
           <motion.div
             variants={itemVariants}
-            className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12"
+            className="grid grid-cols-2 md:grid-cols-4 gap-5 mb-12"
           >
             {categories.map((category) => (
               <motion.button
                 key={category.label}
                 onClick={() => navigate(category.path)}
-                className="group flex flex-col items-center gap-3 px-6 py-6 rounded-2xl font-semibold transition-all duration-300 border-2"
+                className="group relative flex flex-col items-center gap-3 px-6 py-8 rounded-2xl font-semibold transition-all duration-500 overflow-hidden"
                 style={{ 
                   fontFamily: "'Quicksand', sans-serif",
-                  backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                  borderColor: 'hsl(0, 100%, 50%)',
+                  background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 245, 245, 0.9) 100%)',
+                  border: '1px solid rgba(0, 0, 0, 0.08)',
                   color: '#1a1a1a',
-                  boxShadow: '0 4px 15px rgba(255, 0, 0, 0.1)'
+                  boxShadow: '0 4px 20px rgba(0, 0, 0, 0.06)'
                 }}
                 whileHover={{ 
-                  scale: 1.03, 
-                  backgroundColor: 'hsl(0, 100%, 50%)',
-                  color: 'white',
-                  boxShadow: '0 8px 25px rgba(255, 0, 0, 0.25)'
+                  scale: 1.02,
+                  boxShadow: '0 12px 35px rgba(0, 0, 0, 0.12)'
                 }}
-                whileTap={{ scale: 0.97 }}
+                whileTap={{ scale: 0.98 }}
               >
-                <category.icon className="w-8 h-8 group-hover:text-white transition-colors" style={{ color: 'hsl(0, 100%, 50%)' }} />
-                <span className="text-lg">{category.label}</span>
-                <span 
-                  className="text-xs opacity-70 group-hover:opacity-100 flex items-center gap-1"
-                  style={{ color: 'inherit' }}
+                {/* Gradient overlay on hover */}
+                <div 
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(255, 0, 0, 0.08) 0%, rgba(255, 200, 0, 0.06) 100%)'
+                  }}
+                />
+                
+                {/* Icon container with subtle background */}
+                <div 
+                  className="relative z-10 w-14 h-14 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:scale-110"
+                  style={{ backgroundColor: 'rgba(255, 0, 0, 0.08)' }}
                 >
-                  Watch Now <ArrowRight className="w-3 h-3" />
+                  <category.icon className="w-7 h-7 transition-colors duration-300" style={{ color: 'hsl(0, 100%, 50%)' }} />
+                </div>
+                
+                <span className="relative z-10 text-lg">{category.label}</span>
+                
+                <span 
+                  className="relative z-10 text-xs flex items-center gap-1 transition-all duration-300 group-hover:gap-2"
+                  style={{ color: 'hsl(0, 100%, 50%)' }}
+                >
+                  Watch Now <ArrowRight className="w-3 h-3 transition-transform duration-300 group-hover:translate-x-1" />
                 </span>
               </motion.button>
             ))}
