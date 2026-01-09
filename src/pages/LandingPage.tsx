@@ -2,7 +2,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Play, Users, RefreshCw, Shield, Heart, ArrowRight, Music, BookOpen, Mic, Gamepad2, Film, Grid3X3 } from 'lucide-react';
+import { Play, Users, RefreshCw, Shield, Heart, ArrowRight, Music, BookOpen, Mic, Gamepad2, Film, Grid3X3, GraduationCap, Laugh, Megaphone } from 'lucide-react';
 import HeroSearchSection from '@/components/home/HeroSearchSection';
 
 const LandingPage = () => {
@@ -53,6 +53,9 @@ const LandingPage = () => {
     { icon: Mic, label: "Podcasts", path: "/videos?category=podcast" },
     { icon: Gamepad2, label: "Entertainment", path: "/videos?category=entertainment" },
     { icon: Film, label: "Inspiration", path: "/videos?category=inspiration" },
+    { icon: GraduationCap, label: "Education", path: "/videos?category=education" },
+    { icon: Laugh, label: "Funny", path: "/videos?category=custom&name=Funny" },
+    { icon: Megaphone, label: "Advertisement", path: "/videos?category=custom&name=Advertisement" },
   ];
 
   const containerVariants = {
@@ -157,10 +160,10 @@ const LandingPage = () => {
         >
           <motion.h2
             variants={itemVariants}
-            className="text-3xl md:text-4xl font-bold text-center mb-4"
-            style={{ fontFamily: "'Quicksand', sans-serif", color: '#1a1a1a' }}
+            className="text-4xl md:text-5xl font-bold text-center mb-4"
+            style={{ fontFamily: "'Nunito', 'Poppins', sans-serif", color: '#1a1a1a' }}
           >
-            Find What You Love
+            Find What You <span style={{ color: 'hsl(0, 100%, 50%)' }}>Love</span>
           </motion.h2>
           <motion.p
             variants={itemVariants}
@@ -173,24 +176,36 @@ const LandingPage = () => {
           {/* Category Buttons */}
           <motion.div
             variants={itemVariants}
-            className="flex flex-wrap justify-center gap-4 mb-12"
+            className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12"
           >
             {categories.map((category) => (
               <motion.button
                 key={category.label}
                 onClick={() => navigate(category.path)}
-                className="group flex items-center gap-2 px-6 py-3 rounded-full font-medium transition-all duration-300"
+                className="group flex flex-col items-center gap-3 px-6 py-6 rounded-2xl font-semibold transition-all duration-300 border-2"
                 style={{ 
                   fontFamily: "'Quicksand', sans-serif",
-                  backgroundColor: 'rgba(255, 0, 0, 0.1)',
-                  border: '2px solid rgba(255, 0, 0, 0.3)',
-                  color: '#1a1a1a'
+                  backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                  borderColor: 'hsl(0, 100%, 50%)',
+                  color: '#1a1a1a',
+                  boxShadow: '0 4px 15px rgba(255, 0, 0, 0.1)'
                 }}
-                whileHover={{ scale: 1.05, backgroundColor: 'rgba(255, 204, 0, 0.2)', borderColor: 'hsl(50, 100%, 50%)' }}
-                whileTap={{ scale: 0.98 }}
+                whileHover={{ 
+                  scale: 1.03, 
+                  backgroundColor: 'hsl(0, 100%, 50%)',
+                  color: 'white',
+                  boxShadow: '0 8px 25px rgba(255, 0, 0, 0.25)'
+                }}
+                whileTap={{ scale: 0.97 }}
               >
-                <category.icon className="w-5 h-5" style={{ color: 'hsl(0, 100%, 50%)' }} />
-                {category.label}
+                <category.icon className="w-8 h-8 group-hover:text-white transition-colors" style={{ color: 'hsl(0, 100%, 50%)' }} />
+                <span className="text-lg">{category.label}</span>
+                <span 
+                  className="text-xs opacity-70 group-hover:opacity-100 flex items-center gap-1"
+                  style={{ color: 'inherit' }}
+                >
+                  Watch Now <ArrowRight className="w-3 h-3" />
+                </span>
               </motion.button>
             ))}
           </motion.div>
