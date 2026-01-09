@@ -17,7 +17,6 @@ export const FilteredChannelsGrid = ({
 }: FilteredChannelsGridProps) => {
   const { isMobile, isTablet } = useIsMobile();
 
-  // Show loading animation if loading
   if (isLoading) {
     return (
       <div className="flex items-center justify-center my-8">
@@ -30,16 +29,15 @@ export const FilteredChannelsGrid = ({
     );
   }
 
-  // Determine column count based on screen size - ENFORCED TABLET LOGIC
   const getGridColumns = () => {
     if (isMobile) return 'grid-cols-2';
-    if (isTablet) return 'grid-cols-3'; // ENFORCED: Tablet shows exactly 3 columns
-    return 'grid-cols-5'; // Default for desktop
+    if (isTablet) return 'grid-cols-3';
+    return 'grid-cols-5';
   };
 
   return (
     <div className="w-full">
-      <div className={`grid ${getGridColumns()} gap-4 mt-4 pb-8 tablet-channels-grid`}>
+      <div className={`grid ${getGridColumns()} gap-4 md:gap-6 mt-6 pb-8`}>
         {channels.map((channel, index) => (
           <ChannelCard 
             key={channel.id?.toString() || `channel-${index}`}
