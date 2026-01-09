@@ -2,21 +2,20 @@
 import { Header } from "@/components/Header";
 import Auth from "@/pages/Auth";
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { ContentToggle } from "@/components/content/ContentToggle";
+import { motion, AnimatePresence } from "framer-motion";
 import { VideoContent } from "@/components/content/VideoContent";
 import { useVideos } from "@/hooks/video/useVideos";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useSessionManager } from "@/hooks/useSessionManager";
 import { Helmet } from "react-helmet";
-import { useSearchParams } from "react-router-dom";
 import { SiteMaintenancePopup } from "@/components/SiteMaintenancePopup";
 import { FloatingSearchButton } from "@/components/mobile/FloatingSearchButton";
+import { ChevronUp, Sparkles } from "lucide-react";
 
 const MainContent = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
-  const [visibleVideos, setVisibleVideos] = useState(12); // Start with 12 videos (3 rows of 4)
+  const [visibleVideos, setVisibleVideos] = useState(12);
   
   const { 
     data: videos, 
@@ -30,7 +29,6 @@ const MainContent = () => {
   
   const { isMobile } = useIsMobile();
   const { session } = useSessionManager();
-  const [searchParams] = useSearchParams();
   const [hasScrolled, setHasScrolled] = useState(false);
 
   // Filter and sort videos based on selected category
@@ -38,13 +36,10 @@ const MainContent = () => {
     if (selectedCategory === "all") return true;
     return video.category === selectedCategory;
   }).sort((a, b) => {
-    // Sort by uploaded date (latest first)
     return new Date(b.uploaded_at).getTime() - new Date(a.uploaded_at).getTime();
   }) || [];
 
-  // Pass all filtered videos to let internal pagination handle display
   const displayVideos = filteredVideos;
-  const hasMoreVideos = false; // Remove "Load More" since we'll use pagination arrows
 
   // Reset pagination when category changes
   useEffect(() => {
@@ -54,32 +49,61 @@ const MainContent = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      setHasScrolled(window.scrollY > 50);
+      setHasScrolled(window.scrollY > 100);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
-    <div className="flex-1 videos-page">
+    <div className="flex-1 videos-page videos-page-container min-h-screen">
       <Header 
         selectedCategory={selectedCategory}
         onCategoryChange={setSelectedCategory}
       />
+      
       <motion.main 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1, duration: 0.5 }}
-        className="mt-4 mx-auto px-2 md:px-6 max-w-[1400px] w-full"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.4 }}
+        className="w-full"
       >
-        <div className="space-y-2 md:space-y-4">
+        {/* Hero Section with Welcome Message */}
+        <motion.div 
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1, duration: 0.5 }}
+          className="w-full bg-gradient-to-r from-white via-rose-50/50 to-white border-b border-gray-100"
+        >
+          <div className="max-w-[1400px] mx-auto px-4 md:px-6 py-4 md:py-6">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-xl bg-gradient-to-br from-primary/10 to-primary/5">
+                <Sparkles className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <h1 className="text-lg md:text-xl font-semibold text-gray-900">
+                  {selectedCategory === "all" ? "Discover Videos" : `${selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)} Videos`}
+                </h1>
+                <p className="text-sm text-gray-500 hidden md:block">
+                  Explore our curated collection of kosher content
+                </p>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Main Content Area */}
+        <div className="max-w-[1400px] mx-auto px-3 md:px-6 py-6 md:py-8">
           <motion.div
             key={selectedCategory}
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.3 }}
-            className={isMobile ? 'mt-2' : 'mt-4'}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
           >
             <VideoContent 
               videos={displayVideos} 
@@ -89,57 +113,26 @@ const MainContent = () => {
               lastSuccessfulFetch={lastSuccessfulFetch}
               fetchAttempts={fetchAttempts}
             />
-            
-            {/* Load More Button */}
-            {hasMoreVideos && !isLoading && (
-              <motion.div 
-                className="flex justify-center mt-8"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.3 }}
-              >
-                <button
-                  onClick={() => setVisibleVideos(prev => prev + 12)}
-                  className="px-8 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
-                >
-                  Load More Videos
-                </button>
-              </motion.div>
-            )}
           </motion.div>
         </div>
       </motion.main>
 
-      {/* Desktop scroll to top button */}
-      {!isMobile && (
-        <motion.div 
-          className="fixed bottom-4 right-4 p-3 bg-card/80 backdrop-blur-sm rounded-full shadow-lg cursor-pointer"
-          initial={{ opacity: 0, scale: 0.5 }}
-          animate={{ 
-            opacity: hasScrolled ? 1 : 0,
-            scale: hasScrolled ? 1 : 0.5,
-            y: hasScrolled ? 0 : 20
-          }}
-          transition={{ duration: 0.3 }}
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        >
-          <motion.svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            whileHover={{ scale: 1.2 }}
-            className="text-primary"
+      {/* Modern Scroll to Top Button */}
+      <AnimatePresence>
+        {hasScrolled && !isMobile && (
+          <motion.button
+            initial={{ opacity: 0, scale: 0.8, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.8, y: 20 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            onClick={scrollToTop}
+            className="scroll-top-modern"
+            aria-label="Scroll to top"
           >
-            <path d="m18 15-6-6-6 6"/>
-          </motion.svg>
-        </motion.div>
-      )}
+            <ChevronUp className="w-6 h-6 text-gray-600" />
+          </motion.button>
+        )}
+      </AnimatePresence>
 
       {/* Mobile floating search button */}
       <FloatingSearchButton hasScrolled={hasScrolled} />
@@ -190,7 +183,7 @@ const Videos = () => {
         </script>
       </Helmet>
       
-      <div className="min-h-screen w-full bg-white videos-page overflow-x-hidden max-w-[100vw]">
+      <div className="min-h-screen w-full overflow-x-hidden max-w-[100vw]">
         <MainContent />
         <Auth isOpen={isAuthOpen} onOpenChange={setIsAuthOpen} />
         <SiteMaintenancePopup 
