@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, LogIn, LogOut, Menu, X } from "lucide-react";
@@ -23,6 +23,8 @@ export const GlobalHeader = () => {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const lastScrollY = useRef(0);
   
   const isHomePage = location.pathname === "/";
   
@@ -30,6 +32,26 @@ export const GlobalHeader = () => {
   if (isHomePage) {
     return null;
   }
+
+  // Handle scroll to show/hide header
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      const scrollingDown = currentScrollY > lastScrollY.current;
+      
+      // Only hide after scrolling down past 100px
+      if (scrollingDown && currentScrollY > 100) {
+        setIsVisible(false);
+      } else if (!scrollingDown) {
+        setIsVisible(true);
+      }
+      
+      lastScrollY.current = currentScrollY;
+    };
+    
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Close mobile menu on route change
   useEffect(() => {
@@ -48,10 +70,20 @@ export const GlobalHeader = () => {
 
   return (
     <>
-      <header
-        className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 shadow-sm"
+      <motion.header
+        initial={{ y: 0, opacity: 1 }}
+        animate={{ 
+          y: isVisible ? 0 : -100, 
+          opacity: isVisible ? 1 : 0 
+        }}
+        transition={{ 
+          duration: 0.3, 
+          ease: [0.4, 0, 0.2, 1]
+        }}
+        className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md shadow-sm"
+        style={{ borderBottom: '2px solid hsl(50, 100%, 50%)' }}
       >
-        <div className="max-w-7xl mx-auto px-4 md:px-6">
+        <div className="w-full px-4 md:px-8">
           <div className="flex items-center justify-between h-14">
             {/* Left Side - Logo */}
             <Link to="/" className="flex items-center gap-2 shrink-0">
@@ -64,36 +96,36 @@ export const GlobalHeader = () => {
                 className="text-xl font-bold hidden sm:block"
                 style={{ 
                   fontFamily: "'Fredoka One', 'Nunito', sans-serif",
-                  color: 'hsl(180, 100%, 13%)'
+                  color: 'hsl(0, 100%, 50%)'
                 }}
               >
                 YidVid
               </span>
             </Link>
 
-            {/* Center - Search Button (Desktop) */}
-            {!isMobile && (
+            {/* Right Side - Search, Navigation & Auth */}
+            <div className="flex items-center gap-3">
+              {/* Search Button */}
               <button
                 onClick={() => setIsSearchOpen(true)}
-                className="flex items-center gap-2 px-5 py-2 rounded-full border-2 transition-all duration-200 hover:shadow-md"
+                className="flex items-center gap-2 px-4 py-2 rounded-full border-2 transition-all duration-200 hover:shadow-md hover:scale-105"
                 style={{ 
                   borderColor: 'hsl(50, 100%, 50%)',
-                  backgroundColor: 'hsl(50, 100%, 97%)',
+                  backgroundColor: 'hsl(50, 100%, 95%)',
                   fontFamily: "'Quicksand', sans-serif"
                 }}
               >
-                <Search className="w-4 h-4" style={{ color: 'hsl(50, 100%, 35%)' }} />
-                <span className="text-sm font-medium" style={{ color: 'hsl(50, 100%, 30%)' }}>
-                  Search videos...
-                </span>
+                <Search className="w-4 h-4" style={{ color: 'hsl(0, 100%, 50%)' }} />
+                {!isMobile && (
+                  <span className="text-sm font-semibold" style={{ color: 'hsl(0, 100%, 40%)' }}>
+                    Search
+                  </span>
+                )}
               </button>
-            )}
 
-            {/* Right Side - Navigation & Auth */}
-            <div className="flex items-center gap-1">
               {/* Desktop Navigation */}
               {!isMobile && (
-                <nav className="flex items-center gap-1 mr-4">
+                <nav className="flex items-center gap-1">
                   {navLinks.map((link) => (
                     <Link
                       key={link.path}
@@ -101,35 +133,18 @@ export const GlobalHeader = () => {
                       className={`px-3 py-1.5 rounded-full text-sm font-semibold transition-all duration-200 ${
                         isActive(link.path)
                           ? 'text-white'
-                          : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100'
+                          : 'hover:bg-yellow-50'
                       }`}
                       style={{ 
                         fontFamily: "'Quicksand', sans-serif",
-                        backgroundColor: isActive(link.path) ? 'hsl(180, 100%, 13%)' : undefined
+                        backgroundColor: isActive(link.path) ? 'hsl(0, 100%, 50%)' : undefined,
+                        color: isActive(link.path) ? 'white' : 'hsl(0, 100%, 35%)'
                       }}
                     >
                       {link.name}
                     </Link>
                   ))}
                 </nav>
-              )}
-
-              {/* Mobile Search Button */}
-              {isMobile && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setIsSearchOpen(true)}
-                  className="rounded-full gap-1.5 mr-1"
-                  style={{ 
-                    borderColor: 'hsl(50, 100%, 50%)',
-                    backgroundColor: 'hsl(50, 100%, 97%)',
-                    color: 'hsl(50, 100%, 30%)'
-                  }}
-                >
-                  <Search className="w-4 h-4" />
-                  <span className="text-xs font-medium">Search</span>
-                </Button>
               )}
 
               {/* Auth Button - Desktop */}
@@ -140,10 +155,11 @@ export const GlobalHeader = () => {
                       variant="outline"
                       size="sm"
                       onClick={handleSignOut}
-                      className="rounded-full gap-2 border-gray-300 hover:bg-gray-100"
+                      className="rounded-full gap-2 hover:bg-red-50"
                       style={{ 
                         fontFamily: "'Quicksand', sans-serif",
-                        color: '#333'
+                        borderColor: 'hsl(0, 100%, 50%)',
+                        color: 'hsl(0, 100%, 40%)'
                       }}
                     >
                       <LogOut className="w-4 h-4" />
@@ -153,10 +169,10 @@ export const GlobalHeader = () => {
                     <Button
                       onClick={() => setIsAuthOpen(true)}
                       size="sm"
-                      className="rounded-full gap-2 font-semibold hover:opacity-90"
+                      className="rounded-full gap-2 font-semibold hover:opacity-90 transition-all hover:scale-105"
                       style={{ 
                         fontFamily: "'Quicksand', sans-serif",
-                        backgroundColor: 'hsl(180, 100%, 13%)',
+                        backgroundColor: 'hsl(0, 100%, 50%)',
                         color: 'white'
                       }}
                     >
@@ -174,6 +190,7 @@ export const GlobalHeader = () => {
                   size="icon"
                   onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                   className="rounded-full h-9 w-9"
+                  style={{ color: 'hsl(0, 100%, 50%)' }}
                 >
                   {isMobileMenuOpen ? (
                     <X className="w-5 h-5" />
@@ -185,7 +202,7 @@ export const GlobalHeader = () => {
             </div>
           </div>
         </div>
-      </header>
+      </motion.header>
 
       {/* Mobile Menu - Separate from header, positioned below */}
       <AnimatePresence>
@@ -196,15 +213,17 @@ export const GlobalHeader = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-40 bg-black/20"
+              className="fixed inset-0 z-40 bg-black/30"
               onClick={() => setIsMobileMenuOpen(false)}
             />
             {/* Menu Panel */}
             <motion.div
-              initial={{ opacity: 0, y: -10 }}
+              initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="fixed top-14 left-0 right-0 z-50 bg-white border-b border-gray-200 shadow-lg"
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.2 }}
+              className="fixed top-14 left-0 right-0 z-50 bg-white shadow-xl"
+              style={{ borderBottom: '3px solid hsl(50, 100%, 50%)' }}
             >
               <nav className="px-4 py-3 space-y-1">
                 {navLinks.map((link) => (
@@ -215,11 +234,12 @@ export const GlobalHeader = () => {
                     className={`block px-4 py-3 rounded-xl text-base font-semibold transition-all ${
                       isActive(link.path)
                         ? 'text-white'
-                        : 'text-gray-700 hover:bg-gray-100'
+                        : 'hover:bg-yellow-50'
                     }`}
                     style={{ 
                       fontFamily: "'Quicksand', sans-serif",
-                      backgroundColor: isActive(link.path) ? 'hsl(180, 100%, 13%)' : undefined
+                      backgroundColor: isActive(link.path) ? 'hsl(0, 100%, 50%)' : undefined,
+                      color: isActive(link.path) ? 'white' : 'hsl(0, 100%, 35%)'
                     }}
                   >
                     {link.name}
@@ -235,8 +255,12 @@ export const GlobalHeader = () => {
                         handleSignOut();
                         setIsMobileMenuOpen(false);
                       }}
-                      className="w-full rounded-xl gap-2 justify-center py-5 border-gray-300"
-                      style={{ fontFamily: "'Quicksand', sans-serif", color: '#333' }}
+                      className="w-full rounded-xl gap-2 justify-center py-5"
+                      style={{ 
+                        fontFamily: "'Quicksand', sans-serif", 
+                        borderColor: 'hsl(0, 100%, 50%)',
+                        color: 'hsl(0, 100%, 40%)'
+                      }}
                     >
                       <LogOut className="w-4 h-4" />
                       Sign Out
@@ -250,7 +274,7 @@ export const GlobalHeader = () => {
                       className="w-full rounded-xl gap-2 justify-center py-5 font-semibold"
                       style={{ 
                         fontFamily: "'Quicksand', sans-serif",
-                        backgroundColor: 'hsl(180, 100%, 13%)',
+                        backgroundColor: 'hsl(0, 100%, 50%)',
                         color: 'white'
                       }}
                     >
@@ -264,9 +288,6 @@ export const GlobalHeader = () => {
           </>
         )}
       </AnimatePresence>
-
-      {/* Spacer for fixed header */}
-      <div className="h-14" />
 
       {/* Search Modal */}
       <SearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
