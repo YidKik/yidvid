@@ -192,7 +192,7 @@ const HeroSearchSection = () => {
             </div>
             <motion.button
               type="submit"
-              className="absolute right-2 flex items-center gap-2 px-6 py-3 rounded-full font-bold transition-colors"
+              className="absolute right-2 z-20 flex items-center gap-2 px-6 py-3 rounded-full font-bold transition-colors cursor-pointer"
               style={{ 
                 fontFamily: "'Quicksand', sans-serif",
                 backgroundColor: 'hsl(0, 100%, 50%)',
