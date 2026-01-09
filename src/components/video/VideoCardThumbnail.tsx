@@ -81,25 +81,25 @@ export const VideoCardThumbnail = ({
         )}
       >
         {/* Top bar with channel name and duration */}
-        <div className="absolute top-0 left-0 right-0 p-2.5 flex items-center justify-between">
+        <div className="absolute top-0 left-0 right-0 p-2 flex items-center justify-between">
           {/* Channel name */}
           {channelName && (
             <div 
-              className="bg-white/95 backdrop-blur-sm rounded-full px-3 py-1.5 shadow-sm border border-gray-100"
+              className="bg-white/20 backdrop-blur-sm rounded-full px-2 py-0.5 border border-white/40"
               style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
             >
-              <span className="text-xs font-bold text-gray-700">{channelName}</span>
+              <span className="text-[10px] font-semibold text-white">{channelName}</span>
             </div>
           )}
           
           {/* Duration */}
           {duration && (
             <div 
-              className="bg-white/95 backdrop-blur-sm rounded-full px-2.5 py-1.5 flex items-center gap-1.5 shadow-sm border border-gray-100"
+              className="bg-white/20 backdrop-blur-sm rounded-full px-1.5 py-0.5 flex items-center gap-1 border border-white/40"
               style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
             >
-              <Clock size={11} className="text-blue-500" />
-              <span className="text-xs font-bold text-gray-700">{duration}</span>
+              <Clock size={9} className="text-white" />
+              <span className="text-[10px] font-semibold text-white">{duration}</span>
             </div>
           )}
         </div>
