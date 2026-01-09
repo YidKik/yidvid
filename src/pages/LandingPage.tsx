@@ -273,45 +273,6 @@ const LandingPage = () => {
         </motion.div>
       </section>
 
-      {/* Footer CTA */}
-      <section className="py-16 px-6" style={{ backgroundColor: 'hsl(0, 100%, 50%)' }}>
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="max-w-3xl mx-auto text-center"
-        >
-          <h2 
-            className="text-3xl md:text-4xl font-bold mb-4"
-            style={{ fontFamily: "'Quicksand', sans-serif", color: 'white' }}
-          >
-            Ready to Explore?
-          </h2>
-          <p 
-            className="mb-8 text-lg"
-            style={{ fontFamily: "'Quicksand', sans-serif", color: 'rgba(255,255,255,0.9)' }}
-          >
-            Thousands of videos are waiting for you.
-          </p>
-          <motion.button
-            onClick={() => navigate('/videos')}
-            className="inline-flex items-center gap-2 px-8 py-4 font-bold rounded-full shadow-lg"
-            style={{ 
-              fontFamily: "'Quicksand', sans-serif",
-              backgroundColor: 'hsl(50, 100%, 50%)',
-              color: 'black'
-            }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <Play className="w-5 h-5" />
-            Start Watching Now
-            <ArrowRight className="w-5 h-5" />
-          </motion.button>
-        </motion.div>
-      </section>
-
       {/* Simple Footer */}
       <footer 
         className="py-8 px-6"
