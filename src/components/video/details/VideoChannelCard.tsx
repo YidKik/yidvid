@@ -114,7 +114,7 @@ export const VideoChannelCard = ({
       <div className="flex justify-center mb-4">
         {channelId ? (
           <Link to={`/channel/${channelId}`}>
-            <Avatar className="h-20 w-20 ring-4 ring-background shadow-lg hover:ring-primary/20 transition-all">
+            <Avatar className="h-20 w-20 ring-4 ring-primary/20 shadow-lg hover:ring-primary/40 transition-all">
               <AvatarImage src={channelThumbnail || ''} alt={channelName} />
               <AvatarFallback className="bg-primary/10 text-primary text-xl font-semibold">
                 {channelName?.slice(0, 2).toUpperCase()}
@@ -122,7 +122,7 @@ export const VideoChannelCard = ({
             </Avatar>
           </Link>
         ) : (
-          <Avatar className="h-20 w-20 ring-4 ring-background shadow-lg">
+          <Avatar className="h-20 w-20 ring-4 ring-primary/20 shadow-lg">
             <AvatarImage src={channelThumbnail || ''} alt={channelName} />
             <AvatarFallback className="bg-primary/10 text-primary text-xl font-semibold">
               {channelName?.slice(0, 2).toUpperCase()}

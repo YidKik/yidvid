@@ -89,8 +89,8 @@ export const VideoActionBar = ({ videoId, youtubeVideoId, compact = false }: Vid
         variant="ghost"
         size="sm"
         onClick={handleLike}
-        className={`${buttonClass} rounded-full hover:bg-primary/10 transition-colors ${
-          isLiked ? "text-primary bg-primary/10" : "text-muted-foreground"
+        className={`${buttonClass} rounded-full transition-colors ${
+          isLiked ? "text-primary bg-primary/10" : "text-foreground hover:bg-primary/10 hover:text-primary"
         }`}
       >
         <ThumbsUp className={`${iconClass} ${isLiked ? "fill-current" : ""}`} />
@@ -102,8 +102,8 @@ export const VideoActionBar = ({ videoId, youtubeVideoId, compact = false }: Vid
         variant="ghost"
         size="sm"
         onClick={handleDislike}
-        className={`${buttonClass} rounded-full hover:bg-muted transition-colors ${
-          isDisliked ? "text-foreground bg-muted" : "text-muted-foreground"
+        className={`${buttonClass} rounded-full transition-colors ${
+          isDisliked ? "text-foreground bg-muted" : "text-foreground hover:bg-muted"
         }`}
       >
         <ThumbsDown className={`${iconClass} ${isDisliked ? "fill-current" : ""}`} />
@@ -114,7 +114,7 @@ export const VideoActionBar = ({ videoId, youtubeVideoId, compact = false }: Vid
         variant="ghost"
         size="sm"
         onClick={handleShare}
-        className={`${buttonClass} rounded-full hover:bg-muted text-muted-foreground`}
+        className={`${buttonClass} rounded-full hover:bg-muted text-foreground`}
       >
         <Share2 className={iconClass} />
         {!compact && <span>Share</span>}

@@ -37,12 +37,12 @@ export const VideoMetaInfo = ({ views, uploadedAt, showIcon = false }: VideoMeta
 
   return (
     <div className="flex items-center gap-3 text-sm text-muted-foreground">
-      <span className="flex items-center gap-1">
-        <Eye className="h-3.5 w-3.5" />
+      <span className="flex items-center gap-1.5 font-medium">
+        <Eye className="h-4 w-4" />
         {formattedViews}
       </span>
-      <span className="w-1 h-1 bg-muted-foreground/40 rounded-full"></span>
-      <span>{formattedDate}</span>
+      <span className="w-1 h-1 bg-muted-foreground/60 rounded-full"></span>
+      <span className="font-medium">{formattedDate}</span>
     </div>
   );
 };

@@ -16,7 +16,7 @@ export const VideoDescriptionCard = ({ description }: VideoDescriptionCardProps)
   const shouldShowExpand = description.length > 250;
 
   return (
-    <div className="bg-card rounded-2xl border border-border/30 p-5">
+    <div className="bg-card rounded-2xl border border-border p-5 shadow-sm">
       <h3 className="text-lg font-semibold text-foreground mb-3">Description</h3>
       
       <p className={`text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap ${
