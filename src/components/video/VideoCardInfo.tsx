@@ -41,10 +41,10 @@ export const VideoCardInfo = ({
 
   return (
     <div className="mt-2">
-      {/* Title - Georgia serif for classic feel */}
+      {/* Title - Rounded, friendly font */}
       <h3 
-        className={`text-sm font-medium line-clamp-2 ${textColor}`}
-        style={{ fontFamily: "'Georgia', 'Times New Roman', serif" }}
+        className={`text-sm font-semibold line-clamp-2 text-gray-900`}
+        style={{ fontFamily: "'Comic Sans MS', 'Chalkboard', 'Marker Felt', cursive", letterSpacing: '0.01em' }}
         title={title}
       >
         {title}
@@ -68,21 +68,21 @@ export const VideoCardInfo = ({
               {channelId ? (
                 <Link 
                   to={`/channel/${channelId}`}
-                  className={`text-xs hover:text-primary flex items-center gap-1 ${isMobile ? 'font-medium truncate' : 'text-muted-foreground'} line-clamp-1`}
+                  className={`text-xs hover:text-primary flex items-center gap-1 text-gray-700 line-clamp-1`}
                   style={{ fontFamily: "'Verdana', 'Trebuchet MS', sans-serif" }}
                   onClick={(e) => {
                     e.stopPropagation();
                   }}
                 >
-                  <User size={10} className="text-muted-foreground/70 flex-shrink-0" />
+                  <User size={10} className="text-gray-500 flex-shrink-0" />
                   {channelName}
                 </Link>
               ) : (
                 <span 
-                  className={`text-xs flex items-center gap-1 ${isMobile ? 'font-medium truncate' : 'text-muted-foreground'} line-clamp-1`}
+                  className={`text-xs flex items-center gap-1 text-gray-700 line-clamp-1`}
                   style={{ fontFamily: "'Verdana', 'Trebuchet MS', sans-serif" }}
                 >
-                  <User size={10} className="text-muted-foreground/70 flex-shrink-0" />
+                  <User size={10} className="text-gray-500 flex-shrink-0" />
                   {channelName}
                 </span>
               )}
@@ -91,13 +91,13 @@ export const VideoCardInfo = ({
           
           {/* Views and Date - Tahoma for friendly readability */}
           <div 
-            className="text-[11px] flex items-center text-muted-foreground"
+            className="text-[11px] flex items-center text-gray-600"
             style={{ fontFamily: "'Tahoma', 'Arial', sans-serif" }}
           >
-            <Eye size={10} className="mr-0.5 text-muted-foreground/60" />
+            <Eye size={10} className="mr-0.5 text-gray-500" />
             <span>{formattedViews}</span>
             <span className="mx-1.5">•</span>
-            <Clock size={10} className="mr-0.5 text-muted-foreground/60" />
+            <Clock size={10} className="mr-0.5 text-gray-500" />
             <span>{formattedDate}</span>
           </div>
         </div>
