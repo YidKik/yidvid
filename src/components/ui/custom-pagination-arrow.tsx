@@ -26,36 +26,39 @@ export const CustomPaginationArrow = ({
     >
       <div 
         className={`flex justify-center items-center rounded-full 
-          border-3 border-gray-700 bg-gray-100
-          h-12 px-4 overflow-hidden
+          border border-highlight bg-transparent
+          h-11 px-4 overflow-hidden
           transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]
-          group-hover:px-5 group-hover:border-gray-800 group-hover:bg-gray-200
+          group-hover:px-5 group-hover:bg-highlight/10
           ${disabled ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}
         style={{ 
           fontFamily: "'Quicksand', 'Rubik', sans-serif",
-          borderWidth: '3px'
+          borderColor: 'hsl(50, 100%, 50%)'
         }}
       >
         {direction === "left" && (
           <ChevronLeft 
-            className="w-6 h-6 text-gray-800 flex-shrink-0" 
-            strokeWidth={3}
+            className="w-5 h-5 flex-shrink-0" 
+            strokeWidth={2.5}
+            style={{ color: 'hsl(50, 100%, 45%)' }}
           />
         )}
         
         {/* Text that appears on hover */}
         <span 
-          className="max-w-0 overflow-hidden whitespace-nowrap text-base font-black text-gray-800
+          className="max-w-0 overflow-hidden whitespace-nowrap text-sm font-bold
             transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] opacity-0
             group-hover:max-w-28 group-hover:opacity-100 group-hover:mx-1.5"
+          style={{ color: 'hsl(50, 100%, 40%)' }}
         >
           {label}
         </span>
         
         {direction === "right" && (
           <ChevronRight 
-            className="w-6 h-6 text-gray-800 flex-shrink-0" 
-            strokeWidth={3}
+            className="w-5 h-5 flex-shrink-0" 
+            strokeWidth={2.5}
+            style={{ color: 'hsl(50, 100%, 45%)' }}
           />
         )}
       </div>
