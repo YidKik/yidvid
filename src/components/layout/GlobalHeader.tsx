@@ -30,8 +30,6 @@ export const GlobalHeader = () => {
 
   // Handle scroll to show/hide header
   useEffect(() => {
-    if (isHomePage) return; // Skip scroll handling on homepage
-    
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       const scrollingDown = currentScrollY > lastScrollY.current;
@@ -48,7 +46,7 @@ export const GlobalHeader = () => {
     
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [isHomePage]);
+  }, []);
 
   // Close mobile menu on route change
   useEffect(() => {
@@ -65,11 +63,6 @@ export const GlobalHeader = () => {
     return location.pathname === path;
   };
 
-  // Don't show header on homepage - it has its own hero section
-  if (isHomePage) {
-    return null;
-  }
-
   return (
     <>
       <motion.header
@@ -82,9 +75,15 @@ export const GlobalHeader = () => {
           duration: 0.5, 
           ease: [0.25, 0.1, 0.25, 1]
         }}
-        className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md"
+        className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-md ${
+          isHomePage 
+            ? 'bg-[#003c43]/90' 
+            : 'bg-white/95'
+        }`}
         style={{ 
-          boxShadow: '0 2px 12px rgba(0, 0, 0, 0.04)'
+          boxShadow: isHomePage 
+            ? '0 2px 12px rgba(0, 0, 0, 0.15)' 
+            : '0 2px 12px rgba(0, 0, 0, 0.04)'
         }}
       >
         <div className="w-full px-4 md:px-8">
@@ -100,7 +99,7 @@ export const GlobalHeader = () => {
                 className="text-xl font-bold hidden sm:block"
                 style={{ 
                   fontFamily: "'Fredoka One', 'Nunito', sans-serif",
-                  color: '#333'
+                  color: isHomePage ? '#e3fef7' : '#333'
                 }}
               >
                 YidVid
@@ -112,16 +111,16 @@ export const GlobalHeader = () => {
               {/* Search Button */}
               <button
                 onClick={() => setIsSearchOpen(true)}
-                className="flex items-center gap-2 px-4 py-2 rounded-full border transition-all duration-200 hover:shadow-sm hover:border-gray-300"
+                className="flex items-center gap-2 px-4 py-2 rounded-full border transition-all duration-200 hover:shadow-sm"
                 style={{ 
-                  borderColor: '#e5e5e5',
-                  backgroundColor: '#fafafa',
+                  borderColor: isHomePage ? 'rgba(255,255,255,0.3)' : '#e5e5e5',
+                  backgroundColor: isHomePage ? 'rgba(255,255,255,0.1)' : '#fafafa',
                   fontFamily: "'Quicksand', sans-serif"
                 }}
               >
-                <Search className="w-4 h-4 text-gray-500" />
+                <Search className={`w-4 h-4 ${isHomePage ? 'text-white/70' : 'text-gray-500'}`} />
                 {!isMobile && (
-                  <span className="text-sm font-medium text-gray-500">
+                  <span className={`text-sm font-medium ${isHomePage ? 'text-white/70' : 'text-gray-500'}`}>
                     Search
                   </span>
                 )}
@@ -134,15 +133,17 @@ export const GlobalHeader = () => {
                     <Link
                       key={link.path}
                       to={link.path}
-                      className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 ${
+                      className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 border ${
                         isActive(link.path)
-                          ? 'border'
-                          : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50 border border-transparent'
+                          ? ''
+                          : isHomePage 
+                            ? 'text-white/80 hover:text-white hover:bg-white/10 border-transparent'
+                            : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50 border-transparent'
                       }`}
                       style={{ 
                         fontFamily: "'Quicksand', sans-serif",
-                        borderColor: isActive(link.path) ? 'hsl(0, 70%, 55%)' : undefined,
-                        color: isActive(link.path) ? 'hsl(0, 70%, 50%)' : undefined
+                        borderColor: isActive(link.path) ? (isHomePage ? '#77b0aa' : 'hsl(0, 70%, 55%)') : 'transparent',
+                        color: isActive(link.path) ? (isHomePage ? '#e3fef7' : 'hsl(0, 70%, 50%)') : undefined
                       }}
                     >
                       {link.name}
@@ -159,7 +160,11 @@ export const GlobalHeader = () => {
                       variant="ghost"
                       size="sm"
                       onClick={handleSignOut}
-                      className="rounded-full gap-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                      className={`rounded-full gap-2 ${
+                        isHomePage 
+                          ? 'text-white/80 hover:text-white hover:bg-white/10' 
+                          : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                      }`}
                       style={{ fontFamily: "'Quicksand', sans-serif" }}
                     >
                       <LogOut className="w-4 h-4" />
@@ -172,8 +177,8 @@ export const GlobalHeader = () => {
                       className="rounded-full gap-2 font-medium hover:opacity-90 transition-all"
                       style={{ 
                         fontFamily: "'Quicksand', sans-serif",
-                        backgroundColor: 'hsl(0, 70%, 55%)',
-                        color: 'white'
+                        backgroundColor: isHomePage ? '#77b0aa' : 'hsl(0, 70%, 55%)',
+                        color: isHomePage ? '#003c43' : 'white'
                       }}
                     >
                       <LogIn className="w-4 h-4" />
@@ -189,7 +194,7 @@ export const GlobalHeader = () => {
                   variant="ghost"
                   size="icon"
                   onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                  className="rounded-full h-9 w-9 text-gray-600"
+                  className={`rounded-full h-9 w-9 ${isHomePage ? 'text-white/80 hover:text-white hover:bg-white/10' : 'text-gray-600'}`}
                 >
                   {isMobileMenuOpen ? (
                     <X className="w-5 h-5" />

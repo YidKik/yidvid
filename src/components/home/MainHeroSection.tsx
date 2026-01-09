@@ -5,26 +5,10 @@ import { motion } from 'framer-motion';
 
 export const MainHeroSection: React.FC = () => {
   return (
-    <div className="hidden sm:flex fixed top-0 left-0 right-0 z-20 flex-col items-center justify-start px-4 text-center hero-content">
-      {/* Logo and Navigation Section */}
-      <div className="w-full flex items-center justify-between mb-8 pt-4">
-        <img 
-          src="/lovable-uploads/dd4fbfcb-aeb9-4cd3-a7b1-9dbf07b81a43.png" 
-          alt="YidVid Icon" 
-          className="w-40 h-40 object-contain"
-        />
-        <nav className="flex space-x-6 text-white/80">
-          <Link to="/" className="hover:text-white bg-transparent">Home</Link>
-          <Link to="/about" className="hover:text-white bg-transparent">About</Link>
-          <Link to="/contact" className="hover:text-white bg-transparent">Contact</Link>
-        </nav>
-        <Link to="/signin" className="text-white/80 hover:text-white bg-transparent">
-          Sign In
-        </Link>
-      </div>
+    <div className="hidden sm:flex fixed top-0 left-0 right-0 z-10 flex-col items-center justify-start px-4 text-center hero-content pt-24">
       
       {/* Hero Content */}
-      <div className="mt-20 w-full max-w-6xl mx-auto">
+      <div className="mt-16 w-full max-w-6xl mx-auto">
         <h1 className="text-7xl md:text-8xl lg:text-9xl font-bold mb-8 tracking-tight text-center">
           <span className="bg-clip-text text-transparent bg-gradient-to-b from-[#e3fef7] to-[#e3fef7]/80 inline">
             Your Gateway to
