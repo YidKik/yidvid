@@ -86,56 +86,47 @@ const LandingPage = () => {
 
           {/* Main Heading */}
           <motion.h1
-            className="text-5xl md:text-7xl font-bold text-foreground mb-6"
-            style={{ fontFamily: "'Quicksand', sans-serif" }}
+            className="text-5xl md:text-7xl font-bold mb-6"
+            style={{ fontFamily: "'Quicksand', sans-serif", color: '#1a1a1a' }}
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
           >
             Welcome to{' '}
-            <span className="text-primary">YidVid</span>
+            <span style={{ color: 'hsl(0, 100%, 50%)' }}>YidVid</span>
           </motion.h1>
 
           {/* Subtitle */}
           <motion.p
-            className="text-xl md:text-2xl text-muted-foreground mb-12 max-w-2xl mx-auto"
-            style={{ fontFamily: "'Quicksand', sans-serif" }}
+            className="text-xl md:text-2xl mb-12 max-w-2xl mx-auto"
+            style={{ fontFamily: "'Quicksand', sans-serif", color: '#666666' }}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
           >
             Your trusted destination for quality Jewish content.
             <br />
-            <span className="text-foreground font-medium">Safe, curated, and always up to date.</span>
+            <span style={{ color: '#1a1a1a', fontWeight: 500 }}>Safe, curated, and always up to date.</span>
           </motion.p>
 
           {/* Main CTA Button */}
           <motion.button
             onClick={() => navigate('/videos')}
-            className="group relative inline-flex items-center gap-3 px-10 py-5 bg-primary text-primary-foreground text-xl font-bold rounded-full shadow-lg overflow-hidden"
-            style={{ fontFamily: "'Quicksand', sans-serif" }}
+            className="group inline-flex items-center gap-3 px-10 py-5 text-xl font-bold rounded-full shadow-lg"
+            style={{ 
+              fontFamily: "'Quicksand', sans-serif",
+              backgroundColor: 'hsl(0, 100%, 50%)',
+              color: 'white'
+            }}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.5 }}
-            whileHover={{ scale: 1.05 }}
+            whileHover={{ scale: 1.05, backgroundColor: 'hsl(50, 100%, 50%)', color: 'black' }}
             whileTap={{ scale: 0.98 }}
           >
-            <span className="relative z-10 flex items-center gap-3">
-              <Play className="w-6 h-6" strokeWidth={2.5} />
-              Start Watching
-              <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-            </span>
-            <motion.div
-              className="absolute inset-0 bg-highlight"
-              initial={{ x: "-100%" }}
-              whileHover={{ x: 0 }}
-              transition={{ duration: 0.3 }}
-            />
-            <span className="absolute inset-0 z-10 flex items-center justify-center gap-3 text-highlight-foreground opacity-0 group-hover:opacity-100 transition-opacity">
-              <Play className="w-6 h-6" strokeWidth={2.5} />
-              Start Watching
-              <ArrowRight className="w-5 h-5" />
-            </span>
+            <Play className="w-6 h-6" strokeWidth={2.5} />
+            Start Watching
+            <ArrowRight className="w-5 h-5" />
           </motion.button>
         </motion.div>
 
@@ -166,15 +157,15 @@ const LandingPage = () => {
         >
           <motion.h2
             variants={itemVariants}
-            className="text-3xl md:text-4xl font-bold text-center text-foreground mb-4"
-            style={{ fontFamily: "'Quicksand', sans-serif" }}
+            className="text-3xl md:text-4xl font-bold text-center mb-4"
+            style={{ fontFamily: "'Quicksand', sans-serif", color: '#1a1a1a' }}
           >
-            Why Choose <span className="text-primary">YidVid</span>?
+            Why Choose <span style={{ color: 'hsl(0, 100%, 50%)' }}>YidVid</span>?
           </motion.h2>
           <motion.p
             variants={itemVariants}
-            className="text-center text-muted-foreground mb-12 max-w-xl mx-auto"
-            style={{ fontFamily: "'Quicksand', sans-serif" }}
+            className="text-center mb-12 max-w-xl mx-auto"
+            style={{ fontFamily: "'Quicksand', sans-serif", color: '#666666' }}
           >
             We're different from other platforms. Here's what makes us special.
           </motion.p>
@@ -184,19 +175,26 @@ const LandingPage = () => {
               <motion.div
                 key={feature.title}
                 variants={itemVariants}
-                className="group relative bg-primary/10 rounded-2xl p-6 border-2 border-primary/20 hover:border-highlight hover:bg-highlight/10 transition-all duration-300 hover:shadow-lg"
+                className="group relative rounded-2xl p-6 border-2 transition-all duration-300 hover:shadow-lg"
+                style={{
+                  backgroundColor: 'rgba(255, 0, 0, 0.08)',
+                  borderColor: 'rgba(255, 0, 0, 0.2)'
+                }}
                 whileHover={{ y: -5 }}
               >
-                <div className="w-14 h-14 bg-primary/20 rounded-xl flex items-center justify-center mb-4 group-hover:bg-highlight/30 transition-colors">
-                  <feature.icon className="w-7 h-7 text-primary group-hover:text-highlight transition-colors" strokeWidth={2} />
+                <div 
+                  className="w-14 h-14 rounded-xl flex items-center justify-center mb-4"
+                  style={{ backgroundColor: 'rgba(255, 0, 0, 0.15)' }}
+                >
+                  <feature.icon className="w-7 h-7" style={{ color: 'hsl(0, 100%, 50%)' }} strokeWidth={2} />
                 </div>
                 <h3 
-                  className="text-xl font-bold text-foreground mb-2"
-                  style={{ fontFamily: "'Quicksand', sans-serif" }}
+                  className="text-xl font-bold mb-2"
+                  style={{ fontFamily: "'Quicksand', sans-serif", color: '#1a1a1a' }}
                 >
                   {feature.title}
                 </h3>
-                <p className="text-muted-foreground" style={{ fontFamily: "'Quicksand', sans-serif" }}>
+                <p style={{ fontFamily: "'Quicksand', sans-serif", color: '#666666' }}>
                   {feature.description}
                 </p>
               </motion.div>
@@ -216,15 +214,15 @@ const LandingPage = () => {
         >
           <motion.h2
             variants={itemVariants}
-            className="text-3xl md:text-4xl font-bold text-center text-foreground mb-4"
-            style={{ fontFamily: "'Quicksand', sans-serif" }}
+            className="text-3xl md:text-4xl font-bold text-center mb-4"
+            style={{ fontFamily: "'Quicksand', sans-serif", color: '#1a1a1a' }}
           >
             Find What You Love
           </motion.h2>
           <motion.p
             variants={itemVariants}
-            className="text-center text-muted-foreground mb-12 max-w-xl mx-auto"
-            style={{ fontFamily: "'Quicksand', sans-serif" }}
+            className="text-center mb-12 max-w-xl mx-auto"
+            style={{ fontFamily: "'Quicksand', sans-serif", color: '#666666' }}
           >
             Jump straight to your favorite content
           </motion.p>
@@ -238,12 +236,17 @@ const LandingPage = () => {
               <motion.button
                 key={category.label}
                 onClick={() => navigate(category.path)}
-                className="group flex items-center gap-2 px-6 py-3 bg-primary/10 border-2 border-primary/30 rounded-full text-foreground font-medium hover:border-highlight hover:bg-highlight/20 transition-all duration-300"
-                style={{ fontFamily: "'Quicksand', sans-serif" }}
-                whileHover={{ scale: 1.05 }}
+                className="group flex items-center gap-2 px-6 py-3 rounded-full font-medium transition-all duration-300"
+                style={{ 
+                  fontFamily: "'Quicksand', sans-serif",
+                  backgroundColor: 'rgba(255, 0, 0, 0.1)',
+                  border: '2px solid rgba(255, 0, 0, 0.3)',
+                  color: '#1a1a1a'
+                }}
+                whileHover={{ scale: 1.05, backgroundColor: 'rgba(255, 204, 0, 0.2)', borderColor: 'hsl(50, 100%, 50%)' }}
                 whileTap={{ scale: 0.98 }}
               >
-                <category.icon className="w-5 h-5 text-primary group-hover:text-highlight transition-colors" />
+                <category.icon className="w-5 h-5" style={{ color: 'hsl(0, 100%, 50%)' }} />
                 {category.label}
               </motion.button>
             ))}
@@ -256,21 +259,30 @@ const LandingPage = () => {
           >
             <motion.button
               onClick={() => navigate('/videos')}
-              className="group flex items-center justify-center gap-2 px-8 py-4 bg-primary text-primary-foreground font-bold rounded-xl shadow-md"
-              style={{ fontFamily: "'Quicksand', sans-serif" }}
-              whileHover={{ scale: 1.02 }}
+              className="group flex items-center justify-center gap-2 px-8 py-4 font-bold rounded-xl shadow-md"
+              style={{ 
+                fontFamily: "'Quicksand', sans-serif",
+                backgroundColor: 'hsl(0, 100%, 50%)',
+                color: 'white'
+              }}
+              whileHover={{ scale: 1.02, backgroundColor: 'hsl(0, 100%, 45%)' }}
               whileTap={{ scale: 0.98 }}
             >
               <Play className="w-5 h-5" />
               Browse All Videos
-              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+              <ArrowRight className="w-4 h-4" />
             </motion.button>
 
             <motion.button
               onClick={() => navigate('/videos?view=channels')}
-              className="group flex items-center justify-center gap-2 px-8 py-4 bg-background border-2 border-primary text-primary font-bold rounded-xl"
-              style={{ fontFamily: "'Quicksand', sans-serif" }}
-              whileHover={{ scale: 1.02, backgroundColor: "hsl(var(--primary))", color: "hsl(var(--primary-foreground))" }}
+              className="group flex items-center justify-center gap-2 px-8 py-4 font-bold rounded-xl"
+              style={{ 
+                fontFamily: "'Quicksand', sans-serif",
+                backgroundColor: 'transparent',
+                color: 'hsl(0, 100%, 50%)',
+                border: '2px solid hsl(0, 100%, 50%)'
+              }}
+              whileHover={{ scale: 1.02, backgroundColor: 'hsl(0, 100%, 50%)', color: 'white' }}
               whileTap={{ scale: 0.98 }}
             >
               <Grid3X3 className="w-5 h-5" />
@@ -281,7 +293,7 @@ const LandingPage = () => {
       </section>
 
       {/* Footer CTA */}
-      <section className="py-16 px-6 bg-primary">
+      <section className="py-16 px-6" style={{ backgroundColor: 'hsl(0, 100%, 50%)' }}>
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -290,21 +302,25 @@ const LandingPage = () => {
           className="max-w-3xl mx-auto text-center"
         >
           <h2 
-            className="text-3xl md:text-4xl font-bold text-primary-foreground mb-4"
-            style={{ fontFamily: "'Quicksand', sans-serif" }}
+            className="text-3xl md:text-4xl font-bold mb-4"
+            style={{ fontFamily: "'Quicksand', sans-serif", color: 'white' }}
           >
             Ready to Explore?
           </h2>
           <p 
-            className="text-primary-foreground/80 mb-8 text-lg"
-            style={{ fontFamily: "'Quicksand', sans-serif" }}
+            className="mb-8 text-lg"
+            style={{ fontFamily: "'Quicksand', sans-serif", color: 'rgba(255,255,255,0.9)' }}
           >
             Thousands of videos are waiting for you.
           </p>
           <motion.button
             onClick={() => navigate('/videos')}
-            className="inline-flex items-center gap-2 px-8 py-4 bg-highlight text-highlight-foreground font-bold rounded-full shadow-lg"
-            style={{ fontFamily: "'Quicksand', sans-serif" }}
+            className="inline-flex items-center gap-2 px-8 py-4 font-bold rounded-full shadow-lg"
+            style={{ 
+              fontFamily: "'Quicksand', sans-serif",
+              backgroundColor: 'hsl(50, 100%, 50%)',
+              color: 'black'
+            }}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.98 }}
           >
@@ -316,7 +332,10 @@ const LandingPage = () => {
       </section>
 
       {/* Simple Footer */}
-      <footer className="py-8 px-6 bg-foreground/5 border-t border-primary/20">
+      <footer 
+        className="py-8 px-6"
+        style={{ backgroundColor: '#f5f5f5', borderTop: '1px solid rgba(255, 0, 0, 0.2)' }}
+      >
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <img
@@ -325,15 +344,15 @@ const LandingPage = () => {
               className="w-8 h-8"
             />
             <span 
-              className="font-bold text-primary"
-              style={{ fontFamily: "'Quicksand', sans-serif" }}
+              className="font-bold"
+              style={{ fontFamily: "'Quicksand', sans-serif", color: 'hsl(0, 100%, 50%)' }}
             >
               YidVid
             </span>
           </div>
           <p 
-            className="text-sm text-foreground/70"
-            style={{ fontFamily: "'Quicksand', sans-serif" }}
+            className="text-sm"
+            style={{ fontFamily: "'Quicksand', sans-serif", color: '#666666' }}
           >
             © {new Date().getFullYear()} YidVid. Quality Jewish content for everyone.
           </p>

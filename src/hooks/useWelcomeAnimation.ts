@@ -1,11 +1,12 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useContentPreloader } from './useContentPreloader';
 
 export const useWelcomeAnimation = () => {
   const [showWelcome, setShowWelcome] = useState<boolean | null>(null);
   const [isPreloading, setIsPreloading] = useState(false);
   const [loadingProgress, setLoadingProgress] = useState(0);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Start preloading when welcome animation is shown
   const { preloadComplete, isPreloading: contentPreloading, imagesCached, videosReady, channelsReady } = useContentPreloader(showWelcome === true);
@@ -34,27 +35,33 @@ export const useWelcomeAnimation = () => {
     // Always show welcome animation on app startup to preload content
     setShowWelcome(true);
     setIsPreloading(true);
+    
+    // Safety timeout - force complete after 8 seconds max to prevent getting stuck
+    timeoutRef.current = setTimeout(() => {
+      console.info('Welcome animation: Safety timeout reached, forcing completion');
+      setShowWelcome(false);
+      setIsPreloading(false);
+    }, 8000);
+    
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
   }, []);
 
   const markWelcomeAsShown = () => {
+    // Clear safety timeout
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    
     // Mark as seen in localStorage
     localStorage.setItem('hasSeenWelcome', 'true');
     
-    // Don't hide welcome until preloading is complete
-    if (preloadComplete || !isPreloading) {
-      setShowWelcome(false);
-      setIsPreloading(false);
-    } else {
-      // Wait for preloading to complete
-      console.info('Welcome animation: Waiting for content preload to complete...');
-      const checkPreload = setInterval(() => {
-        if (preloadComplete) {
-          clearInterval(checkPreload);
-          setShowWelcome(false);
-          setIsPreloading(false);
-        }
-      }, 100);
-    }
+    // Complete immediately - don't wait for preloading
+    setShowWelcome(false);
+    setIsPreloading(false);
   };
 
   const resetWelcome = () => {

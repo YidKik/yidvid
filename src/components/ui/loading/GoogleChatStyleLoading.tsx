@@ -16,16 +16,29 @@ export const GoogleChatStyleLoading: React.FC<GoogleChatStyleLoadingProps> = ({
 
   useEffect(() => {
     if (!isVisible) return;
+    
+    // Start color reveal quickly
+    const revealTimer = setTimeout(() => {
+      setStartColorReveal(true);
+    }, 800);
+
+    return () => {
+      clearTimeout(revealTimer);
+    };
+  }, [isVisible]);
+
+  useEffect(() => {
+    if (!isVisible) return;
     if (!startColorReveal) return;
 
-    // Once reveal starts, schedule exit and completion
+    // Quick exit after reveal
     const exitTimer = setTimeout(() => {
       setShouldExit(true);
-    }, 2000);
+    }, 800);
 
     const completeTimer = setTimeout(() => {
       onComplete?.();
-    }, 2500);
+    }, 1000);
 
     return () => {
       clearTimeout(exitTimer);
@@ -53,12 +66,8 @@ export const GoogleChatStyleLoading: React.FC<GoogleChatStyleLoadingProps> = ({
               opacity: 1
             }}
             transition={{
-              duration: 3.5,
-              ease: [0.22, 1, 0.36, 1], // Very smooth easing
-            }}
-            onAnimationComplete={() => {
-              // Start color reveal immediately when scale completes
-              setStartColorReveal(true);
+              duration: 0.8,
+              ease: [0.22, 1, 0.36, 1],
             }}
           >
             <div className="relative w-80 h-80 md:w-96 md:h-96">
