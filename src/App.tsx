@@ -32,10 +32,11 @@ import TestimonialsPage from './pages/admin/TestimonialsPage';
 import AdminSEO from './pages/AdminSEO';
 import { EmailPreferences } from './pages/EmailPreferences';
 import { Unsubscribe } from './pages/Unsubscribe';
+import About from './pages/About';
 
 import { PagePreloader } from './components/PagePreloader';
 import { TopLoadingBar } from './components/ui/TopLoadingBar';
-
+import { GlobalHeader } from './components/layout/GlobalHeader';
 
 function App() {
   const location = useLocation();
@@ -62,6 +63,7 @@ function App() {
     <PlaybackProvider>
       <ColorProvider>
         <TopLoadingBar />
+        <GlobalHeader />
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/videos" element={<Videos />} />
@@ -74,6 +76,7 @@ function App() {
           <Route path="/settings/email-preferences" element={<EmailPreferences />} />
           <Route path="/unsubscribe" element={<Unsubscribe />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/about" element={<About />} />
           
           {/* Admin routes */}
           <Route path="/admin" element={<AdminDashboard />} />

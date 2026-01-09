@@ -1,6 +1,4 @@
 
-import { Header } from "@/components/Header";
-import Auth from "@/pages/Auth";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ContentToggle } from "@/components/content/ContentToggle";
@@ -10,8 +8,8 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useSessionManager } from "@/hooks/useSessionManager";
 import { Helmet } from "react-helmet";
 import { useSearchParams } from "react-router-dom";
-import { SiteMaintenancePopup } from "@/components/SiteMaintenancePopup";
-import { FloatingSearchButton } from "@/components/mobile/FloatingSearchButton";
+import { CategoryToggle } from "@/components/header/CategoryToggle";
+
 
 const MainContent = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -62,10 +60,16 @@ const MainContent = () => {
 
   return (
     <div className="flex-1 videos-page">
-      <Header 
-        selectedCategory={selectedCategory}
-        onCategoryChange={setSelectedCategory}
-      />
+      {/* Category Filter Bar */}
+      <div className="sticky top-16 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-200/50 py-3 px-4">
+        <div className="max-w-[1400px] mx-auto">
+          <CategoryToggle 
+            selectedCategory={selectedCategory}
+            onCategoryChange={setSelectedCategory}
+          />
+        </div>
+      </div>
+
       <motion.main 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -143,17 +147,11 @@ const MainContent = () => {
           </motion.svg>
         </motion.div>
       )}
-
-      {/* Mobile floating search button */}
-      <FloatingSearchButton hasScrolled={hasScrolled} />
     </div>
   );
 };
 
 const Videos = () => {
-  const [isAuthOpen, setIsAuthOpen] = useState(false);
-  const [isMaintenancePopupOpen, setIsMaintenancePopupOpen] = useState(true);
-
   return (
     <>
       <Helmet>
@@ -195,11 +193,6 @@ const Videos = () => {
       
       <div className="min-h-screen w-full bg-white videos-page overflow-x-hidden max-w-[100vw]">
         <MainContent />
-        <Auth isOpen={isAuthOpen} onOpenChange={setIsAuthOpen} />
-        <SiteMaintenancePopup 
-          isOpen={isMaintenancePopupOpen} 
-          onClose={() => setIsMaintenancePopupOpen(false)} 
-        />
       </div>
     </>
   );
