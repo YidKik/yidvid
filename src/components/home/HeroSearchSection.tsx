@@ -207,53 +207,36 @@ const HeroSearchSection = () => {
           </div>
         </motion.form>
 
-      </motion.div>
-
-      {/* Browse videos button - centered at bottom */}
-      <motion.div
-        className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1, duration: 0.5 }}
-      >
-        <motion.button
-          onClick={() => navigate('/videos')}
-          className="group flex items-center gap-3 px-8 py-4 rounded-full font-semibold transition-all duration-300"
-          style={{ 
-            fontFamily: "'Quicksand', sans-serif",
-            backgroundColor: 'rgba(255, 255, 255, 0.9)',
-            color: '#333333',
-            border: '1px solid rgba(0, 0, 0, 0.1)',
-            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)'
-          }}
-          whileHover={{ 
-            backgroundColor: 'rgba(255, 255, 255, 1)',
-            boxShadow: '0 8px 30px rgba(0, 0, 0, 0.12)',
-            scale: 1.02
-          }}
-          whileTap={{ scale: 0.98 }}
-        >
-          <Play className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" style={{ color: 'hsl(0, 100%, 50%)' }} />
-          <span>Browse All Videos</span>
-          <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" style={{ color: 'hsl(0, 100%, 50%)' }} />
-        </motion.button>
-        
-        {/* Subtle scroll hint */}
+        {/* Browse videos button - centered under search bar */}
         <motion.div
-          animate={{ y: [0, 5, 0] }}
-          transition={{ repeat: Infinity, duration: 1.5 }}
-          className="opacity-40"
+          className="mt-8 flex justify-center"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.9, duration: 0.5 }}
         >
-          <div 
-            className="w-5 h-8 rounded-full flex justify-center pt-1.5"
-            style={{ border: '1.5px solid rgba(0, 0, 0, 0.3)' }}
+          <motion.button
+            onClick={() => navigate('/videos')}
+            className="group flex items-center gap-3 px-8 py-4 rounded-full font-semibold transition-all duration-300"
+            style={{ 
+              fontFamily: "'Quicksand', sans-serif",
+              backgroundColor: 'rgba(255, 255, 255, 0.9)',
+              color: '#333333',
+              border: '1px solid rgba(0, 0, 0, 0.1)',
+              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)'
+            }}
+            whileHover={{ 
+              backgroundColor: 'rgba(255, 255, 255, 1)',
+              boxShadow: '0 8px 30px rgba(0, 0, 0, 0.12)',
+              scale: 1.02
+            }}
+            whileTap={{ scale: 0.98 }}
           >
-            <div 
-              className="w-1 h-2 rounded-full"
-              style={{ backgroundColor: 'rgba(0, 0, 0, 0.4)' }}
-            />
-          </div>
+            <Play className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" style={{ color: 'hsl(0, 100%, 50%)' }} />
+            <span>Browse All Videos</span>
+            <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" style={{ color: 'hsl(0, 100%, 50%)' }} />
+          </motion.button>
         </motion.div>
+
       </motion.div>
     </section>
   );
