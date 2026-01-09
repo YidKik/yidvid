@@ -13,29 +13,29 @@ const LandingPage = () => {
       icon: RefreshCw,
       title: "Auto-Updated",
       description: "Fresh content added automatically every day",
-      animation: { rotate: [0, 360] },
-      animationDuration: 3
+      animation: { rotate: 360 },
+      animationDuration: 2
     },
     {
       icon: Shield,
       title: "100% Kosher",
       description: "Curated and verified family-friendly content",
-      animation: { scale: [1, 1.15, 1] },
-      animationDuration: 2
+      animation: { scale: [1, 1.2, 1] },
+      animationDuration: 1.5
     },
     {
       icon: Heart,
       title: "Free Forever",
       description: "No subscriptions, no hidden fees",
-      animation: { rotate: [0, 15, -15, 0], scale: [1, 1.1, 1] },
-      animationDuration: 2.5
+      animation: { scale: [1, 1.15, 1, 1.15, 1] },
+      animationDuration: 1.2
     },
     {
       icon: Users,
       title: "Many Channels",
       description: "Wide variety of creators and content",
-      animation: { y: [0, -5, 0] },
-      animationDuration: 1.5
+      animation: { opacity: [0.4, 1, 0.4], pathLength: [0, 1, 0] },
+      animationDuration: 2
     }
   ];
 
@@ -83,8 +83,8 @@ const LandingPage = () => {
         >
           <motion.h2
             variants={itemVariants}
-            className="text-3xl md:text-4xl font-bold text-center mb-4"
-            style={{ fontFamily: "'Quicksand', sans-serif", color: '#1a1a1a' }}
+            className="text-3xl md:text-4xl font-extrabold text-center mb-4"
+            style={{ fontFamily: "'Montserrat', 'Inter', sans-serif", color: '#1a1a1a', letterSpacing: '-0.02em' }}
           >
             Built for <span style={{ color: 'hsl(0, 100%, 50%)' }}>You</span>
           </motion.h2>
@@ -108,18 +108,21 @@ const LandingPage = () => {
                 }}
                 whileHover={{ y: -5 }}
               >
-                <motion.div 
+                <div 
                   className="w-14 h-14 rounded-xl flex items-center justify-center mb-4"
                   style={{ backgroundColor: 'rgba(255, 0, 0, 0.15)' }}
-                  animate={feature.animation}
-                  transition={{ 
-                    duration: feature.animationDuration, 
-                    repeat: Infinity, 
-                    ease: "easeInOut" 
-                  }}
                 >
-                  <feature.icon className="w-7 h-7" style={{ color: 'hsl(0, 100%, 50%)' }} strokeWidth={2} />
-                </motion.div>
+                  <motion.div
+                    animate={feature.animation}
+                    transition={{ 
+                      duration: feature.animationDuration, 
+                      repeat: Infinity, 
+                      ease: "easeInOut" 
+                    }}
+                  >
+                    <feature.icon className="w-7 h-7" style={{ color: 'hsl(0, 100%, 50%)' }} strokeWidth={2} />
+                  </motion.div>
+                </div>
                 <h3 
                   className="text-xl font-bold mb-2"
                   style={{ fontFamily: "'Quicksand', sans-serif", color: '#1a1a1a' }}
