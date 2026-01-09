@@ -1,13 +1,13 @@
 
 import React, { useEffect } from 'react';
-import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import VideoDetails from './pages/VideoDetails';
 import Search from './pages/Search';
 import ChannelDetails from './pages/ChannelDetails';
 import WritingVideos from './pages/WritingVideos';
 import ResetPassword from './pages/ResetPassword';
 import Videos from './pages/Videos';
-import HorizontalHomePage from './pages/HorizontalHomePage';
+import LandingPage from './pages/LandingPage';
 import { PlaybackProvider } from './contexts/PlaybackContext';
 import { ColorProvider } from './contexts/ColorContext';
 import Settings from './pages/Settings';
@@ -39,20 +39,9 @@ import { Unsubscribe } from './pages/Unsubscribe';
 // Add the PagePreloader import
 import { PagePreloader } from './components/PagePreloader';
 
-// Homepage redirects to videos
-const HomePage = () => {
-  const navigate = useNavigate();
-  
-  useEffect(() => {
-    navigate('/videos', { replace: true });
-  }, [navigate]);
-
-  return null;
-};
 
 function App() {
   const location = useLocation();
-  const navigate = useNavigate();
   const { showWelcome, markWelcomeAsShown, loadingProgress } = useWelcomeAnimation();
   
   // Initialize keyboard shortcuts
@@ -106,8 +95,7 @@ function App() {
     <PlaybackProvider>
       <ColorProvider>
         <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/home" element={<HorizontalHomePage />} />
+          <Route path="/" element={<LandingPage />} />
           <Route path="/videos" element={<Videos />} />
           <Route path="/video/:videoId" element={<VideoDetails />} />
           <Route path="/search" element={<Search />} />
