@@ -4,21 +4,21 @@
   --foreground: 222.2 84% 4.9%;
   --background-custom: 0 0% 100%;
   --text-custom: 0 0% 0%;
-  --button-custom: 352 82% 57%;
+  --button-custom: 0 100% 50%;
   --logo-custom: 0 0% 0%;
   --search-background: 0 0% 100%;
   --search-text: 0 0% 0%;
   --search-border: 220 13% 91%;
   --auth-background: 0 0% 100%;
   --auth-text: 0 0% 0%;
-  --auth-primary: 352 82% 57%;
+  --auth-primary: 0 100% 50%;
   --auth-secondary: 220 14% 96%;
   --auth-border: 220 13% 91%;
   --auth-input-bg: 0 0% 100%;
   --auth-footer-bg: 210 20% 98%;
   --auth-footer-text: 220 9% 46%;
-  --auth-link: 352 82% 57%;
-  --auth-link-hover: 0 84% 50%;
+  --auth-link: 0 100% 50%;
+  --auth-link-hover: 0 100% 45%;
 
   --card: 0 0% 100%;
   --card-foreground: 222.2 84% 4.9%;
@@ -26,8 +26,13 @@
   --popover: 0 0% 100%;
   --popover-foreground: 222.2 84% 4.9%;
 
-  --primary: 352 82% 57%;
+  /* Strong bright red - primary color */
+  --primary: 0 100% 50%;
   --primary-foreground: 0 0% 100%;
+
+  /* Classic bright yellow - accent for hover effects and special touches */
+  --highlight: 50 100% 50%;
+  --highlight-foreground: 0 0% 0%;
 
   --secondary: 240 4.8% 95.9%;
   --secondary-foreground: 222.2 47.4% 11.2%;
@@ -43,7 +48,7 @@
 
   --border: 214.3 31.8% 91.4%;
   --input: 214.3 31.8% 91.4%;
-  --ring: 221.2 83.2% 53.3%;
+  --ring: 0 100% 50%;
 
   --radius: 0.5rem;
 }
