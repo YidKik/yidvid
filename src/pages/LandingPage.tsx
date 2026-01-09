@@ -114,8 +114,8 @@ const LandingPage = () => {
                 variants={itemVariants}
                 className="group relative rounded-2xl p-6 border-2 transition-all duration-300 hover:shadow-lg cursor-pointer"
                 style={{
-                  backgroundColor: 'rgba(255, 0, 0, 0.08)',
-                  borderColor: 'hsl(0, 100%, 50%)'
+                  backgroundColor: 'rgba(255, 204, 0, 0.08)',
+                  borderColor: 'hsl(50, 100%, 50%)'
                 }}
                 initial="rest"
                 whileHover="hover"
