@@ -80,8 +80,7 @@ export const GlobalHeader = () => {
           duration: 0.3, 
           ease: [0.4, 0, 0.2, 1]
         }}
-        className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md shadow-sm"
-        style={{ borderBottom: '2px solid hsl(50, 100%, 50%)' }}
+        className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100"
       >
         <div className="w-full px-4 md:px-8">
           <div className="flex items-center justify-between h-14">
@@ -96,7 +95,7 @@ export const GlobalHeader = () => {
                 className="text-xl font-bold hidden sm:block"
                 style={{ 
                   fontFamily: "'Fredoka One', 'Nunito', sans-serif",
-                  color: 'hsl(0, 100%, 50%)'
+                  color: '#333'
                 }}
               >
                 YidVid
@@ -108,16 +107,16 @@ export const GlobalHeader = () => {
               {/* Search Button */}
               <button
                 onClick={() => setIsSearchOpen(true)}
-                className="flex items-center gap-2 px-4 py-2 rounded-full border-2 transition-all duration-200 hover:shadow-md hover:scale-105"
+                className="flex items-center gap-2 px-4 py-2 rounded-full border transition-all duration-200 hover:shadow-sm hover:border-gray-300"
                 style={{ 
-                  borderColor: 'hsl(50, 100%, 50%)',
-                  backgroundColor: 'hsl(50, 100%, 95%)',
+                  borderColor: '#e5e5e5',
+                  backgroundColor: '#fafafa',
                   fontFamily: "'Quicksand', sans-serif"
                 }}
               >
-                <Search className="w-4 h-4" style={{ color: 'hsl(0, 100%, 50%)' }} />
+                <Search className="w-4 h-4 text-gray-500" />
                 {!isMobile && (
-                  <span className="text-sm font-semibold" style={{ color: 'hsl(0, 100%, 40%)' }}>
+                  <span className="text-sm font-medium text-gray-500">
                     Search
                   </span>
                 )}
@@ -125,20 +124,19 @@ export const GlobalHeader = () => {
 
               {/* Desktop Navigation */}
               {!isMobile && (
-                <nav className="flex items-center gap-1">
+                <nav className="flex items-center gap-0.5">
                   {navLinks.map((link) => (
                     <Link
                       key={link.path}
                       to={link.path}
-                      className={`px-3 py-1.5 rounded-full text-sm font-semibold transition-all duration-200 ${
+                      className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 ${
                         isActive(link.path)
                           ? 'text-white'
-                          : 'hover:bg-yellow-50'
+                          : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                       }`}
                       style={{ 
                         fontFamily: "'Quicksand', sans-serif",
-                        backgroundColor: isActive(link.path) ? 'hsl(0, 100%, 50%)' : undefined,
-                        color: isActive(link.path) ? 'white' : 'hsl(0, 100%, 35%)'
+                        backgroundColor: isActive(link.path) ? 'hsl(0, 70%, 55%)' : undefined
                       }}
                     >
                       {link.name}
@@ -152,15 +150,11 @@ export const GlobalHeader = () => {
                 <>
                   {isAuthenticated ? (
                     <Button
-                      variant="outline"
+                      variant="ghost"
                       size="sm"
                       onClick={handleSignOut}
-                      className="rounded-full gap-2 hover:bg-red-50"
-                      style={{ 
-                        fontFamily: "'Quicksand', sans-serif",
-                        borderColor: 'hsl(0, 100%, 50%)',
-                        color: 'hsl(0, 100%, 40%)'
-                      }}
+                      className="rounded-full gap-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                      style={{ fontFamily: "'Quicksand', sans-serif" }}
                     >
                       <LogOut className="w-4 h-4" />
                       Sign Out
@@ -169,10 +163,10 @@ export const GlobalHeader = () => {
                     <Button
                       onClick={() => setIsAuthOpen(true)}
                       size="sm"
-                      className="rounded-full gap-2 font-semibold hover:opacity-90 transition-all hover:scale-105"
+                      className="rounded-full gap-2 font-medium hover:opacity-90 transition-all"
                       style={{ 
                         fontFamily: "'Quicksand', sans-serif",
-                        backgroundColor: 'hsl(0, 100%, 50%)',
+                        backgroundColor: 'hsl(0, 70%, 55%)',
                         color: 'white'
                       }}
                     >
@@ -189,8 +183,7 @@ export const GlobalHeader = () => {
                   variant="ghost"
                   size="icon"
                   onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                  className="rounded-full h-9 w-9"
-                  style={{ color: 'hsl(0, 100%, 50%)' }}
+                  className="rounded-full h-9 w-9 text-gray-600"
                 >
                   {isMobileMenuOpen ? (
                     <X className="w-5 h-5" />
@@ -213,17 +206,16 @@ export const GlobalHeader = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-40 bg-black/30"
+              className="fixed inset-0 z-40 bg-black/20"
               onClick={() => setIsMobileMenuOpen(false)}
             />
             {/* Menu Panel */}
             <motion.div
-              initial={{ opacity: 0, y: -20 }}
+              initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
+              exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
-              className="fixed top-14 left-0 right-0 z-50 bg-white shadow-xl"
-              style={{ borderBottom: '3px solid hsl(50, 100%, 50%)' }}
+              className="fixed top-14 left-0 right-0 z-50 bg-white shadow-lg border-b border-gray-100"
             >
               <nav className="px-4 py-3 space-y-1">
                 {navLinks.map((link) => (
@@ -231,15 +223,14 @@ export const GlobalHeader = () => {
                     key={link.path}
                     to={link.path}
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className={`block px-4 py-3 rounded-xl text-base font-semibold transition-all ${
+                    className={`block px-4 py-3 rounded-xl text-base font-medium transition-all ${
                       isActive(link.path)
                         ? 'text-white'
-                        : 'hover:bg-yellow-50'
+                        : 'text-gray-600 hover:bg-gray-50'
                     }`}
                     style={{ 
                       fontFamily: "'Quicksand', sans-serif",
-                      backgroundColor: isActive(link.path) ? 'hsl(0, 100%, 50%)' : undefined,
-                      color: isActive(link.path) ? 'white' : 'hsl(0, 100%, 35%)'
+                      backgroundColor: isActive(link.path) ? 'hsl(0, 70%, 55%)' : undefined
                     }}
                   >
                     {link.name}
@@ -247,20 +238,16 @@ export const GlobalHeader = () => {
                 ))}
                 
                 {/* Mobile Auth Button */}
-                <div className="pt-2 border-t border-gray-200 mt-2">
+                <div className="pt-2 border-t border-gray-100 mt-2">
                   {isAuthenticated ? (
                     <Button
-                      variant="outline"
+                      variant="ghost"
                       onClick={() => {
                         handleSignOut();
                         setIsMobileMenuOpen(false);
                       }}
-                      className="w-full rounded-xl gap-2 justify-center py-5"
-                      style={{ 
-                        fontFamily: "'Quicksand', sans-serif", 
-                        borderColor: 'hsl(0, 100%, 50%)',
-                        color: 'hsl(0, 100%, 40%)'
-                      }}
+                      className="w-full rounded-xl gap-2 justify-center py-5 text-gray-600"
+                      style={{ fontFamily: "'Quicksand', sans-serif" }}
                     >
                       <LogOut className="w-4 h-4" />
                       Sign Out
@@ -271,10 +258,10 @@ export const GlobalHeader = () => {
                         setIsAuthOpen(true);
                         setIsMobileMenuOpen(false);
                       }}
-                      className="w-full rounded-xl gap-2 justify-center py-5 font-semibold"
+                      className="w-full rounded-xl gap-2 justify-center py-5 font-medium"
                       style={{ 
                         fontFamily: "'Quicksand', sans-serif",
-                        backgroundColor: 'hsl(0, 100%, 50%)',
+                        backgroundColor: 'hsl(0, 70%, 55%)',
                         color: 'white'
                       }}
                     >
