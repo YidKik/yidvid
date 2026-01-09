@@ -156,7 +156,7 @@ const LandingPage = () => {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 px-6 bg-secondary/30">
+      <section className="py-20 px-6 bg-primary/5">
         <motion.div
           variants={containerVariants}
           initial="hidden"
@@ -184,10 +184,10 @@ const LandingPage = () => {
               <motion.div
                 key={feature.title}
                 variants={itemVariants}
-                className="group relative bg-background rounded-2xl p-6 shadow-sm border border-border hover:border-highlight transition-all duration-300 hover:shadow-lg"
+                className="group relative bg-primary/10 rounded-2xl p-6 border-2 border-primary/20 hover:border-highlight hover:bg-highlight/10 transition-all duration-300 hover:shadow-lg"
                 whileHover={{ y: -5 }}
               >
-                <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-highlight/20 transition-colors">
+                <div className="w-14 h-14 bg-primary/20 rounded-xl flex items-center justify-center mb-4 group-hover:bg-highlight/30 transition-colors">
                   <feature.icon className="w-7 h-7 text-primary group-hover:text-highlight transition-colors" strokeWidth={2} />
                 </div>
                 <h3 
@@ -238,12 +238,12 @@ const LandingPage = () => {
               <motion.button
                 key={category.label}
                 onClick={() => navigate(category.path)}
-                className="group flex items-center gap-2 px-6 py-3 bg-background border-2 border-border rounded-full text-foreground font-medium hover:border-highlight hover:bg-highlight/5 transition-all duration-300"
+                className="group flex items-center gap-2 px-6 py-3 bg-primary/10 border-2 border-primary/30 rounded-full text-foreground font-medium hover:border-highlight hover:bg-highlight/20 transition-all duration-300"
                 style={{ fontFamily: "'Quicksand', sans-serif" }}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <category.icon className="w-5 h-5 text-muted-foreground group-hover:text-highlight transition-colors" />
+                <category.icon className="w-5 h-5 text-primary group-hover:text-highlight transition-colors" />
                 {category.label}
               </motion.button>
             ))}
@@ -303,9 +303,9 @@ const LandingPage = () => {
           </p>
           <motion.button
             onClick={() => navigate('/videos')}
-            className="inline-flex items-center gap-2 px-8 py-4 bg-background text-primary font-bold rounded-full shadow-lg"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-highlight text-highlight-foreground font-bold rounded-full shadow-lg"
             style={{ fontFamily: "'Quicksand', sans-serif" }}
-            whileHover={{ scale: 1.05, backgroundColor: "hsl(var(--highlight))", color: "hsl(var(--highlight-foreground))" }}
+            whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.98 }}
           >
             <Play className="w-5 h-5" />
@@ -316,7 +316,7 @@ const LandingPage = () => {
       </section>
 
       {/* Simple Footer */}
-      <footer className="py-8 px-6 bg-background border-t border-border">
+      <footer className="py-8 px-6 bg-foreground/5 border-t border-primary/20">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <img
@@ -325,14 +325,14 @@ const LandingPage = () => {
               className="w-8 h-8"
             />
             <span 
-              className="font-bold text-foreground"
+              className="font-bold text-primary"
               style={{ fontFamily: "'Quicksand', sans-serif" }}
             >
               YidVid
             </span>
           </div>
           <p 
-            className="text-sm text-muted-foreground"
+            className="text-sm text-foreground/70"
             style={{ fontFamily: "'Quicksand', sans-serif" }}
           >
             © {new Date().getFullYear()} YidVid. Quality Jewish content for everyone.
