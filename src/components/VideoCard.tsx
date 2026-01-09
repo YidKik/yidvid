@@ -83,6 +83,8 @@ export const VideoCard = ({
         thumbnail={thumbnail} 
         title={title} 
         isSample={isSample}
+        channelName={channelName}
+        duration="3:45"
       />
       
       {!hideInfo && (
