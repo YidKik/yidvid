@@ -227,38 +227,47 @@ const LandingPage = () => {
           {/* Secondary CTAs */}
           <motion.div
             variants={itemVariants}
-            className="flex flex-col sm:flex-row justify-center gap-4"
+            className="flex flex-col sm:flex-row justify-center gap-5"
           >
             <motion.button
               onClick={() => navigate('/videos')}
-              className="group flex items-center justify-center gap-2 px-8 py-4 font-bold rounded-xl shadow-md"
+              className="group relative flex items-center justify-center gap-3 px-10 py-5 font-bold rounded-2xl overflow-hidden"
               style={{ 
                 fontFamily: "'Quicksand', sans-serif",
-                backgroundColor: 'hsl(0, 100%, 50%)',
-                color: 'white'
+                background: 'linear-gradient(135deg, hsl(0, 100%, 50%) 0%, hsl(0, 100%, 40%) 100%)',
+                color: 'white',
+                boxShadow: '0 6px 25px rgba(255, 0, 0, 0.3)'
               }}
-              whileHover={{ scale: 1.02, backgroundColor: 'hsl(0, 100%, 45%)' }}
-              whileTap={{ scale: 0.98 }}
+              whileHover={{ 
+                scale: 1.03,
+                boxShadow: '0 10px 35px rgba(255, 0, 0, 0.4)'
+              }}
+              whileTap={{ scale: 0.97 }}
             >
-              <Play className="w-5 h-5" />
+              <Play className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" />
               Browse All Videos
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
             </motion.button>
 
             <motion.button
               onClick={() => navigate('/videos?view=channels')}
-              className="group flex items-center justify-center gap-2 px-8 py-4 font-bold rounded-xl"
+              className="group relative flex items-center justify-center gap-3 px-10 py-5 font-bold rounded-2xl overflow-hidden"
               style={{ 
                 fontFamily: "'Quicksand', sans-serif",
-                backgroundColor: 'transparent',
-                color: 'hsl(0, 100%, 50%)',
-                border: '2px solid hsl(0, 100%, 50%)'
+                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 250, 250, 0.9) 100%)',
+                color: '#1a1a1a',
+                border: '1px solid rgba(0, 0, 0, 0.1)',
+                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)'
               }}
-              whileHover={{ scale: 1.02, backgroundColor: 'hsl(0, 100%, 50%)', color: 'white' }}
-              whileTap={{ scale: 0.98 }}
+              whileHover={{ 
+                scale: 1.03,
+                boxShadow: '0 10px 30px rgba(0, 0, 0, 0.12)'
+              }}
+              whileTap={{ scale: 0.97 }}
             >
-              <Grid3X3 className="w-5 h-5" />
-              View All Channels
+              <Grid3X3 className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" style={{ color: 'hsl(0, 100%, 50%)' }} />
+              <span>View All Channels</span>
+              <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" style={{ color: 'hsl(0, 100%, 50%)' }} />
             </motion.button>
           </motion.div>
         </motion.div>
