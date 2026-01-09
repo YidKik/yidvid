@@ -1,51 +1,42 @@
 import React, { useEffect, useRef } from 'react';
 import { useParams, Link, useLocation } from "react-router-dom";
-import { Helmet } from "react-helmet";
 import { VideoPlayer } from "@/components/video/VideoPlayer";
-import { VideoInfo } from "@/components/video/VideoInfo";
-import { RelatedVideos } from "@/components/video/RelatedVideos";
-import { ChannelSection } from "@/components/video/details/ChannelSection";
-import { VideoDescription } from "@/components/video/details/VideoDescription";
 import { BackButton } from "@/components/navigation/BackButton";
-import { VideoInteractions } from "@/components/video/VideoInteractions";
-import { StickyRelatedVideos } from "@/components/video/details/StickyRelatedVideos";
-import { ReportVideoDialog } from "@/components/video/ReportVideoDialog";
 import { useVideoQuery } from "@/components/video/details/VideoQuery";
 import { VideoComments } from "@/components/video/details/VideoComments";
 import { useRelatedVideosQuery } from "@/components/video/details/RelatedVideosQuery";
 import { VideoHistory } from "@/components/video/details/VideoHistory";
-import { DelayedLoadingAnimation } from "@/components/ui/DelayedLoadingAnimation";
 import { VideoPlaceholder } from "@/components/video/VideoPlaceholder";
 import { VideoSEO } from "@/components/seo/VideoSEO";
 import { toast } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useAuth } from "@/hooks/useAuth";
 import { useIncrementVideoView } from "@/hooks/video/useIncrementVideoView";
+import { VideoActionBar } from "@/components/video/details/VideoActionBar";
+import { VideoChannelCard } from "@/components/video/details/VideoChannelCard";
+import { VideoMetaInfo } from "@/components/video/details/VideoMetaInfo";
+import { RelatedVideosSidebar } from "@/components/video/details/RelatedVideosSidebar";
+import { VideoDescriptionCard } from "@/components/video/details/VideoDescriptionCard";
 
 const VideoDetails = () => {
   const { videoId } = useParams<{ videoId: string }>();
   const location = useLocation();
-  const { isMobile } = useIsMobile();
+  const { isMobile, isTablet } = useIsMobile();
   const { isAuthenticated, session } = useAuth();
   const incrementView = useIncrementVideoView();
   const viewIncrementedRef = useRef<string | null>(null);
-  const pageContentRef = useRef<HTMLDivElement>(null);
 
-  // Single effect for logging and view increment
   useEffect(() => {
     if (!videoId) return;
     
     console.log("VideoDetails page route:", location.pathname);
     console.log("VideoDetails page received videoId:", videoId);
-    console.log("User authentication status:", isAuthenticated ? "logged in" : "logged out");
     
-    // Only increment view once per video
     if (viewIncrementedRef.current !== videoId) {
       viewIncrementedRef.current = videoId;
-      console.log("Incrementing view for video:", videoId);
       incrementView(videoId);
     }
-  }, [videoId, location.pathname, isAuthenticated, incrementView]);
+  }, [videoId, location.pathname, incrementView]);
 
   if (!videoId) {
     toast.error("Video ID not provided");
@@ -59,64 +50,37 @@ const VideoDetails = () => {
     videoId
   );
 
-  // Set page title based on video data
-  const pageTitle = video?.title ? `${video.title} | YidVid` : "Loading Video | YidVid";
-
-  if (isLoadingVideo) {
-    return (
-      <>
-        <Helmet>
-          <title>Loading Video | YidVid</title>
-        </Helmet>
-        <div className="container mx-auto p-4 mt-16 flex justify-center">
-          <DelayedLoadingAnimation 
-            size={isMobile ? "medium" : "large"} 
-            color="primary" 
-            text="Loading video..." 
-            delayMs={3000}
-          />
-        </div>
-      </>
-    );
-  }
-
   if (!video || error) {
-    console.error("Video not found or error:", error, "for videoId:", videoId);
+    if (!isLoadingVideo) {
+      console.error("Video not found or error:", error, "for videoId:", videoId);
+    }
     return (
-      <>
-        <Helmet>
-          <title>Video Not Found | YidVid</title>
-        </Helmet>
-        <div className="container mx-auto p-4 mt-16">
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto p-4 pt-20">
           <BackButton />
           <div className="p-8 text-center">
             <div className="mx-auto mb-6 w-full max-w-md aspect-video flex items-center justify-center">
               <VideoPlaceholder size="large" />
             </div>
-            <h2 className="text-xl font-semibold text-destructive">Video not found</h2>
-            <p className="mt-2 text-muted-foreground">
-              {error ? `Error: ${error.message}` : "The video you're looking for doesn't exist or has been removed."}
-            </p>
-            <Link to="/videos" className="mt-4 inline-block px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 transition-colors">
-              Return to videos
-            </Link>
+            <h2 className="text-xl font-semibold text-destructive">
+              {isLoadingVideo ? "Loading..." : "Video not found"}
+            </h2>
+            {!isLoadingVideo && (
+              <>
+                <p className="mt-2 text-muted-foreground">
+                  {error ? `Error: ${error.message}` : "The video you're looking for doesn't exist or has been removed."}
+                </p>
+                <Link to="/videos" className="mt-4 inline-block px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors">
+                  Return to videos
+                </Link>
+              </>
+            )}
           </div>
         </div>
-      </>
+      </div>
     );
   }
 
-  console.log("Video details found:", { 
-    id: video.id,
-    video_id: video.video_id,
-    title: video.title,
-    channelId: video.channel_id,
-    views: video.views,
-    authStatus: isAuthenticated ? "logged in" : "logged out",
-    relatedVideosCount: channelVideos.length
-  });
-
-  // Convert the database video to VideoData format for SEO component
   const videoForSEO = {
     ...video,
     channel_name: video.channel_name || "Unknown Channel",
@@ -125,72 +89,127 @@ const VideoDetails = () => {
     updated_at: video.updated_at || new Date().toISOString(),
     created_at: video.created_at || new Date().toISOString(),
     views: video.views || 0,
-    // Ensure category is properly typed
     category: (video.category as "music" | "torah" | "inspiration" | "podcast" | "education" | "entertainment" | "other" | "custom" | null) || null
   };
 
   return (
     <>
       <VideoSEO video={videoForSEO} />
-      <div className="w-full min-h-screen bg-white text-black">
-        <div className="container mx-auto p-4 pt-16">
+      {isAuthenticated && <VideoHistory videoId={video?.id || ""} />}
+      
+      <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
+        <div className="container mx-auto px-4 pt-20 pb-12">
           <BackButton />
-          {isAuthenticated && <VideoHistory videoId={video?.id || ""} />}
           
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div ref={pageContentRef} className="lg:col-span-2 space-y-6">
-              <div className="relative">
-                <VideoPlayer videoId={video?.video_id || ""} />
+          {/* Main content wrapper - card style like reference */}
+          <div className="mt-6 bg-card rounded-2xl shadow-lg border border-border/30 overflow-hidden">
+            
+            {/* Desktop/Tablet: Side by side layout */}
+            {!isMobile && (
+              <div className="flex">
+                {/* Left: Channel Card */}
+                <div className="w-80 flex-shrink-0 p-6 border-r border-border/20">
+                  <VideoChannelCard
+                    channelName={video?.channel_name || ""}
+                    channelId={video?.channel_id || ""}
+                    channelThumbnail={video?.youtube_channels?.thumbnail_url || ""}
+                    channelDescription=""
+                  />
+                </div>
+                
+                {/* Right: Video Player and Info */}
+                <div className="flex-1 p-6">
+                  {/* Video Player */}
+                  <div className="rounded-xl overflow-hidden shadow-md">
+                    <VideoPlayer videoId={video?.video_id || ""} />
+                  </div>
+                  
+                  {/* Video Title and Actions Row */}
+                  <div className="mt-4 flex items-start justify-between gap-4">
+                    <div className="flex-1 min-w-0">
+                      <h1 className="text-lg font-semibold text-foreground line-clamp-2 leading-tight">
+                        {video?.title}
+                      </h1>
+                      <VideoMetaInfo 
+                        views={video?.views || 0} 
+                        uploadedAt={video?.uploaded_at || ""} 
+                      />
+                    </div>
+                    
+                    {/* Action buttons */}
+                    <VideoActionBar 
+                      videoId={video?.id || ""} 
+                      youtubeVideoId={video?.video_id || ""}
+                    />
+                  </div>
+                </div>
               </div>
-              
-              <div className="flex justify-between items-start gap-3">
-                <h1 className={`font-semibold text-foreground leading-tight flex-1 ${
-                  isMobile 
-                    ? "text-sm sm:text-base line-clamp-2 min-h-[2.5rem] text-[0.875rem] leading-tight" 
-                    : "text-xl md:text-2xl"
-                }`}>
+            )}
+            
+            {/* Mobile: Stacked layout */}
+            {isMobile && (
+              <div className="p-4">
+                {/* Video Player */}
+                <div className="rounded-xl overflow-hidden shadow-md -mx-4 -mt-4">
+                  <VideoPlayer videoId={video?.video_id || ""} />
+                </div>
+                
+                {/* Video Title */}
+                <h1 className="mt-4 text-base font-semibold text-foreground leading-tight">
                   {video?.title}
                 </h1>
-                <ReportVideoDialog videoId={video?.id || ""} />
+                
+                {/* Meta and Actions Row */}
+                <div className="mt-3 flex items-center justify-between">
+                  <VideoMetaInfo 
+                    views={video?.views || 0} 
+                    uploadedAt={video?.uploaded_at || ""} 
+                  />
+                  <VideoActionBar 
+                    videoId={video?.id || ""} 
+                    youtubeVideoId={video?.video_id || ""}
+                    compact
+                  />
+                </div>
+                
+                {/* Channel Card */}
+                <div className="mt-4 pt-4 border-t border-border/30">
+                  <VideoChannelCard
+                    channelName={video?.channel_name || ""}
+                    channelId={video?.channel_id || ""}
+                    channelThumbnail={video?.youtube_channels?.thumbnail_url || ""}
+                    channelDescription=""
+                    compact
+                  />
+                </div>
               </div>
-              
-              <VideoInteractions videoId={video?.id || ""} />
-              
-              <ChannelSection
-                channelName={video?.channel_name || ""}
-                channelId={video?.channel_id || ""}
-                channelThumbnail={video?.youtube_channels?.thumbnail_url || ""}
-                views={video?.views || 0}
-                uploadedAt={video?.uploaded_at || ""}
-              />
-              
-              {isAuthenticated && <VideoComments videoId={video?.id || ""} />}
-
-              <VideoDescription description={video?.description || ""} />
-            </div>
-            
-            <div className="lg:col-span-1">
-              {!isMobile && (
-                <StickyRelatedVideos 
-                  videos={channelVideos} 
-                  isLoading={isLoadingRelated}
-                  pageContentRef={pageContentRef}
-                />
-              )}
-            </div>
+            )}
           </div>
           
-          {/* Mobile related videos */}
-          {isMobile && (
-            <div className="mt-8">
-              <h2 className="text-xl font-semibold mb-4 text-foreground">More from this channel</h2>
-              <RelatedVideos 
-                videos={channelVideos} 
-                showHeading={false} 
+          {/* Below main card: Description, Comments, Related Videos */}
+          <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Left column: Description and Comments */}
+            <div className="lg:col-span-2 space-y-6">
+              {/* Description Card */}
+              {video?.description && (
+                <VideoDescriptionCard description={video.description} />
+              )}
+              
+              {/* Comments Section */}
+              {isAuthenticated && (
+                <VideoComments videoId={video?.id || ""} />
+              )}
+            </div>
+            
+            {/* Right column: Related Videos */}
+            <div className="lg:col-span-1">
+              <RelatedVideosSidebar 
+                videos={channelVideos}
                 isLoading={isLoadingRelated}
+                channelName={video?.channel_name || ""}
               />
             </div>
-          )}
+          </div>
         </div>
       </div>
     </>

@@ -17,9 +17,10 @@ import { toast } from "sonner";
 
 interface ReportVideoDialogProps {
   videoId: string;
+  compact?: boolean;
 }
 
-export function ReportVideoDialog({ videoId }: ReportVideoDialogProps) {
+export function ReportVideoDialog({ videoId, compact = false }: ReportVideoDialogProps) {
   const [message, setMessage] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -58,15 +59,14 @@ export function ReportVideoDialog({ videoId }: ReportVideoDialogProps) {
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button 
-          variant="outline" 
+          variant="ghost" 
           size="sm" 
-          className="group relative rounded-full px-3 py-1.5 text-xs text-muted-foreground border border-gray-300 hover:bg-gray-50 hover:border-red-500 transition-all duration-300"
+          className={`group rounded-full hover:bg-muted text-muted-foreground transition-colors ${
+            compact ? "h-8 px-2" : "h-9 px-3"
+          }`}
         >
-          <Flag className="h-3.5 w-3.5 mr-1 group-hover:text-red-500 transition-colors duration-300" />
-          <span className="group-hover:text-red-500 transition-colors duration-300">Report</span>
-          <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200 group-hover:text-red-500">
-            Report this video
-          </span>
+          <Flag className={`${compact ? "h-3.5 w-3.5" : "h-4 w-4"} group-hover:text-destructive transition-colors`} />
+          {!compact && <span className="ml-1.5 text-sm group-hover:text-destructive transition-colors">Report</span>}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] relative fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
