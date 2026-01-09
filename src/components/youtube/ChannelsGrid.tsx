@@ -5,8 +5,7 @@ import { ChannelsGridSkeleton } from "./grid/ChannelsGridSkeleton";
 import { ChannelDataProvider } from "./grid/ChannelDataProvider";
 import { FilteredChannelsGrid } from "./grid/FilteredChannelsGrid";
 import { useState } from "react";
-import { Plus, Users } from "lucide-react";
-import { motion } from "framer-motion";
+import { Button } from "../ui/button";
 
 interface ChannelsGridProps {
   onError?: (error: any) => void;
@@ -18,34 +17,12 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
   const [isRequestChannelOpen, setIsRequestChannelOpen] = useState(false);
 
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.2, duration: 0.5 }}
-      className="w-full max-w-[1400px] mx-auto mt-12 md:mt-16"
-    >
-      {/* Modern Section Header */}
-      <div className="section-header-modern">
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-xl bg-gradient-to-br from-primary/10 to-primary/5">
-            <Users className="w-5 h-5 text-primary" />
-          </div>
-          <div>
-            <h2 className="section-title-modern">Browse Channels</h2>
-            <p className="section-subtitle-modern hidden md:block">
-              Discover content from trusted creators
-            </p>
-          </div>
-        </div>
-        
-        <button 
-          onClick={() => setIsRequestChannelOpen(true)}
-          className="button-modern-secondary flex items-center gap-2"
-        >
-          <Plus className="w-4 h-4" />
-          <span className="hidden sm:inline">Request Channel</span>
-        </button>
-        
+    <div className="w-full max-w-[1600px] mx-auto px-3 md:px-4 animate-in fade-in duration-300">
+      <div className="flex items-center justify-between mb-3 md:mb-6">
+        <h2 className="text-base md:text-2xl font-bold text-foreground">View All Channels</h2>
+        <Button variant="outline" onClick={() => setIsRequestChannelOpen(true)}>
+          Request a Channel
+        </Button>
         <RequestChannelDialog
           open={isRequestChannelOpen}
           onOpenChange={setIsRequestChannelOpen}
@@ -54,6 +31,7 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
       
       <ChannelDataProvider onError={onError}>
         {({ displayChannels, isLoading }) => {
+          // Show skeleton only when explicitly loading and not on main page
           const showSkeleton = isLoading && !isMainPage;
 
           if (showSkeleton) {
@@ -63,10 +41,10 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
           return <FilteredChannelsGrid 
             channels={displayChannels} 
             isMainPage={isMainPage}
-            isLoading={isLoading}
+            isLoading={isLoading}  // Pass loading state to FilteredChannelsGrid
           />;
         }}
       </ChannelDataProvider>
-    </motion.div>
+    </div>
   );
 };

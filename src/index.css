@@ -89,9 +89,6 @@ body {
 /* Import mobile responsive fixes */
 @import './styles/mobile/responsive.css';
 
-/* Import modern videos page styles */
-@import './styles/videos-page.css';
-
 /* Homepage specific override for ALL devices */
 html.home-page,
 body.home-page {

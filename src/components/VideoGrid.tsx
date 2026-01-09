@@ -27,6 +27,7 @@ export const VideoGrid = ({
   const { session } = useSessionManager();
   const [forceFetchPublic, setForceFetchPublic] = useState(false);
   
+  // Always set to true to ensure we fetch public videos for all users
   const shouldShowContent = true;
   
   const { videos: fetchedVideos, loading: internalLoading, error } = useVideoGridData(
@@ -35,13 +36,16 @@ export const VideoGrid = ({
   );
   
   useEffect(() => {
+    // For non-authenticated users, ensure we try to fetch public videos
     if (!session) {
       setForceFetchPublic(true);
     }
   }, [session]);
   
   useEffect(() => {
+    // If we need to fetch public videos and don't have external videos
     if (forceFetchPublic && !externalVideos && fetchedVideos.length === 0) {
+      // Attempt to fetch public videos via edge function
       const fetchPublicVideos = async () => {
         try {
           const response = await fetch(
@@ -50,12 +54,15 @@ export const VideoGrid = ({
               method: "GET",
               headers: {
                 "Content-Type": "application/json",
+                // Use Supabase client instead of direct fetch
               }
             }
           );
           
           if (response.ok) {
+            const data = await response.json();
             console.log("Successfully fetched public videos via edge function");
+            // Data will be used in the next render cycle
           }
         } catch (error) {
           console.error("Error fetching public videos:", error);
@@ -68,36 +75,46 @@ export const VideoGrid = ({
     }
   }, [forceFetchPublic, externalVideos, fetchedVideos]);
   
+  // Use external videos if provided, otherwise use fetched videos
   const videos = externalVideos || fetchedVideos;
   const isLoading = externalLoading !== undefined ? externalLoading : internalLoading;
 
+  // Show loader while loading
   if (isLoading) {
     return <VideoGridLoader />;
   }
 
+  // Handle errors
   if (error && !videos.length) {
     return <VideoGridError message={error.message} onRetry={() => window.location.reload()} />;
   }
 
-  // Modern responsive grid columns
-  let gridCols = "grid-cols-4";
+  // Create grid columns based on device and rowSize - FIXED TABLET LOGIC
+  let gridCols = "grid-cols-4"; // Default desktop
+  
   if (isMobile) {
-    gridCols = "grid-cols-2";
+    gridCols = "grid-cols-2"; // Mobile always 2 columns
   } else if (isTablet) {
-    gridCols = "grid-cols-3";
+    gridCols = "grid-cols-3"; // Tablet always 3 columns - ENFORCED
   }
   
-  const videoLimit = isMobile ? 6 : isTablet ? 9 : maxVideos;
+  const gridGap = isMobile ? "gap-x-3 gap-y-4" : isTablet ? "gap-4" : "gap-5";
+  
+  // Limit videos based on device - FIXED TABLET LOGIC
+  const videoLimit = isMobile ? 4 : isTablet ? 9 : maxVideos;
   const displayVideos = videos.slice(0, videoLimit);
+
+  console.log(`VideoGrid: Device - isMobile: ${isMobile}, isTablet: ${isTablet}, gridCols: ${gridCols}, videoLimit: ${videoLimit}, displayVideos: ${displayVideos.length}`);
 
   return (
     <div className={cn(
-      "video-grid-modern", 
-      gridCols,
+      "grid video-grid-container", 
+      gridCols, 
+      gridGap, 
       isTablet && "tablet-video-grid-enforce",
       className
     )}>
-      {displayVideos.map((video, index) => (
+      {displayVideos.map((video) => (
         <VideoGridItem key={video.id} video={video} />
       ))}
     </div>

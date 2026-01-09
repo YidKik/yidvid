@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Channel } from "@/hooks/channel/useChannelsGrid";
-import { motion } from "framer-motion";
 
 export interface ChannelCardProps {
   channel: Channel;
@@ -15,49 +14,57 @@ export const ChannelCard = ({
   index = 0
 }: ChannelCardProps) => {
   const { id, channel_id, title, thumbnail_url } = channel;
-  const [imageError, setImageError] = useState(false);
+  const [showControls, setShowControls] = useState(false);
 
-  const animationDelay = 0.05 * (index % 10);
+  const isSample = id?.toString()?.includes('sample') || channel_id?.includes('sample');
+  const animationDelay = `${0.05 * (index % 10)}s`;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: animationDelay, duration: 0.4, ease: "easeOut" }}
+    <Link
+      to={`/channel/${channel_id}`}
+      className={cn(
+        "block opacity-0 animate-[fadeIn_0.5s_ease-out_forwards]",
+        "relative group rounded-xl overflow-hidden transition-all duration-300",
+        "hover:scale-[1.05] text-center p-4 md:p-6",
+        "bg-white backdrop-blur-sm mx-auto w-full",
+        "shadow-[0_-1px_3px_0_rgba(0,0,0,0.05),0_4px_6px_-1px_rgba(0,0,0,0.1)]",
+        "hover:shadow-[0_-2px_4px_0_rgba(0,0,0,0.06),0_6px_10px_-1px_rgba(0,0,0,0.15)]"
+      )}
+      style={{ animationDelay }}
+      onMouseEnter={() => setShowControls(true)}
+      onMouseLeave={() => setShowControls(false)}
+      aria-label={`View channel: ${title}`}
     >
-      <Link
-        to={`/channel/${channel_id}`}
-        className="channel-card-modern block"
-        aria-label={`View channel: ${title}`}
-      >
-        <div className="channel-avatar-modern">
-          {thumbnail_url && !imageError ? (
+      <div className="flex flex-col items-center justify-center">
+        <div className="w-24 h-24 md:w-28 md:h-28 rounded-full flex items-center justify-center overflow-hidden mb-4 mx-auto 
+                      border-2 border-primary/30 group-hover:border-[#ea384c] transition-all duration-300
+                      group-hover:shadow-lg shadow-primary/20">
+          {thumbnail_url ? (
             <img
               src={thumbnail_url}
               alt={title}
               className="w-full h-full object-cover"
               loading="lazy"
-              onError={() => setImageError(true)}
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.src = "/lovable-uploads/efca5adc-d9d2-4c5b-8900-e078f9d49b6a.png";
+              }}
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
-              <img 
-                src="/lovable-uploads/efca5adc-d9d2-4c5b-8900-e078f9d49b6a.png" 
-                alt="YidVid" 
-                className="w-8 h-8 opacity-50" 
-              />
+              <img src="/lovable-uploads/efca5adc-d9d2-4c5b-8900-e078f9d49b6a.png" alt="YidVid" className="w-10 h-10" />
             </div>
           )}
         </div>
         
-        <h3 className="channel-name-modern line-clamp-2">
+        <h3 className="text-sm md:text-base font-medium text-center mb-1 !text-black group-hover:!text-[#ea384c] transition-colors">
           {title}
         </h3>
         
-        <p className="channel-cta-modern">
-          View Channel →
+        <p className="text-xs !text-black/70 group-hover:!text-[#ea384c] transition-colors">
+          View Channel
         </p>
-      </Link>
-    </motion.div>
+      </div>
+    </Link>
   );
 };
