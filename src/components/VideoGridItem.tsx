@@ -40,8 +40,6 @@ export const VideoGridItem = ({ video, loading }: VideoGridItemProps) => {
         thumbnail={video.thumbnail} 
         title={video.title} 
         isSample={video.id?.toString().includes('sample')}
-        views={video.views}
-        formattedDate={formattedDate}
       />
       
       {isVideosPage && (

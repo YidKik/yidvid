@@ -83,8 +83,6 @@ export const VideoCard = ({
         thumbnail={thumbnail} 
         title={title} 
         isSample={isSample}
-        views={viewsNumber}
-        formattedDate={formattedDate}
       />
       
       {!hideInfo && (
