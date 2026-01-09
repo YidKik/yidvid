@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useSearchSuggestions } from '@/hooks/useSearchSuggestions';
 
 const typingPhrases = [
   "Find inspiring Torah videos...",
@@ -12,16 +13,6 @@ const typingPhrases = [
   "Listen to the latest podcasts...",
 ];
 
-const searchSuggestions = [
-  "Benny Friedman Music",
-  "Torah Anytime Lectures",
-  "Shmuel Kunda Stories",
-  "Avraham Fried Classics",
-  "Daily Halacha Videos",
-  "Jewish Podcasts",
-  "Kids Entertainment",
-];
-
 const HeroSearchSection = () => {
   const navigate = useNavigate();
   const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
@@ -30,16 +21,27 @@ const HeroSearchSection = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [currentSuggestionIndex, setCurrentSuggestionIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
+  
+  const { suggestions, isLoading } = useSearchSuggestions();
 
   // Rotate search suggestions every 3 seconds
   useEffect(() => {
+    if (suggestions.length === 0) return;
+    
     const interval = setInterval(() => {
-      setCurrentSuggestionIndex((prev) => (prev + 1) % searchSuggestions.length);
+      setCurrentSuggestionIndex((prev) => (prev + 1) % suggestions.length);
     }, 3000);
     return () => clearInterval(interval);
-  }, []);
+  }, [suggestions.length]);
 
-  const currentPlaceholder = searchSuggestions[currentSuggestionIndex];
+  const currentPlaceholder = suggestions[currentSuggestionIndex]?.name || 'Search videos, channels...';
+
+  // Handle click on the search input to fill with current suggestion
+  const handleInputClick = () => {
+    if (!searchQuery && suggestions[currentSuggestionIndex]) {
+      setSearchQuery(suggestions[currentSuggestionIndex].name);
+    }
+  };
 
   useEffect(() => {
     const currentPhrase = typingPhrases[currentPhraseIndex];
@@ -159,14 +161,15 @@ const HeroSearchSection = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={handleKeyDown}
-                className="w-full py-5 pl-14 pr-36 text-lg outline-none bg-transparent relative z-10"
+                onClick={handleInputClick}
+                className="w-full py-5 pl-14 pr-36 text-lg outline-none bg-transparent relative z-10 cursor-text"
                 style={{ 
                   fontFamily: "'Quicksand', sans-serif",
                   color: '#1a1a1a'
                 }}
               />
               {/* Animated placeholder */}
-              {!searchQuery && (
+              {!searchQuery && !isLoading && suggestions.length > 0 && (
                 <div className="absolute inset-0 flex items-center pl-14 pointer-events-none">
                   <AnimatePresence mode="wait">
                     <motion.span
