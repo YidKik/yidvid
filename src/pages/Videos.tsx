@@ -59,9 +59,9 @@ const MainContent = () => {
   }, []);
 
   return (
-    <div className="flex-1 videos-page">
+    <div className="flex-1 videos-page pt-14">
       {/* Category Filter Bar */}
-      <div className="sticky top-16 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-200/50 py-3 px-4">
+      <div className="sticky top-14 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-200/50 py-3 px-4">
         <div className="max-w-[1400px] mx-auto">
           <CategoryToggle 
             selectedCategory={selectedCategory}
