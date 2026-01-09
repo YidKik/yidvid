@@ -79,12 +79,7 @@ export const VideoGrid = ({
   const videos = externalVideos || fetchedVideos;
   const isLoading = externalLoading !== undefined ? externalLoading : internalLoading;
 
-  // Show loader while loading
-  if (isLoading) {
-    return <VideoGridLoader />;
-  }
-
-  // Handle errors
+  // Handle errors - removed loading indicator to allow full page to load at once
   if (error && !videos.length) {
     return <VideoGridError message={error.message} onRetry={() => window.location.reload()} />;
   }
