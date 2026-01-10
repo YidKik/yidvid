@@ -12,11 +12,10 @@ import { toast } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useAuth } from "@/hooks/useAuth";
 import { useIncrementVideoView } from "@/hooks/video/useIncrementVideoView";
-import { VideoActionBar } from "@/components/video/details/VideoActionBar";
-import { VideoChannelCard } from "@/components/video/details/VideoChannelCard";
-import { VideoMetaInfo } from "@/components/video/details/VideoMetaInfo";
-import { RelatedVideosRow } from "@/components/video/details/RelatedVideosRow";
-import { VideoDescriptionCard } from "@/components/video/details/VideoDescriptionCard";
+import { FriendlyVideoActionBar } from "@/components/video/details/FriendlyVideoActionBar";
+import { FriendlyChannelSection } from "@/components/video/details/FriendlyChannelSection";
+import { FriendlyRelatedVideos } from "@/components/video/details/FriendlyRelatedVideos";
+import { MessageCircle, Sparkles } from "lucide-react";
 
 const VideoDetails = () => {
   const { videoId } = useParams<{ videoId: string }>();
@@ -55,11 +54,11 @@ const VideoDetails = () => {
       console.error("Video not found or error:", error, "for videoId:", videoId);
     }
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/10">
         <div className="container mx-auto p-4 pt-20">
           <BackButton />
-          <div className="p-8 text-center">
-            <div className="mx-auto mb-6 w-full max-w-md aspect-video flex items-center justify-center">
+          <div className="p-8 text-center bg-card/80 backdrop-blur-sm rounded-3xl shadow-lg border border-border/50 mt-6">
+            <div className="mx-auto mb-6 w-full max-w-md aspect-video flex items-center justify-center bg-muted/30 rounded-2xl">
               <VideoPlaceholder size="large" />
             </div>
             <h2 className="text-xl font-semibold text-destructive">
@@ -70,7 +69,7 @@ const VideoDetails = () => {
                 <p className="mt-2 text-muted-foreground">
                   {error ? `Error: ${error.message}` : "The video you're looking for doesn't exist or has been removed."}
                 </p>
-                <Link to="/videos" className="mt-4 inline-block px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors">
+                <Link to="/videos" className="mt-4 inline-block px-6 py-3 bg-primary text-primary-foreground rounded-full font-medium hover:bg-primary/90 transition-all hover:shadow-lg hover:shadow-primary/25">
                   Return to videos
                 </Link>
               </>
@@ -97,79 +96,79 @@ const VideoDetails = () => {
       <VideoSEO video={videoForSEO} />
       {isAuthenticated && <VideoHistory videoId={video?.id || ""} />}
       
-      <div className="min-h-screen bg-gradient-to-br from-muted/30 via-background to-muted/20">
+      <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/10">
         <div className="container mx-auto px-4 pt-20 pb-12">
           <BackButton />
           
           {/* Desktop/Tablet Layout */}
           {!isMobile && (
-            <>
-              {/* Main content card with video and comments side by side */}
-              <div className="mt-6 bg-card/90 backdrop-blur-sm rounded-2xl shadow-lg border border-border/80 overflow-hidden">
-                <div className="flex">
-                  {/* Left: Channel Card + Video */}
-                  <div className="flex-1 flex">
-                    {/* Channel sidebar */}
-                    <div className="w-64 flex-shrink-0 p-5 border-r border-border/50 bg-gradient-to-b from-primary/5 to-transparent">
-                      <VideoChannelCard
-                        channelName={video?.channel_name || ""}
-                        channelId={video?.channel_id || ""}
-                        channelThumbnail={video?.youtube_channels?.thumbnail_url || ""}
-                        channelDescription=""
-                      />
+            <div className="mt-6 space-y-8">
+              {/* Main content area - Video left, Comments right */}
+              <div className="flex gap-6">
+                {/* Left Column - Video and Info */}
+                <div className="flex-1 space-y-5">
+                  {/* Video Player Card */}
+                  <div className="bg-card/95 backdrop-blur-sm rounded-3xl shadow-xl border border-border/40 overflow-hidden">
+                    {/* Video Player */}
+                    <div className="aspect-video">
+                      <VideoPlayer videoId={video?.video_id || ""} />
                     </div>
                     
-                    {/* Video section */}
-                    <div className="flex-1 p-5">
-                      {/* Video Player */}
-                      <div className="rounded-xl overflow-hidden shadow-md">
-                        <VideoPlayer videoId={video?.video_id || ""} />
-                      </div>
+                    {/* Video Title Section */}
+                    <div className="p-6">
+                      <h1 className="text-xl font-bold text-foreground leading-tight mb-4">
+                        {video?.title}
+                      </h1>
                       
-                      {/* Video Title and Actions Row */}
-                      <div className="mt-4 flex items-start justify-between gap-4">
-                        <div className="flex-1 min-w-0">
-                          <h1 className="text-lg font-semibold text-foreground line-clamp-2 leading-tight">
-                            {video?.title}
-                          </h1>
-                          <VideoMetaInfo 
-                            views={video?.views || 0} 
-                            uploadedAt={video?.uploaded_at || ""} 
-                          />
-                        </div>
-                        
-                        {/* Action buttons */}
-                        <VideoActionBar 
-                          videoId={video?.id || ""} 
-                          youtubeVideoId={video?.video_id || ""}
-                        />
-                      </div>
-                      
-                      {/* Description */}
-                      {video?.description && (
-                        <div className="mt-4">
-                          <VideoDescriptionCard description={video.description} />
-                        </div>
-                      )}
+                      {/* Action Buttons */}
+                      <FriendlyVideoActionBar 
+                        videoId={video?.id || ""} 
+                        youtubeVideoId={video?.video_id || ""}
+                        views={video?.views || 0}
+                        uploadedAt={video?.uploaded_at || ""}
+                      />
                     </div>
                   </div>
                   
-                  {/* Right: Comments section */}
-                  <div className="w-80 flex-shrink-0 border-l border-border/50 bg-muted/10">
-                    <div className="p-5 h-full max-h-[600px] overflow-y-auto">
-                      <h3 className="text-lg font-semibold text-foreground mb-4">Comments</h3>
+                  {/* Channel & Description Section */}
+                  <FriendlyChannelSection
+                    channelName={video?.channel_name || ""}
+                    channelId={video?.channel_id || ""}
+                    channelThumbnail={video?.youtube_channels?.thumbnail_url || ""}
+                    description={video?.description || ""}
+                  />
+                </div>
+                
+                {/* Right Column - Comments */}
+                <div className="w-96 flex-shrink-0">
+                  <div className="bg-card/95 backdrop-blur-sm rounded-3xl shadow-xl border border-border/40 overflow-hidden sticky top-24">
+                    {/* Comments Header */}
+                    <div className="p-5 border-b border-border/30 bg-gradient-to-r from-primary/5 to-transparent">
+                      <div className="flex items-center gap-2">
+                        <div className="p-2 bg-primary/10 rounded-full">
+                          <MessageCircle className="h-5 w-5 text-primary" />
+                        </div>
+                        <h3 className="text-lg font-bold text-foreground">Comments</h3>
+                      </div>
+                    </div>
+                    
+                    {/* Comments Content */}
+                    <div className="p-5 max-h-[600px] overflow-y-auto">
                       {isAuthenticated ? (
                         <VideoComments videoId={video?.id || ""} />
                       ) : (
-                        <div className="text-center py-8">
-                          <p className="text-muted-foreground text-sm">
-                            Sign in to view and add comments
+                        <div className="text-center py-12">
+                          <div className="w-16 h-16 mx-auto mb-4 bg-primary/10 rounded-full flex items-center justify-center">
+                            <Sparkles className="h-8 w-8 text-primary" />
+                          </div>
+                          <p className="text-muted-foreground text-sm mb-4">
+                            Join the conversation!
                           </p>
                           <Link 
                             to="/auth" 
-                            className="inline-block mt-3 text-primary hover:text-primary/80 text-sm font-medium"
+                            className="inline-block px-6 py-2.5 bg-primary text-primary-foreground rounded-full text-sm font-medium hover:bg-primary/90 transition-all hover:shadow-lg hover:shadow-primary/25"
                           >
-                            Sign In
+                            Sign In to Comment
                           </Link>
                         </div>
                       )}
@@ -178,83 +177,87 @@ const VideoDetails = () => {
                 </div>
               </div>
               
-              {/* Related Videos Row - Full width below */}
-              <div className="mt-8">
-                <RelatedVideosRow 
-                  videos={channelVideos}
-                  isLoading={isLoadingRelated}
-                  channelName={video?.channel_name || ""}
-                />
-              </div>
-            </>
+              {/* More Videos Section - Full Width */}
+              <FriendlyRelatedVideos 
+                videos={channelVideos}
+                isLoading={isLoadingRelated}
+                channelName={video?.channel_name || ""}
+              />
+            </div>
           )}
           
           {/* Mobile Layout */}
           {isMobile && (
-            <>
+            <div className="mt-4 space-y-5">
               {/* Video Card */}
-              <div className="mt-6 bg-card/90 backdrop-blur-sm rounded-2xl shadow-lg border border-border/80 overflow-hidden">
+              <div className="bg-card/95 backdrop-blur-sm rounded-3xl shadow-xl border border-border/40 overflow-hidden">
                 {/* Video Player */}
-                <div className="rounded-t-2xl overflow-hidden">
-                  <VideoPlayer videoId={video?.video_id || ""} />
-                </div>
+                <VideoPlayer videoId={video?.video_id || ""} />
                 
-                <div className="p-4">
+                <div className="p-5">
                   {/* Video Title */}
-                  <h1 className="text-base font-semibold text-foreground leading-tight">
+                  <h1 className="text-lg font-bold text-foreground leading-tight mb-4">
                     {video?.title}
                   </h1>
                   
-                  {/* Meta and Actions Row */}
-                  <div className="mt-3 flex items-center justify-between">
-                    <VideoMetaInfo 
-                      views={video?.views || 0} 
-                      uploadedAt={video?.uploaded_at || ""} 
-                    />
-                    <VideoActionBar 
-                      videoId={video?.id || ""} 
-                      youtubeVideoId={video?.video_id || ""}
-                      compact
-                    />
-                  </div>
-                  
-                  {/* Channel Card */}
-                  <div className="mt-4 pt-4 border-t border-border/30">
-                    <VideoChannelCard
-                      channelName={video?.channel_name || ""}
-                      channelId={video?.channel_id || ""}
-                      channelThumbnail={video?.youtube_channels?.thumbnail_url || ""}
-                      channelDescription=""
-                      compact
-                    />
-                  </div>
+                  {/* Action Buttons */}
+                  <FriendlyVideoActionBar 
+                    videoId={video?.id || ""} 
+                    youtubeVideoId={video?.video_id || ""}
+                    views={video?.views || 0}
+                    uploadedAt={video?.uploaded_at || ""}
+                    compact
+                  />
                 </div>
               </div>
               
-              {/* Description */}
-              {video?.description && (
-                <div className="mt-6">
-                  <VideoDescriptionCard description={video.description} />
-                </div>
-              )}
+              {/* Channel & Description Section */}
+              <FriendlyChannelSection
+                channelName={video?.channel_name || ""}
+                channelId={video?.channel_id || ""}
+                channelThumbnail={video?.youtube_channels?.thumbnail_url || ""}
+                description={video?.description || ""}
+                compact
+              />
               
               {/* Comments */}
-              {isAuthenticated && (
-                <div className="mt-6 bg-card/90 backdrop-blur-sm rounded-2xl border border-border/80 p-4">
-                  <h3 className="text-lg font-semibold text-foreground mb-4">Comments</h3>
-                  <VideoComments videoId={video?.id || ""} />
+              <div className="bg-card/95 backdrop-blur-sm rounded-3xl shadow-xl border border-border/40 overflow-hidden">
+                <div className="p-4 border-b border-border/30 bg-gradient-to-r from-primary/5 to-transparent">
+                  <div className="flex items-center gap-2">
+                    <div className="p-1.5 bg-primary/10 rounded-full">
+                      <MessageCircle className="h-4 w-4 text-primary" />
+                    </div>
+                    <h3 className="text-base font-bold text-foreground">Comments</h3>
+                  </div>
                 </div>
-              )}
+                
+                <div className="p-4">
+                  {isAuthenticated ? (
+                    <VideoComments videoId={video?.id || ""} />
+                  ) : (
+                    <div className="text-center py-8">
+                      <p className="text-muted-foreground text-sm mb-3">
+                        Join the conversation!
+                      </p>
+                      <Link 
+                        to="/auth" 
+                        className="inline-block px-5 py-2 bg-primary text-primary-foreground rounded-full text-sm font-medium hover:bg-primary/90 transition-all"
+                      >
+                        Sign In
+                      </Link>
+                    </div>
+                  )}
+                </div>
+              </div>
               
               {/* Related Videos */}
-              <div className="mt-6">
-                <RelatedVideosRow 
-                  videos={channelVideos}
-                  isLoading={isLoadingRelated}
-                  channelName={video?.channel_name || ""}
-                />
-              </div>
-            </>
+              <FriendlyRelatedVideos 
+                videos={channelVideos}
+                isLoading={isLoadingRelated}
+                channelName={video?.channel_name || ""}
+                compact
+              />
+            </div>
           )}
         </div>
       </div>
