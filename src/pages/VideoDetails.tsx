@@ -96,7 +96,7 @@ const VideoDetails = () => {
       <VideoSEO video={videoForSEO} />
       {isAuthenticated && <VideoHistory videoId={video?.id || ""} />}
       
-      <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/10">
+      <div className="min-h-screen bg-gradient-to-br from-primary/10 via-background to-primary/5">
         <div className="container mx-auto px-4 pt-20 pb-12">
           <BackButton />
           
@@ -108,7 +108,7 @@ const VideoDetails = () => {
                 {/* Left Column - Video and Info */}
                 <div className="flex-1 space-y-5">
                   {/* Video Player Card */}
-                  <div className="bg-card/95 backdrop-blur-sm rounded-3xl shadow-xl border border-border/40 overflow-hidden">
+                  <div className="bg-gradient-to-br from-card via-card to-primary/5 rounded-3xl shadow-2xl shadow-primary/10 overflow-hidden">
                     {/* Video Player */}
                     <div className="aspect-video">
                       <VideoPlayer videoId={video?.video_id || ""} />
@@ -141,11 +141,11 @@ const VideoDetails = () => {
                 
                 {/* Right Column - Comments */}
                 <div className="w-96 flex-shrink-0">
-                  <div className="bg-card/95 backdrop-blur-sm rounded-3xl shadow-xl border border-border/40 overflow-hidden sticky top-24">
+                  <div className="bg-gradient-to-b from-card via-card to-primary/5 rounded-3xl shadow-2xl shadow-primary/10 overflow-hidden sticky top-24">
                     {/* Comments Header */}
-                    <div className="p-5 border-b border-border/30 bg-gradient-to-r from-primary/5 to-transparent">
-                      <div className="flex items-center gap-2">
-                        <div className="p-2 bg-primary/10 rounded-full">
+                    <div className="p-5 bg-gradient-to-r from-primary/15 via-primary/10 to-primary/5 rounded-t-3xl">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2.5 bg-primary/20 rounded-2xl">
                           <MessageCircle className="h-5 w-5 text-primary" />
                         </div>
                         <h3 className="text-lg font-bold text-foreground">Comments</h3>
@@ -190,7 +190,7 @@ const VideoDetails = () => {
           {isMobile && (
             <div className="mt-4 space-y-5">
               {/* Video Card */}
-              <div className="bg-card/95 backdrop-blur-sm rounded-3xl shadow-xl border border-border/40 overflow-hidden">
+              <div className="bg-gradient-to-br from-card via-card to-primary/5 rounded-3xl shadow-2xl shadow-primary/10 overflow-hidden">
                 {/* Video Player */}
                 <VideoPlayer videoId={video?.video_id || ""} />
                 
@@ -221,10 +221,10 @@ const VideoDetails = () => {
               />
               
               {/* Comments */}
-              <div className="bg-card/95 backdrop-blur-sm rounded-3xl shadow-xl border border-border/40 overflow-hidden">
-                <div className="p-4 border-b border-border/30 bg-gradient-to-r from-primary/5 to-transparent">
+              <div className="bg-gradient-to-b from-card via-card to-primary/5 rounded-3xl shadow-2xl shadow-primary/10 overflow-hidden">
+                <div className="p-4 bg-gradient-to-r from-primary/15 via-primary/10 to-primary/5 rounded-t-3xl">
                   <div className="flex items-center gap-2">
-                    <div className="p-1.5 bg-primary/10 rounded-full">
+                    <div className="p-2 bg-primary/20 rounded-xl">
                       <MessageCircle className="h-4 w-4 text-primary" />
                     </div>
                     <h3 className="text-base font-bold text-foreground">Comments</h3>
