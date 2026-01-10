@@ -78,10 +78,11 @@ body {
   color: #606060 !important;
 }
 
+/* Import theme CSS - MUST be first for CSS variables */
+@import './styles/theme.css';
+
 /* Import components CSS */
-@import './styles/components/theme.css';
 @import './styles/components/buttons.css';
-@import './styles/components/search.css';
 
 /* Import desktop specific styles */
 @import './styles/desktop.css';
