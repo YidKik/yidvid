@@ -50,7 +50,7 @@ export const FriendlyChannelSection = ({
   const shouldShowExpand = description && description.length > 200;
 
   return (
-    <div className="bg-card/95 backdrop-blur-sm rounded-3xl shadow-xl border border-border/40 overflow-hidden">
+    <div className="bg-gradient-to-br from-card via-card to-primary/5 rounded-3xl shadow-2xl shadow-primary/10 overflow-hidden">
       {/* Channel Info Header */}
       <div className="p-6 bg-gradient-to-r from-primary/8 via-primary/4 to-transparent">
         <div className="flex items-center gap-4">
@@ -121,8 +121,8 @@ export const FriendlyChannelSection = ({
       {/* Description Section */}
       {description && (
         <div className="px-6 pb-6">
-          <div className="pt-4 border-t border-border/30">
-            <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
+          <div className="pt-5 mt-2 bg-gradient-to-r from-primary/5 via-muted/30 to-transparent rounded-2xl p-4">
+            <h4 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
               <span className="w-1 h-4 bg-primary rounded-full"></span>
               About this video
             </h4>
