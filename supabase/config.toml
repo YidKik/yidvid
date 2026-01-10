@@ -69,3 +69,6 @@ verify_jwt = true
 
 [functions.handle-unsubscribe]
 verify_jwt = false
+
+[functions.increment_counter]
+verify_jwt = false
