@@ -1,12 +1,10 @@
-
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import "@/styles/pages/settings.css";
 import { BackButton } from "@/components/navigation/BackButton";
-import { Settings as SettingsIcon } from "lucide-react";
+import { Settings as SettingsIcon, User, Video, History, Palette, HelpCircle, Shield } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useAdminStatus } from "@/hooks/useAdminStatus";
 import { useSettingsPageState } from "@/hooks/useSettingsPageState";
-// Removed AdminDashboardCard import - dashboard access via shortcuts only
 import { ProfileSection } from "@/components/settings/ProfileSection";
 import { ProfileSectionSkeleton } from "@/components/settings/profile/ProfileSectionSkeleton";
 import { ContentPreferencesSection } from "@/components/settings/sections/ContentPreferencesSection";
@@ -14,6 +12,7 @@ import { ActivitySection } from "@/components/settings/sections/ActivitySection"
 import { AppearanceSection } from "@/components/settings/sections/AppearanceSection";
 import { AdminSection } from "@/components/settings/sections/AdminSection";
 import { SupportSection } from "@/components/settings/sections/SupportSection";
+import { cn } from "@/lib/utils";
 
 const Settings = () => {
   const { 
@@ -24,18 +23,28 @@ const Settings = () => {
   } = useSettingsPageState();
   
   const { isMobile } = useIsMobile();
-  
-  // Admin status check
-  const { isAdmin, hasPinBypass } = useAdminStatus(userId);
+  const { isAdmin } = useAdminStatus(userId);
+  const [activeSection, setActiveSection] = useState("profile");
+
+  const navItems = [
+    { id: "profile", label: "Profile", icon: User },
+    { id: "content", label: "Content", icon: Video },
+    { id: "activity", label: "Activity", icon: History },
+    { id: "appearance", label: "Appearance", icon: Palette },
+    { id: "support", label: "Support", icon: HelpCircle },
+    ...(userId ? [{ id: "admin", label: "Admin", icon: Shield }] : []),
+  ];
 
   // Show loading state while verifying auth
   if (!authChecked) {
     return (
-      <div className="min-h-screen bg-background text-foreground pt-16 px-4">
+      <div 
+        className="min-h-screen bg-white pt-16 px-4"
+        style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
+      >
         <div className="container mx-auto max-w-4xl">
           <BackButton />
-          {/* Minimal loading state - yellow bar at top indicates loading */}
-          <div className="h-8 w-56 bg-muted/30 rounded mb-8"></div>
+          <div className="h-8 w-56 bg-gray-100 rounded-lg mb-8 animate-pulse"></div>
           <ProfileSectionSkeleton />
         </div>
       </div>
@@ -43,49 +52,85 @@ const Settings = () => {
   }
 
   return (
-    <div className="settings-theme min-h-screen bg-gradient-to-br from-background to-primary/5">
+    <div 
+      className="min-h-screen bg-white"
+      style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
+    >
       <BackButton />
-      <main className={`container mx-auto ${isMobile ? 'pt-14 px-4 md:px-6 max-w-[95%]' : 'pt-24 px-4'} pb-16 max-w-4xl`}>
-        <div className={`mb-6 md:mb-8 flex items-center gap-3 p-4 bg-card text-card-foreground rounded-3xl border-2 border-primary/20 shadow-lg`}>
-          <div className="p-2 bg-primary/10 rounded-2xl">
-            <SettingsIcon className={`${isMobile ? 'w-5 h-5' : 'w-6 h-6'} text-primary`} />
+      <main className={`container mx-auto ${isMobile ? 'pt-16 px-4' : 'pt-20 px-6'} pb-16 max-w-5xl`}>
+        {/* Header */}
+        <div className="flex items-center gap-3 mb-6 pb-4 border-b-2 border-yellow-400">
+          <div className="p-2.5 bg-yellow-400 rounded-xl">
+            <SettingsIcon className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h1 className={`${isMobile ? 'text-lg' : 'text-2xl'} font-bold text-primary`}>Settings</h1>
-            <p className="text-sm text-muted-foreground">Manage your preferences and account</p>
+            <h1 className="text-xl font-bold text-gray-900">Settings</h1>
+            <p className="text-sm text-gray-500">Manage your account and preferences</p>
           </div>
         </div>
 
-        {/* Removed Admin Dashboard Card */}
+        {/* Navigation Tabs */}
+        <div className="flex gap-1 mb-6 overflow-x-auto pb-2 scrollbar-hide">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = activeSection === item.id;
+            return (
+              <button
+                key={item.id}
+                onClick={() => setActiveSection(item.id)}
+                className={cn(
+                  "flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium text-sm whitespace-nowrap transition-all duration-200",
+                  isActive 
+                    ? "bg-red-500 text-white shadow-md" 
+                    : "bg-gray-100 text-gray-600 hover:bg-yellow-100 hover:text-gray-900"
+                )}
+              >
+                <Icon size={16} />
+                {item.label}
+              </button>
+            );
+          })}
+        </div>
 
-        <div className="space-y-6 md:space-y-8">
-          {/* Profile section always shows first, either real or skeleton */}
-          {loadingProfile ? <ProfileSectionSkeleton /> : <ProfileSection />}
+        {/* Content Area */}
+        <div className="bg-gray-50 rounded-2xl border-2 border-gray-200 p-5 md:p-6">
+          {activeSection === "profile" && (
+            loadingProfile ? <ProfileSectionSkeleton /> : <ProfileSection />
+          )}
           
-          {/* Only render other sections once we're ready */}
-          {sectionsReady && (
-            <>
-              <ContentPreferencesSection 
-                userId={userId}
-                autoplay={autoplay}
-                setAutoplay={setAutoplay}
-              />
-              <ActivitySection />
-              <AppearanceSection 
-                backgroundColor={backgroundColor}
-                setBackgroundColor={setBackgroundColor}
-                textColor={textColor}
-                setTextColor={setTextColor}
-                buttonColor={buttonColor}
-                setButtonColor={setButtonColor}
-                logoColor={logoColor}
-                setLogoColor={setLogoColor}
-                saveColors={saveColors}
-                resetToDefaults={resetToDefaults}
-              />
-              {userId && <AdminSection userId={userId} />}
-              <SupportSection />
-            </>
+          {activeSection === "content" && sectionsReady && (
+            <ContentPreferencesSection 
+              userId={userId}
+              autoplay={autoplay}
+              setAutoplay={setAutoplay}
+            />
+          )}
+          
+          {activeSection === "activity" && sectionsReady && (
+            <ActivitySection />
+          )}
+          
+          {activeSection === "appearance" && sectionsReady && (
+            <AppearanceSection 
+              backgroundColor={backgroundColor}
+              setBackgroundColor={setBackgroundColor}
+              textColor={textColor}
+              setTextColor={setTextColor}
+              buttonColor={buttonColor}
+              setButtonColor={setButtonColor}
+              logoColor={logoColor}
+              setLogoColor={setLogoColor}
+              saveColors={saveColors}
+              resetToDefaults={resetToDefaults}
+            />
+          )}
+          
+          {activeSection === "support" && sectionsReady && (
+            <SupportSection />
+          )}
+          
+          {activeSection === "admin" && sectionsReady && userId && (
+            <AdminSection userId={userId} />
           )}
         </div>
       </main>

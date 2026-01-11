@@ -1,12 +1,11 @@
-
 import { useEffect, useState } from "react";
-import { Card } from "@/components/ui/card";
 import { ChannelSubscriptions } from "@/components/youtube/ChannelSubscriptions";
 import { ChannelControl } from "@/components/youtube/ChannelPreferences";
 import { PlaybackSettings } from "@/components/settings/PlaybackSettings";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useUnifiedAuth } from "@/hooks/useUnifiedAuth";
 import Auth from "@/pages/Auth";
+import { Video, Eye, Play } from "lucide-react";
 
 interface ContentPreferencesSectionProps {
   userId: string | null;
@@ -22,53 +21,51 @@ export const ContentPreferencesSection = ({
   const isMobile = useIsMobile();
   const { isAuthenticated, user, isLoading: authLoading } = useUnifiedAuth();
   const [isAuthOpen, setIsAuthOpen] = useState(false);
-
-  // Log authentication state when component mounts
-  useEffect(() => {
-    console.log("ContentPreferencesSection - Auth state:", {
-      isAuthenticated,
-      userId: user?.id,
-      userEmail: user?.email || "No email",
-      authLoading
-    });
-  }, [isAuthenticated, user, authLoading]);
   
   return (
-    <Card className="w-full border-2 border-primary/20 shadow-lg rounded-3xl bg-gradient-to-br from-card to-primary/5">
-      <div className="p-4 md:p-6 space-y-6">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-primary/10 rounded-2xl">
-            <div className="w-6 h-6 text-primary">🎬</div>
-          </div>
-          <div>
-            <h2 className="text-xl md:text-2xl font-bold text-primary">Content Preferences</h2>
-            <p className="text-sm text-muted-foreground">Manage your channels and playback settings</p>
-          </div>
-        </div>
-        
+    <div style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}>
+      {/* Section Header */}
+      <div className="flex items-center gap-2 mb-5 pb-3 border-b border-gray-200">
+        <Video size={18} className="text-yellow-600" />
+        <h2 className="text-lg font-bold text-gray-900">Content Preferences</h2>
+      </div>
+      
+      <div className="space-y-6">
+        {/* Channel Subscriptions */}
         <div>
-          <h3 className={`${isMobile ? 'text-base' : 'text-lg'} font-semibold mb-3 text-primary/90`}>Channel Subscriptions</h3>
+          <div className="flex items-center gap-2 mb-3">
+            <div className="w-1.5 h-1.5 bg-red-500 rounded-full"></div>
+            <h3 className="text-sm font-semibold text-gray-800">Channel Subscriptions</h3>
+          </div>
           <ChannelSubscriptions />
         </div>
 
-        <div>
-          <h3 className={`${isMobile ? 'text-base' : 'text-lg'} font-semibold mb-3 text-primary/90`}>Channel Visibility</h3>
-          <div className="space-y-3">
-            <p className={`${isMobile ? 'text-xs' : 'text-sm'} text-muted-foreground`}>
-              Choose which channels you want to see in your feed. Hidden channels won't appear in your recommendations or search results.
-            </p>
-            <ChannelControl />
+        {/* Channel Visibility */}
+        <div className="pt-4 border-t border-gray-100">
+          <div className="flex items-center gap-2 mb-2">
+            <Eye size={14} className="text-gray-500" />
+            <h3 className="text-sm font-semibold text-gray-800">Channel Visibility</h3>
           </div>
+          <p className="text-xs text-gray-500 mb-3">
+            Choose which channels appear in your feed. Hidden channels won't show in recommendations.
+          </p>
+          <ChannelControl />
         </div>
 
-        <PlaybackSettings 
-          autoplay={autoplay}
-          setAutoplay={setAutoplay}
-        />
-        
-        {/* Auth dialog */}
-        <Auth isOpen={isAuthOpen} onOpenChange={setIsAuthOpen} />
+        {/* Playback Settings */}
+        <div className="pt-4 border-t border-gray-100">
+          <div className="flex items-center gap-2 mb-3">
+            <Play size={14} className="text-gray-500" />
+            <h3 className="text-sm font-semibold text-gray-800">Playback</h3>
+          </div>
+          <PlaybackSettings 
+            autoplay={autoplay}
+            setAutoplay={setAutoplay}
+          />
+        </div>
       </div>
-    </Card>
+      
+      <Auth isOpen={isAuthOpen} onOpenChange={setIsAuthOpen} />
+    </div>
   );
 };
