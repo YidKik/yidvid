@@ -37,8 +37,8 @@ export const ChannelCard = ({
     >
       <div className="flex flex-col items-center justify-center">
         <div className="w-24 h-24 md:w-28 md:h-28 rounded-full flex items-center justify-center overflow-hidden mb-4 mx-auto 
-                      border-2 border-primary/30 group-hover:border-[#ea384c] transition-all duration-300
-                      group-hover:shadow-lg shadow-primary/20">
+                      border-2 border-yellow-400 group-hover:border-red-500 transition-all duration-300
+                      group-hover:shadow-lg shadow-yellow-200/40">
           {thumbnail_url ? (
             <img
               src={thumbnail_url}
