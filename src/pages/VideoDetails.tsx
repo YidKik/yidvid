@@ -155,8 +155,8 @@ const VideoDetails = () => {
                   />
                 </div>
                 
-                {/* Right Column - Comments */}
-                <div className="w-96 flex-shrink-0">
+                {/* Right Column - Comments (wider) */}
+                <div className="w-[420px] flex-shrink-0">
                   <div className="relative bg-card/90 backdrop-blur-md rounded-3xl shadow-xl overflow-hidden sticky top-24 border-2 border-yellow-200/40">
                     {/* Friendly gradient background */}
                     <div className="absolute inset-0 bg-gradient-to-b from-yellow-50/20 via-transparent to-red-50/10 pointer-events-none" />

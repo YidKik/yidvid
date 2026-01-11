@@ -24,29 +24,30 @@ export const CommentList = ({ comments }: CommentListProps) => {
       {comments?.map((comment) => (
         <div 
           key={comment.id} 
-          className="group bg-white/60 hover:bg-yellow-50/50 rounded-2xl p-4 transition-all duration-200 border border-yellow-100/30 hover:border-yellow-300/50 hover:shadow-sm"
+          className="group bg-white/50 hover:bg-yellow-50/40 rounded-xl p-3.5 transition-all duration-200 border border-yellow-100/20 hover:border-yellow-200/40"
         >
-          <div className="flex items-start gap-3">
-            {/* Avatar */}
-            <div className="w-9 h-9 bg-gradient-to-br from-yellow-300 to-red-300 rounded-full flex items-center justify-center flex-shrink-0 shadow-sm">
-              <span className="text-sm font-bold text-white">
+          <div className="flex items-start gap-2.5">
+            {/* Small Avatar */}
+            <div className="w-7 h-7 bg-gradient-to-br from-yellow-200 to-yellow-300 rounded-full flex items-center justify-center flex-shrink-0">
+              <span className="text-xs font-medium text-yellow-800">
                 {getDisplayName(comment.profiles).charAt(0).toUpperCase()}
               </span>
             </div>
             
             <div className="flex-1 min-w-0">
-              {/* Header */}
-              <div className="flex items-center justify-between mb-1.5">
-                <h4 className="font-semibold text-sm text-foreground group-hover:text-yellow-700 transition-colors">
+              {/* Header - name smaller and less prominent */}
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-xs text-muted-foreground/70 font-medium">
                   {getDisplayName(comment.profiles)}
-                </h4>
-                <time className="text-xs text-muted-foreground">
+                </span>
+                <span className="text-[10px] text-muted-foreground/50">•</span>
+                <time className="text-[10px] text-muted-foreground/50">
                   {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}
                 </time>
               </div>
               
-              {/* Comment Content */}
-              <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap break-words">
+              {/* Comment Content - more prominent */}
+              <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap break-words">
                 {comment.content}
               </p>
             </div>

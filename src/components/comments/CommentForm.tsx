@@ -40,8 +40,8 @@ export const CommentForm = ({ onSubmit }: CommentFormProps) => {
       <Textarea
         value={comment}
         onChange={(e) => setComment(e.target.value)}
-        placeholder="Share your thoughts... 💭"
-        className="bg-white/80 border-yellow-200/50 focus:border-yellow-400 focus:ring-yellow-300/30 rounded-xl resize-none min-h-[80px] text-sm"
+        placeholder="Write your comment here..."
+        className="bg-white/90 border-yellow-200/60 focus:border-yellow-400 focus:ring-yellow-300/30 rounded-xl resize-none min-h-[120px] text-sm leading-relaxed p-4"
       />
       <div className="flex justify-end">
         <Button 
