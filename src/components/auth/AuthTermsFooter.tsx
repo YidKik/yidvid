@@ -1,4 +1,3 @@
-
 import React from "react";
 
 interface AuthTermsFooterProps {
@@ -11,18 +10,21 @@ export const AuthTermsFooter: React.FC<AuthTermsFooterProps> = ({
   onOpenPrivacy 
 }) => {
   return (
-    <div className="mt-6 text-center">
-      <p className="text-xs text-black leading-relaxed">
+    <div 
+      className="mt-6 pt-4 border-t border-gray-100 text-center"
+      style={{ fontFamily: "'Quicksand', sans-serif" }}
+    >
+      <p className="text-xs text-gray-500 leading-relaxed">
         By signing in, you agree to our{" "}
         <button 
           onClick={onOpenTos} 
-          className="text-black bg-transparent p-0 border-none inline font-medium text-xs underline-offset-2 hover:underline"
+          className="text-red-500 bg-transparent p-0 border-none inline font-semibold text-xs hover:text-red-600 hover:underline underline-offset-2 transition-colors"
         >
           Terms of Service
         </button>{" "}and{" "}
         <button 
           onClick={onOpenPrivacy} 
-          className="text-black bg-transparent p-0 border-none inline font-medium text-xs underline-offset-2 hover:underline"
+          className="text-red-500 bg-transparent p-0 border-none inline font-semibold text-xs hover:text-red-600 hover:underline underline-offset-2 transition-colors"
         >
           Privacy Policy
         </button>
