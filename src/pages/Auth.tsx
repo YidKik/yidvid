@@ -65,11 +65,11 @@ const Auth = ({ isOpen, onOpenChange, initialTab = 'signin' }: AuthProps) => {
     }}>
       <DialogContent 
         hideCloseButton={true}
-        className={`p-0 gap-0 ${showOptions ? 'bg-transparent border-none' : 'bg-white border border-gray-200 shadow-lg'} ${isMobile 
-          ? 'w-[95%] max-w-[350px] max-h-[85vh] overflow-auto rounded-xl' 
-          : 'sm:max-w-[500px] max-w-[500px] rounded-2xl overflow-hidden'
+        className={`p-0 gap-0 ${showOptions ? 'bg-transparent border-none shadow-none' : 'bg-white border-2 border-yellow-200 shadow-2xl'} ${isMobile 
+          ? 'w-[92%] max-w-[380px] max-h-[85vh] overflow-auto rounded-2xl' 
+          : 'sm:max-w-[440px] max-w-[440px] rounded-3xl overflow-hidden'
         }`}
-      > 
+      >
         <AnimatePresence mode="wait">
           {showOptions ? (
             <motion.div

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -9,6 +8,7 @@ import { SignUpFormField } from "./SignUpFormField";
 import { TermsCheckbox } from "./TermsCheckbox";
 import { SocialLoginButtons } from "../SocialLoginButtons";
 import { validateSignUpForm } from "@/utils/formValidation";
+import { UserPlus } from "lucide-react";
 
 interface SignUpFormProps {
   isLoading: boolean;
@@ -86,7 +86,7 @@ export const SignUpForm = ({
   };
 
   return (
-    <form onSubmit={handleSignUp} className="space-y-5">
+    <form onSubmit={handleSignUp} className="space-y-4">
       <SignUpFormField
         type="text"
         placeholder="Username"
@@ -114,16 +114,17 @@ export const SignUpForm = ({
       
       <Button
         type="submit"
-        variant="outline"
         className={`w-full ${isMobile 
-          ? 'h-10 text-sm py-0' 
-          : 'h-12 text-base py-0'} 
-          mt-2 border-purple-500 bg-white text-[#8B5CF6] hover:bg-purple-50 hover:border-purple-500
-          rounded-lg font-medium transition-all duration-300 disabled:opacity-50 
-          disabled:cursor-not-allowed hover:scale-[1.02] active:scale-[0.98] 
-          disabled:hover:scale-100 shadow-sm hover:shadow-md`}
+          ? 'h-11 text-sm' 
+          : 'h-12 text-base'} 
+          mt-4 bg-yellow-400 hover:bg-yellow-500 text-gray-900 border-2 border-yellow-500
+          rounded-xl font-semibold transition-all duration-200 disabled:opacity-50 
+          disabled:cursor-not-allowed hover:scale-[1.01] active:scale-[0.99] 
+          disabled:hover:scale-100 shadow-md hover:shadow-lg flex items-center justify-center gap-2`}
+        style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
         disabled={isLoading}
       >
+        <UserPlus size={18} />
         {isLoading ? "Creating Account..." : "Create Account"}
       </Button>
       

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { SignInForm } from "./forms/SignInForm";
@@ -20,7 +19,10 @@ export const AuthForm = ({ onOpenChange, initialTab = 'signin', hideOptions = fa
   const [privacyDialogOpen, setPrivacyDialogOpen] = useState(false);
   
   return (
-    <div className={`${isMobile ? 'p-4 pt-4 pb-5' : 'px-10 py-8'} bg-white`}>
+    <div 
+      className={`${isMobile ? 'p-5 pt-5 pb-6' : 'px-10 py-8'} bg-white`}
+      style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
+    >
       {initialTab === 'signin' ? (
         <SignInForm 
           onOpenChange={onOpenChange}
