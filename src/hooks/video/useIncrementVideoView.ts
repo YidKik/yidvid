@@ -65,8 +65,15 @@ export const useIncrementVideoView = () => {
       
       const responseData = await response.json();
       
+      // Handle 404 gracefully - video not found is not a critical error
+      if (response.status === 404) {
+        console.log("Video not found for view increment, skipping:", videoId);
+        return;
+      }
+      
       if (!response.ok) {
-        throw new Error(`Edge function error: ${response.statusText}`);
+        console.warn(`View increment failed: ${response.statusText}`, responseData);
+        return; // Don't throw, just log and continue
       }
       
       // Access the response data correctly
