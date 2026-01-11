@@ -34,10 +34,9 @@ const Settings = () => {
       <div className="min-h-screen bg-background text-foreground pt-16 px-4">
         <div className="container mx-auto max-w-4xl">
           <BackButton />
-          <div className="animate-pulse">
-            <div className="h-8 w-56 bg-gray-200 rounded mb-8"></div>
-            <ProfileSectionSkeleton />
-          </div>
+          {/* Minimal loading state - yellow bar at top indicates loading */}
+          <div className="h-8 w-56 bg-muted/30 rounded mb-8"></div>
+          <ProfileSectionSkeleton />
         </div>
       </div>
     );

@@ -77,10 +77,7 @@ export const ChannelSubscribeButton = ({
         } ${className}`}
     >
       {isLoading ? (
-        <>
-          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-          <span>Loading...</span>
-        </>
+        <span className="opacity-70">...</span>
       ) : isSubscribed ? (
         <>
           <Check className="w-4 h-4 mr-2" />

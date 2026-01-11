@@ -67,12 +67,8 @@ const MusicDetails = () => {
           <div className="flex-1">
             <Header />
             <main className="mt-16 p-6">
-              <div className="flex items-center justify-center h-[60vh]">
-                <div className="text-center">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-                  <p>Loading track...</p>
-                </div>
-              </div>
+              <div className="h-[60vh]" />
+              {/* Loading indicated by yellow progress bar at top */}
             </main>
           </div>
         </div>
