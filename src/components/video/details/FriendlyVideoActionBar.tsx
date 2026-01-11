@@ -1,4 +1,4 @@
-import { ThumbsUp, ThumbsDown, Share2, Eye, Clock, Copy, Facebook, Twitter, Mail, MessageCircle } from "lucide-react";
+import { ThumbsUp, ThumbsDown, Share2, Eye, Clock, Copy, Facebook, Twitter, Mail, MessageCircle, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -7,10 +7,12 @@ import { ReportVideoDialog } from "@/components/video/ReportVideoDialog";
 import { toast } from "sonner";
 import { format, formatDistanceToNow, parseISO } from "date-fns";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 interface FriendlyVideoActionBarProps {
   videoId: string;
@@ -25,6 +27,9 @@ type InteractionType = 'view' | 'like' | 'dislike' | 'save';
 // Subtle hover styles for action buttons
 const actionButtonBase = "h-10 px-4 rounded-full font-medium transition-all duration-200 bg-muted/40 hover:bg-muted/60 text-muted-foreground hover:text-foreground";
 const actionButtonBaseCompact = "h-8 px-3 rounded-full text-sm transition-all duration-200 bg-muted/40 hover:bg-muted/60 text-muted-foreground hover:text-foreground";
+// Enhanced hover styles for Share and Report buttons
+const shareReportButtonBase = "h-10 px-4 rounded-full font-medium transition-all duration-200 bg-muted/40 text-muted-foreground hover:bg-yellow-100 hover:text-yellow-700 hover:border-yellow-400 hover:shadow-md hover:shadow-yellow-200/40 hover:scale-105 border border-transparent";
+const shareReportButtonCompact = "h-8 px-3 rounded-full text-sm transition-all duration-200 bg-muted/40 text-muted-foreground hover:bg-yellow-100 hover:text-yellow-700 hover:border-yellow-400 hover:shadow-md hover:shadow-yellow-200/40 hover:scale-105 border border-transparent";
 
 export const FriendlyVideoActionBar = ({ 
   videoId, 
@@ -218,32 +223,53 @@ export const FriendlyVideoActionBar = ({
             <ThumbsDown className={`h-4 w-4 ${isDisliked ? "fill-current" : ""}`} />
           </Button>
 
-          <Popover open={shareOpen} onOpenChange={setShareOpen}>
-            <PopoverTrigger asChild>
+          <Dialog open={shareOpen} onOpenChange={setShareOpen}>
+            <DialogTrigger asChild>
               <Button
                 variant="ghost"
                 size="sm"
-                className={actionButtonBaseCompact}
+                className={shareReportButtonCompact}
               >
                 <Share2 className="h-4 w-4 mr-1.5" />
                 Share
               </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-48 p-2" align="start">
-              <div className="space-y-1">
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[360px] bg-card border-border shadow-xl">
+              <button 
+                onClick={() => setShareOpen(false)}
+                className="absolute right-4 top-4 text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <X className="h-5 w-5" />
+              </button>
+              <DialogHeader>
+                <DialogTitle className="text-lg font-semibold flex items-center gap-2">
+                  <Share2 className="h-5 w-5 text-yellow-500" />
+                  Share this video
+                </DialogTitle>
+              </DialogHeader>
+              <div className="grid grid-cols-2 gap-3 py-4">
                 {shareOptions.map((option) => (
                   <button
                     key={option.name}
                     onClick={() => { option.action(); setShareOpen(false); }}
-                    className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-muted transition-colors text-left"
+                    className="flex flex-col items-center gap-2 p-4 rounded-xl bg-muted/30 hover:bg-yellow-50 hover:border-yellow-300 border border-transparent transition-all duration-200 hover:shadow-md"
                   >
-                    <option.icon className={`h-4 w-4 ${option.color}`} />
-                    <span className="text-sm">{option.name}</span>
+                    <option.icon className={`h-6 w-6 ${option.color}`} />
+                    <span className="text-xs font-medium text-muted-foreground">{option.name}</span>
                   </button>
                 ))}
               </div>
-            </PopoverContent>
-          </Popover>
+              {navigator.share && (
+                <button
+                  onClick={handleShareNative}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-yellow-100 hover:bg-yellow-200 text-yellow-700 font-medium transition-all duration-200"
+                >
+                  <Share2 className="h-4 w-4" />
+                  More sharing options...
+                </button>
+              )}
+            </DialogContent>
+          </Dialog>
 
           <ReportVideoDialog videoId={videoId} compact />
         </div>
@@ -292,42 +318,53 @@ export const FriendlyVideoActionBar = ({
           <ThumbsDown className={`h-4 w-4 ${isDisliked ? "fill-current" : ""}`} />
         </Button>
 
-        {/* Share Button with Popover */}
-        <Popover open={shareOpen} onOpenChange={setShareOpen}>
-          <PopoverTrigger asChild>
+        {/* Share Button with Dialog Popup */}
+        <Dialog open={shareOpen} onOpenChange={setShareOpen}>
+          <DialogTrigger asChild>
             <Button
               variant="ghost"
-              className={actionButtonBase}
+              className={shareReportButtonBase}
             >
               <Share2 className="h-4 w-4 mr-2" />
               Share
             </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-56 p-2" align="start">
-            <div className="space-y-1">
-              <p className="text-xs text-muted-foreground px-3 py-1.5 font-medium">Share this video</p>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[400px] bg-card border-border shadow-xl">
+            <button 
+              onClick={() => setShareOpen(false)}
+              className="absolute right-4 top-4 text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <X className="h-5 w-5" />
+            </button>
+            <DialogHeader>
+              <DialogTitle className="text-lg font-semibold flex items-center gap-2">
+                <Share2 className="h-5 w-5 text-yellow-500" />
+                Share this video
+              </DialogTitle>
+            </DialogHeader>
+            <div className="grid grid-cols-2 gap-3 py-4">
               {shareOptions.map((option) => (
                 <button
                   key={option.name}
                   onClick={() => { option.action(); setShareOpen(false); }}
-                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-muted transition-colors text-left"
+                  className="flex flex-col items-center gap-2 p-4 rounded-xl bg-muted/30 hover:bg-yellow-50 hover:border-yellow-300 border border-transparent transition-all duration-200 hover:shadow-md"
                 >
-                  <option.icon className={`h-4 w-4 ${option.color}`} />
-                  <span className="text-sm font-medium">{option.name}</span>
+                  <option.icon className={`h-6 w-6 ${option.color}`} />
+                  <span className="text-sm font-medium text-muted-foreground">{option.name}</span>
                 </button>
               ))}
-              {navigator.share && (
-                <button
-                  onClick={handleShareNative}
-                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-muted transition-colors text-left border-t border-border mt-1 pt-2"
-                >
-                  <Share2 className="h-4 w-4 text-yellow-600" />
-                  <span className="text-sm font-medium">More options...</span>
-                </button>
-              )}
             </div>
-          </PopoverContent>
-        </Popover>
+            {navigator.share && (
+              <button
+                onClick={handleShareNative}
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-yellow-100 hover:bg-yellow-200 text-yellow-700 font-medium transition-all duration-200"
+              >
+                <Share2 className="h-4 w-4" />
+                More sharing options...
+              </button>
+            )}
+          </DialogContent>
+        </Dialog>
 
         {/* Report Button */}
         <ReportVideoDialog videoId={videoId} />
