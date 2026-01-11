@@ -61,12 +61,12 @@ export function ReportVideoDialog({ videoId, compact = false }: ReportVideoDialo
         <Button 
           variant="ghost" 
           size="sm" 
-          className={`group rounded-full hover:bg-muted text-muted-foreground transition-colors ${
-            compact ? "h-8 px-2" : "h-9 px-3"
+          className={`group rounded-full transition-all duration-200 border-2 border-transparent bg-muted/50 hover:bg-yellow-100 hover:border-yellow-400 hover:text-yellow-700 hover:shadow-md hover:shadow-yellow-200/40 hover:scale-105 ${
+            compact ? "h-9 px-3" : "h-11 px-5"
           }`}
         >
-          <Flag className={`${compact ? "h-3.5 w-3.5" : "h-4 w-4"} group-hover:text-destructive transition-colors`} />
-          {!compact && <span className="ml-1.5 text-sm group-hover:text-destructive transition-colors">Report</span>}
+          <Flag className={`${compact ? "h-4 w-4" : "h-5 w-5"} transition-colors`} />
+          {!compact && <span className="ml-2 font-medium transition-colors">Report</span>}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] relative fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">

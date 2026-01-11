@@ -1,4 +1,3 @@
-
 import { cn } from "@/lib/utils";
 import { useState, useRef, useEffect } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -12,6 +11,7 @@ interface VideoCardThumbnailProps {
   formattedDate?: string;
   channelName?: string;
   duration?: string;
+  hideChannelOnHover?: boolean;
 }
 
 export const VideoCardThumbnail = ({
@@ -21,7 +21,8 @@ export const VideoCardThumbnail = ({
   views,
   formattedDate,
   channelName,
-  duration
+  duration,
+  hideChannelOnHover = false
 }: VideoCardThumbnailProps) => {
   const [imageError, setImageError] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
@@ -58,7 +59,7 @@ export const VideoCardThumbnail = ({
       className={cn(
         "relative overflow-hidden aspect-video w-full group video-card-thumbnail",
         "rounded-xl transition-all duration-300",
-        "border-2 border-gray-200 bg-gray-50"
+        "border-2 border-gray-200/50 bg-gray-50"
       )}
       style={{
         borderColor: isHovering ? 'hsl(50, 100%, 50%)' : undefined
@@ -75,33 +76,23 @@ export const VideoCardThumbnail = ({
         onError={() => setImageError(true)}
       />
       
-      {/* Hover overlay with channel name and duration at top */}
+      {/* Hover overlay - only show duration, not channel name */}
       <div 
         className={cn(
-          "absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-transparent transition-opacity duration-300 rounded-xl",
+          "absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-transparent transition-opacity duration-300 rounded-xl",
           isHovering ? "opacity-100" : "opacity-0"
         )}
       >
-        {/* Top bar with channel name and duration */}
-        <div className="absolute top-0 left-0 right-0 p-2 flex items-center justify-between">
-          {/* Channel name */}
-          {channelName && (
-            <div 
-              className="bg-white/20 backdrop-blur-sm rounded-full px-2 py-0.5 border border-white/40"
-              style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
-            >
-              <span className="text-[10px] font-semibold text-white">{channelName}</span>
-            </div>
-          )}
-          
-          {/* Duration */}
+        {/* Top bar with duration only */}
+        <div className="absolute top-0 left-0 right-0 p-2 flex items-center justify-end">
+          {/* Duration only - no channel name on hover */}
           {duration && (
             <div 
-              className="bg-white/20 backdrop-blur-sm rounded-full px-1.5 py-0.5 flex items-center gap-1 border border-white/40"
+              className="bg-black/60 backdrop-blur-sm rounded-full px-2 py-0.5 flex items-center gap-1"
               style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
             >
-              <Clock size={9} className="text-white" />
-              <span className="text-[10px] font-semibold text-white">{duration}</span>
+              <Clock size={10} className="text-white" />
+              <span className="text-[11px] font-semibold text-white">{duration}</span>
             </div>
           )}
         </div>

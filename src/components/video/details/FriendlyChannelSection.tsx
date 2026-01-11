@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { useEnhancedChannelSubscription } from "@/hooks/channel/useEnhancedChannelSubscription";
 import { useUnifiedAuth } from "@/hooks/useUnifiedAuth";
 import { toast } from "sonner";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { VideoCard } from "@/components/VideoCard";
 
 interface Video {
@@ -39,6 +39,8 @@ export const FriendlyChannelSection = ({
   compact = false
 }: FriendlyChannelSectionProps) => {
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
+  const [needsExpand, setNeedsExpand] = useState(false);
+  const descriptionRef = useRef<HTMLParagraphElement>(null);
   const { isAuthenticated, isLoading: authLoading, isProfileLoading } = useUnifiedAuth();
   
   const { 
@@ -47,6 +49,15 @@ export const FriendlyChannelSection = ({
     isLoading: subscriptionLoading,
     isUserDataReady
   } = useEnhancedChannelSubscription(channelId);
+
+  // Check if description actually needs expand button
+  useEffect(() => {
+    if (descriptionRef.current && description) {
+      const element = descriptionRef.current;
+      // Check if content is actually truncated (scrollHeight > clientHeight)
+      setNeedsExpand(element.scrollHeight > element.clientHeight);
+    }
+  }, [description]);
 
   const handleSubscribeClick = async () => {
     if (!isAuthenticated) {
@@ -63,30 +74,29 @@ export const FriendlyChannelSection = ({
   };
 
   const isLoading = authLoading || isProfileLoading || subscriptionLoading;
-  const shouldShowExpand = description && description.length > 200;
 
   return (
-    <div className="relative bg-card/80 backdrop-blur-md rounded-3xl shadow-2xl overflow-hidden border border-red-200/20">
+    <div className="relative bg-card/90 backdrop-blur-md rounded-3xl shadow-xl overflow-hidden border-2 border-yellow-200/30">
       {/* Subtle gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-red-50/15 via-transparent to-yellow-50/10 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-br from-yellow-50/20 via-transparent to-red-50/15 pointer-events-none" />
       
       {/* Channel Info Header */}
-      <div className="relative p-6 bg-gradient-to-r from-red-100/30 via-yellow-100/20 to-transparent">
+      <div className="relative p-6 bg-gradient-to-r from-yellow-100/40 via-red-50/20 to-transparent">
         <div className="flex items-center gap-4">
           {/* Channel Avatar */}
           {channelId ? (
             <Link to={`/channel/${channelId}`} className="group">
-              <Avatar className="h-16 w-16 ring-4 ring-red-300/20 shadow-lg group-hover:ring-red-400/40 transition-all">
+              <Avatar className="h-14 w-14 ring-3 ring-yellow-300/30 shadow-lg group-hover:ring-yellow-400/50 transition-all">
                 <AvatarImage src={channelThumbnail || ''} alt={channelName} />
-                <AvatarFallback className="bg-gradient-to-br from-red-100/50 to-yellow-100/40 text-red-700 text-xl font-bold">
+                <AvatarFallback className="bg-gradient-to-br from-yellow-200 to-red-200 text-red-700 text-lg font-bold">
                   {channelName?.slice(0, 2).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
             </Link>
           ) : (
-            <Avatar className="h-16 w-16 ring-4 ring-red-300/20 shadow-lg">
+            <Avatar className="h-14 w-14 ring-3 ring-yellow-300/30 shadow-lg">
               <AvatarImage src={channelThumbnail || ''} alt={channelName} />
-              <AvatarFallback className="bg-gradient-to-br from-red-100/50 to-yellow-100/40 text-red-700 text-xl font-bold">
+              <AvatarFallback className="bg-gradient-to-br from-yellow-200 to-red-200 text-red-700 text-lg font-bold">
                 {channelName?.slice(0, 2).toUpperCase()}
               </AvatarFallback>
             </Avatar>
@@ -107,13 +117,13 @@ export const FriendlyChannelSection = ({
             <p className="text-sm text-muted-foreground mt-0.5">Channel</p>
           </div>
           
-          {/* Subscribe Button - Solid Red/Yellow */}
+          {/* Subscribe Button - Solid Red */}
           {channelId && (
             <Button
               variant={isSubscribed ? "default" : "default"}
               onClick={handleSubscribeClick}
               disabled={isLoading}
-              className={`h-11 px-6 rounded-full font-semibold transition-all ${
+              className={`h-10 px-5 rounded-full font-semibold transition-all ${
                 isSubscribed 
                   ? "bg-muted text-foreground hover:bg-muted/80" 
                   : "bg-red-500 text-white hover:bg-red-600 shadow-lg shadow-red-300/30 hover:shadow-xl hover:shadow-red-400/40"
@@ -138,28 +148,32 @@ export const FriendlyChannelSection = ({
       </div>
       
       {/* Gradient divider */}
-      <div className="h-0.5 bg-gradient-to-r from-transparent via-red-200/40 to-yellow-200/30" />
+      <div className="h-0.5 bg-gradient-to-r from-transparent via-yellow-300/40 to-transparent" />
       
       {/* Description Section */}
       {description && (
         <div className="relative px-6 py-5">
-          <div className="bg-gradient-to-r from-red-50/30 via-yellow-50/20 to-transparent rounded-2xl p-4 border border-red-100/20">
+          <div className="bg-gradient-to-r from-yellow-50/40 via-red-50/20 to-transparent rounded-2xl p-4 border border-yellow-200/30">
             <h4 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
-              <span className="w-1 h-4 bg-gradient-to-b from-red-400 to-yellow-400 rounded-full"></span>
+              <span className="w-1 h-4 bg-gradient-to-b from-yellow-400 to-red-400 rounded-full"></span>
               Description
             </h4>
-            <p className={`text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap ${
-              !isDescriptionExpanded && shouldShowExpand ? 'line-clamp-3' : ''
-            }`}>
+            <p 
+              ref={descriptionRef}
+              className={`text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap ${
+                !isDescriptionExpanded ? 'line-clamp-3' : ''
+              }`}
+            >
               {description}
             </p>
             
-            {shouldShowExpand && (
+            {/* Only show expand button if content is actually truncated */}
+            {needsExpand && (
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
-                className="mt-2 text-red-600 hover:text-red-700 hover:bg-red-100/50 px-3 rounded-full"
+                className="mt-2 text-yellow-600 hover:text-yellow-700 hover:bg-yellow-100/50 px-3 rounded-full"
               >
                 {isDescriptionExpanded ? (
                   <>
@@ -180,25 +194,25 @@ export const FriendlyChannelSection = ({
       
       {/* Divider before videos */}
       {(channelVideos.length > 0 || isLoadingVideos) && (
-        <div className="h-0.5 bg-gradient-to-r from-transparent via-yellow-200/30 to-red-200/20 mx-6" />
+        <div className="h-0.5 bg-gradient-to-r from-transparent via-yellow-300/30 to-transparent mx-6" />
       )}
       
       {/* More Videos from Channel - Integrated */}
       {isLoadingVideos ? (
         <div className="relative p-6">
           <div className="flex items-center gap-3 mb-5">
-            <div className="p-2 bg-gradient-to-br from-red-400/20 to-yellow-400/15 rounded-xl">
-              <Play className="h-4 w-4 text-red-600 fill-red-600" />
+            <div className="p-2 bg-yellow-400/20 rounded-xl">
+              <Play className="h-4 w-4 text-yellow-600 fill-yellow-600" />
             </div>
             <span className="text-sm font-medium text-muted-foreground">Loading more videos...</span>
           </div>
           <div className={`grid gap-4 ${compact ? 'grid-cols-2' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'}`}>
             {[...Array(compact ? 4 : 6)].map((_, i) => (
               <div key={i} className="animate-pulse">
-                <div className="aspect-video bg-red-100/20 rounded-xl"></div>
+                <div className="aspect-video bg-yellow-100/30 rounded-xl"></div>
                 <div className="mt-2 space-y-1.5">
-                  <div className="h-3 bg-red-100/30 rounded-full w-full"></div>
-                  <div className="h-2 bg-yellow-100/20 rounded-full w-3/4"></div>
+                  <div className="h-3 bg-yellow-100/40 rounded-full w-full"></div>
+                  <div className="h-2 bg-yellow-100/30 rounded-full w-3/4"></div>
                 </div>
               </div>
             ))}
@@ -207,8 +221,8 @@ export const FriendlyChannelSection = ({
       ) : channelVideos.length > 0 ? (
         <div className="relative p-6">
           <div className="flex items-center gap-3 mb-5">
-            <div className="p-2 bg-gradient-to-br from-red-400/20 to-yellow-400/15 rounded-xl">
-              <Play className="h-4 w-4 text-red-600 fill-red-600" />
+            <div className="p-2 bg-yellow-400/20 rounded-xl">
+              <Play className="h-4 w-4 text-yellow-600 fill-yellow-600" />
             </div>
             <span className="text-sm font-medium text-foreground">
               More from this channel
@@ -219,9 +233,9 @@ export const FriendlyChannelSection = ({
             {channelVideos.slice(0, compact ? 6 : 9).map((video) => (
               <div 
                 key={video.id}
-                className="group transition-all duration-300 hover:scale-[1.02] rounded-xl overflow-hidden border-2 border-transparent hover:border-yellow-400 hover:shadow-lg hover:shadow-yellow-200/30"
+                className="group transition-all duration-300 hover:scale-[1.02] rounded-xl overflow-hidden border-2 border-transparent hover:border-yellow-400 hover:shadow-lg hover:shadow-yellow-200/40"
               >
-                <div className="bg-card/60 backdrop-blur-sm">
+                <div className="bg-card/70 backdrop-blur-sm">
                   <VideoCard
                     id={video.id}
                     video_id={video.video_id}
