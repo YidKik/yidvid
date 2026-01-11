@@ -79,7 +79,7 @@ export const VideoCardThumbnail = ({
       {/* Hover overlay */}
       <div 
         className={cn(
-          "absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30 transition-opacity duration-300 rounded-xl",
+          "absolute inset-0 transition-opacity duration-300 rounded-xl",
           isHovering ? "opacity-100" : "opacity-0"
         )}
       >
@@ -100,7 +100,7 @@ export const VideoCardThumbnail = ({
         {showChannelOnHover && channelName && (
           <div className="absolute bottom-0 left-0 right-0 p-2.5">
             <div 
-              className="inline-flex items-center gap-1.5 bg-gradient-to-r from-red-500/90 to-yellow-500/90 backdrop-blur-sm rounded-full px-3 py-1.5 shadow-lg max-w-[85%]"
+              className="inline-flex items-center gap-1.5 bg-black/70 backdrop-blur-sm rounded-full px-3 py-1.5 shadow-lg max-w-[85%]"
               style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
             >
               <span className="text-xs font-bold text-white truncate">{channelName}</span>
