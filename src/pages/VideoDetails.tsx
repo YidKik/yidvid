@@ -95,7 +95,7 @@ const VideoDetails = () => {
       <VideoSEO video={videoForSEO} />
       {isAuthenticated && <VideoHistory videoId={video?.id || ""} />}
       
-      <div className="min-h-screen bg-gradient-to-br from-amber-50/30 via-background to-rose-50/20">
+      <div className="min-h-screen bg-gradient-to-br from-yellow-50/40 via-background to-red-50/20">
         <div className="container mx-auto px-4 pt-20 pb-12">
           <BackButton />
           
@@ -179,21 +179,18 @@ const VideoDetails = () => {
                       {isAuthenticated ? (
                         <VideoComments videoId={video?.id || ""} />
                       ) : (
-                        <div className="text-center py-12">
-                          <div className="w-16 h-16 mx-auto mb-4 bg-yellow-100 rounded-full flex items-center justify-center">
-                            <Sparkles className="h-8 w-8 text-yellow-500" />
+                        <div className="text-center py-10">
+                          <div className="w-14 h-14 mx-auto mb-4 bg-yellow-100 rounded-full flex items-center justify-center">
+                            <MessageCircle className="h-7 w-7 text-yellow-500" />
                           </div>
-                          <p className="text-foreground font-medium text-base mb-2">
-                            Join the conversation! 🎉
-                          </p>
-                          <p className="text-muted-foreground text-sm mb-4">
-                            Sign in to share your thoughts
+                          <p className="text-foreground font-medium text-sm mb-4 px-4 leading-relaxed">
+                            To view comments and post comments, you need to be logged in.
                           </p>
                           <Link 
                             to="/auth" 
                             className="inline-block px-6 py-2.5 bg-yellow-400 text-yellow-900 rounded-full text-sm font-semibold hover:bg-yellow-500 transition-all hover:shadow-lg hover:shadow-yellow-300/40"
                           >
-                            Sign In to Comment
+                            Sign In
                           </Link>
                         </div>
                       )}
@@ -280,13 +277,10 @@ const VideoDetails = () => {
                   ) : (
                     <div className="text-center py-8">
                       <div className="w-12 h-12 mx-auto mb-3 bg-yellow-100 rounded-full flex items-center justify-center">
-                        <Sparkles className="h-6 w-6 text-yellow-500" />
+                        <MessageCircle className="h-6 w-6 text-yellow-500" />
                       </div>
-                      <p className="text-foreground font-medium text-sm mb-1">
-                        Join the conversation! 🎉
-                      </p>
-                      <p className="text-muted-foreground text-xs mb-3">
-                        Sign in to share your thoughts
+                      <p className="text-foreground font-medium text-sm mb-3 px-2 leading-relaxed">
+                        To view comments and post comments, you need to be logged in.
                       </p>
                       <Link 
                         to="/auth" 

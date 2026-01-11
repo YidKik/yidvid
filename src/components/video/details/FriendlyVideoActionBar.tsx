@@ -17,6 +17,10 @@ interface FriendlyVideoActionBarProps {
 
 type InteractionType = 'view' | 'like' | 'dislike' | 'save';
 
+// Shared hover styles for action buttons
+const actionButtonBase = "h-11 px-5 rounded-full font-medium transition-all duration-200 border-2 border-transparent bg-muted/50 hover:bg-yellow-100 hover:border-yellow-400 hover:text-yellow-700 hover:shadow-md hover:shadow-yellow-200/40 hover:scale-105";
+const actionButtonBaseCompact = "h-9 px-3 rounded-full transition-all duration-200 border-2 border-transparent bg-muted/50 hover:bg-yellow-100 hover:border-yellow-400 hover:text-yellow-700 hover:shadow-sm hover:scale-105";
+
 export const FriendlyVideoActionBar = ({ 
   videoId, 
   youtubeVideoId, 
@@ -130,28 +134,26 @@ export const FriendlyVideoActionBar = ({
       <div className="space-y-3">
         {/* Meta info */}
         <div className="flex items-center gap-3 text-sm text-muted-foreground">
-          <div className="flex items-center gap-1.5">
-            <Eye className="h-4 w-4" />
+          <div className="flex items-center gap-1.5 px-2.5 py-1 bg-muted/30 rounded-full">
+            <Eye className="h-3.5 w-3.5" />
             <span>{formatViewCount(views)} views</span>
           </div>
           {uploadedAt && (
-            <div className="flex items-center gap-1.5">
-              <Clock className="h-4 w-4" />
+            <div className="flex items-center gap-1.5 px-2.5 py-1 bg-muted/30 rounded-full">
+              <Clock className="h-3.5 w-3.5" />
               <span>{getFormattedDate(uploadedAt)}</span>
             </div>
           )}
         </div>
         
-        {/* Action buttons */}
+        {/* Action buttons - all with same hover effect */}
         <div className="flex items-center gap-2 flex-wrap">
           <Button
             variant="ghost"
             size="sm"
             onClick={handleLike}
-            className={`h-9 px-3 rounded-full transition-all ${
-              isLiked 
-                ? "bg-red-100 text-red-600 border border-red-300/50" 
-                : "bg-muted/50 hover:bg-red-50 hover:text-red-600"
+            className={`${actionButtonBaseCompact} ${
+              isLiked ? "bg-red-100 text-red-600 border-red-300" : ""
             }`}
           >
             <ThumbsUp className={`h-4 w-4 mr-1.5 ${isLiked ? "fill-current" : ""}`} />
@@ -162,10 +164,8 @@ export const FriendlyVideoActionBar = ({
             variant="ghost"
             size="sm"
             onClick={handleDislike}
-            className={`h-9 px-3 rounded-full transition-all ${
-              isDisliked 
-                ? "bg-muted text-foreground" 
-                : "bg-muted/50 hover:bg-muted"
+            className={`${actionButtonBaseCompact} ${
+              isDisliked ? "bg-muted text-foreground border-border" : ""
             }`}
           >
             <ThumbsDown className={`h-4 w-4 ${isDisliked ? "fill-current" : ""}`} />
@@ -175,7 +175,7 @@ export const FriendlyVideoActionBar = ({
             variant="ghost"
             size="sm"
             onClick={handleShare}
-            className="h-9 px-3 rounded-full bg-muted/50 hover:bg-accent/50 hover:text-accent-foreground"
+            className={actionButtonBaseCompact}
           >
             <Share2 className="h-4 w-4 mr-1.5" />
             Share
@@ -191,28 +191,26 @@ export const FriendlyVideoActionBar = ({
     <div className="space-y-4">
       {/* Meta info row */}
       <div className="flex items-center gap-4 text-sm text-muted-foreground">
-        <div className="flex items-center gap-2 px-3 py-1.5 bg-muted/40 rounded-full">
+        <div className="flex items-center gap-2 px-3 py-1.5 bg-muted/30 rounded-full">
           <Eye className="h-4 w-4" />
           <span className="font-medium">{formatViewCount(views)} views</span>
         </div>
         {uploadedAt && (
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-muted/40 rounded-full">
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-muted/30 rounded-full">
             <Clock className="h-4 w-4" />
             <span className="font-medium">{getFormattedDate(uploadedAt)}</span>
           </div>
         )}
       </div>
       
-      {/* Action buttons row */}
+      {/* Action buttons row - all with same yellow hover effect */}
       <div className="flex items-center gap-3 flex-wrap">
-        {/* Like Button - Red/Yellow themed */}
+        {/* Like Button */}
         <Button
           variant="ghost"
           onClick={handleLike}
-          className={`h-11 px-5 rounded-full font-medium transition-all ${
-            isLiked 
-              ? "bg-red-100 text-red-600 border-2 border-red-300/50 shadow-sm" 
-              : "bg-muted/60 hover:bg-red-50 hover:text-red-600 hover:border-red-200/30 border-2 border-transparent"
+          className={`${actionButtonBase} ${
+            isLiked ? "bg-red-100 text-red-600 border-red-300 shadow-sm" : ""
           }`}
         >
           <ThumbsUp className={`h-5 w-5 mr-2 ${isLiked ? "fill-current" : ""}`} />
@@ -223,10 +221,8 @@ export const FriendlyVideoActionBar = ({
         <Button
           variant="ghost"
           onClick={handleDislike}
-          className={`h-11 px-4 rounded-full transition-all ${
-            isDisliked 
-              ? "bg-muted text-foreground border-2 border-border" 
-              : "bg-muted/60 hover:bg-muted border-2 border-transparent"
+          className={`${actionButtonBase} px-4 ${
+            isDisliked ? "bg-muted text-foreground border-border" : ""
           }`}
         >
           <ThumbsDown className={`h-5 w-5 ${isDisliked ? "fill-current" : ""}`} />
@@ -236,7 +232,7 @@ export const FriendlyVideoActionBar = ({
         <Button
           variant="ghost"
           onClick={handleShare}
-          className="h-11 px-5 rounded-full bg-muted/60 hover:bg-accent/30 font-medium border-2 border-transparent hover:border-accent/20"
+          className={actionButtonBase}
         >
           <Share2 className="h-5 w-5 mr-2" />
           Share
