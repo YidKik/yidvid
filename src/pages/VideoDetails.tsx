@@ -14,7 +14,6 @@ import { useAuth } from "@/hooks/useAuth";
 import { useIncrementVideoView } from "@/hooks/video/useIncrementVideoView";
 import { FriendlyVideoActionBar } from "@/components/video/details/FriendlyVideoActionBar";
 import { FriendlyChannelSection } from "@/components/video/details/FriendlyChannelSection";
-import { FriendlyRelatedVideos } from "@/components/video/details/FriendlyRelatedVideos";
 import { MessageCircle, Sparkles } from "lucide-react";
 
 const VideoDetails = () => {
@@ -107,18 +106,19 @@ const VideoDetails = () => {
               <div className="flex gap-6">
                 {/* Left Column - Video and Info */}
                 <div className="flex-1 space-y-6">
-                  {/* Video Player Card - Translucent with warm glow */}
-                  <div className="relative bg-card/80 backdrop-blur-md rounded-3xl shadow-2xl overflow-hidden border border-amber-200/30">
-                    {/* Warm gradient glow behind */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-amber-100/20 via-transparent to-rose-100/15 pointer-events-none" />
+                  {/* Video Player Card - Fade transparency background */}
+                  <div className="relative rounded-3xl shadow-2xl overflow-hidden border border-red-200/20">
+                    {/* Fade transparency background */}
+                    <div className="absolute inset-0 bg-gradient-to-b from-card/60 via-card/40 to-card/30 backdrop-blur-sm" />
+                    <div className="absolute inset-0 bg-gradient-to-br from-red-50/10 via-transparent to-yellow-50/10 pointer-events-none" />
                     
                     {/* Video Player */}
                     <div className="relative aspect-video">
                       <VideoPlayer videoId={video?.video_id || ""} />
                     </div>
                     
-                    {/* Friendly gradient divider */}
-                    <div className="h-1 bg-gradient-to-r from-transparent via-amber-400/40 to-transparent" />
+                    {/* Subtle gradient divider */}
+                    <div className="h-0.5 bg-gradient-to-r from-transparent via-red-300/30 to-yellow-300/20" />
                     
                     {/* Video Title Section */}
                     <div className="relative p-6">
@@ -136,19 +136,21 @@ const VideoDetails = () => {
                     </div>
                   </div>
                   
-                  {/* Section Divider - Warm gradient fade */}
+                  {/* Section Divider */}
                   <div className="flex items-center gap-4 px-4">
-                    <div className="flex-1 h-px bg-gradient-to-r from-transparent via-amber-300/50 to-rose-300/30" />
-                    <div className="w-2 h-2 rounded-full bg-gradient-to-br from-amber-400/60 to-rose-400/40" />
-                    <div className="flex-1 h-px bg-gradient-to-r from-rose-300/30 via-amber-300/50 to-transparent" />
+                    <div className="flex-1 h-px bg-gradient-to-r from-transparent via-red-200/40 to-yellow-200/30" />
+                    <div className="w-2 h-2 rounded-full bg-gradient-to-br from-red-400/50 to-yellow-400/40" />
+                    <div className="flex-1 h-px bg-gradient-to-r from-yellow-200/30 via-red-200/40 to-transparent" />
                   </div>
                   
-                  {/* Channel & Description Section */}
+                  {/* Channel, Description & More Videos Section - Combined */}
                   <FriendlyChannelSection
                     channelName={video?.channel_name || ""}
                     channelId={video?.channel_id || ""}
                     channelThumbnail={video?.youtube_channels?.thumbnail_url || ""}
                     description={video?.description || ""}
+                    channelVideos={channelVideos}
+                    isLoadingVideos={isLoadingRelated}
                   />
                 </div>
                 
@@ -196,39 +198,24 @@ const VideoDetails = () => {
                 </div>
               </div>
               
-              {/* Section Divider before Related Videos */}
-              <div className="flex items-center gap-4 px-8">
-                <div className="flex-1 h-px bg-gradient-to-r from-transparent via-amber-300/40 to-rose-300/30" />
-                <div className="flex gap-1.5">
-                  <div className="w-1.5 h-1.5 rounded-full bg-amber-400/50" />
-                  <div className="w-1.5 h-1.5 rounded-full bg-rose-400/40" />
-                  <div className="w-1.5 h-1.5 rounded-full bg-amber-400/50" />
-                </div>
-                <div className="flex-1 h-px bg-gradient-to-r from-rose-300/30 via-amber-300/40 to-transparent" />
-              </div>
-              
-              {/* More Videos Section - Full Width */}
-              <FriendlyRelatedVideos 
-                videos={channelVideos}
-                isLoading={isLoadingRelated}
-                channelName={video?.channel_name || ""}
-              />
+              {/* Related videos are now part of FriendlyChannelSection */}
             </div>
           )}
           
           {/* Mobile Layout */}
           {isMobile && (
             <div className="mt-4 space-y-5">
-              {/* Video Card */}
-              <div className="relative bg-card/80 backdrop-blur-md rounded-3xl shadow-2xl overflow-hidden border border-amber-200/30">
-                {/* Warm gradient glow */}
-                <div className="absolute inset-0 bg-gradient-to-br from-amber-100/20 via-transparent to-rose-100/15 pointer-events-none" />
+              {/* Video Card - Fade transparency background */}
+              <div className="relative rounded-3xl shadow-2xl overflow-hidden border border-red-200/20">
+                {/* Fade transparency background */}
+                <div className="absolute inset-0 bg-gradient-to-b from-card/60 via-card/40 to-card/30 backdrop-blur-sm" />
+                <div className="absolute inset-0 bg-gradient-to-br from-red-50/10 via-transparent to-yellow-50/10 pointer-events-none" />
                 
                 {/* Video Player */}
                 <VideoPlayer videoId={video?.video_id || ""} />
                 
-                {/* Friendly divider */}
-                <div className="h-0.5 bg-gradient-to-r from-transparent via-amber-400/40 to-transparent" />
+                {/* Subtle divider */}
+                <div className="h-0.5 bg-gradient-to-r from-transparent via-red-300/30 to-yellow-300/20" />
                 
                 <div className="relative p-5">
                   {/* Video Title */}
@@ -249,26 +236,21 @@ const VideoDetails = () => {
               
               {/* Mobile Section Divider */}
               <div className="flex items-center gap-3 px-4">
-                <div className="flex-1 h-px bg-gradient-to-r from-transparent via-amber-300/50 to-rose-300/30" />
-                <div className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-amber-400/60 to-rose-400/40" />
-                <div className="flex-1 h-px bg-gradient-to-r from-rose-300/30 via-amber-300/50 to-transparent" />
+                <div className="flex-1 h-px bg-gradient-to-r from-transparent via-red-200/40 to-yellow-200/30" />
+                <div className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-red-400/50 to-yellow-400/40" />
+                <div className="flex-1 h-px bg-gradient-to-r from-yellow-200/30 via-red-200/40 to-transparent" />
               </div>
               
-              {/* Channel & Description Section */}
+              {/* Channel, Description & More Videos Section - Combined */}
               <FriendlyChannelSection
                 channelName={video?.channel_name || ""}
                 channelId={video?.channel_id || ""}
                 channelThumbnail={video?.youtube_channels?.thumbnail_url || ""}
                 description={video?.description || ""}
+                channelVideos={channelVideos}
+                isLoadingVideos={isLoadingRelated}
                 compact
               />
-              
-              {/* Mobile Section Divider */}
-              <div className="flex items-center gap-3 px-4">
-                <div className="flex-1 h-px bg-gradient-to-r from-transparent via-rose-300/40 to-amber-300/30" />
-                <div className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-rose-400/50 to-amber-400/40" />
-                <div className="flex-1 h-px bg-gradient-to-r from-amber-300/30 via-rose-300/40 to-transparent" />
-              </div>
               
               {/* Comments */}
               <div className="relative bg-card/80 backdrop-blur-md rounded-3xl shadow-2xl overflow-hidden border border-rose-200/30">
@@ -306,23 +288,7 @@ const VideoDetails = () => {
                 </div>
               </div>
               
-              {/* Mobile Section Divider */}
-              <div className="flex items-center gap-3 px-4">
-                <div className="flex-1 h-px bg-gradient-to-r from-transparent via-amber-300/40 to-rose-300/30" />
-                <div className="flex gap-1">
-                  <div className="w-1 h-1 rounded-full bg-amber-400/50" />
-                  <div className="w-1 h-1 rounded-full bg-rose-400/40" />
-                </div>
-                <div className="flex-1 h-px bg-gradient-to-r from-rose-300/30 via-amber-300/40 to-transparent" />
-              </div>
-              
-              {/* Related Videos */}
-              <FriendlyRelatedVideos 
-                videos={channelVideos}
-                isLoading={isLoadingRelated}
-                channelName={video?.channel_name || ""}
-                compact
-              />
+              {/* Related videos are now part of FriendlyChannelSection */}
             </div>
           )}
         </div>

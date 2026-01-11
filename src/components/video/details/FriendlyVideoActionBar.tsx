@@ -1,4 +1,4 @@
-import { ThumbsUp, ThumbsDown, Share2, Flag, Eye, Clock, Heart } from "lucide-react";
+import { ThumbsUp, ThumbsDown, Share2, Eye, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -150,11 +150,11 @@ export const FriendlyVideoActionBar = ({
             onClick={handleLike}
             className={`h-9 px-3 rounded-full transition-all ${
               isLiked 
-                ? "bg-primary/15 text-primary border border-primary/30" 
-                : "bg-muted/50 hover:bg-primary/10 hover:text-primary"
+                ? "bg-red-100 text-red-600 border border-red-300/50" 
+                : "bg-muted/50 hover:bg-red-50 hover:text-red-600"
             }`}
           >
-            <Heart className={`h-4 w-4 mr-1.5 ${isLiked ? "fill-current" : ""}`} />
+            <ThumbsUp className={`h-4 w-4 mr-1.5 ${isLiked ? "fill-current" : ""}`} />
             Like
           </Button>
 
@@ -205,17 +205,17 @@ export const FriendlyVideoActionBar = ({
       
       {/* Action buttons row */}
       <div className="flex items-center gap-3 flex-wrap">
-        {/* Like Button */}
+        {/* Like Button - Red/Yellow themed */}
         <Button
           variant="ghost"
           onClick={handleLike}
           className={`h-11 px-5 rounded-full font-medium transition-all ${
             isLiked 
-              ? "bg-primary/15 text-primary border-2 border-primary/30 shadow-sm" 
-              : "bg-muted/60 hover:bg-primary/10 hover:text-primary hover:border-primary/20 border-2 border-transparent"
+              ? "bg-red-100 text-red-600 border-2 border-red-300/50 shadow-sm" 
+              : "bg-muted/60 hover:bg-red-50 hover:text-red-600 hover:border-red-200/30 border-2 border-transparent"
           }`}
         >
-          <Heart className={`h-5 w-5 mr-2 ${isLiked ? "fill-current" : ""}`} />
+          <ThumbsUp className={`h-5 w-5 mr-2 ${isLiked ? "fill-current" : ""}`} />
           {isLiked ? "Liked!" : "Like"}
         </Button>
 
