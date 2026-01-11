@@ -1380,7 +1380,7 @@ export type Database = {
           id: string
           message: string
           updated_at: string
-          user_id: string
+          user_id: string | null
           video_id: string
         }
         Insert: {
@@ -1389,7 +1389,7 @@ export type Database = {
           id?: string
           message: string
           updated_at?: string
-          user_id: string
+          user_id?: string | null
           video_id: string
         }
         Update: {
@@ -1398,7 +1398,7 @@ export type Database = {
           id?: string
           message?: string
           updated_at?: string
-          user_id?: string
+          user_id?: string | null
           video_id?: string
         }
         Relationships: [
