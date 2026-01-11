@@ -11,7 +11,7 @@ interface VideoCardThumbnailProps {
   formattedDate?: string;
   channelName?: string;
   duration?: string;
-  hideChannelOnHover?: boolean;
+  showChannelOnHover?: boolean;
 }
 
 export const VideoCardThumbnail = ({
@@ -22,7 +22,7 @@ export const VideoCardThumbnail = ({
   formattedDate,
   channelName,
   duration,
-  hideChannelOnHover = false
+  showChannelOnHover = false
 }: VideoCardThumbnailProps) => {
   const [imageError, setImageError] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
@@ -76,26 +76,37 @@ export const VideoCardThumbnail = ({
         onError={() => setImageError(true)}
       />
       
-      {/* Hover overlay - only show duration, not channel name */}
+      {/* Hover overlay */}
       <div 
         className={cn(
-          "absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-transparent transition-opacity duration-300 rounded-xl",
+          "absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30 transition-opacity duration-300 rounded-xl",
           isHovering ? "opacity-100" : "opacity-0"
         )}
       >
-        {/* Top bar with duration only */}
-        <div className="absolute top-0 left-0 right-0 p-2 flex items-center justify-end">
-          {/* Duration only - no channel name on hover */}
+        {/* Top right - duration */}
+        <div className="absolute top-0 right-0 p-2.5">
           {duration && (
             <div 
-              className="bg-black/60 backdrop-blur-sm rounded-full px-2 py-0.5 flex items-center gap-1"
+              className="bg-black/70 backdrop-blur-sm rounded-full px-2.5 py-1 flex items-center gap-1.5 shadow-lg"
               style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
             >
-              <Clock size={10} className="text-white" />
-              <span className="text-[11px] font-semibold text-white">{duration}</span>
+              <Clock size={11} className="text-white" />
+              <span className="text-xs font-semibold text-white">{duration}</span>
             </div>
           )}
         </div>
+        
+        {/* Bottom left - channel name (only on videos page) */}
+        {showChannelOnHover && channelName && (
+          <div className="absolute bottom-0 left-0 right-0 p-2.5">
+            <div 
+              className="inline-flex items-center gap-1.5 bg-gradient-to-r from-red-500/90 to-yellow-500/90 backdrop-blur-sm rounded-full px-3 py-1.5 shadow-lg max-w-[85%]"
+              style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
+            >
+              <span className="text-xs font-bold text-white truncate">{channelName}</span>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

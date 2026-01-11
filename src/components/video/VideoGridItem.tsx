@@ -45,6 +45,7 @@ export const VideoGridItem = ({ video, loading }: VideoGridItemProps) => {
         isSample={video.id?.toString().includes('sample')}
         channelName={video.channel_name}
         duration="3:45"
+        showChannelOnHover={isVideosPage}
       />
       
       {isVideosPage && (
