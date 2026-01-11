@@ -20,7 +20,7 @@ export const AuthForm = ({ onOpenChange, initialTab = 'signin', hideOptions = fa
   
   return (
     <div 
-      className={`${isMobile ? 'p-5 pt-5 pb-6' : 'px-10 py-8'} bg-white`}
+      className="p-5 bg-white"
       style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
     >
       {initialTab === 'signin' ? (
