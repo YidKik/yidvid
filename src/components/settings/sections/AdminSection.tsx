@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { supabase } from "@/integrations/supabase/client";
@@ -6,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { AdminPinDialog } from "./admin/AdminPinDialog";
 import { AdminDashboardAccess } from "./admin/AdminDashboardAccess";
 import { useSecureAdminAuth } from "@/hooks/useSecureAdminAuth";
+import { Shield, Key } from "lucide-react";
 
 interface AdminSectionProps {
   userId?: string;
@@ -24,107 +24,81 @@ export const AdminSection = ({ userId }: AdminSectionProps) => {
     hasAdminSession
   } = useSecureAdminAuth();
 
-  // First check if we have cached admin status
   const { data: cachedAdminStatus } = useQuery({
     queryKey: ["admin-status", userId],
     queryFn: async () => {
-      // Check localStorage first for quicker access
       if (userId) {
         const cached = JSON.parse(localStorage.getItem(`admin-status-${userId}`) || 'null');
-        if (cached) {
-          console.log("Using cached admin status from localStorage:", cached);
-          return cached;
-        }
+        if (cached) return cached;
       }
-      
-      // Also check for PIN bypass
       const hasPinBypass = localStorage.getItem('admin-pin-bypass') === 'true';
-      if (hasPinBypass) {
-        console.log("Using PIN bypass for admin access");
-        return { isAdmin: true };
-      }
-      
+      if (hasPinBypass) return { isAdmin: true };
       return null;
     },
     enabled: !!userId,
     staleTime: Infinity,
   });
 
-  // Use direct query with minimal fields for better performance
   const { data: adminStatus } = useQuery({
     queryKey: ["user-admin-status", userId],
     queryFn: async () => {
       if (!userId) return { isAdmin: false };
+      if (cachedAdminStatus) return cachedAdminStatus;
       
-      // If we already have cached admin status, use it
-      if (cachedAdminStatus) {
-        console.log("Using cached admin status:", cachedAdminStatus);
-        return cachedAdminStatus;
-      }
-      
-      // Check for PIN bypass
       const hasPinBypass = localStorage.getItem('admin-pin-bypass') === 'true';
-      if (hasPinBypass) {
-        console.log("Using PIN bypass for admin access");
-        return { isAdmin: true };
-      }
+      if (hasPinBypass) return { isAdmin: true };
       
       try {
-        console.log("Explicitly checking admin status for user:", userId);
-        
-        // Simplest possible query to avoid RLS issues
         const { data, error } = await supabase
           .from("profiles")
           .select("is_admin")
           .eq("id", userId)
           .maybeSingle();
 
-        if (error) {
-          console.warn("Error checking admin status:", error.message);
-          return { isAdmin: false };
-        }
+        if (error) return { isAdmin: false };
         
         const isAdmin = data?.is_admin === true;
-        console.log("Admin status from direct query:", isAdmin);
-        
-        // Cache the admin status for future quick access
         if (isAdmin) {
-          // Store in localStorage for persistence between refreshes
           localStorage.setItem(`admin-status-${userId}`, JSON.stringify({ isAdmin: true }));
           return { isAdmin: true };
         }
-        
         return { isAdmin: !!data?.is_admin };
       } catch (error) {
-        console.error("Unexpected error checking admin status:", error);
         return { isAdmin: false };
       }
     },
-    staleTime: 60000, // 60 seconds
+    staleTime: 60000,
     retry: 2,
     enabled: !!userId,
   });
 
-  // Set loading state based on query status
   useEffect(() => {
     setIsLoading(false);
   }, [adminStatus]);
 
-  if (isLoading) {
-    return <div className="h-4"></div>;
-  }
+  if (isLoading) return <div className="h-4"></div>;
 
-  // Always show the section with PIN option even if user is not admin
   return (
-    <section className={`${isMobile ? 'mb-6' : 'mb-8'}`}>
-      <h2 className={`${isMobile ? 'text-lg' : 'text-2xl'} font-semibold mb-2 md:mb-4`}>Admin Settings</h2>
-      <div className={`space-y-3 md:space-y-4`}>
-        <div className="flex items-center justify-between">
+    <div style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}>
+      {/* Section Header */}
+      <div className="flex items-center gap-2 mb-5 pb-3 border-b border-gray-200">
+        <Shield size={18} className="text-yellow-600" />
+        <h2 className="text-lg font-bold text-gray-900">Admin Settings</h2>
+      </div>
+      
+      <div>
+        <div className="flex items-center gap-2 mb-2">
+          <Key size={14} className="text-gray-500" />
+          <h3 className="text-sm font-semibold text-gray-800">Dashboard Access</h3>
+        </div>
+        <p className="text-xs text-gray-500 mb-4">
+          Access administrative dashboard and controls.
+        </p>
+        
+        <div className="flex items-center justify-between p-4 bg-white border-2 border-gray-200 rounded-xl">
           <div>
-            <h3 className={`${isMobile ? 'text-sm' : 'font-medium'}`}>Dashboard Access</h3>
-            <p className={`${isMobile ? 'text-xs' : 'text-sm'} text-muted-foreground`}>
-              Access administrative dashboard and controls
-            </p>
+            <p className="text-sm font-medium text-gray-900">Admin Dashboard</p>
+            <p className="text-xs text-gray-500">Manage content and users</p>
           </div>
           <AdminDashboardAccess 
             isAdmin={adminStatus?.isAdmin || false} 
@@ -141,6 +115,6 @@ export const AdminSection = ({ userId }: AdminSectionProps) => {
         setPinValue={setAdminPin}
         onUnlock={handlePinVerification}
       />
-    </section>
+    </div>
   );
 };
