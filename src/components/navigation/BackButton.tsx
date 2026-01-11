@@ -94,37 +94,25 @@ export const BackButton = ({ className }: BackButtonProps) => {
     navigate("/videos");
   };
 
-  // Match header button styling on videos/search pages
-  const buttonClass = `rounded-full shadow-sm p-1.5 md:p-2.5 transition-all duration-200 hover:scale-105 active:scale-95 ${
-    isVideosPage || isSearchPage
-      ? 'bg-primary hover:bg-primary text-primary-foreground'
-      : 'bg-transparent backdrop-blur-sm border-2 border-primary text-primary hover:bg-primary/10 hover:shadow-lg'
-  }`;
-
   return (
-    <div
+    <button
+      onClick={handleGoBack}
       className={cn(
-        "fixed left-4 z-[100] flex gap-2",
-        "top-16 md:top-12", // Higher on mobile, normal on desktop
-        visible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-10 pointer-events-none",
-        "transition-all duration-300 ease-in-out"
+        "fixed left-4 z-[100] flex items-center gap-2 px-3 py-2 rounded-full",
+        "top-[72px] md:top-16",
+        "bg-white/60 dark:bg-gray-900/60 backdrop-blur-md",
+        "border border-gray-200/50 dark:border-gray-700/50",
+        "text-muted-foreground hover:text-foreground",
+        "shadow-sm hover:shadow-md",
+        "transition-all duration-300 ease-in-out",
+        "hover:bg-white/80 dark:hover:bg-gray-900/80",
+        visible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4 pointer-events-none",
+        className
       )}
+      aria-label="Go back"
     >
-      <button
-        onClick={handleGoBack}
-        className={cn(buttonClass, className)}
-        aria-label="Go back"
-      >
-        <ArrowLeft className="h-4 w-4 md:h-5 md:w-5" />
-      </button>
-      
-      <button
-        onClick={handleGoHome}
-        className={buttonClass}
-        aria-label="Go to videos page"
-      >
-        <Home className="h-4 w-4 md:h-5 md:w-5" />
-      </button>
-    </div>
+      <ArrowLeft className="h-4 w-4" />
+      <span className="text-sm font-medium hidden sm:inline">Back</span>
+    </button>
   );
 };
