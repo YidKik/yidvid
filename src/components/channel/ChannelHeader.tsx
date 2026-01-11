@@ -111,73 +111,97 @@ export const ChannelHeader = ({
   const subscriptionStateKnown = internalSubscriptionState !== undefined;
 
   return (
-    <div className="flex flex-col items-center mb-6 md:mb-8">
-      <Avatar className="w-20 h-20 md:w-32 md:h-32 mb-3 md:mb-4 opacity-0 animate-[scaleIn_0.6s_ease-out_0.3s_forwards] group relative">
-        <AvatarImage
-          src={channel.thumbnail_url}
-          alt={channel.title}
-          className="object-cover transition-transform duration-300 group-hover:scale-105"
-          onLoad={() => setImageLoaded(true)}
-          onError={() => setImageError(true)}
-        />
-        <AvatarFallback className="bg-primary/10">
-          <img 
-            src={fallbackLogo} 
-            alt="YidVid Logo" 
-            className="w-10 h-10 md:w-16 md:h-16"
-          />
-        </AvatarFallback>
+    <div className="mb-8 md:mb-10 animate-fade-in">
+      {/* Friendly card container */}
+      <div className="bg-gradient-to-br from-yellow-50 via-white to-red-50 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800 rounded-3xl border border-yellow-200/60 dark:border-yellow-900/30 shadow-lg shadow-yellow-100/50 dark:shadow-none overflow-hidden">
+        {/* Top accent bar */}
+        <div className="h-2 bg-gradient-to-r from-yellow-400 via-red-400 to-yellow-400" />
         
-        {!imageLoaded && !imageError && (
-          <div className="absolute inset-0 bg-gray-100 rounded-full flex items-center justify-center">
-            <img 
-              src={fallbackLogo} 
-              alt="Loading" 
-              className="w-10 h-10 md:w-16 md:h-16 animate-pulse"
-            />
+        <div className="p-5 md:p-8">
+          <div className="flex flex-col md:flex-row md:items-start gap-5 md:gap-8">
+            {/* Left side - Avatar */}
+            <div className="flex-shrink-0 flex justify-center md:justify-start">
+              <div className="relative group">
+                <div className="absolute -inset-1 bg-gradient-to-r from-yellow-400 via-red-400 to-yellow-400 rounded-full opacity-75 blur group-hover:opacity-100 transition-opacity duration-300" />
+                <Avatar className="relative w-24 h-24 md:w-32 md:h-32 ring-4 ring-white dark:ring-gray-800 shadow-xl">
+                  <AvatarImage
+                    src={channel.thumbnail_url}
+                    alt={channel.title}
+                    className="object-cover transition-transform duration-300 group-hover:scale-105"
+                    onLoad={() => setImageLoaded(true)}
+                    onError={() => setImageError(true)}
+                  />
+                  <AvatarFallback className="bg-gradient-to-br from-yellow-100 to-red-100 dark:from-yellow-900/30 dark:to-red-900/30">
+                    <img 
+                      src={fallbackLogo} 
+                      alt="YidVid Logo" 
+                      className="w-12 h-12 md:w-16 md:h-16"
+                    />
+                  </AvatarFallback>
+                  
+                  {!imageLoaded && !imageError && (
+                    <div className="absolute inset-0 bg-gradient-to-br from-yellow-100 to-red-100 rounded-full flex items-center justify-center">
+                      <img 
+                        src={fallbackLogo} 
+                        alt="Loading" 
+                        className="w-12 h-12 md:w-16 md:h-16 animate-pulse"
+                      />
+                    </div>
+                  )}
+                </Avatar>
+              </div>
+            </div>
+            
+            {/* Right side - Content */}
+            <div className="flex-1 flex flex-col items-center md:items-start text-center md:text-left">
+              {/* Channel name */}
+              <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-3">
+                {channel.title}
+              </h1>
+              
+              {/* Subscribe button */}
+              <Button
+                variant={displaySubscribed && subscriptionStateKnown ? "default" : "outline"}
+                onClick={handleSubscribeClick}
+                disabled={buttonLoading}
+                className={`h-10 md:h-11 text-sm md:text-base px-5 md:px-6 rounded-full font-medium transition-all duration-300 ${
+                  (displaySubscribed && subscriptionStateKnown) 
+                    ? "bg-gradient-to-r from-yellow-500 to-red-500 hover:from-yellow-600 hover:to-red-600 text-white shadow-lg shadow-yellow-500/30 hover:shadow-xl hover:shadow-yellow-500/40 border-0" 
+                    : "border-2 border-yellow-500 text-yellow-700 dark:text-yellow-400 hover:bg-yellow-50 dark:hover:bg-yellow-900/20 hover:border-yellow-600"
+                }`}
+                data-subscribed={displaySubscribed && subscriptionStateKnown ? "true" : "false"}
+                aria-label={displaySubscribed && subscriptionStateKnown ? "Unsubscribe from channel" : "Subscribe to channel"}
+              >
+                {buttonLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    {isProcessing ? "Processing..." : "Loading..."}
+                  </>
+                ) : displaySubscribed && subscriptionStateKnown ? (
+                  <>
+                    <Check className="w-4 h-4 mr-2" />
+                    Subscribed
+                  </>
+                ) : (
+                  <>
+                    <UserPlus className="w-4 h-4 mr-2" />
+                    Subscribe
+                  </>
+                )}
+              </Button>
+              
+              {/* Description */}
+              {channel.description && (
+                <div className="mt-4 md:mt-5">
+                  <p className="text-gray-600 dark:text-gray-300 text-sm md:text-base leading-relaxed max-w-2xl">
+                    {channel.description}
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
-        )}
-      </Avatar>
-      
-      <h1 className="text-xl md:text-3xl font-bold text-center mb-2 opacity-0 animate-[fadeIn_0.6s_ease-out_0.4s_forwards]">
-        {channel.title}
-      </h1>
-      
-      <Button
-        variant={displaySubscribed && subscriptionStateKnown ? "default" : "outline"}
-        onClick={handleSubscribeClick}
-        disabled={buttonLoading}
-        className={`h-7 md:h-9 text-xs md:text-sm px-2.5 md:px-3.5 mb-2 md:mb-3 transition-all duration-200 ${
-          (displaySubscribed && subscriptionStateKnown) ? "bg-primary hover:bg-primary-hover text-white shadow-md" : ""
-        }`}
-        data-subscribed={displaySubscribed && subscriptionStateKnown ? "true" : "false"}
-        aria-label={displaySubscribed && subscriptionStateKnown ? "Unsubscribe from channel" : "Subscribe to channel"}
-      >
-        {buttonLoading ? (
-          <>
-            <Loader2 className="w-3 h-3 md:w-3.5 md:h-3.5 mr-1 md:mr-1.5 animate-spin" />
-            {isProcessing ? "Processing..." : "Loading..."}
-          </>
-        ) : displaySubscribed && subscriptionStateKnown ? (
-          <>
-            <Check className="w-3 h-3 md:w-3.5 md:h-3.5 mr-1 md:mr-1.5" />
-            Subscribed
-          </>
-        ) : (
-          <>
-            <UserPlus className="w-3 h-3 md:w-3.5 md:h-3.5 mr-1 md:mr-1.5" />
-            Subscribe
-          </>
-        )}
-      </Button>
-
-      {channel.description && (
-        <div className="mt-2 opacity-0 animate-[fadeIn_0.6s_ease-out_0.5s_forwards]">
-          <p className="text-muted-foreground text-xs md:text-sm text-center max-w-2xl">
-            {channel.description}
-          </p>
         </div>
-      )}
+      </div>
     </div>
   );
 };
