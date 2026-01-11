@@ -4,6 +4,7 @@ import { CommentForm } from "@/components/comments/CommentForm";
 import { CommentList } from "@/components/comments/CommentList";
 import { VideoCommentsTable } from "@/integrations/supabase/types/video-comments";
 import { toast } from "sonner";
+import { MessageSquare } from "lucide-react";
 
 type Comment = VideoCommentsTable["Row"] & {
   profiles: {
@@ -64,14 +65,36 @@ export const VideoComments = ({ videoId }: VideoCommentsProps) => {
     }
 
     await refetchComments();
+    toast.success("Comment posted! 🎉");
   };
 
   return (
-    <div className="py-6 border-t border-border/30">
-      <h2 className="text-lg font-semibold mb-6 text-foreground">Comments</h2>
-      <CommentForm onSubmit={handleSubmitComment} />
-      <div className="mt-6">
-        <CommentList comments={comments} />
+    <div className="space-y-4">
+      {/* Comment Form Section */}
+      <div className="bg-yellow-50/50 rounded-2xl p-4 border border-yellow-200/30">
+        <CommentForm onSubmit={handleSubmitComment} />
+      </div>
+      
+      {/* Comments List */}
+      <div className="space-y-3">
+        {comments && comments.length > 0 ? (
+          <>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground px-1">
+              <MessageSquare className="h-4 w-4" />
+              <span>{comments.length} comment{comments.length !== 1 ? 's' : ''}</span>
+            </div>
+            <CommentList comments={comments} />
+          </>
+        ) : (
+          <div className="text-center py-6">
+            <div className="w-12 h-12 mx-auto mb-3 bg-yellow-100/50 rounded-full flex items-center justify-center">
+              <MessageSquare className="h-6 w-6 text-yellow-500" />
+            </div>
+            <p className="text-muted-foreground text-sm">
+              Be the first to comment! ✨
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

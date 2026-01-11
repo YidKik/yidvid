@@ -107,7 +107,7 @@ export const FriendlyChannelSection = ({
             <p className="text-sm text-muted-foreground mt-0.5">Channel</p>
           </div>
           
-          {/* Subscribe Button - Red/Yellow themed */}
+          {/* Subscribe Button - Solid Red/Yellow */}
           {channelId && (
             <Button
               variant={isSubscribed ? "default" : "default"}
@@ -116,7 +116,7 @@ export const FriendlyChannelSection = ({
               className={`h-11 px-6 rounded-full font-semibold transition-all ${
                 isSubscribed 
                   ? "bg-muted text-foreground hover:bg-muted/80" 
-                  : "bg-gradient-to-r from-red-500 to-yellow-500 text-white hover:from-red-600 hover:to-yellow-600 shadow-lg shadow-red-300/30 hover:shadow-xl hover:shadow-red-400/40"
+                  : "bg-red-500 text-white hover:bg-red-600 shadow-lg shadow-red-300/30 hover:shadow-xl hover:shadow-red-400/40"
               }`}
             >
               {isLoading ? (
@@ -211,7 +211,7 @@ export const FriendlyChannelSection = ({
               <Play className="h-4 w-4 text-red-600 fill-red-600" />
             </div>
             <span className="text-sm font-medium text-foreground">
-              {channelVideos.length} more video{channelVideos.length !== 1 ? 's' : ''} from this channel
+              More from this channel
             </span>
           </div>
           
@@ -219,9 +219,9 @@ export const FriendlyChannelSection = ({
             {channelVideos.slice(0, compact ? 6 : 9).map((video) => (
               <div 
                 key={video.id}
-                className="group transition-all duration-300 hover:scale-[1.02]"
+                className="group transition-all duration-300 hover:scale-[1.02] rounded-xl overflow-hidden border-2 border-transparent hover:border-yellow-400 hover:shadow-lg hover:shadow-yellow-200/30"
               >
-                <div className="bg-card/60 backdrop-blur-sm rounded-xl overflow-hidden shadow-md hover:shadow-lg hover:shadow-red-100/20 transition-all border border-red-100/10">
+                <div className="bg-card/60 backdrop-blur-sm">
                   <VideoCard
                     id={video.id}
                     video_id={video.video_id}

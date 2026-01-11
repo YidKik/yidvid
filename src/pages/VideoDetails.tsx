@@ -106,19 +106,20 @@ const VideoDetails = () => {
               <div className="flex gap-6">
                 {/* Left Column - Video and Info */}
                 <div className="flex-1 space-y-6">
-                  {/* Video Player Card - Fade transparency background */}
-                  <div className="relative rounded-3xl shadow-2xl overflow-hidden border border-red-200/20">
-                    {/* Fade transparency background */}
-                    <div className="absolute inset-0 bg-gradient-to-b from-card/60 via-card/40 to-card/30 backdrop-blur-sm" />
-                    <div className="absolute inset-0 bg-gradient-to-br from-red-50/10 via-transparent to-yellow-50/10 pointer-events-none" />
+                  {/* Video Player Card - Enhanced fade background */}
+                  <div className="relative rounded-3xl shadow-2xl overflow-hidden border-2 border-yellow-200/30">
+                    {/* Enhanced fade transparency background */}
+                    <div className="absolute inset-0 bg-gradient-to-b from-card/70 via-card/50 to-card/40 backdrop-blur-md" />
+                    <div className="absolute inset-0 bg-gradient-to-br from-yellow-100/20 via-transparent to-red-100/15 pointer-events-none" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-yellow-50/10 via-transparent to-red-50/10 pointer-events-none" />
                     
                     {/* Video Player */}
                     <div className="relative aspect-video">
                       <VideoPlayer videoId={video?.video_id || ""} />
                     </div>
                     
-                    {/* Subtle gradient divider */}
-                    <div className="h-0.5 bg-gradient-to-r from-transparent via-red-300/30 to-yellow-300/20" />
+                    {/* Yellow/Red gradient divider */}
+                    <div className="h-1 bg-gradient-to-r from-yellow-300/40 via-red-300/30 to-yellow-300/40" />
                     
                     {/* Video Title Section */}
                     <div className="relative p-6">
@@ -156,22 +157,22 @@ const VideoDetails = () => {
                 
                 {/* Right Column - Comments */}
                 <div className="w-96 flex-shrink-0">
-                  <div className="relative bg-card/80 backdrop-blur-md rounded-3xl shadow-2xl overflow-hidden sticky top-24 border border-rose-200/30">
-                    {/* Warm gradient glow */}
-                    <div className="absolute inset-0 bg-gradient-to-b from-rose-50/20 via-transparent to-amber-50/15 pointer-events-none" />
+                  <div className="relative bg-card/90 backdrop-blur-md rounded-3xl shadow-xl overflow-hidden sticky top-24 border-2 border-yellow-200/40">
+                    {/* Friendly gradient background */}
+                    <div className="absolute inset-0 bg-gradient-to-b from-yellow-50/20 via-transparent to-red-50/10 pointer-events-none" />
                     
                     {/* Comments Header */}
-                    <div className="relative p-5 bg-gradient-to-r from-amber-100/40 via-rose-100/30 to-amber-50/20">
+                    <div className="relative p-5 bg-gradient-to-r from-yellow-100/50 via-red-50/30 to-yellow-50/20">
                       <div className="flex items-center gap-3">
-                        <div className="p-2.5 bg-gradient-to-br from-amber-400/30 to-rose-400/20 rounded-2xl">
-                          <MessageCircle className="h-5 w-5 text-amber-600" />
+                        <div className="p-2.5 bg-yellow-400/30 rounded-2xl">
+                          <MessageCircle className="h-5 w-5 text-yellow-600" />
                         </div>
-                        <h3 className="text-lg font-bold text-foreground">Comments</h3>
+                        <h3 className="text-lg font-bold text-foreground">💬 Comments</h3>
                       </div>
                     </div>
                     
-                    {/* Friendly divider */}
-                    <div className="h-0.5 bg-gradient-to-r from-transparent via-rose-300/40 to-transparent" />
+                    {/* Yellow divider */}
+                    <div className="h-0.5 bg-gradient-to-r from-transparent via-yellow-300/50 to-transparent" />
                     
                     {/* Comments Content */}
                     <div className="relative p-5 max-h-[600px] overflow-y-auto">
@@ -179,15 +180,18 @@ const VideoDetails = () => {
                         <VideoComments videoId={video?.id || ""} />
                       ) : (
                         <div className="text-center py-12">
-                          <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-amber-100 to-rose-100 rounded-full flex items-center justify-center">
-                            <Sparkles className="h-8 w-8 text-amber-500" />
+                          <div className="w-16 h-16 mx-auto mb-4 bg-yellow-100 rounded-full flex items-center justify-center">
+                            <Sparkles className="h-8 w-8 text-yellow-500" />
                           </div>
+                          <p className="text-foreground font-medium text-base mb-2">
+                            Join the conversation! 🎉
+                          </p>
                           <p className="text-muted-foreground text-sm mb-4">
-                            Join the conversation!
+                            Sign in to share your thoughts
                           </p>
                           <Link 
                             to="/auth" 
-                            className="inline-block px-6 py-2.5 bg-gradient-to-r from-amber-400 to-rose-400 text-white rounded-full text-sm font-medium hover:from-amber-500 hover:to-rose-500 transition-all hover:shadow-lg hover:shadow-amber-300/30"
+                            className="inline-block px-6 py-2.5 bg-yellow-400 text-yellow-900 rounded-full text-sm font-semibold hover:bg-yellow-500 transition-all hover:shadow-lg hover:shadow-yellow-300/40"
                           >
                             Sign In to Comment
                           </Link>
@@ -205,17 +209,18 @@ const VideoDetails = () => {
           {/* Mobile Layout */}
           {isMobile && (
             <div className="mt-4 space-y-5">
-              {/* Video Card - Fade transparency background */}
-              <div className="relative rounded-3xl shadow-2xl overflow-hidden border border-red-200/20">
-                {/* Fade transparency background */}
-                <div className="absolute inset-0 bg-gradient-to-b from-card/60 via-card/40 to-card/30 backdrop-blur-sm" />
-                <div className="absolute inset-0 bg-gradient-to-br from-red-50/10 via-transparent to-yellow-50/10 pointer-events-none" />
+              {/* Video Card - Enhanced fade background */}
+              <div className="relative rounded-3xl shadow-2xl overflow-hidden border-2 border-yellow-200/30">
+                {/* Enhanced fade transparency background */}
+                <div className="absolute inset-0 bg-gradient-to-b from-card/70 via-card/50 to-card/40 backdrop-blur-md" />
+                <div className="absolute inset-0 bg-gradient-to-br from-yellow-100/20 via-transparent to-red-100/15 pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-t from-yellow-50/10 via-transparent to-red-50/10 pointer-events-none" />
                 
                 {/* Video Player */}
                 <VideoPlayer videoId={video?.video_id || ""} />
                 
-                {/* Subtle divider */}
-                <div className="h-0.5 bg-gradient-to-r from-transparent via-red-300/30 to-yellow-300/20" />
+                {/* Yellow/Red gradient divider */}
+                <div className="h-1 bg-gradient-to-r from-yellow-300/40 via-red-300/30 to-yellow-300/40" />
                 
                 <div className="relative p-5">
                   {/* Video Title */}
@@ -252,34 +257,40 @@ const VideoDetails = () => {
                 compact
               />
               
-              {/* Comments */}
-              <div className="relative bg-card/80 backdrop-blur-md rounded-3xl shadow-2xl overflow-hidden border border-rose-200/30">
-                {/* Warm gradient glow */}
-                <div className="absolute inset-0 bg-gradient-to-b from-rose-50/20 via-transparent to-amber-50/15 pointer-events-none" />
+              {/* Comments - Mobile */}
+              <div className="relative bg-card/90 backdrop-blur-md rounded-3xl shadow-xl overflow-hidden border-2 border-yellow-200/40">
+                {/* Friendly gradient */}
+                <div className="absolute inset-0 bg-gradient-to-b from-yellow-50/20 via-transparent to-red-50/10 pointer-events-none" />
                 
-                <div className="relative p-4 bg-gradient-to-r from-amber-100/40 via-rose-100/30 to-amber-50/20">
+                <div className="relative p-4 bg-gradient-to-r from-yellow-100/50 via-red-50/30 to-yellow-50/20">
                   <div className="flex items-center gap-2">
-                    <div className="p-2 bg-gradient-to-br from-amber-400/30 to-rose-400/20 rounded-xl">
-                      <MessageCircle className="h-4 w-4 text-amber-600" />
+                    <div className="p-2 bg-yellow-400/30 rounded-xl">
+                      <MessageCircle className="h-4 w-4 text-yellow-600" />
                     </div>
-                    <h3 className="text-base font-bold text-foreground">Comments</h3>
+                    <h3 className="text-base font-bold text-foreground">💬 Comments</h3>
                   </div>
                 </div>
                 
-                {/* Friendly divider */}
-                <div className="h-0.5 bg-gradient-to-r from-transparent via-rose-300/40 to-transparent" />
+                {/* Yellow divider */}
+                <div className="h-0.5 bg-gradient-to-r from-transparent via-yellow-300/50 to-transparent" />
                 
                 <div className="relative p-4">
                   {isAuthenticated ? (
                     <VideoComments videoId={video?.id || ""} />
                   ) : (
                     <div className="text-center py-8">
-                      <p className="text-muted-foreground text-sm mb-3">
-                        Join the conversation!
+                      <div className="w-12 h-12 mx-auto mb-3 bg-yellow-100 rounded-full flex items-center justify-center">
+                        <Sparkles className="h-6 w-6 text-yellow-500" />
+                      </div>
+                      <p className="text-foreground font-medium text-sm mb-1">
+                        Join the conversation! 🎉
+                      </p>
+                      <p className="text-muted-foreground text-xs mb-3">
+                        Sign in to share your thoughts
                       </p>
                       <Link 
                         to="/auth" 
-                        className="inline-block px-5 py-2 bg-gradient-to-r from-amber-400 to-rose-400 text-white rounded-full text-sm font-medium hover:from-amber-500 hover:to-rose-500 transition-all"
+                        className="inline-block px-5 py-2 bg-yellow-400 text-yellow-900 rounded-full text-sm font-semibold hover:bg-yellow-500 transition-all"
                       >
                         Sign In
                       </Link>
