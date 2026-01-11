@@ -56,16 +56,87 @@ body {
   background: rgba(0, 0, 0, 0.25);
 }
 
-/* Toast styles */
-[data-sonner-toast] {
-  background-color: white !important;
-  color: #606060 !important;
-  border: 1px solid #e5e7eb !important;
+/* Toast styles - Friendly bottom-right design */
+[data-sonner-toaster] {
+  --normal-bg: white;
+  --normal-border: #fde68a;
+  --normal-text: #1f2937;
 }
 
-[data-sonner-toast]>.sonner-toast-background {
-  background-color: white !important;
-  color: #606060 !important;
+[data-sonner-toast] {
+  border-radius: 1rem !important;
+  padding: 1rem 1.25rem !important;
+  box-shadow: 0 10px 25px -5px rgba(251, 191, 36, 0.15), 0 8px 10px -6px rgba(251, 191, 36, 0.1) !important;
+  border: 2px solid #fde68a !important;
+  background: linear-gradient(135deg, #fffbeb 0%, #ffffff 100%) !important;
+  animation: toast-slide-in 0.4s cubic-bezier(0.21, 1.02, 0.73, 1) forwards !important;
+}
+
+[data-sonner-toast][data-type="success"] {
+  border-color: #86efac !important;
+  background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%) !important;
+  box-shadow: 0 10px 25px -5px rgba(34, 197, 94, 0.15), 0 8px 10px -6px rgba(34, 197, 94, 0.1) !important;
+}
+
+[data-sonner-toast][data-type="error"] {
+  border-color: #fca5a5 !important;
+  background: linear-gradient(135deg, #fef2f2 0%, #ffffff 100%) !important;
+  box-shadow: 0 10px 25px -5px rgba(239, 68, 68, 0.15), 0 8px 10px -6px rgba(239, 68, 68, 0.1) !important;
+}
+
+[data-sonner-toast][data-type="warning"] {
+  border-color: #fcd34d !important;
+  background: linear-gradient(135deg, #fffbeb 0%, #ffffff 100%) !important;
+  box-shadow: 0 10px 25px -5px rgba(251, 191, 36, 0.2), 0 8px 10px -6px rgba(251, 191, 36, 0.15) !important;
+}
+
+[data-sonner-toast][data-type="info"] {
+  border-color: #93c5fd !important;
+  background: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%) !important;
+  box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.15), 0 8px 10px -6px rgba(59, 130, 246, 0.1) !important;
+}
+
+[data-sonner-toast] [data-title] {
+  font-weight: 600 !important;
+  color: #1f2937 !important;
+  font-size: 0.9375rem !important;
+}
+
+[data-sonner-toast] [data-description] {
+  color: #6b7280 !important;
+  font-size: 0.875rem !important;
+}
+
+[data-sonner-toast] [data-icon] {
+  margin-right: 0.75rem !important;
+}
+
+/* Toast slide-in animation */
+@keyframes toast-slide-in {
+  0% {
+    opacity: 0;
+    transform: translateX(100%) scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+/* Toast exit animation */
+[data-sonner-toast][data-removed="true"] {
+  animation: toast-slide-out 0.3s cubic-bezier(0.21, 1.02, 0.73, 1) forwards !important;
+}
+
+@keyframes toast-slide-out {
+  0% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(100%) scale(0.9);
+  }
 }
 
 /* Import theme CSS - MUST be first for CSS variables */
