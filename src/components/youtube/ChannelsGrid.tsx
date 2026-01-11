@@ -20,7 +20,11 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
     <div className="w-full max-w-[1600px] mx-auto px-3 md:px-4 animate-in fade-in duration-300">
       <div className="flex items-center justify-between mb-3 md:mb-6">
         <h2 className="text-base md:text-2xl font-bold text-foreground">View All Channels</h2>
-        <Button variant="outline" onClick={() => setIsRequestChannelOpen(true)}>
+        <Button 
+          variant="outline" 
+          onClick={() => setIsRequestChannelOpen(true)}
+          className="rounded-full px-5 border-2 border-yellow-400 text-yellow-600 hover:bg-yellow-50 hover:text-yellow-700 hover:border-yellow-500 hover:shadow-md hover:shadow-yellow-200/40 hover:scale-105 transition-all duration-200 font-medium"
+        >
           Request a Channel
         </Button>
         <RequestChannelDialog
