@@ -50,24 +50,27 @@ export const FriendlyChannelSection = ({
   const shouldShowExpand = description && description.length > 200;
 
   return (
-    <div className="bg-gradient-to-br from-card via-card to-primary/5 rounded-3xl shadow-2xl shadow-primary/10 overflow-hidden">
+    <div className="relative bg-card/80 backdrop-blur-md rounded-3xl shadow-2xl overflow-hidden border border-amber-200/30">
+      {/* Warm gradient glow background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-amber-50/25 via-transparent to-rose-50/20 pointer-events-none" />
+      
       {/* Channel Info Header */}
-      <div className="p-6 bg-gradient-to-r from-primary/8 via-primary/4 to-transparent">
+      <div className="relative p-6 bg-gradient-to-r from-amber-100/40 via-rose-100/25 to-transparent">
         <div className="flex items-center gap-4">
           {/* Channel Avatar */}
           {channelId ? (
             <Link to={`/channel/${channelId}`} className="group">
-              <Avatar className="h-16 w-16 ring-4 ring-primary/20 shadow-lg group-hover:ring-primary/40 transition-all">
+              <Avatar className="h-16 w-16 ring-4 ring-amber-300/30 shadow-lg group-hover:ring-amber-400/50 transition-all">
                 <AvatarImage src={channelThumbnail || ''} alt={channelName} />
-                <AvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/10 text-primary text-xl font-bold">
+                <AvatarFallback className="bg-gradient-to-br from-amber-200/50 to-rose-200/40 text-amber-700 text-xl font-bold">
                   {channelName?.slice(0, 2).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
             </Link>
           ) : (
-            <Avatar className="h-16 w-16 ring-4 ring-primary/20 shadow-lg">
+            <Avatar className="h-16 w-16 ring-4 ring-amber-300/30 shadow-lg">
               <AvatarImage src={channelThumbnail || ''} alt={channelName} />
-              <AvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/10 text-primary text-xl font-bold">
+              <AvatarFallback className="bg-gradient-to-br from-amber-200/50 to-rose-200/40 text-amber-700 text-xl font-bold">
                 {channelName?.slice(0, 2).toUpperCase()}
               </AvatarFallback>
             </Avatar>
@@ -78,7 +81,7 @@ export const FriendlyChannelSection = ({
             {channelId ? (
               <Link 
                 to={`/channel/${channelId}`}
-                className="text-lg font-bold text-foreground hover:text-primary transition-colors block truncate"
+                className="text-lg font-bold text-foreground hover:text-amber-600 transition-colors block truncate"
               >
                 {channelName}
               </Link>
@@ -97,7 +100,7 @@ export const FriendlyChannelSection = ({
               className={`h-11 px-6 rounded-full font-semibold transition-all ${
                 isSubscribed 
                   ? "bg-muted text-foreground hover:bg-muted/80" 
-                  : "bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30"
+                  : "bg-gradient-to-r from-amber-400 to-rose-400 text-white hover:from-amber-500 hover:to-rose-500 shadow-lg shadow-amber-300/30 hover:shadow-xl hover:shadow-amber-400/40"
               }`}
             >
               {isLoading ? (
@@ -118,12 +121,15 @@ export const FriendlyChannelSection = ({
         </div>
       </div>
       
+      {/* Friendly gradient divider */}
+      <div className="h-0.5 bg-gradient-to-r from-transparent via-amber-300/40 to-transparent" />
+      
       {/* Description Section */}
       {description && (
-        <div className="px-6 pb-6">
-          <div className="pt-5 mt-2 bg-gradient-to-r from-primary/5 via-muted/30 to-transparent rounded-2xl p-4">
+        <div className="relative px-6 pb-6">
+          <div className="pt-5 mt-2 bg-gradient-to-r from-amber-50/40 via-rose-50/30 to-transparent rounded-2xl p-4 border border-amber-200/20">
             <h4 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
-              <span className="w-1 h-4 bg-primary rounded-full"></span>
+              <span className="w-1 h-4 bg-gradient-to-b from-amber-400 to-rose-400 rounded-full"></span>
               About this video
             </h4>
             <p className={`text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap ${
@@ -137,7 +143,7 @@ export const FriendlyChannelSection = ({
                 variant="ghost"
                 size="sm"
                 onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
-                className="mt-2 text-primary hover:text-primary/80 hover:bg-primary/5 px-3 rounded-full"
+                className="mt-2 text-amber-600 hover:text-amber-700 hover:bg-amber-100/50 px-3 rounded-full"
               >
                 {isDescriptionExpanded ? (
                   <>
