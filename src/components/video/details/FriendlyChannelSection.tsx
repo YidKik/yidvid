@@ -130,7 +130,7 @@ export const FriendlyChannelSection = ({
               }`}
             >
               {isLoading ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
+                <span className="opacity-70">...</span>
               ) : isSubscribed ? (
                 <>
                   <Bell className="w-4 h-4 mr-2 fill-current" />

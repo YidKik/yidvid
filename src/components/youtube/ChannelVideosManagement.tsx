@@ -31,12 +31,8 @@ export const ChannelVideosManagement = ({ channelId }: ChannelVideosManagementPr
   } = useVideoManagement(channelId);
 
   if (isLoading) {
-    return (
-      <div className="p-8 text-center">
-        <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-primary" />
-        <p className="text-muted-foreground">Loading videos...</p>
-      </div>
-    );
+    // Return minimal state - yellow loading bar at top handles loading indication
+    return <div className="p-8" />;
   }
 
   if (isError) {
