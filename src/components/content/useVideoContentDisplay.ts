@@ -1,8 +1,5 @@
-
-import { useState, useEffect } from 'react';
-import { VideoData } from '@/hooks/video/types/video-fetcher';
-import { useSampleVideos } from '@/hooks/video/useSampleVideos';
-import { useRefetchControl } from '@/hooks/video/useRefetchControl';
+import { VideoData } from "@/hooks/video/types/video-fetcher";
+import { useRefetchControl } from "@/hooks/video/useRefetchControl";
 
 interface UseVideoContentDisplayProps {
   videos: VideoData[];
@@ -15,26 +12,22 @@ export const useVideoContentDisplay = ({
   videos,
   isLoading,
   refetch,
-  forceRefetch
+  forceRefetch,
 }: UseVideoContentDisplayProps) => {
-  // Refetch control hook
-  const { 
-    isRefreshing, 
-    handleRefetch, 
-    handleForceRefetch 
-  } = useRefetchControl({ refetch, forceRefetch });
-  
-  // Sample videos hook
-  const { createSampleVideos, hasOnlySampleVideos } = useSampleVideos();
+  const { isRefreshing, handleRefetch, handleForceRefetch } = useRefetchControl({
+    refetch,
+    forceRefetch,
+  });
 
-  // Always show some content immediately, whether user is logged in or not
-  const displayVideos = videos?.length ? videos : createSampleVideos(8);
-  
+  // IMPORTANT: Do not show sample/template videos while loading.
+  // Only render real videos once they are available.
+  const displayVideos = videos;
+
   return {
     displayVideos,
     isRefreshing,
     handleRefetch,
     handleForceRefetch,
-    hasOnlySampleVideos: hasOnlySampleVideos(videos)
   };
 };
+

@@ -30,6 +30,12 @@ export const VideoContentDisplay: React.FC<VideoContentDisplayProps> = ({
 }) => {
   const { isMobile } = useIsMobile();
 
+  // Don't render any placeholder/template UI while loading.
+  // The app's top loading indicator should be the only visible loading feedback.
+  if ((isLoading || isRefreshing) && videos.length === 0) {
+    return null;
+  }
+
   return (
     <div>
       {/* Component to handle automatic refresh of stale content */}
