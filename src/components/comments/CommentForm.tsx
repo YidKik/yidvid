@@ -1,8 +1,8 @@
-
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { Send } from "lucide-react";
 
 interface CommentFormProps {
   onSubmit: (content: string) => Promise<void>;
@@ -36,22 +36,29 @@ export const CommentForm = ({ onSubmit }: CommentFormProps) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mb-6">
+    <form onSubmit={handleSubmit} className="space-y-3">
       <Textarea
         value={comment}
         onChange={(e) => setComment(e.target.value)}
-        placeholder="Add a comment..."
-        className="mb-3 bg-background/50 border-border/60 focus:border-primary/50 rounded-lg"
+        placeholder="Share your thoughts... 💭"
+        className="bg-white/80 border-yellow-200/50 focus:border-yellow-400 focus:ring-yellow-300/30 rounded-xl resize-none min-h-[80px] text-sm"
       />
-      <Button 
-        type="submit" 
-        disabled={isSubmitting}
-        variant="default"
-        size="sm"
-        className="rounded-full px-6 py-2 text-sm font-medium bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-300"
-      >
-        {isSubmitting ? "Posting..." : "Comment"}
-      </Button>
+      <div className="flex justify-end">
+        <Button 
+          type="submit" 
+          disabled={isSubmitting || !comment.trim()}
+          className="rounded-full px-5 py-2 text-sm font-semibold bg-yellow-400 hover:bg-yellow-500 text-yellow-900 transition-all duration-300 shadow-sm hover:shadow-md disabled:opacity-50"
+        >
+          {isSubmitting ? (
+            "Posting..."
+          ) : (
+            <>
+              <Send className="h-4 w-4 mr-2" />
+              Post Comment
+            </>
+          )}
+        </Button>
+      </div>
     </form>
   );
 };
