@@ -15,6 +15,7 @@ import { useIncrementVideoView } from "@/hooks/video/useIncrementVideoView";
 import { FriendlyVideoActionBar } from "@/components/video/details/FriendlyVideoActionBar";
 import { FriendlyChannelSection } from "@/components/video/details/FriendlyChannelSection";
 import { MessageCircle, Sparkles } from "lucide-react";
+import { usePageLoader } from "@/contexts/LoadingContext";
 
 const VideoDetails = () => {
   const { videoId } = useParams<{ videoId: string }>();
@@ -47,6 +48,10 @@ const VideoDetails = () => {
     video?.channel_id || "",
     videoId
   );
+
+  // Register loading state with the global loading bar
+  const isLoading = isLoadingVideo || isLoadingRelated;
+  usePageLoader('video-details', isLoading);
 
   if (!video || error) {
     if (!isLoadingVideo) {
