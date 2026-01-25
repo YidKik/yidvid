@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Play, Users, RefreshCw, Shield, Heart, ArrowRight, Music, BookOpen, Mic, Gamepad2, Film, Grid3X3, GraduationCap, Laugh, Megaphone } from 'lucide-react';
 import HeroSearchSection from '@/components/home/HeroSearchSection';
+import yidvidLogoFull from '@/assets/yidvid-logo-full.png';
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -279,18 +280,12 @@ const LandingPage = () => {
         style={{ backgroundColor: '#f5f5f5', borderTop: '1px solid rgba(255, 0, 0, 0.2)' }}
       >
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center">
             <img
-              src="/lovable-uploads/e425cacb-4c3a-4d81-b4e0-77fcbf10f61c.png"
+              src={yidvidLogoFull}
               alt="YidVid"
-              className="w-8 h-8"
+              className="h-8 w-auto"
             />
-            <span 
-              className="font-bold"
-              style={{ fontFamily: "'Quicksand', sans-serif", color: 'hsl(0, 100%, 50%)' }}
-            >
-              YidVid
-            </span>
           </div>
           <p 
             className="text-sm"
