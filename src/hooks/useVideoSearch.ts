@@ -2,11 +2,15 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { useHiddenChannels } from '@/hooks/channel/useHiddenChannels';
 
 export const useVideoSearch = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [debouncedQuery, setDebouncedQuery] = useState('');
+  
+  // Get hidden channels filter
+  const { filterVideos, filterChannels, hiddenChannelIds } = useHiddenChannels();
 
   // Debounce search query
   useEffect(() => {
@@ -17,8 +21,8 @@ export const useVideoSearch = () => {
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  // Fetch search results for both videos and channels - removed auth dependencies
-  const { data: searchResults, isLoading } = useQuery({
+  // Fetch search results for both videos and channels
+  const { data: rawSearchResults, isLoading } = useQuery({
     queryKey: ['video-search', debouncedQuery],
     queryFn: async () => {
       if (!debouncedQuery.trim()) return { videos: [], channels: [] };
@@ -26,9 +30,7 @@ export const useVideoSearch = () => {
       console.log('🔍 Starting search for:', debouncedQuery);
 
       try {
-        // Search videos - using public access without auth checks
-        console.log('🎥 Searching videos...');
-        
+        // Search videos
         const { data: videos, error: videosError } = await supabase
           .from('youtube_videos')
           .select('id, video_id, title, thumbnail, channel_id, channel_name')
@@ -36,70 +38,66 @@ export const useVideoSearch = () => {
           .is('deleted_at', null)
           .eq('content_analysis_status', 'approved')
           .order('created_at', { ascending: false })
-          .limit(10);
+          .limit(20); // Fetch more to account for filtering
 
-        console.log('🎥 Videos search result:', { 
-          videosFound: videos?.length || 0, 
-          error: videosError,
-          sampleVideo: videos?.[0]
-        });
-
-        // Search channels - using public access without auth checks
-        console.log('📺 Searching channels...');
+        // Search channels
         const { data: channels, error: channelsError } = await supabase
           .from('youtube_channels')
           .select('id, title, thumbnail_url, channel_id')
           .ilike('title', `%${debouncedQuery}%`)
           .is('deleted_at', null)
           .order('created_at', { ascending: false })
-          .limit(5);
+          .limit(10); // Fetch more to account for filtering
 
-        console.log('📺 Channels search result:', { 
-          channelsFound: channels?.length || 0, 
-          error: channelsError,
-          sampleChannel: channels?.[0]
-        });
-
-        // Handle any errors gracefully without blocking the search
         if (videosError) {
-          console.warn('Videos search error (continuing):', videosError);
+          console.warn('Videos search error:', videosError);
         }
         
         if (channelsError) {
-          console.warn('Channels search error (continuing):', channelsError);
+          console.warn('Channels search error:', channelsError);
         }
 
-        const result = {
+        return {
           videos: videos || [],
           channels: channels || []
         };
-
-        console.log('✅ Final search results:', {
-          videosCount: result.videos.length,
-          channelsCount: result.channels.length,
-          query: debouncedQuery
-        });
-        
-        return result;
       } catch (error) {
-        console.error('💥 Search error:', error);
-        // Return empty results instead of failing
+        console.error('Search error:', error);
         return { videos: [], channels: [] };
       }
     },
     enabled: debouncedQuery.trim().length > 0,
-    staleTime: 30000, // Cache results for 30 seconds
+    staleTime: 30000,
     retry: 1,
-    gcTime: 1000 * 60 * 5, // Keep in cache for 5 minutes
+    gcTime: 1000 * 60 * 5,
   });
 
+  // Filter out hidden channels from search results
+  const searchResults = useMemo(() => {
+    if (!rawSearchResults) return { videos: [], channels: [] };
+    
+    const filteredVideos = filterVideos(rawSearchResults.videos).slice(0, 10);
+    const filteredChannels = filterChannels(rawSearchResults.channels).slice(0, 5);
+    
+    console.log('🔍 Filtered search results:', {
+      originalVideos: rawSearchResults.videos.length,
+      filteredVideos: filteredVideos.length,
+      originalChannels: rawSearchResults.channels.length,
+      filteredChannels: filteredChannels.length,
+      hiddenCount: hiddenChannelIds.size
+    });
+    
+    return {
+      videos: filteredVideos,
+      channels: filteredChannels
+    };
+  }, [rawSearchResults, filterVideos, filterChannels, hiddenChannelIds]);
+
   const hasResults = useMemo(() => {
-    const result = searchResults && (
-      (searchResults.videos && searchResults.videos.length > 0) || 
-      (searchResults.channels && searchResults.channels.length > 0)
+    return searchResults && (
+      searchResults.videos.length > 0 || 
+      searchResults.channels.length > 0
     );
-    console.log('🎯 hasResults:', result, searchResults);
-    return result;
   }, [searchResults]);
 
   return {
@@ -107,7 +105,7 @@ export const useVideoSearch = () => {
     setSearchQuery,
     isSearchOpen,
     setIsSearchOpen,
-    searchResults: searchResults || { videos: [], channels: [] },
+    searchResults,
     isLoading,
     hasResults,
     debouncedQuery

@@ -1,6 +1,8 @@
 
+import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useHiddenChannels } from "@/hooks/channel/useHiddenChannels";
 
 interface CustomCategory {
   id: string;
@@ -35,7 +37,9 @@ export interface UseCategories {
 }
 
 export const useCategories = (): UseCategories => {
-  const { data: categoryVideos, refetch: refetchVideos } = useQuery({
+  const { filterVideos, hiddenChannelIds } = useHiddenChannels();
+
+  const { data: rawCategoryVideos, refetch: refetchVideos } = useQuery({
     queryKey: ["category-videos"],
     queryFn: async () => {
       try {
@@ -54,6 +58,12 @@ export const useCategories = (): UseCategories => {
     },
   });
 
+  // Filter out videos from hidden channels
+  const categoryVideos = useMemo(() => {
+    if (!rawCategoryVideos) return [];
+    return filterVideos(rawCategoryVideos);
+  }, [rawCategoryVideos, filterVideos]);
+
   const { data: customCategories, isLoading: categoriesLoading } = useQuery({
     queryKey: ["custom-categories"],
     queryFn: async () => {
@@ -64,7 +74,6 @@ export const useCategories = (): UseCategories => {
           .order("name", { ascending: true });
 
         if (error) throw error;
-        console.log("Fetched custom categories:", data);
         return data || [];
       } catch (error) {
         console.error('Error fetching custom categories:', error);
@@ -89,14 +98,6 @@ export const useCategories = (): UseCategories => {
   const infiniteCategories = allCategories.length > 0 
     ? [...allCategories, ...allCategories, ...allCategories]
     : [];
-
-  // Debug log to help diagnose issues
-  console.log("useCategories hook state:", {
-    allCategoriesCount: allCategories.length,
-    infiniteCategoriesCount: infiniteCategories.length,
-    isLoading: categoriesLoading,
-    customCategoriesCount: customCategories?.length || 0
-  });
 
   return {
     allCategories,
