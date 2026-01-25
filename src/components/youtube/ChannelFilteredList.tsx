@@ -5,7 +5,6 @@ import { ChannelListItem } from "@/components/youtube/ChannelListItem";
 import { YoutubeChannelsTable } from "@/integrations/supabase/types/youtube-channels";
 import { Channel } from "@/hooks/channel/useChannelsGrid";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useEffect } from "react";
 
 interface ChannelFilteredListProps {
   searchQuery: string;
@@ -26,15 +25,8 @@ export const ChannelFilteredList = ({
   isLocked,
   isLoading = false
 }: ChannelFilteredListProps) => {
-  const handleSearch = (value: string) => {
-    console.log("Search query changed to:", value);
-    setSearchQuery(value);
-  };
-
-  // Log when hidden channels update
-  useEffect(() => {
-    console.log(`ChannelFilteredList - Hidden channels count: ${hiddenChannels.size}`);
-  }, [hiddenChannels]);
+  // Only show loading state on initial load, not during search
+  const showInitialLoading = isLoading && (!filteredChannels || filteredChannels.length === 0);
 
   return (
     <div className={`relative transition-all duration-300 ${isLocked ? 'pointer-events-none' : ''}`}>
@@ -45,12 +37,12 @@ export const ChannelFilteredList = ({
       <div className="my-4">
         <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-primary/5 to-primary/10 rounded-2xl border border-primary/20 shadow-sm">
           <Search className="h-5 w-5 text-primary flex-shrink-0" />
-          <ChannelSearch value={searchQuery} onChange={handleSearch} />
+          <ChannelSearch value={searchQuery} onChange={setSearchQuery} />
         </div>
       </div>
 
       <div className="max-h-[400px] md:max-h-[500px] overflow-y-auto scrollbar-hide space-y-3 pr-2">
-        {isLoading ? (
+        {showInitialLoading ? (
           <div className="space-y-3">
             {Array(6).fill(0).map((_, i) => (
               <div key={i} className="p-4 border border-primary/10 rounded-2xl bg-card animate-pulse">
@@ -84,7 +76,7 @@ export const ChannelFilteredList = ({
             </p>
             <p className="text-sm text-muted-foreground">
               {searchQuery ? 
-                "Try adjusting your search terms or check back later." : 
+                "Try adjusting your search terms." : 
                 "Channels will appear here when they become available."}
             </p>
           </div>

@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useChannelsGrid } from "./useChannelsGrid";
@@ -18,19 +18,24 @@ export const useChannelControl = () => {
   
   // Use our enhanced channels grid hook
   const { 
-    manuallyFetchedChannels: channels, 
-    isLoading, 
-    fetchError, 
-    searchQuery: gridSearchQuery,
-    setSearchQuery: setGridSearchQuery
+    allChannels,
+    isLoading: channelsLoading,
+    fetchError
   } = useChannelsGrid();
 
-  // Sync the search queries
-  useEffect(() => {
-    if (gridSearchQuery !== searchQuery) {
-      setGridSearchQuery(searchQuery);
+  // Client-side filtering for instant search results
+  const filteredChannels = useMemo(() => {
+    if (!allChannels || allChannels.length === 0) return [];
+    
+    if (!searchQuery.trim()) {
+      return allChannels;
     }
-  }, [searchQuery, gridSearchQuery, setGridSearchQuery]);
+    
+    const query = searchQuery.toLowerCase().trim();
+    return allChannels.filter(channel => 
+      channel.title.toLowerCase().includes(query)
+    );
+  }, [allChannels, searchQuery]);
 
   const loadLockStatus = async () => {
     if (!session?.user?.id) {
@@ -255,17 +260,14 @@ export const useChannelControl = () => {
     setShowLockDialog(false);
   };
 
-  // Filter the channels based on search query
-  const filteredChannels = channels || [];
-
   return {
-    isLoading: isLoading || loadingHiddenChannels,
+    isLoading: channelsLoading || loadingHiddenChannels,
     filteredChannels,
     hiddenChannels,
     isLocked,
     storedPin,
     searchQuery,
-    setSearchQuery,
+    setSearchQuery, // Now just updates local state - filtering is instant via useMemo
     showLockDialog,
     setShowLockDialog,
     showSetPinDialog,

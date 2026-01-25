@@ -1,7 +1,6 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
 
 export interface Channel {
   id: string;
@@ -18,61 +17,53 @@ export interface Channel {
 }
 
 export const useChannelsGrid = () => {
-  const [manuallyFetchedChannels, setManuallyFetchedChannels] = useState<Channel[]>([]);
+  const [allChannels, setAllChannels] = useState<Channel[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [fetchError, setFetchError] = useState<Error | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const fetchChannelsDirectly = async (searchTerm: string = ""): Promise<Channel[]> => {
+  // Client-side filtering - instant, no refetch needed
+  const filteredChannels = useMemo(() => {
+    if (!searchQuery.trim()) {
+      return allChannels;
+    }
+    const query = searchQuery.toLowerCase().trim();
+    return allChannels.filter(channel => 
+      channel.title.toLowerCase().includes(query)
+    );
+  }, [allChannels, searchQuery]);
+
+  const fetchChannelsDirectly = async (): Promise<Channel[]> => {
     try {
-      setIsLoading(true);
-      console.log("Attempting to fetch ALL channels directly with search:", searchTerm);
+      console.log("Fetching ALL channels directly...");
       
-      // First try direct database query - only get non-deleted channels
-      try {
-        let query = supabase.from("youtube_channels")
-          .select("id, channel_id, title, thumbnail_url, description, created_at, updated_at, deleted_at, default_category, fetch_error, last_fetch")
-          .is("deleted_at", null); // Filter out deleted channels
-          
-        if (searchTerm) {
-          query = query.ilike("title", `%${searchTerm}%`);
-        }
+      // Direct database query - only get non-deleted channels
+      const { data: channelsData, error: channelsError } = await supabase
+        .from("youtube_channels")
+        .select("id, channel_id, title, thumbnail_url, description, created_at, updated_at, deleted_at, default_category, fetch_error, last_fetch")
+        .is("deleted_at", null)
+        .order("title", { ascending: true });
         
-        const { data: channelsData, error: channelsError } = await query;
-        
-        if (!channelsError && channelsData && channelsData.length > 0) {
-          console.log(`Successfully fetched ${channelsData.length} channels directly`);
-          setManuallyFetchedChannels(channelsData);
-          setFetchError(null);
-          return channelsData;
-        }
-        
-        if (channelsError) {
-          console.warn("Direct DB fetch error:", channelsError);
-        }
-      } catch (directError) {
-        console.error("Error in direct fetch:", directError);
+      if (!channelsError && channelsData && channelsData.length > 0) {
+        console.log(`Successfully fetched ${channelsData.length} channels`);
+        return channelsData;
+      }
+      
+      if (channelsError) {
+        console.warn("Direct DB fetch error:", channelsError);
       }
       
       // Try edge function as fallback
       try {
-        const urlWithSearch = `https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/get-public-channels${searchTerm ? `?search=${encodeURIComponent(searchTerm)}` : ''}`;
-        console.log("Fetching from edge function:", urlWithSearch);
-        
-        const response = await fetch(urlWithSearch, {
+        const response = await fetch("https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/get-public-channels", {
           method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            // Use Supabase client instead of direct fetch
-          }
+          headers: { "Content-Type": "application/json" }
         });
         
         if (response.ok) {
           const result = await response.json();
           if (result.data && Array.isArray(result.data)) {
             console.log(`Retrieved ${result.data.length} channels with edge function`);
-            setManuallyFetchedChannels(result.data);
-            setFetchError(null);
             return result.data;
           }
         }
@@ -80,22 +71,11 @@ export const useChannelsGrid = () => {
         console.error("Edge function error:", edgeError);
       }
       
-      console.error("All channel fetch methods failed");
-      setFetchError(new Error("Failed to fetch channels"));
       return [];
     } catch (err) {
       console.error("Error in fetchChannelsDirectly:", err);
-      setFetchError(err instanceof Error ? err : new Error(String(err)));
-      return [];
-    } finally {
-      setIsLoading(false);
+      throw err;
     }
-  };
-
-  // Update search handler
-  const handleSearchChange = async (newQuery: string) => {
-    setSearchQuery(newQuery);
-    await fetchChannelsDirectly(newQuery);
   };
 
   useEffect(() => {
@@ -103,15 +83,19 @@ export const useChannelsGrid = () => {
     
     const initialFetchChannels = async () => {
       try {
+        setIsLoading(true);
         const channels = await fetchChannelsDirectly();
         if (isMounted) {
-          setManuallyFetchedChannels(channels);
-          setIsLoading(false);
+          setAllChannels(channels);
+          setFetchError(null);
         }
       } catch (error) {
         if (isMounted) {
           console.error("Error in initialFetchChannels:", error);
           setFetchError(error instanceof Error ? error : new Error(String(error)));
+        }
+      } finally {
+        if (isMounted) {
           setIsLoading(false);
         }
       }
@@ -126,11 +110,12 @@ export const useChannelsGrid = () => {
 
   return {
     fetchChannelsDirectly,
-    manuallyFetchedChannels,
+    manuallyFetchedChannels: filteredChannels,
+    allChannels,
     isLoading,
     setIsLoading,
     fetchError,
     searchQuery,
-    setSearchQuery: handleSearchChange
+    setSearchQuery // Now just updates state, filtering is done via useMemo
   };
 };

@@ -1,7 +1,6 @@
 
 import { Input } from "@/components/ui/input";
-import { useEffect, useState } from "react";
-import { useDebounce } from "@/hooks/use-debounce";
+import { X } from "lucide-react";
 
 interface ChannelSearchProps {
   value: string;
@@ -9,22 +8,24 @@ interface ChannelSearchProps {
 }
 
 export const ChannelSearch = ({ value, onChange }: ChannelSearchProps) => {
-  const [inputValue, setInputValue] = useState(value);
-  const debouncedValue = useDebounce(inputValue, 150); // Faster search
-  
-  useEffect(() => {
-    if (debouncedValue !== value) {
-      onChange(debouncedValue);
-    }
-  }, [debouncedValue, onChange, value]);
-
   return (
-    <Input
-      type="search"
-      placeholder="Search channels..."
-      value={inputValue}
-      onChange={(e) => setInputValue(e.target.value)}
-      className="w-full h-11"
-    />
+    <div className="relative flex-1">
+      <Input
+        type="text"
+        placeholder="Search channels..."
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full h-10 pr-8 bg-white/80 border-0 focus-visible:ring-1 focus-visible:ring-primary/30"
+      />
+      {value && (
+        <button
+          onClick={() => onChange("")}
+          className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground transition-colors"
+          aria-label="Clear search"
+        >
+          <X className="h-4 w-4" />
+        </button>
+      )}
+    </div>
   );
 };
