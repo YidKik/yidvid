@@ -1,11 +1,8 @@
 
-import React from 'react';
-import { VideoGrid } from "@/components/VideoGrid";
-import { VideoGridPagination } from "@/components/video/VideoGridPagination";
-import { ChannelsGrid } from "@/components/youtube/ChannelsGrid";
+import React, { useMemo } from 'react';
 import { VideoData } from "@/hooks/video/types/video-fetcher";
-import { useVideoPagination } from "@/hooks/video/useVideoPagination";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { MobileVideoCarouselSection } from "@/components/videos/MobileVideoCarouselSection";
+import { MobileChannelsRow } from "@/components/videos/MobileChannelsRow";
 
 export interface MobileVideoViewProps {
   videos: VideoData[];
@@ -26,60 +23,61 @@ export const MobileVideoView: React.FC<MobileVideoViewProps> = ({
   forceRefetch,
   selectedCategory = "all"
 }) => {
-  const { isMobile } = useIsMobile();
-  
-  // Use 6 videos (3 rows of 2 videos) for mobile instead of just 4
-  const videosPerPage = 6; 
-  const rowSize = 2;
-  
-  const {
-    sortedVideos,
-    displayVideos,
-    currentPage,
-    totalPages,
-    setCurrentPage,
-    showMoreMobile,
-    setShowMoreMobile
-  } = useVideoPagination({
-    videos,
-    videosPerPage,
-    isMobile: true
-  });
+  // New videos - sorted by upload date
+  const newVideos = useMemo(() => {
+    return [...videos]
+      .sort((a, b) => new Date(b.uploaded_at).getTime() - new Date(a.uploaded_at).getTime())
+      .slice(0, 10);
+  }, [videos]);
+
+  // Trending videos - sorted by views
+  const trendingVideos = useMemo(() => {
+    return [...videos]
+      .sort((a, b) => (b.views || 0) - (a.views || 0))
+      .slice(0, 10);
+  }, [videos]);
+
+  // Category videos
+  const musicVideos = useMemo(() => videos.filter(v => v.category === 'music').slice(0, 10), [videos]);
+  const torahVideos = useMemo(() => videos.filter(v => v.category === 'torah').slice(0, 10), [videos]);
 
   // Only render when we have videos to show - prevents staggered loading
   if (!videos || videos.length === 0) {
     return null;
   }
 
-  return (
-    <div className="space-y-2">
-      <VideoGrid 
-        videos={displayVideos}
-        maxVideos={videosPerPage}
-        rowSize={rowSize}
-        isLoading={false}
-        className="grid-cols-2 gap-3 px-1 max-w-[98%] mx-auto mobile-view"
-      />
-      
-      {totalPages > 1 && (
-        <div className="mt-2 px-4 flex justify-center">
-          <VideoGridPagination
-            showAll={false}  // Always use pagination arrows instead of "Show All"
-            currentPage={currentPage}
-            totalPages={totalPages}
-            filteredVideosLength={sortedVideos.length}
-            maxVideos={videosPerPage}
-            isMobile={true}
-            onShowAll={() => {}} // We don't need this functionality anymore
-            onPageChange={(page) => setCurrentPage(page)}
-            usePaginationArrows={true} // Add this prop to force arrow pagination
-          />
-        </div>
-      )}
-
-      <div className="mt-4 px-2">
-        <ChannelsGrid selectedCategory={selectedCategory} />
+  // Filtered view for specific category
+  if (selectedCategory !== "all") {
+    const filteredVideos = videos.filter(v => v.category === selectedCategory);
+    return (
+      <div className="space-y-6 px-2">
+        <MobileVideoCarouselSection title="Latest" videos={filteredVideos.slice(0, 10)} />
+        <MobileVideoCarouselSection title="Popular" videos={[...filteredVideos].sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, 10)} />
+        <MobileChannelsRow />
       </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6 px-2">
+      {/* New Videos */}
+      <MobileVideoCarouselSection title="New Videos" videos={newVideos} seeAllLink="/videos?sort=newest" />
+      
+      {/* Trending */}
+      <MobileVideoCarouselSection title="Trending" videos={trendingVideos} seeAllLink="/videos?sort=trending" />
+      
+      {/* Channels Row */}
+      <MobileChannelsRow />
+      
+      {/* Music if available */}
+      {musicVideos.length >= 3 && (
+        <MobileVideoCarouselSection title="Music" videos={musicVideos} seeAllLink="/videos?category=music" />
+      )}
+      
+      {/* Torah if available */}
+      {torahVideos.length >= 3 && (
+        <MobileVideoCarouselSection title="Torah" videos={torahVideos} seeAllLink="/videos?category=torah" />
+      )}
     </div>
   );
 };
