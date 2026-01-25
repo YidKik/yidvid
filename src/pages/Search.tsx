@@ -79,11 +79,11 @@ const Search = () => {
   usePageLoader('search', isLoading);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-secondary/20">
+    <div className="min-h-screen bg-gradient-to-br from-background to-secondary/20 pt-14 pl-[200px] transition-all duration-300">
       <Header />
       <BackButton className="z-50" />
-      <main className="container mx-auto px-4 py-8">
-        <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-primary/10">
+      <main className="px-6 py-8">
+        <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-primary/10 max-w-6xl">
           <h1 className="mb-8 flex items-baseline gap-2">
             <span className="text-lg text-muted-foreground font-normal">Search results for:</span>
             <span className="text-2xl font-bold text-primary">{query}</span>

@@ -39,10 +39,10 @@ const Settings = () => {
   if (!authChecked) {
     return (
       <div 
-        className="min-h-screen bg-white pt-16 px-4"
+        className="min-h-screen bg-white pt-16 px-4 pl-[200px] transition-all duration-300"
         style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
       >
-        <div className="container mx-auto max-w-4xl">
+        <div className="max-w-4xl">
           <BackButton />
           <div className="h-8 w-56 bg-gray-100 rounded-lg mb-8 animate-pulse"></div>
           <ProfileSectionSkeleton />
@@ -53,11 +53,11 @@ const Settings = () => {
 
   return (
     <div 
-      className="min-h-screen bg-white"
+      className="min-h-screen bg-white pt-14 pl-[200px] transition-all duration-300"
       style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
     >
       <BackButton />
-      <main className={`container mx-auto ${isMobile ? 'pt-16 px-4' : 'pt-20 px-6'} pb-16 max-w-5xl`}>
+      <main className={`${isMobile ? 'pt-4 px-4' : 'pt-6 px-6'} pb-16 max-w-5xl`}>
         {/* Header */}
         <div className="flex items-center gap-3 mb-6 pb-4 border-b-2 border-yellow-400">
           <div className="p-2.5 bg-yellow-400 rounded-xl">
