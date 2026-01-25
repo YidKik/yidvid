@@ -79,12 +79,12 @@ const MainContent = () => {
   }
 
   return (
-    <div className="flex-1 videos-page pt-14 pl-16 md:pl-16">
+    <div className="flex-1 videos-page pt-14 pl-[200px] transition-all duration-300">
       <motion.main 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1, duration: 0.5 }}
-        className="mt-4 mx-auto px-2 md:px-6 max-w-[1400px] w-full"
+        className="mt-4 px-4 md:px-6 max-w-[1400px] w-full"
       >
         {/* Category Toggle and Notification Bell */}
         <div className="mb-4 flex items-center justify-between">

@@ -58,8 +58,8 @@ const VideoDetails = () => {
       console.error("Video not found or error:", error, "for videoId:", videoId);
     }
     return (
-      <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/10">
-        <div className="container mx-auto p-4 pt-20">
+      <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/10 pt-14 pl-[200px] transition-all duration-300">
+        <div className="p-4">
           <BackButton />
           <div className="p-8 text-center bg-card/80 backdrop-blur-sm rounded-3xl shadow-lg border border-border/50 mt-6">
             <div className="mx-auto mb-6 w-full max-w-md aspect-video flex items-center justify-center bg-muted/30 rounded-2xl">
@@ -100,8 +100,8 @@ const VideoDetails = () => {
       <VideoSEO video={videoForSEO} />
       {isAuthenticated && <VideoHistory videoId={video?.id || ""} />}
       
-      <div className="min-h-screen bg-gradient-to-br from-yellow-50/40 via-background to-red-50/20">
-        <div className="container mx-auto px-4 pt-20 pb-12">
+      <div className="min-h-screen bg-gradient-to-br from-yellow-50/40 via-background to-red-50/20 pt-14 pl-[200px] transition-all duration-300">
+        <div className="px-6 pt-6 pb-12">
           <BackButton />
           
           {/* Desktop/Tablet Layout */}

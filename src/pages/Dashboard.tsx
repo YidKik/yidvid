@@ -56,7 +56,7 @@ export default function Dashboard() {
   console.log("Dashboard render - Is admin:", isAdmin, "Has PIN bypass:", hasPinBypass, "Profile:", profile);
 
   return (
-    <div className="container mx-auto py-12 space-y-8 px-4">
+    <div className="min-h-screen pt-14 pl-[200px] transition-all duration-300 py-8 space-y-8 px-6">
       <BackButton />
       
       <DashboardHeader title="Welcome to Your Dashboard" />
