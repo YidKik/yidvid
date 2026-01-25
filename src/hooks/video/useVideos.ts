@@ -43,8 +43,9 @@ export const useVideos = () => {
   const { filterVideos, hiddenChannelIds } = useHiddenChannels();
 
   // Main query - single useQuery call
+  // Include hiddenChannelIds.size in the key to refetch when hidden channels change
   const query = useQuery({
-    queryKey: ["videos"],
+    queryKey: ["videos", hiddenChannelIds.size],
     queryFn: fetchVideosFromDB,
     refetchInterval: 5 * 60 * 1000,
     refetchIntervalInBackground: false,

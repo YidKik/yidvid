@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -7,7 +7,7 @@ import { toast } from "sonner";
 export const useHiddenChannels = () => {
   const queryClient = useQueryClient();
 
-  // Fetch hidden channels from database
+  // Fetch hidden channels from database with proper caching
   const { data: hiddenChannelsData, isLoading, refetch } = useQuery({
     queryKey: ["hidden-channels"],
     queryFn: async () => {
@@ -37,13 +37,19 @@ export const useHiddenChannels = () => {
         return [];
       }
     },
-    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+    staleTime: 0, // Always consider data stale to ensure fresh checks
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
   });
 
-  // Create a Set for fast lookup
-  const hiddenChannelIds = new Set(
-    hiddenChannelsData?.map(hc => hc.channel_id) || []
-  );
+  // Create a Set for fast lookup - memoized based on actual data
+  const hiddenChannelIds = useMemo(() => {
+    const ids = new Set<string>(
+      hiddenChannelsData?.map(hc => hc.channel_id) || []
+    );
+    console.log(`Hidden channel IDs set updated: ${ids.size} channels hidden`);
+    return ids;
+  }, [hiddenChannelsData]);
 
   // Check if a channel is hidden
   const isChannelHidden = useCallback((channelId: string): boolean => {
@@ -52,15 +58,36 @@ export const useHiddenChannels = () => {
 
   // Filter videos by removing those from hidden channels
   const filterVideos = useCallback(<T extends { channel_id: string }>(videos: T[]): T[] => {
+    if (!videos || videos.length === 0) return [];
     if (hiddenChannelIds.size === 0) return videos;
-    return videos.filter(video => !hiddenChannelIds.has(video.channel_id));
+    
+    const filtered = videos.filter(video => !hiddenChannelIds.has(video.channel_id));
+    return filtered;
   }, [hiddenChannelIds]);
 
   // Filter channels by removing hidden ones
   const filterChannels = useCallback(<T extends { channel_id: string }>(channels: T[]): T[] => {
+    if (!channels || channels.length === 0) return [];
     if (hiddenChannelIds.size === 0) return channels;
+    
     return channels.filter(channel => !hiddenChannelIds.has(channel.channel_id));
   }, [hiddenChannelIds]);
+
+  // Invalidate all video/channel related queries
+  const invalidateAllQueries = useCallback(async () => {
+    // First refetch hidden channels to update the list
+    await refetch();
+    
+    // Then invalidate all dependent queries
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ["videos"] }),
+      queryClient.invalidateQueries({ queryKey: ["video-search"] }),
+      queryClient.invalidateQueries({ queryKey: ["category-videos"] }),
+      queryClient.invalidateQueries({ queryKey: ["youtube_videos"] }),
+      queryClient.invalidateQueries({ queryKey: ["youtube_channels"] }),
+      queryClient.invalidateQueries({ queryKey: ["channel-videos"] }),
+    ]);
+  }, [queryClient, refetch]);
 
   // Hide a channel
   const hideChannel = async (channelId: string) => {
@@ -86,10 +113,8 @@ export const useHiddenChannels = () => {
         return false;
       }
       
-      // Invalidate queries to refresh data everywhere
-      await refetch();
-      queryClient.invalidateQueries({ queryKey: ["videos"] });
-      queryClient.invalidateQueries({ queryKey: ["video-search"] });
+      // Invalidate all related queries
+      await invalidateAllQueries();
       
       toast.success('Channel hidden successfully');
       return true;
@@ -123,10 +148,8 @@ export const useHiddenChannels = () => {
         return false;
       }
       
-      // Invalidate queries to refresh data everywhere
-      await refetch();
-      queryClient.invalidateQueries({ queryKey: ["videos"] });
-      queryClient.invalidateQueries({ queryKey: ["video-search"] });
+      // Invalidate all related queries
+      await invalidateAllQueries();
       
       toast.success('Channel is now visible');
       return true;
@@ -146,6 +169,7 @@ export const useHiddenChannels = () => {
     filterChannels,
     hideChannel,
     unhideChannel,
-    refetch
+    refetch,
+    invalidateAllQueries
   };
 };
