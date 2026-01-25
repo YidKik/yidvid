@@ -44,13 +44,18 @@ export const MobileVideoView: React.FC<MobileVideoViewProps> = ({
     isMobile: true
   });
 
+  // Only render when we have videos to show - prevents staggered loading
+  if (!videos || videos.length === 0) {
+    return null;
+  }
+
   return (
     <div className="space-y-2">
       <VideoGrid 
         videos={displayVideos}
         maxVideos={videosPerPage}
         rowSize={rowSize}
-        isLoading={isLoading || isRefreshing}
+        isLoading={false}
         className="grid-cols-2 gap-3 px-1 max-w-[98%] mx-auto mobile-view"
       />
       

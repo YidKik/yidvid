@@ -63,6 +63,11 @@ export const DesktopVideoView = ({
     console.log(`Device: isTablet: ${isTablet}, videosPerPage: ${videosPerPage}, rowSize: ${rowSize}`);
   }, [videos, hasRealVideos, isLoading, isRefreshing, currentPage, totalPages, displayVideos.length, isTablet, videosPerPage, rowSize]);
 
+  // Only render when we have real videos to show - prevents staggered loading
+  if (!hasRealVideos || videos.length === 0) {
+    return null;
+  }
+
   return (
     <div className="space-y-6">
       <div className="video-grid relative">
@@ -70,7 +75,7 @@ export const DesktopVideoView = ({
           videos={displayVideos}
           maxVideos={videosPerPage}
           rowSize={rowSize}
-          isLoading={isLoading || isRefreshing}
+          isLoading={false}
           className={`${isTablet ? 'grid-cols-3 gap-4 tablet-video-grid' : 'grid-cols-4 gap-4'}`}
         />
         

@@ -58,6 +58,13 @@ const MainContent = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Don't render the page content until videos are loaded
+  // This ensures the full page appears at once instead of loading in stages
+  const hasVideos = videos && Array.isArray(videos) && videos.length > 0;
+  if (isLoading && !hasVideos) {
+    return null;
+  }
+
   return (
     <div className="flex-1 videos-page pt-14">
       <motion.main 
