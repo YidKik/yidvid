@@ -79,7 +79,7 @@ const MainContent = () => {
   }
 
   return (
-    <div className="flex-1 videos-page pt-14">
+    <div className="flex-1 videos-page pt-14 pl-16 md:pl-16">
       <motion.main 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

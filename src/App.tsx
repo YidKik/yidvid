@@ -38,9 +38,12 @@ import About from './pages/About';
 import { PagePreloader } from './components/PagePreloader';
 import { TopLoadingBar } from './components/ui/TopLoadingBar';
 import { GlobalHeader } from './components/layout/GlobalHeader';
+import { Sidebar } from './components/layout/Sidebar';
+import { useSessionManager } from './hooks/useSessionManager';
 
-function App() {
+function AppContent() {
   const location = useLocation();
+  const { isAuthenticated } = useSessionManager();
   
   // Initialize keyboard shortcuts
   useKeyboardShortcuts();
@@ -61,45 +64,55 @@ function App() {
   }, [location]);
 
   return (
+    <>
+      <TopLoadingBar />
+      <GlobalHeader />
+      <Sidebar isAuthenticated={isAuthenticated} />
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/videos" element={<Videos />} />
+        <Route path="/video/:videoId" element={<VideoDetails />} />
+        <Route path="/search" element={<Search />} />
+        <Route path="/channel/:channelId" element={<ChannelDetails />} />
+        <Route path="/writing-videos" element={<WritingVideos />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/settings" element={<Settings />} />
+        <Route path="/settings/email-preferences" element={<EmailPreferences />} />
+        <Route path="/unsubscribe" element={<Unsubscribe />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/about" element={<About />} />
+        
+        {/* Admin routes */}
+        <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/admin/channels" element={<ChannelsPage />} />
+        <Route path="/admin/youtube-channels" element={<ChannelsPage />} />
+        <Route path="/admin/categories" element={<CategoriesPage />} />
+        <Route path="/admin/comments" element={<CommentsPage />} />
+        <Route path="/admin/analytics" element={<AnalyticsPage />} />
+        <Route path="/admin/videos" element={<VideosPage />} />
+        <Route path="/admin/users" element={<UsersPage />} />
+        <Route path="/admin/reported-videos" element={<ReportedVideosPage />} />
+        <Route path="/admin/requests" element={<RequestsPage />} />
+        <Route path="/admin/contact-requests" element={<ContactRequestsPage />} />
+        <Route path="/admin/notifications" element={<NotificationsPage />} />
+        <Route path="/admin/layout" element={<LayoutCustomizationPage />} />
+        <Route path="/admin/testimonials" element={<TestimonialsPage />} />
+        <Route path="/admin/seo" element={<AdminSEO />} />
+      </Routes>
+      
+      {/* Add the PagePreloader to prefetch the Videos page */}
+      <PagePreloader />
+    </>
+  );
+}
+
+function App() {
+
+  return (
     <LoadingProvider>
       <PlaybackProvider>
         <ColorProvider>
-          <TopLoadingBar />
-          <GlobalHeader />
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/videos" element={<Videos />} />
-            <Route path="/video/:videoId" element={<VideoDetails />} />
-            <Route path="/search" element={<Search />} />
-            <Route path="/channel/:channelId" element={<ChannelDetails />} />
-            <Route path="/writing-videos" element={<WritingVideos />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/settings/email-preferences" element={<EmailPreferences />} />
-            <Route path="/unsubscribe" element={<Unsubscribe />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/about" element={<About />} />
-            
-            {/* Admin routes */}
-            <Route path="/admin" element={<AdminDashboard />} />
-            <Route path="/admin/channels" element={<ChannelsPage />} />
-            <Route path="/admin/youtube-channels" element={<ChannelsPage />} />
-            <Route path="/admin/categories" element={<CategoriesPage />} />
-            <Route path="/admin/comments" element={<CommentsPage />} />
-            <Route path="/admin/analytics" element={<AnalyticsPage />} />
-            <Route path="/admin/videos" element={<VideosPage />} />
-            <Route path="/admin/users" element={<UsersPage />} />
-            <Route path="/admin/reported-videos" element={<ReportedVideosPage />} />
-            <Route path="/admin/requests" element={<RequestsPage />} />
-            <Route path="/admin/contact-requests" element={<ContactRequestsPage />} />
-            <Route path="/admin/notifications" element={<NotificationsPage />} />
-            <Route path="/admin/layout" element={<LayoutCustomizationPage />} />
-            <Route path="/admin/testimonials" element={<TestimonialsPage />} />
-            <Route path="/admin/seo" element={<AdminSEO />} />
-          </Routes>
-          
-          {/* Add the PagePreloader to prefetch the Videos page */}
-          <PagePreloader />
+          <AppContent />
         </ColorProvider>
       </PlaybackProvider>
     </LoadingProvider>

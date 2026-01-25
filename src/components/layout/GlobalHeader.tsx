@@ -1,22 +1,24 @@
 import { useState, useEffect, useRef } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Search, Menu } from "lucide-react";
+import { Search, LogIn, X, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useSessionManager } from "@/hooks/useSessionManager";
 import { useIsMobile } from "@/hooks/use-mobile";
 import Auth from "@/pages/Auth";
-import { SearchModal } from "./SearchModal";
-import { Sidebar } from "./Sidebar";
 import yidvidLogoIcon from "@/assets/yidvid-logo-icon.png";
 
 export const GlobalHeader = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { isMobile } = useIsMobile();
+  const { isAuthenticated, session, profile } = useSessionManager();
   const [isAuthOpen, setIsAuthOpen] = useState(false);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const lastScrollY = useRef(0);
+  const searchInputRef = useRef<HTMLInputElement>(null);
   
   const isHomePage = location.pathname === "/";
 
@@ -40,10 +42,29 @@ export const GlobalHeader = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Close sidebar on route change
-  useEffect(() => {
-    setIsSidebarOpen(false);
-  }, [location.pathname]);
+  // Handle search submit
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchQuery("");
+      searchInputRef.current?.blur();
+    }
+  };
+
+  // Get user initial for profile icon
+  const getUserInitial = () => {
+    if (profile?.display_name) {
+      return profile.display_name.charAt(0).toUpperCase();
+    }
+    if (profile?.name) {
+      return profile.name.charAt(0).toUpperCase();
+    }
+    if (session?.user?.email) {
+      return session.user.email.charAt(0).toUpperCase();
+    }
+    return "U";
+  };
 
   return (
     <>
@@ -63,28 +84,17 @@ export const GlobalHeader = () => {
         }}
       >
         <div className="w-full px-3 md:px-6">
-          <div className="flex items-center justify-between h-14">
-            {/* Left Side - Menu Toggle & Logo */}
-            <div className="flex items-center gap-2">
-              {/* Hamburger Menu Button */}
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setIsSidebarOpen(true)}
-                className="rounded-full h-10 w-10 text-gray-600 hover:bg-gray-100 transition-colors"
-              >
-                <Menu className="w-5 h-5" />
-              </Button>
-              
-              {/* Logo */}
-              <Link to="/" className="flex items-center gap-2 shrink-0">
-                <img 
-                  src={yidvidLogoIcon} 
-                  alt="YidVid" 
-                  className="w-8 h-8 object-contain"
-                />
+          <div className="flex items-center justify-between h-14 gap-4">
+            {/* Left Side - Logo Only */}
+            <Link to="/" className="flex items-center gap-2 shrink-0">
+              <img 
+                src={yidvidLogoIcon} 
+                alt="YidVid" 
+                className="w-9 h-9 object-contain"
+              />
+              {!isMobile && (
                 <span 
-                  className="text-lg font-bold hidden sm:block"
+                  className="text-lg font-bold"
                   style={{ 
                     fontFamily: "'Fredoka One', 'Nunito', sans-serif",
                     color: '#333'
@@ -92,55 +102,88 @@ export const GlobalHeader = () => {
                 >
                   YidVid
                 </span>
-              </Link>
-            </div>
+              )}
+            </Link>
 
-            {/* Center - Search Bar (Desktop) */}
-            {!isMobile && (
-              <div className="flex-1 max-w-xl mx-4">
+            {/* Center - Search Bar */}
+            <form 
+              onSubmit={handleSearchSubmit}
+              className="flex-1 max-w-xl"
+            >
+              <div 
+                className={`flex items-center rounded-full border transition-all duration-200 ${
+                  isSearchFocused 
+                    ? 'border-gray-400 shadow-sm' 
+                    : 'border-gray-200 hover:border-gray-300'
+                }`}
+                style={{ backgroundColor: '#fafafa' }}
+              >
+                <div className="flex items-center flex-1 px-4">
+                  <Search className="w-4 h-4 text-gray-400 shrink-0" />
+                  <input
+                    ref={searchInputRef}
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onFocus={() => setIsSearchFocused(true)}
+                    onBlur={() => setIsSearchFocused(false)}
+                    placeholder={isMobile ? "Search..." : "Search videos, channels..."}
+                    className="flex-1 bg-transparent border-none outline-none px-3 py-2 text-sm text-gray-700 placeholder:text-gray-400"
+                    style={{ fontFamily: "'Quicksand', sans-serif" }}
+                  />
+                  {searchQuery && (
+                    <button
+                      type="button"
+                      onClick={() => setSearchQuery("")}
+                      className="p-1 rounded-full hover:bg-gray-200 transition-colors"
+                    >
+                      <X className="w-4 h-4 text-gray-400" />
+                    </button>
+                  )}
+                </div>
                 <button
-                  onClick={() => setIsSearchOpen(true)}
-                  className="w-full flex items-center gap-3 px-4 py-2 rounded-full border transition-all duration-200 hover:shadow-sm hover:border-gray-300"
-                  style={{ 
-                    borderColor: '#e5e5e5',
-                    backgroundColor: '#fafafa',
-                    fontFamily: "'Quicksand', sans-serif"
-                  }}
+                  type="submit"
+                  className="h-9 px-4 rounded-r-full border-l border-gray-200 hover:bg-gray-100 transition-colors"
+                  style={{ backgroundColor: '#f5f5f5' }}
                 >
-                  <Search className="w-4 h-4 text-gray-400" />
-                  <span className="text-sm text-gray-500">
-                    Search videos, channels...
-                  </span>
+                  <Search className="w-4 h-4 text-gray-600" />
                 </button>
               </div>
-            )}
+            </form>
 
-            {/* Right Side - Search (Mobile) */}
-            <div className="flex items-center gap-2">
-              {isMobile && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setIsSearchOpen(true)}
-                  className="rounded-full h-10 w-10 text-gray-600 hover:bg-gray-100"
+            {/* Right Side - Sign In / Profile */}
+            <div className="flex items-center shrink-0">
+              {isAuthenticated ? (
+                <Link
+                  to="/settings"
+                  className="flex items-center justify-center w-9 h-9 rounded-full text-white font-semibold text-sm transition-transform hover:scale-105"
+                  style={{ 
+                    backgroundColor: 'hsl(0, 70%, 55%)',
+                    fontFamily: "'Quicksand', sans-serif"
+                  }}
+                  title="Profile"
                 >
-                  <Search className="w-5 h-5" />
+                  {getUserInitial()}
+                </Link>
+              ) : (
+                <Button
+                  onClick={() => setIsAuthOpen(true)}
+                  size={isMobile ? "sm" : "default"}
+                  className="rounded-full gap-2 font-medium hover:opacity-90 transition-all"
+                  style={{ 
+                    fontFamily: "'Quicksand', sans-serif",
+                    backgroundColor: 'hsl(0, 70%, 55%)',
+                    color: 'white'
+                  }}
+                >
+                  <LogIn className="w-4 h-4" />
+                  {!isMobile && <span>Sign In</span>}
                 </Button>
               )}
             </div>
           </div>
         </div>
       </motion.header>
-
-      {/* Sidebar */}
-      <Sidebar 
-        isOpen={isSidebarOpen} 
-        onClose={() => setIsSidebarOpen(false)} 
-        onAuthOpen={() => setIsAuthOpen(true)}
-      />
-
-      {/* Search Modal */}
-      <SearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
 
       {/* Auth Dialog */}
       <Auth isOpen={isAuthOpen} onOpenChange={setIsAuthOpen} />
