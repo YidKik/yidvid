@@ -111,10 +111,10 @@ export const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[101] w-[90%] max-w-2xl"
+            className="fixed inset-0 z-[101] flex items-center justify-center p-4"
           >
             <div 
-              className="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl overflow-hidden border border-red-100 dark:border-red-900/30"
+              className="w-full max-w-2xl bg-white dark:bg-gray-900 rounded-3xl shadow-2xl overflow-hidden border border-red-100 dark:border-red-900/30"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header accent bar */}
