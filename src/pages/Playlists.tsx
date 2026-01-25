@@ -1,0 +1,426 @@
+import { useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { ListMusic, Plus, Play, Pencil, Trash2, LogIn, ArrowLeft, MoreVertical } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useVideoLibrary, usePlaylistItems } from "@/hooks/useVideoLibrary";
+import { useSessionManager } from "@/hooks/useSessionManager";
+import { VideoOptionsMenu } from "@/components/video/VideoOptionsMenu";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+
+const Playlists = () => {
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const selectedPlaylistId = searchParams.get("id");
+  
+  const { isAuthenticated, session, setIsAuthOpen } = useSessionManager();
+  const userId = session?.user?.id;
+  const { playlists, isLoading, createPlaylist, updatePlaylist, deletePlaylist, removeFromPlaylist } = useVideoLibrary(userId);
+  const { data: playlistItems, isLoading: isLoadingItems } = usePlaylistItems(selectedPlaylistId || undefined);
+
+  const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [editingPlaylist, setEditingPlaylist] = useState<{ id: string; title: string; description?: string } | null>(null);
+  const [newPlaylistTitle, setNewPlaylistTitle] = useState("");
+  const [newPlaylistDescription, setNewPlaylistDescription] = useState("");
+
+  const selectedPlaylist = playlists?.find((p) => p.id === selectedPlaylistId);
+
+  const handleCreatePlaylist = () => {
+    if (!newPlaylistTitle.trim()) return;
+    createPlaylist.mutate(
+      { title: newPlaylistTitle.trim(), description: newPlaylistDescription.trim() || undefined },
+      {
+        onSuccess: () => {
+          setShowCreateDialog(false);
+          setNewPlaylistTitle("");
+          setNewPlaylistDescription("");
+        },
+      }
+    );
+  };
+
+  const handleUpdatePlaylist = () => {
+    if (!editingPlaylist || !editingPlaylist.title.trim()) return;
+    updatePlaylist.mutate(
+      { id: editingPlaylist.id, title: editingPlaylist.title.trim(), description: editingPlaylist.description },
+      {
+        onSuccess: () => {
+          setShowEditDialog(false);
+          setEditingPlaylist(null);
+        },
+      }
+    );
+  };
+
+  const handleDeletePlaylist = (playlistId: string) => {
+    if (confirm("Are you sure you want to delete this playlist?")) {
+      deletePlaylist.mutate(playlistId, {
+        onSuccess: () => {
+          if (selectedPlaylistId === playlistId) {
+            setSearchParams({});
+          }
+        },
+      });
+    }
+  };
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen pt-14 pl-[200px] bg-gray-50">
+        <div className="max-w-6xl mx-auto px-6 py-12">
+          <div className="flex flex-col items-center justify-center py-20 text-center">
+            <div className="w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center mb-6">
+              <ListMusic className="w-12 h-12 text-gray-400" />
+            </div>
+            <h1 className="text-2xl font-bold text-gray-800 mb-2">Sign in to view your playlists</h1>
+            <p className="text-gray-500 mb-6 max-w-md">
+              Create custom playlists to organize your favorite videos. Sign in to get started.
+            </p>
+            <Button
+              onClick={() => setIsAuthOpen(true)}
+              className="rounded-full gap-2 bg-red-500 hover:bg-red-600 text-white px-6"
+            >
+              <LogIn className="w-4 h-4" />
+              Sign In
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Playlist detail view
+  if (selectedPlaylistId && selectedPlaylist) {
+    return (
+      <div className="min-h-screen pt-14 pl-[200px] bg-gray-50">
+        <div className="max-w-6xl mx-auto px-6 py-8">
+          {/* Back button and header */}
+          <button
+            onClick={() => setSearchParams({})}
+            className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6 transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span>Back to Playlists</span>
+          </button>
+
+          <div className="flex items-start justify-between mb-8">
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center">
+                <ListMusic className="w-7 h-7 text-white" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">{selectedPlaylist.title}</h1>
+                {selectedPlaylist.description && (
+                  <p className="text-gray-500 text-sm mt-1">{selectedPlaylist.description}</p>
+                )}
+                <p className="text-gray-400 text-sm mt-1">
+                  {playlistItems?.length || 0} video{(playlistItems?.length || 0) !== 1 ? "s" : ""}
+                </p>
+              </div>
+            </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="rounded-full">
+                  <MoreVertical className="w-5 h-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="bg-white border rounded-xl shadow-lg">
+                <DropdownMenuItem
+                  onClick={() => {
+                    setEditingPlaylist({
+                      id: selectedPlaylist.id,
+                      title: selectedPlaylist.title,
+                      description: selectedPlaylist.description || "",
+                    });
+                    setShowEditDialog(true);
+                  }}
+                  className="flex items-center gap-2 cursor-pointer"
+                >
+                  <Pencil className="w-4 h-4" />
+                  Edit playlist
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => handleDeletePlaylist(selectedPlaylist.id)}
+                  className="flex items-center gap-2 cursor-pointer text-red-600"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  Delete playlist
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+
+          {/* Playlist items */}
+          {isLoadingItems ? (
+            <div className="space-y-4">
+              {[...Array(5)].map((_, i) => (
+                <div key={i} className="flex gap-4 animate-pulse">
+                  <div className="w-40 aspect-video bg-gray-200 rounded-lg" />
+                  <div className="flex-1">
+                    <div className="h-4 bg-gray-200 rounded w-3/4 mb-2" />
+                    <div className="h-3 bg-gray-200 rounded w-1/2" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : !playlistItems || playlistItems.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-20 text-center">
+              <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-4">
+                <ListMusic className="w-8 h-8 text-gray-400" />
+              </div>
+              <h2 className="text-lg font-semibold text-gray-800 mb-2">No videos in this playlist</h2>
+              <p className="text-gray-500">Add videos from any video page using the menu.</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {playlistItems.map((item, index) => (
+                <motion.div
+                  key={item.id}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  className="flex gap-4 p-3 rounded-xl hover:bg-white hover:shadow-sm transition-all group cursor-pointer"
+                  onClick={() => navigate(`/video/${item.video?.video_id}`)}
+                >
+                  <div className="relative w-40 aspect-video rounded-lg overflow-hidden bg-gray-200 shrink-0">
+                    <img
+                      src={item.video?.thumbnail}
+                      alt={item.video?.title}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
+                      <Play className="w-8 h-8 text-white fill-white" />
+                    </div>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-medium text-gray-900 line-clamp-2 group-hover:text-purple-600 transition-colors">
+                      {item.video?.title}
+                    </h3>
+                    <p className="text-sm text-gray-500 mt-1">{item.video?.channel_name}</p>
+                  </div>
+                  <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 rounded-full opacity-0 group-hover:opacity-100 transition-opacity text-gray-500 hover:text-red-500"
+                      onClick={() => removeFromPlaylist.mutate({ playlistId: selectedPlaylistId, videoId: item.video?.id })}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // Playlists list view
+  return (
+    <div className="min-h-screen pt-14 pl-[200px] bg-gray-50">
+      <div className="max-w-6xl mx-auto px-6 py-8">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center">
+              <ListMusic className="w-7 h-7 text-white" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">Playlists</h1>
+              <p className="text-gray-500">{playlists?.length || 0} playlist{(playlists?.length || 0) !== 1 ? "s" : ""}</p>
+            </div>
+          </div>
+          <Button
+            onClick={() => setShowCreateDialog(true)}
+            className="rounded-full gap-2 bg-red-500 hover:bg-red-600 text-white"
+          >
+            <Plus className="w-4 h-4" />
+            New Playlist
+          </Button>
+        </div>
+
+        {/* Content */}
+        {isLoading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="animate-pulse">
+                <div className="aspect-video bg-gray-200 rounded-xl mb-3" />
+                <div className="h-4 bg-gray-200 rounded w-3/4" />
+              </div>
+            ))}
+          </div>
+        ) : !playlists || playlists.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-20 text-center">
+            <div className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center mb-4">
+              <ListMusic className="w-10 h-10 text-gray-400" />
+            </div>
+            <h2 className="text-xl font-semibold text-gray-800 mb-2">No playlists yet</h2>
+            <p className="text-gray-500 max-w-md mb-6">
+              Create your first playlist to organize your favorite videos.
+            </p>
+            <Button
+              onClick={() => setShowCreateDialog(true)}
+              className="rounded-full gap-2 bg-red-500 hover:bg-red-600 text-white"
+            >
+              <Plus className="w-4 h-4" />
+              Create Playlist
+            </Button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {playlists.map((playlist, index) => (
+              <motion.div
+                key={playlist.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05 }}
+                className="group cursor-pointer bg-white rounded-xl p-4 hover:shadow-lg transition-all border border-gray-100"
+                onClick={() => setSearchParams({ id: playlist.id })}
+              >
+                <div className="relative aspect-video rounded-lg overflow-hidden bg-gradient-to-br from-purple-100 to-purple-200 mb-3 flex items-center justify-center">
+                  <ListMusic className="w-12 h-12 text-purple-400" />
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
+                </div>
+                <div className="flex items-start justify-between">
+                  <div className="min-w-0 flex-1">
+                    <h3 className="font-medium text-gray-900 truncate group-hover:text-purple-600 transition-colors">
+                      {playlist.title}
+                    </h3>
+                    {playlist.description && (
+                      <p className="text-xs text-gray-500 truncate mt-0.5">{playlist.description}</p>
+                    )}
+                  </div>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                      <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full shrink-0">
+                        <MoreVertical className="w-4 h-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="bg-white border rounded-xl shadow-lg">
+                      <DropdownMenuItem
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setEditingPlaylist({
+                            id: playlist.id,
+                            title: playlist.title,
+                            description: playlist.description || "",
+                          });
+                          setShowEditDialog(true);
+                        }}
+                        className="flex items-center gap-2 cursor-pointer"
+                      >
+                        <Pencil className="w-4 h-4" />
+                        Edit
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeletePlaylist(playlist.id);
+                        }}
+                        className="flex items-center gap-2 cursor-pointer text-red-600"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                        Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Create Playlist Dialog */}
+      <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
+        <DialogContent className="sm:max-w-md bg-white rounded-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-semibold">Create New Playlist</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <Input
+              placeholder="Playlist name"
+              value={newPlaylistTitle}
+              onChange={(e) => setNewPlaylistTitle(e.target.value)}
+              className="rounded-xl border-gray-300"
+            />
+            <Textarea
+              placeholder="Description (optional)"
+              value={newPlaylistDescription}
+              onChange={(e) => setNewPlaylistDescription(e.target.value)}
+              className="rounded-xl border-gray-300 resize-none"
+              rows={3}
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setShowCreateDialog(false)} className="rounded-xl">
+              Cancel
+            </Button>
+            <Button
+              onClick={handleCreatePlaylist}
+              disabled={!newPlaylistTitle.trim() || createPlaylist.isPending}
+              className="rounded-xl bg-red-500 hover:bg-red-600 text-white"
+            >
+              Create
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Playlist Dialog */}
+      <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
+        <DialogContent className="sm:max-w-md bg-white rounded-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-semibold">Edit Playlist</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <Input
+              placeholder="Playlist name"
+              value={editingPlaylist?.title || ""}
+              onChange={(e) => setEditingPlaylist((prev) => prev ? { ...prev, title: e.target.value } : null)}
+              className="rounded-xl border-gray-300"
+            />
+            <Textarea
+              placeholder="Description (optional)"
+              value={editingPlaylist?.description || ""}
+              onChange={(e) => setEditingPlaylist((prev) => prev ? { ...prev, description: e.target.value } : null)}
+              className="rounded-xl border-gray-300 resize-none"
+              rows={3}
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setShowEditDialog(false)} className="rounded-xl">
+              Cancel
+            </Button>
+            <Button
+              onClick={handleUpdatePlaylist}
+              disabled={!editingPlaylist?.title.trim() || updatePlaylist.isPending}
+              className="rounded-xl bg-red-500 hover:bg-red-600 text-white"
+            >
+              Save
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+};
+
+export default Playlists;

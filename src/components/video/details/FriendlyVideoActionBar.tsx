@@ -1,4 +1,4 @@
-import { ThumbsUp, ThumbsDown, Share2, Eye, Clock, Copy, Facebook, Twitter, Mail, MessageCircle, X } from "lucide-react";
+import { ThumbsUp, ThumbsDown, Share2, Eye, Clock, Copy, Facebook, Twitter, Mail, MessageCircle, X, Heart, ListPlus, Plus, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -12,7 +12,11 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogFooter,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { useVideoLibrary } from "@/hooks/useVideoLibrary";
+import { cn } from "@/lib/utils";
 
 interface FriendlyVideoActionBarProps {
   videoId: string;
@@ -41,9 +45,24 @@ export const FriendlyVideoActionBar = ({
   const [isLiked, setIsLiked] = useState(false);
   const [isDisliked, setIsDisliked] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
+  const [playlistDialogOpen, setPlaylistDialogOpen] = useState(false);
+  const [newPlaylistName, setNewPlaylistName] = useState("");
   
   const { isAuthenticated, user } = useUnifiedAuth();
   const userId = user?.id;
+
+  const {
+    playlists,
+    isInFavorites,
+    isInWatchLater,
+    toggleFavorite,
+    toggleWatchLater,
+    createPlaylist,
+    addToPlaylist,
+  } = useVideoLibrary(userId);
+
+  const isFavorite = isInFavorites(videoId);
+  const isWatchLaterSaved = isInWatchLater(videoId);
 
   const shareUrl = `${window.location.origin}/video/${youtubeVideoId}`;
   const shareTitle = document.title;
@@ -146,6 +165,41 @@ export const FriendlyVideoActionBar = ({
         console.error('Error sharing:', error);
       }
     }
+  };
+
+  const handleToggleFavorite = () => {
+    if (!isAuthenticated) {
+      toast.info("Please sign in to add favorites", { icon: <LogIn className="w-4 h-4" /> });
+      return;
+    }
+    toggleFavorite.mutate(videoId);
+  };
+
+  const handleToggleWatchLater = () => {
+    if (!isAuthenticated) {
+      toast.info("Please sign in to add to Watch Later", { icon: <LogIn className="w-4 h-4" /> });
+      return;
+    }
+    toggleWatchLater.mutate(videoId);
+  };
+
+  const handleAddToPlaylist = (playlistId: string) => {
+    addToPlaylist.mutate({ playlistId, videoId });
+    setPlaylistDialogOpen(false);
+  };
+
+  const handleCreateAndAddToPlaylist = () => {
+    if (!newPlaylistName.trim()) return;
+    createPlaylist.mutate(
+      { title: newPlaylistName.trim() },
+      {
+        onSuccess: (playlist) => {
+          addToPlaylist.mutate({ playlistId: playlist.id, videoId });
+          setPlaylistDialogOpen(false);
+          setNewPlaylistName("");
+        },
+      }
+    );
   };
 
   const shareOptions = [
@@ -272,6 +326,91 @@ export const FriendlyVideoActionBar = ({
           </Dialog>
 
           <ReportVideoDialog videoId={videoId} compact />
+
+          {/* Favorites Button */}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleToggleFavorite}
+            className={`${actionButtonBaseCompact} ${isFavorite ? "bg-red-50 text-red-500" : ""}`}
+          >
+            <Heart className={cn("h-4 w-4 mr-1.5", isFavorite && "fill-current")} />
+            {isFavorite ? "Saved" : "Favorite"}
+          </Button>
+
+          {/* Watch Later Button */}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleToggleWatchLater}
+            className={`${actionButtonBaseCompact} ${isWatchLaterSaved ? "bg-blue-50 text-blue-500" : ""}`}
+          >
+            <Clock className={cn("h-4 w-4 mr-1.5", isWatchLaterSaved && "fill-current")} />
+            {isWatchLaterSaved ? "Saved" : "Watch Later"}
+          </Button>
+
+          {/* Add to Playlist Button */}
+          <Dialog open={playlistDialogOpen} onOpenChange={setPlaylistDialogOpen}>
+            <DialogTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className={actionButtonBaseCompact}
+                onClick={() => {
+                  if (!isAuthenticated) {
+                    toast.info("Please sign in to use playlists", { icon: <LogIn className="w-4 h-4" /> });
+                    return;
+                  }
+                }}
+              >
+                <ListPlus className="h-4 w-4 mr-1.5" />
+                Playlist
+              </Button>
+            </DialogTrigger>
+            {isAuthenticated && (
+              <DialogContent className="sm:max-w-[360px] bg-white rounded-2xl">
+                <DialogHeader>
+                  <DialogTitle className="text-lg font-semibold">Add to Playlist</DialogTitle>
+                </DialogHeader>
+                <div className="py-4 space-y-2 max-h-60 overflow-y-auto">
+                  {playlists && playlists.length > 0 ? (
+                    playlists.map((playlist) => (
+                      <button
+                        key={playlist.id}
+                        onClick={() => handleAddToPlaylist(playlist.id)}
+                        className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg hover:bg-gray-100 transition-colors text-left"
+                      >
+                        <ListPlus className="w-4 h-4 text-gray-500" />
+                        <span className="truncate">{playlist.title}</span>
+                      </button>
+                    ))
+                  ) : (
+                    <p className="text-sm text-gray-500 text-center py-2">No playlists yet</p>
+                  )}
+                </div>
+                <div className="border-t pt-4">
+                  <p className="text-sm font-medium mb-2">Create new playlist</p>
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder="Playlist name"
+                      value={newPlaylistName}
+                      onChange={(e) => setNewPlaylistName(e.target.value)}
+                      className="rounded-lg"
+                      onKeyDown={(e) => e.key === "Enter" && handleCreateAndAddToPlaylist()}
+                    />
+                    <Button
+                      size="icon"
+                      onClick={handleCreateAndAddToPlaylist}
+                      disabled={!newPlaylistName.trim()}
+                      className="shrink-0 rounded-lg bg-red-500 hover:bg-red-600"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+              </DialogContent>
+            )}
+          </Dialog>
         </div>
       </div>
     );
@@ -368,6 +507,88 @@ export const FriendlyVideoActionBar = ({
 
         {/* Report Button */}
         <ReportVideoDialog videoId={videoId} />
+
+        {/* Favorites Button */}
+        <Button
+          variant="ghost"
+          onClick={handleToggleFavorite}
+          className={`${actionButtonBase} ${isFavorite ? "bg-red-50 text-red-500" : ""}`}
+        >
+          <Heart className={cn("h-4 w-4 mr-2", isFavorite && "fill-current")} />
+          {isFavorite ? "Saved" : "Favorite"}
+        </Button>
+
+        {/* Watch Later Button */}
+        <Button
+          variant="ghost"
+          onClick={handleToggleWatchLater}
+          className={`${actionButtonBase} ${isWatchLaterSaved ? "bg-blue-50 text-blue-500" : ""}`}
+        >
+          <Clock className={cn("h-4 w-4 mr-2", isWatchLaterSaved && "fill-current")} />
+          {isWatchLaterSaved ? "Saved" : "Later"}
+        </Button>
+
+        {/* Add to Playlist Button */}
+        <Dialog open={playlistDialogOpen} onOpenChange={setPlaylistDialogOpen}>
+          <DialogTrigger asChild>
+            <Button
+              variant="ghost"
+              className={actionButtonBase}
+              onClick={() => {
+                if (!isAuthenticated) {
+                  toast.info("Please sign in to use playlists", { icon: <LogIn className="w-4 h-4" /> });
+                  return;
+                }
+              }}
+            >
+              <ListPlus className="h-4 w-4 mr-2" />
+              Playlist
+            </Button>
+          </DialogTrigger>
+          {isAuthenticated && (
+            <DialogContent className="sm:max-w-[400px] bg-white rounded-2xl">
+              <DialogHeader>
+                <DialogTitle className="text-lg font-semibold">Add to Playlist</DialogTitle>
+              </DialogHeader>
+              <div className="py-4 space-y-2 max-h-60 overflow-y-auto">
+                {playlists && playlists.length > 0 ? (
+                  playlists.map((playlist) => (
+                    <button
+                      key={playlist.id}
+                      onClick={() => handleAddToPlaylist(playlist.id)}
+                      className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg hover:bg-gray-100 transition-colors text-left"
+                    >
+                      <ListPlus className="w-4 h-4 text-gray-500" />
+                      <span className="truncate">{playlist.title}</span>
+                    </button>
+                  ))
+                ) : (
+                  <p className="text-sm text-gray-500 text-center py-2">No playlists yet</p>
+                )}
+              </div>
+              <div className="border-t pt-4">
+                <p className="text-sm font-medium mb-2">Create new playlist</p>
+                <div className="flex gap-2">
+                  <Input
+                    placeholder="Playlist name"
+                    value={newPlaylistName}
+                    onChange={(e) => setNewPlaylistName(e.target.value)}
+                    className="rounded-lg"
+                    onKeyDown={(e) => e.key === "Enter" && handleCreateAndAddToPlaylist()}
+                  />
+                  <Button
+                    size="icon"
+                    onClick={handleCreateAndAddToPlaylist}
+                    disabled={!newPlaylistName.trim()}
+                    className="shrink-0 rounded-lg bg-red-500 hover:bg-red-600"
+                  >
+                    <Plus className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+            </DialogContent>
+          )}
+        </Dialog>
       </div>
     </div>
   );

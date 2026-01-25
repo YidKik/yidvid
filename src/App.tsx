@@ -34,6 +34,9 @@ import AdminSEO from './pages/AdminSEO';
 import { EmailPreferences } from './pages/EmailPreferences';
 import { Unsubscribe } from './pages/Unsubscribe';
 import About from './pages/About';
+import Favorites from './pages/Favorites';
+import WatchLater from './pages/WatchLater';
+import Playlists from './pages/Playlists';
 
 import { PagePreloader } from './components/PagePreloader';
 import { TopLoadingBar } from './components/ui/TopLoadingBar';
@@ -81,6 +84,9 @@ function AppContent() {
         <Route path="/unsubscribe" element={<Unsubscribe />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/about" element={<About />} />
+        <Route path="/favorites" element={<Favorites />} />
+        <Route path="/watch-later" element={<WatchLater />} />
+        <Route path="/playlists" element={<Playlists />} />
         
         {/* Admin routes */}
         <Route path="/admin" element={<AdminDashboard />} />

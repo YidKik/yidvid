@@ -10,7 +10,6 @@ import {
   Clock, 
   History, 
   Sparkles,
-  Users,
   ChevronLeft,
   ChevronRight,
   ChevronDown,
@@ -19,6 +18,7 @@ import {
   Bell,
   ArrowLeft,
   LogIn,
+  ListMusic,
   type LucideIcon
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -62,8 +62,9 @@ const navSections: NavSection[] = [
     requiresAuth: true,
     items: [
       { name: "History", path: "/dashboard", icon: History },
-      { name: "Favorites", path: "/videos?filter=favorites", icon: Heart },
-      { name: "Watch Later", path: "/videos?filter=watchlater", icon: Clock },
+      { name: "Favorites", path: "/favorites", icon: Heart },
+      { name: "Watch Later", path: "/watch-later", icon: Clock },
+      { name: "Playlists", path: "/playlists", icon: ListMusic },
     ]
   },
   {
