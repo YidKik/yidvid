@@ -11,7 +11,6 @@ import { SearchModal } from "./SearchModal";
 const navLinks = [
   { name: "Home", path: "/" },
   { name: "Videos", path: "/videos" },
-  { name: "Channels", path: "/videos?view=channels" },
   { name: "Settings", path: "/settings" },
   { name: "About", path: "/about" },
 ];
@@ -54,11 +53,8 @@ export const GlobalHeader = () => {
   }, [location.pathname]);
 
   const isActive = (path: string) => {
-    if (path === "/videos?view=channels") {
-      return location.pathname === "/videos" && location.search.includes("view=channels");
-    }
     if (path === "/videos") {
-      return location.pathname === "/videos" && !location.search.includes("view=channels");
+      return location.pathname === "/videos";
     }
     return location.pathname === path;
   };
