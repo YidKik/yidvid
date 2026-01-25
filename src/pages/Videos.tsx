@@ -9,6 +9,7 @@ import { useSessionManager } from "@/hooks/useSessionManager";
 import { Helmet } from "react-helmet";
 import { useSearchParams } from "react-router-dom";
 import { CategoryToggle } from "@/components/header/CategoryToggle";
+import { NotificationBell } from "@/components/header/NotificationBell";
 
 
 const MainContent = () => {
@@ -81,15 +82,18 @@ const MainContent = () => {
         transition={{ delay: 0.1, duration: 0.5 }}
         className="mt-4 mx-auto px-2 md:px-6 max-w-[1400px] w-full"
       >
-        {/* Category Toggle - inline with content */}
-        <div className="mb-4 flex items-center gap-3">
-          <CategoryToggle 
-            selectedCategory={selectedCategory}
-            onCategoryChange={setSelectedCategory}
-          />
-          <span className="text-sm text-gray-500 font-medium" style={{ fontFamily: "'Quicksand', sans-serif" }}>
-            {selectedCategory === 'all' ? 'All Videos' : selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)}
-          </span>
+        {/* Category Toggle and Notification Bell */}
+        <div className="mb-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <CategoryToggle 
+              selectedCategory={selectedCategory}
+              onCategoryChange={setSelectedCategory}
+            />
+            <span className="text-sm text-gray-500 font-medium" style={{ fontFamily: "'Quicksand', sans-serif" }}>
+              {selectedCategory === 'all' ? 'All Videos' : selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)}
+            </span>
+          </div>
+          <NotificationBell />
         </div>
         <div className="space-y-2 md:space-y-4">
           <motion.div
