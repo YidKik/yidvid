@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, ArrowRight, Play } from 'lucide-react';
+import yidvidLogoIcon from '@/assets/yidvid-logo-icon.png';
 import { useNavigate } from 'react-router-dom';
 import { useSearchSuggestions } from '@/hooks/useSearchSuggestions';
 
@@ -85,7 +86,7 @@ const HeroSearchSection = () => {
   };
 
   return (
-    <section className="relative min-h-[70vh] flex flex-col items-center justify-center px-6 py-20">
+    <section className="relative min-h-[80vh] flex flex-col items-center justify-center px-6 pt-32 pb-20">
       {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div 
@@ -104,11 +105,11 @@ const HeroSearchSection = () => {
         transition={{ duration: 0.8 }}
         className="relative z-10 text-center max-w-4xl mx-auto w-full"
       >
-        {/* Logo */}
+        {/* Large Logo Icon */}
         <motion.img
-          src="/lovable-uploads/e425cacb-4c3a-4d81-b4e0-77fcbf10f61c.png"
+          src={yidvidLogoIcon}
           alt="YidVid Logo"
-          className="w-20 h-20 mx-auto mb-8 drop-shadow-lg"
+          className="w-40 h-40 md:w-52 md:h-52 mx-auto mb-10 drop-shadow-2xl"
           initial={{ scale: 0, rotate: -180 }}
           animate={{ scale: 1, rotate: 0 }}
           transition={{ type: "spring", stiffness: 200, delay: 0.2 }}
