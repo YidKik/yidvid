@@ -1,6 +1,7 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useHiddenChannels } from "@/hooks/channel/useHiddenChannels";
 
 export interface VideoGridItem {
   id: string;
@@ -16,26 +17,24 @@ export interface VideoGridItem {
 }
 
 export const useVideoGridData = (maxVideos: number = 12, shouldFetch: boolean = true) => {
-  const [videos, setVideos] = useState<VideoGridItem[]>([]);
+  const [rawVideos, setRawVideos] = useState<VideoGridItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
+  
+  const { filterVideos, hiddenChannelIds } = useHiddenChannels();
 
   useEffect(() => {
     const fetchVideos = async () => {
       setLoading(true);
       try {
-        // Skip fetching if we shouldn't fetch
         if (!shouldFetch) {
           setLoading(false);
           return;
         }
 
-        console.log(`Fetching up to ${maxVideos} videos from Supabase or edge function`);
+        // Fetch more videos to account for filtering
+        const fetchLimit = maxVideos + (hiddenChannelIds.size * 2);
         
-        // REMOVED: Edge function call to reduce API usage
-        // Skip edge function and go directly to database
-        
-        // Fall back to direct database query
         const { data, error } = await supabase
           .from("youtube_videos")
           .select(`
@@ -46,25 +45,22 @@ export const useVideoGridData = (maxVideos: number = 12, shouldFetch: boolean = 
           `)
           .is("deleted_at", null)
           .order("uploaded_at", { ascending: false })
-          .limit(maxVideos);
+          .limit(fetchLimit);
         
         if (error) {
-          console.error("Supabase error:", error);
-          
           // Try a simpler query as fallback
           const { data: simpleData, error: simpleError } = await supabase
             .from("youtube_videos")
             .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, updated_at")
             .is("deleted_at", null)
             .order("uploaded_at", { ascending: false })
-            .limit(maxVideos);
+            .limit(fetchLimit);
             
           if (simpleError) {
             throw new Error(`Error fetching videos: ${simpleError.message}`);
           }
           
           if (simpleData && simpleData.length > 0) {
-            // Map the Supabase data to match our VideoGridItem interface
             const mappedVideos = simpleData.map(video => ({
               id: video.id,
               video_id: video.video_id,
@@ -78,15 +74,13 @@ export const useVideoGridData = (maxVideos: number = 12, shouldFetch: boolean = 
               channelThumbnail: null,
             }));
             
-            setVideos(mappedVideos);
+            setRawVideos(mappedVideos);
             setLoading(false);
             return;
           }
           
           throw new Error(`Error fetching videos: ${error.message}`);
         }
-        
-        console.log(`Successfully fetched ${data?.length || 0} videos`);
         
         // Map the Supabase data to match our VideoGridItem interface
         const mappedVideos = data.map(video => ({
@@ -106,21 +100,27 @@ export const useVideoGridData = (maxVideos: number = 12, shouldFetch: boolean = 
         const sortedVideos = mappedVideos.sort((a, b) => {
           const dateA = new Date(a.uploaded_at).getTime();
           const dateB = new Date(b.uploaded_at).getTime();
-          return dateB - dateA; // Newest first
+          return dateB - dateA;
         });
         
-        setVideos(sortedVideos);
+        setRawVideos(sortedVideos);
       } catch (err) {
         console.error("Error in useVideoGridData:", err);
         setError(err instanceof Error ? err : new Error(String(err)));
-        setVideos([]);
+        setRawVideos([]);
       } finally {
         setLoading(false);
       }
     };
 
     fetchVideos();
-  }, [maxVideos, shouldFetch]);
+  }, [maxVideos, shouldFetch, hiddenChannelIds.size]);
+
+  // Filter out hidden channels and limit to maxVideos
+  const videos = useMemo(() => {
+    const filtered = filterVideos(rawVideos);
+    return filtered.slice(0, maxVideos);
+  }, [rawVideos, filterVideos, maxVideos]);
 
   return { videos, loading, error };
 };

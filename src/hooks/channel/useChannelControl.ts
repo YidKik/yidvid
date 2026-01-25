@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useChannelsGrid } from "./useChannelsGrid";
 import { useSessionManager } from "@/hooks/useSessionManager";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const useChannelControl = () => {
   const [hiddenChannels, setHiddenChannels] = useState<Set<string>>(new Set());
@@ -15,6 +16,7 @@ export const useChannelControl = () => {
   const [storedPin, setStoredPin] = useState("");
   const [loadingHiddenChannels, setLoadingHiddenChannels] = useState(false);
   const { session, isAuthenticated } = useSessionManager();
+  const queryClient = useQueryClient();
   
   // Use our enhanced channels grid hook
   const { 
@@ -39,12 +41,10 @@ export const useChannelControl = () => {
 
   const loadLockStatus = async () => {
     if (!session?.user?.id) {
-      console.log("Cannot load lock status: No user ID");
       return;
     }
     
     try {
-      console.log("Loading lock status for user:", session.user.id);
       const { data, error } = await supabase
         .from('parental_locks')
         .select('pin, is_locked')
@@ -58,7 +58,6 @@ export const useChannelControl = () => {
       }
 
       if (data) {
-        console.log("Lock status loaded:", data.is_locked);
         setIsLocked(data.is_locked);
         setStoredPin(data.pin);
       }
@@ -69,13 +68,11 @@ export const useChannelControl = () => {
 
   const loadHiddenChannels = async () => {
     if (!session?.user?.id) {
-      console.log("Cannot load hidden channels: No user ID");
       return;
     }
 
     setLoadingHiddenChannels(true);
     try {
-      console.log("Loading hidden channels for user:", session.user.id);
       const { data: hiddenChannelsData, error } = await supabase
         .from('hidden_channels')
         .select('channel_id')
@@ -87,7 +84,6 @@ export const useChannelControl = () => {
       }
 
       const channelIds = hiddenChannelsData?.map(hc => hc.channel_id) || [];
-      console.log(`Found ${channelIds.length} hidden channels`);
       setHiddenChannels(new Set(channelIds));
     } catch (err) {
       console.error('Unexpected error loading hidden channels:', err);
@@ -97,18 +93,9 @@ export const useChannelControl = () => {
   };
 
   useEffect(() => {
-    // Debug the session state
-    console.log("Session state in useChannelControl:", { 
-      userId: session?.user?.id, 
-      isAuthenticated,
-      email: session?.user?.email 
-    });
-    
     if (session?.user?.id) {
       loadHiddenChannels();
       loadLockStatus();
-    } else {
-      console.log("No user session detected for channel control");
     }
   }, [session?.user?.id, isAuthenticated]);
 
@@ -127,11 +114,8 @@ export const useChannelControl = () => {
     const isCurrentlyHidden = newHiddenChannels.has(channelId);
 
     try {
-      // Debug user information
-      console.log("Toggle channel for user:", session.user.id, "Channel:", channelId);
-      console.log("Action:", isCurrentlyHidden ? "unhiding" : "hiding");
-      
       if (isCurrentlyHidden) {
+        // Unhide the channel
         const { error } = await supabase
           .from('hidden_channels')
           .delete()
@@ -143,7 +127,9 @@ export const useChannelControl = () => {
           throw error;
         }
         newHiddenChannels.delete(channelId);
+        toast.success("Channel is now visible in your feed");
       } else {
+        // Hide the channel
         const { error } = await supabase
           .from('hidden_channels')
           .insert({
@@ -156,12 +142,17 @@ export const useChannelControl = () => {
           throw error;
         }
         newHiddenChannels.add(channelId);
+        toast.success("Channel hidden from your feed");
       }
 
       setHiddenChannels(newHiddenChannels);
-      toast.success(
-        `Channel ${isCurrentlyHidden ? "added to" : "removed from"} your allowed list`
-      );
+      
+      // Invalidate all related queries to refresh data across the app
+      queryClient.invalidateQueries({ queryKey: ["hidden-channels"] });
+      queryClient.invalidateQueries({ queryKey: ["videos"] });
+      queryClient.invalidateQueries({ queryKey: ["video-search"] });
+      queryClient.invalidateQueries({ queryKey: ["category-videos"] });
+      
     } catch (error) {
       console.error('Error toggling channel visibility:', error);
       toast.error("Failed to update channel visibility");
@@ -267,7 +258,7 @@ export const useChannelControl = () => {
     isLocked,
     storedPin,
     searchQuery,
-    setSearchQuery, // Now just updates local state - filtering is instant via useMemo
+    setSearchQuery,
     showLockDialog,
     setShowLockDialog,
     showSetPinDialog,

@@ -1,6 +1,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useHiddenChannels } from "./useHiddenChannels";
 
 export interface Channel {
   id: string;
@@ -21,6 +22,9 @@ export const useChannelsGrid = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [fetchError, setFetchError] = useState<Error | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  
+  // Get hidden channels filter - but only for filtering display, not the control panel
+  const { filterChannels, hiddenChannelIds } = useHiddenChannels();
 
   // Client-side filtering - instant, no refetch needed
   const filteredChannels = useMemo(() => {
@@ -32,6 +36,11 @@ export const useChannelsGrid = () => {
       channel.title.toLowerCase().includes(query)
     );
   }, [allChannels, searchQuery]);
+
+  // Channels filtered for public display (excluding hidden ones)
+  const visibleChannels = useMemo(() => {
+    return filterChannels(filteredChannels);
+  }, [filteredChannels, filterChannels]);
 
   const fetchChannelsDirectly = async (): Promise<Channel[]> => {
     try {
@@ -110,12 +119,12 @@ export const useChannelsGrid = () => {
 
   return {
     fetchChannelsDirectly,
-    manuallyFetchedChannels: filteredChannels,
-    allChannels,
+    manuallyFetchedChannels: visibleChannels, // For public display - filtered
+    allChannels, // For channel control panel - unfiltered
     isLoading,
     setIsLoading,
     fetchError,
     searchQuery,
-    setSearchQuery // Now just updates state, filtering is done via useMemo
+    setSearchQuery
   };
 };
