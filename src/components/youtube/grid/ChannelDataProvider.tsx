@@ -12,9 +12,10 @@ interface ChannelDataProviderProps {
   }) => React.ReactNode;
   onError?: (error: any) => void;
   searchQuery?: string;
+  selectedCategory?: string;
 }
 
-export const ChannelDataProvider = ({ children, onError, searchQuery = "" }: ChannelDataProviderProps) => {
+export const ChannelDataProvider = ({ children, onError, searchQuery = "", selectedCategory = "all" }: ChannelDataProviderProps) => {
   const { 
     fetchChannelsDirectly, 
     manuallyFetchedChannels, 
@@ -228,6 +229,14 @@ export const ChannelDataProvider = ({ children, onError, searchQuery = "" }: Cha
         : sampleChannels;
     }
     
+    // Filter channels by selected category if not "all"
+    if (selectedCategory && selectedCategory !== "all") {
+      finalChannels = finalChannels.filter(channel => 
+        channel.default_category === selectedCategory
+      );
+      console.log(`Filtered to ${finalChannels.length} channels for category: ${selectedCategory}`);
+    }
+    
     // Only update if the channels have actually changed
     setDisplayChannels(prev => {
       if (prev.length !== finalChannels.length) {
@@ -241,7 +250,7 @@ export const ChannelDataProvider = ({ children, onError, searchQuery = "" }: Cha
     });
     
     setIsLoading(false);
-  }, [channels, manuallyFetchedChannels, hasRealChannels, createSampleChannels, searchQuery, setIsLoading]);
+  }, [channels, manuallyFetchedChannels, hasRealChannels, createSampleChannels, searchQuery, setIsLoading, selectedCategory]);
 
   return (
     <>

@@ -17,6 +17,7 @@ interface DesktopVideoViewProps {
   forceRefetch?: () => Promise<any>;
   lastSuccessfulFetch?: Date | null;
   fetchAttempts?: number;
+  selectedCategory?: string;
 }
 
 export const DesktopVideoView = ({
@@ -24,7 +25,8 @@ export const DesktopVideoView = ({
   isLoading,
   isRefreshing,
   refetch,
-  forceRefetch
+  forceRefetch,
+  selectedCategory = "all"
 }: DesktopVideoViewProps) => {
   const { isTablet } = useIsMobile();
   
@@ -97,9 +99,12 @@ export const DesktopVideoView = ({
       </div>
 
       <div className="mt-6">
-        <ChannelsGrid onError={() => {
-          console.error('Channel grid error');
-        }} />
+        <ChannelsGrid 
+          selectedCategory={selectedCategory}
+          onError={() => {
+            console.error('Channel grid error');
+          }} 
+        />
       </div>
 
       {!hasRealVideos && !isLoading && !isRefreshing && !isMainPage && (
