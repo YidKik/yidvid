@@ -6,33 +6,23 @@ import {
   PlayCircle, 
   Settings, 
   Info, 
-  LogIn, 
-  LogOut, 
-  Bell, 
   Heart, 
   Clock, 
   History, 
-  ListVideo,
   TrendingUp,
   Sparkles,
   Users,
-  ChevronDown,
-  ChevronUp
+  ChevronLeft,
+  ChevronRight,
+  type LucideIcon
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useSessionManager } from "@/hooks/useSessionManager";
-import yidvidLogoIcon from "@/assets/yidvid-logo-icon.png";
-
-interface SidebarProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onAuthOpen: () => void;
-}
+import { cn } from "@/lib/utils";
 
 interface NavItem {
   name: string;
   path: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: LucideIcon;
 }
 
 interface NavSection {
@@ -57,10 +47,10 @@ const navSections: NavSection[] = [
     ]
   },
   {
-    title: "Your Library",
+    title: "Library",
     requiresAuth: true,
     items: [
-      { name: "Watch History", path: "/dashboard", icon: History },
+      { name: "History", path: "/dashboard", icon: History },
       { name: "Favorites", path: "/dashboard", icon: Heart },
       { name: "Watch Later", path: "/dashboard", icon: Clock },
     ]
@@ -74,15 +64,17 @@ const navSections: NavSection[] = [
   }
 ];
 
-export const Sidebar = ({ isOpen, onClose, onAuthOpen }: SidebarProps) => {
-  const location = useLocation();
-  const { isAuthenticated, handleSignOut } = useSessionManager();
-  const [expandedSections, setExpandedSections] = useState<string[]>(["Your Library"]);
+interface SidebarProps {
+  isAuthenticated?: boolean;
+}
 
-  // Close sidebar on route change
-  useEffect(() => {
-    onClose();
-  }, [location.pathname, location.search]);
+export const Sidebar = ({ isAuthenticated = false }: SidebarProps) => {
+  const location = useLocation();
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  // Don't show on homepage
+  const isHomePage = location.pathname === "/";
+  if (isHomePage) return null;
 
   const isActive = (path: string) => {
     const [basePath, query] = path.split("?");
@@ -92,158 +84,104 @@ export const Sidebar = ({ isOpen, onClose, onAuthOpen }: SidebarProps) => {
     return location.pathname === basePath;
   };
 
-  const toggleSection = (title: string) => {
-    setExpandedSections(prev => 
-      prev.includes(title) 
-        ? prev.filter(s => s !== title)
-        : [...prev, title]
-    );
-  };
-
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <>
-          {/* Backdrop */}
+    <>
+      {/* Backdrop when expanded */}
+      <AnimatePresence>
+        {isExpanded && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-40 bg-black/30 backdrop-blur-[2px]"
-            onClick={onClose}
+            className="fixed inset-0 z-30 bg-black/20"
+            onClick={() => setIsExpanded(false)}
           />
-          
-          {/* Sidebar Panel */}
-          <motion.aside
-            initial={{ x: -280 }}
-            animate={{ x: 0 }}
-            exit={{ x: -280 }}
-            transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="fixed top-0 left-0 bottom-0 z-50 w-[260px] bg-white shadow-2xl flex flex-col"
-            style={{ 
-              boxShadow: '4px 0 24px rgba(0, 0, 0, 0.12)',
-              fontFamily: "'Quicksand', sans-serif"
-            }}
+        )}
+      </AnimatePresence>
+
+      {/* Sidebar */}
+      <motion.aside
+        initial={false}
+        animate={{ width: isExpanded ? 220 : 64 }}
+        transition={{ type: "spring", damping: 25, stiffness: 300 }}
+        className="fixed top-14 left-0 bottom-0 z-40 bg-white border-r border-gray-100 flex flex-col overflow-hidden"
+        style={{ 
+          boxShadow: isExpanded ? '2px 0 12px rgba(0, 0, 0, 0.08)' : 'none',
+          fontFamily: "'Quicksand', sans-serif"
+        }}
+      >
+        {/* Toggle Button */}
+        <div className={cn("p-2 border-b border-gray-100", isExpanded ? "px-3" : "px-2")}>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setIsExpanded(!isExpanded)}
+            className={cn(
+              "rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors",
+              isExpanded ? "w-full justify-start gap-2" : "w-10 h-10 p-0"
+            )}
           >
-            {/* Header with Logo */}
-            <div className="h-14 px-4 flex items-center gap-3 border-b border-gray-100">
-              <Link to="/" className="flex items-center gap-2" onClick={onClose}>
-                <img 
-                  src={yidvidLogoIcon} 
-                  alt="YidVid" 
-                  className="w-8 h-8 object-contain"
-                />
-                <span 
-                  className="text-lg font-bold"
-                  style={{ 
-                    fontFamily: "'Fredoka One', 'Nunito', sans-serif",
-                    color: '#333'
-                  }}
-                >
-                  YidVid
-                </span>
-              </Link>
-            </div>
+            {isExpanded ? (
+              <>
+                <ChevronLeft className="w-4 h-4" />
+                <span className="text-sm font-medium">Collapse</span>
+              </>
+            ) : (
+              <ChevronRight className="w-4 h-4" />
+            )}
+          </Button>
+        </div>
 
-            {/* Scrollable Navigation */}
-            <nav className="flex-1 overflow-y-auto py-2 px-2">
-              {navSections.map((section, sectionIdx) => {
-                // Skip auth-required sections if not authenticated
-                if (section.requiresAuth && !isAuthenticated) return null;
-                
-                const isSectionExpanded = !section.title || expandedSections.includes(section.title);
-                
-                return (
-                  <div key={sectionIdx} className={sectionIdx > 0 ? "mt-2 pt-2 border-t border-gray-100" : ""}>
-                    {/* Section Header */}
-                    {section.title && (
-                      <button
-                        onClick={() => toggleSection(section.title!)}
-                        className="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider hover:bg-gray-50 rounded-lg transition-colors"
-                      >
-                        {section.title}
-                        {isSectionExpanded ? (
-                          <ChevronUp className="w-3.5 h-3.5" />
-                        ) : (
-                          <ChevronDown className="w-3.5 h-3.5" />
-                        )}
-                      </button>
-                    )}
-                    
-                    {/* Section Items */}
-                    <AnimatePresence>
-                      {isSectionExpanded && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: "auto", opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.2 }}
-                          className="overflow-hidden"
-                        >
-                          {section.items.map((item) => {
-                            const Icon = item.icon;
-                            const active = isActive(item.path);
-                            
-                            return (
-                              <Link
-                                key={item.path + item.name}
-                                to={item.path}
-                                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
-                                  active
-                                    ? 'text-white'
-                                    : 'text-gray-700 hover:bg-gray-100'
-                                }`}
-                                style={{
-                                  backgroundColor: active ? 'hsl(0, 70%, 55%)' : undefined,
-                                }}
-                              >
-                                <Icon className={`w-5 h-5 ${active ? 'text-white' : 'text-gray-500'}`} />
-                                <span>{item.name}</span>
-                              </Link>
-                            );
-                          })}
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
+        {/* Scrollable Navigation */}
+        <nav className="flex-1 overflow-y-auto py-2 px-2">
+          {navSections.map((section, sectionIdx) => {
+            // Skip auth-required sections if not authenticated
+            if (section.requiresAuth && !isAuthenticated) return null;
+            
+            return (
+              <div key={sectionIdx} className={sectionIdx > 0 ? "mt-3 pt-3 border-t border-gray-100" : ""}>
+                {/* Section Header - Only show when expanded */}
+                {section.title && isExpanded && (
+                  <div className="px-2 py-1.5 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
+                    {section.title}
                   </div>
-                );
-              })}
-            </nav>
-
-            {/* Footer - Auth */}
-            <div className="p-3 border-t border-gray-100">
-              {isAuthenticated ? (
-                <Button
-                  variant="ghost"
-                  onClick={() => {
-                    handleSignOut();
-                    onClose();
-                  }}
-                  className="w-full rounded-xl gap-3 justify-start py-5 text-gray-600 hover:bg-gray-100"
-                >
-                  <LogOut className="w-5 h-5" />
-                  <span className="font-medium">Sign Out</span>
-                </Button>
-              ) : (
-                <Button
-                  onClick={() => {
-                    onAuthOpen();
-                    onClose();
-                  }}
-                  className="w-full rounded-xl gap-3 justify-center py-5 font-semibold text-white hover:opacity-90 transition-all"
-                  style={{ 
-                    backgroundColor: 'hsl(0, 70%, 55%)',
-                  }}
-                >
-                  <LogIn className="w-5 h-5" />
-                  <span>Sign In</span>
-                </Button>
-              )}
-            </div>
-          </motion.aside>
-        </>
-      )}
-    </AnimatePresence>
+                )}
+                
+                {/* Section Items */}
+                <div className="space-y-0.5">
+                  {section.items.map((item) => {
+                    const Icon = item.icon;
+                    const active = isActive(item.path);
+                    
+                    return (
+                      <Link
+                        key={item.path + item.name}
+                        to={item.path}
+                        onClick={() => setIsExpanded(false)}
+                        title={!isExpanded ? item.name : undefined}
+                        className={cn(
+                          "flex items-center rounded-xl text-sm font-medium transition-all duration-200",
+                          isExpanded ? "gap-3 px-3 py-2.5" : "justify-center p-2.5",
+                          active
+                            ? 'text-white'
+                            : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                        )}
+                        style={{
+                          backgroundColor: active ? 'hsl(0, 70%, 55%)' : undefined,
+                        }}
+                      >
+                        <Icon className={cn("w-5 h-5 shrink-0", active ? 'text-white' : 'text-gray-500')} />
+                        {isExpanded && <span className="truncate">{item.name}</span>}
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
+        </nav>
+      </motion.aside>
+    </>
   );
 };
