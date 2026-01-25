@@ -9,6 +9,7 @@ import {
   LoadingSize,
   LoadingColor
 } from "@/hooks/useLoadingAnimations";
+import yidvidLogoIcon from "@/assets/yidvid-logo-icon.png";
 
 interface LoadingAnimationProps {
   size?: LoadingSize;
@@ -68,11 +69,10 @@ export const LoadingAnimation = ({
         )}>
           {size !== "small" && (
             <img 
-              src="/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png" 
+              src={yidvidLogoIcon} 
               alt="YidVid Logo"
               className={cn("object-contain", selectedSize.logoSize)}
               onError={(e) => {
-                // If logo fails to load, don't show anything rather than a fallback
                 e.currentTarget.style.display = 'none';
               }}
             />

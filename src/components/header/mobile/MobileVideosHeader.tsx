@@ -9,6 +9,7 @@ import { NotificationList } from "@/components/notifications/NotificationList";
 import { NotificationHeader } from "@/components/notifications/NotificationHeader";
 import { useNotifications } from "@/components/notifications/useNotifications";
 import { useUnifiedAuth } from "@/hooks/useUnifiedAuth";
+import yidvidLogoIcon from "@/assets/yidvid-logo-icon.png";
 
 interface MobileVideosHeaderProps {
   session: any;
@@ -59,12 +60,9 @@ export const MobileVideosHeader = ({
         {!isSearchExpanded ? (
           <Link to="/" className="flex items-center">
             <img 
-              src="/yidkik-logo.png" 
+              src={yidvidLogoIcon} 
               alt="YidVid Logo" 
               className="h-8 w-auto"
-              onError={(e) => {
-                e.currentTarget.src = "/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png";
-              }} 
             />
           </Link>
         ) : (
