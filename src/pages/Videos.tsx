@@ -99,6 +99,7 @@ const MainContent = () => {
               forceRefetch={forceRefetch}
               lastSuccessfulFetch={lastSuccessfulFetch}
               fetchAttempts={fetchAttempts}
+              selectedCategory={selectedCategory}
             />
             
             {/* Load More Button */}

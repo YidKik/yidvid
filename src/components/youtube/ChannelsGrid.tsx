@@ -9,17 +9,23 @@ import { Button } from "../ui/button";
 
 interface ChannelsGridProps {
   onError?: (error: any) => void;
+  selectedCategory?: string;
 }
 
-export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
+export const ChannelsGrid = ({ onError, selectedCategory = "all" }: ChannelsGridProps) => {
   const location = useLocation();
   const isMainPage = location.pathname === "/";
   const [isRequestChannelOpen, setIsRequestChannelOpen] = useState(false);
 
+  // Determine section title based on category
+  const sectionTitle = selectedCategory === "all" 
+    ? "View All Channels" 
+    : `${selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)} Channels`;
+
   return (
     <div className="w-full max-w-[1600px] mx-auto px-3 md:px-4 animate-in fade-in duration-300">
       <div className="flex items-center justify-between mb-3 md:mb-6">
-        <h2 className="text-base md:text-2xl font-bold text-foreground">View All Channels</h2>
+        <h2 className="text-base md:text-2xl font-bold text-foreground">{sectionTitle}</h2>
         <Button 
           variant="outline" 
           onClick={() => setIsRequestChannelOpen(true)}
@@ -33,7 +39,7 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
         />
       </div>
       
-      <ChannelDataProvider onError={onError}>
+      <ChannelDataProvider onError={onError} selectedCategory={selectedCategory}>
         {({ displayChannels, isLoading }) => {
           // Show skeleton only when explicitly loading and not on main page
           const showSkeleton = isLoading && !isMainPage;
@@ -45,7 +51,7 @@ export const ChannelsGrid = ({ onError }: ChannelsGridProps) => {
           return <FilteredChannelsGrid 
             channels={displayChannels} 
             isMainPage={isMainPage}
-            isLoading={isLoading}  // Pass loading state to FilteredChannelsGrid
+            isLoading={isLoading}
           />;
         }}
       </ChannelDataProvider>

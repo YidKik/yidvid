@@ -13,6 +13,7 @@ interface VideoContentProps {
   forceRefetch?: () => Promise<any>;
   lastSuccessfulFetch?: Date | null;
   fetchAttempts?: number;
+  selectedCategory?: string;
 }
 
 export const VideoContent = ({ 
@@ -21,7 +22,8 @@ export const VideoContent = ({
   refetch,
   forceRefetch,
   lastSuccessfulFetch,
-  fetchAttempts
+  fetchAttempts,
+  selectedCategory = "all"
 }: VideoContentProps) => {
   const { session, isAuthenticated } = useSessionManager();
   
@@ -61,6 +63,7 @@ export const VideoContent = ({
         fetchAttempts={fetchAttempts}
         handleRefetch={handleRefetch}
         handleForceRefetch={handleForceRefetch}
+        selectedCategory={selectedCategory}
       />
     </div>
   );
