@@ -1,12 +1,16 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
-import { Search, LogIn, X, User } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Search, LogIn, X, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { useSessionManager } from "@/hooks/useSessionManager";
 import { useIsMobile } from "@/hooks/use-mobile";
 import Auth from "@/pages/Auth";
-import yidvidLogoIcon from "@/assets/yidvid-logo-icon.png";
+import { useVideoSearch } from "@/hooks/useVideoSearch";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { NotificationsMenu } from "@/components/header/NotificationsMenu";
 
 export const GlobalHeader = () => {
   const location = useLocation();
@@ -14,13 +18,22 @@ export const GlobalHeader = () => {
   const { isMobile } = useIsMobile();
   const { isAuthenticated, session, profile } = useSessionManager();
   const [isAuthOpen, setIsAuthOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const lastScrollY = useRef(0);
-  const searchInputRef = useRef<HTMLInputElement>(null);
+  const searchContainerRef = useRef<HTMLDivElement>(null);
   
   const isHomePage = location.pathname === "/";
+
+  // Use the video search hook for live search
+  const {
+    searchQuery,
+    setSearchQuery,
+    isSearchOpen,
+    setIsSearchOpen,
+    searchResults,
+    isLoading: isSearching,
+    hasResults
+  } = useVideoSearch();
 
   // Handle scroll to show/hide header
   useEffect(() => {
@@ -28,7 +41,6 @@ export const GlobalHeader = () => {
       const currentScrollY = window.scrollY;
       const scrollingDown = currentScrollY > lastScrollY.current;
       
-      // Only hide after scrolling down past 100px
       if (scrollingDown && currentScrollY > 100) {
         setIsVisible(false);
       } else if (!scrollingDown) {
@@ -42,17 +54,40 @@ export const GlobalHeader = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Close search dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchContainerRef.current && !searchContainerRef.current.contains(event.target as Node)) {
+        setIsSearchOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [setIsSearchOpen]);
+
   // Handle search submit
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
       navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
       setSearchQuery("");
-      searchInputRef.current?.blur();
+      setIsSearchOpen(false);
     }
   };
 
-  // Get user initial for profile icon
+  const handleVideoClick = (videoId: string) => {
+    navigate(`/video/${videoId}`);
+    setSearchQuery("");
+    setIsSearchOpen(false);
+  };
+
+  const handleChannelClick = (channelId: string) => {
+    navigate(`/channel/${channelId}`);
+    setSearchQuery("");
+    setIsSearchOpen(false);
+  };
+
   const getUserInitial = () => {
     if (profile?.display_name) {
       return profile.display_name.charAt(0).toUpperCase();
@@ -66,6 +101,15 @@ export const GlobalHeader = () => {
     return "U";
   };
 
+  const handleMarkNotificationsAsRead = async () => {
+    // This will be handled by the NotificationsMenu component
+  };
+
+  const shouldShowDropdown = isSearchOpen && searchQuery.trim().length > 0;
+
+  // Calculate left offset based on sidebar state (not on homepage)
+  const headerLeftOffset = isHomePage ? 0 : 64;
+
   return (
     <>
       <motion.header
@@ -78,81 +122,175 @@ export const GlobalHeader = () => {
           duration: 0.5, 
           ease: [0.25, 0.1, 0.25, 1]
         }}
-        className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-white/95"
+        className="fixed top-0 right-0 z-50 backdrop-blur-md bg-white/95"
         style={{ 
-          boxShadow: '0 2px 12px rgba(0, 0, 0, 0.04)'
+          boxShadow: '0 2px 12px rgba(0, 0, 0, 0.04)',
+          left: headerLeftOffset
         }}
       >
         <div className="w-full px-3 md:px-6">
           <div className="flex items-center justify-between h-14 gap-4">
-            {/* Left Side - Logo Only */}
-            <Link to="/" className="flex items-center gap-2 shrink-0">
-              <img 
-                src={yidvidLogoIcon} 
-                alt="YidVid" 
-                className="w-9 h-9 object-contain"
-              />
-              {!isMobile && (
-                <span 
-                  className="text-lg font-bold"
-                  style={{ 
-                    fontFamily: "'Fredoka One', 'Nunito', sans-serif",
-                    color: '#333'
-                  }}
-                >
-                  YidVid
-                </span>
-              )}
-            </Link>
+            {/* Left Side - Empty for sidebar logo, or logo on homepage */}
+            <div className="w-10 shrink-0">
+              {/* Spacer for alignment */}
+            </div>
 
-            {/* Center - Search Bar */}
-            <form 
-              onSubmit={handleSearchSubmit}
-              className="flex-1 max-w-xl"
+            {/* Center - Search Bar with YouTube-like design */}
+            <div 
+              ref={searchContainerRef}
+              className="flex-1 max-w-xl relative"
             >
-              <div 
-                className={`flex items-center rounded-full border transition-all duration-200 ${
-                  isSearchFocused 
-                    ? 'border-gray-400 shadow-sm' 
-                    : 'border-gray-200 hover:border-gray-300'
-                }`}
-                style={{ backgroundColor: '#fafafa' }}
-              >
-                <div className="flex items-center flex-1 px-4">
-                  <Search className="w-4 h-4 text-gray-400 shrink-0" />
-                  <input
-                    ref={searchInputRef}
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    onFocus={() => setIsSearchFocused(true)}
-                    onBlur={() => setIsSearchFocused(false)}
-                    placeholder={isMobile ? "Search..." : "Search videos, channels..."}
-                    className="flex-1 bg-transparent border-none outline-none px-3 py-2 text-sm text-gray-700 placeholder:text-gray-400"
-                    style={{ fontFamily: "'Quicksand', sans-serif" }}
-                  />
-                  {searchQuery && (
-                    <button
-                      type="button"
-                      onClick={() => setSearchQuery("")}
-                      className="p-1 rounded-full hover:bg-gray-200 transition-colors"
-                    >
-                      <X className="w-4 h-4 text-gray-400" />
-                    </button>
-                  )}
-                </div>
-                <button
-                  type="submit"
-                  className="h-9 px-4 rounded-r-full border-l border-gray-200 hover:bg-gray-100 transition-colors"
-                  style={{ backgroundColor: '#f5f5f5' }}
+              <form onSubmit={handleSearchSubmit}>
+                <div 
+                  className={`flex items-center rounded-full border-2 transition-all duration-200 ${
+                    isSearchOpen 
+                      ? 'border-gray-400 shadow-md' 
+                      : 'border-gray-300 hover:border-gray-400'
+                  }`}
+                  style={{ backgroundColor: '#f8f8f8' }}
                 >
-                  <Search className="w-4 h-4 text-gray-600" />
-                </button>
-              </div>
-            </form>
+                  <div className="flex items-center flex-1 px-4">
+                    <input
+                      type="text"
+                      value={searchQuery}
+                      onChange={(e) => {
+                        setSearchQuery(e.target.value);
+                        setIsSearchOpen(true);
+                      }}
+                      onFocus={() => setIsSearchOpen(true)}
+                      placeholder={isMobile ? "Search..." : "Search videos, channels..."}
+                      className="flex-1 bg-transparent border-none outline-none py-2.5 text-sm text-gray-800 placeholder:text-gray-500 font-medium"
+                      style={{ fontFamily: "'Quicksand', sans-serif" }}
+                    />
+                    {searchQuery && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSearchQuery("");
+                          setIsSearchOpen(false);
+                        }}
+                        className="p-1.5 rounded-full hover:bg-gray-200 transition-colors"
+                      >
+                        <X className="w-4 h-4 text-gray-500" />
+                      </button>
+                    )}
+                  </div>
+                  <button
+                    type="submit"
+                    className="h-10 px-5 rounded-r-full border-l-2 border-gray-300 hover:bg-gray-200 transition-colors flex items-center justify-center"
+                    style={{ backgroundColor: '#f0f0f0' }}
+                  >
+                    <Search className="w-5 h-5 text-gray-600" />
+                  </button>
+                </div>
+              </form>
 
-            {/* Right Side - Sign In / Profile */}
-            <div className="flex items-center shrink-0">
+              {/* Search Results Dropdown */}
+              <AnimatePresence>
+                {shouldShowDropdown && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.15 }}
+                    className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden z-[100]"
+                    style={{ maxHeight: '70vh' }}
+                  >
+                    {isSearching && (
+                      <div className="flex items-center justify-center py-4">
+                        <div className="w-5 h-5 border-2 border-red-500 border-t-transparent rounded-full animate-spin"></div>
+                        <span className="ml-2 text-sm text-gray-500">Searching...</span>
+                      </div>
+                    )}
+
+                    {!isSearching && hasResults && (
+                      <div className="max-h-80 overflow-y-auto">
+                        {/* Videos */}
+                        {searchResults.videos && searchResults.videos.length > 0 && (
+                          <div>
+                            <div className="px-4 py-2 bg-gray-50 text-xs font-semibold text-gray-500 uppercase">
+                              Videos
+                            </div>
+                            {searchResults.videos.slice(0, 5).map((video: any) => (
+                              <button
+                                key={video.id}
+                                onClick={() => handleVideoClick(video.video_id || video.id)}
+                                className="flex items-center gap-3 w-full px-4 py-2.5 hover:bg-gray-50 transition-colors text-left"
+                              >
+                                <img
+                                  src={video.thumbnail}
+                                  alt={video.title}
+                                  className="w-16 h-10 object-cover rounded"
+                                />
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-sm font-medium text-gray-800 truncate">
+                                    {video.title}
+                                  </p>
+                                  <p className="text-xs text-gray-500 truncate">
+                                    {video.channel_name}
+                                  </p>
+                                </div>
+                              </button>
+                            ))}
+                          </div>
+                        )}
+
+                        {/* Channels */}
+                        {searchResults.channels && searchResults.channels.length > 0 && (
+                          <div>
+                            <div className="px-4 py-2 bg-gray-50 text-xs font-semibold text-gray-500 uppercase border-t">
+                              Channels
+                            </div>
+                            {searchResults.channels.slice(0, 3).map((channel: any) => (
+                              <button
+                                key={channel.id}
+                                onClick={() => handleChannelClick(channel.channel_id)}
+                                className="flex items-center gap-3 w-full px-4 py-2.5 hover:bg-gray-50 transition-colors text-left"
+                              >
+                                <img
+                                  src={channel.thumbnail_url || '/placeholder.svg'}
+                                  alt={channel.title}
+                                  className="w-10 h-10 object-cover rounded-full"
+                                />
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-sm font-medium text-gray-800 truncate">
+                                    {channel.title}
+                                  </p>
+                                  <p className="text-xs text-gray-500">Channel</p>
+                                </div>
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {!isSearching && searchQuery.trim() && !hasResults && (
+                      <div className="py-6 text-center">
+                        <Search className="w-8 h-8 mx-auto mb-2 text-gray-300" />
+                        <p className="text-sm text-gray-500">No results found</p>
+                      </div>
+                    )}
+
+                    {/* Press Enter hint */}
+                    {searchQuery.trim() && (
+                      <div className="px-4 py-2 bg-gray-50 text-xs text-gray-400 text-center border-t">
+                        Press Enter to see all results
+                      </div>
+                    )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            {/* Right Side - Notifications + Sign In / Profile */}
+            <div className="flex items-center gap-2 shrink-0">
+              {/* Notification Bell */}
+              {isAuthenticated && (
+                <NotificationsMenu onMarkAsRead={handleMarkNotificationsAsRead} />
+              )}
+
+              {/* Profile / Sign In */}
               {isAuthenticated ? (
                 <Link
                   to="/settings"
