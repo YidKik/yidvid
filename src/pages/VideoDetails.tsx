@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { useParams, Link, useLocation } from "react-router-dom";
 import { VideoPlayer } from "@/components/video/VideoPlayer";
-import { BackButton } from "@/components/navigation/BackButton";
 import { useVideoQuery } from "@/components/video/details/VideoQuery";
 import { VideoComments } from "@/components/video/details/VideoComments";
 import { useRelatedVideosQuery } from "@/components/video/details/RelatedVideosQuery";
@@ -60,7 +59,6 @@ const VideoDetails = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/10 pt-14 pl-[200px] transition-all duration-300">
         <div className="p-4">
-          <BackButton />
           <div className="p-8 text-center bg-card/80 backdrop-blur-sm rounded-3xl shadow-lg border border-border/50 mt-6">
             <div className="mx-auto mb-6 w-full max-w-md aspect-video flex items-center justify-center bg-muted/30 rounded-2xl">
               <VideoPlaceholder size="large" />
@@ -102,7 +100,6 @@ const VideoDetails = () => {
       
       <div className="min-h-screen bg-gradient-to-br from-yellow-50/40 via-background to-red-50/20 pt-14 pl-[200px] transition-all duration-300">
         <div className="px-6 pt-6 pb-12">
-          <BackButton />
           
           {/* Desktop/Tablet Layout */}
           {!isMobile && (

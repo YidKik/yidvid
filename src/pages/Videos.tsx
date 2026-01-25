@@ -1,15 +1,12 @@
 
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { ContentToggle } from "@/components/content/ContentToggle";
 import { VideoContent } from "@/components/content/VideoContent";
 import { useVideos } from "@/hooks/video/useVideos";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useSessionManager } from "@/hooks/useSessionManager";
 import { Helmet } from "react-helmet";
 import { useSearchParams } from "react-router-dom";
-import { CategoryToggle } from "@/components/header/CategoryToggle";
-import { NotificationBell } from "@/components/header/NotificationBell";
 import { usePageLoader } from "@/contexts/LoadingContext";
 
 const MainContent = () => {
@@ -17,7 +14,7 @@ const MainContent = () => {
   const categoryFromUrl = searchParams.get('category');
   const [selectedCategory, setSelectedCategory] = useState(categoryFromUrl || "all");
   const [currentPage, setCurrentPage] = useState(1);
-  const [visibleVideos, setVisibleVideos] = useState(12); // Start with 12 videos (3 rows of 4)
+  const [visibleVideos, setVisibleVideos] = useState(12);
   
   const { 
     data: videos, 
@@ -34,30 +31,24 @@ const MainContent = () => {
   const { session } = useSessionManager();
   const [hasScrolled, setHasScrolled] = useState(false);
 
-  // Register loading state with the global loading bar
   usePageLoader('videos', isLoading);
 
-  // Update selected category when URL parameter changes
   useEffect(() => {
     if (categoryFromUrl && categoryFromUrl !== selectedCategory) {
       setSelectedCategory(categoryFromUrl);
     }
   }, [categoryFromUrl]);
 
-  // Filter and sort videos based on selected category
   const filteredVideos = videos?.filter(video => {
     if (selectedCategory === "all") return true;
     return video.category === selectedCategory;
   }).sort((a, b) => {
-    // Sort by uploaded date (latest first)
     return new Date(b.uploaded_at).getTime() - new Date(a.uploaded_at).getTime();
   }) || [];
 
-  // Pass all filtered videos to let internal pagination handle display
   const displayVideos = filteredVideos;
-  const hasMoreVideos = false; // Remove "Load More" since we'll use pagination arrows
+  const hasMoreVideos = false;
 
-  // Reset pagination when category changes
   useEffect(() => {
     setCurrentPage(1);
     setVisibleVideos(12);
@@ -71,8 +62,6 @@ const MainContent = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Don't render the page content until videos are loaded
-  // This ensures the full page appears at once instead of loading in stages
   const hasVideos = videos && Array.isArray(videos) && videos.length > 0;
   if (isLoading && !hasVideos) {
     return null;
@@ -86,19 +75,13 @@ const MainContent = () => {
         transition={{ delay: 0.1, duration: 0.5 }}
         className="mt-4 px-4 md:px-6 max-w-[1400px] w-full"
       >
-        {/* Category Toggle and Notification Bell */}
-        <div className="mb-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <CategoryToggle 
-              selectedCategory={selectedCategory}
-              onCategoryChange={setSelectedCategory}
-            />
-            <span className="text-sm text-gray-500 font-medium" style={{ fontFamily: "'Quicksand', sans-serif" }}>
-              {selectedCategory === 'all' ? 'All Videos' : selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)}
-            </span>
-          </div>
-          <NotificationBell />
+        {/* Category indicator - categories are now in sidebar */}
+        <div className="mb-4 flex items-center">
+          <span className="text-sm text-gray-500 font-medium" style={{ fontFamily: "'Quicksand', sans-serif" }}>
+            {selectedCategory === 'all' ? 'All Videos' : selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)}
+          </span>
         </div>
+        
         <div className="space-y-2 md:space-y-4">
           <motion.div
             key={selectedCategory}
@@ -118,7 +101,6 @@ const MainContent = () => {
               selectedCategory={selectedCategory}
             />
             
-            {/* Load More Button */}
             {hasMoreVideos && !isLoading && (
               <motion.div 
                 className="flex justify-center mt-8"
@@ -185,20 +167,17 @@ const Videos = () => {
         <meta name="robots" content="index, follow, max-image-preview:large" />
         <link rel="canonical" href={`${window.location.origin}/videos`} />
         
-        {/* Open Graph */}
         <meta property="og:title" content="Kosher videos | YidVid kosher content" />
         <meta property="og:description" content="YidVid is your premier Jewish kosher Yiddish platform featuring thousands of videos, content from trusted sources." />
         <meta property="og:image" content="/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content={`${window.location.origin}/videos`} />
         
-        {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Kosher videos | YidVid kosher content" />
         <meta name="twitter:description" content="YidVid is your premier Jewish kosher Yiddish platform featuring thousands of videos, content from trusted sources." />
         <meta name="twitter:image" content="/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png" />
         
-        {/* Structured Data */}
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",

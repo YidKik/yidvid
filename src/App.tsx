@@ -43,7 +43,7 @@ import { useSessionManager } from './hooks/useSessionManager';
 
 function AppContent() {
   const location = useLocation();
-  const { isAuthenticated } = useSessionManager();
+  const { isAuthenticated, session } = useSessionManager();
   
   // Initialize keyboard shortcuts
   useKeyboardShortcuts();
@@ -67,7 +67,7 @@ function AppContent() {
     <>
       <TopLoadingBar />
       <GlobalHeader />
-      <Sidebar isAuthenticated={isAuthenticated} />
+      <Sidebar isAuthenticated={isAuthenticated} userId={session?.user?.id} />
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/videos" element={<Videos />} />
