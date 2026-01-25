@@ -1,5 +1,5 @@
 
-import { useMemo, useState, useCallback } from "react";
+import { useMemo, useCallback, useRef, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useHiddenChannels } from "@/hooks/channel/useHiddenChannels";
@@ -33,16 +33,18 @@ const fetchVideosFromDB = async (): Promise<VideoData[]> => {
   return formatVideoData(data);
 };
 
-export const useVideos = (category?: string) => {
-  // All hooks must be called unconditionally and in the same order
-  const [fetchAttempts, setFetchAttempts] = useState(0);
-  const [lastSuccessfulFetch, setLastSuccessfulFetch] = useState<Date | null>(null);
-  const [isRefreshing, setIsRefreshing] = useState(false);
+export const useVideos = () => {
+  // Use refs to track state without causing re-renders or hook issues
+  const fetchAttemptsRef = useRef(0);
+  const lastSuccessfulFetchRef = useRef<Date | null>(null);
+  const isRefreshingRef = useRef(false);
   
+  // Get hidden channels filter - this hook is stable
   const { filterVideos, hiddenChannelIds } = useHiddenChannels();
 
+  // Main query - single useQuery call
   const query = useQuery({
-    queryKey: ["videos", category],
+    queryKey: ["videos"],
     queryFn: fetchVideosFromDB,
     refetchInterval: 5 * 60 * 1000,
     refetchIntervalInBackground: false,
@@ -52,15 +54,15 @@ export const useVideos = (category?: string) => {
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
   });
 
-  // Track successful fetches
-  useMemo(() => {
+  // Track successful fetches using useEffect (proper side effect handling)
+  useEffect(() => {
     if (query.data && query.data.length > 0 && !query.isFetching) {
-      setLastSuccessfulFetch(new Date());
-      setFetchAttempts(0);
+      lastSuccessfulFetchRef.current = new Date();
+      fetchAttemptsRef.current = 0;
     }
   }, [query.data, query.isFetching]);
 
-  // Filter out videos from hidden channels - stable memoization
+  // Filter out videos from hidden channels - pure computation
   const filteredData = useMemo(() => {
     if (!query.data || !Array.isArray(query.data)) return [];
     
@@ -75,19 +77,18 @@ export const useVideos = (category?: string) => {
 
   // Stable refetch handler
   const handleRefetch = useCallback(async () => {
+    isRefreshingRef.current = true;
     try {
-      setIsRefreshing(true);
       await query.refetch();
     } finally {
-      setIsRefreshing(false);
+      isRefreshingRef.current = false;
     }
-  }, [query.refetch]);
+  }, [query]);
 
   // Stable force refetch handler
   const handleForceRefetch = useCallback(async () => {
+    isRefreshingRef.current = true;
     try {
-      setIsRefreshing(true);
-      
       // Rate limiting
       const lastRefetch = localStorage.getItem('lastForceRefetch');
       const now = Date.now();
@@ -101,7 +102,7 @@ export const useVideos = (category?: string) => {
       return result.data || [];
     } catch (err: any) {
       console.error("Error in force refetch:", err);
-      setFetchAttempts(prev => prev + 1);
+      fetchAttemptsRef.current += 1;
       
       if (err.message && err.message !== "No videos found") {
         toast.error("Failed to refresh content", {
@@ -111,17 +112,17 @@ export const useVideos = (category?: string) => {
       }
       return [];
     } finally {
-      setIsRefreshing(false);
+      isRefreshingRef.current = false;
     }
-  }, [query.refetch]);
+  }, [query]);
 
   return {
     ...query,
     data: filteredData,
     refetch: handleRefetch,
     forceRefetch: handleForceRefetch,
-    fetchAttempts,
-    lastSuccessfulFetch,
-    isRefreshing
+    fetchAttempts: fetchAttemptsRef.current,
+    lastSuccessfulFetch: lastSuccessfulFetchRef.current,
+    isRefreshing: query.isFetching
   };
 };
