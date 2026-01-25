@@ -83,7 +83,7 @@ export const ChannelDataProvider = ({ children, onError, searchQuery = "", selec
       // Fall back to direct query with no limit
       let query = supabase
         .from("youtube_channels")
-        .select("id, channel_id, title, thumbnail_url, description")
+        .select("id, channel_id, title, thumbnail_url, description, default_category")
         .is("deleted_at", null);
         
       if (searchQuery) {
@@ -98,7 +98,7 @@ export const ChannelDataProvider = ({ children, onError, searchQuery = "", selec
         // Try a different approach with minimal fields and no limit
         let simplifiedQuery = supabase
           .from("youtube_channels")
-          .select("id, channel_id, title, thumbnail_url");
+          .select("id, channel_id, title, thumbnail_url, default_category");
           
         if (searchQuery) {
           simplifiedQuery = simplifiedQuery.ilike("title", `%${searchQuery}%`);
