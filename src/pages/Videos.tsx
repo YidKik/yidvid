@@ -26,7 +26,8 @@ const MainContent = () => {
     forceRefetch,
     lastSuccessfulFetch, 
     fetchAttempts, 
-    error 
+    error,
+    isRefreshing
   } = useVideos();
   
   const { isMobile } = useIsMobile();
