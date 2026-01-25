@@ -2,7 +2,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Play, Users, RefreshCw, Shield, Heart, ArrowRight, Music, BookOpen, Mic, Gamepad2, Film, Grid3X3, GraduationCap, Laugh, Megaphone } from 'lucide-react';
+import { Play, Users, RefreshCw, Shield, Heart, ArrowRight, Music, BookOpen, Mic, Gamepad2, Film, Grid3X3, GraduationCap } from 'lucide-react';
 import HeroSearchSection from '@/components/home/HeroSearchSection';
 import yidvidLogoFull from '@/assets/yidvid-logo-full.png';
 
@@ -55,8 +55,6 @@ const LandingPage = () => {
     { icon: Gamepad2, label: "Entertainment", path: "/videos?category=entertainment" },
     { icon: Film, label: "Inspiration", path: "/videos?category=inspiration" },
     { icon: GraduationCap, label: "Education", path: "/videos?category=education" },
-    { icon: Laugh, label: "Funny", path: "/videos?category=custom&name=Funny" },
-    { icon: Megaphone, label: "Advertisement", path: "/videos?category=custom&name=Advertisement" },
   ];
 
   const containerVariants = {
@@ -177,7 +175,7 @@ const LandingPage = () => {
           {/* Category Buttons */}
           <motion.div
             variants={itemVariants}
-            className="grid grid-cols-2 md:grid-cols-4 gap-5 mb-12"
+            className="grid grid-cols-2 md:grid-cols-3 gap-5 mb-12"
           >
             {categories.map((category) => (
               <motion.button
