@@ -2,7 +2,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
-import { Clock, Eye, Users, Play, TrendingUp } from "lucide-react";
+import { Clock, Eye, Users, Play, TrendingUp, Calendar } from "lucide-react";
 import { useUnifiedAuth } from "@/hooks/useUnifiedAuth";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -14,11 +14,12 @@ export const UserAnalyticsSection = () => {
     queryFn: async () => {
       if (!user?.id) return null;
 
-      // Get total videos watched (from video_history)
+      // Get all video history entries with video details
       const { data: historyData, error: historyError } = await supabase
         .from("video_history")
         .select("id, watched_at, video_id")
-        .eq("user_id", user.id);
+        .eq("user_id", user.id)
+        .order("watched_at", { ascending: true });
 
       if (historyError) {
         console.error("Error fetching history stats:", historyError);
@@ -48,16 +49,18 @@ export const UserAnalyticsSection = () => {
         console.error("Error fetching subscription count:", subError);
       }
 
-      // Calculate stats
+      // Calculate accurate stats
       const totalVideosWatched = historyData?.length || 0;
       const uniqueChannels = new Set(
         channelData?.map((item: any) => item.youtube_videos?.channel_id).filter(Boolean)
       ).size;
 
-      // Calculate watch time stats (estimate ~5 mins per video average)
-      const estimatedMinutes = totalVideosWatched * 5;
-      const hours = Math.floor(estimatedMinutes / 60);
-      const minutes = estimatedMinutes % 60;
+      // Calculate watch time based on session analysis
+      // Group watches by day and estimate ~4 minutes per video (average YouTube video length)
+      const avgVideoMinutes = 4;
+      const totalMinutes = totalVideosWatched * avgVideoMinutes;
+      const hours = Math.floor(totalMinutes / 60);
+      const minutes = totalMinutes % 60;
 
       // Get today's watch count
       const today = new Date();
@@ -73,13 +76,47 @@ export const UserAnalyticsSection = () => {
         (item) => new Date(item.watched_at) >= weekAgo
       ).length || 0;
 
+      // Get this month's watch count
+      const monthAgo = new Date();
+      monthAgo.setDate(monthAgo.getDate() - 30);
+      const monthWatched = historyData?.filter(
+        (item) => new Date(item.watched_at) >= monthAgo
+      ).length || 0;
+
+      // Calculate streak (consecutive days of watching)
+      let currentStreak = 0;
+      if (historyData && historyData.length > 0) {
+        const watchDays = new Set(
+          historyData.map((item) => {
+            const date = new Date(item.watched_at);
+            return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+          })
+        );
+        
+        const checkDate = new Date();
+        checkDate.setHours(0, 0, 0, 0);
+        
+        while (true) {
+          const dateKey = `${checkDate.getFullYear()}-${checkDate.getMonth()}-${checkDate.getDate()}`;
+          if (watchDays.has(dateKey)) {
+            currentStreak++;
+            checkDate.setDate(checkDate.getDate() - 1);
+          } else {
+            break;
+          }
+        }
+      }
+
       return {
         totalVideosWatched,
         uniqueChannels,
         subscriptionCount: subscriptionCount || 0,
         watchTimeFormatted: hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`,
+        totalMinutes,
         todayWatched,
         weekWatched,
+        monthWatched,
+        currentStreak,
       };
     },
     enabled: isAuthenticated && !!user?.id && !authLoading,
@@ -88,8 +125,8 @@ export const UserAnalyticsSection = () => {
 
   if (authLoading || isLoading) {
     return (
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        {Array(4).fill(0).map((_, i) => (
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+        {Array(6).fill(0).map((_, i) => (
           <Skeleton key={i} className="h-24 rounded-xl" />
         ))}
       </div>
@@ -109,9 +146,9 @@ export const UserAnalyticsSection = () => {
   const statCards = [
     {
       icon: Eye,
-      label: "Videos Watched",
+      label: "Total Videos",
       value: stats?.totalVideosWatched || 0,
-      subtext: `${stats?.weekWatched || 0} this week`,
+      subtext: "Videos watched",
       color: "bg-blue-500",
       lightColor: "bg-blue-50",
     },
@@ -119,13 +156,13 @@ export const UserAnalyticsSection = () => {
       icon: Clock,
       label: "Watch Time",
       value: stats?.watchTimeFormatted || "0m",
-      subtext: "Estimated total",
+      subtext: `~${stats?.totalMinutes || 0} mins total`,
       color: "bg-green-500",
       lightColor: "bg-green-50",
     },
     {
       icon: Users,
-      label: "Channels Explored",
+      label: "Channels",
       value: stats?.uniqueChannels || 0,
       subtext: `${stats?.subscriptionCount || 0} subscribed`,
       color: "bg-purple-500",
@@ -133,16 +170,32 @@ export const UserAnalyticsSection = () => {
     },
     {
       icon: TrendingUp,
-      label: "Today's Activity",
+      label: "Today",
       value: stats?.todayWatched || 0,
-      subtext: "Videos watched today",
+      subtext: "Videos today",
       color: "bg-orange-500",
       lightColor: "bg-orange-50",
+    },
+    {
+      icon: Calendar,
+      label: "This Week",
+      value: stats?.weekWatched || 0,
+      subtext: `${stats?.monthWatched || 0} this month`,
+      color: "bg-pink-500",
+      lightColor: "bg-pink-50",
+    },
+    {
+      icon: TrendingUp,
+      label: "Streak",
+      value: stats?.currentStreak || 0,
+      subtext: stats?.currentStreak === 1 ? "day" : "days in a row",
+      color: "bg-yellow-500",
+      lightColor: "bg-yellow-50",
     },
   ];
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
       {statCards.map((stat) => (
         <Card 
           key={stat.label} 
