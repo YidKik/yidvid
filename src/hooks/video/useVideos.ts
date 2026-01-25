@@ -1,22 +1,50 @@
 
-import { useMemo } from "react";
+import { useMemo, useState, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useVideoFetcher } from "./useVideoFetcher";
-import { useRefetchControl } from "./useRefetchControl";
+import { supabase } from "@/integrations/supabase/client";
 import { useHiddenChannels } from "@/hooks/channel/useHiddenChannels";
 import { VideoData } from "./types/video-fetcher";
+import { formatVideoData } from "./utils/database";
+import { toast } from "sonner";
+
+// Stable fetch function outside the hook to prevent recreation
+const fetchVideosFromDB = async (): Promise<VideoData[]> => {
+  console.log("Fetching all videos");
+  
+  const { data, error } = await supabase
+    .from("youtube_videos")
+    .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, updated_at, category, description")
+    .is("deleted_at", null)
+    .eq("content_analysis_status", "approved")
+    .order("uploaded_at", { ascending: false })
+    .limit(500);
+
+  if (error) {
+    console.error("Error fetching videos:", error);
+    throw error;
+  }
+
+  if (!data || data.length === 0) {
+    console.log("No videos found in database");
+    return [];
+  }
+
+  console.log(`Successfully fetched ${data.length} videos from database`);
+  return formatVideoData(data);
+};
 
 export const useVideos = (category?: string) => {
-  const { fetchAllVideos, forceRefetch, fetchAttempts, lastSuccessfulFetch } = useVideoFetcher();
+  // All hooks must be called unconditionally and in the same order
+  const [fetchAttempts, setFetchAttempts] = useState(0);
+  const [lastSuccessfulFetch, setLastSuccessfulFetch] = useState<Date | null>(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  
   const { filterVideos, hiddenChannelIds } = useHiddenChannels();
 
   const query = useQuery({
     queryKey: ["videos", category],
-    queryFn: async () => {
-      const allVideos = await fetchAllVideos();
-      return allVideos;
-    },
-    refetchInterval: 5 * 60 * 1000, // 5 minutes
+    queryFn: fetchVideosFromDB,
+    refetchInterval: 5 * 60 * 1000,
     refetchIntervalInBackground: false,
     refetchOnWindowFocus: false,
     staleTime: 2 * 60 * 1000,
@@ -24,27 +52,73 @@ export const useVideos = (category?: string) => {
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
   });
 
-  // Filter out videos from hidden channels
+  // Track successful fetches
+  useMemo(() => {
+    if (query.data && query.data.length > 0 && !query.isFetching) {
+      setLastSuccessfulFetch(new Date());
+      setFetchAttempts(0);
+    }
+  }, [query.data, query.isFetching]);
+
+  // Filter out videos from hidden channels - stable memoization
   const filteredData = useMemo(() => {
-    if (!query.data) return [];
+    if (!query.data || !Array.isArray(query.data)) return [];
     
-    const filtered = filterVideos(query.data as VideoData[]);
+    const filtered = filterVideos(query.data);
     
-    if (hiddenChannelIds.size > 0) {
+    if (hiddenChannelIds.size > 0 && query.data.length > 0) {
       console.log(`Filtered videos: ${query.data.length} -> ${filtered.length} (${hiddenChannelIds.size} channels hidden)`);
     }
     
     return filtered;
-  }, [query.data, filterVideos, hiddenChannelIds]);
+  }, [query.data, filterVideos, hiddenChannelIds.size]);
 
-  const { isRefreshing, handleRefetch, handleForceRefetch } = useRefetchControl({
-    refetch: query.refetch,
-    forceRefetch: forceRefetch
-  });
+  // Stable refetch handler
+  const handleRefetch = useCallback(async () => {
+    try {
+      setIsRefreshing(true);
+      await query.refetch();
+    } finally {
+      setIsRefreshing(false);
+    }
+  }, [query.refetch]);
+
+  // Stable force refetch handler
+  const handleForceRefetch = useCallback(async () => {
+    try {
+      setIsRefreshing(true);
+      
+      // Rate limiting
+      const lastRefetch = localStorage.getItem('lastForceRefetch');
+      const now = Date.now();
+      if (lastRefetch && (now - parseInt(lastRefetch)) < 600000) {
+        console.log("Skipping refetch - too recent");
+        return [];
+      }
+      localStorage.setItem('lastForceRefetch', now.toString());
+      
+      const result = await query.refetch();
+      return result.data || [];
+    } catch (err: any) {
+      console.error("Error in force refetch:", err);
+      setFetchAttempts(prev => prev + 1);
+      
+      if (err.message && err.message !== "No videos found") {
+        toast.error("Failed to refresh content", {
+          description: err.message,
+          duration: 5000
+        });
+      }
+      return [];
+    } finally {
+      setIsRefreshing(false);
+    }
+  }, [query.refetch]);
 
   return {
     ...query,
-    data: filteredData, // Return filtered data instead of raw data
+    data: filteredData,
+    refetch: handleRefetch,
     forceRefetch: handleForceRefetch,
     fetchAttempts,
     lastSuccessfulFetch,
