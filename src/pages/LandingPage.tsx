@@ -1,13 +1,18 @@
-
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Play, Users, RefreshCw, Shield, Heart, ArrowRight, Music, BookOpen, Mic, Gamepad2, Film, Grid3X3, GraduationCap, Laugh, Megaphone } from 'lucide-react';
 import HeroSearchSection from '@/components/home/HeroSearchSection';
 import yidvidLogoFull from '@/assets/yidvid-logo-full.png';
+import IntroAnimation from '@/components/home/IntroAnimation';
 
 const LandingPage = () => {
   const navigate = useNavigate();
+  const [showIntro, setShowIntro] = useState(true);
+  
+  const handleIntroComplete = useCallback(() => {
+    setShowIntro(false);
+  }, []);
 
   const features = [
     {
@@ -80,9 +85,20 @@ const LandingPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background overflow-x-hidden">
-      {/* Hero Search Section with Typing Effect */}
-      <HeroSearchSection />
+    <>
+      {/* Intro Animation */}
+      <AnimatePresence>
+        {showIntro && <IntroAnimation onComplete={handleIntroComplete} />}
+      </AnimatePresence>
+      
+      <motion.div 
+        className="min-h-screen bg-background overflow-x-hidden"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: showIntro ? 0 : 1 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+      >
+        {/* Hero Search Section with Typing Effect */}
+        <HeroSearchSection />
 
       {/* Features Section */}
       <section className="py-20 px-6 bg-primary/5">
@@ -295,7 +311,8 @@ const LandingPage = () => {
           </p>
         </div>
       </footer>
-    </div>
+      </motion.div>
+    </>
   );
 };
 
