@@ -18,6 +18,7 @@ import {
   LayoutGrid,
   Bell,
   ArrowLeft,
+  LogIn,
   type LucideIcon
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -33,6 +34,7 @@ import {
   saveScrollPosition,
   recordNavigation
 } from "@/utils/scrollRestoration";
+import { toast } from "sonner";
 
 interface NavItem {
   name: string;
@@ -48,17 +50,11 @@ interface NavSection {
 
 const navSections: NavSection[] = [
   {
-    title: "Main",
+    // No title - these are the main nav items
     items: [
       { name: "Home", path: "/", icon: Home },
       { name: "Videos", path: "/videos", icon: PlayCircle },
-    ]
-  },
-  {
-    title: "Explore",
-    items: [
       { name: "New Videos", path: "/videos?sort=new", icon: Sparkles },
-      { name: "Channels", path: "/settings", icon: Users },
     ]
   },
   {
@@ -71,7 +67,7 @@ const navSections: NavSection[] = [
     ]
   },
   {
-    title: "More",
+    // Settings section without title
     items: [
       { name: "Settings", path: "/settings", icon: Settings },
       { name: "About", path: "/about", icon: Info },
@@ -236,7 +232,14 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
       {/* Scrollable Navigation */}
       <nav className="flex-1 overflow-y-auto py-2 px-2">
         {navSections.map((section, sectionIdx) => {
-          if (section.requiresAuth && !isAuthenticated) return null;
+          const handleItemClick = (e: React.MouseEvent, item: NavItem) => {
+            if (section.requiresAuth && !isAuthenticated) {
+              e.preventDefault();
+              toast.info("Please sign in to access this feature", {
+                icon: <LogIn className="w-4 h-4" />,
+              });
+            }
+          };
           
           return (
             <div key={sectionIdx} className={sectionIdx > 0 ? "mt-3 pt-3 border-t border-gray-100" : ""}>
@@ -254,22 +257,20 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
                   return (
                     <Link
                       key={item.path + item.name}
-                      to={item.path}
+                      to={section.requiresAuth && !isAuthenticated ? "#" : item.path}
+                      onClick={(e) => handleItemClick(e, item)}
                       title={!isExpanded ? item.name : undefined}
                       className={cn(
-                        "flex items-center rounded-xl text-sm font-medium transition-all duration-200",
-                        isExpanded ? "gap-3 px-3 py-2.5" : "justify-center p-2.5",
+                        "flex items-center rounded-lg text-sm font-medium transition-all duration-200",
+                        isExpanded ? "gap-3 px-3 py-2" : "justify-center p-2.5",
                         active
-                          ? 'bg-transparent border-2 text-gray-900'
-                          : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 border-2 border-transparent'
+                          ? 'bg-gray-100 text-gray-900'
+                          : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
                       )}
-                      style={{
-                        borderColor: active ? 'hsl(0, 70%, 55%)' : undefined,
-                      }}
                     >
                       <Icon className={cn(
                         "w-5 h-5 shrink-0",
-                        active ? 'text-[hsl(0,70%,55%)]' : 'text-gray-500'
+                        active ? 'text-gray-900' : 'text-gray-600'
                       )} />
                       {isExpanded && <span className="truncate">{item.name}</span>}
                     </Link>
@@ -282,24 +283,18 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
 
         {/* Categories Section */}
         <div className="mt-3 pt-3 border-t border-gray-100">
-          {isExpanded && (
-            <div className="px-2 py-1.5 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
-              Categories
-            </div>
-          )}
-          
           <button
             onClick={() => setIsCategoriesOpen(!isCategoriesOpen)}
             title={!isExpanded ? "Categories" : undefined}
             className={cn(
-              "flex items-center rounded-xl text-sm font-medium transition-all duration-200 w-full",
-              isExpanded ? "gap-3 px-3 py-2.5 justify-between" : "justify-center p-2.5",
-              "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+              "flex items-center rounded-lg text-sm font-medium transition-all duration-200 w-full",
+              isExpanded ? "gap-3 px-3 py-2 justify-between" : "justify-center p-2.5",
+              "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
             )}
           >
             <div className="flex items-center gap-3">
-              <LayoutGrid className="w-5 h-5 shrink-0 text-gray-500" />
-              {isExpanded && <span>Browse Categories</span>}
+              <LayoutGrid className="w-5 h-5 shrink-0 text-gray-600" />
+              {isExpanded && <span>Categories</span>}
             </div>
             {isExpanded && (
               isCategoriesOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />
@@ -335,67 +330,67 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
           </AnimatePresence>
         </div>
 
-        {/* Subscriptions Section - Only for authenticated users */}
-        {isAuthenticated && (
-          <div className="mt-3 pt-3 border-t border-gray-100">
-            {isExpanded && (
-              <div className="px-2 py-1.5 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
-                Subscriptions
-              </div>
+        {/* Subscriptions Section */}
+        <div className="mt-3 pt-3 border-t border-gray-100">
+          <button
+            onClick={() => {
+              if (!isAuthenticated) {
+                toast.info("Please sign in to view your subscriptions", {
+                  icon: <LogIn className="w-4 h-4" />,
+                });
+                return;
+              }
+              setIsSubscriptionsOpen(!isSubscriptionsOpen);
+            }}
+            title={!isExpanded ? "Subscriptions" : undefined}
+            className={cn(
+              "flex items-center rounded-lg text-sm font-medium transition-all duration-200 w-full",
+              isExpanded ? "gap-3 px-3 py-2 justify-between" : "justify-center p-2.5",
+              "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
             )}
-            
-            <button
-              onClick={() => setIsSubscriptionsOpen(!isSubscriptionsOpen)}
-              title={!isExpanded ? "Subscriptions" : undefined}
-              className={cn(
-                "flex items-center rounded-xl text-sm font-medium transition-all duration-200 w-full",
-                isExpanded ? "gap-3 px-3 py-2.5 justify-between" : "justify-center p-2.5",
-                "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-              )}
-            >
-              <div className="flex items-center gap-3">
-                <Bell className="w-5 h-5 shrink-0 text-gray-500" />
-                {isExpanded && <span>Subscriptions</span>}
-              </div>
-              {isExpanded && (
-                isSubscriptionsOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />
-              )}
-            </button>
+          >
+            <div className="flex items-center gap-3">
+              <Bell className="w-5 h-5 shrink-0 text-gray-600" />
+              {isExpanded && <span>Subscriptions</span>}
+            </div>
+            {isExpanded && (
+              isSubscriptionsOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />
+            )}
+          </button>
 
-            <AnimatePresence>
-              {isSubscriptionsOpen && isExpanded && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="overflow-hidden ml-2"
-                >
-                  {subscriptions && subscriptions.length > 0 ? (
-                    subscriptions.map((sub: any) => (
-                      <Link
-                        key={sub.channel.channel_id}
-                        to={`/channel/${sub.channel.channel_id}`}
-                        className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg text-gray-600 hover:bg-gray-50 transition-all"
-                      >
-                        <img
-                          src={sub.channel.thumbnail_url || '/placeholder.svg'}
-                          alt={sub.channel.title}
-                          className="w-6 h-6 rounded-full object-cover"
-                        />
-                        <span className="truncate text-xs">{sub.channel.title}</span>
-                      </Link>
-                    ))
-                  ) : (
-                    <div className="px-3 py-2 text-xs text-gray-400">
-                      No subscriptions yet
-                    </div>
-                  )}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        )}
+          <AnimatePresence>
+            {isSubscriptionsOpen && isExpanded && isAuthenticated && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="overflow-hidden ml-2"
+              >
+                {subscriptions && subscriptions.length > 0 ? (
+                  subscriptions.map((sub: any) => (
+                    <Link
+                      key={sub.channel.channel_id}
+                      to={`/channel/${sub.channel.channel_id}`}
+                      className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg text-gray-600 hover:bg-gray-50 transition-all"
+                    >
+                      <img
+                        src={sub.channel.thumbnail_url || '/placeholder.svg'}
+                        alt={sub.channel.title}
+                        className="w-6 h-6 rounded-full object-cover"
+                      />
+                      <span className="truncate text-xs">{sub.channel.title}</span>
+                    </Link>
+                  ))
+                ) : (
+                  <div className="px-3 py-2 text-xs text-gray-400">
+                    No subscriptions yet
+                  </div>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </nav>
     </motion.aside>
   );

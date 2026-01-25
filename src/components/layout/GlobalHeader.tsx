@@ -107,9 +107,6 @@ export const GlobalHeader = () => {
 
   const shouldShowDropdown = isSearchOpen && searchQuery.trim().length > 0;
 
-  // Calculate left offset based on sidebar state (not on homepage)
-  const headerLeftOffset = isHomePage ? 0 : 64;
-
   return (
     <>
       <motion.header
@@ -122,10 +119,11 @@ export const GlobalHeader = () => {
           duration: 0.5, 
           ease: [0.25, 0.1, 0.25, 1]
         }}
-        className="fixed top-0 right-0 z-50 backdrop-blur-md bg-white/95"
+        className="fixed top-0 z-40 backdrop-blur-md bg-white/95"
         style={{ 
           boxShadow: '0 2px 12px rgba(0, 0, 0, 0.04)',
-          left: headerLeftOffset
+          left: isHomePage ? 0 : 200,
+          right: 0
         }}
       >
         <div className="w-full px-3 md:px-6">
@@ -142,14 +140,14 @@ export const GlobalHeader = () => {
             >
               <form onSubmit={handleSearchSubmit}>
                 <div 
-                  className={`flex items-center rounded-full border-2 transition-all duration-200 ${
+                  className={`flex items-center rounded-full border transition-all duration-200 ${
                     isSearchOpen 
-                      ? 'border-gray-400 shadow-md' 
-                      : 'border-gray-300 hover:border-gray-400'
+                      ? 'border-gray-500 shadow-lg' 
+                      : 'border-gray-400 hover:border-gray-500 shadow-sm'
                   }`}
-                  style={{ backgroundColor: '#f8f8f8' }}
+                  style={{ backgroundColor: '#ffffff' }}
                 >
-                  <div className="flex items-center flex-1 px-4">
+                  <div className="flex items-center flex-1 pl-5 pr-2">
                     <input
                       type="text"
                       value={searchQuery}
@@ -158,9 +156,9 @@ export const GlobalHeader = () => {
                         setIsSearchOpen(true);
                       }}
                       onFocus={() => setIsSearchOpen(true)}
-                      placeholder={isMobile ? "Search..." : "Search videos, channels..."}
-                      className="flex-1 bg-transparent border-none outline-none py-2.5 text-sm text-gray-800 placeholder:text-gray-500 font-medium"
-                      style={{ fontFamily: "'Quicksand', sans-serif" }}
+                      placeholder={isMobile ? "Search" : "Search"}
+                      className="flex-1 bg-transparent border-none outline-none py-2 text-base text-gray-900 placeholder:text-gray-500"
+                      style={{ fontFamily: "'Roboto', 'Arial', sans-serif" }}
                     />
                     {searchQuery && (
                       <button
@@ -169,18 +167,18 @@ export const GlobalHeader = () => {
                           setSearchQuery("");
                           setIsSearchOpen(false);
                         }}
-                        className="p-1.5 rounded-full hover:bg-gray-200 transition-colors"
+                        className="p-1.5 rounded-full hover:bg-gray-100 transition-colors"
                       >
-                        <X className="w-4 h-4 text-gray-500" />
+                        <X className="w-5 h-5 text-gray-600" />
                       </button>
                     )}
                   </div>
                   <button
                     type="submit"
-                    className="h-10 px-5 rounded-r-full border-l-2 border-gray-300 hover:bg-gray-200 transition-colors flex items-center justify-center"
-                    style={{ backgroundColor: '#f0f0f0' }}
+                    className="h-10 px-5 rounded-r-full border-l border-gray-300 hover:bg-gray-100 transition-colors flex items-center justify-center"
+                    style={{ backgroundColor: '#f8f8f8' }}
                   >
-                    <Search className="w-5 h-5 text-gray-600" />
+                    <Search className="w-5 h-5 text-gray-700" />
                   </button>
                 </div>
               </form>
