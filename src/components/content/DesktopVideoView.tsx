@@ -1,13 +1,11 @@
 
-import { VideoGrid } from "@/components/VideoGrid";
-import { VideoGridPagination } from "@/components/video/VideoGridPagination";
-import { MostViewedVideos } from "@/components/video/MostViewedVideos";
-import { ChannelsGrid } from "@/components/youtube/ChannelsGrid";
+import { FeaturedVideoSection } from "@/components/videos/FeaturedVideoSection";
+import { NewVideosSection } from "@/components/videos/NewVideosSection";
+import { TrendingSection } from "@/components/videos/TrendingSection";
+import { ChannelsRowSection } from "@/components/videos/ChannelsRowSection";
+import { CategorySection } from "@/components/videos/CategorySection";
 import { VideoData } from "@/hooks/video/types/video-fetcher";
-import { useVideoPagination } from "@/hooks/video/useVideoPagination";
-import { useLocation } from "react-router-dom";
-import { useEffect } from "react";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useMemo } from "react";
 
 interface DesktopVideoViewProps {
   videos: VideoData[];
@@ -28,28 +26,6 @@ export const DesktopVideoView = ({
   forceRefetch,
   selectedCategory = "all"
 }: DesktopVideoViewProps) => {
-  const { isTablet } = useIsMobile();
-  
-  // For tablet: 9 videos (3 rows of 3)
-  // For desktop: 12 videos (3 rows of 4)
-  const videosPerPage = isTablet ? 9 : 12;
-  const rowSize = isTablet ? 3 : 4;
-  
-  const location = useLocation();
-  const isMainPage = location.pathname === "/";
-  
-  const {
-    sortedVideos,
-    displayVideos,
-    currentPage,
-    totalPages,
-    setCurrentPage
-  } = useVideoPagination({
-    videos,
-    videosPerPage,
-    preloadNext: false // Don't preload to ensure we only show exactly the right number of videos
-  });
-
   // More thorough check if we have real videos (not samples)
   const hasRealVideos = videos.some(video => 
     !video.id.toString().includes('sample') && 
@@ -58,65 +34,68 @@ export const DesktopVideoView = ({
     video.title !== "Sample Video 1"
   );
 
-  // Log for debugging
-  useEffect(() => {
-    console.log(`DesktopVideoView: ${videos.length} videos, hasRealVideos: ${hasRealVideos}, isLoading: ${isLoading}, isRefreshing: ${isRefreshing}`);
-    console.log(`Pagination: currentPage ${currentPage} of ${totalPages}, showing ${displayVideos.length} videos`);
-    console.log(`Device: isTablet: ${isTablet}, videosPerPage: ${videosPerPage}, rowSize: ${rowSize}`);
-  }, [videos, hasRealVideos, isLoading, isRefreshing, currentPage, totalPages, displayVideos.length, isTablet, videosPerPage, rowSize]);
+  // Get featured videos - highest views in the last 7 days
+  const featuredVideos = useMemo(() => {
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+    
+    return [...videos]
+      .filter(v => new Date(v.uploaded_at) >= oneWeekAgo)
+      .sort((a, b) => (b.views || 0) - (a.views || 0))
+      .slice(0, 4);
+  }, [videos]);
+
+  // Categories for sections
+  const categories = [
+    { key: "music", label: "Music" },
+    { key: "torah", label: "Torah" },
+    { key: "inspiration", label: "Inspiration" },
+    { key: "education", label: "Education" },
+    { key: "entertainment", label: "Entertainment" },
+  ];
 
   // Only render when we have real videos to show - prevents staggered loading
   if (!hasRealVideos || videos.length === 0) {
     return null;
   }
 
+  // If a specific category is selected, show filtered grid view
+  if (selectedCategory !== "all") {
+    const filteredVideos = videos.filter(v => v.category === selectedCategory);
+    return (
+      <div className="space-y-8">
+        <TrendingSection videos={filteredVideos} />
+        <NewVideosSection videos={filteredVideos} />
+        <ChannelsRowSection selectedCategory={selectedCategory} />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
-      <div className="video-grid relative">
-        <VideoGrid 
-          videos={displayVideos}
-          maxVideos={videosPerPage}
-          rowSize={rowSize}
-          isLoading={false}
-          className={`${isTablet ? 'grid-cols-3 gap-4 tablet-video-grid' : 'grid-cols-4 gap-4'}`}
-        />
-        
-        {totalPages > 1 && (
-          <div className="mt-6 flex justify-center">
-            <VideoGridPagination
-              showAll={false}  // Always use pagination arrows for consistency
-              currentPage={currentPage}
-              totalPages={totalPages}
-              filteredVideosLength={sortedVideos.length}
-              maxVideos={videosPerPage}
-              isMobile={false}
-              onShowAll={() => {}}
-              onPageChange={(page) => setCurrentPage(page)}
-              usePaginationArrows={true} // Use arrows for desktop too
-            />
-          </div>
-        )}
-      </div>
-
-      <div className="mt-6">
-        <ChannelsGrid 
-          selectedCategory={selectedCategory}
-          onError={() => {
-            console.error('Channel grid error');
-          }} 
-        />
-      </div>
-
-      {!hasRealVideos && !isLoading && !isRefreshing && !isMainPage && (
-        <div className="flex justify-center mt-6">
-          <button 
-            onClick={() => forceRefetch && forceRefetch()}
-            className="px-4 py-2 bg-blue-500 text-primary-foreground rounded-md hover:bg-blue-600 transition-colors"
-          >
-            Refresh Content
-          </button>
-        </div>
+      {/* Featured Section - Large hero cards */}
+      {featuredVideos.length >= 4 && (
+        <FeaturedVideoSection videos={featuredVideos} />
       )}
+
+      {/* New Videos Section */}
+      <NewVideosSection videos={videos} />
+
+      {/* Trending Section */}
+      <TrendingSection videos={videos} />
+
+      {/* Channels Row */}
+      <ChannelsRowSection selectedCategory={selectedCategory} />
+
+      {/* Category Sections */}
+      {categories.map(cat => (
+        <CategorySection 
+          key={cat.key}
+          videos={videos}
+          category={cat.key}
+          categoryLabel={cat.label}
+        />
+      ))}
     </div>
   );
 };

@@ -73,14 +73,8 @@ const MainContent = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1, duration: 0.5 }}
-        className="mt-4 px-4 md:px-6 max-w-[1400px] w-full"
+        className="mt-4 px-4 md:px-6 max-w-[1600px] w-full"
       >
-        {/* Category indicator - categories are now in sidebar */}
-        <div className="mb-4 flex items-center">
-          <span className="text-sm text-gray-500 font-medium" style={{ fontFamily: "'Quicksand', sans-serif" }}>
-            {selectedCategory === 'all' ? 'All Videos' : selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)}
-          </span>
-        </div>
         
         <div className="space-y-2 md:space-y-4">
           <motion.div
