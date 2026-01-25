@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ContentToggle } from "@/components/content/ContentToggle";
 import { VideoContent } from "@/components/content/VideoContent";
@@ -12,7 +12,9 @@ import { CategoryToggle } from "@/components/header/CategoryToggle";
 
 
 const MainContent = () => {
-  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [searchParams] = useSearchParams();
+  const categoryFromUrl = searchParams.get('category');
+  const [selectedCategory, setSelectedCategory] = useState(categoryFromUrl || "all");
   const [currentPage, setCurrentPage] = useState(1);
   const [visibleVideos, setVisibleVideos] = useState(12); // Start with 12 videos (3 rows of 4)
   
@@ -28,8 +30,14 @@ const MainContent = () => {
   
   const { isMobile } = useIsMobile();
   const { session } = useSessionManager();
-  const [searchParams] = useSearchParams();
   const [hasScrolled, setHasScrolled] = useState(false);
+
+  // Update selected category when URL parameter changes
+  useEffect(() => {
+    if (categoryFromUrl && categoryFromUrl !== selectedCategory) {
+      setSelectedCategory(categoryFromUrl);
+    }
+  }, [categoryFromUrl]);
 
   // Filter and sort videos based on selected category
   const filteredVideos = videos?.filter(video => {
