@@ -7,6 +7,7 @@ import { useSessionManager } from "@/hooks/useSessionManager";
 import { useIsMobile } from "@/hooks/use-mobile";
 import Auth from "@/pages/Auth";
 import { SearchModal } from "./SearchModal";
+import yidvidLogoIcon from "@/assets/yidvid-logo-icon.png";
 
 const navLinks = [
   { name: "Home", path: "/" },
@@ -81,7 +82,7 @@ export const GlobalHeader = () => {
             {/* Left Side - Logo */}
             <Link to="/" className="flex items-center gap-2 shrink-0">
               <img 
-                src="/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png" 
+                src={yidvidLogoIcon} 
                 alt="YidVid" 
                 className="w-9 h-9 object-contain"
               />
