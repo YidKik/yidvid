@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { createPortal } from "react-dom";
-import { Bell, X, Check, Clock } from "lucide-react";
+import { Bell, X, Check, Clock, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSubscriptionNotifications } from "@/hooks/useSubscriptionNotifications";
@@ -15,6 +15,8 @@ export const NotificationBell = () => {
   const { session } = useSessionManager();
   const { notifications, unreadCount, isLoading, markAsRead, markAllAsRead } = useSubscriptionNotifications();
 
+  const isLoggedIn = !!session;
+
   const toggleNotifications = () => {
     setIsOpen(!isOpen);
   };
@@ -27,31 +29,32 @@ export const NotificationBell = () => {
     setIsOpen(false);
   };
 
-  // Don't show for non-authenticated users
-  if (!session) {
-    return null;
-  }
-
   return (
     <>
-      {/* Bell Button with Badge */}
-      <Button
-        variant="default"
-        size="icon"
-        onClick={toggleNotifications}
-        className="h-9 w-9 rounded-full relative"
+      {/* Bell Button with Badge - Always visible */}
+      <motion.div
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        className="relative"
       >
-        <Bell className="h-4 w-4" />
-        {unreadCount > 0 && (
-          <motion.span
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-white text-xs font-bold flex items-center justify-center"
-          >
-            {unreadCount > 9 ? "9+" : unreadCount}
-          </motion.span>
-        )}
-      </Button>
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={toggleNotifications}
+          className="h-10 w-10 rounded-full relative border-2 border-red-400 bg-white hover:bg-red-50 shadow-md"
+        >
+          <Bell className="h-5 w-5 text-red-500" />
+          {isLoggedIn && unreadCount > 0 && (
+            <motion.span
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-white text-xs font-bold flex items-center justify-center shadow-lg"
+            >
+              {unreadCount > 9 ? "9+" : unreadCount}
+            </motion.span>
+          )}
+        </Button>
+      </motion.div>
 
       {/* Notifications Panel */}
       {createPortal(
@@ -73,16 +76,19 @@ export const NotificationBell = () => {
                 animate={{ x: 0 }}
                 exit={{ x: 320 }}
                 transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                className="fixed right-0 top-[80px] z-50 w-80 max-h-[70vh] bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl shadow-2xl rounded-l-3xl border-2 border-red-400 overflow-hidden flex flex-col"
+                className="fixed right-0 top-[80px] z-50 w-80 max-h-[70vh] bg-white dark:bg-gray-900 backdrop-blur-xl shadow-2xl rounded-l-3xl border-2 border-red-400 overflow-hidden flex flex-col"
               >
                 {/* Header */}
-                <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+                <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-red-50 to-white">
                   <div className="flex items-center justify-between">
-                    <h2 className="text-lg font-semibold text-gray-900 dark:text-white" style={{ fontFamily: "'Quicksand', sans-serif" }}>
-                      New Videos
-                    </h2>
                     <div className="flex items-center gap-2">
-                      {unreadCount > 0 && (
+                      <Bell className="h-5 w-5 text-red-500" />
+                      <h2 className="text-lg font-semibold text-gray-900 dark:text-white" style={{ fontFamily: "'Quicksand', sans-serif" }}>
+                        New Videos
+                      </h2>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {isLoggedIn && unreadCount > 0 && (
                         <Button
                           variant="ghost"
                           size="sm"
@@ -108,21 +114,46 @@ export const NotificationBell = () => {
                   </p>
                 </div>
 
-                {/* Notifications List */}
+                {/* Content */}
                 <div className="flex-1 overflow-y-auto">
-                  {isLoading ? (
+                  {!isLoggedIn ? (
+                    // Not logged in state
+                    <div className="p-6 text-center">
+                      <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
+                        <LogIn className="h-8 w-8 text-red-500" />
+                      </div>
+                      <h3 className="text-base font-semibold text-gray-900 mb-2" style={{ fontFamily: "'Quicksand', sans-serif" }}>
+                        Sign in to get notified
+                      </h3>
+                      <p className="text-sm text-gray-500 mb-4">
+                        Subscribe to your favorite channels and never miss a new video!
+                      </p>
+                      <Button
+                        onClick={() => {
+                          setIsOpen(false);
+                          navigate('/auth');
+                        }}
+                        className="bg-red-500 hover:bg-red-600 text-white"
+                      >
+                        <LogIn className="h-4 w-4 mr-2" />
+                        Sign In
+                      </Button>
+                    </div>
+                  ) : isLoading ? (
                     <div className="p-6 text-center">
                       <div className="animate-spin h-6 w-6 border-2 border-red-500 border-t-transparent rounded-full mx-auto" />
                       <p className="text-sm text-gray-500 mt-2">Loading...</p>
                     </div>
                   ) : notifications.length === 0 ? (
                     <div className="p-6 text-center">
-                      <Bell className="h-10 w-10 text-gray-300 mx-auto mb-3" />
-                      <p className="text-sm text-gray-500" style={{ fontFamily: "'Quicksand', sans-serif" }}>
+                      <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
+                        <Bell className="h-8 w-8 text-gray-400" />
+                      </div>
+                      <h3 className="text-base font-semibold text-gray-900 mb-2" style={{ fontFamily: "'Quicksand', sans-serif" }}>
                         No new videos yet
-                      </p>
-                      <p className="text-xs text-gray-400 mt-1">
-                        Subscribe to channels to get notified
+                      </h3>
+                      <p className="text-sm text-gray-500">
+                        Subscribe to channels to get notified when new videos are uploaded
                       </p>
                     </div>
                   ) : (
@@ -147,7 +178,7 @@ export const NotificationBell = () => {
                                   className="w-20 h-12 object-cover rounded-lg"
                                 />
                                 {!notification.is_read && (
-                                  <span className="absolute top-1 left-1 w-2 h-2 bg-red-500 rounded-full" />
+                                  <span className="absolute top-1 left-1 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
                                 )}
                               </div>
                             )}
