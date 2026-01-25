@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import { useSessionManager } from "@/hooks/useSessionManager";
 import { EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { usePageLoader } from "@/contexts/LoadingContext";
 
 const ChannelDetails = () => {
   const { channelId } = useParams<{ channelId?: string }>();
@@ -72,6 +73,10 @@ const ChannelDetails = () => {
     refetchVideos,
     error: videosError
   } = useChannelVideos(cleanChannelId);
+
+  // Register loading state with the global loading bar
+  const isLoading = isLoadingChannel || isLoadingInitialVideos;
+  usePageLoader('channel', isLoading);
 
   // Verify subscription status when component mounts or auth state changes
   useEffect(() => {

@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Youtube } from "lucide-react";
 import { Link } from "react-router-dom";
 import { BackButton } from "@/components/navigation/BackButton";
+import { usePageLoader } from "@/contexts/LoadingContext";
 
 const Search = () => {
   const [searchParams] = useSearchParams();
@@ -72,6 +73,10 @@ const Search = () => {
     staleTime: 1000 * 60 * 5, // Cache search results for 5 minutes
     gcTime: 1000 * 60 * 15,   // Keep them in cache for 15 minutes
   });
+
+  // Register loading state with the global loading bar
+  const isLoading = isLoadingVideos || isLoadingChannels;
+  usePageLoader('search', isLoading);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-secondary/20">

@@ -1,48 +1,81 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useLoading } from '@/contexts/LoadingContext';
 
 export const TopLoadingBar = () => {
   const location = useLocation();
-  const [isLoading, setIsLoading] = useState(false);
-  const [progress, setProgress] = useState(0);
+  const { isLoading: contextLoading, progress: contextProgress } = useLoading();
+  const [isNavigating, setIsNavigating] = useState(false);
+  const [navProgress, setNavProgress] = useState(0);
+  const prevPathRef = useRef(location.pathname + location.search);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Handle route changes - start loading bar immediately on navigation
   useEffect(() => {
-    // Start loading on route change
-    setIsLoading(true);
-    setProgress(0);
-
-    // Simulate progress
-    const progressInterval = setInterval(() => {
-      setProgress(prev => {
-        if (prev >= 90) {
-          clearInterval(progressInterval);
-          return 90;
-        }
-        // Fast initial progress, slower as it approaches 90%
-        const increment = Math.max(1, (90 - prev) / 10);
-        return Math.min(90, prev + increment);
-      });
-    }, 100);
-
-    // Complete loading after a short delay (simulating page load)
-    const completeTimeout = setTimeout(() => {
-      setProgress(100);
-      setTimeout(() => {
-        setIsLoading(false);
-        setProgress(0);
-      }, 200);
-    }, 400);
-
-    return () => {
-      clearInterval(progressInterval);
-      clearTimeout(completeTimeout);
-    };
+    const currentPath = location.pathname + location.search;
+    
+    if (currentPath !== prevPathRef.current) {
+      prevPathRef.current = currentPath;
+      setIsNavigating(true);
+      setNavProgress(10);
+      
+      // Clear any existing timeout
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    }
   }, [location.pathname, location.search]);
+
+  // Sync navigation state with context loading
+  useEffect(() => {
+    if (isNavigating) {
+      if (contextLoading) {
+        // Context has taken over, use its progress
+        setNavProgress(contextProgress);
+      } else if (contextProgress === 0 && !contextLoading) {
+        // Loading complete
+        setNavProgress(100);
+        timeoutRef.current = setTimeout(() => {
+          setIsNavigating(false);
+          setNavProgress(0);
+        }, 200);
+      }
+    }
+  }, [contextLoading, contextProgress, isNavigating]);
+
+  // Fallback: if no context loading registers within 500ms, complete anyway
+  useEffect(() => {
+    if (isNavigating && !contextLoading && navProgress < 100) {
+      const fallbackTimeout = setTimeout(() => {
+        if (!contextLoading) {
+          setNavProgress(100);
+          setTimeout(() => {
+            setIsNavigating(false);
+            setNavProgress(0);
+          }, 200);
+        }
+      }, 500);
+      
+      return () => clearTimeout(fallbackTimeout);
+    }
+  }, [isNavigating, contextLoading, navProgress]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
+  const showBar = isNavigating || contextLoading;
+  const displayProgress = contextLoading ? contextProgress : navProgress;
 
   return (
     <AnimatePresence>
-      {isLoading && (
+      {showBar && (
         <motion.div
           className="fixed top-0 left-0 right-0 z-[9999] h-[3px]"
           initial={{ opacity: 0 }}
@@ -57,10 +90,10 @@ export const TopLoadingBar = () => {
               boxShadow: '0 0 10px hsl(50, 100%, 50%), 0 0 5px hsl(50, 100%, 50%)',
             }}
             initial={{ width: '0%' }}
-            animate={{ width: `${progress}%` }}
+            animate={{ width: `${displayProgress}%` }}
             transition={{ 
-              duration: 0.1,
-              ease: 'linear'
+              duration: 0.15,
+              ease: 'easeOut'
             }}
           />
         </motion.div>

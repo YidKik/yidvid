@@ -10,7 +10,7 @@ import { Helmet } from "react-helmet";
 import { useSearchParams } from "react-router-dom";
 import { CategoryToggle } from "@/components/header/CategoryToggle";
 import { NotificationBell } from "@/components/header/NotificationBell";
-
+import { usePageLoader } from "@/contexts/LoadingContext";
 
 const MainContent = () => {
   const [searchParams] = useSearchParams();
@@ -33,6 +33,9 @@ const MainContent = () => {
   const { isMobile } = useIsMobile();
   const { session } = useSessionManager();
   const [hasScrolled, setHasScrolled] = useState(false);
+
+  // Register loading state with the global loading bar
+  usePageLoader('videos', isLoading);
 
   // Update selected category when URL parameter changes
   useEffect(() => {
