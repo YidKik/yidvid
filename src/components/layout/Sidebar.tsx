@@ -310,21 +310,27 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
                 transition={{ duration: 0.2 }}
                 className="overflow-hidden ml-4"
               >
-                {allCategories.map((category) => (
-                  <button
-                    key={category.id}
-                    onClick={() => handleCategorySelect(category.id)}
-                    className={cn(
-                      "flex items-center gap-2 w-full px-3 py-2 text-sm rounded-lg transition-all",
-                      selectedCategory === category.id
-                        ? "bg-red-50 text-red-600"
-                        : "text-gray-600 hover:bg-gray-50"
-                    )}
-                  >
-                    <span>{category.icon}</span>
-                    <span>{category.label}</span>
-                  </button>
-                ))}
+                {allCategories
+                  .filter((category) => {
+                    // Only show categories with emoji icons (not URLs)
+                    const isUrl = category.icon?.startsWith('http') || category.icon?.startsWith('/');
+                    return !isUrl;
+                  })
+                  .map((category) => (
+                    <button
+                      key={category.id}
+                      onClick={() => handleCategorySelect(category.id)}
+                      className={cn(
+                        "flex items-center gap-2 w-full px-3 py-2 text-sm rounded-lg transition-all",
+                        selectedCategory === category.id
+                          ? "bg-gray-100 text-gray-900"
+                          : "text-gray-600 hover:bg-gray-50"
+                      )}
+                    >
+                      <span className="grayscale opacity-70 text-base">{category.icon}</span>
+                      <span>{category.label}</span>
+                    </button>
+                  ))}
               </motion.div>
             )}
           </AnimatePresence>
