@@ -47,13 +47,11 @@ export const ChannelCard = ({
               loading="lazy"
               onError={(e) => {
                 const target = e.target as HTMLImageElement;
-                target.src = "/lovable-uploads/efca5adc-d9d2-4c5b-8900-e078f9d49b6a.png";
+                target.style.display = 'none';
               }}
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
-              <img src="/lovable-uploads/efca5adc-d9d2-4c5b-8900-e078f9d49b6a.png" alt="YidVid" className="w-10 h-10" />
-            </div>
+            <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200" />
           )}
         </div>
         
