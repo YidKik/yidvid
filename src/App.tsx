@@ -11,6 +11,7 @@ import LandingPage from './pages/LandingPage';
 import { PlaybackProvider } from './contexts/PlaybackContext';
 import { ColorProvider } from './contexts/ColorContext';
 import { LoadingProvider } from './contexts/LoadingContext';
+import { SidebarProvider } from './contexts/SidebarContext';
 import Settings from './pages/Settings';
 import Dashboard from './pages/Dashboard';
 import { recordNavigation, setupScrollRestoration } from './utils/scrollRestoration';
@@ -118,7 +119,9 @@ function App() {
     <LoadingProvider>
       <PlaybackProvider>
         <ColorProvider>
-          <AppContent />
+          <SidebarProvider>
+            <AppContent />
+          </SidebarProvider>
         </ColorProvider>
       </PlaybackProvider>
     </LoadingProvider>

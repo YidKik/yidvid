@@ -35,6 +35,7 @@ import {
   recordNavigation
 } from "@/utils/scrollRestoration";
 import { toast } from "sonner";
+import { useSidebarContext } from "@/contexts/SidebarContext";
 
 interface NavItem {
   name: string;
@@ -85,7 +86,7 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
   const location = useLocation();
   const navigate = useNavigate();
   const isHomePage = location.pathname === "/";
-  const [isExpanded, setIsExpanded] = useState(!isHomePage);
+  const { isExpanded, setIsExpanded } = useSidebarContext();
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
   const [isSubscriptionsOpen, setIsSubscriptionsOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -112,15 +113,6 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
     },
     enabled: !!userId && isAuthenticated,
   });
-
-  // Update expanded state when route changes
-  useEffect(() => {
-    if (isHomePage) {
-      setIsExpanded(false);
-    } else {
-      setIsExpanded(true);
-    }
-  }, [isHomePage]);
 
   // Record navigation for back button
   useEffect(() => {
@@ -403,6 +395,5 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
   );
 };
 
-// Export sidebar width for use in other components
-export const SIDEBAR_EXPANDED_WIDTH = 200;
-export const SIDEBAR_COLLAPSED_WIDTH = 64;
+// Re-export sidebar width constants from context for backward compatibility
+export { SIDEBAR_EXPANDED_WIDTH, SIDEBAR_COLLAPSED_WIDTH } from "@/contexts/SidebarContext";

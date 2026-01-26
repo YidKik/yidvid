@@ -8,6 +8,7 @@ import { useSessionManager } from "@/hooks/useSessionManager";
 import { Helmet } from "react-helmet";
 import { useSearchParams } from "react-router-dom";
 import { usePageLoader } from "@/contexts/LoadingContext";
+import { useSidebarContext } from "@/contexts/SidebarContext";
 
 const MainContent = () => {
   const [searchParams] = useSearchParams();
@@ -29,6 +30,7 @@ const MainContent = () => {
   
   const { isMobile } = useIsMobile();
   const { session } = useSessionManager();
+  const { sidebarWidth } = useSidebarContext();
   const [hasScrolled, setHasScrolled] = useState(false);
 
   usePageLoader('videos', isLoading);
@@ -68,12 +70,15 @@ const MainContent = () => {
   }
 
   return (
-    <div className="flex-1 videos-page pt-14 pl-[200px] transition-all duration-300">
+    <div 
+      className="flex-1 videos-page pt-14 transition-all duration-300"
+      style={{ paddingLeft: `${sidebarWidth + 16}px` }}
+    >
       <motion.main 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1, duration: 0.5 }}
-        className="mt-4 px-6 lg:px-10 max-w-[1800px] mx-auto w-full"
+        className="mt-4 px-6 lg:px-8 w-full"
       >
         
         <div className="space-y-2 md:space-y-4">
