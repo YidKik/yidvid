@@ -55,17 +55,7 @@ const navSections: NavSection[] = [
     items: [
       { name: "Home", path: "/", icon: Home },
       { name: "Videos", path: "/videos", icon: PlayCircle },
-      { name: "New Videos", path: "/videos?sort=new", icon: Sparkles },
-    ]
-  },
-  {
-    title: "Library",
-    requiresAuth: true,
-    items: [
-      { name: "History", path: "/dashboard", icon: History },
-      { name: "Favorites", path: "/favorites", icon: Heart },
-      { name: "Watch Later", path: "/watch-later", icon: Clock },
-      { name: "Playlists", path: "/playlists", icon: ListMusic },
+      { name: "New Videos", path: "/videos?sort=newest", icon: Sparkles },
     ]
   },
   {
@@ -76,6 +66,17 @@ const navSections: NavSection[] = [
     ]
   }
 ];
+
+const librarySection: NavSection = {
+  title: "Library",
+  requiresAuth: true,
+  items: [
+    { name: "History", path: "/dashboard", icon: History },
+    { name: "Favorites", path: "/favorites", icon: Heart },
+    { name: "Watch Later", path: "/watch-later", icon: Clock },
+    { name: "Playlists", path: "/playlists", icon: ListMusic },
+  ]
+};
 
 interface SidebarProps {
   isAuthenticated?: boolean;
@@ -226,67 +227,50 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
 
       {/* Scrollable Navigation */}
       <nav className="flex-1 overflow-y-auto py-2 px-2">
-        {navSections.map((section, sectionIdx) => {
-          const handleItemClick = (e: React.MouseEvent, item: NavItem) => {
-            if (section.requiresAuth && !isAuthenticated) {
-              e.preventDefault();
-              toast.info("Please sign in to access this feature", {
-                icon: <LogIn className="w-4 h-4" />,
-              });
-            }
-          };
-          
-          return (
-            <div key={sectionIdx} className={sectionIdx > 0 ? "mt-3 pt-3 border-t border-gray-100" : ""}>
-              {section.title && effectiveIsExpanded && (
-                <div className="px-2 py-1.5 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
-                  {section.title}
-                </div>
-              )}
-              
-              <div className="space-y-1">
-                {section.items.map((item) => {
-                  const Icon = item.icon;
-                  const active = isActive(item.path);
-                  
-                  return (
-                    <Link
-                      key={item.path + item.name}
-                      to={section.requiresAuth && !isAuthenticated ? "#" : item.path}
-                      onClick={(e) => handleItemClick(e, item)}
-                      title={!effectiveIsExpanded ? item.name : undefined}
-                      className={cn(
-                        "flex items-center text-sm font-medium transition-all duration-200",
-                        effectiveIsExpanded 
-                          ? "gap-3 px-3 py-2 rounded-full" 
-                          : "justify-center p-2 rounded-full mx-auto w-10 h-10",
-                        active
-                          ? 'border border-red-400 bg-red-50/50'
-                          : 'border border-transparent hover:bg-gray-50'
-                      )}
-                    >
-                      <Icon className={cn(
-                        "w-5 h-5 shrink-0 transition-colors",
-                        active ? 'text-red-500' : 'text-gray-600'
-                      )} />
-                      {effectiveIsExpanded && (
-                        <span className={cn(
-                          "truncate transition-colors",
-                          active ? 'text-red-500' : 'text-gray-700'
-                        )}>
-                          {item.name}
-                        </span>
-                      )}
-                    </Link>
-                  );
-                })}
-              </div>
+        {/* Main Nav Section */}
+        {navSections.slice(0, 1).map((section, sectionIdx) => (
+          <div key={sectionIdx}>
+            <div className="space-y-1">
+              {section.items.map((item) => {
+                const Icon = item.icon;
+                const active = isActive(item.path);
+                
+                return (
+                  <Link
+                    key={item.path + item.name}
+                    to={item.path}
+                    title={!effectiveIsExpanded ? item.name : undefined}
+                    className={cn(
+                      "flex items-center text-sm font-medium transition-all duration-200",
+                      effectiveIsExpanded 
+                        ? "gap-3 px-3 py-2 rounded-full" 
+                        : "justify-center p-2 rounded-full mx-auto w-10 h-10",
+                      active
+                        ? 'border border-red-400 bg-red-50/50'
+                        : 'border border-transparent hover:bg-gray-50'
+                    )}
+                  >
+                    <Icon className={cn(
+                      "w-5 h-5 shrink-0 transition-colors",
+                      active ? 'text-red-500' : 'text-gray-600'
+                    )} />
+                    {effectiveIsExpanded && (
+                      <span className={cn(
+                        "truncate transition-colors",
+                        active ? 'text-red-500' : 'text-gray-700'
+                      )}>
+                        {item.name}
+                      </span>
+                    )}
+                  </Link>
+                );
+              })}
             </div>
-          );
-        })}
+          </div>
+        ))}
 
-        {/* Categories Section */}
-        <div className="mt-3 pt-3 border-t border-gray-100">
+        {/* Categories Section - Moved up right after main nav */}
+        <div className="mt-2 pt-2 border-t border-gray-100">
           <button
             onClick={() => setIsCategoriesOpen(!isCategoriesOpen)}
             title={!effectiveIsExpanded ? "Categories" : undefined}
@@ -339,6 +323,104 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
             )}
           </AnimatePresence>
         </div>
+
+        {/* Library Section */}
+        <div className="mt-3 pt-3 border-t border-gray-100">
+          {effectiveIsExpanded && (
+            <div className="px-2 py-1.5 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
+              {librarySection.title}
+            </div>
+          )}
+          
+          <div className="space-y-1">
+            {librarySection.items.map((item) => {
+              const Icon = item.icon;
+              const active = isActive(item.path);
+              
+              const handleItemClick = (e: React.MouseEvent) => {
+                if (!isAuthenticated) {
+                  e.preventDefault();
+                  toast.info("Please sign in to access this feature", {
+                    icon: <LogIn className="w-4 h-4" />,
+                  });
+                }
+              };
+              
+              return (
+                <Link
+                  key={item.path + item.name}
+                  to={isAuthenticated ? item.path : "#"}
+                  onClick={handleItemClick}
+                  title={!effectiveIsExpanded ? item.name : undefined}
+                  className={cn(
+                    "flex items-center text-sm font-medium transition-all duration-200",
+                    effectiveIsExpanded 
+                      ? "gap-3 px-3 py-2 rounded-full" 
+                      : "justify-center p-2 rounded-full mx-auto w-10 h-10",
+                    active
+                      ? 'border border-red-400 bg-red-50/50'
+                      : 'border border-transparent hover:bg-gray-50'
+                  )}
+                >
+                  <Icon className={cn(
+                    "w-5 h-5 shrink-0 transition-colors",
+                    active ? 'text-red-500' : 'text-gray-600'
+                  )} />
+                  {effectiveIsExpanded && (
+                    <span className={cn(
+                      "truncate transition-colors",
+                      active ? 'text-red-500' : 'text-gray-700'
+                    )}>
+                      {item.name}
+                    </span>
+                  )}
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Settings Section */}
+        {navSections.slice(1).map((section, sectionIdx) => (
+          <div key={sectionIdx} className="mt-3 pt-3 border-t border-gray-100">
+            <div className="space-y-1">
+              {section.items.map((item) => {
+                const Icon = item.icon;
+                const active = isActive(item.path);
+                
+                return (
+                  <Link
+                    key={item.path + item.name}
+                    to={item.path}
+                    title={!effectiveIsExpanded ? item.name : undefined}
+                    className={cn(
+                      "flex items-center text-sm font-medium transition-all duration-200",
+                      effectiveIsExpanded 
+                        ? "gap-3 px-3 py-2 rounded-full" 
+                        : "justify-center p-2 rounded-full mx-auto w-10 h-10",
+                      active
+                        ? 'border border-red-400 bg-red-50/50'
+                        : 'border border-transparent hover:bg-gray-50'
+                    )}
+                  >
+                    <Icon className={cn(
+                      "w-5 h-5 shrink-0 transition-colors",
+                      active ? 'text-red-500' : 'text-gray-600'
+                    )} />
+                    {effectiveIsExpanded && (
+                      <span className={cn(
+                        "truncate transition-colors",
+                        active ? 'text-red-500' : 'text-gray-700'
+                      )}>
+                        {item.name}
+                      </span>
+                    )}
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        ))}
 
         {/* Subscriptions Section */}
         <div className="mt-3 pt-3 border-t border-gray-100">
