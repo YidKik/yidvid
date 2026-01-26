@@ -167,7 +167,7 @@ export const NewVideosSection = ({ videos }: NewVideosSectionProps) => {
   return (
     <section 
       ref={sectionRef}
-      className={`mb-8 py-8 -mx-6 px-6 bg-gradient-to-r from-amber-50/80 via-yellow-50/60 to-amber-50/80 dark:from-yellow-900/10 dark:via-amber-900/5 dark:to-yellow-900/10 ${showAllVideos ? 'min-h-screen pb-20' : ''}`}
+      className={`mb-8 py-8 -mx-6 px-6 bg-gradient-to-r from-amber-50/80 via-yellow-50/60 to-amber-50/80 dark:from-yellow-900/10 dark:via-amber-900/5 dark:to-yellow-900/10 ${showAllVideos ? 'min-h-screen pb-20' : 'rounded-3xl'}`}
     >
       <AnimatePresence mode="wait">
         {showAllVideos ? (

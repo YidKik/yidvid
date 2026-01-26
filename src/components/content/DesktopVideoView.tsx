@@ -68,14 +68,17 @@ export const DesktopVideoView = ({
         <FeaturedVideoSection videos={featuredVideos} />
       )}
 
-      {/* New Videos Section */}
-      <NewVideosSection videos={videos} />
+      {/* Container for sections below Featured - aligned with Featured's width */}
+      <div className="max-w-[calc(100%-2rem)] mr-4">
+        {/* New Videos Section */}
+        <NewVideosSection videos={videos} />
 
-      {/* Trending Section - Different style */}
-      <TrendingSection videos={videos} />
+        {/* Trending Section - Different style */}
+        <TrendingSection videos={videos} />
 
-      {/* Most Viewed Channels */}
-      <ChannelsRowSection selectedCategory={selectedCategory} />
+        {/* Most Viewed Channels */}
+        <ChannelsRowSection selectedCategory={selectedCategory} />
+      </div>
     </div>
   );
 };
