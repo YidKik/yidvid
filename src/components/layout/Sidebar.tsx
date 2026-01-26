@@ -126,9 +126,20 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
 
   const isActive = (path: string) => {
     const [basePath, query] = path.split("?");
+    const currentFullPath = location.pathname + location.search;
+    
     if (query) {
+      // For paths with query params (like /videos?sort=newest), check exact match
       return location.pathname === basePath && location.search.includes(query.split("=")[1]);
     }
+    
+    // For paths without query params (like /videos), only match if there's no conflicting query
+    // This prevents /videos from being active when on /videos?sort=newest
+    if (basePath === "/videos" && location.pathname === "/videos") {
+      // Only active if there's no sort param in the URL
+      return !location.search.includes("sort=");
+    }
+    
     return location.pathname === basePath;
   };
 
