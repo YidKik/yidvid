@@ -52,17 +52,18 @@
    const bottomY = 90;
    const midY = 50;
    
-   // Vertical gaps between slices
-   const gap = 5;
+  // Vertical gaps between slices
+  const gap = 5;
+  
+  // SLICE 1: Left vertical section - smaller, straight left, curved right
+  const slice1Left = leftX + 3;
+  const slice1Right = leftX + 15 - gap/2;
+  const slice1Top = topY + 3;
+  const slice1Bottom = bottomY - 3;
+  const slice1Radius = 4; // Radius for corners
    
-   // SLICE 1: Left vertical section (tall rounded rectangle)
-   const slice1Left = leftX;
-   const slice1Right = leftX + 20 - gap/2;
-   const slice1Top = topY;
-   const slice1Bottom = bottomY;
-   
-   // SLICE 2: Middle vertical section (main triangle body)
-   const slice2Left = leftX + 20 + gap/2;
+  // SLICE 2: Middle vertical section (main triangle body)
+  const slice2Left = leftX + 15 + gap/2;
    const slice2Right = tipX - 18 - gap/2;
    
    // Calculate the top and bottom Y for slice 2 at its edges
@@ -113,14 +114,20 @@
           animate={{ scale: 1, opacity: 1 }}
            transition={{ delay: 1.3, duration: 0.4 }}
         />
-        {/* Slice 1 - LEFT vertical section (slides in first) - rounded pill shape */}
-        <motion.rect
-          x={slice1Left}
-          y={slice1Top}
-          width={slice1Right - slice1Left}
-          height={slice1Bottom - slice1Top}
-          rx={(slice1Right - slice1Left) / 2}
-          ry="8"
+        {/* Slice 1 - LEFT vertical section - straight left, slightly curved right */}
+        <motion.path
+          d={`
+            M ${slice1Left + 2},${slice1Top}
+            L ${slice1Right - slice1Radius},${slice1Top}
+            Q ${slice1Right},${slice1Top} ${slice1Right},${slice1Top + slice1Radius}
+            L ${slice1Right},${slice1Bottom - slice1Radius}
+            Q ${slice1Right},${slice1Bottom} ${slice1Right - slice1Radius},${slice1Bottom}
+            L ${slice1Left + 2},${slice1Bottom}
+            Q ${slice1Left},${slice1Bottom} ${slice1Left},${slice1Bottom - 2}
+            L ${slice1Left},${slice1Top + 2}
+            Q ${slice1Left},${slice1Top} ${slice1Left + 2},${slice1Top}
+            Z
+          `}
           fill={redColor}
           custom={0}
           variants={sliceVariants}
