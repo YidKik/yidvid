@@ -107,11 +107,11 @@ export const TrendingSection = ({ videos }: TrendingSectionProps) => {
               className="flex-none w-[calc(20%-13px)] group"
             >
               {/* Thumbnail - rounded with yellow outline on hover */}
-              <div className="relative aspect-video rounded-xl overflow-hidden shadow-sm group-hover:shadow-md border-2 border-transparent group-hover:border-yellow-400 transition-all duration-300">
+              <div className="relative aspect-video rounded-xl overflow-hidden border-2 border-transparent group-hover:border-yellow-400 transition-all duration-300">
                 <img
                   src={video.thumbnail}
                   alt={video.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  className="w-full h-full object-cover"
                   loading="lazy"
                 />
               </div>

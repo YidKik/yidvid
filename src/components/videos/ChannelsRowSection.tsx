@@ -126,15 +126,15 @@ export const ChannelsRowSection = ({ selectedCategory = "all" }: ChannelsRowSect
               to={`/channel/${channel.channel_id}`}
               className="flex-none w-[210px] group"
             >
-              {/* Channel Card - Bigger with more padding, no border, shadow/glow */}
-              <div className="bg-card rounded-2xl p-7 shadow-md hover:shadow-xl hover:shadow-yellow-400/25 transition-all duration-300 text-center">
+              {/* Channel Card - Bigger with more padding, no border, subtle shadow */}
+              <div className="bg-card rounded-2xl p-7 shadow-md transition-all duration-300 text-center">
                 {/* Channel Avatar - Bigger with yellow border on hover */}
-                <div className="relative mx-auto w-28 h-28 rounded-full overflow-hidden border-[3px] border-transparent group-hover:border-yellow-400 group-hover:shadow-lg group-hover:shadow-yellow-400/40 transition-all duration-300 ring-2 ring-muted/30 group-hover:ring-yellow-400/50">
+                <div className="relative mx-auto w-28 h-28 rounded-full overflow-hidden border-[3px] border-transparent group-hover:border-yellow-400 transition-all duration-300 ring-2 ring-muted/30 group-hover:ring-yellow-400/50">
                   {channel.thumbnail_url ? (
                     <img
                       src={channel.thumbnail_url}
                       alt={channel.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      className="w-full h-full object-cover"
                       loading="lazy"
                     />
                   ) : (
