@@ -244,7 +244,7 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
                 </div>
               )}
               
-              <div className="space-y-0.5">
+              <div className="space-y-1">
                 {section.items.map((item) => {
                   const Icon = item.icon;
                   const active = isActive(item.path);
@@ -256,18 +256,27 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
                       onClick={(e) => handleItemClick(e, item)}
                       title={!effectiveIsExpanded ? item.name : undefined}
                       className={cn(
-                        "flex items-center rounded-lg text-sm font-medium transition-all duration-200",
-                        effectiveIsExpanded ? "gap-3 px-3 py-2" : "justify-center p-2.5",
+                        "flex items-center text-sm font-medium transition-all duration-200",
+                        effectiveIsExpanded 
+                          ? "gap-3 px-3 py-2 rounded-full" 
+                          : "justify-center p-2 rounded-full mx-auto w-10 h-10",
                         active
-                          ? 'bg-gray-100 text-gray-900'
-                          : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                          ? 'border border-red-400 bg-red-50/50'
+                          : 'border border-transparent hover:bg-gray-50'
                       )}
                     >
                       <Icon className={cn(
-                        "w-5 h-5 shrink-0",
-                        active ? 'text-gray-900' : 'text-gray-600'
+                        "w-5 h-5 shrink-0 transition-colors",
+                        active ? 'text-red-500' : 'text-gray-600'
                       )} />
-                      {effectiveIsExpanded && <span className="truncate">{item.name}</span>}
+                      {effectiveIsExpanded && (
+                        <span className={cn(
+                          "truncate transition-colors",
+                          active ? 'text-red-500' : 'text-gray-700'
+                        )}>
+                          {item.name}
+                        </span>
+                      )}
                     </Link>
                   );
                 })}
