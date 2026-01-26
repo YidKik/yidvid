@@ -135,8 +135,8 @@ export const ChannelsRowSection = ({ selectedCategory = "all" }: ChannelsRowSect
               to={`/channel/${channel.channel_id}`}
               className="flex-none w-[180px] group"
             >
-              {/* Channel Card - Clean white card like reference */}
-              <div className="bg-card rounded-2xl p-5 border border-border/30 hover:border-primary hover:shadow-xl transition-all duration-300 text-center">
+              {/* Channel Card - No border, just shadow/glow, yellow hover */}
+              <div className="bg-card rounded-2xl p-5 shadow-md hover:shadow-xl hover:shadow-primary/20 transition-all duration-300 text-center">
                 {/* Channel Avatar - Bigger with yellow border on hover */}
                 <div className="relative mx-auto w-24 h-24 rounded-full overflow-hidden border-2 border-primary/30 group-hover:border-primary transition-all duration-300 shadow-md">
                   {channel.thumbnail_url ? (

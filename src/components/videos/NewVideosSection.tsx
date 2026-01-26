@@ -51,7 +51,7 @@ export const NewVideosSection = ({ videos }: NewVideosSectionProps) => {
   if (!newVideos || newVideos.length === 0) return null;
 
   return (
-    <section className="mb-8 py-6 px-5 -mx-4 bg-card/80 rounded-2xl border border-border/20 shadow-sm">
+    <section className="mb-8 py-6 -mx-6 px-6 bg-muted/40">
       {/* Header - YouTube style, smaller */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
