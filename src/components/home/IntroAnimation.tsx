@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, useAnimation } from 'framer-motion';
+import yidvidLogoIcon from '@/assets/yidvid-logo-icon.png';
 
 interface IntroAnimationProps {
   onComplete: () => void;
@@ -7,7 +8,7 @@ interface IntroAnimationProps {
 }
 
 export const IntroAnimation: React.FC<IntroAnimationProps> = ({ onComplete, children }) => {
-  const [animationPhase, setAnimationPhase] = useState<'intro' | 'revealing' | 'complete'>('intro');
+  const [animationPhase, setAnimationPhase] = useState<'intro' | 'revealing' | 'transitioning' | 'complete'>('intro');
   const controls = useAnimation();
   
   const redColor = '#FF0000';
@@ -29,6 +30,12 @@ export const IntroAnimation: React.FC<IntroAnimationProps> = ({ onComplete, chil
       
       // Wait for settle animation
       await new Promise(resolve => setTimeout(resolve, settleDuration * 1000 + 500));
+      
+      // Start transition to static logo
+      setAnimationPhase('transitioning');
+      
+      // Wait for transition to complete
+      await new Promise(resolve => setTimeout(resolve, 800));
       
       // Complete
       setAnimationPhase('complete');
@@ -188,6 +195,30 @@ export const IntroAnimation: React.FC<IntroAnimationProps> = ({ onComplete, chil
       animate={{ opacity: animationPhase === 'complete' ? 0.15 : 0 }}
       transition={{ duration: 0.5 }}
     >
+      <img 
+        src={yidvidLogoIcon} 
+        alt="YidVid Logo" 
+        className="w-full h-full object-contain"
+      />
+    </motion.div>
+  );
+
+  // Animated SVG logo that fades out during transition
+  const AnimatedLogo = () => (
+    <motion.div
+      className="fixed top-1/2 -translate-y-1/2 z-45 pointer-events-none"
+      style={{ 
+        width: logoSize * 0.8, 
+        height: logoSize * 0.8,
+        right: 20
+      }}
+      initial={{ opacity: 0.15, scale: 1 }}
+      animate={{ 
+        opacity: animationPhase === 'transitioning' || animationPhase === 'complete' ? 0 : 0.15,
+        scale: animationPhase === 'transitioning' ? 1.05 : 1
+      }}
+      transition={{ duration: 0.6, ease: "easeInOut" }}
+    >
       <svg viewBox="0 0 100 100" className="w-full h-full">
         <path
           d={`
@@ -227,7 +258,12 @@ export const IntroAnimation: React.FC<IntroAnimationProps> = ({ onComplete, chil
         </>
       )}
       
-      {/* Decorative settled logo on right side */}
+      {/* Animated SVG logo that fades out during transition */}
+      {(animationPhase === 'revealing' || animationPhase === 'transitioning') && (
+        <AnimatedLogo />
+      )}
+      
+      {/* Static logo icon that fades in */}
       <FinalLogo />
       
       {/* Main content that reveals behind logo */}
