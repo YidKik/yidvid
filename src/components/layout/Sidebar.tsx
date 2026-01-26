@@ -120,8 +120,8 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
     recordNavigation(currentPath);
   }, [location.pathname, location.search]);
 
-  // Don't render on homepage
-  if (isHomePage) return null;
+  // On homepage, show collapsed sidebar
+  const effectiveIsExpanded = isHomePage ? false : isExpanded;
 
   const isActive = (path: string) => {
     const [basePath, query] = path.split("?");
@@ -158,7 +158,7 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
     setIsCategoriesOpen(false);
   };
 
-  const sidebarWidth = isExpanded ? 200 : 64;
+  const sidebarWidth = effectiveIsExpanded ? 200 : 64;
 
   return (
     <motion.aside
@@ -171,7 +171,7 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
       {/* Logo Section */}
       <div className={cn(
         "flex items-center border-b border-gray-100 h-14",
-        isExpanded ? "px-4 justify-between" : "px-2 justify-center"
+        effectiveIsExpanded ? "px-4 justify-between" : "px-2 justify-center"
       )}>
         <Link to="/" className="flex items-center gap-2 shrink-0">
           <img 
@@ -179,7 +179,7 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
             alt="YidVid" 
             className="w-8 h-8 object-contain"
           />
-          {isExpanded && (
+          {effectiveIsExpanded && (
             <span 
               className="text-base font-bold text-gray-800"
               style={{ fontFamily: "'Fredoka One', 'Nunito', sans-serif" }}
@@ -189,35 +189,37 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
           )}
         </Link>
         
-        {/* Toggle Arrow */}
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="h-8 w-8 rounded-full hover:bg-gray-100"
-        >
-          {isExpanded ? (
-            <ChevronLeft className="w-4 h-4 text-gray-500" />
-          ) : (
-            <ChevronRight className="w-4 h-4 text-gray-500" />
-          )}
-        </Button>
+        {/* Toggle Arrow - hidden on homepage */}
+        {!isHomePage && (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="h-8 w-8 rounded-full hover:bg-gray-100"
+          >
+            {effectiveIsExpanded ? (
+              <ChevronLeft className="w-4 h-4 text-gray-500" />
+            ) : (
+              <ChevronRight className="w-4 h-4 text-gray-500" />
+            )}
+          </Button>
+        )}
       </div>
 
       {/* Back Button - Only show when can go back and on detail pages (not main listing pages) */}
       {canGoBack() && (location.pathname.startsWith("/video/") || location.pathname.startsWith("/channel/")) && (
-        <div className={cn("px-2 py-2 border-b border-gray-50", isExpanded ? "px-3" : "")}>
+        <div className={cn("px-2 py-2 border-b border-gray-50", effectiveIsExpanded ? "px-3" : "")}>
           <button
             onClick={handleGoBack}
             title="Go back"
             className={cn(
               "flex items-center rounded-xl text-sm font-medium transition-all duration-200",
               "text-gray-500 hover:bg-gray-100 hover:text-gray-700",
-              isExpanded ? "gap-2 px-3 py-2 w-full" : "justify-center p-2 w-10 h-10 mx-auto"
+              effectiveIsExpanded ? "gap-2 px-3 py-2 w-full" : "justify-center p-2 w-10 h-10 mx-auto"
             )}
           >
             <ArrowLeft className="w-4 h-4 shrink-0" />
-            {isExpanded && <span>Back</span>}
+            {effectiveIsExpanded && <span>Back</span>}
           </button>
         </div>
       )}
@@ -236,7 +238,7 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
           
           return (
             <div key={sectionIdx} className={sectionIdx > 0 ? "mt-3 pt-3 border-t border-gray-100" : ""}>
-              {section.title && isExpanded && (
+              {section.title && effectiveIsExpanded && (
                 <div className="px-2 py-1.5 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
                   {section.title}
                 </div>
@@ -252,10 +254,10 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
                       key={item.path + item.name}
                       to={section.requiresAuth && !isAuthenticated ? "#" : item.path}
                       onClick={(e) => handleItemClick(e, item)}
-                      title={!isExpanded ? item.name : undefined}
+                      title={!effectiveIsExpanded ? item.name : undefined}
                       className={cn(
                         "flex items-center rounded-lg text-sm font-medium transition-all duration-200",
-                        isExpanded ? "gap-3 px-3 py-2" : "justify-center p-2.5",
+                        effectiveIsExpanded ? "gap-3 px-3 py-2" : "justify-center p-2.5",
                         active
                           ? 'bg-gray-100 text-gray-900'
                           : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
@@ -265,7 +267,7 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
                         "w-5 h-5 shrink-0",
                         active ? 'text-gray-900' : 'text-gray-600'
                       )} />
-                      {isExpanded && <span className="truncate">{item.name}</span>}
+                      {effectiveIsExpanded && <span className="truncate">{item.name}</span>}
                     </Link>
                   );
                 })}
@@ -278,24 +280,24 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
         <div className="mt-3 pt-3 border-t border-gray-100">
           <button
             onClick={() => setIsCategoriesOpen(!isCategoriesOpen)}
-            title={!isExpanded ? "Categories" : undefined}
+            title={!effectiveIsExpanded ? "Categories" : undefined}
             className={cn(
               "flex items-center rounded-lg text-sm font-medium transition-all duration-200 w-full",
-              isExpanded ? "gap-3 px-3 py-2 justify-between" : "justify-center p-2.5",
+              effectiveIsExpanded ? "gap-3 px-3 py-2 justify-between" : "justify-center p-2.5",
               "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
             )}
           >
             <div className="flex items-center gap-3">
               <LayoutGrid className="w-5 h-5 shrink-0 text-gray-600" />
-              {isExpanded && <span>Categories</span>}
+              {effectiveIsExpanded && <span>Categories</span>}
             </div>
-            {isExpanded && (
+            {effectiveIsExpanded && (
               isCategoriesOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />
             )}
           </button>
 
           <AnimatePresence>
-            {isCategoriesOpen && isExpanded && (
+            {isCategoriesOpen && effectiveIsExpanded && (
               <motion.div
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: "auto", opacity: 1 }}
@@ -341,24 +343,24 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
               }
               setIsSubscriptionsOpen(!isSubscriptionsOpen);
             }}
-            title={!isExpanded ? "Subscriptions" : undefined}
+            title={!effectiveIsExpanded ? "Subscriptions" : undefined}
             className={cn(
               "flex items-center rounded-lg text-sm font-medium transition-all duration-200 w-full",
-              isExpanded ? "gap-3 px-3 py-2 justify-between" : "justify-center p-2.5",
+              effectiveIsExpanded ? "gap-3 px-3 py-2 justify-between" : "justify-center p-2.5",
               "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
             )}
           >
             <div className="flex items-center gap-3">
               <Bell className="w-5 h-5 shrink-0 text-gray-600" />
-              {isExpanded && <span>Subscriptions</span>}
+              {effectiveIsExpanded && <span>Subscriptions</span>}
             </div>
-            {isExpanded && (
+            {effectiveIsExpanded && (
               isSubscriptionsOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />
             )}
           </button>
 
           <AnimatePresence>
-            {isSubscriptionsOpen && isExpanded && isAuthenticated && (
+            {isSubscriptionsOpen && effectiveIsExpanded && isAuthenticated && (
               <motion.div
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: "auto", opacity: 1 }}
