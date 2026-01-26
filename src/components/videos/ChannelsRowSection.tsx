@@ -154,7 +154,7 @@ export const ChannelsRowSection = ({ selectedCategory = "all" }: ChannelsRowSect
   return (
     <section 
       ref={sectionRef}
-      className={`mb-10 py-10 -mx-6 px-6 ${showAllChannels ? 'bg-background min-h-screen' : 'bg-gradient-to-br from-yellow-50/80 via-orange-50/50 to-red-50/30 dark:from-yellow-900/10 dark:via-orange-900/5 dark:to-red-900/5 rounded-3xl shadow-sm'}`}
+      className={`mb-10 py-10 -mx-6 px-6 bg-gradient-to-br from-yellow-50/80 via-orange-50/50 to-red-50/30 dark:from-yellow-900/10 dark:via-orange-900/5 dark:to-red-900/5 ${showAllChannels ? 'min-h-screen pb-20' : 'rounded-3xl shadow-sm'}`}
     >
       <AnimatePresence mode="wait">
         {showAllChannels ? (
