@@ -9,6 +9,7 @@ import { Helmet } from "react-helmet";
 import { useSearchParams } from "react-router-dom";
 import { usePageLoader } from "@/contexts/LoadingContext";
 import { useSidebarContext } from "@/contexts/SidebarContext";
+import { Footer } from "@/components/layout/Footer";
 
 const MainContent = () => {
   const [searchParams] = useSearchParams();
@@ -195,8 +196,11 @@ const Videos = () => {
         </script>
       </Helmet>
       
-      <div className="min-h-screen w-full bg-white videos-page overflow-x-hidden max-w-[100vw]">
-        <MainContent />
+      <div className="min-h-screen w-full bg-white videos-page overflow-x-hidden max-w-[100vw] flex flex-col">
+        <div className="flex-1">
+          <MainContent />
+        </div>
+        <Footer />
       </div>
     </>
   );
