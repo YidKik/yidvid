@@ -6,7 +6,7 @@ import { useChannelsGrid } from "@/hooks/channel/useChannelsGrid";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ChevronLeft } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 
 interface ChannelsRowSectionProps {
   selectedCategory?: string;
@@ -89,8 +89,6 @@ export const ChannelsRowSection = ({ selectedCategory = "all" }: ChannelsRowSect
   // Handle View All click
   const handleViewAllClick = () => {
     setShowAllChannels(true);
-    // Scroll to top of page smoothly
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   // Handle Back click
@@ -111,7 +109,7 @@ export const ChannelsRowSection = ({ selectedCategory = "all" }: ChannelsRowSect
       animate={isGrid ? { opacity: 1, y: 0, scale: 1 } : false}
       transition={isGrid ? { 
         duration: 0.4, 
-        delay: index * 0.05,
+        delay: index * 0.03,
         ease: [0.25, 0.46, 0.45, 0.94]
       } : undefined}
     >
@@ -150,121 +148,124 @@ export const ChannelsRowSection = ({ selectedCategory = "all" }: ChannelsRowSect
   );
 
   return (
-    <section 
-      ref={sectionRef}
-      className="mb-10 py-8 -mx-6 px-6 bg-gradient-to-b from-slate-50/70 via-gray-50/50 to-transparent dark:from-slate-800/20 dark:via-gray-800/10 dark:to-transparent border-t border-muted/30"
-    >
-      <AnimatePresence mode="wait">
-        {showAllChannels ? (
-          // Expanded All Channels View
+    <>
+      {/* Full-page All Channels View - Fixed overlay */}
+      <AnimatePresence>
+        {showAllChannels && (
           <motion.div
-            key="all-channels"
+            key="all-channels-fullpage"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
+            className="fixed inset-0 z-50 bg-background overflow-y-auto"
+            style={{ top: '56px' }}
           >
-            {/* Header with Back button */}
-            <div className="flex items-center justify-between mb-8">
-              <div className="flex items-center gap-4">
-                <button
-                  onClick={handleBackClick}
-                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground bg-muted/50 hover:bg-muted rounded-full transition-all duration-200"
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                  Back to Videos
-                </button>
-                <h2 className="text-xl font-semibold text-foreground font-friendly">
-                  All Channels
-                </h2>
-              </div>
-              <span className="text-sm text-muted-foreground">
-                {allSortedChannels.length} channels
-              </span>
-            </div>
+            <div className="min-h-full px-6 py-8 pl-[220px]">
+              {/* Header with Back button */}
+              <motion.div 
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.1 }}
+                className="flex items-center justify-between mb-8"
+              >
+                <div className="flex items-center gap-4">
+                  <button
+                    onClick={handleBackClick}
+                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground bg-muted/50 hover:bg-muted rounded-full transition-all duration-200"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                    Back to Videos
+                  </button>
+                  <h2 className="text-xl font-semibold text-foreground font-friendly">
+                    All Channels
+                  </h2>
+                </div>
+                <span className="text-sm text-muted-foreground">
+                  {allSortedChannels.length} channels
+                </span>
+              </motion.div>
 
-            {/* Grid of all channels */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-              {allSortedChannels.map((channel, index) => (
-                <ChannelCard 
-                  key={channel.id} 
-                  channel={channel} 
-                  index={index}
-                  isGrid={true}
-                />
-              ))}
-            </div>
-          </motion.div>
-        ) : (
-          // Normal Carousel View
-          <motion.div
-            key="carousel"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            {/* Header - YouTube style, smaller */}
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
-                Most Viewed Channels
-              </h2>
-              
-              <div className="flex gap-1.5">
-                <button
-                  onClick={scrollPrev}
-                  disabled={!canScrollPrev}
-                  className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
-                    canScrollPrev 
-                      ? 'bg-muted hover:bg-muted/80 text-foreground' 
-                      : 'bg-muted/30 text-muted-foreground/30 cursor-not-allowed'
-                  }`}
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                  </svg>
-                </button>
-                <button
-                  onClick={scrollNext}
-                  disabled={!canScrollNext}
-                  className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
-                    canScrollNext 
-                      ? 'bg-muted hover:bg-muted/80 text-foreground' 
-                      : 'bg-muted/30 text-muted-foreground/30 cursor-not-allowed'
-                  }`}
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
-              </div>
-            </div>
-
-            <div className="overflow-visible py-3" ref={emblaRef}>
-              <div className="flex gap-6">
-                {sortedChannels.map((channel, index) => (
+              {/* Grid of all channels */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 pb-8">
+                {allSortedChannels.map((channel, index) => (
                   <ChannelCard 
                     key={channel.id} 
                     channel={channel} 
                     index={index}
-                    isGrid={false}
+                    isGrid={true}
                   />
                 ))}
               </div>
             </div>
-
-            {/* View All Button - Bottom center, friendly and visible */}
-            <div className="flex justify-center mt-8">
-              <button 
-                onClick={handleViewAllClick}
-                className="px-8 py-3 text-base font-friendly font-semibold text-foreground hover:text-white bg-yellow-400/20 hover:bg-yellow-400 border-2 border-yellow-400 rounded-full transition-all duration-300 shadow-sm hover:shadow-lg hover:shadow-yellow-400/30"
-              >
-                View All Channels
-              </button>
-            </div>
           </motion.div>
         )}
       </AnimatePresence>
-    </section>
+
+      {/* Normal Section View */}
+      <section 
+        ref={sectionRef}
+        className="mb-10 py-8 -mx-6 px-6 bg-gradient-to-b from-slate-50/70 via-gray-50/50 to-transparent dark:from-slate-800/20 dark:via-gray-800/10 dark:to-transparent border-t border-muted/30"
+      >
+        {/* Header - YouTube style, smaller */}
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+            Most Viewed Channels
+          </h2>
+          
+          <div className="flex gap-1.5">
+            <button
+              onClick={scrollPrev}
+              disabled={!canScrollPrev}
+              className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
+                canScrollPrev 
+                  ? 'bg-muted hover:bg-muted/80 text-foreground' 
+                  : 'bg-muted/30 text-muted-foreground/30 cursor-not-allowed'
+              }`}
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <button
+              onClick={scrollNext}
+              disabled={!canScrollNext}
+              className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
+                canScrollNext 
+                  ? 'bg-muted hover:bg-muted/80 text-foreground' 
+                  : 'bg-muted/30 text-muted-foreground/30 cursor-not-allowed'
+              }`}
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div className="overflow-visible py-3" ref={emblaRef}>
+          <div className="flex gap-6">
+            {sortedChannels.map((channel, index) => (
+              <ChannelCard 
+                key={channel.id} 
+                channel={channel} 
+                index={index}
+                isGrid={false}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* View All Button - Bottom center, friendly and visible */}
+        <div className="flex justify-center mt-8">
+          <button 
+            onClick={handleViewAllClick}
+            className="px-8 py-3 text-base font-friendly font-semibold text-foreground hover:text-white bg-yellow-400/20 hover:bg-yellow-400 border-2 border-yellow-400 rounded-full transition-all duration-300 shadow-sm hover:shadow-lg hover:shadow-yellow-400/30"
+          >
+            View All Channels
+          </button>
+        </div>
+      </section>
+    </>
   );
 };
