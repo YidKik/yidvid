@@ -42,7 +42,7 @@ export const ChannelsRowSection = ({ selectedCategory = "all" }: ChannelsRowSect
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: "start",
     slidesToScroll: 5,
-    containScroll: "trimSnaps",
+    containScroll: "keepSnaps",
     dragFree: false,
   });
 
@@ -158,7 +158,7 @@ export const ChannelsRowSection = ({ selectedCategory = "all" }: ChannelsRowSect
     >
       <AnimatePresence mode="wait">
         {showAllChannels ? (
-          /* Expanded Grid View */
+          /* Expanded Grid View - Shows all channels including first row */
           <motion.div
             key="all-channels"
             initial={{ opacity: 0 }}
@@ -242,8 +242,8 @@ export const ChannelsRowSection = ({ selectedCategory = "all" }: ChannelsRowSect
               </div>
             </div>
 
-            <div className="overflow-visible py-3" ref={emblaRef}>
-              <div className="flex gap-6">
+            <div className="overflow-hidden py-3" ref={emblaRef}>
+              <div className="flex gap-4">
                 {sortedChannels.map((channel, index) => (
                   <ChannelCard 
                     key={channel.id} 
