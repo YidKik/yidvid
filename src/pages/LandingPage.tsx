@@ -78,7 +78,7 @@ const LandingPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background overflow-x-hidden">
+    <div className="min-h-screen bg-background overflow-x-hidden" style={{ paddingLeft: '64px' }}>
       {/* Hero Search Section with Typing Effect */}
       <HeroSearchSection />
 
