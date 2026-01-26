@@ -6,7 +6,7 @@ import { useChannelsGrid } from "@/hooks/channel/useChannelsGrid";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronUp } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 
 interface ChannelsRowSectionProps {
   selectedCategory?: string;
@@ -81,18 +81,8 @@ export const ChannelsRowSection = ({ selectedCategory = "all" }: ChannelsRowSect
       });
   }, [channels, channelVideoCounts]);
 
-  // First row (6 channels for grid)
-  const firstRowChannels = useMemo(() => {
-    return allSortedChannels.slice(0, 6);
-  }, [allSortedChannels]);
-
-  // Remaining channels after first row
-  const remainingChannels = useMemo(() => {
-    return allSortedChannels.slice(6);
-  }, [allSortedChannels]);
-
   // Top 10 for carousel view
-  const carouselChannels = useMemo(() => {
+  const sortedChannels = useMemo(() => {
     return allSortedChannels.slice(0, 10);
   }, [allSortedChannels]);
 
@@ -105,31 +95,34 @@ export const ChannelsRowSection = ({ selectedCategory = "all" }: ChannelsRowSect
     }, 50);
   };
 
-  // Handle Back click - collapse
+  // Handle Back click - collapse and stay at section
   const handleBackClick = () => {
     setShowAllChannels(false);
+    // Scroll back to section
+    setTimeout(() => {
+      sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 50);
   };
 
-  if (isLoading || carouselChannels.length === 0) return null;
+  if (isLoading || sortedChannels.length === 0) return null;
 
   // Channel Card Component for reuse
-  const ChannelCard = ({ channel, index, animated = false }: { channel: any; index: number; animated?: boolean }) => (
+  const ChannelCard = ({ channel, index, isGrid = false }: { channel: any; index: number; isGrid?: boolean }) => (
     <motion.div
-      initial={animated ? { opacity: 0, y: 30 } : false}
-      animate={animated ? { opacity: 1, y: 0 } : false}
-      transition={animated ? { 
-        duration: 0.4, 
-        delay: index * 0.03,
+      initial={isGrid ? { opacity: 0, y: 20, scale: 0.95 } : false}
+      animate={isGrid ? { opacity: 1, y: 0, scale: 1 } : false}
+      transition={isGrid ? { 
+        duration: 0.35, 
+        delay: index * 0.02,
         ease: [0.25, 0.46, 0.45, 0.94]
       } : undefined}
-      className="w-full"
     >
       <Link
         to={`/channel/${channel.channel_id}`}
-        className="block group"
+        className={`block group ${isGrid ? 'w-full' : 'flex-none w-[210px]'}`}
       >
-        <div className="bg-card rounded-2xl p-6 shadow-md transition-all duration-300 text-center">
-          <div className="relative mx-auto w-24 h-24 rounded-full overflow-hidden border-[3px] border-transparent group-hover:border-yellow-400 transition-all duration-300 ring-2 ring-muted/30 group-hover:ring-yellow-400/50">
+        <div className="bg-card rounded-2xl p-7 shadow-md transition-all duration-300 text-center">
+          <div className="relative mx-auto w-28 h-28 rounded-full overflow-hidden border-[3px] border-transparent group-hover:border-yellow-400 transition-all duration-300 ring-2 ring-muted/30 group-hover:ring-yellow-400/50">
             {channel.thumbnail_url ? (
               <img
                 src={channel.thumbnail_url}
@@ -139,18 +132,18 @@ export const ChannelsRowSection = ({ selectedCategory = "all" }: ChannelsRowSect
               />
             ) : (
               <div className="w-full h-full bg-gradient-to-br from-yellow-400 to-red-500 flex items-center justify-center">
-                <span className="text-2xl font-bold text-white">
+                <span className="text-3xl font-bold text-white">
                   {channel.title.charAt(0).toUpperCase()}
                 </span>
               </div>
             )}
           </div>
           
-          <p className="mt-3 text-sm font-semibold text-foreground truncate group-hover:text-yellow-500 transition-colors">
+          <p className="mt-4 text-sm font-semibold text-foreground truncate group-hover:text-yellow-500 transition-colors">
             {channel.title}
           </p>
           
-          <p className="text-xs text-muted-foreground mt-1">
+          <p className="text-xs text-muted-foreground mt-1.5">
             {channelVideoCounts?.[channel.channel_id]?.toLocaleString() || 0} views
           </p>
         </div>
@@ -158,157 +151,122 @@ export const ChannelsRowSection = ({ selectedCategory = "all" }: ChannelsRowSect
     </motion.div>
   );
 
-  // Carousel Card (slightly different sizing)
-  const CarouselCard = ({ channel }: { channel: any }) => (
-    <Link
-      to={`/channel/${channel.channel_id}`}
-      className="flex-none w-[210px] group"
-    >
-      <div className="bg-card rounded-2xl p-7 shadow-md transition-all duration-300 text-center">
-        <div className="relative mx-auto w-28 h-28 rounded-full overflow-hidden border-[3px] border-transparent group-hover:border-yellow-400 transition-all duration-300 ring-2 ring-muted/30 group-hover:ring-yellow-400/50">
-          {channel.thumbnail_url ? (
-            <img
-              src={channel.thumbnail_url}
-              alt={channel.title}
-              className="w-full h-full object-cover"
-              loading="lazy"
-            />
-          ) : (
-            <div className="w-full h-full bg-gradient-to-br from-yellow-400 to-red-500 flex items-center justify-center">
-              <span className="text-3xl font-bold text-white">
-                {channel.title.charAt(0).toUpperCase()}
-              </span>
-            </div>
-          )}
-        </div>
-        
-        <p className="mt-4 text-sm font-semibold text-foreground truncate group-hover:text-yellow-500 transition-colors">
-          {channel.title}
-        </p>
-        
-        <p className="text-xs text-muted-foreground mt-1.5">
-          {channelVideoCounts?.[channel.channel_id]?.toLocaleString() || 0} views
-        </p>
-      </div>
-    </Link>
-  );
-
   return (
     <section 
       ref={sectionRef}
       className="mb-10 py-8 -mx-6 px-6 bg-gradient-to-b from-slate-50/70 via-gray-50/50 to-transparent dark:from-slate-800/20 dark:via-gray-800/10 dark:to-transparent border-t border-muted/30"
     >
-      {showAllChannels ? (
-        /* Expanded Grid View */
-        <div>
-          {/* Header with Back button */}
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-4">
-              <button
-                onClick={handleBackClick}
-                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground bg-muted/50 hover:bg-muted rounded-full transition-all duration-200"
-              >
-                <ChevronUp className="w-4 h-4" />
-                Collapse
-              </button>
-              <h2 className="text-lg font-semibold text-foreground font-friendly">
-                All Channels
-              </h2>
+      <AnimatePresence mode="wait">
+        {showAllChannels ? (
+          /* Expanded Grid View */
+          <motion.div
+            key="all-channels"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+          >
+            {/* Header with Back button */}
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={handleBackClick}
+                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground bg-muted/50 hover:bg-muted rounded-full transition-all duration-200"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                  Back
+                </button>
+                <h2 className="text-lg font-semibold text-foreground font-friendly">
+                  All Channels
+                </h2>
+              </div>
+              <span className="text-sm text-muted-foreground">
+                {allSortedChannels.length} channels
+              </span>
             </div>
-            <span className="text-sm text-muted-foreground">
-              {allSortedChannels.length} channels
-            </span>
-          </div>
 
-          {/* First row - stays visible */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 mb-4">
-            {firstRowChannels.map((channel, index) => (
-              <ChannelCard 
-                key={channel.id} 
-                channel={channel} 
-                index={index}
-                animated={false}
-              />
-            ))}
-          </div>
-
-          {/* Remaining rows - animate in */}
-          <AnimatePresence>
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
-              className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4"
-            >
-              {remainingChannels.map((channel, index) => (
+            {/* Grid of all channels */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+              {allSortedChannels.map((channel, index) => (
                 <ChannelCard 
                   key={channel.id} 
                   channel={channel} 
                   index={index}
-                  animated={true}
+                  isGrid={true}
                 />
               ))}
-            </motion.div>
-          </AnimatePresence>
-        </div>
-      ) : (
-        /* Normal Carousel View */
-        <div>
-          {/* Header - YouTube style, smaller */}
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
-              Most Viewed Channels
-            </h2>
-            
-            <div className="flex gap-1.5">
-              <button
-                onClick={scrollPrev}
-                disabled={!canScrollPrev}
-                className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
-                  canScrollPrev 
-                    ? 'bg-muted hover:bg-muted/80 text-foreground' 
-                    : 'bg-muted/30 text-muted-foreground/30 cursor-not-allowed'
-                }`}
+            </div>
+          </motion.div>
+        ) : (
+          /* Normal Carousel View */
+          <motion.div
+            key="carousel"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+          >
+            {/* Header - YouTube style, smaller */}
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+                Most Viewed Channels
+              </h2>
+              
+              <div className="flex gap-1.5">
+                <button
+                  onClick={scrollPrev}
+                  disabled={!canScrollPrev}
+                  className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
+                    canScrollPrev 
+                      ? 'bg-muted hover:bg-muted/80 text-foreground' 
+                      : 'bg-muted/30 text-muted-foreground/30 cursor-not-allowed'
+                  }`}
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+                <button
+                  onClick={scrollNext}
+                  disabled={!canScrollNext}
+                  className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
+                    canScrollNext 
+                      ? 'bg-muted hover:bg-muted/80 text-foreground' 
+                      : 'bg-muted/30 text-muted-foreground/30 cursor-not-allowed'
+                  }`}
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div className="overflow-visible py-3" ref={emblaRef}>
+              <div className="flex gap-6">
+                {sortedChannels.map((channel, index) => (
+                  <ChannelCard 
+                    key={channel.id} 
+                    channel={channel} 
+                    index={index}
+                    isGrid={false}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* View All Button - Bottom center, friendly and visible */}
+            <div className="flex justify-center mt-8">
+              <button 
+                onClick={handleViewAllClick}
+                className="px-8 py-3 text-base font-friendly font-semibold text-foreground hover:text-white bg-yellow-400/20 hover:bg-yellow-400 border-2 border-yellow-400 rounded-full transition-all duration-300 shadow-sm hover:shadow-lg hover:shadow-yellow-400/30"
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-              </button>
-              <button
-                onClick={scrollNext}
-                disabled={!canScrollNext}
-                className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
-                  canScrollNext 
-                    ? 'bg-muted hover:bg-muted/80 text-foreground' 
-                    : 'bg-muted/30 text-muted-foreground/30 cursor-not-allowed'
-                }`}
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
+                View All Channels
               </button>
             </div>
-          </div>
-
-          <div className="overflow-visible py-3" ref={emblaRef}>
-            <div className="flex gap-6">
-              {carouselChannels.map((channel) => (
-                <CarouselCard key={channel.id} channel={channel} />
-              ))}
-            </div>
-          </div>
-
-          {/* View All Button - Bottom center, friendly and visible */}
-          <div className="flex justify-center mt-8">
-            <button 
-              onClick={handleViewAllClick}
-              className="px-8 py-3 text-base font-friendly font-semibold text-foreground hover:text-white bg-yellow-400/20 hover:bg-yellow-400 border-2 border-yellow-400 rounded-full transition-all duration-300 shadow-sm hover:shadow-lg hover:shadow-yellow-400/30"
-            >
-              View All Channels
-            </button>
-          </div>
-        </div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 };
