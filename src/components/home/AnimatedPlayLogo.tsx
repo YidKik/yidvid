@@ -113,13 +113,14 @@
           animate={{ scale: 1, opacity: 1 }}
            transition={{ delay: 1.3, duration: 0.4 }}
         />
-         {/* Slice 1 - LEFT vertical section (slides in first) */}
-         <motion.rect
-           x={slice1Left}
-           y={slice1Top}
-           width={slice1Right - slice1Left}
-           height={slice1Bottom - slice1Top}
-           rx="3"
+        {/* Slice 1 - LEFT vertical section (slides in first) - rounded pill shape */}
+        <motion.rect
+          x={slice1Left}
+          y={slice1Top}
+          width={slice1Right - slice1Left}
+          height={slice1Bottom - slice1Top}
+          rx={(slice1Right - slice1Left) / 2}
+          ry="8"
           fill={redColor}
           custom={0}
           variants={sliceVariants}
