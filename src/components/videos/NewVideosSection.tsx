@@ -118,12 +118,12 @@ export const NewVideosSection = ({ videos }: NewVideosSectionProps) => {
               {/* Video Info - left aligned */}
               <div className="mt-3">
                 {/* Title */}
-                <h3 className="text-sm font-medium text-foreground line-clamp-2 group-hover:text-primary transition-colors">
+                <h3 className="text-sm font-medium text-foreground line-clamp-2 group-hover:text-yellow-500 transition-colors">
                   {video.title}
                 </h3>
                 {/* Channel with avatar */}
                 <div className="flex items-center gap-2 mt-2">
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-br from-primary to-red-500 flex items-center justify-center text-[10px] font-bold text-white flex-shrink-0">
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-br from-yellow-400 to-red-500 flex items-center justify-center text-[10px] font-bold text-white flex-shrink-0">
                     {video.channel_name.charAt(0).toUpperCase()}
                   </div>
                   <p className="text-xs text-muted-foreground truncate">

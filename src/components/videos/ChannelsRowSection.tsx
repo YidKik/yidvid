@@ -127,9 +127,9 @@ export const ChannelsRowSection = ({ selectedCategory = "all" }: ChannelsRowSect
               className="flex-none w-[200px] group"
             >
               {/* Channel Card - Bigger, no border, just shadow/glow */}
-              <div className="bg-card rounded-2xl p-6 shadow-md hover:shadow-xl hover:shadow-primary/20 transition-all duration-300 text-center">
+              <div className="bg-card rounded-2xl p-6 shadow-md hover:shadow-xl hover:shadow-yellow-400/20 transition-all duration-300 text-center">
                 {/* Channel Avatar - Bigger with yellow border */}
-                <div className="relative mx-auto w-28 h-28 rounded-full overflow-hidden border-3 border-primary group-hover:border-primary group-hover:shadow-lg group-hover:shadow-primary/30 transition-all duration-300">
+                <div className="relative mx-auto w-28 h-28 rounded-full overflow-hidden border-3 border-yellow-400 group-hover:shadow-lg group-hover:shadow-yellow-400/30 transition-all duration-300">
                   {channel.thumbnail_url ? (
                     <img
                       src={channel.thumbnail_url}
@@ -138,7 +138,7 @@ export const ChannelsRowSection = ({ selectedCategory = "all" }: ChannelsRowSect
                       loading="lazy"
                     />
                   ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-primary to-red-500 flex items-center justify-center">
+                    <div className="w-full h-full bg-gradient-to-br from-yellow-400 to-red-500 flex items-center justify-center">
                       <span className="text-3xl font-bold text-white">
                         {channel.title.charAt(0).toUpperCase()}
                       </span>
@@ -147,7 +147,7 @@ export const ChannelsRowSection = ({ selectedCategory = "all" }: ChannelsRowSect
                 </div>
                 
                 {/* Channel Name */}
-                <p className="mt-4 text-sm font-semibold text-foreground truncate group-hover:text-primary transition-colors">
+                <p className="mt-4 text-sm font-semibold text-foreground truncate group-hover:text-yellow-500 transition-colors">
                   {channel.title}
                 </p>
                 
