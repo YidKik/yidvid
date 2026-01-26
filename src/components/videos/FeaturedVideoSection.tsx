@@ -97,7 +97,7 @@ export const FeaturedVideoSection = ({ videos }: FeaturedVideoSectionProps) => {
               className="flex-none w-[calc(33.333%-14px)] group"
             >
               {/* Featured Card - Solid yellow border always */}
-              <div className="relative aspect-video rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-primary">
+              <div className="relative aspect-video rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-yellow-400">
                 <img
                   src={video.thumbnail}
                   alt={video.title}
@@ -110,15 +110,15 @@ export const FeaturedVideoSection = ({ videos }: FeaturedVideoSectionProps) => {
                 
                 {/* Play Button on Hover */}
                 <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className="w-14 h-14 rounded-full bg-primary/90 flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform">
-                    <Play className="w-7 h-7 text-primary-foreground fill-primary-foreground ml-1" />
+                  <div className="w-14 h-14 rounded-full bg-yellow-400 flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform">
+                    <Play className="w-7 h-7 text-black fill-black ml-1" />
                   </div>
                 </div>
                 
                 {/* Content at Bottom */}
                 <div className="absolute bottom-0 left-0 right-0 p-4">
                   {/* Video Title - turns yellow on hover */}
-                  <h3 className="text-white font-semibold text-base line-clamp-2 group-hover:text-primary transition-colors drop-shadow-md">
+                  <h3 className="text-white font-semibold text-base line-clamp-2 group-hover:text-yellow-400 transition-colors drop-shadow-md">
                     {video.title}
                   </h3>
                   {/* Channel Name */}
