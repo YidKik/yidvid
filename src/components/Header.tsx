@@ -13,6 +13,7 @@ import { HeaderLogo } from "./header/HeaderLogo";
 import { VideoSearchBar } from "./header/VideoSearchBar";
 import { CategoryToggle } from "./header/CategoryToggle";
 import { MobileVideosHeader } from "./header/mobile/MobileVideosHeader";
+import { useSidebarContext } from "@/contexts/SidebarContext";
 
 export const Header = ({ selectedCategory, onCategoryChange }: { selectedCategory?: string; onCategoryChange?: (category: string) => void } = {}) => {
   const { isMobile } = useIsMobile();
@@ -23,6 +24,7 @@ export const Header = ({ selectedCategory, onCategoryChange }: { selectedCategor
   const queryClient = useQueryClient();
   const [isMarkingNotifications, setIsMarkingNotifications] = useState(false);
   const location = useLocation();
+  const { sidebarWidth } = useSidebarContext();
   
   // Determine if we're on the home page
   const isHomePage = location.pathname === "/";
@@ -32,7 +34,7 @@ export const Header = ({ selectedCategory, onCategoryChange }: { selectedCategor
   // Header animation states
   const [scrolled, setScrolled] = useState(false);
   // Use fixed header on desktop videos page to guarantee persistent visibility
-  const headerPositionClass = isVideosPage && !isMobile ? 'fixed top-0 left-0 right-0' : 'sticky top-0';
+  const headerPositionClass = isVideosPage && !isMobile ? 'fixed top-0 right-0' : 'sticky top-0';
   const needsSpacer = isVideosPage && !isMobile;
 
   // Enhanced scroll detection for blurred background effect
@@ -98,11 +100,12 @@ export const Header = ({ selectedCategory, onCategoryChange }: { selectedCategor
   return (
     <>
       <motion.header 
-        className={`${headerPositionClass} z-50 w-full max-w-[100vw] border-b bg-white/25 backdrop-blur-lg supports-[backdrop-filter]:bg-white/20 transition-all duration-300 ${
+        className={`${headerPositionClass} z-50 border-b bg-white/25 backdrop-blur-lg supports-[backdrop-filter]:bg-white/20 transition-all duration-300 ${
           scrolled 
             ? 'border-primary/60 shadow-sm' 
             : 'border-gray-200'
-        } ${isMobile ? 'h-14' : ''} ${isVideosPage ? 'videos-page' : isHomePage ? 'home-page' : ''}`}
+        } ${isMobile ? 'h-14 w-full max-w-[100vw]' : ''} ${isVideosPage ? 'videos-page' : isHomePage ? 'home-page' : ''}`}
+        style={!isMobile && isVideosPage ? { left: `${sidebarWidth}px`, width: `calc(100% - ${sidebarWidth}px)` } : { width: '100%', maxWidth: '100vw' }}
         initial={{ opacity: 1, y: 0 }}
         animate={{ opacity: 1, y: 0 }}
       >
