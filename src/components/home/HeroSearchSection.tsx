@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, ArrowRight, Play } from 'lucide-react';
-import yidvidLogoIcon from '@/assets/yidvid-logo-icon.png';
+import { AnimatedPlayLogo } from './AnimatedPlayLogo';
 import { useNavigate } from 'react-router-dom';
 import { useSearchSuggestions } from '@/hooks/useSearchSuggestions';
 
@@ -105,15 +105,8 @@ const HeroSearchSection = () => {
         transition={{ duration: 0.8 }}
         className="relative z-10 text-center max-w-4xl mx-auto w-full"
       >
-        {/* Large Logo Icon */}
-        <motion.img
-          src={yidvidLogoIcon}
-          alt="YidVid Logo"
-          className="w-40 h-40 md:w-52 md:h-52 mx-auto mb-10 drop-shadow-2xl"
-          initial={{ scale: 0, rotate: -180 }}
-          animate={{ scale: 1, rotate: 0 }}
-          transition={{ type: "spring", stiffness: 200, delay: 0.2 }}
-        />
+        {/* Animated Logo with Sliding Sections */}
+        <AnimatedPlayLogo className="w-40 h-40 md:w-52 md:h-52 mx-auto mb-10" />
 
         {/* Typing Text */}
         <motion.div
