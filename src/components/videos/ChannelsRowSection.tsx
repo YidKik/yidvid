@@ -15,6 +15,7 @@ interface ChannelsRowSectionProps {
 export const ChannelsRowSection = ({ selectedCategory = "all" }: ChannelsRowSectionProps) => {
   const { manuallyFetchedChannels: channels, isLoading } = useChannelsGrid();
   const [showAllChannels, setShowAllChannels] = useState(false);
+  const [hasAnimated, setHasAnimated] = useState(false);
   const sectionRef = useRef<HTMLDivElement>(null);
   
   // Fetch video counts per channel to determine "most viewed"
@@ -92,12 +93,15 @@ export const ChannelsRowSection = ({ selectedCategory = "all" }: ChannelsRowSect
    // Scroll so the first row of channel cards is at the top of the viewport
     setTimeout(() => {
      sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+     // Mark animation as complete after it plays
+     setTimeout(() => setHasAnimated(true), 800);
     }, 50);
   };
 
   // Handle Back click - collapse and stay at section
   const handleBackClick = () => {
     setShowAllChannels(false);
+    setHasAnimated(false); // Reset animation state for next time
     // Scroll back to section
     setTimeout(() => {
       sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -107,16 +111,20 @@ export const ChannelsRowSection = ({ selectedCategory = "all" }: ChannelsRowSect
   if (isLoading || sortedChannels.length === 0) return null;
 
   // Channel Card Component for reuse
-  const ChannelCard = ({ channel, index, isGrid = false }: { channel: any; index: number; isGrid?: boolean }) => (
-    <motion.div
-      initial={isGrid ? { opacity: 0, y: 20, scale: 0.95 } : false}
-      animate={isGrid ? { opacity: 1, y: 0, scale: 1 } : false}
-      transition={isGrid ? { 
-        duration: 0.35, 
-        delay: index * 0.02,
-        ease: [0.25, 0.46, 0.45, 0.94]
-      } : undefined}
-    >
+  // Skip animation for first 12 cards (first 2 rows on largest grid) and after initial animation
+  const ChannelCard = ({ channel, index, isGrid = false }: { channel: any; index: number; isGrid?: boolean }) => {
+    const shouldAnimate = isGrid && index >= 12 && !hasAnimated;
+    
+    return (
+      <motion.div
+        initial={shouldAnimate ? { opacity: 0, y: 20, scale: 0.95 } : { opacity: 1, y: 0, scale: 1 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={shouldAnimate ? { 
+          duration: 0.35, 
+          delay: (index - 12) * 0.02,
+          ease: [0.25, 0.46, 0.45, 0.94]
+        } : { duration: 0 }}
+      >
       <Link
         to={`/channel/${channel.channel_id}`}
         className={`block group ${isGrid ? 'w-full' : 'flex-none w-[210px]'}`}
@@ -148,9 +156,9 @@ export const ChannelsRowSection = ({ selectedCategory = "all" }: ChannelsRowSect
           </p>
         </div>
       </Link>
-    </motion.div>
-  );
-
+      </motion.div>
+    );
+  };
   return (
     <section 
       ref={sectionRef}
