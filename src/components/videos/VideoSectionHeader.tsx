@@ -10,6 +10,7 @@ interface VideoSectionHeaderProps {
   canScrollPrev?: boolean;
   canScrollNext?: boolean;
   showNavigation?: boolean;
+  variant?: "default" | "accent";
 }
 
 export const VideoSectionHeader = ({
@@ -20,48 +21,59 @@ export const VideoSectionHeader = ({
   canScrollPrev = true,
   canScrollNext = true,
   showNavigation = true,
+  variant = "default",
 }: VideoSectionHeaderProps) => {
+  const isAccent = variant === "accent";
+  
   return (
     <div className="flex items-center justify-between mb-4">
-      <h2 className="text-lg md:text-xl font-bold text-foreground" style={{ fontFamily: "'Quicksand', sans-serif" }}>
-        {title}
-      </h2>
+      <div className="flex items-center gap-3">
+        {isAccent && (
+          <div className="w-1 h-6 rounded-full bg-gradient-to-b from-primary to-red-500" />
+        )}
+        <h2 
+          className={`text-lg md:text-xl font-bold ${isAccent ? 'text-primary' : 'text-foreground'}`} 
+          style={{ fontFamily: "'Quicksand', sans-serif" }}
+        >
+          {title}
+        </h2>
+      </div>
       
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-3">
         {seeAllLink && (
           <Link 
             to={seeAllLink}
-            className="text-sm font-medium text-primary hover:text-primary/80 hover:underline transition-colors mr-2"
+            className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors px-3 py-1.5 rounded-full hover:bg-primary/5"
           >
-            See all
+            View all
           </Link>
         )}
         
         {showNavigation && (
-          <div className="flex gap-1">
+          <div className="flex gap-1.5">
             <button
               onClick={onPrevious}
               disabled={!canScrollPrev}
-              className={`p-1.5 rounded-full transition-all duration-200 ${
+              className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
                 canScrollPrev 
-                  ? 'hover:bg-muted text-foreground hover:scale-105' 
-                  : 'text-muted-foreground/40 cursor-not-allowed'
+                  ? 'bg-muted hover:bg-muted/80 text-foreground' 
+                  : 'bg-muted/30 text-muted-foreground/30 cursor-not-allowed'
               }`}
               aria-label="Previous"
             >
-              <ChevronLeft className="w-5 h-5" />
+              <ChevronLeft className="w-4 h-4" />
             </button>
             <button
               onClick={onNext}
               disabled={!canScrollNext}
-              className={`p-1.5 rounded-full transition-all duration-200 ${
+              className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
                 canScrollNext 
-                  ? 'hover:bg-muted text-foreground hover:scale-105' 
-                  : 'text-muted-foreground/40 cursor-not-allowed'
+                  ? 'bg-muted hover:bg-muted/80 text-foreground' 
+                  : 'bg-muted/30 text-muted-foreground/30 cursor-not-allowed'
               }`}
               aria-label="Next"
             >
-              <ChevronRight className="w-5 h-5" />
+              <ChevronRight className="w-4 h-4" />
             </button>
           </div>
         )}

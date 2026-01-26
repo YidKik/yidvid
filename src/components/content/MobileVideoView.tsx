@@ -37,10 +37,6 @@ export const MobileVideoView: React.FC<MobileVideoViewProps> = ({
       .slice(0, 10);
   }, [videos]);
 
-  // Category videos
-  const musicVideos = useMemo(() => videos.filter(v => v.category === 'music').slice(0, 10), [videos]);
-  const torahVideos = useMemo(() => videos.filter(v => v.category === 'torah').slice(0, 10), [videos]);
-
   // Only render when we have videos to show - prevents staggered loading
   if (!videos || videos.length === 0) {
     return null;
@@ -61,23 +57,13 @@ export const MobileVideoView: React.FC<MobileVideoViewProps> = ({
   return (
     <div className="space-y-6 px-2">
       {/* New Videos */}
-      <MobileVideoCarouselSection title="New Videos" videos={newVideos} seeAllLink="/videos?sort=newest" />
+      <MobileVideoCarouselSection title="Latest Videos" videos={newVideos} seeAllLink="/videos?sort=newest" isNew />
       
       {/* Trending */}
-      <MobileVideoCarouselSection title="Trending" videos={trendingVideos} seeAllLink="/videos?sort=trending" />
+      <MobileVideoCarouselSection title="Trending" videos={trendingVideos} seeAllLink="/videos?sort=trending" isTrending />
       
-      {/* Channels Row */}
+      {/* Most Viewed Channels */}
       <MobileChannelsRow />
-      
-      {/* Music if available */}
-      {musicVideos.length >= 3 && (
-        <MobileVideoCarouselSection title="Music" videos={musicVideos} seeAllLink="/videos?category=music" />
-      )}
-      
-      {/* Torah if available */}
-      {torahVideos.length >= 3 && (
-        <MobileVideoCarouselSection title="Torah" videos={torahVideos} seeAllLink="/videos?category=torah" />
-      )}
     </div>
   );
 };
