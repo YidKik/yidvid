@@ -97,7 +97,7 @@ export const TrendingSection = ({ videos }: TrendingSectionProps) => {
         </div>
       </div>
 
-      {/* Same card style as New Videos */}
+      {/* Same card style as Latest Videos */}
       <div className="overflow-hidden" ref={emblaRef}>
         <div className="flex gap-4">
           {trendingVideos.map((video) => (
@@ -106,8 +106,8 @@ export const TrendingSection = ({ videos }: TrendingSectionProps) => {
               to={`/video/${video.video_id || video.id}`}
               className="flex-none w-[calc(20%-13px)] group"
             >
-              {/* Thumbnail */}
-              <div className="relative aspect-video rounded-lg overflow-hidden shadow-sm group-hover:shadow-md transition-shadow">
+              {/* Thumbnail - rounded */}
+              <div className="relative aspect-video rounded-xl overflow-hidden shadow-sm group-hover:shadow-md transition-shadow">
                 <img
                   src={video.thumbnail}
                   alt={video.title}
@@ -116,27 +116,25 @@ export const TrendingSection = ({ videos }: TrendingSectionProps) => {
                 />
               </div>
               
-              {/* Video Info */}
-              <div className="mt-3 flex gap-2">
-                {/* Channel Avatar */}
-                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-red-500 flex items-center justify-center text-xs font-bold text-white flex-shrink-0">
-                  {video.channel_name.charAt(0).toUpperCase()}
-                </div>
-                
-                <div className="min-w-0 flex-1">
-                  {/* Title */}
-                  <h3 className="text-sm font-medium text-foreground line-clamp-2 group-hover:text-primary transition-colors">
-                    {video.title}
-                  </h3>
-                  {/* Channel Name */}
-                  <p className="text-xs text-muted-foreground mt-0.5 truncate">
+              {/* Video Info - left aligned */}
+              <div className="mt-3">
+                {/* Title */}
+                <h3 className="text-sm font-medium text-foreground line-clamp-2 group-hover:text-primary transition-colors">
+                  {video.title}
+                </h3>
+                {/* Channel with avatar */}
+                <div className="flex items-center gap-2 mt-2">
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-br from-primary to-red-500 flex items-center justify-center text-[10px] font-bold text-white flex-shrink-0">
+                    {video.channel_name.charAt(0).toUpperCase()}
+                  </div>
+                  <p className="text-xs text-muted-foreground truncate">
                     {video.channel_name}
                   </p>
-                  {/* Meta */}
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    {getFormattedDate(video.uploaded_at)} • {video.views?.toLocaleString() || 0} views
-                  </p>
                 </div>
+                {/* Meta */}
+                <p className="text-xs text-muted-foreground mt-1">
+                  {video.views?.toLocaleString() || 0} views • {getFormattedDate(video.uploaded_at)}
+                </p>
               </div>
             </Link>
           ))}
