@@ -1,11 +1,10 @@
-
 import { useMemo, useCallback, useEffect, useState, useRef } from "react";
 import useEmblaCarousel from "embla-carousel-react";
-import { Link } from "react-router-dom";
 import { VideoData } from "@/hooks/video/types/video-fetcher";
 import { useVideoDate } from "@/components/video/useVideoDate";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { VideoCardWithOptions } from "@/components/video/VideoCardWithOptions";
 
 interface NewVideosSectionProps {
   videos: VideoData[];
@@ -133,51 +132,17 @@ export const NewVideosSection = ({ videos, autoExpand = false }: NewVideosSectio
           ease: [0.25, 0.46, 0.45, 0.94]
         } : { duration: 0 }}
       >
-        <Link
-          to={`/video/${video.video_id || video.id}`}
-          className="block group"
-        >
-          {/* Thumbnail - rounded with yellow outline on hover */}
-          <div className="relative aspect-video rounded-xl overflow-hidden border-2 border-transparent group-hover:border-yellow-400 transition-all duration-300">
-            <img
-              src={video.thumbnail}
-              alt={video.title}
-              className="w-full h-full object-cover"
-              loading="lazy"
-            />
-          </div>
-          
-          {/* Video Info - clean layout like reference */}
-          <div className="mt-3">
-            {/* Title - bolder, friendly */}
-            <h3 className="text-sm font-semibold font-friendly text-foreground line-clamp-2 leading-snug">
-              {video.title}
-            </h3>
-            {/* Channel with actual profile picture */}
-            <div className="flex items-center gap-2 mt-2">
-              <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0 bg-muted">
-                {video.channelThumbnail ? (
-                  <img
-                    src={video.channelThumbnail}
-                    alt={video.channel_name}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-yellow-400 to-red-500 flex items-center justify-center text-[10px] font-bold text-white">
-                    {video.channel_name.charAt(0).toUpperCase()}
-                  </div>
-                )}
-              </div>
-              <p className="text-xs text-muted-foreground truncate">
-                {video.channel_name}
-              </p>
-            </div>
-            {/* Meta - cleaner */}
-            <p className="text-xs text-muted-foreground/80 mt-1.5">
-              {video.views?.toLocaleString() || 0} views • {getFormattedDate(video.uploaded_at)}
-            </p>
-          </div>
-        </Link>
+        <VideoCardWithOptions
+          videoId={video.video_id || video.id}
+          videoUuid={video.id}
+          title={video.title}
+          thumbnail={video.thumbnail}
+          channelName={video.channel_name}
+          channelThumbnail={video.channelThumbnail}
+          views={video.views}
+          formattedDate={getFormattedDate(video.uploaded_at)}
+          duration={video.duration}
+        />
       </motion.div>
     );
   };
