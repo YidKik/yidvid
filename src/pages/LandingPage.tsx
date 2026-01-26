@@ -1,33 +1,13 @@
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Play, Users, RefreshCw, Shield, Heart, ArrowRight, Music, BookOpen, Mic, Gamepad2, Film, Grid3X3, GraduationCap } from 'lucide-react';
 import HeroSearchSection from '@/components/home/HeroSearchSection';
-import IntroAnimation from '@/components/home/IntroAnimation';
 import yidvidLogoFull from '@/assets/yidvid-logo-full.png';
 
 const LandingPage = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const [showIntro, setShowIntro] = useState(true);
-  const [introComplete, setIntroComplete] = useState(false);
-
-  // Check if we should skip the intro (e.g., coming back from another page)
-  useEffect(() => {
-    const skipWelcome = new URLSearchParams(location.search).get('skipWelcome');
-    if (skipWelcome === 'true' || sessionStorage.getItem('introShown') === 'true') {
-      setShowIntro(false);
-      setIntroComplete(true);
-    }
-  }, [location.search]);
-
-  const handleIntroComplete = () => {
-    setIntroComplete(true);
-    sessionStorage.setItem('introShown', 'true');
-    // Delay hiding the intro overlay slightly
-    setTimeout(() => setShowIntro(false), 300);
-  };
 
   const features = [
     {
@@ -316,15 +296,6 @@ const LandingPage = () => {
       </footer>
     </div>
   );
-
-  // Wrap with intro animation if needed
-  if (showIntro) {
-    return (
-      <IntroAnimation onComplete={handleIntroComplete}>
-        {pageContent}
-      </IntroAnimation>
-    );
-  }
 
   return pageContent;
 };
