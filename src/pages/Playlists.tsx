@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { ListMusic, Plus, Play, Pencil, Trash2, LogIn, ArrowLeft, MoreVertical } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useVideoLibrary, usePlaylistItems } from "@/hooks/useVideoLibrary";
 import { useSessionManager } from "@/hooks/useSessionManager";
 import { VideoOptionsMenu } from "@/components/video/VideoOptionsMenu";
@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Footer } from "@/components/layout/Footer";
 
 const Playlists = () => {
   const navigate = useNavigate();
@@ -81,25 +82,26 @@ const Playlists = () => {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen pt-14 pl-[200px] bg-gray-50">
-        <div className="max-w-6xl mx-auto px-6 py-12">
+      <div className="min-h-screen pt-14 pl-[200px] bg-white flex flex-col">
+        <div className="flex-1 max-w-6xl mx-auto px-6 py-12">
           <div className="flex flex-col items-center justify-center py-20 text-center">
-            <div className="w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center mb-6">
-              <ListMusic className="w-12 h-12 text-gray-400" />
+            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-yellow-100 to-red-100 flex items-center justify-center mb-6 shadow-sm">
+              <ListMusic className="w-12 h-12 text-red-500" />
             </div>
-            <h1 className="text-2xl font-bold text-gray-800 mb-2">Sign in to view your playlists</h1>
+            <h1 className="text-2xl font-bold text-gray-900 mb-2 font-friendly">Sign in to view your playlists</h1>
             <p className="text-gray-500 mb-6 max-w-md">
               Create custom playlists to organize your favorite videos. Sign in to get started.
             </p>
             <Button
               onClick={() => setIsAuthOpen(true)}
-              className="rounded-full gap-2 bg-red-500 hover:bg-red-600 text-white px-6"
+              className="rounded-full gap-2 bg-red-500 hover:bg-red-600 text-white px-8 py-3 font-semibold shadow-md hover:shadow-lg transition-all"
             >
               <LogIn className="w-4 h-4" />
               Sign In
             </Button>
           </div>
         </div>
+        <Footer />
       </div>
     );
   }
@@ -107,24 +109,25 @@ const Playlists = () => {
   // Playlist detail view
   if (selectedPlaylistId && selectedPlaylist) {
     return (
-      <div className="min-h-screen pt-14 pl-[200px] bg-gray-50">
-        <div className="max-w-6xl mx-auto px-6 py-8">
-          {/* Back button and header */}
+      <div className="min-h-screen pt-14 pl-[200px] bg-white flex flex-col">
+        <div className="flex-1 max-w-6xl mx-auto px-6 py-8">
+          {/* Back button */}
           <button
             onClick={() => setSearchParams({})}
-            className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6 transition-colors"
+            className="flex items-center gap-2 text-gray-500 hover:text-gray-900 mb-6 transition-colors font-medium"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>Back to Playlists</span>
           </button>
 
-          <div className="flex items-start justify-between mb-8">
+          {/* Header */}
+          <div className="flex items-start justify-between mb-8 pb-6 border-b border-gray-100">
             <div className="flex items-center gap-4">
-              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center">
-                <ListMusic className="w-7 h-7 text-white" />
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-yellow-400 to-red-500 flex items-center justify-center shadow-lg">
+                <ListMusic className="w-8 h-8 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">{selectedPlaylist.title}</h1>
+                <h1 className="text-2xl font-bold text-gray-900 font-friendly">{selectedPlaylist.title}</h1>
                 {selectedPlaylist.description && (
                   <p className="text-gray-500 text-sm mt-1">{selectedPlaylist.description}</p>
                 )}
@@ -135,11 +138,11 @@ const Playlists = () => {
             </div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="rounded-full">
-                  <MoreVertical className="w-5 h-5" />
+                <Button variant="ghost" size="icon" className="rounded-full hover:bg-gray-100">
+                  <MoreVertical className="w-5 h-5 text-gray-500" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="bg-white border rounded-xl shadow-lg">
+              <DropdownMenuContent align="end" className="bg-white border border-gray-200 rounded-xl shadow-lg">
                 <DropdownMenuItem
                   onClick={() => {
                     setEditingPlaylist({
@@ -149,14 +152,14 @@ const Playlists = () => {
                     });
                     setShowEditDialog(true);
                   }}
-                  className="flex items-center gap-2 cursor-pointer"
+                  className="flex items-center gap-2 cursor-pointer hover:bg-gray-50"
                 >
                   <Pencil className="w-4 h-4" />
                   Edit playlist
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => handleDeletePlaylist(selectedPlaylist.id)}
-                  className="flex items-center gap-2 cursor-pointer text-red-600"
+                  className="flex items-center gap-2 cursor-pointer text-red-600 hover:bg-red-50"
                 >
                   <Trash2 className="w-4 h-4" />
                   Delete playlist
@@ -170,21 +173,27 @@ const Playlists = () => {
             <div className="space-y-4">
               {[...Array(5)].map((_, i) => (
                 <div key={i} className="flex gap-4 animate-pulse">
-                  <div className="w-40 aspect-video bg-gray-200 rounded-lg" />
+                  <div className="w-44 aspect-video bg-gray-100 rounded-xl" />
                   <div className="flex-1">
-                    <div className="h-4 bg-gray-200 rounded w-3/4 mb-2" />
-                    <div className="h-3 bg-gray-200 rounded w-1/2" />
+                    <div className="h-4 bg-gray-100 rounded-full w-3/4 mb-2" />
+                    <div className="h-3 bg-gray-100 rounded-full w-1/2" />
                   </div>
                 </div>
               ))}
             </div>
           ) : !playlistItems || playlistItems.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20 text-center">
-              <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-4">
-                <ListMusic className="w-8 h-8 text-gray-400" />
+              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-yellow-100 to-red-100 flex items-center justify-center mb-4">
+                <ListMusic className="w-10 h-10 text-red-400" />
               </div>
-              <h2 className="text-lg font-semibold text-gray-800 mb-2">No videos in this playlist</h2>
+              <h2 className="text-lg font-semibold text-gray-900 mb-2 font-friendly">No videos in this playlist</h2>
               <p className="text-gray-500">Add videos from any video page using the menu.</p>
+              <Button
+                onClick={() => navigate('/videos')}
+                className="mt-6 rounded-full bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold px-6 shadow-md hover:shadow-lg transition-all"
+              >
+                Browse Videos
+              </Button>
             </div>
           ) : (
             <div className="space-y-3">
@@ -193,31 +202,33 @@ const Playlists = () => {
                   key={item.id}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                  className="flex gap-4 p-3 rounded-xl hover:bg-white hover:shadow-sm transition-all group cursor-pointer"
+                  transition={{ delay: index * 0.03 }}
+                  className="flex gap-4 p-4 rounded-2xl hover:bg-gray-50 transition-all group cursor-pointer border border-transparent hover:border-gray-100 hover:shadow-sm"
                   onClick={() => navigate(`/video/${item.video?.video_id}`)}
                 >
-                  <div className="relative w-40 aspect-video rounded-lg overflow-hidden bg-gray-200 shrink-0">
+                  <div className="relative w-44 aspect-video rounded-xl overflow-hidden bg-gray-100 shrink-0 shadow-sm">
                     <img
                       src={item.video?.thumbnail}
                       alt={item.video?.title}
                       className="w-full h-full object-cover"
                     />
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
-                      <Play className="w-8 h-8 text-white fill-white" />
+                      <div className="w-10 h-10 rounded-full bg-yellow-400 flex items-center justify-center shadow-md">
+                        <Play className="w-5 h-5 text-gray-900 fill-gray-900 ml-0.5" />
+                      </div>
                     </div>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-medium text-gray-900 line-clamp-2 group-hover:text-purple-600 transition-colors">
+                  <div className="flex-1 min-w-0 py-1">
+                    <h3 className="font-semibold text-gray-900 line-clamp-2 group-hover:text-red-500 transition-colors">
                       {item.video?.title}
                     </h3>
-                    <p className="text-sm text-gray-500 mt-1">{item.video?.channel_name}</p>
+                    <p className="text-sm text-gray-500 mt-1.5">{item.video?.channel_name}</p>
                   </div>
                   <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-8 w-8 rounded-full opacity-0 group-hover:opacity-100 transition-opacity text-gray-500 hover:text-red-500"
+                      className="h-9 w-9 rounded-full opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-red-500 hover:bg-red-50"
                       onClick={() => removeFromPlaylist.mutate({ playlistId: selectedPlaylistId, videoId: item.video?.id })}
                     >
                       <Trash2 className="w-4 h-4" />
@@ -228,28 +239,65 @@ const Playlists = () => {
             </div>
           )}
         </div>
+        <Footer />
+
+        {/* Edit Playlist Dialog */}
+        <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
+          <DialogContent className="sm:max-w-md bg-white rounded-2xl border-0 shadow-xl">
+            <DialogHeader>
+              <DialogTitle className="text-xl font-bold font-friendly">Edit Playlist</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <Input
+                placeholder="Playlist name"
+                value={editingPlaylist?.title || ""}
+                onChange={(e) => setEditingPlaylist((prev) => prev ? { ...prev, title: e.target.value } : null)}
+                className="rounded-xl border-gray-200 focus:border-yellow-400 focus:ring-yellow-400"
+              />
+              <Textarea
+                placeholder="Description (optional)"
+                value={editingPlaylist?.description || ""}
+                onChange={(e) => setEditingPlaylist((prev) => prev ? { ...prev, description: e.target.value } : null)}
+                className="rounded-xl border-gray-200 focus:border-yellow-400 focus:ring-yellow-400 resize-none"
+                rows={3}
+              />
+            </div>
+            <DialogFooter>
+              <Button variant="ghost" onClick={() => setShowEditDialog(false)} className="rounded-xl">
+                Cancel
+              </Button>
+              <Button
+                onClick={handleUpdatePlaylist}
+                disabled={!editingPlaylist?.title.trim() || updatePlaylist.isPending}
+                className="rounded-xl bg-red-500 hover:bg-red-600 text-white font-semibold"
+              >
+                Save Changes
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     );
   }
 
   // Playlists list view
   return (
-    <div className="min-h-screen pt-14 pl-[200px] bg-gray-50">
-      <div className="max-w-6xl mx-auto px-6 py-8">
+    <div className="min-h-screen pt-14 pl-[200px] bg-white flex flex-col">
+      <div className="flex-1 max-w-6xl mx-auto px-6 py-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-8 pb-6 border-b border-gray-100">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center">
-              <ListMusic className="w-7 h-7 text-white" />
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-yellow-400 to-red-500 flex items-center justify-center shadow-lg">
+              <ListMusic className="w-8 h-8 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Playlists</h1>
-              <p className="text-gray-500">{playlists?.length || 0} playlist{(playlists?.length || 0) !== 1 ? "s" : ""}</p>
+              <h1 className="text-2xl font-bold text-gray-900 font-friendly">Playlists</h1>
+              <p className="text-gray-500 mt-1">{playlists?.length || 0} playlist{(playlists?.length || 0) !== 1 ? "s" : ""}</p>
             </div>
           </div>
           <Button
             onClick={() => setShowCreateDialog(true)}
-            className="rounded-full gap-2 bg-red-500 hover:bg-red-600 text-white"
+            className="rounded-full gap-2 bg-red-500 hover:bg-red-600 text-white font-semibold px-6 shadow-md hover:shadow-lg transition-all"
           >
             <Plus className="w-4 h-4" />
             New Playlist
@@ -258,62 +306,68 @@ const Playlists = () => {
 
         {/* Content */}
         {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {[...Array(4)].map((_, i) => (
               <div key={i} className="animate-pulse">
-                <div className="aspect-video bg-gray-200 rounded-xl mb-3" />
-                <div className="h-4 bg-gray-200 rounded w-3/4" />
+                <div className="aspect-video bg-gray-100 rounded-2xl mb-3" />
+                <div className="h-4 bg-gray-100 rounded-full w-3/4" />
               </div>
             ))}
           </div>
         ) : !playlists || playlists.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center">
-            <div className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center mb-4">
-              <ListMusic className="w-10 h-10 text-gray-400" />
+            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-yellow-100 to-red-100 flex items-center justify-center mb-6 shadow-sm">
+              <ListMusic className="w-12 h-12 text-red-400" />
             </div>
-            <h2 className="text-xl font-semibold text-gray-800 mb-2">No playlists yet</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-2 font-friendly">No playlists yet</h2>
             <p className="text-gray-500 max-w-md mb-6">
               Create your first playlist to organize your favorite videos.
             </p>
             <Button
               onClick={() => setShowCreateDialog(true)}
-              className="rounded-full gap-2 bg-red-500 hover:bg-red-600 text-white"
+              className="rounded-full gap-2 bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold px-6 shadow-md hover:shadow-lg transition-all"
             >
               <Plus className="w-4 h-4" />
               Create Playlist
             </Button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {playlists.map((playlist, index) => (
               <motion.div
                 key={playlist.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
-                className="group cursor-pointer bg-white rounded-xl p-4 hover:shadow-lg transition-all border border-gray-100"
+                transition={{ delay: index * 0.03 }}
+                className="group cursor-pointer bg-white rounded-2xl p-5 hover:shadow-lg transition-all border border-gray-100 hover:border-gray-200"
                 onClick={() => setSearchParams({ id: playlist.id })}
               >
-                <div className="relative aspect-video rounded-lg overflow-hidden bg-gradient-to-br from-purple-100 to-purple-200 mb-3 flex items-center justify-center">
-                  <ListMusic className="w-12 h-12 text-purple-400" />
+                <div className="relative aspect-video rounded-xl overflow-hidden bg-gradient-to-br from-yellow-100 via-orange-50 to-red-100 mb-4 flex items-center justify-center shadow-sm">
+                  <ListMusic className="w-14 h-14 text-red-400" />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
+                  {/* Play overlay */}
+                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="w-12 h-12 rounded-full bg-yellow-400 flex items-center justify-center shadow-lg">
+                      <Play className="w-5 h-5 text-gray-900 fill-gray-900 ml-0.5" />
+                    </div>
+                  </div>
                 </div>
                 <div className="flex items-start justify-between">
                   <div className="min-w-0 flex-1">
-                    <h3 className="font-medium text-gray-900 truncate group-hover:text-purple-600 transition-colors">
+                    <h3 className="font-semibold text-gray-900 truncate group-hover:text-red-500 transition-colors">
                       {playlist.title}
                     </h3>
                     {playlist.description && (
-                      <p className="text-xs text-gray-500 truncate mt-0.5">{playlist.description}</p>
+                      <p className="text-xs text-gray-500 truncate mt-1">{playlist.description}</p>
                     )}
                   </div>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full shrink-0">
-                        <MoreVertical className="w-4 h-4" />
+                      <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full shrink-0 hover:bg-gray-100">
+                        <MoreVertical className="w-4 h-4 text-gray-400" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="bg-white border rounded-xl shadow-lg">
+                    <DropdownMenuContent align="end" className="bg-white border border-gray-200 rounded-xl shadow-lg">
                       <DropdownMenuItem
                         onClick={(e) => {
                           e.stopPropagation();
@@ -324,7 +378,7 @@ const Playlists = () => {
                           });
                           setShowEditDialog(true);
                         }}
-                        className="flex items-center gap-2 cursor-pointer"
+                        className="flex items-center gap-2 cursor-pointer hover:bg-gray-50"
                       >
                         <Pencil className="w-4 h-4" />
                         Edit
@@ -334,7 +388,7 @@ const Playlists = () => {
                           e.stopPropagation();
                           handleDeletePlaylist(playlist.id);
                         }}
-                        className="flex items-center gap-2 cursor-pointer text-red-600"
+                        className="flex items-center gap-2 cursor-pointer text-red-600 hover:bg-red-50"
                       >
                         <Trash2 className="w-4 h-4" />
                         Delete
@@ -347,25 +401,26 @@ const Playlists = () => {
           </div>
         )}
       </div>
+      <Footer />
 
       {/* Create Playlist Dialog */}
       <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-        <DialogContent className="sm:max-w-md bg-white rounded-2xl">
+        <DialogContent className="sm:max-w-md bg-white rounded-2xl border-0 shadow-xl">
           <DialogHeader>
-            <DialogTitle className="text-xl font-semibold">Create New Playlist</DialogTitle>
+            <DialogTitle className="text-xl font-bold font-friendly">Create New Playlist</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <Input
               placeholder="Playlist name"
               value={newPlaylistTitle}
               onChange={(e) => setNewPlaylistTitle(e.target.value)}
-              className="rounded-xl border-gray-300"
+              className="rounded-xl border-gray-200 focus:border-yellow-400 focus:ring-yellow-400"
             />
             <Textarea
               placeholder="Description (optional)"
               value={newPlaylistDescription}
               onChange={(e) => setNewPlaylistDescription(e.target.value)}
-              className="rounded-xl border-gray-300 resize-none"
+              className="rounded-xl border-gray-200 focus:border-yellow-400 focus:ring-yellow-400 resize-none"
               rows={3}
             />
           </div>
@@ -376,7 +431,7 @@ const Playlists = () => {
             <Button
               onClick={handleCreatePlaylist}
               disabled={!newPlaylistTitle.trim() || createPlaylist.isPending}
-              className="rounded-xl bg-red-500 hover:bg-red-600 text-white"
+              className="rounded-xl bg-red-500 hover:bg-red-600 text-white font-semibold"
             >
               Create
             </Button>
@@ -386,22 +441,22 @@ const Playlists = () => {
 
       {/* Edit Playlist Dialog */}
       <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
-        <DialogContent className="sm:max-w-md bg-white rounded-2xl">
+        <DialogContent className="sm:max-w-md bg-white rounded-2xl border-0 shadow-xl">
           <DialogHeader>
-            <DialogTitle className="text-xl font-semibold">Edit Playlist</DialogTitle>
+            <DialogTitle className="text-xl font-bold font-friendly">Edit Playlist</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <Input
               placeholder="Playlist name"
               value={editingPlaylist?.title || ""}
               onChange={(e) => setEditingPlaylist((prev) => prev ? { ...prev, title: e.target.value } : null)}
-              className="rounded-xl border-gray-300"
+              className="rounded-xl border-gray-200 focus:border-yellow-400 focus:ring-yellow-400"
             />
             <Textarea
               placeholder="Description (optional)"
               value={editingPlaylist?.description || ""}
               onChange={(e) => setEditingPlaylist((prev) => prev ? { ...prev, description: e.target.value } : null)}
-              className="rounded-xl border-gray-300 resize-none"
+              className="rounded-xl border-gray-200 focus:border-yellow-400 focus:ring-yellow-400 resize-none"
               rows={3}
             />
           </div>
@@ -412,9 +467,9 @@ const Playlists = () => {
             <Button
               onClick={handleUpdatePlaylist}
               disabled={!editingPlaylist?.title.trim() || updatePlaylist.isPending}
-              className="rounded-xl bg-red-500 hover:bg-red-600 text-white"
+              className="rounded-xl bg-red-500 hover:bg-red-600 text-white font-semibold"
             >
-              Save
+              Save Changes
             </Button>
           </DialogFooter>
         </DialogContent>
