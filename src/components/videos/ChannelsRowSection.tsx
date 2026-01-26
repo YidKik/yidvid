@@ -89,9 +89,9 @@ export const ChannelsRowSection = ({ selectedCategory = "all" }: ChannelsRowSect
   // Handle View All click - expand and scroll to top of page
   const handleViewAllClick = () => {
     setShowAllChannels(true);
-    // Scroll to top of page so channels fill the viewport
+   // Scroll so the first row of channel cards is at the top of the viewport
     setTimeout(() => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+     sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 50);
   };
 
