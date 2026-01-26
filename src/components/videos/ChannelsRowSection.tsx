@@ -88,57 +88,48 @@ export const ChannelsRowSection = ({ selectedCategory = "all" }: ChannelsRowSect
           Most Viewed Channels
         </h2>
         
-        <div className="flex items-center gap-3">
-          <Link 
-            to="/channels"
-            className="text-xs font-medium text-muted-foreground hover:text-primary transition-colors"
+        <div className="flex gap-1.5">
+          <button
+            onClick={scrollPrev}
+            disabled={!canScrollPrev}
+            className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
+              canScrollPrev 
+                ? 'bg-muted hover:bg-muted/80 text-foreground' 
+                : 'bg-muted/30 text-muted-foreground/30 cursor-not-allowed'
+            }`}
           >
-            View all
-          </Link>
-          
-          <div className="flex gap-1.5">
-            <button
-              onClick={scrollPrev}
-              disabled={!canScrollPrev}
-              className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
-                canScrollPrev 
-                  ? 'bg-muted hover:bg-muted/80 text-foreground' 
-                  : 'bg-muted/30 text-muted-foreground/30 cursor-not-allowed'
-              }`}
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-            </button>
-            <button
-              onClick={scrollNext}
-              disabled={!canScrollNext}
-              className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
-                canScrollNext 
-                  ? 'bg-muted hover:bg-muted/80 text-foreground' 
-                  : 'bg-muted/30 text-muted-foreground/30 cursor-not-allowed'
-              }`}
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
-          </div>
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <button
+            onClick={scrollNext}
+            disabled={!canScrollNext}
+            className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
+              canScrollNext 
+                ? 'bg-muted hover:bg-muted/80 text-foreground' 
+                : 'bg-muted/30 text-muted-foreground/30 cursor-not-allowed'
+            }`}
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
         </div>
       </div>
 
       <div className="overflow-hidden" ref={emblaRef}>
-        <div className="flex gap-5">
+        <div className="flex gap-6">
           {sortedChannels.map((channel) => (
             <Link
               key={channel.id}
               to={`/channel/${channel.channel_id}`}
-              className="flex-none w-[180px] group"
+              className="flex-none w-[200px] group"
             >
-              {/* Channel Card - No border, just shadow/glow, yellow hover */}
-              <div className="bg-card rounded-2xl p-5 shadow-md hover:shadow-xl hover:shadow-primary/20 transition-all duration-300 text-center">
-                {/* Channel Avatar - Bigger with yellow border on hover */}
-                <div className="relative mx-auto w-24 h-24 rounded-full overflow-hidden border-2 border-primary/30 group-hover:border-primary transition-all duration-300 shadow-md">
+              {/* Channel Card - Bigger, no border, just shadow/glow */}
+              <div className="bg-card rounded-2xl p-6 shadow-md hover:shadow-xl hover:shadow-primary/20 transition-all duration-300 text-center">
+                {/* Channel Avatar - Bigger with yellow border */}
+                <div className="relative mx-auto w-28 h-28 rounded-full overflow-hidden border-3 border-primary group-hover:border-primary group-hover:shadow-lg group-hover:shadow-primary/30 transition-all duration-300">
                   {channel.thumbnail_url ? (
                     <img
                       src={channel.thumbnail_url}
@@ -148,7 +139,7 @@ export const ChannelsRowSection = ({ selectedCategory = "all" }: ChannelsRowSect
                     />
                   ) : (
                     <div className="w-full h-full bg-gradient-to-br from-primary to-red-500 flex items-center justify-center">
-                      <span className="text-2xl font-bold text-white">
+                      <span className="text-3xl font-bold text-white">
                         {channel.title.charAt(0).toUpperCase()}
                       </span>
                     </div>
@@ -160,14 +151,24 @@ export const ChannelsRowSection = ({ selectedCategory = "all" }: ChannelsRowSect
                   {channel.title}
                 </p>
                 
-                {/* View Channel link */}
-                <p className="text-xs text-muted-foreground mt-1 group-hover:text-primary/80 transition-colors">
-                  View Channel
+                {/* View Count */}
+                <p className="text-xs text-muted-foreground mt-1">
+                  {channelVideoCounts?.[channel.channel_id]?.toLocaleString() || 0} views
                 </p>
               </div>
             </Link>
           ))}
         </div>
+      </div>
+
+      {/* View All Button - Bottom center, more visible */}
+      <div className="flex justify-center mt-6">
+        <Link 
+          to="/channels"
+          className="px-6 py-2.5 text-sm font-medium text-muted-foreground hover:text-primary-foreground bg-muted/50 hover:bg-primary rounded-full transition-all duration-300"
+        >
+          View All Channels
+        </Link>
       </div>
     </section>
   );
