@@ -6,7 +6,7 @@ import { useChannelsGrid } from "@/hooks/channel/useChannelsGrid";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface ChannelsRowSectionProps {
   selectedCategory?: string;
@@ -220,32 +220,28 @@ export const ChannelsRowSection = ({ selectedCategory = "all" }: ChannelsRowSect
                 Most Viewed Channels
               </h2>
               
-              <div className="flex gap-1.5">
+              <div className="flex gap-2">
                 <button
                   onClick={scrollPrev}
                   disabled={!canScrollPrev}
-                  className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
+                  className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 ${
                     canScrollPrev 
-                      ? 'bg-muted hover:bg-muted/80 text-foreground' 
+                      ? 'bg-orange-100 dark:bg-orange-900/30 hover:bg-orange-200 dark:hover:bg-orange-900/50 text-orange-700 dark:text-orange-400 hover:scale-110' 
                       : 'bg-muted/30 text-muted-foreground/30 cursor-not-allowed'
                   }`}
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                  </svg>
+                  <ChevronLeft className="w-5 h-5" />
                 </button>
                 <button
                   onClick={scrollNext}
                   disabled={!canScrollNext}
-                  className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
+                  className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 ${
                     canScrollNext 
-                      ? 'bg-muted hover:bg-muted/80 text-foreground' 
+                      ? 'bg-orange-100 dark:bg-orange-900/30 hover:bg-orange-200 dark:hover:bg-orange-900/50 text-orange-700 dark:text-orange-400 hover:scale-110' 
                       : 'bg-muted/30 text-muted-foreground/30 cursor-not-allowed'
                   }`}
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
+                  <ChevronRight className="w-5 h-5" />
                 </button>
               </div>
             </div>
