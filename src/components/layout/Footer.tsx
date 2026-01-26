@@ -1,49 +1,99 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import yidvidLogo from "@/assets/yidvid-logo-icon.png";
+import { TermsOfServiceDialog } from "@/components/auth/TermsOfServiceDialog";
+import { PrivacyPolicyDialog } from "@/components/auth/PrivacyPolicyDialog";
+import { ContactDialog } from "@/components/contact/ContactDialog";
 
 export const Footer = () => {
+  const [tosDialogOpen, setTosDialogOpen] = useState(false);
+  const [privacyDialogOpen, setPrivacyDialogOpen] = useState(false);
+  const [contactDialogOpen, setContactDialogOpen] = useState(false);
+
   return (
-    <footer className="mt-8 border-t border-border/20 bg-muted/10">
-      <div className="max-w-[1600px] mx-auto px-8 lg:px-12 xl:px-16 py-4">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-3">
-          {/* Logo and Tagline */}
-          <div className="flex items-center gap-2">
-            <img 
-              src={yidvidLogo} 
-              alt="YidVid" 
-              className="w-6 h-6 object-contain opacity-60"
-            />
-            <span className="text-xs text-muted-foreground/70">Safe videos for the whole family</span>
-          </div>
+    <>
+      <footer 
+        className="mt-auto border-t"
+        style={{ 
+          backgroundColor: 'hsl(50, 100%, 96%)',
+          borderColor: 'hsl(50, 80%, 85%)'
+        }}
+      >
+        <div className="max-w-[1600px] mx-auto px-6 lg:px-12 py-5">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            {/* Logo and Tagline */}
+            <Link to="/" className="flex items-center gap-3">
+              <img 
+                src={yidvidLogo} 
+                alt="YidVid" 
+                className="w-8 h-8 object-contain"
+                style={{ opacity: 1 }}
+              />
+              <span 
+                className="text-sm font-medium"
+                style={{ 
+                  fontFamily: "'Quicksand', sans-serif",
+                  color: 'hsl(0, 0%, 30%)'
+                }}
+              >
+                quality Jewish content for everyone
+              </span>
+            </Link>
 
-          {/* Links */}
-          <div className="flex items-center gap-4 text-xs">
-            <Link 
-              to="/terms" 
-              className="text-muted-foreground/60 hover:text-muted-foreground transition-colors"
-            >
-              Terms
-            </Link>
-            <Link 
-              to="/privacy" 
-              className="text-muted-foreground/60 hover:text-muted-foreground transition-colors"
-            >
-              Privacy
-            </Link>
-            <Link 
-              to="/contact" 
-              className="text-muted-foreground/60 hover:text-muted-foreground transition-colors"
-            >
-              Contact
-            </Link>
-          </div>
+            {/* Links */}
+            <div className="flex items-center gap-4">
+              <button 
+                onClick={() => setTosDialogOpen(true)}
+                className="text-sm font-medium transition-colors hover:text-red-500"
+                style={{ 
+                  fontFamily: "'Quicksand', sans-serif",
+                  color: 'hsl(0, 0%, 45%)'
+                }}
+              >
+                Terms of Service
+              </button>
+              <span style={{ color: 'hsl(0, 0%, 75%)' }}>|</span>
+              <button 
+                onClick={() => setPrivacyDialogOpen(true)}
+                className="text-sm font-medium transition-colors hover:text-red-500"
+                style={{ 
+                  fontFamily: "'Quicksand', sans-serif",
+                  color: 'hsl(0, 0%, 45%)'
+                }}
+              >
+                Privacy Policy
+              </button>
+              <span style={{ color: 'hsl(0, 0%, 75%)' }}>|</span>
+              <button 
+                onClick={() => setContactDialogOpen(true)}
+                className="text-sm font-medium transition-colors hover:text-red-500"
+                style={{ 
+                  fontFamily: "'Quicksand', sans-serif",
+                  color: 'hsl(0, 0%, 45%)'
+                }}
+              >
+                Contact
+              </button>
+            </div>
 
-          {/* Copyright */}
-          <div className="text-xs text-muted-foreground/50">
-            © {new Date().getFullYear()} YidVid
+            {/* Copyright */}
+            <div 
+              className="text-sm"
+              style={{ 
+                fontFamily: "'Quicksand', sans-serif",
+                color: 'hsl(0, 0%, 55%)'
+              }}
+            >
+              © {new Date().getFullYear()} YidVid
+            </div>
           </div>
         </div>
-      </div>
-    </footer>
+      </footer>
+
+      {/* Dialogs */}
+      <TermsOfServiceDialog isOpen={tosDialogOpen} onOpenChange={setTosDialogOpen} />
+      <PrivacyPolicyDialog isOpen={privacyDialogOpen} onOpenChange={setPrivacyDialogOpen} />
+      <ContactDialog open={contactDialogOpen} onOpenChange={setContactDialogOpen} />
+    </>
   );
 };

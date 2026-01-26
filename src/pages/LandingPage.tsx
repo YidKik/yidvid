@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Play, Users, RefreshCw, Shield, Heart, ArrowRight, Music, BookOpen, Mic, Gamepad2, Film, Grid3X3, GraduationCap } from 'lucide-react';
 import HeroSearchSection from '@/components/home/HeroSearchSection';
-import yidvidLogoFull from '@/assets/yidvid-logo-full.png';
+import { Footer } from '@/components/layout/Footer';
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -273,27 +273,8 @@ const LandingPage = () => {
         </motion.div>
       </section>
 
-      {/* Simple Footer */}
-      <footer 
-        className="py-8 px-6"
-        style={{ backgroundColor: '#f5f5f5', borderTop: '1px solid rgba(255, 0, 0, 0.2)' }}
-      >
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center">
-            <img
-              src={yidvidLogoFull}
-              alt="YidVid"
-              className="h-8 w-auto"
-            />
-          </div>
-          <p 
-            className="text-sm"
-            style={{ fontFamily: "'Quicksand', sans-serif", color: '#666666' }}
-          >
-            © {new Date().getFullYear()} YidVid. Quality Jewish content for everyone.
-          </p>
-        </div>
-      </footer>
+      {/* Unified Footer */}
+      <Footer />
     </div>
   );
 
