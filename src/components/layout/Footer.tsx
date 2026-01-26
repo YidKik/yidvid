@@ -3,47 +3,44 @@ import yidvidLogo from "@/assets/yidvid-logo-icon.png";
 
 export const Footer = () => {
   return (
-    <footer className="mt-12 border-t border-border/50 bg-muted/30">
-      <div className="max-w-[1600px] mx-auto px-8 lg:px-12 xl:px-16 py-8">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+    <footer className="mt-8 border-t border-border/20 bg-muted/10">
+      <div className="max-w-[1600px] mx-auto px-8 lg:px-12 xl:px-16 py-4">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-3">
           {/* Logo and Tagline */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <img 
               src={yidvidLogo} 
               alt="YidVid" 
-              className="w-10 h-10 object-contain"
+              className="w-6 h-6 object-contain opacity-60"
             />
-            <div className="flex flex-col">
-              <span className="font-semibold text-foreground font-friendly">YidVid</span>
-              <span className="text-sm text-muted-foreground">Safe videos for the whole family</span>
-            </div>
+            <span className="text-xs text-muted-foreground/70">Safe videos for the whole family</span>
           </div>
 
           {/* Links */}
-          <div className="flex items-center gap-6 text-sm">
+          <div className="flex items-center gap-4 text-xs">
             <Link 
               to="/terms" 
-              className="text-muted-foreground hover:text-foreground transition-colors"
+              className="text-muted-foreground/60 hover:text-muted-foreground transition-colors"
             >
-              Terms of Service
+              Terms
             </Link>
             <Link 
               to="/privacy" 
-              className="text-muted-foreground hover:text-foreground transition-colors"
+              className="text-muted-foreground/60 hover:text-muted-foreground transition-colors"
             >
-              Privacy Policy
+              Privacy
             </Link>
             <Link 
               to="/contact" 
-              className="text-muted-foreground hover:text-foreground transition-colors"
+              className="text-muted-foreground/60 hover:text-muted-foreground transition-colors"
             >
-              Contact Us
+              Contact
             </Link>
           </div>
 
           {/* Copyright */}
-          <div className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} YidVid. All rights reserved.
+          <div className="text-xs text-muted-foreground/50">
+            © {new Date().getFullYear()} YidVid
           </div>
         </div>
       </div>
