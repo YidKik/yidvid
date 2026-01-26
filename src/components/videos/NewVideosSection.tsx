@@ -106,6 +106,7 @@ export const NewVideosSection = ({ videos }: NewVideosSectionProps) => {
     
     return (
       <motion.div
+        className={isGrid ? 'w-full' : 'flex-none w-[calc(20%-13px)]'}
         initial={shouldAnimate ? { opacity: 0, y: 20, scale: 0.95 } : { opacity: 1, y: 0, scale: 1 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={shouldAnimate ? { 
@@ -116,7 +117,7 @@ export const NewVideosSection = ({ videos }: NewVideosSectionProps) => {
       >
         <Link
           to={`/video/${video.video_id || video.id}`}
-          className={`block group ${isGrid ? 'w-full' : 'flex-none w-[calc(20%-13px)]'}`}
+          className="block group"
         >
           {/* Thumbnail - rounded with yellow outline on hover */}
           <div className="relative aspect-video rounded-xl overflow-hidden border-2 border-transparent group-hover:border-yellow-400 transition-all duration-300">
