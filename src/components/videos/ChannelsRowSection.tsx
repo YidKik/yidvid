@@ -81,7 +81,7 @@ export const ChannelsRowSection = ({ selectedCategory = "all" }: ChannelsRowSect
   if (isLoading || sortedChannels.length === 0) return null;
 
   return (
-    <section className="mb-10 py-4">
+    <section className="mb-10 py-8 -mx-6 px-6 bg-gradient-to-b from-slate-50/70 via-gray-50/50 to-transparent dark:from-slate-800/20 dark:via-gray-800/10 dark:to-transparent border-t border-muted/30">
       {/* Header - YouTube style, smaller */}
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
