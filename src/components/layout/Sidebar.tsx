@@ -286,17 +286,29 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
             onClick={() => setIsCategoriesOpen(!isCategoriesOpen)}
             title={!effectiveIsExpanded ? "Categories" : undefined}
             className={cn(
-              "flex items-center rounded-lg text-sm font-medium transition-all duration-200 w-full",
-              effectiveIsExpanded ? "gap-3 px-3 py-2 justify-between" : "justify-center p-2.5",
-              "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+              "flex items-center text-sm font-medium transition-all duration-200 w-full",
+              effectiveIsExpanded 
+                ? "gap-3 px-3 py-2 rounded-full justify-between" 
+                : "justify-center p-2 rounded-full mx-auto w-10 h-10",
+              isCategoriesOpen
+                ? "border border-red-400 bg-red-50/50"
+                : "border border-transparent hover:bg-red-50/30 hover:border-red-200"
             )}
           >
             <div className="flex items-center gap-3">
-              <LayoutGrid className="w-5 h-5 shrink-0 text-gray-600" />
-              {effectiveIsExpanded && <span>Categories</span>}
+              <LayoutGrid className={cn(
+                "w-5 h-5 shrink-0 transition-colors",
+                isCategoriesOpen ? "text-red-500" : "text-gray-600"
+              )} />
+              {effectiveIsExpanded && (
+                <span className={cn(
+                  "transition-colors",
+                  isCategoriesOpen ? "text-red-500" : "text-gray-700"
+                )}>Categories</span>
+              )}
             </div>
             {effectiveIsExpanded && (
-              isCategoriesOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />
+              isCategoriesOpen ? <ChevronUp className="w-4 h-4 text-red-500" /> : <ChevronDown className="w-4 h-4 text-gray-400" />
             )}
           </button>
 
@@ -320,14 +332,18 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
                       key={category.id}
                       onClick={() => handleCategorySelect(category.id)}
                       className={cn(
-                        "flex items-center gap-2 w-full px-3 py-2 text-sm rounded-lg transition-all",
+                        "flex items-center gap-2 w-full px-3 py-2 text-sm rounded-full transition-all duration-200",
+                        "hover:scale-[1.02] hover:shadow-sm",
                         selectedCategory === category.id
-                          ? "bg-gray-100 text-gray-900"
-                          : "text-gray-600 hover:bg-gray-50"
+                          ? "bg-red-50 text-red-600 border border-red-300"
+                          : "text-gray-600 hover:bg-yellow-50/80 hover:text-yellow-700 hover:border-yellow-300 border border-transparent"
                       )}
                     >
-                      <span className="grayscale opacity-70 text-base">{category.icon}</span>
-                      <span>{category.label}</span>
+                      <span className={cn(
+                        "text-base transition-all duration-200",
+                        selectedCategory === category.id ? "grayscale-0 opacity-100" : "grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100"
+                      )}>{category.icon}</span>
+                      <span className="font-medium">{category.label}</span>
                     </button>
                   ))}
               </motion.div>
@@ -447,17 +463,29 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
             }}
             title={!effectiveIsExpanded ? "Subscriptions" : undefined}
             className={cn(
-              "flex items-center rounded-lg text-sm font-medium transition-all duration-200 w-full",
-              effectiveIsExpanded ? "gap-3 px-3 py-2 justify-between" : "justify-center p-2.5",
-              "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+              "flex items-center text-sm font-medium transition-all duration-200 w-full",
+              effectiveIsExpanded 
+                ? "gap-3 px-3 py-2 rounded-full justify-between" 
+                : "justify-center p-2 rounded-full mx-auto w-10 h-10",
+              isSubscriptionsOpen
+                ? "border border-red-400 bg-red-50/50"
+                : "border border-transparent hover:bg-red-50/30 hover:border-red-200"
             )}
           >
             <div className="flex items-center gap-3">
-              <Bell className="w-5 h-5 shrink-0 text-gray-600" />
-              {effectiveIsExpanded && <span>Subscriptions</span>}
+              <Bell className={cn(
+                "w-5 h-5 shrink-0 transition-colors",
+                isSubscriptionsOpen ? "text-red-500" : "text-gray-600"
+              )} />
+              {effectiveIsExpanded && (
+                <span className={cn(
+                  "transition-colors",
+                  isSubscriptionsOpen ? "text-red-500" : "text-gray-700"
+                )}>Subscriptions</span>
+              )}
             </div>
             {effectiveIsExpanded && (
-              isSubscriptionsOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />
+              isSubscriptionsOpen ? <ChevronUp className="w-4 h-4 text-red-500" /> : <ChevronDown className="w-4 h-4 text-gray-400" />
             )}
           </button>
 
@@ -475,14 +503,14 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
                     <Link
                       key={sub.channel.channel_id}
                       to={`/channel/${sub.channel.channel_id}`}
-                      className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg text-gray-600 hover:bg-gray-50 transition-all"
+                      className="flex items-center gap-2 px-3 py-2 text-sm rounded-full text-gray-600 hover:bg-yellow-50/80 hover:text-yellow-700 hover:border-yellow-300 border border-transparent transition-all duration-200 hover:scale-[1.02] hover:shadow-sm"
                     >
                       <img
                         src={sub.channel.thumbnail_url || '/placeholder.svg'}
                         alt={sub.channel.title}
                         className="w-6 h-6 rounded-full object-cover"
                       />
-                      <span className="truncate text-xs">{sub.channel.title}</span>
+                      <span className="truncate text-xs font-medium">{sub.channel.title}</span>
                     </Link>
                   ))
                 ) : (
