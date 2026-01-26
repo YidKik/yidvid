@@ -106,7 +106,7 @@ const HeroSearchSection = () => {
         className="relative z-10 text-center max-w-4xl mx-auto w-full"
       >
         {/* Animated Logo with Sliding Sections */}
-        <AnimatedPlayLogo className="w-40 h-40 md:w-52 md:h-52 mx-auto mb-10" />
+        <AnimatedPlayLogo className="w-56 h-56 md:w-72 md:h-72 lg:w-80 lg:h-80 mx-auto mb-10" />
 
         {/* Typing Text */}
         <motion.div
