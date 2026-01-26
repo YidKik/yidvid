@@ -1,7 +1,8 @@
-import { VideoCard } from "@/components/VideoCard";
+import { VideoCardWithOptions } from "@/components/video/VideoCardWithOptions";
 import { DelayedLoadingAnimation } from "@/components/ui/DelayedLoadingAnimation";
 import { useLocation } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useVideoDate } from "@/components/video/useVideoDate";
 
 interface ChannelVideosProps {
   videos: any[];
@@ -21,6 +22,7 @@ export const ChannelVideos = ({
   const location = useLocation();
   const isMainPage = location.pathname === "/";
   const { isMobile } = useIsMobile();
+  const { getFormattedDate } = useVideoDate();
 
   // Log video data for debugging
   console.log("ChannelVideos rendering with:", {
@@ -65,16 +67,16 @@ export const ChannelVideos = ({
               animation: `fadeIn 0.6s ease-out ${0.5 + index * 0.1}s forwards`
             }}
           >
-            <VideoCard
-              id={video.id}
-              video_id={video.video_id || video.id}
+            <VideoCardWithOptions
+              videoId={video.video_id || video.id}
+              videoUuid={video.id}
               title={video.title || "Untitled Video"}
               thumbnail={video.thumbnail || "/placeholder.svg"}
               channelName={video.channel_name || "Unknown Channel"}
-              views={video.views || 0}
-              uploadedAt={video.uploaded_at || new Date().toISOString()}
-              channelId={video.channel_id || ""}
               channelThumbnail={channelThumbnail}
+              views={video.views || 0}
+              formattedDate={getFormattedDate(video.uploaded_at)}
+              duration={video.duration}
             />
           </div>
         ))}
