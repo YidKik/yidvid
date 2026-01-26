@@ -167,7 +167,7 @@ export const TrendingSection = ({ videos }: TrendingSectionProps) => {
   return (
     <section 
       ref={sectionRef}
-      className={`mb-8 py-8 -mx-6 px-6 bg-gradient-to-r from-rose-50/60 via-pink-50/40 to-rose-50/60 dark:from-rose-900/10 dark:via-pink-900/5 dark:to-rose-900/10 ${showAllVideos ? 'min-h-screen pb-20' : 'rounded-3xl'}`}
+      className={`mb-8 py-8 -mx-6 px-6 bg-white dark:bg-gray-900/50 ${showAllVideos ? 'min-h-screen pb-20' : 'rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800'}`}
     >
       <AnimatePresence mode="wait">
         {showAllVideos ? (
@@ -184,7 +184,7 @@ export const TrendingSection = ({ videos }: TrendingSectionProps) => {
               <div className="flex items-center gap-4">
                 <button
                   onClick={handleBackClick}
-                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground bg-muted/50 hover:bg-muted rounded-full transition-all duration-200"
+                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition-all duration-200 shadow-sm"
                 >
                   <ChevronLeft className="w-4 h-4" />
                   Back
@@ -193,7 +193,7 @@ export const TrendingSection = ({ videos }: TrendingSectionProps) => {
                   Trending Videos
                 </h2>
               </div>
-              <span className="text-sm text-muted-foreground">
+              <span className="text-sm text-gray-500 dark:text-gray-400">
                 Page {currentPage + 1} of {totalPages}
               </span>
             </div>
@@ -210,25 +210,25 @@ export const TrendingSection = ({ videos }: TrendingSectionProps) => {
               ))}
             </div>
 
-            {/* Pagination Arrows - Friendly themed */}
+            {/* Pagination Arrows */}
             <div className="flex justify-center items-center gap-6 mt-10">
               <button
                 onClick={handlePrevPage}
                 disabled={currentPage === 0}
                 className={`flex items-center gap-2 px-8 py-3 rounded-full font-semibold transition-all duration-300 ${
                   currentPage === 0
-                    ? 'bg-muted/30 text-muted-foreground/40 cursor-not-allowed'
-                    : 'bg-gradient-to-r from-yellow-400 to-orange-400 text-white shadow-md hover:shadow-lg hover:shadow-yellow-400/30 hover:scale-105'
+                    ? 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-600 cursor-not-allowed'
+                    : 'bg-red-500 text-white shadow-md hover:shadow-lg hover:scale-105'
                 }`}
               >
                 <ChevronLeft className="w-5 h-5" />
                 Previous
               </button>
               
-              <div className="flex items-center gap-2 px-4 py-2 bg-muted/50 rounded-full">
+              <div className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-full shadow-sm">
                 <span className="text-sm font-medium text-foreground">{currentPage + 1}</span>
-                <span className="text-muted-foreground">/</span>
-                <span className="text-sm text-muted-foreground">{totalPages}</span>
+                <span className="text-gray-400">/</span>
+                <span className="text-sm text-gray-500">{totalPages}</span>
               </div>
               
               <button
@@ -236,8 +236,8 @@ export const TrendingSection = ({ videos }: TrendingSectionProps) => {
                 disabled={currentPage >= totalPages - 1}
                 className={`flex items-center gap-2 px-8 py-3 rounded-full font-semibold transition-all duration-300 ${
                   currentPage >= totalPages - 1
-                    ? 'bg-muted/30 text-muted-foreground/40 cursor-not-allowed'
-                    : 'bg-gradient-to-r from-yellow-400 to-orange-400 text-white shadow-md hover:shadow-lg hover:shadow-yellow-400/30 hover:scale-105'
+                    ? 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-600 cursor-not-allowed'
+                    : 'bg-red-500 text-white shadow-md hover:shadow-lg hover:scale-105'
                 }`}
               >
                 Next
@@ -254,16 +254,16 @@ export const TrendingSection = ({ videos }: TrendingSectionProps) => {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
           >
-            {/* Header - YouTube style, smaller */}
+            {/* Header */}
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+              <h2 className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                 Trending Videos
               </h2>
               
               <div className="flex items-center gap-4">
                 <button 
                   onClick={handleViewAllClick}
-                  className="px-4 py-1.5 text-xs font-semibold text-rose-700 dark:text-rose-400 bg-rose-100 dark:bg-rose-900/30 hover:bg-rose-200 dark:hover:bg-rose-900/50 rounded-full transition-all duration-200 hover:scale-105"
+                  className="px-4 py-1.5 text-xs font-semibold text-white bg-red-500 hover:bg-red-600 rounded-full transition-all duration-200 hover:scale-105 shadow-sm"
                 >
                   View all
                 </button>
@@ -272,10 +272,10 @@ export const TrendingSection = ({ videos }: TrendingSectionProps) => {
                   <button
                     onClick={scrollPrev}
                     disabled={!canScrollPrev}
-                    className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 ${
+                    className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 shadow-sm ${
                       canScrollPrev 
-                        ? 'bg-rose-100 dark:bg-rose-900/30 hover:bg-rose-200 dark:hover:bg-rose-900/50 text-rose-700 dark:text-rose-400 hover:scale-110' 
-                        : 'bg-muted/30 text-muted-foreground/30 cursor-not-allowed'
+                        ? 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 hover:scale-110' 
+                        : 'bg-gray-50 dark:bg-gray-800 text-gray-300 dark:text-gray-600 cursor-not-allowed'
                     }`}
                   >
                     <ChevronLeft className="w-5 h-5" />
@@ -283,10 +283,10 @@ export const TrendingSection = ({ videos }: TrendingSectionProps) => {
                   <button
                     onClick={scrollNext}
                     disabled={!canScrollNext}
-                    className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 ${
+                    className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 shadow-sm ${
                       canScrollNext 
-                        ? 'bg-rose-100 dark:bg-rose-900/30 hover:bg-rose-200 dark:hover:bg-rose-900/50 text-rose-700 dark:text-rose-400 hover:scale-110' 
-                        : 'bg-muted/30 text-muted-foreground/30 cursor-not-allowed'
+                        ? 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 hover:scale-110' 
+                        : 'bg-gray-50 dark:bg-gray-800 text-gray-300 dark:text-gray-600 cursor-not-allowed'
                     }`}
                   >
                     <ChevronRight className="w-5 h-5" />

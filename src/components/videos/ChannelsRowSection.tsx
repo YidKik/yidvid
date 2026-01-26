@@ -162,7 +162,7 @@ export const ChannelsRowSection = ({ selectedCategory = "all" }: ChannelsRowSect
   return (
     <section 
       ref={sectionRef}
-      className={`mb-10 py-10 -mx-6 px-6 bg-gradient-to-br from-yellow-50/80 via-orange-50/50 to-red-50/30 dark:from-yellow-900/10 dark:via-orange-900/5 dark:to-red-900/5 ${showAllChannels ? 'min-h-screen pb-20' : 'rounded-3xl shadow-sm'}`}
+      className={`mb-10 py-10 -mx-6 px-6 bg-gray-50 dark:bg-gray-900/30 ${showAllChannels ? 'min-h-screen pb-20' : 'rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800'}`}
     >
       <AnimatePresence mode="wait">
         {showAllChannels ? (
@@ -179,7 +179,7 @@ export const ChannelsRowSection = ({ selectedCategory = "all" }: ChannelsRowSect
               <div className="flex items-center gap-4">
                 <button
                   onClick={handleBackClick}
-                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground bg-muted/50 hover:bg-muted rounded-full transition-all duration-200"
+                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-all duration-200 shadow-sm"
                 >
                   <ChevronLeft className="w-4 h-4" />
                   Back
@@ -188,7 +188,7 @@ export const ChannelsRowSection = ({ selectedCategory = "all" }: ChannelsRowSect
                   All Channels
                 </h2>
               </div>
-              <span className="text-sm text-muted-foreground">
+              <span className="text-sm text-gray-500 dark:text-gray-400">
                 {allSortedChannels.length} channels
               </span>
             </div>
@@ -214,9 +214,9 @@ export const ChannelsRowSection = ({ selectedCategory = "all" }: ChannelsRowSect
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
           >
-            {/* Header - YouTube style, smaller */}
+            {/* Header */}
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+              <h2 className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                 Most Viewed Channels
               </h2>
               
@@ -224,10 +224,10 @@ export const ChannelsRowSection = ({ selectedCategory = "all" }: ChannelsRowSect
                 <button
                   onClick={scrollPrev}
                   disabled={!canScrollPrev}
-                  className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 ${
+                  className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 shadow-sm ${
                     canScrollPrev 
-                      ? 'bg-orange-100 dark:bg-orange-900/30 hover:bg-orange-200 dark:hover:bg-orange-900/50 text-orange-700 dark:text-orange-400 hover:scale-110' 
-                      : 'bg-muted/30 text-muted-foreground/30 cursor-not-allowed'
+                      ? 'bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 hover:scale-110' 
+                      : 'bg-gray-100 dark:bg-gray-800 text-gray-300 dark:text-gray-600 cursor-not-allowed'
                   }`}
                 >
                   <ChevronLeft className="w-5 h-5" />
@@ -235,10 +235,10 @@ export const ChannelsRowSection = ({ selectedCategory = "all" }: ChannelsRowSect
                 <button
                   onClick={scrollNext}
                   disabled={!canScrollNext}
-                  className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 ${
+                  className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 shadow-sm ${
                     canScrollNext 
-                      ? 'bg-orange-100 dark:bg-orange-900/30 hover:bg-orange-200 dark:hover:bg-orange-900/50 text-orange-700 dark:text-orange-400 hover:scale-110' 
-                      : 'bg-muted/30 text-muted-foreground/30 cursor-not-allowed'
+                      ? 'bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 hover:scale-110' 
+                      : 'bg-gray-100 dark:bg-gray-800 text-gray-300 dark:text-gray-600 cursor-not-allowed'
                   }`}
                 >
                   <ChevronRight className="w-5 h-5" />
@@ -259,11 +259,11 @@ export const ChannelsRowSection = ({ selectedCategory = "all" }: ChannelsRowSect
               </div>
             </div>
 
-            {/* View All Button - Bottom center, friendly and visible */}
+            {/* View All Button */}
             <div className="flex justify-center mt-8">
               <button 
                 onClick={handleViewAllClick}
-                className="px-8 py-3 text-base font-friendly font-semibold text-foreground hover:text-white bg-yellow-400/20 hover:bg-yellow-400 border-2 border-yellow-400 rounded-full transition-all duration-300 shadow-sm hover:shadow-lg hover:shadow-yellow-400/30"
+                className="px-8 py-3 text-base font-friendly font-semibold text-gray-900 bg-yellow-400 hover:bg-yellow-500 rounded-full transition-all duration-300 shadow-md hover:shadow-lg hover:scale-105"
               >
                 View All Channels
               </button>
