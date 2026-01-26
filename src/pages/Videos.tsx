@@ -13,6 +13,7 @@ import { useSidebarContext } from "@/contexts/SidebarContext";
 const MainContent = () => {
   const [searchParams] = useSearchParams();
   const categoryFromUrl = searchParams.get('category');
+  const sortFromUrl = searchParams.get('sort');
   const [selectedCategory, setSelectedCategory] = useState(categoryFromUrl || "all");
   const [currentPage, setCurrentPage] = useState(1);
   const [visibleVideos, setVisibleVideos] = useState(12);
@@ -98,6 +99,7 @@ const MainContent = () => {
               lastSuccessfulFetch={lastSuccessfulFetch}
               fetchAttempts={fetchAttempts}
               selectedCategory={selectedCategory}
+              sortBy={sortFromUrl || undefined}
             />
             
             {hasMoreVideos && !isLoading && (

@@ -15,6 +15,7 @@ interface DesktopVideoViewProps {
   lastSuccessfulFetch?: Date | null;
   fetchAttempts?: number;
   selectedCategory?: string;
+  sortBy?: string;
 }
 
 export const DesktopVideoView = ({
@@ -23,7 +24,8 @@ export const DesktopVideoView = ({
   isRefreshing,
   refetch,
   forceRefetch,
-  selectedCategory = "all"
+  selectedCategory = "all",
+  sortBy
 }: DesktopVideoViewProps) => {
   // More thorough check if we have real videos (not samples)
   const hasRealVideos = videos.some(video => 
@@ -71,7 +73,7 @@ export const DesktopVideoView = ({
       {/* Container for sections below Featured - aligned with Featured's width */}
       <div className="max-w-[calc(100%-2rem)] mr-4">
         {/* New Videos Section */}
-        <NewVideosSection videos={videos} />
+        <NewVideosSection videos={videos} autoExpand={sortBy === 'newest'} />
 
         {/* Trending Section - Different style */}
         <TrendingSection videos={videos} />

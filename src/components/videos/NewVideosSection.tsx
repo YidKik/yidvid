@@ -9,13 +9,14 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface NewVideosSectionProps {
   videos: VideoData[];
+  autoExpand?: boolean;
 }
 
-export const NewVideosSection = ({ videos }: NewVideosSectionProps) => {
+export const NewVideosSection = ({ videos, autoExpand = false }: NewVideosSectionProps) => {
   const { getFormattedDate } = useVideoDate();
-  const [showAllVideos, setShowAllVideos] = useState(false);
+  const [showAllVideos, setShowAllVideos] = useState(autoExpand);
   const [currentPage, setCurrentPage] = useState(0);
-  const [hasAnimated, setHasAnimated] = useState(false);
+  const [hasAnimated, setHasAnimated] = useState(autoExpand);
   const sectionRef = useRef<HTMLDivElement>(null);
   
   const [emblaRef, emblaApi] = useEmblaCarousel({
@@ -47,6 +48,15 @@ export const NewVideosSection = ({ videos }: NewVideosSectionProps) => {
       emblaApi.off("reInit", onSelect);
     };
   }, [emblaApi, onSelect]);
+
+  // Handle autoExpand - scroll to section when expanded via URL
+  useEffect(() => {
+    if (autoExpand && showAllVideos) {
+      setTimeout(() => {
+        sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
+  }, [autoExpand, showAllVideos]);
 
   // Sort by upload date to get newest videos
   const allNewVideos = useMemo(() => {
