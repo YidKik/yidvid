@@ -90,9 +90,23 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
   const { isExpanded, setIsExpanded } = useSidebarContext();
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
   const [isSubscriptionsOpen, setIsSubscriptionsOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState("all");
   
   const { allCategories } = useCategories();
+
+  // Get category from URL params
+  const searchParams = new URLSearchParams(location.search);
+  const categoryFromUrl = searchParams.get('category');
+  const [selectedCategory, setSelectedCategory] = useState(categoryFromUrl || "all");
+
+  // Sync selected category with URL
+  useEffect(() => {
+    if (categoryFromUrl) {
+      setSelectedCategory(categoryFromUrl);
+      setIsCategoriesOpen(true); // Auto-open categories dropdown when a category is selected
+    } else if (location.pathname === "/videos" && !location.search.includes("category=")) {
+      setSelectedCategory("all");
+    }
+  }, [categoryFromUrl, location.pathname, location.search]);
 
   // Fetch user subscriptions
   const { data: subscriptions } = useQuery({
@@ -124,9 +138,16 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
   // On homepage, show collapsed sidebar
   const effectiveIsExpanded = isHomePage ? false : isExpanded;
 
+  // Check if viewing a specific category
+  const isViewingCategory = location.pathname === "/videos" && categoryFromUrl && categoryFromUrl !== "all";
+
   const isActive = (path: string) => {
     const [basePath, query] = path.split("?");
-    const currentFullPath = location.pathname + location.search;
+    
+    // If we're viewing a category, don't highlight the Videos page
+    if (isViewingCategory && path === "/videos") {
+      return false;
+    }
     
     if (query) {
       // For paths with query params (like /videos?sort=newest), check exact match
@@ -134,13 +155,18 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
     }
     
     // For paths without query params (like /videos), only match if there's no conflicting query
-    // This prevents /videos from being active when on /videos?sort=newest
+    // This prevents /videos from being active when on /videos?sort=newest or /videos?category=xxx
     if (basePath === "/videos" && location.pathname === "/videos") {
-      // Only active if there's no sort param in the URL
-      return !location.search.includes("sort=");
+      // Only active if there's no sort param or category param in the URL
+      return !location.search.includes("sort=") && !location.search.includes("category=");
     }
     
     return location.pathname === basePath;
+  };
+
+  // Check if a specific category is active
+  const isCategoryActive = (categoryId: string) => {
+    return location.pathname === "/videos" && categoryFromUrl === categoryId;
   };
 
   const canGoBack = () => {
@@ -326,14 +352,14 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
                       className={cn(
                         "flex items-center gap-2 w-full px-2.5 py-1.5 text-sm rounded-lg transition-all duration-200 my-0.5",
                         "hover:scale-[1.01]",
-                        selectedCategory === category.id
+                        isCategoryActive(category.id)
                           ? "bg-red-50 text-red-600 border border-red-300"
                           : "text-gray-600 hover:bg-yellow-50 hover:text-yellow-700 border border-transparent"
                       )}
                     >
                       <span className={cn(
                         "text-base transition-all duration-200",
-                        selectedCategory === category.id ? "grayscale-0 opacity-100" : "grayscale opacity-70"
+                        isCategoryActive(category.id) ? "grayscale-0 opacity-100" : "grayscale opacity-70"
                       )}>{category.icon}</span>
                       <span className="font-medium">{category.label}</span>
                     </button>

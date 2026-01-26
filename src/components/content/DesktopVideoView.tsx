@@ -3,6 +3,7 @@ import { FeaturedVideoSection } from "@/components/videos/FeaturedVideoSection";
 import { NewVideosSection } from "@/components/videos/NewVideosSection";
 import { TrendingSection } from "@/components/videos/TrendingSection";
 import { ChannelsRowSection } from "@/components/videos/ChannelsRowSection";
+import { CategoryVideosGrid } from "@/components/videos/CategoryVideosGrid";
 import { VideoData } from "@/hooks/video/types/video-fetcher";
 import { useMemo } from "react";
 
@@ -51,13 +52,11 @@ export const DesktopVideoView = ({
     return null;
   }
 
-  // If a specific category is selected, show filtered grid view
+  // If a specific category is selected, show the category grid with 4 rows
   if (selectedCategory !== "all") {
-    const filteredVideos = videos.filter(v => v.category === selectedCategory);
     return (
-      <div className="space-y-8">
-        <NewVideosSection videos={filteredVideos} />
-        <TrendingSection videos={filteredVideos} />
+      <div className="space-y-8 px-8 lg:px-12 xl:px-16 max-w-[1600px] mx-auto">
+        <CategoryVideosGrid videos={videos} categoryId={selectedCategory} />
         <ChannelsRowSection selectedCategory={selectedCategory} />
       </div>
     );
