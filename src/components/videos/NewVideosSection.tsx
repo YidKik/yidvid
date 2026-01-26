@@ -1,16 +1,16 @@
 
 import { useMemo, useCallback, useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
-import { VideoCard } from "@/components/VideoCard";
-import { VideoSectionHeader } from "./VideoSectionHeader";
+import { Link } from "react-router-dom";
 import { VideoData } from "@/hooks/video/types/video-fetcher";
-import { Sparkles } from "lucide-react";
+import { useVideoDate } from "@/components/video/useVideoDate";
 
 interface NewVideosSectionProps {
   videos: VideoData[];
 }
 
 export const NewVideosSection = ({ videos }: NewVideosSectionProps) => {
+  const { getFormattedDate } = useVideoDate();
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: "start",
     slidesToScroll: 5,
@@ -51,23 +51,17 @@ export const NewVideosSection = ({ videos }: NewVideosSectionProps) => {
   if (!newVideos || newVideos.length === 0) return null;
 
   return (
-    <section className="mb-8">
-      {/* Custom header with "New" badge */}
+    <section className="mb-8 py-6 px-4 -mx-4 bg-muted/30 rounded-xl">
+      {/* Header - YouTube style, smaller */}
       <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <div className="flex items-center gap-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white px-3 py-1 rounded-full">
-            <Sparkles className="w-4 h-4" />
-            <span className="text-sm font-semibold">New</span>
-          </div>
-          <h2 className="text-lg md:text-xl font-bold text-foreground" style={{ fontFamily: "'Quicksand', sans-serif" }}>
-            Latest Videos
-          </h2>
-        </div>
+        <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+          Latest Videos
+        </h2>
         
         <div className="flex items-center gap-3">
           <a 
             href="/videos?sort=newest"
-            className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors px-3 py-1.5 rounded-full hover:bg-primary/5"
+            className="text-xs font-medium text-muted-foreground hover:text-primary transition-colors"
           >
             View all
           </a>
@@ -78,8 +72,8 @@ export const NewVideosSection = ({ videos }: NewVideosSectionProps) => {
               disabled={!canScrollPrev}
               className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
                 canScrollPrev 
-                  ? 'bg-muted hover:bg-muted/80 text-foreground' 
-                  : 'bg-muted/30 text-muted-foreground/30 cursor-not-allowed'
+                  ? 'bg-background hover:bg-muted text-foreground' 
+                  : 'bg-background/50 text-muted-foreground/30 cursor-not-allowed'
               }`}
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -91,8 +85,8 @@ export const NewVideosSection = ({ videos }: NewVideosSectionProps) => {
               disabled={!canScrollNext}
               className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
                 canScrollNext 
-                  ? 'bg-muted hover:bg-muted/80 text-foreground' 
-                  : 'bg-muted/30 text-muted-foreground/30 cursor-not-allowed'
+                  ? 'bg-background hover:bg-muted text-foreground' 
+                  : 'bg-background/50 text-muted-foreground/30 cursor-not-allowed'
               }`}
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -106,21 +100,44 @@ export const NewVideosSection = ({ videos }: NewVideosSectionProps) => {
       <div className="overflow-hidden" ref={emblaRef}>
         <div className="flex gap-4">
           {newVideos.map((video) => (
-            <div
+            <Link
               key={video.id}
-              className="flex-none w-[calc(20%-13px)]"
+              to={`/video/${video.video_id || video.id}`}
+              className="flex-none w-[calc(20%-13px)] group"
             >
-              <VideoCard
-                id={video.id}
-                video_id={video.video_id}
-                title={video.title}
-                thumbnail={video.thumbnail}
-                channelName={video.channel_name}
-                channelId={video.channel_id}
-                views={video.views}
-                uploadedAt={video.uploaded_at}
-              />
-            </div>
+              {/* Thumbnail */}
+              <div className="relative aspect-video rounded-lg overflow-hidden shadow-sm group-hover:shadow-md transition-shadow">
+                <img
+                  src={video.thumbnail}
+                  alt={video.title}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  loading="lazy"
+                />
+              </div>
+              
+              {/* Video Info */}
+              <div className="mt-3 flex gap-2">
+                {/* Channel Avatar */}
+                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-red-500 flex items-center justify-center text-xs font-bold text-white flex-shrink-0">
+                  {video.channel_name.charAt(0).toUpperCase()}
+                </div>
+                
+                <div className="min-w-0 flex-1">
+                  {/* Title */}
+                  <h3 className="text-sm font-medium text-foreground line-clamp-2 group-hover:text-primary transition-colors">
+                    {video.title}
+                  </h3>
+                  {/* Channel Name */}
+                  <p className="text-xs text-muted-foreground mt-0.5 truncate">
+                    {video.channel_name}
+                  </p>
+                  {/* Meta */}
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    {getFormattedDate(video.uploaded_at)} • {video.views?.toLocaleString() || 0} views
+                  </p>
+                </div>
+              </div>
+            </Link>
           ))}
         </div>
       </div>
