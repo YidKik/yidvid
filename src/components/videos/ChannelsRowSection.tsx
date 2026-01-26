@@ -130,7 +130,7 @@ export const ChannelsRowSection = ({ selectedCategory = "all" }: ChannelsRowSect
         className={`block group ${isGrid ? 'w-full' : 'flex-none w-[210px]'}`}
       >
         <div className="bg-card rounded-2xl p-7 shadow-md transition-all duration-300 text-center">
-          <div className="relative mx-auto w-28 h-28 rounded-full overflow-hidden border-[3px] border-transparent group-hover:border-yellow-400 transition-all duration-300 ring-2 ring-muted/30 group-hover:ring-yellow-400/50">
+          <div className="relative mx-auto w-28 h-28 rounded-full overflow-hidden border-2 border-transparent group-hover:border-yellow-400 transition-all duration-300 ring-2 ring-muted/30 group-hover:ring-yellow-400/50">
             {channel.thumbnail_url ? (
               <img
                 src={channel.thumbnail_url}
@@ -147,12 +147,12 @@ export const ChannelsRowSection = ({ selectedCategory = "all" }: ChannelsRowSect
             )}
           </div>
           
-          <p className="mt-4 text-sm font-semibold text-foreground truncate group-hover:text-yellow-500 transition-colors">
+          <p className="mt-4 text-sm font-semibold text-foreground truncate">
             {channel.title}
           </p>
           
           <p className="text-xs text-muted-foreground mt-1.5">
-            {channelVideoCounts?.[channel.channel_id]?.toLocaleString() || 0} views
+            {isGrid ? 'View Channel' : `${channelVideoCounts?.[channel.channel_id]?.toLocaleString() || 0} views`}
           </p>
         </div>
       </Link>
