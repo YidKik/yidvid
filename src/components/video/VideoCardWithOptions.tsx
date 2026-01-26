@@ -52,29 +52,22 @@ export const VideoCardWithOptions = ({
             loading="lazy"
           />
           
-          {/* Hover overlay with duration and options */}
+          {/* Hover overlay with duration */}
           <div 
             className={cn(
               "absolute inset-0 transition-opacity duration-300 pointer-events-none",
               isHovering ? "opacity-100" : "opacity-0"
             )}
           >
-            {/* Duration badge - top right */}
+            {/* Duration badge - bottom right */}
             {duration && (
-              <div className="absolute top-2 right-2 pointer-events-auto">
+              <div className="absolute bottom-2 right-2 pointer-events-auto">
                 <div className="bg-black/70 backdrop-blur-sm rounded-full px-2.5 py-1 flex items-center gap-1.5 shadow-lg">
                   <Clock size={11} className="text-white" />
                   <span className="text-xs font-semibold text-white">{duration}</span>
                 </div>
               </div>
             )}
-            
-            {/* Channel name badge - bottom left */}
-            <div className="absolute bottom-2 left-2">
-              <div className="inline-flex items-center gap-1.5 bg-black/70 backdrop-blur-sm rounded-full px-3 py-1.5 shadow-lg max-w-[85%]">
-                <span className="text-xs font-bold text-white truncate">{channelName}</span>
-              </div>
-            </div>
           </div>
         </div>
         
