@@ -86,12 +86,12 @@ export const ChannelsRowSection = ({ selectedCategory = "all" }: ChannelsRowSect
     return allSortedChannels.slice(0, 10);
   }, [allSortedChannels]);
 
-  // Handle View All click - expand and scroll to top of section
+  // Handle View All click - expand and scroll to top of page
   const handleViewAllClick = () => {
     setShowAllChannels(true);
-    // Scroll so the section is at the top of the viewport
+    // Scroll to top of page so channels fill the viewport
     setTimeout(() => {
-      sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }, 50);
   };
 
@@ -154,7 +154,7 @@ export const ChannelsRowSection = ({ selectedCategory = "all" }: ChannelsRowSect
   return (
     <section 
       ref={sectionRef}
-      className="mb-10 py-8 -mx-6 px-6 bg-gradient-to-b from-slate-50/70 via-gray-50/50 to-transparent dark:from-slate-800/20 dark:via-gray-800/10 dark:to-transparent border-t border-muted/30"
+      className={`mb-10 py-8 -mx-6 px-6 ${showAllChannels ? 'bg-background min-h-screen' : 'bg-gradient-to-b from-slate-50/70 via-gray-50/50 to-transparent dark:from-slate-800/20 dark:via-gray-800/10 dark:to-transparent border-t border-muted/30'}`}
     >
       <AnimatePresence mode="wait">
         {showAllChannels ? (
