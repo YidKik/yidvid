@@ -51,7 +51,7 @@ export const NewVideosSection = ({ videos }: NewVideosSectionProps) => {
   if (!newVideos || newVideos.length === 0) return null;
 
   return (
-    <section className="mb-8 py-6 px-4 -mx-4 bg-muted/30 rounded-xl">
+    <section className="mb-8 py-6 px-5 -mx-4 bg-card/80 rounded-2xl border border-border/20 shadow-sm">
       {/* Header - YouTube style, smaller */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
@@ -72,8 +72,8 @@ export const NewVideosSection = ({ videos }: NewVideosSectionProps) => {
               disabled={!canScrollPrev}
               className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
                 canScrollPrev 
-                  ? 'bg-background hover:bg-muted text-foreground' 
-                  : 'bg-background/50 text-muted-foreground/30 cursor-not-allowed'
+                  ? 'bg-muted hover:bg-muted/80 text-foreground' 
+                  : 'bg-muted/30 text-muted-foreground/30 cursor-not-allowed'
               }`}
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -85,8 +85,8 @@ export const NewVideosSection = ({ videos }: NewVideosSectionProps) => {
               disabled={!canScrollNext}
               className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
                 canScrollNext 
-                  ? 'bg-background hover:bg-muted text-foreground' 
-                  : 'bg-background/50 text-muted-foreground/30 cursor-not-allowed'
+                  ? 'bg-muted hover:bg-muted/80 text-foreground' 
+                  : 'bg-muted/30 text-muted-foreground/30 cursor-not-allowed'
               }`}
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -105,8 +105,8 @@ export const NewVideosSection = ({ videos }: NewVideosSectionProps) => {
               to={`/video/${video.video_id || video.id}`}
               className="flex-none w-[calc(20%-13px)] group"
             >
-              {/* Thumbnail */}
-              <div className="relative aspect-video rounded-lg overflow-hidden shadow-sm group-hover:shadow-md transition-shadow">
+              {/* Thumbnail - rounded */}
+              <div className="relative aspect-video rounded-xl overflow-hidden shadow-sm group-hover:shadow-md transition-shadow">
                 <img
                   src={video.thumbnail}
                   alt={video.title}
@@ -115,27 +115,25 @@ export const NewVideosSection = ({ videos }: NewVideosSectionProps) => {
                 />
               </div>
               
-              {/* Video Info */}
-              <div className="mt-3 flex gap-2">
-                {/* Channel Avatar */}
-                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-red-500 flex items-center justify-center text-xs font-bold text-white flex-shrink-0">
-                  {video.channel_name.charAt(0).toUpperCase()}
-                </div>
-                
-                <div className="min-w-0 flex-1">
-                  {/* Title */}
-                  <h3 className="text-sm font-medium text-foreground line-clamp-2 group-hover:text-primary transition-colors">
-                    {video.title}
-                  </h3>
-                  {/* Channel Name */}
-                  <p className="text-xs text-muted-foreground mt-0.5 truncate">
+              {/* Video Info - left aligned */}
+              <div className="mt-3">
+                {/* Title */}
+                <h3 className="text-sm font-medium text-foreground line-clamp-2 group-hover:text-primary transition-colors">
+                  {video.title}
+                </h3>
+                {/* Channel with avatar */}
+                <div className="flex items-center gap-2 mt-2">
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-br from-primary to-red-500 flex items-center justify-center text-[10px] font-bold text-white flex-shrink-0">
+                    {video.channel_name.charAt(0).toUpperCase()}
+                  </div>
+                  <p className="text-xs text-muted-foreground truncate">
                     {video.channel_name}
                   </p>
-                  {/* Meta */}
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    {getFormattedDate(video.uploaded_at)} • {video.views?.toLocaleString() || 0} views
-                  </p>
                 </div>
+                {/* Meta */}
+                <p className="text-xs text-muted-foreground mt-1">
+                  {video.views?.toLocaleString() || 0} views • {getFormattedDate(video.uploaded_at)}
+                </p>
               </div>
             </Link>
           ))}

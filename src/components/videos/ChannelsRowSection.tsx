@@ -133,12 +133,12 @@ export const ChannelsRowSection = ({ selectedCategory = "all" }: ChannelsRowSect
             <Link
               key={channel.id}
               to={`/channel/${channel.channel_id}`}
-              className="flex-none w-[160px] group"
+              className="flex-none w-[180px] group"
             >
-              {/* Channel Card - Friendly card style */}
-              <div className="bg-card rounded-2xl p-4 border border-border/50 hover:border-primary/40 hover:shadow-lg transition-all duration-300 text-center">
-                {/* Channel Avatar - Bigger */}
-                <div className="relative mx-auto w-20 h-20 rounded-full overflow-hidden border-3 border-primary/20 group-hover:border-primary/50 transition-all duration-300 shadow-md">
+              {/* Channel Card - Clean white card like reference */}
+              <div className="bg-card rounded-2xl p-5 border border-border/30 hover:border-primary hover:shadow-xl transition-all duration-300 text-center">
+                {/* Channel Avatar - Bigger with yellow border on hover */}
+                <div className="relative mx-auto w-24 h-24 rounded-full overflow-hidden border-2 border-primary/30 group-hover:border-primary transition-all duration-300 shadow-md">
                   {channel.thumbnail_url ? (
                     <img
                       src={channel.thumbnail_url}
@@ -156,13 +156,13 @@ export const ChannelsRowSection = ({ selectedCategory = "all" }: ChannelsRowSect
                 </div>
                 
                 {/* Channel Name */}
-                <p className="mt-3 text-sm font-semibold text-foreground truncate group-hover:text-primary transition-colors">
+                <p className="mt-4 text-sm font-semibold text-foreground truncate group-hover:text-primary transition-colors">
                   {channel.title}
                 </p>
                 
-                {/* View Count */}
-                <p className="text-xs text-muted-foreground mt-1">
-                  {channelVideoCounts?.[channel.channel_id]?.toLocaleString() || 0} views
+                {/* View Channel link */}
+                <p className="text-xs text-muted-foreground mt-1 group-hover:text-primary/80 transition-colors">
+                  View Channel
                 </p>
               </div>
             </Link>

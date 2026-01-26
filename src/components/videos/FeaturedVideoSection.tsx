@@ -96,8 +96,8 @@ export const FeaturedVideoSection = ({ videos }: FeaturedVideoSectionProps) => {
               to={`/video/${video.video_id || video.id}`}
               className="flex-none w-[calc(33.333%-14px)] group"
             >
-              {/* Featured Card - Yellow border */}
-              <div className="relative aspect-video rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-primary/40 hover:border-primary">
+              {/* Featured Card - Yellow border on hover */}
+              <div className="relative aspect-video rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-primary/50 hover:border-primary">
                 <img
                   src={video.thumbnail}
                   alt={video.title}
