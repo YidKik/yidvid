@@ -210,32 +210,34 @@ export const TrendingSection = ({ videos }: TrendingSectionProps) => {
               ))}
             </div>
 
-            {/* Pagination Arrows */}
-            <div className="flex justify-center items-center gap-4 mt-8">
+            {/* Pagination Arrows - Friendly themed */}
+            <div className="flex justify-center items-center gap-6 mt-10">
               <button
                 onClick={handlePrevPage}
                 disabled={currentPage === 0}
-                className={`flex items-center gap-2 px-6 py-3 rounded-full font-medium transition-all duration-200 ${
+                className={`flex items-center gap-2 px-8 py-3 rounded-full font-semibold transition-all duration-300 ${
                   currentPage === 0
-                    ? 'bg-muted/30 text-muted-foreground/30 cursor-not-allowed'
-                    : 'bg-muted hover:bg-muted/80 text-foreground'
+                    ? 'bg-muted/30 text-muted-foreground/40 cursor-not-allowed'
+                    : 'bg-gradient-to-r from-yellow-400 to-orange-400 text-white shadow-md hover:shadow-lg hover:shadow-yellow-400/30 hover:scale-105'
                 }`}
               >
                 <ChevronLeft className="w-5 h-5" />
                 Previous
               </button>
               
-              <span className="text-sm text-muted-foreground px-4">
-                {currentPage + 1} / {totalPages}
-              </span>
+              <div className="flex items-center gap-2 px-4 py-2 bg-muted/50 rounded-full">
+                <span className="text-sm font-medium text-foreground">{currentPage + 1}</span>
+                <span className="text-muted-foreground">/</span>
+                <span className="text-sm text-muted-foreground">{totalPages}</span>
+              </div>
               
               <button
                 onClick={handleNextPage}
                 disabled={currentPage >= totalPages - 1}
-                className={`flex items-center gap-2 px-6 py-3 rounded-full font-medium transition-all duration-200 ${
+                className={`flex items-center gap-2 px-8 py-3 rounded-full font-semibold transition-all duration-300 ${
                   currentPage >= totalPages - 1
-                    ? 'bg-muted/30 text-muted-foreground/30 cursor-not-allowed'
-                    : 'bg-muted hover:bg-muted/80 text-foreground'
+                    ? 'bg-muted/30 text-muted-foreground/40 cursor-not-allowed'
+                    : 'bg-gradient-to-r from-yellow-400 to-orange-400 text-white shadow-md hover:shadow-lg hover:shadow-yellow-400/30 hover:scale-105'
                 }`}
               >
                 Next
@@ -258,40 +260,36 @@ export const TrendingSection = ({ videos }: TrendingSectionProps) => {
                 Trending Videos
               </h2>
               
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-4">
                 <button 
                   onClick={handleViewAllClick}
-                  className="text-xs font-medium text-muted-foreground hover:text-primary transition-colors"
+                  className="px-4 py-1.5 text-xs font-semibold text-rose-700 dark:text-rose-400 bg-rose-100 dark:bg-rose-900/30 hover:bg-rose-200 dark:hover:bg-rose-900/50 rounded-full transition-all duration-200 hover:scale-105"
                 >
                   View all
                 </button>
                 
-                <div className="flex gap-1.5">
+                <div className="flex gap-2">
                   <button
                     onClick={scrollPrev}
                     disabled={!canScrollPrev}
-                    className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
+                    className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 ${
                       canScrollPrev 
-                        ? 'bg-muted hover:bg-muted/80 text-foreground' 
+                        ? 'bg-rose-100 dark:bg-rose-900/30 hover:bg-rose-200 dark:hover:bg-rose-900/50 text-rose-700 dark:text-rose-400 hover:scale-110' 
                         : 'bg-muted/30 text-muted-foreground/30 cursor-not-allowed'
                     }`}
                   >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                    </svg>
+                    <ChevronLeft className="w-5 h-5" />
                   </button>
                   <button
                     onClick={scrollNext}
                     disabled={!canScrollNext}
-                    className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
+                    className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 ${
                       canScrollNext 
-                        ? 'bg-muted hover:bg-muted/80 text-foreground' 
+                        ? 'bg-rose-100 dark:bg-rose-900/30 hover:bg-rose-200 dark:hover:bg-rose-900/50 text-rose-700 dark:text-rose-400 hover:scale-110' 
                         : 'bg-muted/30 text-muted-foreground/30 cursor-not-allowed'
                     }`}
                   >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
+                    <ChevronRight className="w-5 h-5" />
                   </button>
                 </div>
               </div>
