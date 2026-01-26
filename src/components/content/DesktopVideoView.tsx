@@ -64,23 +64,20 @@ export const DesktopVideoView = ({
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 px-8 lg:px-12 xl:px-16 max-w-[1600px] mx-auto">
       {/* Featured Section - Large hero cards */}
       {featuredVideos.length >= 3 && (
         <FeaturedVideoSection videos={featuredVideos} />
       )}
 
-      {/* Container for sections below Featured - aligned with Featured's width */}
-      <div className="max-w-[calc(100%-2rem)] mr-4">
-        {/* New Videos Section */}
-        <NewVideosSection videos={videos} autoExpand={sortBy === 'newest'} />
+      {/* New Videos Section */}
+      <NewVideosSection videos={videos} autoExpand={sortBy === 'newest'} />
 
-        {/* Trending Section - Different style */}
-        <TrendingSection videos={videos} />
+      {/* Trending Section - Different style */}
+      <TrendingSection videos={videos} />
 
-        {/* Most Viewed Channels */}
-        <ChannelsRowSection selectedCategory={selectedCategory} />
-      </div>
+      {/* Most Viewed Channels */}
+      <ChannelsRowSection selectedCategory={selectedCategory} />
     </div>
   );
 };
