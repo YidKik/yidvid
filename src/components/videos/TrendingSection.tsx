@@ -106,8 +106,8 @@ export const TrendingSection = ({ videos }: TrendingSectionProps) => {
               to={`/video/${video.video_id || video.id}`}
               className="flex-none w-[calc(20%-13px)] group"
             >
-              {/* Thumbnail - rounded */}
-              <div className="relative aspect-video rounded-xl overflow-hidden shadow-sm group-hover:shadow-md transition-shadow">
+              {/* Thumbnail - rounded with yellow outline on hover */}
+              <div className="relative aspect-video rounded-xl overflow-hidden shadow-sm group-hover:shadow-md border-2 border-transparent group-hover:border-yellow-400 transition-all duration-300">
                 <img
                   src={video.thumbnail}
                   alt={video.title}
@@ -116,23 +116,33 @@ export const TrendingSection = ({ videos }: TrendingSectionProps) => {
                 />
               </div>
               
-              {/* Video Info - left aligned */}
+              {/* Video Info - clean layout like reference */}
               <div className="mt-3">
-                {/* Title */}
-                <h3 className="text-sm font-medium text-foreground line-clamp-2 group-hover:text-yellow-500 transition-colors">
+                {/* Title - bolder, friendly */}
+                <h3 className="text-sm font-semibold font-friendly text-foreground line-clamp-2 leading-snug">
                   {video.title}
                 </h3>
-                {/* Channel with avatar */}
+                {/* Channel with actual profile picture */}
                 <div className="flex items-center gap-2 mt-2">
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-br from-yellow-400 to-red-500 flex items-center justify-center text-[10px] font-bold text-white flex-shrink-0">
-                    {video.channel_name.charAt(0).toUpperCase()}
+                  <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0 bg-muted">
+                    {video.channelThumbnail ? (
+                      <img
+                        src={video.channelThumbnail}
+                        alt={video.channel_name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-yellow-400 to-red-500 flex items-center justify-center text-[10px] font-bold text-white">
+                        {video.channel_name.charAt(0).toUpperCase()}
+                      </div>
+                    )}
                   </div>
                   <p className="text-xs text-muted-foreground truncate">
                     {video.channel_name}
                   </p>
                 </div>
-                {/* Meta */}
-                <p className="text-xs text-muted-foreground mt-1">
+                {/* Meta - cleaner */}
+                <p className="text-xs text-muted-foreground/80 mt-1.5">
                   {video.views?.toLocaleString() || 0} views • {getFormattedDate(video.uploaded_at)}
                 </p>
               </div>
