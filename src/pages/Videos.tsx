@@ -73,7 +73,7 @@ const MainContent = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1, duration: 0.5 }}
-        className="mt-4 px-4 md:px-6 max-w-[1600px] w-full"
+        className="mt-4 px-6 lg:px-10 max-w-[1800px] mx-auto w-full"
       >
         
         <div className="space-y-2 md:space-y-4">
