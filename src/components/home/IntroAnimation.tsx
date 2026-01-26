@@ -47,7 +47,8 @@ export const IntroAnimation: React.FC<IntroAnimationProps> = ({ onComplete, chil
 
   // Calculate positions
   const viewportWidth = typeof window !== 'undefined' ? window.innerWidth : 1920;
-  const logoSize = Math.min(viewportWidth * 0.5, 500); // Logo size relative to viewport
+  const viewportHeight = typeof window !== 'undefined' ? window.innerHeight : 1080;
+  const logoSize = Math.min(viewportWidth * 0.8, viewportHeight * 0.9, 800); // Much larger logo
   
   // Slice animation - sweep across screen then settle to right
   const getSliceVariants = (index: number) => ({
