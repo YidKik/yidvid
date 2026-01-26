@@ -81,9 +81,9 @@ export const ChannelsRowSection = ({ selectedCategory = "all" }: ChannelsRowSect
   if (isLoading || sortedChannels.length === 0) return null;
 
   return (
-    <section className="mb-8">
+    <section className="mb-10 py-4">
       {/* Header - YouTube style, smaller */}
-      <div className="flex items-center justify-between mb-5">
+      <div className="flex items-center justify-between mb-6">
         <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
           Most Viewed Channels
         </h2>
@@ -118,18 +118,18 @@ export const ChannelsRowSection = ({ selectedCategory = "all" }: ChannelsRowSect
         </div>
       </div>
 
-      <div className="overflow-hidden" ref={emblaRef}>
+      <div className="overflow-visible py-3" ref={emblaRef}>
         <div className="flex gap-6">
           {sortedChannels.map((channel) => (
             <Link
               key={channel.id}
               to={`/channel/${channel.channel_id}`}
-              className="flex-none w-[200px] group"
+              className="flex-none w-[210px] group"
             >
-              {/* Channel Card - Bigger, no border, just shadow/glow */}
-              <div className="bg-card rounded-2xl p-6 shadow-md hover:shadow-xl hover:shadow-yellow-400/20 transition-all duration-300 text-center">
-                {/* Channel Avatar - Bigger with yellow border */}
-                <div className="relative mx-auto w-28 h-28 rounded-full overflow-hidden border-3 border-yellow-400 group-hover:shadow-lg group-hover:shadow-yellow-400/30 transition-all duration-300">
+              {/* Channel Card - Bigger with more padding, no border, shadow/glow */}
+              <div className="bg-card rounded-2xl p-7 shadow-md hover:shadow-xl hover:shadow-yellow-400/25 transition-all duration-300 text-center">
+                {/* Channel Avatar - Bigger with yellow border on hover */}
+                <div className="relative mx-auto w-28 h-28 rounded-full overflow-hidden border-[3px] border-transparent group-hover:border-yellow-400 group-hover:shadow-lg group-hover:shadow-yellow-400/40 transition-all duration-300 ring-2 ring-muted/30 group-hover:ring-yellow-400/50">
                   {channel.thumbnail_url ? (
                     <img
                       src={channel.thumbnail_url}
@@ -152,7 +152,7 @@ export const ChannelsRowSection = ({ selectedCategory = "all" }: ChannelsRowSect
                 </p>
                 
                 {/* View Count */}
-                <p className="text-xs text-muted-foreground mt-1">
+                <p className="text-xs text-muted-foreground mt-1.5">
                   {channelVideoCounts?.[channel.channel_id]?.toLocaleString() || 0} views
                 </p>
               </div>
@@ -161,11 +161,11 @@ export const ChannelsRowSection = ({ selectedCategory = "all" }: ChannelsRowSect
         </div>
       </div>
 
-      {/* View All Button - Bottom center, more visible */}
-      <div className="flex justify-center mt-6">
+      {/* View All Button - Bottom center, friendly and visible */}
+      <div className="flex justify-center mt-8">
         <Link 
           to="/channels"
-          className="px-6 py-2.5 text-sm font-medium text-muted-foreground hover:text-primary-foreground bg-muted/50 hover:bg-primary rounded-full transition-all duration-300"
+          className="px-8 py-3 text-base font-friendly font-semibold text-foreground hover:text-white bg-yellow-400/20 hover:bg-yellow-400 border-2 border-yellow-400 rounded-full transition-all duration-300 shadow-sm hover:shadow-lg hover:shadow-yellow-400/30"
         >
           View All Channels
         </Link>
