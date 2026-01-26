@@ -14,10 +14,18 @@ interface NewVideosSectionProps {
 
 export const NewVideosSection = ({ videos, autoExpand = false }: NewVideosSectionProps) => {
   const { getFormattedDate } = useVideoDate();
-  const [showAllVideos, setShowAllVideos] = useState(autoExpand);
+  const [showAllVideos, setShowAllVideos] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
-  const [hasAnimated, setHasAnimated] = useState(autoExpand);
+  const [hasAnimated, setHasAnimated] = useState(false);
   const sectionRef = useRef<HTMLDivElement>(null);
+
+  // Sync state when autoExpand prop changes (e.g., navigating via sidebar)
+  useEffect(() => {
+    if (autoExpand) {
+      setShowAllVideos(true);
+      setHasAnimated(true);
+    }
+  }, [autoExpand]);
   
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: "start",
