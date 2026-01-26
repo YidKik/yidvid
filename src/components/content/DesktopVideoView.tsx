@@ -3,7 +3,6 @@ import { FeaturedVideoSection } from "@/components/videos/FeaturedVideoSection";
 import { NewVideosSection } from "@/components/videos/NewVideosSection";
 import { TrendingSection } from "@/components/videos/TrendingSection";
 import { ChannelsRowSection } from "@/components/videos/ChannelsRowSection";
-import { CategorySection } from "@/components/videos/CategorySection";
 import { VideoData } from "@/hooks/video/types/video-fetcher";
 import { useMemo } from "react";
 
@@ -42,17 +41,8 @@ export const DesktopVideoView = ({
     return [...videos]
       .filter(v => new Date(v.uploaded_at) >= oneWeekAgo)
       .sort((a, b) => (b.views || 0) - (a.views || 0))
-      .slice(0, 4);
+      .slice(0, 6);
   }, [videos]);
-
-  // Categories for sections
-  const categories = [
-    { key: "music", label: "Music" },
-    { key: "torah", label: "Torah" },
-    { key: "inspiration", label: "Inspiration" },
-    { key: "education", label: "Education" },
-    { key: "entertainment", label: "Entertainment" },
-  ];
 
   // Only render when we have real videos to show - prevents staggered loading
   if (!hasRealVideos || videos.length === 0) {
@@ -64,38 +54,28 @@ export const DesktopVideoView = ({
     const filteredVideos = videos.filter(v => v.category === selectedCategory);
     return (
       <div className="space-y-8">
-        <TrendingSection videos={filteredVideos} />
         <NewVideosSection videos={filteredVideos} />
+        <TrendingSection videos={filteredVideos} />
         <ChannelsRowSection selectedCategory={selectedCategory} />
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Featured Section - Large hero cards */}
-      {featuredVideos.length >= 4 && (
+      {featuredVideos.length >= 3 && (
         <FeaturedVideoSection videos={featuredVideos} />
       )}
 
       {/* New Videos Section */}
       <NewVideosSection videos={videos} />
 
-      {/* Trending Section */}
+      {/* Trending Section - Different style */}
       <TrendingSection videos={videos} />
 
-      {/* Channels Row */}
+      {/* Most Viewed Channels */}
       <ChannelsRowSection selectedCategory={selectedCategory} />
-
-      {/* Category Sections */}
-      {categories.map(cat => (
-        <CategorySection 
-          key={cat.key}
-          videos={videos}
-          category={cat.key}
-          categoryLabel={cat.label}
-        />
-      ))}
     </div>
   );
 };
