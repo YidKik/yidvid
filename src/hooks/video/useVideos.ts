@@ -13,7 +13,10 @@ const fetchVideosFromDB = async (): Promise<VideoData[]> => {
   
   const { data, error } = await supabase
     .from("youtube_videos")
-    .select("id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, updated_at, category, description")
+    .select(`
+      id, video_id, title, thumbnail, channel_name, channel_id, views, uploaded_at, updated_at, category, description,
+      youtube_channels(thumbnail_url)
+    `)
     .is("deleted_at", null)
     .eq("content_analysis_status", "approved")
     .order("uploaded_at", { ascending: false })
