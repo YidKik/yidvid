@@ -119,7 +119,7 @@
            y={slice1Top}
            width={slice1Right - slice1Left}
            height={slice1Bottom - slice1Top}
-           rx="8"
+           rx="3"
           fill={redColor}
           custom={0}
           variants={sliceVariants}
