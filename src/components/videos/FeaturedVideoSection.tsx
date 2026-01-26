@@ -3,8 +3,8 @@ import { useCallback, useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { Link } from "react-router-dom";
 import { VideoData } from "@/hooks/video/types/video-fetcher";
-import { Play } from "lucide-react";
 import { useVideoDate } from "@/components/video/useVideoDate";
+import yidvidLogoIcon from "@/assets/yidvid-logo-icon.png";
 
 interface FeaturedVideoSectionProps {
   videos: VideoData[];
@@ -108,10 +108,17 @@ export const FeaturedVideoSection = ({ videos }: FeaturedVideoSectionProps) => {
                 {/* Gradient Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
                 
-                {/* Play Button on Hover */}
+                {/* Play Button on Hover - YidVid Logo */}
                 <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className="w-14 h-14 rounded-full bg-yellow-400 flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform">
-                    <Play className="w-7 h-7 text-black fill-black ml-1" />
+                  <div className="w-16 h-16 rounded-full bg-yellow-400 flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform">
+                    <img 
+                      src={yidvidLogoIcon} 
+                      alt="Play" 
+                      className="w-9 h-9 object-contain"
+                      style={{ 
+                        filter: 'brightness(0) saturate(100%)'
+                      }}
+                    />
                   </div>
                 </div>
                 
