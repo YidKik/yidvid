@@ -47,7 +47,7 @@ export const MobileVideoView: React.FC<MobileVideoViewProps> = ({
     const filteredVideos = videos.filter(v => v.category === selectedCategory);
     return (
       <div className="space-y-6 px-2">
-        <MobileVideoCarouselSection title="Latest" videos={filteredVideos.slice(0, 10)} />
+        <MobileVideoCarouselSection title="Latest" videos={filteredVideos.slice(0, 10)} hasBackground />
         <MobileVideoCarouselSection title="Popular" videos={[...filteredVideos].sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, 10)} />
         <MobileChannelsRow />
       </div>
@@ -56,11 +56,11 @@ export const MobileVideoView: React.FC<MobileVideoViewProps> = ({
 
   return (
     <div className="space-y-6 px-2">
-      {/* New Videos */}
-      <MobileVideoCarouselSection title="Latest Videos" videos={newVideos} seeAllLink="/videos?sort=newest" isNew />
+      {/* Latest Videos - with background */}
+      <MobileVideoCarouselSection title="Latest Videos" videos={newVideos} seeAllLink="/videos?sort=newest" hasBackground />
       
       {/* Trending */}
-      <MobileVideoCarouselSection title="Trending" videos={trendingVideos} seeAllLink="/videos?sort=trending" isTrending />
+      <MobileVideoCarouselSection title="Trending Videos" videos={trendingVideos} seeAllLink="/videos?sort=trending" />
       
       {/* Most Viewed Channels */}
       <MobileChannelsRow />

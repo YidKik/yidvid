@@ -3,13 +3,15 @@ import { useCallback, useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { Link } from "react-router-dom";
 import { VideoData } from "@/hooks/video/types/video-fetcher";
-import { Play, ChevronLeft, ChevronRight } from "lucide-react";
+import { Play } from "lucide-react";
+import { useVideoDate } from "@/components/video/useVideoDate";
 
 interface FeaturedVideoSectionProps {
   videos: VideoData[];
 }
 
 export const FeaturedVideoSection = ({ videos }: FeaturedVideoSectionProps) => {
+  const { getFormattedDate } = useVideoDate();
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: "start",
     slidesToScroll: 1,
@@ -47,37 +49,41 @@ export const FeaturedVideoSection = ({ videos }: FeaturedVideoSectionProps) => {
 
   return (
     <section className="mb-10">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-5">
-        <h2 className="text-xl md:text-2xl font-bold text-foreground" style={{ fontFamily: "'Quicksand', sans-serif" }}>
+      {/* Header - YouTube style, smaller font */}
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
           Featured
         </h2>
         
-        {/* Navigation - custom styled */}
+        {/* Navigation */}
         <div className="flex items-center gap-2">
           <button
             onClick={scrollPrev}
             disabled={!canScrollPrev}
-            className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200 ${
+            className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
               canScrollPrev 
-                ? 'bg-primary/10 hover:bg-primary/20 text-primary border border-primary/30' 
-                : 'bg-muted/50 text-muted-foreground/40 cursor-not-allowed border border-transparent'
+                ? 'bg-muted hover:bg-muted/80 text-foreground' 
+                : 'bg-muted/30 text-muted-foreground/30 cursor-not-allowed'
             }`}
             aria-label="Previous"
           >
-            <ChevronLeft className="w-5 h-5" />
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
           </button>
           <button
             onClick={scrollNext}
             disabled={!canScrollNext}
-            className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200 ${
+            className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
               canScrollNext 
-                ? 'bg-primary/10 hover:bg-primary/20 text-primary border border-primary/30' 
-                : 'bg-muted/50 text-muted-foreground/40 cursor-not-allowed border border-transparent'
+                ? 'bg-muted hover:bg-muted/80 text-foreground' 
+                : 'bg-muted/30 text-muted-foreground/30 cursor-not-allowed'
             }`}
             aria-label="Next"
           >
-            <ChevronRight className="w-5 h-5" />
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
           </button>
         </div>
       </div>
@@ -90,8 +96,8 @@ export const FeaturedVideoSection = ({ videos }: FeaturedVideoSectionProps) => {
               to={`/video/${video.video_id || video.id}`}
               className="flex-none w-[calc(33.333%-14px)] group"
             >
-              {/* Featured Card - Larger with more info */}
-              <div className="relative aspect-video rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border border-border/50">
+              {/* Featured Card - Yellow border */}
+              <div className="relative aspect-video rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-primary/40 hover:border-primary">
                 <img
                   src={video.thumbnail}
                   alt={video.title}
@@ -100,7 +106,7 @@ export const FeaturedVideoSection = ({ videos }: FeaturedVideoSectionProps) => {
                 />
                 
                 {/* Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
                 
                 {/* Play Button on Hover */}
                 <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -109,26 +115,22 @@ export const FeaturedVideoSection = ({ videos }: FeaturedVideoSectionProps) => {
                   </div>
                 </div>
                 
-                {/* Title at Bottom */}
+                {/* Content at Bottom */}
                 <div className="absolute bottom-0 left-0 right-0 p-4">
-                  <h3 className="text-white font-semibold text-base md:text-lg line-clamp-2 group-hover:text-primary transition-colors drop-shadow-md">
+                  {/* Video Title - turns yellow on hover */}
+                  <h3 className="text-white font-semibold text-base line-clamp-2 group-hover:text-primary transition-colors drop-shadow-md">
                     {video.title}
                   </h3>
-                </div>
-              </div>
-              
-              {/* Channel Info Below Card */}
-              <div className="mt-3 flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-red-500 flex items-center justify-center text-xs font-bold text-white flex-shrink-0">
-                  {video.channel_name.charAt(0).toUpperCase()}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm font-medium text-foreground truncate group-hover:text-primary transition-colors">
+                  {/* Channel Name */}
+                  <p className="text-white/80 text-sm mt-1 truncate">
                     {video.channel_name}
                   </p>
-                  <p className="text-xs text-muted-foreground">
-                    {video.views?.toLocaleString() || 0} views
-                  </p>
+                  {/* Meta info */}
+                  <div className="flex items-center gap-2 text-white/60 text-xs mt-1">
+                    <span>{getFormattedDate(video.uploaded_at)}</span>
+                    <span>•</span>
+                    <span>{video.views?.toLocaleString() || 0} views</span>
+                  </div>
                 </div>
               </div>
             </Link>

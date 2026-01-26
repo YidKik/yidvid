@@ -1,47 +1,33 @@
 
 import { Link } from "react-router-dom";
-import { VideoCard } from "@/components/VideoCard";
 import { VideoData } from "@/hooks/video/types/video-fetcher";
-import { ChevronRight, Sparkles, TrendingUp } from "lucide-react";
+import { ChevronRight } from "lucide-react";
+import { useVideoDate } from "@/components/video/useVideoDate";
 
 interface MobileVideoCarouselSectionProps {
   title: string;
   videos: VideoData[];
   seeAllLink?: string;
-  isNew?: boolean;
-  isTrending?: boolean;
+  hasBackground?: boolean;
 }
 
 export const MobileVideoCarouselSection = ({
   title,
   videos,
   seeAllLink,
-  isNew = false,
-  isTrending = false,
+  hasBackground = false,
 }: MobileVideoCarouselSectionProps) => {
+  const { getFormattedDate } = useVideoDate();
+  
   if (!videos || videos.length === 0) return null;
 
   return (
-    <section className="mb-4">
-      {/* Header */}
+    <section className={`mb-4 ${hasBackground ? 'py-4 px-2 -mx-2 bg-muted/30 rounded-xl' : ''}`}>
+      {/* Header - YouTube style, smaller */}
       <div className="flex items-center justify-between mb-3 px-1">
-        <div className="flex items-center gap-2">
-          {isNew && (
-            <div className="flex items-center gap-1 bg-gradient-to-r from-green-500 to-emerald-500 text-white px-2 py-0.5 rounded-full">
-              <Sparkles className="w-3 h-3" />
-              <span className="text-xs font-semibold">New</span>
-            </div>
-          )}
-          {isTrending && (
-            <div className="flex items-center gap-1 bg-gradient-to-r from-red-500 to-orange-500 text-white px-2 py-0.5 rounded-full">
-              <TrendingUp className="w-3 h-3" />
-              <span className="text-xs font-semibold">Hot</span>
-            </div>
-          )}
-          <h2 className="text-base font-bold text-foreground" style={{ fontFamily: "'Quicksand', sans-serif" }}>
-            {title}
-          </h2>
-        </div>
+        <h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+          {title}
+        </h2>
         {seeAllLink && (
           <Link 
             to={seeAllLink}
@@ -57,21 +43,44 @@ export const MobileVideoCarouselSection = ({
       <div className="overflow-x-auto scrollbar-hide -mx-2 px-2">
         <div className="flex gap-3" style={{ width: 'max-content' }}>
           {videos.map((video) => (
-            <div
+            <Link
               key={video.id}
-              className="flex-none w-[160px]"
+              to={`/video/${video.video_id || video.id}`}
+              className="flex-none w-[160px] group"
             >
-              <VideoCard
-                id={video.id}
-                video_id={video.video_id}
-                title={video.title}
-                thumbnail={video.thumbnail}
-                channelName={video.channel_name}
-                channelId={video.channel_id}
-                views={video.views}
-                uploadedAt={video.uploaded_at}
-              />
-            </div>
+              {/* Thumbnail */}
+              <div className="relative aspect-video rounded-lg overflow-hidden shadow-sm">
+                <img
+                  src={video.thumbnail}
+                  alt={video.title}
+                  className="w-full h-full object-cover"
+                  loading="lazy"
+                />
+              </div>
+              
+              {/* Video Info */}
+              <div className="mt-2 flex gap-2">
+                {/* Channel Avatar */}
+                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-primary to-red-500 flex items-center justify-center text-[10px] font-bold text-white flex-shrink-0">
+                  {video.channel_name.charAt(0).toUpperCase()}
+                </div>
+                
+                <div className="min-w-0 flex-1">
+                  {/* Title */}
+                  <h3 className="text-xs font-medium text-foreground line-clamp-2 group-hover:text-primary transition-colors">
+                    {video.title}
+                  </h3>
+                  {/* Channel Name */}
+                  <p className="text-[10px] text-muted-foreground mt-0.5 truncate">
+                    {video.channel_name}
+                  </p>
+                  {/* Meta */}
+                  <p className="text-[10px] text-muted-foreground">
+                    {getFormattedDate(video.uploaded_at)} • {video.views?.toLocaleString() || 0}
+                  </p>
+                </div>
+              </div>
+            </Link>
           ))}
         </div>
       </div>
