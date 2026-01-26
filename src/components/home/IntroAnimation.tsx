@@ -187,13 +187,16 @@ export const IntroAnimation: React.FC<IntroAnimationProps> = ({ onComplete, chil
     <motion.div
       className="fixed top-1/2 -translate-y-1/2 z-40 pointer-events-none"
       style={{ 
-        width: logoSize * 0.8, 
-        height: logoSize * 0.8,
-        right: 20
+        width: logoSize * 1.2, 
+        height: logoSize * 1.2,
+        right: 40
       }}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: animationPhase === 'complete' ? 0.15 : 0 }}
-      transition={{ duration: 0.5 }}
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ 
+        opacity: animationPhase === 'transitioning' || animationPhase === 'complete' ? 0.25 : 0,
+        scale: animationPhase === 'complete' ? 1 : 0.9
+      }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
     >
       <img 
         src={yidvidLogoIcon} 
@@ -206,16 +209,16 @@ export const IntroAnimation: React.FC<IntroAnimationProps> = ({ onComplete, chil
   // Animated SVG logo that fades out during transition
   const AnimatedLogo = () => (
     <motion.div
-      className="fixed top-1/2 -translate-y-1/2 z-45 pointer-events-none"
+      className="fixed top-1/2 -translate-y-1/2 z-50 pointer-events-none"
       style={{ 
-        width: logoSize * 0.8, 
-        height: logoSize * 0.8,
-        right: 20
+        width: logoSize * 1.2, 
+        height: logoSize * 1.2,
+        right: 40
       }}
-      initial={{ opacity: 0.15, scale: 1 }}
+      initial={{ opacity: 0.25, scale: 1 }}
       animate={{ 
-        opacity: animationPhase === 'transitioning' || animationPhase === 'complete' ? 0 : 0.15,
-        scale: animationPhase === 'transitioning' ? 1.05 : 1
+        opacity: animationPhase === 'transitioning' || animationPhase === 'complete' ? 0 : 0.25,
+        scale: animationPhase === 'transitioning' ? 1.02 : 1
       }}
       transition={{ duration: 0.6, ease: "easeInOut" }}
     >
