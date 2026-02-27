@@ -252,7 +252,7 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
             title="Go back"
             className={cn(
               "flex items-center rounded-xl text-sm font-medium transition-all duration-200",
-              "text-gray-500 hover:bg-gray-100 hover:text-gray-700",
+              "text-gray-500 hover:bg-[#F0F0F0] hover:text-gray-700",
               effectiveIsExpanded ? "gap-2 px-3 py-2 w-full" : "justify-center p-2 w-10 h-10 mx-auto"
             )}
           >
