@@ -495,7 +495,7 @@ export const FriendlyVideoActionBar = ({
             {navigator.share && (
               <button
                 onClick={handleShareNative}
-                className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-yellow-100 hover:bg-yellow-200 text-yellow-700 font-medium transition-all duration-200"
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-[#FFCC00] hover:brightness-90 text-[#1A1A1A] font-medium transition-all duration-200"
               >
                 <Share2 className="h-4 w-4" />
                 More sharing options...
