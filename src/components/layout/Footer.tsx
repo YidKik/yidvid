@@ -20,7 +20,7 @@ export const Footer = () => {
         }}
       >
         <div className="max-w-[1600px] mx-auto px-6 lg:px-12 py-2.5">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-3">
             {/* Logo and Tagline */}
             <Link to="/" className="flex items-center gap-3">
               <img 
