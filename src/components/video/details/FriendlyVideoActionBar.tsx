@@ -579,7 +579,7 @@ export const FriendlyVideoActionBar = ({
                     size="icon"
                     onClick={handleCreateAndAddToPlaylist}
                     disabled={!newPlaylistName.trim()}
-                    className="shrink-0 rounded-lg bg-red-500 hover:bg-red-600"
+                    className="shrink-0 rounded-lg bg-[#FF0000] hover:brightness-90"
                   >
                     <Plus className="w-4 h-4" />
                   </Button>
