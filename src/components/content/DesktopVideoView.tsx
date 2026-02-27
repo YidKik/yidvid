@@ -6,6 +6,7 @@ import { ChannelsRowSection } from "@/components/videos/ChannelsRowSection";
 import { CategoryVideosGrid } from "@/components/videos/CategoryVideosGrid";
 import { VideoData } from "@/hooks/video/types/video-fetcher";
 import { useMemo } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface DesktopVideoViewProps {
   videos: VideoData[];
@@ -30,6 +31,7 @@ export const DesktopVideoView = ({
   sortBy,
   viewChannels = false
 }: DesktopVideoViewProps) => {
+  const { isMobile, isTablet } = useIsMobile();
   // More thorough check if we have real videos (not samples)
   const hasRealVideos = videos.some(video => 
     !video.id.toString().includes('sample') && 
@@ -55,18 +57,20 @@ export const DesktopVideoView = ({
   }
 
   // If viewing channels only, skip all video sections
+  const containerPadding = isMobile ? 'px-3' : isTablet ? 'px-4' : 'px-8 lg:px-12 xl:px-16';
+  const sectionSpacing = isMobile ? 'space-y-4' : 'space-y-6';
+
   if (viewChannels) {
     return (
-      <div className="px-8 lg:px-12 xl:px-16 max-w-[1600px] mx-auto">
+      <div className={`${containerPadding} max-w-[1600px] mx-auto`}>
         <ChannelsRowSection selectedCategory={selectedCategory} autoExpand={true} />
       </div>
     );
   }
 
-  // If a specific category is selected, show the category grid with 4 rows
   if (selectedCategory !== "all") {
     return (
-      <div className="space-y-8 px-8 lg:px-12 xl:px-16 max-w-[1600px] mx-auto">
+      <div className={`space-y-8 ${containerPadding} max-w-[1600px] mx-auto`}>
         <CategoryVideosGrid videos={videos} categoryId={selectedCategory} />
         <ChannelsRowSection selectedCategory={selectedCategory} />
       </div>
@@ -74,7 +78,7 @@ export const DesktopVideoView = ({
   }
 
   return (
-    <div className="space-y-6 px-8 lg:px-12 xl:px-16 max-w-[1600px] mx-auto">
+    <div className={`${sectionSpacing} ${containerPadding} max-w-[1600px] mx-auto`}>
       {/* Featured Section - Large hero cards */}
       {featuredVideos.length >= 3 && (
         <FeaturedVideoSection videos={featuredVideos} />

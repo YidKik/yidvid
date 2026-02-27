@@ -4,6 +4,7 @@ import useEmblaCarousel from "embla-carousel-react";
 import { Link } from "react-router-dom";
 import { VideoData } from "@/hooks/video/types/video-fetcher";
 import { useVideoDate } from "@/components/video/useVideoDate";
+import { useIsMobile } from "@/hooks/use-mobile";
 import yidvidLogoIcon from "@/assets/yidvid-logo-icon.png";
 
 interface FeaturedVideoSectionProps {
@@ -12,6 +13,7 @@ interface FeaturedVideoSectionProps {
 
 export const FeaturedVideoSection = ({ videos }: FeaturedVideoSectionProps) => {
   const { getFormattedDate } = useVideoDate();
+  const { isMobile, isTablet } = useIsMobile();
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: "start",
     slidesToScroll: 1,
@@ -94,7 +96,7 @@ export const FeaturedVideoSection = ({ videos }: FeaturedVideoSectionProps) => {
             <Link
               key={video.id}
               to={`/video/${video.video_id || video.id}`}
-              className="flex-none w-[calc(33.333%-14px)] group"
+              className={`flex-none group ${isMobile ? 'w-[85%]' : isTablet ? 'w-[calc(50%-10px)]' : 'w-[calc(33.333%-14px)]'}`}
             >
               {/* Featured Card - Solid yellow border always */}
               <div className="relative aspect-video rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-yellow-400">
@@ -110,11 +112,11 @@ export const FeaturedVideoSection = ({ videos }: FeaturedVideoSectionProps) => {
                 
                 {/* Play Button on Hover - YidVid Logo */}
                 <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className="w-16 h-16 rounded-full bg-yellow-400 flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform">
+                  <div className={`${isMobile ? 'w-12 h-12' : 'w-16 h-16'} rounded-full bg-yellow-400 flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform`}>
                     <img 
                       src={yidvidLogoIcon} 
                       alt="Play" 
-                      className="w-9 h-9 object-contain"
+                      className={`${isMobile ? 'w-6 h-6' : 'w-9 h-9'} object-contain`}
                       style={{ 
                         filter: 'brightness(0) saturate(100%)'
                       }}
@@ -123,9 +125,9 @@ export const FeaturedVideoSection = ({ videos }: FeaturedVideoSectionProps) => {
                 </div>
                 
                 {/* Content at Bottom */}
-                <div className="absolute bottom-0 left-0 right-0 p-4">
+                <div className={`absolute bottom-0 left-0 right-0 ${isMobile ? 'p-3' : 'p-4'}`}>
                   {/* Video Title - turns yellow on hover */}
-                  <h3 className="text-white font-semibold text-base line-clamp-2 group-hover:text-yellow-400 transition-colors drop-shadow-md">
+                  <h3 className={`text-white font-semibold ${isMobile ? 'text-sm' : 'text-base'} line-clamp-2 group-hover:text-yellow-400 transition-colors drop-shadow-md`}>
                     {video.title}
                   </h3>
                   {/* Channel Name */}

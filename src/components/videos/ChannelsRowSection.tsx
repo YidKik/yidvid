@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface ChannelsRowSectionProps {
   selectedCategory?: string;
@@ -15,6 +16,7 @@ interface ChannelsRowSectionProps {
 
 export const ChannelsRowSection = ({ selectedCategory = "all", autoExpand = false }: ChannelsRowSectionProps) => {
   const { manuallyFetchedChannels: channels, isLoading } = useChannelsGrid();
+  const { isMobile, isTablet } = useIsMobile();
   const [showAllChannels, setShowAllChannels] = useState(autoExpand);
   const [hasAnimated, setHasAnimated] = useState(autoExpand);
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -126,16 +128,16 @@ export const ChannelsRowSection = ({ selectedCategory = "all", autoExpand = fals
   // Show skeleton while loading instead of hiding the section
   if (isLoading) {
     return (
-      <section className="mb-10 py-10 -mx-6 px-6 bg-gray-50 dark:bg-gray-900/30 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800">
+      <section className={`mb-10 ${isMobile ? 'py-6 -mx-3 px-3' : 'py-10 -mx-6 px-6'} bg-gray-50 dark:bg-gray-900/30 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800`}>
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
             Most Viewed Channels
           </h2>
         </div>
         <div className="flex gap-4 overflow-hidden py-3">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="flex-none w-[210px] bg-card rounded-2xl p-7 shadow-md text-center animate-pulse">
-              <div className="mx-auto w-28 h-28 rounded-full bg-muted" />
+          {Array.from({ length: isMobile ? 3 : 6 }).map((_, i) => (
+            <div key={i} className={`flex-none ${isMobile ? 'w-[140px]' : 'w-[210px]'} bg-card rounded-2xl ${isMobile ? 'p-4' : 'p-7'} shadow-md text-center animate-pulse`}>
+              <div className={`mx-auto ${isMobile ? 'w-16 h-16' : 'w-28 h-28'} rounded-full bg-muted`} />
               <div className="mt-4 h-4 bg-muted rounded w-3/4 mx-auto" />
               <div className="mt-2 h-3 bg-muted rounded w-1/2 mx-auto" />
             </div>
@@ -164,10 +166,10 @@ export const ChannelsRowSection = ({ selectedCategory = "all", autoExpand = fals
       >
       <Link
         to={`/channel/${channel.channel_id}`}
-        className={`block group ${isGrid ? 'w-full' : 'flex-none w-[210px]'}`}
-      >
-        <div className="bg-card rounded-2xl p-7 shadow-md transition-all duration-300 text-center">
-          <div className="relative mx-auto w-28 h-28 rounded-full overflow-hidden border-2 border-transparent group-hover:border-yellow-400 transition-all duration-300 ring-2 ring-muted/30 group-hover:ring-yellow-400/50">
+      className={`block group ${isGrid ? 'w-full' : `flex-none ${isMobile ? 'w-[140px]' : isTablet ? 'w-[170px]' : 'w-[210px]'}`}`}
+    >
+        <div className={`bg-card rounded-2xl ${isMobile ? 'p-4' : 'p-7'} shadow-md transition-all duration-300 text-center`}>
+          <div className={`relative mx-auto ${isMobile ? 'w-16 h-16' : isTablet ? 'w-20 h-20' : 'w-28 h-28'} rounded-full overflow-hidden border-2 border-transparent group-hover:border-yellow-400 transition-all duration-300 ring-2 ring-muted/30 group-hover:ring-yellow-400/50`}>
             {channel.thumbnail_url ? (
               <img
                 src={channel.thumbnail_url}
@@ -199,7 +201,7 @@ export const ChannelsRowSection = ({ selectedCategory = "all", autoExpand = fals
   return (
     <section 
       ref={sectionRef}
-      className={`mb-10 py-10 -mx-6 px-6 bg-gray-50 dark:bg-gray-900/30 ${showAllChannels ? 'min-h-screen pb-20' : 'rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800'}`}
+      className={`mb-10 ${isMobile ? 'py-6 -mx-3 px-3' : 'py-10 -mx-6 px-6'} bg-gray-50 dark:bg-gray-900/30 ${showAllChannels ? 'min-h-screen pb-20' : 'rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800'}`}
     >
       <AnimatePresence mode="wait">
         {showAllChannels ? (
@@ -300,7 +302,7 @@ export const ChannelsRowSection = ({ selectedCategory = "all", autoExpand = fals
             <div className="flex justify-center mt-8">
               <button 
                 onClick={handleViewAllClick}
-                className="px-8 py-3 text-base font-friendly font-semibold text-gray-900 bg-yellow-400 hover:bg-yellow-500 rounded-full transition-all duration-300 shadow-md hover:shadow-lg hover:scale-105"
+                className={`${isMobile ? 'px-6 py-2 text-sm' : 'px-8 py-3 text-base'} font-friendly font-semibold text-gray-900 bg-yellow-400 hover:bg-yellow-500 rounded-full transition-all duration-300 shadow-md hover:shadow-lg hover:scale-105`}
               >
                 View All Channels
               </button>

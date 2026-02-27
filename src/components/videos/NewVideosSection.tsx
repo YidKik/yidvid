@@ -6,6 +6,7 @@ import { useVideoDate } from "@/components/video/useVideoDate";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { VideoCardWithOptions } from "@/components/video/VideoCardWithOptions";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface NewVideosSectionProps {
   videos: VideoData[];
@@ -14,6 +15,7 @@ interface NewVideosSectionProps {
 
 export const NewVideosSection = ({ videos, autoExpand = false }: NewVideosSectionProps) => {
   const { getFormattedDate } = useVideoDate();
+  const { isMobile, isTablet } = useIsMobile();
   const [showAllVideos, setShowAllVideos] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const [hasAnimated, setHasAnimated] = useState(false);
@@ -126,7 +128,7 @@ export const NewVideosSection = ({ videos, autoExpand = false }: NewVideosSectio
     
     return (
       <motion.div
-        className={isGrid ? 'w-full' : 'flex-none w-[calc(20%-13px)]'}
+        className={isGrid ? 'w-full' : `flex-none ${isMobile ? 'w-[calc(50%-8px)]' : isTablet ? 'w-[calc(33.333%-10px)]' : 'w-[calc(20%-13px)]'}`}
         initial={shouldAnimate ? { opacity: 0, y: 20, scale: 0.95 } : { opacity: 1, y: 0, scale: 1 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={shouldAnimate ? { 
@@ -153,7 +155,7 @@ export const NewVideosSection = ({ videos, autoExpand = false }: NewVideosSectio
   return (
     <section 
       ref={sectionRef}
-      className={`mb-8 py-8 -mx-6 px-6 bg-gray-50 dark:bg-gray-900/30 ${showAllVideos ? 'min-h-screen pb-20' : 'rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800'}`}
+      className={`mb-8 ${isMobile ? 'py-5 -mx-3 px-3' : 'py-8 -mx-6 px-6'} bg-gray-50 dark:bg-gray-900/30 ${showAllVideos ? 'min-h-screen pb-20' : 'rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800'}`}
     >
       <AnimatePresence mode="wait">
         {showAllVideos ? (
@@ -201,7 +203,7 @@ export const NewVideosSection = ({ videos, autoExpand = false }: NewVideosSectio
               <button
                 onClick={handlePrevPage}
                 disabled={currentPage === 0}
-                className={`flex items-center gap-2 px-8 py-3 rounded-full font-semibold transition-all duration-300 ${
+                className={`flex items-center gap-2 ${isMobile ? 'px-4 py-2 text-sm' : 'px-8 py-3'} rounded-full font-semibold transition-all duration-300 ${
                   currentPage === 0
                     ? 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-600 cursor-not-allowed'
                     : 'bg-yellow-400 text-gray-900 shadow-md hover:shadow-lg hover:scale-105'
@@ -220,7 +222,7 @@ export const NewVideosSection = ({ videos, autoExpand = false }: NewVideosSectio
               <button
                 onClick={handleNextPage}
                 disabled={currentPage >= totalPages - 1}
-                className={`flex items-center gap-2 px-8 py-3 rounded-full font-semibold transition-all duration-300 ${
+                className={`flex items-center gap-2 ${isMobile ? 'px-4 py-2 text-sm' : 'px-8 py-3'} rounded-full font-semibold transition-all duration-300 ${
                   currentPage >= totalPages - 1
                     ? 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-600 cursor-not-allowed'
                     : 'bg-yellow-400 text-gray-900 shadow-md hover:shadow-lg hover:scale-105'
