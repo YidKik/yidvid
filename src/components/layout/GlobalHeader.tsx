@@ -263,7 +263,7 @@ export const GlobalHeader = () => {
               {isAuthenticated ? (
                 <Link
                   to="/settings"
-                  className="flex items-center justify-center w-9 h-9 rounded-full text-white font-semibold text-sm transition-transform hover:scale-105 bg-[#FF0000]"
+                  className="flex items-center justify-center w-9 h-9 rounded-full font-semibold text-sm transition-all duration-200 hover:bg-[#F5F5F5] border-2 border-[#E5E5E5] bg-transparent text-[#666666]"
                   style={{ fontFamily: "'Quicksand', sans-serif" }}
                   title="Profile"
                 >

@@ -62,7 +62,7 @@ export const NotificationsMenu = ({ onMarkAsRead }: NotificationsMenuProps) => {
     <Sheet>
       <SheetTrigger asChild>
         <Button 
-          variant={isFilled ? "default" : "ghost"} 
+          variant="ghost" 
           size="icon" 
           className={`${buttonClass} relative`}
         >
