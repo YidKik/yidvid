@@ -2,6 +2,13 @@
   publish = "dist"
   command = "npm run build"
 
+# Dynamic sitemap served from Supabase edge function
+[[redirects]]
+  from = "/sitemap.xml"
+  to = "https://euincktvsiuztsxcuqfd.supabase.co/functions/v1/generate-sitemap"
+  status = 200
+  force = true
+
 [[redirects]]
   from = "/*"
   to = "/index.html"

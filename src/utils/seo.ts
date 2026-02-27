@@ -133,11 +133,11 @@ export const generateOrganizationSchema = () => {
     "@context": "https://schema.org",
     "@type": "Organization",
     "name": "YidVid",
-    "description": "bringing kosher content for the Jewish Yiddish community",
-    "url": "https://yidvid.com",
-    "logo": "/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png",
+    "description": "YidVid is your premier Jewish kosher Yiddish platform featuring thousands of videos from trusted sources.",
+    "url": "https://yidvid.co",
+    "logo": "https://yidvid.co/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png",
     "sameAs": [
-      // Add your social media URLs here when available
+      "https://yidvid.co"
     ],
     "contactPoint": {
       "@type": "ContactPoint",
