@@ -70,22 +70,24 @@ export const generateVideoSchema = (video: VideoData, pageUrl: string) => {
     "@type": "VideoObject",
     "name": video.title || "Jewish Video",
     "description": video.description || generateVideoMetaDescription(video),
-    "thumbnailUrl": video.thumbnail || "/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png",
+    "thumbnailUrl": video.thumbnail || "https://yidvid.co/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png",
     "uploadDate": uploadDate,
-    "duration": "PT0M0S", // You might want to fetch actual duration
+    "duration": "PT0M0S",
     "embedUrl": `https://www.youtube-nocookie.com/embed/${video.video_id}`,
+    "contentUrl": `https://www.youtube-nocookie.com/embed/${video.video_id}`,
     "url": pageUrl,
     "publisher": {
       "@type": "Organization",
       "name": "YidVid",
       "logo": {
         "@type": "ImageObject",
-        "url": "/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png"
+        "url": "https://yidvid.co/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png"
       }
     },
     "author": {
-      "@type": "Person",
-      "name": video.channel_name || "YidVid"
+      "@type": "Organization",
+      "name": video.channel_name || "YidVid",
+      "url": `https://yidvid.co/channel/${video.channel_id || ''}`
     },
     "interactionStatistic": {
       "@type": "InteractionCounter",
