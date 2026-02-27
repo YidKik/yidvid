@@ -31,6 +31,7 @@ export const VideoCardWithOptions = ({
   duration,
   className,
   isGrid = false,
+  hideChannelInfo = false,
 }: VideoCardWithOptionsProps) => {
   const [isHovering, setIsHovering] = useState(false);
 
