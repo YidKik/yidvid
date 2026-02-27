@@ -86,7 +86,7 @@ const About = () => {
                   style={{ color: '#FFCC00' }} 
                 />
                 <h3 
-                  className="text-xl font-bold mb-2"
+                  className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold mb-2`}
                   style={{ fontFamily: "'Quicksand', sans-serif", color: '#000000' }}
                 >
                   {feature.title}
