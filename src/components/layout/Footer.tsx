@@ -13,7 +13,7 @@ export const Footer = () => {
   return (
     <>
       <footer 
-        className="mt-auto border-t"
+        className="mt-auto border-t hidden md:block"
         style={{ 
           backgroundColor: '#FAFAFA',
           borderColor: '#EFEFEF'
