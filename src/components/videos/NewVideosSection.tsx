@@ -78,8 +78,8 @@ export const NewVideosSection = ({ videos, autoExpand = false }: NewVideosSectio
   // First row for carousel (5 videos)
   const carouselVideos = useMemo(() => allNewVideos.slice(0, 15), [allNewVideos]);
   
-  // Videos per page in expanded view (3 rows x 4 = 12 videos per page)
-  const videosPerPage = 12;
+  // Videos per page in expanded view - fewer on mobile
+  const videosPerPage = isMobile ? 6 : isTablet ? 9 : 12;
   const totalPages = Math.ceil(allNewVideos.length / videosPerPage);
   
   // Current page videos
