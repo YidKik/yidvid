@@ -87,7 +87,7 @@ export const VideoComments = ({ videoId }: VideoCommentsProps) => {
           </>
         ) : (
           <div className="text-center py-6">
-            <div className="w-12 h-12 mx-auto mb-3 bg-yellow-100/50 rounded-full flex items-center justify-center">
+            <div className="w-12 h-12 mx-auto mb-3 bg-[#F5F5F5] rounded-full flex items-center justify-center">
               <MessageSquare className="h-6 w-6 text-yellow-500" />
             </div>
             <p className="text-muted-foreground text-sm">
