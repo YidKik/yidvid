@@ -42,9 +42,10 @@ export const ChannelsRowSection = ({ selectedCategory = "all" }: ChannelsRowSect
 
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: "start",
-    slidesToScroll: 5,
+    slidesToScroll: 3,
     containScroll: "keepSnaps",
     dragFree: false,
+    duration: 35,
   });
 
   const [canScrollPrev, setCanScrollPrev] = useState(false);
