@@ -13,8 +13,9 @@ import { useAuth } from "@/hooks/useAuth";
 import { useIncrementVideoView } from "@/hooks/video/useIncrementVideoView";
 import { FriendlyVideoActionBar } from "@/components/video/details/FriendlyVideoActionBar";
 import { FriendlyChannelSection } from "@/components/video/details/FriendlyChannelSection";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, ListMusic, Shuffle } from "lucide-react";
 import { usePageLoader } from "@/contexts/LoadingContext";
+import { usePlaylistAutoplay } from "@/hooks/video/usePlaylistAutoplay";
 
 const VideoDetails = () => {
   const { videoId } = useParams<{ videoId: string }>();
