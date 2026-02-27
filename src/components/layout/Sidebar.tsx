@@ -353,8 +353,8 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
                         "flex items-center gap-2 w-full px-2.5 py-1.5 text-sm rounded-lg transition-all duration-200 my-0.5",
                         "hover:scale-[1.01]",
                         isCategoryActive(category.id)
-                          ? "bg-red-50 text-red-600 border border-red-300"
-                          : "text-gray-600 hover:bg-yellow-50 hover:text-yellow-700 border border-transparent"
+                          ? "bg-white text-[#FF0000] border-l-[3px] border-[#FF0000]"
+                          : "text-gray-600 hover:bg-[#F0F0F0] hover:text-[#1A1A1A] border border-transparent"
                       )}
                     >
                       <span className={cn(
