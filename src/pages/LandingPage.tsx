@@ -81,6 +81,19 @@ const LandingPage = () => {
   };
 
   const pageContent = (
+    <>
+    <Helmet>
+      <title>YidVid - Watch Kosher Jewish Videos, Music & Torah Content Free</title>
+      <meta name="description" content="YidVid is your premier free Jewish video platform. Watch thousands of kosher videos including music, Torah lectures, podcasts, education & entertainment from trusted channels." />
+      <meta name="keywords" content="Jewish videos, kosher videos, Torah videos, Jewish music, Yiddish content, Jewish education, Jewish entertainment, kosher content, Jewish platform, free Jewish videos" />
+      <link rel="canonical" href="https://yidvid.co" />
+      <meta property="og:title" content="YidVid - Watch Kosher Jewish Videos Free" />
+      <meta property="og:description" content="Your premier free Jewish video platform. Thousands of kosher videos - music, Torah, podcasts, education & entertainment." />
+      <meta property="og:url" content="https://yidvid.co" />
+      <meta property="og:type" content="website" />
+      <meta name="twitter:title" content="YidVid - Watch Kosher Jewish Videos Free" />
+      <meta name="twitter:description" content="Your premier free Jewish video platform. Thousands of kosher videos - music, Torah, podcasts, education & entertainment." />
+    </Helmet>
     <div 
       className="min-h-screen bg-white overflow-x-hidden"
       style={{ paddingLeft: isMobile ? '0px' : isTablet ? '0px' : '64px' }}
