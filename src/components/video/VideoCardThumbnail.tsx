@@ -87,7 +87,7 @@ export const VideoCardThumbnail = ({
         <div className="absolute top-0 right-0 p-2.5">
           {duration && (
             <div 
-              className="bg-black/70 backdrop-blur-sm rounded-full px-2.5 py-1 flex items-center gap-1.5 shadow-lg"
+              className="bg-[#1A1A1A] rounded-full px-2.5 py-1 flex items-center gap-1.5 shadow-lg"
               style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
             >
               <Clock size={11} className="text-white" />
