@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
-import { User, UserPlus, Sparkles } from "lucide-react";
+import { User, UserPlus } from "lucide-react";
 
 interface AuthOptionsProps {
   onSelectOption: (option: 'signin' | 'signup') => void;
