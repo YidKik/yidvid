@@ -511,7 +511,7 @@ export const FriendlyVideoActionBar = ({
         <Button
           variant="ghost"
           onClick={handleToggleFavorite}
-          className={`${actionButtonBase} ${isFavorite ? "bg-red-50 text-red-500" : ""}`}
+          className={`${actionButtonBase} ${isFavorite ? "bg-[#F5F5F5] text-[#FF0000]" : ""}`}
         >
           <Heart className={cn("h-4 w-4 mr-2", isFavorite && "fill-current")} />
           {isFavorite ? "Saved" : "Favorite"}
