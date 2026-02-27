@@ -205,10 +205,10 @@ const Playlists = () => {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.03 }}
-                  className="flex gap-4 p-4 rounded-2xl hover:bg-gray-50 transition-all group cursor-pointer border border-transparent hover:border-gray-100 hover:shadow-sm"
+                  className={`${isMobile ? 'flex-col' : 'flex'} gap-3 p-3 rounded-2xl hover:bg-gray-50 transition-all group cursor-pointer border border-transparent hover:border-gray-100 hover:shadow-sm`}
                   onClick={() => navigate(`/video/${item.video?.video_id}?playlist=${selectedPlaylistId}`)}
                 >
-                  <div className="relative w-44 aspect-video rounded-xl overflow-hidden bg-gray-100 shrink-0 shadow-sm">
+                  <div className={`relative ${isMobile ? 'w-full' : 'w-44'} aspect-video rounded-xl overflow-hidden bg-gray-100 shrink-0 shadow-sm`}>
                     <img
                       src={item.video?.thumbnail}
                       alt={item.video?.title}
