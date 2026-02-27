@@ -133,7 +133,7 @@ export const VideoOptionsMenu = ({ videoId, variant = "icon", className }: Video
               <ListPlus className="w-4 h-4" />
               <span>Add to Playlist</span>
             </DropdownMenuSubTrigger>
-            <DropdownMenuSubContent className="bg-white border border-gray-200 shadow-lg rounded-xl w-52">
+            <DropdownMenuSubContent className="bg-white border border-[#E5E5E5] shadow-lg rounded-xl w-52">
               {playlists && playlists.length > 0 ? (
                 <>
                   {playlists.map((playlist) => (
