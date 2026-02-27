@@ -22,20 +22,14 @@ const Auth = ({ isOpen, onOpenChange, initialTab = 'signin' }: AuthProps) => {
   const location = useLocation();
   const { isAuthenticated, session, isLoading } = useAuth();
   
-  // Update activeTab when initialTab prop changes
   useEffect(() => {
     if (initialTab) {
       setActiveTab(initialTab);
     }
   }, [initialTab]);
   
-  // Prevent dialog from showing automatically on settings page
   useEffect(() => {
     const isSettingsPage = location.pathname === "/settings";
-    
-    // Close the auth dialog if:
-    // 1. User is already authenticated OR
-    // 2. We're on the settings page (which requires auth)
     if ((isAuthenticated || isSettingsPage) && !isLoading && isOpen) {
       onOpenChange(false);
     }
@@ -50,7 +44,6 @@ const Auth = ({ isOpen, onOpenChange, initialTab = 'signin' }: AuthProps) => {
     setShowOptions(true);
   };
   
-  // Don't render if user is already authenticated
   if (isAuthenticated && !isLoading) {
     return null;
   }
@@ -58,17 +51,17 @@ const Auth = ({ isOpen, onOpenChange, initialTab = 'signin' }: AuthProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={(open) => {
       if (open === false) {
-        // Reset to options screen when dialog closes
         setTimeout(() => setShowOptions(true), 300);
       }
       onOpenChange(open);
     }}>
       <DialogContent 
         hideCloseButton={true}
-        className={`p-0 gap-0 bg-white border-2 border-[#FFCC00] shadow-2xl ${isMobile 
-          ? 'w-[90%] max-w-[340px] rounded-2xl' 
-          : 'w-[380px] max-w-[380px] rounded-2xl'
+        className={`p-0 gap-0 bg-white border-none shadow-2xl ${isMobile 
+          ? 'w-[92%] max-w-[420px] rounded-3xl' 
+          : 'w-[460px] max-w-[460px] rounded-3xl'
         } overflow-hidden`}
+        style={{ boxShadow: '0 25px 60px -12px rgba(0, 0, 0, 0.25)' }}
       >
         <AnimatePresence mode="wait">
           {showOptions ? (
@@ -93,7 +86,7 @@ const Auth = ({ isOpen, onOpenChange, initialTab = 'signin' }: AuthProps) => {
               animate={{ opacity: 1, y: 0, rotateX: 0 }}
               exit={{ opacity: 0, y: 20, rotateX: -10 }}
               transition={{ duration: 0.2, ease: [0.19, 1.0, 0.22, 1.0] }}
-              className="flex flex-col h-full rounded-2xl overflow-hidden"
+              className="flex flex-col h-full rounded-3xl overflow-hidden"
             >
               <AuthHeader 
                 onBack={handleBack} 

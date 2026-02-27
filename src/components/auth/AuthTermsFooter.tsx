@@ -11,10 +11,10 @@ export const AuthTermsFooter: React.FC<AuthTermsFooterProps> = ({
 }) => {
   return (
     <div 
-      className="mt-6 pt-4 border-t border-[#E5E5E5] text-center"
+      className="mt-6 pt-5 border-t border-[#EEEEEE] text-center"
       style={{ fontFamily: "'Quicksand', sans-serif" }}
     >
-      <p className="text-xs text-[#999999] leading-relaxed">
+      <p className="text-xs text-[#AAAAAA] leading-relaxed">
         By signing in, you agree to our{" "}
         <button 
           onClick={onOpenTos} 

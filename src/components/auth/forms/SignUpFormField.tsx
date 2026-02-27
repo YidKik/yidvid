@@ -33,12 +33,12 @@ export const SignUpFormField: React.FC<SignUpFormFieldProps> = ({
   const Icon = getIcon();
   
   return (
-    <div className="space-y-1.5">
+    <div className="space-y-2">
       <label 
-        className="text-sm font-semibold text-gray-700 flex items-center gap-1.5"
+        className="text-sm font-semibold text-[#444444] flex items-center gap-2"
         style={{ fontFamily: "'Quicksand', sans-serif" }}
       >
-        <Icon size={14} className="text-yellow-600" />
+        <Icon size={15} className="text-[#FF0000]" />
         {placeholder}
       </label>
       <Input
@@ -47,11 +47,11 @@ export const SignUpFormField: React.FC<SignUpFormFieldProps> = ({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className={`${isMobile 
-          ? 'h-11 text-sm' 
-          : 'h-12 text-base'} 
-          px-4 border-2 border-gray-200 bg-gray-50 focus:bg-white transition-all duration-200 
-          rounded-xl focus:ring-2 focus:ring-yellow-300 focus:border-yellow-400 text-gray-800
-          placeholder:text-gray-400`}
+          ? 'h-12 text-sm' 
+          : 'h-13 text-base'} 
+          px-4 border-2 border-[#E5E5E5] bg-[#FAFAFA] focus:bg-white transition-all duration-200 
+          rounded-2xl focus:ring-2 focus:ring-[#FFCC00]/40 focus:border-[#FFCC00] text-[#1A1A1A]
+          placeholder:text-[#BBBBBB] py-3`}
         style={{ fontFamily: "'Quicksand', sans-serif" }}
         required={required}
         disabled={disabled}

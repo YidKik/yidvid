@@ -59,7 +59,6 @@ export const SignUpForm = ({
       }
 
       if (signUpData?.user) {
-        // Directly sign in after successful signup
         const { error: signInError } = await supabase.auth.signInWithPassword({
           email,
           password
@@ -86,7 +85,7 @@ export const SignUpForm = ({
   };
 
   return (
-    <form onSubmit={handleSignUp} className="space-y-4">
+    <form onSubmit={handleSignUp} className="space-y-5">
       <SignUpFormField
         type="text"
         placeholder="Username"
@@ -115,16 +114,16 @@ export const SignUpForm = ({
       <Button
         type="submit"
         className={`w-full ${isMobile 
-          ? 'h-11 text-sm' 
-          : 'h-12 text-base'} 
-          mt-4 bg-yellow-400 hover:bg-yellow-500 text-gray-900 border-2 border-yellow-500
-          rounded-xl font-semibold transition-all duration-200 disabled:opacity-50 
+          ? 'h-12 text-sm' 
+          : 'h-13 text-base'} 
+          mt-2 bg-[#FFCC00] hover:bg-[#E6B800] text-[#1A1A1A] border-2 border-[#E6B800]
+          rounded-2xl font-semibold transition-all duration-200 disabled:opacity-50 
           disabled:cursor-not-allowed hover:scale-[1.01] active:scale-[0.99] 
-          disabled:hover:scale-100 shadow-md hover:shadow-lg flex items-center justify-center gap-2`}
+          disabled:hover:scale-100 shadow-md hover:shadow-lg flex items-center justify-center gap-2.5 py-4`}
         style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
         disabled={isLoading}
       >
-        <UserPlus size={18} />
+        <UserPlus size={20} />
         {isLoading ? "Creating Account..." : "Create Account"}
       </Button>
       
