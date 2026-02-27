@@ -342,7 +342,7 @@ export const FriendlyVideoActionBar = ({
             variant="ghost"
             size="sm"
             onClick={handleToggleWatchLater}
-            className={`${actionButtonBaseCompact} ${isWatchLaterSaved ? "bg-blue-50 text-blue-500" : ""}`}
+            className={`${actionButtonBaseCompact} ${isWatchLaterSaved ? "bg-[#F5F5F5] text-[#1A1A1A]" : ""}`}
           >
             <Clock className={cn("h-4 w-4 mr-1.5", isWatchLaterSaved && "fill-current")} />
             {isWatchLaterSaved ? "Saved" : "Watch Later"}
