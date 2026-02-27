@@ -287,13 +287,13 @@ const Playlists = () => {
     <div className="min-h-screen pt-14 pl-0 lg:pl-[200px] bg-white flex flex-col pb-20 lg:pb-0">
       <div className="flex-1 max-w-6xl mx-auto px-4 lg:px-6 py-6 lg:py-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8 pb-6 border-b border-gray-100">
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-yellow-400 to-red-500 flex items-center justify-center shadow-lg">
-              <ListMusic className="w-8 h-8 text-white" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900 font-friendly">Playlists</h1>
+          <div className="flex items-center justify-between mb-8 pb-6 border-b border-gray-100">
+            <div className="flex items-center gap-3">
+              <div className={`${isMobile ? 'w-12 h-12' : 'w-16 h-16'} rounded-2xl bg-gradient-to-br from-yellow-400 to-red-500 flex items-center justify-center shadow-lg`}>
+                <ListMusic className={`${isMobile ? 'w-6 h-6' : 'w-8 h-8'} text-white`} />
+              </div>
+              <div>
+                <h1 className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold text-gray-900 font-friendly`}>Playlists</h1>
               <p className="text-gray-500 mt-1">{playlists?.length || 0} playlist{(playlists?.length || 0) !== 1 ? "s" : ""}</p>
             </div>
           </div>
