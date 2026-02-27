@@ -134,10 +134,10 @@ export const FriendlyChannelSection = ({
       
       {/* Description - collapsible, minimal */}
       {description && (
-        <div className="bg-[#F5F5F5] rounded-xl p-4">
+        <div className={`bg-[#F5F5F5] rounded-xl ${compact ? 'p-3' : 'p-4'}`}>
           <p 
             ref={descriptionRef}
-            className={`text-sm text-[#666666] leading-relaxed whitespace-pre-wrap ${
+            className={`${compact ? 'text-xs' : 'text-sm'} text-[#666666] leading-relaxed whitespace-pre-wrap ${
               !isDescriptionExpanded ? 'line-clamp-3' : ''
             }`}
           >
