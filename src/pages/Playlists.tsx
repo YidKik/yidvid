@@ -109,8 +109,8 @@ const Playlists = () => {
   // Playlist detail view
   if (selectedPlaylistId && selectedPlaylist) {
     return (
-      <div className="min-h-screen pt-14 pl-[200px] bg-white flex flex-col">
-        <div className="flex-1 max-w-6xl mx-auto px-6 py-8">
+      <div className="min-h-screen pt-14 pl-0 lg:pl-[200px] bg-white flex flex-col pb-20 lg:pb-0">
+        <div className="flex-1 max-w-6xl mx-auto px-4 lg:px-6 py-6 lg:py-8">
           {/* Back button */}
           <button
             onClick={() => setSearchParams({})}
