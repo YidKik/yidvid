@@ -29,7 +29,7 @@ export const Footer = () => {
                 className="w-6 h-6 object-contain"
               />
               <span 
-                className="text-sm font-medium"
+                className="text-xs font-medium"
                 style={{ 
                   fontFamily: "'Quicksand', sans-serif",
                   color: '#666666'
