@@ -177,37 +177,37 @@ export const TrendingSection = ({ videos }: TrendingSectionProps) => {
             </div>
 
             {/* Pagination Arrows */}
-            <div className="flex justify-center items-center gap-6 mt-10">
+            <div className={`flex justify-center items-center ${isMobile ? 'gap-3 mt-6' : 'gap-6 mt-10'}`}>
               <button
                 onClick={handlePrevPage}
                 disabled={currentPage === 0}
-                className={`flex items-center gap-2 ${isMobile ? 'px-4 py-2 text-sm' : 'px-8 py-3'} rounded-full font-semibold transition-all duration-300 ${
+                className={`flex items-center gap-1.5 ${isMobile ? 'px-3 py-1.5 text-xs' : isTablet ? 'px-4 py-2 text-sm' : 'px-8 py-3'} rounded-full font-semibold transition-all duration-300 ${
                   currentPage === 0
                     ? 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-600 cursor-not-allowed'
                     : 'bg-red-500 text-white shadow-md hover:shadow-lg hover:scale-105'
                 }`}
               >
-                <ChevronLeft className="w-5 h-5" />
-                Previous
+                <ChevronLeft className={isMobile ? 'w-3.5 h-3.5' : 'w-5 h-5'} />
+                Prev
               </button>
               
-              <div className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-full shadow-sm">
-                <span className="text-sm font-medium text-foreground">{currentPage + 1}</span>
+              <div className={`flex items-center gap-1.5 ${isMobile ? 'px-2.5 py-1' : 'px-4 py-2'} bg-gray-100 dark:bg-gray-800 rounded-full shadow-sm`}>
+                <span className={`${isMobile ? 'text-xs' : 'text-sm'} font-medium text-foreground`}>{currentPage + 1}</span>
                 <span className="text-gray-400">/</span>
-                <span className="text-sm text-gray-500">{totalPages}</span>
+                <span className={`${isMobile ? 'text-xs' : 'text-sm'} text-gray-500`}>{totalPages}</span>
               </div>
               
               <button
                 onClick={handleNextPage}
                 disabled={currentPage >= totalPages - 1}
-                className={`flex items-center gap-2 ${isMobile ? 'px-4 py-2 text-sm' : 'px-8 py-3'} rounded-full font-semibold transition-all duration-300 ${
+                className={`flex items-center gap-1.5 ${isMobile ? 'px-3 py-1.5 text-xs' : isTablet ? 'px-4 py-2 text-sm' : 'px-8 py-3'} rounded-full font-semibold transition-all duration-300 ${
                   currentPage >= totalPages - 1
                     ? 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-600 cursor-not-allowed'
                     : 'bg-red-500 text-white shadow-md hover:shadow-lg hover:scale-105'
                 }`}
               >
                 Next
-                <ChevronRight className="w-5 h-5" />
+                <ChevronRight className={isMobile ? 'w-3.5 h-3.5' : 'w-5 h-5'} />
               </button>
             </div>
           </motion.div>
