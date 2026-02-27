@@ -113,17 +113,17 @@ export const ChannelHeader = ({
   return (
     <div className="mb-8 md:mb-10 animate-fade-in">
       {/* Friendly card container */}
-      <div className="bg-gradient-to-br from-yellow-50 via-white to-red-50 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800 rounded-3xl border border-yellow-200/60 dark:border-yellow-900/30 shadow-lg shadow-yellow-100/50 dark:shadow-none overflow-hidden">
-        {/* Top accent bar */}
-        <div className="h-2 bg-gradient-to-r from-yellow-400 via-red-400 to-yellow-400" />
+      <div className="bg-white rounded-3xl border border-[#E5E5E5] shadow-lg overflow-hidden">
+        {/* Top accent bar - solid yellow */}
+        <div className="h-2 bg-[#FFCC00]" />
         
         <div className="p-5 md:p-8">
           <div className="flex flex-col md:flex-row md:items-start gap-5 md:gap-8">
             {/* Left side - Avatar */}
             <div className="flex-shrink-0 flex justify-center md:justify-start">
               <div className="relative group">
-                <div className="absolute -inset-1 bg-gradient-to-r from-yellow-400 via-red-400 to-yellow-400 rounded-full opacity-75 blur group-hover:opacity-100 transition-opacity duration-300" />
-                <Avatar className="relative w-24 h-24 md:w-32 md:h-32 ring-4 ring-white dark:ring-gray-800 shadow-xl">
+                <div className="absolute -inset-1 bg-[#FFCC00] rounded-full opacity-75 blur group-hover:opacity-100 transition-opacity duration-300" />
+                <Avatar className="relative w-24 h-24 md:w-32 md:h-32 ring-4 ring-white shadow-xl">
                   <AvatarImage
                     src={channel.thumbnail_url}
                     alt={channel.title}
@@ -131,7 +131,7 @@ export const ChannelHeader = ({
                     onLoad={() => setImageLoaded(true)}
                     onError={() => setImageError(true)}
                   />
-                  <AvatarFallback className="bg-gradient-to-br from-yellow-100 to-red-100 dark:from-yellow-900/30 dark:to-red-900/30">
+                  <AvatarFallback className="bg-[#F5F5F5]">
                     <img 
                       src={fallbackLogo} 
                       alt="YidVid Logo" 
@@ -140,7 +140,7 @@ export const ChannelHeader = ({
                   </AvatarFallback>
                   
                   {!imageLoaded && !imageError && (
-                    <div className="absolute inset-0 bg-gradient-to-br from-yellow-100 to-red-100 rounded-full flex items-center justify-center">
+                    <div className="absolute inset-0 bg-[#F5F5F5] rounded-full flex items-center justify-center">
                       <img 
                         src={fallbackLogo} 
                         alt="Loading" 
@@ -155,7 +155,7 @@ export const ChannelHeader = ({
             {/* Right side - Content */}
             <div className="flex-1 flex flex-col items-center md:items-start text-center md:text-left">
               {/* Channel name */}
-              <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-3">
+              <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-[#1A1A1A] mb-3">
                 {channel.title}
               </h1>
               
@@ -166,8 +166,8 @@ export const ChannelHeader = ({
                 disabled={buttonLoading}
                 className={`h-10 md:h-11 text-sm md:text-base px-5 md:px-6 rounded-full font-medium transition-all duration-300 ${
                   (displaySubscribed && subscriptionStateKnown) 
-                    ? "bg-gradient-to-r from-yellow-500 to-red-500 hover:from-yellow-600 hover:to-red-600 text-white shadow-lg shadow-yellow-500/30 hover:shadow-xl hover:shadow-yellow-500/40 border-0" 
-                    : "border-2 border-yellow-500 text-yellow-700 dark:text-yellow-400 hover:bg-yellow-50 dark:hover:bg-yellow-900/20 hover:border-yellow-600"
+                    ? "bg-[#FF0000] hover:brightness-90 text-white shadow-lg border-0" 
+                    : "border-2 border-[#FFCC00] text-[#1A1A1A] hover:bg-[#FFCC00] hover:text-[#1A1A1A]"
                 }`}
                 data-subscribed={displaySubscribed && subscriptionStateKnown ? "true" : "false"}
                 aria-label={displaySubscribed && subscriptionStateKnown ? "Unsubscribe from channel" : "Subscribe to channel"}
@@ -193,7 +193,7 @@ export const ChannelHeader = ({
               {/* Description */}
               {channel.description && (
                 <div className="mt-4 md:mt-5">
-                  <p className="text-gray-600 dark:text-gray-300 text-sm md:text-base leading-relaxed max-w-2xl">
+                  <p className="text-[#666666] text-sm md:text-base leading-relaxed max-w-2xl">
                     {channel.description}
                   </p>
                 </div>
