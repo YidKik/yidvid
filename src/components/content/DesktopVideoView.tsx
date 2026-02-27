@@ -31,6 +31,7 @@ export const DesktopVideoView = ({
   sortBy,
   viewChannels = false
 }: DesktopVideoViewProps) => {
+  const { isMobile, isTablet } = useIsMobile();
   // More thorough check if we have real videos (not samples)
   const hasRealVideos = videos.some(video => 
     !video.id.toString().includes('sample') && 
