@@ -87,7 +87,7 @@ export const FriendlyChannelSection = ({
             </Avatar>
           </Link>
         ) : (
-          <Avatar className="h-10 w-10">
+          <Avatar className={compact ? "h-8 w-8" : "h-10 w-10"}>
             <AvatarImage src={channelThumbnail || ''} alt={channelName} />
             <AvatarFallback className="bg-[#F5F5F5] text-[#666666] text-sm font-bold">
               {channelName?.slice(0, 2).toUpperCase()}
