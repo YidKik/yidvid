@@ -42,17 +42,17 @@ export const ChannelsRowSection = ({ selectedCategory = "all" }: ChannelsRowSect
 
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: "start",
-    slidesToScroll: 3,
-    containScroll: "keepSnaps",
+    slidesToScroll: 2,
+    containScroll: "trimSnaps",
     dragFree: false,
-    duration: 35,
+    duration: 45,
   });
 
   const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(false);
 
-  const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
-  const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
+  const scrollPrev = useCallback(() => emblaApi?.scrollPrev(false), [emblaApi]);
+  const scrollNext = useCallback(() => emblaApi?.scrollNext(false), [emblaApi]);
 
   const onSelect = useCallback(() => {
     if (!emblaApi) return;
