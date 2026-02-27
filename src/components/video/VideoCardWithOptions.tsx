@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Clock } from "lucide-react";
 import { VideoOptionsMenu } from "./VideoOptionsMenu";
 import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface VideoCardWithOptionsProps {
   videoId: string;
@@ -34,6 +35,7 @@ export const VideoCardWithOptions = ({
   hideChannelInfo = false,
 }: VideoCardWithOptionsProps) => {
   const [isHovering, setIsHovering] = useState(false);
+  const { isMobile, isTablet } = useIsMobile();
 
   return (
     <div 
@@ -46,7 +48,7 @@ export const VideoCardWithOptions = ({
         className="block"
       >
         {/* Thumbnail with hover effects */}
-        <div className="relative aspect-video rounded-xl overflow-hidden border-2 border-transparent group-hover:border-[#FFCC00] transition-all duration-300">
+        <div className={`relative aspect-video ${isMobile ? 'rounded-lg' : 'rounded-xl'} overflow-hidden border-2 border-transparent group-hover:border-[#FFCC00] transition-all duration-300`}>
           <img
             src={thumbnail}
             alt={title}
@@ -64,9 +66,9 @@ export const VideoCardWithOptions = ({
             {/* Duration badge - bottom right */}
             {duration && (
               <div className="absolute bottom-2 right-2 pointer-events-auto">
-                <div className="bg-[#1A1A1A] rounded-full px-2.5 py-1 flex items-center gap-1.5 shadow-lg">
-                  <Clock size={11} className="text-white" />
-                  <span className="text-xs font-semibold text-white">{duration}</span>
+                <div className={`bg-[#1A1A1A] rounded-full ${isMobile ? 'px-1.5 py-0.5' : 'px-2.5 py-1'} flex items-center gap-1 shadow-lg`}>
+                  <Clock size={isMobile ? 9 : 11} className="text-white" />
+                  <span className={`${isMobile ? 'text-[10px]' : 'text-xs'} font-semibold text-white`}>{duration}</span>
                 </div>
               </div>
             )}
@@ -74,13 +76,13 @@ export const VideoCardWithOptions = ({
         </div>
         
         {/* Video Info */}
-        <div className="mt-3">
-          <h3 className="text-sm font-semibold font-friendly text-foreground line-clamp-2 leading-snug">
+        <div className={isMobile ? 'mt-1.5' : 'mt-3'}>
+          <h3 className={`${isMobile ? 'text-xs' : 'text-sm'} font-semibold font-friendly text-foreground line-clamp-2 leading-snug`}>
             {title}
           </h3>
           {!hideChannelInfo && (
-            <div className="flex items-center gap-2 mt-2">
-              <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0 bg-muted">
+            <div className={`flex items-center gap-1.5 ${isMobile ? 'mt-1' : 'mt-2'}`}>
+              <div className={`${isMobile ? 'w-4 h-4' : 'w-6 h-6'} rounded-full overflow-hidden flex-shrink-0 bg-muted`}>
                 {channelThumbnail ? (
                   <img
                     src={channelThumbnail}
@@ -88,17 +90,17 @@ export const VideoCardWithOptions = ({
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="w-full h-full bg-[#FF0000] flex items-center justify-center text-[10px] font-bold text-white">
+                  <div className={`w-full h-full bg-[#FF0000] flex items-center justify-center ${isMobile ? 'text-[8px]' : 'text-[10px]'} font-bold text-white`}>
                     {channelName.charAt(0).toUpperCase()}
                   </div>
                 )}
               </div>
-              <p className="text-xs text-muted-foreground truncate">
+              <p className={`${isMobile ? 'text-[10px]' : 'text-xs'} text-muted-foreground truncate`}>
                 {channelName}
               </p>
             </div>
           )}
-          <p className="text-xs text-muted-foreground/80 mt-1.5">
+          <p className={`${isMobile ? 'text-[10px] mt-0.5' : 'text-xs mt-1.5'} text-muted-foreground/80`}>
             {views?.toLocaleString() || 0} views • {formattedDate}
           </p>
         </div>

@@ -168,26 +168,26 @@ export const NewVideosSection = ({ videos, autoExpand = false }: NewVideosSectio
             transition={{ duration: 0.25 }}
           >
             {/* Header with Back button */}
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-4">
+            <div className={`flex items-center justify-between ${isMobile ? 'mb-3' : 'mb-6'}`}>
+              <div className={`flex items-center ${isMobile ? 'gap-2' : 'gap-4'}`}>
                 <button
                   onClick={handleBackClick}
-                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-all duration-200 shadow-sm"
+                  className={`flex items-center gap-1.5 ${isMobile ? 'px-3 py-1.5 text-xs' : 'px-4 py-2 text-sm'} font-medium text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-all duration-200 shadow-sm`}
                 >
-                  <ChevronLeft className="w-4 h-4" />
+                  <ChevronLeft className={isMobile ? 'w-3 h-3' : 'w-4 h-4'} />
                   Back
                 </button>
-                <h2 className="text-lg font-semibold text-foreground font-friendly">
+                <h2 className={`${isMobile ? 'text-sm' : 'text-lg'} font-semibold text-foreground font-friendly`}>
                   Latest Videos
                 </h2>
               </div>
-              <span className="text-sm text-gray-500 dark:text-gray-400">
-                Page {currentPage + 1} of {totalPages}
+              <span className={`${isMobile ? 'text-xs' : 'text-sm'} text-gray-500 dark:text-gray-400`}>
+                {currentPage + 1}/{totalPages}
               </span>
             </div>
 
-            {/* Grid of videos - 4 columns, 3 rows */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+            {/* Grid of videos - responsive columns */}
+            <div className={`grid ${isMobile ? 'grid-cols-2 gap-2' : isTablet ? 'grid-cols-3 gap-3' : 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4'}`}>
               {expandedVideos.map((video, index) => (
                 <VideoCard 
                   key={video.id} 
