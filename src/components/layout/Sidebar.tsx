@@ -404,7 +404,9 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
               effectiveIsExpanded
                 ? "gap-3 px-3 py-2.5 rounded-full justify-between"
                 : "justify-center p-2 rounded-full mx-auto w-10 h-10",
-              "border border-transparent hover:bg-[#F0F0F0] text-[#666666] hover:text-[#1A1A1A]"
+              !isAuthenticated
+                ? "opacity-40 cursor-default border border-transparent"
+                : "border border-transparent hover:bg-[#F0F0F0] text-[#666666] hover:text-[#1A1A1A]"
             )}
           >
             <div className="flex items-center gap-3">
