@@ -193,7 +193,7 @@ export const ChannelHeader = ({
               {/* Description */}
               {channel.description && (
                 <div className="mt-4 md:mt-5">
-                  <p className="text-gray-600 dark:text-gray-300 text-sm md:text-base leading-relaxed max-w-2xl">
+                  <p className="text-[#666666] text-sm md:text-base leading-relaxed max-w-2xl">
                     {channel.description}
                   </p>
                 </div>
