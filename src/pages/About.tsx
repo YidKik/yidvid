@@ -39,7 +39,7 @@ const About = () => {
               About YidVid
             </h1>
             <p 
-              className="text-lg max-w-2xl mx-auto"
+              className={`${isMobile ? 'text-base' : 'text-lg'} max-w-2xl mx-auto`}
               style={{ fontFamily: "'Quicksand', sans-serif", color: '#666666' }}
             >
               Your premier destination for kosher Jewish content, curated with care for the entire family.
