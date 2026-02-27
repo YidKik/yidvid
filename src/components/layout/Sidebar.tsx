@@ -273,62 +273,60 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
           })}
         </div>
 
-        {/* Categories */}
-        <div className="mt-2 pt-2 border-t border-[#E5E5E5]">
-          <button
-            onClick={() => setIsCategoriesOpen(!isCategoriesOpen)}
-            title={!effectiveIsExpanded ? "Categories" : undefined}
-            className={cn(
-              "flex items-center text-sm font-medium transition-all duration-200 w-full",
-              effectiveIsExpanded
-                ? "gap-3 px-3 py-2.5 rounded-full justify-between"
-                : "justify-center p-2 rounded-full mx-auto w-10 h-10",
-              "border border-transparent hover:bg-[#F0F0F0] text-[#666666] hover:text-[#1A1A1A]"
-            )}
-          >
-            <div className="flex items-center gap-3">
-              <LayoutGrid className="w-5 h-5 shrink-0" />
-              {effectiveIsExpanded && <span className="text-[#1A1A1A]">Categories</span>}
-            </div>
-            {effectiveIsExpanded && (
-              isCategoriesOpen
+        {/* Categories - only visible when expanded */}
+        {effectiveIsExpanded && (
+          <div className="mt-2 pt-2 border-t border-[#E5E5E5]">
+            <button
+              onClick={() => setIsCategoriesOpen(!isCategoriesOpen)}
+              className={cn(
+                "flex items-center text-sm font-medium transition-all duration-200 w-full",
+                "gap-3 px-3 py-2.5 rounded-full justify-between",
+                "border border-transparent hover:bg-[#F0F0F0] text-[#666666] hover:text-[#1A1A1A]"
+              )}
+            >
+              <div className="flex items-center gap-3">
+                <LayoutGrid className="w-5 h-5 shrink-0" />
+                <span className="text-[#1A1A1A]">Categories</span>
+              </div>
+              {isCategoriesOpen
                 ? <ChevronUp className="w-4 h-4 text-[#999999]" />
                 : <ChevronDown className="w-4 h-4 text-[#999999]" />
-            )}
-          </button>
+              }
+            </button>
 
-          <AnimatePresence>
-            {isCategoriesOpen && effectiveIsExpanded && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                className="overflow-hidden ml-2 mr-1 py-1"
-              >
-                {allCategories
-                  .filter((category) => {
-                    const isUrl = category.icon?.startsWith('http') || category.icon?.startsWith('/');
-                    return !isUrl;
-                  })
-                  .map((category) => (
-                    <button
-                      key={category.id}
-                      onClick={() => handleCategorySelect(category.id)}
-                      className={cn(
-                        "w-full text-left px-3 py-2 text-sm font-medium rounded-full transition-all duration-200 my-0.5",
-                        isCategoryActive(category.id)
-                          ? "bg-[#F5F5F5] border-l-[3px] border-[#FF0000] text-[#FF0000]"
-                          : "text-[#1A1A1A] hover:bg-[#F0F0F0] border border-transparent"
-                      )}
-                    >
-                      {category.label}
-                    </button>
-                  ))}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
+            <AnimatePresence>
+              {isCategoriesOpen && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="overflow-hidden ml-2 mr-1 py-1"
+                >
+                  {allCategories
+                    .filter((category) => {
+                      const isUrl = category.icon?.startsWith('http') || category.icon?.startsWith('/');
+                      return !isUrl;
+                    })
+                    .map((category) => (
+                      <button
+                        key={category.id}
+                        onClick={() => handleCategorySelect(category.id)}
+                        className={cn(
+                          "w-full text-left px-3 py-2 text-sm font-medium rounded-full transition-all duration-200 my-0.5",
+                          isCategoryActive(category.id)
+                            ? "bg-[#F5F5F5] border-l-[3px] border-[#FF0000] text-[#FF0000]"
+                            : "text-[#1A1A1A] hover:bg-[#F0F0F0] border border-transparent"
+                        )}
+                      >
+                        {category.label}
+                      </button>
+                    ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        )}
 
         {/* Library */}
         <div className="mt-3 pt-3 border-t border-[#E5E5E5]">
