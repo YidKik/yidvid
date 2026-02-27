@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface SidebarContextType {
   isExpanded: boolean;
@@ -14,6 +15,7 @@ export const SIDEBAR_COLLAPSED_WIDTH = 64;
 
 export const SidebarProvider = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
+  const { isDesktop } = useIsMobile();
   const isHomePage = location.pathname === "/";
   const [isExpanded, setIsExpanded] = useState(!isHomePage);
 
@@ -26,7 +28,8 @@ export const SidebarProvider = ({ children }: { children: React.ReactNode }) => 
     }
   }, [isHomePage]);
 
-  const sidebarWidth = isExpanded ? SIDEBAR_EXPANDED_WIDTH : SIDEBAR_COLLAPSED_WIDTH;
+  // On mobile/tablet, sidebar width is always 0 (sidebar is hidden)
+  const sidebarWidth = !isDesktop ? 0 : isExpanded ? SIDEBAR_EXPANDED_WIDTH : SIDEBAR_COLLAPSED_WIDTH;
 
   return (
     <SidebarContext.Provider value={{ isExpanded, setIsExpanded, sidebarWidth }}>

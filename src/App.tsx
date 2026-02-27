@@ -75,7 +75,11 @@ function AppContent() {
     <>
       <TopLoadingBar />
       <GlobalHeader />
-      <Sidebar isAuthenticated={isAuthenticated} userId={session?.user?.id} />
+      {isDesktop ? (
+        <Sidebar isAuthenticated={isAuthenticated} userId={session?.user?.id} />
+      ) : (
+        <MobileBottomNav isAuthenticated={isAuthenticated} />
+      )}
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/videos" element={<Videos />} />

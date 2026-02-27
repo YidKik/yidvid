@@ -282,8 +282,8 @@ const Playlists = () => {
 
   // Playlists list view
   return (
-    <div className="min-h-screen pt-14 pl-[200px] bg-white flex flex-col">
-      <div className="flex-1 max-w-6xl mx-auto px-6 py-8">
+    <div className="min-h-screen pt-14 pl-0 lg:pl-[200px] bg-white flex flex-col pb-20 lg:pb-0">
+      <div className="flex-1 max-w-6xl mx-auto px-4 lg:px-6 py-6 lg:py-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-8 pb-6 border-b border-gray-100">
           <div className="flex items-center gap-4">

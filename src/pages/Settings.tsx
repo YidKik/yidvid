@@ -37,7 +37,7 @@ const Settings = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white pt-14 pl-[200px] transition-all duration-300">
+    <div className="min-h-screen bg-white pt-14 pl-0 lg:pl-[200px] pb-20 lg:pb-0 transition-all duration-300">
       <BackButton />
       <main className={cn("pb-16 max-w-3xl mx-auto", isMobile ? "pt-4 px-4" : "pt-6 px-6")}>
         {/* Header */}

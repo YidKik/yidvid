@@ -212,8 +212,8 @@ const ChannelDetails = () => {
   const hasVideosError = !!videosError;
 
   return (
-    <div className="w-full min-h-screen bg-white text-black pt-14 pl-[200px] transition-all duration-300">
-      <div className="p-6">
+    <div className="w-full min-h-screen bg-white text-black pt-14 pl-0 lg:pl-[200px] pb-20 lg:pb-0 transition-all duration-300">
+      <div className="p-4 lg:p-6">
         <BackButton />
         <ChannelHeader
           channel={channel}
