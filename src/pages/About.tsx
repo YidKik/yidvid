@@ -20,12 +20,12 @@ const About = () => {
           >
             <h1 
               className="text-4xl md:text-5xl font-bold mb-4"
-              style={{ fontFamily: "'Fredoka One', 'Nunito', sans-serif", color: 'hsl(180, 100%, 13%)' }}
+              style={{ fontFamily: "'Fredoka One', 'Nunito', sans-serif", color: '#1A1A1A' }}
             >
               About YidVid
             </h1>
             <p 
-              className="text-lg text-gray-600 max-w-2xl mx-auto"
+              className="text-lg text-[#666666] max-w-2xl mx-auto"
               style={{ fontFamily: "'Quicksand', sans-serif" }}
             >
               Your premier destination for kosher Jewish content, curated with care for the entire family.
@@ -65,20 +65,20 @@ const About = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 + index * 0.1, duration: 0.5 }}
-                className="p-6 rounded-2xl bg-gray-50 border border-gray-100"
+                className="p-6 rounded-2xl bg-[#F5F5F5] border border-[#E5E5E5]"
               >
                 <feature.icon 
                   className="w-10 h-10 mb-4" 
-                  style={{ color: 'hsl(50, 100%, 45%)' }} 
+                  style={{ color: '#FFCC00' }} 
                 />
                 <h3 
                   className="text-xl font-bold mb-2"
-                  style={{ fontFamily: "'Quicksand', sans-serif", color: 'hsl(180, 100%, 13%)' }}
+                  style={{ fontFamily: "'Quicksand', sans-serif", color: '#1A1A1A' }}
                 >
                   {feature.title}
                 </h3>
                 <p 
-                  className="text-gray-600"
+                  className="text-[#666666]"
                   style={{ fontFamily: "'Quicksand', sans-serif" }}
                 >
                   {feature.description}
@@ -91,17 +91,16 @@ const About = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.5 }}
-            className="text-center p-8 rounded-2xl"
-            style={{ backgroundColor: 'hsl(50, 100%, 95%)' }}
+            className="text-center p-8 rounded-2xl bg-[#F5F5F5]"
           >
             <h2 
               className="text-2xl font-bold mb-4"
-              style={{ fontFamily: "'Quicksand', sans-serif", color: 'hsl(180, 100%, 13%)' }}
+              style={{ fontFamily: "'Quicksand', sans-serif", color: '#1A1A1A' }}
             >
               Our Mission
             </h2>
             <p 
-              className="text-gray-700 max-w-2xl mx-auto"
+              className="text-[#666666] max-w-2xl mx-auto"
               style={{ fontFamily: "'Quicksand', sans-serif" }}
             >
               YidVid was created to provide a safe, curated platform for Jewish families to access quality 

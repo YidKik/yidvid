@@ -93,7 +93,7 @@ const Settings = () => {
         </div>
 
         {/* Content Area */}
-        <div className="bg-gray-50 rounded-2xl border-2 border-gray-200 p-5 md:p-6">
+        <div className="bg-[#F5F5F5] rounded-2xl border-2 border-[#E5E5E5] p-5 md:p-6">
           {activeSection === "profile" && (
             loadingProfile ? <ProfileSectionSkeleton /> : <ProfileSection />
           )}
