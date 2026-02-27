@@ -307,7 +307,7 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
         ))}
 
         {/* Categories Section - Moved up right after main nav */}
-        <div className="mt-2 pt-2 border-t border-gray-100">
+        <div className="mt-2 pt-2 border-t border-[#E5E5E5]">
           <button
             onClick={() => setIsCategoriesOpen(!isCategoriesOpen)}
             title={!effectiveIsExpanded ? "Categories" : undefined}
