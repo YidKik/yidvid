@@ -82,22 +82,24 @@ interface SidebarProps {
 }
 
 // Shared nav item styles
-const getNavItemClass = (isExpanded: boolean, active: boolean) =>
+const getNavItemClass = (isExpanded: boolean, active: boolean, disabled = false) =>
   cn(
     "flex items-center text-sm font-medium transition-all duration-200",
     isExpanded
       ? "gap-3 px-3 py-2.5 rounded-full"
       : "justify-center p-2 rounded-full mx-auto w-10 h-10",
-    active
-      ? "bg-[#F5F5F5] border-l-[3px] border-[#FF0000] text-[#FF0000]"
-      : "border border-transparent hover:bg-[#F0F0F0] text-[#666666] hover:text-[#1A1A1A]"
+    disabled
+      ? "opacity-40 cursor-default border border-transparent"
+      : active
+        ? "bg-[#F5F5F5] border-l-[3px] border-[#FF0000] text-[#FF0000]"
+        : "border border-transparent hover:bg-[#F0F0F0] text-[#666666] hover:text-[#1A1A1A]"
   );
 
-const getIconClass = (active: boolean) =>
-  cn("w-5 h-5 shrink-0 transition-colors", active ? "text-[#FF0000]" : "text-[#666666]");
+const getIconClass = (active: boolean, disabled = false) =>
+  cn("w-5 h-5 shrink-0 transition-colors", disabled ? "text-[#999999]" : active ? "text-[#FF0000]" : "text-[#666666]");
 
-const getLabelClass = (active: boolean) =>
-  cn("truncate transition-colors", active ? "text-[#FF0000]" : "text-[#1A1A1A]");
+const getLabelClass = (active: boolean, disabled = false) =>
+  cn("truncate transition-colors", disabled ? "text-[#999999]" : active ? "text-[#FF0000]" : "text-[#1A1A1A]");
 
 export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
   const location = useLocation();
@@ -308,17 +310,13 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
                       key={category.id}
                       onClick={() => handleCategorySelect(category.id)}
                       className={cn(
-                        "flex items-center gap-2 w-full px-3 py-2 text-sm rounded-full transition-all duration-200 my-0.5",
+                        "w-full text-left px-3 py-2 text-sm font-medium rounded-full transition-all duration-200 my-0.5",
                         isCategoryActive(category.id)
                           ? "bg-[#F5F5F5] border-l-[3px] border-[#FF0000] text-[#FF0000]"
-                          : "text-[#666666] hover:bg-[#F0F0F0] hover:text-[#1A1A1A] border border-transparent"
+                          : "text-[#1A1A1A] hover:bg-[#F0F0F0] border border-transparent"
                       )}
                     >
-                      <span className={cn(
-                        "text-base transition-opacity duration-200",
-                        isCategoryActive(category.id) ? "opacity-100" : "opacity-60"
-                      )}>{category.icon}</span>
-                      <span className="font-medium">{category.label}</span>
+                      {category.label}
                     </button>
                   ))}
               </motion.div>
@@ -338,6 +336,7 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
             {librarySection.items.map((item) => {
               const Icon = item.icon;
               const active = isActive(item.path);
+              const disabled = !isAuthenticated;
               
               const handleItemClick = (e: React.MouseEvent) => {
                 if (!isAuthenticated) {
@@ -354,10 +353,10 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
                   to={isAuthenticated ? item.path : "#"}
                   onClick={handleItemClick}
                   title={!effectiveIsExpanded ? item.name : undefined}
-                  className={getNavItemClass(effectiveIsExpanded, active)}
+                  className={getNavItemClass(effectiveIsExpanded, active, disabled)}
                 >
-                  <Icon className={getIconClass(active)} />
-                  {effectiveIsExpanded && <span className={getLabelClass(active)}>{item.name}</span>}
+                  <Icon className={getIconClass(active, disabled)} />
+                  {effectiveIsExpanded && <span className={getLabelClass(active, disabled)}>{item.name}</span>}
                 </Link>
               );
             })}
@@ -405,7 +404,9 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
               effectiveIsExpanded
                 ? "gap-3 px-3 py-2.5 rounded-full justify-between"
                 : "justify-center p-2 rounded-full mx-auto w-10 h-10",
-              "border border-transparent hover:bg-[#F0F0F0] text-[#666666] hover:text-[#1A1A1A]"
+              !isAuthenticated
+                ? "opacity-40 cursor-default border border-transparent"
+                : "border border-transparent hover:bg-[#F0F0F0] text-[#666666] hover:text-[#1A1A1A]"
             )}
           >
             <div className="flex items-center gap-3">
