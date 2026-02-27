@@ -17,6 +17,7 @@ interface DesktopVideoViewProps {
   fetchAttempts?: number;
   selectedCategory?: string;
   sortBy?: string;
+  viewChannels?: boolean;
 }
 
 export const DesktopVideoView = ({
