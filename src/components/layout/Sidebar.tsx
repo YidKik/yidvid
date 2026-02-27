@@ -51,7 +51,6 @@ interface NavSection {
 
 const navSections: NavSection[] = [
   {
-    // No title - these are the main nav items
     items: [
       { name: "Home", path: "/", icon: Home },
       { name: "Videos", path: "/videos", icon: PlayCircle },
@@ -59,7 +58,6 @@ const navSections: NavSection[] = [
     ]
   },
   {
-    // Settings section without title
     items: [
       { name: "Settings", path: "/settings", icon: Settings },
       { name: "About", path: "/about", icon: Info },
@@ -83,6 +81,24 @@ interface SidebarProps {
   userId?: string;
 }
 
+// Shared nav item styles
+const getNavItemClass = (isExpanded: boolean, active: boolean) =>
+  cn(
+    "flex items-center text-sm font-medium transition-all duration-200",
+    isExpanded
+      ? "gap-3 px-3 py-2.5 rounded-full"
+      : "justify-center p-2 rounded-full mx-auto w-10 h-10",
+    active
+      ? "bg-[#F5F5F5] border-l-[3px] border-[#FF0000] text-[#FF0000]"
+      : "border border-transparent hover:bg-[#F0F0F0] text-[#666666] hover:text-[#1A1A1A]"
+  );
+
+const getIconClass = (active: boolean) =>
+  cn("w-5 h-5 shrink-0 transition-colors", active ? "text-[#FF0000]" : "text-[#666666]");
+
+const getLabelClass = (active: boolean) =>
+  cn("truncate transition-colors", active ? "text-[#FF0000]" : "text-[#1A1A1A]");
+
 export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -93,22 +109,19 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
   
   const { allCategories } = useCategories();
 
-  // Get category from URL params
   const searchParams = new URLSearchParams(location.search);
   const categoryFromUrl = searchParams.get('category');
   const [selectedCategory, setSelectedCategory] = useState(categoryFromUrl || "all");
 
-  // Sync selected category with URL
   useEffect(() => {
     if (categoryFromUrl) {
       setSelectedCategory(categoryFromUrl);
-      setIsCategoriesOpen(true); // Auto-open categories dropdown when a category is selected
+      setIsCategoriesOpen(true);
     } else if (location.pathname === "/videos" && !location.search.includes("category=")) {
       setSelectedCategory("all");
     }
   }, [categoryFromUrl, location.pathname, location.search]);
 
-  // Fetch user subscriptions
   const { data: subscriptions } = useQuery({
     queryKey: ["sidebar-subscriptions", userId],
     queryFn: async () => {
@@ -129,59 +142,40 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
     enabled: !!userId && isAuthenticated,
   });
 
-  // Record navigation for back button
   useEffect(() => {
     const currentPath = location.pathname + location.search;
     recordNavigation(currentPath);
   }, [location.pathname, location.search]);
 
-  // On homepage, show collapsed sidebar
   const effectiveIsExpanded = isHomePage ? false : isExpanded;
 
-  // Check if viewing a specific category
   const isViewingCategory = location.pathname === "/videos" && categoryFromUrl && categoryFromUrl !== "all";
 
   const isActive = (path: string) => {
     const [basePath, query] = path.split("?");
-    
-    // If we're viewing a category, don't highlight the Videos page
-    if (isViewingCategory && path === "/videos") {
-      return false;
-    }
-    
+    if (isViewingCategory && path === "/videos") return false;
     if (query) {
-      // For paths with query params (like /videos?sort=newest), check exact match
       return location.pathname === basePath && location.search.includes(query.split("=")[1]);
     }
-    
-    // For paths without query params (like /videos), only match if there's no conflicting query
-    // This prevents /videos from being active when on /videos?sort=newest or /videos?category=xxx
     if (basePath === "/videos" && location.pathname === "/videos") {
-      // Only active if there's no sort param or category param in the URL
       return !location.search.includes("sort=") && !location.search.includes("category=");
     }
-    
     return location.pathname === basePath;
   };
 
-  // Check if a specific category is active
   const isCategoryActive = (categoryId: string) => {
     return location.pathname === "/videos" && categoryFromUrl === categoryId;
   };
 
-  const canGoBack = () => {
-    return !!getPreviousPath();
-  };
+  const canGoBack = () => !!getPreviousPath();
 
   const handleGoBack = () => {
     saveScrollPosition(location.pathname + location.search);
     const previousPath = getPreviousPath();
-    
     if (previousPath) {
       removeCurrentPathFromHistory();
       const scrollPosition = getScrollPosition(previousPath);
       navigate(previousPath);
-      
       setTimeout(() => {
         window.scrollTo({ top: scrollPosition, behavior: 'auto' });
       }, 50);
@@ -206,54 +200,42 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
       className="fixed top-0 left-0 bottom-0 z-40 bg-white flex flex-col overflow-hidden border-r border-[#E5E5E5]"
       style={{ fontFamily: "'Quicksand', sans-serif" }}
     >
-      {/* Logo Section */}
+      {/* Logo */}
       <div className={cn(
         "flex items-center border-b border-[#E5E5E5] h-14",
         effectiveIsExpanded ? "px-4 justify-between" : "px-2 justify-center"
       )}>
         <Link to="/" className="flex items-center gap-2 shrink-0">
-          <img 
-            src={yidvidLogoIcon} 
-            alt="YidVid" 
-            className="w-8 h-8 object-contain"
-          />
+          <img src={yidvidLogoIcon} alt="YidVid" className="w-8 h-8 rounded-full object-contain" />
           {effectiveIsExpanded && (
-            <span 
-              className="text-base font-bold text-gray-800"
-              style={{ fontFamily: "'Fredoka One', 'Nunito', sans-serif" }}
-            >
+            <span className="text-base font-bold text-[#1A1A1A]" style={{ fontFamily: "'Fredoka One', 'Nunito', sans-serif" }}>
               YidVid
             </span>
           )}
         </Link>
         
-        {/* Toggle Arrow - hidden on homepage */}
         {!isHomePage && (
           <Button
             variant="ghost"
             size="icon"
             onClick={() => setIsExpanded(!isExpanded)}
-            className="h-8 w-8 rounded-full hover:bg-[#F0F0F0]"
+            className="h-8 w-8 rounded-full hover:bg-[#F0F0F0] text-[#666666]"
           >
-            {effectiveIsExpanded ? (
-              <ChevronLeft className="w-4 h-4 text-gray-500" />
-            ) : (
-              <ChevronRight className="w-4 h-4 text-gray-500" />
-            )}
+            {effectiveIsExpanded ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
           </Button>
         )}
       </div>
 
-      {/* Back Button - Only show when can go back and on detail pages (not main listing pages) */}
+      {/* Back Button */}
       {canGoBack() && (location.pathname.startsWith("/video/") || location.pathname.startsWith("/channel/")) && (
         <div className={cn("px-2 py-2 border-b border-[#E5E5E5]", effectiveIsExpanded ? "px-3" : "")}>
           <button
             onClick={handleGoBack}
             title="Go back"
             className={cn(
-              "flex items-center rounded-xl text-sm font-medium transition-all duration-200",
-              "text-gray-500 hover:bg-[#F0F0F0] hover:text-gray-700",
-              effectiveIsExpanded ? "gap-2 px-3 py-2 w-full" : "justify-center p-2 w-10 h-10 mx-auto"
+              "flex items-center rounded-full text-sm font-medium transition-all duration-200",
+              "text-[#666666] hover:bg-[#F0F0F0] hover:text-[#1A1A1A]",
+              effectiveIsExpanded ? "gap-2 px-3 py-2.5 w-full" : "justify-center p-2 w-10 h-10 mx-auto"
             )}
           >
             <ArrowLeft className="w-4 h-4 shrink-0" />
@@ -262,71 +244,48 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
         </div>
       )}
 
-      {/* Scrollable Navigation */}
+      {/* Scrollable Nav */}
       <nav className="flex-1 overflow-y-auto py-2 px-2">
-        {/* Main Nav Section */}
-        {navSections.slice(0, 1).map((section, sectionIdx) => (
-          <div key={sectionIdx}>
-            <div className="space-y-1">
-              {section.items.map((item) => {
-                const Icon = item.icon;
-                const active = isActive(item.path);
-                
-                return (
-                  <Link
-                    key={item.path + item.name}
-                    to={item.path}
-                    title={!effectiveIsExpanded ? item.name : undefined}
-                    className={cn(
-                      "flex items-center text-sm font-medium transition-all duration-200",
-                      effectiveIsExpanded 
-                        ? "gap-3 px-3 py-2 rounded-full" 
-                        : "justify-center p-2 rounded-full mx-auto w-10 h-10",
-                      active
-                        ? 'bg-white border-l-[3px] border-[#FF0000] text-[#FF0000]'
-                        : 'border border-transparent hover:bg-[#F0F0F0]'
-                    )}
-                  >
-                    <Icon className={cn(
-                      "w-5 h-5 shrink-0 transition-colors",
-                      active ? 'text-[#FF0000]' : 'text-gray-600'
-                    )} />
-                    {effectiveIsExpanded && (
-                      <span className={cn(
-                        "truncate transition-colors",
-                        active ? 'text-[#FF0000]' : 'text-gray-700'
-                      )}>
-                        {item.name}
-                      </span>
-                    )}
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-        ))}
+        {/* Main Nav */}
+        <div className="space-y-1">
+          {navSections[0].items.map((item) => {
+            const Icon = item.icon;
+            const active = isActive(item.path);
+            return (
+              <Link
+                key={item.path + item.name}
+                to={item.path}
+                title={!effectiveIsExpanded ? item.name : undefined}
+                className={getNavItemClass(effectiveIsExpanded, active)}
+              >
+                <Icon className={getIconClass(active)} />
+                {effectiveIsExpanded && <span className={getLabelClass(active)}>{item.name}</span>}
+              </Link>
+            );
+          })}
+        </div>
 
-        {/* Categories Section - Moved up right after main nav */}
+        {/* Categories */}
         <div className="mt-2 pt-2 border-t border-[#E5E5E5]">
           <button
             onClick={() => setIsCategoriesOpen(!isCategoriesOpen)}
             title={!effectiveIsExpanded ? "Categories" : undefined}
             className={cn(
               "flex items-center text-sm font-medium transition-all duration-200 w-full",
-              effectiveIsExpanded 
-                ? "gap-3 px-3 py-2 rounded-full justify-between" 
+              effectiveIsExpanded
+                ? "gap-3 px-3 py-2.5 rounded-full justify-between"
                 : "justify-center p-2 rounded-full mx-auto w-10 h-10",
-              "border border-transparent hover:bg-[#F0F0F0] text-gray-700"
+              "border border-transparent hover:bg-[#F0F0F0] text-[#666666] hover:text-[#1A1A1A]"
             )}
           >
             <div className="flex items-center gap-3">
-              <LayoutGrid className="w-5 h-5 shrink-0 text-gray-600" />
-              {effectiveIsExpanded && <span>Categories</span>}
+              <LayoutGrid className="w-5 h-5 shrink-0" />
+              {effectiveIsExpanded && <span className="text-[#1A1A1A]">Categories</span>}
             </div>
             {effectiveIsExpanded && (
-              isCategoriesOpen 
-                ? <ChevronUp className="w-4 h-4 text-gray-500" /> 
-                : <ChevronDown className="w-4 h-4 text-gray-400" />
+              isCategoriesOpen
+                ? <ChevronUp className="w-4 h-4 text-[#999999]" />
+                : <ChevronDown className="w-4 h-4 text-[#999999]" />
             )}
           </button>
 
@@ -341,7 +300,6 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
               >
                 {allCategories
                   .filter((category) => {
-                    // Only show categories with emoji icons (not URLs)
                     const isUrl = category.icon?.startsWith('http') || category.icon?.startsWith('/');
                     return !isUrl;
                   })
@@ -350,15 +308,14 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
                       key={category.id}
                       onClick={() => handleCategorySelect(category.id)}
                       className={cn(
-                        "flex items-center gap-2 w-full px-2.5 py-1.5 text-sm rounded-lg transition-all duration-200 my-0.5",
-                        "hover:scale-[1.01]",
+                        "flex items-center gap-2 w-full px-3 py-2 text-sm rounded-full transition-all duration-200 my-0.5",
                         isCategoryActive(category.id)
-                          ? "bg-white text-[#FF0000] border-l-[3px] border-[#FF0000]"
-                          : "text-gray-600 hover:bg-[#F0F0F0] hover:text-[#1A1A1A] border border-transparent"
+                          ? "bg-[#F5F5F5] border-l-[3px] border-[#FF0000] text-[#FF0000]"
+                          : "text-[#666666] hover:bg-[#F0F0F0] hover:text-[#1A1A1A] border border-transparent"
                       )}
                     >
                       <span className={cn(
-                        "text-base transition-all duration-200",
+                        "text-base transition-opacity duration-200",
                         isCategoryActive(category.id) ? "opacity-100" : "opacity-60"
                       )}>{category.icon}</span>
                       <span className="font-medium">{category.label}</span>
@@ -369,10 +326,10 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
           </AnimatePresence>
         </div>
 
-        {/* Library Section */}
+        {/* Library */}
         <div className="mt-3 pt-3 border-t border-[#E5E5E5]">
           {effectiveIsExpanded && (
-            <div className="px-2 py-1.5 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
+            <div className="px-3 py-1.5 text-[10px] font-semibold text-[#999999] uppercase tracking-wider">
               {librarySection.title}
             </div>
           )}
@@ -397,69 +354,32 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
                   to={isAuthenticated ? item.path : "#"}
                   onClick={handleItemClick}
                   title={!effectiveIsExpanded ? item.name : undefined}
-                  className={cn(
-                    "flex items-center text-sm font-medium transition-all duration-200",
-                    effectiveIsExpanded 
-                      ? "gap-3 px-3 py-2 rounded-full" 
-                      : "justify-center p-2 rounded-full mx-auto w-10 h-10",
-                    active
-                      ? 'border border-red-400 bg-red-50/50'
-                      : 'border border-transparent hover:bg-gray-50'
-                  )}
+                  className={getNavItemClass(effectiveIsExpanded, active)}
                 >
-                  <Icon className={cn(
-                    "w-5 h-5 shrink-0 transition-colors",
-                    active ? 'text-[#FF0000]' : 'text-gray-600'
-                  )} />
-                  {effectiveIsExpanded && (
-                    <span className={cn(
-                      "truncate transition-colors",
-                        active ? 'text-[#FF0000]' : 'text-gray-700'
-                    )}>
-                      {item.name}
-                    </span>
-                  )}
+                  <Icon className={getIconClass(active)} />
+                  {effectiveIsExpanded && <span className={getLabelClass(active)}>{item.name}</span>}
                 </Link>
               );
             })}
           </div>
         </div>
 
-        {/* Settings Section */}
+        {/* Settings & About */}
         {navSections.slice(1).map((section, sectionIdx) => (
           <div key={sectionIdx} className="mt-3 pt-3 border-t border-[#E5E5E5]">
             <div className="space-y-1">
               {section.items.map((item) => {
                 const Icon = item.icon;
                 const active = isActive(item.path);
-                
                 return (
                   <Link
                     key={item.path + item.name}
                     to={item.path}
                     title={!effectiveIsExpanded ? item.name : undefined}
-                    className={cn(
-                      "flex items-center text-sm font-medium transition-all duration-200",
-                      effectiveIsExpanded 
-                        ? "gap-3 px-3 py-2 rounded-full" 
-                        : "justify-center p-2 rounded-full mx-auto w-10 h-10",
-                      active
-                        ? 'border border-red-400 bg-red-50/50'
-                        : 'border border-transparent hover:bg-gray-50'
-                    )}
+                    className={getNavItemClass(effectiveIsExpanded, active)}
                   >
-                    <Icon className={cn(
-                      "w-5 h-5 shrink-0 transition-colors",
-                      active ? 'text-[#FF0000]' : 'text-gray-600'
-                    )} />
-                    {effectiveIsExpanded && (
-                      <span className={cn(
-                        "truncate transition-colors",
-                        active ? 'text-[#FF0000]' : 'text-gray-700'
-                      )}>
-                        {item.name}
-                      </span>
-                    )}
+                    <Icon className={getIconClass(active)} />
+                    {effectiveIsExpanded && <span className={getLabelClass(active)}>{item.name}</span>}
                   </Link>
                 );
               })}
@@ -467,7 +387,7 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
           </div>
         ))}
 
-        {/* Subscriptions Section */}
+        {/* Subscriptions */}
         <div className="mt-3 pt-3 border-t border-[#E5E5E5]">
           <button
             onClick={() => {
@@ -482,20 +402,20 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
             title={!effectiveIsExpanded ? "Subscriptions" : undefined}
             className={cn(
               "flex items-center text-sm font-medium transition-all duration-200 w-full",
-              effectiveIsExpanded 
-                ? "gap-3 px-3 py-2 rounded-full justify-between" 
+              effectiveIsExpanded
+                ? "gap-3 px-3 py-2.5 rounded-full justify-between"
                 : "justify-center p-2 rounded-full mx-auto w-10 h-10",
-              "border border-transparent hover:bg-[#F0F0F0] text-gray-700"
+              "border border-transparent hover:bg-[#F0F0F0] text-[#666666] hover:text-[#1A1A1A]"
             )}
           >
             <div className="flex items-center gap-3">
-              <Bell className="w-5 h-5 shrink-0 text-gray-600" />
-              {effectiveIsExpanded && <span>Subscriptions</span>}
+              <Bell className="w-5 h-5 shrink-0" />
+              {effectiveIsExpanded && <span className="text-[#1A1A1A]">Subscriptions</span>}
             </div>
             {effectiveIsExpanded && (
-              isSubscriptionsOpen 
-                ? <ChevronUp className="w-4 h-4 text-gray-500" /> 
-                : <ChevronDown className="w-4 h-4 text-gray-400" />
+              isSubscriptionsOpen
+                ? <ChevronUp className="w-4 h-4 text-[#999999]" />
+                : <ChevronDown className="w-4 h-4 text-[#999999]" />
             )}
           </button>
 
@@ -513,7 +433,7 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
                     <Link
                       key={sub.channel.channel_id}
                       to={`/channel/${sub.channel.channel_id}`}
-                      className="flex items-center gap-2 px-2.5 py-1.5 text-sm rounded-lg text-gray-600 hover:bg-[#F0F0F0] hover:text-[#1A1A1A] border border-transparent transition-all duration-200 hover:scale-[1.01] my-0.5"
+                      className="flex items-center gap-2 px-3 py-2 text-sm rounded-full text-[#666666] hover:bg-[#F0F0F0] hover:text-[#1A1A1A] border border-transparent transition-all duration-200 my-0.5"
                     >
                       <img
                         src={sub.channel.thumbnail_url || '/placeholder.svg'}
@@ -524,7 +444,7 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
                     </Link>
                   ))
                 ) : (
-                  <div className="px-3 py-2 text-xs text-gray-400">
+                  <div className="px-3 py-2 text-xs text-[#999999]">
                     No subscriptions yet
                   </div>
                 )}
@@ -537,5 +457,4 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
   );
 };
 
-// Re-export sidebar width constants from context for backward compatibility
 export { SIDEBAR_EXPANDED_WIDTH, SIDEBAR_COLLAPSED_WIDTH } from "@/contexts/SidebarContext";
