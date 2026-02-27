@@ -1,4 +1,5 @@
 import { useMemo, useCallback, useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import useEmblaCarousel from "embla-carousel-react";
 import { VideoData } from "@/hooks/video/types/video-fetcher";
 import { useVideoDate } from "@/components/video/useVideoDate";
@@ -17,6 +18,7 @@ export const NewVideosSection = ({ videos, autoExpand = false }: NewVideosSectio
   const [currentPage, setCurrentPage] = useState(0);
   const [hasAnimated, setHasAnimated] = useState(false);
   const sectionRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   // Sync state when autoExpand prop changes (e.g., navigating via sidebar)
   useEffect(() => {
@@ -96,6 +98,7 @@ export const NewVideosSection = ({ videos, autoExpand = false }: NewVideosSectio
     setShowAllVideos(false);
     setCurrentPage(0);
     setHasAnimated(false);
+    navigate('/videos', { replace: true });
     setTimeout(() => {
       sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 50);
