@@ -83,9 +83,9 @@ export const ChannelsRowSection = ({ selectedCategory = "all" }: ChannelsRowSect
       });
   }, [channels, channelVideoCounts]);
 
-  // Top 10 for carousel view
+  // Show more channels in carousel (up to 20)
   const sortedChannels = useMemo(() => {
-    return allSortedChannels.slice(0, 10);
+    return allSortedChannels.slice(0, 20);
   }, [allSortedChannels]);
 
   // Handle View All click - expand and scroll to top of page
