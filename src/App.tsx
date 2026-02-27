@@ -51,6 +51,7 @@ import { useIsMobile } from './hooks/use-mobile';
 function AppContent() {
   const location = useLocation();
   const { isAuthenticated, session } = useSessionManager();
+  const { isDesktop } = useIsMobile();
   
   // Initialize keyboard shortcuts
   useKeyboardShortcuts();
