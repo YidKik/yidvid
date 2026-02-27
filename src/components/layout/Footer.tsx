@@ -32,7 +32,7 @@ export const Footer = () => {
                 className="text-xs font-medium"
                 style={{ 
                   fontFamily: "'Quicksand', sans-serif",
-                  color: '#666666'
+                  color: '#999999'
                 }}
               >
                 quality Jewish content for everyone
