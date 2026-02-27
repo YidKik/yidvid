@@ -22,8 +22,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Footer } from "@/components/layout/Footer";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Playlists = () => {
+  const { isMobile } = useIsMobile();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const selectedPlaylistId = searchParams.get("id");
