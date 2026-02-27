@@ -97,6 +97,7 @@ export const NewVideosSection = ({ videos, autoExpand = false }: NewVideosSectio
     setShowAllVideos(false);
     setCurrentPage(0);
     setHasAnimated(false);
+    navigate('/videos', { replace: true });
     setTimeout(() => {
       sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 50);
