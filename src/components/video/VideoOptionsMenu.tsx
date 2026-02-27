@@ -96,19 +96,23 @@ export const VideoOptionsMenu = ({ videoId, variant = "icon", className, compact
             variant="ghost"
             size="icon"
             className={cn(
-              "h-8 w-8 rounded-full transition-colors duration-200",
+              compact ? "h-6 w-6" : "h-8 w-8",
+              "rounded-full transition-colors duration-200",
               variant === "overlay" && "bg-[#1A1A1A] hover:bg-[#FFCC00] text-white hover:text-[#1A1A1A]",
               variant === "icon" && "hover:bg-[#F0F0F0]",
               className
             )}
             onClick={(e) => e.stopPropagation()}
           >
-            <MoreVertical className="w-4 h-4" />
+            <MoreVertical className={compact ? "w-3 h-3" : "w-4 h-4"} />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent 
           align="end" 
-          className="w-56 bg-white border border-[#E5E5E5] shadow-lg rounded-xl z-50"
+          className={cn(
+            "bg-white border border-[#E5E5E5] shadow-lg rounded-xl z-50",
+            compact ? "w-44" : "w-56"
+          )}
           onClick={(e) => e.stopPropagation()}
         >
           <DropdownMenuItem
