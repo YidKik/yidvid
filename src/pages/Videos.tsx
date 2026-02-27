@@ -15,6 +15,7 @@ const MainContent = () => {
   const [searchParams] = useSearchParams();
   const categoryFromUrl = searchParams.get('category');
   const sortFromUrl = searchParams.get('sort');
+  const viewFromUrl = searchParams.get('view');
   const [selectedCategory, setSelectedCategory] = useState(categoryFromUrl || "all");
   const [currentPage, setCurrentPage] = useState(1);
   const [visibleVideos, setVisibleVideos] = useState(12);
