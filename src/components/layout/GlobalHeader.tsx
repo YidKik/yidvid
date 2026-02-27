@@ -121,14 +121,14 @@ export const GlobalHeader = () => {
             >
               <form onSubmit={handleSearchSubmit}>
                 <div 
-                  className={`flex items-center rounded-full border transition-all duration-200 ${
+                  className={`flex items-center rounded-full border-2 transition-all duration-200 bg-[#F5F5F5] ${
                     isSearchOpen 
-                      ? 'border-gray-500 shadow-lg' 
-                      : 'border-gray-400 hover:border-gray-500 shadow-sm'
+                      ? 'border-[#FFCC00] shadow-md bg-white' 
+                      : 'border-[#E5E5E5] hover:border-[#FFCC00] hover:bg-white'
                   }`}
-                  style={{ backgroundColor: '#ffffff' }}
                 >
-                  <div className="flex items-center flex-1 pl-5 pr-2">
+                  <div className="flex items-center flex-1 pl-4 pr-2">
+                    <Search className="w-4 h-4 text-[#999999] shrink-0 mr-2" />
                     <input
                       type="text"
                       value={searchQuery}
@@ -137,9 +137,9 @@ export const GlobalHeader = () => {
                         setIsSearchOpen(true);
                       }}
                       onFocus={() => setIsSearchOpen(true)}
-                      placeholder={isMobile ? "Search" : "Search"}
-                      className="flex-1 bg-transparent border-none outline-none py-2 text-base text-gray-900 placeholder:text-gray-500"
-                      style={{ fontFamily: "'Roboto', 'Arial', sans-serif" }}
+                      placeholder="Search videos..."
+                      className="flex-1 bg-transparent border-none outline-none py-2.5 text-sm text-[#1A1A1A] placeholder:text-[#999999]"
+                      style={{ fontFamily: "'Quicksand', sans-serif" }}
                     />
                     {searchQuery && (
                       <button
@@ -148,18 +148,17 @@ export const GlobalHeader = () => {
                           setSearchQuery("");
                           setIsSearchOpen(false);
                         }}
-                        className="p-1.5 rounded-full hover:bg-gray-100 transition-colors"
+                        className="p-1 rounded-full hover:bg-[#E5E5E5] transition-colors"
                       >
-                        <X className="w-5 h-5 text-gray-600" />
+                        <X className="w-4 h-4 text-[#666666]" />
                       </button>
                     )}
                   </div>
                   <button
                     type="submit"
-                    className="h-10 px-5 rounded-r-full border-l border-gray-300 hover:bg-gray-100 transition-colors flex items-center justify-center"
-                    style={{ backgroundColor: '#f8f8f8' }}
+                    className="h-10 px-4 rounded-r-full border-l border-[#E5E5E5] hover:bg-[#E5E5E5] transition-colors flex items-center justify-center bg-white"
                   >
-                    <Search className="w-5 h-5 text-gray-700" />
+                    <Search className="w-4 h-4 text-[#666666]" />
                   </button>
                 </div>
               </form>
