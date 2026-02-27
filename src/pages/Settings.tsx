@@ -64,7 +64,7 @@ const Settings = () => {
             <SettingsIcon className="w-5 h-5 text-[#1A1A1A]" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-gray-900">Settings</h1>
+            <h1 className="text-xl font-bold text-[#1A1A1A]">Settings</h1>
             <p className="text-sm text-gray-500">Manage your account and preferences</p>
           </div>
         </div>
