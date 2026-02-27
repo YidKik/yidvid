@@ -62,6 +62,7 @@ export const CategoryVideosGrid = ({ videos, categoryId }: CategoryVideosGridPro
             title={video.title}
             thumbnail={video.thumbnail}
             channelName={video.channel_name}
+            channelThumbnail={video.channelThumbnail}
             views={video.views}
             formattedDate={getFormattedDate(video.uploaded_at)}
             duration={video.duration}
