@@ -17,6 +17,7 @@ export const NewVideosSection = ({ videos, autoExpand = false }: NewVideosSectio
   const [showAllVideos, setShowAllVideos] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const [hasAnimated, setHasAnimated] = useState(false);
+  const sectionRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
   // Sync state when autoExpand prop changes (e.g., navigating via sidebar)
