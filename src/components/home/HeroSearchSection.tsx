@@ -25,10 +25,8 @@ const HeroSearchSection = () => {
   
   const { suggestions, isLoading } = useSearchSuggestions();
 
-  // Rotate search suggestions every 3 seconds
   useEffect(() => {
     if (suggestions.length === 0) return;
-    
     const interval = setInterval(() => {
       setCurrentSuggestionIndex((prev) => (prev + 1) % suggestions.length);
     }, 3000);
@@ -37,7 +35,6 @@ const HeroSearchSection = () => {
 
   const currentPlaceholder = suggestions[currentSuggestionIndex]?.name || 'Search videos, channels...';
 
-  // Handle click on the search input to fill with current suggestion
   const handleInputClick = () => {
     if (!searchQuery && suggestions[currentSuggestionIndex]) {
       setSearchQuery(suggestions[currentSuggestionIndex].name);
@@ -87,15 +84,15 @@ const HeroSearchSection = () => {
 
   return (
     <section className="relative min-h-[80vh] flex flex-col items-center justify-center px-6 pt-32 pb-20">
-      {/* Background decoration */}
+      {/* Background decoration - subtle, kept for landing page */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div 
-          className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full blur-3xl opacity-20"
-          style={{ backgroundColor: 'hsl(0, 100%, 50%)' }}
+          className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full blur-3xl opacity-[0.07]"
+          style={{ backgroundColor: '#FF0000' }}
         />
         <div 
-          className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full blur-3xl opacity-15"
-          style={{ backgroundColor: 'hsl(50, 100%, 50%)' }}
+          className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full blur-3xl opacity-[0.05]"
+          style={{ backgroundColor: '#FFCC00' }}
         />
       </div>
 
@@ -105,7 +102,6 @@ const HeroSearchSection = () => {
         transition={{ duration: 0.8 }}
         className="relative z-10 text-center max-w-4xl mx-auto w-full"
       >
-        {/* Animated Logo with Sliding Sections */}
         <AnimatedPlayLogo className="w-56 h-56 md:w-72 md:h-72 lg:w-80 lg:h-80 mx-auto mb-10" />
 
         {/* Typing Text */}
@@ -117,14 +113,13 @@ const HeroSearchSection = () => {
         >
           <h1 
             className="text-3xl md:text-5xl lg:text-6xl font-semibold min-h-[70px] md:min-h-[90px] flex items-center justify-center whitespace-nowrap"
-            style={{ fontFamily: "'Nunito', 'Poppins', sans-serif", color: '#1a1a1a', letterSpacing: '-0.01em' }}
+            style={{ fontFamily: "'Nunito', 'Poppins', sans-serif", color: '#1A1A1A', letterSpacing: '-0.01em' }}
           >
             <span>{displayText}</span>
             <motion.span
               animate={{ opacity: [1, 0] }}
               transition={{ duration: 0.5, repeat: Infinity, repeatType: "reverse" }}
-              className="ml-1 inline-block w-[3px] h-[1em] align-middle"
-              style={{ backgroundColor: 'hsl(0, 100%, 50%)' }}
+              className="ml-1 inline-block w-[3px] h-[1em] align-middle bg-[#FF0000]"
             />
           </h1>
         </motion.div>
@@ -138,11 +133,7 @@ const HeroSearchSection = () => {
           transition={{ delay: 0.6 }}
         >
           <div 
-            className="relative flex items-center rounded-full shadow-xl overflow-hidden border-2 transition-all duration-300 focus-within:shadow-2xl"
-            style={{ 
-              backgroundColor: 'rgba(255, 255, 255, 0.95)',
-              borderColor: 'rgba(255, 0, 0, 0.3)'
-            }}
+            className="relative flex items-center rounded-full shadow-xl overflow-hidden border-2 transition-all duration-300 focus-within:shadow-2xl border-[#E5E5E5] focus-within:border-[#FFCC00] bg-white"
           >
             <Search 
               className="absolute left-5 w-6 h-6 z-10"
@@ -159,7 +150,7 @@ const HeroSearchSection = () => {
                 className="w-full py-5 pl-14 pr-36 text-lg outline-none bg-transparent cursor-text"
                 style={{ 
                   fontFamily: "'Quicksand', sans-serif",
-                  color: '#1a1a1a'
+                  color: '#1A1A1A'
                 }}
               />
               {/* Animated placeholder */}
@@ -186,13 +177,9 @@ const HeroSearchSection = () => {
             </div>
             <motion.button
               type="submit"
-              className="absolute right-2 z-20 flex items-center gap-2 px-6 py-3 rounded-full font-bold transition-colors cursor-pointer"
-              style={{ 
-                fontFamily: "'Quicksand', sans-serif",
-                backgroundColor: 'hsl(0, 100%, 50%)',
-                color: 'white'
-              }}
-              whileHover={{ backgroundColor: 'hsl(0, 100%, 45%)' }}
+              className="absolute right-2 z-20 flex items-center gap-2 px-6 py-3 rounded-full font-bold transition-colors cursor-pointer bg-[#FF0000] text-white"
+              style={{ fontFamily: "'Quicksand', sans-serif" }}
+              whileHover={{ filter: 'brightness(0.9)' }}
               whileTap={{ scale: 0.95 }}
             >
               Search
@@ -201,7 +188,7 @@ const HeroSearchSection = () => {
           </div>
         </motion.form>
 
-        {/* Browse videos button - centered under search bar */}
+        {/* Browse videos button */}
         <motion.div
           className="mt-8 flex justify-center"
           initial={{ opacity: 0, y: 10 }}
@@ -210,27 +197,23 @@ const HeroSearchSection = () => {
         >
           <motion.button
             onClick={() => navigate('/videos')}
-            className="group flex items-center gap-3 px-8 py-4 rounded-full font-semibold transition-all duration-300"
+            className="group flex items-center gap-3 px-8 py-4 rounded-full font-semibold transition-all duration-300 bg-white border border-[#E5E5E5]"
             style={{ 
               fontFamily: "'Quicksand', sans-serif",
-              backgroundColor: 'rgba(255, 255, 255, 0.9)',
-              color: '#333333',
-              border: '1px solid rgba(0, 0, 0, 0.1)',
+              color: '#1A1A1A',
               boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)'
             }}
             whileHover={{ 
-              backgroundColor: 'rgba(255, 255, 255, 1)',
               boxShadow: '0 8px 30px rgba(0, 0, 0, 0.12)',
               scale: 1.02
             }}
             whileTap={{ scale: 0.98 }}
           >
-            <Play className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" style={{ color: 'hsl(0, 100%, 50%)' }} />
+            <Play className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" style={{ color: '#FF0000' }} />
             <span>Browse All Videos</span>
-            <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" style={{ color: 'hsl(0, 100%, 50%)' }} />
+            <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" style={{ color: '#FF0000' }} />
           </motion.button>
         </motion.div>
-
       </motion.div>
     </section>
   );

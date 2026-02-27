@@ -193,7 +193,7 @@ export const VideoOptionsMenu = ({ videoId, variant = "icon", className }: Video
             <Button
               onClick={handleCreatePlaylist}
               disabled={!newPlaylistName.trim() || createPlaylist.isPending}
-              className="rounded-xl bg-red-500 hover:bg-red-600 text-white"
+              className="rounded-xl bg-[#FF0000] hover:brightness-90 text-white"
             >
               Create & Add
             </Button>

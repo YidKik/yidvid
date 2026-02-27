@@ -85,7 +85,7 @@ export const VideoCardWithOptions = ({
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <div className="w-full h-full bg-gradient-to-br from-yellow-400 to-red-500 flex items-center justify-center text-[10px] font-bold text-white">
+                <div className="w-full h-full bg-[#FF0000] flex items-center justify-center text-[10px] font-bold text-white">
                   {channelName.charAt(0).toUpperCase()}
                 </div>
               )}

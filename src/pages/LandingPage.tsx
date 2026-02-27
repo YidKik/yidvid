@@ -77,14 +77,13 @@ const LandingPage = () => {
     }
   };
 
-  // Content wrapper that will be animated
   const pageContent = (
-    <div className="min-h-screen bg-background overflow-x-hidden" style={{ paddingLeft: '64px' }}>
-      {/* Hero Search Section with Typing Effect */}
+    <div className="min-h-screen bg-white overflow-x-hidden" style={{ paddingLeft: '64px' }}>
+      {/* Hero Search Section */}
       <HeroSearchSection />
 
       {/* Features Section */}
-      <section className="py-20 px-6 bg-primary/5">
+      <section className="py-20 px-6 bg-[#F5F5F5]">
         <motion.div
           variants={containerVariants}
           initial="hidden"
@@ -95,9 +94,9 @@ const LandingPage = () => {
           <motion.h2
             variants={itemVariants}
             className="text-4xl md:text-5xl font-extrabold text-center mb-4"
-            style={{ fontFamily: "'Nunito', 'Poppins', sans-serif", color: '#1a1a1a', letterSpacing: '-0.02em' }}
+            style={{ fontFamily: "'Nunito', 'Poppins', sans-serif", color: '#1A1A1A', letterSpacing: '-0.02em' }}
           >
-            Built for <span style={{ color: 'hsl(0, 100%, 50%)' }}>You</span>
+            Built for <span style={{ color: '#FF0000' }}>You</span>
           </motion.h2>
           <motion.p
             variants={itemVariants}
@@ -112,18 +111,16 @@ const LandingPage = () => {
               <motion.div
                 key={feature.title}
                 variants={itemVariants}
-                className="group relative rounded-2xl p-6 border-2 transition-all duration-300 hover:shadow-lg cursor-pointer"
+                className="group relative rounded-2xl p-6 border-2 transition-all duration-300 hover:shadow-lg cursor-pointer bg-white"
                 style={{
-                  backgroundColor: 'rgba(255, 0, 0, 0.08)',
-                  borderColor: 'hsl(0, 100%, 50%)'
+                  borderColor: '#FF0000'
                 }}
                 initial="rest"
                 whileHover="hover"
                 animate="rest"
               >
                 <motion.div 
-                  className="w-14 h-14 rounded-xl flex items-center justify-center mb-4"
-                  style={{ backgroundColor: 'rgba(255, 0, 0, 0.15)' }}
+                  className="w-14 h-14 rounded-xl flex items-center justify-center mb-4 bg-[#F5F5F5]"
                   variants={{ rest: { y: 0 }, hover: { y: -5 } }}
                   transition={{ duration: 0.3 }}
                 >
@@ -131,12 +128,12 @@ const LandingPage = () => {
                     variants={feature.iconVariants}
                     style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                   >
-                    <feature.icon className="w-7 h-7" style={{ color: 'hsl(0, 100%, 50%)' }} strokeWidth={2} />
+                    <feature.icon className="w-7 h-7" style={{ color: '#FF0000' }} strokeWidth={2} />
                   </motion.div>
                 </motion.div>
                 <h3 
                   className="text-xl font-bold mb-2"
-                  style={{ fontFamily: "'Quicksand', sans-serif", color: 'hsl(0, 100%, 50%)' }}
+                  style={{ fontFamily: "'Quicksand', sans-serif", color: '#FF0000' }}
                 >
                   {feature.title}
                 </h3>
@@ -161,9 +158,9 @@ const LandingPage = () => {
           <motion.h2
             variants={itemVariants}
             className="text-4xl md:text-5xl font-bold text-center mb-4"
-            style={{ fontFamily: "'Nunito', 'Poppins', sans-serif", color: '#1a1a1a' }}
+            style={{ fontFamily: "'Nunito', 'Poppins', sans-serif", color: '#1A1A1A' }}
           >
-            Find What You <span style={{ color: 'hsl(0, 100%, 50%)' }}>Love</span>
+            Find What You <span style={{ color: '#FF0000' }}>Love</span>
           </motion.h2>
           <motion.p
             variants={itemVariants}
@@ -182,12 +179,10 @@ const LandingPage = () => {
               <motion.button
                 key={category.label}
                 onClick={() => navigate(category.path)}
-                className="group relative flex flex-col items-center gap-3 px-6 py-8 rounded-2xl font-semibold transition-all duration-500 overflow-hidden"
+                className="group relative flex flex-col items-center gap-3 px-6 py-8 rounded-2xl font-semibold transition-all duration-500 overflow-hidden bg-white border border-[#E5E5E5]"
                 style={{ 
                   fontFamily: "'Quicksand', sans-serif",
-                  background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 245, 245, 0.9) 100%)',
-                  border: '1px solid rgba(0, 0, 0, 0.08)',
-                  color: '#1a1a1a',
+                  color: '#1A1A1A',
                   boxShadow: '0 4px 20px rgba(0, 0, 0, 0.06)'
                 }}
                 whileHover={{ 
@@ -196,27 +191,23 @@ const LandingPage = () => {
                 }}
                 whileTap={{ scale: 0.98 }}
               >
-                {/* Gradient overlay on hover */}
+                {/* Hover overlay */}
                 <div 
-                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                  style={{
-                    background: 'linear-gradient(135deg, rgba(255, 0, 0, 0.08) 0%, rgba(255, 200, 0, 0.06) 100%)'
-                  }}
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-[#F5F5F5]"
                 />
                 
-                {/* Icon container with subtle background */}
+                {/* Icon container */}
                 <div 
-                  className="relative z-10 w-14 h-14 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:scale-110"
-                  style={{ backgroundColor: 'rgba(255, 0, 0, 0.08)' }}
+                  className="relative z-10 w-14 h-14 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 bg-[#F5F5F5]"
                 >
-                  <category.icon className="w-7 h-7 transition-colors duration-300" style={{ color: 'hsl(0, 100%, 50%)' }} />
+                  <category.icon className="w-7 h-7 transition-colors duration-300" style={{ color: '#FF0000' }} />
                 </div>
                 
                 <span className="relative z-10 text-lg">{category.label}</span>
                 
                 <span 
                   className="relative z-10 text-xs flex items-center gap-1 transition-all duration-300 group-hover:gap-2"
-                  style={{ color: 'hsl(0, 100%, 50%)' }}
+                  style={{ color: '#FF0000' }}
                 >
                   Watch Now <ArrowRight className="w-3 h-3 transition-transform duration-300 group-hover:translate-x-1" />
                 </span>
@@ -231,11 +222,9 @@ const LandingPage = () => {
           >
             <motion.button
               onClick={() => navigate('/videos')}
-              className="group relative flex items-center justify-center gap-3 px-10 py-5 font-bold rounded-2xl overflow-hidden"
+              className="group relative flex items-center justify-center gap-3 px-10 py-5 font-bold rounded-2xl overflow-hidden bg-[#FF0000] text-white"
               style={{ 
                 fontFamily: "'Quicksand', sans-serif",
-                background: 'linear-gradient(135deg, hsl(0, 100%, 50%) 0%, hsl(0, 100%, 40%) 100%)',
-                color: 'white',
                 boxShadow: '0 6px 25px rgba(255, 0, 0, 0.3)'
               }}
               whileHover={{ 
@@ -251,12 +240,10 @@ const LandingPage = () => {
 
             <motion.button
               onClick={() => navigate('/videos?view=channels')}
-              className="group relative flex items-center justify-center gap-3 px-10 py-5 font-bold rounded-2xl overflow-hidden"
+              className="group relative flex items-center justify-center gap-3 px-10 py-5 font-bold rounded-2xl overflow-hidden bg-white border border-[#E5E5E5]"
               style={{ 
                 fontFamily: "'Quicksand', sans-serif",
-                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 250, 250, 0.9) 100%)',
-                color: '#1a1a1a',
-                border: '1px solid rgba(0, 0, 0, 0.1)',
+                color: '#1A1A1A',
                 boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)'
               }}
               whileHover={{ 
@@ -265,15 +252,15 @@ const LandingPage = () => {
               }}
               whileTap={{ scale: 0.97 }}
             >
-              <Grid3X3 className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" style={{ color: 'hsl(0, 100%, 50%)' }} />
+              <Grid3X3 className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" style={{ color: '#FF0000' }} />
               <span>View All Channels</span>
-              <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" style={{ color: 'hsl(0, 100%, 50%)' }} />
+              <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" style={{ color: '#FF0000' }} />
             </motion.button>
           </motion.div>
         </motion.div>
       </section>
 
-      {/* Unified Footer */}
+      {/* Footer */}
       <Footer />
     </div>
   );

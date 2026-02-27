@@ -100,7 +100,7 @@ export const VideoCardThumbnail = ({
         {showChannelOnHover && channelName && (
           <div className="absolute bottom-0 left-0 right-0 p-2.5">
             <div 
-              className="inline-flex items-center gap-1.5 bg-black/70 backdrop-blur-sm rounded-full px-3 py-1.5 shadow-lg max-w-[85%]"
+              className="inline-flex items-center gap-1.5 bg-[#1A1A1A] rounded-full px-3 py-1.5 shadow-lg max-w-[85%]"
               style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
             >
               <span className="text-xs font-bold text-white truncate">{channelName}</span>
