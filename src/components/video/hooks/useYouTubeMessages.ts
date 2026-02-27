@@ -63,5 +63,5 @@ export const useYouTubeMessages = ({
 
     window.addEventListener('message', handleMessage);
     return () => window.removeEventListener('message', handleMessage);
-  }, [volume, playbackSpeed, setIsLoading, setHasError, mountedRef]);
+  }, [volume, playbackSpeed, setIsLoading, setHasError, mountedRef, onVideoEnd]);
 };
