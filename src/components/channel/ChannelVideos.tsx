@@ -77,6 +77,7 @@ export const ChannelVideos = ({
               views={video.views || 0}
               formattedDate={getFormattedDate(video.uploaded_at)}
               duration={video.duration}
+              hideChannelInfo={true}
             />
           </div>
         ))}
