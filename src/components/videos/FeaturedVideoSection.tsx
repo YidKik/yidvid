@@ -13,6 +13,7 @@ interface FeaturedVideoSectionProps {
 
 export const FeaturedVideoSection = ({ videos }: FeaturedVideoSectionProps) => {
   const { getFormattedDate } = useVideoDate();
+  const { isMobile, isTablet } = useIsMobile();
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: "start",
     slidesToScroll: 1,
