@@ -103,6 +103,7 @@ const MainContent = () => {
               fetchAttempts={fetchAttempts}
               selectedCategory={selectedCategory}
               sortBy={sortFromUrl || undefined}
+              viewChannels={viewFromUrl === 'channels'}
             />
             
             {hasMoreVideos && !isLoading && (
