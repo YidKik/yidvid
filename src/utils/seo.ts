@@ -70,22 +70,24 @@ export const generateVideoSchema = (video: VideoData, pageUrl: string) => {
     "@type": "VideoObject",
     "name": video.title || "Jewish Video",
     "description": video.description || generateVideoMetaDescription(video),
-    "thumbnailUrl": video.thumbnail || "/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png",
+    "thumbnailUrl": video.thumbnail || "https://yidvid.co/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png",
     "uploadDate": uploadDate,
-    "duration": "PT0M0S", // You might want to fetch actual duration
+    "duration": "PT0M0S",
     "embedUrl": `https://www.youtube-nocookie.com/embed/${video.video_id}`,
+    "contentUrl": `https://www.youtube-nocookie.com/embed/${video.video_id}`,
     "url": pageUrl,
     "publisher": {
       "@type": "Organization",
       "name": "YidVid",
       "logo": {
         "@type": "ImageObject",
-        "url": "/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png"
+        "url": "https://yidvid.co/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png"
       }
     },
     "author": {
-      "@type": "Person",
-      "name": video.channel_name || "YidVid"
+      "@type": "Organization",
+      "name": video.channel_name || "YidVid",
+      "url": `https://yidvid.co/channel/${video.channel_id || ''}`
     },
     "interactionStatistic": {
       "@type": "InteractionCounter",
@@ -108,19 +110,19 @@ export const generateBreadcrumbSchema = (video: VideoData) => {
         "@type": "ListItem",
         "position": 1,
         "name": "Home",
-        "item": "/"
+        "item": "https://yidvid.co/"
       },
       {
         "@type": "ListItem", 
         "position": 2,
         "name": "Videos",
-        "item": "/videos"
+        "item": "https://yidvid.co/videos"
       },
       {
         "@type": "ListItem",
         "position": 3,
         "name": video.title || "Video",
-        "item": window.location.href
+        "item": `https://yidvid.co/video/${video.video_id}`
       }
     ]
   };
@@ -131,11 +133,11 @@ export const generateOrganizationSchema = () => {
     "@context": "https://schema.org",
     "@type": "Organization",
     "name": "YidVid",
-    "description": "bringing kosher content for the Jewish Yiddish community",
-    "url": "https://yidvid.com",
-    "logo": "/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png",
+    "description": "YidVid is your premier Jewish kosher Yiddish platform featuring thousands of videos from trusted sources.",
+    "url": "https://yidvid.co",
+    "logo": "https://yidvid.co/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png",
     "sameAs": [
-      // Add your social media URLs here when available
+      "https://yidvid.co"
     ],
     "contactPoint": {
       "@type": "ContactPoint",
