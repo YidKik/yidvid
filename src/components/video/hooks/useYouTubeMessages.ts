@@ -15,7 +15,8 @@ export const useYouTubeMessages = ({
   playbackSpeed,
   setIsLoading,
   setHasError,
-  mountedRef
+  mountedRef,
+  onVideoEnd
 }: UseYouTubeMessagesProps) => {
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
