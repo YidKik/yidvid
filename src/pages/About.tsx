@@ -105,7 +105,7 @@ const About = () => {
             className={`text-center ${isMobile ? 'p-5' : 'p-8'} rounded-2xl bg-[#F5F5F5] max-w-3xl mx-auto mb-10`}
           >
             <h2 
-              className="text-2xl font-bold mb-4"
+              className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold mb-4`}
               style={{ fontFamily: "'Quicksand', sans-serif", color: '#000000' }}
             >
               Our Mission
