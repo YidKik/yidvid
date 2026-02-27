@@ -12,6 +12,7 @@ interface CommentFormProps {
 export const CommentForm = ({ onSubmit }: CommentFormProps) => {
   const [comment, setComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { isMobile } = useIsMobile();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
