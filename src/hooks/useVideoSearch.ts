@@ -12,11 +12,11 @@ export const useVideoSearch = () => {
   // Get hidden channels filter
   const { filterVideos, filterChannels, hiddenChannelIds } = useHiddenChannels();
 
-  // Debounce search query
+  // Debounce search query - fast 150ms for snappy results
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedQuery(searchQuery);
-    }, 300);
+    }, 150);
 
     return () => clearTimeout(timer);
   }, [searchQuery]);
@@ -67,9 +67,10 @@ export const useVideoSearch = () => {
       }
     },
     enabled: debouncedQuery.trim().length > 0,
-    staleTime: 30000,
-    retry: 1,
+    staleTime: 60000,
+    retry: 0,
     gcTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
   });
 
   // Filter out hidden channels from search results
