@@ -24,7 +24,7 @@ const VideoDetails = () => {
   const { isAuthenticated, session } = useAuth();
   const incrementView = useIncrementVideoView();
   const viewIncrementedRef = useRef<string | null>(null);
-
+  const { isPlaylistMode, totalVideos, currentPosition, goToNextVideo } = usePlaylistAutoplay(videoId || "");
   useEffect(() => {
     if (!videoId) return;
     
