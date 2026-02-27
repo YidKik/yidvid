@@ -81,8 +81,8 @@ const Settings = () => {
                 className={cn(
                   "flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium text-sm whitespace-nowrap transition-all duration-200",
                   isActive 
-                    ? "bg-red-500 text-white shadow-md" 
-                    : "bg-gray-100 text-gray-600 hover:bg-yellow-100 hover:text-gray-900"
+                    ? "bg-[#FF0000] text-white shadow-md" 
+                    : "bg-[#F5F5F5] text-[#666666] hover:bg-[#F0F0F0] hover:text-[#1A1A1A]"
                 )}
               >
                 <Icon size={16} />
