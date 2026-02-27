@@ -409,7 +409,7 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
                 >
                   <Icon className={cn(
                     "w-5 h-5 shrink-0 transition-colors",
-                    active ? 'text-red-500' : 'text-gray-600'
+                    active ? 'text-[#FF0000]' : 'text-gray-600'
                   )} />
                   {effectiveIsExpanded && (
                     <span className={cn(
