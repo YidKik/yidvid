@@ -5,6 +5,7 @@ import { CommentList } from "@/components/comments/CommentList";
 import { VideoCommentsTable } from "@/integrations/supabase/types/video-comments";
 import { toast } from "sonner";
 import { MessageSquare } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 type Comment = VideoCommentsTable["Row"] & {
   profiles: {
