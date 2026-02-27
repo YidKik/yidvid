@@ -115,7 +115,7 @@ export const GlobalHeader = () => {
         <div className="w-full px-3 md:px-6">
           <div className="flex items-center justify-between h-14 gap-4">
             {/* Left Side - Spacer */}
-            <div className="w-10 shrink-0 flex items-center" />
+            <div className={`${isMobile ? 'w-4' : 'w-10'} shrink-0 flex items-center`} />
 
             {/* Center - Search Bar */}
             <div 
