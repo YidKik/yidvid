@@ -107,8 +107,15 @@ const VideoDetails = () => {
               {/* Left Column - Video, Title, Actions, Channel, More Videos */}
               <div className="flex-1 min-w-0">
                 {/* Video Player - clean, no card wrapper */}
-                <div className="rounded-xl overflow-hidden bg-black">
-                  <VideoPlayer videoId={video?.video_id || ""} />
+                <div className="rounded-xl overflow-hidden bg-black relative">
+                  <VideoPlayer videoId={video?.video_id || ""} onVideoEnd={isPlaylistMode ? goToNextVideo : undefined} />
+                  {isPlaylistMode && (
+                    <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-black/70 text-white text-xs font-medium px-2.5 py-1.5 rounded-full backdrop-blur-sm">
+                      <ListMusic className="w-3.5 h-3.5" />
+                      <Shuffle className="w-3 h-3 opacity-70" />
+                      <span>{currentPosition}/{totalVideos}</span>
+                    </div>
+                  )}
                 </div>
                 
                 {/* Title */}
