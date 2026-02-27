@@ -1,4 +1,5 @@
 import { useMemo, useCallback, useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import useEmblaCarousel from "embla-carousel-react";
 import { VideoData } from "@/hooks/video/types/video-fetcher";
 import { useVideoDate } from "@/components/video/useVideoDate";
