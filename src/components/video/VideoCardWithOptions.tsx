@@ -44,7 +44,7 @@ export const VideoCardWithOptions = ({
         className="block"
       >
         {/* Thumbnail with hover effects */}
-        <div className="relative aspect-video rounded-xl overflow-hidden border-2 border-transparent group-hover:border-yellow-400 transition-all duration-300">
+        <div className="relative aspect-video rounded-xl overflow-hidden border-2 border-transparent group-hover:border-[#FFCC00] transition-all duration-300">
           <img
             src={thumbnail}
             alt={title}
@@ -62,7 +62,7 @@ export const VideoCardWithOptions = ({
             {/* Duration badge - bottom right */}
             {duration && (
               <div className="absolute bottom-2 right-2 pointer-events-auto">
-                <div className="bg-black/70 backdrop-blur-sm rounded-full px-2.5 py-1 flex items-center gap-1.5 shadow-lg">
+                <div className="bg-[#1A1A1A] rounded-full px-2.5 py-1 flex items-center gap-1.5 shadow-lg">
                   <Clock size={11} className="text-white" />
                   <span className="text-xs font-semibold text-white">{duration}</span>
                 </div>
@@ -85,7 +85,7 @@ export const VideoCardWithOptions = ({
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <div className="w-full h-full bg-gradient-to-br from-yellow-400 to-red-500 flex items-center justify-center text-[10px] font-bold text-white">
+                <div className="w-full h-full bg-[#FF0000] flex items-center justify-center text-[10px] font-bold text-white">
                   {channelName.charAt(0).toUpperCase()}
                 </div>
               )}

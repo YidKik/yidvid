@@ -59,13 +59,13 @@ const Settings = () => {
       <BackButton />
       <main className={`${isMobile ? 'pt-4 px-4' : 'pt-6 px-6'} pb-16 max-w-5xl`}>
         {/* Header */}
-        <div className="flex items-center gap-3 mb-6 pb-4 border-b-2 border-yellow-400">
-          <div className="p-2.5 bg-yellow-400 rounded-xl">
-            <SettingsIcon className="w-5 h-5 text-white" />
+        <div className="flex items-center gap-3 mb-6 pb-4 border-b-2 border-[#FFCC00]">
+          <div className="p-2.5 bg-[#FFCC00] rounded-xl">
+            <SettingsIcon className="w-5 h-5 text-[#1A1A1A]" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-gray-900">Settings</h1>
-            <p className="text-sm text-gray-500">Manage your account and preferences</p>
+            <h1 className="text-xl font-bold text-[#1A1A1A]">Settings</h1>
+            <p className="text-sm text-[#666666]">Manage your account and preferences</p>
           </div>
         </div>
 
@@ -81,8 +81,8 @@ const Settings = () => {
                 className={cn(
                   "flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium text-sm whitespace-nowrap transition-all duration-200",
                   isActive 
-                    ? "bg-red-500 text-white shadow-md" 
-                    : "bg-gray-100 text-gray-600 hover:bg-yellow-100 hover:text-gray-900"
+                    ? "bg-[#FF0000] text-white shadow-md" 
+                    : "bg-[#F5F5F5] text-[#666666] hover:bg-[#F0F0F0] hover:text-[#1A1A1A]"
                 )}
               >
                 <Icon size={16} />
@@ -93,7 +93,7 @@ const Settings = () => {
         </div>
 
         {/* Content Area */}
-        <div className="bg-gray-50 rounded-2xl border-2 border-gray-200 p-5 md:p-6">
+        <div className="bg-[#F5F5F5] rounded-2xl border-2 border-[#E5E5E5] p-5 md:p-6">
           {activeSection === "profile" && (
             loadingProfile ? <ProfileSectionSkeleton /> : <ProfileSection />
           )}

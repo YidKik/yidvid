@@ -203,12 +203,12 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
       initial={false}
       animate={{ width: sidebarWidth }}
       transition={{ type: "spring", damping: 25, stiffness: 300 }}
-      className="fixed top-0 left-0 bottom-0 z-40 bg-white flex flex-col overflow-hidden border-r border-gray-100"
+      className="fixed top-0 left-0 bottom-0 z-40 bg-white flex flex-col overflow-hidden border-r border-[#E5E5E5]"
       style={{ fontFamily: "'Quicksand', sans-serif" }}
     >
       {/* Logo Section */}
       <div className={cn(
-        "flex items-center border-b border-gray-100 h-14",
+        "flex items-center border-b border-[#E5E5E5] h-14",
         effectiveIsExpanded ? "px-4 justify-between" : "px-2 justify-center"
       )}>
         <Link to="/" className="flex items-center gap-2 shrink-0">
@@ -233,7 +233,7 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
             variant="ghost"
             size="icon"
             onClick={() => setIsExpanded(!isExpanded)}
-            className="h-8 w-8 rounded-full hover:bg-gray-100"
+            className="h-8 w-8 rounded-full hover:bg-[#F0F0F0]"
           >
             {effectiveIsExpanded ? (
               <ChevronLeft className="w-4 h-4 text-gray-500" />
@@ -246,13 +246,13 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
 
       {/* Back Button - Only show when can go back and on detail pages (not main listing pages) */}
       {canGoBack() && (location.pathname.startsWith("/video/") || location.pathname.startsWith("/channel/")) && (
-        <div className={cn("px-2 py-2 border-b border-gray-50", effectiveIsExpanded ? "px-3" : "")}>
+        <div className={cn("px-2 py-2 border-b border-[#E5E5E5]", effectiveIsExpanded ? "px-3" : "")}>
           <button
             onClick={handleGoBack}
             title="Go back"
             className={cn(
               "flex items-center rounded-xl text-sm font-medium transition-all duration-200",
-              "text-gray-500 hover:bg-gray-100 hover:text-gray-700",
+              "text-gray-500 hover:bg-[#F0F0F0] hover:text-gray-700",
               effectiveIsExpanded ? "gap-2 px-3 py-2 w-full" : "justify-center p-2 w-10 h-10 mx-auto"
             )}
           >
@@ -283,18 +283,18 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
                         ? "gap-3 px-3 py-2 rounded-full" 
                         : "justify-center p-2 rounded-full mx-auto w-10 h-10",
                       active
-                        ? 'border border-red-400 bg-red-50/50'
-                        : 'border border-transparent hover:bg-gray-50'
+                        ? 'bg-white border-l-[3px] border-[#FF0000] text-[#FF0000]'
+                        : 'border border-transparent hover:bg-[#F0F0F0]'
                     )}
                   >
                     <Icon className={cn(
                       "w-5 h-5 shrink-0 transition-colors",
-                      active ? 'text-red-500' : 'text-gray-600'
+                      active ? 'text-[#FF0000]' : 'text-gray-600'
                     )} />
                     {effectiveIsExpanded && (
                       <span className={cn(
                         "truncate transition-colors",
-                        active ? 'text-red-500' : 'text-gray-700'
+                        active ? 'text-[#FF0000]' : 'text-gray-700'
                       )}>
                         {item.name}
                       </span>
@@ -307,7 +307,7 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
         ))}
 
         {/* Categories Section - Moved up right after main nav */}
-        <div className="mt-2 pt-2 border-t border-gray-100">
+        <div className="mt-2 pt-2 border-t border-[#E5E5E5]">
           <button
             onClick={() => setIsCategoriesOpen(!isCategoriesOpen)}
             title={!effectiveIsExpanded ? "Categories" : undefined}
@@ -316,7 +316,7 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
               effectiveIsExpanded 
                 ? "gap-3 px-3 py-2 rounded-full justify-between" 
                 : "justify-center p-2 rounded-full mx-auto w-10 h-10",
-              "border border-transparent hover:bg-gray-50 text-gray-700"
+              "border border-transparent hover:bg-[#F0F0F0] text-gray-700"
             )}
           >
             <div className="flex items-center gap-3">
@@ -353,13 +353,13 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
                         "flex items-center gap-2 w-full px-2.5 py-1.5 text-sm rounded-lg transition-all duration-200 my-0.5",
                         "hover:scale-[1.01]",
                         isCategoryActive(category.id)
-                          ? "bg-red-50 text-red-600 border border-red-300"
-                          : "text-gray-600 hover:bg-yellow-50 hover:text-yellow-700 border border-transparent"
+                          ? "bg-white text-[#FF0000] border-l-[3px] border-[#FF0000]"
+                          : "text-gray-600 hover:bg-[#F0F0F0] hover:text-[#1A1A1A] border border-transparent"
                       )}
                     >
                       <span className={cn(
                         "text-base transition-all duration-200",
-                        isCategoryActive(category.id) ? "grayscale-0 opacity-100" : "grayscale opacity-70"
+                        isCategoryActive(category.id) ? "opacity-100" : "opacity-60"
                       )}>{category.icon}</span>
                       <span className="font-medium">{category.label}</span>
                     </button>
@@ -370,7 +370,7 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
         </div>
 
         {/* Library Section */}
-        <div className="mt-3 pt-3 border-t border-gray-100">
+        <div className="mt-3 pt-3 border-t border-[#E5E5E5]">
           {effectiveIsExpanded && (
             <div className="px-2 py-1.5 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
               {librarySection.title}
@@ -409,12 +409,12 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
                 >
                   <Icon className={cn(
                     "w-5 h-5 shrink-0 transition-colors",
-                    active ? 'text-red-500' : 'text-gray-600'
+                    active ? 'text-[#FF0000]' : 'text-gray-600'
                   )} />
                   {effectiveIsExpanded && (
                     <span className={cn(
                       "truncate transition-colors",
-                      active ? 'text-red-500' : 'text-gray-700'
+                        active ? 'text-[#FF0000]' : 'text-gray-700'
                     )}>
                       {item.name}
                     </span>
@@ -427,7 +427,7 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
 
         {/* Settings Section */}
         {navSections.slice(1).map((section, sectionIdx) => (
-          <div key={sectionIdx} className="mt-3 pt-3 border-t border-gray-100">
+          <div key={sectionIdx} className="mt-3 pt-3 border-t border-[#E5E5E5]">
             <div className="space-y-1">
               {section.items.map((item) => {
                 const Icon = item.icon;
@@ -450,12 +450,12 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
                   >
                     <Icon className={cn(
                       "w-5 h-5 shrink-0 transition-colors",
-                      active ? 'text-red-500' : 'text-gray-600'
+                      active ? 'text-[#FF0000]' : 'text-gray-600'
                     )} />
                     {effectiveIsExpanded && (
                       <span className={cn(
                         "truncate transition-colors",
-                        active ? 'text-red-500' : 'text-gray-700'
+                        active ? 'text-[#FF0000]' : 'text-gray-700'
                       )}>
                         {item.name}
                       </span>
@@ -468,7 +468,7 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
         ))}
 
         {/* Subscriptions Section */}
-        <div className="mt-3 pt-3 border-t border-gray-100">
+        <div className="mt-3 pt-3 border-t border-[#E5E5E5]">
           <button
             onClick={() => {
               if (!isAuthenticated) {
@@ -485,7 +485,7 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
               effectiveIsExpanded 
                 ? "gap-3 px-3 py-2 rounded-full justify-between" 
                 : "justify-center p-2 rounded-full mx-auto w-10 h-10",
-              "border border-transparent hover:bg-gray-50 text-gray-700"
+              "border border-transparent hover:bg-[#F0F0F0] text-gray-700"
             )}
           >
             <div className="flex items-center gap-3">
@@ -513,7 +513,7 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
                     <Link
                       key={sub.channel.channel_id}
                       to={`/channel/${sub.channel.channel_id}`}
-                      className="flex items-center gap-2 px-2.5 py-1.5 text-sm rounded-lg text-gray-600 hover:bg-yellow-50 hover:text-yellow-700 border border-transparent transition-all duration-200 hover:scale-[1.01] my-0.5"
+                      className="flex items-center gap-2 px-2.5 py-1.5 text-sm rounded-lg text-gray-600 hover:bg-[#F0F0F0] hover:text-[#1A1A1A] border border-transparent transition-all duration-200 hover:scale-[1.01] my-0.5"
                     >
                       <img
                         src={sub.channel.thumbnail_url || '/placeholder.svg'}

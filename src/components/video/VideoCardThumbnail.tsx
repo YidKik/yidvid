@@ -62,7 +62,7 @@ export const VideoCardThumbnail = ({
         "border-2 border-gray-200/50 bg-gray-50"
       )}
       style={{
-        borderColor: isHovering ? 'hsl(50, 100%, 50%)' : undefined
+        borderColor: isHovering ? '#FFCC00' : undefined
       }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
@@ -87,7 +87,7 @@ export const VideoCardThumbnail = ({
         <div className="absolute top-0 right-0 p-2.5">
           {duration && (
             <div 
-              className="bg-black/70 backdrop-blur-sm rounded-full px-2.5 py-1 flex items-center gap-1.5 shadow-lg"
+              className="bg-[#1A1A1A] rounded-full px-2.5 py-1 flex items-center gap-1.5 shadow-lg"
               style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
             >
               <Clock size={11} className="text-white" />
@@ -100,7 +100,7 @@ export const VideoCardThumbnail = ({
         {showChannelOnHover && channelName && (
           <div className="absolute bottom-0 left-0 right-0 p-2.5">
             <div 
-              className="inline-flex items-center gap-1.5 bg-black/70 backdrop-blur-sm rounded-full px-3 py-1.5 shadow-lg max-w-[85%]"
+              className="inline-flex items-center gap-1.5 bg-[#1A1A1A] rounded-full px-3 py-1.5 shadow-lg max-w-[85%]"
               style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
             >
               <span className="text-xs font-bold text-white truncate">{channelName}</span>

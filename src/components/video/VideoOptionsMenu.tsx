@@ -96,8 +96,8 @@ export const VideoOptionsMenu = ({ videoId, variant = "icon", className }: Video
             size="icon"
             className={cn(
               "h-8 w-8 rounded-full transition-colors duration-200",
-              variant === "overlay" && "bg-black/60 hover:bg-yellow-400 text-white hover:text-gray-900",
-              variant === "icon" && "hover:bg-gray-100",
+              variant === "overlay" && "bg-[#1A1A1A] hover:bg-[#FFCC00] text-white hover:text-[#1A1A1A]",
+              variant === "icon" && "hover:bg-[#F0F0F0]",
               className
             )}
             onClick={(e) => e.stopPropagation()}
@@ -107,20 +107,20 @@ export const VideoOptionsMenu = ({ videoId, variant = "icon", className }: Video
         </DropdownMenuTrigger>
         <DropdownMenuContent 
           align="end" 
-          className="w-56 bg-white border border-gray-200 shadow-lg rounded-xl z-50"
+          className="w-56 bg-white border border-[#E5E5E5] shadow-lg rounded-xl z-50"
           onClick={(e) => e.stopPropagation()}
         >
           <DropdownMenuItem
             onClick={handleToggleFavorite}
-            className="flex items-center gap-3 px-3 py-2.5 cursor-pointer hover:bg-gray-100 rounded-lg"
+            className="flex items-center gap-3 px-3 py-2.5 cursor-pointer hover:bg-[#F0F0F0] rounded-lg"
           >
-            <Heart className={cn("w-4 h-4", isFavorite && "fill-red-500 text-red-500")} />
+            <Heart className={cn("w-4 h-4", isFavorite && "fill-[#FF0000] text-[#FF0000]")} />
             <span>{isFavorite ? "Remove from Favorites" : "Add to Favorites"}</span>
           </DropdownMenuItem>
           
           <DropdownMenuItem
             onClick={handleToggleWatchLater}
-            className="flex items-center gap-3 px-3 py-2.5 cursor-pointer hover:bg-gray-100 rounded-lg"
+            className="flex items-center gap-3 px-3 py-2.5 cursor-pointer hover:bg-[#F0F0F0] rounded-lg"
           >
             <Clock className={cn("w-4 h-4", isWatchLaterSaved && "fill-blue-500 text-blue-500")} />
             <span>{isWatchLaterSaved ? "Remove from Watch Later" : "Add to Watch Later"}</span>
@@ -129,18 +129,18 @@ export const VideoOptionsMenu = ({ videoId, variant = "icon", className }: Video
           <DropdownMenuSeparator />
           
           <DropdownMenuSub>
-            <DropdownMenuSubTrigger className="flex items-center gap-3 px-3 py-2.5 cursor-pointer hover:bg-gray-100 rounded-lg">
+            <DropdownMenuSubTrigger className="flex items-center gap-3 px-3 py-2.5 cursor-pointer hover:bg-[#F0F0F0] rounded-lg">
               <ListPlus className="w-4 h-4" />
               <span>Add to Playlist</span>
             </DropdownMenuSubTrigger>
-            <DropdownMenuSubContent className="bg-white border border-gray-200 shadow-lg rounded-xl w-52">
+            <DropdownMenuSubContent className="bg-white border border-[#E5E5E5] shadow-lg rounded-xl w-52">
               {playlists && playlists.length > 0 ? (
                 <>
                   {playlists.map((playlist) => (
                     <DropdownMenuItem
                       key={playlist.id}
                       onClick={() => handleAddToPlaylist(playlist.id)}
-                      className="flex items-center gap-3 px-3 py-2.5 cursor-pointer hover:bg-gray-100 rounded-lg"
+                      className="flex items-center gap-3 px-3 py-2.5 cursor-pointer hover:bg-[#F0F0F0] rounded-lg"
                     >
                       <ListPlus className="w-4 h-4" />
                       <span className="truncate">{playlist.title}</span>
@@ -157,7 +157,7 @@ export const VideoOptionsMenu = ({ videoId, variant = "icon", className }: Video
                   }
                   setShowCreatePlaylist(true);
                 }}
-                className="flex items-center gap-3 px-3 py-2.5 cursor-pointer hover:bg-gray-100 rounded-lg text-gray-700"
+                className="flex items-center gap-3 px-3 py-2.5 cursor-pointer hover:bg-[#F0F0F0] rounded-lg text-gray-700"
               >
                 <Plus className="w-4 h-4" />
                 <span>Create new playlist</span>
@@ -178,7 +178,7 @@ export const VideoOptionsMenu = ({ videoId, variant = "icon", className }: Video
               placeholder="Playlist name"
               value={newPlaylistName}
               onChange={(e) => setNewPlaylistName(e.target.value)}
-              className="rounded-xl border-gray-300"
+              className="rounded-xl border-[#E5E5E5]"
               onKeyDown={(e) => e.key === "Enter" && handleCreatePlaylist()}
             />
           </div>
@@ -193,7 +193,7 @@ export const VideoOptionsMenu = ({ videoId, variant = "icon", className }: Video
             <Button
               onClick={handleCreatePlaylist}
               disabled={!newPlaylistName.trim() || createPlaylist.isPending}
-              className="rounded-xl bg-red-500 hover:bg-red-600 text-white"
+              className="rounded-xl bg-[#FF0000] hover:brightness-90 text-white"
             >
               Create & Add
             </Button>

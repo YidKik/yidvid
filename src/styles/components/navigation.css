@@ -1,14 +1,5 @@
 
-/* Navigation links should not have background */
-nav a, 
-nav button,
-header a,
-header button {
-  background-color: transparent !important;
-  border: none !important;
-}
-
-/* Home page specific overrides to ensure no red backgrounds */
+/* Home page specific overrides */
 .home-page header,
 .home-page header button,
 .home-page header a,
@@ -26,7 +17,7 @@ header button {
 
 /* Navigation spacing for desktop */
 .home-page header nav {
-  gap: 2.5rem !important; /* Consistent gap for all navigation menus */
+  gap: 2.5rem !important;
 }
 
 .home-page header button,
@@ -37,11 +28,11 @@ header button {
 .home-page header button:hover,
 .home-page nav button:hover {
   background-color: #135d66 !important;
-  color: #ffffff !important; /* Keep text white on hover */
-  transform: scale(1.08); /* Scale button on hover */
+  color: #ffffff !important;
+  transform: scale(1.08);
 }
 
-/* Fix mobile header buttons in home page to prevent red background */
+/* Fix mobile header buttons in home page */
 .home-page header button {
   background-color: transparent !important;
 }
@@ -57,26 +48,19 @@ header button {
     color: white !important;
   }
 
-  /* Mobile header text size and spacing adjustments */
   .home-page header nav {
     gap: 2.5px !important;
   }
   
   .home-page header button,
   .home-page header a {
-    font-size: 0.75rem !important; /* xs text size for mobile */
+    font-size: 0.75rem !important;
     padding: 0.15rem 0.4rem !important;
     margin: -0.15rem -0.4rem !important;
   }
   
   .home-page header button:hover,
   .home-page nav button:hover {
-    transform: scale(1.05); /* Smaller scale for mobile */
-  }
-  
-  /* Ensure buttons on videos page can have colored backgrounds */
-  .videos-page header button.bg-\[\#ea384c\] {
-    background-color: #ea384c !important;
-    opacity: 1 !important;
+    transform: scale(1.05);
   }
 }
