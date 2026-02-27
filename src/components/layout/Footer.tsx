@@ -40,13 +40,13 @@ export const Footer = () => {
             </Link>
 
             {/* Links */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
               <button 
                 onClick={() => setTosDialogOpen(true)}
-                className="text-sm font-medium transition-colors hover:text-[#FF0000]"
+                className="text-xs font-medium transition-colors hover:text-[#FF0000]"
                 style={{ 
                   fontFamily: "'Quicksand', sans-serif",
-                  color: '#666666'
+                  color: '#999999'
                 }}
               >
                 Terms of Service
@@ -54,10 +54,10 @@ export const Footer = () => {
               <span style={{ color: '#E5E5E5' }}>|</span>
               <button 
                 onClick={() => setPrivacyDialogOpen(true)}
-                className="text-sm font-medium transition-colors hover:text-[#FF0000]"
+                className="text-xs font-medium transition-colors hover:text-[#FF0000]"
                 style={{ 
                   fontFamily: "'Quicksand', sans-serif",
-                  color: '#666666'
+                  color: '#999999'
                 }}
               >
                 Privacy Policy
@@ -65,10 +65,10 @@ export const Footer = () => {
               <span style={{ color: '#E5E5E5' }}>|</span>
               <button 
                 onClick={() => setContactDialogOpen(true)}
-                className="text-sm font-medium transition-colors hover:text-[#FF0000]"
+                className="text-xs font-medium transition-colors hover:text-[#FF0000]"
                 style={{ 
                   fontFamily: "'Quicksand', sans-serif",
-                  color: '#666666'
+                  color: '#999999'
                 }}
               >
                 Contact
@@ -77,10 +77,10 @@ export const Footer = () => {
 
             {/* Copyright */}
             <div 
-              className="text-sm"
+              className="text-xs"
               style={{ 
                 fontFamily: "'Quicksand', sans-serif",
-                color: '#999999'
+                color: '#BBBBBB'
               }}
             >
               © {new Date().getFullYear()} YidVid
