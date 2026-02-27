@@ -513,7 +513,7 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
                     <Link
                       key={sub.channel.channel_id}
                       to={`/channel/${sub.channel.channel_id}`}
-                      className="flex items-center gap-2 px-2.5 py-1.5 text-sm rounded-lg text-gray-600 hover:bg-yellow-50 hover:text-yellow-700 border border-transparent transition-all duration-200 hover:scale-[1.01] my-0.5"
+                      className="flex items-center gap-2 px-2.5 py-1.5 text-sm rounded-lg text-gray-600 hover:bg-[#F0F0F0] hover:text-[#1A1A1A] border border-transparent transition-all duration-200 hover:scale-[1.01] my-0.5"
                     >
                       <img
                         src={sub.channel.thumbnail_url || '/placeholder.svg'}
