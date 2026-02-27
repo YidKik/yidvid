@@ -171,59 +171,53 @@ export const GlobalHeader = () => {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.15 }}
-                    className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden z-[100]"
+                    className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-xl border border-[#E5E5E5] overflow-hidden z-[100]"
                     style={{ maxHeight: '70vh' }}
                   >
                     {isSearching && (
                       <div className="flex items-center justify-center py-4">
-                        <div className="w-5 h-5 border-2 border-red-500 border-t-transparent rounded-full animate-spin"></div>
-                        <span className="ml-2 text-sm text-gray-500">Searching...</span>
+                        <div className="w-5 h-5 border-2 border-[#FF0000] border-t-transparent rounded-full animate-spin"></div>
+                        <span className="ml-2 text-sm text-[#999999]">Searching...</span>
                       </div>
                     )}
 
                     {!isSearching && hasResults && (
                       <div className="max-h-80 overflow-y-auto">
-                        {/* Videos */}
                         {searchResults.videos && searchResults.videos.length > 0 && (
                           <div>
-                            <div className="px-4 py-2 bg-gray-50 text-xs font-semibold text-gray-500 uppercase">
+                            <div className="px-4 py-2 bg-[#F5F5F5] text-xs font-semibold text-[#999999] uppercase">
                               Videos
                             </div>
                             {searchResults.videos.slice(0, 5).map((video: any) => (
                               <button
                                 key={video.id}
                                 onClick={() => handleVideoClick(video.video_id || video.id)}
-                                className="flex items-center gap-3 w-full px-4 py-2.5 hover:bg-gray-50 transition-colors text-left"
+                                className="flex items-center gap-3 w-full px-4 py-2.5 hover:bg-[#F0F0F0] transition-colors text-left"
                               >
                                 <img
                                   src={video.thumbnail}
                                   alt={video.title}
-                                  className="w-16 h-10 object-cover rounded"
+                                  className="w-16 h-10 object-cover rounded-lg"
                                 />
                                 <div className="flex-1 min-w-0">
-                                  <p className="text-sm font-medium text-gray-800 truncate">
-                                    {video.title}
-                                  </p>
-                                  <p className="text-xs text-gray-500 truncate">
-                                    {video.channel_name}
-                                  </p>
+                                  <p className="text-sm font-medium text-[#1A1A1A] truncate">{video.title}</p>
+                                  <p className="text-xs text-[#999999] truncate">{video.channel_name}</p>
                                 </div>
                               </button>
                             ))}
                           </div>
                         )}
 
-                        {/* Channels */}
                         {searchResults.channels && searchResults.channels.length > 0 && (
                           <div>
-                            <div className="px-4 py-2 bg-gray-50 text-xs font-semibold text-gray-500 uppercase border-t">
+                            <div className="px-4 py-2 bg-[#F5F5F5] text-xs font-semibold text-[#999999] uppercase border-t border-[#E5E5E5]">
                               Channels
                             </div>
                             {searchResults.channels.slice(0, 3).map((channel: any) => (
                               <button
                                 key={channel.id}
                                 onClick={() => handleChannelClick(channel.channel_id)}
-                                className="flex items-center gap-3 w-full px-4 py-2.5 hover:bg-gray-50 transition-colors text-left"
+                                className="flex items-center gap-3 w-full px-4 py-2.5 hover:bg-[#F0F0F0] transition-colors text-left"
                               >
                                 <img
                                   src={channel.thumbnail_url || '/placeholder.svg'}
@@ -231,10 +225,8 @@ export const GlobalHeader = () => {
                                   className="w-10 h-10 object-cover rounded-full"
                                 />
                                 <div className="flex-1 min-w-0">
-                                  <p className="text-sm font-medium text-gray-800 truncate">
-                                    {channel.title}
-                                  </p>
-                                  <p className="text-xs text-gray-500">Channel</p>
+                                  <p className="text-sm font-medium text-[#1A1A1A] truncate">{channel.title}</p>
+                                  <p className="text-xs text-[#999999]">Channel</p>
                                 </div>
                               </button>
                             ))}
@@ -245,14 +237,13 @@ export const GlobalHeader = () => {
 
                     {!isSearching && searchQuery.trim() && !hasResults && (
                       <div className="py-6 text-center">
-                        <Search className="w-8 h-8 mx-auto mb-2 text-gray-300" />
-                        <p className="text-sm text-gray-500">No results found</p>
+                        <Search className="w-8 h-8 mx-auto mb-2 text-[#E5E5E5]" />
+                        <p className="text-sm text-[#999999]">No results found</p>
                       </div>
                     )}
 
-                    {/* Press Enter hint */}
                     {searchQuery.trim() && (
-                      <div className="px-4 py-2 bg-gray-50 text-xs text-gray-400 text-center border-t">
+                      <div className="px-4 py-2 bg-[#F5F5F5] text-xs text-[#999999] text-center border-t border-[#E5E5E5]">
                         Press Enter to see all results
                       </div>
                     )}
