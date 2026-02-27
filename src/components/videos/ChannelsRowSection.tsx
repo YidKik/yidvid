@@ -109,7 +109,29 @@ export const ChannelsRowSection = ({ selectedCategory = "all" }: ChannelsRowSect
     }, 50);
   };
 
-  if (isLoading || sortedChannels.length === 0) return null;
+  // Show skeleton while loading instead of hiding the section
+  if (isLoading) {
+    return (
+      <section className="mb-10 py-10 -mx-6 px-6 bg-gray-50 dark:bg-gray-900/30 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+            Most Viewed Channels
+          </h2>
+        </div>
+        <div className="flex gap-4 overflow-hidden py-3">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="flex-none w-[210px] bg-card rounded-2xl p-7 shadow-md text-center animate-pulse">
+              <div className="mx-auto w-28 h-28 rounded-full bg-muted" />
+              <div className="mt-4 h-4 bg-muted rounded w-3/4 mx-auto" />
+              <div className="mt-2 h-3 bg-muted rounded w-1/2 mx-auto" />
+            </div>
+          ))}
+        </div>
+      </section>
+    );
+  }
+
+  if (sortedChannels.length === 0) return null;
 
   // Channel Card Component for reuse
   // Skip animation for first 12 cards (first 2 rows on largest grid) and after initial animation
