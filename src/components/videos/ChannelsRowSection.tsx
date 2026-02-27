@@ -10,6 +10,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface ChannelsRowSectionProps {
   selectedCategory?: string;
+  autoExpand?: boolean;
 }
 
 export const ChannelsRowSection = ({ selectedCategory = "all" }: ChannelsRowSectionProps) => {
