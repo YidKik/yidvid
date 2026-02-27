@@ -48,7 +48,7 @@ export const VideoCardWithOptions = ({
         className="block"
       >
         {/* Thumbnail with hover effects */}
-        <div className={`relative aspect-video ${isMobile ? 'rounded-lg' : isTablet ? 'rounded-xl' : 'rounded-xl'} overflow-hidden border-2 border-transparent group-hover:border-[#FFCC00] transition-all duration-300`}>
+        <div className={`relative aspect-video rounded-xl overflow-hidden border-2 border-transparent group-hover:border-[#FFCC00] transition-all duration-300`}>
           <img
             src={thumbnail}
             alt={title}
