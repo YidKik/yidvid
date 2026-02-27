@@ -27,7 +27,8 @@ export const DesktopVideoView = ({
   refetch,
   forceRefetch,
   selectedCategory = "all",
-  sortBy
+  sortBy,
+  viewChannels = false
 }: DesktopVideoViewProps) => {
   // More thorough check if we have real videos (not samples)
   const hasRealVideos = videos.some(video => 
