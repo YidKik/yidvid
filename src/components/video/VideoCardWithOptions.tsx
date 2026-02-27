@@ -109,13 +109,14 @@ export const VideoCardWithOptions = ({
       {/* 3-dot options menu - positioned outside the Link to prevent navigation */}
       <div 
         className={cn(
-          "absolute top-2 left-2 transition-opacity duration-300 z-10",
+          "absolute top-1 left-1 transition-opacity duration-300 z-10",
           isHovering ? "opacity-100" : "opacity-0"
         )}
       >
         <VideoOptionsMenu 
           videoId={videoUuid} 
           variant="overlay"
+          compact={isMobile}
         />
       </div>
     </div>
