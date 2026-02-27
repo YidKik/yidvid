@@ -1,8 +1,11 @@
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet";
-import { Heart, Shield, Users, RefreshCw } from "lucide-react";
+import { Heart, Shield, Users, RefreshCw, FileText, ScrollText } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const About = () => {
+  const navigate = useNavigate();
+
   return (
     <>
       <Helmet>
@@ -11,7 +14,7 @@ const About = () => {
       </Helmet>
 
       <div className="min-h-screen bg-white pt-14 pl-[200px] transition-all duration-300">
-        <div className="max-w-4xl px-6 py-12">
+        <div className="max-w-4xl mx-auto px-6 py-12">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -36,7 +39,7 @@ const About = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.5 }}
-            className="grid md:grid-cols-2 gap-8 mb-16"
+            className="grid md:grid-cols-2 gap-8 mb-16 max-w-3xl mx-auto"
           >
             {[
               {
@@ -65,10 +68,10 @@ const About = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 + index * 0.1, duration: 0.5 }}
-                className="p-6 rounded-2xl bg-[#F5F5F5] border border-[#E5E5E5]"
+                className="p-6 rounded-2xl bg-[#F5F5F5] border border-[#E5E5E5] text-center"
               >
                 <feature.icon 
-                  className="w-10 h-10 mb-4" 
+                  className="w-10 h-10 mb-4 mx-auto" 
                   style={{ color: '#FFCC00' }} 
                 />
                 <h3 
@@ -91,7 +94,7 @@ const About = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.5 }}
-            className="text-center p-8 rounded-2xl bg-[#F5F5F5]"
+            className="text-center p-8 rounded-2xl bg-[#F5F5F5] max-w-3xl mx-auto mb-10"
           >
             <h2 
               className="text-2xl font-bold mb-4"
@@ -107,6 +110,31 @@ const About = () => {
               kosher content. We believe everyone deserves access to inspiring, educational, and entertaining 
               videos without worrying about inappropriate content.
             </p>
+          </motion.div>
+
+          {/* Terms & Privacy Buttons */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6, duration: 0.5 }}
+            className="flex items-center justify-center gap-4 max-w-3xl mx-auto"
+          >
+            <button
+              onClick={() => navigate('/terms')}
+              className="flex items-center gap-2 px-6 py-3 rounded-full bg-[#F5F5F5] border border-[#E5E5E5] text-[#1A1A1A] font-semibold text-sm hover:border-[#FFCC00] hover:shadow-sm transition-all"
+              style={{ fontFamily: "'Quicksand', sans-serif" }}
+            >
+              <FileText className="w-4 h-4" style={{ color: '#FFCC00' }} />
+              Terms & Conditions
+            </button>
+            <button
+              onClick={() => navigate('/privacy')}
+              className="flex items-center gap-2 px-6 py-3 rounded-full bg-[#F5F5F5] border border-[#E5E5E5] text-[#1A1A1A] font-semibold text-sm hover:border-[#FFCC00] hover:shadow-sm transition-all"
+              style={{ fontFamily: "'Quicksand', sans-serif" }}
+            >
+              <ScrollText className="w-4 h-4" style={{ color: '#FFCC00' }} />
+              Privacy Policy
+            </button>
           </motion.div>
         </div>
       </div>
