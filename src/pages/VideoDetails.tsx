@@ -13,7 +13,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useIncrementVideoView } from "@/hooks/video/useIncrementVideoView";
 import { FriendlyVideoActionBar } from "@/components/video/details/FriendlyVideoActionBar";
 import { FriendlyChannelSection } from "@/components/video/details/FriendlyChannelSection";
-import { MessageCircle, Sparkles } from "lucide-react";
+import { MessageCircle } from "lucide-react";
 import { usePageLoader } from "@/contexts/LoadingContext";
 
 const VideoDetails = () => {
@@ -48,7 +48,6 @@ const VideoDetails = () => {
     videoId
   );
 
-  // Register loading state with the global loading bar
   const isLoading = isLoadingVideo || isLoadingRelated;
   usePageLoader('video-details', isLoading);
 
@@ -57,10 +56,10 @@ const VideoDetails = () => {
       console.error("Video not found or error:", error, "for videoId:", videoId);
     }
     return (
-      <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/10 pt-14 pl-[200px] transition-all duration-300">
+      <div className="min-h-screen bg-white pt-14 pl-[200px] transition-all duration-300">
         <div className="p-4">
-          <div className="p-8 text-center bg-card/80 backdrop-blur-sm rounded-3xl shadow-lg border border-border/50 mt-6">
-            <div className="mx-auto mb-6 w-full max-w-md aspect-video flex items-center justify-center bg-muted/30 rounded-2xl">
+          <div className="p-8 text-center bg-[#F5F5F5] rounded-2xl mt-6">
+            <div className="mx-auto mb-6 w-full max-w-md aspect-video flex items-center justify-center bg-white rounded-xl">
               <VideoPlaceholder size="large" />
             </div>
             <h2 className="text-xl font-semibold text-destructive">
@@ -68,10 +67,10 @@ const VideoDetails = () => {
             </h2>
             {!isLoadingVideo && (
               <>
-                <p className="mt-2 text-muted-foreground">
+                <p className="mt-2 text-[#666666]">
                   {error ? `Error: ${error.message}` : "The video you're looking for doesn't exist or has been removed."}
                 </p>
-                <Link to="/videos" className="mt-4 inline-block px-6 py-3 bg-primary text-primary-foreground rounded-full font-medium hover:bg-primary/90 transition-all hover:shadow-lg hover:shadow-primary/25">
+                <Link to="/videos" className="mt-4 inline-block px-6 py-3 bg-[#FF0000] text-white rounded-full font-medium hover:brightness-90 transition-all">
                   Return to videos
                 </Link>
               </>
@@ -98,154 +97,109 @@ const VideoDetails = () => {
       <VideoSEO video={videoForSEO} />
       {isAuthenticated && <VideoHistory videoId={video?.id || ""} />}
       
-      <div className="min-h-screen bg-gradient-to-br from-yellow-50/40 via-background to-red-50/20 pt-14 pl-[200px] transition-all duration-300">
-        <div className="px-6 pt-6 pb-12">
+      <div className="min-h-screen bg-white pt-14 pl-[200px] transition-all duration-300">
+        <div className="px-6 pt-4 pb-12">
           
           {/* Desktop/Tablet Layout */}
           {!isMobile && (
-            <div className="mt-6 space-y-8">
-              {/* Main content area - Video left, Comments right */}
-              <div className="flex gap-6">
-                {/* Left Column - Video and Info */}
-                <div className="flex-1 space-y-6">
-                  {/* Video Player Card - Enhanced fade background */}
-                  <div className="relative rounded-3xl shadow-2xl overflow-hidden border-2 border-yellow-200/30">
-                    {/* Enhanced fade transparency background */}
-                    <div className="absolute inset-0 bg-gradient-to-b from-card/70 via-card/50 to-card/40 backdrop-blur-md" />
-                    <div className="absolute inset-0 bg-gradient-to-br from-yellow-100/20 via-transparent to-red-100/15 pointer-events-none" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-yellow-50/10 via-transparent to-red-50/10 pointer-events-none" />
-                    
-                    {/* Video Player */}
-                    <div className="relative aspect-video">
-                      <VideoPlayer videoId={video?.video_id || ""} />
-                    </div>
-                    
-                    {/* Yellow/Red gradient divider */}
-                    <div className="h-1 bg-gradient-to-r from-yellow-300/40 via-red-300/30 to-yellow-300/40" />
-                    
-                    {/* Video Title Section */}
-                    <div className="relative p-6">
-                      <h1 className="text-xl font-bold text-foreground leading-tight mb-4">
-                        {video?.title}
-                      </h1>
-                      
-                      {/* Action Buttons */}
-                      <FriendlyVideoActionBar 
-                        videoId={video?.id || ""} 
-                        youtubeVideoId={video?.video_id || ""}
-                        views={video?.views || 0}
-                        uploadedAt={video?.uploaded_at || ""}
-                      />
-                    </div>
-                  </div>
-                  
-                  {/* Section Divider */}
-                  <div className="flex items-center gap-4 px-4">
-                    <div className="flex-1 h-px bg-gradient-to-r from-transparent via-red-200/40 to-yellow-200/30" />
-                    <div className="w-2 h-2 rounded-full bg-gradient-to-br from-red-400/50 to-yellow-400/40" />
-                    <div className="flex-1 h-px bg-gradient-to-r from-yellow-200/30 via-red-200/40 to-transparent" />
-                  </div>
-                  
-                  {/* Channel, Description & More Videos Section - Combined */}
-                  <FriendlyChannelSection
-                    channelName={video?.channel_name || ""}
-                    channelId={video?.channel_id || ""}
-                    channelThumbnail={video?.youtube_channels?.thumbnail_url || ""}
-                    description={video?.description || ""}
-                    channelVideos={channelVideos}
-                    isLoadingVideos={isLoadingRelated}
-                  />
+            <div className="mt-4 flex gap-6">
+              {/* Left Column - Video, Title, Actions, Channel, More Videos */}
+              <div className="flex-1 min-w-0">
+                {/* Video Player - clean, no card wrapper */}
+                <div className="rounded-xl overflow-hidden bg-black">
+                  <VideoPlayer videoId={video?.video_id || ""} />
                 </div>
                 
-                {/* Right Column - Comments (wider) */}
-                <div className="w-[420px] flex-shrink-0">
-                  <div className="relative bg-card/90 backdrop-blur-md rounded-3xl shadow-xl overflow-hidden sticky top-24 border-2 border-yellow-200/40">
-                    {/* Friendly gradient background */}
-                    <div className="absolute inset-0 bg-gradient-to-b from-yellow-50/20 via-transparent to-red-50/10 pointer-events-none" />
-                    
-                    {/* Comments Header */}
-                    <div className="relative p-5 bg-gradient-to-r from-yellow-100/50 via-red-50/30 to-yellow-50/20">
-                      <div className="flex items-center gap-3">
-                        <div className="p-2.5 bg-yellow-400/30 rounded-2xl">
-                          <MessageCircle className="h-5 w-5 text-yellow-600" />
-                        </div>
-                        <h3 className="text-lg font-bold text-foreground">💬 Comments</h3>
-                      </div>
-                    </div>
-                    
-                    {/* Yellow divider */}
-                    <div className="h-0.5 bg-gradient-to-r from-transparent via-yellow-300/50 to-transparent" />
-                    
-                    {/* Comments Content */}
-                    <div className="relative p-5 max-h-[600px] overflow-y-auto">
-                      {isAuthenticated ? (
-                        <VideoComments videoId={video?.id || ""} />
-                      ) : (
-                        <div className="text-center py-10">
-                          <div className="w-14 h-14 mx-auto mb-4 bg-yellow-100 rounded-full flex items-center justify-center">
-                            <MessageCircle className="h-7 w-7 text-yellow-500" />
-                          </div>
-                          <p className="text-foreground font-medium text-sm mb-4 px-4 leading-relaxed">
-                            To view comments and post comments, you need to be logged in.
-                          </p>
-                          <Link 
-                            to="/auth" 
-                            className="inline-block px-6 py-2.5 bg-yellow-400 text-yellow-900 rounded-full text-sm font-semibold hover:bg-yellow-500 transition-all hover:shadow-lg hover:shadow-yellow-300/40"
-                          >
-                            Sign In
-                          </Link>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Related videos are now part of FriendlyChannelSection */}
-            </div>
-          )}
-          
-          {/* Mobile Layout */}
-          {isMobile && (
-            <div className="mt-4 space-y-5">
-              {/* Video Card - Enhanced fade background */}
-              <div className="relative rounded-3xl shadow-2xl overflow-hidden border-2 border-yellow-200/30">
-                {/* Enhanced fade transparency background */}
-                <div className="absolute inset-0 bg-gradient-to-b from-card/70 via-card/50 to-card/40 backdrop-blur-md" />
-                <div className="absolute inset-0 bg-gradient-to-br from-yellow-100/20 via-transparent to-red-100/15 pointer-events-none" />
-                <div className="absolute inset-0 bg-gradient-to-t from-yellow-50/10 via-transparent to-red-50/10 pointer-events-none" />
+                {/* Title */}
+                <h1 className="text-xl font-bold text-[#1A1A1A] leading-tight mt-4">
+                  {video?.title}
+                </h1>
                 
-                {/* Video Player */}
-                <VideoPlayer videoId={video?.video_id || ""} />
-                
-                {/* Yellow/Red gradient divider */}
-                <div className="h-1 bg-gradient-to-r from-yellow-300/40 via-red-300/30 to-yellow-300/40" />
-                
-                <div className="relative p-5">
-                  {/* Video Title */}
-                  <h1 className="text-lg font-bold text-foreground leading-tight mb-4">
-                    {video?.title}
-                  </h1>
-                  
-                  {/* Action Buttons */}
+                {/* Action Buttons */}
+                <div className="mt-3">
                   <FriendlyVideoActionBar 
                     videoId={video?.id || ""} 
                     youtubeVideoId={video?.video_id || ""}
                     views={video?.views || 0}
                     uploadedAt={video?.uploaded_at || ""}
-                    compact
                   />
                 </div>
+                
+                {/* Thin divider */}
+                <div className="h-px bg-[#E5E5E5] my-4" />
+                
+                {/* Channel + Description + More Videos */}
+                <FriendlyChannelSection
+                  channelName={video?.channel_name || ""}
+                  channelId={video?.channel_id || ""}
+                  channelThumbnail={video?.youtube_channels?.thumbnail_url || ""}
+                  description={video?.description || ""}
+                  channelVideos={channelVideos}
+                  isLoadingVideos={isLoadingRelated}
+                />
               </div>
               
-              {/* Mobile Section Divider */}
-              <div className="flex items-center gap-3 px-4">
-                <div className="flex-1 h-px bg-gradient-to-r from-transparent via-red-200/40 to-yellow-200/30" />
-                <div className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-red-400/50 to-yellow-400/40" />
-                <div className="flex-1 h-px bg-gradient-to-r from-yellow-200/30 via-red-200/40 to-transparent" />
+              {/* Right Column - Comments */}
+              <div className="w-[380px] flex-shrink-0">
+                <div className="bg-[#F5F5F5] rounded-xl sticky top-20 overflow-hidden">
+                  {/* Simple header */}
+                  <div className="px-5 py-4 border-b border-[#E5E5E5] bg-white">
+                    <h3 className="text-base font-semibold text-[#1A1A1A] flex items-center gap-2">
+                      <MessageCircle className="h-4 w-4 text-[#999999]" />
+                      Comments
+                    </h3>
+                  </div>
+                  
+                  {/* Comments Content */}
+                  <div className="p-4 max-h-[600px] overflow-y-auto">
+                    {isAuthenticated ? (
+                      <VideoComments videoId={video?.id || ""} />
+                    ) : (
+                      <div className="text-center py-10">
+                        <MessageCircle className="h-8 w-8 text-[#999999] mx-auto mb-3" />
+                        <p className="text-[#666666] text-sm mb-4">
+                          Sign in to view and post comments.
+                        </p>
+                        <Link 
+                          to="/auth" 
+                          className="inline-block px-5 py-2 bg-[#FF0000] text-white rounded-full text-sm font-medium hover:brightness-90 transition-all"
+                        >
+                          Sign In
+                        </Link>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+          
+          {/* Mobile Layout */}
+          {isMobile && (
+            <div className="mt-2 space-y-4">
+              {/* Video Player */}
+              <div className="rounded-xl overflow-hidden bg-black -mx-6">
+                <VideoPlayer videoId={video?.video_id || ""} />
               </div>
               
-              {/* Channel, Description & More Videos Section - Combined */}
+              {/* Title */}
+              <h1 className="text-lg font-bold text-[#1A1A1A] leading-tight">
+                {video?.title}
+              </h1>
+              
+              {/* Action Buttons */}
+              <FriendlyVideoActionBar 
+                videoId={video?.id || ""} 
+                youtubeVideoId={video?.video_id || ""}
+                views={video?.views || 0}
+                uploadedAt={video?.uploaded_at || ""}
+                compact
+              />
+              
+              {/* Divider */}
+              <div className="h-px bg-[#E5E5E5]" />
+              
+              {/* Channel + Description + More Videos */}
               <FriendlyChannelSection
                 channelName={video?.channel_name || ""}
                 channelId={video?.channel_id || ""}
@@ -256,37 +210,30 @@ const VideoDetails = () => {
                 compact
               />
               
+              {/* Divider */}
+              <div className="h-px bg-[#E5E5E5]" />
+              
               {/* Comments - Mobile */}
-              <div className="relative bg-card/90 backdrop-blur-md rounded-3xl shadow-xl overflow-hidden border-2 border-yellow-200/40">
-                {/* Friendly gradient */}
-                <div className="absolute inset-0 bg-gradient-to-b from-yellow-50/20 via-transparent to-red-50/10 pointer-events-none" />
-                
-                <div className="relative p-4 bg-gradient-to-r from-yellow-100/50 via-red-50/30 to-yellow-50/20">
-                  <div className="flex items-center gap-2">
-                    <div className="p-2 bg-yellow-400/30 rounded-xl">
-                      <MessageCircle className="h-4 w-4 text-yellow-600" />
-                    </div>
-                    <h3 className="text-base font-bold text-foreground">💬 Comments</h3>
-                  </div>
+              <div className="bg-[#F5F5F5] rounded-xl overflow-hidden">
+                <div className="px-4 py-3 border-b border-[#E5E5E5] bg-white">
+                  <h3 className="text-sm font-semibold text-[#1A1A1A] flex items-center gap-2">
+                    <MessageCircle className="h-4 w-4 text-[#999999]" />
+                    Comments
+                  </h3>
                 </div>
                 
-                {/* Yellow divider */}
-                <div className="h-0.5 bg-gradient-to-r from-transparent via-yellow-300/50 to-transparent" />
-                
-                <div className="relative p-4">
+                <div className="p-4">
                   {isAuthenticated ? (
                     <VideoComments videoId={video?.id || ""} />
                   ) : (
                     <div className="text-center py-8">
-                      <div className="w-12 h-12 mx-auto mb-3 bg-yellow-100 rounded-full flex items-center justify-center">
-                        <MessageCircle className="h-6 w-6 text-yellow-500" />
-                      </div>
-                      <p className="text-foreground font-medium text-sm mb-3 px-2 leading-relaxed">
-                        To view comments and post comments, you need to be logged in.
+                      <MessageCircle className="h-7 w-7 text-[#999999] mx-auto mb-3" />
+                      <p className="text-[#666666] text-sm mb-3">
+                        Sign in to view and post comments.
                       </p>
                       <Link 
                         to="/auth" 
-                        className="inline-block px-5 py-2 bg-yellow-400 text-yellow-900 rounded-full text-sm font-semibold hover:bg-yellow-500 transition-all"
+                        className="inline-block px-5 py-2 bg-[#FF0000] text-white rounded-full text-sm font-medium hover:brightness-90 transition-all"
                       >
                         Sign In
                       </Link>
@@ -294,8 +241,6 @@ const VideoDetails = () => {
                   )}
                 </div>
               </div>
-              
-              {/* Related videos are now part of FriendlyChannelSection */}
             </div>
           )}
         </div>

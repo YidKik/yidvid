@@ -28,12 +28,11 @@ interface FriendlyVideoActionBarProps {
 
 type InteractionType = 'view' | 'like' | 'dislike' | 'save';
 
-// Subtle hover styles for action buttons
-const actionButtonBase = "h-10 px-4 rounded-full font-medium transition-all duration-200 bg-muted/40 hover:bg-muted/60 text-muted-foreground hover:text-foreground";
-const actionButtonBaseCompact = "h-8 px-3 rounded-full text-sm transition-all duration-200 bg-muted/40 hover:bg-muted/60 text-muted-foreground hover:text-foreground";
-// Enhanced hover styles for Share and Report buttons
-const shareReportButtonBase = "h-10 px-4 rounded-full font-medium transition-all duration-200 bg-muted/40 text-muted-foreground hover:bg-yellow-100 hover:text-yellow-700 hover:border-yellow-400 hover:shadow-md hover:shadow-yellow-200/40 hover:scale-105 border border-transparent";
-const shareReportButtonCompact = "h-8 px-3 rounded-full text-sm transition-all duration-200 bg-muted/40 text-muted-foreground hover:bg-yellow-100 hover:text-yellow-700 hover:border-yellow-400 hover:shadow-md hover:shadow-yellow-200/40 hover:scale-105 border border-transparent";
+// Clean action button styles - no fades
+const actionButtonBase = "h-9 px-4 rounded-full font-medium transition-all duration-200 bg-[#F5F5F5] hover:bg-[#E5E5E5] text-[#666666] hover:text-[#1A1A1A]";
+const actionButtonBaseCompact = "h-8 px-3 rounded-full text-sm transition-all duration-200 bg-[#F5F5F5] hover:bg-[#E5E5E5] text-[#666666] hover:text-[#1A1A1A]";
+const shareReportButtonBase = actionButtonBase;
+const shareReportButtonCompact = actionButtonBaseCompact;
 
 export const FriendlyVideoActionBar = ({ 
   videoId, 
