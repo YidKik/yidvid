@@ -10,9 +10,10 @@ import { useYouTubeMessages } from "./hooks/useYouTubeMessages";
 
 interface VideoPlayerProps {
   videoId: string;
+  onVideoEnd?: () => void;
 }
 
-export const VideoPlayer = ({ videoId }: VideoPlayerProps) => {
+export const VideoPlayer = ({ videoId, onVideoEnd }: VideoPlayerProps) => {
   const [hasError, setHasError] = useState(false);
   const { volume, playbackSpeed } = usePlayback();
   
@@ -23,7 +24,8 @@ export const VideoPlayer = ({ videoId }: VideoPlayerProps) => {
     playbackSpeed,
     setIsLoading,
     setHasError,
-    mountedRef
+    mountedRef,
+    onVideoEnd
   });
 
   if (hasError) {

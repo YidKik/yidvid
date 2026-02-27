@@ -13,8 +13,9 @@ import { useAuth } from "@/hooks/useAuth";
 import { useIncrementVideoView } from "@/hooks/video/useIncrementVideoView";
 import { FriendlyVideoActionBar } from "@/components/video/details/FriendlyVideoActionBar";
 import { FriendlyChannelSection } from "@/components/video/details/FriendlyChannelSection";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, ListMusic, Shuffle } from "lucide-react";
 import { usePageLoader } from "@/contexts/LoadingContext";
+import { usePlaylistAutoplay } from "@/hooks/video/usePlaylistAutoplay";
 
 const VideoDetails = () => {
   const { videoId } = useParams<{ videoId: string }>();
@@ -23,7 +24,7 @@ const VideoDetails = () => {
   const { isAuthenticated, session } = useAuth();
   const incrementView = useIncrementVideoView();
   const viewIncrementedRef = useRef<string | null>(null);
-
+  const { isPlaylistMode, totalVideos, currentPosition, goToNextVideo } = usePlaylistAutoplay(videoId || "");
   useEffect(() => {
     if (!videoId) return;
     
@@ -106,8 +107,15 @@ const VideoDetails = () => {
               {/* Left Column - Video, Title, Actions, Channel, More Videos */}
               <div className="flex-1 min-w-0">
                 {/* Video Player - clean, no card wrapper */}
-                <div className="rounded-xl overflow-hidden bg-black">
-                  <VideoPlayer videoId={video?.video_id || ""} />
+                <div className="rounded-xl overflow-hidden bg-black relative">
+                  <VideoPlayer videoId={video?.video_id || ""} onVideoEnd={isPlaylistMode ? goToNextVideo : undefined} />
+                  {isPlaylistMode && (
+                    <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-black/70 text-white text-xs font-medium px-2.5 py-1.5 rounded-full backdrop-blur-sm">
+                      <ListMusic className="w-3.5 h-3.5" />
+                      <Shuffle className="w-3 h-3 opacity-70" />
+                      <span>{currentPosition}/{totalVideos}</span>
+                    </div>
+                  )}
                 </div>
                 
                 {/* Title */}
@@ -178,8 +186,15 @@ const VideoDetails = () => {
           {isMobile && (
             <div className="mt-2 space-y-4">
               {/* Video Player */}
-              <div className="rounded-xl overflow-hidden bg-black -mx-6">
-                <VideoPlayer videoId={video?.video_id || ""} />
+              <div className="rounded-xl overflow-hidden bg-black -mx-6 relative">
+                <VideoPlayer videoId={video?.video_id || ""} onVideoEnd={isPlaylistMode ? goToNextVideo : undefined} />
+                {isPlaylistMode && (
+                  <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-black/70 text-white text-xs font-medium px-2.5 py-1.5 rounded-full backdrop-blur-sm">
+                    <ListMusic className="w-3.5 h-3.5" />
+                    <Shuffle className="w-3 h-3 opacity-70" />
+                    <span>{currentPosition}/{totalVideos}</span>
+                  </div>
+                )}
               </div>
               
               {/* Title */}

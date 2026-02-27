@@ -7,6 +7,7 @@ interface UseYouTubeMessagesProps {
   setIsLoading: (loading: boolean) => void;
   setHasError: (error: boolean) => void;
   mountedRef: React.MutableRefObject<boolean>;
+  onVideoEnd?: () => void;
 }
 
 export const useYouTubeMessages = ({
@@ -14,7 +15,8 @@ export const useYouTubeMessages = ({
   playbackSpeed,
   setIsLoading,
   setHasError,
-  mountedRef
+  mountedRef,
+  onVideoEnd
 }: UseYouTubeMessagesProps) => {
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
@@ -42,6 +44,11 @@ export const useYouTubeMessages = ({
               args: [parseFloat(playbackSpeed)]
             }), '*');
           }
+        } else if (data.event === "onStateChange" && data.info === 0) {
+          // State 0 = ended
+          if (mountedRef.current && onVideoEnd) {
+            onVideoEnd();
+          }
         } else if (data.event === "onError") {
           console.error("YouTube player error:", data);
           if (mountedRef.current) {
@@ -56,5 +63,5 @@ export const useYouTubeMessages = ({
 
     window.addEventListener('message', handleMessage);
     return () => window.removeEventListener('message', handleMessage);
-  }, [volume, playbackSpeed, setIsLoading, setHasError, mountedRef]);
+  }, [volume, playbackSpeed, setIsLoading, setHasError, mountedRef, onVideoEnd]);
 };
