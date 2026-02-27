@@ -203,7 +203,7 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
       initial={false}
       animate={{ width: sidebarWidth }}
       transition={{ type: "spring", damping: 25, stiffness: 300 }}
-      className="fixed top-0 left-0 bottom-0 z-40 bg-white flex flex-col overflow-hidden border-r border-gray-100"
+      className="fixed top-0 left-0 bottom-0 z-40 bg-white flex flex-col overflow-hidden border-r border-[#E5E5E5]"
       style={{ fontFamily: "'Quicksand', sans-serif" }}
     >
       {/* Logo Section */}
