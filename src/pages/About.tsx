@@ -129,7 +129,7 @@ const About = () => {
           >
             <button
               onClick={() => setShowTerms(true)}
-              className="flex items-center gap-2 px-6 py-3 rounded-full bg-[#F5F5F5] border border-[#E5E5E5] font-semibold text-sm hover:border-[#FFCC00] hover:shadow-sm transition-all"
+              className={`flex items-center gap-2 ${isMobile ? 'px-4 py-2.5 text-xs' : 'px-6 py-3 text-sm'} rounded-full bg-[#F5F5F5] border border-[#E5E5E5] font-semibold hover:border-[#FFCC00] hover:shadow-sm transition-all`}
               style={{ fontFamily: "'Quicksand', sans-serif", color: '#000000' }}
             >
               <FileText className="w-4 h-4" style={{ color: '#FFCC00' }} />
@@ -137,7 +137,7 @@ const About = () => {
             </button>
             <button
               onClick={() => setShowPrivacy(true)}
-              className="flex items-center gap-2 px-6 py-3 rounded-full bg-[#F5F5F5] border border-[#E5E5E5] font-semibold text-sm hover:border-[#FFCC00] hover:shadow-sm transition-all"
+              className={`flex items-center gap-2 ${isMobile ? 'px-4 py-2.5 text-xs' : 'px-6 py-3 text-sm'} rounded-full bg-[#F5F5F5] border border-[#E5E5E5] font-semibold hover:border-[#FFCC00] hover:shadow-sm transition-all`}
               style={{ fontFamily: "'Quicksand', sans-serif", color: '#000000' }}
             >
               <ScrollText className="w-4 h-4" style={{ color: '#FFCC00' }} />
@@ -145,7 +145,7 @@ const About = () => {
             </button>
             <button
               onClick={() => setShowContact(true)}
-              className="flex items-center gap-2 px-6 py-3 rounded-full bg-[#F5F5F5] border border-[#E5E5E5] font-semibold text-sm hover:border-[#FFCC00] hover:shadow-sm transition-all"
+              className={`flex items-center gap-2 ${isMobile ? 'px-4 py-2.5 text-xs' : 'px-6 py-3 text-sm'} rounded-full bg-[#F5F5F5] border border-[#E5E5E5] font-semibold hover:border-[#FFCC00] hover:shadow-sm transition-all`}
               style={{ fontFamily: "'Quicksand', sans-serif", color: '#000000' }}
             >
               <MessageSquare className="w-4 h-4" style={{ color: '#FFCC00' }} />

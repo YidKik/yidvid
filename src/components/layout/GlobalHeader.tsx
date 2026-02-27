@@ -159,7 +159,7 @@ export const GlobalHeader = () => {
                   </div>
                   <button
                     type="submit"
-                    className="h-10 px-4 rounded-r-full border-l border-[#E5E5E5] hover:bg-[#E5E5E5] transition-colors flex items-center justify-center bg-white"
+                    className={`${isMobile ? 'h-8 px-3' : 'h-10 px-4'} rounded-r-full border-l border-[#E5E5E5] hover:bg-[#E5E5E5] transition-colors flex items-center justify-center bg-white`}
                   >
                     <Search className="w-4 h-4 text-[#666666]" />
                   </button>

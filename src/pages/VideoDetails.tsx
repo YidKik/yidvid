@@ -99,7 +99,7 @@ const VideoDetails = () => {
       {isAuthenticated && <VideoHistory videoId={video?.id || ""} />}
       
       <div className="min-h-screen bg-white pt-14 pl-0 lg:pl-[200px] pb-20 lg:pb-0 transition-all duration-300">
-        <div className="px-4 lg:px-6 pt-4 pb-12">
+        <div className={`${isMobile ? 'px-3' : 'px-4'} lg:px-6 pt-4 pb-12`}>
           
         {/* Desktop Layout - two column */}
           {!isMobile && !isTablet && (

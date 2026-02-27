@@ -41,15 +41,15 @@ const Settings = () => {
       <BackButton />
       <main className={cn("pb-16 max-w-3xl mx-auto", isMobile ? "pt-4 px-4" : "pt-6 px-6")}>
         {/* Header */}
-        <div className="flex items-center gap-3 mb-8">
-          <div className="p-2 bg-[#FFCC00] rounded-xl">
-            <SettingsIcon className="w-5 h-5 text-[#1A1A1A]" />
+        <div className="flex items-center gap-3 mb-6">
+          <div className={cn("bg-[#FFCC00] rounded-xl", isMobile ? "p-1.5" : "p-2")}>
+            <SettingsIcon className={cn(isMobile ? "w-4 h-4" : "w-5 h-5", "text-[#1A1A1A]")} />
           </div>
-          <h1 className="text-2xl font-bold text-[#1A1A1A]">Settings</h1>
+          <h1 className={cn(isMobile ? "text-xl" : "text-2xl", "font-bold text-[#1A1A1A]")}>Settings</h1>
         </div>
 
         {/* Navigation Tabs */}
-        <div className="flex gap-2 mb-8 border-b border-[#E5E5E5] pb-3">
+        <div className={cn("flex gap-2 mb-8 border-b border-[#E5E5E5] pb-3", isMobile && "overflow-x-auto flex-nowrap scrollbar-hide")}>
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeSection === item.id;
@@ -58,13 +58,14 @@ const Settings = () => {
                 key={item.id}
                 onClick={() => setActiveSection(item.id)}
                 className={cn(
-                  "flex items-center gap-2 px-5 py-2.5 rounded-full font-semibold text-sm transition-all duration-200",
+                  "flex items-center gap-2 rounded-full font-semibold transition-all duration-200 whitespace-nowrap",
+                  isMobile ? "px-3 py-2 text-xs" : "px-5 py-2.5 text-sm",
                   isActive 
                     ? "bg-[#FF0000] text-white" 
                     : "text-[#666666] hover:bg-[#F5F5F5] hover:text-[#1A1A1A]"
                 )}
               >
-                <Icon size={16} />
+                <Icon size={isMobile ? 14 : 16} />
                 {item.label}
               </button>
             );

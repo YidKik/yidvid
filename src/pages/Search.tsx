@@ -167,9 +167,9 @@ const Search = () => {
                 <Link
                   key={channel.id}
                   to={`/channel/${channel.channel_id}`}
-                  className="group flex items-center gap-4 p-4 rounded-xl bg-[#FAFAFA] border border-[#E5E5E5] hover:border-[#FFCC00] hover:shadow-md transition-all duration-200"
+                  className={`group flex items-center gap-3 ${isMobile ? 'p-3' : 'p-4'} rounded-xl bg-[#FAFAFA] border border-[#E5E5E5] hover:border-[#FFCC00] hover:shadow-md transition-all duration-200`}
                 >
-                  <Avatar className="w-16 h-16 flex-shrink-0 border-2 border-[#E5E5E5] group-hover:border-[#FFCC00] transition-colors">
+                  <Avatar className={`${isMobile ? 'w-12 h-12' : 'w-16 h-16'} flex-shrink-0 border-2 border-[#E5E5E5] group-hover:border-[#FFCC00] transition-colors`}>
                     <AvatarImage src={channel.thumbnail_url} alt={channel.title} />
                     <AvatarFallback className="bg-[#F5F5F5]">
                       <Youtube className="w-7 h-7 text-[#FF0000]" />

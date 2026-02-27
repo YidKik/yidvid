@@ -299,7 +299,7 @@ const Playlists = () => {
           </div>
           <Button
             onClick={() => setShowCreateDialog(true)}
-            className="rounded-full gap-2 bg-red-500 hover:bg-red-600 text-white font-semibold px-6 shadow-md hover:shadow-lg transition-all"
+            className={`rounded-full gap-2 bg-red-500 hover:bg-red-600 text-white font-semibold ${isMobile ? 'px-4 text-xs' : 'px-6'} shadow-md hover:shadow-lg transition-all`}
           >
             <Plus className="w-4 h-4" />
             New Playlist

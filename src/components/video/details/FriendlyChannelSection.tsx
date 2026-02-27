@@ -174,11 +174,11 @@ export const FriendlyChannelSection = ({
       ) : channelVideos.length > 0 ? (
         <div>
           <div className="h-px bg-[#E5E5E5] mb-4" />
-          <p className="text-sm font-medium text-[#666666] mb-3">
+          <p className={`${compact ? 'text-xs' : 'text-sm'} font-medium text-[#666666] mb-3`}>
             More from {channelName}
           </p>
           
-          <div className={`grid gap-3 ${compact ? 'grid-cols-2' : 'grid-cols-3'}`}>
+          <div className={`grid ${compact ? 'gap-2 grid-cols-2' : 'gap-3 grid-cols-3'}`}>
             {channelVideos.slice(0, compact ? 4 : 3).map((video) => (
               <div key={video.id} className="rounded-lg overflow-hidden">
                 <VideoCard
