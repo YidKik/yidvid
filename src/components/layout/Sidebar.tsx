@@ -82,19 +82,21 @@ interface SidebarProps {
 }
 
 // Shared nav item styles
-const getNavItemClass = (isExpanded: boolean, active: boolean) =>
+const getNavItemClass = (isExpanded: boolean, active: boolean, disabled = false) =>
   cn(
     "flex items-center text-sm font-medium transition-all duration-200",
     isExpanded
       ? "gap-3 px-3 py-2.5 rounded-full"
       : "justify-center p-2 rounded-full mx-auto w-10 h-10",
-    active
-      ? "bg-[#F5F5F5] border-l-[3px] border-[#FF0000] text-[#FF0000]"
-      : "border border-transparent hover:bg-[#F0F0F0] text-[#666666] hover:text-[#1A1A1A]"
+    disabled
+      ? "opacity-40 cursor-default border border-transparent"
+      : active
+        ? "bg-[#F5F5F5] border-l-[3px] border-[#FF0000] text-[#FF0000]"
+        : "border border-transparent hover:bg-[#F0F0F0] text-[#666666] hover:text-[#1A1A1A]"
   );
 
-const getIconClass = (active: boolean) =>
-  cn("w-5 h-5 shrink-0 transition-colors", active ? "text-[#FF0000]" : "text-[#666666]");
+const getIconClass = (active: boolean, disabled = false) =>
+  cn("w-5 h-5 shrink-0 transition-colors", disabled ? "text-[#999999]" : active ? "text-[#FF0000]" : "text-[#666666]");
 
 const getLabelClass = (active: boolean) =>
   cn("truncate transition-colors", active ? "text-[#FF0000]" : "text-[#1A1A1A]");
