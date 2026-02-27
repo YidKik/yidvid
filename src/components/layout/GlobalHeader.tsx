@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useSidebarContext } from "@/contexts/SidebarContext";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, LogIn, X } from "lucide-react";
