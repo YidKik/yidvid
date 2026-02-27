@@ -128,7 +128,7 @@ export const NewVideosSection = ({ videos, autoExpand = false }: NewVideosSectio
     
     return (
       <motion.div
-        className={isGrid ? 'w-full' : 'flex-none w-[calc(20%-13px)]'}
+        className={isGrid ? 'w-full' : `flex-none ${isMobile ? 'w-[calc(50%-8px)]' : isTablet ? 'w-[calc(33.333%-10px)]' : 'w-[calc(20%-13px)]'}`}
         initial={shouldAnimate ? { opacity: 0, y: 20, scale: 0.95 } : { opacity: 1, y: 0, scale: 1 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={shouldAnimate ? { 
