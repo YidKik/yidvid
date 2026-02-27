@@ -22,8 +22,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Footer } from "@/components/layout/Footer";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Playlists = () => {
+  const { isMobile } = useIsMobile();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const selectedPlaylistId = searchParams.get("id");
@@ -122,12 +124,12 @@ const Playlists = () => {
 
           {/* Header */}
           <div className="flex items-start justify-between mb-8 pb-6 border-b border-gray-100">
-            <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-yellow-400 to-red-500 flex items-center justify-center shadow-lg">
-                <ListMusic className="w-8 h-8 text-white" />
+            <div className="flex items-center gap-3">
+              <div className={`${isMobile ? 'w-12 h-12' : 'w-16 h-16'} rounded-2xl bg-gradient-to-br from-yellow-400 to-red-500 flex items-center justify-center shadow-lg`}>
+                <ListMusic className={`${isMobile ? 'w-6 h-6' : 'w-8 h-8'} text-white`} />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900 font-friendly">{selectedPlaylist.title}</h1>
+                <h1 className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold text-gray-900 font-friendly`}>{selectedPlaylist.title}</h1>
                 {selectedPlaylist.description && (
                   <p className="text-gray-500 text-sm mt-1">{selectedPlaylist.description}</p>
                 )}
@@ -203,10 +205,10 @@ const Playlists = () => {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.03 }}
-                  className="flex gap-4 p-4 rounded-2xl hover:bg-gray-50 transition-all group cursor-pointer border border-transparent hover:border-gray-100 hover:shadow-sm"
+                  className={`${isMobile ? 'flex-col' : 'flex'} gap-3 p-3 rounded-2xl hover:bg-gray-50 transition-all group cursor-pointer border border-transparent hover:border-gray-100 hover:shadow-sm`}
                   onClick={() => navigate(`/video/${item.video?.video_id}?playlist=${selectedPlaylistId}`)}
                 >
-                  <div className="relative w-44 aspect-video rounded-xl overflow-hidden bg-gray-100 shrink-0 shadow-sm">
+                  <div className={`relative ${isMobile ? 'w-full' : 'w-44'} aspect-video rounded-xl overflow-hidden bg-gray-100 shrink-0 shadow-sm`}>
                     <img
                       src={item.video?.thumbnail}
                       alt={item.video?.title}
@@ -285,19 +287,19 @@ const Playlists = () => {
     <div className="min-h-screen pt-14 pl-0 lg:pl-[200px] bg-white flex flex-col pb-20 lg:pb-0">
       <div className="flex-1 max-w-6xl mx-auto px-4 lg:px-6 py-6 lg:py-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8 pb-6 border-b border-gray-100">
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-yellow-400 to-red-500 flex items-center justify-center shadow-lg">
-              <ListMusic className="w-8 h-8 text-white" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900 font-friendly">Playlists</h1>
+          <div className="flex items-center justify-between mb-8 pb-6 border-b border-gray-100">
+            <div className="flex items-center gap-3">
+              <div className={`${isMobile ? 'w-12 h-12' : 'w-16 h-16'} rounded-2xl bg-gradient-to-br from-yellow-400 to-red-500 flex items-center justify-center shadow-lg`}>
+                <ListMusic className={`${isMobile ? 'w-6 h-6' : 'w-8 h-8'} text-white`} />
+              </div>
+              <div>
+                <h1 className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold text-gray-900 font-friendly`}>Playlists</h1>
               <p className="text-gray-500 mt-1">{playlists?.length || 0} playlist{(playlists?.length || 0) !== 1 ? "s" : ""}</p>
             </div>
           </div>
           <Button
             onClick={() => setShowCreateDialog(true)}
-            className="rounded-full gap-2 bg-red-500 hover:bg-red-600 text-white font-semibold px-6 shadow-md hover:shadow-lg transition-all"
+            className={`rounded-full gap-2 bg-red-500 hover:bg-red-600 text-white font-semibold ${isMobile ? 'px-4 text-xs' : 'px-6'} shadow-md hover:shadow-lg transition-all`}
           >
             <Plus className="w-4 h-4" />
             New Playlist

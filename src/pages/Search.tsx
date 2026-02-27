@@ -8,6 +8,7 @@ import { Youtube, Search as SearchIcon, Users, Play } from "lucide-react";
 import { Link } from "react-router-dom";
 import { usePageLoader } from "@/contexts/LoadingContext";
 import { useState, useEffect } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const TypingSearchLoader = ({ query }: { query: string }) => {
   const prefix = 'Searching results for ';
@@ -62,6 +63,7 @@ const TypingSearchLoader = ({ query }: { query: string }) => {
 const Search = () => {
   const [searchParams] = useSearchParams();
   const query = searchParams.get("q") || "";
+  const { isMobile, isTablet } = useIsMobile();
 
   const { data: videos, isLoading: isLoadingVideos } = useQuery({
     queryKey: ["search-videos", query],
@@ -138,10 +140,10 @@ const Search = () => {
     <div className="min-h-screen bg-white pt-16 pl-0 lg:pl-[200px] pb-20 lg:pb-0 transition-all duration-300">
       <main className="max-w-7xl mx-auto px-4 lg:px-6 py-6 lg:py-8">
         {/* Search Header */}
-        <div className="mb-8">
-          <div className="flex items-center gap-3 mb-2">
-            <SearchIcon className="h-6 w-6 text-[#999999]" />
-            <h1 className="text-2xl font-bold text-[#1A1A1A]">
+        <div className={isMobile ? "mb-5" : "mb-8"}>
+          <div className="flex items-center gap-2 mb-2">
+            <SearchIcon className={`${isMobile ? 'h-5 w-5' : 'h-6 w-6'} text-[#999999]`} />
+            <h1 className={`${isMobile ? 'text-lg' : isTablet ? 'text-xl' : 'text-2xl'} font-bold text-[#1A1A1A]`}>
               Search results for "<span className="text-[#FF0000]">{query}</span>"
             </h1>
           </div>
@@ -165,9 +167,9 @@ const Search = () => {
                 <Link
                   key={channel.id}
                   to={`/channel/${channel.channel_id}`}
-                  className="group flex items-center gap-4 p-4 rounded-xl bg-[#FAFAFA] border border-[#E5E5E5] hover:border-[#FFCC00] hover:shadow-md transition-all duration-200"
+                  className={`group flex items-center gap-3 ${isMobile ? 'p-3' : 'p-4'} rounded-xl bg-[#FAFAFA] border border-[#E5E5E5] hover:border-[#FFCC00] hover:shadow-md transition-all duration-200`}
                 >
-                  <Avatar className="w-16 h-16 flex-shrink-0 border-2 border-[#E5E5E5] group-hover:border-[#FFCC00] transition-colors">
+                  <Avatar className={`${isMobile ? 'w-12 h-12' : 'w-16 h-16'} flex-shrink-0 border-2 border-[#E5E5E5] group-hover:border-[#FFCC00] transition-colors`}>
                     <AvatarImage src={channel.thumbnail_url} alt={channel.title} />
                     <AvatarFallback className="bg-[#F5F5F5]">
                       <Youtube className="w-7 h-7 text-[#FF0000]" />

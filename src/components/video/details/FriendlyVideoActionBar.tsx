@@ -235,63 +235,47 @@ export const FriendlyVideoActionBar = ({
   ];
 
   if (compact) {
+    const compactBtnClass = "h-8 w-8 p-0 rounded-full transition-all duration-200 bg-[#F5F5F5] hover:bg-[#E5E5E5] text-[#666666] hover:text-[#1A1A1A] flex items-center justify-center";
+    
     return (
-      <div className="space-y-3">
-        {/* Meta info */}
-        <div className="flex items-center gap-3 text-sm text-muted-foreground">
-          <div className="flex items-center gap-1.5 px-2.5 py-1 bg-muted/30 rounded-full">
-            <Eye className="h-3.5 w-3.5" />
+      <div className="space-y-2">
+        {/* Meta info - smaller */}
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          <div className="flex items-center gap-1 px-2 py-0.5 bg-muted/30 rounded-full">
+            <Eye className="h-3 w-3" />
             <span>{formatViewCount(views)} views</span>
           </div>
           {uploadedAt && (
-            <div className="flex items-center gap-1.5 px-2.5 py-1 bg-muted/30 rounded-full">
-              <Clock className="h-3.5 w-3.5" />
+            <div className="flex items-center gap-1 px-2 py-0.5 bg-muted/30 rounded-full">
+              <Clock className="h-3 w-3" />
               <span>{getFormattedDate(uploadedAt)}</span>
             </div>
           )}
         </div>
         
-        {/* Action buttons */}
-        <div className="flex items-center gap-2 flex-wrap">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleLike}
-            className={`${actionButtonBaseCompact} ${
-              isLiked ? "bg-[#F5F5F5] text-[#FF0000]" : ""
-            }`}
-          >
-            <ThumbsUp className={`h-4 w-4 mr-1.5 ${isLiked ? "fill-current" : ""}`} />
-            Like
+        {/* Action buttons - icon only, single row */}
+        <div className="flex items-center gap-1.5">
+          <Button variant="ghost" size="icon" onClick={handleLike}
+            className={`${compactBtnClass} ${isLiked ? "bg-[#F5F5F5] text-[#FF0000]" : ""}`}
+            title="Like">
+            <ThumbsUp className={`h-3.5 w-3.5 ${isLiked ? "fill-current" : ""}`} />
           </Button>
 
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleDislike}
-            className={`${actionButtonBaseCompact} ${
-              isDisliked ? "bg-muted text-foreground" : ""
-            }`}
-          >
-            <ThumbsDown className={`h-4 w-4 ${isDisliked ? "fill-current" : ""}`} />
+          <Button variant="ghost" size="icon" onClick={handleDislike}
+            className={`${compactBtnClass} ${isDisliked ? "bg-muted text-foreground" : ""}`}
+            title="Dislike">
+            <ThumbsDown className={`h-3.5 w-3.5 ${isDisliked ? "fill-current" : ""}`} />
           </Button>
 
           <Dialog open={shareOpen} onOpenChange={setShareOpen}>
             <DialogTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                className={shareReportButtonCompact}
-              >
-                <Share2 className="h-4 w-4 mr-1.5" />
-                Share
+              <Button variant="ghost" size="icon" className={compactBtnClass} title="Share">
+                <Share2 className="h-3.5 w-3.5" />
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[360px] bg-white border-[#E5E5E5] shadow-xl [&>button]:hidden">
-              <button 
-                onClick={() => setShareOpen(false)}
-                className="absolute right-4 top-4 text-muted-foreground hover:text-foreground transition-colors z-10"
-              >
+              <button onClick={() => setShareOpen(false)}
+                className="absolute right-4 top-4 text-muted-foreground hover:text-foreground transition-colors z-10">
                 <X className="h-5 w-5" />
               </button>
               <DialogHeader>
@@ -302,21 +286,17 @@ export const FriendlyVideoActionBar = ({
               </DialogHeader>
               <div className="grid grid-cols-2 gap-3 py-4">
                 {shareOptions.map((option) => (
-                  <button
-                    key={option.name}
+                  <button key={option.name}
                     onClick={() => { option.action(); setShareOpen(false); }}
-                    className="flex flex-col items-center gap-2 p-4 rounded-xl bg-[#F5F5F5] hover:bg-[#E5E5E5] border border-transparent transition-all duration-200"
-                  >
+                    className="flex flex-col items-center gap-2 p-4 rounded-xl bg-[#F5F5F5] hover:bg-[#E5E5E5] border border-transparent transition-all duration-200">
                     <option.icon className={`h-6 w-6 ${option.color}`} />
                     <span className="text-xs font-medium text-muted-foreground">{option.name}</span>
                   </button>
                 ))}
               </div>
               {navigator.share && (
-                <button
-                  onClick={handleShareNative}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-[#FFCC00] hover:brightness-90 text-[#1A1A1A] font-medium transition-all duration-200"
-                >
+                <button onClick={handleShareNative}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-[#FFCC00] hover:brightness-90 text-[#1A1A1A] font-medium transition-all duration-200">
                   <Share2 className="h-4 w-4" />
                   More sharing options...
                 </button>
@@ -326,44 +306,28 @@ export const FriendlyVideoActionBar = ({
 
           <ReportVideoDialog videoId={videoId} compact />
 
-          {/* Favorites Button */}
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleToggleFavorite}
-            className={`${actionButtonBaseCompact} ${isFavorite ? "bg-[#F5F5F5] text-[#FF0000]" : ""}`}
-          >
-            <Heart className={cn("h-4 w-4 mr-1.5", isFavorite && "fill-current")} />
-            {isFavorite ? "Saved" : "Favorite"}
+          <Button variant="ghost" size="icon" onClick={handleToggleFavorite}
+            className={`${compactBtnClass} ${isFavorite ? "bg-[#F5F5F5] text-[#FF0000]" : ""}`}
+            title={isFavorite ? "Saved" : "Favorite"}>
+            <Heart className={cn("h-3.5 w-3.5", isFavorite && "fill-current")} />
           </Button>
 
-          {/* Watch Later Button */}
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleToggleWatchLater}
-            className={`${actionButtonBaseCompact} ${isWatchLaterSaved ? "bg-[#F5F5F5] text-[#1A1A1A]" : ""}`}
-          >
-            <Clock className={cn("h-4 w-4 mr-1.5", isWatchLaterSaved && "fill-current")} />
-            {isWatchLaterSaved ? "Saved" : "Watch Later"}
+          <Button variant="ghost" size="icon" onClick={handleToggleWatchLater}
+            className={`${compactBtnClass} ${isWatchLaterSaved ? "bg-[#F5F5F5] text-[#1A1A1A]" : ""}`}
+            title={isWatchLaterSaved ? "Saved" : "Watch Later"}>
+            <Clock className={cn("h-3.5 w-3.5", isWatchLaterSaved && "fill-current")} />
           </Button>
 
-          {/* Add to Playlist Button */}
           <Dialog open={playlistDialogOpen} onOpenChange={setPlaylistDialogOpen}>
             <DialogTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                className={actionButtonBaseCompact}
+              <Button variant="ghost" size="icon" className={compactBtnClass} title="Playlist"
                 onClick={() => {
                   if (!isAuthenticated) {
                     toast.info("Please sign in to use playlists", { icon: <LogIn className="w-4 h-4" /> });
                     return;
                   }
-                }}
-              >
-                <ListPlus className="h-4 w-4 mr-1.5" />
-                Playlist
+                }}>
+                <ListPlus className="h-3.5 w-3.5" />
               </Button>
             </DialogTrigger>
             {isAuthenticated && (
@@ -374,11 +338,8 @@ export const FriendlyVideoActionBar = ({
                 <div className="py-4 space-y-2 max-h-60 overflow-y-auto">
                   {playlists && playlists.length > 0 ? (
                     playlists.map((playlist) => (
-                      <button
-                        key={playlist.id}
-                        onClick={() => handleAddToPlaylist(playlist.id)}
-                        className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg hover:bg-gray-100 transition-colors text-left"
-                      >
+                      <button key={playlist.id} onClick={() => handleAddToPlaylist(playlist.id)}
+                        className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg hover:bg-gray-100 transition-colors text-left">
                         <ListPlus className="w-4 h-4 text-gray-500" />
                         <span className="truncate">{playlist.title}</span>
                       </button>
@@ -390,19 +351,12 @@ export const FriendlyVideoActionBar = ({
                 <div className="border-t pt-4">
                   <p className="text-sm font-medium mb-2">Create new playlist</p>
                   <div className="flex gap-2">
-                    <Input
-                      placeholder="Playlist name"
-                      value={newPlaylistName}
-                      onChange={(e) => setNewPlaylistName(e.target.value)}
-                      className="rounded-lg"
-                      onKeyDown={(e) => e.key === "Enter" && handleCreateAndAddToPlaylist()}
-                    />
-                    <Button
-                      size="icon"
-                      onClick={handleCreateAndAddToPlaylist}
+                    <Input placeholder="Playlist name" value={newPlaylistName}
+                      onChange={(e) => setNewPlaylistName(e.target.value)} className="rounded-lg"
+                      onKeyDown={(e) => e.key === "Enter" && handleCreateAndAddToPlaylist()} />
+                    <Button size="icon" onClick={handleCreateAndAddToPlaylist}
                       disabled={!newPlaylistName.trim()}
-                      className="shrink-0 rounded-lg bg-red-500 hover:bg-red-600"
-                    >
+                      className="shrink-0 rounded-lg bg-red-500 hover:bg-red-600">
                       <Plus className="w-4 h-4" />
                     </Button>
                   </div>

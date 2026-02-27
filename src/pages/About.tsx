@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Helmet } from "react-helmet";
 import { Heart, Shield, Users, RefreshCw, FileText, ScrollText, MessageSquare } from "lucide-react";
 import { ContactDialog } from "@/components/contact/ContactDialog";
+import { useIsMobile } from "@/hooks/use-mobile";
 import {
   Dialog,
   DialogContent,
@@ -14,6 +15,7 @@ const About = () => {
   const [showTerms, setShowTerms] = useState(false);
   const [showPrivacy, setShowPrivacy] = useState(false);
   const [showContact, setShowContact] = useState(false);
+  const { isMobile } = useIsMobile();
 
   return (
     <>
@@ -23,7 +25,7 @@ const About = () => {
       </Helmet>
 
       <div className="min-h-screen bg-white pt-14 pl-0 lg:pl-[200px] pb-20 lg:pb-0 transition-all duration-300">
-        <div className="max-w-4xl mx-auto px-6 py-12">
+        <div className={`max-w-4xl mx-auto ${isMobile ? 'px-4 py-8' : 'px-6 py-12'}`}>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -31,13 +33,13 @@ const About = () => {
             className="text-center mb-12"
           >
             <h1 
-              className="text-4xl md:text-5xl font-bold mb-4"
+              className={`${isMobile ? 'text-2xl' : 'text-4xl md:text-5xl'} font-bold mb-4`}
               style={{ fontFamily: "'Fredoka One', 'Nunito', sans-serif", color: '#000000' }}
             >
               About YidVid
             </h1>
             <p 
-              className="text-lg max-w-2xl mx-auto"
+              className={`${isMobile ? 'text-base' : 'text-lg'} max-w-2xl mx-auto`}
               style={{ fontFamily: "'Quicksand', sans-serif", color: '#666666' }}
             >
               Your premier destination for kosher Jewish content, curated with care for the entire family.
@@ -77,14 +79,14 @@ const About = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 + index * 0.1, duration: 0.5 }}
-                className="p-6 rounded-2xl bg-[#F5F5F5] border border-[#E5E5E5] text-center"
+                className={`${isMobile ? 'p-4' : 'p-6'} rounded-2xl bg-[#F5F5F5] border border-[#E5E5E5] text-center`}
               >
                 <feature.icon 
-                  className="w-10 h-10 mb-4 mx-auto" 
+                  className={`${isMobile ? 'w-8 h-8' : 'w-10 h-10'} mb-4 mx-auto`}
                   style={{ color: '#FFCC00' }} 
                 />
                 <h3 
-                  className="text-xl font-bold mb-2"
+                  className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold mb-2`}
                   style={{ fontFamily: "'Quicksand', sans-serif", color: '#000000' }}
                 >
                   {feature.title}
@@ -100,10 +102,10 @@ const About = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.5 }}
-            className="text-center p-8 rounded-2xl bg-[#F5F5F5] max-w-3xl mx-auto mb-10"
+            className={`text-center ${isMobile ? 'p-5' : 'p-8'} rounded-2xl bg-[#F5F5F5] max-w-3xl mx-auto mb-10`}
           >
             <h2 
-              className="text-2xl font-bold mb-4"
+              className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold mb-4`}
               style={{ fontFamily: "'Quicksand', sans-serif", color: '#000000' }}
             >
               Our Mission
@@ -127,7 +129,7 @@ const About = () => {
           >
             <button
               onClick={() => setShowTerms(true)}
-              className="flex items-center gap-2 px-6 py-3 rounded-full bg-[#F5F5F5] border border-[#E5E5E5] font-semibold text-sm hover:border-[#FFCC00] hover:shadow-sm transition-all"
+              className={`flex items-center gap-2 ${isMobile ? 'px-4 py-2.5 text-xs' : 'px-6 py-3 text-sm'} rounded-full bg-[#F5F5F5] border border-[#E5E5E5] font-semibold hover:border-[#FFCC00] hover:shadow-sm transition-all`}
               style={{ fontFamily: "'Quicksand', sans-serif", color: '#000000' }}
             >
               <FileText className="w-4 h-4" style={{ color: '#FFCC00' }} />
@@ -135,7 +137,7 @@ const About = () => {
             </button>
             <button
               onClick={() => setShowPrivacy(true)}
-              className="flex items-center gap-2 px-6 py-3 rounded-full bg-[#F5F5F5] border border-[#E5E5E5] font-semibold text-sm hover:border-[#FFCC00] hover:shadow-sm transition-all"
+              className={`flex items-center gap-2 ${isMobile ? 'px-4 py-2.5 text-xs' : 'px-6 py-3 text-sm'} rounded-full bg-[#F5F5F5] border border-[#E5E5E5] font-semibold hover:border-[#FFCC00] hover:shadow-sm transition-all`}
               style={{ fontFamily: "'Quicksand', sans-serif", color: '#000000' }}
             >
               <ScrollText className="w-4 h-4" style={{ color: '#FFCC00' }} />
@@ -143,7 +145,7 @@ const About = () => {
             </button>
             <button
               onClick={() => setShowContact(true)}
-              className="flex items-center gap-2 px-6 py-3 rounded-full bg-[#F5F5F5] border border-[#E5E5E5] font-semibold text-sm hover:border-[#FFCC00] hover:shadow-sm transition-all"
+              className={`flex items-center gap-2 ${isMobile ? 'px-4 py-2.5 text-xs' : 'px-6 py-3 text-sm'} rounded-full bg-[#F5F5F5] border border-[#E5E5E5] font-semibold hover:border-[#FFCC00] hover:shadow-sm transition-all`}
               style={{ fontFamily: "'Quicksand', sans-serif", color: '#000000' }}
             >
               <MessageSquare className="w-4 h-4" style={{ color: '#FFCC00' }} />

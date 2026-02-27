@@ -115,7 +115,7 @@ export const GlobalHeader = () => {
         <div className="w-full px-3 md:px-6">
           <div className="flex items-center justify-between h-14 gap-4">
             {/* Left Side - Spacer */}
-            <div className="w-10 shrink-0 flex items-center" />
+            <div className={`${isMobile ? 'w-4' : 'w-10'} shrink-0 flex items-center`} />
 
             {/* Center - Search Bar */}
             <div 
@@ -141,7 +141,7 @@ export const GlobalHeader = () => {
                       }}
                       onFocus={() => setIsSearchOpen(true)}
                       placeholder="Search videos..."
-                      className="flex-1 bg-transparent border-none outline-none py-2.5 text-sm text-[#1A1A1A] placeholder:text-[#999999]"
+                      className={`flex-1 bg-transparent border-none outline-none ${isMobile ? 'py-2 text-xs' : 'py-2.5 text-sm'} text-[#1A1A1A] placeholder:text-[#999999]`}
                       style={{ fontFamily: "'Quicksand', sans-serif" }}
                     />
                     {searchQuery && (
@@ -159,7 +159,7 @@ export const GlobalHeader = () => {
                   </div>
                   <button
                     type="submit"
-                    className="h-10 px-4 rounded-r-full border-l border-[#E5E5E5] hover:bg-[#E5E5E5] transition-colors flex items-center justify-center bg-white"
+                    className={`${isMobile ? 'h-8 px-3' : 'h-10 px-4'} rounded-r-full border-l border-[#E5E5E5] hover:bg-[#E5E5E5] transition-colors flex items-center justify-center bg-white`}
                   >
                     <Search className="w-4 h-4 text-[#666666]" />
                   </button>

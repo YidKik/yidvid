@@ -79,7 +79,7 @@ export const FriendlyChannelSection = ({
       <div className="flex items-center gap-3">
         {channelId ? (
           <Link to={`/channel/${channelId}`}>
-            <Avatar className="h-10 w-10">
+            <Avatar className={compact ? "h-8 w-8" : "h-10 w-10"}>
               <AvatarImage src={channelThumbnail || ''} alt={channelName} />
               <AvatarFallback className="bg-[#F5F5F5] text-[#666666] text-sm font-bold">
                 {channelName?.slice(0, 2).toUpperCase()}
@@ -87,7 +87,7 @@ export const FriendlyChannelSection = ({
             </Avatar>
           </Link>
         ) : (
-          <Avatar className="h-10 w-10">
+          <Avatar className={compact ? "h-8 w-8" : "h-10 w-10"}>
             <AvatarImage src={channelThumbnail || ''} alt={channelName} />
             <AvatarFallback className="bg-[#F5F5F5] text-[#666666] text-sm font-bold">
               {channelName?.slice(0, 2).toUpperCase()}
@@ -99,12 +99,12 @@ export const FriendlyChannelSection = ({
           {channelId ? (
             <Link 
               to={`/channel/${channelId}`}
-              className="text-sm font-semibold text-[#1A1A1A] hover:text-[#FF0000] transition-colors block truncate"
+              className={`${compact ? 'text-xs' : 'text-sm'} font-semibold text-[#1A1A1A] hover:text-[#FF0000] transition-colors block truncate`}
             >
               {channelName}
             </Link>
           ) : (
-            <span className="text-sm font-semibold text-[#1A1A1A] truncate block">{channelName}</span>
+            <span className={`${compact ? 'text-xs' : 'text-sm'} font-semibold text-[#1A1A1A] truncate block`}>{channelName}</span>
           )}
         </div>
         
@@ -112,7 +112,7 @@ export const FriendlyChannelSection = ({
           <Button
             onClick={handleSubscribeClick}
             disabled={isLoading}
-            className={`h-9 px-4 rounded-full text-sm font-semibold transition-all ${
+            className={`${compact ? 'h-7 px-3 text-xs' : 'h-9 px-4 text-sm'} rounded-full font-semibold transition-all ${
               isSubscribed 
                 ? "bg-[#F5F5F5] text-[#1A1A1A] hover:bg-[#E5E5E5]" 
                 : "bg-[#FF0000] text-white hover:brightness-90"
@@ -134,10 +134,10 @@ export const FriendlyChannelSection = ({
       
       {/* Description - collapsible, minimal */}
       {description && (
-        <div className="bg-[#F5F5F5] rounded-xl p-4">
+        <div className={`bg-[#F5F5F5] rounded-xl ${compact ? 'p-3' : 'p-4'}`}>
           <p 
             ref={descriptionRef}
-            className={`text-sm text-[#666666] leading-relaxed whitespace-pre-wrap ${
+            className={`${compact ? 'text-xs' : 'text-sm'} text-[#666666] leading-relaxed whitespace-pre-wrap ${
               !isDescriptionExpanded ? 'line-clamp-3' : ''
             }`}
           >
@@ -174,11 +174,11 @@ export const FriendlyChannelSection = ({
       ) : channelVideos.length > 0 ? (
         <div>
           <div className="h-px bg-[#E5E5E5] mb-4" />
-          <p className="text-sm font-medium text-[#666666] mb-3">
+          <p className={`${compact ? 'text-xs' : 'text-sm'} font-medium text-[#666666] mb-3`}>
             More from {channelName}
           </p>
           
-          <div className={`grid gap-3 ${compact ? 'grid-cols-2' : 'grid-cols-3'}`}>
+          <div className={`grid ${compact ? 'gap-2 grid-cols-2' : 'gap-3 grid-cols-3'}`}>
             {channelVideos.slice(0, compact ? 4 : 3).map((video) => (
               <div key={video.id} className="rounded-lg overflow-hidden">
                 <VideoCard

@@ -99,10 +99,10 @@ const VideoDetails = () => {
       {isAuthenticated && <VideoHistory videoId={video?.id || ""} />}
       
       <div className="min-h-screen bg-white pt-14 pl-0 lg:pl-[200px] pb-20 lg:pb-0 transition-all duration-300">
-        <div className="px-4 lg:px-6 pt-4 pb-12">
+        <div className={`${isMobile ? 'px-3' : 'px-4'} lg:px-6 pt-4 pb-12`}>
           
-          {/* Desktop/Tablet Layout */}
-          {!isMobile && (
+        {/* Desktop Layout - two column */}
+          {!isMobile && !isTablet && (
             <div className="mt-4 flex gap-6">
               {/* Left Column - Video, Title, Actions, Channel, More Videos */}
               <div className="flex-1 min-w-0">
@@ -182,11 +182,11 @@ const VideoDetails = () => {
             </div>
           )}
           
-          {/* Mobile Layout */}
-          {isMobile && (
-            <div className="mt-2 space-y-4">
+          {/* Mobile + Tablet Layout - stacked */}
+          {(isMobile || isTablet) && (
+            <div className={`mt-2 space-y-${isMobile ? '3' : '4'}`}>
               {/* Video Player */}
-              <div className="rounded-xl overflow-hidden bg-black -mx-6 relative">
+              <div className={`rounded-xl overflow-hidden bg-black ${isMobile ? '-mx-3' : ''} relative`}>
                 <VideoPlayer videoId={video?.video_id || ""} onVideoEnd={isPlaylistMode ? goToNextVideo : undefined} />
                 {isPlaylistMode && (
                   <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-black/70 text-white text-xs font-medium px-2.5 py-1.5 rounded-full backdrop-blur-sm">
@@ -198,7 +198,7 @@ const VideoDetails = () => {
               </div>
               
               {/* Title */}
-              <h1 className="text-lg font-bold text-[#1A1A1A] leading-tight">
+              <h1 className={`${isMobile ? 'text-base' : 'text-lg'} font-bold text-[#1A1A1A] leading-tight`}>
                 {video?.title}
               </h1>
               
