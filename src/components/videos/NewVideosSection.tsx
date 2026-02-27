@@ -6,6 +6,7 @@ import { useVideoDate } from "@/components/video/useVideoDate";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { VideoCardWithOptions } from "@/components/video/VideoCardWithOptions";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface NewVideosSectionProps {
   videos: VideoData[];
