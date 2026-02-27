@@ -15,13 +15,10 @@ export const GlobalHeader = () => {
   const { isMobile } = useIsMobile();
   const { isAuthenticated, session, profile } = useSessionManager();
   const [isAuthOpen, setIsAuthOpen] = useState(false);
-  const [isVisible, setIsVisible] = useState(true);
-  const lastScrollY = useRef(0);
   const searchContainerRef = useRef<HTMLDivElement>(null);
   
   const isHomePage = location.pathname === "/";
 
-  // Use the video search hook for live search
   const {
     searchQuery,
     setSearchQuery,
@@ -31,25 +28,6 @@ export const GlobalHeader = () => {
     isLoading: isSearching,
     hasResults
   } = useVideoSearch();
-
-  // Handle scroll to show/hide header
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      const scrollingDown = currentScrollY > lastScrollY.current;
-      
-      if (scrollingDown && currentScrollY > 100) {
-        setIsVisible(false);
-      } else if (!scrollingDown) {
-        setIsVisible(true);
-      }
-      
-      lastScrollY.current = currentScrollY;
-    };
-    
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   // Close search dropdown when clicking outside
   useEffect(() => {
@@ -63,7 +41,6 @@ export const GlobalHeader = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [setIsSearchOpen]);
 
-  // Handle search submit
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
@@ -86,38 +63,26 @@ export const GlobalHeader = () => {
   };
 
   const getUserInitial = () => {
-    if (profile?.display_name) {
-      return profile.display_name.charAt(0).toUpperCase();
-    }
-    if (profile?.name) {
-      return profile.name.charAt(0).toUpperCase();
-    }
-    if (session?.user?.email) {
-      return session.user.email.charAt(0).toUpperCase();
-    }
+    if (profile?.display_name) return profile.display_name.charAt(0).toUpperCase();
+    if (profile?.name) return profile.name.charAt(0).toUpperCase();
+    if (session?.user?.email) return session.user.email.charAt(0).toUpperCase();
     return "U";
   };
 
-  const handleMarkNotificationsAsRead = async () => {
-    // This will be handled by the NotificationsMenu component
-  };
+  const handleMarkNotificationsAsRead = async () => {};
 
   const shouldShowDropdown = isSearchOpen && searchQuery.trim().length > 0;
 
-  // On homepage, only show a floating profile icon in top-right corner
+  // Homepage: floating profile icon only
   if (isHomePage) {
     return (
       <>
-        {/* Floating Profile Icon for Homepage */}
         <div className="fixed top-4 right-4 z-50">
           {isAuthenticated ? (
             <Link
               to="/settings"
-              className="flex items-center justify-center w-10 h-10 rounded-full text-white font-semibold text-sm transition-transform hover:scale-105 shadow-lg"
-              style={{ 
-                backgroundColor: 'hsl(0, 70%, 55%)',
-                fontFamily: "'Quicksand', sans-serif"
-              }}
+              className="flex items-center justify-center w-10 h-10 rounded-full text-white font-semibold text-sm transition-transform hover:scale-105 shadow-lg bg-[#FF0000]"
+              style={{ fontFamily: "'Quicksand', sans-serif" }}
               title="Profile"
             >
               {getUserInitial()}
@@ -126,19 +91,13 @@ export const GlobalHeader = () => {
             <Button
               onClick={() => setIsAuthOpen(true)}
               size="icon"
-              className="rounded-full w-10 h-10 shadow-lg hover:opacity-90 transition-all"
-              style={{ 
-                backgroundColor: 'hsl(0, 70%, 55%)',
-                color: 'white'
-              }}
+              className="rounded-full w-10 h-10 shadow-lg hover:opacity-90 transition-all bg-[#FF0000] text-white"
               title="Sign In"
             >
               <LogIn className="w-5 h-5" />
             </Button>
           )}
         </div>
-
-        {/* Auth Dialog */}
         <Auth isOpen={isAuthOpen} onOpenChange={setIsAuthOpen} />
       </>
     );
@@ -146,22 +105,9 @@ export const GlobalHeader = () => {
 
   return (
     <>
-      <motion.header
-        initial={{ y: 0, opacity: 1 }}
-        animate={{ 
-          y: isVisible ? 0 : -70, 
-          opacity: isVisible ? 1 : 0 
-        }}
-        transition={{ 
-          duration: 0.5, 
-          ease: [0.25, 0.1, 0.25, 1]
-        }}
-        className="fixed top-0 z-40 backdrop-blur-md bg-white/95"
-        style={{ 
-          boxShadow: '0 2px 12px rgba(0, 0, 0, 0.04)',
-          left: 200,
-          right: 0
-        }}
+      <header
+        className="fixed top-0 z-40 bg-white border-b border-[#E5E5E5]"
+        style={{ left: 200, right: 0 }}
       >
         <div className="w-full px-3 md:px-6">
           <div className="flex items-center justify-between h-14 gap-4">
@@ -175,14 +121,14 @@ export const GlobalHeader = () => {
             >
               <form onSubmit={handleSearchSubmit}>
                 <div 
-                  className={`flex items-center rounded-full border transition-all duration-200 ${
+                  className={`flex items-center rounded-full border-2 transition-all duration-200 bg-[#F5F5F5] ${
                     isSearchOpen 
-                      ? 'border-gray-500 shadow-lg' 
-                      : 'border-gray-400 hover:border-gray-500 shadow-sm'
+                      ? 'border-[#FFCC00] shadow-md bg-white' 
+                      : 'border-[#E5E5E5] hover:border-[#FFCC00] hover:bg-white'
                   }`}
-                  style={{ backgroundColor: '#ffffff' }}
                 >
-                  <div className="flex items-center flex-1 pl-5 pr-2">
+                  <div className="flex items-center flex-1 pl-4 pr-2">
+                    <Search className="w-4 h-4 text-[#999999] shrink-0 mr-2" />
                     <input
                       type="text"
                       value={searchQuery}
@@ -191,9 +137,9 @@ export const GlobalHeader = () => {
                         setIsSearchOpen(true);
                       }}
                       onFocus={() => setIsSearchOpen(true)}
-                      placeholder={isMobile ? "Search" : "Search"}
-                      className="flex-1 bg-transparent border-none outline-none py-2 text-base text-gray-900 placeholder:text-gray-500"
-                      style={{ fontFamily: "'Roboto', 'Arial', sans-serif" }}
+                      placeholder="Search videos..."
+                      className="flex-1 bg-transparent border-none outline-none py-2.5 text-sm text-[#1A1A1A] placeholder:text-[#999999]"
+                      style={{ fontFamily: "'Quicksand', sans-serif" }}
                     />
                     {searchQuery && (
                       <button
@@ -202,18 +148,17 @@ export const GlobalHeader = () => {
                           setSearchQuery("");
                           setIsSearchOpen(false);
                         }}
-                        className="p-1.5 rounded-full hover:bg-gray-100 transition-colors"
+                        className="p-1 rounded-full hover:bg-[#E5E5E5] transition-colors"
                       >
-                        <X className="w-5 h-5 text-gray-600" />
+                        <X className="w-4 h-4 text-[#666666]" />
                       </button>
                     )}
                   </div>
                   <button
                     type="submit"
-                    className="h-10 px-5 rounded-r-full border-l border-gray-300 hover:bg-gray-100 transition-colors flex items-center justify-center"
-                    style={{ backgroundColor: '#f8f8f8' }}
+                    className="h-10 px-4 rounded-r-full border-l border-[#E5E5E5] hover:bg-[#E5E5E5] transition-colors flex items-center justify-center bg-white"
                   >
-                    <Search className="w-5 h-5 text-gray-700" />
+                    <Search className="w-4 h-4 text-[#666666]" />
                   </button>
                 </div>
               </form>
@@ -226,59 +171,53 @@ export const GlobalHeader = () => {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.15 }}
-                    className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden z-[100]"
+                    className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-xl border border-[#E5E5E5] overflow-hidden z-[100]"
                     style={{ maxHeight: '70vh' }}
                   >
                     {isSearching && (
                       <div className="flex items-center justify-center py-4">
-                        <div className="w-5 h-5 border-2 border-red-500 border-t-transparent rounded-full animate-spin"></div>
-                        <span className="ml-2 text-sm text-gray-500">Searching...</span>
+                        <div className="w-5 h-5 border-2 border-[#FF0000] border-t-transparent rounded-full animate-spin"></div>
+                        <span className="ml-2 text-sm text-[#999999]">Searching...</span>
                       </div>
                     )}
 
                     {!isSearching && hasResults && (
                       <div className="max-h-80 overflow-y-auto">
-                        {/* Videos */}
                         {searchResults.videos && searchResults.videos.length > 0 && (
                           <div>
-                            <div className="px-4 py-2 bg-gray-50 text-xs font-semibold text-gray-500 uppercase">
+                            <div className="px-4 py-2 bg-[#F5F5F5] text-xs font-semibold text-[#999999] uppercase">
                               Videos
                             </div>
                             {searchResults.videos.slice(0, 5).map((video: any) => (
                               <button
                                 key={video.id}
                                 onClick={() => handleVideoClick(video.video_id || video.id)}
-                                className="flex items-center gap-3 w-full px-4 py-2.5 hover:bg-gray-50 transition-colors text-left"
+                                className="flex items-center gap-3 w-full px-4 py-2.5 hover:bg-[#F0F0F0] transition-colors text-left"
                               >
                                 <img
                                   src={video.thumbnail}
                                   alt={video.title}
-                                  className="w-16 h-10 object-cover rounded"
+                                  className="w-16 h-10 object-cover rounded-lg"
                                 />
                                 <div className="flex-1 min-w-0">
-                                  <p className="text-sm font-medium text-gray-800 truncate">
-                                    {video.title}
-                                  </p>
-                                  <p className="text-xs text-gray-500 truncate">
-                                    {video.channel_name}
-                                  </p>
+                                  <p className="text-sm font-medium text-[#1A1A1A] truncate">{video.title}</p>
+                                  <p className="text-xs text-[#999999] truncate">{video.channel_name}</p>
                                 </div>
                               </button>
                             ))}
                           </div>
                         )}
 
-                        {/* Channels */}
                         {searchResults.channels && searchResults.channels.length > 0 && (
                           <div>
-                            <div className="px-4 py-2 bg-gray-50 text-xs font-semibold text-gray-500 uppercase border-t">
+                            <div className="px-4 py-2 bg-[#F5F5F5] text-xs font-semibold text-[#999999] uppercase border-t border-[#E5E5E5]">
                               Channels
                             </div>
                             {searchResults.channels.slice(0, 3).map((channel: any) => (
                               <button
                                 key={channel.id}
                                 onClick={() => handleChannelClick(channel.channel_id)}
-                                className="flex items-center gap-3 w-full px-4 py-2.5 hover:bg-gray-50 transition-colors text-left"
+                                className="flex items-center gap-3 w-full px-4 py-2.5 hover:bg-[#F0F0F0] transition-colors text-left"
                               >
                                 <img
                                   src={channel.thumbnail_url || '/placeholder.svg'}
@@ -286,10 +225,8 @@ export const GlobalHeader = () => {
                                   className="w-10 h-10 object-cover rounded-full"
                                 />
                                 <div className="flex-1 min-w-0">
-                                  <p className="text-sm font-medium text-gray-800 truncate">
-                                    {channel.title}
-                                  </p>
-                                  <p className="text-xs text-gray-500">Channel</p>
+                                  <p className="text-sm font-medium text-[#1A1A1A] truncate">{channel.title}</p>
+                                  <p className="text-xs text-[#999999]">Channel</p>
                                 </div>
                               </button>
                             ))}
@@ -300,14 +237,13 @@ export const GlobalHeader = () => {
 
                     {!isSearching && searchQuery.trim() && !hasResults && (
                       <div className="py-6 text-center">
-                        <Search className="w-8 h-8 mx-auto mb-2 text-gray-300" />
-                        <p className="text-sm text-gray-500">No results found</p>
+                        <Search className="w-8 h-8 mx-auto mb-2 text-[#E5E5E5]" />
+                        <p className="text-sm text-[#999999]">No results found</p>
                       </div>
                     )}
 
-                    {/* Press Enter hint */}
                     {searchQuery.trim() && (
-                      <div className="px-4 py-2 bg-gray-50 text-xs text-gray-400 text-center border-t">
+                      <div className="px-4 py-2 bg-[#F5F5F5] text-xs text-[#999999] text-center border-t border-[#E5E5E5]">
                         Press Enter to see all results
                       </div>
                     )}
@@ -327,11 +263,8 @@ export const GlobalHeader = () => {
               {isAuthenticated ? (
                 <Link
                   to="/settings"
-                  className="flex items-center justify-center w-9 h-9 rounded-full text-white font-semibold text-sm transition-transform hover:scale-105"
-                  style={{ 
-                    backgroundColor: 'hsl(0, 70%, 55%)',
-                    fontFamily: "'Quicksand', sans-serif"
-                  }}
+                  className="flex items-center justify-center w-9 h-9 rounded-full text-white font-semibold text-sm transition-transform hover:scale-105 bg-[#FF0000]"
+                  style={{ fontFamily: "'Quicksand', sans-serif" }}
                   title="Profile"
                 >
                   {getUserInitial()}
@@ -340,12 +273,8 @@ export const GlobalHeader = () => {
                 <Button
                   onClick={() => setIsAuthOpen(true)}
                   size={isMobile ? "sm" : "default"}
-                  className="rounded-full gap-2 font-medium hover:opacity-90 transition-all"
-                  style={{ 
-                    fontFamily: "'Quicksand', sans-serif",
-                    backgroundColor: 'hsl(0, 70%, 55%)',
-                    color: 'white'
-                  }}
+                  className="rounded-full gap-2 font-medium hover:brightness-90 transition-all bg-[#FF0000] text-white"
+                  style={{ fontFamily: "'Quicksand', sans-serif" }}
                 >
                   <LogIn className="w-4 h-4" />
                   {!isMobile && <span>Sign In</span>}
@@ -354,7 +283,7 @@ export const GlobalHeader = () => {
             </div>
           </div>
         </div>
-      </motion.header>
+      </header>
 
       {/* Auth Dialog */}
       <Auth isOpen={isAuthOpen} onOpenChange={setIsAuthOpen} />
