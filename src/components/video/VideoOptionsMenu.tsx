@@ -120,7 +120,7 @@ export const VideoOptionsMenu = ({ videoId, variant = "icon", className }: Video
           
           <DropdownMenuItem
             onClick={handleToggleWatchLater}
-            className="flex items-center gap-3 px-3 py-2.5 cursor-pointer hover:bg-gray-100 rounded-lg"
+            className="flex items-center gap-3 px-3 py-2.5 cursor-pointer hover:bg-[#F0F0F0] rounded-lg"
           >
             <Clock className={cn("w-4 h-4", isWatchLaterSaved && "fill-blue-500 text-blue-500")} />
             <span>{isWatchLaterSaved ? "Remove from Watch Later" : "Add to Watch Later"}</span>
