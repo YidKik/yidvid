@@ -101,8 +101,8 @@ const VideoDetails = () => {
       <div className="min-h-screen bg-white pt-14 pl-0 lg:pl-[200px] pb-20 lg:pb-0 transition-all duration-300">
         <div className="px-4 lg:px-6 pt-4 pb-12">
           
-          {/* Desktop/Tablet Layout */}
-          {!isMobile && (
+        {/* Desktop Layout - two column */}
+          {!isMobile && !isTablet && (
             <div className="mt-4 flex gap-6">
               {/* Left Column - Video, Title, Actions, Channel, More Videos */}
               <div className="flex-1 min-w-0">
