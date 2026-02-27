@@ -427,7 +427,7 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
 
         {/* Settings Section */}
         {navSections.slice(1).map((section, sectionIdx) => (
-          <div key={sectionIdx} className="mt-3 pt-3 border-t border-gray-100">
+          <div key={sectionIdx} className="mt-3 pt-3 border-t border-[#E5E5E5]">
             <div className="space-y-1">
               {section.items.map((item) => {
                 const Icon = item.icon;
