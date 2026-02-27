@@ -31,7 +31,8 @@ export const VideoContentDisplay: React.FC<VideoContentDisplayProps> = ({
   handleRefetch,
   handleForceRefetch,
   selectedCategory = "all",
-  sortBy
+  sortBy,
+  viewChannels = false
 }) => {
   const { isMobile } = useIsMobile();
 
