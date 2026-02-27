@@ -15,6 +15,7 @@ const About = () => {
   const [showTerms, setShowTerms] = useState(false);
   const [showPrivacy, setShowPrivacy] = useState(false);
   const [showContact, setShowContact] = useState(false);
+  const { isMobile } = useIsMobile();
 
   return (
     <>
