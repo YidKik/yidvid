@@ -16,6 +16,7 @@ interface VideoCardWithOptionsProps {
   duration?: string | null;
   className?: string;
   isGrid?: boolean;
+  hideChannelInfo?: boolean;
 }
 
 export const VideoCardWithOptions = ({
