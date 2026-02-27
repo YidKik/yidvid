@@ -182,7 +182,7 @@ export const TrendingSection = ({ videos }: TrendingSectionProps) => {
               <button
                 onClick={handlePrevPage}
                 disabled={currentPage === 0}
-                className={`flex items-center gap-2 px-8 py-3 rounded-full font-semibold transition-all duration-300 ${
+                className={`flex items-center gap-2 ${isMobile ? 'px-4 py-2 text-sm' : 'px-8 py-3'} rounded-full font-semibold transition-all duration-300 ${
                   currentPage === 0
                     ? 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-600 cursor-not-allowed'
                     : 'bg-red-500 text-white shadow-md hover:shadow-lg hover:scale-105'
