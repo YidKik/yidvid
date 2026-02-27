@@ -438,7 +438,7 @@ export const FriendlyVideoActionBar = ({
           variant="ghost"
           onClick={handleLike}
           className={`${actionButtonBase} ${
-            isLiked ? "bg-red-50 text-red-500" : ""
+            isLiked ? "bg-[#F5F5F5] text-[#FF0000]" : ""
           }`}
         >
           <ThumbsUp className={`h-4 w-4 mr-2 ${isLiked ? "fill-current" : ""}`} />
