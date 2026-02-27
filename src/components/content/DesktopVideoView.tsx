@@ -17,6 +17,7 @@ interface DesktopVideoViewProps {
   fetchAttempts?: number;
   selectedCategory?: string;
   sortBy?: string;
+  viewChannels?: boolean;
 }
 
 export const DesktopVideoView = ({
@@ -26,7 +27,8 @@ export const DesktopVideoView = ({
   refetch,
   forceRefetch,
   selectedCategory = "all",
-  sortBy
+  sortBy,
+  viewChannels = false
 }: DesktopVideoViewProps) => {
   // More thorough check if we have real videos (not samples)
   const hasRealVideos = videos.some(video => 
@@ -76,7 +78,7 @@ export const DesktopVideoView = ({
       <TrendingSection videos={videos} />
 
       {/* Most Viewed Channels */}
-      <ChannelsRowSection selectedCategory={selectedCategory} />
+      <ChannelsRowSection selectedCategory={selectedCategory} autoExpand={viewChannels} />
     </div>
   );
 };

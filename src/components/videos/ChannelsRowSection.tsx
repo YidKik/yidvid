@@ -10,13 +10,27 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface ChannelsRowSectionProps {
   selectedCategory?: string;
+  autoExpand?: boolean;
 }
 
-export const ChannelsRowSection = ({ selectedCategory = "all" }: ChannelsRowSectionProps) => {
+export const ChannelsRowSection = ({ selectedCategory = "all", autoExpand = false }: ChannelsRowSectionProps) => {
   const { manuallyFetchedChannels: channels, isLoading } = useChannelsGrid();
-  const [showAllChannels, setShowAllChannels] = useState(false);
-  const [hasAnimated, setHasAnimated] = useState(false);
+  const [showAllChannels, setShowAllChannels] = useState(autoExpand);
+  const [hasAnimated, setHasAnimated] = useState(autoExpand);
   const sectionRef = useRef<HTMLDivElement>(null);
+  const hasAutoExpanded = useRef(false);
+
+  // Auto-expand and scroll when autoExpand prop is true
+  useEffect(() => {
+    if (autoExpand && !hasAutoExpanded.current && !isLoading && channels && channels.length > 0) {
+      hasAutoExpanded.current = true;
+      setShowAllChannels(true);
+      setHasAnimated(true);
+      setTimeout(() => {
+        sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
+  }, [autoExpand, isLoading, channels]);
   
   // Fetch video counts per channel to determine "most viewed"
   const { data: channelVideoCounts } = useQuery({

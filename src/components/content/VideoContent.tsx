@@ -15,6 +15,7 @@ interface VideoContentProps {
   fetchAttempts?: number;
   selectedCategory?: string;
   sortBy?: string;
+  viewChannels?: boolean;
 }
 
 export const VideoContent = ({ 
@@ -25,7 +26,8 @@ export const VideoContent = ({
   lastSuccessfulFetch,
   fetchAttempts,
   selectedCategory = "all",
-  sortBy
+  sortBy,
+  viewChannels = false
 }: VideoContentProps) => {
   const { session, isAuthenticated } = useSessionManager();
   
@@ -67,6 +69,7 @@ export const VideoContent = ({
         handleForceRefetch={handleForceRefetch}
         selectedCategory={selectedCategory}
         sortBy={sortBy}
+        viewChannels={viewChannels}
       />
     </div>
   );

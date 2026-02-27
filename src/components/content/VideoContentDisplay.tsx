@@ -18,6 +18,7 @@ interface VideoContentDisplayProps {
   handleForceRefetch: () => Promise<any>;
   selectedCategory?: string;
   sortBy?: string;
+  viewChannels?: boolean;
 }
 
 export const VideoContentDisplay: React.FC<VideoContentDisplayProps> = ({
@@ -30,7 +31,8 @@ export const VideoContentDisplay: React.FC<VideoContentDisplayProps> = ({
   handleRefetch,
   handleForceRefetch,
   selectedCategory = "all",
-  sortBy
+  sortBy,
+  viewChannels = false
 }) => {
   const { isMobile } = useIsMobile();
 
@@ -73,6 +75,7 @@ export const VideoContentDisplay: React.FC<VideoContentDisplayProps> = ({
           fetchAttempts={fetchAttempts || 0}
           selectedCategory={selectedCategory}
           sortBy={sortBy}
+          viewChannels={viewChannels}
         />
       )}
     </div>
