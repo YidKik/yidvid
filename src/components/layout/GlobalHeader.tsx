@@ -141,7 +141,7 @@ export const GlobalHeader = () => {
                       }}
                       onFocus={() => setIsSearchOpen(true)}
                       placeholder="Search videos..."
-                      className="flex-1 bg-transparent border-none outline-none py-2.5 text-sm text-[#1A1A1A] placeholder:text-[#999999]"
+                      className={`flex-1 bg-transparent border-none outline-none ${isMobile ? 'py-2 text-xs' : 'py-2.5 text-sm'} text-[#1A1A1A] placeholder:text-[#999999]`}
                       style={{ fontFamily: "'Quicksand', sans-serif" }}
                     />
                     {searchQuery && (
