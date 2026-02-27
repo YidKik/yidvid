@@ -110,19 +110,19 @@ export const generateBreadcrumbSchema = (video: VideoData) => {
         "@type": "ListItem",
         "position": 1,
         "name": "Home",
-        "item": "/"
+        "item": "https://yidvid.co/"
       },
       {
         "@type": "ListItem", 
         "position": 2,
         "name": "Videos",
-        "item": "/videos"
+        "item": "https://yidvid.co/videos"
       },
       {
         "@type": "ListItem",
         "position": 3,
         "name": video.title || "Video",
-        "item": window.location.href
+        "item": `https://yidvid.co/video/${video.video_id}`
       }
     ]
   };
