@@ -98,7 +98,7 @@ const getNavItemClass = (isExpanded: boolean, active: boolean, disabled = false)
 const getIconClass = (active: boolean, disabled = false) =>
   cn("w-5 h-5 shrink-0 transition-colors", disabled ? "text-[#999999]" : active ? "text-[#FF0000]" : "text-[#666666]");
 
-const getLabelClass = (active: boolean) =>
+const getLabelClass = (active: boolean, disabled = false) =>
   cn("truncate transition-colors", disabled ? "text-[#999999]" : active ? "text-[#FF0000]" : "text-[#1A1A1A]");
 
 export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
