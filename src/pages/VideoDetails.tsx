@@ -198,7 +198,7 @@ const VideoDetails = () => {
               </div>
               
               {/* Title */}
-              <h1 className="text-lg font-bold text-[#1A1A1A] leading-tight">
+              <h1 className={`${isMobile ? 'text-base' : 'text-lg'} font-bold text-[#1A1A1A] leading-tight`}>
                 {video?.title}
               </h1>
               
