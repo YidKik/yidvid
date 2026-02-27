@@ -15,8 +15,8 @@ export const Footer = () => {
       <footer 
         className="mt-auto border-t"
         style={{ 
-          backgroundColor: 'hsl(50, 100%, 96%)',
-          borderColor: 'hsl(50, 80%, 85%)'
+          backgroundColor: '#F5F5F5',
+          borderColor: '#E5E5E5'
         }}
       >
         <div className="max-w-[1600px] mx-auto px-6 lg:px-12 py-5">
@@ -27,13 +27,12 @@ export const Footer = () => {
                 src={yidvidLogo} 
                 alt="YidVid" 
                 className="w-8 h-8 object-contain"
-                style={{ opacity: 1 }}
               />
               <span 
                 className="text-sm font-medium"
                 style={{ 
                   fontFamily: "'Quicksand', sans-serif",
-                  color: 'hsl(0, 0%, 30%)'
+                  color: '#666666'
                 }}
               >
                 quality Jewish content for everyone
@@ -44,32 +43,32 @@ export const Footer = () => {
             <div className="flex items-center gap-4">
               <button 
                 onClick={() => setTosDialogOpen(true)}
-                className="text-sm font-medium transition-colors hover:text-red-500"
+                className="text-sm font-medium transition-colors hover:text-[#FF0000]"
                 style={{ 
                   fontFamily: "'Quicksand', sans-serif",
-                  color: 'hsl(0, 0%, 45%)'
+                  color: '#666666'
                 }}
               >
                 Terms of Service
               </button>
-              <span style={{ color: 'hsl(0, 0%, 75%)' }}>|</span>
+              <span style={{ color: '#E5E5E5' }}>|</span>
               <button 
                 onClick={() => setPrivacyDialogOpen(true)}
-                className="text-sm font-medium transition-colors hover:text-red-500"
+                className="text-sm font-medium transition-colors hover:text-[#FF0000]"
                 style={{ 
                   fontFamily: "'Quicksand', sans-serif",
-                  color: 'hsl(0, 0%, 45%)'
+                  color: '#666666'
                 }}
               >
                 Privacy Policy
               </button>
-              <span style={{ color: 'hsl(0, 0%, 75%)' }}>|</span>
+              <span style={{ color: '#E5E5E5' }}>|</span>
               <button 
                 onClick={() => setContactDialogOpen(true)}
-                className="text-sm font-medium transition-colors hover:text-red-500"
+                className="text-sm font-medium transition-colors hover:text-[#FF0000]"
                 style={{ 
                   fontFamily: "'Quicksand', sans-serif",
-                  color: 'hsl(0, 0%, 45%)'
+                  color: '#666666'
                 }}
               >
                 Contact
@@ -81,7 +80,7 @@ export const Footer = () => {
               className="text-sm"
               style={{ 
                 fontFamily: "'Quicksand', sans-serif",
-                color: 'hsl(0, 0%, 55%)'
+                color: '#999999'
               }}
             >
               © {new Date().getFullYear()} YidVid

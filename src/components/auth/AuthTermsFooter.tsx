@@ -11,20 +11,20 @@ export const AuthTermsFooter: React.FC<AuthTermsFooterProps> = ({
 }) => {
   return (
     <div 
-      className="mt-6 pt-4 border-t border-gray-100 text-center"
+      className="mt-6 pt-4 border-t border-[#E5E5E5] text-center"
       style={{ fontFamily: "'Quicksand', sans-serif" }}
     >
-      <p className="text-xs text-gray-500 leading-relaxed">
+      <p className="text-xs text-[#999999] leading-relaxed">
         By signing in, you agree to our{" "}
         <button 
           onClick={onOpenTos} 
-          className="text-red-500 bg-transparent p-0 border-none inline font-semibold text-xs hover:text-red-600 hover:underline underline-offset-2 transition-colors"
+          className="text-[#FF0000] bg-transparent p-0 border-none inline font-semibold text-xs hover:underline underline-offset-2 transition-colors"
         >
           Terms of Service
         </button>{" "}and{" "}
         <button 
           onClick={onOpenPrivacy} 
-          className="text-red-500 bg-transparent p-0 border-none inline font-semibold text-xs hover:text-red-600 hover:underline underline-offset-2 transition-colors"
+          className="text-[#FF0000] bg-transparent p-0 border-none inline font-semibold text-xs hover:underline underline-offset-2 transition-colors"
         >
           Privacy Policy
         </button>

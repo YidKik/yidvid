@@ -65,7 +65,7 @@ const Auth = ({ isOpen, onOpenChange, initialTab = 'signin' }: AuthProps) => {
     }}>
       <DialogContent 
         hideCloseButton={true}
-        className={`p-0 gap-0 bg-white border-2 border-yellow-200 shadow-2xl ${isMobile 
+        className={`p-0 gap-0 bg-white border-2 border-[#FFCC00] shadow-2xl ${isMobile 
           ? 'w-[90%] max-w-[340px] rounded-2xl' 
           : 'w-[380px] max-w-[380px] rounded-2xl'
         } overflow-hidden`}
