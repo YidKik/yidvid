@@ -468,7 +468,7 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
         ))}
 
         {/* Subscriptions Section */}
-        <div className="mt-3 pt-3 border-t border-gray-100">
+        <div className="mt-3 pt-3 border-t border-[#E5E5E5]">
           <button
             onClick={() => {
               if (!isAuthenticated) {
