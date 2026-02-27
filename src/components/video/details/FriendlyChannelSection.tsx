@@ -104,7 +104,7 @@ export const FriendlyChannelSection = ({
               {channelName}
             </Link>
           ) : (
-            <span className="text-sm font-semibold text-[#1A1A1A] truncate block">{channelName}</span>
+            <span className={`${compact ? 'text-xs' : 'text-sm'} font-semibold text-[#1A1A1A] truncate block`}>{channelName}</span>
           )}
         </div>
         
