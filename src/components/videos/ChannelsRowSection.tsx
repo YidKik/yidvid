@@ -16,6 +16,7 @@ interface ChannelsRowSectionProps {
 
 export const ChannelsRowSection = ({ selectedCategory = "all", autoExpand = false }: ChannelsRowSectionProps) => {
   const { manuallyFetchedChannels: channels, isLoading } = useChannelsGrid();
+  const { isMobile, isTablet } = useIsMobile();
   const [showAllChannels, setShowAllChannels] = useState(autoExpand);
   const [hasAnimated, setHasAnimated] = useState(autoExpand);
   const sectionRef = useRef<HTMLDivElement>(null);
