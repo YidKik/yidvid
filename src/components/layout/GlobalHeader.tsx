@@ -13,12 +13,13 @@ import { NotificationsMenu } from "@/components/header/NotificationsMenu";
 export const GlobalHeader = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { isMobile } = useIsMobile();
+  const { isMobile, isDesktop: _ } = useIsMobile();
   const { isAuthenticated, session, profile } = useSessionManager();
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const searchContainerRef = useRef<HTMLDivElement>(null);
   
   const isHomePage = location.pathname === "/";
+  const { isDesktop } = useIsMobile();
   const { sidebarWidth } = useSidebarContext();
 
   const {
@@ -109,7 +110,7 @@ export const GlobalHeader = () => {
     <>
       <header
         className="fixed top-0 z-40 bg-white border-b border-[#E5E5E5] transition-all duration-300"
-        style={{ left: sidebarWidth, right: 0 }}
+        style={{ left: isDesktop ? sidebarWidth : 0, right: 0 }}
       >
         <div className="w-full px-3 md:px-6">
           <div className="flex items-center justify-between h-14 gap-4">

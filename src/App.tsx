@@ -44,11 +44,14 @@ import { PagePreloader } from './components/PagePreloader';
 import { TopLoadingBar } from './components/ui/TopLoadingBar';
 import { GlobalHeader } from './components/layout/GlobalHeader';
 import { Sidebar } from './components/layout/Sidebar';
+import { MobileBottomNav } from './components/layout/MobileBottomNav';
 import { useSessionManager } from './hooks/useSessionManager';
+import { useIsMobile } from './hooks/use-mobile';
 
 function AppContent() {
   const location = useLocation();
   const { isAuthenticated, session } = useSessionManager();
+  const { isDesktop } = useIsMobile();
   
   // Initialize keyboard shortcuts
   useKeyboardShortcuts();
@@ -72,7 +75,11 @@ function AppContent() {
     <>
       <TopLoadingBar />
       <GlobalHeader />
-      <Sidebar isAuthenticated={isAuthenticated} userId={session?.user?.id} />
+      {isDesktop ? (
+        <Sidebar isAuthenticated={isAuthenticated} userId={session?.user?.id} />
+      ) : (
+        <MobileBottomNav isAuthenticated={isAuthenticated} />
+      )}
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/videos" element={<Videos />} />

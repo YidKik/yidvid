@@ -18,10 +18,10 @@ export default function History() {
 
       <div className="min-h-screen flex flex-col bg-white">
         <div
-          className="flex-1 pt-14 transition-all duration-300"
-          style={{ paddingLeft: isMobile ? 0 : `${sidebarWidth + 16}px` }}
+          className="flex-1 pt-14 transition-all duration-300 pb-20 lg:pb-0"
+          style={{ paddingLeft: `${sidebarWidth ? sidebarWidth + 16 : 0}px` }}
         >
-          <main className="max-w-4xl mx-auto px-6 py-8">
+          <main className="max-w-4xl mx-auto px-4 lg:px-6 py-6 lg:py-8">
             {/* Header */}
             <div className="flex items-center gap-3 mb-8">
               <div

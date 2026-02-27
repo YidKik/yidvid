@@ -75,8 +75,8 @@ const MainContent = () => {
 
   return (
     <div 
-      className="flex-1 videos-page pt-14 transition-all duration-300"
-      style={{ paddingLeft: `${sidebarWidth + 16}px` }}
+      className="flex-1 videos-page pt-14 transition-all duration-300 pb-20 lg:pb-0"
+      style={{ paddingLeft: sidebarWidth ? `${sidebarWidth + 16}px` : '0px' }}
     >
       <motion.main 
         initial={{ opacity: 0, y: 20 }}

@@ -82,10 +82,10 @@ const Playlists = () => {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen pt-14 pl-[200px] bg-white flex flex-col">
-        <div className="flex-1 max-w-6xl mx-auto px-6 py-12">
+      <div className="min-h-screen pt-14 pl-0 lg:pl-[200px] bg-white flex flex-col pb-20 lg:pb-0">
+        <div className="flex-1 max-w-6xl mx-auto px-4 lg:px-6 py-12">
           <div className="flex flex-col items-center justify-center py-20 text-center">
-            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-yellow-100 to-red-100 flex items-center justify-center mb-6 shadow-sm">
+            <div className="w-20 h-20 lg:w-24 lg:h-24 rounded-full bg-gradient-to-br from-yellow-100 to-red-100 flex items-center justify-center mb-6 shadow-sm">
               <ListMusic className="w-12 h-12 text-red-500" />
             </div>
             <h1 className="text-2xl font-bold text-gray-900 mb-2 font-friendly">Sign in to view your playlists</h1>
@@ -109,8 +109,8 @@ const Playlists = () => {
   // Playlist detail view
   if (selectedPlaylistId && selectedPlaylist) {
     return (
-      <div className="min-h-screen pt-14 pl-[200px] bg-white flex flex-col">
-        <div className="flex-1 max-w-6xl mx-auto px-6 py-8">
+      <div className="min-h-screen pt-14 pl-0 lg:pl-[200px] bg-white flex flex-col pb-20 lg:pb-0">
+        <div className="flex-1 max-w-6xl mx-auto px-4 lg:px-6 py-6 lg:py-8">
           {/* Back button */}
           <button
             onClick={() => setSearchParams({})}
@@ -282,8 +282,8 @@ const Playlists = () => {
 
   // Playlists list view
   return (
-    <div className="min-h-screen pt-14 pl-[200px] bg-white flex flex-col">
-      <div className="flex-1 max-w-6xl mx-auto px-6 py-8">
+    <div className="min-h-screen pt-14 pl-0 lg:pl-[200px] bg-white flex flex-col pb-20 lg:pb-0">
+      <div className="flex-1 max-w-6xl mx-auto px-4 lg:px-6 py-6 lg:py-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-8 pb-6 border-b border-gray-100">
           <div className="flex items-center gap-4">

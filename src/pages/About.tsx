@@ -22,7 +22,7 @@ const About = () => {
         <meta name="description" content="Learn about YidVid - your premier destination for kosher Jewish content." />
       </Helmet>
 
-      <div className="min-h-screen bg-white pt-14 pl-[200px] transition-all duration-300">
+      <div className="min-h-screen bg-white pt-14 pl-0 lg:pl-[200px] pb-20 lg:pb-0 transition-all duration-300">
         <div className="max-w-4xl mx-auto px-6 py-12">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
