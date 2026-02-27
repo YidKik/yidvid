@@ -99,11 +99,6 @@ const Favorites = () => {
                   <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity" onClick={(e) => e.stopPropagation()}>
                     <VideoOptionsMenu videoId={item.video?.id} variant="overlay" />
                   </div>
-                  <div className="absolute bottom-2 left-2">
-                    <div className="w-7 h-7 rounded-full bg-[#FF0000] flex items-center justify-center shadow-sm">
-                      <Heart className="w-3.5 h-3.5 text-white fill-white" />
-                    </div>
-                  </div>
                 </div>
                 <h3 className="font-semibold text-[#1A1A1A] line-clamp-2 text-sm mb-1.5 group-hover:text-[#FF0000] transition-colors">
                   {item.video?.title}
