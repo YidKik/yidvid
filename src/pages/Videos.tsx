@@ -38,8 +38,9 @@ const MainContent = () => {
   usePageLoader('videos', isLoading);
 
   useEffect(() => {
-    if (categoryFromUrl && categoryFromUrl !== selectedCategory) {
-      setSelectedCategory(categoryFromUrl);
+    const newCategory = categoryFromUrl || "all";
+    if (newCategory !== selectedCategory) {
+      setSelectedCategory(newCategory);
     }
   }, [categoryFromUrl]);
 
