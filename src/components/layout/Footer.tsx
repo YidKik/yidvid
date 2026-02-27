@@ -15,24 +15,24 @@ export const Footer = () => {
       <footer 
         className="mt-auto border-t"
         style={{ 
-          backgroundColor: '#F5F5F5',
-          borderColor: '#E5E5E5'
+          backgroundColor: '#FAFAFA',
+          borderColor: '#EFEFEF'
         }}
       >
-        <div className="max-w-[1600px] mx-auto px-6 lg:px-12 py-5">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="max-w-[1600px] mx-auto px-6 lg:px-12 py-2.5">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-3">
             {/* Logo and Tagline */}
             <Link to="/" className="flex items-center gap-3">
               <img 
                 src={yidvidLogo} 
                 alt="YidVid" 
-                className="w-8 h-8 object-contain"
+                className="w-6 h-6 object-contain"
               />
               <span 
-                className="text-sm font-medium"
+                className="text-xs font-medium"
                 style={{ 
                   fontFamily: "'Quicksand', sans-serif",
-                  color: '#666666'
+                  color: '#999999'
                 }}
               >
                 quality Jewish content for everyone
@@ -40,13 +40,13 @@ export const Footer = () => {
             </Link>
 
             {/* Links */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
               <button 
                 onClick={() => setTosDialogOpen(true)}
-                className="text-sm font-medium transition-colors hover:text-[#FF0000]"
+                className="text-xs font-medium transition-colors hover:text-[#FF0000]"
                 style={{ 
                   fontFamily: "'Quicksand', sans-serif",
-                  color: '#666666'
+                  color: '#999999'
                 }}
               >
                 Terms of Service
@@ -54,10 +54,10 @@ export const Footer = () => {
               <span style={{ color: '#E5E5E5' }}>|</span>
               <button 
                 onClick={() => setPrivacyDialogOpen(true)}
-                className="text-sm font-medium transition-colors hover:text-[#FF0000]"
+                className="text-xs font-medium transition-colors hover:text-[#FF0000]"
                 style={{ 
                   fontFamily: "'Quicksand', sans-serif",
-                  color: '#666666'
+                  color: '#999999'
                 }}
               >
                 Privacy Policy
@@ -65,10 +65,10 @@ export const Footer = () => {
               <span style={{ color: '#E5E5E5' }}>|</span>
               <button 
                 onClick={() => setContactDialogOpen(true)}
-                className="text-sm font-medium transition-colors hover:text-[#FF0000]"
+                className="text-xs font-medium transition-colors hover:text-[#FF0000]"
                 style={{ 
                   fontFamily: "'Quicksand', sans-serif",
-                  color: '#666666'
+                  color: '#999999'
                 }}
               >
                 Contact
@@ -77,10 +77,10 @@ export const Footer = () => {
 
             {/* Copyright */}
             <div 
-              className="text-sm"
+              className="text-xs"
               style={{ 
                 fontFamily: "'Quicksand', sans-serif",
-                color: '#999999'
+                color: '#BBBBBB'
               }}
             >
               © {new Date().getFullYear()} YidVid
