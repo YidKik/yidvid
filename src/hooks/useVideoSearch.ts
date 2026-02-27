@@ -67,9 +67,10 @@ export const useVideoSearch = () => {
       }
     },
     enabled: debouncedQuery.trim().length > 0,
-    staleTime: 30000,
-    retry: 1,
+    staleTime: 60000,
+    retry: 0,
     gcTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
   });
 
   // Filter out hidden channels from search results
