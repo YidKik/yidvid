@@ -54,6 +54,15 @@ export const DesktopVideoView = ({
     return null;
   }
 
+  // If viewing channels only, skip all video sections
+  if (viewChannels) {
+    return (
+      <div className="px-8 lg:px-12 xl:px-16 max-w-[1600px] mx-auto">
+        <ChannelsRowSection selectedCategory={selectedCategory} autoExpand={true} />
+      </div>
+    );
+  }
+
   // If a specific category is selected, show the category grid with 4 rows
   if (selectedCategory !== "all") {
     return (
@@ -78,7 +87,7 @@ export const DesktopVideoView = ({
       <TrendingSection videos={videos} />
 
       {/* Most Viewed Channels */}
-      <ChannelsRowSection selectedCategory={selectedCategory} autoExpand={viewChannels} />
+      <ChannelsRowSection selectedCategory={selectedCategory} />
     </div>
   );
 };
