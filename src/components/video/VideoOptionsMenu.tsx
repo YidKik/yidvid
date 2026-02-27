@@ -129,7 +129,7 @@ export const VideoOptionsMenu = ({ videoId, variant = "icon", className }: Video
           <DropdownMenuSeparator />
           
           <DropdownMenuSub>
-            <DropdownMenuSubTrigger className="flex items-center gap-3 px-3 py-2.5 cursor-pointer hover:bg-[#F0F0F0] rounded-lg">
+            <DropdownMenuSubTrigger className="flex items-center gap-3 px-3 py-2.5 cursor-pointer rounded-lg transition-all duration-200 hover:bg-[#F5F5F5] hover:pl-4">
               <ListPlus className="w-4 h-4" />
               <span>Add to Playlist</span>
             </DropdownMenuSubTrigger>
