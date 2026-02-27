@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
-import { User, UserPlus } from "lucide-react";
+import { User, UserPlus, Sparkles } from "lucide-react";
 
 interface AuthOptionsProps {
   onSelectOption: (option: 'signin' | 'signup') => void;
@@ -18,48 +18,63 @@ export const AuthOptions = ({
   
   return (
     <div 
-      className="flex flex-col items-center justify-center p-6 space-y-5 relative w-full"
+      className="flex flex-col items-center justify-center w-full relative"
       style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
     >
       {/* Top accent bar */}
-      <div className="absolute top-0 left-0 right-0 h-1 bg-[#FFCC00]" />
+      <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#FF0000] via-[#FFCC00] to-[#FF0000]" />
       
-      <motion.div 
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, ease: "easeOut" }}
-        className="text-center space-y-1 pt-1"
-      >
-        <h2 
-          className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold text-[#1A1A1A]`}
-          style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
+      {/* Hero section */}
+      <div className="w-full bg-[#FAFAFA] px-8 pt-10 pb-8 text-center">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.4, ease: "easeOut" }}
+          className="mb-4"
         >
-          Welcome! 👋
-        </h2>
-        <p 
-          className="text-sm text-[#666666] font-medium"
-          style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
+          <div className="w-16 h-16 mx-auto rounded-2xl bg-[#FF0000] flex items-center justify-center shadow-lg mb-5">
+            <Sparkles className="w-8 h-8 text-white" />
+          </div>
+        </motion.div>
+
+        <motion.div 
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.1, ease: "easeOut" }}
+          className="space-y-2"
         >
-          Choose an option to continue
-        </p>
-      </motion.div>
+          <h2 
+            className={`${isMobile ? 'text-2xl' : 'text-[28px]'} font-bold text-[#1A1A1A]`}
+            style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
+          >
+            Welcome! 👋
+          </h2>
+          <p 
+            className="text-base text-[#666666] font-medium max-w-[280px] mx-auto"
+            style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
+          >
+            Sign in to your account or create a new one to get started
+          </p>
+        </motion.div>
+      </div>
       
-      <div className="flex flex-col w-full space-y-3 px-2">
+      {/* Buttons section */}
+      <div className="flex flex-col w-full space-y-3 px-8 py-8">
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: 0.15 }}
+          transition={{ duration: 0.3, delay: 0.2 }}
           whileHover={{ scale: 1.01 }}
           whileTap={{ scale: 0.99 }}
         >
           <Button 
             onClick={() => onSelectOption('signin')}
-            className="w-full h-11 text-base bg-[#FF0000] hover:brightness-90 text-white rounded-xl font-semibold
+            className="w-full h-13 text-base bg-[#FF0000] hover:brightness-90 text-white rounded-2xl font-semibold
               transition-all duration-200 shadow-md hover:shadow-lg
-              flex items-center justify-center gap-2"
+              flex items-center justify-center gap-2.5 py-4"
             style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
           >
-            <User size={18} />
+            <User size={20} />
             Sign In
           </Button>
         </motion.div>
@@ -67,28 +82,30 @@ export const AuthOptions = ({
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: 0.25 }}
+          transition={{ duration: 0.3, delay: 0.3 }}
           whileHover={{ scale: 1.01 }}
           whileTap={{ scale: 0.99 }}
         >
           <Button 
             onClick={() => onSelectOption('signup')}
             variant="outline"
-            className="w-full h-11 text-base border-2 border-[#FFCC00] text-[#1A1A1A] bg-white hover:bg-[#FFCC00] 
-              rounded-xl font-semibold transition-all duration-200
-              shadow-sm hover:shadow-md flex items-center justify-center gap-2"
+            className="w-full h-13 text-base border-2 border-[#FFCC00] text-[#1A1A1A] bg-white hover:bg-[#FFCC00] 
+              rounded-2xl font-semibold transition-all duration-200
+              shadow-sm hover:shadow-md flex items-center justify-center gap-2.5 py-4"
             style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
           >
-            <UserPlus size={18} />
-            Sign Up
+            <UserPlus size={20} />
+            Create Account
           </Button>
         </motion.div>
       </div>
       
-      {/* Friendly footer text */}
-      <p className="text-xs text-[#999999] text-center" style={{ fontFamily: "'Quicksand', sans-serif" }}>
-        Join our friendly community today!
-      </p>
+      {/* Footer */}
+      <div className="px-8 pb-6">
+        <p className="text-xs text-[#AAAAAA] text-center" style={{ fontFamily: "'Quicksand', sans-serif" }}>
+          Join our friendly community today!
+        </p>
+      </div>
     </div>
   );
 };
