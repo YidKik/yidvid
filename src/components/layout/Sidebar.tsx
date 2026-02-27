@@ -308,17 +308,13 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
                       key={category.id}
                       onClick={() => handleCategorySelect(category.id)}
                       className={cn(
-                        "flex items-center gap-2 w-full px-3 py-2 text-sm rounded-full transition-all duration-200 my-0.5",
+                        "w-full text-left px-3 py-2 text-sm font-medium rounded-full transition-all duration-200 my-0.5",
                         isCategoryActive(category.id)
                           ? "bg-[#F5F5F5] border-l-[3px] border-[#FF0000] text-[#FF0000]"
-                          : "text-[#666666] hover:bg-[#F0F0F0] hover:text-[#1A1A1A] border border-transparent"
+                          : "text-[#1A1A1A] hover:bg-[#F0F0F0] border border-transparent"
                       )}
                     >
-                      <span className={cn(
-                        "text-base transition-opacity duration-200",
-                        isCategoryActive(category.id) ? "opacity-100" : "opacity-60"
-                      )}>{category.icon}</span>
-                      <span className="font-medium">{category.label}</span>
+                      {category.label}
                     </button>
                   ))}
               </motion.div>
