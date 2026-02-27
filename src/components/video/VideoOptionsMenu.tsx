@@ -28,6 +28,7 @@ interface VideoOptionsMenuProps {
   videoId: string;
   variant?: "icon" | "overlay";
   className?: string;
+  compact?: boolean;
 }
 
 export const VideoOptionsMenu = ({ videoId, variant = "icon", className }: VideoOptionsMenuProps) => {
