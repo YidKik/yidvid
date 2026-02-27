@@ -99,7 +99,7 @@ export const FriendlyChannelSection = ({
           {channelId ? (
             <Link 
               to={`/channel/${channelId}`}
-              className="text-sm font-semibold text-[#1A1A1A] hover:text-[#FF0000] transition-colors block truncate"
+              className={`${compact ? 'text-xs' : 'text-sm'} font-semibold text-[#1A1A1A] hover:text-[#FF0000] transition-colors block truncate`}
             >
               {channelName}
             </Link>
