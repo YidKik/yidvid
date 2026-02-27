@@ -7,6 +7,7 @@ interface UseYouTubeMessagesProps {
   setIsLoading: (loading: boolean) => void;
   setHasError: (error: boolean) => void;
   mountedRef: React.MutableRefObject<boolean>;
+  onVideoEnd?: () => void;
 }
 
 export const useYouTubeMessages = ({
