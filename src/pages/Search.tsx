@@ -63,6 +63,7 @@ const TypingSearchLoader = ({ query }: { query: string }) => {
 const Search = () => {
   const [searchParams] = useSearchParams();
   const query = searchParams.get("q") || "";
+  const { isMobile, isTablet } = useIsMobile();
 
   const { data: videos, isLoading: isLoadingVideos } = useQuery({
     queryKey: ["search-videos", query],
