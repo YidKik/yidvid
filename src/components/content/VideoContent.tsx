@@ -69,6 +69,7 @@ export const VideoContent = ({
         handleForceRefetch={handleForceRefetch}
         selectedCategory={selectedCategory}
         sortBy={sortBy}
+        viewChannels={viewChannels}
       />
     </div>
   );

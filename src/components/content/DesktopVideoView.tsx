@@ -78,7 +78,7 @@ export const DesktopVideoView = ({
       <TrendingSection videos={videos} />
 
       {/* Most Viewed Channels */}
-      <ChannelsRowSection selectedCategory={selectedCategory} />
+      <ChannelsRowSection selectedCategory={selectedCategory} autoExpand={viewChannels} />
     </div>
   );
 };

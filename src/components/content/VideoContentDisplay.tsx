@@ -75,6 +75,7 @@ export const VideoContentDisplay: React.FC<VideoContentDisplayProps> = ({
           fetchAttempts={fetchAttempts || 0}
           selectedCategory={selectedCategory}
           sortBy={sortBy}
+          viewChannels={viewChannels}
         />
       )}
     </div>
