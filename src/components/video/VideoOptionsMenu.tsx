@@ -112,7 +112,7 @@ export const VideoOptionsMenu = ({ videoId, variant = "icon", className }: Video
         >
           <DropdownMenuItem
             onClick={handleToggleFavorite}
-            className="flex items-center gap-3 px-3 py-2.5 cursor-pointer hover:bg-gray-100 rounded-lg"
+            className="flex items-center gap-3 px-3 py-2.5 cursor-pointer hover:bg-[#F0F0F0] rounded-lg"
           >
             <Heart className={cn("w-4 h-4", isFavorite && "fill-red-500 text-red-500")} />
             <span>{isFavorite ? "Remove from Favorites" : "Add to Favorites"}</span>
