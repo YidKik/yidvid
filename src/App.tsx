@@ -85,6 +85,7 @@ function AppContent() {
         <Route path="/settings/email-preferences" element={<EmailPreferences />} />
         <Route path="/unsubscribe" element={<Unsubscribe />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/history" element={<History />} />
         <Route path="/about" element={<About />} />
         <Route path="/favorites" element={<Favorites />} />
         <Route path="/watch-later" element={<WatchLater />} />
