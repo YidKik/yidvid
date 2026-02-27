@@ -78,24 +78,26 @@ export const VideoCardWithOptions = ({
           <h3 className="text-sm font-semibold font-friendly text-foreground line-clamp-2 leading-snug">
             {title}
           </h3>
-          <div className="flex items-center gap-2 mt-2">
-            <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0 bg-muted">
-              {channelThumbnail ? (
-                <img
-                  src={channelThumbnail}
-                  alt={channelName}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="w-full h-full bg-[#FF0000] flex items-center justify-center text-[10px] font-bold text-white">
-                  {channelName.charAt(0).toUpperCase()}
-                </div>
-              )}
+          {!hideChannelInfo && (
+            <div className="flex items-center gap-2 mt-2">
+              <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0 bg-muted">
+                {channelThumbnail ? (
+                  <img
+                    src={channelThumbnail}
+                    alt={channelName}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-[#FF0000] flex items-center justify-center text-[10px] font-bold text-white">
+                    {channelName.charAt(0).toUpperCase()}
+                  </div>
+                )}
+              </div>
+              <p className="text-xs text-muted-foreground truncate">
+                {channelName}
+              </p>
             </div>
-            <p className="text-xs text-muted-foreground truncate">
-              {channelName}
-            </p>
-          </div>
+          )}
           <p className="text-xs text-muted-foreground/80 mt-1.5">
             {views?.toLocaleString() || 0} views • {formattedDate}
           </p>
