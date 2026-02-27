@@ -126,7 +126,7 @@ const Search = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-white pt-16 pl-[200px] transition-all duration-300">
+      <div className="min-h-screen bg-white pt-16 pl-0 lg:pl-[200px] pb-20 lg:pb-0 transition-all duration-300">
         <main className="max-w-7xl mx-auto px-6 py-8">
           <TypingSearchLoader query={query} />
         </main>
