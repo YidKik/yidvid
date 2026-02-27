@@ -15,13 +15,10 @@ export const GlobalHeader = () => {
   const { isMobile } = useIsMobile();
   const { isAuthenticated, session, profile } = useSessionManager();
   const [isAuthOpen, setIsAuthOpen] = useState(false);
-  const [isVisible, setIsVisible] = useState(true);
-  const lastScrollY = useRef(0);
   const searchContainerRef = useRef<HTMLDivElement>(null);
   
   const isHomePage = location.pathname === "/";
 
-  // Use the video search hook for live search
   const {
     searchQuery,
     setSearchQuery,
@@ -31,25 +28,6 @@ export const GlobalHeader = () => {
     isLoading: isSearching,
     hasResults
   } = useVideoSearch();
-
-  // Handle scroll to show/hide header
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      const scrollingDown = currentScrollY > lastScrollY.current;
-      
-      if (scrollingDown && currentScrollY > 100) {
-        setIsVisible(false);
-      } else if (!scrollingDown) {
-        setIsVisible(true);
-      }
-      
-      lastScrollY.current = currentScrollY;
-    };
-    
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   // Close search dropdown when clicking outside
   useEffect(() => {
@@ -63,7 +41,6 @@ export const GlobalHeader = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [setIsSearchOpen]);
 
-  // Handle search submit
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
@@ -86,38 +63,26 @@ export const GlobalHeader = () => {
   };
 
   const getUserInitial = () => {
-    if (profile?.display_name) {
-      return profile.display_name.charAt(0).toUpperCase();
-    }
-    if (profile?.name) {
-      return profile.name.charAt(0).toUpperCase();
-    }
-    if (session?.user?.email) {
-      return session.user.email.charAt(0).toUpperCase();
-    }
+    if (profile?.display_name) return profile.display_name.charAt(0).toUpperCase();
+    if (profile?.name) return profile.name.charAt(0).toUpperCase();
+    if (session?.user?.email) return session.user.email.charAt(0).toUpperCase();
     return "U";
   };
 
-  const handleMarkNotificationsAsRead = async () => {
-    // This will be handled by the NotificationsMenu component
-  };
+  const handleMarkNotificationsAsRead = async () => {};
 
   const shouldShowDropdown = isSearchOpen && searchQuery.trim().length > 0;
 
-  // On homepage, only show a floating profile icon in top-right corner
+  // Homepage: floating profile icon only
   if (isHomePage) {
     return (
       <>
-        {/* Floating Profile Icon for Homepage */}
         <div className="fixed top-4 right-4 z-50">
           {isAuthenticated ? (
             <Link
               to="/settings"
-              className="flex items-center justify-center w-10 h-10 rounded-full text-white font-semibold text-sm transition-transform hover:scale-105 shadow-lg"
-              style={{ 
-                backgroundColor: 'hsl(0, 70%, 55%)',
-                fontFamily: "'Quicksand', sans-serif"
-              }}
+              className="flex items-center justify-center w-10 h-10 rounded-full text-white font-semibold text-sm transition-transform hover:scale-105 shadow-lg bg-[#FF0000]"
+              style={{ fontFamily: "'Quicksand', sans-serif" }}
               title="Profile"
             >
               {getUserInitial()}
@@ -126,19 +91,13 @@ export const GlobalHeader = () => {
             <Button
               onClick={() => setIsAuthOpen(true)}
               size="icon"
-              className="rounded-full w-10 h-10 shadow-lg hover:opacity-90 transition-all"
-              style={{ 
-                backgroundColor: 'hsl(0, 70%, 55%)',
-                color: 'white'
-              }}
+              className="rounded-full w-10 h-10 shadow-lg hover:opacity-90 transition-all bg-[#FF0000] text-white"
               title="Sign In"
             >
               <LogIn className="w-5 h-5" />
             </Button>
           )}
         </div>
-
-        {/* Auth Dialog */}
         <Auth isOpen={isAuthOpen} onOpenChange={setIsAuthOpen} />
       </>
     );
@@ -146,22 +105,9 @@ export const GlobalHeader = () => {
 
   return (
     <>
-      <motion.header
-        initial={{ y: 0, opacity: 1 }}
-        animate={{ 
-          y: isVisible ? 0 : -70, 
-          opacity: isVisible ? 1 : 0 
-        }}
-        transition={{ 
-          duration: 0.5, 
-          ease: [0.25, 0.1, 0.25, 1]
-        }}
-        className="fixed top-0 z-40 backdrop-blur-md bg-white/95"
-        style={{ 
-          boxShadow: '0 2px 12px rgba(0, 0, 0, 0.04)',
-          left: 200,
-          right: 0
-        }}
+      <header
+        className="fixed top-0 z-40 bg-white border-b border-[#E5E5E5]"
+        style={{ left: 200, right: 0 }}
       >
         <div className="w-full px-3 md:px-6">
           <div className="flex items-center justify-between h-14 gap-4">
