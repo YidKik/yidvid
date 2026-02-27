@@ -31,7 +31,7 @@ interface VideoOptionsMenuProps {
   compact?: boolean;
 }
 
-export const VideoOptionsMenu = ({ videoId, variant = "icon", className }: VideoOptionsMenuProps) => {
+export const VideoOptionsMenu = ({ videoId, variant = "icon", className, compact = false }: VideoOptionsMenuProps) => {
   const { isAuthenticated, session } = useSessionManager();
   const userId = session?.user?.id;
   const {
