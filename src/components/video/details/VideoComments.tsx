@@ -71,7 +71,7 @@ export const VideoComments = ({ videoId }: VideoCommentsProps) => {
   return (
     <div className="space-y-4">
       {/* Comment Form Section */}
-      <div className="bg-yellow-50/50 rounded-2xl p-4 border border-yellow-200/30">
+      <div className="bg-white rounded-xl p-4 border border-[#E5E5E5]">
         <CommentForm onSubmit={handleSubmitComment} />
       </div>
       
@@ -87,8 +87,8 @@ export const VideoComments = ({ videoId }: VideoCommentsProps) => {
           </>
         ) : (
           <div className="text-center py-6">
-            <div className="w-12 h-12 mx-auto mb-3 bg-yellow-100/50 rounded-full flex items-center justify-center">
-              <MessageSquare className="h-6 w-6 text-yellow-500" />
+            <div className="w-12 h-12 mx-auto mb-3 bg-[#F5F5F5] rounded-full flex items-center justify-center">
+              <MessageSquare className="h-6 w-6 text-[#999999]" />
             </div>
             <p className="text-muted-foreground text-sm">
               Be the first to comment! ✨

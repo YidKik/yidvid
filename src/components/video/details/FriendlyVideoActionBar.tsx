@@ -28,12 +28,11 @@ interface FriendlyVideoActionBarProps {
 
 type InteractionType = 'view' | 'like' | 'dislike' | 'save';
 
-// Subtle hover styles for action buttons
-const actionButtonBase = "h-10 px-4 rounded-full font-medium transition-all duration-200 bg-muted/40 hover:bg-muted/60 text-muted-foreground hover:text-foreground";
-const actionButtonBaseCompact = "h-8 px-3 rounded-full text-sm transition-all duration-200 bg-muted/40 hover:bg-muted/60 text-muted-foreground hover:text-foreground";
-// Enhanced hover styles for Share and Report buttons
-const shareReportButtonBase = "h-10 px-4 rounded-full font-medium transition-all duration-200 bg-muted/40 text-muted-foreground hover:bg-yellow-100 hover:text-yellow-700 hover:border-yellow-400 hover:shadow-md hover:shadow-yellow-200/40 hover:scale-105 border border-transparent";
-const shareReportButtonCompact = "h-8 px-3 rounded-full text-sm transition-all duration-200 bg-muted/40 text-muted-foreground hover:bg-yellow-100 hover:text-yellow-700 hover:border-yellow-400 hover:shadow-md hover:shadow-yellow-200/40 hover:scale-105 border border-transparent";
+// Clean action button styles - no fades
+const actionButtonBase = "h-9 px-4 rounded-full font-medium transition-all duration-200 bg-[#F5F5F5] hover:bg-[#E5E5E5] text-[#666666] hover:text-[#1A1A1A]";
+const actionButtonBaseCompact = "h-8 px-3 rounded-full text-sm transition-all duration-200 bg-[#F5F5F5] hover:bg-[#E5E5E5] text-[#666666] hover:text-[#1A1A1A]";
+const shareReportButtonBase = actionButtonBase;
+const shareReportButtonCompact = actionButtonBaseCompact;
 
 export const FriendlyVideoActionBar = ({ 
   videoId, 
@@ -259,7 +258,7 @@ export const FriendlyVideoActionBar = ({
             size="sm"
             onClick={handleLike}
             className={`${actionButtonBaseCompact} ${
-              isLiked ? "bg-red-50 text-red-500" : ""
+              isLiked ? "bg-[#F5F5F5] text-[#FF0000]" : ""
             }`}
           >
             <ThumbsUp className={`h-4 w-4 mr-1.5 ${isLiked ? "fill-current" : ""}`} />
@@ -288,7 +287,7 @@ export const FriendlyVideoActionBar = ({
                 Share
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[360px] bg-white dark:bg-gray-900 border-border shadow-2xl [&>button]:hidden">
+            <DialogContent className="sm:max-w-[360px] bg-white border-[#E5E5E5] shadow-xl [&>button]:hidden">
               <button 
                 onClick={() => setShareOpen(false)}
                 className="absolute right-4 top-4 text-muted-foreground hover:text-foreground transition-colors z-10"
@@ -306,7 +305,7 @@ export const FriendlyVideoActionBar = ({
                   <button
                     key={option.name}
                     onClick={() => { option.action(); setShareOpen(false); }}
-                    className="flex flex-col items-center gap-2 p-4 rounded-xl bg-muted/30 hover:bg-yellow-50 hover:border-yellow-300 border border-transparent transition-all duration-200 hover:shadow-md"
+                    className="flex flex-col items-center gap-2 p-4 rounded-xl bg-[#F5F5F5] hover:bg-[#E5E5E5] border border-transparent transition-all duration-200"
                   >
                     <option.icon className={`h-6 w-6 ${option.color}`} />
                     <span className="text-xs font-medium text-muted-foreground">{option.name}</span>
@@ -316,7 +315,7 @@ export const FriendlyVideoActionBar = ({
               {navigator.share && (
                 <button
                   onClick={handleShareNative}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-yellow-100 hover:bg-yellow-200 text-yellow-700 font-medium transition-all duration-200"
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-[#FFCC00] hover:brightness-90 text-[#1A1A1A] font-medium transition-all duration-200"
                 >
                   <Share2 className="h-4 w-4" />
                   More sharing options...
@@ -332,7 +331,7 @@ export const FriendlyVideoActionBar = ({
             variant="ghost"
             size="sm"
             onClick={handleToggleFavorite}
-            className={`${actionButtonBaseCompact} ${isFavorite ? "bg-red-50 text-red-500" : ""}`}
+            className={`${actionButtonBaseCompact} ${isFavorite ? "bg-[#F5F5F5] text-[#FF0000]" : ""}`}
           >
             <Heart className={cn("h-4 w-4 mr-1.5", isFavorite && "fill-current")} />
             {isFavorite ? "Saved" : "Favorite"}
@@ -343,7 +342,7 @@ export const FriendlyVideoActionBar = ({
             variant="ghost"
             size="sm"
             onClick={handleToggleWatchLater}
-            className={`${actionButtonBaseCompact} ${isWatchLaterSaved ? "bg-blue-50 text-blue-500" : ""}`}
+            className={`${actionButtonBaseCompact} ${isWatchLaterSaved ? "bg-[#F5F5F5] text-[#1A1A1A]" : ""}`}
           >
             <Clock className={cn("h-4 w-4 mr-1.5", isWatchLaterSaved && "fill-current")} />
             {isWatchLaterSaved ? "Saved" : "Watch Later"}
@@ -439,7 +438,7 @@ export const FriendlyVideoActionBar = ({
           variant="ghost"
           onClick={handleLike}
           className={`${actionButtonBase} ${
-            isLiked ? "bg-red-50 text-red-500" : ""
+            isLiked ? "bg-[#F5F5F5] text-[#FF0000]" : ""
           }`}
         >
           <ThumbsUp className={`h-4 w-4 mr-2 ${isLiked ? "fill-current" : ""}`} />
@@ -468,7 +467,7 @@ export const FriendlyVideoActionBar = ({
               Share
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[400px] bg-white dark:bg-gray-900 border-border shadow-2xl [&>button]:hidden">
+          <DialogContent className="sm:max-w-[400px] bg-white border-[#E5E5E5] shadow-xl [&>button]:hidden">
             <button 
               onClick={() => setShareOpen(false)}
               className="absolute right-4 top-4 text-muted-foreground hover:text-foreground transition-colors z-10"
@@ -486,7 +485,7 @@ export const FriendlyVideoActionBar = ({
                 <button
                   key={option.name}
                   onClick={() => { option.action(); setShareOpen(false); }}
-                  className="flex flex-col items-center gap-2 p-4 rounded-xl bg-muted/30 hover:bg-yellow-50 hover:border-yellow-300 border border-transparent transition-all duration-200 hover:shadow-md"
+                  className="flex flex-col items-center gap-2 p-4 rounded-xl bg-[#F5F5F5] hover:bg-[#E5E5E5] border border-transparent transition-all duration-200"
                 >
                   <option.icon className={`h-6 w-6 ${option.color}`} />
                   <span className="text-sm font-medium text-muted-foreground">{option.name}</span>
@@ -496,7 +495,7 @@ export const FriendlyVideoActionBar = ({
             {navigator.share && (
               <button
                 onClick={handleShareNative}
-                className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-yellow-100 hover:bg-yellow-200 text-yellow-700 font-medium transition-all duration-200"
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-[#FFCC00] hover:brightness-90 text-[#1A1A1A] font-medium transition-all duration-200"
               >
                 <Share2 className="h-4 w-4" />
                 More sharing options...
@@ -512,7 +511,7 @@ export const FriendlyVideoActionBar = ({
         <Button
           variant="ghost"
           onClick={handleToggleFavorite}
-          className={`${actionButtonBase} ${isFavorite ? "bg-red-50 text-red-500" : ""}`}
+          className={`${actionButtonBase} ${isFavorite ? "bg-[#F5F5F5] text-[#FF0000]" : ""}`}
         >
           <Heart className={cn("h-4 w-4 mr-2", isFavorite && "fill-current")} />
           {isFavorite ? "Saved" : "Favorite"}
@@ -522,7 +521,7 @@ export const FriendlyVideoActionBar = ({
         <Button
           variant="ghost"
           onClick={handleToggleWatchLater}
-          className={`${actionButtonBase} ${isWatchLaterSaved ? "bg-blue-50 text-blue-500" : ""}`}
+          className={`${actionButtonBase} ${isWatchLaterSaved ? "bg-[#F5F5F5] text-[#1A1A1A]" : ""}`}
         >
           <Clock className={cn("h-4 w-4 mr-2", isWatchLaterSaved && "fill-current")} />
           {isWatchLaterSaved ? "Saved" : "Later"}
@@ -580,7 +579,7 @@ export const FriendlyVideoActionBar = ({
                     size="icon"
                     onClick={handleCreateAndAddToPlaylist}
                     disabled={!newPlaylistName.trim()}
-                    className="shrink-0 rounded-lg bg-red-500 hover:bg-red-600"
+                    className="shrink-0 rounded-lg bg-[#FF0000] hover:brightness-90"
                   >
                     <Plus className="w-4 h-4" />
                   </Button>
