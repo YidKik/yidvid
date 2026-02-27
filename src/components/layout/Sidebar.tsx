@@ -283,8 +283,8 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
                         ? "gap-3 px-3 py-2 rounded-full" 
                         : "justify-center p-2 rounded-full mx-auto w-10 h-10",
                       active
-                        ? 'border border-red-400 bg-red-50/50'
-                        : 'border border-transparent hover:bg-gray-50'
+                        ? 'bg-white border-l-[3px] border-[#FF0000] text-[#FF0000]'
+                        : 'border border-transparent hover:bg-[#F0F0F0]'
                     )}
                   >
                     <Icon className={cn(
