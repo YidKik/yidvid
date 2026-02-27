@@ -390,73 +390,71 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
           </div>
         ))}
 
-        {/* Subscriptions */}
-        <div className="mt-3 pt-3 border-t border-[#E5E5E5]">
-          <button
-            onClick={() => {
-              if (!isAuthenticated) {
-                toast.info("Please sign in to view your subscriptions", {
-                  icon: <LogIn className="w-4 h-4" />,
-                });
-                return;
-              }
-              setIsSubscriptionsOpen(!isSubscriptionsOpen);
-            }}
-            title={!effectiveIsExpanded ? "Subscriptions" : undefined}
-            className={cn(
-              "flex items-center text-sm font-medium transition-all duration-200 w-full",
-              effectiveIsExpanded
-                ? "gap-3 px-3 py-2.5 rounded-full justify-between"
-                : "justify-center p-2 rounded-full mx-auto w-10 h-10",
-              !isAuthenticated
-                ? "opacity-40 cursor-default border border-transparent"
-                : "border border-transparent hover:bg-[#F0F0F0] text-[#666666] hover:text-[#1A1A1A]"
-            )}
-          >
-            <div className="flex items-center gap-3">
-              <Bell className="w-5 h-5 shrink-0" />
-              {effectiveIsExpanded && <span className="text-[#1A1A1A]">Subscriptions</span>}
-            </div>
-            {effectiveIsExpanded && (
-              isSubscriptionsOpen
+        {/* Subscriptions - only visible when expanded */}
+        {effectiveIsExpanded && (
+          <div className="mt-3 pt-3 border-t border-[#E5E5E5]">
+            <button
+              onClick={() => {
+                if (!isAuthenticated) {
+                  toast.info("Please sign in to view your subscriptions", {
+                    icon: <LogIn className="w-4 h-4" />,
+                  });
+                  return;
+                }
+                setIsSubscriptionsOpen(!isSubscriptionsOpen);
+              }}
+              className={cn(
+                "flex items-center text-sm font-medium transition-all duration-200 w-full",
+                "gap-3 px-3 py-2.5 rounded-full justify-between",
+                !isAuthenticated
+                  ? "opacity-40 cursor-default border border-transparent"
+                  : "border border-transparent hover:bg-[#F0F0F0] text-[#666666] hover:text-[#1A1A1A]"
+              )}
+            >
+              <div className="flex items-center gap-3">
+                <Bell className="w-5 h-5 shrink-0" />
+                <span className="text-[#1A1A1A]">Subscriptions</span>
+              </div>
+              {isSubscriptionsOpen
                 ? <ChevronUp className="w-4 h-4 text-[#999999]" />
                 : <ChevronDown className="w-4 h-4 text-[#999999]" />
-            )}
-          </button>
+              }
+            </button>
 
-          <AnimatePresence>
-            {isSubscriptionsOpen && effectiveIsExpanded && isAuthenticated && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                className="overflow-hidden ml-2 mr-1 py-1"
-              >
-                {subscriptions && subscriptions.length > 0 ? (
-                  subscriptions.map((sub: any) => (
-                    <Link
-                      key={sub.channel.channel_id}
-                      to={`/channel/${sub.channel.channel_id}`}
-                      className="flex items-center gap-2 px-3 py-2 text-sm rounded-full text-[#666666] hover:bg-[#F0F0F0] hover:text-[#1A1A1A] border border-transparent transition-all duration-200 my-0.5"
-                    >
-                      <img
-                        src={sub.channel.thumbnail_url || '/placeholder.svg'}
-                        alt={sub.channel.title}
-                        className="w-6 h-6 rounded-full object-cover"
-                      />
-                      <span className="truncate text-xs font-medium">{sub.channel.title}</span>
-                    </Link>
-                  ))
-                ) : (
-                  <div className="px-3 py-2 text-xs text-[#999999]">
-                    No subscriptions yet
-                  </div>
-                )}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
+            <AnimatePresence>
+              {isSubscriptionsOpen && isAuthenticated && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="overflow-hidden ml-2 mr-1 py-1"
+                >
+                  {subscriptions && subscriptions.length > 0 ? (
+                    subscriptions.map((sub: any) => (
+                      <Link
+                        key={sub.channel.channel_id}
+                        to={`/channel/${sub.channel.channel_id}`}
+                        className="flex items-center gap-2 px-3 py-2 text-sm rounded-full text-[#666666] hover:bg-[#F0F0F0] hover:text-[#1A1A1A] border border-transparent transition-all duration-200 my-0.5"
+                      >
+                        <img
+                          src={sub.channel.thumbnail_url || '/placeholder.svg'}
+                          alt={sub.channel.title}
+                          className="w-6 h-6 rounded-full object-cover"
+                        />
+                        <span className="truncate text-xs font-medium">{sub.channel.title}</span>
+                      </Link>
+                    ))
+                  ) : (
+                    <div className="px-3 py-2 text-xs text-[#999999]">
+                      No subscriptions yet
+                    </div>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        )}
       </nav>
     </motion.aside>
   );
