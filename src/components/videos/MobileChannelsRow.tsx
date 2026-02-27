@@ -44,7 +44,30 @@ export const MobileChannelsRow = () => {
       .slice(0, 8);
   }, [channels, channelVideoCounts]);
 
-  if (isLoading || sortedChannels.length === 0) return null;
+  // Show skeleton while loading instead of hiding the section
+  if (isLoading) {
+    return (
+      <section className="mb-4">
+        <div className="flex items-center justify-between mb-3 px-1">
+          <h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+            Most Viewed Channels
+          </h2>
+        </div>
+        <div className="overflow-hidden -mx-2 px-2">
+          <div className="flex gap-3">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="flex-none w-[100px] bg-card rounded-xl p-3 border border-border/50 text-center animate-pulse">
+                <div className="mx-auto w-14 h-14 rounded-full bg-muted" />
+                <div className="mt-2 h-3 bg-muted rounded w-3/4 mx-auto" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (sortedChannels.length === 0) return null;
 
   return (
     <section className="mb-4">

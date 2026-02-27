@@ -67,7 +67,40 @@ export function fetchInitialContent(queryClient: QueryClient): Promise<void> {
             return [];
           }
         },
-        staleTime: 10000, // 10 seconds
+        staleTime: 10000,
+        meta: {
+          suppressToasts: true
+        }
+      });
+
+      // Prefetch channel video counts for the "Most Viewed Channels" section
+      queryClient.prefetchQuery({
+        queryKey: ["channel-video-counts"],
+        queryFn: async () => {
+          try {
+            const { data, error } = await supabase
+              .from("youtube_videos")
+              .select("channel_id, views")
+              .is("deleted_at", null)
+              .eq("content_analysis_status", "approved");
+            
+            if (error) {
+              console.error("Error prefetching channel video counts:", error);
+              return {};
+            }
+            
+            const counts: Record<string, number> = {};
+            data?.forEach(video => {
+              counts[video.channel_id] = (counts[video.channel_id] || 0) + (video.views || 0);
+            });
+            console.log(`Initial content fetch: Computed video counts for ${Object.keys(counts).length} channels`);
+            return counts;
+          } catch (err) {
+            console.error("Error in channel video counts fetch:", err);
+            return {};
+          }
+        },
+        staleTime: 5 * 60 * 1000,
         meta: {
           suppressToasts: true
         }
