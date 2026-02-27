@@ -59,8 +59,8 @@ const Settings = () => {
       <BackButton />
       <main className={`${isMobile ? 'pt-4 px-4' : 'pt-6 px-6'} pb-16 max-w-5xl`}>
         {/* Header */}
-        <div className="flex items-center gap-3 mb-6 pb-4 border-b-2 border-yellow-400">
-          <div className="p-2.5 bg-yellow-400 rounded-xl">
+        <div className="flex items-center gap-3 mb-6 pb-4 border-b-2 border-[#FFCC00]">
+          <div className="p-2.5 bg-[#FFCC00] rounded-xl">
             <SettingsIcon className="w-5 h-5 text-white" />
           </div>
           <div>
