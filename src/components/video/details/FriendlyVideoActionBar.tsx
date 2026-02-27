@@ -521,7 +521,7 @@ export const FriendlyVideoActionBar = ({
         <Button
           variant="ghost"
           onClick={handleToggleWatchLater}
-          className={`${actionButtonBase} ${isWatchLaterSaved ? "bg-blue-50 text-blue-500" : ""}`}
+          className={`${actionButtonBase} ${isWatchLaterSaved ? "bg-[#F5F5F5] text-[#1A1A1A]" : ""}`}
         >
           <Clock className={cn("h-4 w-4 mr-2", isWatchLaterSaved && "fill-current")} />
           {isWatchLaterSaved ? "Saved" : "Later"}
