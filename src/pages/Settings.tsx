@@ -26,7 +26,7 @@ const Settings = () => {
 
   if (!authChecked) {
     return (
-      <div className="min-h-screen bg-white pt-16 px-4 pl-[200px] transition-all duration-300">
+      <div className="min-h-screen bg-white pt-16 px-4 pl-0 lg:pl-[200px] transition-all duration-300">
         <div className="max-w-3xl mx-auto">
           <BackButton />
           <div className="h-8 w-56 bg-[#F5F5F5] rounded-lg mb-8 animate-pulse" />
