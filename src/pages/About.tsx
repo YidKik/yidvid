@@ -25,7 +25,7 @@ const About = () => {
       </Helmet>
 
       <div className="min-h-screen bg-white pt-14 pl-0 lg:pl-[200px] pb-20 lg:pb-0 transition-all duration-300">
-        <div className="max-w-4xl mx-auto px-6 py-12">
+        <div className={`max-w-4xl mx-auto ${isMobile ? 'px-4 py-8' : 'px-6 py-12'}`}>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
