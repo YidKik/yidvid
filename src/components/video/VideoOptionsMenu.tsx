@@ -96,8 +96,8 @@ export const VideoOptionsMenu = ({ videoId, variant = "icon", className }: Video
             size="icon"
             className={cn(
               "h-8 w-8 rounded-full transition-colors duration-200",
-              variant === "overlay" && "bg-black/60 hover:bg-yellow-400 text-white hover:text-gray-900",
-              variant === "icon" && "hover:bg-gray-100",
+              variant === "overlay" && "bg-[#1A1A1A] hover:bg-[#FFCC00] text-white hover:text-[#1A1A1A]",
+              variant === "icon" && "hover:bg-[#F0F0F0]",
               className
             )}
             onClick={(e) => e.stopPropagation()}
