@@ -7,6 +7,50 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Youtube, Search as SearchIcon, Users, Play } from "lucide-react";
 import { Link } from "react-router-dom";
 import { usePageLoader } from "@/contexts/LoadingContext";
+import { useState, useEffect } from "react";
+
+const TypingSearchLoader = ({ query }: { query: string }) => {
+  const fullText = `Searching results for "${query}"`;
+  const [displayedText, setDisplayedText] = useState("");
+  const [charIndex, setCharIndex] = useState(0);
+
+  useEffect(() => {
+    setDisplayedText("");
+    setCharIndex(0);
+  }, [query]);
+
+  useEffect(() => {
+    if (charIndex < fullText.length) {
+      const timer = setTimeout(() => {
+        setDisplayedText(fullText.slice(0, charIndex + 1));
+        setCharIndex(charIndex + 1);
+      }, 35);
+      return () => clearTimeout(timer);
+    } else {
+      // Loop: restart after a pause
+      const timer = setTimeout(() => {
+        setDisplayedText("");
+        setCharIndex(0);
+      }, 1200);
+      return () => clearTimeout(timer);
+    }
+  }, [charIndex, fullText]);
+
+  return (
+    <div className="flex flex-col items-center justify-center py-24 gap-6">
+      <div className="relative">
+        <div className="w-12 h-12 rounded-full border-3 border-[#E5E5E5] border-t-[#FF0000] animate-spin" />
+      </div>
+      <div className="text-center">
+        <p className="text-lg font-semibold text-[#1A1A1A] min-h-[28px]">
+          {displayedText}
+          <span className="inline-block w-[2px] h-5 bg-[#FF0000] ml-0.5 animate-pulse align-text-bottom" />
+        </p>
+        <p className="text-sm text-[#999999] mt-2">Finding the best matches...</p>
+      </div>
+    </div>
+  );
+};
 
 const Search = () => {
   const [searchParams] = useSearchParams();
@@ -73,6 +117,16 @@ const Search = () => {
   const isLoading = isLoadingVideos || isLoadingChannels;
   usePageLoader('search', isLoading);
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-white pt-16 pl-[200px] transition-all duration-300">
+        <main className="max-w-7xl mx-auto px-6 py-8">
+          <TypingSearchLoader query={query} />
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-white pt-16 pl-[200px] transition-all duration-300">
       <main className="max-w-7xl mx-auto px-6 py-8">
@@ -90,61 +144,49 @@ const Search = () => {
         </div>
 
         {/* Channels Section */}
-        {(isLoadingChannels || (channels && channels.length > 0)) && (
+        {channels && channels.length > 0 && (
           <section className="mb-10">
             <div className="flex items-center gap-2 mb-5 pb-3 border-b border-[#E5E5E5]">
               <Users className="h-5 w-5 text-[#FF0000]" />
               <h2 className="text-lg font-bold text-[#1A1A1A]">Channels</h2>
-              {channels && (
-                <span className="bg-[#FF0000] text-white text-xs font-bold px-2.5 py-0.5 rounded-full">
-                  {channels.length}
-                </span>
-              )}
+              <span className="bg-[#FF0000] text-white text-xs font-bold px-2.5 py-0.5 rounded-full">
+                {channels.length}
+              </span>
             </div>
-
-            {isLoadingChannels ? (
-              <div className="flex items-center justify-center py-12">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#FF0000]" />
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                {channels?.map((channel) => (
-                  <Link
-                    key={channel.id}
-                    to={`/channel/${channel.channel_id}`}
-                    className="group flex items-center gap-4 p-4 rounded-xl bg-[#FAFAFA] border border-[#E5E5E5] hover:border-[#FFCC00] hover:shadow-md transition-all duration-200"
-                  >
-                    <Avatar className="w-16 h-16 flex-shrink-0 border-2 border-[#E5E5E5] group-hover:border-[#FFCC00] transition-colors">
-                      <AvatarImage
-                        src={channel.thumbnail_url}
-                        alt={channel.title}
-                      />
-                      <AvatarFallback className="bg-[#F5F5F5]">
-                        <Youtube className="w-7 h-7 text-[#FF0000]" />
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-[#1A1A1A] text-sm line-clamp-1 group-hover:text-[#FF0000] transition-colors">
-                        {channel.title}
-                      </h3>
-                      {channel.description && (
-                        <p className="text-xs text-[#999999] mt-1 line-clamp-2">
-                          {channel.description}
-                        </p>
-                      )}
-                      <span className="inline-block mt-2 text-xs font-medium text-[#FF0000] bg-[#FF0000]/10 px-2 py-0.5 rounded-full">
-                        View Channel
-                      </span>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            )}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              {channels.map((channel) => (
+                <Link
+                  key={channel.id}
+                  to={`/channel/${channel.channel_id}`}
+                  className="group flex items-center gap-4 p-4 rounded-xl bg-[#FAFAFA] border border-[#E5E5E5] hover:border-[#FFCC00] hover:shadow-md transition-all duration-200"
+                >
+                  <Avatar className="w-16 h-16 flex-shrink-0 border-2 border-[#E5E5E5] group-hover:border-[#FFCC00] transition-colors">
+                    <AvatarImage src={channel.thumbnail_url} alt={channel.title} />
+                    <AvatarFallback className="bg-[#F5F5F5]">
+                      <Youtube className="w-7 h-7 text-[#FF0000]" />
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-[#1A1A1A] text-sm line-clamp-1 group-hover:text-[#FF0000] transition-colors">
+                      {channel.title}
+                    </h3>
+                    {channel.description && (
+                      <p className="text-xs text-[#999999] mt-1 line-clamp-2">
+                        {channel.description}
+                      </p>
+                    )}
+                    <span className="inline-block mt-2 text-xs font-medium text-[#FF0000] bg-[#FF0000]/10 px-2 py-0.5 rounded-full">
+                      View Channel
+                    </span>
+                  </div>
+                </Link>
+              ))}
+            </div>
           </section>
         )}
 
         {/* No channels found */}
-        {!isLoadingChannels && channels?.length === 0 && (
+        {channels?.length === 0 && (
           <section className="mb-10">
             <div className="flex items-center gap-2 mb-5 pb-3 border-b border-[#E5E5E5]">
               <Users className="h-5 w-5 text-[#FF0000]" />
@@ -169,11 +211,7 @@ const Search = () => {
             )}
           </div>
 
-          {isLoadingVideos ? (
-            <div className="flex items-center justify-center py-12">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#FF0000]" />
-            </div>
-          ) : videos?.length === 0 ? (
+          {videos?.length === 0 ? (
             <div className="text-center py-8 bg-[#FAFAFA] rounded-xl border border-[#E5E5E5]">
               <p className="text-sm text-[#999999]">No videos found matching "{query}"</p>
             </div>
