@@ -200,7 +200,7 @@ export const MobileBottomNav = ({ isAuthenticated = false }: MobileBottomNavProp
       </AnimatePresence>
 
       {/* Bottom Navigation Bar */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-[#E5E5E5] shadow-lg md:hidden lg:hidden" style={{ fontFamily: "'Quicksand', sans-serif" }}>
+      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-[#E5E5E5] shadow-lg lg:hidden" style={{ fontFamily: "'Quicksand', sans-serif" }}>
         <div className="flex items-center justify-around h-14 max-w-lg mx-auto">
           {navItems.map((item) => {
             const Icon = item.icon;
