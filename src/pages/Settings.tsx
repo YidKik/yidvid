@@ -61,7 +61,7 @@ const Settings = () => {
         {/* Header */}
         <div className="flex items-center gap-3 mb-6 pb-4 border-b-2 border-[#FFCC00]">
           <div className="p-2.5 bg-[#FFCC00] rounded-xl">
-            <SettingsIcon className="w-5 h-5 text-white" />
+            <SettingsIcon className="w-5 h-5 text-[#1A1A1A]" />
           </div>
           <div>
             <h1 className="text-xl font-bold text-gray-900">Settings</h1>
