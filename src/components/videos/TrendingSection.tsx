@@ -165,8 +165,8 @@ export const TrendingSection = ({ videos }: TrendingSectionProps) => {
               </span>
             </div>
 
-            {/* Grid of videos - 4 columns, 3 rows */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+            {/* Grid of videos - responsive columns */}
+            <div className={`grid ${isMobile ? 'grid-cols-2 gap-2' : isTablet ? 'grid-cols-3 gap-3' : 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4'}`}>
               {expandedVideos.map((video, index) => (
                 <VideoCard 
                   key={video.id} 
