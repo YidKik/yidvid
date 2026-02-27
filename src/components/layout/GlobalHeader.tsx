@@ -272,11 +272,8 @@ export const GlobalHeader = () => {
               {isAuthenticated ? (
                 <Link
                   to="/settings"
-                  className="flex items-center justify-center w-9 h-9 rounded-full text-white font-semibold text-sm transition-transform hover:scale-105"
-                  style={{ 
-                    backgroundColor: 'hsl(0, 70%, 55%)',
-                    fontFamily: "'Quicksand', sans-serif"
-                  }}
+                  className="flex items-center justify-center w-9 h-9 rounded-full text-white font-semibold text-sm transition-transform hover:scale-105 bg-[#FF0000]"
+                  style={{ fontFamily: "'Quicksand', sans-serif" }}
                   title="Profile"
                 >
                   {getUserInitial()}
@@ -285,12 +282,8 @@ export const GlobalHeader = () => {
                 <Button
                   onClick={() => setIsAuthOpen(true)}
                   size={isMobile ? "sm" : "default"}
-                  className="rounded-full gap-2 font-medium hover:opacity-90 transition-all"
-                  style={{ 
-                    fontFamily: "'Quicksand', sans-serif",
-                    backgroundColor: 'hsl(0, 70%, 55%)',
-                    color: 'white'
-                  }}
+                  className="rounded-full gap-2 font-medium hover:brightness-90 transition-all bg-[#FF0000] text-white"
+                  style={{ fontFamily: "'Quicksand', sans-serif" }}
                 >
                   <LogIn className="w-4 h-4" />
                   {!isMobile && <span>Sign In</span>}
