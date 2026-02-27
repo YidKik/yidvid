@@ -140,7 +140,7 @@ export const VideoOptionsMenu = ({ videoId, variant = "icon", className }: Video
                     <DropdownMenuItem
                       key={playlist.id}
                       onClick={() => handleAddToPlaylist(playlist.id)}
-                      className="flex items-center gap-3 px-3 py-2.5 cursor-pointer rounded-lg transition-all duration-200 hover:bg-[#F5F5F5] hover:pl-4"
+                      className="flex items-center gap-3 px-3 py-2.5 cursor-pointer rounded-lg transition-all duration-200 hover:bg-black/[0.06] hover:pl-4 hover:shadow-[inset_0_0_0_1px_rgba(0,0,0,0.04)]"
                     >
                       <ListPlus className="w-4 h-4" />
                       <span className="truncate">{playlist.title}</span>
