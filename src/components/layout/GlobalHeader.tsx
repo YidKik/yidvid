@@ -300,7 +300,7 @@ export const GlobalHeader = () => {
             </div>
           </div>
         </div>
-      </motion.header>
+      </header>
 
       {/* Auth Dialog */}
       <Auth isOpen={isAuthOpen} onOpenChange={setIsAuthOpen} />
