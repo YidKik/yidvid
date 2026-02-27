@@ -83,8 +83,8 @@ export function ReportVideoDialog({ videoId, compact = false }: ReportVideoDialo
         <Button 
           variant="ghost" 
           size="sm" 
-          className={`rounded-full transition-all duration-200 bg-muted/40 text-muted-foreground hover:bg-yellow-100 hover:text-yellow-700 hover:border-yellow-400 hover:shadow-md hover:shadow-yellow-200/40 hover:scale-105 border border-transparent ${
-            compact ? "h-8 px-3" : "h-10 px-4"
+          className={`rounded-full transition-all duration-200 bg-[#F5F5F5] hover:bg-[#E5E5E5] text-[#666666] hover:text-[#1A1A1A] ${
+            compact ? "h-8 px-3" : "h-9 px-4"
           }`}
         >
           <Flag className="h-4 w-4" />

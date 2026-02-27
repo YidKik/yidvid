@@ -149,9 +149,9 @@ const VideoDetails = () => {
               
               {/* Right Column - Comments */}
               <div className="w-[380px] flex-shrink-0">
-                <div className="bg-[#F5F5F5] rounded-xl sticky top-20 overflow-hidden">
+                <div className="bg-[#F5F5F5] rounded-t-xl sticky top-20 overflow-hidden flex flex-col" style={{ height: 'calc(100vh - 6rem)' }}>
                   {/* Simple header */}
-                  <div className="px-5 py-4 border-b border-[#E5E5E5] bg-white">
+                  <div className="px-5 py-4 border-b border-[#E5E5E5] bg-white flex-shrink-0">
                     <h3 className="text-base font-semibold text-[#1A1A1A] flex items-center gap-2">
                       <MessageCircle className="h-4 w-4 text-[#999999]" />
                       Comments
@@ -159,7 +159,7 @@ const VideoDetails = () => {
                   </div>
                   
                   {/* Comments Content */}
-                  <div className="p-4 max-h-[600px] overflow-y-auto">
+                  <div className="p-4 overflow-y-auto flex-1">
                     {isAuthenticated ? (
                       <VideoComments videoId={video?.id || ""} />
                     ) : (
