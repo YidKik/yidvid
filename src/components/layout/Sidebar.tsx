@@ -208,7 +208,7 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
     >
       {/* Logo Section */}
       <div className={cn(
-        "flex items-center border-b border-gray-100 h-14",
+        "flex items-center border-b border-[#E5E5E5] h-14",
         effectiveIsExpanded ? "px-4 justify-between" : "px-2 justify-center"
       )}>
         <Link to="/" className="flex items-center gap-2 shrink-0">
