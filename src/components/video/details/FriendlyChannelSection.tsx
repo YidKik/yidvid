@@ -79,7 +79,7 @@ export const FriendlyChannelSection = ({
       <div className="flex items-center gap-3">
         {channelId ? (
           <Link to={`/channel/${channelId}`}>
-            <Avatar className="h-10 w-10">
+            <Avatar className={compact ? "h-8 w-8" : "h-10 w-10"}>
               <AvatarImage src={channelThumbnail || ''} alt={channelName} />
               <AvatarFallback className="bg-[#F5F5F5] text-[#666666] text-sm font-bold">
                 {channelName?.slice(0, 2).toUpperCase()}
