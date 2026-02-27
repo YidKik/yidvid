@@ -178,7 +178,7 @@ export const VideoOptionsMenu = ({ videoId, variant = "icon", className }: Video
               placeholder="Playlist name"
               value={newPlaylistName}
               onChange={(e) => setNewPlaylistName(e.target.value)}
-              className="rounded-xl border-gray-300"
+              className="rounded-xl border-[#E5E5E5]"
               onKeyDown={(e) => e.key === "Enter" && handleCreatePlaylist()}
             />
           </div>
