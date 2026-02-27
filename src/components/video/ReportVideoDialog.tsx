@@ -91,9 +91,9 @@ export function ReportVideoDialog({ videoId, compact = false }: ReportVideoDialo
           {!compact && <span className="ml-2 font-medium">Report</span>}
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[450px] bg-white dark:bg-gray-900 border-border shadow-2xl rounded-2xl p-0 overflow-hidden [&>button]:hidden">
-        {/* Header with gradient */}
-        <div className="bg-gradient-to-r from-red-500 to-orange-500 p-6 text-white">
+      <DialogContent className="sm:max-w-[450px] bg-white border-2 border-[#E5E5E5] shadow-xl rounded-2xl p-0 overflow-hidden [&>button]:hidden">
+        {/* Header - solid red */}
+        <div className="bg-[#FF0000] px-6 py-5 text-white">
           <button 
             onClick={() => setIsOpen(false)}
             className="absolute right-4 top-4 text-white/80 hover:text-white transition-colors z-10"
@@ -106,7 +106,7 @@ export function ReportVideoDialog({ videoId, compact = false }: ReportVideoDialo
             </div>
             <div>
               <DialogTitle className="text-xl font-bold text-white">Report Video</DialogTitle>
-              <p className="text-white/80 text-sm mt-1">Help us keep our community safe</p>
+              <p className="text-white/90 text-sm mt-0.5">Help us keep our community safe</p>
             </div>
           </div>
         </div>
@@ -116,8 +116,8 @@ export function ReportVideoDialog({ videoId, compact = false }: ReportVideoDialo
           {/* Email field for non-logged-in users */}
           {!isAuthenticated && (
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-sm font-medium flex items-center gap-2">
-                <Mail className="h-4 w-4 text-muted-foreground" />
+              <Label htmlFor="email" className="text-sm font-semibold text-[#1A1A1A] flex items-center gap-2">
+                <Mail className="h-4 w-4 text-[#666666]" />
                 Your Email Address
               </Label>
               <Input
@@ -126,9 +126,9 @@ export function ReportVideoDialog({ videoId, compact = false }: ReportVideoDialo
                 placeholder="Enter your email address"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="h-11 rounded-xl border-2 border-muted focus:border-yellow-400 transition-colors"
+                className="h-11 rounded-xl border-2 border-[#E5E5E5] focus:border-[#FFCC00] transition-colors"
               />
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-[#666666]">
                 We may contact you for more details about this report
               </p>
             </div>
@@ -136,21 +136,21 @@ export function ReportVideoDialog({ videoId, compact = false }: ReportVideoDialo
 
           {/* Logged-in user info */}
           {isAuthenticated && user?.email && (
-            <div className="flex items-center gap-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-200 dark:border-green-800">
-              <div className="p-2 bg-green-100 dark:bg-green-800 rounded-full">
-                <Mail className="h-4 w-4 text-green-600 dark:text-green-400" />
+            <div className="flex items-center gap-3 p-3 bg-[#F5F5F5] rounded-xl border border-[#E5E5E5]">
+              <div className="p-2 bg-white rounded-full border border-[#E5E5E5]">
+                <Mail className="h-4 w-4 text-[#FF0000]" />
               </div>
               <div>
-                <p className="text-sm font-medium text-green-700 dark:text-green-400">Reporting as</p>
-                <p className="text-xs text-green-600 dark:text-green-500">{user.email}</p>
+                <p className="text-sm font-semibold text-[#1A1A1A]">Reporting as</p>
+                <p className="text-xs text-[#666666]">{user.email}</p>
               </div>
             </div>
           )}
 
           {/* Message field */}
           <div className="space-y-2">
-            <Label htmlFor="message" className="text-sm font-medium flex items-center gap-2">
-              <MessageSquare className="h-4 w-4 text-muted-foreground" />
+            <Label htmlFor="message" className="text-sm font-semibold text-[#1A1A1A] flex items-center gap-2">
+              <MessageSquare className="h-4 w-4 text-[#666666]" />
               What's the issue?
             </Label>
             <Textarea
@@ -158,14 +158,14 @@ export function ReportVideoDialog({ videoId, compact = false }: ReportVideoDialo
               placeholder="Please describe what's wrong with this video..."
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              className="min-h-[120px] rounded-xl border-2 border-muted focus:border-yellow-400 transition-colors resize-none"
+              className="min-h-[120px] rounded-xl border-2 border-[#E5E5E5] focus:border-[#FFCC00] transition-colors resize-none"
             />
           </div>
 
           {/* Info box */}
-          <div className="flex items-start gap-3 p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-xl border border-yellow-200 dark:border-yellow-800">
-            <AlertTriangle className="h-5 w-5 text-yellow-600 dark:text-yellow-400 flex-shrink-0 mt-0.5" />
-            <p className="text-xs text-yellow-700 dark:text-yellow-400">
+          <div className="flex items-start gap-3 p-3 bg-[#FFCC00] rounded-xl">
+            <AlertTriangle className="h-5 w-5 text-[#1A1A1A] flex-shrink-0 mt-0.5" />
+            <p className="text-xs font-medium text-[#1A1A1A]">
               Our team reviews all reports within 24-48 hours. We take every report seriously to ensure a safe viewing experience for everyone.
             </p>
           </div>
@@ -174,7 +174,7 @@ export function ReportVideoDialog({ videoId, compact = false }: ReportVideoDialo
           <Button
             onClick={handleSubmit}
             disabled={!isFormValid || isSubmitting}
-            className="w-full h-12 rounded-xl bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white font-semibold transition-all duration-200 hover:shadow-lg hover:shadow-red-200/50 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full h-12 rounded-xl bg-[#FF0000] hover:brightness-90 text-white font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isSubmitting ? (
               <span className="flex items-center gap-2">
