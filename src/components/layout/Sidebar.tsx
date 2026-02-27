@@ -414,7 +414,7 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
                   {effectiveIsExpanded && (
                     <span className={cn(
                       "truncate transition-colors",
-                      active ? 'text-red-500' : 'text-gray-700'
+                        active ? 'text-[#FF0000]' : 'text-gray-700'
                     )}>
                       {item.name}
                     </span>
