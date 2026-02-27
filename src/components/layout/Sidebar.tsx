@@ -233,7 +233,7 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
             variant="ghost"
             size="icon"
             onClick={() => setIsExpanded(!isExpanded)}
-            className="h-8 w-8 rounded-full hover:bg-gray-100"
+            className="h-8 w-8 rounded-full hover:bg-[#F0F0F0]"
           >
             {effectiveIsExpanded ? (
               <ChevronLeft className="w-4 h-4 text-gray-500" />
