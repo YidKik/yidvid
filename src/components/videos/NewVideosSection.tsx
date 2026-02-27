@@ -15,6 +15,7 @@ interface NewVideosSectionProps {
 
 export const NewVideosSection = ({ videos, autoExpand = false }: NewVideosSectionProps) => {
   const { getFormattedDate } = useVideoDate();
+  const { isMobile, isTablet } = useIsMobile();
   const [showAllVideos, setShowAllVideos] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const [hasAnimated, setHasAnimated] = useState(false);
