@@ -336,6 +336,7 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
             {librarySection.items.map((item) => {
               const Icon = item.icon;
               const active = isActive(item.path);
+              const disabled = !isAuthenticated;
               
               const handleItemClick = (e: React.MouseEvent) => {
                 if (!isAuthenticated) {
@@ -352,10 +353,10 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
                   to={isAuthenticated ? item.path : "#"}
                   onClick={handleItemClick}
                   title={!effectiveIsExpanded ? item.name : undefined}
-                  className={getNavItemClass(effectiveIsExpanded, active)}
+                  className={getNavItemClass(effectiveIsExpanded, active, disabled)}
                 >
-                  <Icon className={getIconClass(active)} />
-                  {effectiveIsExpanded && <span className={getLabelClass(active)}>{item.name}</span>}
+                  <Icon className={getIconClass(active, disabled)} />
+                  {effectiveIsExpanded && <span className={getLabelClass(active, disabled)}>{item.name}</span>}
                 </Link>
               );
             })}
