@@ -55,16 +55,14 @@ export const NotificationsMenu = ({ onMarkAsRead }: NotificationsMenuProps) => {
     return null;
   }
 
-  // Consistent button styling to match other header buttons
-  const isSearchPage = location.pathname.startsWith("/search");
-  const isFilled = isVideosPage || isSearchPage;
-  const buttonClass = `h-9 w-9 rounded-full transition-all duration-300 ${isFilled ? '' : 'bg-[#222222] hover:bg-[#333333] text-white'}`;
+  // Outline-only style to match profile icon
+  const buttonClass = `h-9 w-9 rounded-full border-2 border-[#E5E5E5] bg-transparent hover:bg-[#F5F5F5] text-[#666666] transition-all duration-200`;
 
   return (
     <Sheet>
       <SheetTrigger asChild>
         <Button 
-          variant={isFilled ? "default" : "ghost"} 
+          variant="ghost" 
           size="icon" 
           className={`${buttonClass} relative`}
         >
