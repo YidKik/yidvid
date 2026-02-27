@@ -485,7 +485,7 @@ export const FriendlyVideoActionBar = ({
                 <button
                   key={option.name}
                   onClick={() => { option.action(); setShareOpen(false); }}
-                  className="flex flex-col items-center gap-2 p-4 rounded-xl bg-muted/30 hover:bg-yellow-50 hover:border-yellow-300 border border-transparent transition-all duration-200 hover:shadow-md"
+                  className="flex flex-col items-center gap-2 p-4 rounded-xl bg-[#F5F5F5] hover:bg-[#E5E5E5] border border-transparent transition-all duration-200"
                 >
                   <option.icon className={`h-6 w-6 ${option.color}`} />
                   <span className="text-sm font-medium text-muted-foreground">{option.name}</span>
