@@ -77,12 +77,12 @@ export const VideoCardWithOptions = ({
         
         {/* Video Info */}
         <div className={isMobile ? 'mt-1.5' : 'mt-3'}>
-          <h3 className={`${isMobile ? 'text-xs' : 'text-sm'} font-semibold font-friendly text-foreground line-clamp-2 leading-snug`}>
+          <h3 className={`${isMobile ? 'text-[11px] leading-tight' : 'text-sm'} font-semibold font-friendly text-foreground line-clamp-2 leading-snug`}>
             {title}
           </h3>
           {!hideChannelInfo && (
-            <div className={`flex items-center gap-1.5 ${isMobile ? 'mt-1' : 'mt-2'}`}>
-              <div className={`${isMobile ? 'w-4 h-4' : 'w-6 h-6'} rounded-full overflow-hidden flex-shrink-0 bg-muted`}>
+            <div className={`flex items-center gap-1.5 ${isMobile ? 'mt-0.5' : 'mt-2'}`}>
+              <div className={`${isMobile ? 'w-3.5 h-3.5' : 'w-6 h-6'} rounded-full overflow-hidden flex-shrink-0 bg-muted`}>
                 {channelThumbnail ? (
                   <img
                     src={channelThumbnail}
@@ -90,17 +90,17 @@ export const VideoCardWithOptions = ({
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className={`w-full h-full bg-[#FF0000] flex items-center justify-center ${isMobile ? 'text-[8px]' : 'text-[10px]'} font-bold text-white`}>
+                  <div className={`w-full h-full bg-[#FF0000] flex items-center justify-center ${isMobile ? 'text-[7px]' : 'text-[10px]'} font-bold text-white`}>
                     {channelName.charAt(0).toUpperCase()}
                   </div>
                 )}
               </div>
-              <p className={`${isMobile ? 'text-[10px]' : 'text-xs'} text-muted-foreground truncate`}>
+              <p className={`${isMobile ? 'text-[9px]' : 'text-xs'} text-muted-foreground truncate`}>
                 {channelName}
               </p>
             </div>
           )}
-          <p className={`${isMobile ? 'text-[10px] mt-0.5' : 'text-xs mt-1.5'} text-muted-foreground/80`}>
+          <p className={`${isMobile ? 'text-[9px] mt-0' : 'text-xs mt-1.5'} text-muted-foreground/80`}>
             {views?.toLocaleString() || 0} views • {formattedDate}
           </p>
         </div>
