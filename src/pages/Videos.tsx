@@ -31,7 +31,7 @@ const MainContent = () => {
     isRefreshing
   } = useVideos();
   
-  const { isMobile } = useIsMobile();
+  const { isMobile, isTablet } = useIsMobile();
   const { session } = useSessionManager();
   const { sidebarWidth } = useSidebarContext();
   const [hasScrolled, setHasScrolled] = useState(false);
