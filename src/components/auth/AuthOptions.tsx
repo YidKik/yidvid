@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
-import { User, UserPlus, Sparkles } from "lucide-react";
+import { User, UserPlus } from "lucide-react";
 
 interface AuthOptionsProps {
   onSelectOption: (option: 'signin' | 'signup') => void;
@@ -26,18 +26,7 @@ export const AuthOptions = ({
       
       {/* Hero section */}
       <div className="w-full bg-[#FAFAFA] px-8 pt-10 pb-8 text-center">
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.4, ease: "easeOut" }}
-          className="mb-4"
-        >
-          <div className="w-16 h-16 mx-auto rounded-2xl bg-[#FF0000] flex items-center justify-center shadow-lg mb-5">
-            <Sparkles className="w-8 h-8 text-white" />
-          </div>
-        </motion.div>
-
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.1, ease: "easeOut" }}
