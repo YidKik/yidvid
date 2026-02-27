@@ -31,7 +31,7 @@ const MainContent = () => {
     isRefreshing
   } = useVideos();
   
-  const { isMobile } = useIsMobile();
+  const { isMobile, isTablet } = useIsMobile();
   const { session } = useSessionManager();
   const { sidebarWidth } = useSidebarContext();
   const [hasScrolled, setHasScrolled] = useState(false);
@@ -125,10 +125,10 @@ const MainContent = () => {
         </div>
       </motion.main>
 
-      {/* Desktop scroll to top button */}
+      {/* Desktop/Tablet scroll to top button */}
       {!isMobile && (
         <motion.div 
-          className="fixed bottom-4 right-4 p-3 rounded-full cursor-pointer"
+          className={`fixed ${isTablet ? 'bottom-24' : 'bottom-4'} right-4 p-3 rounded-full cursor-pointer z-40`}
           style={{
             backgroundColor: 'transparent',
             border: '2px solid hsl(50, 100%, 50%)'
