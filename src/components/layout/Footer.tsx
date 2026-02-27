@@ -15,11 +15,11 @@ export const Footer = () => {
       <footer 
         className="mt-auto border-t"
         style={{ 
-          backgroundColor: '#F5F5F5',
-          borderColor: '#E5E5E5'
+          backgroundColor: '#FAFAFA',
+          borderColor: '#EFEFEF'
         }}
       >
-        <div className="max-w-[1600px] mx-auto px-6 lg:px-12 py-5">
+        <div className="max-w-[1600px] mx-auto px-6 lg:px-12 py-2.5">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             {/* Logo and Tagline */}
             <Link to="/" className="flex items-center gap-3">

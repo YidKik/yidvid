@@ -108,8 +108,8 @@ export const GlobalHeader = () => {
   return (
     <>
       <header
-        className="fixed top-0 z-40 bg-white border-b border-[#E5E5E5]"
-        style={{ left: 200, right: 0 }}
+        className="fixed top-0 z-40 bg-white border-b border-[#E5E5E5] transition-all duration-300"
+        style={{ left: sidebarWidth, right: 0 }}
       >
         <div className="w-full px-3 md:px-6">
           <div className="flex items-center justify-between h-14 gap-4">
