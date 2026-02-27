@@ -124,12 +124,12 @@ const Playlists = () => {
 
           {/* Header */}
           <div className="flex items-start justify-between mb-8 pb-6 border-b border-gray-100">
-            <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-yellow-400 to-red-500 flex items-center justify-center shadow-lg">
-                <ListMusic className="w-8 h-8 text-white" />
+            <div className="flex items-center gap-3">
+              <div className={`${isMobile ? 'w-12 h-12' : 'w-16 h-16'} rounded-2xl bg-gradient-to-br from-yellow-400 to-red-500 flex items-center justify-center shadow-lg`}>
+                <ListMusic className={`${isMobile ? 'w-6 h-6' : 'w-8 h-8'} text-white`} />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900 font-friendly">{selectedPlaylist.title}</h1>
+                <h1 className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold text-gray-900 font-friendly`}>{selectedPlaylist.title}</h1>
                 {selectedPlaylist.description && (
                   <p className="text-gray-500 text-sm mt-1">{selectedPlaylist.description}</p>
                 )}
