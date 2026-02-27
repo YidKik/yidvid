@@ -8,6 +8,7 @@ import { Youtube, Search as SearchIcon, Users, Play } from "lucide-react";
 import { Link } from "react-router-dom";
 import { usePageLoader } from "@/contexts/LoadingContext";
 import { useState, useEffect } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const TypingSearchLoader = ({ query }: { query: string }) => {
   const prefix = 'Searching results for ';
