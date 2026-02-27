@@ -285,6 +285,7 @@ const LandingPage = () => {
       {/* Footer */}
       <Footer />
     </div>
+    </>
   );
 
   return pageContent;
