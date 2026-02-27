@@ -166,10 +166,10 @@ export const ChannelsRowSection = ({ selectedCategory = "all", autoExpand = fals
       >
       <Link
         to={`/channel/${channel.channel_id}`}
-        className={`block group ${isGrid ? 'w-full' : 'flex-none w-[210px]'}`}
-      >
-        <div className="bg-card rounded-2xl p-7 shadow-md transition-all duration-300 text-center">
-          <div className="relative mx-auto w-28 h-28 rounded-full overflow-hidden border-2 border-transparent group-hover:border-yellow-400 transition-all duration-300 ring-2 ring-muted/30 group-hover:ring-yellow-400/50">
+      className={`block group ${isGrid ? 'w-full' : `flex-none ${isMobile ? 'w-[140px]' : isTablet ? 'w-[170px]' : 'w-[210px]'}`}`}
+    >
+        <div className={`bg-card rounded-2xl ${isMobile ? 'p-4' : 'p-7'} shadow-md transition-all duration-300 text-center`}>
+          <div className={`relative mx-auto ${isMobile ? 'w-16 h-16' : isTablet ? 'w-20 h-20' : 'w-28 h-28'} rounded-full overflow-hidden border-2 border-transparent group-hover:border-yellow-400 transition-all duration-300 ring-2 ring-muted/30 group-hover:ring-yellow-400/50`}>
             {channel.thumbnail_url ? (
               <img
                 src={channel.thumbnail_url}
