@@ -157,7 +157,13 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
     const [basePath, query] = path.split("?");
     if (isViewingCategory && path === "/videos") return false;
     if (query) {
-      return location.pathname === basePath && location.search.includes(query.split("=")[1]);
+      const currentParams = new URLSearchParams(location.search);
+      const targetParams = new URLSearchParams(query);
+      if (location.pathname !== basePath) return false;
+      for (const [key, value] of targetParams.entries()) {
+        if (currentParams.get(key) !== value) return false;
+      }
+      return true;
     }
     if (basePath === "/videos" && location.pathname === "/videos") {
       return !location.search.includes("sort=") && !location.search.includes("category=");
