@@ -62,7 +62,7 @@ export const VideoCardWithOptions = ({
             {/* Duration badge - bottom right */}
             {duration && (
               <div className="absolute bottom-2 right-2 pointer-events-auto">
-                <div className="bg-black/70 backdrop-blur-sm rounded-full px-2.5 py-1 flex items-center gap-1.5 shadow-lg">
+                <div className="bg-[#1A1A1A] rounded-full px-2.5 py-1 flex items-center gap-1.5 shadow-lg">
                   <Clock size={11} className="text-white" />
                   <span className="text-xs font-semibold text-white">{duration}</span>
                 </div>
