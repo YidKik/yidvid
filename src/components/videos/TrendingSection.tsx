@@ -58,8 +58,7 @@ export const TrendingSection = ({ videos }: TrendingSectionProps) => {
   // First row for carousel (15 videos)
   const carouselVideos = useMemo(() => allTrendingVideos.slice(0, 15), [allTrendingVideos]);
   
-  // Videos per page in expanded view (3 rows x 4 = 12 videos per page)
-  const videosPerPage = 12;
+  const videosPerPage = isMobile ? 6 : isTablet ? 9 : 12;
   const totalPages = Math.ceil(allTrendingVideos.length / videosPerPage);
   
   // Current page videos
