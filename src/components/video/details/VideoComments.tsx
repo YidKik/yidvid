@@ -20,6 +20,7 @@ interface VideoCommentsProps {
 }
 
 export const VideoComments = ({ videoId }: VideoCommentsProps) => {
+  const { isMobile } = useIsMobile();
   const { data: comments, refetch: refetchComments } = useQuery({
     queryKey: ["video-comments", videoId],
     enabled: !!videoId,
