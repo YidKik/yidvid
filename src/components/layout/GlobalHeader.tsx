@@ -13,7 +13,7 @@ import { NotificationsMenu } from "@/components/header/NotificationsMenu";
 export const GlobalHeader = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { isMobile } = useIsMobile();
+  const { isMobile, isDesktop: _ } = useIsMobile();
   const { isAuthenticated, session, profile } = useSessionManager();
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const searchContainerRef = useRef<HTMLDivElement>(null);
