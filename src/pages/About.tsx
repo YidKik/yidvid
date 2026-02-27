@@ -33,7 +33,7 @@ const About = () => {
             className="text-center mb-12"
           >
             <h1 
-              className="text-4xl md:text-5xl font-bold mb-4"
+              className={`${isMobile ? 'text-2xl' : 'text-4xl md:text-5xl'} font-bold mb-4`}
               style={{ fontFamily: "'Fredoka One', 'Nunito', sans-serif", color: '#000000' }}
             >
               About YidVid
