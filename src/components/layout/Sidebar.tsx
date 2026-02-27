@@ -359,7 +359,7 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
                     >
                       <span className={cn(
                         "text-base transition-all duration-200",
-                        isCategoryActive(category.id) ? "grayscale-0 opacity-100" : "grayscale opacity-70"
+                        isCategoryActive(category.id) ? "opacity-100" : "opacity-60"
                       )}>{category.icon}</span>
                       <span className="font-medium">{category.label}</span>
                     </button>
