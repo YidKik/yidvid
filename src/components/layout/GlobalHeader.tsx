@@ -19,6 +19,7 @@ export const GlobalHeader = () => {
   const searchContainerRef = useRef<HTMLDivElement>(null);
   
   const isHomePage = location.pathname === "/";
+  const { isDesktop } = useIsMobile();
   const { sidebarWidth } = useSidebarContext();
 
   const {
