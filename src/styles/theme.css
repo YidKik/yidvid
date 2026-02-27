@@ -2,13 +2,27 @@
 :root {
   --background: 0 0% 100%;
   --foreground: 222.2 84% 4.9%;
+
+  /* Brand colors - sharp, 100% opacity */
+  --brand-red: 0 100% 50%;
+  --brand-yellow: 50 100% 40%;
+  --brand-dark: 0 0% 10%;
+  --brand-medium: 0 0% 40%;
+  --brand-light-text: 0 0% 60%;
+  --brand-light-bg: 0 0% 96%;
+  --brand-border: 0 0% 90%;
+  --brand-hover: 0 0% 94%;
+
+  /* User customization (kept for ColorContext) */
   --background-custom: 0 0% 100%;
   --text-custom: 0 0% 0%;
   --button-custom: 0 100% 50%;
   --logo-custom: 0 0% 0%;
+
   --search-background: 0 0% 100%;
   --search-text: 0 0% 0%;
   --search-border: 220 13% 91%;
+
   --auth-background: 0 0% 100%;
   --auth-text: 0 0% 0%;
   --auth-primary: 0 100% 50%;
@@ -26,12 +40,12 @@
   --popover: 0 0% 100%;
   --popover-foreground: 222.2 84% 4.9%;
 
-  /* Strong bright red - primary color */
+  /* Primary = Brand Red */
   --primary: 0 100% 50%;
   --primary-foreground: 0 0% 100%;
 
-  /* Classic bright yellow - accent for hover effects and special touches */
-  --highlight: 50 100% 50%;
+  /* Highlight = Brand Yellow */
+  --highlight: 50 100% 40%;
   --highlight-foreground: 0 0% 0%;
 
   --secondary: 240 4.8% 95.9%;
