@@ -265,6 +265,15 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
                 to={item.path}
                 title={!effectiveIsExpanded ? item.name : undefined}
                 className={getNavItemClass(effectiveIsExpanded, active)}
+                onClick={(e) => {
+                  // If clicking "Videos" while already on /videos with params, force reset
+                  if (item.path === "/videos" && location.pathname === "/videos" && location.search) {
+                    e.preventDefault();
+                    setSelectedCategory("");
+                    setIsCategoriesOpen(false);
+                    navigate("/videos", { replace: true });
+                  }
+                }}
               >
                 <Icon className={getIconClass(active)} />
                 {effectiveIsExpanded && <span className={getLabelClass(active)}>{item.name}</span>}
