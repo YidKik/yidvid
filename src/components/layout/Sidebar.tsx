@@ -246,7 +246,7 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
 
       {/* Back Button - Only show when can go back and on detail pages (not main listing pages) */}
       {canGoBack() && (location.pathname.startsWith("/video/") || location.pathname.startsWith("/channel/")) && (
-        <div className={cn("px-2 py-2 border-b border-gray-50", effectiveIsExpanded ? "px-3" : "")}>
+        <div className={cn("px-2 py-2 border-b border-[#E5E5E5]", effectiveIsExpanded ? "px-3" : "")}>
           <button
             onClick={handleGoBack}
             title="Go back"
