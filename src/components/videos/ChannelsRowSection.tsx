@@ -201,7 +201,7 @@ export const ChannelsRowSection = ({ selectedCategory = "all", autoExpand = fals
   return (
     <section 
       ref={sectionRef}
-      className={`mb-10 py-10 -mx-6 px-6 bg-gray-50 dark:bg-gray-900/30 ${showAllChannels ? 'min-h-screen pb-20' : 'rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800'}`}
+      className={`mb-10 ${isMobile ? 'py-6 -mx-3 px-3' : 'py-10 -mx-6 px-6'} bg-gray-50 dark:bg-gray-900/30 ${showAllChannels ? 'min-h-screen pb-20' : 'rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800'}`}
     >
       <AnimatePresence mode="wait">
         {showAllChannels ? (
