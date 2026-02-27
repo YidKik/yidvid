@@ -26,7 +26,8 @@ export const VideoContent = ({
   lastSuccessfulFetch,
   fetchAttempts,
   selectedCategory = "all",
-  sortBy
+  sortBy,
+  viewChannels = false
 }: VideoContentProps) => {
   const { session, isAuthenticated } = useSessionManager();
   
