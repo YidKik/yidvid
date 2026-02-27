@@ -125,9 +125,9 @@ export const FeaturedVideoSection = ({ videos }: FeaturedVideoSectionProps) => {
                 </div>
                 
                 {/* Content at Bottom */}
-                <div className="absolute bottom-0 left-0 right-0 p-4">
+                <div className={`absolute bottom-0 left-0 right-0 ${isMobile ? 'p-3' : 'p-4'}`}>
                   {/* Video Title - turns yellow on hover */}
-                  <h3 className="text-white font-semibold text-base line-clamp-2 group-hover:text-yellow-400 transition-colors drop-shadow-md">
+                  <h3 className={`text-white font-semibold ${isMobile ? 'text-sm' : 'text-base'} line-clamp-2 group-hover:text-yellow-400 transition-colors drop-shadow-md`}>
                     {video.title}
                   </h3>
                   {/* Channel Name */}

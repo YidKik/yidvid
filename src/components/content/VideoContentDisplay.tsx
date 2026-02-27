@@ -1,8 +1,6 @@
 
 import React from 'react';
-import { MobileVideoView } from './MobileVideoView';
 import { DesktopVideoView } from './DesktopVideoView';
-import { useIsMobile } from '@/hooks/use-mobile';
 import { VideoData } from '@/hooks/video/types/video-fetcher';
 import { AutoRefreshHandler } from './AutoRefreshHandler';
 
@@ -34,17 +32,12 @@ export const VideoContentDisplay: React.FC<VideoContentDisplayProps> = ({
   sortBy,
   viewChannels = false
 }) => {
-  const { isMobile } = useIsMobile();
-
-  // Don't render any placeholder/template UI while loading.
-  // The app's top loading indicator should be the only visible loading feedback.
   if ((isLoading || isRefreshing) && videos.length === 0) {
     return null;
   }
 
   return (
     <div>
-      {/* Component to handle automatic refresh of stale content */}
       <AutoRefreshHandler
         videos={videos}
         isRefreshing={isRefreshing}
@@ -52,32 +45,18 @@ export const VideoContentDisplay: React.FC<VideoContentDisplayProps> = ({
         forceRefetch={forceRefetch}
       />
       
-      {/* Responsive video view based on device */}
-      {isMobile ? (
-        <MobileVideoView
-          videos={videos}
-          isLoading={isLoading}
-          isRefreshing={isRefreshing}
-          refetch={handleRefetch}
-          forceRefetch={handleForceRefetch}
-          lastSuccessfulFetch={lastSuccessfulFetch}
-          fetchAttempts={fetchAttempts || 0}
-          selectedCategory={selectedCategory}
-        />
-      ) : (
-        <DesktopVideoView
-          videos={videos}
-          isLoading={isLoading}
-          isRefreshing={isRefreshing}
-          refetch={handleRefetch}
-          forceRefetch={handleForceRefetch}
-          lastSuccessfulFetch={lastSuccessfulFetch}
-          fetchAttempts={fetchAttempts || 0}
-          selectedCategory={selectedCategory}
-          sortBy={sortBy}
-          viewChannels={viewChannels}
-        />
-      )}
+      <DesktopVideoView
+        videos={videos}
+        isLoading={isLoading}
+        isRefreshing={isRefreshing}
+        refetch={handleRefetch}
+        forceRefetch={handleForceRefetch}
+        lastSuccessfulFetch={lastSuccessfulFetch}
+        fetchAttempts={fetchAttempts || 0}
+        selectedCategory={selectedCategory}
+        sortBy={sortBy}
+        viewChannels={viewChannels}
+      />
     </div>
   );
 };
