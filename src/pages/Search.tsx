@@ -10,43 +10,50 @@ import { usePageLoader } from "@/contexts/LoadingContext";
 import { useState, useEffect } from "react";
 
 const TypingSearchLoader = ({ query }: { query: string }) => {
-  const fullText = `Searching results for "${query}"`;
-  const [displayedText, setDisplayedText] = useState("");
+  const prefix = 'Searching results for ';
+  const suffix = '';
+  const fullText = prefix + query + suffix;
   const [charIndex, setCharIndex] = useState(0);
 
   useEffect(() => {
-    setDisplayedText("");
     setCharIndex(0);
   }, [query]);
 
   useEffect(() => {
     if (charIndex < fullText.length) {
       const timer = setTimeout(() => {
-        setDisplayedText(fullText.slice(0, charIndex + 1));
         setCharIndex(charIndex + 1);
-      }, 35);
+      }, 40);
       return () => clearTimeout(timer);
     } else {
-      // Loop: restart after a pause
       const timer = setTimeout(() => {
-        setDisplayedText("");
         setCharIndex(0);
-      }, 1200);
+      }, 1500);
       return () => clearTimeout(timer);
     }
   }, [charIndex, fullText]);
 
+  // Split displayed text into prefix part and query part for coloring
+  const displayed = fullText.slice(0, charIndex);
+  const prefixEnd = Math.min(charIndex, prefix.length);
+  const queryStart = Math.max(0, charIndex - prefix.length);
+  const displayedPrefix = prefix.slice(0, prefixEnd);
+  const displayedQuery = query.slice(0, queryStart);
+
   return (
     <div className="flex flex-col items-center justify-center py-24 gap-6">
       <div className="relative">
-        <div className="w-12 h-12 rounded-full border-3 border-[#E5E5E5] border-t-[#FF0000] animate-spin" />
+        <div className="w-14 h-14 rounded-full border-4 border-[#FFCC00]/30 border-t-[#FF0000] animate-spin" />
       </div>
       <div className="text-center">
-        <p className="text-lg font-semibold text-[#1A1A1A] min-h-[28px]">
-          {displayedText}
-          <span className="inline-block w-[2px] h-5 bg-[#FF0000] ml-0.5 animate-pulse align-text-bottom" />
+        <p className="text-xl font-bold text-[#1A1A1A] min-h-[32px]">
+          <span>{displayedPrefix}</span>
+          {displayedQuery && (
+            <span className="text-[#FF0000]">"{displayedQuery}"</span>
+          )}
+          <span className="inline-block w-[3px] h-6 bg-[#FFCC00] ml-1 animate-pulse align-text-bottom rounded-sm" />
         </p>
-        <p className="text-sm text-[#999999] mt-2">Finding the best matches...</p>
+        <p className="text-sm font-medium text-[#999999] mt-3">Finding the best matches...</p>
       </div>
     </div>
   );
