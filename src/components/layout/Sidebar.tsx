@@ -69,7 +69,7 @@ const librarySection: NavSection = {
   title: "Library",
   requiresAuth: true,
   items: [
-    { name: "History", path: "/dashboard", icon: History },
+    { name: "History", path: "/history", icon: History },
     { name: "Favorites", path: "/favorites", icon: Heart },
     { name: "Watch Later", path: "/watch-later", icon: Clock },
     { name: "Playlists", path: "/playlists", icon: ListMusic },

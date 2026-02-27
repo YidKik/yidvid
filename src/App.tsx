@@ -7,6 +7,7 @@ import ChannelDetails from './pages/ChannelDetails';
 import WritingVideos from './pages/WritingVideos';
 import ResetPassword from './pages/ResetPassword';
 import Videos from './pages/Videos';
+import History from './pages/History';
 import LandingPage from './pages/LandingPage';
 import { PlaybackProvider } from './contexts/PlaybackContext';
 import { ColorProvider } from './contexts/ColorContext';
@@ -84,6 +85,7 @@ function AppContent() {
         <Route path="/settings/email-preferences" element={<EmailPreferences />} />
         <Route path="/unsubscribe" element={<Unsubscribe />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/history" element={<History />} />
         <Route path="/about" element={<About />} />
         <Route path="/favorites" element={<Favorites />} />
         <Route path="/watch-later" element={<WatchLater />} />
