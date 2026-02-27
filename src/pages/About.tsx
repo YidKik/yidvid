@@ -79,10 +79,10 @@ const About = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 + index * 0.1, duration: 0.5 }}
-                className="p-6 rounded-2xl bg-[#F5F5F5] border border-[#E5E5E5] text-center"
+                className={`${isMobile ? 'p-4' : 'p-6'} rounded-2xl bg-[#F5F5F5] border border-[#E5E5E5] text-center`}
               >
                 <feature.icon 
-                  className="w-10 h-10 mb-4 mx-auto" 
+                  className={`${isMobile ? 'w-8 h-8' : 'w-10 h-10'} mb-4 mx-auto`}
                   style={{ color: '#FFCC00' }} 
                 />
                 <h3 
