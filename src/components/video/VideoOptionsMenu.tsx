@@ -28,9 +28,10 @@ interface VideoOptionsMenuProps {
   videoId: string;
   variant?: "icon" | "overlay";
   className?: string;
+  compact?: boolean;
 }
 
-export const VideoOptionsMenu = ({ videoId, variant = "icon", className }: VideoOptionsMenuProps) => {
+export const VideoOptionsMenu = ({ videoId, variant = "icon", className, compact = false }: VideoOptionsMenuProps) => {
   const { isAuthenticated, session } = useSessionManager();
   const userId = session?.user?.id;
   const {
@@ -95,35 +96,45 @@ export const VideoOptionsMenu = ({ videoId, variant = "icon", className }: Video
             variant="ghost"
             size="icon"
             className={cn(
-              "h-8 w-8 rounded-full transition-colors duration-200",
+              compact ? "h-6 w-6" : "h-8 w-8",
+              "rounded-full transition-colors duration-200",
               variant === "overlay" && "bg-[#1A1A1A] hover:bg-[#FFCC00] text-white hover:text-[#1A1A1A]",
               variant === "icon" && "hover:bg-[#F0F0F0]",
               className
             )}
             onClick={(e) => e.stopPropagation()}
           >
-            <MoreVertical className="w-4 h-4" />
+            <MoreVertical className={compact ? "w-3 h-3" : "w-4 h-4"} />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent 
           align="end" 
-          className="w-56 bg-white border border-[#E5E5E5] shadow-lg rounded-xl z-50"
+          className={cn(
+            "bg-white border border-[#E5E5E5] shadow-lg rounded-xl z-50",
+            compact ? "w-44" : "w-56"
+          )}
           onClick={(e) => e.stopPropagation()}
         >
           <DropdownMenuItem
             onClick={handleToggleFavorite}
-            className="flex items-center gap-3 px-3 py-2.5 cursor-pointer rounded-lg transition-all duration-200 hover:bg-black/[0.06] hover:pl-4 hover:text-[#FF0000] hover:shadow-[inset_0_0_0_1px_rgba(0,0,0,0.04)]"
+            className={cn(
+              "flex items-center gap-2 cursor-pointer rounded-lg transition-all duration-200 hover:bg-black/[0.06] hover:shadow-[inset_0_0_0_1px_rgba(0,0,0,0.04)]",
+              compact ? "px-2 py-1.5 text-xs" : "px-3 py-2.5 gap-3 hover:pl-4 hover:text-[#FF0000]"
+            )}
           >
-            <Heart className={cn("w-4 h-4 transition-transform duration-200 group-hover:scale-110", isFavorite && "fill-[#FF0000] text-[#FF0000]")} />
-            <span>{isFavorite ? "Remove from Favorites" : "Add to Favorites"}</span>
+            <Heart className={cn(compact ? "w-3 h-3" : "w-4 h-4", "transition-transform duration-200", isFavorite && "fill-[#FF0000] text-[#FF0000]")} />
+            <span>{isFavorite ? "Remove Favorite" : "Favorite"}</span>
           </DropdownMenuItem>
           
           <DropdownMenuItem
             onClick={handleToggleWatchLater}
-            className="flex items-center gap-3 px-3 py-2.5 cursor-pointer rounded-lg transition-all duration-200 hover:bg-black/[0.06] hover:pl-4 hover:text-blue-500 hover:shadow-[inset_0_0_0_1px_rgba(0,0,0,0.04)]"
+            className={cn(
+              "flex items-center gap-2 cursor-pointer rounded-lg transition-all duration-200 hover:bg-black/[0.06] hover:shadow-[inset_0_0_0_1px_rgba(0,0,0,0.04)]",
+              compact ? "px-2 py-1.5 text-xs" : "px-3 py-2.5 gap-3 hover:pl-4 hover:text-blue-500"
+            )}
           >
-            <Clock className={cn("w-4 h-4 transition-transform duration-200", isWatchLaterSaved && "fill-blue-500 text-blue-500")} />
-            <span>{isWatchLaterSaved ? "Remove from Watch Later" : "Add to Watch Later"}</span>
+            <Clock className={cn(compact ? "w-3 h-3" : "w-4 h-4", "transition-transform duration-200", isWatchLaterSaved && "fill-blue-500 text-blue-500")} />
+            <span>{isWatchLaterSaved ? "Remove Watch Later" : "Watch Later"}</span>
           </DropdownMenuItem>
           
           <DropdownMenuSeparator />
