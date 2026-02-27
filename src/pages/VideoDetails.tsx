@@ -57,7 +57,7 @@ const VideoDetails = () => {
       console.error("Video not found or error:", error, "for videoId:", videoId);
     }
     return (
-      <div className="min-h-screen bg-white pt-14 pl-[200px] transition-all duration-300">
+      <div className="min-h-screen bg-white pt-14 pl-0 lg:pl-[200px] transition-all duration-300">
         <div className="p-4">
           <div className="p-8 text-center bg-[#F5F5F5] rounded-2xl mt-6">
             <div className="mx-auto mb-6 w-full max-w-md aspect-video flex items-center justify-center bg-white rounded-xl">
