@@ -107,7 +107,7 @@ export const VideoOptionsMenu = ({ videoId, variant = "icon", className }: Video
         </DropdownMenuTrigger>
         <DropdownMenuContent 
           align="end" 
-          className="w-56 bg-white border border-gray-200 shadow-lg rounded-xl z-50"
+          className="w-56 bg-white border border-[#E5E5E5] shadow-lg rounded-xl z-50"
           onClick={(e) => e.stopPropagation()}
         >
           <DropdownMenuItem
