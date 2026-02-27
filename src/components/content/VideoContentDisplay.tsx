@@ -18,6 +18,7 @@ interface VideoContentDisplayProps {
   handleForceRefetch: () => Promise<any>;
   selectedCategory?: string;
   sortBy?: string;
+  viewChannels?: boolean;
 }
 
 export const VideoContentDisplay: React.FC<VideoContentDisplayProps> = ({
