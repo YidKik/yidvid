@@ -112,17 +112,17 @@ export const VideoOptionsMenu = ({ videoId, variant = "icon", className }: Video
         >
           <DropdownMenuItem
             onClick={handleToggleFavorite}
-            className="flex items-center gap-3 px-3 py-2.5 cursor-pointer hover:bg-[#F0F0F0] rounded-lg"
+            className="flex items-center gap-3 px-3 py-2.5 cursor-pointer rounded-lg transition-all duration-200 hover:bg-[#F5F5F5] hover:pl-4 hover:text-[#FF0000]"
           >
-            <Heart className={cn("w-4 h-4", isFavorite && "fill-[#FF0000] text-[#FF0000]")} />
+            <Heart className={cn("w-4 h-4 transition-transform duration-200 group-hover:scale-110", isFavorite && "fill-[#FF0000] text-[#FF0000]")} />
             <span>{isFavorite ? "Remove from Favorites" : "Add to Favorites"}</span>
           </DropdownMenuItem>
           
           <DropdownMenuItem
             onClick={handleToggleWatchLater}
-            className="flex items-center gap-3 px-3 py-2.5 cursor-pointer hover:bg-[#F0F0F0] rounded-lg"
+            className="flex items-center gap-3 px-3 py-2.5 cursor-pointer rounded-lg transition-all duration-200 hover:bg-[#F5F5F5] hover:pl-4 hover:text-blue-500"
           >
-            <Clock className={cn("w-4 h-4", isWatchLaterSaved && "fill-blue-500 text-blue-500")} />
+            <Clock className={cn("w-4 h-4 transition-transform duration-200", isWatchLaterSaved && "fill-blue-500 text-blue-500")} />
             <span>{isWatchLaterSaved ? "Remove from Watch Later" : "Add to Watch Later"}</span>
           </DropdownMenuItem>
           
