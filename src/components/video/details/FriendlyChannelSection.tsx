@@ -112,7 +112,7 @@ export const FriendlyChannelSection = ({
           <Button
             onClick={handleSubscribeClick}
             disabled={isLoading}
-            className={`h-9 px-4 rounded-full text-sm font-semibold transition-all ${
+            className={`${compact ? 'h-7 px-3 text-xs' : 'h-9 px-4 text-sm'} rounded-full font-semibold transition-all ${
               isSubscribed 
                 ? "bg-[#F5F5F5] text-[#1A1A1A] hover:bg-[#E5E5E5]" 
                 : "bg-[#FF0000] text-white hover:brightness-90"
