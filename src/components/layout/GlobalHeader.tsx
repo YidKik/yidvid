@@ -19,6 +19,7 @@ export const GlobalHeader = () => {
   const searchContainerRef = useRef<HTMLDivElement>(null);
   
   const isHomePage = location.pathname === "/";
+  const { sidebarWidth } = useSidebarContext();
 
   const {
     searchQuery,
