@@ -140,10 +140,10 @@ const Search = () => {
     <div className="min-h-screen bg-white pt-16 pl-0 lg:pl-[200px] pb-20 lg:pb-0 transition-all duration-300">
       <main className="max-w-7xl mx-auto px-4 lg:px-6 py-6 lg:py-8">
         {/* Search Header */}
-        <div className="mb-8">
-          <div className="flex items-center gap-3 mb-2">
-            <SearchIcon className="h-6 w-6 text-[#999999]" />
-            <h1 className="text-2xl font-bold text-[#1A1A1A]">
+        <div className={isMobile ? "mb-5" : "mb-8"}>
+          <div className="flex items-center gap-2 mb-2">
+            <SearchIcon className={`${isMobile ? 'h-5 w-5' : 'h-6 w-6'} text-[#999999]`} />
+            <h1 className={`${isMobile ? 'text-lg' : isTablet ? 'text-xl' : 'text-2xl'} font-bold text-[#1A1A1A]`}>
               Search results for "<span className="text-[#FF0000]">{query}</span>"
             </h1>
           </div>
