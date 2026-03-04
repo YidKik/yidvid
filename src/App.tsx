@@ -20,19 +20,6 @@ import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 
 // Admin Pages
 import AdminDashboard from './pages/admin/Dashboard';
-import ChannelsPage from './pages/admin/ChannelsPage';
-import CategoriesPage from './pages/admin/CategoriesPage';
-import CommentsPage from './pages/admin/CommentsPage';
-import AnalyticsPage from './pages/admin/AnalyticsPage';
-import VideosPage from './pages/admin/VideosPage';
-import UsersPage from './pages/admin/UsersPage';
-import ReportedVideosPage from './pages/admin/ReportedVideosPage';
-import RequestsPage from './pages/admin/RequestsPage';
-import ContactRequestsPage from './pages/admin/ContactRequestsPage';
-import NotificationsPage from './pages/admin/NotificationsPage';
-import LayoutCustomizationPage from './pages/admin/LayoutCustomizationPage';
-import TestimonialsPage from './pages/admin/TestimonialsPage';
-import AdminSEO from './pages/AdminSEO';
 import { EmailPreferences } from './pages/EmailPreferences';
 import { Unsubscribe } from './pages/Unsubscribe';
 import About from './pages/About';
@@ -98,22 +85,8 @@ function AppContent() {
         <Route path="/watch-later" element={<WatchLater />} />
         <Route path="/playlists" element={<Playlists />} />
         
-        {/* Admin routes */}
+        {/* Admin route - single entry point, tabs handled internally */}
         <Route path="/admin" element={<AdminDashboard />} />
-        <Route path="/admin/channels" element={<ChannelsPage />} />
-        <Route path="/admin/youtube-channels" element={<ChannelsPage />} />
-        <Route path="/admin/categories" element={<CategoriesPage />} />
-        <Route path="/admin/comments" element={<CommentsPage />} />
-        <Route path="/admin/analytics" element={<AnalyticsPage />} />
-        <Route path="/admin/videos" element={<VideosPage />} />
-        <Route path="/admin/users" element={<UsersPage />} />
-        <Route path="/admin/reported-videos" element={<ReportedVideosPage />} />
-        <Route path="/admin/requests" element={<RequestsPage />} />
-        <Route path="/admin/contact-requests" element={<ContactRequestsPage />} />
-        <Route path="/admin/notifications" element={<NotificationsPage />} />
-        <Route path="/admin/layout" element={<LayoutCustomizationPage />} />
-        <Route path="/admin/testimonials" element={<TestimonialsPage />} />
-        <Route path="/admin/seo" element={<AdminSEO />} />
       </Routes>
       
       {/* Add the PagePreloader to prefetch the Videos page */}
