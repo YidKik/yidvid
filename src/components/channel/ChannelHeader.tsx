@@ -27,10 +27,12 @@ export const ChannelHeader = ({
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
   const { session, isAuthenticated, isLoading: isSessionLoading } = useSessionManager();
+  const { isMobile } = useIsMobile();
   const fallbackLogo = "/lovable-uploads/efca5adc-d9d2-4c5b-8900-e078f9d49b6a.png";
   const [internalSubscriptionState, setInternalSubscriptionState] = useState<boolean | undefined>(undefined);
   const [isProcessing, setIsProcessing] = useState(false);
   const [initialLoadComplete, setInitialLoadComplete] = useState(false);
+  const [descriptionExpanded, setDescriptionExpanded] = useState(false);
 
   // Set initial subscription state and mark initial load as complete
   useEffect(() => {
