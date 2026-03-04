@@ -69,7 +69,7 @@ export const useChannelsGrid = () => {
     manuallyFetchedChannels: visibleChannels,
     allChannels,
     isLoading: query.isLoading,
-    setIsLoading: () => {}, // no-op for backward compat
+    setIsLoading: (_v?: boolean) => {}, // no-op for backward compat
     fetchError: query.error instanceof Error ? query.error : null,
     searchQuery,
     setSearchQuery
