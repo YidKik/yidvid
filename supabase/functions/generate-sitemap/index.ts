@@ -87,14 +87,20 @@ Deno.serve(async (req) => {
         xml += `    <changefreq>weekly</changefreq>\n`;
         xml += `    <priority>0.8</priority>\n`;
         // Video sitemap extension - helps Google show video rich results
+        const thumbnailUrl = video.thumbnail || `https://img.youtube.com/vi/${video.video_id}/hqdefault.jpg`;
+        const uploaderName = (video.channel_name || "YidVid").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        const pubDate = video.uploaded_at ? new Date(video.uploaded_at).toISOString() : new Date().toISOString();
+
         xml += "    <video:video>\n";
-        xml += `      <video:thumbnail_loc>${video.thumbnail || `https://img.youtube.com/vi/${video.video_id}/hqdefault.jpg`}</video:thumbnail_loc>\n`;
+        xml += `      <video:thumbnail_loc>${thumbnailUrl}</video:thumbnail_loc>\n`;
         xml += `      <video:title>${title}</video:title>\n`;
         xml += `      <video:description>${description}</video:description>\n`;
-        xml += `      <video:player_loc>https://www.youtube-nocookie.com/embed/${video.video_id}</video:player_loc>\n`;
-        xml += `      <video:publication_date>${video.uploaded_at ? new Date(video.uploaded_at).toISOString() : new Date().toISOString()}</video:publication_date>\n`;
+        xml += `      <video:content_loc>https://www.youtube.com/watch?v=${video.video_id}</video:content_loc>\n`;
+        xml += `      <video:player_loc allow_embed="yes">https://www.youtube.com/embed/${video.video_id}</video:player_loc>\n`;
+        xml += `      <video:publication_date>${pubDate}</video:publication_date>\n`;
         xml += `      <video:family_friendly>yes</video:family_friendly>\n`;
-        xml += `      <video:uploader>${(video.channel_name || "YidVid").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")}</video:uploader>\n`;
+        xml += `      <video:live>no</video:live>\n`;
+        xml += `      <video:uploader info="https://www.youtube.com/channel/${video.channel_id || ''}">${uploaderName}</video:uploader>\n`;
         xml += "    </video:video>\n";
         xml += "  </url>\n";
       }
