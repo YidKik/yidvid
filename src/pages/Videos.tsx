@@ -48,7 +48,6 @@ const MainContent = () => {
     if (selectedCategory !== "all") {
       result = result.filter(video => video.category === selectedCategory);
     }
-    // Videos are already sorted by uploaded_at desc from the query
     return result;
   }, [videos, selectedCategory]);
 
@@ -74,13 +73,9 @@ const MainContent = () => {
       className="flex-1 videos-page pt-14 pb-20 lg:pb-0"
       style={!isMobile && sidebarWidth ? { paddingLeft: `${sidebarWidth + 16}px` } : undefined}
     >
-        <main 
-          className="mt-4 px-6 lg:px-8 w-full"
-        >
-          <div className="space-y-2 md:space-y-4">
-            <div
-              className={isMobile ? 'mt-2' : 'mt-4'}
-            >
+      <main className="mt-4 px-6 lg:px-8 w-full">
+        <div className="space-y-2 md:space-y-4">
+          <div className={isMobile ? 'mt-2' : 'mt-4'}>
             <VideoContent 
               videos={displayVideos} 
               isLoading={isLoading} 
