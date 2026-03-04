@@ -9,8 +9,6 @@ import { toast } from "sonner";
 
 // Stable fetch function outside the hook to prevent recreation
 const fetchVideosFromDB = async (): Promise<VideoData[]> => {
-  console.log("Fetching all videos");
-  
   const { data, error } = await supabase
     .from("youtube_videos")
     .select(`
@@ -28,37 +26,30 @@ const fetchVideosFromDB = async (): Promise<VideoData[]> => {
   }
 
   if (!data || data.length === 0) {
-    console.log("No videos found in database");
     return [];
   }
 
-  console.log(`Successfully fetched ${data.length} videos from database`);
   return formatVideoData(data);
 };
 
 export const useVideos = () => {
-  // Use refs to track state without causing re-renders or hook issues
   const fetchAttemptsRef = useRef(0);
   const lastSuccessfulFetchRef = useRef<Date | null>(null);
   const isRefreshingRef = useRef(false);
   
-  // Get hidden channels filter - this hook is stable
   const { filterVideos, hiddenChannelIds } = useHiddenChannels();
 
-  // Main query - single useQuery call
-  // Include hiddenChannelIds.size in the key to refetch when hidden channels change
   const query = useQuery({
     queryKey: ["videos", hiddenChannelIds.size],
     queryFn: fetchVideosFromDB,
     refetchInterval: 5 * 60 * 1000,
     refetchIntervalInBackground: false,
     refetchOnWindowFocus: false,
-    staleTime: 2 * 60 * 1000,
+    staleTime: 3 * 60 * 1000, // Increased from 2 to 3 minutes
     retry: 2,
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
   });
 
-  // Track successful fetches using useEffect (proper side effect handling)
   useEffect(() => {
     if (query.data && query.data.length > 0 && !query.isFetching) {
       lastSuccessfulFetchRef.current = new Date();
@@ -66,20 +57,12 @@ export const useVideos = () => {
     }
   }, [query.data, query.isFetching]);
 
-  // Filter out videos from hidden channels - pure computation
+  // Filter out videos from hidden channels
   const filteredData = useMemo(() => {
     if (!query.data || !Array.isArray(query.data)) return [];
-    
-    const filtered = filterVideos(query.data);
-    
-    if (hiddenChannelIds.size > 0 && query.data.length > 0) {
-      console.log(`Filtered videos: ${query.data.length} -> ${filtered.length} (${hiddenChannelIds.size} channels hidden)`);
-    }
-    
-    return filtered;
+    return filterVideos(query.data);
   }, [query.data, filterVideos, hiddenChannelIds.size]);
 
-  // Stable refetch handler
   const handleRefetch = useCallback(async () => {
     isRefreshingRef.current = true;
     try {
@@ -89,15 +72,12 @@ export const useVideos = () => {
     }
   }, [query]);
 
-  // Stable force refetch handler
   const handleForceRefetch = useCallback(async () => {
     isRefreshingRef.current = true;
     try {
-      // Rate limiting
       const lastRefetch = localStorage.getItem('lastForceRefetch');
       const now = Date.now();
       if (lastRefetch && (now - parseInt(lastRefetch)) < 600000) {
-        console.log("Skipping refetch - too recent");
         return [];
       }
       localStorage.setItem('lastForceRefetch', now.toString());
