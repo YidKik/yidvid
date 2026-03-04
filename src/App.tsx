@@ -20,19 +20,6 @@ import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 
 // Admin Pages
 import AdminDashboard from './pages/admin/Dashboard';
-import ChannelsPage from './pages/admin/ChannelsPage';
-import CategoriesPage from './pages/admin/CategoriesPage';
-import CommentsPage from './pages/admin/CommentsPage';
-import AnalyticsPage from './pages/admin/AnalyticsPage';
-import VideosPage from './pages/admin/VideosPage';
-import UsersPage from './pages/admin/UsersPage';
-import ReportedVideosPage from './pages/admin/ReportedVideosPage';
-import RequestsPage from './pages/admin/RequestsPage';
-import ContactRequestsPage from './pages/admin/ContactRequestsPage';
-import NotificationsPage from './pages/admin/NotificationsPage';
-import LayoutCustomizationPage from './pages/admin/LayoutCustomizationPage';
-import TestimonialsPage from './pages/admin/TestimonialsPage';
-import AdminSEO from './pages/AdminSEO';
 import { EmailPreferences } from './pages/EmailPreferences';
 import { Unsubscribe } from './pages/Unsubscribe';
 import About from './pages/About';
