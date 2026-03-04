@@ -1,6 +1,5 @@
 
 import React, { useState, useEffect, useMemo } from "react";
-import { motion } from "framer-motion";
 import { VideoContent } from "@/components/content/VideoContent";
 import { useVideos } from "@/hooks/video/useVideos";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -70,21 +69,13 @@ const MainContent = () => {
       className="flex-1 videos-page pt-14 transition-all duration-300 pb-20 lg:pb-0"
       style={{ paddingLeft: sidebarWidth ? `${sidebarWidth + 16}px` : '0px' }}
     >
-      <motion.main 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1, duration: 0.5 }}
-        className="mt-4 px-6 lg:px-8 w-full"
-      >
-        <div className="space-y-2 md:space-y-4">
-          <motion.div
-            key={selectedCategory}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.3 }}
-            className={isMobile ? 'mt-2' : 'mt-4'}
-          >
+        <main 
+          className="mt-4 px-6 lg:px-8 w-full"
+        >
+          <div className="space-y-2 md:space-y-4">
+            <div
+              className={isMobile ? 'mt-2' : 'mt-4'}
+            >
             <VideoContent 
               videos={displayVideos} 
               isLoading={isLoading} 
@@ -96,9 +87,9 @@ const MainContent = () => {
               sortBy={sortFromUrl || undefined}
               viewChannels={viewFromUrl === 'channels'}
             />
-          </motion.div>
+          </div>
         </div>
-      </motion.main>
+      </main>
 
       {/* Desktop/Tablet scroll to top button */}
       {!isMobile && (
