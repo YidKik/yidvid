@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { VideoCardWithOptions } from "@/components/video/VideoCardWithOptions";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { scrollToSection } from "@/utils/scrollToSection";
 
 interface NewVideosSectionProps {
   videos: VideoData[];
@@ -64,7 +65,7 @@ export const NewVideosSection = ({ videos, autoExpand = false }: NewVideosSectio
   useEffect(() => {
     if (autoExpand && showAllVideos) {
       setTimeout(() => {
-        sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        scrollToSection(sectionRef.current);
       }, 100);
     }
   }, [autoExpand, showAllVideos]);
@@ -91,7 +92,7 @@ export const NewVideosSection = ({ videos, autoExpand = false }: NewVideosSectio
   const handleViewAllClick = () => {
     setShowAllVideos(true);
     setTimeout(() => {
-      sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      scrollToSection(sectionRef.current);
       setTimeout(() => setHasAnimated(true), 800);
     }, 50);
   };
@@ -102,21 +103,21 @@ export const NewVideosSection = ({ videos, autoExpand = false }: NewVideosSectio
     setHasAnimated(false);
     navigate('/videos', { replace: true });
     setTimeout(() => {
-      sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      scrollToSection(sectionRef.current);
     }, 50);
   };
 
   const handleNextPage = () => {
     if (currentPage < totalPages - 1) {
       setCurrentPage(prev => prev + 1);
-      sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      scrollToSection(sectionRef.current);
     }
   };
 
   const handlePrevPage = () => {
     if (currentPage > 0) {
       setCurrentPage(prev => prev - 1);
-      sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      scrollToSection(sectionRef.current);
     }
   };
 

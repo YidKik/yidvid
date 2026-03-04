@@ -8,6 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { scrollToSection } from "@/utils/scrollToSection";
 
 interface ChannelsRowSectionProps {
   selectedCategory?: string;
@@ -29,7 +30,7 @@ export const ChannelsRowSection = ({ selectedCategory = "all", autoExpand = fals
       setShowAllChannels(true);
       setHasAnimated(true);
       setTimeout(() => {
-        sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        scrollToSection(sectionRef.current);
       }, 100);
     }
   }, [autoExpand, isLoading, channels]);
@@ -107,21 +108,17 @@ export const ChannelsRowSection = ({ selectedCategory = "all", autoExpand = fals
   // Handle View All click - expand and scroll to top of page
   const handleViewAllClick = () => {
     setShowAllChannels(true);
-   // Scroll so the first row of channel cards is at the top of the viewport
     setTimeout(() => {
-     sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-     // Mark animation as complete after it plays
-     setTimeout(() => setHasAnimated(true), 800);
+      scrollToSection(sectionRef.current);
+      setTimeout(() => setHasAnimated(true), 800);
     }, 50);
   };
 
-  // Handle Back click - collapse and stay at section
   const handleBackClick = () => {
     setShowAllChannels(false);
-    setHasAnimated(false); // Reset animation state for next time
-    // Scroll back to section
+    setHasAnimated(false);
     setTimeout(() => {
-      sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      scrollToSection(sectionRef.current);
     }, 50);
   };
 
