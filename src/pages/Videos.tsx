@@ -53,12 +53,16 @@ const MainContent = () => {
   }, [videos, selectedCategory]);
 
   useEffect(() => {
+    if (isMobile) return;
+
     const handleScroll = () => {
-      setHasScrolled(window.scrollY > 50);
+      const nextHasScrolled = window.scrollY > 50;
+      setHasScrolled((prev) => (prev === nextHasScrolled ? prev : nextHasScrolled));
     };
+
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [isMobile]);
 
   const hasVideos = videos && Array.isArray(videos) && videos.length > 0;
   if (isLoading && !hasVideos) {
@@ -67,8 +71,8 @@ const MainContent = () => {
 
   return (
     <div 
-      className="flex-1 videos-page pt-14 transition-all duration-300 pb-20 lg:pb-0"
-      style={{ paddingLeft: sidebarWidth ? `${sidebarWidth + 16}px` : '0px' }}
+      className="flex-1 videos-page pt-14 pb-20 lg:pb-0"
+      style={!isMobile && sidebarWidth ? { paddingLeft: `${sidebarWidth + 16}px` } : undefined}
     >
         <main 
           className="mt-4 px-6 lg:px-8 w-full"

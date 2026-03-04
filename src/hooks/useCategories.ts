@@ -1,8 +1,6 @@
 
-import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useHiddenChannels } from "@/hooks/channel/useHiddenChannels";
 
 interface CustomCategory {
   id: string;
@@ -37,34 +35,7 @@ export interface UseCategories {
 }
 
 export const useCategories = (): UseCategories => {
-  const { filterVideos, hiddenChannelIds } = useHiddenChannels();
-
-  const { data: rawCategoryVideos, refetch: refetchVideos } = useQuery({
-    queryKey: ["category-videos"],
-    queryFn: async () => {
-      try {
-        const { data, error } = await supabase
-          .from("youtube_videos")
-          .select("*")
-          .is('deleted_at', null)
-          .order("uploaded_at", { ascending: false });
-
-        if (error) throw error;
-        return data || [];
-      } catch (error) {
-        console.error('Error fetching videos:', error);
-        return [];
-      }
-    },
-  });
-
-  // Filter out videos from hidden channels
-  const categoryVideos = useMemo(() => {
-    if (!rawCategoryVideos) return [];
-    return filterVideos(rawCategoryVideos);
-  }, [rawCategoryVideos, filterVideos]);
-
-  const { data: customCategories, isLoading: categoriesLoading } = useQuery({
+  const { data: customCategories, isLoading: categoriesLoading, refetch: refetchCustomCategories } = useQuery({
     queryKey: ["custom-categories"],
     queryFn: async () => {
       try {
@@ -103,6 +74,6 @@ export const useCategories = (): UseCategories => {
     allCategories,
     infiniteCategories,
     categoriesLoading: categoriesLoading && allCategories.length <= defaultCategories.length,
-    refetchVideos
+    refetchVideos: refetchCustomCategories
   };
 };

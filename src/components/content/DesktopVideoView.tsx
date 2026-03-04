@@ -51,15 +51,31 @@ export const DesktopVideoView = ({
       .slice(0, 6);
   }, [videos]);
 
-  // Only render when we have real videos to show - prevents staggered loading
+  const containerPadding = isMobile ? 'px-3' : isTablet ? 'px-4' : 'px-8 lg:px-12 xl:px-16';
+  const sectionSpacing = isMobile ? 'space-y-4' : 'space-y-6';
+
+  // Reserve layout while loading to prevent mobile scroll jumps/layout shifts
+  if (isLoading && videos.length === 0) {
+    return (
+      <div className={`${sectionSpacing} ${containerPadding} max-w-[1600px] mx-auto`}>
+        <section className="mb-6">
+          <div className={`${isMobile ? 'h-[180px]' : isTablet ? 'h-[220px]' : 'h-[260px]'} rounded-2xl bg-muted/30 animate-pulse`} />
+        </section>
+        <section>
+          <div className={`${isMobile ? 'h-[280px]' : isTablet ? 'h-[340px]' : 'h-[380px]'} rounded-3xl bg-muted/30 animate-pulse`} />
+        </section>
+        <section>
+          <div className={`${isMobile ? 'h-[280px]' : isTablet ? 'h-[340px]' : 'h-[380px]'} rounded-3xl bg-muted/30 animate-pulse`} />
+        </section>
+      </div>
+    );
+  }
+
   if (!hasRealVideos || videos.length === 0) {
     return null;
   }
 
   // If viewing channels only, skip all video sections
-  const containerPadding = isMobile ? 'px-3' : isTablet ? 'px-4' : 'px-8 lg:px-12 xl:px-16';
-  const sectionSpacing = isMobile ? 'space-y-4' : 'space-y-6';
-
   if (viewChannels) {
     return (
       <div className={`${containerPadding} max-w-[1600px] mx-auto`}>

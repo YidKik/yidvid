@@ -77,11 +77,11 @@ export const VideoCardWithOptions = ({
         
         {/* Video Info */}
         <div className={isMobile ? 'mt-1.5' : 'mt-3'}>
-          <h3 className={`${isMobile ? 'text-[11px] leading-tight' : 'text-sm'} font-semibold font-friendly text-foreground line-clamp-2 leading-snug`}>
+          <h3 className={`${isMobile ? 'text-[11px] leading-tight min-h-[28px]' : 'text-sm min-h-[38px]'} font-semibold font-friendly text-foreground line-clamp-2 leading-snug`}>
             {title}
           </h3>
           {!hideChannelInfo && (
-            <div className={`flex items-center gap-1.5 ${isMobile ? 'mt-0.5' : 'mt-2'}`}>
+            <div className={`flex items-center gap-1.5 min-h-[14px] ${isMobile ? 'mt-0.5' : 'mt-2'}`}>
               <div className={`${isMobile ? 'w-3.5 h-3.5' : 'w-6 h-6'} rounded-full overflow-hidden flex-shrink-0 bg-muted`}>
                 {channelThumbnail ? (
                   <img
@@ -100,7 +100,7 @@ export const VideoCardWithOptions = ({
               </p>
             </div>
           )}
-          <p className={`${isMobile ? 'text-[9px] mt-0' : 'text-xs mt-1.5'} text-muted-foreground/80`}>
+          <p className={`${isMobile ? 'text-[9px] mt-0 min-h-[12px]' : 'text-xs mt-1.5 min-h-[16px]'} text-muted-foreground/80`}>
             {views?.toLocaleString() || 0} views • {formattedDate}
           </p>
         </div>
