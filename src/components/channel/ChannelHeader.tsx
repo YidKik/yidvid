@@ -1,10 +1,11 @@
-import { Youtube, UserPlus, Check, Loader2 } from "lucide-react";
+import { Youtube, UserPlus, Check, Loader2, ChevronDown, ChevronUp } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { useSessionManager } from "@/hooks/useSessionManager";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface ChannelHeaderProps {
   channel: {
@@ -26,10 +27,12 @@ export const ChannelHeader = ({
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
   const { session, isAuthenticated, isLoading: isSessionLoading } = useSessionManager();
+  const { isMobile } = useIsMobile();
   const fallbackLogo = "/lovable-uploads/efca5adc-d9d2-4c5b-8900-e078f9d49b6a.png";
   const [internalSubscriptionState, setInternalSubscriptionState] = useState<boolean | undefined>(undefined);
   const [isProcessing, setIsProcessing] = useState(false);
   const [initialLoadComplete, setInitialLoadComplete] = useState(false);
+  const [descriptionExpanded, setDescriptionExpanded] = useState(false);
 
   // Set initial subscription state and mark initial load as complete
   useEffect(() => {
@@ -193,9 +196,29 @@ export const ChannelHeader = ({
               {/* Description */}
               {channel.description && (
                 <div className="mt-4 md:mt-5">
-                  <p className="text-[#666666] text-sm md:text-base leading-relaxed max-w-2xl">
-                    {channel.description}
-                  </p>
+                  {isMobile ? (
+                    <div>
+                      <p className={`text-[#666666] text-sm leading-relaxed max-w-2xl ${!descriptionExpanded ? 'line-clamp-2' : ''}`}>
+                        {channel.description}
+                      </p>
+                      {channel.description.length > 100 && (
+                        <button
+                          onClick={() => setDescriptionExpanded(!descriptionExpanded)}
+                          className="flex items-center gap-1 mt-1 text-xs font-medium text-[#666666] hover:text-[#1A1A1A] transition-colors"
+                        >
+                          {descriptionExpanded ? (
+                            <>Show less <ChevronUp className="w-3 h-3" /></>
+                          ) : (
+                            <>Show more <ChevronDown className="w-3 h-3" /></>
+                          )}
+                        </button>
+                      )}
+                    </div>
+                  ) : (
+                    <p className="text-[#666666] text-sm md:text-base leading-relaxed max-w-2xl">
+                      {channel.description}
+                    </p>
+                  )}
                 </div>
               )}
             </div>
