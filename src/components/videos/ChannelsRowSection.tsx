@@ -200,15 +200,15 @@ export const ChannelsRowSection = ({ selectedCategory = "all", autoExpand = fals
       ref={sectionRef}
       className={`mb-10 ${isMobile ? 'py-6 -mx-3 px-3' : 'py-10 -mx-6 px-6'} bg-gray-50 dark:bg-gray-900/30 ${showAllChannels ? 'min-h-screen pb-20' : 'rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800'}`}
     >
-      <AnimatePresence mode="wait">
+      <AnimatePresence mode="sync">
         {showAllChannels ? (
           /* Expanded Grid View - Shows all channels including first row */
           <motion.div
             key="all-channels"
-            initial={{ opacity: 0 }}
+            initial={{ opacity: 1 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
+            transition={{ duration: 0.15 }}
           >
             {/* Header with Back button */}
             <div className="flex items-center justify-between mb-6">
@@ -245,10 +245,10 @@ export const ChannelsRowSection = ({ selectedCategory = "all", autoExpand = fals
           /* Normal Carousel View */
           <motion.div
             key="carousel"
-            initial={{ opacity: 0 }}
+            initial={{ opacity: 1 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
+            transition={{ duration: 0.15 }}
           >
             {/* Header */}
             <div className="flex items-center justify-between mb-6">

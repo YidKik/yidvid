@@ -99,7 +99,9 @@ export const TrendingSection = ({ videos }: TrendingSectionProps) => {
     }
   };
 
-  if (!carouselVideos || carouselVideos.length === 0) return null;
+  if (!carouselVideos || carouselVideos.length === 0) {
+    return <div className={`mb-8 ${isMobile ? 'min-h-[200px]' : 'min-h-[300px]'}`} />;
+  }
 
   // Video Card Component
   const VideoCard = ({ video, index, isGrid = false }: { video: VideoData; index: number; isGrid?: boolean }) => {
@@ -136,15 +138,15 @@ export const TrendingSection = ({ videos }: TrendingSectionProps) => {
       ref={sectionRef}
       className={`mb-8 ${isMobile ? 'py-5 -mx-3 px-3' : 'py-8 -mx-6 px-6'} bg-white dark:bg-gray-900/50 ${showAllVideos ? 'min-h-screen pb-20' : 'rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800'}`}
     >
-      <AnimatePresence mode="wait">
+      <AnimatePresence mode="sync">
         {showAllVideos ? (
           /* Expanded Grid View */
           <motion.div
             key="all-videos"
-            initial={{ opacity: 0 }}
+            initial={{ opacity: 1 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
+            transition={{ duration: 0.15 }}
           >
             {/* Header with Back button */}
             <div className={`flex items-center justify-between ${isMobile ? 'mb-3' : 'mb-6'}`}>
@@ -216,10 +218,10 @@ export const TrendingSection = ({ videos }: TrendingSectionProps) => {
           /* Normal Carousel View */
           <motion.div
             key="carousel"
-            initial={{ opacity: 0 }}
+            initial={{ opacity: 1 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
+            transition={{ duration: 0.15 }}
           >
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
