@@ -6,95 +6,37 @@ import { useChannelsGrid } from './channel/useChannelsGrid';
 export const useContentPreloader = (shouldPreload: boolean = false) => {
   const [preloadComplete, setPreloadComplete] = useState(false);
   const [imagesCached, setImagesCached] = useState(false);
-  const queryClient = useQueryClient();
 
-  // Preload video and channel data
+  // Preload video and channel data - these use cached queries now
   const { data: videos, isLoading: videosLoading } = useVideos();
   const { manuallyFetchedChannels: channels, isLoading: channelsLoading } = useChannelsGrid();
 
-  // Function to preload images
-  const preloadImages = async (imageUrls: string[]) => {
-    const promises = imageUrls.map((url) => {
-      return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.onload = resolve;
-        img.onerror = resolve; // Resolve even on error to not block the process
-        img.src = url;
-      });
-    });
-
-    try {
-      await Promise.all(promises);
-      console.info('Content preloader: All images cached successfully');
-      setImagesCached(true);
-    } catch (error) {
-      console.warn('Content preloader: Some images failed to cache, continuing anyway');
-      setImagesCached(true);
-    }
-  };
-
   useEffect(() => {
     if (!shouldPreload) return;
+    if (videosLoading || channelsLoading || !videos || !channels) return;
 
-    const preloadContent = async () => {
-      try {
-        // Wait for data to be available
-        if (videosLoading || channelsLoading || !videos || !channels) {
-          return;
-        }
+    // Preload only first 20 thumbnails for fast initial paint
+    const imageUrls = [
+      ...videos.slice(0, 20).map(v => v.thumbnail).filter(Boolean),
+      ...channels.slice(0, 10).map(c => c.thumbnail_url).filter(Boolean) as string[],
+    ];
 
-        console.info('Content preloader: Starting image preload...');
-
-        // Collect all image URLs from videos and channels
-        const videoThumbnails = videos
-          .slice(0, 50) // Preload first 50 videos for performance
-          .map(video => video.thumbnail)
-          .filter(Boolean);
-
-        const channelAvatars = channels
-          .slice(0, 50) // Preload first 50 channels for performance
-          .map(channel => channel.thumbnail_url)
-          .filter(Boolean);
-
-        const allImageUrls = [...videoThumbnails, ...channelAvatars];
-
-        // Preload images in batches to avoid overwhelming the browser
-        const batchSize = 10;
-        for (let i = 0; i < allImageUrls.length; i += batchSize) {
-          const batch = allImageUrls.slice(i, i + batchSize);
-          await preloadImages(batch);
-          
-          // Small delay between batches to prevent browser overload
-          await new Promise(resolve => setTimeout(resolve, 100));
-        }
-
-        setPreloadComplete(true);
-        console.info('Content preloader: Preloading completed successfully');
-      } catch (error) {
-        console.error('Content preloader: Error during preload:', error);
-        // Set as complete anyway to not block the user experience
-        setPreloadComplete(true);
-      }
+    // Use a single batch with requestIdleCallback for non-blocking preload
+    const preload = () => {
+      imageUrls.forEach(url => {
+        const img = new Image();
+        img.src = url;
+      });
+      setImagesCached(true);
+      setPreloadComplete(true);
     };
 
-    preloadContent();
-  }, [shouldPreload, videos, channels, videosLoading, channelsLoading]);
-
-  // Prefetch query data for instant access
-  useEffect(() => {
-    if (shouldPreload && !videosLoading && !channelsLoading) {
-      // Ensure data is available in cache
-      queryClient.prefetchQuery({
-        queryKey: ["videos"],
-        staleTime: 5 * 60 * 1000, // Keep fresh for 5 minutes
-      });
-
-      queryClient.prefetchQuery({
-        queryKey: ["channels"],
-        staleTime: 5 * 60 * 1000, // Keep fresh for 5 minutes
-      });
+    if ('requestIdleCallback' in window) {
+      (window as any).requestIdleCallback(preload);
+    } else {
+      setTimeout(preload, 200);
     }
-  }, [shouldPreload, videosLoading, channelsLoading, queryClient]);
+  }, [shouldPreload, videos, channels, videosLoading, channelsLoading]);
 
   return {
     preloadComplete,

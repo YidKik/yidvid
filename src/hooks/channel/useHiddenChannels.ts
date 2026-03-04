@@ -7,89 +7,70 @@ import { toast } from "sonner";
 export const useHiddenChannels = () => {
   const queryClient = useQueryClient();
 
-  // Fetch hidden channels from database with proper caching
+  // Fetch hidden channels with stable caching - no excessive refetching
   const { data: hiddenChannelsData, isLoading, refetch } = useQuery({
     queryKey: ["hidden-channels"],
     queryFn: async () => {
-      try {
-        const { data: sessionData } = await supabase.auth.getSession();
-        const session = sessionData.session;
-        
-        if (!session?.user?.id) {
-          console.log("No user session for hidden channels");
-          return [];
-        }
-        
-        const { data, error } = await supabase
-          .from('hidden_channels')
-          .select('channel_id')
-          .eq('user_id', session.user.id);
+      const { data: sessionData } = await supabase.auth.getSession();
+      const session = sessionData.session;
+      
+      if (!session?.user?.id) {
+        return [];
+      }
+      
+      const { data, error } = await supabase
+        .from('hidden_channels')
+        .select('channel_id')
+        .eq('user_id', session.user.id);
 
-        if (error) {
-          console.error('Error loading hidden channels:', error);
-          return [];
-        }
-        
-        console.log(`Loaded ${data?.length || 0} hidden channels for user`);
-        return data || [];
-      } catch (error) {
+      if (error) {
         console.error('Error loading hidden channels:', error);
         return [];
       }
+      
+      return data || [];
     },
-    staleTime: 0, // Always consider data stale to ensure fresh checks
-    refetchOnMount: true,
-    refetchOnWindowFocus: true,
+    staleTime: 5 * 60 * 1000, // 5 minutes - stable, prevents cascading re-renders
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
   });
 
-  // Create a Set for fast lookup - memoized based on actual data
+  // Create a Set for fast lookup
   const hiddenChannelIds = useMemo(() => {
-    const ids = new Set<string>(
+    return new Set<string>(
       hiddenChannelsData?.map(hc => hc.channel_id) || []
     );
-    console.log(`Hidden channel IDs set updated: ${ids.size} channels hidden`);
-    return ids;
   }, [hiddenChannelsData]);
 
-  // Check if a channel is hidden
   const isChannelHidden = useCallback((channelId: string): boolean => {
     return hiddenChannelIds.has(channelId);
   }, [hiddenChannelIds]);
 
-  // Filter videos by removing those from hidden channels
   const filterVideos = useCallback(<T extends { channel_id: string }>(videos: T[]): T[] => {
     if (!videos || videos.length === 0) return [];
     if (hiddenChannelIds.size === 0) return videos;
-    
-    const filtered = videos.filter(video => !hiddenChannelIds.has(video.channel_id));
-    return filtered;
+    return videos.filter(video => !hiddenChannelIds.has(video.channel_id));
   }, [hiddenChannelIds]);
 
-  // Filter channels by removing hidden ones
   const filterChannels = useCallback(<T extends { channel_id: string }>(channels: T[]): T[] => {
     if (!channels || channels.length === 0) return [];
     if (hiddenChannelIds.size === 0) return channels;
-    
     return channels.filter(channel => !hiddenChannelIds.has(channel.channel_id));
   }, [hiddenChannelIds]);
 
-  // Invalidate all video/channel related queries
   const invalidateAllQueries = useCallback(async () => {
-    // First refetch hidden channels to update the list
     await refetch();
-    
-    // Then invalidate all dependent queries
     await Promise.all([
       queryClient.invalidateQueries({ queryKey: ["videos"] }),
       queryClient.invalidateQueries({ queryKey: ["video-search"] }),
       queryClient.invalidateQueries({ queryKey: ["category-videos"] }),
       queryClient.invalidateQueries({ queryKey: ["youtube_videos"] }),
       queryClient.invalidateQueries({ queryKey: ["youtube_channels"] }),
+      queryClient.invalidateQueries({ queryKey: ["channels-grid"] }),
       queryClient.invalidateQueries({ queryKey: ["channel-videos"] }),
     ]);
   }, [queryClient, refetch]);
 
-  // Hide a channel
   const hideChannel = async (channelId: string) => {
     try {
       const { data } = await supabase.auth.getSession();
@@ -113,9 +94,7 @@ export const useHiddenChannels = () => {
         return false;
       }
       
-      // Invalidate all related queries
       await invalidateAllQueries();
-      
       toast.success('Channel hidden successfully');
       return true;
     } catch (error) {
@@ -125,7 +104,6 @@ export const useHiddenChannels = () => {
     }
   };
 
-  // Unhide a channel
   const unhideChannel = async (channelId: string) => {
     try {
       const { data } = await supabase.auth.getSession();
@@ -148,9 +126,7 @@ export const useHiddenChannels = () => {
         return false;
       }
       
-      // Invalidate all related queries
       await invalidateAllQueries();
-      
       toast.success('Channel is now visible');
       return true;
     } catch (error) {

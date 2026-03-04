@@ -1,10 +1,9 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import { VideoContent } from "@/components/content/VideoContent";
 import { useVideos } from "@/hooks/video/useVideos";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useSessionManager } from "@/hooks/useSessionManager";
 import { Helmet } from "react-helmet";
 import { useSearchParams } from "react-router-dom";
 import { usePageLoader } from "@/contexts/LoadingContext";
@@ -17,8 +16,6 @@ const MainContent = () => {
   const sortFromUrl = searchParams.get('sort');
   const viewFromUrl = searchParams.get('view');
   const [selectedCategory, setSelectedCategory] = useState(categoryFromUrl || "all");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [visibleVideos, setVisibleVideos] = useState(12);
   
   const { 
     data: videos, 
@@ -27,12 +24,10 @@ const MainContent = () => {
     forceRefetch,
     lastSuccessfulFetch, 
     fetchAttempts, 
-    error,
     isRefreshing
   } = useVideos();
   
   const { isMobile, isTablet } = useIsMobile();
-  const { session } = useSessionManager();
   const { sidebarWidth } = useSidebarContext();
   const [hasScrolled, setHasScrolled] = useState(false);
 
@@ -45,26 +40,23 @@ const MainContent = () => {
     }
   }, [categoryFromUrl]);
 
-  const filteredVideos = videos?.filter(video => {
-    if (selectedCategory === "all") return true;
-    return video.category === selectedCategory;
-  }).sort((a, b) => {
-    return new Date(b.uploaded_at).getTime() - new Date(a.uploaded_at).getTime();
-  }) || [];
-
-  const displayVideos = filteredVideos;
-  const hasMoreVideos = false;
-
-  useEffect(() => {
-    setCurrentPage(1);
-    setVisibleVideos(12);
-  }, [selectedCategory]);
+  // Memoize filtered+sorted videos to avoid recomputing every render
+  const displayVideos = useMemo(() => {
+    if (!videos || !Array.isArray(videos)) return [];
+    
+    let result = videos;
+    if (selectedCategory !== "all") {
+      result = result.filter(video => video.category === selectedCategory);
+    }
+    // Videos are already sorted by uploaded_at desc from the query
+    return result;
+  }, [videos, selectedCategory]);
 
   useEffect(() => {
     const handleScroll = () => {
       setHasScrolled(window.scrollY > 50);
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -84,7 +76,6 @@ const MainContent = () => {
         transition={{ delay: 0.1, duration: 0.5 }}
         className="mt-4 px-6 lg:px-8 w-full"
       >
-        
         <div className="space-y-2 md:space-y-4">
           <motion.div
             key={selectedCategory}
@@ -105,22 +96,6 @@ const MainContent = () => {
               sortBy={sortFromUrl || undefined}
               viewChannels={viewFromUrl === 'channels'}
             />
-            
-            {hasMoreVideos && !isLoading && (
-              <motion.div 
-                className="flex justify-center mt-8"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.3 }}
-              >
-                <button
-                  onClick={() => setVisibleVideos(prev => prev + 12)}
-                  className="px-8 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
-                >
-                  Load More Videos
-                </button>
-              </motion.div>
-            )}
           </motion.div>
         </div>
       </motion.main>
