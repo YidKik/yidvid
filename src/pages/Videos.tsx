@@ -28,6 +28,7 @@ const MainContent = () => {
   } = useVideos();
   
   const { isMobile, isTablet } = useIsMobile();
+  const { sidebarWidth } = useSidebarContext();
   const [hasScrolled, setHasScrolled] = useState(false);
 
   usePageLoader('videos', isLoading);
