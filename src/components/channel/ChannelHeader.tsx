@@ -196,9 +196,29 @@ export const ChannelHeader = ({
               {/* Description */}
               {channel.description && (
                 <div className="mt-4 md:mt-5">
-                  <p className="text-[#666666] text-sm md:text-base leading-relaxed max-w-2xl">
-                    {channel.description}
-                  </p>
+                  {isMobile ? (
+                    <div>
+                      <p className={`text-[#666666] text-sm leading-relaxed max-w-2xl ${!descriptionExpanded ? 'line-clamp-2' : ''}`}>
+                        {channel.description}
+                      </p>
+                      {channel.description.length > 100 && (
+                        <button
+                          onClick={() => setDescriptionExpanded(!descriptionExpanded)}
+                          className="flex items-center gap-1 mt-1 text-xs font-medium text-[#666666] hover:text-[#1A1A1A] transition-colors"
+                        >
+                          {descriptionExpanded ? (
+                            <>Show less <ChevronUp className="w-3 h-3" /></>
+                          ) : (
+                            <>Show more <ChevronDown className="w-3 h-3" /></>
+                          )}
+                        </button>
+                      )}
+                    </div>
+                  ) : (
+                    <p className="text-[#666666] text-sm md:text-base leading-relaxed max-w-2xl">
+                      {channel.description}
+                    </p>
+                  )}
                 </div>
               )}
             </div>
