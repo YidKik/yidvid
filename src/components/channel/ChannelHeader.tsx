@@ -1,10 +1,11 @@
-import { Youtube, UserPlus, Check, Loader2 } from "lucide-react";
+import { Youtube, UserPlus, Check, Loader2, ChevronDown, ChevronUp } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { useSessionManager } from "@/hooks/useSessionManager";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface ChannelHeaderProps {
   channel: {
