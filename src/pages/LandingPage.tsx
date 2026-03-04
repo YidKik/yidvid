@@ -240,11 +240,11 @@ const LandingPage = () => {
           {/* Secondary CTAs */}
           <motion.div
             variants={itemVariants}
-            className={`flex flex-col sm:flex-row justify-center ${isMobile ? 'gap-3' : 'gap-5'}`}
+            className={`flex flex-row justify-center ${isMobile ? 'gap-2 px-4 pb-20' : 'gap-5'}`}
           >
             <motion.button
               onClick={() => navigate('/videos')}
-              className={`group relative flex items-center justify-center gap-2 ${isMobile ? 'px-6 py-3 text-sm' : isTablet ? 'px-7 py-4 text-sm' : 'px-10 py-5'} font-bold rounded-2xl overflow-hidden bg-[#FF0000] text-white`}
+              className={`group relative flex items-center justify-center gap-1.5 ${isMobile ? 'px-4 py-2.5 text-xs flex-1' : isTablet ? 'px-7 py-4 text-sm' : 'px-10 py-5'} font-bold rounded-2xl overflow-hidden bg-[#FF0000] text-white`}
               style={{ 
                 fontFamily: "'Quicksand', sans-serif",
                 boxShadow: '0 6px 25px rgba(255, 0, 0, 0.3)'
@@ -262,7 +262,7 @@ const LandingPage = () => {
 
             <motion.button
               onClick={() => navigate('/videos?view=channels')}
-              className={`group relative flex items-center justify-center gap-2 ${isMobile ? 'px-6 py-3 text-sm' : isTablet ? 'px-7 py-4 text-sm' : 'px-10 py-5'} font-bold rounded-2xl overflow-hidden bg-white border border-[#E5E5E5]`}
+              className={`group relative flex items-center justify-center gap-1.5 ${isMobile ? 'px-4 py-2.5 text-xs flex-1' : isTablet ? 'px-7 py-4 text-sm' : 'px-10 py-5'} font-bold rounded-2xl overflow-hidden bg-white border border-[#E5E5E5]`}
               style={{ 
                 fontFamily: "'Quicksand', sans-serif",
                 color: '#1A1A1A',
