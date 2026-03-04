@@ -51,6 +51,9 @@ export const DesktopVideoView = ({
       .slice(0, 6);
   }, [videos]);
 
+  const containerPadding = isMobile ? 'px-3' : isTablet ? 'px-4' : 'px-8 lg:px-12 xl:px-16';
+  const sectionSpacing = isMobile ? 'space-y-4' : 'space-y-6';
+
   // Reserve layout while loading to prevent mobile scroll jumps/layout shifts
   if (isLoading && videos.length === 0) {
     return (
@@ -73,9 +76,6 @@ export const DesktopVideoView = ({
   }
 
   // If viewing channels only, skip all video sections
-  const containerPadding = isMobile ? 'px-3' : isTablet ? 'px-4' : 'px-8 lg:px-12 xl:px-16';
-  const sectionSpacing = isMobile ? 'space-y-4' : 'space-y-6';
-
   if (viewChannels) {
     return (
       <div className={`${containerPadding} max-w-[1600px] mx-auto`}>
