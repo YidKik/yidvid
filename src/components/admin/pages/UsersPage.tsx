@@ -5,6 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { Search, Shield, ShieldOff, Loader2, UserPlus } from "lucide-react";
 import { useState } from "react";
 import { AddAdminDialog } from "@/components/dashboard/user-management/AddAdminDialog";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface UsersPageProps {
   currentUserId: string;
@@ -21,7 +23,32 @@ export const UsersPage = ({ currentUserId }: UsersPageProps) => {
     refetchUsers,
   } = useUserManagement(currentUserId);
 
-  const [addDialogOpen, setAddDialogOpen] = useState(false);
+  const [showAddAdminDialog, setShowAddAdminDialog] = useState(false);
+  const [newAdminEmail, setNewAdminEmail] = useState("");
+
+  const handleAddAdmin = async () => {
+    if (!newAdminEmail.trim()) return;
+    try {
+      const { data: user, error } = await supabase
+        .from("profiles")
+        .select("id")
+        .eq("email", newAdminEmail.trim())
+        .maybeSingle();
+
+      if (error || !user) {
+        toast.error("User not found with that email");
+        return;
+      }
+
+      await supabase.from("profiles").update({ is_admin: true }).eq("id", user.id);
+      toast.success("Admin status granted");
+      setShowAddAdminDialog(false);
+      setNewAdminEmail("");
+      refetchUsers();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to add admin");
+    }
+  };
 
   if (isLoading) {
     return <div className="flex justify-center py-20"><Loader2 className="w-6 h-6 animate-spin" /></div>;
@@ -35,7 +62,7 @@ export const UsersPage = ({ currentUserId }: UsersPageProps) => {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[hsl(220,10%,55%)]" />
           <Input placeholder="Search users..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-10" />
         </div>
-        <Button onClick={() => setAddDialogOpen(true)}>
+        <Button onClick={() => setShowAddAdminDialog(true)}>
           <UserPlus className="w-4 h-4 mr-2" /> Add Admin
         </Button>
       </div>
@@ -55,9 +82,11 @@ export const UsersPage = ({ currentUserId }: UsersPageProps) => {
       </Section>
 
       <AddAdminDialog
-        isOpen={addDialogOpen}
-        onOpenChange={setAddDialogOpen}
-        onAdminAdded={refetchUsers}
+        showAddAdminDialog={showAddAdminDialog}
+        setShowAddAdminDialog={setShowAddAdminDialog}
+        newAdminEmail={newAdminEmail}
+        setNewAdminEmail={setNewAdminEmail}
+        handleAddAdmin={handleAddAdmin}
       />
     </div>
   );
