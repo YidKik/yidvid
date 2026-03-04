@@ -99,7 +99,9 @@ export const TrendingSection = ({ videos }: TrendingSectionProps) => {
     }
   };
 
-  if (!carouselVideos || carouselVideos.length === 0) return null;
+  if (!carouselVideos || carouselVideos.length === 0) {
+    return <div className={`mb-8 ${isMobile ? 'min-h-[200px]' : 'min-h-[300px]'}`} />;
+  }
 
   // Video Card Component
   const VideoCard = ({ video, index, isGrid = false }: { video: VideoData; index: number; isGrid?: boolean }) => {
