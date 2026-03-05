@@ -1,4 +1,5 @@
 import { VideoCard } from "@/components/VideoCard";
+import { Loader2 } from "lucide-react";
 
 interface Video {
   id: string;

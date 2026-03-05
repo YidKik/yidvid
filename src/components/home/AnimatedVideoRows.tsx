@@ -1,5 +1,6 @@
 
 import React, { useMemo } from "react";
+import { Loader2 } from "lucide-react";
 import { VideoGridItem as VideoItemType } from "@/hooks/video/useVideoGridData";
 import { VideoGridItem } from "@/components/video/VideoGridItem";
 

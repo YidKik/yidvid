@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
+import { Loader2 } from "lucide-react";
 
 export const ChannelsCounter = () => {
   const [count, setCount] = useState<number | null>(null);

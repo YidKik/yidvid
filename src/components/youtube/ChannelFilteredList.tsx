@@ -1,5 +1,5 @@
 
-import { Search } from "lucide-react";
+import { Search, Loader2 } from "lucide-react";
 import { ChannelSearch } from "@/components/youtube/ChannelSearch";
 import { ChannelListItem } from "@/components/youtube/ChannelListItem";
 import { YoutubeChannelsTable } from "@/integrations/supabase/types/youtube-channels";

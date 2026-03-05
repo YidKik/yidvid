@@ -6,7 +6,7 @@ import { useChannelsGrid } from "@/hooks/channel/useChannelsGrid";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { scrollToSection } from "@/utils/scrollToSection";
 

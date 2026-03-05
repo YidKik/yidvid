@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Bell, ChevronDown, ChevronUp, Sparkles } from "lucide-react";
+import { Bell, ChevronDown, ChevronUp, Sparkles, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useEnhancedChannelSubscription } from "@/hooks/channel/useEnhancedChannelSubscription";
 import { useUnifiedAuth } from "@/hooks/useUnifiedAuth";

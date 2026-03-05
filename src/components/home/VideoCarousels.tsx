@@ -1,5 +1,6 @@
 
 import React from "react";
+import { Loader2 } from "lucide-react";
 import { VideoGridItem as VideoGridItemType } from "@/hooks/video/useVideoGridData";
 import { VideoCarousel } from "./VideoCarousel";
 import { motion } from "framer-motion";
