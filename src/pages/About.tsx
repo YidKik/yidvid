@@ -3,13 +3,9 @@ import { motion } from "framer-motion";
 import { Helmet } from "react-helmet";
 import { Heart, Shield, Users, RefreshCw, FileText, ScrollText, MessageSquare } from "lucide-react";
 import { ContactDialog } from "@/components/contact/ContactDialog";
+import { TermsOfServiceDialog } from "@/components/auth/TermsOfServiceDialog";
+import { PrivacyPolicyDialog } from "@/components/auth/PrivacyPolicyDialog";
 import { useIsMobile } from "@/hooks/use-mobile";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 
 const About = () => {
   const [showTerms, setShowTerms] = useState(false);
