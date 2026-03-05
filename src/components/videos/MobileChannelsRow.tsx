@@ -1,7 +1,7 @@
 
 import { Link } from "react-router-dom";
 import { useChannelsGrid } from "@/hooks/channel/useChannelsGrid";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
