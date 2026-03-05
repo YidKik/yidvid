@@ -70,7 +70,7 @@ const MainContent = () => {
 
   return (
     <div 
-      className="flex-1 videos-page pt-14 pb-20 lg:pb-0"
+      className="flex-1 videos-page pt-14 pb-24 md:pb-24 lg:pb-4"
       style={!isMobile && sidebarWidth ? { paddingLeft: `${sidebarWidth + 16}px` } : undefined}
     >
       <main className="mt-4 px-6 lg:px-8 w-full">
