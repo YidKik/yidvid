@@ -28,7 +28,7 @@ export const useYouTubePlayer = (
   const seekingRef = useRef(false);
 
   const postCommand = useCallback(
-    (func: string, args: any[] = []) => {
+    (func: string, args: any = "") => {
       const iframe = iframeRef.current;
       if (iframe?.contentWindow) {
         iframe.contentWindow.postMessage(
@@ -56,6 +56,28 @@ export const useYouTubePlayer = (
         iframe.contentWindow.postMessage(
           JSON.stringify({
             event: "listening",
+            id: "custom-youtube-player",
+            channel: "widget",
+          }),
+          "*"
+        );
+
+        iframe.contentWindow.postMessage(
+          JSON.stringify({
+            event: "command",
+            func: "addEventListener",
+            args: ["onReady"],
+            id: "custom-youtube-player",
+            channel: "widget",
+          }),
+          "*"
+        );
+
+        iframe.contentWindow.postMessage(
+          JSON.stringify({
+            event: "command",
+            func: "addEventListener",
+            args: ["onStateChange"],
             id: "custom-youtube-player",
             channel: "widget",
           }),
