@@ -150,11 +150,11 @@ export const ProfileSection = () => {
                 <AlertTriangle className="h-7 w-7 text-red-600" />
               </div>
               <DialogTitle className="text-red-600 text-xl font-bold">Delete Account</DialogTitle>
-              <DialogDescription className="text-gray-600 text-sm leading-relaxed pt-2">
-                Are you sure you want to delete your account? This action <strong className="text-gray-900">cannot be undone</strong> and all your data — including your profile, watch history, and preferences — will be <strong className="text-gray-900">permanently deleted</strong>.
+              <DialogDescription className="text-[#1A1A1A] text-sm leading-relaxed pt-2">
+                Are you sure you want to delete your account? This action <strong>cannot be undone</strong> and all your data — including your profile, watch history, and preferences — will be <strong>permanently deleted</strong>.
               </DialogDescription>
             </DialogHeader>
-            <DialogFooter className="flex flex-col gap-2 sm:flex-col pt-2">
+            <DialogFooter className="flex flex-col gap-3 sm:flex-col pt-4">
               <Button
                 onClick={handleDeleteAccount}
                 disabled={isDeleting}
