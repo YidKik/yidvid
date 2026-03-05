@@ -33,6 +33,7 @@ export const VideoPlayerIframe = forwardRef<HTMLIFrameElement, VideoPlayerIframe
 
     return (
       <iframe
+        id="custom-youtube-player"
         ref={ref}
         src={embedUrl}
         className={`w-full h-full absolute inset-0 transition-opacity duration-300 pointer-events-none ${

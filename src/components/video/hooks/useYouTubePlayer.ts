@@ -28,11 +28,15 @@ export const useYouTubePlayer = (
   const seekingRef = useRef(false);
 
   const postCommand = useCallback(
-    (func: string, args: any[] = []) => {
+    (func: string, args: any = "") => {
       const iframe = iframeRef.current;
       if (iframe?.contentWindow) {
         iframe.contentWindow.postMessage(
-          JSON.stringify({ event: "command", func, args }),
+          JSON.stringify({
+            event: "command",
+            func,
+            args,
+          }),
           "*"
         );
       }
@@ -48,7 +52,33 @@ export const useYouTubePlayer = (
     const sendListening = () => {
       if (iframe.contentWindow) {
         iframe.contentWindow.postMessage(
-          JSON.stringify({ event: "listening" }),
+          JSON.stringify({
+            event: "listening",
+            id: "custom-youtube-player",
+            channel: "widget",
+          }),
+          "*"
+        );
+
+        iframe.contentWindow.postMessage(
+          JSON.stringify({
+            event: "command",
+            func: "addEventListener",
+            args: ["onReady"],
+            id: "custom-youtube-player",
+            channel: "widget",
+          }),
+          "*"
+        );
+
+        iframe.contentWindow.postMessage(
+          JSON.stringify({
+            event: "command",
+            func: "addEventListener",
+            args: ["onStateChange"],
+            id: "custom-youtube-player",
+            channel: "widget",
+          }),
           "*"
         );
       }
@@ -100,7 +130,7 @@ export const useYouTubePlayer = (
           const playerState = data.info;
           setState((s) => ({
             ...s,
-            isPlaying: playerState === 1 || playerState === 3,
+            isPlaying: playerState === 1,
           }));
           if (playerState === 0 && onVideoEnd) {
             onVideoEnd();
