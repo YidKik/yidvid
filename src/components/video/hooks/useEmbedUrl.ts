@@ -14,6 +14,7 @@ export const useEmbedUrl = (videoId: string) => {
       rel: "0",
       modestbranding: "1",
       enablejsapi: "1",
+      playerapiid: "custom-youtube-player",
       origin: window.location.origin,
       iv_load_policy: "3",
       cc_load_policy: "0",

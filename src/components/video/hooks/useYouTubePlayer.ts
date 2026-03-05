@@ -32,7 +32,13 @@ export const useYouTubePlayer = (
       const iframe = iframeRef.current;
       if (iframe?.contentWindow) {
         iframe.contentWindow.postMessage(
-          JSON.stringify({ event: "command", func, args }),
+          JSON.stringify({
+            event: "command",
+            func,
+            args,
+            id: "custom-youtube-player",
+            channel: "widget",
+          }),
           "*"
         );
       }
@@ -48,7 +54,11 @@ export const useYouTubePlayer = (
     const sendListening = () => {
       if (iframe.contentWindow) {
         iframe.contentWindow.postMessage(
-          JSON.stringify({ event: "listening" }),
+          JSON.stringify({
+            event: "listening",
+            id: "custom-youtube-player",
+            channel: "widget",
+          }),
           "*"
         );
       }
