@@ -97,7 +97,7 @@ export const ContactDialog = ({ open, onOpenChange }: ContactDialogProps) => {
 
         <div className="px-6 pt-5 pb-6 overflow-y-auto bg-background/60" style={{ maxHeight: isMobile ? 'calc(90vh - 100px)' : 'calc(85vh - 100px)' }}>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5 text-primary">
               <CategorySelect form={form} />
               <ContactFormFields form={form} />
               <Button

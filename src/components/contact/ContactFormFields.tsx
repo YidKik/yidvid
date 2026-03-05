@@ -22,7 +22,7 @@ export const ContactFormFields = ({ form }: ContactFormFieldsProps) => {
               <Input 
                 placeholder="Your name" 
                 {...field} 
-                className="h-10 rounded-full border-2 border-border bg-transparent hover:border-[#FFCC00] focus:border-primary focus:ring-0 focus:bg-transparent transition-colors px-4 text-foreground"
+                className="h-10 rounded-full border-2 border-border bg-transparent hover:border-[#FFCC00] focus:border-primary focus:ring-0 focus:bg-transparent transition-colors px-4 text-primary placeholder:text-muted-foreground"
               />
             </FormControl>
             <FormMessage />
@@ -40,7 +40,7 @@ export const ContactFormFields = ({ form }: ContactFormFieldsProps) => {
                 placeholder="you@example.com" 
                 type="email" 
                 {...field} 
-                className="h-10 rounded-full border-2 border-border bg-transparent hover:border-[#FFCC00] focus:border-primary focus:ring-0 focus:bg-transparent transition-colors px-4 text-foreground"
+                className="h-10 rounded-full border-2 border-border bg-transparent hover:border-[#FFCC00] focus:border-primary focus:ring-0 focus:bg-transparent transition-colors px-4 text-primary placeholder:text-muted-foreground"
               />
             </FormControl>
             <FormMessage />
@@ -56,7 +56,7 @@ export const ContactFormFields = ({ form }: ContactFormFieldsProps) => {
             <FormControl>
               <Textarea 
                 placeholder="Tell us what's on your mind..." 
-                className="min-h-[100px] resize-none rounded-2xl border-2 border-border bg-transparent hover:border-[#FFCC00] focus:border-primary focus:ring-0 focus:bg-transparent transition-colors px-4 py-3 text-foreground"
+                className="min-h-[100px] resize-none rounded-2xl border-2 border-border bg-transparent hover:border-[#FFCC00] focus:border-primary focus:ring-0 focus:bg-transparent transition-colors px-4 py-3 text-primary placeholder:text-muted-foreground"
                 {...field} 
               />
             </FormControl>

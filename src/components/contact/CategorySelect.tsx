@@ -36,8 +36,8 @@ export const CategorySelect = ({ form }: CategorySelectProps) => {
                     onClick={() => field.onChange(category.value)}
                     className={`flex flex-col items-center gap-2 p-3 rounded-2xl border-2 transition-colors duration-200 cursor-pointer text-center
                       ${isSelected
-                        ? 'border-primary bg-background'
-                        : 'border-border hover:border-accent bg-background'
+                        ? 'border-primary bg-primary/10'
+                        : 'border-border hover:border-primary/60 bg-background'
                       }`}
                   >
                     <div
@@ -49,7 +49,7 @@ export const CategorySelect = ({ form }: CategorySelectProps) => {
                     >
                       <Icon className="w-4 h-4" />
                     </div>
-                    <span className={`text-xs font-bold leading-tight ${isSelected ? 'text-primary-foreground' : 'text-primary'}`}>
+                    <span className={`text-xs font-bold leading-tight ${isSelected ? 'text-primary' : 'text-primary'}`}>
                       {category.label}
                     </span>
                   </button>
