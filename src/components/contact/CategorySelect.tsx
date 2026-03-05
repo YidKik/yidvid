@@ -22,7 +22,7 @@ export const CategorySelect = ({ form }: CategorySelectProps) => {
       name="category"
       render={({ field }) => (
         <FormItem>
-          <p className="text-sm font-bold mb-3" style={{ color: '#FF0000' }}>What can we help with?</p>
+          <p className="text-sm font-semibold mb-3" style={{ color: '#333' }}>What can we help with?</p>
           <FormControl>
             <div className="grid grid-cols-2 gap-2.5">
               {categoryOptions.map((category) => {
@@ -34,23 +34,22 @@ export const CategorySelect = ({ form }: CategorySelectProps) => {
                     key={category.value}
                     type="button"
                     onClick={() => field.onChange(category.value)}
-                    className="flex flex-col items-center gap-2 p-3 rounded-2xl border-2 transition-colors duration-200 cursor-pointer text-center"
+                    className="flex flex-col items-center gap-2 p-3 rounded-xl border transition-colors duration-200 cursor-pointer text-center"
                     style={{
-                      borderColor: isSelected ? '#FF0000' : '#e5e5e5',
-                      backgroundColor: isSelected ? 'rgba(255,0,0,0.06)' : 'white',
+                      borderColor: isSelected ? '#FFCC00' : '#e5e5e5',
+                      backgroundColor: isSelected ? 'rgba(255,204,0,0.08)' : 'white',
                     }}
                   >
                     <div
-                      className="w-9 h-9 rounded-full flex items-center justify-center border-2"
+                      className="w-9 h-9 rounded-full flex items-center justify-center"
                       style={{
-                        backgroundColor: isSelected ? '#FF0000' : '#FFCC00',
-                        borderColor: isSelected ? '#FF0000' : '#FFCC00',
-                        color: isSelected ? 'white' : '#FF0000',
+                        backgroundColor: isSelected ? '#FFCC00' : '#F5F5F5',
+                        color: '#222',
                       }}
                     >
                       <Icon className="w-4 h-4" />
                     </div>
-                    <span className="text-xs font-bold leading-tight" style={{ color: '#FF0000' }}>
+                    <span className="text-xs font-semibold leading-tight" style={{ color: isSelected ? '#222' : '#666' }}>
                       {category.label}
                     </span>
                   </button>

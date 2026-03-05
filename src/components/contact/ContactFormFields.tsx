@@ -10,7 +10,7 @@ interface ContactFormFieldsProps {
 }
 
 export const ContactFormFields = ({ form }: ContactFormFieldsProps) => {
-  const inputStyle = "h-10 rounded-full border-2 border-border bg-transparent hover:border-[#FFCC00] focus:border-[#FF0000] focus:ring-0 focus:bg-transparent transition-colors px-4 placeholder:text-gray-400";
+  const inputStyle = "h-10 rounded-full border border-border bg-transparent hover:border-[#FFCC00] focus:border-[#222] focus:ring-0 focus:bg-transparent transition-colors px-4 placeholder:text-gray-400";
 
   return (
     <div className="space-y-4">
@@ -19,7 +19,7 @@ export const ContactFormFields = ({ form }: ContactFormFieldsProps) => {
         name="name"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="text-sm font-bold" style={{ color: '#FF0000' }}>Name</FormLabel>
+            <FormLabel className="text-sm font-semibold" style={{ color: '#333' }}>Name</FormLabel>
             <FormControl>
               <Input 
                 placeholder="Your name" 
@@ -37,7 +37,7 @@ export const ContactFormFields = ({ form }: ContactFormFieldsProps) => {
         name="email"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="text-sm font-bold" style={{ color: '#FF0000' }}>Email</FormLabel>
+            <FormLabel className="text-sm font-semibold" style={{ color: '#333' }}>Email</FormLabel>
             <FormControl>
               <Input 
                 placeholder="you@example.com" 
@@ -56,11 +56,11 @@ export const ContactFormFields = ({ form }: ContactFormFieldsProps) => {
         name="message"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="text-sm font-bold" style={{ color: '#FF0000' }}>Message</FormLabel>
+            <FormLabel className="text-sm font-semibold" style={{ color: '#333' }}>Message</FormLabel>
             <FormControl>
               <Textarea 
                 placeholder="Tell us what's on your mind..." 
-                className="min-h-[100px] resize-none rounded-2xl border-2 border-border bg-transparent hover:border-[#FFCC00] focus:border-[#FF0000] focus:ring-0 focus:bg-transparent transition-colors px-4 py-3 placeholder:text-gray-400"
+                className="min-h-[100px] resize-none rounded-xl border border-border bg-transparent hover:border-[#FFCC00] focus:border-[#222] focus:ring-0 focus:bg-transparent transition-colors px-4 py-3 placeholder:text-gray-400"
                 style={{ color: '#222' }}
                 {...field} 
               />
