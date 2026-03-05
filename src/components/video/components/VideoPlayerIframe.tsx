@@ -42,32 +42,12 @@ export const VideoPlayerIframe = ({
 
   return (
     <>
-      <style>{`
-        /* Hide YouTube logo and related videos overlay */
-        .ytp-pause-overlay,
-        .ytp-scroll-min,
-        .ytp-player-content,
-        .ytp-endscreen-content,
-        .ytp-ce-element,
-        .ytp-cards-teaser,
-        .ytp-watermark,
-        .ytp-chrome-top-buttons,
-        .ytp-show-cards-title {
-          display: none !important;
-          pointer-events: none !important;
-        }
-        
-        /* Prevent clicks on YouTube branding */
-        iframe[src*="youtube"] {
-          pointer-events: auto;
-        }
-        
-        iframe[src*="youtube"] .ytp-title-link,
-        iframe[src*="youtube"] .ytp-youtube-button {
-          pointer-events: none !important;
-          display: none !important;
-        }
-      `}</style>
+      {/* Overlay to block YouTube top bar (logo, title, share/copy link) */}
+      <div 
+        className="absolute top-0 left-0 right-0 z-10 pointer-events-auto" 
+        style={{ height: '60px', background: 'linear-gradient(to bottom, rgba(0,0,0,0.01), transparent)' }}
+        onClick={(e) => e.stopPropagation()}
+      />
       <iframe
         ref={iframeRef}
         src={embedUrl}
