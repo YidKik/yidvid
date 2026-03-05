@@ -49,7 +49,7 @@ export const CategorySelect = ({ form }: CategorySelectProps) => {
                     >
                       <Icon className="w-4 h-4" />
                     </div>
-                    <span className={`text-xs font-bold leading-tight ${isSelected ? 'text-primary' : 'text-foreground'}`}>
+                    <span className={`text-xs font-bold leading-tight ${isSelected ? 'text-primary-foreground' : 'text-primary'}`}>
                       {category.label}
                     </span>
                   </button>

@@ -22,8 +22,7 @@ export const ContactFormFields = ({ form }: ContactFormFieldsProps) => {
               <Input 
                 placeholder="Your name" 
                 {...field} 
-                className="h-10 rounded-full border-2 border-border bg-white hover:border-[#FFCC00] focus:border-primary focus:ring-0 focus:bg-white transition-colors px-4 text-foreground"
-                style={{ backgroundColor: 'white' }}
+                className="h-10 rounded-full border-2 border-border bg-transparent hover:border-[#FFCC00] focus:border-primary focus:ring-0 focus:bg-transparent transition-colors px-4 text-foreground"
               />
             </FormControl>
             <FormMessage />
@@ -41,8 +40,7 @@ export const ContactFormFields = ({ form }: ContactFormFieldsProps) => {
                 placeholder="you@example.com" 
                 type="email" 
                 {...field} 
-                className="h-10 rounded-full border-2 border-border bg-white hover:border-[#FFCC00] focus:border-primary focus:ring-0 focus:bg-white transition-colors px-4 text-foreground"
-                style={{ backgroundColor: 'white' }}
+                className="h-10 rounded-full border-2 border-border bg-transparent hover:border-[#FFCC00] focus:border-primary focus:ring-0 focus:bg-transparent transition-colors px-4 text-foreground"
               />
             </FormControl>
             <FormMessage />
@@ -58,8 +56,7 @@ export const ContactFormFields = ({ form }: ContactFormFieldsProps) => {
             <FormControl>
               <Textarea 
                 placeholder="Tell us what's on your mind..." 
-                className="min-h-[100px] resize-none rounded-2xl border-2 border-border bg-white hover:border-[#FFCC00] focus:border-primary focus:ring-0 focus:bg-white transition-colors px-4 py-3 text-foreground"
-                style={{ backgroundColor: 'white' }}
+                className="min-h-[100px] resize-none rounded-2xl border-2 border-border bg-transparent hover:border-[#FFCC00] focus:border-primary focus:ring-0 focus:bg-transparent transition-colors px-4 py-3 text-foreground"
                 {...field} 
               />
             </FormControl>
