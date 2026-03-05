@@ -17,12 +17,12 @@ export const useEmbedUrl = (videoId: string) => {
       origin: window.location.origin,
       iv_load_policy: "3",
       cc_load_policy: "0",
-      disablekb: "1",
+      disablekb: "0",
       playsinline: "1",
-      fs: "1",
+      fs: "0",
       color: "white",
       showinfo: "0",
-      controls: "1",
+      controls: "0",
     });
     return `${baseUrl}?${params.toString()}`;
   }, []);
