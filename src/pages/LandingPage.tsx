@@ -3,7 +3,7 @@ import React from 'react';
 import { Helmet } from 'react-helmet';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Play, Users, RefreshCw, Shield, Heart, ArrowRight, Music, BookOpen, Mic, Gamepad2, Film, Grid3X3, GraduationCap } from 'lucide-react';
+import { Play, Users, RefreshCw, Shield, Heart, ArrowRight, Music, BookOpen, Mic, Film, Sparkles, Grid3X3, GraduationCap } from 'lucide-react';
 import HeroSearchSection from '@/components/home/HeroSearchSection';
 import { Footer } from '@/components/layout/Footer';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -55,8 +55,8 @@ const LandingPage = () => {
     { icon: Music, label: "Music", path: "/videos?category=music" },
     { icon: BookOpen, label: "Torah", path: "/videos?category=torah" },
     { icon: Mic, label: "Podcasts", path: "/videos?category=podcast" },
-    { icon: Gamepad2, label: "Entertainment", path: "/videos?category=entertainment" },
-    { icon: Film, label: "Inspiration", path: "/videos?category=inspiration" },
+    { icon: Film, label: "Entertainment", path: "/videos?category=entertainment" },
+    { icon: Heart, label: "Inspiration", path: "/videos?category=inspiration" },
     { icon: GraduationCap, label: "Education", path: "/videos?category=education" },
   ];
 
@@ -113,7 +113,7 @@ const LandingPage = () => {
           <motion.h2
             variants={itemVariants}
             className={`${isMobile ? 'text-2xl mb-2' : isTablet ? 'text-3xl mb-3' : 'text-4xl md:text-5xl mb-4'} font-extrabold text-center`}
-            style={{ fontFamily: "'Nunito', 'Poppins', sans-serif", color: '#1A1A1A', letterSpacing: '-0.02em' }}
+            style={{ fontFamily: "'Quicksand', sans-serif", color: '#1A1A1A', letterSpacing: '-0.02em' }}
           >
             Built for <span style={{ color: '#FF0000' }}>You</span>
           </motion.h2>
