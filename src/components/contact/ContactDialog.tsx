@@ -71,31 +71,21 @@ export const ContactDialog = ({ open, onOpenChange }: ContactDialogProps) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      {/* Blurred overlay */}
-      <div className={`${open ? 'fixed inset-0 z-40 backdrop-blur-md bg-black/40' : 'hidden'}`} />
-
       <DialogContent
-        className={`${isMobile ? 'w-[calc(100%-2rem)] max-h-[90vh]' : 'w-[480px] max-h-[85vh]'} p-0 border-2 border-primary rounded-3xl overflow-hidden bg-white/95 backdrop-blur-xl shadow-[0_0_60px_rgba(255,0,0,0.15)] z-50`}
+        hideCloseButton
+        className={`${isMobile ? 'w-[calc(100%-2rem)] max-h-[90vh]' : 'w-[500px] max-h-[85vh]'} p-0 rounded-3xl overflow-hidden border-2 border-primary bg-background/80 backdrop-blur-2xl shadow-2xl`}
       >
-        {/* Decorative corner circles */}
-        <div className="absolute -top-6 -right-6 w-24 h-24 rounded-full border-[3px] border-[#FFCC00] pointer-events-none" />
-        <div className="absolute -bottom-4 -left-4 w-16 h-16 rounded-full border-[3px] border-primary pointer-events-none" />
-        <div className="absolute top-16 -right-3 w-10 h-10 rounded-full border-2 border-primary/40 pointer-events-none" />
-        <div className="absolute -bottom-2 right-12 w-8 h-8 rounded-full border-2 border-[#FFCC00]/50 pointer-events-none" />
-
-        {/* Close button */}
-        <button 
+        <button
           onClick={() => onOpenChange(false)}
-          className="absolute right-4 top-4 z-10 w-8 h-8 rounded-full border-2 border-primary bg-white hover:bg-primary hover:text-white text-primary transition-all duration-200 flex items-center justify-center"
+          className="absolute right-4 top-4 z-10 w-8 h-8 rounded-full border-2 border-primary bg-background text-primary hover:bg-primary hover:text-primary-foreground transition-colors flex items-center justify-center"
         >
           <X className="h-4 w-4" />
           <span className="sr-only">Close</span>
         </button>
 
-        {/* Header */}
-        <div className="px-6 pt-6 pb-4">
-          <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-full border-2 border-[#FFCC00] bg-[#FFCC00]/10 flex items-center justify-center">
+        <div className="px-6 pt-6 pb-4 border-b-2 border-primary">
+          <div className="flex items-center gap-3 pr-10">
+            <div className="w-11 h-11 rounded-full border-2 border-primary bg-accent flex items-center justify-center">
               <Send className="w-5 h-5 text-primary" />
             </div>
             <div>
@@ -105,18 +95,14 @@ export const ContactDialog = ({ open, onOpenChange }: ContactDialogProps) => {
           </div>
         </div>
 
-        {/* Divider */}
-        <div className="mx-6 h-[2px] bg-gradient-to-r from-primary via-[#FFCC00] to-primary rounded-full" />
-
-        {/* Form */}
-        <div className="px-6 pt-5 pb-6 overflow-y-auto" style={{ maxHeight: isMobile ? 'calc(90vh - 100px)' : 'calc(85vh - 100px)' }}>
+        <div className="px-6 pt-5 pb-6 overflow-y-auto bg-background/60" style={{ maxHeight: isMobile ? 'calc(90vh - 100px)' : 'calc(85vh - 100px)' }}>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
               <CategorySelect form={form} />
               <ContactFormFields form={form} />
-              <Button 
-                type="submit" 
-                className="w-full h-11 text-sm font-bold bg-primary hover:bg-primary/90 text-white rounded-full transition-all duration-200 flex items-center justify-center gap-2 border-2 border-primary hover:border-primary/90"
+              <Button
+                type="submit"
+                className="w-full h-11 text-sm font-bold rounded-full border-2 border-primary !bg-primary !text-primary-foreground hover:!bg-primary/90 flex items-center justify-center gap-2"
               >
                 <Send className="w-4 h-4" />
                 Send Message

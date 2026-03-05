@@ -2,12 +2,12 @@
 import { FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { UseFormReturn } from "react-hook-form";
 import { FormValues, categoryOptions } from "./types";
-import { Bug, Lightbulb, HelpCircle, MessageCircle } from "lucide-react";
+import { Bug, Sparkles, LifeBuoy, MessageCircle, LucideIcon } from "lucide-react";
 
-const categoryIcons: Record<string, React.ElementType> = {
+const categoryIcons: Record<FormValues["category"], LucideIcon> = {
   bug_report: Bug,
-  feature_request: Lightbulb,
-  support: HelpCircle,
+  feature_request: Sparkles,
+  support: LifeBuoy,
   general: MessageCircle,
 };
 
@@ -26,23 +26,27 @@ export const CategorySelect = ({ form }: CategorySelectProps) => {
           <FormControl>
             <div className="grid grid-cols-2 gap-2.5">
               {categoryOptions.map((category) => {
-                const Icon = categoryIcons[category.value] || MessageCircle;
+                const Icon = categoryIcons[category.value];
                 const isSelected = field.value === category.value;
+
                 return (
                   <button
                     key={category.value}
                     type="button"
                     onClick={() => field.onChange(category.value)}
-                    className={`flex flex-col items-center gap-2 p-3 rounded-2xl border-2 transition-all duration-200 cursor-pointer text-center
+                    className={`flex flex-col items-center gap-2 p-3 rounded-2xl border-2 transition-colors duration-200 cursor-pointer text-center
                       ${isSelected
-                        ? 'border-primary bg-white shadow-sm'
-                        : 'border-border hover:border-[#FFCC00] bg-white'
+                        ? 'border-primary bg-background'
+                        : 'border-border hover:border-accent bg-background'
                       }`}
                   >
-                    <div className={`w-9 h-9 rounded-full flex items-center justify-center border-2 transition-all
-                      ${isSelected 
-                        ? 'bg-primary border-primary text-white' 
-                        : 'bg-white border-[#FFCC00] text-[#FFCC00]'}`}>
+                    <div
+                      className={`w-9 h-9 rounded-full flex items-center justify-center border-2
+                        ${isSelected
+                          ? 'bg-primary border-primary text-primary-foreground'
+                          : 'bg-accent border-accent text-primary'
+                        }`}
+                    >
                       <Icon className="w-4 h-4" />
                     </div>
                     <span className={`text-xs font-semibold leading-tight ${isSelected ? 'text-primary' : 'text-foreground'}`}>
