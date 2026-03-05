@@ -114,7 +114,7 @@ const HeroSearchSection = () => {
           transition={{ delay: 0.4 }}
         >
           <h1 
-            className={`${isMobile ? 'text-lg' : isTablet ? 'text-2xl' : 'text-3xl md:text-5xl lg:text-6xl'} font-semibold ${isMobile ? 'min-h-[40px]' : 'min-h-[70px] md:min-h-[90px]'} flex items-center justify-center ${isMobile ? '' : 'whitespace-nowrap'}`}
+            className={`${isMobile ? 'text-lg' : isTablet ? 'text-3xl' : 'text-3xl md:text-5xl lg:text-6xl'} font-semibold ${isMobile ? 'min-h-[40px]' : 'min-h-[70px] md:min-h-[90px]'} flex items-center justify-center ${isMobile ? '' : 'whitespace-nowrap'}`}
             style={{ fontFamily: "'Nunito', 'Poppins', sans-serif", color: '#1A1A1A', letterSpacing: '-0.01em' }}
           >
             <span>{displayText}</span>

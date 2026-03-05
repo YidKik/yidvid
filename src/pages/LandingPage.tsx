@@ -125,12 +125,12 @@ const LandingPage = () => {
             Everything you need for quality Jewish entertainment, all in one place.
           </motion.p>
 
-          <div className={`grid ${isMobile ? 'grid-cols-2 gap-3' : isTablet ? 'grid-cols-2 gap-4' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'}`}>
+          <div className={`grid ${isMobile ? 'grid-cols-2 gap-3' : isTablet ? 'grid-cols-2 gap-4 max-w-lg mx-auto' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'}`}>
             {features.map((feature, index) => (
               <motion.div
                 key={feature.title}
                 variants={itemVariants}
-                className={`group relative rounded-2xl ${isMobile ? 'p-3' : isTablet ? 'p-4' : 'p-6'} border-2 transition-all duration-300 hover:shadow-lg cursor-pointer bg-white`}
+                className={`group relative rounded-2xl ${isMobile ? 'p-3' : isTablet ? 'p-4 text-center flex flex-col items-center' : 'p-6'} border-2 transition-all duration-300 hover:shadow-lg cursor-pointer bg-white`}
                 style={{
                   borderColor: '#FF0000'
                 }}
