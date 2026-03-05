@@ -114,7 +114,7 @@ const HeroSearchSection = () => {
           transition={{ delay: 0.4 }}
         >
           <h1 
-            className={`${isMobile ? 'text-lg' : isTablet ? 'text-3xl' : 'text-3xl md:text-5xl lg:text-6xl'} font-semibold ${isMobile ? 'min-h-[40px]' : 'min-h-[70px] md:min-h-[90px]'} flex items-center justify-center ${isMobile ? '' : 'whitespace-nowrap'}`}
+            className={`${isMobile ? 'text-xl' : isTablet ? 'text-3xl' : 'text-3xl md:text-5xl lg:text-6xl'} font-semibold ${isMobile ? 'min-h-[40px]' : 'min-h-[70px] md:min-h-[90px]'} flex items-center justify-center ${isMobile ? '' : 'whitespace-nowrap'}`}
             style={{ fontFamily: "'Nunito', 'Poppins', sans-serif", color: '#1A1A1A', letterSpacing: '-0.01em' }}
           >
             <span>{displayText}</span>
@@ -149,7 +149,7 @@ const HeroSearchSection = () => {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={handleKeyDown}
                 onClick={handleInputClick}
-                className={`w-full ${isMobile ? 'py-3 pl-10 pr-20 text-sm' : isTablet ? 'py-4 pl-12 pr-28 text-base' : 'py-5 pl-14 pr-36 text-lg'} outline-none bg-transparent cursor-text`}
+                className={`w-full ${isMobile ? 'py-2.5 pl-9 pr-16 text-sm' : isTablet ? 'py-4 pl-12 pr-28 text-base' : 'py-5 pl-14 pr-36 text-lg'} outline-none bg-transparent cursor-text`}
                 style={{ 
                   fontFamily: "'Quicksand', sans-serif",
                   color: '#1A1A1A'
