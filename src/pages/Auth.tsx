@@ -33,14 +33,12 @@ const Auth = ({ isOpen, onOpenChange, initialTab = 'signin' }: AuthProps) => {
   }, [initialTab]);
   
   useEffect(() => {
-    const isSettingsPage = location.pathname === "/settings";
-    if ((isAuthenticated || isSettingsPage) && !isLoading && isOpen) {
-      // Don't close immediately - let the success overlay handle it
+    if (isAuthenticated && !isLoading && isOpen) {
       if (!showSuccess) {
         onOpenChange(false);
       }
     }
-  }, [isAuthenticated, isOpen, onOpenChange, location.pathname, isLoading, showSuccess]);
+  }, [isAuthenticated, isOpen, onOpenChange, isLoading, showSuccess]);
   
   const handleSelectOption = (option: 'signin' | 'signup') => {
     setActiveTab(option);
