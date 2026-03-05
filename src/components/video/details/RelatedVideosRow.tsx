@@ -52,14 +52,8 @@ export const RelatedVideosRow = ({
     return (
       <div className="bg-card/80 backdrop-blur-sm rounded-2xl border border-border p-5 shadow-sm">
         <h2 className="text-lg font-semibold text-foreground mb-4">More from {channelName}</h2>
-        <div className="flex gap-4 overflow-hidden">
-          {[...Array(5)].map((_, i) => (
-            <div key={i} className="flex-shrink-0 w-56 animate-pulse">
-              <div className="aspect-video bg-muted rounded-lg"></div>
-              <div className="mt-2 h-3 bg-muted rounded w-full"></div>
-              <div className="mt-1 h-2 bg-muted/60 rounded w-3/4"></div>
-            </div>
-          ))}
+        <div className="flex items-center justify-center py-8">
+          <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
         </div>
       </div>
     );

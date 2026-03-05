@@ -176,10 +176,7 @@ export const ChannelHeader = ({
                 aria-label={displaySubscribed && subscriptionStateKnown ? "Unsubscribe from channel" : "Subscribe to channel"}
               >
                 {buttonLoading ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    {isProcessing ? "Processing..." : "Loading..."}
-                  </>
+                  <Loader2 className="w-4 h-4 animate-spin" />
                 ) : displaySubscribed && subscriptionStateKnown ? (
                   <>
                     <Check className="w-4 h-4 mr-2" />

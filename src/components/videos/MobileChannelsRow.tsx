@@ -53,15 +53,8 @@ export const MobileChannelsRow = () => {
             Most Viewed Channels
           </h2>
         </div>
-        <div className="overflow-hidden -mx-2 px-2">
-          <div className="flex gap-3">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="flex-none w-[100px] bg-card rounded-xl p-3 border border-border/50 text-center animate-pulse">
-                <div className="mx-auto w-14 h-14 rounded-full bg-muted" />
-                <div className="mt-2 h-3 bg-muted rounded w-3/4 mx-auto" />
-              </div>
-            ))}
-          </div>
+        <div className="flex items-center justify-center py-6">
+          <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
         </div>
       </section>
     );
