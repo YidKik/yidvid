@@ -1,5 +1,5 @@
 
-import { User, LogOut, Trash2, LayoutDashboard } from "lucide-react";
+import { User, LogOut, Trash2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -116,16 +116,6 @@ export const ProfileErrorState = ({ userEmail, isLoggingOut, handleLogout }: Pro
           </div>
           
           <div className="flex flex-col sm:flex-row gap-3 mt-4 md:mt-0">
-            {isAdmin && (
-              <Button
-                onClick={handleAdminDashboard}
-                variant="outline"
-                className="flex items-center justify-center gap-2 text-primary hover:text-primary-foreground hover:bg-primary"
-              >
-                <LayoutDashboard className="h-4 w-4" />
-                <span>Admin Dashboard</span>
-              </Button>
-            )}
           
             <Button
               onClick={handleFastLogout}
