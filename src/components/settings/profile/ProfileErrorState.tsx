@@ -78,18 +78,12 @@ export const ProfileErrorState = ({ userEmail, isLoggingOut, handleLogout }: Pro
         return;
       }
       
-      // Navigate first for immediate feedback
       setIsDeleteDialogOpen(false);
-      navigate("/");
       
-      // Then do the actual sign out
       await supabase.auth.signOut();
       
-      // Clear user data
-      queryClient.removeQueries({ queryKey: ["profile"] });
-      queryClient.removeQueries({ queryKey: ["user-profile"] });
-      queryClient.removeQueries({ queryKey: ["session"] });
-      queryClient.setQueryData(["session"], null);
+      // Hard redirect to cleanly reset state
+      window.location.href = "/videos";
     } catch (error) {
       console.error("Error deleting account:", error);
     }
