@@ -57,6 +57,7 @@ export const CustomVideoControls = ({
   const [isHovering, setIsHovering] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [showVolume, setShowVolume] = useState(false);
+  const [isContainerHovered, setIsContainerHovered] = useState(false);
   const progressRef = useRef<HTMLDivElement>(null);
 
   const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
@@ -111,9 +112,13 @@ export const CustomVideoControls = ({
       : Volume2;
 
   return (
-    <>
-      {/* Big center play button when paused */}
-      {!isPlaying && (
+    <div
+      className="absolute inset-0 z-10"
+      onMouseEnter={() => setIsContainerHovered(true)}
+      onMouseLeave={() => setIsContainerHovered(false)}
+    >
+      {/* Big center play button when paused and not hovering */}
+      {!isPlaying && !isContainerHovered && (
         <button
           className="absolute inset-0 z-20 flex items-center justify-center bg-black/20 transition-opacity"
           onClick={onTogglePlay}
@@ -124,14 +129,12 @@ export const CustomVideoControls = ({
         </button>
       )}
 
-      {/* Click-to-toggle play on video area */}
-      {isPlaying && (
-        <button
-          className="absolute inset-0 z-15 cursor-default"
-          style={{ zIndex: 15 }}
-          onClick={onTogglePlay}
-        />
-      )}
+      {/* Click-to-toggle play on video area (always, both playing and paused) */}
+      <button
+        className="absolute inset-0 z-15 cursor-default"
+        style={{ zIndex: 15 }}
+        onClick={onTogglePlay}
+      />
 
       {/* Bottom controls bar */}
       <div
@@ -274,6 +277,6 @@ export const CustomVideoControls = ({
         onMouseEnter={() => setIsHovering(true)}
         onMouseLeave={() => setIsHovering(false)}
       />
-    </>
+    </div>
   );
 };
