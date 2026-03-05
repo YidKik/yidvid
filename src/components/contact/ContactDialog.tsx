@@ -30,45 +30,39 @@ export const ContactDialog = ({ open, onOpenChange }: ContactDialogProps) => {
     },
   });
 
-  const onSubmit = async (data: FormValues) => {
-    try {
-      const user = await supabase.auth.getUser();
-      const { data: insertedRequest, error } = await supabase
-        .from("contact_requests")
-        .insert({
-          category: data.category,
-          name: data.name,
-          email: data.email,
-          message: data.message,
-          user_id: user.data.user?.id,
-        })
-        .select()
-        .single();
+  const onSubmit = (data: FormValues) => {
+    // Immediately show success animation (optimistic)
+    onOpenChange(false);
+    setShowSuccess(true);
+    form.setValue("message", "");
 
-      if (error) throw error;
+    // Send in background - don't block the UI
+    (async () => {
+      try {
+        const user = await supabase.auth.getUser();
+        const { data: insertedRequest, error } = await supabase
+          .from("contact_requests")
+          .insert({
+            category: data.category,
+            name: data.name,
+            email: data.email,
+            message: data.message,
+            user_id: user.data.user?.id,
+          })
+          .select()
+          .single();
 
-      if (insertedRequest) {
-        const { error: emailError } = await supabase.functions.invoke("send-contact-notifications", {
-          body: {
-            type: "new_request",
-            requestId: insertedRequest.id
-          }
-        });
+        if (error) throw error;
 
-        if (emailError) {
-          console.error("Email notification error:", emailError);
+        if (insertedRequest) {
+          supabase.functions.invoke("send-contact-notifications", {
+            body: { type: "new_request", requestId: insertedRequest.id }
+          }).catch(e => console.error("Email notification error:", e));
         }
+      } catch (error) {
+        console.error("Error submitting contact request:", error);
       }
-
-      // Close dialog and show full-screen success animation
-      onOpenChange(false);
-      setShowSuccess(true);
-      
-      // Only clear the message, keep name and email for convenience
-      form.setValue("message", "");
-    } catch (error) {
-      console.error("Error submitting contact request:", error);
-    }
+    })();
   };
 
   const handleSuccessComplete = useCallback(() => {
