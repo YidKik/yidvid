@@ -6,6 +6,7 @@ import { ChannelsRowSection } from "@/components/videos/ChannelsRowSection";
 import { CategoryVideosGrid } from "@/components/videos/CategoryVideosGrid";
 import { VideoData } from "@/hooks/video/types/video-fetcher";
 import { useMemo } from "react";
+import { Loader2 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 interface DesktopVideoViewProps {
