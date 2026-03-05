@@ -169,10 +169,7 @@ export const VideoChannelCard = ({
             }`}
           >
             {isLoading ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                Loading...
-              </>
+              <Loader2 className="w-4 h-4 animate-spin" />
             ) : isSubscribed ? (
               <>
                 <Check className="w-4 h-4 mr-2" />

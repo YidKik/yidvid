@@ -1,5 +1,5 @@
 import { VideoCardWithOptions } from "@/components/video/VideoCardWithOptions";
-import { DelayedLoadingAnimation } from "@/components/ui/DelayedLoadingAnimation";
+import { Loader2 } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useVideoDate } from "@/components/video/useVideoDate";
@@ -24,30 +24,14 @@ export const ChannelVideos = ({
   const { isMobile } = useIsMobile();
   const { getFormattedDate } = useVideoDate();
 
-  // Log video data for debugging
-  console.log("ChannelVideos rendering with:", {
-    videosCount: videos?.length || 0,
-    isLoading,
-    isLoadingMore,
-    showingAllVideos: true // We're now showing all videos
-  });
-
-  // Show loading animation while loading
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <DelayedLoadingAnimation
-          size={isMobile ? "small" : "medium"}
-          color="primary"
-          text="Loading all channel videos..."
-          delayMs={3000}
-        />
+        <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
       </div>
     );
   }
 
-  // This fallback should not be reached due to checks in the parent component
-  // but keeping it as a safety measure
   if (!videos || videos.length === 0) {
     return (
       <div className="flex items-center justify-center min-h-[300px]">
@@ -84,7 +68,7 @@ export const ChannelVideos = ({
       </div>
       {isLoadingMore && !isMainPage && (
         <div className="flex justify-center mt-6 md:mt-8">
-          <DelayedLoadingAnimation size="small" color="muted" delayMs={3000} />
+          <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
         </div>
       )}
     </>

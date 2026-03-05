@@ -14,7 +14,7 @@ export const VideoGridHeader = ({
   hasVideos,
 }: VideoGridHeaderProps) => {
   if (isLoading) {
-    return <div className="h-8 animate-pulse bg-muted rounded w-64" />;
+    return null;
   }
 
   if (!hasChannels) {

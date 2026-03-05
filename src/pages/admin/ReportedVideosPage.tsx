@@ -12,7 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { toast } from "sonner";
-import { ExternalLink, Flag } from "lucide-react";
+import { ExternalLink, Flag, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
@@ -97,7 +97,7 @@ export default function ReportedVideosPage() {
         </div>
 
         {isLoading ? (
-          <div className="text-center py-8">Loading reports...</div>
+          <div className="flex items-center justify-center py-8"><Loader2 className="w-5 h-5 animate-spin text-muted-foreground" /></div>
         ) : reports?.length === 0 ? (
           <Card className="p-6">
             <p className="text-center text-muted-foreground">No videos have been reported yet.</p>

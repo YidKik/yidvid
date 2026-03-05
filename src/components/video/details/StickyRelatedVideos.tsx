@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import { Loader2 } from "lucide-react";
 import { VideoCard } from "../../VideoCard";
 import { useSize } from "@/hooks/use-size";
 
@@ -63,20 +64,10 @@ export const StickyRelatedVideos = ({ videos, isLoading = false, pageContentRef 
         className="relative"
       >
         <div 
-          className="bg-card/20 rounded-xl p-4 backdrop-blur-sm border border-border/30"
+          className="bg-card/20 rounded-xl p-4 backdrop-blur-sm border border-border/30 flex items-center justify-center"
           style={{ height: calculatedHeight }}
         >
-          <div className="animate-pulse space-y-4 h-full">
-            {[...Array(3)].map((_, i) => (
-              <div key={i} className="flex gap-3">
-                <div className="w-32 h-18 bg-muted rounded-lg"></div>
-                <div className="flex-1 space-y-2">
-                  <div className="h-4 bg-muted rounded"></div>
-                  <div className="h-3 bg-muted/70 rounded w-3/4"></div>
-                </div>
-              </div>
-            ))}
-          </div>
+          <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
         </div>
       </div>
     );

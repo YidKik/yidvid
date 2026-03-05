@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Clock, TrendingDown, RefreshCw, Activity, AlertTriangle, AlertCircle } from "lucide-react";
+import { Clock, TrendingDown, RefreshCw, Activity, AlertTriangle, AlertCircle, Loader2 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useEffect, useRef } from "react";
@@ -109,7 +109,9 @@ export const ApiQuotaStatus = () => {
           <CardTitle>YouTube API Quota Status</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="h-40 animate-pulse bg-muted rounded" />
+          <div className="flex items-center justify-center h-40">
+            <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+          </div>
         </CardContent>
       </Card>
     );

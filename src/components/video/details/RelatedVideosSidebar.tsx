@@ -1,4 +1,5 @@
 import { VideoCard } from "@/components/VideoCard";
+import { Loader2 } from "lucide-react";
 
 interface Video {
   id: string;
@@ -27,17 +28,8 @@ export const RelatedVideosSidebar = ({
     return (
       <div className="bg-card rounded-2xl border border-border p-5 shadow-sm">
         <h2 className="text-lg font-semibold text-foreground mb-4">More Videos</h2>
-        <div className="space-y-4">
-          {[...Array(4)].map((_, i) => (
-            <div key={i} className="flex gap-3 animate-pulse">
-              <div className="w-28 h-16 bg-muted rounded-lg flex-shrink-0"></div>
-              <div className="flex-1 space-y-2">
-                <div className="h-3 bg-muted rounded w-full"></div>
-                <div className="h-3 bg-muted rounded w-3/4"></div>
-                <div className="h-2 bg-muted/60 rounded w-1/2"></div>
-              </div>
-            </div>
-          ))}
+        <div className="flex items-center justify-center py-8">
+          <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
         </div>
       </div>
     );

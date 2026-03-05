@@ -146,10 +146,7 @@ export const ChannelSection = ({
                 `}
               >
                 {isLoading ? (
-                  <>
-                    <Loader2 className={`animate-spin mr-2 ${isMobile ? "w-3 h-3" : "w-4 h-4"}`} />
-                    <span className={isMobile ? "text-xs" : "text-sm"}>Loading...</span>
-                  </>
+                  <Loader2 className={`animate-spin ${isMobile ? "w-3 h-3" : "w-4 h-4"}`} />
                 ) : isSubscribed ? (
                   <>
                     <Check className={`mr-2 ${isMobile ? "w-3 h-3" : "w-4 h-4"}`} />

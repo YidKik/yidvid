@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Bell, ChevronDown, ChevronUp, Sparkles } from "lucide-react";
+import { Bell, ChevronDown, ChevronUp, Sparkles, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useEnhancedChannelSubscription } from "@/hooks/channel/useEnhancedChannelSubscription";
 import { useUnifiedAuth } from "@/hooks/useUnifiedAuth";
@@ -157,19 +157,8 @@ export const FriendlyChannelSection = ({
       
       {/* More from this channel - compact, max 1 row */}
       {isLoadingVideos ? (
-        <div>
-          <p className="text-sm font-medium text-[#999999] mb-3">Loading more videos...</p>
-          <div className={`grid gap-3 ${compact ? 'grid-cols-2' : 'grid-cols-3'}`}>
-            {[...Array(compact ? 2 : 3)].map((_, i) => (
-              <div key={i} className="animate-pulse">
-                <div className="aspect-video bg-[#F5F5F5] rounded-lg"></div>
-                <div className="mt-2 space-y-1">
-                  <div className="h-3 bg-[#F5F5F5] rounded w-full"></div>
-                  <div className="h-2 bg-[#F5F5F5] rounded w-3/4"></div>
-                </div>
-              </div>
-            ))}
-          </div>
+        <div className="flex items-center justify-center py-6">
+          <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
         </div>
       ) : channelVideos.length > 0 ? (
         <div>

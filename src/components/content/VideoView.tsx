@@ -5,7 +5,7 @@ import { MostViewedVideos } from "@/components/video/MostViewedVideos";
 import { ChannelsGrid } from "@/components/youtube/ChannelsGrid";
 import { VideoData } from "@/hooks/video/types/video-fetcher";
 import { useVideoPagination } from "@/hooks/video/useVideoPagination";
-import { DelayedLoadingAnimation } from "@/components/ui/DelayedLoadingAnimation";
+import { Loader2 } from "lucide-react";
 
 export interface VideoViewProps {
   videos: VideoData[];
@@ -25,9 +25,6 @@ export const VideoView = ({
   isMobile = false,
   isTablet = false
 }: VideoViewProps) => {
-  // For mobile: 4 videos (2 rows of 2)
-  // For tablet: 9 videos (3 rows of 3) 
-  // For desktop: 12 videos (3 rows of 4)
   const videosPerPage = isMobile ? 4 : (isTablet ? 9 : 12);
   const rowSize = isMobile ? 2 : (isTablet ? 3 : 4);
   
@@ -45,14 +42,11 @@ export const VideoView = ({
     isMobile
   });
 
-  // If loading is taking longer than 3 seconds, show the gradient loading animation
   if (isLoading || isRefreshing) {
     return (
-      <DelayedLoadingAnimation
-        size={isMobile ? "small" : isTablet ? "medium" : "large"}
-        text={isRefreshing ? "Refreshing videos..." : "Loading videos..."}
-        delayMs={3000}
-      />
+      <div className="flex items-center justify-center min-h-[200px]">
+        <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+      </div>
     );
   }
 

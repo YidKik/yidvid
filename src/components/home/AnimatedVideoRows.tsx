@@ -1,5 +1,6 @@
 
 import React, { useMemo } from "react";
+import { Loader2 } from "lucide-react";
 import { VideoGridItem as VideoItemType } from "@/hooks/video/useVideoGridData";
 import { VideoGridItem } from "@/components/video/VideoGridItem";
 
@@ -57,24 +58,6 @@ export const AnimatedVideoRows: React.FC<{
   isLoading: boolean;
   onVideoClick?: (videoId: string) => void;
 }> = ({ videos, isLoading, onVideoClick }) => {
-  if (isLoading || !videos.length) {
-    return (
-      <div className="flex flex-col gap-6 justify-center items-center h-full w-full py-16">
-        {[0, 1, 2].map((r) => (
-          <div key={r} className="flex gap-5">
-            {Array.from({ length: 5 }, (_, i) => (
-              <div
-                key={i}
-                className="w-[170px] md:w-[220px] aspect-video rounded-xl bg-gray-200 animate-pulse"
-              />
-            ))}
-          </div>
-        ))}
-      </div>
-    );
-  }
-
-  // Sort by newest, then shuffle for the lower rows
   const sortedVideos = useMemo(
     () => [...videos].sort((a, b) =>
       new Date(b.uploaded_at).getTime() - new Date(a.uploaded_at).getTime()
@@ -83,6 +66,14 @@ export const AnimatedVideoRows: React.FC<{
   );
   const shuffledA = useMemo(() => shuffle(videos), [videos]);
   const shuffledB = useMemo(() => shuffle(videos), [videos]);
+
+  if (isLoading || !videos.length) {
+    return (
+      <div className="flex items-center justify-center h-full w-full py-16">
+        <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-8 pt-14 pb-8 pl-4 pr-2 md:pr-10 h-full">
