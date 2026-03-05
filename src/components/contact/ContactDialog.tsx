@@ -4,12 +4,9 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
 } from "@/components/ui/dialog";
 import { Form } from "@/components/ui/form";
-import { MessageSquare, X } from "lucide-react";
+import { Mail, Send, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CategorySelect } from "./CategorySelect";
@@ -52,7 +49,6 @@ export const ContactDialog = ({ open, onOpenChange }: ContactDialogProps) => {
 
       if (error) throw error;
 
-      // Send email notification to admins
       if (insertedRequest) {
         const { error: emailError } = await supabase.functions.invoke("send-contact-notifications", {
           body: {
@@ -63,7 +59,6 @@ export const ContactDialog = ({ open, onOpenChange }: ContactDialogProps) => {
 
         if (emailError) {
           console.error("Email notification error:", emailError);
-          // Don't fail the whole operation if email fails
         }
       }
 
@@ -76,33 +71,51 @@ export const ContactDialog = ({ open, onOpenChange }: ContactDialogProps) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className={`${isMobile ? 'w-[calc(100%-2rem)]' : 'w-[550px]'} p-0 bg-[#333333] text-white border-gray-600 rounded-lg`}>
-        <DialogHeader className="p-4 border-b border-gray-600 relative">
-          <DialogTitle className="text-base md:text-lg text-white">Contact Us</DialogTitle>
-          <DialogDescription className="text-xs md:text-sm text-gray-300 mt-1">
-            How can we help you today? Choose a category below and send us your message.
-          </DialogDescription>
+      <DialogContent
+        className={`${isMobile ? 'w-[calc(100%-2rem)] max-h-[90vh]' : 'w-[520px] max-h-[85vh]'} p-0 border-none rounded-2xl overflow-hidden bg-white shadow-2xl`}
+        style={{
+          backdropFilter: 'blur(20px)',
+        }}
+      >
+        {/* Header with brand red accent */}
+        <div className="relative bg-primary px-6 pt-8 pb-10">
+          {/* Decorative circles */}
+          <div className="absolute top-4 left-4 w-16 h-16 rounded-full border-2 border-white/20" />
+          <div className="absolute -bottom-6 right-8 w-20 h-20 rounded-full border-2 border-white/10" />
+          <div className="absolute top-2 right-20 w-8 h-8 rounded-full bg-white/10" />
+
           <button 
             onClick={() => onOpenChange(false)}
-            className="absolute right-4 top-4 text-[#ea384c]"
+            className="absolute right-4 top-4 w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 transition-colors flex items-center justify-center"
           >
-            <X className="h-5 w-5" />
+            <X className="h-4 w-4 text-white" />
             <span className="sr-only">Close</span>
           </button>
-        </DialogHeader>
-        <div className="p-4">
+
+          <div className="flex items-center gap-4 relative z-10">
+            <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center ring-2 ring-white/30">
+              <Mail className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-white tracking-tight">Contact Us</h2>
+              <p className="text-white/80 text-sm mt-0.5">We'd love to hear from you</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Form area with overlap effect */}
+        <div className="relative -mt-4 bg-white rounded-t-2xl px-6 pt-6 pb-6 overflow-y-auto" style={{ maxHeight: isMobile ? 'calc(90vh - 120px)' : 'calc(85vh - 120px)' }}>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
               <CategorySelect form={form} />
               <ContactFormFields form={form} />
-              <div className="pt-2">
-                <Button 
-                  type="submit" 
-                  className="w-full h-9 text-sm bg-primary hover:bg-primary-hover transition-colors"
-                >
-                  Send Message
-                </Button>
-              </div>
+              <Button 
+                type="submit" 
+                className="w-full h-11 text-sm font-semibold bg-primary hover:bg-primary/90 text-white rounded-full transition-all duration-200 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 flex items-center justify-center gap-2"
+              >
+                <Send className="w-4 h-4" />
+                Send Message
+              </Button>
             </form>
           </Form>
         </div>
