@@ -3,13 +3,9 @@ import { motion } from "framer-motion";
 import { Helmet } from "react-helmet";
 import { Heart, Shield, Users, RefreshCw, FileText, ScrollText, MessageSquare } from "lucide-react";
 import { ContactDialog } from "@/components/contact/ContactDialog";
+import { TermsOfServiceDialog } from "@/components/auth/TermsOfServiceDialog";
+import { PrivacyPolicyDialog } from "@/components/auth/PrivacyPolicyDialog";
 import { useIsMobile } from "@/hooks/use-mobile";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 
 const About = () => {
   const [showTerms, setShowTerms] = useState(false);
@@ -155,57 +151,9 @@ const About = () => {
         </div>
       </div>
 
-      {/* Terms & Conditions Dialog */}
-      <Dialog open={showTerms} onOpenChange={setShowTerms}>
-        <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto bg-white rounded-2xl border border-[#E5E5E5]">
-          <DialogHeader>
-            <DialogTitle className="text-xl font-bold" style={{ fontFamily: "'Quicksand', sans-serif", color: '#000000' }}>
-              Terms & Conditions
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 text-sm" style={{ fontFamily: "'Quicksand', sans-serif", color: '#333333' }}>
-            <p><strong>Last updated:</strong> February 2026</p>
-            <p>Welcome to YidVid. By using our platform, you agree to the following terms:</p>
-            <h3 className="font-bold text-base" style={{ color: '#000000' }}>1. Use of Service</h3>
-            <p>YidVid provides curated kosher video content. The platform is free to use and intended for family-friendly viewing. You agree not to misuse the service or attempt to access content through unauthorized means.</p>
-            <h3 className="font-bold text-base" style={{ color: '#000000' }}>2. Content</h3>
-            <p>All videos on YidVid are sourced from public YouTube channels. We curate and filter content to maintain kosher standards but do not claim ownership of any third-party content.</p>
-            <h3 className="font-bold text-base" style={{ color: '#000000' }}>3. User Accounts</h3>
-            <p>Creating an account allows you to save favorites, create playlists, and interact with the community. You are responsible for maintaining the security of your account credentials.</p>
-            <h3 className="font-bold text-base" style={{ color: '#000000' }}>4. Acceptable Use</h3>
-            <p>Users must not post inappropriate comments, harass other users, or use the platform for any unlawful purpose. We reserve the right to remove content or accounts that violate these terms.</p>
-            <h3 className="font-bold text-base" style={{ color: '#000000' }}>5. Changes</h3>
-            <p>We may update these terms from time to time. Continued use of YidVid after changes constitutes acceptance of the updated terms.</p>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Privacy Policy Dialog */}
-      <Dialog open={showPrivacy} onOpenChange={setShowPrivacy}>
-        <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto bg-white rounded-2xl border border-[#E5E5E5]">
-          <DialogHeader>
-            <DialogTitle className="text-xl font-bold" style={{ fontFamily: "'Quicksand', sans-serif", color: '#000000' }}>
-              Privacy Policy
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 text-sm" style={{ fontFamily: "'Quicksand', sans-serif", color: '#333333' }}>
-            <p><strong>Last updated:</strong> February 2026</p>
-            <p>Your privacy is important to us. This policy explains how YidVid handles your information.</p>
-            <h3 className="font-bold text-base" style={{ color: '#000000' }}>1. Information We Collect</h3>
-            <p>We collect only the information necessary to provide our service: email address for account creation, viewing preferences, and interaction data (favorites, playlists, watch history).</p>
-            <h3 className="font-bold text-base" style={{ color: '#000000' }}>2. How We Use Your Information</h3>
-            <p>Your information is used to personalize your experience, save your preferences, and improve our platform. We do not sell or share your personal data with third parties for marketing purposes.</p>
-            <h3 className="font-bold text-base" style={{ color: '#000000' }}>3. Data Storage</h3>
-            <p>Your data is securely stored using industry-standard encryption. We use Supabase for data management, which provides enterprise-grade security.</p>
-            <h3 className="font-bold text-base" style={{ color: '#000000' }}>4. Cookies</h3>
-            <p>We use essential cookies to maintain your session and preferences. No third-party tracking cookies are used.</p>
-            <h3 className="font-bold text-base" style={{ color: '#000000' }}>5. Your Rights</h3>
-            <p>You can request deletion of your account and associated data at any time through the Settings page. Contact us if you have any questions about your data.</p>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Contact Dialog */}
+      {/* Shared dialogs - same as footer/auth */}
+      <TermsOfServiceDialog isOpen={showTerms} onOpenChange={setShowTerms} />
+      <PrivacyPolicyDialog isOpen={showPrivacy} onOpenChange={setShowPrivacy} />
       <ContactDialog open={showContact} onOpenChange={setShowContact} />
     </>
   );
