@@ -20,7 +20,8 @@ import {
   DialogTrigger 
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Trash2, User } from "lucide-react";
+import { Trash2, User, AlertTriangle } from "lucide-react";
+import { toast } from "sonner";
 
 export const ProfileSection = () => {
   const navigate = useNavigate();
@@ -56,14 +57,25 @@ export const ProfileSection = () => {
     retry: 1,
   });
 
+  const [isDeleting, setIsDeleting] = useState(false);
+
   const handleDeleteAccount = async () => {
+    setIsDeleting(true);
     try {
       const { error } = await supabase.rpc('delete_user');
-      if (error) return;
+      if (error) {
+        console.error("Error deleting account:", error);
+        toast.error("Failed to delete account. Please try again.");
+        setIsDeleting(false);
+        return;
+      }
       await supabase.auth.signOut();
-      navigate("/");
+      toast.success("Your account has been deleted.");
+      window.location.href = "/";
     } catch (error) {
       console.error("Error during account deletion:", error);
+      toast.error("Something went wrong. Please try again.");
+      setIsDeleting(false);
     }
   };
 
@@ -122,7 +134,7 @@ export const ProfileSection = () => {
           handleLogout={signOut}
         />
         
-        <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <Dialog open={isDeleteDialogOpen} onOpenChange={(open) => !isDeleting && setIsDeleteDialogOpen(open)}>
           <DialogTrigger asChild>
             <Button
               variant="outline"
@@ -132,22 +144,31 @@ export const ProfileSection = () => {
               <span className="font-semibold">Delete Account</span>
             </Button>
           </DialogTrigger>
-          <DialogContent className="border-2 border-red-200 rounded-2xl">
-            <DialogHeader>
-              <DialogTitle className="text-red-600">Delete Account</DialogTitle>
-              <DialogDescription>
-                Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently deleted.
+          <DialogContent className="border-2 border-red-200 rounded-2xl max-w-md">
+            <DialogHeader className="text-center sm:text-center">
+              <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-red-100">
+                <AlertTriangle className="h-7 w-7 text-red-600" />
+              </div>
+              <DialogTitle className="text-red-600 text-xl font-bold">Delete Account</DialogTitle>
+              <DialogDescription className="text-gray-600 text-sm leading-relaxed pt-2">
+                Are you sure you want to delete your account? This action <strong className="text-gray-900">cannot be undone</strong> and all your data — including your profile, watch history, and preferences — will be <strong className="text-gray-900">permanently deleted</strong>.
               </DialogDescription>
             </DialogHeader>
-            <DialogFooter className="flex flex-col sm:flex-row gap-2 sm:gap-0">
-              <Button variant="ghost" onClick={() => setIsDeleteDialogOpen(false)} className="rounded-xl">
-                Cancel
-              </Button>
+            <DialogFooter className="flex flex-col gap-2 sm:flex-col pt-2">
               <Button
                 onClick={handleDeleteAccount}
-                className="bg-red-500 hover:bg-red-600 text-white rounded-xl"
+                disabled={isDeleting}
+                className="w-full bg-red-500 hover:bg-red-600 text-white rounded-xl h-11 font-semibold"
               >
-                Yes, Delete My Account
+                {isDeleting ? "Deleting..." : "Yes, Delete My Account"}
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={() => setIsDeleteDialogOpen(false)} 
+                disabled={isDeleting}
+                className="w-full rounded-xl h-11 font-semibold"
+              >
+                Cancel
               </Button>
             </DialogFooter>
           </DialogContent>
