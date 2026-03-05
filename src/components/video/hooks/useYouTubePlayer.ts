@@ -36,8 +36,6 @@ export const useYouTubePlayer = (
             event: "command",
             func,
             args,
-            id: "custom-youtube-player",
-            channel: "widget",
           }),
           "*"
         );
