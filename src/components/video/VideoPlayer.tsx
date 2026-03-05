@@ -58,23 +58,21 @@ export const VideoPlayer = ({ videoId, onVideoEnd }: VideoPlayerProps) => {
         setHasError={setHasError}
         mountedRef={mountedRef}
       />
-      {!isLoading && (
-        <CustomVideoControls
-          isPlaying={player.isPlaying}
-          currentTime={player.currentTime}
-          duration={player.duration}
-          volume={player.volume}
-          isMuted={player.isMuted}
-          buffered={player.buffered}
-          onTogglePlay={player.togglePlay}
-          onSeek={player.seek}
-          onVolumeChange={player.setVolume}
-          onToggleMute={player.toggleMute}
-          onFullscreen={handleFullscreen}
-          playbackSpeed={playbackSpeed}
-          onPlaybackSpeedChange={handlePlaybackSpeedChange}
-        />
-      )}
+      <CustomVideoControls
+        isPlaying={player.isPlaying}
+        currentTime={player.currentTime}
+        duration={player.duration}
+        volume={player.volume}
+        isMuted={player.isMuted}
+        buffered={player.buffered}
+        onTogglePlay={player.togglePlay}
+        onSeek={player.seek}
+        onVolumeChange={player.setVolume}
+        onToggleMute={player.toggleMute}
+        onFullscreen={handleFullscreen}
+        playbackSpeed={playbackSpeed}
+        onPlaybackSpeedChange={handlePlaybackSpeedChange}
+      />
     </div>
   );
 };
