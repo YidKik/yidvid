@@ -59,17 +59,8 @@ export const AnimatedVideoRows: React.FC<{
 }> = ({ videos, isLoading, onVideoClick }) => {
   if (isLoading || !videos.length) {
     return (
-      <div className="flex flex-col gap-6 justify-center items-center h-full w-full py-16">
-        {[0, 1, 2].map((r) => (
-          <div key={r} className="flex gap-5">
-            {Array.from({ length: 5 }, (_, i) => (
-              <div
-                key={i}
-                className="w-[170px] md:w-[220px] aspect-video rounded-xl bg-gray-200 animate-pulse"
-              />
-            ))}
-          </div>
-        ))}
+      <div className="flex items-center justify-center h-full w-full py-16">
+        <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
       </div>
     );
   }

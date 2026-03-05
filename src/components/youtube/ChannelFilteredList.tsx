@@ -43,19 +43,8 @@ export const ChannelFilteredList = ({
 
       <div className="max-h-[400px] md:max-h-[500px] overflow-y-auto scrollbar-hide space-y-3 pr-2">
         {showInitialLoading ? (
-          <div className="space-y-3">
-            {Array(6).fill(0).map((_, i) => (
-              <div key={i} className="p-4 border border-primary/10 rounded-2xl bg-card animate-pulse">
-                <div className="flex items-center gap-3">
-                  <Skeleton className="h-10 w-10 rounded-full" />
-                  <div className="space-y-2 flex-1">
-                    <Skeleton className="h-4 w-3/4" />
-                    <Skeleton className="h-3 w-1/2" />
-                  </div>
-                  <Skeleton className="h-6 w-12 rounded-full" />
-                </div>
-              </div>
-            ))}
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
           </div>
         ) : filteredChannels && filteredChannels.length > 0 ? (
           <div className="space-y-3">

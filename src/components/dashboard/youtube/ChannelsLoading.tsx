@@ -1,5 +1,6 @@
 
 import React from "react";
+import { Loader2 } from "lucide-react";
 
 export const ChannelsLoading: React.FC = () => {
   return (
@@ -7,16 +8,8 @@ export const ChannelsLoading: React.FC = () => {
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-semibold">YouTube Channels</h2>
       </div>
-      <div className="animate-pulse space-y-4">
-        {[...Array(5)].map((_, i) => (
-          <div key={i} className="flex items-center space-x-4">
-            <div className="h-12 w-12 bg-gray-200 rounded-full"></div>
-            <div className="flex-1">
-              <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-              <div className="h-3 bg-gray-200 rounded w-1/2"></div>
-            </div>
-          </div>
-        ))}
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
       </div>
     </div>
   );

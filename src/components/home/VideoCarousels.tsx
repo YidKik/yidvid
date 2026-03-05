@@ -22,21 +22,8 @@ function getSortedVideos(videos: VideoGridItemType[]): VideoGridItemType[] {
 export const VideoCarousels = ({ videos, isLoading, onVideoClick }: VideoCarouselsProps) => {
   if (isLoading) {
     return (
-      <div className="space-y-6 py-4">
-        {[1, 2, 3].map((index) => (
-          <div key={index} className="px-6 md:px-16">
-            <div className="h-4 w-32 bg-gray-200 rounded animate-pulse mb-3"></div>
-            <div className="flex gap-3 overflow-hidden">
-              {Array.from({ length: 6 }).map((_, idx) => (
-                <div 
-                  key={idx} 
-                  className="flex-none w-64 md:w-80 aspect-video bg-gray-200 rounded animate-pulse"
-                  style={{animationDelay: `${idx * 0.1}s`}}
-                ></div>
-              ))}
-            </div>
-          </div>
-        ))}
+      <div className="flex items-center justify-center py-16">
+        <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
       </div>
     );
   }

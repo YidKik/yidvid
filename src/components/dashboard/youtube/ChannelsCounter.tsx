@@ -83,7 +83,7 @@ export const ChannelsCounter = () => {
 
   if (isLoading) {
     return (
-      <div className="animate-pulse bg-gray-200 rounded-full h-6 w-24"></div>
+      <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
     );
   }
 

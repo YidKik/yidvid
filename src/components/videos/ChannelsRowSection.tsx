@@ -131,14 +131,8 @@ export const ChannelsRowSection = ({ selectedCategory = "all", autoExpand = fals
             Most Viewed Channels
           </h2>
         </div>
-        <div className="flex gap-4 overflow-hidden py-3">
-          {Array.from({ length: isMobile ? 3 : 6 }).map((_, i) => (
-            <div key={i} className={`flex-none ${isMobile ? 'w-[140px]' : 'w-[210px]'} bg-card rounded-2xl ${isMobile ? 'p-4' : 'p-7'} shadow-md text-center animate-pulse`}>
-              <div className={`mx-auto ${isMobile ? 'w-16 h-16' : 'w-28 h-28'} rounded-full bg-muted`} />
-              <div className="mt-4 h-4 bg-muted rounded w-3/4 mx-auto" />
-              <div className="mt-2 h-3 bg-muted rounded w-1/2 mx-auto" />
-            </div>
-          ))}
+        <div className="flex items-center justify-center py-8">
+          <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
         </div>
       </section>
     );

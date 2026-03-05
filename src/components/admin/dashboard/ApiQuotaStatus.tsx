@@ -109,7 +109,9 @@ export const ApiQuotaStatus = () => {
           <CardTitle>YouTube API Quota Status</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="h-40 animate-pulse bg-muted rounded" />
+          <div className="flex items-center justify-center h-40">
+            <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+          </div>
         </CardContent>
       </Card>
     );
