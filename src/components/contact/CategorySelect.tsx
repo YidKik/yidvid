@@ -22,7 +22,7 @@ export const CategorySelect = ({ form }: CategorySelectProps) => {
       name="category"
       render={({ field }) => (
         <FormItem>
-          <p className="text-sm font-semibold text-foreground mb-3">What can we help with?</p>
+          <p className="text-sm font-bold text-primary mb-3">What can we help with?</p>
           <FormControl>
             <div className="grid grid-cols-2 gap-2.5">
               {categoryOptions.map((category) => {
@@ -44,12 +44,12 @@ export const CategorySelect = ({ form }: CategorySelectProps) => {
                       className={`w-9 h-9 rounded-full flex items-center justify-center border-2
                         ${isSelected
                           ? 'bg-primary border-primary text-primary-foreground'
-                          : 'bg-accent border-accent text-primary'
+                          : 'bg-[#FFCC00] border-[#FFCC00] text-primary'
                         }`}
                     >
                       <Icon className="w-4 h-4" />
                     </div>
-                    <span className={`text-xs font-semibold leading-tight ${isSelected ? 'text-primary' : 'text-foreground'}`}>
+                    <span className={`text-xs font-bold leading-tight ${isSelected ? 'text-primary' : 'text-foreground'}`}>
                       {category.label}
                     </span>
                   </button>

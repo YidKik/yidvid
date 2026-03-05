@@ -17,12 +17,13 @@ export const ContactFormFields = ({ form }: ContactFormFieldsProps) => {
         name="name"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="text-sm font-semibold text-foreground">Name</FormLabel>
+            <FormLabel className="text-sm font-bold text-primary">Name</FormLabel>
             <FormControl>
               <Input 
                 placeholder="Your name" 
                 {...field} 
-                className="h-10 rounded-full border-2 border-border bg-background hover:border-accent focus:border-primary focus:ring-0 transition-colors px-4"
+                className="h-10 rounded-full border-2 border-border bg-white hover:border-[#FFCC00] focus:border-primary focus:ring-0 focus:bg-white transition-colors px-4 text-foreground"
+                style={{ backgroundColor: 'white' }}
               />
             </FormControl>
             <FormMessage />
@@ -34,13 +35,14 @@ export const ContactFormFields = ({ form }: ContactFormFieldsProps) => {
         name="email"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="text-sm font-semibold text-foreground">Email</FormLabel>
+            <FormLabel className="text-sm font-bold text-primary">Email</FormLabel>
             <FormControl>
               <Input 
                 placeholder="you@example.com" 
                 type="email" 
                 {...field} 
-                className="h-10 rounded-full border-2 border-border bg-background hover:border-accent focus:border-primary focus:ring-0 transition-colors px-4"
+                className="h-10 rounded-full border-2 border-border bg-white hover:border-[#FFCC00] focus:border-primary focus:ring-0 focus:bg-white transition-colors px-4 text-foreground"
+                style={{ backgroundColor: 'white' }}
               />
             </FormControl>
             <FormMessage />
@@ -52,11 +54,12 @@ export const ContactFormFields = ({ form }: ContactFormFieldsProps) => {
         name="message"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="text-sm font-semibold text-foreground">Message</FormLabel>
+            <FormLabel className="text-sm font-bold text-primary">Message</FormLabel>
             <FormControl>
               <Textarea 
                 placeholder="Tell us what's on your mind..." 
-                className="min-h-[100px] resize-none rounded-2xl border-2 border-border bg-background hover:border-accent focus:border-primary focus:ring-0 transition-colors px-4 py-3"
+                className="min-h-[100px] resize-none rounded-2xl border-2 border-border bg-white hover:border-[#FFCC00] focus:border-primary focus:ring-0 focus:bg-white transition-colors px-4 py-3 text-foreground"
+                style={{ backgroundColor: 'white' }}
                 {...field} 
               />
             </FormControl>
