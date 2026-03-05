@@ -1,4 +1,4 @@
-
+import { useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { Form } from "@/components/ui/form";
 import { Send, X } from "lucide-react";
@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CategorySelect } from "./CategorySelect";
 import { ContactFormFields } from "./ContactFormFields";
+import { ContactSuccessOverlay } from "./ContactSuccessOverlay";
 import { FormValues, formSchema } from "./types";
 import { useIsMobile } from "@/hooks/use-mobile";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
@@ -17,6 +18,7 @@ interface ContactDialogProps {
 
 export const ContactDialog = ({ open, onOpenChange }: ContactDialogProps) => {
   const { isMobile } = useIsMobile();
+  const [showSuccess, setShowSuccess] = useState(false);
   
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -58,85 +60,95 @@ export const ContactDialog = ({ open, onOpenChange }: ContactDialogProps) => {
         }
       }
 
+      // Close dialog and show full-screen success animation
       onOpenChange(false);
-      form.reset();
+      setShowSuccess(true);
+      
+      // Only clear the message, keep name and email for convenience
+      form.setValue("message", "");
     } catch (error) {
       console.error("Error submitting contact request:", error);
     }
   };
 
+  const handleSuccessComplete = useCallback(() => {
+    setShowSuccess(false);
+  }, []);
+
   return (
-    <DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
-      <DialogPrimitive.Portal>
-        <DialogPrimitive.Overlay
-          className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm"
-          style={{
-            animation: open ? 'contactFadeIn 0.2s ease-out' : undefined,
-          }}
-        />
+    <>
+      <DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
+        <DialogPrimitive.Portal>
+          <DialogPrimitive.Overlay
+            className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm"
+            style={{
+              animation: open ? 'contactFadeIn 0.2s ease-out' : undefined,
+            }}
+          />
 
-        <DialogPrimitive.Content
-          className={`fixed left-[50%] top-[50%] z-50 translate-x-[-50%] translate-y-[-50%] ${isMobile ? 'w-[calc(100%-2rem)] max-h-[90vh]' : 'w-[480px] max-h-[85vh]'} rounded-2xl overflow-hidden shadow-xl p-0`}
-          style={{
-            border: '1px solid #E5E5E5',
-            backgroundColor: 'rgba(255,255,255,0.95)',
-            backdropFilter: 'blur(24px)',
-            animation: open ? 'contactScaleIn 0.25s cubic-bezier(0.16, 1, 0.3, 1)' : undefined,
-          }}
-        >
-          {/* Close button */}
-          <button
-            onClick={() => onOpenChange(false)}
-            className="absolute right-4 top-4 z-10 w-8 h-8 rounded-full flex items-center justify-center transition-colors hover:bg-gray-100"
-            style={{ color: '#666' }}
+          <DialogPrimitive.Content
+            className={`fixed left-[50%] top-[50%] z-50 translate-x-[-50%] translate-y-[-50%] ${isMobile ? 'w-[calc(100%-2rem)] max-h-[90vh]' : 'w-[480px] max-h-[85vh]'} rounded-2xl overflow-hidden shadow-xl p-0`}
+            style={{
+              border: '1px solid #E5E5E5',
+              backgroundColor: 'rgba(255,255,255,0.95)',
+              backdropFilter: 'blur(24px)',
+              animation: open ? 'contactScaleIn 0.25s cubic-bezier(0.16, 1, 0.3, 1)' : undefined,
+            }}
           >
-            <X className="h-4 w-4" />
-            <span className="sr-only">Close</span>
-          </button>
+            <button
+              onClick={() => onOpenChange(false)}
+              className="absolute right-4 top-4 z-10 w-8 h-8 rounded-full flex items-center justify-center transition-colors hover:bg-gray-100"
+              style={{ color: '#666' }}
+            >
+              <X className="h-4 w-4" />
+              <span className="sr-only">Close</span>
+            </button>
 
-          {/* Header - clean and simple */}
-          <div className="px-6 pt-6 pb-4" style={{ borderBottom: '1px solid #E5E5E5' }}>
-            <div className="flex items-center gap-3 pr-10">
-              <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: '#FFCC00' }}>
-                <Send className="w-4.5 h-4.5" style={{ color: '#222' }} />
-              </div>
-              <div>
-                <h2 className="text-lg font-bold tracking-tight" style={{ color: '#222' }}>Contact Us</h2>
-                <p className="text-xs" style={{ color: '#999' }}>We'd love to hear from you</p>
+            <div className="px-6 pt-6 pb-4" style={{ borderBottom: '1px solid #E5E5E5' }}>
+              <div className="flex items-center gap-3 pr-10">
+                <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: '#FFCC00' }}>
+                  <Send className="w-4.5 h-4.5" style={{ color: '#222' }} />
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold tracking-tight" style={{ color: '#222' }}>Contact Us</h2>
+                  <p className="text-xs" style={{ color: '#999' }}>We'd love to hear from you</p>
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Form */}
-          <div className="px-6 pt-5 pb-6 overflow-y-auto" style={{ maxHeight: isMobile ? 'calc(90vh - 100px)' : 'calc(85vh - 100px)' }}>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-                <CategorySelect form={form} />
-                <ContactFormFields form={form} />
-                <button
-                  type="submit"
-                  className="w-full h-11 text-sm font-bold rounded-full flex items-center justify-center gap-2 transition-opacity hover:opacity-90"
-                  style={{ backgroundColor: '#FF0000', color: 'white' }}
-                >
-                  <Send className="w-4 h-4" />
-                  Send Message
-                </button>
-              </form>
-            </Form>
-          </div>
-        </DialogPrimitive.Content>
-      </DialogPrimitive.Portal>
+            <div className="px-6 pt-5 pb-6 overflow-y-auto" style={{ maxHeight: isMobile ? 'calc(90vh - 100px)' : 'calc(85vh - 100px)' }}>
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+                  <CategorySelect form={form} />
+                  <ContactFormFields form={form} />
+                  <button
+                    type="submit"
+                    className="w-full h-11 text-sm font-bold rounded-full flex items-center justify-center gap-2 transition-opacity hover:opacity-90"
+                    style={{ backgroundColor: '#FF0000', color: 'white' }}
+                  >
+                    <Send className="w-4 h-4" />
+                    Send Message
+                  </button>
+                </form>
+              </Form>
+            </div>
+          </DialogPrimitive.Content>
+        </DialogPrimitive.Portal>
 
-      <style>{`
-        @keyframes contactFadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        @keyframes contactScaleIn {
-          from { opacity: 0; transform: translate(-50%, -50%) scale(0.97); }
-          to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-        }
-      `}</style>
-    </DialogPrimitive.Root>
+        <style>{`
+          @keyframes contactFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+          }
+          @keyframes contactScaleIn {
+            from { opacity: 0; transform: translate(-50%, -50%) scale(0.97); }
+            to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+          }
+        `}</style>
+      </DialogPrimitive.Root>
+
+      {/* Full-screen success overlay */}
+      <ContactSuccessOverlay show={showSuccess} onComplete={handleSuccessComplete} />
+    </>
   );
 };
