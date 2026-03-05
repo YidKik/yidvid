@@ -48,6 +48,12 @@ export const VideoPlayerIframe = ({
         style={{ height: '60px', background: 'linear-gradient(to bottom, rgba(0,0,0,0.01), transparent)' }}
         onClick={(e) => e.stopPropagation()}
       />
+      {/* Overlay to block YouTube logo in bottom-right corner */}
+      <div 
+        className="absolute z-10 pointer-events-auto"
+        style={{ bottom: '40px', right: '0', height: '50px', width: '120px', background: 'transparent' }}
+        onClick={(e) => e.stopPropagation()}
+      />
       <iframe
         ref={iframeRef}
         src={embedUrl}
