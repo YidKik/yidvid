@@ -197,6 +197,42 @@ export type Database = {
         }
         Relationships: []
       }
+      broadcast_emails: {
+        Row: {
+          body: string
+          created_at: string
+          filter_type: string
+          id: string
+          recipient_count: number
+          sent_by: string
+          status: string
+          subject: string
+          updated_at: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          filter_type?: string
+          id?: string
+          recipient_count?: number
+          sent_by: string
+          status?: string
+          subject: string
+          updated_at?: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          filter_type?: string
+          id?: string
+          recipient_count?: number
+          sent_by?: string
+          status?: string
+          subject?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       channel_category_mappings: {
         Row: {
           category_id: string

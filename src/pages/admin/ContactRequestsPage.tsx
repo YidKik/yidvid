@@ -1,6 +1,7 @@
 
 import { ContactRequestsSection } from "@/components/dashboard/ContactRequestsSection";
 import { AdminEmailManagementSection } from "@/components/dashboard/AdminEmailManagementSection";
+import { BroadcastEmailSection } from "@/components/admin/BroadcastEmailSection";
 import { BackButton } from "@/components/navigation/BackButton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -14,6 +15,7 @@ export default function ContactRequestsPage() {
         <TabsList>
           <TabsTrigger value="requests">Contact Requests</TabsTrigger>
           <TabsTrigger value="emails">Email Settings</TabsTrigger>
+          <TabsTrigger value="broadcast">Broadcast</TabsTrigger>
         </TabsList>
         
         <TabsContent value="requests">
@@ -22,6 +24,10 @@ export default function ContactRequestsPage() {
         
         <TabsContent value="emails">
           <AdminEmailManagementSection />
+        </TabsContent>
+
+        <TabsContent value="broadcast">
+          <BroadcastEmailSection />
         </TabsContent>
       </Tabs>
     </div>
