@@ -6,7 +6,7 @@ import {
   DialogContent,
 } from "@/components/ui/dialog";
 import { Form } from "@/components/ui/form";
-import { Mail, Send, X } from "lucide-react";
+import { Send, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CategorySelect } from "./CategorySelect";
@@ -71,47 +71,52 @@ export const ContactDialog = ({ open, onOpenChange }: ContactDialogProps) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
+      {/* Blurred overlay */}
+      <div className={`${open ? 'fixed inset-0 z-40 backdrop-blur-md bg-black/40' : 'hidden'}`} />
+
       <DialogContent
-        className={`${isMobile ? 'w-[calc(100%-2rem)] max-h-[90vh]' : 'w-[520px] max-h-[85vh]'} p-0 border-none rounded-2xl overflow-hidden bg-white shadow-2xl`}
-        style={{
-          backdropFilter: 'blur(20px)',
-        }}
+        className={`${isMobile ? 'w-[calc(100%-2rem)] max-h-[90vh]' : 'w-[480px] max-h-[85vh]'} p-0 border-2 border-primary rounded-3xl overflow-hidden bg-white/95 backdrop-blur-xl shadow-[0_0_60px_rgba(255,0,0,0.15)] z-50`}
       >
-        {/* Header with brand red accent */}
-        <div className="relative bg-primary px-6 pt-8 pb-10">
-          {/* Decorative circles */}
-          <div className="absolute top-4 left-4 w-16 h-16 rounded-full border-2 border-white/20" />
-          <div className="absolute -bottom-6 right-8 w-20 h-20 rounded-full border-2 border-white/10" />
-          <div className="absolute top-2 right-20 w-8 h-8 rounded-full bg-white/10" />
+        {/* Decorative corner circles */}
+        <div className="absolute -top-6 -right-6 w-24 h-24 rounded-full border-[3px] border-[#FFCC00] pointer-events-none" />
+        <div className="absolute -bottom-4 -left-4 w-16 h-16 rounded-full border-[3px] border-primary pointer-events-none" />
+        <div className="absolute top-16 -right-3 w-10 h-10 rounded-full border-2 border-primary/40 pointer-events-none" />
+        <div className="absolute -bottom-2 right-12 w-8 h-8 rounded-full border-2 border-[#FFCC00]/50 pointer-events-none" />
 
-          <button 
-            onClick={() => onOpenChange(false)}
-            className="absolute right-4 top-4 w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 transition-colors flex items-center justify-center"
-          >
-            <X className="h-4 w-4 text-white" />
-            <span className="sr-only">Close</span>
-          </button>
+        {/* Close button */}
+        <button 
+          onClick={() => onOpenChange(false)}
+          className="absolute right-4 top-4 z-10 w-8 h-8 rounded-full border-2 border-primary bg-white hover:bg-primary hover:text-white text-primary transition-all duration-200 flex items-center justify-center"
+        >
+          <X className="h-4 w-4" />
+          <span className="sr-only">Close</span>
+        </button>
 
-          <div className="flex items-center gap-4 relative z-10">
-            <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center ring-2 ring-white/30">
-              <Mail className="w-6 h-6 text-white" />
+        {/* Header */}
+        <div className="px-6 pt-6 pb-4">
+          <div className="flex items-center gap-3">
+            <div className="w-11 h-11 rounded-full border-2 border-[#FFCC00] bg-[#FFCC00]/10 flex items-center justify-center">
+              <Send className="w-5 h-5 text-primary" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-white tracking-tight">Contact Us</h2>
-              <p className="text-white/80 text-sm mt-0.5">We'd love to hear from you</p>
+              <h2 className="text-lg font-bold text-foreground tracking-tight">Contact Us</h2>
+              <p className="text-xs text-muted-foreground">We'd love to hear from you</p>
             </div>
           </div>
         </div>
 
-        {/* Form area with overlap effect */}
-        <div className="relative -mt-4 bg-white rounded-t-2xl px-6 pt-6 pb-6 overflow-y-auto" style={{ maxHeight: isMobile ? 'calc(90vh - 120px)' : 'calc(85vh - 120px)' }}>
+        {/* Divider */}
+        <div className="mx-6 h-[2px] bg-gradient-to-r from-primary via-[#FFCC00] to-primary rounded-full" />
+
+        {/* Form */}
+        <div className="px-6 pt-5 pb-6 overflow-y-auto" style={{ maxHeight: isMobile ? 'calc(90vh - 100px)' : 'calc(85vh - 100px)' }}>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
               <CategorySelect form={form} />
               <ContactFormFields form={form} />
               <Button 
                 type="submit" 
-                className="w-full h-11 text-sm font-semibold bg-primary hover:bg-primary/90 text-white rounded-full transition-all duration-200 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 flex items-center justify-center gap-2"
+                className="w-full h-11 text-sm font-bold bg-primary hover:bg-primary/90 text-white rounded-full transition-all duration-200 flex items-center justify-center gap-2 border-2 border-primary hover:border-primary/90"
               >
                 <Send className="w-4 h-4" />
                 Send Message
