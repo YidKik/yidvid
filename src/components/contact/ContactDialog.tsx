@@ -85,12 +85,12 @@ export const ContactDialog = ({ open, onOpenChange }: ContactDialogProps) => {
 
         <div className="px-6 pt-6 pb-4 border-b-2 border-primary">
           <div className="flex items-center gap-3 pr-10">
-            <div className="w-11 h-11 rounded-full border-2 border-primary bg-accent flex items-center justify-center">
+            <div className="w-11 h-11 rounded-full border-2 border-[#FFCC00] bg-[#FFCC00] flex items-center justify-center">
               <Send className="w-5 h-5 text-primary" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-foreground tracking-tight">Contact Us</h2>
-              <p className="text-xs text-muted-foreground">We'd love to hear from you</p>
+              <h2 className="text-lg font-bold text-primary tracking-tight">Contact Us</h2>
+              <p className="text-xs text-[#FFCC00] font-medium">We'd love to hear from you</p>
             </div>
           </div>
         </div>
