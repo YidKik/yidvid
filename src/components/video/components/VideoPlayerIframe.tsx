@@ -42,16 +42,24 @@ export const VideoPlayerIframe = ({
 
   return (
     <>
-      {/* Overlay to block YouTube top bar (logo, title, share/copy link) */}
-      <div 
-        className="absolute top-0 left-0 right-0 z-10 pointer-events-auto" 
-        style={{ height: '60px', background: 'linear-gradient(to bottom, rgba(0,0,0,0.01), transparent)' }}
+      {/* Shield zone: block YouTube top hover bar (title + copy link) */}
+      <div
+        className="absolute top-0 left-0 right-0 z-10 pointer-events-auto bg-transparent"
+        style={{ height: "78px" }}
         onClick={(e) => e.stopPropagation()}
       />
-      {/* Overlay to block YouTube logo in bottom-right corner */}
-      <div 
-        className="absolute z-10 pointer-events-auto"
-        style={{ bottom: '40px', right: '0', height: '50px', width: '120px', background: 'transparent' }}
+
+      {/* Extra shield on top-right where YouTube "Copy link" tends to appear */}
+      <div
+        className="absolute top-0 right-0 z-10 pointer-events-auto bg-transparent"
+        style={{ height: "92px", width: "220px" }}
+        onClick={(e) => e.stopPropagation()}
+      />
+
+      {/* Shield zone: block bottom-right YouTube branding/logo without touching controls */}
+      <div
+        className="absolute z-10 pointer-events-auto bg-transparent"
+        style={{ bottom: "34px", right: "0", height: "78px", width: "180px" }}
         onClick={(e) => e.stopPropagation()}
       />
       <iframe
