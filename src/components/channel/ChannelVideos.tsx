@@ -33,11 +33,7 @@ export const ChannelVideos = ({
   }
 
   if (!videos || videos.length === 0) {
-    return (
-      <div className="flex items-center justify-center min-h-[300px]">
-        <p className="text-muted-foreground">No videos found for this channel</p>
-      </div>
-    );
+    return <div className="min-h-[200px]" />;
   }
 
   return (

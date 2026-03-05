@@ -1,7 +1,5 @@
-
-import { VideoPlaceholder } from "@/components/video/VideoPlaceholder";
 import { ChannelVideos } from "@/components/channel/ChannelVideos";
-import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
 
 interface ChannelVideoSectionProps {
   isLoadingVideos: boolean;
@@ -24,58 +22,26 @@ export const ChannelVideoSection = ({
   isLoadingMore,
   refetchVideos
 }: ChannelVideoSectionProps) => {
-  // Only show an error if we actually have an error AND there are no videos
-  if (hasVideosError && (!displayedVideos || displayedVideos.length === 0)) {
+  // Show spinner while loading or on error with no data
+  if (isLoadingVideos || (hasVideosError && (!displayedVideos || displayedVideos.length === 0))) {
     return (
-      <div className="text-center my-12 p-6 border border-gray-100 rounded-lg bg-white/50">
-        <VideoPlaceholder size="small" />
-        <h3 className="text-lg font-medium mt-4">Error loading videos</h3>
-        <p className="text-muted-foreground mt-2">
-          {videosError instanceof Error ? videosError.message : "There was an error loading videos for this channel."}
-        </p>
-        <Button 
-          variant="outline" 
-          className="mt-4" 
-          onClick={refetchVideos}
-        >
-          Retry
-        </Button>
+      <div className="flex items-center justify-center min-h-[300px]">
+        <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
       </div>
     );
   }
 
-  // Only show the "no videos" message if we're not loading AND there are no videos
-  if (!isLoadingVideos && (!displayedVideos || displayedVideos.length === 0)) {
-    return (
-      <div className="text-center my-12 p-6 border border-gray-100 rounded-lg bg-white/50">
-        <VideoPlaceholder size="small" />
-        <h3 className="text-lg font-medium mt-4">No videos found</h3>
-        <p className="text-muted-foreground mt-2">
-          This channel doesn't have any videos yet, or they're still being processed.
-        </p>
-        <Button 
-          variant="outline" 
-          className="mt-4" 
-          onClick={refetchVideos}
-        >
-          Refresh Videos
-        </Button>
-      </div>
-    );
+  // No videos and done loading — show empty space
+  if (!displayedVideos || displayedVideos.length === 0) {
+    return <div className="min-h-[200px]" />;
   }
 
-  // Log sorted videos for debugging
-  console.log("Rendering ALL videos sorted by uploaded_at:", 
-    displayedVideos?.length > 0 ? 
-    `${displayedVideos.length} total videos` : "No videos");
-
-  // Show ALL videos (no limit applied)
   return (
     <ChannelVideos
       videos={displayedVideos}
       isLoading={isLoadingVideos}
       channelThumbnail={channelThumbnail}
-      initialCount={displayedVideos.length} // Show all videos
+      initialCount={displayedVideos.length}
       isLoadingMore={isLoadingMore}
     />
   );
