@@ -117,17 +117,21 @@ export const CustomVideoControls = ({
       onMouseEnter={() => setIsContainerHovered(true)}
       onMouseLeave={() => setIsContainerHovered(false)}
     >
-      {/* Big center play button when paused and hovering */}
-      {!isPlaying && isContainerHovered && (
-        <button
-          className="absolute inset-0 z-20 flex items-center justify-center bg-black/20 transition-opacity"
-          onClick={onTogglePlay}
-        >
-          <div className="w-16 h-16 rounded-full bg-primary/90 flex items-center justify-center shadow-lg hover:bg-primary transition-colors">
-            <Play className="w-7 h-7 text-white ml-1" fill="white" />
-          </div>
-        </button>
-      )}
+      {/* Big center play button when paused and hovering - fade animation */}
+      <button
+        className={`absolute inset-0 z-20 flex items-center justify-center bg-black/20 transition-all duration-300 ${
+          !isPlaying && isContainerHovered
+            ? "opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none"
+        }`}
+        onClick={onTogglePlay}
+      >
+        <div className={`w-16 h-16 rounded-full bg-primary/90 flex items-center justify-center shadow-lg hover:bg-primary transition-all duration-300 ${
+          !isPlaying && isContainerHovered ? "scale-100" : "scale-75"
+        }`}>
+          <Play className="w-7 h-7 text-white ml-1" fill="white" />
+        </div>
+      </button>
 
       {/* Click-to-toggle play on video area (always, both playing and paused) */}
       <button
@@ -139,7 +143,7 @@ export const CustomVideoControls = ({
       {/* Bottom controls bar */}
       <div
         className={`absolute bottom-0 left-0 right-0 z-30 transition-opacity duration-300 ${
-          isHovering || !isPlaying || isDragging
+          isHovering || isContainerHovered || !isPlaying || isDragging
             ? "opacity-100"
             : "opacity-0"
         }`}
@@ -159,17 +163,19 @@ export const CustomVideoControls = ({
           <div className="absolute inset-0 bg-white/20 rounded-none" />
           {/* Buffered */}
           <div
-            className="absolute inset-y-0 left-0 bg-white/30 rounded-none"
+            className="absolute inset-y-0 left-0 bg-white/30 rounded-none transition-[width] duration-150"
             style={{ width: `${bufferedPercent}%` }}
           />
-          {/* Progress */}
+          {/* Progress fill */}
           <div
-            className="absolute inset-y-0 left-0 bg-primary rounded-none"
+            className="absolute inset-y-0 left-0 bg-primary rounded-none transition-[width] duration-150"
             style={{ width: `${progress}%` }}
           />
-          {/* Thumb */}
+          {/* Draggable thumb - always visible */}
           <div
-            className="absolute top-1/2 -translate-y-1/2 w-3.5 h-3.5 bg-primary rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity"
+            className={`absolute top-1/2 w-4 h-4 bg-primary rounded-full shadow-md border-2 border-white transition-transform duration-150 cursor-grab active:cursor-grabbing ${
+              isDragging ? "scale-125" : "group-hover:scale-110 scale-100"
+            }`}
             style={{
               left: `${progress}%`,
               transform: "translate(-50%, -50%)",
