@@ -1,10 +1,6 @@
 
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-} from "@/components/ui/dialog";
 import { Form } from "@/components/ui/form";
 import { Send, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,6 +9,7 @@ import { CategorySelect } from "./CategorySelect";
 import { ContactFormFields } from "./ContactFormFields";
 import { FormValues, formSchema } from "./types";
 import { useIsMobile } from "@/hooks/use-mobile";
+import * as DialogPrimitive from "@radix-ui/react-dialog";
 
 interface ContactDialogProps {
   open: boolean;
@@ -70,47 +67,82 @@ export const ContactDialog = ({ open, onOpenChange }: ContactDialogProps) => {
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        hideCloseButton
-        className={`${isMobile ? 'w-[calc(100%-2rem)] max-h-[90vh]' : 'w-[500px] max-h-[85vh]'} p-0 rounded-3xl overflow-hidden border-2 border-primary bg-background/80 backdrop-blur-2xl shadow-2xl`}
-      >
-        <button
-          onClick={() => onOpenChange(false)}
-          className="absolute right-4 top-4 z-10 w-8 h-8 rounded-full border-2 border-primary bg-background text-primary hover:bg-primary hover:text-primary-foreground transition-colors flex items-center justify-center"
-        >
-          <X className="h-4 w-4" />
-          <span className="sr-only">Close</span>
-        </button>
+    <DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
+      <DialogPrimitive.Portal>
+        {/* Smooth blurred overlay */}
+        <DialogPrimitive.Overlay
+          className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm"
+          style={{
+            animation: open ? 'contactFadeIn 0.2s ease-out' : undefined,
+          }}
+        />
 
-        <div className="px-6 pt-6 pb-4 border-b-2 border-primary">
-          <div className="flex items-center gap-3 pr-10">
-            <div className="w-11 h-11 rounded-full border-2 border-[#FFCC00] bg-[#FFCC00] flex items-center justify-center">
-              <Send className="w-5 h-5 text-primary" />
-            </div>
-            <div>
-              <h2 className="text-lg font-bold text-primary tracking-tight">Contact Us</h2>
-              <p className="text-xs text-[#FFCC00] font-medium">We'd love to hear from you</p>
+        {/* Dialog content - custom smooth animation */}
+        <DialogPrimitive.Content
+          className={`fixed left-[50%] top-[50%] z-50 translate-x-[-50%] translate-y-[-50%] ${isMobile ? 'w-[calc(100%-2rem)] max-h-[90vh]' : 'w-[500px] max-h-[85vh]'} rounded-3xl overflow-hidden border-2 shadow-2xl p-0`}
+          style={{
+            borderColor: '#FF0000',
+            backgroundColor: 'rgba(255,255,255,0.92)',
+            backdropFilter: 'blur(24px)',
+            animation: open ? 'contactScaleIn 0.25s cubic-bezier(0.16, 1, 0.3, 1)' : undefined,
+          }}
+        >
+          {/* Close button */}
+          <button
+            onClick={() => onOpenChange(false)}
+            className="absolute right-4 top-4 z-10 w-8 h-8 rounded-full border-2 flex items-center justify-center transition-colors"
+            style={{ borderColor: '#FF0000', color: '#FF0000', backgroundColor: 'white' }}
+            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#FF0000'; e.currentTarget.style.color = 'white'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'white'; e.currentTarget.style.color = '#FF0000'; }}
+          >
+            <X className="h-4 w-4" />
+            <span className="sr-only">Close</span>
+          </button>
+
+          {/* Header */}
+          <div className="px-6 pt-6 pb-4" style={{ borderBottom: '2px solid #FF0000' }}>
+            <div className="flex items-center gap-3 pr-10">
+              <div className="w-11 h-11 rounded-full border-2 flex items-center justify-center" style={{ borderColor: '#FFCC00', backgroundColor: '#FFCC00' }}>
+                <Send className="w-5 h-5" style={{ color: '#FF0000' }} />
+              </div>
+              <div>
+                <h2 className="text-lg font-bold tracking-tight" style={{ color: '#FF0000' }}>Contact Us</h2>
+                <p className="text-xs font-medium" style={{ color: '#FFCC00' }}>We'd love to hear from you</p>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="px-6 pt-5 pb-6 overflow-y-auto bg-background/60" style={{ maxHeight: isMobile ? 'calc(90vh - 100px)' : 'calc(85vh - 100px)' }}>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5 text-primary">
-              <CategorySelect form={form} />
-              <ContactFormFields form={form} />
-              <Button
-                type="submit"
-                className="w-full h-11 text-sm font-bold rounded-full border-2 border-primary !bg-primary !text-primary-foreground hover:!bg-primary/90 flex items-center justify-center gap-2"
-              >
-                <Send className="w-4 h-4" />
-                Send Message
-              </Button>
-            </form>
-          </Form>
-        </div>
-      </DialogContent>
-    </Dialog>
+          {/* Form */}
+          <div className="px-6 pt-5 pb-6 overflow-y-auto" style={{ maxHeight: isMobile ? 'calc(90vh - 100px)' : 'calc(85vh - 100px)' }}>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+                <CategorySelect form={form} />
+                <ContactFormFields form={form} />
+                <button
+                  type="submit"
+                  className="w-full h-11 text-sm font-bold rounded-full border-2 flex items-center justify-center gap-2 transition-opacity hover:opacity-90"
+                  style={{ backgroundColor: '#FF0000', borderColor: '#FF0000', color: 'white' }}
+                >
+                  <Send className="w-4 h-4" />
+                  Send Message
+                </button>
+              </form>
+            </Form>
+          </div>
+        </DialogPrimitive.Content>
+      </DialogPrimitive.Portal>
+
+      {/* Inline keyframes for smooth animation */}
+      <style>{`
+        @keyframes contactFadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes contactScaleIn {
+          from { opacity: 0; transform: translate(-50%, -50%) scale(0.97); }
+          to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+      `}</style>
+    </DialogPrimitive.Root>
   );
 };
