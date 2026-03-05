@@ -57,16 +57,8 @@ export const DesktopVideoView = ({
   // Reserve layout while loading to prevent mobile scroll jumps/layout shifts
   if (isLoading && videos.length === 0) {
     return (
-      <div className={`${sectionSpacing} ${containerPadding} max-w-[1600px] mx-auto`}>
-        <section className="mb-6">
-          <div className={`${isMobile ? 'h-[180px]' : isTablet ? 'h-[220px]' : 'h-[260px]'} rounded-2xl bg-muted/30 animate-pulse`} />
-        </section>
-        <section>
-          <div className={`${isMobile ? 'h-[280px]' : isTablet ? 'h-[340px]' : 'h-[380px]'} rounded-3xl bg-muted/30 animate-pulse`} />
-        </section>
-        <section>
-          <div className={`${isMobile ? 'h-[280px]' : isTablet ? 'h-[340px]' : 'h-[380px]'} rounded-3xl bg-muted/30 animate-pulse`} />
-        </section>
+      <div className={`flex items-center justify-center ${isMobile ? 'min-h-[200px]' : 'min-h-[400px]'} ${containerPadding} max-w-[1600px] mx-auto`}>
+        <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
       </div>
     );
   }
