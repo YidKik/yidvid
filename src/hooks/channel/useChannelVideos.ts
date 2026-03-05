@@ -89,8 +89,9 @@ export const useChannelVideos = (channelId: string | undefined) => {
     },
     retry: 2,
     refetchOnWindowFocus: false,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 2 * 60 * 1000, // 2 minutes
     enabled: !!channelId,
+    placeholderData: (prev: any) => prev,
     meta: {
       suppressToasts: true // Don't show toast notifications
     }
