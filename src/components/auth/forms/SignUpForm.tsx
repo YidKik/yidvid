@@ -47,7 +47,8 @@ export const SignUpForm = ({
         options: {
           emailRedirectTo: `${window.location.origin}/`,
           data: {
-            username
+            username,
+            full_name: username
           }
         }
       });
@@ -59,6 +60,16 @@ export const SignUpForm = ({
       }
 
       if (signUpData?.user) {
+        // Save username to profile immediately
+        await supabase
+          .from("profiles")
+          .update({ 
+            username: username,
+            display_name: username,
+            name: username
+          })
+          .eq("id", signUpData.user.id);
+
         const { error: signInError } = await supabase.auth.signInWithPassword({
           email,
           password

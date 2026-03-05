@@ -9,7 +9,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 
 type Comment = VideoCommentsTable["Row"] & {
   profiles: {
-    email: string;
+    username?: string | null;
     name?: string;
     display_name?: string;
   } | null;
@@ -30,7 +30,7 @@ export const VideoComments = ({ videoId }: VideoCommentsProps) => {
         .select(`
           *,
           profiles (
-            email,
+            username,
             name,
             display_name
           ),

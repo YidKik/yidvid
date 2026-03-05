@@ -3,7 +3,7 @@ import { VideoCommentsTable } from "@/integrations/supabase/types/video-comments
 
 type Comment = VideoCommentsTable["Row"] & {
   profiles: {
-    email: string;
+    username?: string | null;
     name?: string;
     display_name?: string;
   } | null;
@@ -16,7 +16,7 @@ interface CommentListProps {
 export const CommentList = ({ comments }: CommentListProps) => {
   const getDisplayName = (profile: Comment['profiles']) => {
     if (!profile) return "Anonymous";
-    return profile.display_name || profile.name || profile.email || "Anonymous";
+    return profile.username || profile.display_name || profile.name || "Anonymous";
   };
 
   return (
