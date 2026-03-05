@@ -2,7 +2,7 @@
 import { Channel } from "@/hooks/channel/useChannelsGrid";
 import { ChannelCard } from "./ChannelCard";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { DelayedLoadingAnimation } from "@/components/ui/DelayedLoadingAnimation";
+import { Loader2 } from "lucide-react";
 
 interface FilteredChannelsGridProps {
   channels: Channel[];
@@ -17,24 +17,18 @@ export const FilteredChannelsGrid = ({
 }: FilteredChannelsGridProps) => {
   const { isMobile, isTablet } = useIsMobile();
 
-  // Show loading animation if loading
   if (isLoading) {
     return (
       <div className="flex items-center justify-center my-8">
-        <DelayedLoadingAnimation 
-          size={isMobile ? "small" : "medium"} 
-          text="Loading channels..."
-          delayMs={3000}
-        />
+        <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
       </div>
     );
   }
 
-  // Determine column count based on screen size - ENFORCED TABLET LOGIC
   const getGridColumns = () => {
     if (isMobile) return 'grid-cols-2';
-    if (isTablet) return 'grid-cols-3'; // ENFORCED: Tablet shows exactly 3 columns
-    return 'grid-cols-5'; // Default for desktop
+    if (isTablet) return 'grid-cols-3';
+    return 'grid-cols-5';
   };
 
   return (

@@ -1,18 +1,11 @@
 
 import React from "react";
-import { LoadingAnimation } from "@/components/ui/LoadingAnimation";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { Loader2 } from "lucide-react";
 
 export const CategorySkeleton: React.FC = () => {
-  const isMobile = useIsMobile();
-  
   return (
     <div className="flex justify-center items-center h-[100px] md:h-[150px]">
-      <LoadingAnimation 
-        size={isMobile ? "small" : "medium"} 
-        color="accent" 
-        text="Loading categories..." 
-      />
+      <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
     </div>
   );
 };
