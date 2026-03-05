@@ -117,8 +117,8 @@ export const CustomVideoControls = ({
       onMouseEnter={() => setIsContainerHovered(true)}
       onMouseLeave={() => setIsContainerHovered(false)}
     >
-      {/* Big center play button when paused and not hovering */}
-      {!isPlaying && !isContainerHovered && (
+      {/* Big center play button when paused and hovering */}
+      {!isPlaying && isContainerHovered && (
         <button
           className="absolute inset-0 z-20 flex items-center justify-center bg-black/20 transition-opacity"
           onClick={onTogglePlay}
