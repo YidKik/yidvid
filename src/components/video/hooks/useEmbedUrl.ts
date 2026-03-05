@@ -10,7 +10,7 @@ export const useEmbedUrl = (videoId: string) => {
   const createEmbedUrl = useCallback((videoId: string) => {
     const baseUrl = `https://www.youtube-nocookie.com/embed/${videoId}`;
     const params = new URLSearchParams({
-      autoplay: "1",
+      autoplay: "0",
       rel: "0",
       modestbranding: "1",
       enablejsapi: "1",

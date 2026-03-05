@@ -130,7 +130,7 @@ export const useYouTubePlayer = (
           const playerState = data.info;
           setState((s) => ({
             ...s,
-            isPlaying: playerState === 1 || playerState === 3,
+            isPlaying: playerState === 1,
           }));
           if (playerState === 0 && onVideoEnd) {
             onVideoEnd();
