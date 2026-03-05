@@ -40,9 +40,48 @@ export const useYouTubePlayer = (
     [iframeRef]
   );
 
+  // Initialize the YouTube IFrame API by sending "listening" message
+  useEffect(() => {
+    const iframe = iframeRef.current;
+    if (!iframe) return;
+
+    const sendListening = () => {
+      if (iframe.contentWindow) {
+        iframe.contentWindow.postMessage(
+          JSON.stringify({ event: "listening" }),
+          "*"
+        );
+      }
+    };
+
+    // Send listening on load and also periodically until ready
+    const onLoad = () => {
+      sendListening();
+    };
+    iframe.addEventListener("load", onLoad);
+
+    // Retry sending "listening" until we get onReady
+    const interval = setInterval(() => {
+      if (!state.isReady) {
+        sendListening();
+      } else {
+        clearInterval(interval);
+      }
+    }, 250);
+
+    // Also try immediately
+    sendListening();
+
+    return () => {
+      iframe.removeEventListener("load", onLoad);
+      clearInterval(interval);
+    };
+  }, [iframeRef, state.isReady]);
+
   // Listen for YouTube messages
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
+      // Accept messages from YouTube origins
       if (
         event.origin !== "https://www.youtube.com" &&
         event.origin !== "https://www.youtube-nocookie.com"

@@ -57,6 +57,7 @@ export const CustomVideoControls = ({
   const [isHovering, setIsHovering] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [showVolume, setShowVolume] = useState(false);
+  const [isContainerHovered, setIsContainerHovered] = useState(false);
   const progressRef = useRef<HTMLDivElement>(null);
 
   const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
