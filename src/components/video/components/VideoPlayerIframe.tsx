@@ -35,7 +35,7 @@ export const VideoPlayerIframe = forwardRef<HTMLIFrameElement, VideoPlayerIframe
       <iframe
         ref={ref}
         src={embedUrl}
-        className={`w-full h-full absolute inset-0 transition-opacity duration-300 ${
+        className={`w-full h-full absolute inset-0 transition-opacity duration-300 pointer-events-none ${
           isLoading ? "opacity-30" : "opacity-100"
         }`}
         allowFullScreen
