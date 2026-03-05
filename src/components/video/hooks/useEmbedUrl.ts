@@ -11,16 +11,18 @@ export const useEmbedUrl = (videoId: string) => {
     const baseUrl = `https://www.youtube-nocookie.com/embed/${videoId}`;
     const params = new URLSearchParams({
       autoplay: "1",
-      rel: "0", // Show related videos from same channel only (can't fully disable)
-      modestbranding: "1", // Minimize YouTube branding
-      enablejsapi: "1", // Enable JavaScript API for control
+      rel: "0",
+      modestbranding: "1",
+      enablejsapi: "1",
       origin: window.location.origin,
-      iv_load_policy: "3", // Hide video annotations
-      cc_load_policy: "0", // Don't show captions by default
-      disablekb: "1", // Disable keyboard controls to prevent YouTube shortcuts
-      playsinline: "1", // Play inline on mobile
-      fs: "1", // Allow fullscreen
-      color: "white", // Use white progress bar
+      iv_load_policy: "3",
+      cc_load_policy: "0",
+      disablekb: "1",
+      playsinline: "1",
+      fs: "1",
+      color: "white",
+      showinfo: "0",
+      controls: "1",
     });
     return `${baseUrl}?${params.toString()}`;
   }, []);
