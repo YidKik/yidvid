@@ -1,5 +1,5 @@
 
-import { User, LogOut, Trash2, LayoutDashboard } from "lucide-react";
+import { User, LogOut, Trash2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
