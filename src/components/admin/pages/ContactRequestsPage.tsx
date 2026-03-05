@@ -1,6 +1,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ContactRequestsSection } from "@/components/dashboard/ContactRequestsSection";
 import { AdminEmailManagementSection } from "@/components/dashboard/AdminEmailManagementSection";
+import { BroadcastEmailSection } from "@/components/admin/BroadcastEmailSection";
 
 export const ContactRequestsPage = () => {
   return (
@@ -9,6 +10,7 @@ export const ContactRequestsPage = () => {
         <TabsList>
           <TabsTrigger value="requests">Contact Requests</TabsTrigger>
           <TabsTrigger value="email">Email Settings</TabsTrigger>
+          <TabsTrigger value="broadcast">Broadcast</TabsTrigger>
         </TabsList>
 
         <TabsContent value="requests">
@@ -17,6 +19,10 @@ export const ContactRequestsPage = () => {
 
         <TabsContent value="email">
           <AdminEmailManagementSection />
+        </TabsContent>
+
+        <TabsContent value="broadcast">
+          <BroadcastEmailSection />
         </TabsContent>
       </Tabs>
     </div>
