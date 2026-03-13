@@ -16,7 +16,7 @@ export const HomeHero = () => {
         <img
           src="/lovable-uploads/e3f1c50b-8945-4b12-977d-c47c9d1c7083.png"
           alt="YidVid Logo"
-          className="w-44 md:w-52 h-auto mb-5 mx-auto md:mx-0"
+          className="w-52 md:w-64 h-auto mb-5 mx-auto md:mx-0"
           draggable={false}
         />
 

@@ -59,7 +59,7 @@ export function HeroGeometric({
                         <img 
                             src="/yidvid-logo-full.png" 
                             alt="YidVid Logo" 
-                            className="h-48 w-auto"
+                            className="h-56 w-auto"
                         />
                     </motion.div>
 

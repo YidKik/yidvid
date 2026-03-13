@@ -23,7 +23,7 @@ export const HeaderLogo = ({ isMobile, isMobileMenuOpen, onMobileMenuToggle }: H
         <img 
           src={yidvidLogoFull} 
           alt="YidVid Logo" 
-          className={`${isMobile ? 'h-8' : 'h-10'} w-auto`}
+          className={`${isMobile ? 'h-10' : 'h-12'} w-auto`}
         />
       </Link>
     </div>
