@@ -133,6 +133,7 @@ export const useYouTubePlayer = (
           setState((s) => ({
             ...s,
             isPlaying: playerState === 1,
+            hasEnded: playerState === 0,
           }));
           if (playerState === 0 && onVideoEnd) {
             onVideoEnd();
