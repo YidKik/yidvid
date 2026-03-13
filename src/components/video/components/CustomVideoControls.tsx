@@ -168,17 +168,18 @@ export const CustomVideoControls = ({
           />
           {/* Progress fill */}
           <div
-            className="absolute inset-y-0 left-0 bg-primary rounded-none transition-[width] duration-150"
-            style={{ width: `${progress}%` }}
+            className="absolute inset-y-0 left-0 rounded-none transition-[width] duration-150"
+            style={{ width: `${progress}%`, backgroundColor: '#FF0000' }}
           />
-          {/* Draggable thumb - outlined circle, primary red */}
+          {/* Draggable thumb - outlined circle, red */}
           <div
-            className={`absolute top-1/2 w-4 h-4 rounded-full shadow-md border-2 border-primary bg-white transition-transform duration-150 cursor-grab active:cursor-grabbing ${
+            className={`absolute top-1/2 w-4 h-4 rounded-full shadow-md bg-white transition-transform duration-150 cursor-grab active:cursor-grabbing ${
               isDragging ? "scale-125" : "group-hover:scale-110 scale-100"
             }`}
             style={{
               left: `${progress}%`,
               transform: "translate(-50%, -50%)",
+              border: "2px solid #FF0000",
             }}
           />
         </div>
@@ -189,7 +190,10 @@ export const CustomVideoControls = ({
           <div className="flex items-center gap-3">
             <button
               onClick={onTogglePlay}
-              className="text-white hover:text-primary transition-colors group/play"
+              className="text-white transition-colors group/play"
+              style={{ }}
+              onMouseEnter={(e) => e.currentTarget.style.color = '#FF0000'}
+              onMouseLeave={(e) => e.currentTarget.style.color = 'white'}
             >
               {isPlaying ? (
                 <Pause className="w-5 h-5 fill-current" />
@@ -206,7 +210,9 @@ export const CustomVideoControls = ({
             >
               <button
                 onClick={onToggleMute}
-                className="text-white hover:text-primary transition-colors"
+                className="text-white transition-colors"
+                onMouseEnter={(e) => e.currentTarget.style.color = '#FF0000'}
+                onMouseLeave={(e) => e.currentTarget.style.color = 'white'}
               >
                 <VolumeIcon className="w-5 h-5" />
               </button>
@@ -237,7 +243,11 @@ export const CustomVideoControls = ({
             {/* Playback speed */}
             <Popover>
               <PopoverTrigger asChild>
-                <button className="text-white hover:text-primary transition-colors">
+                <button
+                  className="text-white transition-colors"
+                  onMouseEnter={(e) => e.currentTarget.style.color = '#FF0000'}
+                  onMouseLeave={(e) => e.currentTarget.style.color = 'white'}
+                >
                   <Settings className="w-4.5 h-4.5" />
                 </button>
               </PopoverTrigger>
@@ -276,7 +286,9 @@ export const CustomVideoControls = ({
             {/* Fullscreen */}
             <button
               onClick={onFullscreen}
-              className="text-white hover:text-primary transition-colors"
+              className="text-white transition-colors"
+              onMouseEnter={(e) => e.currentTarget.style.color = '#FF0000'}
+              onMouseLeave={(e) => e.currentTarget.style.color = 'white'}
             >
               <Maximize className="w-4.5 h-4.5" />
             </button>
