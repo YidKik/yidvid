@@ -64,7 +64,7 @@ export const loadingSizeConfig = {
   large: {
     container: "h-24 w-24",
     spinner: "h-24 w-24",
-    innerSpinner: "h-18 w-18",
+    innerSpinner: "h-[72px] w-[72px]",
     centerDot: "h-10 w-10 flex items-center justify-center",
     fontSize: "text-base",
     logoSize: "h-7 w-7",
