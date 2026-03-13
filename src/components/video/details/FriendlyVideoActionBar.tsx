@@ -111,7 +111,7 @@ export const FriendlyVideoActionBar = ({
             video_id: videoId,
             interaction_type: 'like' as InteractionType
           });
-        toast.success("Added to liked videos");
+        // Like saved silently
       } catch (error) {
         console.error('Error saving like:', error);
       }
