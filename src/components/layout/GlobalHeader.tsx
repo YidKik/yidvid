@@ -44,6 +44,15 @@ export const GlobalHeader = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [setIsSearchOpen]);
 
+  // Listen for the custom auth dialog event (e.g. from Sign In buttons elsewhere)
+  useEffect(() => {
+    const handleOpenAuthDialog = () => {
+      setIsAuthOpen(true);
+    };
+    document.addEventListener('openAuthDialog', handleOpenAuthDialog);
+    return () => document.removeEventListener('openAuthDialog', handleOpenAuthDialog);
+  }, []);
+
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
