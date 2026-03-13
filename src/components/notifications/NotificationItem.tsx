@@ -53,7 +53,7 @@ export const NotificationItem = ({ notification, onNotificationClick }: Notifica
                 const logoImg = document.createElement('img');
                 logoImg.src = "/yidvid-logo-icon.png";
                 logoImg.alt = "YidVid Logo";
-                logoImg.className = 'w-12 h-12 sm:w-14 sm:h-14 opacity-80'; // Small centered logo
+                logoImg.className = 'w-16 h-16 sm:w-20 sm:h-20 opacity-85'; // Small centered logo
                 
                 logoOverlay.appendChild(logoImg);
                 parent.appendChild(logoOverlay);

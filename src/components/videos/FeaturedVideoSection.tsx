@@ -112,11 +112,11 @@ export const FeaturedVideoSection = ({ videos }: FeaturedVideoSectionProps) => {
                 
                 {/* Play Button on Hover - YidVid Logo */}
                 <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className={`${isMobile ? 'w-16 h-16' : 'w-[84px] h-[84px]'} rounded-full bg-yellow-400 flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform`}>
+                  <div className={`${isMobile ? 'w-20 h-20' : 'w-[104px] h-[104px]'} rounded-full bg-yellow-400 flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform`}>
                     <img 
                       src={yidvidLogoIcon} 
                       alt="Play" 
-                      className={`${isMobile ? 'w-12 h-12' : 'w-14 h-14'} object-contain`}
+                      className={`${isMobile ? 'w-14 h-14' : 'w-16 h-16'} object-contain`}
                       style={{ 
                         filter: 'brightness(0) saturate(100%)'
                       }}
