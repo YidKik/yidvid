@@ -26,7 +26,7 @@ export const Footer = () => {
               <img 
                 src={yidvidLogo} 
                 alt="YidVid" 
-                className="w-12 h-12 object-contain"
+                className="w-12 h-12 object-contain scale-110"
               />
               <span 
                 className="text-xs font-medium"
