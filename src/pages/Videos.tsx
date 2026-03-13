@@ -140,7 +140,7 @@ const Videos = () => {
         
         <meta property="og:title" content="Kosher videos | YidVid kosher content" />
         <meta property="og:description" content="YidVid is your premier Jewish kosher Yiddish platform featuring thousands of videos, content from trusted sources." />
-        <meta property="og:image" content="/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png" />
+        <meta property="og:image" content="/yidvid-logo-full.png" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content={`${window.location.origin}/videos`} />
         
