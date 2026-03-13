@@ -7,7 +7,7 @@
 /* Logo sizing */
 .header-logo img {
   height: auto;
-  max-height: 40px;
+  max-height: 48px;
   object-fit: contain;
   display: block; /* Ensure the image displays properly */
 }
