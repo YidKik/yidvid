@@ -55,14 +55,14 @@ export const MobileVideosHeader = ({
 
   return (
     <>
-      <div className="flex items-center justify-between w-full px-3 h-20">
+      <div className="flex items-center justify-between w-full px-3 h-16">
         {/* Left: Logo or Search */}
         {!isSearchExpanded ? (
           <Link to="/" className="flex items-center">
             <img 
               src={yidvidLogoIcon} 
               alt="YidVid Logo" 
-              className="h-16 w-auto"
+              className="h-12 w-auto"
             />
           </Link>
         ) : (
