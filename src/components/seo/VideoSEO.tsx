@@ -56,7 +56,7 @@ export const VideoSEO = ({ video, pageUrl }: VideoSEOProps) => {
       <meta name="twitter:card" content="player" />
       <meta name="twitter:title" content={metaTitle} />
       <meta name="twitter:description" content={metaDescription} />
-      <meta name="twitter:image" content={video.thumbnail || "/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png"} />
+      <meta name="twitter:image" content={video.thumbnail || "/yidvid-logo-full.png"} />
       <meta name="twitter:player" content={`https://www.youtube-nocookie.com/embed/${video.video_id}`} />
       <meta name="twitter:player:width" content="1280" />
       <meta name="twitter:player:height" content="720" />

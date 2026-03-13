@@ -159,7 +159,7 @@ const Videos = () => {
             "publisher": {
               "@type": "Organization",
               "name": "YidVid",
-              "logo": "/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png"
+              "logo": "/yidvid-logo-full.png"
             }
           })}
         </script>
