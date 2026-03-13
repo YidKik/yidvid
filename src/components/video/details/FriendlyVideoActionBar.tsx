@@ -273,33 +273,37 @@ export const FriendlyVideoActionBar = ({
                 <Share2 className="h-3.5 w-3.5" />
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[360px] bg-white border-[#E5E5E5] shadow-xl [&>button]:hidden">
-              <button onClick={() => setShareOpen(false)}
-                className="absolute right-4 top-4 text-muted-foreground hover:text-foreground transition-colors z-10">
-                <X className="h-5 w-5" />
-              </button>
-              <DialogHeader>
-                <DialogTitle className="text-lg font-semibold flex items-center gap-2">
-                  <Share2 className="h-5 w-5 text-yellow-500" />
-                  Share this video
-                </DialogTitle>
-              </DialogHeader>
-              <div className="grid grid-cols-2 gap-3 py-4">
+            <DialogContent className="sm:max-w-[340px] p-0 bg-white border border-[#E5E5E5] rounded-2xl overflow-hidden shadow-xl [&>button]:hidden">
+              {/* Header */}
+              <div className="flex items-center justify-between px-5 py-3.5 border-b border-[#E5E5E5]">
+                <h3 className="text-sm font-bold text-[#1A1A1A] tracking-tight">Share</h3>
+                <button onClick={() => setShareOpen(false)}
+                  className="text-[#999999] hover:text-[#1A1A1A] transition-colors">
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+              {/* Share options */}
+              <div className="px-5 py-4 space-y-1">
                 {shareOptions.map((option) => (
                   <button key={option.name}
                     onClick={() => { option.action(); setShareOpen(false); }}
-                    className="flex flex-col items-center gap-2 p-4 rounded-xl bg-[#F5F5F5] hover:bg-[#E5E5E5] border border-transparent transition-all duration-200">
-                    <option.icon className={`h-6 w-6 ${option.color}`} />
-                    <span className="text-xs font-medium text-muted-foreground">{option.name}</span>
+                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-[#F5F5F5] transition-colors duration-150 group">
+                    <div className="h-9 w-9 rounded-full bg-[#F5F5F5] group-hover:bg-white border border-[#E5E5E5] flex items-center justify-center flex-shrink-0">
+                      <option.icon className={`h-4 w-4 ${option.color}`} />
+                    </div>
+                    <span className="text-sm font-medium text-[#1A1A1A]">{option.name}</span>
                   </button>
                 ))}
               </div>
+              {/* Native share */}
               {navigator.share && (
-                <button onClick={handleShareNative}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-[#FFCC00] hover:brightness-90 text-[#1A1A1A] font-medium transition-all duration-200">
-                  <Share2 className="h-4 w-4" />
-                  More sharing options...
-                </button>
+                <div className="px-5 pb-4">
+                  <button onClick={handleShareNative}
+                    className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#FF0000] hover:brightness-90 text-white text-sm font-semibold transition-all duration-200">
+                    <Share2 className="h-4 w-4" />
+                    More options
+                  </button>
+                </div>
               )}
             </DialogContent>
           </Dialog>
