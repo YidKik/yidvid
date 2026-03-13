@@ -15,22 +15,22 @@ export const YouTubeStyleLoading: React.FC<YouTubeStyleLoadingProps> = ({
   // Size configurations
   const sizeConfig = {
     small: { 
-      containerWidth: 210, 
-      logoSize: 50, 
+      containerWidth: 220, 
+      logoSize: 64, 
       lineHeight: 3,
-      containerHeight: 100,
+      containerHeight: 112,
     },
     medium: { 
-      containerWidth: 320, 
-      logoSize: 68, 
+      containerWidth: 340, 
+      logoSize: 86, 
       lineHeight: 4,
-      containerHeight: 128,
+      containerHeight: 140,
     },
     large: { 
-      containerWidth: 420, 
-      logoSize: 84, 
+      containerWidth: 440, 
+      logoSize: 108, 
       lineHeight: 5,
-      containerHeight: 148,
+      containerHeight: 164,
     },
   };
 
