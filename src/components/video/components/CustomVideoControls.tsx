@@ -168,8 +168,8 @@ export const CustomVideoControls = ({
           />
           {/* Progress fill */}
           <div
-            className="absolute inset-y-0 left-0 bg-primary rounded-none transition-[width] duration-150"
-            style={{ width: `${progress}%` }}
+            className="absolute inset-y-0 left-0 rounded-none transition-[width] duration-150"
+            style={{ width: `${progress}%`, backgroundColor: '#FF0000' }}
           />
           {/* Draggable thumb - outlined circle, red */}
           <div
