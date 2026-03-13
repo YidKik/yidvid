@@ -23,42 +23,37 @@ export const VideoPlayerBranding = ({
 }: VideoPlayerBrandingProps) => {
   const [phase, setPhase] = useState<BrandingPhase>("hidden");
   const [animClass, setAnimClass] = useState("");
-  const introShownRef = useRef(false);
+  const hasPlayedOnceRef = useRef(false);
   const outroShownRef = useRef(false);
-  const soundPlayedRef = useRef(false);
 
-  // INTRO: Show logo while loading, fade out when ready
+  // INTRO: Show logo only after user clicks play (isPlaying becomes true for the first time)
+  // and the player was still buffering/loading
   useEffect(() => {
-    if (isLoading && !introShownRef.current) {
-      introShownRef.current = true;
-      soundPlayedRef.current = false;
+    if (isPlaying && !hasPlayedOnceRef.current) {
+      hasPlayedOnceRef.current = true;
       setPhase("intro");
       setAnimClass("animate-in");
+      // Play sound after a brief moment so logo is visible first
+      setTimeout(() => playSignatureSound(0.12), 150);
     }
-  }, [isLoading]);
+  }, [isPlaying]);
 
-  // Play sound once logo is visible
+  // When ready & playing, fade out intro after a short display
   useEffect(() => {
-    if (phase === "intro" && animClass === "animate-in" && !soundPlayedRef.current) {
-      soundPlayedRef.current = true;
-      // Small delay so the logo is visible first
-      const t = setTimeout(() => playSignatureSound(0.12), 150);
-      return () => clearTimeout(t);
-    }
-  }, [phase, animClass]);
-
-  // When ready, fade out intro
-  useEffect(() => {
-    if (isReady && phase === "intro") {
-      setAnimClass("animate-out");
+    if (phase === "intro" && isPlaying && isReady) {
+      // Show logo for at least 0.8s before fading
       const t = setTimeout(() => {
-        setPhase("hidden");
-        setAnimClass("");
-        onIntroComplete();
-      }, 600);
+        setAnimClass("animate-out");
+        const t2 = setTimeout(() => {
+          setPhase("hidden");
+          setAnimClass("");
+          onIntroComplete();
+        }, 600);
+        return () => clearTimeout(t2);
+      }, 800);
       return () => clearTimeout(t);
     }
-  }, [isReady, phase, onIntroComplete]);
+  }, [phase, isPlaying, isReady, onIntroComplete]);
 
   // OUTRO: Show logo briefly when video ends
   useEffect(() => {
@@ -68,7 +63,6 @@ export const VideoPlayerBranding = ({
       setAnimClass("animate-in");
       playSignatureSound(0.1);
 
-      // Fade out after 1.2s
       const t = setTimeout(() => {
         setAnimClass("animate-out");
         const t2 = setTimeout(() => {
@@ -82,7 +76,7 @@ export const VideoPlayerBranding = ({
     }
   }, [hasEnded, onOutroComplete]);
 
-  // Reset outro flag when a new video starts playing
+  // Reset outro flag when video replays
   useEffect(() => {
     if (isPlaying && outroShownRef.current) {
       outroShownRef.current = false;
@@ -93,14 +87,14 @@ export const VideoPlayerBranding = ({
 
   return (
     <div
-      className={`absolute inset-0 z-40 flex items-center justify-center bg-black/70 pointer-events-none transition-opacity duration-500 ${
+      className={`absolute inset-0 z-40 flex items-center justify-center bg-black/60 pointer-events-none transition-opacity duration-500 ${
         animClass === "animate-out" ? "opacity-0" : "opacity-100"
       }`}
     >
       <img
         src={yvLogoIcon}
         alt="YV"
-        className={`w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-2xl shadow-2xl transition-all duration-500 ${
+        className={`object-contain transition-all duration-500 ${
           animClass === "animate-in"
             ? "scale-100 opacity-100"
             : animClass === "animate-out"
@@ -108,7 +102,9 @@ export const VideoPlayerBranding = ({
             : "scale-75 opacity-0"
         }`}
         style={{
-          filter: "drop-shadow(0 0 20px rgba(255, 0, 0, 0.3))",
+          width: "120px",
+          height: "120px",
+          filter: "drop-shadow(0 0 24px rgba(255, 0, 0, 0.25))",
         }}
       />
     </div>
