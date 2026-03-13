@@ -189,12 +189,12 @@ export const CustomVideoControls = ({
           <div className="flex items-center gap-3">
             <button
               onClick={onTogglePlay}
-              className="text-white hover:text-primary transition-colors"
+              className="text-white hover:text-primary transition-colors group/play"
             >
               {isPlaying ? (
-                <Pause className="w-5 h-5" fill="white" />
+                <Pause className="w-5 h-5 fill-current" />
               ) : (
-                <Play className="w-5 h-5 ml-0.5" fill="white" />
+                <Play className="w-5 h-5 ml-0.5 fill-current" />
               )}
             </button>
 
