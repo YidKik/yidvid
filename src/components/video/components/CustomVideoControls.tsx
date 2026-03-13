@@ -8,6 +8,7 @@ import {
   Maximize,
   Settings,
 } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 import {
   Popover,
   PopoverContent,
@@ -60,6 +61,7 @@ export const CustomVideoControls = ({
   const [isContainerHovered, setIsContainerHovered] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const progressRef = useRef<HTMLDivElement>(null);
+  const { isMobile } = useIsMobile();
 
   const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
   const bufferedPercent = buffered * 100;
@@ -127,10 +129,10 @@ export const CustomVideoControls = ({
         }`}
         onClick={onTogglePlay}
       >
-        <div className={`w-16 h-16 rounded-full bg-primary/90 flex items-center justify-center shadow-lg hover:bg-primary transition-all duration-300 ${
+        <div className={`${isMobile ? 'w-10 h-10' : 'w-16 h-16'} rounded-full bg-primary/90 flex items-center justify-center shadow-lg hover:bg-primary transition-all duration-300 ${
           !isPlaying && isContainerHovered ? "scale-100" : "scale-75"
         }`}>
-          <Play className="w-7 h-7 text-white ml-1" fill="white" />
+          <Play className={`${isMobile ? 'w-4 h-4' : 'w-7 h-7'} text-white ml-0.5`} fill="white" />
         </div>
       </button>
 
@@ -157,7 +159,7 @@ export const CustomVideoControls = ({
         {/* Progress bar */}
         <div
           ref={progressRef}
-          className="relative w-full h-1.5 cursor-pointer group hover:h-2.5 transition-all mx-0 mb-0"
+          className={`relative w-full ${isMobile ? 'h-1' : 'h-1.5'} cursor-pointer group ${isMobile ? 'hover:h-1.5' : 'hover:h-2.5'} transition-all mx-0 mb-0`}
           onMouseDown={handleMouseDown}
         >
           {/* Track background */}
@@ -174,21 +176,21 @@ export const CustomVideoControls = ({
           />
           {/* Draggable thumb - outline only, no fill */}
           <div
-            className={`absolute top-1/2 w-4 h-4 rounded-full shadow-md bg-transparent transition-transform duration-150 cursor-grab active:cursor-grabbing ${
+            className={`absolute top-1/2 ${isMobile ? 'w-2.5 h-2.5' : 'w-4 h-4'} rounded-full shadow-md bg-transparent transition-transform duration-150 cursor-grab active:cursor-grabbing ${
               isDragging ? "scale-125" : "group-hover:scale-110 scale-100"
             }`}
             style={{
               left: `${progress}%`,
               transform: "translate(-50%, -50%)",
-              border: "2.5px solid #FF0000",
+              border: `${isMobile ? '2px' : '2.5px'} solid #FF0000`,
             }}
           />
         </div>
 
         {/* Controls row */}
-        <div className="flex items-center justify-between px-3 py-2">
+        <div className={`flex items-center justify-between ${isMobile ? 'px-2 py-1' : 'px-3 py-2'}`}>
           {/* Left side */}
-          <div className="flex items-center gap-3">
+          <div className={`flex items-center ${isMobile ? 'gap-2' : 'gap-3'}`}>
             <button
               onClick={onTogglePlay}
               className="text-white transition-colors group/play"
@@ -197,9 +199,9 @@ export const CustomVideoControls = ({
               onMouseLeave={(e) => e.currentTarget.style.color = 'white'}
             >
               {isPlaying ? (
-                <Pause className="w-5 h-5 fill-current" />
+                <Pause className={`${isMobile ? 'w-3.5 h-3.5' : 'w-5 h-5'} fill-current`} />
               ) : (
-                <Play className="w-5 h-5 ml-0.5 fill-current" />
+                <Play className={`${isMobile ? 'w-3.5 h-3.5' : 'w-5 h-5'} ml-0.5 fill-current`} />
               )}
             </button>
 
@@ -214,11 +216,11 @@ export const CustomVideoControls = ({
                 className="transition-colors"
                 style={{ color: showVolume ? '#FF0000' : 'white' }}
               >
-                <VolumeIcon className="w-5 h-5" />
+                <VolumeIcon className={`${isMobile ? 'w-3.5 h-3.5' : 'w-5 h-5'}`} />
               </button>
               <div
                 className={`overflow-hidden transition-all duration-200 ${
-                  showVolume ? "w-20 opacity-100" : "w-0 opacity-0"
+                  showVolume ? `${isMobile ? 'w-14' : 'w-20'} opacity-100` : "w-0 opacity-0"
                 }`}
               >
                 <input
@@ -234,13 +236,13 @@ export const CustomVideoControls = ({
             </div>
 
             {/* Time */}
-            <span className="text-white text-xs font-medium tabular-nums select-none">
+            <span className={`text-white ${isMobile ? 'text-[10px]' : 'text-xs'} font-medium tabular-nums select-none`}>
               {formatTime(currentTime)} / {formatTime(duration)}
             </span>
           </div>
 
           {/* Right side */}
-          <div className="flex items-center gap-2">
+          <div className={`flex items-center ${isMobile ? 'gap-1.5' : 'gap-2'}`}>
             {/* Playback speed */}
             <Popover open={settingsOpen} onOpenChange={setSettingsOpen}>
               <PopoverTrigger asChild>
@@ -250,7 +252,7 @@ export const CustomVideoControls = ({
                   onMouseEnter={(e) => e.currentTarget.style.color = '#FF0000'}
                   onMouseLeave={(e) => { if (!settingsOpen) e.currentTarget.style.color = 'white'; }}
                 >
-                  <Settings className="w-4.5 h-4.5" />
+                  <Settings className={`${isMobile ? 'w-3.5 h-3.5' : 'w-4.5 h-4.5'}`} />
                 </button>
               </PopoverTrigger>
               <PopoverContent
@@ -292,7 +294,7 @@ export const CustomVideoControls = ({
               onMouseEnter={(e) => e.currentTarget.style.color = '#FF0000'}
               onMouseLeave={(e) => e.currentTarget.style.color = 'white'}
             >
-              <Maximize className="w-4.5 h-4.5" />
+              <Maximize className={`${isMobile ? 'w-3.5 h-3.5' : 'w-4.5 h-4.5'}`} />
             </button>
           </div>
         </div>
