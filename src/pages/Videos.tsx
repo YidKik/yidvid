@@ -147,7 +147,7 @@ const Videos = () => {
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Kosher videos | YidVid kosher content" />
         <meta name="twitter:description" content="YidVid is your premier Jewish kosher Yiddish platform featuring thousands of videos, content from trusted sources." />
-        <meta name="twitter:image" content="/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png" />
+        <meta name="twitter:image" content="/yidvid-logo-full.png" />
         
         <script type="application/ld+json">
           {JSON.stringify({
