@@ -17,14 +17,14 @@ export const TrackInfo = ({ title, artistName, artistThumbnail, plays, uploadedA
       <div>
         <h1 className="text-2xl font-bold mb-2">{title}</h1>
         <div className="flex items-center gap-4 mb-4">
-          <Avatar className="w-12 h-12">
+          <Avatar className="w-14 h-14">
             <AvatarImage src={artistThumbnail} />
             <AvatarFallback>
               <div className="flex items-center justify-center w-full h-full">
                 <img 
                   src="/yidvid-logo-icon.png" 
                   alt="YidVid Logo" 
-                  className="w-10 h-10 object-contain"
+                  className="w-12 h-12 object-contain"
                   onError={() => {}} 
                 />
               </div>

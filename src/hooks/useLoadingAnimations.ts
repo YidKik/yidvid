@@ -42,32 +42,32 @@ export const useLoadingAnimations = () => {
 // Size configuration for different loading sizes
 export const loadingSizeConfig = {
   small: {
-    container: "h-9 w-9",
-    spinner: "h-9 w-9", 
-    innerSpinner: "h-7 w-7",
-    centerDot: "h-4 w-4 flex items-center justify-center",
+    container: "h-10 w-10",
+    spinner: "h-10 w-10", 
+    innerSpinner: "h-8 w-8",
+    centerDot: "h-5 w-5 flex items-center justify-center",
     fontSize: "text-xs mt-2",
-    logoSize: "h-4 w-4",
+    logoSize: "h-5 w-5",
     circle: "0.5rem", // Add circle size for OrbitalCircles and CenterLogo
     gap: "1.5rem"      // Add gap for OrbitalCircles
   },
   medium: {
-    container: "h-14 w-14",
-    spinner: "h-14 w-14",
-    innerSpinner: "h-10 w-10",
-    centerDot: "h-6 w-6 flex items-center justify-center",
+    container: "h-16 w-16",
+    spinner: "h-16 w-16",
+    innerSpinner: "h-12 w-12",
+    centerDot: "h-8 w-8 flex items-center justify-center",
     fontSize: "text-sm",
-    logoSize: "h-5 w-5",
+    logoSize: "h-6 w-6",
     circle: "0.75rem", // Add circle size for OrbitalCircles and CenterLogo
     gap: "2.5rem"      // Add gap for OrbitalCircles
   },
   large: {
-    container: "h-24 w-24",
-    spinner: "h-24 w-24",
-    innerSpinner: "h-[72px] w-[72px]",
-    centerDot: "h-10 w-10 flex items-center justify-center",
+    container: "h-28 w-28",
+    spinner: "h-28 w-28",
+    innerSpinner: "h-[84px] w-[84px]",
+    centerDot: "h-12 w-12 flex items-center justify-center",
     fontSize: "text-base",
-    logoSize: "h-7 w-7",
+    logoSize: "h-8 w-8",
     circle: "1rem",    // Add circle size for OrbitalCircles and CenterLogo
     gap: "3.5rem"      // Add gap for OrbitalCircles
   }
