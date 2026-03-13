@@ -171,9 +171,9 @@ export const CustomVideoControls = ({
             className="absolute inset-y-0 left-0 bg-primary rounded-none transition-[width] duration-150"
             style={{ width: `${progress}%` }}
           />
-          {/* Draggable thumb - always visible */}
+          {/* Draggable thumb - outlined circle, primary red */}
           <div
-            className={`absolute top-1/2 w-4 h-4 bg-primary rounded-full shadow-md border-2 border-white transition-transform duration-150 cursor-grab active:cursor-grabbing ${
+            className={`absolute top-1/2 w-4 h-4 rounded-full shadow-md border-2 border-primary bg-white transition-transform duration-150 cursor-grab active:cursor-grabbing ${
               isDragging ? "scale-125" : "group-hover:scale-110 scale-100"
             }`}
             style={{
@@ -189,12 +189,12 @@ export const CustomVideoControls = ({
           <div className="flex items-center gap-3">
             <button
               onClick={onTogglePlay}
-              className="text-white hover:text-primary transition-colors"
+              className="text-white hover:text-primary transition-colors group/play"
             >
               {isPlaying ? (
-                <Pause className="w-5 h-5" fill="white" />
+                <Pause className="w-5 h-5 fill-current" />
               ) : (
-                <Play className="w-5 h-5 ml-0.5" fill="white" />
+                <Play className="w-5 h-5 ml-0.5 fill-current" />
               )}
             </button>
 
