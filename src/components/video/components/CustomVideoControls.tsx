@@ -210,7 +210,9 @@ export const CustomVideoControls = ({
             >
               <button
                 onClick={onToggleMute}
-                className="text-white hover:text-primary transition-colors"
+                className="text-white transition-colors"
+                onMouseEnter={(e) => e.currentTarget.style.color = '#FF0000'}
+                onMouseLeave={(e) => e.currentTarget.style.color = 'white'}
               >
                 <VolumeIcon className="w-5 h-5" />
               </button>
