@@ -89,18 +89,18 @@ export const VideoInfo = ({
         <div className="flex items-center gap-3 flex-1">
           {channelId ? (
             <Link to={`/channel/${channelId}`} className="hover:opacity-80 transition-opacity">
-              <Avatar className="h-10 w-10 md:h-12 md:w-12 ring-2 ring-background shadow-lg">
+              <Avatar className="h-12 w-12 md:h-14 md:w-14 ring-2 ring-background shadow-lg">
                 <AvatarImage src={channelThumbnail || ''} alt={channelName} />
                 <AvatarFallback className="bg-primary/10 text-primary">
-                  <img src="/yidvid-logo-icon.png" alt="YidVid Logo" className="h-10 w-10" />
+                  <img src="/yidvid-logo-icon.png" alt="YidVid Logo" className="h-11 w-11" />
                 </AvatarFallback>
               </Avatar>
             </Link>
           ) : (
-            <Avatar className="h-10 w-10 md:h-12 m d:w-12 ring-2 ring-background shadow-lg">
+            <Avatar className="h-12 w-12 md:h-14 md:w-14 ring-2 ring-background shadow-lg">
               <AvatarImage src={channelThumbnail || ''} alt={channelName} />
               <AvatarFallback className="bg-primary/10 text-primary">
-                <img src="/yidvid-logo-icon.png" alt="YidVid Logo" className="h-10 w-10" />
+                <img src="/yidvid-logo-icon.png" alt="YidVid Logo" className="h-11 w-11" />
               </AvatarFallback>
             </Avatar>
           )}

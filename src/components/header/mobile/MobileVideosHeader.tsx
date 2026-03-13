@@ -62,7 +62,7 @@ export const MobileVideosHeader = ({
             <img 
               src={yidvidLogoIcon} 
               alt="YidVid Logo" 
-              className="h-10 w-auto"
+              className="h-12 w-auto"
             />
           </Link>
         ) : (
