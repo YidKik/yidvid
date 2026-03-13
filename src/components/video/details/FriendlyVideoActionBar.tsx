@@ -448,17 +448,15 @@ export const FriendlyVideoActionBar = ({
               ))}
             </div>
             {/* Native share */}
-            {navigator.share && (
-              <div className="px-5 pb-4">
-                <button
-                  onClick={handleShareNative}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#FF0000] hover:brightness-90 text-white text-sm font-semibold transition-all duration-200"
-                >
-                  <Share2 className="h-4 w-4" />
-                  More options
-                </button>
-              </div>
-            )}
+            <div className="px-5 pb-4">
+              <button
+                onClick={() => setShareOpen(false)}
+                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#FF0000] hover:brightness-90 text-white text-sm font-semibold transition-all duration-200"
+              >
+                <X className="h-4 w-4" />
+                Close
+              </button>
+            </div>
           </DialogContent>
         </Dialog>
 
