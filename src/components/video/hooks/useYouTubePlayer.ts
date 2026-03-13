@@ -23,6 +23,7 @@ export const useYouTubePlayer = (
     isMuted: false,
     isReady: false,
     buffered: 0,
+    hasEnded: false,
   });
 
   const previousVolumeRef = useRef(80);
