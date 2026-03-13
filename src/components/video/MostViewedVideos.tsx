@@ -25,7 +25,7 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
     return Array(10).fill(null).map((_, i) => ({
       id: `most-viewed-${i}`,
       title: `Most Viewed Sample ${i+1}`,
-      thumbnail: '/lovable-uploads/e425cacb-4c3a-4d81-b4e0-77fcbf10f61c.png',
+      thumbnail: '/yidvid-logo-icon.png',
       channelName: "Sample Channel",
       channelId: "sample-channel",
       views: 10000 - (i * 1000),

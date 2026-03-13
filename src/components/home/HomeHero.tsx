@@ -61,7 +61,7 @@ export const HomeHero = () => {
           <div className="absolute inset-0 bg-gradient-to-br from-[#ea384c]/10 to-purple-500/10 rounded-3xl transform rotate-3"></div>
           <div className="relative bg-white rounded-2xl shadow-xl overflow-hidden p-2">
             <img 
-              src="/lovable-uploads/efca5adc-d9d2-4c5b-8900-e078f9d49b6a.png" 
+              src="/yidvid-logo-full.png" 
               alt="Video content preview" 
               className="w-full h-auto rounded-xl"
               draggable={false}

@@ -92,7 +92,7 @@ const ResetPassword = () => {
       <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-md">
         <div className="mb-6 text-center">
           <img 
-            src="/lovable-uploads/e425cacb-4c3a-4d81-b4e0-77fcbf10f61c.png"
+            src="/yidvid-logo-full.png"
             alt="YidVid Logo"
             className="h-16 w-auto mx-auto mb-4 drop-shadow-lg" 
           />

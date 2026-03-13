@@ -55,7 +55,7 @@ export const getPageTitle = (path: string): string => {
 // Enhanced SEO metadata
 export const DEFAULT_META_DESCRIPTION = APP_DESCRIPTION;
 export const DEFAULT_META_KEYWORDS = "Jewish videos, Torah videos, Jewish lectures, Jewish education, Jewish music, Jewish content, Torah study, Jewish learning, Jewish media, kosher videos, Jewish platform, Torah classes, Jewish spirituality, Yiddish videos, kosher videos, Jewish videos, chasdesh videos, Jewish youtube, kosher you tube, Jewish youtube, kosher content, yiddish content";
-export const DEFAULT_META_IMAGE = "/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png"; // Updated to use the official logo
+export const DEFAULT_META_IMAGE = "/yidvid-logo-full.png";
 
 // New SEO utility functions
 export const getSEOConfig = (path: string, customConfig?: {

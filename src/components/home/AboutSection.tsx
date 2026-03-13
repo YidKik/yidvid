@@ -33,7 +33,7 @@ export const AboutSection = () => {
         </div>
         <div className="flex justify-center items-center">
           <img
-            src="/public/yidvid-logo.png"
+            src="/yidvid-logo-full.png"
             alt="YidVid Logo"
             className="w-[600px] h-[600px] object-contain"
           />

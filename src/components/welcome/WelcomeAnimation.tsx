@@ -170,7 +170,7 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ onComplete, 
               className="mb-8"
             >
               <img 
-                src="/lovable-uploads/dd4fbfcb-aeb9-4cd3-a7b1-9dbf07b81a43.png" 
+                src="/yidvid-logo-icon.png" 
                 alt="YidVid Logo" 
                 className="w-32 h-32 mx-auto object-contain drop-shadow-lg"
               />
