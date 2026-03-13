@@ -50,10 +50,16 @@ export const TrendingSection = ({ videos }: TrendingSectionProps) => {
     };
   }, [emblaApi, onSelect]);
 
-  // Sort by views to get trending videos
+  // Sort by views to get trending videos, max 2 per channel for diversity
   const allTrendingVideos = useMemo(() => {
-    return [...videos]
-      .sort((a, b) => (b.views || 0) - (a.views || 0));
+    const sorted = [...videos].sort((a, b) => (b.views || 0) - (a.views || 0));
+    const channelCount: Record<string, number> = {};
+    return sorted.filter(video => {
+      const count = channelCount[video.channel_id] || 0;
+      if (count >= 2) return false;
+      channelCount[video.channel_id] = count + 1;
+      return true;
+    });
   }, [videos]);
 
   // First row for carousel (15 videos)
