@@ -35,7 +35,7 @@ export const AboutSection = () => {
           <img
             src="/yidvid-logo-full.png"
             alt="YidVid Logo"
-            className="w-[600px] h-[600px] object-contain"
+            className="w-[650px] h-[650px] object-contain"
           />
         </div>
       </div>

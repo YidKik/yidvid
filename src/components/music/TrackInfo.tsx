@@ -24,7 +24,7 @@ export const TrackInfo = ({ title, artistName, artistThumbnail, plays, uploadedA
                 <img 
                   src="/yidvid-logo-icon.png" 
                   alt="YidVid Logo" 
-                  className="w-6 h-6 object-contain"
+                  className="w-8 h-8 object-contain"
                   onError={() => {}} 
                 />
               </div>

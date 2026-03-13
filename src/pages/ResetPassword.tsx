@@ -94,7 +94,7 @@ const ResetPassword = () => {
           <img 
             src="/yidvid-logo-full.png"
             alt="YidVid Logo"
-            className="h-16 w-auto mx-auto mb-4 drop-shadow-lg" 
+            className="h-20 w-auto mx-auto mb-4 drop-shadow-lg" 
           />
           <h2 className="text-2xl font-semibold text-gray-800">Reset Your Password</h2>
           <p className="text-sm text-gray-500 mt-1">

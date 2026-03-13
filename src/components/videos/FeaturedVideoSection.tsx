@@ -116,7 +116,7 @@ export const FeaturedVideoSection = ({ videos }: FeaturedVideoSectionProps) => {
                     <img 
                       src={yidvidLogoIcon} 
                       alt="Play" 
-                      className={`${isMobile ? 'w-6 h-6' : 'w-9 h-9'} object-contain`}
+                      className={`${isMobile ? 'w-8 h-8' : 'w-10 h-10'} object-contain`}
                       style={{ 
                         filter: 'brightness(0) saturate(100%)'
                       }}

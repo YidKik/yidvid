@@ -18,7 +18,7 @@ export const WelcomeSection = () => {
       <div className="max-w-md mx-auto px-6 text-center">
         {/* Logo */}
         <div className="mb-8 flex justify-center">
-          <img src="/yidvid-logo-full.png" alt="YidVid Logo" className="h-16" />
+          <img src="/yidvid-logo-full.png" alt="YidVid Logo" className="h-24" />
         </div>
         
         {/* Welcome text */}

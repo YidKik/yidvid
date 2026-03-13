@@ -214,7 +214,7 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
         effectiveIsExpanded ? "px-4 justify-between" : "px-2 justify-center"
       )}>
         <Link to="/" className="flex items-center gap-2 shrink-0">
-          <img src={yidvidLogoIcon} alt="YidVid" className="w-8 h-8 rounded-full object-contain" />
+          <img src={yidvidLogoIcon} alt="YidVid" className="w-10 h-10 rounded-full object-contain" />
           {effectiveIsExpanded && (
             <span className="text-base font-bold text-[#1A1A1A]" style={{ fontFamily: "'Fredoka One', 'Nunito', sans-serif" }}>
               YidVid
