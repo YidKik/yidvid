@@ -8,85 +8,40 @@ interface AnimatedPlayLogoProps {
 
 export const AnimatedPlayLogo: React.FC<AnimatedPlayLogoProps> = ({ className = '' }) => {
   const [showOriginalLogo, setShowOriginalLogo] = useState(false);
-  
-  // After animation completes, transition to original logo
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowOriginalLogo(true);
-    }, 2200); // Wait for animation to complete
-    
+    }, 2400);
     return () => clearTimeout(timer);
   }, []);
 
-  const sliceVariants = {
-    hidden: { 
-      x: -100,
-      opacity: 0
-    },
-    visible: (i: number) => ({
-      x: 0,
-      opacity: 1,
-      transition: {
-        delay: 0.3 + i * 0.25,
-        duration: 0.55,
-        ease: [0.25, 0.46, 0.45, 0.94],
-        type: "spring",
-        stiffness: 110,
-        damping: 15
-      }
-    })
-  };
+  // Brand colors
+  const red = '#FF0000';
+  const white = '#FFFFFF';
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
+  // Stroke animation shared config
+  const strokeVariants = {
+    hidden: (from: { x: number; y: number }) => ({
+      x: from.x,
+      y: from.y,
+      opacity: 0,
+      pathLength: 0,
+    }),
     visible: {
+      x: 0,
+      y: 0,
       opacity: 1,
-      transition: {
-        duration: 0.2,
-        ease: "easeOut"
-      }
-    }
+      pathLength: 1,
+    },
   };
 
-  // Red color matching the brand
-  const redColor = '#FF0000';
-
-  const leftX = 15;
-  const tipX = 85;
-  const topY = 10;
-  const bottomY = 90;
-  const midY = 50;
-  
-  const gap = 5;
-  
-  const slice1Left = leftX + 3;
-  const slice1Right = leftX + 15 - gap/2;
-  const slice1Top = topY + 3;
-  const slice1Bottom = bottomY - 3;
-  const slice1Radius = 4;
-  
-  const slice2Left = leftX + 15 + gap/2;
-  const slice2Right = tipX - 18 - gap/2;
-  
-  const getYAtX = (x: number, topEdge: boolean): number => {
-    const t = (x - leftX) / (tipX - leftX);
-    if (topEdge) {
-      return topY + t * (midY - topY);
-    } else {
-      return bottomY - t * (bottomY - midY);
-    }
-  };
-  
-  const s2_topLeft_y = getYAtX(slice2Left, true);
-  const s2_bottomLeft_y = getYAtX(slice2Left, false);
-  const s2_topRight_y = getYAtX(slice2Right, true);
-  const s2_bottomRight_y = getYAtX(slice2Right, false);
-  
-  const slice3Left = tipX - 18 + gap/2;
-  const s3_topLeft_y = getYAtX(slice3Left, true);
-  const s3_bottomLeft_y = getYAtX(slice3Left, false);
-  
-  const slice2Points = `${slice2Left},${s2_topLeft_y} ${slice2Right},${s2_topRight_y} ${slice2Right},${s2_bottomRight_y} ${slice2Left},${s2_bottomLeft_y}`;
+  const strokeTransition = (delay: number) => ({
+    x: { delay, duration: 0.5, type: 'spring' as const, stiffness: 120, damping: 14 },
+    y: { delay, duration: 0.5, type: 'spring' as const, stiffness: 120, damping: 14 },
+    opacity: { delay, duration: 0.2 },
+    pathLength: { delay: delay + 0.1, duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] as const },
+  });
 
   return (
     <div className={`relative ${className}`}>
@@ -95,87 +50,191 @@ export const AnimatedPlayLogo: React.FC<AnimatedPlayLogoProps> = ({ className = 
           <motion.div
             key="animated-logo"
             className="w-full h-full"
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-            exit={{ 
-              opacity: 0, 
-              scale: 1.08,
-              transition: { duration: 0.5, ease: "easeInOut" }
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{
+              opacity: 0,
+              scale: 1.06,
+              transition: { duration: 0.45, ease: 'easeInOut' },
             }}
           >
             <svg
               viewBox="0 0 100 100"
               className="w-full h-full overflow-visible"
-              style={{ filter: 'drop-shadow(0 8px 24px rgba(255, 0, 0, 0.35))' }}
+              style={{ filter: 'drop-shadow(0 6px 20px rgba(255, 0, 0, 0.3))' }}
             >
-              {/* Background glow */}
+              {/* Background glow - yellow + red */}
               <motion.ellipse
                 cx="50"
                 cy="50"
-                r="42"
+                rx="48"
+                ry="48"
+                fill="rgba(255, 204, 0, 0.12)"
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ delay: 1.5, duration: 0.5 }}
+              />
+              <motion.ellipse
+                cx="50"
+                cy="50"
+                rx="42"
+                ry="42"
                 fill="rgba(255, 0, 0, 0.08)"
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                transition={{ delay: 1.3, duration: 0.4 }}
+                transition={{ delay: 1.6, duration: 0.4 }}
               />
-              {/* Slice 1 - LEFT vertical section */}
-              <motion.path
-                d={`
-                  M ${slice1Left + 2},${slice1Top}
-                  L ${slice1Right - slice1Radius},${slice1Top}
-                  Q ${slice1Right},${slice1Top} ${slice1Right},${slice1Top + slice1Radius}
-                  L ${slice1Right},${slice1Bottom - slice1Radius}
-                  Q ${slice1Right},${slice1Bottom} ${slice1Right - slice1Radius},${slice1Bottom}
-                  L ${slice1Left + 2},${slice1Bottom}
-                  Q ${slice1Left},${slice1Bottom} ${slice1Left},${slice1Bottom - 2}
-                  L ${slice1Left},${slice1Top + 2}
-                  Q ${slice1Left},${slice1Top} ${slice1Left + 2},${slice1Top}
-                  Z
-                `}
-                fill={redColor}
-                custom={0}
-                variants={sliceVariants}
+
+              {/* Phase 1: Rounded red rectangle expands from center */}
+              <motion.rect
+                x="10"
+                y="10"
+                width="80"
+                height="80"
+                rx="18"
+                ry="18"
+                fill={red}
+                initial={{ scaleX: 0.02, scaleY: 0.85, opacity: 0 }}
+                animate={{ scaleX: 1, scaleY: 1, opacity: 1 }}
+                transition={{
+                  scaleX: {
+                    duration: 0.55,
+                    type: 'spring',
+                    stiffness: 100,
+                    damping: 12,
+                  },
+                  scaleY: {
+                    delay: 0.15,
+                    duration: 0.4,
+                    type: 'spring',
+                    stiffness: 100,
+                    damping: 14,
+                  },
+                  opacity: { duration: 0.15 },
+                }}
+                style={{ originX: '50%', originY: '50%' }}
+              />
+
+              {/* Phase 2: Y letterform — 3 strokes */}
+
+              {/* Y left diagonal arm (top-left to center junction) */}
+              <motion.line
+                x1="22" y1="28"
+                x2="36" y2="50"
+                stroke={white}
+                strokeWidth="7"
+                strokeLinecap="round"
+                custom={{ x: -25, y: -20 }}
+                variants={strokeVariants}
                 initial="hidden"
                 animate="visible"
+                transition={strokeTransition(0.6)}
               />
-              {/* Slice 2 - MIDDLE vertical section */}
-              <motion.polygon
-                points={slice2Points}
-                fill={redColor}
-                custom={1}
-                variants={sliceVariants}
+
+              {/* Y right diagonal arm (top-right to center junction) */}
+              <motion.line
+                x1="50" y1="28"
+                x2="36" y2="50"
+                stroke={white}
+                strokeWidth="7"
+                strokeLinecap="round"
+                custom={{ x: 20, y: -25 }}
+                variants={strokeVariants}
                 initial="hidden"
                 animate="visible"
+                transition={strokeTransition(0.72)}
               />
-              {/* Slice 3 - RIGHT vertical section / tip */}
-              <motion.path
-                d={`M ${slice3Left},${s3_topLeft_y} L ${tipX},${midY} L ${slice3Left},${s3_bottomLeft_y} Z`}
-                fill={redColor}
-                custom={2}
-                variants={sliceVariants}
+
+              {/* Y vertical stem (center junction to bottom) */}
+              <motion.line
+                x1="36" y1="50"
+                x2="36" y2="74"
+                stroke={white}
+                strokeWidth="7"
+                strokeLinecap="round"
+                custom={{ x: 0, y: 30 }}
+                variants={strokeVariants}
                 initial="hidden"
                 animate="visible"
+                transition={strokeTransition(0.85)}
+              />
+
+              {/* Phase 2: V letterform — 2 strokes + slash */}
+
+              {/* V left stroke (top to bottom vertex) */}
+              <motion.line
+                x1="58" y1="28"
+                x2="68" y2="74"
+                stroke={white}
+                strokeWidth="7"
+                strokeLinecap="round"
+                custom={{ x: -15, y: -30 }}
+                variants={strokeVariants}
+                initial="hidden"
+                animate="visible"
+                transition={strokeTransition(0.95)}
+              />
+
+              {/* V right stroke (top to bottom vertex) */}
+              <motion.line
+                x1="78" y1="28"
+                x2="68" y2="74"
+                stroke={white}
+                strokeWidth="7"
+                strokeLinecap="round"
+                custom={{ x: 25, y: -20 }}
+                variants={strokeVariants}
+                initial="hidden"
+                animate="visible"
+                transition={strokeTransition(1.08)}
+              />
+
+              {/* Diagonal slash through the V */}
+              <motion.line
+                x1="56" y1="60"
+                x2="80" y2="38"
+                stroke={white}
+                strokeWidth="4.5"
+                strokeLinecap="round"
+                initial={{ pathLength: 0, opacity: 0 }}
+                animate={{ pathLength: 1, opacity: 1 }}
+                transition={{
+                  pathLength: { delay: 1.25, duration: 0.35, ease: [0.4, 0, 0.2, 1] },
+                  opacity: { delay: 1.25, duration: 0.15 },
+                }}
               />
             </svg>
 
-            {/* Shine sweep effect */}
+            {/* Phase 3: Shine sweep */}
             <motion.div
-              className="absolute inset-0 pointer-events-none overflow-hidden"
+              className="absolute inset-0 pointer-events-none overflow-hidden rounded-[18%]"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 1.4 }}
+              transition={{ delay: 1.5 }}
             >
               <motion.div
                 className="absolute w-[150%] h-full -skew-x-12"
                 style={{
-                  background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.5) 50%, transparent 100%)',
-                  left: '-150%'
+                  background:
+                    'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.45) 45%, rgba(255,204,0,0.2) 55%, transparent 100%)',
+                  left: '-150%',
                 }}
                 animate={{ left: '150%' }}
-                transition={{ delay: 1.5, duration: 0.6, ease: "easeInOut" }}
+                transition={{ delay: 1.55, duration: 0.55, ease: 'easeInOut' }}
               />
             </motion.div>
+
+            {/* Yellow/red glow pulse */}
+            <motion.div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background:
+                  'radial-gradient(circle, rgba(255,204,0,0.15) 0%, rgba(255,0,0,0.08) 50%, transparent 70%)',
+              }}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: [0, 1, 0], scale: [0.8, 1.15, 1.2] }}
+              transition={{ delay: 1.6, duration: 0.7, ease: 'easeOut' }}
+            />
           </motion.div>
         ) : (
           <motion.div
@@ -183,13 +242,13 @@ export const AnimatedPlayLogo: React.FC<AnimatedPlayLogoProps> = ({ className = 
             className="w-full h-full"
             initial={{ opacity: 0, scale: 0.92 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
+            transition={{ duration: 0.5, ease: 'easeOut' }}
           >
-            <img 
-              src={yidvidLogoIcon} 
-              alt="YidVid Logo" 
+            <img
+              src={yidvidLogoIcon}
+              alt="YidVid Logo"
               className="w-full h-full object-contain"
-              style={{ filter: 'drop-shadow(0 8px 24px rgba(255, 0, 0, 0.35))' }}
+              style={{ filter: 'drop-shadow(0 6px 20px rgba(255, 0, 0, 0.3))' }}
             />
           </motion.div>
         )}
