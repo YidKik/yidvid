@@ -14,26 +14,25 @@ export const AnimatedPlayLogo: React.FC<AnimatedPlayLogoProps> = ({ className = 
         src={yidvidLogoIcon}
         alt="YidVid Logo"
         className="relative w-full h-full object-contain"
-        style={{ filter: 'drop-shadow(0 6px 18px hsl(0 100% 50% / 0.24))' }}
         draggable={false}
       />
 
-      {/* Diagonal red-yellow shine sweep: top-right to bottom-left */}
+      {/* Shine sweep: left to right across the logo */}
       <motion.div
-        className="absolute inset-0 pointer-events-none overflow-hidden rounded-[18%]"
+        className="absolute inset-0 pointer-events-none overflow-hidden"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.3, duration: 0.15 }}
+        transition={{ delay: 0.3, duration: 0.1 }}
       >
         <motion.div
-          className="absolute w-[60%] h-[200%] rotate-[35deg]"
+          className="absolute h-full w-[40%] -skew-x-12"
           style={{
             background:
-              'linear-gradient(180deg, transparent 0%, hsl(0 100% 50% / 0.35) 30%, hsl(48 100% 50% / 0.45) 50%, hsl(0 100% 50% / 0.35) 70%, transparent 100%)',
-            top: '-100%',
-            right: '-60%',
+              'linear-gradient(90deg, transparent 0%, hsl(0 100% 50% / 0.3) 25%, hsl(48 100% 50% / 0.4) 50%, hsl(0 100% 50% / 0.3) 75%, transparent 100%)',
+            left: '-40%',
+            top: 0,
           }}
-          animate={{ top: '100%', right: '100%' }}
+          animate={{ left: '140%' }}
           transition={{ delay: 0.4, duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
         />
       </motion.div>
