@@ -8,6 +8,7 @@ interface YouTubePlayerState {
   isMuted: boolean;
   isReady: boolean;
   buffered: number;
+  hasEnded: boolean;
 }
 
 export const useYouTubePlayer = (
