@@ -41,15 +41,21 @@ export const DesktopVideoView = ({
     video.title !== "Sample Video 1"
   );
 
-  // Get featured videos - highest views in the last 7 days
+  // Get featured videos - highest views in the last 7 days, max 1 per channel
   const featuredVideos = useMemo(() => {
     const oneWeekAgo = new Date();
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
     
-    return [...videos]
+    const sorted = [...videos]
       .filter(v => new Date(v.uploaded_at) >= oneWeekAgo)
-      .sort((a, b) => (b.views || 0) - (a.views || 0))
-      .slice(0, 6);
+      .sort((a, b) => (b.views || 0) - (a.views || 0));
+    
+    const seenChannels = new Set<string>();
+    return sorted.filter(video => {
+      if (seenChannels.has(video.channel_id)) return false;
+      seenChannels.add(video.channel_id);
+      return true;
+    }).slice(0, 6);
   }, [videos]);
 
   const containerPadding = isMobile ? 'px-3' : isTablet ? 'px-4' : 'px-8 lg:px-12 xl:px-16';
