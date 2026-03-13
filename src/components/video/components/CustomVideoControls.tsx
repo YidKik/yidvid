@@ -242,12 +242,13 @@ export const CustomVideoControls = ({
           {/* Right side */}
           <div className="flex items-center gap-2">
             {/* Playback speed */}
-            <Popover>
+            <Popover open={settingsOpen} onOpenChange={setSettingsOpen}>
               <PopoverTrigger asChild>
                 <button
-                  className="text-white transition-colors"
+                  className="transition-colors"
+                  style={{ color: settingsOpen ? '#FF0000' : 'white' }}
                   onMouseEnter={(e) => e.currentTarget.style.color = '#FF0000'}
-                  onMouseLeave={(e) => e.currentTarget.style.color = 'white'}
+                  onMouseLeave={(e) => { if (!settingsOpen) e.currentTarget.style.color = 'white'; }}
                 >
                   <Settings className="w-4.5 h-4.5" />
                 </button>
