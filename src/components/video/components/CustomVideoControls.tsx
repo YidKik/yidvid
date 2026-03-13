@@ -171,14 +171,15 @@ export const CustomVideoControls = ({
             className="absolute inset-y-0 left-0 bg-primary rounded-none transition-[width] duration-150"
             style={{ width: `${progress}%` }}
           />
-          {/* Draggable thumb - outlined circle, primary red */}
+          {/* Draggable thumb - outlined circle, red */}
           <div
-            className={`absolute top-1/2 w-4 h-4 rounded-full shadow-md border-2 border-primary bg-white transition-transform duration-150 cursor-grab active:cursor-grabbing ${
+            className={`absolute top-1/2 w-4 h-4 rounded-full shadow-md bg-white transition-transform duration-150 cursor-grab active:cursor-grabbing ${
               isDragging ? "scale-125" : "group-hover:scale-110 scale-100"
             }`}
             style={{
               left: `${progress}%`,
               transform: "translate(-50%, -50%)",
+              border: "2px solid #FF0000",
             }}
           />
         </div>
