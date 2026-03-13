@@ -60,6 +60,12 @@ export const SignUpForm = ({
       }
 
       if (signUpData?.user) {
+        // Check if the user already exists (Supabase returns empty identities for existing users)
+        if (signUpData.user.identities && signUpData.user.identities.length === 0) {
+          toast.error("An account with this email already exists. Please sign in instead.");
+          return;
+        }
+
         // Save username to profile immediately
         await supabase
           .from("profiles")
