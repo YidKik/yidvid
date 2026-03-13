@@ -8,6 +8,7 @@ interface YouTubePlayerState {
   isMuted: boolean;
   isReady: boolean;
   buffered: number;
+  hasEnded: boolean;
 }
 
 export const useYouTubePlayer = (
@@ -22,6 +23,7 @@ export const useYouTubePlayer = (
     isMuted: false,
     isReady: false,
     buffered: 0,
+    hasEnded: false,
   });
 
   const previousVolumeRef = useRef(80);
@@ -131,6 +133,7 @@ export const useYouTubePlayer = (
           setState((s) => ({
             ...s,
             isPlaying: playerState === 1,
+            hasEnded: playerState === 0,
           }));
           if (playerState === 0 && onVideoEnd) {
             onVideoEnd();

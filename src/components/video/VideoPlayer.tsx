@@ -4,6 +4,7 @@ import { VideoPlayerError } from "./components/VideoPlayerError";
 import { VideoPlayerLoading } from "./components/VideoPlayerLoading";
 import { VideoPlayerIframe } from "./components/VideoPlayerIframe";
 import { CustomVideoControls } from "./components/CustomVideoControls";
+import { VideoPlayerBranding } from "./components/VideoPlayerBranding";
 import { useEmbedUrl } from "./hooks/useEmbedUrl";
 import { useYouTubePlayer } from "./hooks/useYouTubePlayer";
 
@@ -40,6 +41,15 @@ export const VideoPlayer = ({ videoId, onVideoEnd }: VideoPlayerProps) => {
     [setPlaybackSpeed, player]
   );
 
+  const handleIntroComplete = useCallback(() => {
+    // Auto-play the video once branding fades out
+    player.play();
+  }, [player]);
+
+  const handleOutroComplete = useCallback(() => {
+    // Outro finished, nothing else needed
+  }, []);
+
   if (hasError) {
     return <VideoPlayerError />;
   }
@@ -57,6 +67,14 @@ export const VideoPlayer = ({ videoId, onVideoEnd }: VideoPlayerProps) => {
         setIsLoading={setIsLoading}
         setHasError={setHasError}
         mountedRef={mountedRef}
+      />
+      <VideoPlayerBranding
+        isLoading={isLoading}
+        isReady={player.isReady}
+        isPlaying={player.isPlaying}
+        hasEnded={player.hasEnded}
+        onIntroComplete={handleIntroComplete}
+        onOutroComplete={handleOutroComplete}
       />
       <CustomVideoControls
         isPlaying={player.isPlaying}
