@@ -168,12 +168,12 @@ const VideoDetails = () => {
                         <p className="text-[#666666] text-sm mb-4">
                           Sign in to view and post comments.
                         </p>
-                        <Link 
-                          to="/auth" 
+                        <button 
+                          onClick={() => document.dispatchEvent(new CustomEvent('openAuthDialog'))}
                           className="inline-block px-5 py-2 bg-[#FF0000] text-white rounded-full text-sm font-medium hover:brightness-90 transition-all"
                         >
                           Sign In
-                        </Link>
+                        </button>
                       </div>
                     )}
                   </div>
@@ -246,12 +246,12 @@ const VideoDetails = () => {
                       <p className="text-[#666666] text-sm mb-3">
                         Sign in to view and post comments.
                       </p>
-                      <Link 
-                        to="/auth" 
+                      <button 
+                        onClick={() => document.dispatchEvent(new CustomEvent('openAuthDialog'))}
                         className="inline-block px-5 py-2 bg-[#FF0000] text-white rounded-full text-sm font-medium hover:brightness-90 transition-all"
                       >
                         Sign In
-                      </Link>
+                      </button>
                     </div>
                   )}
                 </div>
