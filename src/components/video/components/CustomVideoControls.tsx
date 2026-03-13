@@ -286,7 +286,9 @@ export const CustomVideoControls = ({
             {/* Fullscreen */}
             <button
               onClick={onFullscreen}
-              className="text-white hover:text-primary transition-colors"
+              className="text-white transition-colors"
+              onMouseEnter={(e) => e.currentTarget.style.color = '#FF0000'}
+              onMouseLeave={(e) => e.currentTarget.style.color = 'white'}
             >
               <Maximize className="w-4.5 h-4.5" />
             </button>
