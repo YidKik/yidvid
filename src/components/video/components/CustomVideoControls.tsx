@@ -129,10 +129,10 @@ export const CustomVideoControls = ({
         }`}
         onClick={onTogglePlay}
       >
-        <div className={`w-16 h-16 rounded-full bg-primary/90 flex items-center justify-center shadow-lg hover:bg-primary transition-all duration-300 ${
+        <div className={`${isMobile ? 'w-10 h-10' : 'w-16 h-16'} rounded-full bg-primary/90 flex items-center justify-center shadow-lg hover:bg-primary transition-all duration-300 ${
           !isPlaying && isContainerHovered ? "scale-100" : "scale-75"
         }`}>
-          <Play className="w-7 h-7 text-white ml-1" fill="white" />
+          <Play className={`${isMobile ? 'w-4 h-4' : 'w-7 h-7'} text-white ml-0.5`} fill="white" />
         </div>
       </button>
 
