@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import yidvidIcon from "@/assets/yidvid_logo_icon.png";
+import yidvidIcon from "@/assets/yidvid-logo-icon.png";
 import { cn } from "@/lib/utils";
 
 interface YouTubeStyleLoadingProps {

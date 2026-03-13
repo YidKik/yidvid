@@ -22,7 +22,7 @@ export const TrackInfo = ({ title, artistName, artistThumbnail, plays, uploadedA
             <AvatarFallback>
               <div className="flex items-center justify-center w-full h-full">
                 <img 
-                  src="/lovable-uploads/e425cacb-4c3a-4d81-b4e0-77fcbf10f61c.png" 
+                  src="/yidvid-logo-icon.png" 
                   alt="YidVid Logo" 
                   className="w-6 h-6 object-contain"
                   onError={() => {}} 
