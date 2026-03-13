@@ -27,7 +27,7 @@ const setFavicon = () => {
   // Add the correct favicon
   const link = document.createElement('link');
   link.rel = 'icon';
-  link.href = '/lovable-uploads/4a9898a9-f142-42b7-899a-ddd1a106410a.png';
+  link.href = '/yidvid-logo-icon.png';
   document.head.appendChild(link);
   
   // Also add apple touch icon
