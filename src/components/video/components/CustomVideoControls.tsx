@@ -210,9 +210,8 @@ export const CustomVideoControls = ({
             >
               <button
                 onClick={onToggleMute}
-                className="text-white transition-colors"
-                onMouseEnter={(e) => e.currentTarget.style.color = '#FF0000'}
-                onMouseLeave={(e) => e.currentTarget.style.color = 'white'}
+                className="transition-colors"
+                style={{ color: showVolume ? '#FF0000' : 'white' }}
               >
                 <VolumeIcon className="w-5 h-5" />
               </button>
@@ -227,7 +226,8 @@ export const CustomVideoControls = ({
                   max={100}
                   value={isMuted ? 0 : volume}
                   onChange={(e) => onVolumeChange(Number(e.target.value))}
-                  className="w-full h-1 accent-primary cursor-pointer"
+                  className="w-full h-1 cursor-pointer"
+                  style={{ accentColor: '#FF0000' }}
                 />
               </div>
             </div>
