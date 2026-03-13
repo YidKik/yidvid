@@ -58,6 +58,7 @@ export const CustomVideoControls = ({
   const [isDragging, setIsDragging] = useState(false);
   const [showVolume, setShowVolume] = useState(false);
   const [isContainerHovered, setIsContainerHovered] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const progressRef = useRef<HTMLDivElement>(null);
 
   const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
@@ -171,15 +172,15 @@ export const CustomVideoControls = ({
             className="absolute inset-y-0 left-0 rounded-none transition-[width] duration-150"
             style={{ width: `${progress}%`, backgroundColor: '#FF0000' }}
           />
-          {/* Draggable thumb - outlined circle, red */}
+          {/* Draggable thumb - outline only, no fill */}
           <div
-            className={`absolute top-1/2 w-4 h-4 rounded-full shadow-md bg-white transition-transform duration-150 cursor-grab active:cursor-grabbing ${
+            className={`absolute top-1/2 w-4 h-4 rounded-full shadow-md bg-transparent transition-transform duration-150 cursor-grab active:cursor-grabbing ${
               isDragging ? "scale-125" : "group-hover:scale-110 scale-100"
             }`}
             style={{
               left: `${progress}%`,
               transform: "translate(-50%, -50%)",
-              border: "2px solid #FF0000",
+              border: "2.5px solid #FF0000",
             }}
           />
         </div>
@@ -210,9 +211,8 @@ export const CustomVideoControls = ({
             >
               <button
                 onClick={onToggleMute}
-                className="text-white transition-colors"
-                onMouseEnter={(e) => e.currentTarget.style.color = '#FF0000'}
-                onMouseLeave={(e) => e.currentTarget.style.color = 'white'}
+                className="transition-colors"
+                style={{ color: showVolume ? '#FF0000' : 'white' }}
               >
                 <VolumeIcon className="w-5 h-5" />
               </button>
@@ -227,7 +227,8 @@ export const CustomVideoControls = ({
                   max={100}
                   value={isMuted ? 0 : volume}
                   onChange={(e) => onVolumeChange(Number(e.target.value))}
-                  className="w-full h-1 accent-primary cursor-pointer"
+                  className="w-full h-1 cursor-pointer"
+                  style={{ accentColor: '#FF0000' }}
                 />
               </div>
             </div>
@@ -241,12 +242,13 @@ export const CustomVideoControls = ({
           {/* Right side */}
           <div className="flex items-center gap-2">
             {/* Playback speed */}
-            <Popover>
+            <Popover open={settingsOpen} onOpenChange={setSettingsOpen}>
               <PopoverTrigger asChild>
                 <button
-                  className="text-white transition-colors"
+                  className="transition-colors"
+                  style={{ color: settingsOpen ? '#FF0000' : 'white' }}
                   onMouseEnter={(e) => e.currentTarget.style.color = '#FF0000'}
-                  onMouseLeave={(e) => e.currentTarget.style.color = 'white'}
+                  onMouseLeave={(e) => { if (!settingsOpen) e.currentTarget.style.color = 'white'; }}
                 >
                   <Settings className="w-4.5 h-4.5" />
                 </button>
