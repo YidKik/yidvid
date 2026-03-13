@@ -244,24 +244,32 @@ export const CustomVideoControls = ({
               <PopoverContent
                 side="top"
                 align="end"
-                className="w-36 p-1 bg-black/90 border-white/10 backdrop-blur-md"
+                sideOffset={12}
+                className="w-44 p-0 bg-white border border-[#E5E5E5] shadow-xl rounded-xl overflow-hidden"
               >
-                <p className="text-[10px] text-white/50 uppercase tracking-wider px-2 pt-1 pb-0.5">
-                  Speed
-                </p>
-                {SPEEDS.map((s) => (
-                  <button
-                    key={s}
-                    onClick={() => onPlaybackSpeedChange(s)}
-                    className={`w-full text-left px-2 py-1 text-sm rounded transition-colors ${
-                      playbackSpeed === s
-                        ? "text-primary bg-white/10"
-                        : "text-white hover:bg-white/10"
-                    }`}
-                  >
-                    {s === "1" ? "Normal" : `${s}x`}
-                  </button>
-                ))}
+                <div className="px-3 py-2 border-b border-[#E5E5E5]">
+                  <p className="text-xs font-semibold text-[#1A1A1A] tracking-wide">
+                    Playback speed
+                  </p>
+                </div>
+                <div className="py-1">
+                  {SPEEDS.map((s) => (
+                    <button
+                      key={s}
+                      onClick={() => onPlaybackSpeedChange(s)}
+                      className={`w-full text-left px-3 py-1.5 text-sm transition-colors flex items-center justify-between ${
+                        playbackSpeed === s
+                          ? "text-[#FF0000] font-medium bg-[#FFF5F5]"
+                          : "text-[#1A1A1A] hover:bg-[#F5F5F5]"
+                      }`}
+                    >
+                      <span>{s === "1" ? "Normal" : `${s}x`}</span>
+                      {playbackSpeed === s && (
+                        <div className="w-1.5 h-1.5 rounded-full bg-[#FF0000]" />
+                      )}
+                    </button>
+                  ))}
+                </div>
               </PopoverContent>
             </Popover>
 
