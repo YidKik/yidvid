@@ -61,6 +61,7 @@ export const CustomVideoControls = ({
   const [isContainerHovered, setIsContainerHovered] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const progressRef = useRef<HTMLDivElement>(null);
+  const { isMobile } = useIsMobile();
 
   const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
   const bufferedPercent = buffered * 100;
