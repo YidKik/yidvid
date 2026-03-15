@@ -1,11 +1,8 @@
 import { useState, useRef, useCallback } from "react";
 import { usePlayback } from "@/contexts/PlaybackContext";
 import { VideoPlayerError } from "./components/VideoPlayerError";
-import { VideoPlayerLoading } from "./components/VideoPlayerLoading";
-import { VideoPlayerIframe } from "./components/VideoPlayerIframe";
 import { CustomVideoControls } from "./components/CustomVideoControls";
 import { VideoPlayerBranding } from "./components/VideoPlayerBranding";
-import { useEmbedUrl } from "./hooks/useEmbedUrl";
 import { useYouTubePlayer } from "./hooks/useYouTubePlayer";
 
 interface VideoPlayerProps {
@@ -17,11 +14,9 @@ export const VideoPlayer = ({ videoId, onVideoEnd }: VideoPlayerProps) => {
   const [hasError, setHasError] = useState(false);
   const { playbackSpeed, setPlaybackSpeed } = usePlayback();
   const containerRef = useRef<HTMLDivElement>(null);
-  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const playerContainerRef = useRef<HTMLDivElement>(null);
 
-  const { embedUrl, isLoading, setIsLoading, mountedRef } = useEmbedUrl(videoId);
-
-  const player = useYouTubePlayer(iframeRef, onVideoEnd);
+  const player = useYouTubePlayer(playerContainerRef, videoId, onVideoEnd);
 
   const handleFullscreen = useCallback(() => {
     const el = containerRef.current;
@@ -42,13 +37,10 @@ export const VideoPlayer = ({ videoId, onVideoEnd }: VideoPlayerProps) => {
   );
 
   const handleIntroComplete = useCallback(() => {
-    // Auto-play the video once branding fades out
     player.play();
   }, [player]);
 
-  const handleOutroComplete = useCallback(() => {
-    // Outro finished, nothing else needed
-  }, []);
+  const handleOutroComplete = useCallback(() => {}, []);
 
   if (hasError) {
     return <VideoPlayerError />;
@@ -59,17 +51,13 @@ export const VideoPlayer = ({ videoId, onVideoEnd }: VideoPlayerProps) => {
       ref={containerRef}
       className="aspect-video w-full mb-4 relative rounded-lg overflow-hidden bg-black group"
     >
-      <VideoPlayerLoading isLoading={isLoading} />
-      <VideoPlayerIframe
-        ref={iframeRef}
-        embedUrl={embedUrl}
-        isLoading={isLoading}
-        setIsLoading={setIsLoading}
-        setHasError={setHasError}
-        mountedRef={mountedRef}
+      {/* YouTube player renders here via the API */}
+      <div
+        ref={playerContainerRef}
+        className="absolute inset-0 w-full h-full pointer-events-none"
       />
       <VideoPlayerBranding
-        isLoading={isLoading}
+        isLoading={!player.isReady}
         isReady={player.isReady}
         isPlaying={player.isPlaying}
         hasEnded={player.hasEnded}
