@@ -28,11 +28,13 @@ const setFavicon = () => {
   const link = document.createElement('link');
   link.rel = 'icon';
   link.href = '/yidvid-logo-icon.png';
+  link.sizes = '32x32';
   document.head.appendChild(link);
   
   // Also add apple touch icon
   const appleLink = document.createElement('link');
   appleLink.rel = 'apple-touch-icon';
+  appleLink.sizes = '180x180';
   appleLink.href = '/yidvid-logo-icon.png';
   document.head.appendChild(appleLink);
 };
