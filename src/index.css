@@ -233,9 +233,9 @@ body.home-page {
 
 /* Force ALL dark text to light in dark mode — catches inline styles too */
 .dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6,
-.dark p, .dark span, .dark a, .dark label, .dark li, .dark td, .dark th,
-.dark div, .dark button, .dark summary {
-  color: #e8e8e8;
+.dark p, .dark span, .dark label, .dark li, .dark td, .dark th,
+.dark summary {
+  color: #e8e8e8 !important;
 }
 
 /* Preserve colored text (red brand, yellow, etc.) */
