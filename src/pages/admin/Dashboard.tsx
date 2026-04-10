@@ -17,7 +17,7 @@ import { ChannelsPageV2 } from "@/components/admin-v2/pages/ChannelsPageV2";
 import { MusicPage } from "@/components/admin/pages/MusicPage";
 import { UsersPageV2 } from "@/components/admin-v2/pages/UsersPageV2";
 import { CategoriesPageV2 } from "@/components/admin-v2/pages/CategoriesPageV2";
-import { CommentsPage } from "@/components/admin/pages/CommentsPage";
+import { CommentsPageV2 } from "@/components/admin-v2/pages/CommentsPageV2";
 import { ContactRequestsPage } from "@/components/admin/pages/ContactRequestsPage";
 import { NotificationsPage } from "@/components/admin/pages/NotificationsPage";
 import { AnalyticsPageV2 } from "@/components/admin-v2/pages/AnalyticsPageV2";
@@ -101,7 +101,7 @@ const Dashboard = () => {
       case "users":
         return <UsersPageV2 currentUserId={session?.user?.id || ""} />;
       case "comments":
-        return <CommentsPage />;
+        return <CommentsPageV2 />;
       case "contacts":
         return <ContactRequestsPage />;
       case "notifications":
