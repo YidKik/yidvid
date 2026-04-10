@@ -130,7 +130,7 @@ export const ChannelRequestsPageV2 = () => {
             </div>
           ) : (
             <ScrollArea className="h-full">
-              <div className="p-2 space-y-1">
+              <div className="p-2 divide-y divide-[#1e2028]">
                 {filtered.map(request => {
                   const isActive = selectedId === request.id;
                   return (
