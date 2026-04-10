@@ -261,131 +261,22 @@ export const UsersPageV2 = ({ currentUserId }: UsersPageV2Props) => {
 
         {/* Detail Panel */}
         {selectedUser && (
-          <Card className="bg-[#12131a] border-[#1e2028] w-[40%] min-w-[320px]">
-            <CardContent className="p-5">
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-full bg-[#2a2b35] flex items-center justify-center text-lg font-semibold text-gray-300 shrink-0">
-                    {selectedUser.avatar_url ? (
-                      <img src={selectedUser.avatar_url} alt="" className="w-12 h-12 rounded-full object-cover" />
-                    ) : (
-                      (selectedUser.display_name || selectedUser.username || "U")[0]?.toUpperCase()
-                    )}
-                  </div>
-                  <div>
-                    <p className="text-base font-semibold text-gray-100">
-                      {selectedUser.display_name || selectedUser.username || selectedUser.name || "Unnamed"}
-                    </p>
-                    <div className="flex items-center gap-2 mt-0.5">
-                      {selectedUser.is_admin && (
-                        <Badge className="bg-amber-500/10 text-amber-400 border-amber-500/20 text-[10px] px-1.5 py-0">Admin</Badge>
-                      )}
-                      {selectedUser.id === currentUserId && (
-                        <Badge className="bg-cyan-500/10 text-cyan-400 border-cyan-500/20 text-[10px] px-1.5 py-0">You</Badge>
-                      )}
-                    </div>
-                  </div>
-                </div>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => setSelectedUserId(null)}
-                  className="text-gray-500 hover:text-gray-300 h-7 w-7 p-0"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
-
-              <Separator className="bg-[#1e2028] mb-4" />
-
-              {/* User details */}
-              {!editMode ? (
-                <div className="space-y-3">
-                  <DetailRow label="User ID" value={selectedUser.id} copyable />
-                  <DetailRow label="Email" value={selectedUser.email} />
-                  <DetailRow label="Display Name" value={selectedUser.display_name || "—"} />
-                  <DetailRow label="Username" value={selectedUser.username || "—"} />
-                  <DetailRow label="Joined" value={selectedUser.created_at ? formatDate(selectedUser.created_at) : "Unknown"} />
-                  <DetailRow label="User Type" value={(selectedUser as any).user_type || "visitor"} />
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  <div>
-                    <label className="text-xs text-gray-500 mb-1 block">Display Name</label>
-                    <Input
-                      value={editDisplayName}
-                      onChange={(e) => setEditDisplayName(e.target.value)}
-                      className="bg-[#1a1b24] border-[#2a2b35] text-gray-200 h-8 text-sm"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-xs text-gray-500 mb-1 block">Username</label>
-                    <Input
-                      value={editUsername}
-                      onChange={(e) => setEditUsername(e.target.value)}
-                      className="bg-[#1a1b24] border-[#2a2b35] text-gray-200 h-8 text-sm"
-                    />
-                  </div>
-                </div>
-              )}
-
-              <Separator className="bg-[#1e2028] my-4" />
-
-              {/* Action buttons */}
-              {selectedUser.id !== currentUserId && (
-                <div className="space-y-2">
-                  {!editMode ? (
-                    <>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="w-full border-[#2a2b35] text-gray-300 hover:text-gray-100 hover:bg-[#1a1b24] justify-start"
-                        onClick={handleStartEdit}
-                      >
-                        <Pencil className="h-3.5 w-3.5 mr-2" /> Edit Profile
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="w-full border-[#2a2b35] text-gray-300 hover:text-gray-100 hover:bg-[#1a1b24] justify-start"
-                        onClick={() => setShowActivityDialog(true)}
-                      >
-                        <Eye className="h-3.5 w-3.5 mr-2" /> View Full Activity
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="w-full border-red-500/20 text-red-400 hover:text-red-300 hover:bg-red-500/10 justify-start"
-                        onClick={() => setShowDeleteConfirm(true)}
-                      >
-                        <Trash2 className="h-3.5 w-3.5 mr-2" /> Delete User
-                      </Button>
-                    </>
-                  ) : (
-                    <div className="flex gap-2">
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="flex-1 text-gray-400 hover:text-gray-200"
-                        onClick={() => setEditMode(false)}
-                        disabled={savingEdit}
-                      >
-                        Cancel
-                      </Button>
-                      <Button
-                        size="sm"
-                        className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white"
-                        onClick={handleSaveEdit}
-                        disabled={savingEdit}
-                      >
-                        {savingEdit ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <><Save className="h-3.5 w-3.5 mr-1" /> Save</>}
-                      </Button>
-                    </div>
-                  )}
-                </div>
-              )}
-            </CardContent>
-          </Card>
+          <UserDetailPanel
+            user={selectedUser}
+            currentUserId={currentUserId}
+            onClose={() => setSelectedUserId(null)}
+            editMode={editMode}
+            editDisplayName={editDisplayName}
+            editUsername={editUsername}
+            setEditDisplayName={setEditDisplayName}
+            setEditUsername={setEditUsername}
+            savingEdit={savingEdit}
+            onStartEdit={handleStartEdit}
+            onSaveEdit={handleSaveEdit}
+            onCancelEdit={() => setEditMode(false)}
+            onViewActivity={() => setShowActivityDialog(true)}
+            onDeleteUser={() => setShowDeleteConfirm(true)}
+          />
         )}
       </div>
 
