@@ -10,6 +10,7 @@ import {
   ChevronLeft,
   ChevronRight,
   LogOut,
+  GitPullRequest,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
@@ -36,6 +37,7 @@ const navSections = [
       { id: "users", label: "Users", icon: Users },
       { id: "comments", label: "Comments", icon: MessageSquare },
       { id: "contacts", label: "Contact Requests", icon: Mail },
+      { id: "requests", label: "Channel Requests", icon: GitPullRequest },
     ],
   },
 ];
