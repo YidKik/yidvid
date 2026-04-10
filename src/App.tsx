@@ -99,15 +99,17 @@ function AppContent() {
 function App() {
 
   return (
-    <LoadingProvider>
-      <PlaybackProvider>
-        <ColorProvider>
-          <SidebarProvider>
-            <AppContent />
-          </SidebarProvider>
-        </ColorProvider>
-      </PlaybackProvider>
-    </LoadingProvider>
+    <ThemeProvider>
+      <LoadingProvider>
+        <PlaybackProvider>
+          <ColorProvider>
+            <SidebarProvider>
+              <AppContent />
+            </SidebarProvider>
+          </ColorProvider>
+        </PlaybackProvider>
+      </LoadingProvider>
+    </ThemeProvider>
   );
 }
 
