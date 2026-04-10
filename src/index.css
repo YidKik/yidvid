@@ -231,19 +231,136 @@ body.home-page {
   border-color: #333 !important;
 }
 
-/* Text colors */
-.dark .text-\[\#1A1A1A\],
-.dark .text-\[\#000000\],
-.dark .text-black {
+/* Force ALL dark text to light in dark mode — catches inline styles too.
+   Uses !important to override inline style="color: ..." attributes.
+   The * selector ensures ALL elements get light text by default in dark mode. */
+.dark * {
+  color: inherit;
+}
+
+.dark body, .dark #root {
   color: #e8e8e8 !important;
+}
+
+.dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6,
+.dark p, .dark span, .dark a, .dark label, .dark li, .dark td, .dark th,
+.dark summary, .dark button, .dark input, .dark textarea {
+  color: #e8e8e8 !important;
+}
+
+/* Preserve colored text (red brand, yellow, etc.) */
+.dark .text-\[\#FF0000\],
+.dark [style*="color: rgb(255, 0, 0)"],
+.dark [style*="color: #FF0000"] {
+  color: #FF0000 !important;
+}
+
+.dark .text-\[\#FFCC00\],
+.dark [style*="color: #FFCC00"],
+.dark [style*="color: rgb(255, 204, 0)"] {
+  color: #FFCC00 !important;
+}
+
+.dark .text-white,
+.dark .text-primary-foreground,
+.dark .bg-\[\#FF0000\] span,
+.dark .bg-\[\#FF0000\] button,
+.dark .bg-red-500 span {
+  color: #ffffff !important;
+}
+
+/* SVG icons should inherit color properly */
+.dark svg {
+  color: inherit !important;
+}
+.dark .text-yellow-600 svg, .dark .text-yellow-600 {
+  color: #FFCC00 !important;
+}
+
+/* Muted/secondary text in dark mode */
+.dark .text-muted-foreground {
+  color: #aaaaaa !important;
 }
 
 .dark .text-\[\#666666\] {
   color: #aaaaaa !important;
 }
 
-.dark .text-\[\#999999\] {
+.dark .text-\[\#999999\],
+.dark .text-\[\#BBBBBB\] {
   color: #717171 !important;
+}
+
+/* Force override inline style colors for dark headings/body text */
+.dark [style*="color: '#000000'"],
+.dark [style*="color: '#1A1A1A'"],
+.dark [style*="color: '#1a1a1a'"],
+.dark [style*="color: '#333'"],
+.dark [style*="color: '#222'"],
+.dark [style*="color: '#666'"],
+.dark [style*="color: rgb(0, 0, 0)"],
+.dark [style*="color: rgb(26, 26, 26)"],
+.dark [style*="color: rgb(34, 34, 34)"],
+.dark [style*="color: rgb(51, 51, 51)"] {
+  color: #e8e8e8 !important;
+}
+
+.dark [style*="color: '#666666'"],
+.dark [style*="color: '#999999'"],
+.dark [style*="color: '#999'"],
+.dark [style*="color: rgb(102, 102, 102)"],
+.dark [style*="color: rgb(153, 153, 153)"] {
+  color: #aaaaaa !important;
+}
+
+/* Foreground from semantic tokens */
+.dark .text-foreground {
+  color: #e8e8e8 !important;
+}
+
+.dark .text-\[\#1A1A1A\],
+.dark .text-\[\#000000\],
+.dark .text-black {
+  color: #e8e8e8 !important;
+}
+
+/* Tailwind gray text overrides */
+.dark .text-gray-900, .dark .text-gray-800, .dark .text-gray-700 {
+  color: #e8e8e8 !important;
+}
+.dark .text-gray-600, .dark .text-gray-500 {
+  color: #aaaaaa !important;
+}
+.dark .text-gray-400, .dark .text-gray-300 {
+  color: #717171 !important;
+}
+
+/* Gray backgrounds */
+.dark .bg-gray-50, .dark .bg-gray-100, .dark .bg-gray-200 {
+  background-color: #1a1a1a !important;
+}
+.dark .hover\:bg-gray-100:hover, .dark .hover\:bg-gray-200:hover {
+  background-color: #272727 !important;
+}
+
+/* Border grays */
+.dark .border-gray-200, .dark .border-gray-300 {
+  border-color: #333 !important;
+}
+
+/* Slate overrides */
+.dark .text-slate-900, .dark .text-slate-800, .dark .text-slate-700 {
+  color: #e8e8e8 !important;
+}
+.dark .text-slate-600, .dark .text-slate-500 {
+  color: #aaaaaa !important;
+}
+
+/* Dialog/sheet backgrounds */
+.dark [data-state="open"][role="dialog"],
+.dark [class*="SheetContent"],
+.dark .bg-gray-50[class*="SheetContent"] {
+  background-color: #212121 !important;
 }
 
 /* Background surface colors */
