@@ -34,22 +34,21 @@ export const CategorySelect = ({ form }: CategorySelectProps) => {
                     key={category.value}
                     type="button"
                     onClick={() => field.onChange(category.value)}
-                    className="flex flex-col items-center gap-2 p-3 rounded-xl border transition-colors duration-200 cursor-pointer text-center"
+                    className="flex flex-col items-center gap-2 p-3 rounded-xl border transition-colors duration-200 cursor-pointer text-center dark:border-[#333] dark:bg-[#1a1a1a]"
                     style={{
-                      borderColor: isSelected ? '#FFCC00' : '#e5e5e5',
-                      backgroundColor: isSelected ? 'rgba(255,204,0,0.08)' : 'white',
+                      borderColor: isSelected ? '#FFCC00' : undefined,
+                      backgroundColor: isSelected ? 'rgba(255,204,0,0.08)' : undefined,
                     }}
                   >
                     <div
-                      className="w-9 h-9 rounded-full flex items-center justify-center"
+                      className="w-9 h-9 rounded-full flex items-center justify-center dark:bg-[#272727]"
                       style={{
-                        backgroundColor: isSelected ? '#FFCC00' : '#F5F5F5',
-                        color: '#222',
+                        backgroundColor: isSelected ? '#FFCC00' : undefined,
                       }}
                     >
-                      <Icon className="w-4 h-4" />
+                      <Icon className="w-4 h-4 dark:!text-[#e8e8e8]" style={{ color: isSelected ? '#222' : undefined }} />
                     </div>
-                    <span className="text-xs font-semibold leading-tight" style={{ color: isSelected ? '#222' : '#666' }}>
+                    <span className="text-xs font-semibold leading-tight dark:!text-[#aaa]" style={{ color: isSelected ? '#222' : undefined }}>
                       {category.label}
                     </span>
                   </button>
