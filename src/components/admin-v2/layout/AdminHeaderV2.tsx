@@ -75,6 +75,7 @@ const DEFAULT_CONFIG = {
   icon: Bell,
   color: "text-slate-400",
   bg: "bg-slate-500/10",
+  tab: undefined as string | undefined,
   label: "Notification",
   priority: "low" as const,
 };
