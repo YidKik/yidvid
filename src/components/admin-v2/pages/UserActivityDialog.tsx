@@ -154,13 +154,22 @@ export const UserActivityDialog = ({ open, onOpenChange, userId, userName }: Use
         .select("session_start, session_end, page_path", { count: "exact" })
         .eq("user_id", userId)
         .order("session_start", { ascending: false })
-        .limit(100);
+        .limit(500);
 
       let totalMinutes = 0;
+      let isLive = false;
       (data || []).forEach(s => {
         if (s.session_start && s.session_end) {
           const diff = (new Date(s.session_end).getTime() - new Date(s.session_start).getTime()) / 60000;
           if (diff > 0 && diff < 480) totalMinutes += diff;
+        }
+        // User is "live" if they have a session with no end, or session_end updated within last 2 minutes
+        if (s.session_start && !s.session_end) {
+          const startAge = (Date.now() - new Date(s.session_start).getTime()) / 60000;
+          if (startAge < 480) isLive = true; // session started less than 8h ago with no end
+        } else if (s.session_end) {
+          const endAge = (Date.now() - new Date(s.session_end).getTime()) / 60000;
+          if (endAge < 2) isLive = true; // heartbeat within last 2 minutes
         }
       });
 
@@ -168,9 +177,12 @@ export const UserActivityDialog = ({ open, onOpenChange, userId, userName }: Use
         totalSessions: count || 0,
         totalMinutes: Math.round(totalMinutes),
         lastSession: data?.[0]?.session_start || null,
+        isLive,
+        currentPage: isLive ? data?.[0]?.page_path || null : null,
       };
     },
     enabled: open,
+    refetchInterval: 30_000, // Refresh every 30s to update live status
   });
 
   const isLoading = loadingCR || loadingContact || loadingComments || loadingSubs || loadingVideos || loadingFavs;
