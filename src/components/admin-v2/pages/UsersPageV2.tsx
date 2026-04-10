@@ -193,6 +193,7 @@ export const UsersPageV2 = ({ currentUserId }: UsersPageV2Props) => {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
           <Input
             placeholder="Search by name, email, or username..."
+            placeholder="Search by name, email, username, or ID..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-9 bg-[#12131a] border-[#1e2028] text-gray-200 placeholder:text-gray-500 h-9"
@@ -297,6 +298,7 @@ export const UsersPageV2 = ({ currentUserId }: UsersPageV2Props) => {
               {/* User details */}
               {!editMode ? (
                 <div className="space-y-3">
+                  <DetailRow label="User ID" value={selectedUser.id} copyable />
                   <DetailRow label="Email" value={selectedUser.email} />
                   <DetailRow label="Display Name" value={selectedUser.display_name || "—"} />
                   <DetailRow label="Username" value={selectedUser.username || "—"} />
@@ -495,9 +497,20 @@ const UserRow = ({
   );
 };
 
-const DetailRow = ({ label, value }: { label: string; value: string }) => (
-  <div className="flex justify-between items-center">
+const DetailRow = ({ label, value, copyable }: { label: string; value: string; copyable?: boolean }) => (
+  <div className="flex justify-between items-center group">
     <span className="text-xs text-gray-500">{label}</span>
-    <span className="text-sm text-gray-300 text-right truncate max-w-[200px]">{value}</span>
+    <div className="flex items-center gap-1">
+      <span className={`text-sm text-gray-300 text-right truncate ${copyable ? 'max-w-[160px] font-mono text-xs' : 'max-w-[200px]'}`}>{value}</span>
+      {copyable && (
+        <button
+          onClick={() => { navigator.clipboard.writeText(value); import("sonner").then(m => m.toast.success("Copied to clipboard")); }}
+          className="opacity-0 group-hover:opacity-100 text-gray-500 hover:text-gray-300 transition-opacity p-0.5"
+          title="Copy"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+        </button>
+      )}
+    </div>
   </div>
 );
