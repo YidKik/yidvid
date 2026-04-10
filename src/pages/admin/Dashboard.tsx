@@ -19,6 +19,7 @@ import { UsersPageV2 } from "@/components/admin-v2/pages/UsersPageV2";
 import { CategoriesPageV2 } from "@/components/admin-v2/pages/CategoriesPageV2";
 import { CommentsPageV2 } from "@/components/admin-v2/pages/CommentsPageV2";
 import { ContactRequestsPageV2 } from "@/components/admin-v2/pages/ContactRequestsPageV2";
+import { ChannelRequestsPageV2 } from "@/components/admin-v2/pages/ChannelRequestsPageV2";
 
 import { AnalyticsPageV2 } from "@/components/admin-v2/pages/AnalyticsPageV2";
 
@@ -32,7 +33,7 @@ const PAGE_META: Record<string, { title: string; description: string }> = {
   users: { title: "Users", description: "Manage users & admin roles" },
   comments: { title: "Comments", description: "View & moderate comments" },
   contacts: { title: "Contact Requests", description: "Manage contact requests & emails" },
-  
+  requests: { title: "Channel Requests", description: "Review & manage channel requests from users" },
 };
 
 const Dashboard = () => {
@@ -102,6 +103,8 @@ const Dashboard = () => {
         return <CommentsPageV2 />;
       case "contacts":
         return <ContactRequestsPageV2 />;
+      case "requests":
+        return <ChannelRequestsPageV2 />;
       default:
         return <OverviewPageV2 />;
     }
