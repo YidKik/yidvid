@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogD
 import { Separator } from "@/components/ui/separator";
 import {
   Search, Shield, ShieldOff, Loader2, UserPlus, Users, ShieldCheck, Calendar, Mail,
-  Pencil, Trash2, X, Save, AlertTriangle, MoreVertical
+  Pencil, Trash2, X, Save, AlertTriangle, MoreVertical, Eye
 } from "lucide-react";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger
@@ -18,6 +18,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { formatDate } from "@/components/dashboard/user-management/UserManagementUtils";
 import { secureStorage } from "@/utils/security/storageEncryption";
+import { UserActivityDialog } from "./UserActivityDialog";
 
 interface UsersPageV2Props {
   currentUserId: string;
@@ -44,6 +45,7 @@ export const UsersPageV2 = ({ currentUserId }: UsersPageV2Props) => {
   const [editDisplayName, setEditDisplayName] = useState("");
   const [editUsername, setEditUsername] = useState("");
   const [savingEdit, setSavingEdit] = useState(false);
+  const [showActivityDialog, setShowActivityDialog] = useState(false);
 
   const allUsers = useMemo(() => [...(adminUsers || []), ...(regularUsers || [])], [adminUsers, regularUsers]);
   const selectedUser = useMemo(() => allUsers.find(u => u.id === selectedUserId), [allUsers, selectedUserId]);
@@ -343,6 +345,14 @@ export const UsersPageV2 = ({ currentUserId }: UsersPageV2Props) => {
                       <Button
                         size="sm"
                         variant="outline"
+                        className="w-full border-[#2a2b35] text-gray-300 hover:text-gray-100 hover:bg-[#1a1b24] justify-start"
+                        onClick={() => setShowActivityDialog(true)}
+                      >
+                        <Eye className="h-3.5 w-3.5 mr-2" /> View Full Activity
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
                         className="w-full border-red-500/20 text-red-400 hover:text-red-300 hover:bg-red-500/10 justify-start"
                         onClick={() => setShowDeleteConfirm(true)}
                       >
@@ -434,6 +444,16 @@ export const UsersPageV2 = ({ currentUserId }: UsersPageV2Props) => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* User Activity Dialog */}
+      {selectedUser && (
+        <UserActivityDialog
+          open={showActivityDialog}
+          onOpenChange={setShowActivityDialog}
+          userId={selectedUser.id}
+          userName={selectedUser.display_name || selectedUser.username || selectedUser.email || "User"}
+        />
+      )}
     </div>
   );
 };
