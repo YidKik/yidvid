@@ -401,6 +401,7 @@ export type Database = {
           replied_by: string | null
           responded_at: string | null
           status: string
+          updated_at: string
           user_id: string | null
         }
         Insert: {
@@ -415,6 +416,7 @@ export type Database = {
           replied_by?: string | null
           responded_at?: string | null
           status?: string
+          updated_at?: string
           user_id?: string | null
         }
         Update: {
@@ -429,6 +431,7 @@ export type Database = {
           replied_by?: string | null
           responded_at?: string | null
           status?: string
+          updated_at?: string
           user_id?: string | null
         }
         Relationships: []
