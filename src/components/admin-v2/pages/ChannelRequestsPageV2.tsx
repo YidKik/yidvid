@@ -3,11 +3,11 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
-import { CheckCircle2, XCircle, Clock, ExternalLink, Search, ChevronDown, ChevronUp, User, Mail, Hash, Copy } from "lucide-react";
+import { CheckCircle2, XCircle, Clock, ExternalLink, Search, User, Mail, Hash, Copy, X, Calendar, Link2 } from "lucide-react";
 import { formatDistanceToNow, format } from "date-fns";
 import { toast } from "sonner";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface ChannelRequest {
   id: string;
@@ -28,7 +28,7 @@ type FilterStatus = "all" | "pending" | "approved" | "rejected";
 
 export const ChannelRequestsPageV2 = () => {
   const [filter, setFilter] = useState<FilterStatus>("all");
-  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const queryClient = useQueryClient();
 
   const { data: requests, isLoading } = useQuery({
@@ -66,6 +66,8 @@ export const ChannelRequestsPageV2 = () => {
   };
 
   const filtered = requests?.filter(r => filter === "all" || r.status === filter) || [];
+  const selected = requests?.find(r => r.id === selectedId) || null;
+
   const counts = {
     all: requests?.length || 0,
     pending: requests?.filter(r => r.status === "pending").length || 0,
@@ -73,14 +75,15 @@ export const ChannelRequestsPageV2 = () => {
     rejected: requests?.filter(r => r.status === "rejected").length || 0,
   };
 
-  const statusBadge = (status: string | null) => {
+  const statusBadge = (status: string | null, size: "sm" | "lg" = "sm") => {
+    const cls = size === "lg" ? "text-xs px-3 py-1" : "";
     switch (status) {
       case "approved":
-        return <Badge className="bg-emerald-500/15 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20"><CheckCircle2 className="w-3 h-3 mr-1" />Approved</Badge>;
+        return <Badge className={`bg-emerald-500/15 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20 ${cls}`}><CheckCircle2 className="w-3 h-3 mr-1" />Approved</Badge>;
       case "rejected":
-        return <Badge className="bg-red-500/15 text-red-400 border-red-500/20 hover:bg-red-500/20"><XCircle className="w-3 h-3 mr-1" />Rejected</Badge>;
+        return <Badge className={`bg-red-500/15 text-red-400 border-red-500/20 hover:bg-red-500/20 ${cls}`}><XCircle className="w-3 h-3 mr-1" />Rejected</Badge>;
       default:
-        return <Badge className="bg-amber-500/15 text-amber-400 border-amber-500/20 hover:bg-amber-500/20"><Clock className="w-3 h-3 mr-1" />Pending</Badge>;
+        return <Badge className={`bg-amber-500/15 text-amber-400 border-amber-500/20 hover:bg-amber-500/20 ${cls}`}><Clock className="w-3 h-3 mr-1" />Pending</Badge>;
     }
   };
 
@@ -92,241 +95,191 @@ export const ChannelRequestsPageV2 = () => {
   ];
 
   return (
-    <div className="space-y-6 max-w-7xl">
-      {/* Filter tabs */}
-      <div className="flex items-center gap-2">
-        {filterButtons.map(btn => (
-          <button
-            key={btn.key}
-            onClick={() => setFilter(btn.key)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-              filter === btn.key
-                ? "bg-[#6366f1]/15 text-[#818cf8] border border-[#6366f1]/20"
-                : "text-[#8b8fa3] hover:bg-[#1a1c25] hover:text-[#c4c7d4] border border-transparent"
-            }`}
-          >
-            {btn.label}
-          </button>
-        ))}
-      </div>
+    <div className="flex gap-6 h-[calc(100vh-132px)]">
+      {/* Left: list */}
+      <div className={`flex flex-col min-w-0 ${selected ? "flex-1" : "w-full"} transition-all duration-200`}>
+        {/* Filter tabs */}
+        <div className="flex items-center gap-2 mb-4 shrink-0">
+          {filterButtons.map(btn => (
+            <button
+              key={btn.key}
+              onClick={() => setFilter(btn.key)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                filter === btn.key
+                  ? "bg-[#6366f1]/15 text-[#818cf8] border border-[#6366f1]/20"
+                  : "text-[#8b8fa3] hover:bg-[#1a1c25] hover:text-[#c4c7d4] border border-transparent"
+              }`}
+            >
+              {btn.label}
+            </button>
+          ))}
+        </div>
 
-      {/* Table */}
-      <div className="rounded-xl border border-[#1e2028] bg-[#0f1117] overflow-hidden">
-        {isLoading ? (
-          <div className="p-6 space-y-4">
-            {[...Array(5)].map((_, i) => (
-              <Skeleton key={i} className="h-12 w-full bg-[#1a1c25]" />
-            ))}
-          </div>
-        ) : filtered.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-[#565b6e]">
-            <Search className="w-8 h-8 mb-3 opacity-40" />
-            <p className="text-sm">No {filter === "all" ? "" : filter} channel requests found</p>
-          </div>
-        ) : (
-          <Table>
-            <TableHeader>
-              <TableRow className="border-[#1e2028] hover:bg-transparent">
-                <TableHead className="text-[#565b6e] text-[11px] uppercase tracking-wider font-semibold w-8"></TableHead>
-                <TableHead className="text-[#565b6e] text-[11px] uppercase tracking-wider font-semibold">Channel</TableHead>
-                <TableHead className="text-[#565b6e] text-[11px] uppercase tracking-wider font-semibold">Requested By</TableHead>
-                <TableHead className="text-[#565b6e] text-[11px] uppercase tracking-wider font-semibold">Date</TableHead>
-                <TableHead className="text-[#565b6e] text-[11px] uppercase tracking-wider font-semibold">Status</TableHead>
-                <TableHead className="text-[#565b6e] text-[11px] uppercase tracking-wider font-semibold text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filtered.map(request => {
-                const isExpanded = expandedId === request.id;
-                return (
-                  <>
-                    <TableRow
+        {/* Request list */}
+        <div className="rounded-xl border border-[#1e2028] bg-[#0f1117] overflow-hidden flex-1 min-h-0">
+          {isLoading ? (
+            <div className="p-6 space-y-3">
+              {[...Array(6)].map((_, i) => (
+                <Skeleton key={i} className="h-14 w-full bg-[#1a1c25] rounded-lg" />
+              ))}
+            </div>
+          ) : filtered.length === 0 ? (
+            <div className="flex flex-col items-center justify-center h-full text-[#565b6e]">
+              <Search className="w-8 h-8 mb-3 opacity-40" />
+              <p className="text-sm">No {filter === "all" ? "" : filter} channel requests found</p>
+            </div>
+          ) : (
+            <ScrollArea className="h-full">
+              <div className="p-2 space-y-1">
+                {filtered.map(request => {
+                  const isActive = selectedId === request.id;
+                  return (
+                    <button
                       key={request.id}
-                      className={`border-[#1e2028] cursor-pointer transition-colors ${
-                        isExpanded ? "bg-[#1a1c25]/70" : "hover:bg-[#1a1c25]/50"
+                      onClick={() => setSelectedId(isActive ? null : request.id)}
+                      className={`w-full flex items-center gap-4 px-4 py-3 rounded-lg text-left transition-all ${
+                        isActive
+                          ? "bg-[#6366f1]/10 border border-[#6366f1]/20"
+                          : "hover:bg-[#1a1c25] border border-transparent"
                       }`}
-                      onClick={() => setExpandedId(isExpanded ? null : request.id)}
                     >
-                      <TableCell className="w-8 pr-0">
-                        {isExpanded
-                          ? <ChevronUp className="w-4 h-4 text-[#565b6e]" />
-                          : <ChevronDown className="w-4 h-4 text-[#565b6e]" />
-                        }
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm font-medium text-[#c4c7d4]">{request.channel_name}</span>
-                          {request.channel_id && (
-                            <a
-                              href={`https://youtube.com/channel/${request.channel_id}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-[#565b6e] hover:text-[#818cf8] transition-colors"
-                              onClick={e => e.stopPropagation()}
-                            >
-                              <ExternalLink className="w-3.5 h-3.5" />
-                            </a>
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-sm text-[#8b8fa3]">
-                        {request.profiles?.display_name || request.profiles?.email || "Anonymous"}
-                      </TableCell>
-                      <TableCell className="text-xs text-[#565b6e]">
-                        {formatDistanceToNow(new Date(request.created_at), { addSuffix: true })}
-                      </TableCell>
-                      <TableCell>{statusBadge(request.status)}</TableCell>
-                      <TableCell className="text-right" onClick={e => e.stopPropagation()}>
-                        <div className="flex items-center justify-end gap-2">
-                          {request.status !== "approved" && (
-                            <Button
-                              size="sm"
-                              onClick={() => handleStatusChange(request.id, "approved")}
-                              className="h-7 px-3 text-xs bg-emerald-500/15 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/25"
-                            >
-                              <CheckCircle2 className="w-3 h-3 mr-1" />
-                              Approve
-                            </Button>
-                          )}
-                          {request.status !== "rejected" && (
-                            <Button
-                              size="sm"
-                              onClick={() => handleStatusChange(request.id, "rejected")}
-                              className="h-7 px-3 text-xs bg-red-500/15 text-red-400 border border-red-500/20 hover:bg-red-500/25"
-                            >
-                              <XCircle className="w-3 h-3 mr-1" />
-                              Reject
-                            </Button>
-                          )}
-                        </div>
-                      </TableCell>
-                    </TableRow>
-
-                    {/* Expanded detail panel */}
-                    {isExpanded && (
-                      <TableRow key={`${request.id}-detail`} className="border-[#1e2028] bg-[#13141b] hover:bg-[#13141b]">
-                        <TableCell colSpan={6} className="p-0">
-                          <div className="px-6 py-5 space-y-4">
-                            {/* User details */}
-                            <div>
-                              <p className="text-[10px] uppercase tracking-wider text-[#565b6e] font-semibold mb-3">User Details</p>
-                              <div className="grid grid-cols-3 gap-4">
-                                <div className="flex items-start gap-3 bg-[#0f1117] rounded-lg p-3 border border-[#1e2028]">
-                                  <User className="w-4 h-4 text-[#818cf8] mt-0.5 shrink-0" />
-                                  <div className="min-w-0">
-                                    <p className="text-[10px] text-[#565b6e] mb-0.5">Username</p>
-                                    <p className="text-sm text-[#c4c7d4] truncate">
-                                      {request.profiles?.username || request.profiles?.display_name || "N/A"}
-                                    </p>
-                                  </div>
-                                </div>
-                                <div className="flex items-start gap-3 bg-[#0f1117] rounded-lg p-3 border border-[#1e2028]">
-                                  <Mail className="w-4 h-4 text-[#818cf8] mt-0.5 shrink-0" />
-                                  <div className="min-w-0 flex-1">
-                                    <p className="text-[10px] text-[#565b6e] mb-0.5">Email</p>
-                                    <div className="flex items-center gap-1.5">
-                                      <p className="text-sm text-[#c4c7d4] truncate">
-                                        {request.profiles?.email || "N/A"}
-                                      </p>
-                                      {request.profiles?.email && (
-                                        <button
-                                          onClick={() => copyToClipboard(request.profiles!.email, "Email")}
-                                          className="text-[#565b6e] hover:text-[#818cf8] transition-colors shrink-0"
-                                        >
-                                          <Copy className="w-3 h-3" />
-                                        </button>
-                                      )}
-                                    </div>
-                                  </div>
-                                </div>
-                                <div className="flex items-start gap-3 bg-[#0f1117] rounded-lg p-3 border border-[#1e2028]">
-                                  <Hash className="w-4 h-4 text-[#818cf8] mt-0.5 shrink-0" />
-                                  <div className="min-w-0 flex-1">
-                                    <p className="text-[10px] text-[#565b6e] mb-0.5">User ID</p>
-                                    <div className="flex items-center gap-1.5">
-                                      <p className="text-xs text-[#8b8fa3] font-mono truncate">
-                                        {request.user_id || "Anonymous"}
-                                      </p>
-                                      {request.user_id && (
-                                        <button
-                                          onClick={() => copyToClipboard(request.user_id!, "User ID")}
-                                          className="text-[#565b6e] hover:text-[#818cf8] transition-colors shrink-0"
-                                        >
-                                          <Copy className="w-3 h-3" />
-                                        </button>
-                                      )}
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-
-                            {/* Request details */}
-                            <div>
-                              <p className="text-[10px] uppercase tracking-wider text-[#565b6e] font-semibold mb-3">Request Details</p>
-                              <div className="grid grid-cols-3 gap-4">
-                                <div className="bg-[#0f1117] rounded-lg p-3 border border-[#1e2028]">
-                                  <p className="text-[10px] text-[#565b6e] mb-0.5">Channel Name</p>
-                                  <p className="text-sm text-[#c4c7d4]">{request.channel_name}</p>
-                                </div>
-                                <div className="bg-[#0f1117] rounded-lg p-3 border border-[#1e2028]">
-                                  <p className="text-[10px] text-[#565b6e] mb-0.5">Channel ID</p>
-                                  <div className="flex items-center gap-1.5">
-                                    <p className="text-xs text-[#8b8fa3] font-mono truncate">
-                                      {request.channel_id || "Not provided"}
-                                    </p>
-                                    {request.channel_id && (
-                                      <button
-                                        onClick={() => copyToClipboard(request.channel_id!, "Channel ID")}
-                                        className="text-[#565b6e] hover:text-[#818cf8] transition-colors shrink-0"
-                                      >
-                                        <Copy className="w-3 h-3" />
-                                      </button>
-                                    )}
-                                  </div>
-                                </div>
-                                <div className="bg-[#0f1117] rounded-lg p-3 border border-[#1e2028]">
-                                  <p className="text-[10px] text-[#565b6e] mb-0.5">Submitted</p>
-                                  <p className="text-sm text-[#c4c7d4]">
-                                    {format(new Date(request.created_at), "MMM d, yyyy 'at' h:mm a")}
-                                  </p>
-                                </div>
-                              </div>
-                            </div>
-
-                            {/* Status actions */}
-                            <div className="flex items-center gap-3 pt-1">
-                              <p className="text-[10px] uppercase tracking-wider text-[#565b6e] font-semibold mr-1">Set Status:</p>
-                              <Button
-                                size="sm"
-                                disabled={request.status === "approved"}
-                                onClick={() => handleStatusChange(request.id, "approved")}
-                                className="h-8 px-4 text-xs bg-emerald-500/15 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/25 disabled:opacity-30"
-                              >
-                                <CheckCircle2 className="w-3.5 h-3.5 mr-1.5" />
-                                Approve
-                              </Button>
-                              <Button
-                                size="sm"
-                                disabled={request.status === "rejected"}
-                                onClick={() => handleStatusChange(request.id, "rejected")}
-                                className="h-8 px-4 text-xs bg-red-500/15 text-red-400 border border-red-500/20 hover:bg-red-500/25 disabled:opacity-30"
-                              >
-                                <XCircle className="w-3.5 h-3.5 mr-1.5" />
-                                Reject
-                              </Button>
-                            </div>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </>
-                );
-              })}
-            </TableBody>
-          </Table>
-        )}
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-[#c4c7d4] truncate">{request.channel_name}</p>
+                        <p className="text-xs text-[#565b6e] mt-0.5 truncate">
+                          {request.profiles?.display_name || request.profiles?.email || "Anonymous"}
+                          {" · "}
+                          {formatDistanceToNow(new Date(request.created_at), { addSuffix: true })}
+                        </p>
+                      </div>
+                      {statusBadge(request.status)}
+                    </button>
+                  );
+                })}
+              </div>
+            </ScrollArea>
+          )}
+        </div>
       </div>
+
+      {/* Right: detail panel */}
+      {selected && (
+        <div className="w-[400px] shrink-0 rounded-xl border border-[#1e2028] bg-[#0f1117] flex flex-col overflow-hidden">
+          {/* Panel header */}
+          <div className="flex items-center justify-between px-5 py-4 border-b border-[#1e2028] shrink-0">
+            <h3 className="text-sm font-semibold text-white truncate pr-3">Request Details</h3>
+            <button
+              onClick={() => setSelectedId(null)}
+              className="p-1 rounded hover:bg-white/5 text-[#565b6e] hover:text-[#8b8fa3] transition-colors shrink-0"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+
+          <ScrollArea className="flex-1">
+            <div className="p-5 space-y-6">
+              {/* Channel info */}
+              <div>
+                <p className="text-[10px] uppercase tracking-wider text-[#565b6e] font-semibold mb-3">Channel</p>
+                <div className="space-y-2.5">
+                  <div className="bg-[#13141b] rounded-lg p-3.5 border border-[#1e2028]">
+                    <p className="text-[10px] text-[#565b6e] mb-1">Channel Name</p>
+                    <p className="text-sm font-medium text-[#c4c7d4]">{selected.channel_name}</p>
+                  </div>
+                  {selected.channel_id && (
+                    <div className="bg-[#13141b] rounded-lg p-3.5 border border-[#1e2028]">
+                      <p className="text-[10px] text-[#565b6e] mb-1">Channel ID</p>
+                      <div className="flex items-center gap-2">
+                        <p className="text-xs text-[#8b8fa3] font-mono truncate flex-1">{selected.channel_id}</p>
+                        <button onClick={() => copyToClipboard(selected.channel_id!, "Channel ID")} className="text-[#565b6e] hover:text-[#818cf8] transition-colors shrink-0">
+                          <Copy className="w-3 h-3" />
+                        </button>
+                        <a href={`https://youtube.com/channel/${selected.channel_id}`} target="_blank" rel="noopener noreferrer" className="text-[#565b6e] hover:text-[#818cf8] transition-colors shrink-0">
+                          <ExternalLink className="w-3 h-3" />
+                        </a>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Status */}
+              <div>
+                <p className="text-[10px] uppercase tracking-wider text-[#565b6e] font-semibold mb-3">Status</p>
+                <div className="bg-[#13141b] rounded-lg p-3.5 border border-[#1e2028] flex items-center justify-between">
+                  {statusBadge(selected.status, "lg")}
+                  <p className="text-[10px] text-[#565b6e]">
+                    Updated {formatDistanceToNow(new Date(selected.updated_at), { addSuffix: true })}
+                  </p>
+                </div>
+              </div>
+
+              {/* User details */}
+              <div>
+                <p className="text-[10px] uppercase tracking-wider text-[#565b6e] font-semibold mb-3">Requested By</p>
+                <div className="space-y-2.5">
+                  <InfoRow icon={User} label="Username" value={selected.profiles?.username || selected.profiles?.display_name || "N/A"} />
+                  <InfoRow icon={Mail} label="Email" value={selected.profiles?.email || "N/A"} copyable={!!selected.profiles?.email} onCopy={() => copyToClipboard(selected.profiles!.email, "Email")} />
+                  <InfoRow icon={Hash} label="User ID" value={selected.user_id || "Anonymous"} mono copyable={!!selected.user_id} onCopy={() => copyToClipboard(selected.user_id!, "User ID")} />
+                  <InfoRow icon={Calendar} label="Submitted" value={format(new Date(selected.created_at), "MMM d, yyyy 'at' h:mm a")} />
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div>
+                <p className="text-[10px] uppercase tracking-wider text-[#565b6e] font-semibold mb-3">Actions</p>
+                <div className="flex gap-2">
+                  <Button
+                    size="sm"
+                    disabled={selected.status === "approved"}
+                    onClick={() => handleStatusChange(selected.id, "approved")}
+                    className="flex-1 h-9 text-xs bg-emerald-500/15 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/25 disabled:opacity-30"
+                  >
+                    <CheckCircle2 className="w-3.5 h-3.5 mr-1.5" />
+                    Approve
+                  </Button>
+                  <Button
+                    size="sm"
+                    disabled={selected.status === "rejected"}
+                    onClick={() => handleStatusChange(selected.id, "rejected")}
+                    className="flex-1 h-9 text-xs bg-red-500/15 text-red-400 border border-red-500/20 hover:bg-red-500/25 disabled:opacity-30"
+                  >
+                    <XCircle className="w-3.5 h-3.5 mr-1.5" />
+                    Reject
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </ScrollArea>
+        </div>
+      )}
     </div>
   );
 };
+
+function InfoRow({ icon: Icon, label, value, mono, copyable, onCopy }: {
+  icon: typeof User;
+  label: string;
+  value: string;
+  mono?: boolean;
+  copyable?: boolean;
+  onCopy?: () => void;
+}) {
+  return (
+    <div className="flex items-start gap-3 bg-[#13141b] rounded-lg p-3.5 border border-[#1e2028]">
+      <Icon className="w-4 h-4 text-[#818cf8] mt-0.5 shrink-0" />
+      <div className="min-w-0 flex-1">
+        <p className="text-[10px] text-[#565b6e] mb-0.5">{label}</p>
+        <div className="flex items-center gap-1.5">
+          <p className={`text-sm truncate ${mono ? "font-mono text-xs text-[#8b8fa3]" : "text-[#c4c7d4]"}`}>
+            {value}
+          </p>
+          {copyable && onCopy && (
+            <button onClick={onCopy} className="text-[#565b6e] hover:text-[#818cf8] transition-colors shrink-0">
+              <Copy className="w-3 h-3" />
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
