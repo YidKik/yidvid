@@ -13,7 +13,7 @@ import { AdminPinDialog } from "@/components/settings/sections/admin/AdminPinDia
 
 // Keep existing page components for now — they'll be rebuilt in subsequent phases
 import { ContentModerationPage } from "@/components/admin/pages/ContentModerationPage";
-import { VideosChannelsPage } from "@/components/admin/pages/VideosChannelsPage";
+import { ChannelsPageV2 } from "@/components/admin-v2/pages/ChannelsPageV2";
 import { MusicPage } from "@/components/admin/pages/MusicPage";
 import { UsersPage } from "@/components/admin/pages/UsersPage";
 import { CategoriesPage } from "@/components/admin/pages/CategoriesPage";
@@ -91,7 +91,7 @@ const Dashboard = () => {
       case "analytics":
         return <AnalyticsPage userId={session?.user?.id} />;
       case "channels":
-        return <VideosChannelsPage />;
+        return <ChannelsPageV2 />;
       case "moderation":
         return <ContentModerationPage />;
       case "categories":
