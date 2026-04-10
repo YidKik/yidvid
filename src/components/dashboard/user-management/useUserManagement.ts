@@ -4,34 +4,44 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ProfilesTable } from "@/integrations/supabase/types/profiles";
+import { secureStorage } from "@/utils/security/storageEncryption";
 
 export const useUserManagement = (currentUserId: string) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isExpanded, setIsExpanded] = useState(true);
   const [isCurrentUserAdmin, setIsCurrentUserAdmin] = useState(false);
-  const [hasPinBypass, setHasPinBypass] = useState(false);
-  
-  // Check for PIN bypass on mount
-  useEffect(() => {
-    const pinBypass = localStorage.getItem('admin-pin-bypass') === 'true';
-    setHasPinBypass(pinBypass);
-    
-    if (pinBypass) {
-      setIsCurrentUserAdmin(true);
-    }
-  }, []);
+  const [hasSecureAdminSession, setHasSecureAdminSession] = useState(false);
+
+  const getAdminToken = () => {
+    const adminSession = secureStorage.getSecureItem("admin-session");
+    return typeof adminSession?.adminToken === "string" ? adminSession.adminToken : undefined;
+  };
   
   // Check if current user is admin
   useEffect(() => {
     const checkAdminStatus = async () => {
-      if (!currentUserId && !hasPinBypass) return;
-      
-      if (hasPinBypass) {
-        setIsCurrentUserAdmin(true);
-        return;
-      }
+      if (!currentUserId) return;
       
       try {
+        const adminToken = getAdminToken();
+
+        if (adminToken) {
+          const { data: secureAdminData, error: secureAdminError } = await supabase.functions.invoke("secure-admin-auth", {
+            body: {
+              action: "verify-admin",
+              adminToken,
+            },
+          });
+
+          if (!secureAdminError && secureAdminData?.isAdmin) {
+            setHasSecureAdminSession(true);
+            setIsCurrentUserAdmin(true);
+            return;
+          }
+        }
+
+        setHasSecureAdminSession(false);
+
         // Try to use edge function first
         try {
           const { data: adminCheckData, error: funcError } = await supabase.functions.invoke('check-admin-status', {
@@ -61,26 +71,25 @@ export const useUserManagement = (currentUserId: string) => {
         setIsCurrentUserAdmin(data?.is_admin === true);
       } catch (err) {
         console.error("Failed to check admin status:", err);
+        setHasSecureAdminSession(false);
       }
     };
     
     checkAdminStatus();
-  }, [currentUserId, hasPinBypass]);
+  }, [currentUserId]);
   
   const { data: users, refetch: refetchUsers, isLoading } = useQuery({
-    queryKey: ["all-users"],
+    queryKey: ["all-users", currentUserId, hasSecureAdminSession],
     queryFn: async () => {
-      if (!isCurrentUserAdmin && !hasPinBypass) {
-        toast.error("Only admins can view user data", { id: "admin-permission-denied" });
-        return [];
-      }
-      
-      console.log("Fetching all users via direct profiles query...");
-      
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("id, email, is_admin, name, display_name, username, avatar_url, created_at, updated_at, user_type, child_name, email_notifications, welcome_name, welcome_popup_shown")
-        .order("created_at", { ascending: false });
+      const adminToken = getAdminToken();
+
+      const { data, error } = await supabase.functions.invoke("get-all-users", {
+        body: {
+          page: 1,
+          perPage: 1000,
+          adminToken,
+        },
+      });
 
       if (error) {
         console.error("Error fetching users:", error);
@@ -88,44 +97,43 @@ export const useUserManagement = (currentUserId: string) => {
         return [];
       }
 
-      console.log("Fetched users via direct query:", data?.length);
-      return data || [];
+      const userList = Array.isArray(data) ? data : data?.users;
+
+      if (!Array.isArray(userList)) {
+        toast.error("Error fetching users: Invalid response format", { id: "fetch-users-error" });
+        return [];
+      }
+
+      console.log("Fetched users via secure admin function:", userList.length);
+      return userList as ProfilesTable["Row"][];
     },
-    enabled: isCurrentUserAdmin || hasPinBypass // Only run query if user is admin or has PIN bypass
+    enabled: Boolean(currentUserId),
   });
 
   const toggleAdminStatus = async (userId: string, currentStatus: boolean) => {
-    if (!isCurrentUserAdmin && !hasPinBypass) {
+    if (!isCurrentUserAdmin && !hasSecureAdminSession) {
       toast.error("Permission denied: Only admins can modify admin status.", { id: "admin-permission-denied" });
       return;
     }
     
     try {
       console.log(`Toggling admin status for user ${userId} from ${currentStatus} to ${!currentStatus}`);
-      
-      // Try edge function first
-      try {
-        const { data: result, error: funcError } = await supabase.functions.invoke('toggle-admin-status', {
-          body: { userId, newStatus: !currentStatus }
-        });
-        
-        if (!funcError && result?.success) {
-          toast.success(`Admin status ${currentStatus ? "removed" : "granted"}: User has been ${currentStatus ? "removed from" : "made"} admin.`, 
-            { id: `admin-status-changed-${userId}` });
-          refetchUsers();
-          return;
-        }
-      } catch (edgeFuncError) {
-        console.log("Edge function not available, falling back to direct query");
-      }
-      
-      // Fall back to direct query
-      const { error: updateError } = await supabase
-        .from("profiles")
-        .update({ is_admin: !currentStatus })
-        .eq("id", userId);
+      const adminToken = getAdminToken();
+      const { data: result, error } = await supabase.functions.invoke("toggle-admin-status", {
+        body: {
+          userId,
+          newStatus: !currentStatus,
+          adminToken,
+        },
+      });
 
-      if (updateError) throw updateError;
+      if (error) {
+        throw error;
+      }
+
+      if (!result?.success) {
+        throw new Error(result?.error || "Failed to update admin status");
+      }
 
       toast.success(`Admin status ${currentStatus ? "removed" : "granted"}: User has been ${currentStatus ? "removed from" : "made"} admin.`, 
         { id: `admin-status-changed-${userId}` });
@@ -164,6 +172,6 @@ export const useUserManagement = (currentUserId: string) => {
     toggleAdminStatus,
     isExpanded,
     setIsExpanded,
-    isCurrentUserAdmin: isCurrentUserAdmin || hasPinBypass
+    isCurrentUserAdmin: isCurrentUserAdmin || hasSecureAdminSession
   };
 };
