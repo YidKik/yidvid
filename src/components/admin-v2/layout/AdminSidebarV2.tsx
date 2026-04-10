@@ -5,10 +5,8 @@ import {
   Users,
   MessageSquare,
   Mail,
-  Bell,
   BarChart3,
   Tag,
-  Music,
   ChevronLeft,
   ChevronRight,
   LogOut,
@@ -30,7 +28,6 @@ const navSections = [
       { id: "channels", label: "Channels & Videos", icon: MonitorPlay },
       { id: "moderation", label: "Moderation", icon: Shield },
       { id: "categories", label: "Categories", icon: Tag },
-      { id: "music", label: "Music", icon: Music },
     ],
   },
   {
@@ -39,7 +36,6 @@ const navSections = [
       { id: "users", label: "Users", icon: Users },
       { id: "comments", label: "Comments", icon: MessageSquare },
       { id: "contacts", label: "Contact Requests", icon: Mail },
-      { id: "notifications", label: "Notifications", icon: Bell },
     ],
   },
 ];
