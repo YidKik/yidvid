@@ -4,6 +4,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, LogIn, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/header/ThemeToggle";
 import { useSessionManager } from "@/hooks/useSessionManager";
 import { useIsMobile } from "@/hooks/use-mobile";
 import Auth from "@/pages/Auth";
@@ -266,6 +267,8 @@ export const GlobalHeader = () => {
 
             {/* Right Side - Notifications + Sign In / Profile */}
             <div className="flex items-center gap-2 shrink-0">
+              {/* Theme Toggle */}
+              <ThemeToggle />
               {/* Notification Bell */}
               {isAuthenticated && (
                 <NotificationsMenu onMarkAsRead={handleMarkNotificationsAsRead} />
