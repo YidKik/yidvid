@@ -154,13 +154,22 @@ export const UserActivityDialog = ({ open, onOpenChange, userId, userName }: Use
         .select("session_start, session_end, page_path", { count: "exact" })
         .eq("user_id", userId)
         .order("session_start", { ascending: false })
-        .limit(100);
+        .limit(500);
 
       let totalMinutes = 0;
+      let isLive = false;
       (data || []).forEach(s => {
         if (s.session_start && s.session_end) {
           const diff = (new Date(s.session_end).getTime() - new Date(s.session_start).getTime()) / 60000;
           if (diff > 0 && diff < 480) totalMinutes += diff;
+        }
+        // User is "live" if they have a session with no end, or session_end updated within last 2 minutes
+        if (s.session_start && !s.session_end) {
+          const startAge = (Date.now() - new Date(s.session_start).getTime()) / 60000;
+          if (startAge < 480) isLive = true; // session started less than 8h ago with no end
+        } else if (s.session_end) {
+          const endAge = (Date.now() - new Date(s.session_end).getTime()) / 60000;
+          if (endAge < 2) isLive = true; // heartbeat within last 2 minutes
         }
       });
 
@@ -168,9 +177,12 @@ export const UserActivityDialog = ({ open, onOpenChange, userId, userName }: Use
         totalSessions: count || 0,
         totalMinutes: Math.round(totalMinutes),
         lastSession: data?.[0]?.session_start || null,
+        isLive,
+        currentPage: isLive ? data?.[0]?.page_path || null : null,
       };
     },
     enabled: open,
+    refetchInterval: 30_000, // Refresh every 30s to update live status
   });
 
   const isLoading = loadingCR || loadingContact || loadingComments || loadingSubs || loadingVideos || loadingFavs;
@@ -199,6 +211,12 @@ export const UserActivityDialog = ({ open, onOpenChange, userId, userName }: Use
           <DialogTitle className="text-base font-semibold text-white flex items-center gap-2">
             <User className="w-4 h-4 text-[#818cf8]" />
             Activity Overview — {userName}
+            {sessionData?.isLive && (
+              <span className="flex items-center gap-1.5 ml-2 text-xs font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 rounded-full px-2.5 py-0.5">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                Online Now
+              </span>
+            )}
           </DialogTitle>
         </DialogHeader>
 
@@ -211,13 +229,28 @@ export const UserActivityDialog = ({ open, onOpenChange, userId, userName }: Use
             ) : (
               <>
                 {/* Top stats bar */}
-                <div className="grid grid-cols-5 gap-3 mb-6">
+                <div className="grid grid-cols-6 gap-3 mb-6">
                   {[
                     { label: "Videos Watched", value: videoStats?.totalWatched || 0, icon: Play, color: "text-violet-400" },
                     { label: "Channels Explored", value: videoStats?.uniqueChannels || 0, icon: Tv, color: "text-blue-400" },
                     { label: "Subscriptions", value: subscriptions?.length || 0, icon: Activity, color: "text-cyan-400" },
                     { label: "Favorites", value: favorites || 0, icon: Heart, color: "text-pink-400" },
-                    { label: "Est. Time on Site", value: sessionData?.totalMinutes ? `${sessionData.totalMinutes}m` : "—", icon: Clock, color: "text-amber-400" },
+                    {
+                      label: "Time on Site",
+                      value: sessionData?.totalMinutes
+                        ? sessionData.totalMinutes >= 60
+                          ? `${Math.floor(sessionData.totalMinutes / 60)}h ${sessionData.totalMinutes % 60}m`
+                          : `${sessionData.totalMinutes}m`
+                        : "—",
+                      icon: Clock,
+                      color: "text-amber-400",
+                    },
+                    {
+                      label: "Status",
+                      value: sessionData?.isLive ? "🟢 Live" : "⚫ Offline",
+                      icon: Eye,
+                      color: sessionData?.isLive ? "text-emerald-400" : "text-[#565b6e]",
+                    },
                   ].map(stat => (
                     <div key={stat.label} className="bg-[#0f1117] rounded-xl p-3.5 border border-[#1e2028] text-center">
                       <stat.icon className={`w-4 h-4 mx-auto mb-1.5 ${stat.color}`} />
@@ -227,22 +260,38 @@ export const UserActivityDialog = ({ open, onOpenChange, userId, userName }: Use
                   ))}
                 </div>
 
-                {/* Last active info */}
-                {videoStats?.lastWatched && (
-                  <div className="flex items-center gap-2 bg-[#0f1117] rounded-lg px-4 py-2.5 border border-[#1e2028] mb-6">
-                    <Clock className="w-3.5 h-3.5 text-[#565b6e]" />
-                    <span className="text-xs text-[#8b8fa3]">Last active:</span>
-                    <span className="text-xs text-[#c4c7d4] font-medium">
-                      {format(new Date(videoStats.lastWatched), "MMM d, yyyy 'at' h:mm a")}
-                    </span>
-                    <span className="text-[10px] text-[#565b6e]">
-                      ({formatDistanceToNow(new Date(videoStats.lastWatched), { addSuffix: true })})
-                    </span>
-                    {sessionData?.totalSessions ? (
-                      <span className="ml-auto text-[10px] text-[#565b6e]">{sessionData.totalSessions} total sessions</span>
-                    ) : null}
-                  </div>
-                )}
+                {/* Last active / live info */}
+                <div className="flex items-center gap-2 bg-[#0f1117] rounded-lg px-4 py-2.5 border border-[#1e2028] mb-6">
+                  {sessionData?.isLive ? (
+                    <>
+                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+                      <span className="text-xs text-emerald-400 font-medium">Currently browsing</span>
+                      {sessionData.currentPage && (
+                        <span className="text-[10px] text-[#8b8fa3] font-mono bg-[#1a1c25] px-2 py-0.5 rounded">{sessionData.currentPage}</span>
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      <Clock className="w-3.5 h-3.5 text-[#565b6e]" />
+                      <span className="text-xs text-[#8b8fa3]">Last active:</span>
+                      {videoStats?.lastWatched ? (
+                        <>
+                          <span className="text-xs text-[#c4c7d4] font-medium">
+                            {format(new Date(videoStats.lastWatched), "MMM d, yyyy 'at' h:mm a")}
+                          </span>
+                          <span className="text-[10px] text-[#565b6e]">
+                            ({formatDistanceToNow(new Date(videoStats.lastWatched), { addSuffix: true })})
+                          </span>
+                        </>
+                      ) : (
+                        <span className="text-xs text-[#565b6e]">No activity recorded</span>
+                      )}
+                    </>
+                  )}
+                  {sessionData?.totalSessions ? (
+                    <span className="ml-auto text-[10px] text-[#565b6e]">{sessionData.totalSessions} total sessions</span>
+                  ) : null}
+                </div>
 
                 {/* Two-column grid of sections */}
                 <div className="grid grid-cols-2 gap-5">

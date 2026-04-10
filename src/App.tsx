@@ -17,6 +17,7 @@ import { SidebarProvider } from './contexts/SidebarContext';
 import Settings from './pages/Settings';
 import Dashboard from './pages/Dashboard';
 import { recordNavigation, setupScrollRestoration } from './utils/scrollRestoration';
+import { useSessionTracking } from './hooks/useSessionTracking';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 
 // Admin Pages
@@ -45,6 +46,9 @@ function AppContent() {
   
   // Initialize keyboard shortcuts
   useKeyboardShortcuts();
+  
+  // Track user sessions
+  useSessionTracking(session?.user?.id);
   
   // Set up navigation tracking
   useEffect(() => {
