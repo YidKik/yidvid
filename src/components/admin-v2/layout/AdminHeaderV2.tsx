@@ -227,10 +227,7 @@ export const AdminHeaderV2 = ({ pageTitle, pageDescription, profile, onTabChange
                           const Icon = cfg.icon;
                           const items = sectionMap[type] || [];
                           return (
-                            <div
-                              key={type}
-                              className="bg-[#1a1c25]/60 border border-[#1e2028] rounded-xl flex flex-col min-h-[200px]"
-                            >
+                            <div className="bg-[#1a1c25]/60 border border-[#1e2028] rounded-xl flex flex-col min-h-[320px]">
                               {/* Column header */}
                               <div className="flex items-center justify-between px-3 py-2.5 border-b border-[#1e2028]">
                                 <div className="flex items-center gap-1.5">
@@ -249,7 +246,7 @@ export const AdminHeaderV2 = ({ pageTitle, pageDescription, profile, onTabChange
                               </div>
 
                               {/* Column items */}
-                              <div className="flex-1 overflow-y-auto max-h-[340px]">
+                              <div className="flex-1 overflow-y-auto max-h-[480px]">
                                 {items.length === 0 ? (
                                   <div className="flex items-center justify-center h-full py-8">
                                     <p className="text-[10px] text-[#4a4e5e]">No notifications</p>
