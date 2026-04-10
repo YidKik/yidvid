@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { format, formatDistanceToNow, differenceInHours, differenceInDays, differenceInMinutes } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -29,46 +29,58 @@ interface ContactRequest {
   user_id: string | null;
 }
 
-const STATUS_CONFIG: Record<string, { label: string; cardBg: string; cardBorder: string; badgeColor: string; textColor: string; icon: typeof CheckCircle }> = {
+const STATUS_CONFIG: Record<string, {
+  label: string;
+  bg: string;
+  selectedBg: string;
+  border: string;
+  accent: string;
+  text: string;
+  icon: typeof CheckCircle;
+}> = {
   pending: {
     label: "Pending",
-    cardBg: "bg-yellow-500/10",
-    cardBorder: "border-yellow-500/30",
-    badgeColor: "bg-yellow-500/30 text-yellow-300 border-yellow-500/40",
-    textColor: "text-yellow-300",
+    bg: "bg-amber-600/80",
+    selectedBg: "bg-amber-600",
+    border: "border-amber-400",
+    accent: "text-amber-100",
+    text: "text-white",
     icon: Clock,
   },
   in_progress: {
     label: "In Progress",
-    cardBg: "bg-blue-500/10",
-    cardBorder: "border-blue-500/30",
-    badgeColor: "bg-blue-500/30 text-blue-300 border-blue-500/40",
-    textColor: "text-blue-300",
+    bg: "bg-sky-600/80",
+    selectedBg: "bg-sky-600",
+    border: "border-sky-400",
+    accent: "text-sky-100",
+    text: "text-white",
     icon: AlertCircle,
   },
   resolved: {
     label: "Resolved",
-    cardBg: "bg-green-500/10",
-    cardBorder: "border-green-500/30",
-    badgeColor: "bg-green-500/30 text-green-300 border-green-500/40",
-    textColor: "text-green-300",
+    bg: "bg-emerald-600/80",
+    selectedBg: "bg-emerald-600",
+    border: "border-emerald-400",
+    accent: "text-emerald-100",
+    text: "text-white",
     icon: CheckCircle,
   },
   closed: {
     label: "Closed",
-    cardBg: "bg-gray-500/10",
-    cardBorder: "border-gray-500/30",
-    badgeColor: "bg-gray-500/30 text-gray-300 border-gray-500/40",
-    textColor: "text-gray-400",
+    bg: "bg-slate-600/80",
+    selectedBg: "bg-slate-600",
+    border: "border-slate-400",
+    accent: "text-slate-200",
+    text: "text-white",
     icon: X,
   },
 };
 
 const CATEGORY_CONFIG: Record<string, { label: string; color: string }> = {
-  bug_report: { label: "Bug Report", color: "bg-red-500/20 text-red-400 border-red-500/30" },
-  feature_request: { label: "Feature Request", color: "bg-purple-500/20 text-purple-400 border-purple-500/30" },
-  support: { label: "Support", color: "bg-blue-500/20 text-blue-400 border-blue-500/30" },
-  general: { label: "General", color: "bg-gray-500/20 text-gray-400 border-gray-500/30" },
+  bug_report: { label: "Bug Report", color: "bg-white/20 text-white border-white/30" },
+  feature_request: { label: "Feature Request", color: "bg-white/20 text-white border-white/30" },
+  support: { label: "Support", color: "bg-white/20 text-white border-white/30" },
+  general: { label: "General", color: "bg-white/20 text-white border-white/30" },
 };
 
 type SortOption = "newest" | "oldest" | "longest_open";
@@ -79,7 +91,6 @@ const getOpenDuration = (createdAt: string): string => {
   const mins = differenceInMinutes(now, created);
   const hours = differenceInHours(now, created);
   const days = differenceInDays(now, created);
-
   if (mins < 60) return `${mins}m`;
   if (hours < 24) return `${hours}h`;
   if (days < 30) return `${days}d`;
@@ -92,7 +103,6 @@ const getOpenDurationFull = (createdAt: string): string => {
   const mins = differenceInMinutes(now, created);
   const hours = differenceInHours(now, created);
   const days = differenceInDays(now, created);
-
   if (mins < 60) return `${mins} minute${mins !== 1 ? "s" : ""}`;
   if (hours < 24) return `${hours} hour${hours !== 1 ? "s" : ""}`;
   if (days < 30) return `${days} day${days !== 1 ? "s" : ""}`;
@@ -107,8 +117,9 @@ export const ContactRequestsPageV2 = () => {
   const [isReplying, setIsReplying] = useState(false);
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [sortBy, setSortBy] = useState<SortOption>("newest");
+  const queryClient = useQueryClient();
 
-  const { data: requests, refetch, isLoading } = useQuery({
+  const { data: requests, isLoading } = useQuery({
     queryKey: ["admin-v2-contact-requests"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -122,10 +133,11 @@ export const ContactRequestsPageV2 = () => {
     staleTime: 15000,
   });
 
+  const invalidate = () => queryClient.invalidateQueries({ queryKey: ["admin-v2-contact-requests"] });
+
   const filtered = useMemo(() => {
     if (!requests) return [];
     let result = [...requests];
-
     if (statusFilter !== "all") {
       result = result.filter(r => r.status === statusFilter);
     }
@@ -139,19 +151,12 @@ export const ContactRequestsPageV2 = () => {
         r.category?.toLowerCase().includes(q)
       );
     }
-
-    // Sort
     result.sort((a, b) => {
       const dateA = new Date(a.created_at).getTime();
       const dateB = new Date(b.created_at).getTime();
-      switch (sortBy) {
-        case "oldest": return dateA - dateB;
-        case "longest_open": return dateA - dateB; // oldest first = longest open
-        case "newest":
-        default: return dateB - dateA;
-      }
+      if (sortBy === "oldest" || sortBy === "longest_open") return dateA - dateB;
+      return dateB - dateA;
     });
-
     return result;
   }, [requests, searchQuery, statusFilter, sortBy]);
 
@@ -179,8 +184,8 @@ export const ContactRequestsPageV2 = () => {
     if (error) {
       toast.error("Failed to update status");
     } else {
-      toast.success("Status updated");
-      refetch();
+      toast.success(`Status changed to ${STATUS_CONFIG[newStatus]?.label || newStatus}`);
+      await invalidate();
     }
   };
 
@@ -206,7 +211,7 @@ export const ContactRequestsPageV2 = () => {
 
       toast.success("Reply sent successfully");
       setReplyText("");
-      refetch();
+      await invalidate();
     } catch {
       toast.error("Failed to send reply");
     } finally {
@@ -262,7 +267,6 @@ export const ContactRequestsPageV2 = () => {
     <div className="flex gap-6 h-[calc(100vh-140px)]">
       {/* Left: List */}
       <div className="flex-1 min-w-0 flex flex-col">
-        {/* Search + sort */}
         <div className="mb-4 space-y-3">
           <div className="flex gap-2">
             <div className="relative flex-1">
@@ -301,7 +305,6 @@ export const ContactRequestsPageV2 = () => {
           </div>
         </div>
 
-        {/* List */}
         <ScrollArea className="flex-1">
           <div className="space-y-2 pr-2">
             {filtered.map(request => {
@@ -315,50 +318,61 @@ export const ContactRequestsPageV2 = () => {
               return (
                 <Card
                   key={request.id}
-                  className={`cursor-pointer transition-all border-l-4 ${status.cardBorder} ${
-                    isSelected
-                      ? `${status.cardBg} border border-l-4 ${status.cardBorder}`
-                      : `${status.cardBg} hover:brightness-125`
+                  className={`cursor-pointer transition-all rounded-xl border-2 shadow-lg ${
+                    isSelected ? `${status.selectedBg} ${status.border} ring-2 ring-white/20` : `${status.bg} ${status.border} hover:brightness-110 hover:shadow-xl`
                   }`}
                   onClick={() => setSelectedId(request.id)}
                 >
                   <CardContent className="p-4">
-                    {/* Open duration banner */}
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-1.5">
-                        <StatusIcon className={`w-3.5 h-3.5 ${status.textColor}`} />
-                        <span className={`text-xs font-semibold ${status.textColor}`}>
+                    {/* Top row: status + duration */}
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <StatusIcon className={`w-4 h-4 ${status.text} drop-shadow`} />
+                        <span className={`text-xs font-bold uppercase tracking-wide ${status.text} drop-shadow`}>
                           {status.label}
                         </span>
                       </div>
-                      <div className="flex items-center gap-1">
-                        <Timer className={`w-3 h-3 ${isOpen ? "text-orange-400" : "text-gray-500"}`} />
-                        <span className={`text-[11px] font-mono font-medium ${isOpen ? "text-orange-400" : "text-gray-500"}`}>
-                          {isOpen ? `Open ${openDuration}` : `Closed after ${openDuration}`}
+                      <div className="flex items-center gap-1.5 bg-black/20 rounded-full px-2.5 py-0.5">
+                        <Timer className="w-3 h-3 text-white/80" />
+                        <span className="text-[11px] font-mono font-semibold text-white/90">
+                          {isOpen ? `Open ${openDuration}` : openDuration}
                         </span>
                       </div>
                     </div>
 
+                    {/* Content */}
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2 mb-1">
-                          <p className="text-sm font-medium text-gray-200 truncate">{request.name}</p>
+                          <User className="w-3.5 h-3.5 text-white/70 shrink-0" />
+                          <p className={`text-sm font-bold ${status.text} truncate drop-shadow`}>{request.name}</p>
                           {request.admin_reply && (
-                            <CheckCircle className="w-3.5 h-3.5 text-green-400 shrink-0" />
+                            <CheckCircle className="w-3.5 h-3.5 text-white shrink-0 drop-shadow" />
                           )}
                         </div>
-                        <p className="text-xs text-gray-500 truncate mb-2">{request.email}</p>
-                        <p className="text-xs text-gray-400 line-clamp-2">{request.message}</p>
+                        <div className="flex items-center gap-1.5 mb-2">
+                          <Mail className="w-3 h-3 text-white/60 shrink-0" />
+                          <p className="text-xs text-white/70 truncate">{request.email}</p>
+                        </div>
+                        <p className="text-xs text-white/80 line-clamp-2 leading-relaxed">{request.message}</p>
                       </div>
-                      <div className="shrink-0">
-                        <Badge className={`${category.color} border text-[10px] px-1.5 py-0`}>
-                          {category.label}
-                        </Badge>
-                      </div>
+                      <Badge className={`${category.color} border text-[10px] px-2 py-0.5 shrink-0 font-semibold`}>
+                        {category.label}
+                      </Badge>
                     </div>
-                    <p className="text-[10px] text-gray-600 mt-2">
-                      {formatDistanceToNow(new Date(request.created_at), { addSuffix: true })}
-                    </p>
+
+                    {/* Footer */}
+                    <div className="flex items-center justify-between mt-3 pt-2 border-t border-white/15">
+                      <div className="flex items-center gap-1.5">
+                        <Clock className="w-3 h-3 text-white/50" />
+                        <p className="text-[10px] text-white/60">
+                          {formatDistanceToNow(new Date(request.created_at), { addSuffix: true })}
+                        </p>
+                      </div>
+                      {request.admin_reply && (
+                        <span className="text-[10px] text-white/60 bg-white/10 rounded px-1.5 py-0.5">Replied</span>
+                      )}
+                    </div>
                   </CardContent>
                 </Card>
               );
@@ -382,41 +396,38 @@ export const ContactRequestsPageV2 = () => {
           const isOpen = selected.status === "pending" || selected.status === "in_progress";
 
           return (
-            <Card className={`${selStatus.cardBg} ${selStatus.cardBorder} border h-full flex flex-col`}>
+            <Card className="bg-[#1a1b23] border-white/10 h-full flex flex-col">
               <CardContent className="p-5 flex-1 overflow-auto">
-                {/* Header */}
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-lg font-semibold text-white">{selected.name}</h3>
-                  <button onClick={() => setSelectedId(null)} className="text-gray-500 hover:text-gray-300">
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
-
-                {/* Open duration highlight */}
-                <div className={`flex items-center gap-2 rounded-lg px-3 py-2 mb-4 ${
-                  isOpen ? "bg-orange-500/10 border border-orange-500/20" : "bg-white/5 border border-white/5"
-                }`}>
-                  <Timer className={`w-4 h-4 ${isOpen ? "text-orange-400" : "text-gray-500"}`} />
-                  <span className={`text-sm font-medium ${isOpen ? "text-orange-300" : "text-gray-400"}`}>
-                    {isOpen
-                      ? `Open for ${getOpenDurationFull(selected.created_at)}`
-                      : `Closed after ${getOpenDurationFull(selected.created_at)}`
-                    }
-                  </span>
+                {/* Header with status color bar */}
+                <div className={`-mx-5 -mt-5 px-5 py-4 mb-4 rounded-t-lg ${selStatus.bg}`}>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <selStatus.icon className="w-5 h-5 text-white drop-shadow" />
+                      <h3 className="text-lg font-bold text-white drop-shadow">{selected.name}</h3>
+                    </div>
+                    <button onClick={() => setSelectedId(null)} className="text-white/70 hover:text-white">
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                  <div className="flex items-center gap-2 mt-2">
+                    <Timer className="w-3.5 h-3.5 text-white/80" />
+                    <span className="text-sm font-medium text-white/90">
+                      {isOpen
+                        ? `Open for ${getOpenDurationFull(selected.created_at)}`
+                        : `Closed after ${getOpenDurationFull(selected.created_at)}`
+                      }
+                    </span>
+                  </div>
                 </div>
 
                 <div className="flex gap-2 mb-4">
-                  <Badge className={`${selStatus.badgeColor} border`}>
-                    {selStatus.label}
-                  </Badge>
-                  <Badge className={`${selCategory.color} border`}>
+                  <Badge className={`${selCategory.color.replace('text-white', 'text-gray-300').replace('bg-white/20', 'bg-white/10')} border`}>
                     {selCategory.label}
                   </Badge>
                 </div>
 
                 <Separator className="bg-white/5 mb-4" />
 
-                {/* Details */}
                 <div className="space-y-1">
                   <DetailRow label="Request ID" value={selected.id} icon={Hash} mono copyable />
                   <DetailRow label="Email" value={selected.email} icon={Mail} copyable />
@@ -428,7 +439,6 @@ export const ContactRequestsPageV2 = () => {
 
                 <Separator className="bg-white/5 my-4" />
 
-                {/* Message */}
                 <div>
                   <p className="text-xs text-gray-500 mb-2">Message</p>
                   <div className="bg-white/5 rounded-lg p-3">
@@ -436,11 +446,10 @@ export const ContactRequestsPageV2 = () => {
                   </div>
                 </div>
 
-                {/* Previous reply */}
                 {selected.admin_reply && (
                   <div className="mt-4">
                     <p className="text-xs text-gray-500 mb-2">Admin Reply</p>
-                    <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-3">
+                    <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-lg p-3">
                       <p className="text-sm text-gray-300 whitespace-pre-wrap">{selected.admin_reply}</p>
                       {selected.replied_at && (
                         <p className="text-[10px] text-gray-500 mt-2">
@@ -453,23 +462,23 @@ export const ContactRequestsPageV2 = () => {
 
                 <Separator className="bg-white/5 my-4" />
 
-                {/* Status change */}
+                {/* Status buttons */}
                 <div>
                   <p className="text-xs text-gray-500 mb-2">Update Status</p>
-                  <div className="flex gap-2 flex-wrap">
+                  <div className="grid grid-cols-2 gap-2">
                     {Object.entries(STATUS_CONFIG).map(([key, cfg]) => {
                       const isActive = selected.status === key;
                       return (
                         <button
                           key={key}
                           onClick={() => updateStatus(selected.id, key)}
-                          disabled={isActive}
-                          className={`px-3 py-1.5 rounded text-xs font-medium transition-all border ${
+                          className={`flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold transition-all ${
                             isActive
-                              ? `${cfg.badgeColor} cursor-default`
-                              : "bg-white/5 text-gray-400 border-white/10 hover:bg-white/10 hover:text-white"
+                              ? `${cfg.bg} text-white ring-2 ring-white/30 shadow-lg`
+                              : "bg-white/5 text-gray-400 border border-white/10 hover:bg-white/10 hover:text-white"
                           }`}
                         >
+                          <cfg.icon className="w-3.5 h-3.5" />
                           {cfg.label}
                         </button>
                       );
@@ -479,7 +488,6 @@ export const ContactRequestsPageV2 = () => {
 
                 <Separator className="bg-white/5 my-4" />
 
-                {/* Reply */}
                 <div>
                   <p className="text-xs text-gray-500 mb-2">
                     {selected.admin_reply ? "Send New Reply" : "Send Reply"}
