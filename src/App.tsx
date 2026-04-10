@@ -41,6 +41,8 @@ function AppContent() {
   const { isAuthenticated, session } = useSessionManager();
   const { isDesktop } = useIsMobile();
   
+  const isAdminRoute = location.pathname.startsWith("/admin");
+  
   // Initialize keyboard shortcuts
   useKeyboardShortcuts();
   
@@ -62,11 +64,13 @@ function AppContent() {
   return (
     <>
       <TopLoadingBar />
-      <GlobalHeader />
-      {isDesktop ? (
-        <Sidebar isAuthenticated={isAuthenticated} userId={session?.user?.id} />
-      ) : (
-        <MobileBottomNav isAuthenticated={isAuthenticated} />
+      {!isAdminRoute && <GlobalHeader />}
+      {!isAdminRoute && (
+        isDesktop ? (
+          <Sidebar isAuthenticated={isAuthenticated} userId={session?.user?.id} />
+        ) : (
+          <MobileBottomNav isAuthenticated={isAuthenticated} />
+        )
       )}
       <Routes>
         <Route path="/" element={<LandingPage />} />
