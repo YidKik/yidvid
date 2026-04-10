@@ -8,6 +8,8 @@ import { NonAdminContent } from "@/components/dashboard/NonAdminContent";
 import { AdminSidebarV2 } from "@/components/admin-v2/layout/AdminSidebarV2";
 import { AdminHeaderV2 } from "@/components/admin-v2/layout/AdminHeaderV2";
 import { OverviewPageV2 } from "@/components/admin-v2/pages/OverviewPageV2";
+import { useSecureAdminAuth } from "@/hooks/useSecureAdminAuth";
+import { AdminPinDialog } from "@/components/settings/sections/admin/AdminPinDialog";
 
 // Keep existing page components for now — they'll be rebuilt in subsequent phases
 import { ContentModerationPage } from "@/components/admin/pages/ContentModerationPage";
@@ -41,6 +43,15 @@ const Dashboard = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = searchParams.get("tab") || "overview";
 
+  const {
+    showPinDialog,
+    setShowPinDialog,
+    adminPin,
+    setAdminPin,
+    handlePinVerification,
+    hasAdminSession
+  } = useSecureAdminAuth();
+
   useEffect(() => {
     if (!session || authLoading) return;
     try {
@@ -53,7 +64,21 @@ const Dashboard = () => {
   }, [session, profile, authLoading]);
 
   if (authLoading || isLoading) return <DashboardLoading />;
-  if (isAdmin === false) return <NonAdminContent />;
+  
+  if (isAdmin === false && !hasAdminSession) {
+    return (
+      <div className="min-h-screen bg-[#0a0b10] flex items-center justify-center">
+        <NonAdminContent onEnterPin={() => setShowPinDialog(true)} />
+        <AdminPinDialog
+          showDialog={showPinDialog}
+          setShowDialog={setShowPinDialog}
+          pinValue={adminPin}
+          setPinValue={setAdminPin}
+          onUnlock={handlePinVerification}
+        />
+      </div>
+    );
+  }
 
   const handleTabChange = (tab: string) => setSearchParams({ tab });
 
