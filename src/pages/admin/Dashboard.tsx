@@ -14,12 +14,12 @@ import { AdminPinDialog } from "@/components/settings/sections/admin/AdminPinDia
 // Keep existing page components for now — they'll be rebuilt in subsequent phases
 import { ContentModerationPage } from "@/components/admin/pages/ContentModerationPage";
 import { ChannelsPageV2 } from "@/components/admin-v2/pages/ChannelsPageV2";
-import { MusicPage } from "@/components/admin/pages/MusicPage";
+
 import { UsersPageV2 } from "@/components/admin-v2/pages/UsersPageV2";
 import { CategoriesPageV2 } from "@/components/admin-v2/pages/CategoriesPageV2";
 import { CommentsPageV2 } from "@/components/admin-v2/pages/CommentsPageV2";
 import { ContactRequestsPageV2 } from "@/components/admin-v2/pages/ContactRequestsPageV2";
-import { NotificationsPage } from "@/components/admin/pages/NotificationsPage";
+
 import { AnalyticsPageV2 } from "@/components/admin-v2/pages/AnalyticsPageV2";
 
 const PAGE_META: Record<string, { title: string; description: string }> = {
@@ -28,11 +28,11 @@ const PAGE_META: Record<string, { title: string; description: string }> = {
   channels: { title: "Channels & Videos", description: "Manage YouTube channels & videos" },
   moderation: { title: "Moderation", description: "Review & moderate content" },
   categories: { title: "Categories", description: "Manage channel & video categories" },
-  music: { title: "Music", description: "Manage music artists & tracks" },
+  
   users: { title: "Users", description: "Manage users & admin roles" },
   comments: { title: "Comments", description: "View & moderate comments" },
   contacts: { title: "Contact Requests", description: "Manage contact requests & emails" },
-  notifications: { title: "Notifications", description: "Global notifications & channel requests" },
+  
 };
 
 const Dashboard = () => {
@@ -96,16 +96,12 @@ const Dashboard = () => {
         return <ContentModerationPage />;
       case "categories":
         return <CategoriesPageV2 />;
-      case "music":
-        return <MusicPage />;
       case "users":
         return <UsersPageV2 currentUserId={session?.user?.id || ""} />;
       case "comments":
         return <CommentsPageV2 />;
       case "contacts":
         return <ContactRequestsPageV2 />;
-      case "notifications":
-        return <NotificationsPage />;
       default:
         return <OverviewPageV2 />;
     }
