@@ -7,8 +7,6 @@ import {
   MessageSquare, 
   Mail, 
   Youtube, 
-  Music,
-  Bell,
   AlertTriangle,
   BarChart3,
   Filter
