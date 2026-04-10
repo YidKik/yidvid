@@ -55,7 +55,7 @@ export const UsersPageV2 = ({ currentUserId }: UsersPageV2Props) => {
 
   const handleStartEdit = () => {
     if (!selectedUser) return;
-    setEditDisplayName(selectedUser.display_name || selectedUser.name || "");
+    setEditDisplayName(selectedUser.display_name || selectedUser.username || selectedUser.name || "");
     setEditUsername(selectedUser.username || "");
     setEditMode(true);
   };
