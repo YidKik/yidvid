@@ -393,10 +393,10 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
           <div className="mt-3 pt-3 border-t border-[#E5E5E5] dark:border-[#333]">
             <button
               onClick={() => {
-                if (!isAuthenticated) {
-                  navigate("/subscriptions");
-                  return;
-                }
+              if (!isAuthenticated) {
+                window.dispatchEvent(new Event('openAuthDialog'));
+                return;
+              }
                 setIsSubscriptionsOpen(!isSubscriptionsOpen);
               }}
               className={cn(
