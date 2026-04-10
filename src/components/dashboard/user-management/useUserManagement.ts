@@ -77,18 +77,32 @@ export const useUserManagement = (currentUserId: string) => {
       
       console.log("Fetching all users...");
       
-      // Try using the edge function first
+      // Try using the edge function first via explicit authenticated fetch
       try {
         console.log("Attempting to fetch users via edge function");
-        const { data: edgeData, error: edgeError } = await supabase.functions.invoke('get-all-users');
-        
-        if (!edgeError && edgeData && Array.isArray(edgeData)) {
-          console.log("Successfully fetched users via edge function:", edgeData.length);
-          return edgeData;
-        }
-        
-        if (edgeError) {
-          console.warn("Edge function error:", edgeError);
+        const { data: sessionData } = await supabase.auth.getSession();
+        const accessToken = sessionData.session?.access_token;
+
+        if (accessToken) {
+          const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/get-all-users`, {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({}),
+          });
+
+          if (response.ok) {
+            const edgeData = await response.json();
+            if (Array.isArray(edgeData)) {
+              console.log("Successfully fetched users via edge function:", edgeData.length);
+              return edgeData;
+            }
+          } else {
+            console.warn("Edge function returned non-OK status:", response.status);
+          }
         }
       } catch (edgeFuncError) {
         console.warn("Edge function not available, falling back to direct query", edgeFuncError);
