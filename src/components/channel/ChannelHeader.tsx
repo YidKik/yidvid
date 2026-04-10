@@ -1,4 +1,5 @@
 import { UserPlus, Check, Loader2, Share2, Info } from "lucide-react";
+import { ShareDialog } from "@/components/shared/ShareDialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
@@ -39,6 +40,7 @@ export const ChannelHeader = ({
   const [internalSubscriptionState, setInternalSubscriptionState] = useState<boolean | undefined>(undefined);
   const [isProcessing, setIsProcessing] = useState(false);
   const [initialLoadComplete, setInitialLoadComplete] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
 
   useEffect(() => {
     if (!initialLoadComplete && !isLoading) {
@@ -89,17 +91,7 @@ export const ChannelHeader = ({
     }
   };
 
-  const handleShare = async () => {
-    const url = window.location.href;
-    if (navigator.share) {
-      try {
-        await navigator.share({ title: channel.title, url });
-      } catch {}
-    } else {
-      await navigator.clipboard.writeText(url);
-      toast.success("Link copied to clipboard");
-    }
-  };
+  const shareUrl = window.location.href;
 
   const buttonLoading = isLoading || isProcessing || isSessionLoading;
   const displaySubscribed = internalSubscriptionState === undefined ? false : internalSubscriptionState;
@@ -163,12 +155,18 @@ export const ChannelHeader = ({
           </Button>
 
           <button
-            onClick={handleShare}
+            onClick={() => setShareOpen(true)}
             className="h-9 px-4 rounded-full bg-[#F5F5F5] dark:bg-[#272727] hover:bg-[#E5E5E5] dark:hover:bg-[#333] text-[#1A1A1A] dark:!text-[#e8e8e8] transition-colors flex items-center gap-1.5 text-xs md:text-sm font-medium"
           >
             <Share2 className="w-3.5 h-3.5" />
             Share
           </button>
+          <ShareDialog
+            open={shareOpen}
+            onOpenChange={setShareOpen}
+            url={shareUrl}
+            title={channel.title}
+          />
 
           {channel.description && (
             <Dialog>
