@@ -232,11 +232,19 @@ body.home-page {
 }
 
 /* Force ALL dark text to light in dark mode — catches inline styles too.
-   Uses !important to override inline style="color: ..." attributes. */
+   Uses !important to override inline style="color: ..." attributes.
+   The * selector ensures ALL elements get light text by default in dark mode. */
+.dark * {
+  color: inherit;
+}
+
+.dark body, .dark #root {
+  color: #e8e8e8 !important;
+}
+
 .dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6,
-.dark p, .dark span, .dark label, .dark li, .dark td, .dark th,
-.dark summary, .dark a:not(.bg-\[\#FF0000\]),
-.dark div:not([class*="bg-"]):not([class*="rounded-full"]) {
+.dark p, .dark span, .dark a, .dark label, .dark li, .dark td, .dark th,
+.dark summary, .dark button, .dark input, .dark textarea {
   color: #e8e8e8 !important;
 }
 
