@@ -92,39 +92,6 @@ export function AdminDashboardCards({ stats, notifications }: AdminDashboardCard
         </CardContent>
       </Card>
 
-      {/* Music Artists */}
-      <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate('/admin/music-artists')}>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Music Artists</CardTitle>
-          <Music className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{stats?.totalArtists || 0}</div>
-          <p className="text-xs text-muted-foreground">
-            Music artists managed
-          </p>
-          <Button variant="outline" size="sm" className="mt-2">
-            Manage Artists
-          </Button>
-        </CardContent>
-      </Card>
-
-      {/* Global Notifications */}
-      <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate('/admin/notifications')}>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Notifications</CardTitle>
-          <Bell className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{unreadNotifications}</div>
-          <p className="text-xs text-muted-foreground">
-            Unread notifications
-          </p>
-          <Button variant="outline" size="sm" className="mt-2">
-            Manage Notifications
-          </Button>
-        </CardContent>
-      </Card>
 
       {/* Reported Videos */}
       <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate('/admin/reported-videos')}>
