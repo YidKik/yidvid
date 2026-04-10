@@ -1,11 +1,9 @@
 import { useState } from "react";
-import { Copy, Mail, MessageCircle, Link2, Check, X } from "lucide-react";
+import { Check, Mail, MessageCircle, Link2 } from "lucide-react";
 import { toast } from "sonner";
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
 } from "@/components/ui/dialog";
 
 interface ShareDialogProps {
@@ -20,22 +18,25 @@ const shareOptions = [
     id: "copy",
     label: "Copy link",
     icon: Link2,
-    color: "#1A1A1A",
-    darkColor: "#e8e8e8",
+    bg: "bg-[#F5F5F5] dark:bg-[#2a2a2a]",
+    hoverBg: "hover:bg-[#E8E8E8] dark:hover:bg-[#383838]",
+    iconColor: "text-[#1A1A1A] dark:text-[#e8e8e8]",
   },
   {
     id: "whatsapp",
     label: "WhatsApp",
     icon: MessageCircle,
-    color: "#25D366",
-    darkColor: "#25D366",
+    bg: "bg-[#DCFCE7]",
+    hoverBg: "hover:bg-[#BBF7D0]",
+    iconColor: "text-[#16A34A]",
   },
   {
     id: "email",
     label: "Email",
     icon: Mail,
-    color: "#FF0000",
-    darkColor: "#FF0000",
+    bg: "bg-[#FEE2E2]",
+    hoverBg: "hover:bg-[#FECACA]",
+    iconColor: "text-[#FF0000]",
   },
 ];
 
@@ -47,7 +48,7 @@ export const ShareDialog = ({ open, onOpenChange, url, title }: ShareDialogProps
       case "copy":
         await navigator.clipboard.writeText(url);
         setCopied(true);
-        toast.success("Link copied to clipboard");
+        toast.success("Link copied!");
         setTimeout(() => setCopied(false), 2000);
         break;
       case "whatsapp":
@@ -67,45 +68,32 @@ export const ShareDialog = ({ open, onOpenChange, url, title }: ShareDialogProps
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-sm bg-white dark:bg-[#212121] border-[#E5E5E5] dark:border-[#333] p-0 gap-0">
-        <DialogHeader className="px-5 pt-5 pb-3">
-          <DialogTitle className="text-base font-semibold text-[#1A1A1A] dark:!text-[#e8e8e8]">
-            Share
-          </DialogTitle>
-        </DialogHeader>
+      <DialogContent className="sm:max-w-[280px] bg-white dark:bg-[#1a1a1a] border border-[#E5E5E5] dark:border-[#333] rounded-3xl p-5 gap-0 shadow-xl [&>button]:hidden">
+        <p className="text-sm font-bold text-[#1A1A1A] dark:text-[#e8e8e8] text-center mb-4">
+          Share
+        </p>
 
-        <div className="px-5 pb-5 space-y-1">
+        <div className="flex items-center justify-center gap-4">
           {shareOptions.map((option) => {
-            const Icon = option.id === "copy" && copied ? Check : option.icon;
+            const isCopy = option.id === "copy";
+            const Icon = isCopy && copied ? Check : option.icon;
             return (
               <button
                 key={option.id}
                 onClick={() => handleShare(option.id)}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-[#F5F5F5] dark:hover:bg-[#2a2a2a] transition-colors text-left"
+                className={`flex flex-col items-center gap-1.5 group`}
               >
                 <div
-                  className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0"
-                  style={{ backgroundColor: `${option.color}15` }}
+                  className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-200 ${option.bg} ${option.hoverBg} group-hover:scale-110 group-active:scale-95`}
                 >
-                  <Icon
-                    className="w-4 h-4"
-                    style={{ color: option.color }}
-                  />
+                  <Icon className={`w-5 h-5 ${option.iconColor}`} />
                 </div>
-                <span className="text-sm font-medium text-[#1A1A1A] dark:!text-[#e8e8e8]">
-                  {option.id === "copy" && copied ? "Copied!" : option.label}
+                <span className="text-[10px] font-medium text-[#666] dark:text-[#aaa] group-hover:text-[#1A1A1A] dark:group-hover:text-[#e8e8e8] transition-colors">
+                  {isCopy && copied ? "Copied!" : option.label}
                 </span>
               </button>
             );
           })}
-        </div>
-
-        {/* URL preview */}
-        <div className="px-5 pb-5">
-          <div className="flex items-center gap-2 bg-[#F5F5F5] dark:bg-[#1a1a1a] rounded-lg px-3 py-2">
-            <Link2 className="w-3.5 h-3.5 text-[#999] flex-shrink-0" />
-            <span className="text-xs text-[#666] dark:!text-[#888] truncate">{url}</span>
-          </div>
         </div>
       </DialogContent>
     </Dialog>
