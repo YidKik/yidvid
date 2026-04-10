@@ -20,7 +20,7 @@ import { CategoriesPage } from "@/components/admin/pages/CategoriesPage";
 import { CommentsPage } from "@/components/admin/pages/CommentsPage";
 import { ContactRequestsPage } from "@/components/admin/pages/ContactRequestsPage";
 import { NotificationsPage } from "@/components/admin/pages/NotificationsPage";
-import { AnalyticsPage } from "@/components/admin/pages/AnalyticsPage";
+import { AnalyticsPageV2 } from "@/components/admin-v2/pages/AnalyticsPageV2";
 
 const PAGE_META: Record<string, { title: string; description: string }> = {
   overview: { title: "Overview", description: "Dashboard summary & key metrics" },
@@ -89,7 +89,7 @@ const Dashboard = () => {
       case "overview":
         return <OverviewPageV2 />;
       case "analytics":
-        return <AnalyticsPage userId={session?.user?.id} />;
+        return <AnalyticsPageV2 />;
       case "channels":
         return <ChannelsPageV2 />;
       case "moderation":
