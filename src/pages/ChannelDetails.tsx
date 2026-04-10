@@ -220,6 +220,7 @@ const ChannelDetails = () => {
           isSubscribed={isSubscribed}
           onSubscribe={handleSubscribe}
           isLoading={isLoadingSubscription}
+          videoCount={displayedVideos?.length}
         />
         
         <ChannelVideoSection
