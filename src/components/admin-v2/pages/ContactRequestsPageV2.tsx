@@ -177,15 +177,22 @@ export const ContactRequestsPageV2 = () => {
   }, [requests]);
 
   const updateStatus = async (id: string, newStatus: string) => {
-    const { error } = await supabase
-      .from("contact_requests")
-      .update({ status: newStatus })
-      .eq("id", id);
-    if (error) {
-      toast.error("Failed to update status");
-    } else {
-      toast.success(`Status changed to ${STATUS_CONFIG[newStatus]?.label || newStatus}`);
-      await invalidate();
+    try {
+      const { error, count } = await supabase
+        .from("contact_requests")
+        .update({ status: newStatus })
+        .eq("id", id)
+        .select();
+      if (error) {
+        console.error("Contact request update error:", error);
+        toast.error(`Failed to update status: ${error.message}`);
+      } else {
+        toast.success(`Status changed to ${STATUS_CONFIG[newStatus]?.label || newStatus}`);
+        await invalidate();
+      }
+    } catch (err: any) {
+      console.error("Contact request update exception:", err);
+      toast.error(`Failed to update status: ${err?.message || "Unknown error"}`);
     }
   };
 
