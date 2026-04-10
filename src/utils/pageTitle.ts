@@ -29,7 +29,7 @@ export const getPageTitle = (path: string): string => {
       'categories': 'Category Management',
       'contact-requests': 'Contact Requests',
       'reported-videos': 'Reported Videos',
-      'notifications': 'Global Notifications'
+      
     }
   };
   
