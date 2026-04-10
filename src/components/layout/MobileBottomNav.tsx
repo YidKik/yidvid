@@ -96,11 +96,11 @@ export const MobileBottomNav = ({ isAuthenticated = false }: MobileBottomNavProp
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="fixed bottom-14 left-0 right-0 z-40 bg-white rounded-t-2xl border-t border-[#E5E5E5] shadow-2xl"
+            className="fixed bottom-14 left-0 right-0 z-40 bg-white dark:bg-[#212121] rounded-t-2xl border-t border-[#E5E5E5] dark:border-[#333] shadow-2xl"
           >
-            <div className="w-12 h-1 bg-[#E5E5E5] rounded-full mx-auto mt-3" />
+            <div className="w-12 h-1 bg-[#E5E5E5] dark:bg-[#555] rounded-full mx-auto mt-3" />
             <div className="p-4 pb-2">
-              <h3 className="text-sm font-bold text-[#1A1A1A] mb-3 px-1" style={{ fontFamily: "'Quicksand', sans-serif" }}>Library</h3>
+              <h3 className="text-sm font-bold text-[#1A1A1A] dark:text-[#e8e8e8] mb-3 px-1" style={{ fontFamily: "'Quicksand', sans-serif" }}>Library</h3>
               <div className="space-y-1">
                 {libraryItems.map((item) => {
                   const Icon = item.icon;
@@ -111,7 +111,7 @@ export const MobileBottomNav = ({ isAuthenticated = false }: MobileBottomNavProp
                       onClick={() => handleSheetItemClick(item.path, true)}
                       className={cn(
                         "flex items-center gap-3 w-full px-3 py-3 rounded-xl text-sm font-medium transition-all",
-                        active ? "bg-[#F5F5F5] text-[#FF0000]" : "text-[#666666] hover:bg-[#F5F5F5]",
+                        active ? "bg-[#F5F5F5] dark:bg-[#333] text-[#FF0000]" : "text-[#666666] dark:text-[#aaa] hover:bg-[#F5F5F5] dark:hover:bg-[#333]",
                         !isAuthenticated && "opacity-40"
                       )}
                     >
@@ -134,9 +134,9 @@ export const MobileBottomNav = ({ isAuthenticated = false }: MobileBottomNavProp
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="fixed bottom-14 left-0 right-0 z-40 bg-white rounded-t-2xl border-t border-[#E5E5E5] shadow-2xl max-h-[60vh] overflow-y-auto"
+            className="fixed bottom-14 left-0 right-0 z-40 bg-white dark:bg-[#212121] rounded-t-2xl border-t border-[#E5E5E5] dark:border-[#333] shadow-2xl max-h-[60vh] overflow-y-auto"
           >
-            <div className="w-12 h-1 bg-[#E5E5E5] rounded-full mx-auto mt-3 sticky top-0" />
+            <div className="w-12 h-1 bg-[#E5E5E5] dark:bg-[#555] rounded-full mx-auto mt-3 sticky top-0" />
             <div className="p-4 pb-2">
               {/* Menu items */}
               <div className="space-y-1 mb-4">
@@ -149,7 +149,7 @@ export const MobileBottomNav = ({ isAuthenticated = false }: MobileBottomNavProp
                       onClick={() => handleSheetItemClick(item.path)}
                       className={cn(
                         "flex items-center gap-3 w-full px-3 py-3 rounded-xl text-sm font-medium transition-all",
-                        active ? "bg-[#F5F5F5] text-[#FF0000]" : "text-[#666666] hover:bg-[#F5F5F5]"
+                        active ? "bg-[#F5F5F5] dark:bg-[#333] text-[#FF0000]" : "text-[#666666] dark:text-[#aaa] hover:bg-[#F5F5F5] dark:hover:bg-[#333]"
                       )}
                     >
                       <Icon className={cn("w-5 h-5", active ? "text-[#FF0000]" : "text-[#666666]")} />
@@ -161,8 +161,8 @@ export const MobileBottomNav = ({ isAuthenticated = false }: MobileBottomNavProp
 
               {/* Categories */}
               {allCategories.length > 0 && (
-                <div className="border-t border-[#E5E5E5] pt-3">
-                  <h3 className="text-xs font-bold text-[#999999] uppercase tracking-wider mb-2 px-1">Categories</h3>
+                <div className="border-t border-[#E5E5E5] dark:border-[#333] pt-3">
+                  <h3 className="text-xs font-bold text-[#999999] dark:text-[#717171] uppercase tracking-wider mb-2 px-1">Categories</h3>
                   <div className="space-y-1">
                     {allCategories
                       .filter((c) => {
@@ -173,7 +173,7 @@ export const MobileBottomNav = ({ isAuthenticated = false }: MobileBottomNavProp
                         <button
                           key={category.id}
                           onClick={() => handleSheetItemClick(`/videos?category=${category.id}`)}
-                          className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-medium text-[#666666] hover:bg-[#F5F5F5] transition-all"
+                          className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-medium text-[#666666] dark:text-[#aaa] hover:bg-[#F5F5F5] dark:hover:bg-[#333] transition-all"
                         >
                           <span>{category.label}</span>
                         </button>
@@ -184,10 +184,10 @@ export const MobileBottomNav = ({ isAuthenticated = false }: MobileBottomNavProp
 
               {/* Sign In */}
               {!isAuthenticated && (
-                <div className="border-t border-[#E5E5E5] pt-3 mt-3">
+                <div className="border-t border-[#E5E5E5] dark:border-[#333] pt-3 mt-3">
                   <button
                     onClick={() => { setShowMenu(false); setIsAuthOpen(true); }}
-                    className="flex items-center gap-3 w-full px-3 py-3 rounded-xl text-sm font-semibold text-[#FF0000] hover:bg-[#F5F5F5] transition-all"
+                    className="flex items-center gap-3 w-full px-3 py-3 rounded-xl text-sm font-semibold text-[#FF0000] hover:bg-[#F5F5F5] dark:hover:bg-[#333] transition-all"
                   >
                     <LogIn className="w-5 h-5" />
                     <span>Sign In</span>
@@ -200,7 +200,7 @@ export const MobileBottomNav = ({ isAuthenticated = false }: MobileBottomNavProp
       </AnimatePresence>
 
       {/* Bottom Navigation Bar */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-[#E5E5E5] shadow-lg lg:hidden" style={{ fontFamily: "'Quicksand', sans-serif" }}>
+      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-[#212121] border-t border-[#E5E5E5] dark:border-[#333] shadow-lg lg:hidden" style={{ fontFamily: "'Quicksand', sans-serif" }}>
         <div className="flex items-center justify-around h-14 max-w-lg mx-auto">
           {navItems.map((item) => {
             const Icon = item.icon;
@@ -215,8 +215,8 @@ export const MobileBottomNav = ({ isAuthenticated = false }: MobileBottomNavProp
                 onClick={() => handleNavClick(item)}
                 className="flex flex-col items-center justify-center h-full px-3 min-w-0"
               >
-                <Icon className={cn("w-5 h-5 mb-0.5 transition-colors", active ? "text-[#FF0000]" : "text-[#666666]")} />
-                <span className={cn("text-[10px] font-semibold transition-colors", active ? "text-[#FF0000]" : "text-[#666666]")}>
+                <Icon className={cn("w-5 h-5 mb-0.5 transition-colors", active ? "text-[#FF0000]" : "text-[#666666] dark:text-[#aaa]")} />
+                <span className={cn("text-[10px] font-semibold transition-colors", active ? "text-[#FF0000]" : "text-[#666666] dark:text-[#aaa]")}>
                   {item.label}
                 </span>
               </button>
