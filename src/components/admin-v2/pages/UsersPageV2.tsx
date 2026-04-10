@@ -12,6 +12,7 @@ import { useUserManagement } from "@/components/dashboard/user-management/useUse
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { formatDate } from "@/components/dashboard/user-management/UserManagementUtils";
+import { secureStorage } from "@/utils/security/storageEncryption";
 
 interface UsersPageV2Props {
   currentUserId: string;
@@ -36,18 +37,26 @@ export const UsersPageV2 = ({ currentUserId }: UsersPageV2Props) => {
     if (!newAdminEmail.trim()) return;
     setAddingAdmin(true);
     try {
-      const { data: user, error } = await supabase
-        .from("profiles")
-        .select("id")
-        .eq("email", newAdminEmail.trim())
-        .maybeSingle();
+      const adminSession = secureStorage.getSecureItem("admin-session");
+      const adminToken = typeof adminSession?.adminToken === "string" ? adminSession.adminToken : undefined;
 
-      if (error || !user) {
-        toast.error("User not found with that email");
+      const { data, error } = await supabase.functions.invoke("add-admin-user", {
+        body: {
+          email: newAdminEmail.trim(),
+          adminToken,
+        },
+      });
+
+      if (error) {
+        toast.error(error.message || "Failed to add admin");
         return;
       }
 
-      await supabase.from("profiles").update({ is_admin: true }).eq("id", user.id);
+      if (!data?.success) {
+        toast.error(data?.error || "Failed to add admin");
+        return;
+      }
+
       toast.success("Admin status granted");
       setShowAddAdmin(false);
       setNewAdminEmail("");

@@ -1,88 +1,126 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
-};
+import { adminCorsHeaders, verifyAdminAccess } from '../_shared/admin-auth.ts';
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response('ok', { headers: adminCorsHeaders });
   }
 
   try {
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    const body = await req.json().catch(() => ({}));
+    const page = Math.max(1, Number(body.page ?? 1));
+    const perPage = Math.min(1000, Math.max(1, Number(body.perPage ?? 1000)));
+    const adminToken = typeof body.adminToken === 'string' ? body.adminToken : undefined;
 
-    // Verify the caller is authenticated
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader) {
+    const auth = await verifyAdminAccess(req.headers.get('Authorization'), adminToken);
+    if (auth.error || !auth.adminClient) {
       return new Response(
-        JSON.stringify({ error: 'Missing authorization header' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 401 }
+        JSON.stringify({ error: auth.error }),
+        { headers: { ...adminCorsHeaders, 'Content-Type': 'application/json' }, status: auth.status ?? 401 }
       );
     }
 
-    // Verify the caller is an admin using the anon client with their token
-    const anonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
-    const userClient = createClient(supabaseUrl, anonKey, {
-      global: { headers: { Authorization: authHeader } }
+    const { data: authUsersData, error: authUsersError } = await auth.adminClient.auth.admin.listUsers({
+      page,
+      perPage,
     });
-    
-    const { data: { user }, error: userError } = await userClient.auth.getUser();
-    if (userError || !user) {
+
+    if (authUsersError) {
       return new Response(
-        JSON.stringify({ error: 'Unauthorized' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 401 }
+        JSON.stringify({ error: authUsersError.message }),
+        { headers: { ...adminCorsHeaders, 'Content-Type': 'application/json' }, status: 500 }
       );
     }
 
-    // Check admin status via profiles or user_roles
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('is_admin')
-      .eq('id', user.id)
-      .single();
+    const authUsers = authUsersData?.users ?? [];
+    const userIds = authUsers.map((user) => user.id);
 
-    const { data: roleData } = await supabase
-      .from('user_roles')
-      .select('role')
-      .eq('user_id', user.id)
-      .eq('role', 'admin')
-      .maybeSingle();
+    let profiles: Array<Record<string, unknown>> = [];
+    let adminRoles: Array<{ user_id: string; role: string }> = [];
 
-    if (!profile?.is_admin && !roleData) {
-      return new Response(
-        JSON.stringify({ error: 'Admin access required' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 403 }
-      );
+    if (userIds.length > 0) {
+      const [profilesResult, rolesResult] = await Promise.all([
+        auth.adminClient
+          .from('profiles')
+          .select('id, email, is_admin, name, display_name, username, avatar_url, created_at, updated_at, user_type, child_name, email_notifications, welcome_name, welcome_popup_shown')
+          .in('id', userIds),
+        auth.adminClient
+          .from('user_roles')
+          .select('user_id, role')
+          .eq('role', 'admin')
+          .in('user_id', userIds),
+      ]);
+
+      if (profilesResult.error) {
+        console.error('Error fetching profiles:', profilesResult.error);
+        return new Response(
+          JSON.stringify({ error: profilesResult.error.message }),
+          { headers: { ...adminCorsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+        );
+      }
+
+      if (rolesResult.error) {
+        console.error('Error fetching user roles:', rolesResult.error);
+        return new Response(
+          JSON.stringify({ error: rolesResult.error.message }),
+          { headers: { ...adminCorsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+        );
+      }
+
+      profiles = profilesResult.data ?? [];
+      adminRoles = rolesResult.data ?? [];
     }
 
-    // Fetch all profiles using service role (bypasses RLS)
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .order('created_at', { ascending: false });
+    const profileMap = new Map(profiles.map((profile) => [profile.id as string, profile]));
+    const adminRoleSet = new Set(adminRoles.map((entry) => entry.user_id));
 
-    if (error) {
-      console.error('Error fetching users:', error);
-      return new Response(
-        JSON.stringify({ error: error.message }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
-      );
-    }
+    const users = authUsers
+      .map((authUser) => {
+        const profile = profileMap.get(authUser.id);
+        const userMetadata = (authUser.user_metadata ?? {}) as Record<string, unknown>;
+        const profileCreatedAt = typeof profile?.created_at === 'string' ? profile.created_at : null;
+        const createdAt = profileCreatedAt ?? authUser.created_at ?? new Date().toISOString();
+
+        return {
+          id: authUser.id,
+          email: (typeof profile?.email === 'string' ? profile.email : authUser.email) ?? '',
+          is_admin:
+            profile?.is_admin === true ||
+            adminRoleSet.has(authUser.id) ||
+            authUser.app_metadata?.role === 'admin',
+          name: (profile?.name as string | null | undefined) ?? null,
+          display_name:
+            (profile?.display_name as string | null | undefined) ??
+            (typeof userMetadata.full_name === 'string' ? userMetadata.full_name : null),
+          username:
+            (profile?.username as string | null | undefined) ??
+            (typeof userMetadata.username === 'string' ? userMetadata.username : null),
+          avatar_url:
+            (profile?.avatar_url as string | null | undefined) ??
+            (typeof userMetadata.avatar_url === 'string' ? userMetadata.avatar_url : null),
+          created_at: createdAt,
+          updated_at:
+            (typeof profile?.updated_at === 'string' ? profile.updated_at : null) ?? createdAt,
+          user_type: (profile?.user_type as string | null | undefined) ?? null,
+          child_name: (profile?.child_name as string | null | undefined) ?? null,
+          email_notifications:
+            (profile?.email_notifications as boolean | null | undefined) ?? null,
+          welcome_name: (profile?.welcome_name as string | null | undefined) ?? null,
+          welcome_popup_shown:
+            (profile?.welcome_popup_shown as boolean | null | undefined) ?? null,
+        };
+      })
+      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
     return new Response(
-      JSON.stringify(data),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
+      JSON.stringify({ users, total: users.length, page, perPage }),
+      { headers: { ...adminCorsHeaders, 'Content-Type': 'application/json' }, status: 200 }
     );
   } catch (error) {
     console.error('Unexpected error:', error);
     return new Response(
       JSON.stringify({ error: error.message }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+      { headers: { ...adminCorsHeaders, 'Content-Type': 'application/json' }, status: 500 }
     );
   }
 });

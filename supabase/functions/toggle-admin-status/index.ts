@@ -1,43 +1,39 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-
-// Define CORS headers
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+import { adminCorsHeaders, verifyAdminAccess } from '../_shared/admin-auth.ts';
 
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response('ok', { headers: adminCorsHeaders });
   }
 
   try {
-    const { userId, newStatus } = await req.json();
+    const { userId, newStatus, adminToken } = await req.json();
+
+    const auth = await verifyAdminAccess(req.headers.get('Authorization'), adminToken);
+    if (auth.error || !auth.adminClient) {
+      return new Response(
+        JSON.stringify({ error: auth.error }),
+        { headers: { ...adminCorsHeaders, 'Content-Type': 'application/json' }, status: auth.status ?? 401 }
+      );
+    }
     
     if (!userId) {
       return new Response(
         JSON.stringify({ error: 'userId is required' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+        { headers: { ...adminCorsHeaders, 'Content-Type': 'application/json' }, status: 400 }
       );
     }
 
     if (typeof newStatus !== 'boolean') {
       return new Response(
         JSON.stringify({ error: 'newStatus must be a boolean' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+        { headers: { ...adminCorsHeaders, 'Content-Type': 'application/json' }, status: 400 }
       );
     }
-
-    // Get Supabase client with admin privileges to bypass RLS
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
     
-    // Update the user's admin status
-    const { data, error } = await supabase
+    const { data, error } = await auth.adminClient
       .from('profiles')
       .update({ is_admin: newStatus })
       .eq('id', userId)
@@ -47,8 +43,36 @@ serve(async (req) => {
       console.error('Error updating admin status:', error);
       return new Response(
         JSON.stringify({ error: error.message }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+        { headers: { ...adminCorsHeaders, 'Content-Type': 'application/json' }, status: 500 }
       );
+    }
+
+    if (newStatus) {
+      const { error: roleError } = await auth.adminClient
+        .from('user_roles')
+        .upsert({ user_id: userId, role: 'admin' }, { onConflict: 'user_id,role' });
+
+      if (roleError) {
+        console.error('Error granting admin role:', roleError);
+        return new Response(
+          JSON.stringify({ error: roleError.message }),
+          { headers: { ...adminCorsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+        );
+      }
+    } else {
+      const { error: roleError } = await auth.adminClient
+        .from('user_roles')
+        .delete()
+        .eq('user_id', userId)
+        .eq('role', 'admin');
+
+      if (roleError) {
+        console.error('Error removing admin role:', roleError);
+        return new Response(
+          JSON.stringify({ error: roleError.message }),
+          { headers: { ...adminCorsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+        );
+      }
     }
 
     return new Response(
@@ -57,14 +81,14 @@ serve(async (req) => {
         message: `User admin status updated to ${newStatus}`,
         data
       }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
+      { headers: { ...adminCorsHeaders, 'Content-Type': 'application/json' }, status: 200 }
     );
   } catch (error) {
     console.error('Unexpected error:', error);
     
     return new Response(
       JSON.stringify({ error: error.message }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+      { headers: { ...adminCorsHeaders, 'Content-Type': 'application/json' }, status: 500 }
     );
   }
 });
