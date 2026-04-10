@@ -75,44 +75,11 @@ export const useUserManagement = (currentUserId: string) => {
         return [];
       }
       
-      console.log("Fetching all users...");
+      console.log("Fetching all users via direct profiles query...");
       
-      // Try using the edge function first via explicit authenticated fetch
-      try {
-        console.log("Attempting to fetch users via edge function");
-        const { data: sessionData } = await supabase.auth.getSession();
-        const accessToken = sessionData.session?.access_token;
-
-        if (accessToken) {
-          const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/get-all-users`, {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-              apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({}),
-          });
-
-          if (response.ok) {
-            const edgeData = await response.json();
-            if (Array.isArray(edgeData)) {
-              console.log("Successfully fetched users via edge function:", edgeData.length);
-              return edgeData;
-            }
-          } else {
-            console.warn("Edge function returned non-OK status:", response.status);
-          }
-        }
-      } catch (edgeFuncError) {
-        console.warn("Edge function not available, falling back to direct query", edgeFuncError);
-      }
-      
-      // Fall back to direct query if edge function fails
-      console.log("Falling back to direct profiles query");
       const { data, error } = await supabase
         .from("profiles")
-        .select("*")
+        .select("id, email, is_admin, name, display_name, username, avatar_url, created_at, updated_at, user_type, child_name, email_notifications, welcome_name, welcome_popup_shown")
         .order("created_at", { ascending: false });
 
       if (error) {
