@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "@/styles/pages/settings.css";
-import { BackButton } from "@/components/navigation/BackButton";
+
 import { Settings as SettingsIcon, User, History, HelpCircle } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useSettingsPageState } from "@/hooks/useSettingsPageState";
@@ -28,7 +28,6 @@ const Settings = () => {
     return (
       <div className="min-h-screen bg-white dark:bg-[#0f0f0f] pt-16 px-4 pl-0 lg:pl-[200px] transition-all duration-300">
         <div className="max-w-3xl mx-auto">
-          <BackButton />
           <div className="h-8 w-56 bg-[#F5F5F5] rounded-lg mb-8 animate-pulse" />
           <ProfileSectionSkeleton />
         </div>
@@ -38,7 +37,7 @@ const Settings = () => {
 
   return (
     <div className="min-h-screen bg-white dark:bg-[#0f0f0f] pt-14 pl-0 lg:pl-[200px] pb-20 lg:pb-0 transition-all duration-300">
-      <BackButton />
+      
       <main className={cn("pb-16 max-w-3xl mx-auto", isMobile ? "pt-4 px-4" : "pt-6 px-6")}>
         {/* Header */}
         <div className="flex items-center gap-3 mb-6">

@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { BackButton } from "@/components/navigation/BackButton";
+
 import { ChannelLoading } from "@/components/channel/ChannelLoading";
 import { ChannelHeader } from "@/components/channel/ChannelHeader";
 import { ChannelErrorState } from "@/components/channel/ChannelErrorState";
@@ -164,7 +164,6 @@ const ChannelDetails = () => {
     return (
       <div className="w-full min-h-screen bg-white text-black pt-14 pl-0 lg:pl-[200px] pb-20 lg:pb-0 transition-all duration-300">
         <div className="p-4 lg:p-6">
-          <BackButton />
           <div className="flex flex-col items-center justify-center py-20 text-center">
             <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-6">
               <EyeOff className="w-10 h-10 text-gray-400" />
@@ -214,7 +213,7 @@ const ChannelDetails = () => {
   return (
     <div className="w-full min-h-screen bg-white text-black pt-14 pl-0 lg:pl-[200px] pb-20 lg:pb-0 transition-all duration-300">
       <div className="p-4 lg:p-6">
-        <BackButton />
+        
         <ChannelHeader
           channel={channel}
           isSubscribed={isSubscribed}
