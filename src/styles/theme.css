@@ -65,4 +65,80 @@
   --ring: 0 100% 50%;
 
   --radius: 0.5rem;
+
+  /* Surface colors for components */
+  --surface: 0 0% 100%;
+  --surface-hover: 0 0% 96%;
+  --surface-active: 0 0% 94%;
+  --surface-secondary: 0 0% 96%;
+  --text-primary: 0 0% 10%;
+  --text-secondary: 0 0% 40%;
+  --text-tertiary: 0 0% 60%;
+  --divider: 0 0% 90%;
+}
+
+/* ===== YouTube-style Dark Mode ===== */
+.dark {
+  --background: 0 0% 6.3%;         /* #0f0f0f - YouTube dark bg */
+  --foreground: 0 0% 93%;           /* #ededed */
+
+  --brand-dark: 0 0% 93%;
+  --brand-medium: 0 0% 68%;
+  --brand-light-text: 0 0% 60%;
+  --brand-light-bg: 0 0% 12%;
+  --brand-border: 0 0% 20%;
+  --brand-hover: 0 0% 16%;
+
+  --search-background: 0 0% 7%;
+  --search-text: 0 0% 93%;
+  --search-border: 0 0% 20%;
+
+  --auth-background: 0 0% 10%;
+  --auth-text: 0 0% 93%;
+  --auth-primary: 0 100% 50%;
+  --auth-secondary: 0 0% 15%;
+  --auth-border: 0 0% 20%;
+  --auth-input-bg: 0 0% 12%;
+  --auth-footer-bg: 0 0% 8%;
+  --auth-footer-text: 0 0% 60%;
+  --auth-link: 0 100% 55%;
+  --auth-link-hover: 0 100% 60%;
+
+  --card: 0 0% 10%;                 /* #1a1a1a */
+  --card-foreground: 0 0% 93%;
+
+  --popover: 0 0% 12%;              /* #1f1f1f */
+  --popover-foreground: 0 0% 93%;
+
+  --primary: 0 100% 50%;
+  --primary-foreground: 0 0% 100%;
+
+  --highlight: 50 100% 40%;
+  --highlight-foreground: 0 0% 0%;
+
+  --secondary: 0 0% 15%;
+  --secondary-foreground: 0 0% 90%;
+
+  --muted: 0 0% 15%;
+  --muted-foreground: 0 0% 64%;
+
+  --accent: 0 0% 15%;
+  --accent-foreground: 0 0% 93%;
+
+  --destructive: 0 72% 51%;
+  --destructive-foreground: 0 0% 100%;
+
+  --border: 0 0% 20%;               /* #333 */
+  --input: 0 0% 20%;
+  --ring: 0 100% 50%;
+
+  /* Surface colors for components */
+  --surface: 0 0% 10%;              /* #1a1a1a */
+  --surface-hover: 0 0% 16%;        /* #282828 - YouTube hover */
+  --surface-active: 0 0% 20%;       /* #333 */
+  --surface-secondary: 0 0% 12%;    /* #1f1f1f */
+  --text-primary: 0 0% 93%;         /* #ededed */
+  --text-secondary: 0 0% 68%;       /* #aaaaaa */
+  --text-tertiary: 0 0% 47%;        /* #787878 */
+  --divider: 0 0% 20%;              /* #333 */
 }
