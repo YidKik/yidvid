@@ -29,16 +29,14 @@ const About = () => {
             className="text-center mb-12"
           >
             <h1 
-              className={`${isMobile ? 'text-2xl' : 'text-4xl md:text-5xl'} font-bold mb-4`}
-              style={{ fontFamily: "'Fredoka One', 'Nunito', sans-serif" }}
               className={`${isMobile ? 'text-2xl' : 'text-4xl md:text-5xl'} font-bold mb-4 text-[#000000] dark:text-[#e8e8e8]`}
+              style={{ fontFamily: "'Fredoka One', 'Nunito', sans-serif" }}
             >
               About YidVid
             </h1>
             <p 
-              className={`${isMobile ? 'text-base' : 'text-lg'} max-w-2xl mx-auto`}
-              style={{ fontFamily: "'Quicksand', sans-serif" }}
               className={`${isMobile ? 'text-base' : 'text-lg'} max-w-2xl mx-auto text-[#666666] dark:text-[#aaa]`}
+              style={{ fontFamily: "'Quicksand', sans-serif" }}
             >
               Your premier destination for kosher Jewish content, curated with care for the entire family.
             </p>
@@ -84,9 +82,8 @@ const About = () => {
                   style={{ color: '#FFCC00' }} 
                 />
                 <h3 
-                  className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold mb-2`}
-                  style={{ fontFamily: "'Quicksand', sans-serif" }}
                   className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold mb-2 text-[#000000] dark:text-[#e8e8e8]`}
+                  style={{ fontFamily: "'Quicksand', sans-serif" }}
                 >
                   {feature.title}
                 </h3>
@@ -104,16 +101,14 @@ const About = () => {
             className={`text-center ${isMobile ? 'p-5' : 'p-8'} rounded-2xl bg-[#F5F5F5] dark:bg-[#1a1a1a] max-w-3xl mx-auto mb-10`}
           >
             <h2 
-              className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold mb-4`}
-              style={{ fontFamily: "'Quicksand', sans-serif" }}
               className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold mb-4 text-[#000000] dark:text-[#e8e8e8]`}
+              style={{ fontFamily: "'Quicksand', sans-serif" }}
             >
               Our Mission
             </h2>
             <p 
-              className="max-w-2xl mx-auto"
-              style={{ fontFamily: "'Quicksand', sans-serif" }}
               className="max-w-2xl mx-auto text-[#666666] dark:text-[#aaa]"
+              style={{ fontFamily: "'Quicksand', sans-serif" }}
             >
               YidVid was created to provide a safe, curated platform for Jewish families to access quality 
               kosher content. We believe everyone deserves access to inspiring, educational, and entertaining 
