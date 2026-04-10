@@ -231,10 +231,12 @@ body.home-page {
   border-color: #333 !important;
 }
 
-/* Force ALL dark text to light in dark mode — catches inline styles too */
+/* Force ALL dark text to light in dark mode — catches inline styles too.
+   Uses !important to override inline style="color: ..." attributes. */
 .dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6,
 .dark p, .dark span, .dark label, .dark li, .dark td, .dark th,
-.dark summary {
+.dark summary, .dark a:not(.bg-\[\#FF0000\]),
+.dark div:not([class*="bg-"]):not([class*="rounded-full"]) {
   color: #e8e8e8 !important;
 }
 
