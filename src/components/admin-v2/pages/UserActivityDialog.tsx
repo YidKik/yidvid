@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -7,9 +6,10 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   GitPullRequest, Mail, MessageSquare, Play, Heart, Tv, Clock,
-  ChevronRight, ExternalLink, Calendar, Eye
+  ExternalLink, Eye, Activity, BarChart3, User
 } from "lucide-react";
 import { formatDistanceToNow, format } from "date-fns";
+import { useNavigate } from "react-router-dom";
 
 interface UserActivityDialogProps {
   open: boolean;
@@ -19,10 +19,9 @@ interface UserActivityDialogProps {
   onNavigate?: (tab: string) => void;
 }
 
-export const UserActivityDialog = ({ open, onOpenChange, userId, userName, onNavigate }: UserActivityDialogProps) => {
-  const [activeSection, setActiveSection] = useState<string | null>(null);
+export const UserActivityDialog = ({ open, onOpenChange, userId, userName }: UserActivityDialogProps) => {
+  const navigate = useNavigate();
 
-  // Fetch all user activity data in parallel
   const { data: channelRequests, isLoading: loadingCR } = useQuery({
     queryKey: ["user-activity-channel-requests", userId],
     queryFn: async () => {
@@ -71,16 +70,12 @@ export const UserActivityDialog = ({ open, onOpenChange, userId, userName, onNav
         .select("id, channel_id, created_at")
         .eq("user_id", userId)
         .order("created_at", { ascending: false });
-
       if (!data?.length) return [];
-
-      // Fetch channel names
       const channelIds = [...new Set(data.map(s => s.channel_id))];
       const { data: channels } = await supabase
         .from("youtube_channels")
         .select("channel_id, title, thumbnail_url")
         .in("channel_id", channelIds);
-
       const channelMap = new Map(channels?.map(c => [c.channel_id, c]) || []);
       return data.map(s => ({ ...s, channel: channelMap.get(s.channel_id) }));
     },
@@ -90,7 +85,6 @@ export const UserActivityDialog = ({ open, onOpenChange, userId, userName, onNav
   const { data: videoStats, isLoading: loadingVideos } = useQuery({
     queryKey: ["user-activity-video-stats", userId],
     queryFn: async () => {
-      // Get total count and last watched
       const { count } = await supabase
         .from("video_history")
         .select("*", { count: "exact", head: true })
@@ -101,7 +95,7 @@ export const UserActivityDialog = ({ open, onOpenChange, userId, userName, onNav
         .select("video_id, watched_at")
         .eq("user_id", userId)
         .order("watched_at", { ascending: false })
-        .limit(10);
+        .limit(20);
 
       let recentVideos: any[] = [];
       if (recent?.length) {
@@ -110,15 +104,10 @@ export const UserActivityDialog = ({ open, onOpenChange, userId, userName, onNav
           .from("youtube_videos")
           .select("id, title, channel_name, thumbnail, video_id")
           .in("id", videoIds);
-
         const videoMap = new Map(videos?.map(v => [v.id, v]) || []);
-        recentVideos = recent.map(r => ({
-          ...r,
-          video: videoMap.get(r.video_id),
-        }));
+        recentVideos = recent.map(r => ({ ...r, video: videoMap.get(r.video_id) }));
       }
 
-      // Get unique channels viewed
       const { data: allHistory } = await supabase
         .from("video_history")
         .select("video_id")
@@ -157,70 +146,34 @@ export const UserActivityDialog = ({ open, onOpenChange, userId, userName, onNav
     enabled: open,
   });
 
+  const { data: sessionData } = useQuery({
+    queryKey: ["user-activity-sessions", userId],
+    queryFn: async () => {
+      const { data, count } = await supabase
+        .from("user_analytics")
+        .select("session_start, session_end, page_path", { count: "exact" })
+        .eq("user_id", userId)
+        .order("session_start", { ascending: false })
+        .limit(100);
+
+      let totalMinutes = 0;
+      (data || []).forEach(s => {
+        if (s.session_start && s.session_end) {
+          const diff = (new Date(s.session_end).getTime() - new Date(s.session_start).getTime()) / 60000;
+          if (diff > 0 && diff < 480) totalMinutes += diff;
+        }
+      });
+
+      return {
+        totalSessions: count || 0,
+        totalMinutes: Math.round(totalMinutes),
+        lastSession: data?.[0]?.session_start || null,
+      };
+    },
+    enabled: open,
+  });
+
   const isLoading = loadingCR || loadingContact || loadingComments || loadingSubs || loadingVideos || loadingFavs;
-
-  const sections = [
-    {
-      id: "watch",
-      icon: Play,
-      label: "Watch Activity",
-      color: "text-violet-400",
-      bg: "bg-violet-500/10",
-      count: videoStats?.totalWatched || 0,
-      summary: videoStats?.lastWatched
-        ? `Last watched ${formatDistanceToNow(new Date(videoStats.lastWatched), { addSuffix: true })}`
-        : "No watch history",
-    },
-    {
-      id: "subscriptions",
-      icon: Tv,
-      label: "Channel Subscriptions",
-      color: "text-blue-400",
-      bg: "bg-blue-500/10",
-      count: subscriptions?.length || 0,
-      summary: `${subscriptions?.length || 0} channels subscribed`,
-    },
-    {
-      id: "favorites",
-      icon: Heart,
-      label: "Favorites",
-      color: "text-pink-400",
-      bg: "bg-pink-500/10",
-      count: favorites || 0,
-      summary: `${favorites || 0} videos favorited`,
-    },
-    {
-      id: "comments",
-      icon: MessageSquare,
-      label: "Comments",
-      color: "text-emerald-400",
-      bg: "bg-emerald-500/10",
-      count: comments?.length || 0,
-      summary: `${comments?.length || 0} comments posted`,
-    },
-    {
-      id: "channel_requests",
-      icon: GitPullRequest,
-      label: "Channel Requests",
-      color: "text-sky-400",
-      bg: "bg-sky-500/10",
-      count: channelRequests?.length || 0,
-      summary: `${channelRequests?.length || 0} requests submitted`,
-    },
-    {
-      id: "contact_requests",
-      icon: Mail,
-      label: "Contact Requests",
-      color: "text-amber-400",
-      bg: "bg-amber-500/10",
-      count: contactRequests?.length || 0,
-      summary: `${contactRequests?.length || 0} messages sent`,
-    },
-  ];
-
-  const toggleSection = (id: string) => {
-    setActiveSection(activeSection === id ? null : id);
-  };
 
   const statusColor = (status: string | null) => {
     switch (status) {
@@ -231,209 +184,193 @@ export const UserActivityDialog = ({ open, onOpenChange, userId, userName, onNav
     }
   };
 
+  const SectionHeader = ({ icon: Icon, label, count, color }: { icon: any; label: string; count: number; color: string }) => (
+    <div className="flex items-center gap-2 mb-3">
+      <Icon className={`w-4 h-4 ${color}`} />
+      <h3 className="text-sm font-semibold text-[#c4c7d4]">{label}</h3>
+      <span className="text-[10px] font-bold text-[#565b6e] bg-[#1a1c25] rounded-full px-2 py-0.5 ml-auto">{count}</span>
+    </div>
+  );
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-[#13141b] border-[#2a2d3a] text-gray-200 max-w-[600px] max-h-[80vh] p-0 gap-0">
+      <DialogContent className="bg-[#13141b] border-[#2a2d3a] text-gray-200 max-w-[900px] max-h-[88vh] p-0 gap-0">
         <DialogHeader className="px-6 pt-5 pb-4 border-b border-[#1e2028] shrink-0">
           <DialogTitle className="text-base font-semibold text-white flex items-center gap-2">
-            <Eye className="w-4 h-4 text-[#818cf8]" />
-            User Activity — {userName}
+            <User className="w-4 h-4 text-[#818cf8]" />
+            Activity Overview — {userName}
           </DialogTitle>
         </DialogHeader>
 
-        <ScrollArea className="flex-1 max-h-[calc(80vh-80px)]">
-          <div className="p-5 space-y-5">
-            {/* Overview stats */}
-            <div className="grid grid-cols-3 gap-3">
-              <div className="bg-[#0f1117] rounded-lg p-3 border border-[#1e2028] text-center">
-                <p className="text-xl font-bold text-white">{isLoading ? "—" : videoStats?.totalWatched || 0}</p>
-                <p className="text-[10px] text-[#565b6e] mt-0.5">Videos Watched</p>
-              </div>
-              <div className="bg-[#0f1117] rounded-lg p-3 border border-[#1e2028] text-center">
-                <p className="text-xl font-bold text-white">{isLoading ? "—" : videoStats?.uniqueChannels || 0}</p>
-                <p className="text-[10px] text-[#565b6e] mt-0.5">Channels Explored</p>
-              </div>
-              <div className="bg-[#0f1117] rounded-lg p-3 border border-[#1e2028] text-center">
-                <p className="text-xl font-bold text-white">{isLoading ? "—" : subscriptions?.length || 0}</p>
-                <p className="text-[10px] text-[#565b6e] mt-0.5">Subscriptions</p>
-              </div>
-            </div>
-
-            {/* Last active */}
-            {videoStats?.lastWatched && (
-              <div className="flex items-center gap-2 bg-[#0f1117] rounded-lg px-4 py-2.5 border border-[#1e2028]">
-                <Clock className="w-3.5 h-3.5 text-[#565b6e]" />
-                <span className="text-xs text-[#8b8fa3]">Last active:</span>
-                <span className="text-xs text-[#c4c7d4] font-medium">
-                  {format(new Date(videoStats.lastWatched), "MMM d, yyyy 'at' h:mm a")}
-                </span>
-                <span className="text-[10px] text-[#565b6e]">
-                  ({formatDistanceToNow(new Date(videoStats.lastWatched), { addSuffix: true })})
-                </span>
-              </div>
-            )}
-
-            {/* Expandable sections */}
+        <ScrollArea className="flex-1 max-h-[calc(88vh-70px)]">
+          <div className="p-6">
             {isLoading ? (
-              <div className="space-y-3">
-                {[...Array(4)].map((_, i) => (
-                  <Skeleton key={i} className="h-14 w-full bg-[#1a1c25] rounded-lg" />
-                ))}
+              <div className="grid grid-cols-2 gap-4">
+                {[...Array(6)].map((_, i) => <Skeleton key={i} className="h-32 bg-[#1a1c25] rounded-xl" />)}
               </div>
             ) : (
-              <div className="space-y-2">
-                {sections.map(section => {
-                  const Icon = section.icon;
-                  const isExpanded = activeSection === section.id;
-
-                  return (
-                    <div key={section.id} className="rounded-xl border border-[#1e2028] overflow-hidden">
-                      {/* Section header */}
-                      <button
-                        onClick={() => toggleSection(section.id)}
-                        className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors ${
-                          isExpanded ? "bg-[#1a1c25]" : "bg-[#0f1117] hover:bg-[#14151d]"
-                        }`}
-                      >
-                        <div className={`p-1.5 rounded-lg ${section.bg} shrink-0`}>
-                          <Icon className={`w-3.5 h-3.5 ${section.color}`} />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-[#c4c7d4]">{section.label}</p>
-                          <p className="text-[10px] text-[#565b6e]">{section.summary}</p>
-                        </div>
-                        <span className="text-[11px] font-bold text-[#565b6e] bg-[#1a1c25] rounded-full px-2 py-0.5">
-                          {section.count}
-                        </span>
-                        <ChevronRight className={`w-4 h-4 text-[#4a4e5e] transition-transform ${isExpanded ? "rotate-90" : ""}`} />
-                      </button>
-
-                      {/* Expanded content */}
-                      {isExpanded && (
-                        <div className="border-t border-[#1e2028] bg-[#0c0d13]">
-                          {/* Watch Activity */}
-                          {section.id === "watch" && (
-                            videoStats?.recentVideos?.length ? (
-                              <div className="divide-y divide-[#1e2028]/60">
-                                {videoStats.recentVideos.map((item: any, i: number) => (
-                                  <div key={i} className="flex items-center gap-3 px-4 py-2.5">
-                                    {item.video?.thumbnail && (
-                                      <img src={item.video.thumbnail} alt="" className="w-14 h-8 rounded object-cover shrink-0" />
-                                    )}
-                                    <div className="flex-1 min-w-0">
-                                      <p className="text-xs text-[#c4c7d4] truncate">{item.video?.title || "Unknown"}</p>
-                                      <p className="text-[10px] text-[#565b6e]">{item.video?.channel_name}</p>
-                                    </div>
-                                    <span className="text-[10px] text-[#4a4e5e] shrink-0">
-                                      {formatDistanceToNow(new Date(item.watched_at), { addSuffix: true })}
-                                    </span>
-                                  </div>
-                                ))}
-                              </div>
-                            ) : (
-                              <p className="text-xs text-[#565b6e] px-4 py-4 text-center">No watch history</p>
-                            )
-                          )}
-
-                          {/* Subscriptions */}
-                          {section.id === "subscriptions" && (
-                            subscriptions?.length ? (
-                              <div className="divide-y divide-[#1e2028]/60">
-                                {subscriptions.slice(0, 20).map((sub: any) => (
-                                  <div key={sub.id} className="flex items-center gap-3 px-4 py-2.5">
-                                    {sub.channel?.thumbnail_url && (
-                                      <img src={sub.channel.thumbnail_url} alt="" className="w-7 h-7 rounded-full object-cover shrink-0" />
-                                    )}
-                                    <div className="flex-1 min-w-0">
-                                      <p className="text-xs text-[#c4c7d4] truncate">{sub.channel?.title || sub.channel_id}</p>
-                                    </div>
-                                    <span className="text-[10px] text-[#4a4e5e] shrink-0">
-                                      {formatDistanceToNow(new Date(sub.created_at), { addSuffix: true })}
-                                    </span>
-                                  </div>
-                                ))}
-                              </div>
-                            ) : (
-                              <p className="text-xs text-[#565b6e] px-4 py-4 text-center">No subscriptions</p>
-                            )
-                          )}
-
-                          {/* Favorites */}
-                          {section.id === "favorites" && (
-                            <p className="text-xs text-[#565b6e] px-4 py-4 text-center">
-                              {favorites ? `${favorites} videos favorited` : "No favorites"}
-                            </p>
-                          )}
-
-                          {/* Comments */}
-                          {section.id === "comments" && (
-                            comments?.length ? (
-                              <div className="divide-y divide-[#1e2028]/60">
-                                {comments.slice(0, 15).map((c: any) => (
-                                  <div key={c.id} className="px-4 py-2.5">
-                                    <p className="text-xs text-[#c4c7d4] line-clamp-2">{c.content}</p>
-                                    <p className="text-[10px] text-[#4a4e5e] mt-1">
-                                      {formatDistanceToNow(new Date(c.created_at), { addSuffix: true })}
-                                    </p>
-                                  </div>
-                                ))}
-                              </div>
-                            ) : (
-                              <p className="text-xs text-[#565b6e] px-4 py-4 text-center">No comments</p>
-                            )
-                          )}
-
-                          {/* Channel Requests */}
-                          {section.id === "channel_requests" && (
-                            channelRequests?.length ? (
-                              <div className="divide-y divide-[#1e2028]/60">
-                                {channelRequests.map((r: any) => (
-                                  <div key={r.id} className="flex items-center gap-3 px-4 py-2.5">
-                                    <div className="flex-1 min-w-0">
-                                      <p className="text-xs text-[#c4c7d4] truncate">{r.channel_name}</p>
-                                      <p className="text-[10px] text-[#4a4e5e]">
-                                        {formatDistanceToNow(new Date(r.created_at), { addSuffix: true })}
-                                      </p>
-                                    </div>
-                                    <Badge className={`text-[10px] ${statusColor(r.status)}`}>
-                                      {r.status || "pending"}
-                                    </Badge>
-                                  </div>
-                                ))}
-                              </div>
-                            ) : (
-                              <p className="text-xs text-[#565b6e] px-4 py-4 text-center">No channel requests</p>
-                            )
-                          )}
-
-                          {/* Contact Requests */}
-                          {section.id === "contact_requests" && (
-                            contactRequests?.length ? (
-                              <div className="divide-y divide-[#1e2028]/60">
-                                {contactRequests.map((r: any) => (
-                                  <div key={r.id} className="px-4 py-2.5">
-                                    <div className="flex items-center gap-2 mb-1">
-                                      <Badge className={`text-[10px] ${statusColor(r.status)}`}>
-                                        {r.status}
-                                      </Badge>
-                                      <span className="text-[10px] text-[#4a4e5e]">
-                                        {formatDistanceToNow(new Date(r.created_at), { addSuffix: true })}
-                                      </span>
-                                    </div>
-                                    <p className="text-xs text-[#c4c7d4] line-clamp-2">{r.message}</p>
-                                  </div>
-                                ))}
-                              </div>
-                            ) : (
-                              <p className="text-xs text-[#565b6e] px-4 py-4 text-center">No contact requests</p>
-                            )
-                          )}
-                        </div>
-                      )}
+              <>
+                {/* Top stats bar */}
+                <div className="grid grid-cols-5 gap-3 mb-6">
+                  {[
+                    { label: "Videos Watched", value: videoStats?.totalWatched || 0, icon: Play, color: "text-violet-400" },
+                    { label: "Channels Explored", value: videoStats?.uniqueChannels || 0, icon: Tv, color: "text-blue-400" },
+                    { label: "Subscriptions", value: subscriptions?.length || 0, icon: Activity, color: "text-cyan-400" },
+                    { label: "Favorites", value: favorites || 0, icon: Heart, color: "text-pink-400" },
+                    { label: "Est. Time on Site", value: sessionData?.totalMinutes ? `${sessionData.totalMinutes}m` : "—", icon: Clock, color: "text-amber-400" },
+                  ].map(stat => (
+                    <div key={stat.label} className="bg-[#0f1117] rounded-xl p-3.5 border border-[#1e2028] text-center">
+                      <stat.icon className={`w-4 h-4 mx-auto mb-1.5 ${stat.color}`} />
+                      <p className="text-lg font-bold text-white">{stat.value}</p>
+                      <p className="text-[10px] text-[#565b6e] mt-0.5">{stat.label}</p>
                     </div>
-                  );
-                })}
-              </div>
+                  ))}
+                </div>
+
+                {/* Last active info */}
+                {videoStats?.lastWatched && (
+                  <div className="flex items-center gap-2 bg-[#0f1117] rounded-lg px-4 py-2.5 border border-[#1e2028] mb-6">
+                    <Clock className="w-3.5 h-3.5 text-[#565b6e]" />
+                    <span className="text-xs text-[#8b8fa3]">Last active:</span>
+                    <span className="text-xs text-[#c4c7d4] font-medium">
+                      {format(new Date(videoStats.lastWatched), "MMM d, yyyy 'at' h:mm a")}
+                    </span>
+                    <span className="text-[10px] text-[#565b6e]">
+                      ({formatDistanceToNow(new Date(videoStats.lastWatched), { addSuffix: true })})
+                    </span>
+                    {sessionData?.totalSessions ? (
+                      <span className="ml-auto text-[10px] text-[#565b6e]">{sessionData.totalSessions} total sessions</span>
+                    ) : null}
+                  </div>
+                )}
+
+                {/* Two-column grid of sections */}
+                <div className="grid grid-cols-2 gap-5">
+                  {/* Watch History */}
+                  <div className="bg-[#0f1117] rounded-xl border border-[#1e2028] p-4">
+                    <SectionHeader icon={Play} label="Watch History" count={videoStats?.totalWatched || 0} color="text-violet-400" />
+                    {videoStats?.recentVideos?.length ? (
+                      <div className="space-y-0 divide-y divide-[#1e2028]/60 max-h-[260px] overflow-y-auto pr-1">
+                        {videoStats.recentVideos.map((item: any, i: number) => (
+                          <div
+                            key={i}
+                            className="flex items-center gap-2.5 py-2 group cursor-pointer hover:bg-[#1a1c25]/50 -mx-1 px-1 rounded"
+                            onClick={() => {
+                              if (item.video?.video_id) {
+                                onOpenChange(false);
+                                navigate(`/video/${item.video.video_id}`);
+                              }
+                            }}
+                          >
+                            {item.video?.thumbnail && (
+                              <img src={item.video.thumbnail} alt="" className="w-16 h-9 rounded object-cover shrink-0" />
+                            )}
+                            <div className="flex-1 min-w-0">
+                              <p className="text-xs text-[#c4c7d4] truncate">{item.video?.title || "Unknown"}</p>
+                              <p className="text-[10px] text-[#565b6e]">{item.video?.channel_name}</p>
+                            </div>
+                            <div className="flex items-center gap-1 shrink-0">
+                              <span className="text-[10px] text-[#4a4e5e]">
+                                {formatDistanceToNow(new Date(item.watched_at), { addSuffix: true })}
+                              </span>
+                              <ExternalLink className="w-3 h-3 text-[#4a4e5e] opacity-0 group-hover:opacity-100 transition-opacity" />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-xs text-[#565b6e] text-center py-6">No watch history</p>
+                    )}
+                  </div>
+
+                  {/* Subscriptions */}
+                  <div className="bg-[#0f1117] rounded-xl border border-[#1e2028] p-4">
+                    <SectionHeader icon={Tv} label="Subscriptions" count={subscriptions?.length || 0} color="text-blue-400" />
+                    {subscriptions?.length ? (
+                      <div className="space-y-0 divide-y divide-[#1e2028]/60 max-h-[260px] overflow-y-auto pr-1">
+                        {subscriptions.map((sub: any) => (
+                          <div key={sub.id} className="flex items-center gap-2.5 py-2">
+                            {sub.channel?.thumbnail_url && (
+                              <img src={sub.channel.thumbnail_url} alt="" className="w-7 h-7 rounded-full object-cover shrink-0" />
+                            )}
+                            <p className="text-xs text-[#c4c7d4] truncate flex-1">{sub.channel?.title || sub.channel_id}</p>
+                            <span className="text-[10px] text-[#4a4e5e] shrink-0">
+                              {formatDistanceToNow(new Date(sub.created_at), { addSuffix: true })}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-xs text-[#565b6e] text-center py-6">No subscriptions</p>
+                    )}
+                  </div>
+
+                  {/* Comments */}
+                  <div className="bg-[#0f1117] rounded-xl border border-[#1e2028] p-4">
+                    <SectionHeader icon={MessageSquare} label="Comments" count={comments?.length || 0} color="text-emerald-400" />
+                    {comments?.length ? (
+                      <div className="space-y-0 divide-y divide-[#1e2028]/60 max-h-[260px] overflow-y-auto pr-1">
+                        {comments.map((c: any) => (
+                          <div key={c.id} className="py-2">
+                            <p className="text-xs text-[#c4c7d4] line-clamp-2">{c.content}</p>
+                            <p className="text-[10px] text-[#4a4e5e] mt-1">
+                              {formatDistanceToNow(new Date(c.created_at), { addSuffix: true })}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-xs text-[#565b6e] text-center py-6">No comments</p>
+                    )}
+                  </div>
+
+                  {/* Channel Requests */}
+                  <div className="bg-[#0f1117] rounded-xl border border-[#1e2028] p-4">
+                    <SectionHeader icon={GitPullRequest} label="Channel Requests" count={channelRequests?.length || 0} color="text-sky-400" />
+                    {channelRequests?.length ? (
+                      <div className="space-y-0 divide-y divide-[#1e2028]/60 max-h-[260px] overflow-y-auto pr-1">
+                        {channelRequests.map((r: any) => (
+                          <div key={r.id} className="flex items-center gap-2.5 py-2">
+                            <div className="flex-1 min-w-0">
+                              <p className="text-xs text-[#c4c7d4] truncate">{r.channel_name}</p>
+                              <p className="text-[10px] text-[#4a4e5e]">
+                                {formatDistanceToNow(new Date(r.created_at), { addSuffix: true })}
+                              </p>
+                            </div>
+                            <Badge className={`text-[10px] ${statusColor(r.status)}`}>
+                              {r.status || "pending"}
+                            </Badge>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-xs text-[#565b6e] text-center py-6">No channel requests</p>
+                    )}
+                  </div>
+
+                  {/* Contact Requests - full width */}
+                  <div className="bg-[#0f1117] rounded-xl border border-[#1e2028] p-4 col-span-2">
+                    <SectionHeader icon={Mail} label="Contact Requests" count={contactRequests?.length || 0} color="text-amber-400" />
+                    {contactRequests?.length ? (
+                      <div className="grid grid-cols-2 gap-3">
+                        {contactRequests.map((r: any) => (
+                          <div key={r.id} className="bg-[#13141b] rounded-lg p-3 border border-[#1e2028]/50">
+                            <div className="flex items-center gap-2 mb-1.5">
+                              <Badge className={`text-[10px] ${statusColor(r.status)}`}>{r.status}</Badge>
+                              <span className="text-[10px] text-[#4a4e5e]">
+                                {formatDistanceToNow(new Date(r.created_at), { addSuffix: true })}
+                              </span>
+                            </div>
+                            <p className="text-xs text-[#c4c7d4] line-clamp-2">{r.message}</p>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-xs text-[#565b6e] text-center py-6">No contact requests</p>
+                    )}
+                  </div>
+                </div>
+              </>
             )}
           </div>
         </ScrollArea>
