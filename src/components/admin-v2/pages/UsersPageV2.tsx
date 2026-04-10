@@ -1,13 +1,18 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
+import { Separator } from "@/components/ui/separator";
 import {
-  Search, Shield, ShieldOff, Loader2, UserPlus, Users, ShieldCheck, Calendar, Mail
+  Search, Shield, ShieldOff, Loader2, UserPlus, Users, ShieldCheck, Calendar, Mail,
+  Pencil, Trash2, X, Save, AlertTriangle, MoreVertical
 } from "lucide-react";
+import {
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
 import { useUserManagement } from "@/components/dashboard/user-management/useUserManagement";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -29,11 +34,76 @@ export const UsersPageV2 = ({ currentUserId }: UsersPageV2Props) => {
     refetchUsers,
   } = useUserManagement(currentUserId);
 
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [showAddAdmin, setShowAddAdmin] = useState(false);
   const [newAdminEmail, setNewAdminEmail] = useState("");
   const [addingAdmin, setAddingAdmin] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deletingUser, setDeletingUser] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [editDisplayName, setEditDisplayName] = useState("");
+  const [editUsername, setEditUsername] = useState("");
+  const [savingEdit, setSavingEdit] = useState(false);
 
-  const handleAddAdmin = async () => {
+  const allUsers = useMemo(() => [...(adminUsers || []), ...(regularUsers || [])], [adminUsers, regularUsers]);
+  const selectedUser = useMemo(() => allUsers.find(u => u.id === selectedUserId), [allUsers, selectedUserId]);
+
+  const handleSelectUser = (userId: string) => {
+    setSelectedUserId(userId === selectedUserId ? null : userId);
+    setEditMode(false);
+  };
+
+  const handleStartEdit = () => {
+    if (!selectedUser) return;
+    setEditDisplayName(selectedUser.display_name || selectedUser.name || "");
+    setEditUsername(selectedUser.username || "");
+    setEditMode(true);
+  };
+
+  const handleSaveEdit = async () => {
+    if (!selectedUser) return;
+    setSavingEdit(true);
+    try {
+      const adminSession = secureStorage.getSecureItem("admin-session");
+      const adminToken = typeof adminSession?.adminToken === "string" ? adminSession.adminToken : undefined;
+      const { data, error } = await supabase.functions.invoke("admin-edit-user", {
+        body: { userId: selectedUser.id, display_name: editDisplayName, username: editUsername, adminToken },
+      });
+      if (error) throw error;
+      if (!data?.success) throw new Error(data?.error || "Failed to update user");
+      toast.success("User profile updated");
+      setEditMode(false);
+      refetchUsers();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to update user");
+    } finally {
+      setSavingEdit(false);
+    }
+  };
+
+  const handleDeleteUser = async () => {
+    if (!selectedUser) return;
+    setDeletingUser(true);
+    try {
+      const adminSession = secureStorage.getSecureItem("admin-session");
+      const adminToken = typeof adminSession?.adminToken === "string" ? adminSession.adminToken : undefined;
+      const { data, error } = await supabase.functions.invoke("admin-delete-user", {
+        body: { userId: selectedUser.id, adminToken },
+      });
+      if (error) throw error;
+      if (!data?.success) throw new Error(data?.error || "Failed to delete user");
+      toast.success("User deleted successfully");
+      setShowDeleteConfirm(false);
+      setSelectedUserId(null);
+      refetchUsers();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to delete user");
+    } finally {
+      setDeletingUser(false);
+    }
+  };
+
+   const handleAddAdmin = async () => {
     if (!newAdminEmail.trim()) return;
     setAddingAdmin(true);
     try {
@@ -79,7 +149,7 @@ export const UsersPageV2 = ({ currentUserId }: UsersPageV2Props) => {
   }
 
   return (
-    <div className="space-y-5 max-w-[1400px]">
+    <div className="space-y-5 max-w-[1600px]">
       {/* KPI Cards */}
       <div className="grid grid-cols-3 gap-4">
         <Card className="bg-[#12131a] border-[#1e2028]">
@@ -130,78 +200,188 @@ export const UsersPageV2 = ({ currentUserId }: UsersPageV2Props) => {
         </div>
         <Button
           onClick={() => setShowAddAdmin(true)}
-          className="bg-indigo-600 hover:bg-indigo-700 text-white h-9"
+          size="sm"
+          variant="outline"
+          className="border-[#2a2b35] text-gray-400 hover:text-gray-200 hover:bg-[#1a1b24] h-9"
         >
-          <UserPlus className="h-4 w-4 mr-2" /> Add Admin
+          <UserPlus className="h-4 w-4 mr-2" /> Manage Admin
         </Button>
       </div>
 
-      {/* Admin Users Section */}
-      <Card className="bg-[#12131a] border-[#1e2028]">
-        <CardHeader className="pb-2 pt-3 px-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <ShieldCheck className="h-4 w-4 text-amber-400" />
-              <CardTitle className="text-sm text-gray-300">Admin Users</CardTitle>
-            </div>
-            <span className="text-xs text-gray-500">{adminUsers?.length || 0}</span>
-          </div>
-        </CardHeader>
-        <CardContent className="px-4 pb-3">
-          {adminUsers && adminUsers.length > 0 ? (
-            <div className="space-y-1">
-              {adminUsers.map((user) => (
-                <UserRow
-                  key={user.id}
-                  user={user}
-                  onToggle={toggleAdminStatus}
-                  isCurrentUser={user.id === currentUserId}
-                  isAdmin
-                />
-              ))}
-            </div>
-          ) : (
-            <p className="text-sm text-gray-500 py-3 text-center">No admin users found</p>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Regular Users Section */}
-      <Card className="bg-[#12131a] border-[#1e2028]">
-        <CardHeader className="pb-2 pt-3 px-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Users className="h-4 w-4 text-indigo-400" />
-              <CardTitle className="text-sm text-gray-300">Regular Users</CardTitle>
-            </div>
-            <span className="text-xs text-gray-500">{regularUsers?.length || 0}</span>
-          </div>
-        </CardHeader>
-        <CardContent className="px-4 pb-3">
-          <ScrollArea className="h-[calc(100vh-32rem)]">
-            {regularUsers && regularUsers.length > 0 ? (
-              <div className="space-y-1">
-                {regularUsers.map((user) => (
+      {/* Main content: user list + detail panel */}
+      <div className="flex gap-4">
+        {/* User List */}
+        <Card className={`bg-[#12131a] border-[#1e2028] flex-1 ${selectedUserId ? 'max-w-[60%]' : ''}`}>
+          <CardContent className="p-0">
+            <ScrollArea className="h-[calc(100vh-22rem)]">
+              {/* Admin section header */}
+              {adminUsers && adminUsers.length > 0 && (
+                <>
+                  <div className="flex items-center gap-2 px-4 py-2 border-b border-[#1e2028]">
+                    <ShieldCheck className="h-3.5 w-3.5 text-amber-400" />
+                    <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Admins · {adminUsers.length}</span>
+                  </div>
+                  {adminUsers.map((user) => (
+                    <UserRow
+                      key={user.id}
+                      user={user}
+                      isCurrentUser={user.id === currentUserId}
+                      isAdmin
+                      isSelected={user.id === selectedUserId}
+                      onSelect={() => handleSelectUser(user.id)}
+                    />
+                  ))}
+                </>
+              )}
+              {/* Regular users header */}
+              <div className="flex items-center gap-2 px-4 py-2 border-b border-[#1e2028] border-t border-t-[#1e2028]">
+                <Users className="h-3.5 w-3.5 text-indigo-400" />
+                <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Users · {regularUsers?.length || 0}</span>
+              </div>
+              {regularUsers && regularUsers.length > 0 ? (
+                regularUsers.map((user) => (
                   <UserRow
                     key={user.id}
                     user={user}
-                    onToggle={toggleAdminStatus}
                     isCurrentUser={user.id === currentUserId}
+                    isSelected={user.id === selectedUserId}
+                    onSelect={() => handleSelectUser(user.id)}
                   />
-                ))}
+                ))
+              ) : (
+                <p className="text-sm text-gray-500 py-6 text-center">No users found</p>
+              )}
+            </ScrollArea>
+          </CardContent>
+        </Card>
+
+        {/* Detail Panel */}
+        {selectedUser && (
+          <Card className="bg-[#12131a] border-[#1e2028] w-[40%] min-w-[320px]">
+            <CardContent className="p-5">
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-full bg-[#2a2b35] flex items-center justify-center text-lg font-semibold text-gray-300 shrink-0">
+                    {selectedUser.avatar_url ? (
+                      <img src={selectedUser.avatar_url} alt="" className="w-12 h-12 rounded-full object-cover" />
+                    ) : (
+                      (selectedUser.display_name || selectedUser.username || "U")[0]?.toUpperCase()
+                    )}
+                  </div>
+                  <div>
+                    <p className="text-base font-semibold text-gray-100">
+                      {selectedUser.display_name || selectedUser.username || selectedUser.name || "Unnamed"}
+                    </p>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      {selectedUser.is_admin && (
+                        <Badge className="bg-amber-500/10 text-amber-400 border-amber-500/20 text-[10px] px-1.5 py-0">Admin</Badge>
+                      )}
+                      {selectedUser.id === currentUserId && (
+                        <Badge className="bg-cyan-500/10 text-cyan-400 border-cyan-500/20 text-[10px] px-1.5 py-0">You</Badge>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => setSelectedUserId(null)}
+                  className="text-gray-500 hover:text-gray-300 h-7 w-7 p-0"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
               </div>
-            ) : (
-              <p className="text-sm text-gray-500 py-3 text-center">No users found</p>
-            )}
-          </ScrollArea>
-        </CardContent>
-      </Card>
+
+              <Separator className="bg-[#1e2028] mb-4" />
+
+              {/* User details */}
+              {!editMode ? (
+                <div className="space-y-3">
+                  <DetailRow label="Email" value={selectedUser.email} />
+                  <DetailRow label="Display Name" value={selectedUser.display_name || "—"} />
+                  <DetailRow label="Username" value={selectedUser.username || "—"} />
+                  <DetailRow label="Joined" value={selectedUser.created_at ? formatDate(selectedUser.created_at) : "Unknown"} />
+                  <DetailRow label="User Type" value={(selectedUser as any).user_type || "visitor"} />
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <div>
+                    <label className="text-xs text-gray-500 mb-1 block">Display Name</label>
+                    <Input
+                      value={editDisplayName}
+                      onChange={(e) => setEditDisplayName(e.target.value)}
+                      className="bg-[#1a1b24] border-[#2a2b35] text-gray-200 h-8 text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs text-gray-500 mb-1 block">Username</label>
+                    <Input
+                      value={editUsername}
+                      onChange={(e) => setEditUsername(e.target.value)}
+                      className="bg-[#1a1b24] border-[#2a2b35] text-gray-200 h-8 text-sm"
+                    />
+                  </div>
+                </div>
+              )}
+
+              <Separator className="bg-[#1e2028] my-4" />
+
+              {/* Action buttons */}
+              {selectedUser.id !== currentUserId && (
+                <div className="space-y-2">
+                  {!editMode ? (
+                    <>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="w-full border-[#2a2b35] text-gray-300 hover:text-gray-100 hover:bg-[#1a1b24] justify-start"
+                        onClick={handleStartEdit}
+                      >
+                        <Pencil className="h-3.5 w-3.5 mr-2" /> Edit Profile
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="w-full border-red-500/20 text-red-400 hover:text-red-300 hover:bg-red-500/10 justify-start"
+                        onClick={() => setShowDeleteConfirm(true)}
+                      >
+                        <Trash2 className="h-3.5 w-3.5 mr-2" /> Delete User
+                      </Button>
+                    </>
+                  ) : (
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="flex-1 text-gray-400 hover:text-gray-200"
+                        onClick={() => setEditMode(false)}
+                        disabled={savingEdit}
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        size="sm"
+                        className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white"
+                        onClick={handleSaveEdit}
+                        disabled={savingEdit}
+                      >
+                        {savingEdit ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <><Save className="h-3.5 w-3.5 mr-1" /> Save</>}
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
+      </div>
 
       {/* Add Admin Dialog */}
       <Dialog open={showAddAdmin} onOpenChange={setShowAddAdmin}>
         <DialogContent className="bg-[#12131a] border-[#1e2028] text-gray-200">
           <DialogHeader>
-            <DialogTitle className="text-gray-100">Add Admin User</DialogTitle>
+            <DialogTitle className="text-gray-100">Manage Admin Access</DialogTitle>
+            <DialogDescription className="text-gray-500">Enter a user's email to grant them admin privileges.</DialogDescription>
           </DialogHeader>
           <div className="space-y-3 py-2">
             <label className="text-sm text-gray-400">User email address</label>
@@ -231,40 +411,69 @@ export const UsersPageV2 = ({ currentUserId }: UsersPageV2Props) => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
+        <DialogContent className="bg-[#12131a] border-[#1e2028] text-gray-200">
+          <DialogHeader>
+            <DialogTitle className="text-gray-100 flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-red-400" /> Delete User
+            </DialogTitle>
+            <DialogDescription className="text-gray-400">
+              This will permanently delete <span className="text-gray-200 font-medium">{selectedUser?.display_name || selectedUser?.email}</span> and all their data. This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setShowDeleteConfirm(false)} className="text-gray-400 hover:text-gray-200" disabled={deletingUser}>
+              Cancel
+            </Button>
+            <Button onClick={handleDeleteUser} disabled={deletingUser} className="bg-red-600 hover:bg-red-700 text-white">
+              {deletingUser ? <Loader2 className="h-4 w-4 animate-spin" /> : "Delete Permanently"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
 
 const UserRow = ({
   user,
-  onToggle,
   isCurrentUser,
   isAdmin,
+  isSelected,
+  onSelect,
 }: {
   user: any;
-  onToggle: (id: string, current: boolean) => void;
   isCurrentUser: boolean;
   isAdmin?: boolean;
+  isSelected?: boolean;
+  onSelect: () => void;
 }) => {
   const displayName = user.display_name || user.username || user.name || "Unnamed";
   const initial = displayName[0]?.toUpperCase() || "U";
   const joinDate = user.created_at ? formatDate(user.created_at) : "Unknown";
 
   return (
-    <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-[#1a1b24] border border-[#1e2028] hover:border-[#2a2b35] transition-colors">
-      {/* Avatar */}
-      <div className="w-9 h-9 rounded-full bg-[#2a2b35] flex items-center justify-center text-sm font-semibold text-gray-300 shrink-0">
+    <div
+      onClick={onSelect}
+      className={`flex items-center gap-3 px-4 py-2.5 cursor-pointer transition-colors border-b border-[#1e2028] ${
+        isSelected
+          ? 'bg-indigo-500/10 border-l-2 border-l-indigo-500'
+          : 'hover:bg-[#1a1b24]'
+      }`}
+    >
+      <div className="w-8 h-8 rounded-full bg-[#2a2b35] flex items-center justify-center text-xs font-semibold text-gray-300 shrink-0">
         {user.avatar_url ? (
-          <img src={user.avatar_url} alt="" className="w-9 h-9 rounded-full object-cover" />
+          <img src={user.avatar_url} alt="" className="w-8 h-8 rounded-full object-cover" />
         ) : (
           initial
         )}
       </div>
 
-      {/* Info */}
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <p className="text-sm font-medium text-gray-200 truncate">{displayName}</p>
+          <p className="text-sm font-medium text-gray-200 truncate leading-tight">{displayName}</p>
           {isCurrentUser && (
             <Badge className="bg-cyan-500/10 text-cyan-400 border-cyan-500/20 text-[10px] px-1.5 py-0">You</Badge>
           )}
@@ -282,18 +491,13 @@ const UserRow = ({
         </div>
       </div>
 
-      {/* Actions */}
-      {!isCurrentUser && (
-        <Button
-          size="sm"
-          variant="ghost"
-          onClick={() => onToggle(user.id, user.is_admin)}
-          className="text-gray-400 hover:text-gray-200 h-8 w-8 p-0 shrink-0"
-          title={user.is_admin ? "Remove admin" : "Make admin"}
-        >
-          {user.is_admin ? <ShieldOff className="h-4 w-4" /> : <Shield className="h-4 w-4" />}
-        </Button>
-      )}
     </div>
   );
 };
+
+const DetailRow = ({ label, value }: { label: string; value: string }) => (
+  <div className="flex justify-between items-center">
+    <span className="text-xs text-gray-500">{label}</span>
+    <span className="text-sm text-gray-300 text-right truncate max-w-[200px]">{value}</span>
+  </div>
+);
