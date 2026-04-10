@@ -16,7 +16,7 @@ import { ContentModerationPage } from "@/components/admin/pages/ContentModeratio
 import { ChannelsPageV2 } from "@/components/admin-v2/pages/ChannelsPageV2";
 import { MusicPage } from "@/components/admin/pages/MusicPage";
 import { UsersPage } from "@/components/admin/pages/UsersPage";
-import { CategoriesPage } from "@/components/admin/pages/CategoriesPage";
+import { CategoriesPageV2 } from "@/components/admin-v2/pages/CategoriesPageV2";
 import { CommentsPage } from "@/components/admin/pages/CommentsPage";
 import { ContactRequestsPage } from "@/components/admin/pages/ContactRequestsPage";
 import { NotificationsPage } from "@/components/admin/pages/NotificationsPage";
@@ -95,7 +95,7 @@ const Dashboard = () => {
       case "moderation":
         return <ContentModerationPage />;
       case "categories":
-        return <CategoriesPage />;
+        return <CategoriesPageV2 />;
       case "music":
         return <MusicPage />;
       case "users":
