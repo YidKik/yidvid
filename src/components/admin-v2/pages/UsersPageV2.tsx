@@ -345,6 +345,14 @@ export const UsersPageV2 = ({ currentUserId }: UsersPageV2Props) => {
                       <Button
                         size="sm"
                         variant="outline"
+                        className="w-full border-[#2a2b35] text-gray-300 hover:text-gray-100 hover:bg-[#1a1b24] justify-start"
+                        onClick={() => setShowActivityDialog(true)}
+                      >
+                        <Eye className="h-3.5 w-3.5 mr-2" /> View Full Activity
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
                         className="w-full border-red-500/20 text-red-400 hover:text-red-300 hover:bg-red-500/10 justify-start"
                         onClick={() => setShowDeleteConfirm(true)}
                       >
