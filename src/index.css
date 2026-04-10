@@ -262,8 +262,19 @@ body.home-page {
 }
 
 .dark .text-white,
-.dark .text-primary-foreground {
+.dark .text-primary-foreground,
+.dark .bg-\[\#FF0000\] span,
+.dark .bg-\[\#FF0000\] button,
+.dark .bg-red-500 span {
   color: #ffffff !important;
+}
+
+/* SVG icons should inherit color properly */
+.dark svg {
+  color: inherit !important;
+}
+.dark .text-yellow-600 svg, .dark .text-yellow-600 {
+  color: #FFCC00 !important;
 }
 
 /* Muted/secondary text in dark mode */
