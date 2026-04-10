@@ -32,7 +32,7 @@ const PAGE_META: Record<string, { title: string; description: string }> = {
   users: { title: "Users", description: "Manage users & admin roles" },
   comments: { title: "Comments", description: "View & moderate comments" },
   contacts: { title: "Contact Requests", description: "Manage contact requests & emails" },
-  notifications: { title: "Notifications", description: "Global notifications & channel requests" },
+  
 };
 
 const Dashboard = () => {
