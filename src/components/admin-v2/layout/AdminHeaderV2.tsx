@@ -1,10 +1,9 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { Bell, Mail, GitPullRequest, UserPlus, MessageSquare, Video, X, ChevronRight } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { formatDistanceToNow } from "date-fns";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { motion, AnimatePresence } from "framer-motion";
 
 interface AdminHeaderV2Props {
   pageTitle: string;
@@ -21,64 +20,24 @@ interface AdminNotification {
   created_at: string;
 }
 
-const NOTIFICATION_CONFIG: Record<string, {
+const SECTION_CONFIG: Record<string, {
   icon: typeof Mail;
   color: string;
   bg: string;
   tab?: string;
-  label: string;
-  priority: "high" | "low";
+  sectionLabel: string;
 }> = {
-  new_contact_request: {
-    icon: Mail,
-    color: "text-amber-400",
-    bg: "bg-amber-500/10",
-    tab: "contacts",
-    label: "Contact Request",
-    priority: "high",
-  },
-  new_channel_request: {
-    icon: GitPullRequest,
-    color: "text-sky-400",
-    bg: "bg-sky-500/10",
-    tab: "channels",
-    label: "Channel Request",
-    priority: "high",
-  },
-  new_comment: {
-    icon: MessageSquare,
-    color: "text-slate-400",
-    bg: "bg-slate-500/10",
-    tab: "comments",
-    label: "Comment",
-    priority: "low",
-  },
-  new_video: {
-    icon: Video,
-    color: "text-slate-400",
-    bg: "bg-slate-500/10",
-    tab: "channels",
-    label: "New Video",
-    priority: "low",
-  },
-  new_user: {
-    icon: UserPlus,
-    color: "text-slate-400",
-    bg: "bg-slate-500/10",
-    tab: "users",
-    label: "New User",
-    priority: "low",
-  },
+  new_contact_request: { icon: Mail, color: "text-amber-400", bg: "bg-amber-500/10", tab: "contacts", sectionLabel: "Contact Requests" },
+  new_channel_request: { icon: GitPullRequest, color: "text-sky-400", bg: "bg-sky-500/10", tab: "requests", sectionLabel: "Channel Requests" },
+  new_video: { icon: Video, color: "text-violet-400", bg: "bg-violet-500/10", tab: "channels", sectionLabel: "New Videos" },
+  new_comment: { icon: MessageSquare, color: "text-emerald-400", bg: "bg-emerald-500/10", tab: "comments", sectionLabel: "Comments" },
+  new_user: { icon: UserPlus, color: "text-blue-400", bg: "bg-blue-500/10", tab: "users", sectionLabel: "New Users" },
 };
 
-const DEFAULT_CONFIG = {
-  icon: Bell,
-  color: "text-slate-400",
-  bg: "bg-slate-500/10",
-  tab: undefined as string | undefined,
-  label: "Notification",
-  priority: "low" as const,
-};
+const DEFAULT_CFG = { icon: Bell, color: "text-slate-400", bg: "bg-slate-500/10", tab: undefined as string | undefined, sectionLabel: "Other" };
+
+// Section display order
+const SECTION_ORDER = ["new_contact_request", "new_channel_request", "new_video", "new_comment", "new_user"];
 
 export const AdminHeaderV2 = ({ pageTitle, pageDescription, profile, onTabChange }: AdminHeaderV2Props) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -92,7 +51,7 @@ export const AdminHeaderV2 = ({ pageTitle, pageDescription, profile, onTabChange
         .from("admin_notifications")
         .select("*")
         .order("created_at", { ascending: false })
-        .limit(50);
+        .limit(100);
       if (error) throw error;
       return (data || []) as AdminNotification[];
     },
@@ -101,18 +60,25 @@ export const AdminHeaderV2 = ({ pageTitle, pageDescription, profile, onTabChange
 
   const unreadCount = notifications?.filter(n => !n.is_read).length || 0;
 
-  // Split into high priority (contact/channel requests) and low priority (comments, videos, users)
-  const highPriority = notifications?.filter(n => {
-    const cfg = NOTIFICATION_CONFIG[n.type] || DEFAULT_CONFIG;
-    return cfg.priority === "high" && !n.is_read;
-  }) || [];
+  // Group unread notifications by type into sections
+  const sections = useMemo(() => {
+    const unread = notifications?.filter(n => !n.is_read) || [];
+    const grouped: Record<string, AdminNotification[]> = {};
+    for (const n of unread) {
+      const key = SECTION_CONFIG[n.type] ? n.type : "_other";
+      if (!grouped[key]) grouped[key] = [];
+      grouped[key].push(n);
+    }
+    // Return in defined order
+    const result: { type: string; items: AdminNotification[] }[] = [];
+    for (const type of SECTION_ORDER) {
+      if (grouped[type]?.length) result.push({ type, items: grouped[type] });
+    }
+    if (grouped["_other"]?.length) result.push({ type: "_other", items: grouped["_other"] });
+    return result;
+  }, [notifications]);
 
-  const lowPriority = notifications?.filter(n => {
-    const cfg = NOTIFICATION_CONFIG[n.type] || DEFAULT_CONFIG;
-    return cfg.priority === "low" && !n.is_read;
-  }) || [];
-
-  const readNotifications = notifications?.filter(n => n.is_read).slice(0, 10) || [];
+  const readNotifications = useMemo(() => notifications?.filter(n => n.is_read).slice(0, 8) || [], [notifications]);
 
   // Close on outside click
   useEffect(() => {
@@ -123,6 +89,13 @@ export const AdminHeaderV2 = ({ pageTitle, pageDescription, profile, onTabChange
     };
     if (isOpen) document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
+  }, [isOpen]);
+
+  // Close on Escape
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => { if (e.key === "Escape") setIsOpen(false); };
+    if (isOpen) document.addEventListener("keydown", handleKey);
+    return () => document.removeEventListener("keydown", handleKey);
   }, [isOpen]);
 
   const markAsRead = async (id: string) => {
@@ -136,7 +109,7 @@ export const AdminHeaderV2 = ({ pageTitle, pageDescription, profile, onTabChange
   };
 
   const handleNotificationClick = (notification: AdminNotification) => {
-    const cfg = NOTIFICATION_CONFIG[notification.type];
+    const cfg = SECTION_CONFIG[notification.type];
     markAsRead(notification.id);
     if (cfg?.tab && onTabChange) {
       onTabChange(cfg.tab);
@@ -144,33 +117,12 @@ export const AdminHeaderV2 = ({ pageTitle, pageDescription, profile, onTabChange
     }
   };
 
-  const NotificationItem = ({ notification, compact }: { notification: AdminNotification; compact?: boolean }) => {
-    const cfg = NOTIFICATION_CONFIG[notification.type] || DEFAULT_CONFIG;
-    const Icon = cfg.icon;
-
-    return (
-      <button
-        onClick={() => handleNotificationClick(notification)}
-        className={`w-full flex items-start gap-3 px-4 py-3 text-left transition-colors hover:bg-white/5 group ${
-          compact ? "opacity-60" : ""
-        }`}
-      >
-        <div className={`mt-0.5 p-1.5 rounded-lg ${cfg.bg} shrink-0`}>
-          <Icon className={`w-3.5 h-3.5 ${cfg.color}`} />
-        </div>
-        <div className="min-w-0 flex-1">
-          <p className={`text-xs leading-relaxed ${notification.is_read ? "text-gray-500" : "text-gray-200"}`}>
-            {notification.content}
-          </p>
-          <p className="text-[10px] text-gray-600 mt-0.5">
-            {formatDistanceToNow(new Date(notification.created_at), { addSuffix: true })}
-          </p>
-        </div>
-        {cfg.tab && (
-          <ChevronRight className="w-3.5 h-3.5 text-gray-600 mt-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
-        )}
-      </button>
-    );
+  const handleSectionClick = (type: string) => {
+    const cfg = SECTION_CONFIG[type];
+    if (cfg?.tab && onTabChange) {
+      onTabChange(cfg.tab);
+      setIsOpen(false);
+    }
   };
 
   return (
@@ -208,104 +160,162 @@ export const AdminHeaderV2 = ({ pageTitle, pageDescription, profile, onTabChange
         </div>
       </div>
 
-      {/* Notification popup - centered overlay */}
-      <AnimatePresence>
-        {isOpen && (
-          <>
-            {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/40 z-40"
-            />
+      {/* Notification popup — fixed center using portal-style positioning */}
+      {isOpen && (
+        <>
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 bg-black/50 z-[9998]"
+            onClick={() => setIsOpen(false)}
+          />
 
-            {/* Centered popup */}
-            <motion.div
-              ref={popupRef}
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.15 }}
-              className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-[440px] max-h-[70vh] bg-[#13141b] border border-[#2a2d3a] rounded-2xl shadow-2xl flex flex-col overflow-hidden"
-            >
-              {/* Header */}
-              <div className="flex items-center justify-between px-5 py-4 border-b border-[#1e2028]">
-                <div className="flex items-center gap-2">
+          {/* Centered popup */}
+          <div
+            ref={popupRef}
+            className="fixed z-[9999] w-[540px] max-h-[75vh] bg-[#13141b] border border-[#2a2d3a] rounded-2xl shadow-2xl flex flex-col overflow-hidden"
+            style={{ top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-[#1e2028] shrink-0">
+              <div className="flex items-center gap-2.5">
+                <div className="p-1.5 rounded-lg bg-[#6366f1]/10">
                   <Bell className="w-4 h-4 text-[#818cf8]" />
-                  <h2 className="text-sm font-semibold text-white">Notifications</h2>
-                  {unreadCount > 0 && (
-                    <span className="bg-[#ef4444] text-white text-[10px] font-bold rounded-full px-1.5 py-0.5 leading-none">
-                      {unreadCount}
-                    </span>
-                  )}
                 </div>
-                <div className="flex items-center gap-2">
-                  {unreadCount > 0 && (
-                    <button
-                      onClick={markAllAsRead}
-                      className="text-[11px] text-[#818cf8] hover:text-[#a5b4fc] transition-colors font-medium"
-                    >
-                      Mark all read
-                    </button>
-                  )}
-                  <button onClick={() => setIsOpen(false)} className="p-1 rounded hover:bg-white/5 text-gray-500">
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-
-              {/* Content */}
-              <ScrollArea className="flex-1">
-                {highPriority.length === 0 && lowPriority.length === 0 && readNotifications.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center py-16 text-gray-500">
-                    <Bell className="w-8 h-8 mb-3 opacity-30" />
-                    <p className="text-sm">No notifications</p>
-                  </div>
-                ) : (
-                  <div>
-                    {/* High priority - Contact & Channel requests */}
-                    {highPriority.length > 0 && (
-                      <div>
-                        <p className="px-5 pt-3 pb-1 text-[10px] uppercase tracking-wider text-[#818cf8] font-semibold">
-                          Action Required
-                        </p>
-                        {highPriority.map(n => (
-                          <NotificationItem key={n.id} notification={n} />
-                        ))}
-                      </div>
-                    )}
-
-                    {/* Low priority - comments, videos, users */}
-                    {lowPriority.length > 0 && (
-                      <div>
-                        <p className="px-5 pt-3 pb-1 text-[10px] uppercase tracking-wider text-gray-600 font-semibold">
-                          Activity
-                        </p>
-                        {lowPriority.slice(0, 15).map(n => (
-                          <NotificationItem key={n.id} notification={n} compact />
-                        ))}
-                      </div>
-                    )}
-
-                    {/* Previously read */}
-                    {readNotifications.length > 0 && highPriority.length === 0 && lowPriority.length === 0 && (
-                      <div>
-                        <p className="px-5 pt-3 pb-1 text-[10px] uppercase tracking-wider text-gray-600 font-semibold">
-                          Previous
-                        </p>
-                        {readNotifications.map(n => (
-                          <NotificationItem key={n.id} notification={n} compact />
-                        ))}
-                      </div>
-                    )}
-                  </div>
+                <h2 className="text-sm font-semibold text-white">Notifications</h2>
+                {unreadCount > 0 && (
+                  <span className="bg-[#ef4444] text-white text-[10px] font-bold rounded-full px-1.5 py-0.5 leading-none">
+                    {unreadCount}
+                  </span>
                 )}
-              </ScrollArea>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+              </div>
+              <div className="flex items-center gap-3">
+                {unreadCount > 0 && (
+                  <button
+                    onClick={markAllAsRead}
+                    className="text-[11px] text-[#818cf8] hover:text-[#a5b4fc] transition-colors font-medium"
+                  >
+                    Mark all read
+                  </button>
+                )}
+                <button onClick={() => setIsOpen(false)} className="p-1.5 rounded-lg hover:bg-white/5 text-[#565b6e] hover:text-[#8b8fa3] transition-colors">
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
+            {/* Content */}
+            <ScrollArea className="flex-1">
+              {sections.length === 0 && readNotifications.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-20 text-[#565b6e]">
+                  <Bell className="w-10 h-10 mb-4 opacity-20" />
+                  <p className="text-sm font-medium text-[#8b8fa3]">All caught up!</p>
+                  <p className="text-xs mt-1">No new notifications</p>
+                </div>
+              ) : (
+                <div className="py-2">
+                  {/* Grouped sections */}
+                  {sections.map((section, idx) => {
+                    const cfg = SECTION_CONFIG[section.type] || DEFAULT_CFG;
+                    const Icon = cfg.icon;
+                    return (
+                      <div key={section.type}>
+                        {idx > 0 && <div className="mx-5 my-1 border-t border-[#1e2028]" />}
+
+                        {/* Section header */}
+                        <div className="flex items-center justify-between px-5 pt-3 pb-2">
+                          <div className="flex items-center gap-2">
+                            <div className={`p-1 rounded-md ${cfg.bg}`}>
+                              <Icon className={`w-3.5 h-3.5 ${cfg.color}`} />
+                            </div>
+                            <span className="text-[11px] font-semibold text-[#c4c7d4] uppercase tracking-wide">
+                              {cfg.sectionLabel}
+                            </span>
+                            <span className="text-[10px] font-bold text-[#565b6e] bg-[#1a1c25] rounded-full px-1.5 py-0.5 leading-none">
+                              {section.items.length}
+                            </span>
+                          </div>
+                          {cfg.tab && (
+                            <button
+                              onClick={() => handleSectionClick(section.type)}
+                              className="text-[10px] text-[#818cf8] hover:text-[#a5b4fc] font-medium transition-colors"
+                            >
+                              View all →
+                            </button>
+                          )}
+                        </div>
+
+                        {/* Section items */}
+                        <div className="divide-y divide-[#1e2028]/60">
+                          {section.items.slice(0, 5).map(n => (
+                            <button
+                              key={n.id}
+                              onClick={() => handleNotificationClick(n)}
+                              className="w-full flex items-start gap-3 px-5 py-2.5 text-left transition-colors hover:bg-white/[0.03] group"
+                            >
+                              <div className="min-w-0 flex-1">
+                                <p className="text-xs leading-relaxed text-[#c4c7d4]">
+                                  {n.content}
+                                </p>
+                                <p className="text-[10px] text-[#4a4e5e] mt-0.5">
+                                  {formatDistanceToNow(new Date(n.created_at), { addSuffix: true })}
+                                </p>
+                              </div>
+                              <ChevronRight className="w-3.5 h-3.5 text-[#4a4e5e] mt-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
+                            </button>
+                          ))}
+                          {section.items.length > 5 && (
+                            <button
+                              onClick={() => handleSectionClick(section.type)}
+                              className="w-full px-5 py-2 text-[10px] text-[#818cf8] hover:text-[#a5b4fc] font-medium transition-colors text-center"
+                            >
+                              +{section.items.length - 5} more
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+
+                  {/* Read / Previous notifications */}
+                  {readNotifications.length > 0 && sections.length === 0 && (
+                    <>
+                      <div className="mx-5 my-1 border-t border-[#1e2028]" />
+                      <div className="px-5 pt-3 pb-2">
+                        <span className="text-[10px] font-semibold text-[#4a4e5e] uppercase tracking-wide">
+                          Previous
+                        </span>
+                      </div>
+                      <div className="divide-y divide-[#1e2028]/40">
+                        {readNotifications.map(n => {
+                          const cfg = SECTION_CONFIG[n.type] || DEFAULT_CFG;
+                          const Icon = cfg.icon;
+                          return (
+                            <button
+                              key={n.id}
+                              onClick={() => handleNotificationClick(n)}
+                              className="w-full flex items-start gap-3 px-5 py-2.5 text-left transition-colors hover:bg-white/[0.03] group opacity-50"
+                            >
+                              <div className={`mt-0.5 p-1 rounded-md ${cfg.bg} shrink-0`}>
+                                <Icon className={`w-3 h-3 ${cfg.color}`} />
+                              </div>
+                              <div className="min-w-0 flex-1">
+                                <p className="text-xs leading-relaxed text-[#8b8fa3]">{n.content}</p>
+                                <p className="text-[10px] text-[#4a4e5e] mt-0.5">
+                                  {formatDistanceToNow(new Date(n.created_at), { addSuffix: true })}
+                                </p>
+                              </div>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </>
+                  )}
+                </div>
+              )}
+            </ScrollArea>
+          </div>
+        </>
+      )}
     </header>
   );
 };
