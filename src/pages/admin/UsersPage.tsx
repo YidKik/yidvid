@@ -1,6 +1,6 @@
 
 import { UserManagementSection } from "@/components/dashboard/UserManagementSection";
-import { BackButton } from "@/components/navigation/BackButton";
+
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useState, useEffect } from "react";
@@ -88,7 +88,7 @@ export default function UsersPage() {
   return (
     <div className="container mx-auto py-8 space-y-6">
       <div className="flex items-center justify-between">
-        <BackButton />
+        
         <Button 
           variant="outline" 
           onClick={handleBackToDashboard}
