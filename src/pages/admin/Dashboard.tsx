@@ -128,6 +128,7 @@ const Dashboard = () => {
             pageTitle={meta.title}
             pageDescription={meta.description}
             profile={profile}
+            onTabChange={handleTabChange}
           />
 
           <main className="flex-1 overflow-y-auto p-6 bg-[#0a0b10]">
