@@ -13,11 +13,7 @@ export const Footer = () => {
   return (
     <>
       <footer 
-        className="mt-auto border-t hidden md:block"
-        style={{ 
-          backgroundColor: '#FAFAFA',
-          borderColor: '#EFEFEF'
-        }}
+        className="mt-auto border-t hidden md:block bg-[#FAFAFA] dark:bg-[#0f0f0f] border-[#EFEFEF] dark:border-[#333]"
       >
         <div className="max-w-[1600px] mx-auto px-6 lg:px-12 py-2.5">
           <div className="flex flex-col md:flex-row items-center justify-between gap-3">

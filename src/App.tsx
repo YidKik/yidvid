@@ -11,6 +11,7 @@ import History from './pages/History';
 import LandingPage from './pages/LandingPage';
 import { PlaybackProvider } from './contexts/PlaybackContext';
 import { ColorProvider } from './contexts/ColorContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 import { LoadingProvider } from './contexts/LoadingContext';
 import { SidebarProvider } from './contexts/SidebarContext';
 import Settings from './pages/Settings';
@@ -98,15 +99,17 @@ function AppContent() {
 function App() {
 
   return (
-    <LoadingProvider>
-      <PlaybackProvider>
-        <ColorProvider>
-          <SidebarProvider>
-            <AppContent />
-          </SidebarProvider>
-        </ColorProvider>
-      </PlaybackProvider>
-    </LoadingProvider>
+    <ThemeProvider>
+      <LoadingProvider>
+        <PlaybackProvider>
+          <ColorProvider>
+            <SidebarProvider>
+              <AppContent />
+            </SidebarProvider>
+          </ColorProvider>
+        </PlaybackProvider>
+      </LoadingProvider>
+    </ThemeProvider>
   );
 }
 

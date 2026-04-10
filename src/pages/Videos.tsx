@@ -165,7 +165,7 @@ const Videos = () => {
         </script>
       </Helmet>
       
-      <div className="min-h-screen w-full bg-white videos-page overflow-x-hidden max-w-[100vw] flex flex-col">
+      <div className="min-h-screen w-full bg-white dark:bg-[#0f0f0f] videos-page overflow-x-hidden max-w-[100vw] flex flex-col">
         <div className="flex-1">
           <MainContent />
         </div>
