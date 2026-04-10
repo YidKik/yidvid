@@ -8,15 +8,17 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogD
 import { Separator } from "@/components/ui/separator";
 import {
   Search, Shield, ShieldOff, Loader2, UserPlus, Users, ShieldCheck, Calendar, Mail,
-  Pencil, Trash2, X, Save, AlertTriangle, MoreVertical, Eye
+  Pencil, Trash2, X, Save, AlertTriangle, MoreVertical, Eye, Play, Tv, Clock, Heart, Activity
 } from "lucide-react";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
+import { useQuery } from "@tanstack/react-query";
 import { useUserManagement } from "@/components/dashboard/user-management/useUserManagement";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { formatDate } from "@/components/dashboard/user-management/UserManagementUtils";
+import { formatDistanceToNow } from "date-fns";
 import { secureStorage } from "@/utils/security/storageEncryption";
 import { UserActivityDialog } from "./UserActivityDialog";
 
