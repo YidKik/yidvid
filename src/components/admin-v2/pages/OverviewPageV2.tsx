@@ -28,25 +28,36 @@ export const OverviewPageV2 = () => {
   const { data: stats, isLoading } = useQuery({
     queryKey: ["admin-v2-overview-stats"],
     queryFn: async () => {
-      const [channels, videos, users, comments, views, activeNow] = await Promise.all([
+      // Active sessions: session_end is null AND started within the last 8 hours (avoids stale sessions)
+      const eightHoursAgo = new Date(Date.now() - 8 * 60 * 60 * 1000).toISOString();
+
+      const [channels, videos, users, comments, activeNow] = await Promise.all([
         supabase.from("youtube_channels").select("*", { count: "exact", head: true }).is("deleted_at", null),
         supabase.from("youtube_videos").select("*", { count: "exact", head: true }).is("deleted_at", null),
         supabase.from("profiles").select("*", { count: "exact", head: true }),
         supabase.from("video_comments").select("*", { count: "exact", head: true }),
-        supabase.from("user_video_interactions").select("*", { count: "exact", head: true }).eq("interaction_type", "view"),
-        supabase.from("user_analytics").select("*", { count: "exact", head: true }).is("session_end", null),
+        supabase.from("user_analytics").select("*", { count: "exact", head: true })
+          .is("session_end", null)
+          .gte("session_start", eightHoursAgo),
       ]);
+
+      // Sum all views from youtube_videos
+      const { data: viewsData } = await supabase
+        .from("youtube_videos")
+        .select("views")
+        .is("deleted_at", null);
+      const totalViews = (viewsData || []).reduce((sum, v) => sum + (v.views || 0), 0);
 
       return {
         channels: channels.count || 0,
         videos: videos.count || 0,
         users: users.count || 0,
         comments: comments.count || 0,
-        views: views.count || 0,
+        views: totalViews,
         activeNow: activeNow.count || 0,
       };
     },
-    refetchInterval: 60000,
+    refetchInterval: 30000,
   });
 
   // YouTube API Quota
