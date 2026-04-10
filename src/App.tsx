@@ -47,6 +47,9 @@ function AppContent() {
   // Initialize keyboard shortcuts
   useKeyboardShortcuts();
   
+  // Track user sessions
+  useSessionTracking(session?.user?.id);
+  
   // Set up navigation tracking
   useEffect(() => {
     // Initialize the scroll restoration system
