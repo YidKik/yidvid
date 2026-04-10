@@ -18,6 +18,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { formatDate } from "@/components/dashboard/user-management/UserManagementUtils";
 import { secureStorage } from "@/utils/security/storageEncryption";
+import { UserActivityDialog } from "./UserActivityDialog";
 
 interface UsersPageV2Props {
   currentUserId: string;
@@ -44,6 +45,7 @@ export const UsersPageV2 = ({ currentUserId }: UsersPageV2Props) => {
   const [editDisplayName, setEditDisplayName] = useState("");
   const [editUsername, setEditUsername] = useState("");
   const [savingEdit, setSavingEdit] = useState(false);
+  const [showActivityDialog, setShowActivityDialog] = useState(false);
 
   const allUsers = useMemo(() => [...(adminUsers || []), ...(regularUsers || [])], [adminUsers, regularUsers]);
   const selectedUser = useMemo(() => allUsers.find(u => u.id === selectedUserId), [allUsers, selectedUserId]);
