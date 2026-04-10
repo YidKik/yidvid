@@ -409,21 +409,3 @@ const UserRow = ({
     </div>
   );
 };
-
-const DetailRow = ({ label, value, copyable }: { label: string; value: string; copyable?: boolean }) => (
-  <div className="flex justify-between items-center group">
-    <span className="text-xs text-gray-500">{label}</span>
-    <div className="flex items-center gap-1">
-      <span className={`text-sm text-gray-300 text-right truncate ${copyable ? 'max-w-[160px] font-mono text-xs' : 'max-w-[200px]'}`}>{value}</span>
-      {copyable && (
-        <button
-          onClick={() => { navigator.clipboard.writeText(value); import("sonner").then(m => m.toast.success("Copied to clipboard")); }}
-          className="opacity-0 group-hover:opacity-100 text-gray-500 hover:text-gray-300 transition-opacity p-0.5"
-          title="Copy"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
-        </button>
-      )}
-    </div>
-  </div>
-);
