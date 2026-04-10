@@ -1,4 +1,4 @@
-import { Youtube, UserPlus, Check, Loader2, ChevronDown, ChevronUp } from "lucide-react";
+import { UserPlus, Check, Loader2, Share2, ChevronDown, ChevronUp } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
@@ -16,6 +16,7 @@ interface ChannelHeaderProps {
   isSubscribed: boolean;
   onSubscribe: () => Promise<void>;
   isLoading?: boolean;
+  videoCount?: number;
 }
 
 export const ChannelHeader = ({
@@ -23,6 +24,7 @@ export const ChannelHeader = ({
   isSubscribed,
   onSubscribe,
   isLoading = false,
+  videoCount,
 }: ChannelHeaderProps) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
@@ -34,7 +36,6 @@ export const ChannelHeader = ({
   const [initialLoadComplete, setInitialLoadComplete] = useState(false);
   const [descriptionExpanded, setDescriptionExpanded] = useState(false);
 
-  // Set initial subscription state and mark initial load as complete
   useEffect(() => {
     if (!initialLoadComplete && !isLoading) {
       setInternalSubscriptionState(isSubscribed);
@@ -42,7 +43,6 @@ export const ChannelHeader = ({
     }
   }, [isSubscribed, isLoading, initialLoadComplete]);
 
-  // Update internal state when prop changes after initial load
   useEffect(() => {
     if (initialLoadComplete) {
       setInternalSubscriptionState(isSubscribed);
@@ -54,46 +54,26 @@ export const ChannelHeader = ({
       toast.error("Please sign in to subscribe to channels", { id: "signin-required" });
       return;
     }
-    
-    if (isProcessing || isLoading || isSessionLoading) {
-      console.log("Already processing subscription action or session is still loading, ignoring click");
-      return;
-    }
-    
+    if (isProcessing || isLoading || isSessionLoading) return;
     if (!session?.user?.id) {
-      console.error("No user ID available in session");
-      
-      // Try to refresh session first
       try {
-        console.log("Attempting to refresh session");
         const { data } = await supabase.auth.getSession();
-        
         if (!data.session?.user?.id) {
           toast.error("Authentication error. Please sign in again.");
           return;
         }
-        
-        console.log("Session refreshed successfully, proceeding with subscription");
-      } catch (error) {
-        console.error("Session refresh failed:", error);
+      } catch {
         toast.error("Authentication error. Please sign in again.");
         return;
       }
     }
-    
     try {
       setIsProcessing(true);
-      // Optimistically update UI state for better user experience
       if (internalSubscriptionState !== undefined) {
         setInternalSubscriptionState(!internalSubscriptionState);
       }
-      
       await onSubscribe();
-      // Note: We don't need to set state here as it will be updated
-      // in the useEffect that watches isSubscribed
     } catch (error) {
-      console.error("Error in subscription action:", error);
-      // Revert the optimistic update if there's an error
       setInternalSubscriptionState(isSubscribed);
       if (error instanceof Error) {
         toast.error(`Subscription failed: ${error.message}`);
@@ -105,123 +85,118 @@ export const ChannelHeader = ({
     }
   };
 
-  // Determine the actual loading state (either component loading or processing a subscription action)
+  const handleShare = async () => {
+    const url = window.location.href;
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: channel.title, url });
+      } catch {}
+    } else {
+      await navigator.clipboard.writeText(url);
+      toast.success("Link copied to clipboard");
+    }
+  };
+
   const buttonLoading = isLoading || isProcessing || isSessionLoading;
-  
-  // Determine the correct visual state for the button
-  // Only show subscription state if we have confirmed it (not undefined)
   const displaySubscribed = internalSubscriptionState === undefined ? false : internalSubscriptionState;
   const subscriptionStateKnown = internalSubscriptionState !== undefined;
 
   return (
-    <div className="mb-8 md:mb-10 animate-fade-in">
-      {/* Friendly card container */}
-      <div className="bg-white rounded-3xl border border-[#E5E5E5] shadow-lg overflow-hidden">
-        {/* Top accent bar - solid yellow */}
-        <div className="h-2 bg-[#FFCC00]" />
-        
-        <div className="p-5 md:p-8">
-          <div className="flex flex-col md:flex-row md:items-start gap-5 md:gap-8">
-            {/* Left side - Avatar */}
-            <div className="flex-shrink-0 flex justify-center md:justify-start">
-              <div className="relative group">
-                <div className="absolute -inset-1 bg-[#FFCC00] rounded-full opacity-75 blur group-hover:opacity-100 transition-opacity duration-300" />
-                <Avatar className="relative w-24 h-24 md:w-32 md:h-32 ring-4 ring-white shadow-xl">
-                  <AvatarImage
-                    src={channel.thumbnail_url}
-                    alt={channel.title}
-                    className="object-cover transition-transform duration-300 group-hover:scale-105"
-                    onLoad={() => setImageLoaded(true)}
-                    onError={() => setImageError(true)}
-                  />
-                  <AvatarFallback className="bg-[#F5F5F5]">
-                    <img 
-                      src={fallbackLogo} 
-                      alt="YidVid Logo" 
-                      className="w-12 h-12 md:w-16 md:h-16"
-                    />
-                  </AvatarFallback>
-                  
-                  {!imageLoaded && !imageError && (
-                    <div className="absolute inset-0 bg-[#F5F5F5] rounded-full flex items-center justify-center">
-                      <img 
-                        src={fallbackLogo} 
-                        alt="Loading" 
-                        className="w-12 h-12 md:w-16 md:h-16 animate-pulse"
-                      />
-                    </div>
-                  )}
-                </Avatar>
-              </div>
+    <div className="mb-6 md:mb-8 animate-fade-in">
+      {/* Main row: avatar + info + actions */}
+      <div className="flex items-center gap-3 md:gap-4">
+        {/* Small avatar */}
+        <Avatar className="w-14 h-14 md:w-[72px] md:h-[72px] flex-shrink-0 ring-2 ring-[#E5E5E5]">
+          <AvatarImage
+            src={channel.thumbnail_url}
+            alt={channel.title}
+            className="object-cover"
+            onLoad={() => setImageLoaded(true)}
+            onError={() => setImageError(true)}
+          />
+          <AvatarFallback className="bg-[#F5F5F5]">
+            <img src={fallbackLogo} alt="YidVid" className="w-7 h-7 md:w-9 md:h-9" />
+          </AvatarFallback>
+          {!imageLoaded && !imageError && (
+            <div className="absolute inset-0 bg-[#F5F5F5] rounded-full flex items-center justify-center">
+              <img src={fallbackLogo} alt="Loading" className="w-7 h-7 md:w-9 md:h-9 animate-pulse" />
             </div>
-            
-            {/* Right side - Content */}
-            <div className="flex-1 flex flex-col items-center md:items-start text-center md:text-left">
-              {/* Channel name */}
-              <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-[#1A1A1A] mb-3">
-                {channel.title}
-              </h1>
-              
-              {/* Subscribe button */}
-              <Button
-                variant={displaySubscribed && subscriptionStateKnown ? "default" : "outline"}
-                onClick={handleSubscribeClick}
-                disabled={buttonLoading}
-                className={`h-10 md:h-11 text-sm md:text-base px-5 md:px-6 rounded-full font-medium transition-all duration-300 ${
-                  (displaySubscribed && subscriptionStateKnown) 
-                    ? "bg-[#FF0000] hover:brightness-90 text-white shadow-lg border-0" 
-                    : "border-2 border-[#FFCC00] text-[#1A1A1A] hover:bg-[#FFCC00] hover:text-[#1A1A1A]"
-                }`}
-                data-subscribed={displaySubscribed && subscriptionStateKnown ? "true" : "false"}
-                aria-label={displaySubscribed && subscriptionStateKnown ? "Unsubscribe from channel" : "Subscribe to channel"}
-              >
-                {buttonLoading ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : displaySubscribed && subscriptionStateKnown ? (
-                  <>
-                    <Check className="w-4 h-4 mr-2" />
-                    Subscribed
-                  </>
-                ) : (
-                  <>
-                    <UserPlus className="w-4 h-4 mr-2" />
-                    Subscribe
-                  </>
-                )}
-              </Button>
-              
-              {/* Description */}
-              {channel.description && (
-                <div className="mt-4 md:mt-5">
-                  {isMobile ? (
-                    <div>
-                      <p className={`text-[#666666] text-sm leading-relaxed max-w-2xl ${!descriptionExpanded ? 'line-clamp-2' : ''}`}>
-                        {channel.description}
-                      </p>
-                      {channel.description.length > 100 && (
-                        <button
-                          onClick={() => setDescriptionExpanded(!descriptionExpanded)}
-                          className="flex items-center gap-1 mt-1 text-xs font-medium text-[#666666] hover:text-[#1A1A1A] transition-colors"
-                        >
-                          {descriptionExpanded ? (
-                            <>Show less <ChevronUp className="w-3 h-3" /></>
-                          ) : (
-                            <>Show more <ChevronDown className="w-3 h-3" /></>
-                          )}
-                        </button>
-                      )}
-                    </div>
-                  ) : (
-                    <p className="text-[#666666] text-sm md:text-base leading-relaxed max-w-2xl">
-                      {channel.description}
-                    </p>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
+          )}
+        </Avatar>
+
+        {/* Channel info */}
+        <div className="flex-1 min-w-0">
+          <h1 className="text-lg md:text-xl font-bold text-[#1A1A1A] truncate dark:!text-[#e8e8e8]">
+            {channel.title}
+          </h1>
+          <p className="text-xs md:text-sm text-[#666666] dark:!text-[#aaaaaa]">
+            {videoCount !== undefined ? `${videoCount} video${videoCount !== 1 ? 's' : ''}` : ''}
+          </p>
+        </div>
+
+        {/* Action buttons */}
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <Button
+            variant={displaySubscribed && subscriptionStateKnown ? "default" : "outline"}
+            onClick={handleSubscribeClick}
+            disabled={buttonLoading}
+            className={`h-9 md:h-10 text-xs md:text-sm px-4 md:px-5 rounded-full font-semibold transition-all duration-200 ${
+              displaySubscribed && subscriptionStateKnown
+                ? "bg-[#FF0000] hover:brightness-90 text-white border-0"
+                : "border-2 border-[#1A1A1A] dark:border-[#e8e8e8] text-[#1A1A1A] dark:!text-[#e8e8e8] hover:bg-[#1A1A1A] hover:text-white dark:hover:bg-[#e8e8e8] dark:hover:!text-[#1A1A1A]"
+            }`}
+            aria-label={displaySubscribed && subscriptionStateKnown ? "Unsubscribe" : "Subscribe"}
+          >
+            {buttonLoading ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : displaySubscribed && subscriptionStateKnown ? (
+              <>
+                <Check className="w-3.5 h-3.5 mr-1.5" />
+                Subscribed
+              </>
+            ) : (
+              "Subscribe"
+            )}
+          </Button>
+
+          <button
+            onClick={handleShare}
+            className="h-9 md:h-10 px-3 md:px-4 rounded-full bg-[#F5F5F5] dark:bg-[#272727] hover:bg-[#E5E5E5] dark:hover:bg-[#333] text-[#1A1A1A] dark:!text-[#e8e8e8] transition-colors flex items-center gap-1.5 text-xs md:text-sm font-medium"
+          >
+            <Share2 className="w-3.5 h-3.5" />
+            Share
+          </button>
         </div>
       </div>
+
+      {/* Description - collapsible on mobile */}
+      {channel.description && (
+        <div className="mt-3 md:mt-4 pl-[68px] md:pl-[88px]">
+          {isMobile ? (
+            <div>
+              <p className={`text-[#666666] dark:!text-[#aaaaaa] text-xs leading-relaxed ${!descriptionExpanded ? 'line-clamp-2' : ''}`}>
+                {channel.description}
+              </p>
+              {channel.description.length > 100 && (
+                <button
+                  onClick={() => setDescriptionExpanded(!descriptionExpanded)}
+                  className="flex items-center gap-1 mt-1 text-xs font-medium text-[#666666] hover:text-[#1A1A1A] transition-colors"
+                >
+                  {descriptionExpanded ? (
+                    <>Show less <ChevronUp className="w-3 h-3" /></>
+                  ) : (
+                    <>Show more <ChevronDown className="w-3 h-3" /></>
+                  )}
+                </button>
+              )}
+            </div>
+          ) : (
+            <p className="text-[#666666] dark:!text-[#aaaaaa] text-sm leading-relaxed max-w-3xl">
+              {channel.description}
+            </p>
+          )}
+        </div>
+      )}
     </div>
   );
 };
