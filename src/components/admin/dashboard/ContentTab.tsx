@@ -3,12 +3,10 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { AlertTriangle } from "lucide-react";
 import { YouTubeChannelsSection } from "@/components/dashboard/YouTubeChannelsSection";
-import { MusicArtistsSection } from "@/components/dashboard/MusicArtistsSection";
 import { CommentsManagementSection } from "@/components/dashboard/CommentsManagementSection";
 import { ReportedVideosSection } from "@/components/dashboard/ReportedVideosSection";
 import { ContactRequestsSection } from "@/components/dashboard/ContactRequestsSection";
 import { ChannelRequestsSection } from "@/components/dashboard/ChannelRequestsSection";
-import { GlobalNotificationsSection } from "@/components/dashboard/GlobalNotificationsSection";
 import { RestoreDeletedItems } from "@/components/admin/RestoreDeletedItems";
 
 export const ContentTab = () => {
@@ -17,7 +15,6 @@ export const ContentTab = () => {
   return (
     <div className="space-y-8">
       <YouTubeChannelsSection />
-      <MusicArtistsSection />
       <CommentsManagementSection />
       
       {/* Reported Videos Section with Button Trigger */}
@@ -35,7 +32,6 @@ export const ContentTab = () => {
       
       <ContactRequestsSection />
       <ChannelRequestsSection />
-      <GlobalNotificationsSection />
       
       {/* Add Restore Deleted Items Section */}
       <RestoreDeletedItems />
