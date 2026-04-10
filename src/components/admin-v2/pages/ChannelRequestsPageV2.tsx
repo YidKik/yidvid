@@ -97,7 +97,7 @@ export const ChannelRequestsPageV2 = () => {
   return (
     <div className="flex gap-6 h-[calc(100vh-132px)]">
       {/* Left: list */}
-      <div className={`flex flex-col min-w-0 ${selected ? "flex-1" : "w-full"} transition-all duration-200`}>
+      <div className="flex flex-col min-w-0 flex-1">
         {/* Filter tabs */}
         <div className="flex items-center gap-2 mb-4 shrink-0">
           {filterButtons.map(btn => (
