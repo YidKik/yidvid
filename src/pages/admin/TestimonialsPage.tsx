@@ -7,7 +7,7 @@ import { TestimonialDialog } from "@/components/admin/testimonials/TestimonialDi
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import { BackButton } from "@/components/navigation/BackButton";
+
 import { toast } from "sonner";
 
 export default function TestimonialsPage() {
@@ -43,7 +43,7 @@ export default function TestimonialsPage() {
 
   return (
     <div className="container mx-auto py-12 space-y-8 px-4">
-      <BackButton />
+      
       <div className="flex justify-between items-center">
         <DashboardHeader title="Manage Testimonials" />
         <Button onClick={handleAdd}>

@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { BackButton } from "@/components/navigation/BackButton";
+
 import { AdminDashboardCards } from "@/components/dashboard/AdminDashboardCards";
 import { DashboardLoading } from "@/components/dashboard/DashboardLoading";
 import { NonAdminContent } from "@/components/dashboard/NonAdminContent";
@@ -57,7 +57,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen pt-14 pl-[200px] transition-all duration-300 py-8 space-y-8 px-6">
-      <BackButton />
+      
       
       <DashboardHeader title="Welcome to Your Dashboard" />
       

@@ -1,4 +1,3 @@
-import { BackButton } from "@/components/navigation/BackButton";
 import { useState, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
@@ -89,7 +88,7 @@ export default function ReportedVideosPage() {
 
   return (
     <div className="container mx-auto py-8 px-4">
-      <BackButton />
+      
       <div className="max-w-6xl mx-auto space-y-6">
         <div className="flex items-center gap-2">
           <Flag className="h-6 w-6 text-red-500" />

@@ -235,7 +235,7 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
       </div>
 
       {/* Back Button */}
-      {canGoBack() && (location.pathname.startsWith("/video/") || location.pathname.startsWith("/channel/")) && (
+      {canGoBack() && location.pathname !== "/" && location.pathname !== "/videos" && (
         <div className={cn("px-2 py-2 border-b border-[#E5E5E5] dark:border-[#333]", effectiveIsExpanded ? "px-3" : "")}>
           <button
             onClick={handleGoBack}

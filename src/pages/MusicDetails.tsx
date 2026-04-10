@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Header } from "@/components/Header";
 import { Sidebar } from "@/components/Sidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
-import { BackButton } from "@/components/navigation/BackButton";
+
 import { Music } from "lucide-react";
 import { YouTubePlayer } from "@/components/music/YouTubePlayer";
 import { TrackInfo } from "@/components/music/TrackInfo";
@@ -84,7 +84,6 @@ const MusicDetails = () => {
           <div className="flex-1">
             <Header />
             <main className="mt-16 p-6">
-              <BackButton />
               <div className="flex items-center justify-center h-[60vh]">
                 <div className="text-center">
                   <Music className="w-12 h-12 text-gray-400 mx-auto mb-4" />
@@ -107,7 +106,7 @@ const MusicDetails = () => {
           <Header />
           <main className="mt-16 p-6">
             <div className="max-w-7xl mx-auto">
-              <BackButton />
+              
               <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div className="md:col-span-2">
                   <YouTubePlayer

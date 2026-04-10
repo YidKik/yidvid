@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { BackButton } from "@/components/navigation/BackButton";
+
 import { TimeRangeSelect } from "@/components/admin/TimeRangeSelect";
 import { VideosTable } from "@/components/admin/VideosTable";
 import { TimeRange, timeRanges } from "@/types/admin";
@@ -99,7 +99,7 @@ export default function VideosPage() {
 
   return (
     <div className="container mx-auto py-8 px-4">
-      <BackButton />
+      
       <div className="max-w-6xl mx-auto space-y-6">
         <div className="flex items-center justify-between">
           <h1 className="text-3xl font-bold">Video Management</h1>

@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { BackButton } from "@/components/navigation/BackButton";
+
 import { VideoCategoryManagement } from "@/components/dashboard/VideoCategoryManagement";
 import { ChannelCategoryManagement } from "@/components/dashboard/ChannelCategoryManagement";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -90,7 +90,6 @@ export default function CategoriesPage() {
   if (error) {
     return (
       <div className="container mx-auto py-8">
-        <BackButton />
         <div className="text-center text-red-500">
           {error}
         </div>
@@ -100,7 +99,7 @@ export default function CategoriesPage() {
 
   return (
     <div className="container mx-auto py-8 px-4">
-      <BackButton />
+      
       <div className="max-w-6xl mx-auto space-y-6">
         <div className="flex items-center justify-between">
           <h1 className="text-3xl font-bold">Category Management</h1>
