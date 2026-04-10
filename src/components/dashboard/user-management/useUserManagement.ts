@@ -94,20 +94,24 @@ export const useUserManagement = (currentUserId: string) => {
       if (error) {
         console.error("Error fetching users:", error);
         toast.error("Error fetching users: " + error.message, { id: "fetch-users-error" });
-        return [];
+        throw error;
       }
 
       const userList = Array.isArray(data) ? data : data?.users;
 
       if (!Array.isArray(userList)) {
         toast.error("Error fetching users: Invalid response format", { id: "fetch-users-error" });
-        return [];
+        throw new Error("Invalid response format");
       }
 
       console.log("Fetched users via secure admin function:", userList.length);
       return userList as ProfilesTable["Row"][];
     },
     enabled: Boolean(currentUserId),
+    retry: 2,
+    retryDelay: 1000,
+    staleTime: 30000,
+    refetchOnWindowFocus: false,
   });
 
   const toggleAdminStatus = async (userId: string, currentStatus: boolean) => {
