@@ -155,6 +155,7 @@ export const useUserManagement = (currentUserId: string) => {
     
     const query = searchQuery.toLowerCase();
     return (
+      user.id?.toLowerCase().includes(query) ||
       user.email?.toLowerCase().includes(query) ||
       user.username?.toLowerCase().includes(query) ||
       user.name?.toLowerCase().includes(query) ||
