@@ -444,6 +444,16 @@ export const UsersPageV2 = ({ currentUserId }: UsersPageV2Props) => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* User Activity Dialog */}
+      {selectedUser && (
+        <UserActivityDialog
+          open={showActivityDialog}
+          onOpenChange={setShowActivityDialog}
+          userId={selectedUser.id}
+          userName={selectedUser.display_name || selectedUser.username || selectedUser.email || "User"}
+        />
+      )}
     </div>
   );
 };
