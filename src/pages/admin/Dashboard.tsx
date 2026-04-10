@@ -15,7 +15,7 @@ import { AdminPinDialog } from "@/components/settings/sections/admin/AdminPinDia
 import { ContentModerationPage } from "@/components/admin/pages/ContentModerationPage";
 import { ChannelsPageV2 } from "@/components/admin-v2/pages/ChannelsPageV2";
 import { MusicPage } from "@/components/admin/pages/MusicPage";
-import { UsersPage } from "@/components/admin/pages/UsersPage";
+import { UsersPageV2 } from "@/components/admin-v2/pages/UsersPageV2";
 import { CategoriesPageV2 } from "@/components/admin-v2/pages/CategoriesPageV2";
 import { CommentsPage } from "@/components/admin/pages/CommentsPage";
 import { ContactRequestsPage } from "@/components/admin/pages/ContactRequestsPage";
@@ -99,7 +99,7 @@ const Dashboard = () => {
       case "music":
         return <MusicPage />;
       case "users":
-        return <UsersPage currentUserId={session?.user?.id || ""} />;
+        return <UsersPageV2 currentUserId={session?.user?.id || ""} />;
       case "comments":
         return <CommentsPage />;
       case "contacts":
