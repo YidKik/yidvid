@@ -28,7 +28,6 @@ const loadYouTubeAPI = (): Promise<void> => {
       'script[src="https://www.youtube.com/iframe_api"]'
     );
     if (existingScript) {
-      // Script is loading, wait for it
       const check = setInterval(() => {
         if (window.YT && window.YT.Player) {
           clearInterval(check);
@@ -65,12 +64,11 @@ export const useYouTubePlayer = (
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const onVideoEndRef = useRef(onVideoEnd);
 
-  // Keep callback ref updated
   useEffect(() => {
     onVideoEndRef.current = onVideoEnd;
   }, [onVideoEnd]);
 
-  // Start polling current time / buffered when playing
+  // Poll current time / buffered when playing
   useEffect(() => {
     if (state.isPlaying && playerRef.current) {
       intervalRef.current = setInterval(() => {
@@ -102,7 +100,7 @@ export const useYouTubePlayer = (
     };
   }, [state.isPlaying]);
 
-  // Create / recreate the YT.Player when videoId changes
+  // Create / recreate YT.Player when videoId changes
   useEffect(() => {
     if (!videoId || !containerRef.current) return;
 
@@ -112,7 +110,6 @@ export const useYouTubePlayer = (
       await loadYouTubeAPI();
       if (destroyed) return;
 
-      // Destroy previous player if exists
       if (playerRef.current) {
         try {
           playerRef.current.destroy();
@@ -120,7 +117,6 @@ export const useYouTubePlayer = (
         playerRef.current = null;
       }
 
-      // Create a div for the player inside the container
       const container = containerRef.current;
       if (!container) return;
       container.innerHTML = "";
@@ -136,10 +132,10 @@ export const useYouTubePlayer = (
           modestbranding: 1,
           iv_load_policy: 3,
           cc_load_policy: 0,
-          disablekb: 0,
+          disablekb: 1,        // Disable YouTube keyboard shortcuts
           playsinline: 1,
           fs: 0,
-          controls: 0,
+          controls: 0,         // Hide native controls
           showinfo: 0,
           origin: window.location.origin,
         },
@@ -158,10 +154,9 @@ export const useYouTubePlayer = (
           onStateChange: (event: any) => {
             if (destroyed) return;
             const ps = event.data;
-            // -1 unstarted, 0 ended, 1 playing, 2 paused, 3 buffering, 5 cued
             setState((s) => ({
               ...s,
-              isPlaying: ps === 1,
+              isPlaying: ps === 1 || ps === 3,
               hasEnded: ps === 0,
             }));
             if (ps === 0 && onVideoEndRef.current) {
@@ -174,7 +169,6 @@ export const useYouTubePlayer = (
       playerRef.current = player;
     };
 
-    // Reset state for new video
     setState({
       isPlaying: false,
       currentTime: 0,
@@ -211,10 +205,20 @@ export const useYouTubePlayer = (
     } catch {}
   }, []);
 
+  // Query the actual YT player state for reliable toggle
   const togglePlay = useCallback(() => {
-    if (state.isPlaying) pause();
-    else play();
-  }, [state.isPlaying, play, pause]);
+    const p = playerRef.current;
+    if (!p) return;
+    try {
+      const ps = typeof p.getPlayerState === "function" ? p.getPlayerState() : -1;
+      // 1 = playing, 3 = buffering → pause; otherwise play
+      if (ps === 1 || ps === 3) {
+        p.pauseVideo();
+      } else {
+        p.playVideo();
+      }
+    } catch {}
+  }, []);
 
   const seek = useCallback((time: number) => {
     try {
@@ -225,9 +229,14 @@ export const useYouTubePlayer = (
 
   const setVolume = useCallback((vol: number) => {
     try {
-      playerRef.current?.setVolume(vol);
+      const p = playerRef.current;
+      if (!p) return;
+      p.setVolume(vol);
+      if (vol > 0) {
+        p.unMute();
+        previousVolumeRef.current = vol;
+      }
       setState((s) => ({ ...s, volume: vol, isMuted: vol === 0 }));
-      if (vol > 0) previousVolumeRef.current = vol;
     } catch {}
   }, []);
 
