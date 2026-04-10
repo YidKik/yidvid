@@ -20,7 +20,7 @@ const About = () => {
         <meta name="description" content="Learn about YidVid - your premier destination for kosher Jewish content." />
       </Helmet>
 
-      <div className="min-h-screen bg-white pt-14 pl-0 lg:pl-[200px] pb-20 lg:pb-0 transition-all duration-300">
+      <div className="min-h-screen bg-white dark:bg-[#0f0f0f] pt-14 pl-0 lg:pl-[200px] pb-20 lg:pb-0 transition-all duration-300">
         <div className={`max-w-4xl mx-auto ${isMobile ? 'px-4 py-8' : 'px-6 py-12'}`}>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -30,13 +30,15 @@ const About = () => {
           >
             <h1 
               className={`${isMobile ? 'text-2xl' : 'text-4xl md:text-5xl'} font-bold mb-4`}
-              style={{ fontFamily: "'Fredoka One', 'Nunito', sans-serif", color: '#000000' }}
+              style={{ fontFamily: "'Fredoka One', 'Nunito', sans-serif" }}
+              className={`${isMobile ? 'text-2xl' : 'text-4xl md:text-5xl'} font-bold mb-4 text-[#000000] dark:text-[#e8e8e8]`}
             >
               About YidVid
             </h1>
             <p 
               className={`${isMobile ? 'text-base' : 'text-lg'} max-w-2xl mx-auto`}
-              style={{ fontFamily: "'Quicksand', sans-serif", color: '#666666' }}
+              style={{ fontFamily: "'Quicksand', sans-serif" }}
+              className={`${isMobile ? 'text-base' : 'text-lg'} max-w-2xl mx-auto text-[#666666] dark:text-[#aaa]`}
             >
               Your premier destination for kosher Jewish content, curated with care for the entire family.
             </p>
@@ -75,7 +77,7 @@ const About = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 + index * 0.1, duration: 0.5 }}
-                className={`${isMobile ? 'p-4' : 'p-6'} rounded-2xl bg-[#F5F5F5] border border-[#E5E5E5] text-center`}
+                className={`${isMobile ? 'p-4' : 'p-6'} rounded-2xl bg-[#F5F5F5] dark:bg-[#1a1a1a] border border-[#E5E5E5] dark:border-[#333] text-center`}
               >
                 <feature.icon 
                   className={`${isMobile ? 'w-8 h-8' : 'w-10 h-10'} mb-4 mx-auto`}
@@ -83,11 +85,12 @@ const About = () => {
                 />
                 <h3 
                   className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold mb-2`}
-                  style={{ fontFamily: "'Quicksand', sans-serif", color: '#000000' }}
+                  style={{ fontFamily: "'Quicksand', sans-serif" }}
+                  className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold mb-2 text-[#000000] dark:text-[#e8e8e8]`}
                 >
                   {feature.title}
                 </h3>
-                <p style={{ fontFamily: "'Quicksand', sans-serif", color: '#666666' }}>
+                <p style={{ fontFamily: "'Quicksand', sans-serif" }} className="text-[#666666] dark:text-[#aaa]">
                   {feature.description}
                 </p>
               </motion.div>
@@ -98,17 +101,19 @@ const About = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.5 }}
-            className={`text-center ${isMobile ? 'p-5' : 'p-8'} rounded-2xl bg-[#F5F5F5] max-w-3xl mx-auto mb-10`}
+            className={`text-center ${isMobile ? 'p-5' : 'p-8'} rounded-2xl bg-[#F5F5F5] dark:bg-[#1a1a1a] max-w-3xl mx-auto mb-10`}
           >
             <h2 
               className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold mb-4`}
-              style={{ fontFamily: "'Quicksand', sans-serif", color: '#000000' }}
+              style={{ fontFamily: "'Quicksand', sans-serif" }}
+              className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold mb-4 text-[#000000] dark:text-[#e8e8e8]`}
             >
               Our Mission
             </h2>
             <p 
               className="max-w-2xl mx-auto"
-              style={{ fontFamily: "'Quicksand', sans-serif", color: '#666666' }}
+              style={{ fontFamily: "'Quicksand', sans-serif" }}
+              className="max-w-2xl mx-auto text-[#666666] dark:text-[#aaa]"
             >
               YidVid was created to provide a safe, curated platform for Jewish families to access quality 
               kosher content. We believe everyone deserves access to inspiring, educational, and entertaining 
@@ -125,24 +130,24 @@ const About = () => {
           >
             <button
               onClick={() => setShowTerms(true)}
-              className={`flex items-center gap-2 ${isMobile ? 'px-4 py-2.5 text-xs' : 'px-6 py-3 text-sm'} rounded-full bg-[#F5F5F5] border border-[#E5E5E5] font-semibold hover:border-[#FFCC00] hover:shadow-sm transition-all`}
-              style={{ fontFamily: "'Quicksand', sans-serif", color: '#000000' }}
+              className={`flex items-center gap-2 ${isMobile ? 'px-4 py-2.5 text-xs' : 'px-6 py-3 text-sm'} rounded-full bg-[#F5F5F5] dark:bg-[#1a1a1a] border border-[#E5E5E5] dark:border-[#333] font-semibold hover:border-[#FFCC00] hover:shadow-sm transition-all text-[#000000] dark:text-[#e8e8e8]`}
+              style={{ fontFamily: "'Quicksand', sans-serif" }}
             >
               <FileText className="w-4 h-4" style={{ color: '#FFCC00' }} />
               Terms & Conditions
             </button>
             <button
               onClick={() => setShowPrivacy(true)}
-              className={`flex items-center gap-2 ${isMobile ? 'px-4 py-2.5 text-xs' : 'px-6 py-3 text-sm'} rounded-full bg-[#F5F5F5] border border-[#E5E5E5] font-semibold hover:border-[#FFCC00] hover:shadow-sm transition-all`}
-              style={{ fontFamily: "'Quicksand', sans-serif", color: '#000000' }}
+              className={`flex items-center gap-2 ${isMobile ? 'px-4 py-2.5 text-xs' : 'px-6 py-3 text-sm'} rounded-full bg-[#F5F5F5] dark:bg-[#1a1a1a] border border-[#E5E5E5] dark:border-[#333] font-semibold hover:border-[#FFCC00] hover:shadow-sm transition-all text-[#000000] dark:text-[#e8e8e8]`}
+              style={{ fontFamily: "'Quicksand', sans-serif" }}
             >
               <ScrollText className="w-4 h-4" style={{ color: '#FFCC00' }} />
               Privacy Policy
             </button>
             <button
               onClick={() => setShowContact(true)}
-              className={`flex items-center gap-2 ${isMobile ? 'px-4 py-2.5 text-xs' : 'px-6 py-3 text-sm'} rounded-full bg-[#F5F5F5] border border-[#E5E5E5] font-semibold hover:border-[#FFCC00] hover:shadow-sm transition-all`}
-              style={{ fontFamily: "'Quicksand', sans-serif", color: '#000000' }}
+              className={`flex items-center gap-2 ${isMobile ? 'px-4 py-2.5 text-xs' : 'px-6 py-3 text-sm'} rounded-full bg-[#F5F5F5] dark:bg-[#1a1a1a] border border-[#E5E5E5] dark:border-[#333] font-semibold hover:border-[#FFCC00] hover:shadow-sm transition-all text-[#000000] dark:text-[#e8e8e8]`}
+              style={{ fontFamily: "'Quicksand', sans-serif" }}
             >
               <MessageSquare className="w-4 h-4" style={{ color: '#FFCC00' }} />
               Contact Us
