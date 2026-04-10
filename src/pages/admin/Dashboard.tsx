@@ -102,8 +102,6 @@ const Dashboard = () => {
         return <CommentsPageV2 />;
       case "contacts":
         return <ContactRequestsPageV2 />;
-      case "notifications":
-        return <NotificationsPage />;
       default:
         return <OverviewPageV2 />;
     }
