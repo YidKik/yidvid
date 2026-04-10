@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { format, formatDistanceToNow } from "date-fns";
+import { format, formatDistanceToNow, differenceInHours, differenceInDays, differenceInMinutes } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
@@ -10,10 +10,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Search, Mail, Send, Loader2, X, Clock, Hash, User,
-  MessageSquare, CheckCircle, AlertCircle, Eye, Copy
+  CheckCircle, AlertCircle, Eye, Copy, ArrowUpDown, Timer
 } from "lucide-react";
 
 interface ContactRequest {
@@ -30,11 +29,39 @@ interface ContactRequest {
   user_id: string | null;
 }
 
-const STATUS_CONFIG: Record<string, { label: string; color: string; icon: typeof CheckCircle }> = {
-  pending: { label: "Pending", color: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30", icon: Clock },
-  in_progress: { label: "In Progress", color: "bg-blue-500/20 text-blue-400 border-blue-500/30", icon: AlertCircle },
-  resolved: { label: "Resolved", color: "bg-green-500/20 text-green-400 border-green-500/30", icon: CheckCircle },
-  closed: { label: "Closed", color: "bg-gray-500/20 text-gray-400 border-gray-500/30", icon: X },
+const STATUS_CONFIG: Record<string, { label: string; cardBg: string; cardBorder: string; badgeColor: string; textColor: string; icon: typeof CheckCircle }> = {
+  pending: {
+    label: "Pending",
+    cardBg: "bg-yellow-500/10",
+    cardBorder: "border-yellow-500/30",
+    badgeColor: "bg-yellow-500/30 text-yellow-300 border-yellow-500/40",
+    textColor: "text-yellow-300",
+    icon: Clock,
+  },
+  in_progress: {
+    label: "In Progress",
+    cardBg: "bg-blue-500/10",
+    cardBorder: "border-blue-500/30",
+    badgeColor: "bg-blue-500/30 text-blue-300 border-blue-500/40",
+    textColor: "text-blue-300",
+    icon: AlertCircle,
+  },
+  resolved: {
+    label: "Resolved",
+    cardBg: "bg-green-500/10",
+    cardBorder: "border-green-500/30",
+    badgeColor: "bg-green-500/30 text-green-300 border-green-500/40",
+    textColor: "text-green-300",
+    icon: CheckCircle,
+  },
+  closed: {
+    label: "Closed",
+    cardBg: "bg-gray-500/10",
+    cardBorder: "border-gray-500/30",
+    badgeColor: "bg-gray-500/30 text-gray-300 border-gray-500/40",
+    textColor: "text-gray-400",
+    icon: X,
+  },
 };
 
 const CATEGORY_CONFIG: Record<string, { label: string; color: string }> = {
@@ -44,12 +71,42 @@ const CATEGORY_CONFIG: Record<string, { label: string; color: string }> = {
   general: { label: "General", color: "bg-gray-500/20 text-gray-400 border-gray-500/30" },
 };
 
+type SortOption = "newest" | "oldest" | "longest_open";
+
+const getOpenDuration = (createdAt: string): string => {
+  const now = new Date();
+  const created = new Date(createdAt);
+  const mins = differenceInMinutes(now, created);
+  const hours = differenceInHours(now, created);
+  const days = differenceInDays(now, created);
+
+  if (mins < 60) return `${mins}m`;
+  if (hours < 24) return `${hours}h`;
+  if (days < 30) return `${days}d`;
+  return `${Math.floor(days / 30)}mo`;
+};
+
+const getOpenDurationFull = (createdAt: string): string => {
+  const now = new Date();
+  const created = new Date(createdAt);
+  const mins = differenceInMinutes(now, created);
+  const hours = differenceInHours(now, created);
+  const days = differenceInDays(now, created);
+
+  if (mins < 60) return `${mins} minute${mins !== 1 ? "s" : ""}`;
+  if (hours < 24) return `${hours} hour${hours !== 1 ? "s" : ""}`;
+  if (days < 30) return `${days} day${days !== 1 ? "s" : ""}`;
+  const months = Math.floor(days / 30);
+  return `${months} month${months !== 1 ? "s" : ""}`;
+};
+
 export const ContactRequestsPageV2 = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [replyText, setReplyText] = useState("");
   const [isReplying, setIsReplying] = useState(false);
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [sortBy, setSortBy] = useState<SortOption>("newest");
 
   const { data: requests, refetch, isLoading } = useQuery({
     queryKey: ["admin-v2-contact-requests"],
@@ -67,20 +124,36 @@ export const ContactRequestsPageV2 = () => {
 
   const filtered = useMemo(() => {
     if (!requests) return [];
-    let result = requests;
+    let result = [...requests];
+
     if (statusFilter !== "all") {
       result = result.filter(r => r.status === statusFilter);
     }
-    if (!searchQuery) return result;
-    const q = searchQuery.toLowerCase();
-    return result.filter(r =>
-      r.name?.toLowerCase().includes(q) ||
-      r.email?.toLowerCase().includes(q) ||
-      r.message?.toLowerCase().includes(q) ||
-      r.id?.toLowerCase().includes(q) ||
-      r.category?.toLowerCase().includes(q)
-    );
-  }, [requests, searchQuery, statusFilter]);
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      result = result.filter(r =>
+        r.name?.toLowerCase().includes(q) ||
+        r.email?.toLowerCase().includes(q) ||
+        r.message?.toLowerCase().includes(q) ||
+        r.id?.toLowerCase().includes(q) ||
+        r.category?.toLowerCase().includes(q)
+      );
+    }
+
+    // Sort
+    result.sort((a, b) => {
+      const dateA = new Date(a.created_at).getTime();
+      const dateB = new Date(b.created_at).getTime();
+      switch (sortBy) {
+        case "oldest": return dateA - dateB;
+        case "longest_open": return dateA - dateB; // oldest first = longest open
+        case "newest":
+        default: return dateB - dateA;
+      }
+    });
+
+    return result;
+  }, [requests, searchQuery, statusFilter, sortBy]);
 
   const selected = useMemo(
     () => requests?.find(r => r.id === selectedId) || null,
@@ -146,6 +219,18 @@ export const ContactRequestsPageV2 = () => {
     toast.success("Copied to clipboard");
   };
 
+  const cycleSortOption = () => {
+    const options: SortOption[] = ["newest", "oldest", "longest_open"];
+    const idx = options.indexOf(sortBy);
+    setSortBy(options[(idx + 1) % options.length]);
+  };
+
+  const sortLabel: Record<SortOption, string> = {
+    newest: "Newest first",
+    oldest: "Oldest first",
+    longest_open: "Longest open",
+  };
+
   const DetailRow = ({ label, value, icon: Icon, mono, copyable }: {
     label: string; value: string; icon?: any; mono?: boolean; copyable?: boolean;
   }) => (
@@ -177,16 +262,27 @@ export const ContactRequestsPageV2 = () => {
     <div className="flex gap-6 h-[calc(100vh-140px)]">
       {/* Left: List */}
       <div className="flex-1 min-w-0 flex flex-col">
-        {/* Search + filter tabs */}
+        {/* Search + sort */}
         <div className="mb-4 space-y-3">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-            <Input
-              placeholder="Search by name, email, message, or ID..."
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              className="pl-10 bg-[#1a1b23] border-white/10 text-gray-200 placeholder:text-gray-500"
-            />
+          <div className="flex gap-2">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+              <Input
+                placeholder="Search by name, email, message, or ID..."
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                className="pl-10 bg-[#1a1b23] border-white/10 text-gray-200 placeholder:text-gray-500"
+              />
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={cycleSortOption}
+              className="bg-[#1a1b23] border-white/10 text-gray-400 hover:text-white hover:bg-white/10 shrink-0 h-10 px-3"
+            >
+              <ArrowUpDown className="w-3.5 h-3.5 mr-1.5" />
+              <span className="text-xs">{sortLabel[sortBy]}</span>
+            </Button>
           </div>
           <div className="flex gap-2 flex-wrap">
             {(["all", "pending", "in_progress", "resolved", "closed"] as const).map(s => (
@@ -212,18 +308,37 @@ export const ContactRequestsPageV2 = () => {
               const status = STATUS_CONFIG[request.status] || STATUS_CONFIG.pending;
               const category = CATEGORY_CONFIG[request.category] || CATEGORY_CONFIG.general;
               const isSelected = selectedId === request.id;
+              const StatusIcon = status.icon;
+              const openDuration = getOpenDuration(request.created_at);
+              const isOpen = request.status === "pending" || request.status === "in_progress";
 
               return (
                 <Card
                   key={request.id}
-                  className={`cursor-pointer transition-all border ${
+                  className={`cursor-pointer transition-all border-l-4 ${status.cardBorder} ${
                     isSelected
-                      ? "bg-white/10 border-white/20"
-                      : "bg-[#1a1b23] border-white/5 hover:bg-white/5 hover:border-white/10"
+                      ? `${status.cardBg} border border-l-4 ${status.cardBorder}`
+                      : `${status.cardBg} hover:brightness-125`
                   }`}
                   onClick={() => setSelectedId(request.id)}
                 >
                   <CardContent className="p-4">
+                    {/* Open duration banner */}
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-1.5">
+                        <StatusIcon className={`w-3.5 h-3.5 ${status.textColor}`} />
+                        <span className={`text-xs font-semibold ${status.textColor}`}>
+                          {status.label}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Timer className={`w-3 h-3 ${isOpen ? "text-orange-400" : "text-gray-500"}`} />
+                        <span className={`text-[11px] font-mono font-medium ${isOpen ? "text-orange-400" : "text-gray-500"}`}>
+                          {isOpen ? `Open ${openDuration}` : `Closed after ${openDuration}`}
+                        </span>
+                      </div>
+                    </div>
+
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2 mb-1">
@@ -235,10 +350,7 @@ export const ContactRequestsPageV2 = () => {
                         <p className="text-xs text-gray-500 truncate mb-2">{request.email}</p>
                         <p className="text-xs text-gray-400 line-clamp-2">{request.message}</p>
                       </div>
-                      <div className="flex flex-col items-end gap-1.5 shrink-0">
-                        <Badge className={`${status.color} border text-[10px] px-1.5 py-0`}>
-                          {status.label}
-                        </Badge>
+                      <div className="shrink-0">
                         <Badge className={`${category.color} border text-[10px] px-1.5 py-0`}>
                           {category.label}
                         </Badge>
@@ -264,117 +376,139 @@ export const ContactRequestsPageV2 = () => {
 
       {/* Right: Detail panel */}
       <div className="w-[420px] shrink-0">
-        {selected ? (
-          <Card className="bg-[#1a1b23] border-white/5 h-full flex flex-col">
-            <CardContent className="p-5 flex-1 overflow-auto">
-              {/* Header */}
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-white">{selected.name}</h3>
-                <button onClick={() => setSelectedId(null)} className="text-gray-500 hover:text-gray-300">
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
+        {selected ? (() => {
+          const selStatus = STATUS_CONFIG[selected.status] || STATUS_CONFIG.pending;
+          const selCategory = CATEGORY_CONFIG[selected.category] || CATEGORY_CONFIG.general;
+          const isOpen = selected.status === "pending" || selected.status === "in_progress";
 
-              <div className="flex gap-2 mb-4">
-                <Badge className={`${(STATUS_CONFIG[selected.status] || STATUS_CONFIG.pending).color} border`}>
-                  {(STATUS_CONFIG[selected.status] || STATUS_CONFIG.pending).label}
-                </Badge>
-                <Badge className={`${(CATEGORY_CONFIG[selected.category] || CATEGORY_CONFIG.general).color} border`}>
-                  {(CATEGORY_CONFIG[selected.category] || CATEGORY_CONFIG.general).label}
-                </Badge>
-              </div>
-
-              <Separator className="bg-white/5 mb-4" />
-
-              {/* Details */}
-              <div className="space-y-1">
-                <DetailRow label="Request ID" value={selected.id} icon={Hash} mono copyable />
-                <DetailRow label="Email" value={selected.email} icon={Mail} copyable />
-                <DetailRow label="Submitted" value={format(new Date(selected.created_at), "MMM d, yyyy 'at' h:mm a")} icon={Clock} />
-                {selected.user_id && (
-                  <DetailRow label="User ID" value={selected.user_id} icon={User} mono copyable />
-                )}
-              </div>
-
-              <Separator className="bg-white/5 my-4" />
-
-              {/* Message */}
-              <div>
-                <p className="text-xs text-gray-500 mb-2">Message</p>
-                <div className="bg-white/5 rounded-lg p-3">
-                  <p className="text-sm text-gray-300 whitespace-pre-wrap">{selected.message}</p>
+          return (
+            <Card className={`${selStatus.cardBg} ${selStatus.cardBorder} border h-full flex flex-col`}>
+              <CardContent className="p-5 flex-1 overflow-auto">
+                {/* Header */}
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-lg font-semibold text-white">{selected.name}</h3>
+                  <button onClick={() => setSelectedId(null)} className="text-gray-500 hover:text-gray-300">
+                    <X className="w-4 h-4" />
+                  </button>
                 </div>
-              </div>
 
-              {/* Previous reply */}
-              {selected.admin_reply && (
-                <div className="mt-4">
-                  <p className="text-xs text-gray-500 mb-2">Admin Reply</p>
-                  <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-3">
-                    <p className="text-sm text-gray-300 whitespace-pre-wrap">{selected.admin_reply}</p>
-                    {selected.replied_at && (
-                      <p className="text-[10px] text-gray-500 mt-2">
-                        Replied {formatDistanceToNow(new Date(selected.replied_at), { addSuffix: true })}
-                      </p>
-                    )}
+                {/* Open duration highlight */}
+                <div className={`flex items-center gap-2 rounded-lg px-3 py-2 mb-4 ${
+                  isOpen ? "bg-orange-500/10 border border-orange-500/20" : "bg-white/5 border border-white/5"
+                }`}>
+                  <Timer className={`w-4 h-4 ${isOpen ? "text-orange-400" : "text-gray-500"}`} />
+                  <span className={`text-sm font-medium ${isOpen ? "text-orange-300" : "text-gray-400"}`}>
+                    {isOpen
+                      ? `Open for ${getOpenDurationFull(selected.created_at)}`
+                      : `Closed after ${getOpenDurationFull(selected.created_at)}`
+                    }
+                  </span>
+                </div>
+
+                <div className="flex gap-2 mb-4">
+                  <Badge className={`${selStatus.badgeColor} border`}>
+                    {selStatus.label}
+                  </Badge>
+                  <Badge className={`${selCategory.color} border`}>
+                    {selCategory.label}
+                  </Badge>
+                </div>
+
+                <Separator className="bg-white/5 mb-4" />
+
+                {/* Details */}
+                <div className="space-y-1">
+                  <DetailRow label="Request ID" value={selected.id} icon={Hash} mono copyable />
+                  <DetailRow label="Email" value={selected.email} icon={Mail} copyable />
+                  <DetailRow label="Submitted" value={format(new Date(selected.created_at), "MMM d, yyyy 'at' h:mm a")} icon={Clock} />
+                  {selected.user_id && (
+                    <DetailRow label="User ID" value={selected.user_id} icon={User} mono copyable />
+                  )}
+                </div>
+
+                <Separator className="bg-white/5 my-4" />
+
+                {/* Message */}
+                <div>
+                  <p className="text-xs text-gray-500 mb-2">Message</p>
+                  <div className="bg-white/5 rounded-lg p-3">
+                    <p className="text-sm text-gray-300 whitespace-pre-wrap">{selected.message}</p>
                   </div>
                 </div>
-              )}
 
-              <Separator className="bg-white/5 my-4" />
+                {/* Previous reply */}
+                {selected.admin_reply && (
+                  <div className="mt-4">
+                    <p className="text-xs text-gray-500 mb-2">Admin Reply</p>
+                    <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-3">
+                      <p className="text-sm text-gray-300 whitespace-pre-wrap">{selected.admin_reply}</p>
+                      {selected.replied_at && (
+                        <p className="text-[10px] text-gray-500 mt-2">
+                          Replied {formatDistanceToNow(new Date(selected.replied_at), { addSuffix: true })}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                )}
 
-              {/* Status change */}
-              <div>
-                <p className="text-xs text-gray-500 mb-2">Update Status</p>
-                <div className="flex gap-2 flex-wrap">
-                  {Object.entries(STATUS_CONFIG).map(([key, cfg]) => (
-                    <button
-                      key={key}
-                      onClick={() => updateStatus(selected.id, key)}
-                      disabled={selected.status === key}
-                      className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${
-                        selected.status === key
-                          ? "bg-white/15 text-white cursor-default"
-                          : "bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white"
-                      }`}
-                    >
-                      {cfg.label}
-                    </button>
-                  ))}
+                <Separator className="bg-white/5 my-4" />
+
+                {/* Status change */}
+                <div>
+                  <p className="text-xs text-gray-500 mb-2">Update Status</p>
+                  <div className="flex gap-2 flex-wrap">
+                    {Object.entries(STATUS_CONFIG).map(([key, cfg]) => {
+                      const isActive = selected.status === key;
+                      return (
+                        <button
+                          key={key}
+                          onClick={() => updateStatus(selected.id, key)}
+                          disabled={isActive}
+                          className={`px-3 py-1.5 rounded text-xs font-medium transition-all border ${
+                            isActive
+                              ? `${cfg.badgeColor} cursor-default`
+                              : "bg-white/5 text-gray-400 border-white/10 hover:bg-white/10 hover:text-white"
+                          }`}
+                        >
+                          {cfg.label}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
 
-              <Separator className="bg-white/5 my-4" />
+                <Separator className="bg-white/5 my-4" />
 
-              {/* Reply */}
-              <div>
-                <p className="text-xs text-gray-500 mb-2">
-                  {selected.admin_reply ? "Send New Reply" : "Send Reply"}
-                </p>
-                <Textarea
-                  placeholder="Type your reply..."
-                  value={replyText}
-                  onChange={e => setReplyText(e.target.value)}
-                  rows={4}
-                  className="bg-white/5 border-white/10 text-gray-200 placeholder:text-gray-600 mb-2"
-                />
-                <Button
-                  onClick={sendReply}
-                  disabled={!replyText.trim() || isReplying}
-                  size="sm"
-                  className="w-full"
-                >
-                  {isReplying ? (
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  ) : (
-                    <Send className="w-4 h-4 mr-2" />
-                  )}
-                  Send Reply
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ) : (
+                {/* Reply */}
+                <div>
+                  <p className="text-xs text-gray-500 mb-2">
+                    {selected.admin_reply ? "Send New Reply" : "Send Reply"}
+                  </p>
+                  <Textarea
+                    placeholder="Type your reply..."
+                    value={replyText}
+                    onChange={e => setReplyText(e.target.value)}
+                    rows={4}
+                    className="bg-white/5 border-white/10 text-gray-200 placeholder:text-gray-600 mb-2"
+                  />
+                  <Button
+                    onClick={sendReply}
+                    disabled={!replyText.trim() || isReplying}
+                    size="sm"
+                    className="w-full"
+                  >
+                    {isReplying ? (
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    ) : (
+                      <Send className="w-4 h-4 mr-2" />
+                    )}
+                    Send Reply
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })() : (
           <Card className="bg-[#1a1b23] border-white/5 h-full flex items-center justify-center">
             <div className="text-center">
               <Eye className="w-10 h-10 mx-auto mb-3 text-gray-600" />
