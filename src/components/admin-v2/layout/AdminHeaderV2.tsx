@@ -172,7 +172,7 @@ export const AdminHeaderV2 = ({ pageTitle, pageDescription, profile, onTabChange
           {/* Centered popup — wide multi-column layout */}
           <div
             ref={popupRef}
-            className="fixed z-[9999] w-[90vw] max-w-[1100px] max-h-[80vh] bg-[#13141b] border border-[#2a2d3a] rounded-2xl shadow-2xl flex flex-col overflow-hidden"
+            className="fixed z-[9999] w-[94vw] max-w-[1400px] max-h-[85vh] bg-[#13141b] border border-[#2a2d3a] rounded-2xl shadow-2xl flex flex-col overflow-hidden"
             style={{ top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}
           >
             {/* Header */}
