@@ -169,10 +169,10 @@ export const AdminHeaderV2 = ({ pageTitle, pageDescription, profile, onTabChange
             onClick={() => setIsOpen(false)}
           />
 
-          {/* Centered popup */}
+          {/* Centered popup — wide multi-column layout */}
           <div
             ref={popupRef}
-            className="fixed z-[9999] w-[540px] max-h-[75vh] bg-[#13141b] border border-[#2a2d3a] rounded-2xl shadow-2xl flex flex-col overflow-hidden"
+            className="fixed z-[9999] w-[90vw] max-w-[1100px] max-h-[80vh] bg-[#13141b] border border-[#2a2d3a] rounded-2xl shadow-2xl flex flex-col overflow-hidden"
             style={{ top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}
           >
             {/* Header */}
@@ -203,7 +203,7 @@ export const AdminHeaderV2 = ({ pageTitle, pageDescription, profile, onTabChange
               </div>
             </div>
 
-            {/* Content */}
+            {/* Content — grid of columns */}
             <ScrollArea className="flex-1">
               {sections.length === 0 && readNotifications.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-20 text-[#565b6e]">
@@ -212,104 +212,86 @@ export const AdminHeaderV2 = ({ pageTitle, pageDescription, profile, onTabChange
                   <p className="text-xs mt-1">No new notifications</p>
                 </div>
               ) : (
-                <div className="py-2">
-                  {/* Grouped sections */}
-                  {sections.map((section, idx) => {
-                    const cfg = SECTION_CONFIG[section.type] || DEFAULT_CFG;
-                    const Icon = cfg.icon;
+                <div className="p-4">
+                  {/* All sections as columns in a grid */}
+                  {(() => {
+                    // Build all columns: one per section type (even if empty)
+                    const allSectionTypes = SECTION_ORDER;
+                    const sectionMap: Record<string, AdminNotification[]> = {};
+                    for (const s of sections) sectionMap[s.type] = s.items;
+
                     return (
-                      <div key={section.type}>
-                        {idx > 0 && <div className="mx-5 my-1 border-t border-[#1e2028]" />}
-
-                        {/* Section header */}
-                        <div className="flex items-center justify-between px-5 pt-3 pb-2">
-                          <div className="flex items-center gap-2">
-                            <div className={`p-1 rounded-md ${cfg.bg}`}>
-                              <Icon className={`w-3.5 h-3.5 ${cfg.color}`} />
-                            </div>
-                            <span className="text-[11px] font-semibold text-[#c4c7d4] uppercase tracking-wide">
-                              {cfg.sectionLabel}
-                            </span>
-                            <span className="text-[10px] font-bold text-[#565b6e] bg-[#1a1c25] rounded-full px-1.5 py-0.5 leading-none">
-                              {section.items.length}
-                            </span>
-                          </div>
-                          {cfg.tab && (
-                            <button
-                              onClick={() => handleSectionClick(section.type)}
-                              className="text-[10px] text-[#818cf8] hover:text-[#a5b4fc] font-medium transition-colors"
-                            >
-                              View all →
-                            </button>
-                          )}
-                        </div>
-
-                        {/* Section items */}
-                        <div className="divide-y divide-[#1e2028]/60">
-                          {section.items.slice(0, 5).map(n => (
-                            <button
-                              key={n.id}
-                              onClick={() => handleNotificationClick(n)}
-                              className="w-full flex items-start gap-3 px-5 py-2.5 text-left transition-colors hover:bg-white/[0.03] group"
-                            >
-                              <div className="min-w-0 flex-1">
-                                <p className="text-xs leading-relaxed text-[#c4c7d4]">
-                                  {n.content}
-                                </p>
-                                <p className="text-[10px] text-[#4a4e5e] mt-0.5">
-                                  {formatDistanceToNow(new Date(n.created_at), { addSuffix: true })}
-                                </p>
-                              </div>
-                              <ChevronRight className="w-3.5 h-3.5 text-[#4a4e5e] mt-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
-                            </button>
-                          ))}
-                          {section.items.length > 5 && (
-                            <button
-                              onClick={() => handleSectionClick(section.type)}
-                              className="w-full px-5 py-2 text-[10px] text-[#818cf8] hover:text-[#a5b4fc] font-medium transition-colors text-center"
-                            >
-                              +{section.items.length - 5} more
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
-
-                  {/* Read / Previous notifications */}
-                  {readNotifications.length > 0 && sections.length === 0 && (
-                    <>
-                      <div className="mx-5 my-1 border-t border-[#1e2028]" />
-                      <div className="px-5 pt-3 pb-2">
-                        <span className="text-[10px] font-semibold text-[#4a4e5e] uppercase tracking-wide">
-                          Previous
-                        </span>
-                      </div>
-                      <div className="divide-y divide-[#1e2028]/40">
-                        {readNotifications.map(n => {
-                          const cfg = SECTION_CONFIG[n.type] || DEFAULT_CFG;
+                      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3">
+                        {allSectionTypes.map(type => {
+                          const cfg = SECTION_CONFIG[type] || DEFAULT_CFG;
                           const Icon = cfg.icon;
+                          const items = sectionMap[type] || [];
                           return (
-                            <button
-                              key={n.id}
-                              onClick={() => handleNotificationClick(n)}
-                              className="w-full flex items-start gap-3 px-5 py-2.5 text-left transition-colors hover:bg-white/[0.03] group opacity-50"
+                            <div
+                              key={type}
+                              className="bg-[#1a1c25]/60 border border-[#1e2028] rounded-xl flex flex-col min-h-[200px]"
                             >
-                              <div className={`mt-0.5 p-1 rounded-md ${cfg.bg} shrink-0`}>
-                                <Icon className={`w-3 h-3 ${cfg.color}`} />
+                              {/* Column header */}
+                              <div className="flex items-center justify-between px-3 py-2.5 border-b border-[#1e2028]">
+                                <div className="flex items-center gap-1.5">
+                                  <div className={`p-1 rounded-md ${cfg.bg}`}>
+                                    <Icon className={`w-3.5 h-3.5 ${cfg.color}`} />
+                                  </div>
+                                  <span className="text-[10px] font-semibold text-[#c4c7d4] uppercase tracking-wide">
+                                    {cfg.sectionLabel}
+                                  </span>
+                                </div>
+                                {items.length > 0 && (
+                                  <span className="text-[10px] font-bold text-[#565b6e] bg-[#0f1117] rounded-full px-1.5 py-0.5 leading-none">
+                                    {items.length}
+                                  </span>
+                                )}
                               </div>
-                              <div className="min-w-0 flex-1">
-                                <p className="text-xs leading-relaxed text-[#8b8fa3]">{n.content}</p>
-                                <p className="text-[10px] text-[#4a4e5e] mt-0.5">
-                                  {formatDistanceToNow(new Date(n.created_at), { addSuffix: true })}
-                                </p>
+
+                              {/* Column items */}
+                              <div className="flex-1 overflow-y-auto max-h-[340px]">
+                                {items.length === 0 ? (
+                                  <div className="flex items-center justify-center h-full py-8">
+                                    <p className="text-[10px] text-[#4a4e5e]">No notifications</p>
+                                  </div>
+                                ) : (
+                                  <div className="divide-y divide-[#1e2028]/40">
+                                    {items.slice(0, 8).map(n => (
+                                      <button
+                                        key={n.id}
+                                        onClick={() => handleNotificationClick(n)}
+                                        className="w-full flex items-start gap-2 px-3 py-2 text-left transition-colors hover:bg-white/[0.04] group"
+                                      >
+                                        <div className="min-w-0 flex-1">
+                                          <p className="text-[11px] leading-relaxed text-[#c4c7d4] line-clamp-2">
+                                            {n.content}
+                                          </p>
+                                          <p className="text-[9px] text-[#4a4e5e] mt-0.5">
+                                            {formatDistanceToNow(new Date(n.created_at), { addSuffix: true })}
+                                          </p>
+                                        </div>
+                                        <ChevronRight className="w-3 h-3 text-[#4a4e5e] mt-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                      </button>
+                                    ))}
+                                  </div>
+                                )}
                               </div>
-                            </button>
+
+                              {/* Footer link */}
+                              {items.length > 0 && cfg.tab && (
+                                <button
+                                  onClick={() => handleSectionClick(type)}
+                                  className="px-3 py-2 border-t border-[#1e2028] text-[10px] text-[#818cf8] hover:text-[#a5b4fc] font-medium transition-colors text-center shrink-0"
+                                >
+                                  {items.length > 8 ? `View all ${items.length} →` : "View all →"}
+                                </button>
+                              )}
+                            </div>
                           );
                         })}
                       </div>
-                    </>
-                  )}
+                    );
+                  })()}
                 </div>
               )}
             </ScrollArea>
