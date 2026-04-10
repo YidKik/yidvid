@@ -313,7 +313,7 @@ export const ContactRequestsPageV2 = () => {
         </div>
 
         <ScrollArea className="flex-1">
-          <div className="space-y-2 pr-2">
+          <div className="divide-y divide-white/[0.06] pr-2">
             {filtered.map(request => {
               const status = STATUS_CONFIG[request.status] || STATUS_CONFIG.pending;
               const category = CATEGORY_CONFIG[request.category] || CATEGORY_CONFIG.general;
