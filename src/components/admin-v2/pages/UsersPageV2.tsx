@@ -192,7 +192,6 @@ export const UsersPageV2 = ({ currentUserId }: UsersPageV2Props) => {
         <div className="relative flex-1 max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
           <Input
-            placeholder="Search by name, email, or username..."
             placeholder="Search by name, email, username, or ID..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
