@@ -301,7 +301,7 @@ export const UsersPageV2 = ({ currentUserId }: UsersPageV2Props) => {
                   <DetailRow label="Display Name" value={selectedUser.display_name || "—"} />
                   <DetailRow label="Username" value={selectedUser.username || "—"} />
                   <DetailRow label="Joined" value={selectedUser.created_at ? formatDate(selectedUser.created_at) : "Unknown"} />
-                  <DetailRow label="User Type" value={selectedUser.user_type || "visitor"} />
+                  <DetailRow label="User Type" value={(selectedUser as any).user_type || "visitor"} />
                 </div>
               ) : (
                 <div className="space-y-3">
