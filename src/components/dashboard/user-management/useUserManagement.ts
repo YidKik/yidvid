@@ -82,15 +82,20 @@ export const useUserManagement = (currentUserId: string) => {
         console.log("Attempting to fetch users via edge function");
         const { data: edgeData, error: edgeError } = await supabase.functions.invoke('get-all-users');
         
-        if (!edgeError && edgeData) {
-          console.log("Successfully fetched users via edge function");
+        if (!edgeError && edgeData && Array.isArray(edgeData)) {
+          console.log("Successfully fetched users via edge function:", edgeData.length);
           return edgeData;
         }
+        
+        if (edgeError) {
+          console.warn("Edge function error:", edgeError);
+        }
       } catch (edgeFuncError) {
-        console.log("Edge function not available, falling back to direct query", edgeFuncError);
+        console.warn("Edge function not available, falling back to direct query", edgeFuncError);
       }
       
       // Fall back to direct query if edge function fails
+      console.log("Falling back to direct profiles query");
       const { data, error } = await supabase
         .from("profiles")
         .select("*")
@@ -102,8 +107,8 @@ export const useUserManagement = (currentUserId: string) => {
         return [];
       }
 
-      console.log("Fetched users:", data);
-      return data;
+      console.log("Fetched users via direct query:", data?.length);
+      return data || [];
     },
     enabled: isCurrentUserAdmin || hasPinBypass // Only run query if user is admin or has PIN bypass
   });
