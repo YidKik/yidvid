@@ -349,27 +349,16 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
             {librarySection.items.map((item) => {
               const Icon = item.icon;
               const active = isActive(item.path);
-              const disabled = !isAuthenticated;
-              
-              const handleItemClick = (e: React.MouseEvent) => {
-                if (!isAuthenticated) {
-                  e.preventDefault();
-                  toast.info("Please sign in to access this feature", {
-                    icon: <LogIn className="w-4 h-4" />,
-                  });
-                }
-              };
               
               return (
                 <Link
                   key={item.path + item.name}
-                  to={isAuthenticated ? item.path : "#"}
-                  onClick={handleItemClick}
+                  to={item.path}
                   title={!effectiveIsExpanded ? item.name : undefined}
-                  className={getNavItemClass(effectiveIsExpanded, active, disabled)}
+                  className={getNavItemClass(effectiveIsExpanded, active)}
                 >
-                  <Icon className={getIconClass(active, disabled)} />
-                  {effectiveIsExpanded && <span className={getLabelClass(active, disabled)}>{item.name}</span>}
+                  <Icon className={getIconClass(active)} />
+                  {effectiveIsExpanded && <span className={getLabelClass(active)}>{item.name}</span>}
                 </Link>
               );
             })}
@@ -404,20 +393,16 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
           <div className="mt-3 pt-3 border-t border-[#E5E5E5] dark:border-[#333]">
             <button
               onClick={() => {
-                if (!isAuthenticated) {
-                  toast.info("Please sign in to view your subscriptions", {
-                    icon: <LogIn className="w-4 h-4" />,
-                  });
-                  return;
-                }
+              if (!isAuthenticated) {
+                window.dispatchEvent(new Event('openAuthDialog'));
+                return;
+              }
                 setIsSubscriptionsOpen(!isSubscriptionsOpen);
               }}
               className={cn(
                 "flex items-center text-sm font-medium transition-all duration-200 w-full",
                 "gap-3 px-3 py-2.5 rounded-full justify-between",
-                !isAuthenticated
-                  ? "opacity-40 cursor-default border border-transparent"
-                  : "border border-transparent hover:bg-[#F0F0F0] dark:hover:bg-[#272727] text-[#666666] dark:text-[#aaa] hover:text-[#1A1A1A] dark:hover:text-[#e8e8e8]"
+                "border border-transparent hover:bg-[#F0F0F0] dark:hover:bg-[#272727] text-[#666666] dark:text-[#aaa] hover:text-[#1A1A1A] dark:hover:text-[#e8e8e8]"
               )}
             >
               <div className="flex items-center gap-3">
