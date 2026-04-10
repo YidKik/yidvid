@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogD
 import { Separator } from "@/components/ui/separator";
 import {
   Search, Shield, ShieldOff, Loader2, UserPlus, Users, ShieldCheck, Calendar, Mail,
-  Pencil, Trash2, X, Save, AlertTriangle, MoreVertical
+  Pencil, Trash2, X, Save, AlertTriangle, MoreVertical, Eye
 } from "lucide-react";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger
