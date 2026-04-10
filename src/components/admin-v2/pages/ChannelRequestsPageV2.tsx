@@ -161,97 +161,107 @@ export const ChannelRequestsPageV2 = () => {
         </div>
       </div>
 
-      {/* Right: detail panel */}
-      {selected && (
-        <div className="w-[400px] shrink-0 rounded-xl border border-[#1e2028] bg-[#0f1117] flex flex-col overflow-hidden">
-          {/* Panel header */}
-          <div className="flex items-center justify-between px-5 py-4 border-b border-[#1e2028] shrink-0">
-            <h3 className="text-sm font-semibold text-white truncate pr-3">Request Details</h3>
-            <button
-              onClick={() => setSelectedId(null)}
-              className="p-1 rounded hover:bg-white/5 text-[#565b6e] hover:text-[#8b8fa3] transition-colors shrink-0"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          </div>
-
-          <ScrollArea className="flex-1">
-            <div className="p-5 space-y-6">
-              {/* Channel info */}
-              <div>
-                <p className="text-[10px] uppercase tracking-wider text-[#565b6e] font-semibold mb-3">Channel</p>
-                <div className="space-y-2.5">
-                  <div className="bg-[#13141b] rounded-lg p-3.5 border border-[#1e2028]">
-                    <p className="text-[10px] text-[#565b6e] mb-1">Channel Name</p>
-                    <p className="text-sm font-medium text-[#c4c7d4]">{selected.channel_name}</p>
-                  </div>
-                  {selected.channel_id && (
-                    <div className="bg-[#13141b] rounded-lg p-3.5 border border-[#1e2028]">
-                      <p className="text-[10px] text-[#565b6e] mb-1">Channel ID</p>
-                      <div className="flex items-center gap-2">
-                        <p className="text-xs text-[#8b8fa3] font-mono truncate flex-1">{selected.channel_id}</p>
-                        <button onClick={() => copyToClipboard(selected.channel_id!, "Channel ID")} className="text-[#565b6e] hover:text-[#818cf8] transition-colors shrink-0">
-                          <Copy className="w-3 h-3" />
-                        </button>
-                        <a href={`https://youtube.com/channel/${selected.channel_id}`} target="_blank" rel="noopener noreferrer" className="text-[#565b6e] hover:text-[#818cf8] transition-colors shrink-0">
-                          <ExternalLink className="w-3 h-3" />
-                        </a>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Status */}
-              <div>
-                <p className="text-[10px] uppercase tracking-wider text-[#565b6e] font-semibold mb-3">Status</p>
-                <div className="bg-[#13141b] rounded-lg p-3.5 border border-[#1e2028] flex items-center justify-between">
-                  {statusBadge(selected.status, "lg")}
-                  <p className="text-[10px] text-[#565b6e]">
-                    Updated {formatDistanceToNow(new Date(selected.updated_at), { addSuffix: true })}
-                  </p>
-                </div>
-              </div>
-
-              {/* User details */}
-              <div>
-                <p className="text-[10px] uppercase tracking-wider text-[#565b6e] font-semibold mb-3">Requested By</p>
-                <div className="space-y-2.5">
-                  <InfoRow icon={User} label="Username" value={selected.profiles?.username || selected.profiles?.display_name || "N/A"} />
-                  <InfoRow icon={Mail} label="Email" value={selected.profiles?.email || "N/A"} copyable={!!selected.profiles?.email} onCopy={() => copyToClipboard(selected.profiles!.email, "Email")} />
-                  <InfoRow icon={Hash} label="User ID" value={selected.user_id || "Anonymous"} mono copyable={!!selected.user_id} onCopy={() => copyToClipboard(selected.user_id!, "User ID")} />
-                  <InfoRow icon={Calendar} label="Submitted" value={format(new Date(selected.created_at), "MMM d, yyyy 'at' h:mm a")} />
-                </div>
-              </div>
-
-              {/* Actions */}
-              <div>
-                <p className="text-[10px] uppercase tracking-wider text-[#565b6e] font-semibold mb-3">Actions</p>
-                <div className="flex gap-2">
-                  <Button
-                    size="sm"
-                    disabled={selected.status === "approved"}
-                    onClick={() => handleStatusChange(selected.id, "approved")}
-                    className="flex-1 h-9 text-xs bg-emerald-500/15 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/25 disabled:opacity-30"
-                  >
-                    <CheckCircle2 className="w-3.5 h-3.5 mr-1.5" />
-                    Approve
-                  </Button>
-                  <Button
-                    size="sm"
-                    disabled={selected.status === "rejected"}
-                    onClick={() => handleStatusChange(selected.id, "rejected")}
-                    className="flex-1 h-9 text-xs bg-red-500/15 text-red-400 border border-red-500/20 hover:bg-red-500/25 disabled:opacity-30"
-                  >
-                    <XCircle className="w-3.5 h-3.5 mr-1.5" />
-                    Reject
-                  </Button>
-                </div>
-              </div>
+      {/* Right: detail panel — always visible */}
+      <div className="w-[400px] shrink-0 rounded-xl border border-[#1e2028] bg-[#0f1117] flex flex-col overflow-hidden">
+        {selected ? (
+          <>
+            {/* Panel header */}
+            <div className="flex items-center justify-between px-5 py-4 border-b border-[#1e2028] shrink-0">
+              <h3 className="text-sm font-semibold text-white truncate pr-3">Request Details</h3>
+              <button
+                onClick={() => setSelectedId(null)}
+                className="p-1 rounded hover:bg-white/5 text-[#565b6e] hover:text-[#8b8fa3] transition-colors shrink-0"
+              >
+                <X className="w-4 h-4" />
+              </button>
             </div>
-          </ScrollArea>
-        </div>
-      )}
+
+            <ScrollArea className="flex-1">
+              <div className="p-5 space-y-6">
+                {/* Channel info */}
+                <div>
+                  <p className="text-[10px] uppercase tracking-wider text-[#565b6e] font-semibold mb-3">Channel</p>
+                  <div className="space-y-2.5">
+                    <div className="bg-[#13141b] rounded-lg p-3.5 border border-[#1e2028]">
+                      <p className="text-[10px] text-[#565b6e] mb-1">Channel Name</p>
+                      <p className="text-sm font-medium text-[#c4c7d4]">{selected.channel_name}</p>
+                    </div>
+                    {selected.channel_id && (
+                      <div className="bg-[#13141b] rounded-lg p-3.5 border border-[#1e2028]">
+                        <p className="text-[10px] text-[#565b6e] mb-1">Channel ID</p>
+                        <div className="flex items-center gap-2">
+                          <p className="text-xs text-[#8b8fa3] font-mono truncate flex-1">{selected.channel_id}</p>
+                          <button onClick={() => copyToClipboard(selected.channel_id!, "Channel ID")} className="text-[#565b6e] hover:text-[#818cf8] transition-colors shrink-0">
+                            <Copy className="w-3 h-3" />
+                          </button>
+                          <a href={`https://youtube.com/channel/${selected.channel_id}`} target="_blank" rel="noopener noreferrer" className="text-[#565b6e] hover:text-[#818cf8] transition-colors shrink-0">
+                            <ExternalLink className="w-3 h-3" />
+                          </a>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Status */}
+                <div>
+                  <p className="text-[10px] uppercase tracking-wider text-[#565b6e] font-semibold mb-3">Status</p>
+                  <div className="bg-[#13141b] rounded-lg p-3.5 border border-[#1e2028] flex items-center justify-between">
+                    {statusBadge(selected.status, "lg")}
+                    <p className="text-[10px] text-[#565b6e]">
+                      Updated {formatDistanceToNow(new Date(selected.updated_at), { addSuffix: true })}
+                    </p>
+                  </div>
+                </div>
+
+                {/* User details */}
+                <div>
+                  <p className="text-[10px] uppercase tracking-wider text-[#565b6e] font-semibold mb-3">Requested By</p>
+                  <div className="space-y-2.5">
+                    <InfoRow icon={User} label="Username" value={selected.profiles?.username || selected.profiles?.display_name || "N/A"} />
+                    <InfoRow icon={Mail} label="Email" value={selected.profiles?.email || "N/A"} copyable={!!selected.profiles?.email} onCopy={() => copyToClipboard(selected.profiles!.email, "Email")} />
+                    <InfoRow icon={Hash} label="User ID" value={selected.user_id || "Anonymous"} mono copyable={!!selected.user_id} onCopy={() => copyToClipboard(selected.user_id!, "User ID")} />
+                    <InfoRow icon={Calendar} label="Submitted" value={format(new Date(selected.created_at), "MMM d, yyyy 'at' h:mm a")} />
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div>
+                  <p className="text-[10px] uppercase tracking-wider text-[#565b6e] font-semibold mb-3">Actions</p>
+                  <div className="flex gap-2">
+                    <Button
+                      size="sm"
+                      disabled={selected.status === "approved"}
+                      onClick={() => handleStatusChange(selected.id, "approved")}
+                      className="flex-1 h-9 text-xs bg-emerald-500/15 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/25 disabled:opacity-30"
+                    >
+                      <CheckCircle2 className="w-3.5 h-3.5 mr-1.5" />
+                      Approve
+                    </Button>
+                    <Button
+                      size="sm"
+                      disabled={selected.status === "rejected"}
+                      onClick={() => handleStatusChange(selected.id, "rejected")}
+                      className="flex-1 h-9 text-xs bg-red-500/15 text-red-400 border border-red-500/20 hover:bg-red-500/25 disabled:opacity-30"
+                    >
+                      <XCircle className="w-3.5 h-3.5 mr-1.5" />
+                      Reject
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </ScrollArea>
+          </>
+        ) : (
+          <div className="flex-1 flex flex-col items-center justify-center text-[#565b6e] px-6">
+            <div className="w-12 h-12 rounded-xl bg-[#1a1c25] flex items-center justify-center mb-4">
+              <Search className="w-5 h-5 opacity-50" />
+            </div>
+            <p className="text-sm font-medium text-[#8b8fa3] mb-1">No request selected</p>
+            <p className="text-xs text-center">Select a channel request from the list to view its details</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
