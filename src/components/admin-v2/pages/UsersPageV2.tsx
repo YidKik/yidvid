@@ -21,6 +21,7 @@ import { formatDate } from "@/components/dashboard/user-management/UserManagemen
 import { formatDistanceToNow } from "date-fns";
 import { secureStorage } from "@/utils/security/storageEncryption";
 import { UserActivityDialog } from "./UserActivityDialog";
+import { UserDetailPanel } from "./UserDetailPanel";
 
 interface UsersPageV2Props {
   currentUserId: string;
