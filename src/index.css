@@ -219,6 +219,93 @@ body.home-page {
   background-color: #003c43 !important;
 }
 
+/* ===== Global Dark Mode Overrides ===== */
+/* Catch-all for pages using bg-white */
+.dark .bg-white {
+  background-color: #0f0f0f !important;
+}
+
+/* Borders */
+.dark .border-\[\#E5E5E5\],
+.dark .border-\[\#EFEFEF\] {
+  border-color: #333 !important;
+}
+
+/* Text colors */
+.dark .text-\[\#1A1A1A\],
+.dark .text-\[\#000000\],
+.dark .text-black {
+  color: #e8e8e8 !important;
+}
+
+.dark .text-\[\#666666\] {
+  color: #aaaaaa !important;
+}
+
+.dark .text-\[\#999999\] {
+  color: #717171 !important;
+}
+
+/* Background surface colors */
+.dark .bg-\[\#F5F5F5\],
+.dark .bg-\[\#F0F0F0\],
+.dark .bg-\[\#FAFAFA\] {
+  background-color: #1a1a1a !important;
+}
+
+/* Hover backgrounds */
+.dark .hover\:bg-\[\#F5F5F5\]:hover,
+.dark .hover\:bg-\[\#F0F0F0\]:hover,
+.dark .hover\:bg-\[\#E5E5E5\]:hover {
+  background-color: #272727 !important;
+}
+
+/* Skeleton loading states */
+.dark .bg-\[\#F5F5F5\].animate-pulse {
+  background-color: #1f1f1f !important;
+}
+
+/* Dialog/modal overrides */
+.dark [data-radix-popper-content-wrapper] *,
+.dark [role="dialog"] {
+  color-scheme: dark;
+}
+
+/* Input fields */
+.dark input,
+.dark textarea,
+.dark select {
+  background-color: #1a1a1a;
+  color: #e8e8e8;
+  border-color: #333;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #717171;
+}
+
+/* Dropdown menus and popovers */
+.dark [data-radix-popper-content-wrapper] > div {
+  background-color: #212121 !important;
+  border-color: #333 !important;
+}
+
+/* Cards and card-like surfaces */
+.dark .rounded-2xl.bg-\[\#F5F5F5\] {
+  background-color: #1a1a1a !important;
+  border-color: #333 !important;
+}
+
+/* Header bg-white/25 backdrop blur override */
+.dark .bg-white\/25 {
+  background-color: rgba(15, 15, 15, 0.85) !important;
+}
+
+.dark .bg-white\/90 {
+  background-color: rgba(33, 33, 33, 0.95) !important;
+}
+
 /* YouTube player iframe - fill container, no pointer events */
 [id^="yt-player-"] {
   pointer-events: none;
