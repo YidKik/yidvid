@@ -18,7 +18,7 @@ import { MusicPage } from "@/components/admin/pages/MusicPage";
 import { UsersPageV2 } from "@/components/admin-v2/pages/UsersPageV2";
 import { CategoriesPageV2 } from "@/components/admin-v2/pages/CategoriesPageV2";
 import { CommentsPageV2 } from "@/components/admin-v2/pages/CommentsPageV2";
-import { ContactRequestsPage } from "@/components/admin/pages/ContactRequestsPage";
+import { ContactRequestsPageV2 } from "@/components/admin-v2/pages/ContactRequestsPageV2";
 import { NotificationsPage } from "@/components/admin/pages/NotificationsPage";
 import { AnalyticsPageV2 } from "@/components/admin-v2/pages/AnalyticsPageV2";
 
