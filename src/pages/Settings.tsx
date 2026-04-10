@@ -26,7 +26,7 @@ const Settings = () => {
 
   if (!authChecked) {
     return (
-      <div className="min-h-screen bg-white pt-16 px-4 pl-0 lg:pl-[200px] transition-all duration-300">
+      <div className="min-h-screen bg-white dark:bg-[#0f0f0f] pt-16 px-4 pl-0 lg:pl-[200px] transition-all duration-300">
         <div className="max-w-3xl mx-auto">
           <BackButton />
           <div className="h-8 w-56 bg-[#F5F5F5] rounded-lg mb-8 animate-pulse" />
@@ -37,7 +37,7 @@ const Settings = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white pt-14 pl-0 lg:pl-[200px] pb-20 lg:pb-0 transition-all duration-300">
+    <div className="min-h-screen bg-white dark:bg-[#0f0f0f] pt-14 pl-0 lg:pl-[200px] pb-20 lg:pb-0 transition-all duration-300">
       <BackButton />
       <main className={cn("pb-16 max-w-3xl mx-auto", isMobile ? "pt-4 px-4" : "pt-6 px-6")}>
         {/* Header */}
@@ -45,7 +45,7 @@ const Settings = () => {
           <div className={cn("bg-[#FFCC00] rounded-xl", isMobile ? "p-1.5" : "p-2")}>
             <SettingsIcon className={cn(isMobile ? "w-4 h-4" : "w-5 h-5", "text-[#1A1A1A]")} />
           </div>
-          <h1 className={cn(isMobile ? "text-xl" : "text-2xl", "font-bold text-[#1A1A1A]")}>Settings</h1>
+          <h1 className={cn(isMobile ? "text-xl" : "text-2xl", "font-bold text-[#1A1A1A] dark:text-[#e8e8e8]")}>Settings</h1>
         </div>
 
         {/* Navigation Tabs */}
