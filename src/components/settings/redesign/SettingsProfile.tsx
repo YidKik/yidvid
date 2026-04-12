@@ -11,17 +11,22 @@ import {
   Dialog, DialogContent, DialogDescription, DialogFooter, 
   DialogHeader, DialogTitle, DialogTrigger 
 } from "@/components/ui/dialog";
-import { LogOut, Trash2, AlertTriangle, Mail, Calendar, User, Hash, Bell, X } from "lucide-react";
+import { LogOut, Trash2, AlertTriangle, Mail, Calendar, User, Hash, Bell, X, ImageOff } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import type { ProfilesTable } from "@/integrations/supabase/types/profiles";
 
 export const SettingsProfile = () => {
-  const { user, profile, signOut, isLoading: authLoading, refreshProfile } = useUnifiedAuth();
+  const { user, profile, signOut, isLoading: authLoading } = useUnifiedAuth();
   const { isMobile } = useIsMobile();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isRemoveAvatarDialogOpen, setIsRemoveAvatarDialogOpen] = useState(false);
   const queryClient = useQueryClient();
+
+  // Local state for toggle — driven by DB but controlled locally to avoid flicker
+  const [localEnabled, setLocalEnabled] = useState<boolean | null>(null);
+  const [localFrequency, setLocalFrequency] = useState<string>("daily");
 
   // Sync Google avatar to profile on mount if missing
   useEffect(() => {
@@ -29,7 +34,6 @@ export const SettingsProfile = () => {
     const googleAvatar = user.user_metadata?.avatar_url || user.user_metadata?.picture;
     if (!googleAvatar) return;
     
-    // Check if profile already has an avatar
     const currentAvatar = profile?.avatar_url;
     if (!currentAvatar) {
       supabase
@@ -74,6 +78,14 @@ export const SettingsProfile = () => {
     enabled: !!user?.id,
   });
 
+  // Sync local state from DB when data loads (only if user hasn't interacted yet)
+  useEffect(() => {
+    if (emailPrefs && localEnabled === null) {
+      setLocalEnabled(emailPrefs.new_video_emails ?? false);
+      setLocalFrequency((emailPrefs as any)?.digest_frequency || "daily");
+    }
+  }, [emailPrefs, localEnabled]);
+
   const updateEmailPrefs = useMutation({
     mutationFn: async ({ enabled, frequency }: { enabled: boolean; frequency?: string }) => {
       if (!user?.id) throw new Error("Not authenticated");
@@ -85,28 +97,18 @@ export const SettingsProfile = () => {
         .update(updates)
         .eq("user_id", user.id);
       if (error) throw error;
-    },
-    onMutate: async ({ enabled, frequency }) => {
-      await queryClient.cancelQueries({ queryKey: ["email-preferences", user?.id] });
-      const previous = queryClient.getQueryData(["email-preferences", user?.id]);
-      queryClient.setQueryData(["email-preferences", user?.id], (old: any) => ({
-        ...old,
-        new_video_emails: enabled,
-        digest_frequency: enabled ? (frequency || old?.digest_frequency || "daily") : null,
-      }));
-      return { previous };
-    },
-    onError: (_err, _vars, context) => {
-      if (context?.previous) {
-        queryClient.setQueryData(["email-preferences", user?.id], context.previous);
-      }
-      toast.error("Failed to update preferences");
+      return { enabled, frequency };
     },
     onSuccess: () => {
+      // Silently refetch to keep cache in sync, but local state already reflects the change
+      queryClient.invalidateQueries({ queryKey: ["email-preferences", user?.id] });
       toast.success("Email preferences updated");
     },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["email-preferences", user?.id] });
+    onError: () => {
+      // Revert local state on failure
+      setLocalEnabled(emailPrefs?.new_video_emails ?? false);
+      setLocalFrequency((emailPrefs as any)?.digest_frequency || "daily");
+      toast.error("Failed to update preferences");
     },
   });
 
@@ -122,13 +124,30 @@ export const SettingsProfile = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["user-profile", user?.id] });
       queryClient.invalidateQueries({ queryKey: ["user-profile-settings", user?.id] });
+      setIsRemoveAvatarDialogOpen(false);
       toast.success("Profile picture removed");
     },
     onError: () => toast.error("Failed to remove profile picture"),
   });
 
-  const videoEmailsEnabled = emailPrefs?.new_video_emails ?? false;
-  const digestFrequency = (emailPrefs as any)?.digest_frequency || "daily";
+  const handleToggle = (checked: boolean) => {
+    setLocalEnabled(checked);
+    if (checked) {
+      const freq = localFrequency || "daily";
+      setLocalFrequency(freq);
+      updateEmailPrefs.mutate({ enabled: true, frequency: freq });
+    } else {
+      updateEmailPrefs.mutate({ enabled: false });
+    }
+  };
+
+  const handleFrequencyChange = (freq: string) => {
+    setLocalFrequency(freq);
+    updateEmailPrefs.mutate({ enabled: true, frequency: freq });
+  };
+
+  const videoEmailsEnabled = localEnabled ?? (emailPrefs?.new_video_emails ?? false);
+  const digestFrequency = localFrequency;
 
   const displayProfile = profile || profileData || (user?.id ? {
     id: user.id, email: user.email, name: user.email?.split("@")[0],
@@ -179,8 +198,7 @@ export const SettingsProfile = () => {
           </Avatar>
           {hasAvatar && (
             <button
-              onClick={() => removeAvatar.mutate()}
-              disabled={removeAvatar.isPending}
+              onClick={() => setIsRemoveAvatarDialogOpen(true)}
               className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-[#666]/80 hover:bg-[#FF0000] text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200"
               title="Remove profile picture"
             >
@@ -193,6 +211,38 @@ export const SettingsProfile = () => {
           <p className="text-sm text-[#666] dark:text-[#aaa]">Your account details</p>
         </div>
       </div>
+
+      {/* Remove Avatar Confirmation Dialog */}
+      <Dialog open={isRemoveAvatarDialogOpen} onOpenChange={setIsRemoveAvatarDialogOpen}>
+        <DialogContent className="rounded-2xl max-w-sm">
+          <DialogHeader className="text-center sm:text-center">
+            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-[#F5F5F5] dark:bg-[#222]">
+              <ImageOff className="h-6 w-6 text-[#888]" />
+            </div>
+            <DialogTitle className="text-lg font-bold text-[#1A1A1A] dark:text-[#e8e8e8]">Remove Profile Picture</DialogTitle>
+            <DialogDescription className="text-[#666] dark:text-[#aaa] text-sm pt-1">
+              Are you sure you want to remove your profile picture? Your initials will be shown instead.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex flex-col gap-2.5 sm:flex-col pt-3">
+            <Button
+              onClick={() => removeAvatar.mutate()}
+              disabled={removeAvatar.isPending}
+              className="w-full bg-[#FF0000] hover:bg-[#CC0000] text-white rounded-xl h-10 font-semibold"
+            >
+              {removeAvatar.isPending ? "Removing..." : "Yes, Remove"}
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => setIsRemoveAvatarDialogOpen(false)}
+              disabled={removeAvatar.isPending}
+              className="w-full rounded-xl h-10 font-semibold"
+            >
+              Cancel
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Info Fields */}
       <div className="space-y-4 mb-6">
@@ -214,10 +264,8 @@ export const SettingsProfile = () => {
           </div>
           <Switch
             checked={videoEmailsEnabled}
-            onCheckedChange={(checked) => {
-              updateEmailPrefs.mutate({ enabled: checked, frequency: checked ? "daily" : undefined });
-            }}
-            disabled={prefsLoading || updateEmailPrefs.isPending}
+            onCheckedChange={handleToggle}
+            disabled={prefsLoading}
           />
         </div>
         {videoEmailsEnabled && (
@@ -228,9 +276,8 @@ export const SettingsProfile = () => {
                 <Checkbox
                   checked={digestFrequency === "daily"}
                   onCheckedChange={(checked) => {
-                    if (checked) updateEmailPrefs.mutate({ enabled: true, frequency: "daily" });
+                    if (checked) handleFrequencyChange("daily");
                   }}
-                  disabled={updateEmailPrefs.isPending}
                 />
                 <span className="text-sm text-[#1A1A1A] dark:text-[#e8e8e8] font-medium">Daily</span>
                 <span className="text-xs text-[#888]">— Receive a summary every morning</span>
@@ -239,9 +286,8 @@ export const SettingsProfile = () => {
                 <Checkbox
                   checked={digestFrequency === "weekly"}
                   onCheckedChange={(checked) => {
-                    if (checked) updateEmailPrefs.mutate({ enabled: true, frequency: "weekly" });
+                    if (checked) handleFrequencyChange("weekly");
                   }}
-                  disabled={updateEmailPrefs.isPending}
                 />
                 <span className="text-sm text-[#1A1A1A] dark:text-[#e8e8e8] font-medium">Weekly</span>
                 <span className="text-xs text-[#888]">— Receive a summary once a week</span>
