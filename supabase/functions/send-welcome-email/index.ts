@@ -58,16 +58,19 @@ const handler = async (req: Request): Promise<Response> => {
                 <td align="center">
                   <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width: 600px; width: 100%;">
                     
-                    <!-- Header -->
+                    <!-- Red top bar -->
                     <tr>
-                      <td style="background-color: #FF0000; padding: 32px 40px; text-align: center; border-radius: 12px 12px 0 0;">
-                        <img src="${LOGO_URL}" alt="YidVid" height="48" style="height: 48px; width: auto;" />
-                      </td>
+                      <td style="background-color: #FF0000; height: 6px; font-size: 0; line-height: 0; border-radius: 12px 12px 0 0;">&nbsp;</td>
                     </tr>
-                    
-                    <!-- Yellow accent bar -->
+                    <!-- Yellow accent -->
                     <tr>
                       <td style="background-color: #FFCC00; height: 4px; font-size: 0; line-height: 0;">&nbsp;</td>
+                    </tr>
+                    <!-- Logo -->
+                    <tr>
+                      <td style="background-color: #ffffff; padding: 28px 40px 20px; text-align: center;">
+                        <img src="${LOGO_URL}" alt="YidVid" height="44" style="height: 44px; width: auto;" />
+                      </td>
                     </tr>
                     
                     <!-- Body -->
