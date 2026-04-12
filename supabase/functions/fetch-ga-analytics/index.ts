@@ -6,6 +6,96 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+const OVERVIEW_METRICS = [
+  { name: 'activeUsers' },
+  { name: 'sessions' },
+  { name: 'screenPageViews' },
+  { name: 'engagementRate' },
+  { name: 'totalUsers' },
+  { name: 'userEngagementDuration' },
+];
+
+const addDays = (dateString: string, days: number) => {
+  const date = new Date(`${dateString}T00:00:00.000Z`);
+  date.setUTCDate(date.getUTCDate() + days);
+  return date.toISOString().slice(0, 10);
+};
+
+const resolveAllTimeStartDate = (dateRange: string, fallbackStartDate?: string) => {
+  if (dateRange !== 'allTime') return dateRange;
+  return fallbackStartDate || '2015-08-14';
+};
+
+const buildReportRequest = (metricType: string, resolvedStartDate: string) => {
+  const reportRequest: any = metricType === 'realtime'
+    ? {}
+    : {
+        dateRanges: [{ startDate: resolvedStartDate, endDate: 'today' }],
+      };
+
+  switch (metricType) {
+    case 'overview':
+      reportRequest.metrics = OVERVIEW_METRICS;
+      break;
+
+    case 'realtime':
+      reportRequest.metrics = [{ name: 'activeUsers' }];
+      break;
+
+    case 'traffic':
+      reportRequest.metrics = [
+        { name: 'sessions' },
+        { name: 'totalUsers' },
+      ];
+      reportRequest.dimensions = [
+        { name: 'sessionSource' },
+        { name: 'sessionMedium' },
+      ];
+      break;
+
+    case 'pages':
+      reportRequest.metrics = [
+        { name: 'screenPageViews' },
+        { name: 'averageSessionDuration' },
+      ];
+      reportRequest.dimensions = [{ name: 'pagePath' }];
+      reportRequest.limit = 10;
+      break;
+
+    case 'devices':
+      reportRequest.metrics = [
+        { name: 'sessions' },
+        { name: 'totalUsers' },
+      ];
+      reportRequest.dimensions = [{ name: 'deviceCategory' }];
+      break;
+
+    case 'geography':
+      reportRequest.metrics = [
+        { name: 'sessions' },
+        { name: 'totalUsers' },
+      ];
+      reportRequest.dimensions = [
+        { name: 'country' },
+        { name: 'city' },
+      ];
+      reportRequest.limit = 10;
+      break;
+
+    default:
+      throw new Error(`Unsupported metric type: ${metricType}`);
+  }
+
+  return reportRequest;
+};
+
+const extractFallbackAllTimeStartDate = (gaData: any) => {
+  const message = gaData?.error?.message || '';
+  const match = message.match(/must be greater than (\d{4}-\d{2}-\d{2})/);
+  if (!match) return null;
+  return addDays(match[1], 1);
+};
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -89,74 +179,8 @@ serve(async (req) => {
 
     console.log('Access token obtained');
 
-    const resolvedStartDate = dateRange === 'allTime' ? '2000-01-01' : dateRange;
-
-    // Determine metrics and dimensions based on type
-    let reportRequest: any = metricType === 'realtime'
-      ? {}
-      : {
-          dateRanges: [{ startDate: resolvedStartDate, endDate: 'today' }],
-        };
-
-    switch (metricType) {
-      case 'overview':
-        reportRequest.metrics = [
-          { name: 'activeUsers' },
-          { name: 'sessions' },
-          { name: 'screenPageViews' },
-          { name: 'engagementRate' },
-          { name: 'totalUsers' },
-          { name: 'userEngagementDuration' },
-        ];
-        break;
-      
-      case 'realtime':
-        reportRequest.metrics = [{ name: 'activeUsers' }];
-        break;
-      
-      case 'traffic':
-        reportRequest.metrics = [
-          { name: 'sessions' },
-          { name: 'totalUsers' },
-        ];
-        reportRequest.dimensions = [
-          { name: 'sessionSource' },
-          { name: 'sessionMedium' },
-        ];
-        break;
-      
-      case 'pages':
-        reportRequest.metrics = [
-          { name: 'screenPageViews' },
-          { name: 'averageSessionDuration' },
-        ];
-        reportRequest.dimensions = [{ name: 'pagePath' }];
-        reportRequest.limit = 10;
-        break;
-      
-      case 'devices':
-        reportRequest.metrics = [
-          { name: 'sessions' },
-          { name: 'totalUsers' },
-        ];
-        reportRequest.dimensions = [{ name: 'deviceCategory' }];
-        break;
-      
-      case 'geography':
-        reportRequest.metrics = [
-          { name: 'sessions' },
-          { name: 'totalUsers' },
-        ];
-        reportRequest.dimensions = [
-          { name: 'country' },
-          { name: 'city' },
-        ];
-        reportRequest.limit = 10;
-        break;
-      
-      default:
-        throw new Error(`Unsupported metric type: ${metricType}`);
-    }
+    let resolvedStartDate = resolveAllTimeStartDate(dateRange);
+    let reportRequest = buildReportRequest(metricType, resolvedStartDate);
 
     console.log('Fetching GA data for property:', propertyId);
 
@@ -200,27 +224,91 @@ serve(async (req) => {
     if (!gaResponse.ok) {
       console.error('GA API error JSON:', gaData);
 
-      const details = Array.isArray(gaData?.error?.details)
-        ? gaData.error.details.find((d: any) => d?.reason === 'SERVICE_DISABLED' || d?.metadata?.service === 'analyticsdata.googleapis.com')
-        : undefined;
+      if (metricType !== 'realtime' && dateRange === 'allTime') {
+        const fallbackStartDate = extractFallbackAllTimeStartDate(gaData);
 
-      if (gaData?.error?.status === 'PERMISSION_DENIED' && details) {
-        const activationUrl = details?.metadata?.activationUrl || 'https://console.developers.google.com/apis/api/analyticsdata.googleapis.com/overview';
-        return new Response(
-          JSON.stringify({
-            error: 'Google Analytics Data API is disabled for the Google Cloud project used by your service account.',
-            gcp_project: details?.metadata?.containerInfo,
-            ga_property: normalizedPropertyId,
-            next_steps: [
-              `Enable the API here: ${activationUrl}`,
-              `Add the service account (${serviceAccount.client_email}) to GA4 property ${normalizedPropertyId.replace('properties/', '')} with at least Viewer access.`,
-            ],
-          }),
-          { status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
+        if (fallbackStartDate && fallbackStartDate !== resolvedStartDate) {
+          console.log('Retrying GA all-time query with earliest allowed date:', fallbackStartDate);
+          resolvedStartDate = resolveAllTimeStartDate(dateRange, fallbackStartDate);
+          reportRequest = buildReportRequest(metricType, resolvedStartDate);
+
+          const retryResponse = await fetch(
+            `https://analyticsdata.googleapis.com/v1beta/${endpointPath}`,
+            {
+              method: 'POST',
+              headers: {
+                Authorization: `Bearer ${tokenData.access_token}`,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+              },
+              body: JSON.stringify(reportRequest),
+            }
+          );
+
+          const retryText = await retryResponse.text();
+          console.log('GA retry response status:', retryResponse.status);
+
+          let retryData: any;
+          try {
+            retryData = JSON.parse(retryText);
+          } catch (_e) {
+            console.error('Non-JSON GA retry response snippet:', retryText.slice(0, 300));
+            throw new Error(`Google Analytics retry returned non-JSON (status ${retryResponse.status}).`);
+          }
+
+          if (!retryResponse.ok) {
+            console.error('GA retry API error JSON:', retryData);
+            throw new Error(retryData.error?.message || 'Failed to fetch GA data');
+          }
+
+          gaData = retryData;
+          console.log('GA data fetched successfully after retry');
+        } else {
+          const details = Array.isArray(gaData?.error?.details)
+            ? gaData.error.details.find((d: any) => d?.reason === 'SERVICE_DISABLED' || d?.metadata?.service === 'analyticsdata.googleapis.com')
+            : undefined;
+
+          if (gaData?.error?.status === 'PERMISSION_DENIED' && details) {
+            const activationUrl = details?.metadata?.activationUrl || 'https://console.developers.google.com/apis/api/analyticsdata.googleapis.com/overview';
+            return new Response(
+              JSON.stringify({
+                error: 'Google Analytics Data API is disabled for the Google Cloud project used by your service account.',
+                gcp_project: details?.metadata?.containerInfo,
+                ga_property: normalizedPropertyId,
+                next_steps: [
+                  `Enable the API here: ${activationUrl}`,
+                  `Add the service account (${serviceAccount.client_email}) to GA4 property ${normalizedPropertyId.replace('properties/', '')} with at least Viewer access.`,
+                ],
+              }),
+              { status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+            );
+          }
+
+          throw new Error(gaData.error?.message || 'Failed to fetch GA data');
+        }
+      } else {
+        const details = Array.isArray(gaData?.error?.details)
+          ? gaData.error.details.find((d: any) => d?.reason === 'SERVICE_DISABLED' || d?.metadata?.service === 'analyticsdata.googleapis.com')
+          : undefined;
+
+        if (gaData?.error?.status === 'PERMISSION_DENIED' && details) {
+          const activationUrl = details?.metadata?.activationUrl || 'https://console.developers.google.com/apis/api/analyticsdata.googleapis.com/overview';
+          return new Response(
+            JSON.stringify({
+              error: 'Google Analytics Data API is disabled for the Google Cloud project used by your service account.',
+              gcp_project: details?.metadata?.containerInfo,
+              ga_property: normalizedPropertyId,
+              next_steps: [
+                `Enable the API here: ${activationUrl}`,
+                `Add the service account (${serviceAccount.client_email}) to GA4 property ${normalizedPropertyId.replace('properties/', '')} with at least Viewer access.`,
+              ],
+            }),
+            { status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+
+        throw new Error(gaData.error?.message || 'Failed to fetch GA data');
       }
-
-      throw new Error(gaData.error?.message || 'Failed to fetch GA data');
     }
 
     console.log('GA data fetched successfully');
