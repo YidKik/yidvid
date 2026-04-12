@@ -50,15 +50,14 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <App />
       </BrowserRouter>
       <Toaster 
-        position="bottom-center"
+        position="top-center"
         closeButton={true}
-        style={{ '--offset': '80px' } as React.CSSProperties}
         toastOptions={{
           classNames: {
             toast: 'group toast',
             closeButton: 'text-gray-400 hover:text-gray-700',
           },
-          duration: 3500,
+          duration: 3000,
         }}
         richColors={false}
         expand={false}
