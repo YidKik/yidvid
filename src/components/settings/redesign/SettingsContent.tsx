@@ -64,9 +64,16 @@ export const SettingsContent = () => {
         </div>
       </div>
 
-      <p className="text-sm text-[#666] dark:text-[#aaa] mb-4">
-        Toggle channels on or off to control what appears in your feed, search results, and recommendations.
-      </p>
+      <div className="bg-[#F9F9F9] dark:bg-[#0f0f0f] border border-[#E5E5E5] dark:border-[#333] rounded-xl p-4 mb-4">
+        <p className="text-sm font-medium text-[#1A1A1A] dark:text-[#e8e8e8] mb-1">
+          Control your feed
+        </p>
+        <p className="text-xs text-[#666] dark:text-[#aaa] leading-relaxed">
+          This section lets you choose which channels appear in your feed, search results, and recommendations. 
+          Toggle channels off to hide them completely from your experience. Use the parental PIN lock to prevent 
+          changes from being made without your permission.
+        </p>
+      </div>
 
       {/* Search */}
       <div className="relative mb-4">
@@ -131,7 +138,7 @@ export const SettingsContent = () => {
 
       {/* Unlock Dialog */}
       <Dialog open={showLockDialog} onOpenChange={setShowLockDialog}>
-        <DialogContent className="rounded-2xl max-w-sm">
+        <DialogContent className="rounded-2xl max-w-sm bg-white dark:bg-[#1A1A1A] border border-[#E5E5E5] dark:border-[#333] shadow-xl">
           <DialogHeader className="text-center sm:text-center">
             <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-[#FFCC00]/20">
               <KeyRound className="h-6 w-6 text-[#FFCC00]" />
@@ -165,7 +172,7 @@ export const SettingsContent = () => {
 
       {/* Set PIN Dialog */}
       <Dialog open={showSetPinDialog} onOpenChange={setShowSetPinDialog}>
-        <DialogContent className="rounded-2xl max-w-sm">
+        <DialogContent className="rounded-2xl max-w-sm bg-white dark:bg-[#1A1A1A] border border-[#E5E5E5] dark:border-[#333] shadow-xl">
           <DialogHeader className="text-center sm:text-center">
             <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-[#FFCC00]/20">
               <ShieldCheck className="h-6 w-6 text-[#FFCC00]" />
@@ -182,7 +189,7 @@ export const SettingsContent = () => {
               placeholder="Enter 6-digit PIN"
               value={pin}
               onChange={(e) => setPin(e.target.value.replace(/\D/g, ""))}
-              className="text-center text-2xl tracking-widest h-12 rounded-xl mb-4"
+              className="text-center text-2xl tracking-widest h-12 rounded-xl mb-4 bg-[#F9F9F9] dark:bg-[#0f0f0f] border-[#E5E5E5] dark:border-[#333]"
             />
             <Button type="submit" className="w-full bg-[#FF0000] hover:bg-[#CC0000] text-white rounded-xl h-10 font-semibold">
               Set PIN & Lock

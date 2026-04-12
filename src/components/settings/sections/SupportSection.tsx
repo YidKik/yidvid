@@ -16,6 +16,7 @@ export const SupportSection = () => {
       category: 'general',
       name: "",
       email: "",
+      user_id_display: "",
       message: "",
     },
   });

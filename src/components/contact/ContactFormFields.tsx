@@ -53,6 +53,25 @@ export const ContactFormFields = ({ form }: ContactFormFieldsProps) => {
       />
       <FormField
         control={form.control}
+        name="user_id_display"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel className="text-sm font-semibold" style={{ color: '#333' }}>User ID <span className="text-xs font-normal text-gray-400">(optional)</span></FormLabel>
+            <FormControl>
+              <Input 
+                placeholder="Auto-filled when signed in" 
+                {...field} 
+                className={inputStyle}
+                style={{ color: '#222' }}
+                readOnly
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={form.control}
         name="message"
         render={({ field }) => (
           <FormItem>
