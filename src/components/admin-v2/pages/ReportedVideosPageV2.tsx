@@ -11,7 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import {
   Flag, ExternalLink, Search, X, Trash2, AlertTriangle,
-  Mail, Calendar, MessageSquare, User, Hash, Copy, Eye,
+  Mail, Calendar, MessageSquare, User, Hash, Copy, Eye, CheckCircle,
 } from "lucide-react";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel,
@@ -31,6 +31,7 @@ interface VideoReport {
     video_id: string;
     thumbnail: string;
     channel_name: string;
+    deleted_at: string | null;
   } | null;
   profiles: {
     display_name: string | null;
@@ -48,6 +49,7 @@ interface GroupedReport {
   reportCount: number;
   latestReport: string;
   reports: VideoReport[];
+  isDeleted: boolean;
 }
 
 export const ReportedVideosPageV2 = () => {
@@ -61,7 +63,7 @@ export const ReportedVideosPageV2 = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("video_reports")
-        .select(`*, youtube_videos (title, video_id, thumbnail, channel_name)`)
+        .select(`*, youtube_videos (title, video_id, thumbnail, channel_name, deleted_at)`)
         .order("created_at", { ascending: false });
       if (error) throw error;
 
@@ -110,7 +112,7 @@ export const ReportedVideosPageV2 = () => {
     },
     onSuccess: () => {
       toast.success("Video deleted from site");
-      setSelectedVideoId(null);
+      queryClient.invalidateQueries({ queryKey: ["video-reports"] });
       queryClient.invalidateQueries({ queryKey: ["video-reports"] });
       queryClient.invalidateQueries({ queryKey: ["moderation"] });
     },
@@ -133,6 +135,7 @@ export const ReportedVideosPageV2 = () => {
           reportCount: 0,
           latestReport: r.created_at,
           reports: [],
+          isDeleted: !!r.youtube_videos?.deleted_at,
         };
       }
       map[key].reportCount++;
@@ -245,14 +248,30 @@ export const ReportedVideosPageV2 = () => {
                       }`}
                     >
                       {group.thumbnail && (
-                        <img
-                          src={group.thumbnail}
-                          alt=""
-                          className="w-16 h-10 rounded object-cover shrink-0"
-                        />
+                        <div className="relative w-16 h-10 shrink-0">
+                          <img
+                            src={group.thumbnail}
+                            alt=""
+                            className={`w-full h-full rounded object-cover ${group.isDeleted ? 'opacity-40 grayscale' : ''}`}
+                          />
+                          {group.isDeleted && (
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <CheckCircle className="w-5 h-5 text-emerald-400 drop-shadow-lg" />
+                            </div>
+                          )}
+                        </div>
                       )}
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-[#c4c7d4] truncate">{group.videoTitle}</p>
+                        <div className="flex items-center gap-1.5">
+                          <p className={`text-sm font-medium truncate ${group.isDeleted ? 'text-[#565b6e] line-through' : 'text-[#c4c7d4]'}`}>
+                            {group.videoTitle}
+                          </p>
+                          {group.isDeleted && (
+                            <Badge className="bg-emerald-500/15 text-emerald-400 border-emerald-500/20 text-[9px] px-1.5 py-0 shrink-0">
+                              Deleted
+                            </Badge>
+                          )}
+                        </div>
                         <p className="text-xs text-[#565b6e] mt-0.5 truncate">
                           {group.channelName}
                           {" · "}
@@ -289,12 +308,29 @@ export const ReportedVideosPageV2 = () => {
                 {/* Video info */}
                 <div>
                   <p className="text-[10px] uppercase tracking-wider text-[#565b6e] font-semibold mb-3">Video</p>
+                  
+                  {selected.isDeleted && (
+                    <div className="flex items-center gap-2 px-3.5 py-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 mb-3">
+                      <CheckCircle className="w-4 h-4 text-emerald-400 shrink-0" />
+                      <p className="text-xs font-medium text-emerald-400">This video has been deleted from the site</p>
+                    </div>
+                  )}
+
                   {selected.thumbnail && (
-                    <img
-                      src={selected.thumbnail}
-                      alt=""
-                      className="w-full h-40 rounded-lg object-cover mb-3"
-                    />
+                    <div className="relative mb-3">
+                      <img
+                        src={selected.thumbnail}
+                        alt=""
+                        className={`w-full h-40 rounded-lg object-cover ${selected.isDeleted ? 'opacity-40 grayscale' : ''}`}
+                      />
+                      {selected.isDeleted && (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="bg-black/60 rounded-lg px-4 py-2">
+                            <p className="text-xs font-semibold text-emerald-400">Video Removed</p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   )}
                   <div className="space-y-2.5">
                     <div className="bg-[#13141b] rounded-lg p-3.5 border border-[#1e2028]">
@@ -402,16 +438,24 @@ export const ReportedVideosPageV2 = () => {
                 <div>
                   <p className="text-[10px] uppercase tracking-wider text-[#565b6e] font-semibold mb-3">Actions</p>
                   <div className="flex gap-2">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="flex-1 h-9 text-xs text-[#818cf8] hover:text-[#a5b4fc] hover:bg-[#818cf8]/10 border border-[#6366f1]/20"
-                      onClick={() => window.open(`/video/${selected.videoSlug}`, "_blank")}
-                    >
-                      <Eye className="w-3.5 h-3.5 mr-1.5" />
-                      View Video
-                    </Button>
+                    {!selected.isDeleted && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="flex-1 h-9 text-xs text-[#818cf8] hover:text-[#a5b4fc] hover:bg-[#818cf8]/10 border border-[#6366f1]/20"
+                        onClick={() => window.open(`/video/${selected.videoSlug}`, "_blank")}
+                      >
+                        <Eye className="w-3.5 h-3.5 mr-1.5" />
+                        View Video
+                      </Button>
+                    )}
 
+                    {selected.isDeleted ? (
+                      <div className="flex-1 h-9 flex items-center justify-center gap-1.5 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-medium">
+                        <CheckCircle className="w-3.5 h-3.5" />
+                        Video Already Deleted
+                      </div>
+                    ) : (
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <Button
@@ -444,6 +488,7 @@ export const ReportedVideosPageV2 = () => {
                         </AlertDialogFooter>
                       </AlertDialogContent>
                     </AlertDialog>
+                    )}
                   </div>
                 </div>
               </div>
