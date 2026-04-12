@@ -53,7 +53,7 @@ Deno.serve(async (req) => {
     
     console.log('Validated delete request for channel')
     
-    // Use the admin_delete_channel RPC which does a full hard delete
+    // Use the admin_delete_channel RPC for soft-delete
     const { data, error } = await adminClient
       .rpc('admin_delete_channel', { 
         channel_id_param: channelId, 
@@ -78,7 +78,7 @@ Deno.serve(async (req) => {
       )
     }
     
-    console.log('Channel permanently deleted with all related data')
+    console.log('Channel and videos soft-deleted successfully')
     
     return new Response(
       JSON.stringify({ success: true }),

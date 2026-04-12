@@ -50,7 +50,8 @@ export const useAnalyticsData = (userId: string | undefined) => {
         // Get total channels count
         const { count: totalChannels, error: channelsError } = await supabase
           .from("youtube_channels")
-          .select("*", { count: "exact", head: true });
+          .select("*", { count: "exact", head: true })
+          .is("deleted_at", null);
 
         if (channelsError) throw channelsError;
 
