@@ -63,8 +63,9 @@ export const SettingsProfile = () => {
 
   const username = displayProfile.username || displayProfile.display_name || displayProfile.name || "User";
   const email = displayProfile.email || "";
-  const memberSince = displayProfile.created_at
-    ? format(new Date(displayProfile.created_at), "MMMM d, yyyy")
+  const createdAt = (displayProfile as any).created_at;
+  const memberSince = createdAt
+    ? format(new Date(createdAt), "MMMM d, yyyy")
     : "Unknown";
   const initials = username.split(" ").map((n: string) => n[0]).join("").toUpperCase().slice(0, 2);
 
