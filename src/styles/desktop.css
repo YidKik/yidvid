@@ -54,14 +54,6 @@
     background: rgba(0, 0, 0, 0.25);
   }
   
-  /* Toast animations for desktop */
-  [data-sonner-toast] {
-    animation: toast-enter 0.4s cubic-bezier(0.21, 1.02, 0.73, 1) forwards !important;
-  }
-  
-  [data-sonner-toast][data-removing="true"] {
-    animation: toast-exit 0.4s cubic-bezier(0.06, 0.71, 0.55, 1) forwards !important;
-  }
   
   /* Font improvements for desktop */
   .video-title {
