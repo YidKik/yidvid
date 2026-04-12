@@ -3,6 +3,7 @@ import React, { useMemo } from 'react';
 import { VideoData } from "@/hooks/video/types/video-fetcher";
 import { MobileVideoCarouselSection } from "@/components/videos/MobileVideoCarouselSection";
 import { MobileChannelsRow } from "@/components/videos/MobileChannelsRow";
+import { ShortsSection } from "@/components/videos/ShortsSection";
 
 export interface MobileVideoViewProps {
   videos: VideoData[];
@@ -59,6 +60,9 @@ export const MobileVideoView: React.FC<MobileVideoViewProps> = ({
       {/* Latest Videos - with background */}
       <MobileVideoCarouselSection title="Latest Videos" videos={newVideos} seeAllLink="/videos?sort=newest" hasBackground />
       
+      {/* Shorts */}
+      <ShortsSection />
+
       {/* Trending */}
       <MobileVideoCarouselSection title="Trending Videos" videos={trendingVideos} seeAllLink="/videos?sort=trending" />
       
