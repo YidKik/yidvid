@@ -110,54 +110,63 @@ export const VideoOptionsMenu = ({ videoId, variant = "icon", className, compact
         <DropdownMenuContent 
           align="end" 
           className={cn(
-            "bg-white border border-[#E5E5E5] shadow-lg rounded-xl z-50",
-            compact ? "w-44" : "w-56"
+            "bg-white dark:bg-[#282828] border border-[#E5E5E5] dark:border-[#3a3a3a] shadow-xl z-50 p-1",
+            compact ? "w-36 rounded-lg" : "w-48 rounded-xl"
           )}
           onClick={(e) => e.stopPropagation()}
         >
           <DropdownMenuItem
             onClick={handleToggleFavorite}
             className={cn(
-              "flex items-center gap-2 cursor-pointer rounded-lg transition-all duration-200 hover:bg-black/[0.06] hover:shadow-[inset_0_0_0_1px_rgba(0,0,0,0.04)]",
-              compact ? "px-2 py-1.5 text-xs" : "px-3 py-2.5 gap-3 hover:pl-4 hover:text-[#FF0000]"
+              "flex items-center cursor-pointer transition-colors duration-150 hover:bg-black/[0.06] dark:hover:bg-white/[0.08]",
+              compact ? "gap-2 px-2 py-1.5 text-[11px] rounded-md" : "gap-2.5 px-2.5 py-2 text-[13px] rounded-lg"
             )}
           >
-            <Heart className={cn(compact ? "w-3 h-3" : "w-4 h-4", "transition-transform duration-200", isFavorite && "fill-[#FF0000] text-[#FF0000]")} />
+            <Heart className={cn(compact ? "w-3 h-3" : "w-3.5 h-3.5", "shrink-0", isFavorite && "fill-[#FF0000] text-[#FF0000]")} />
             <span>{isFavorite ? "Remove Favorite" : "Favorite"}</span>
           </DropdownMenuItem>
           
           <DropdownMenuItem
             onClick={handleToggleWatchLater}
             className={cn(
-              "flex items-center gap-2 cursor-pointer rounded-lg transition-all duration-200 hover:bg-black/[0.06] hover:shadow-[inset_0_0_0_1px_rgba(0,0,0,0.04)]",
-              compact ? "px-2 py-1.5 text-xs" : "px-3 py-2.5 gap-3 hover:pl-4 hover:text-blue-500"
+              "flex items-center cursor-pointer transition-colors duration-150 hover:bg-black/[0.06] dark:hover:bg-white/[0.08]",
+              compact ? "gap-2 px-2 py-1.5 text-[11px] rounded-md" : "gap-2.5 px-2.5 py-2 text-[13px] rounded-lg"
             )}
           >
-            <Clock className={cn(compact ? "w-3 h-3" : "w-4 h-4", "transition-transform duration-200", isWatchLaterSaved && "fill-blue-500 text-blue-500")} />
+            <Clock className={cn(compact ? "w-3 h-3" : "w-3.5 h-3.5", "shrink-0", isWatchLaterSaved && "fill-blue-500 text-blue-500")} />
             <span>{isWatchLaterSaved ? "Remove Watch Later" : "Watch Later"}</span>
           </DropdownMenuItem>
           
-          <DropdownMenuSeparator />
+          <DropdownMenuSeparator className="my-1" />
           
           <DropdownMenuSub>
-            <DropdownMenuSubTrigger className="flex items-center gap-3 px-3 py-2.5 cursor-pointer rounded-lg transition-all duration-200 hover:bg-black/[0.06] hover:pl-4 hover:shadow-[inset_0_0_0_1px_rgba(0,0,0,0.04)]">
-              <ListPlus className="w-4 h-4" />
+            <DropdownMenuSubTrigger className={cn(
+              "flex items-center cursor-pointer transition-colors duration-150 hover:bg-black/[0.06] dark:hover:bg-white/[0.08]",
+              compact ? "gap-2 px-2 py-1.5 text-[11px] rounded-md" : "gap-2.5 px-2.5 py-2 text-[13px] rounded-lg"
+            )}>
+              <ListPlus className={compact ? "w-3 h-3" : "w-3.5 h-3.5"} />
               <span>Add to Playlist</span>
             </DropdownMenuSubTrigger>
-            <DropdownMenuSubContent className="bg-white border border-[#E5E5E5] shadow-lg rounded-xl w-52">
+            <DropdownMenuSubContent className={cn(
+              "bg-white dark:bg-[#282828] border border-[#E5E5E5] dark:border-[#3a3a3a] shadow-xl p-1",
+              compact ? "w-40 rounded-lg" : "w-44 rounded-xl"
+            )}>
               {playlists && playlists.length > 0 ? (
                 <>
                   {playlists.map((playlist) => (
                     <DropdownMenuItem
                       key={playlist.id}
                       onClick={() => handleAddToPlaylist(playlist.id)}
-                      className="flex items-center gap-3 px-3 py-2.5 cursor-pointer rounded-lg transition-all duration-200 hover:bg-black/[0.06] hover:pl-4 hover:shadow-[inset_0_0_0_1px_rgba(0,0,0,0.04)]"
+                      className={cn(
+                        "flex items-center cursor-pointer transition-colors duration-150 hover:bg-black/[0.06] dark:hover:bg-white/[0.08]",
+                        compact ? "gap-2 px-2 py-1.5 text-[11px] rounded-md" : "gap-2.5 px-2.5 py-2 text-[13px] rounded-lg"
+                      )}
                     >
-                      <ListPlus className="w-4 h-4" />
+                      <ListPlus className={compact ? "w-3 h-3" : "w-3.5 h-3.5"} />
                       <span className="truncate">{playlist.title}</span>
                     </DropdownMenuItem>
                   ))}
-                  <DropdownMenuSeparator />
+                  <DropdownMenuSeparator className="my-1" />
                 </>
               ) : null}
               <DropdownMenuItem
@@ -168,9 +177,12 @@ export const VideoOptionsMenu = ({ videoId, variant = "icon", className, compact
                   }
                   setShowCreatePlaylist(true);
                 }}
-                className="flex items-center gap-3 px-3 py-2.5 cursor-pointer rounded-lg transition-all duration-200 hover:bg-black/[0.06] hover:pl-4 hover:shadow-[inset_0_0_0_1px_rgba(0,0,0,0.04)] text-gray-700"
+                className={cn(
+                  "flex items-center cursor-pointer transition-colors duration-150 hover:bg-black/[0.06] dark:hover:bg-white/[0.08] text-muted-foreground",
+                  compact ? "gap-2 px-2 py-1.5 text-[11px] rounded-md" : "gap-2.5 px-2.5 py-2 text-[13px] rounded-lg"
+                )}
               >
-                <Plus className="w-4 h-4" />
+                <Plus className={compact ? "w-3 h-3" : "w-3.5 h-3.5"} />
                 <span>Create new playlist</span>
               </DropdownMenuItem>
             </DropdownMenuSubContent>
