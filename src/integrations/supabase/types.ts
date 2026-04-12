@@ -1381,6 +1381,7 @@ export type Database = {
           deleted_at: string | null
           description: string | null
           id: string
+          is_short: boolean
           last_viewed_at: string | null
           manual_review_required: boolean | null
           thumbnail: string
@@ -1405,6 +1406,7 @@ export type Database = {
           deleted_at?: string | null
           description?: string | null
           id?: string
+          is_short?: boolean
           last_viewed_at?: string | null
           manual_review_required?: boolean | null
           thumbnail: string
@@ -1429,6 +1431,7 @@ export type Database = {
           deleted_at?: string | null
           description?: string | null
           id?: string
+          is_short?: boolean
           last_viewed_at?: string | null
           manual_review_required?: boolean | null
           thumbnail?: string
