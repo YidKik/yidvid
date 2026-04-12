@@ -45,6 +45,7 @@ function AppContent() {
   const { isDesktop } = useIsMobile();
   
   const isAdminRoute = location.pathname.startsWith("/admin");
+  const isShortsRoute = location.pathname.startsWith("/shorts");
   
   // Initialize keyboard shortcuts
   useKeyboardShortcuts();
@@ -70,8 +71,8 @@ function AppContent() {
   return (
     <>
       <TopLoadingBar />
-      {!isAdminRoute && <GlobalHeader />}
-      {!isAdminRoute && (
+      {!isAdminRoute && !isShortsRoute && <GlobalHeader />}
+      {!isAdminRoute && !isShortsRoute && (
         isDesktop ? (
           <Sidebar isAuthenticated={isAuthenticated} userId={session?.user?.id} />
         ) : (
