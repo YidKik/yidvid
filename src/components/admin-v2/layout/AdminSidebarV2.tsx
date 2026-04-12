@@ -12,6 +12,7 @@ import {
   LogOut,
   GitPullRequest,
   Play,
+  Flag,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
@@ -40,6 +41,7 @@ const navSections = [
       { id: "comments", label: "Comments", icon: MessageSquare },
       { id: "contacts", label: "Contact Requests", icon: Mail },
       { id: "requests", label: "Channel Requests", icon: GitPullRequest },
+      { id: "reports", label: "Reported Videos", icon: Flag },
     ],
   },
 ];
