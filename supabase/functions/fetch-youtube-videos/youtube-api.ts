@@ -133,6 +133,24 @@ export async function fetchChannelVideos(
   }
 }
 
+// Parse ISO 8601 duration to seconds
+function parseDuration(duration: string): number {
+  const match = duration.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+  if (!match) return 0;
+  const hours = parseInt(match[1] || '0');
+  const minutes = parseInt(match[2] || '0');
+  const seconds = parseInt(match[3] || '0');
+  return hours * 3600 + minutes * 60 + seconds;
+}
+
+// Detect if a video is a YouTube Short
+function isYouTubeShort(title: string, durationSeconds: number): boolean {
+  // Shorts are ≤60 seconds OR have #Shorts in title
+  if (durationSeconds > 0 && durationSeconds <= 60) return true;
+  if (title.toLowerCase().includes('#shorts')) return true;
+  return false;
+}
+
 // Helper function to process video items and get statistics
 async function processVideoItems(data: any, channelId: string, channelTitle: string, apiKey: string): Promise<VideoResult> {
   // Get video IDs and fetch statistics in a single batch
@@ -146,8 +164,8 @@ async function processVideoItems(data: any, channelId: string, channelTitle: str
     return { videos: [] };
   }
 
-  // Get detailed video information including statistics
-  const statsUrl = `https://www.googleapis.com/youtube/v3/videos?part=statistics,snippet&id=${videoIds.join(',')}&key=${apiKey}`;
+  // Get detailed video information including statistics AND contentDetails (for duration)
+  const statsUrl = `https://www.googleapis.com/youtube/v3/videos?part=statistics,snippet,contentDetails&id=${videoIds.join(',')}&key=${apiKey}`;
   const defaultHeaders = {
     'Accept': 'application/json',
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
@@ -170,11 +188,12 @@ async function processVideoItems(data: any, channelId: string, channelTitle: str
   
   const statsData = await statsResponse.json();
 
-  // Create a map for quick lookup of statistics
+  // Create a map for quick lookup of statistics and duration
   const statsMap = new Map(
     statsData.items?.map((item: any) => [item.id, {
       statistics: item.statistics,
-      description: item.snippet.description
+      description: item.snippet.description,
+      duration: item.contentDetails?.duration || ''
     }]) || []
   );
 
@@ -190,19 +209,28 @@ async function processVideoItems(data: any, channelId: string, channelTitle: str
     .map((item: any) => {
       const videoId = item.snippet.resourceId.videoId;
       const stats = statsMap.get(videoId);
+      const durationSeconds = parseDuration(stats?.duration || '');
+      const title = item.snippet.title;
+      const is_short = isYouTubeShort(title, durationSeconds);
+      
+      if (is_short) {
+        console.log(`[YouTube API] 📱 Detected Short: "${title}" (${durationSeconds}s)`);
+      }
       
       return {
         video_id: videoId,
-        title: item.snippet.title,
+        title,
         thumbnail: item.snippet.thumbnails.high?.url || item.snippet.thumbnails.default?.url,
         channel_id: channelId,
         channel_name: channelTitle,
         uploaded_at: item.snippet.publishedAt,
         views: parseInt(stats?.statistics?.viewCount || '0'),
         description: stats?.description || null,
+        is_short,
       };
     });
 
-  console.log(`[YouTube API] Successfully processed ${processedVideos.length} videos for channel ${channelId}`);
+  const shortsCount = processedVideos.filter((v: any) => v.is_short).length;
+  console.log(`[YouTube API] Successfully processed ${processedVideos.length} videos (${shortsCount} shorts) for channel ${channelId}`);
   return { videos: processedVideos };
 }
