@@ -125,17 +125,14 @@ export const FeaturedVideoSection = ({ videos }: FeaturedVideoSectionProps) => {
                 </div>
                 
                 {/* Content at Bottom */}
-                <div className={`absolute bottom-0 left-0 right-0 ${isMobile ? 'p-3' : 'p-4'}`}>
-                  {/* Video Title - turns yellow on hover */}
-                  <h3 className={`text-white font-semibold ${isMobile ? 'text-sm' : 'text-base'} line-clamp-2 group-hover:text-yellow-400 transition-colors drop-shadow-md`}>
+                <div className={`absolute bottom-0 left-0 right-0 ${isMobile ? 'p-2' : 'p-2 sm:p-3 lg:p-4'}`}>
+                  <h3 className={`text-white font-semibold line-clamp-2 group-hover:text-yellow-400 transition-colors drop-shadow-md ${isMobile ? 'text-[11px]' : 'text-[11px] sm:text-xs md:text-sm lg:text-base'}`}>
                     {video.title}
                   </h3>
-                  {/* Channel Name */}
-                  <p className="text-white/80 text-sm mt-1 truncate">
+                  <p className={`text-white/80 mt-0.5 truncate ${isMobile ? 'text-[9px]' : 'text-[9px] sm:text-[10px] md:text-xs lg:text-sm'}`}>
                     {video.channel_name}
                   </p>
-                  {/* Meta info */}
-                  <div className="flex items-center gap-2 text-white/60 text-xs mt-1">
+                  <div className={`flex items-center gap-1.5 text-white/60 mt-0.5 ${isMobile ? 'text-[8px]' : 'text-[8px] sm:text-[9px] md:text-[10px] lg:text-xs'}`}>
                     <span>{getFormattedDate(video.uploaded_at)}</span>
                     <span>•</span>
                     <span>{video.views?.toLocaleString() || 0} views</span>
