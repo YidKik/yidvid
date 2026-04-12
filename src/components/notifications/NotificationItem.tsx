@@ -22,7 +22,7 @@ export const NotificationItem = ({ notification, onNotificationClick }: Notifica
     <div
       key={notification.id}
       className={`
-        p-4 sm:p-5 hover:bg-[#333333] cursor-pointer transition-colors duration-200 
+        p-3 sm:p-5 hover:bg-[#333333] cursor-pointer transition-colors duration-200 
         border-b border-[#333333] animate-fade-in
         ${isMobile ? 'active:bg-[#444444]' : ''}
       `}
@@ -31,8 +31,8 @@ export const NotificationItem = ({ notification, onNotificationClick }: Notifica
         onNotificationClick();
       }}
     >
-      <div className="flex items-start gap-3">
-        <div className="relative w-18 sm:w-24 h-12 sm:h-16 flex-shrink-0">
+      <div className="flex items-start gap-2.5 sm:gap-3">
+        <div className="relative w-14 min-[360px]:w-18 sm:w-24 h-10 min-[360px]:h-12 sm:h-16 flex-shrink-0">
           <img
             src={notification.youtube_videos.thumbnail}
             alt={notification.youtube_videos.title}
@@ -41,19 +41,17 @@ export const NotificationItem = ({ notification, onNotificationClick }: Notifica
               console.error("Failed to load thumbnail");
               e.currentTarget.src = "/placeholder.svg";
               
-              // Add centered logo
               const imgElement = e.currentTarget;
               const parent = imgElement.parentElement;
               
               if (parent) {
-                // Create logo overlay
                 const logoOverlay = document.createElement('div');
                 logoOverlay.className = 'absolute inset-0 flex items-center justify-center';
                 
                 const logoImg = document.createElement('img');
                 logoImg.src = "/yidvid-logo-icon.png";
                 logoImg.alt = "YidVid Logo";
-                logoImg.className = 'w-8 h-8 sm:w-10 sm:h-10 opacity-85'; // Centered logo
+                logoImg.className = 'w-6 h-6 sm:w-10 sm:h-10 opacity-85';
                 
                 logoOverlay.appendChild(logoImg);
                 parent.appendChild(logoOverlay);
@@ -62,10 +60,10 @@ export const NotificationItem = ({ notification, onNotificationClick }: Notifica
           />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm sm:text-base text-white line-clamp-2 font-medium">
+          <p className="text-xs min-[360px]:text-sm sm:text-base text-white line-clamp-2 font-medium">
             New video from {notification.youtube_videos.channel_name}
           </p>
-          <p className="text-xs sm:text-sm text-white/70 mt-1 line-clamp-2">
+          <p className="text-[10px] min-[360px]:text-xs sm:text-sm text-white/70 mt-0.5 sm:mt-1 line-clamp-2">
             {notification.youtube_videos.title}
           </p>
         </div>
