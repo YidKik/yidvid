@@ -20,16 +20,14 @@ import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Tv, Link, Mail, Send, X, Sparkles } from "lucide-react";
+import { Tv, Link, Mail, Send, X } from "lucide-react";
 import { useState } from "react";
 
-// Schema for logged-in users
 const loggedInSchema = z.object({
   channelName: z.string().min(1, "Channel name is required").max(100, "Channel name must be less than 100 characters"),
   channelLink: z.string().optional(),
 });
 
-// Schema for non-logged-in users
 const guestSchema = z.object({
   channelName: z.string().min(1, "Channel name is required").max(100, "Channel name must be less than 100 characters"),
   channelLink: z.string().optional(),
@@ -88,7 +86,6 @@ export const RequestChannelDialog = ({ open, onOpenChange }: RequestChannelDialo
       }
 
       toast.success("Channel request submitted successfully!", {
-        icon: "🎉",
         description: "We'll review your request and add the channel soon.",
       });
 
@@ -104,49 +101,47 @@ export const RequestChannelDialog = ({ open, onOpenChange }: RequestChannelDialo
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[480px] bg-white dark:bg-gray-900 border-border shadow-2xl rounded-2xl p-0 overflow-hidden [&>button]:hidden">
-        {/* Header with gradient */}
-        <div className="bg-gradient-to-r from-yellow-400 via-yellow-500 to-orange-400 p-6 text-white relative">
+      <DialogContent className="sm:max-w-[480px] bg-white dark:bg-[#1A1A1A] border border-[#E5E5E5] dark:border-[#333] shadow-xl rounded-2xl p-0 overflow-hidden [&>button]:hidden">
+        {/* Header — solid color, no gradient */}
+        <div className="bg-[#FFCC00] p-5 relative">
           <button 
             onClick={() => onOpenChange(false)}
-            className="absolute right-4 top-4 text-white/80 hover:text-white transition-colors z-10"
+            className="absolute right-4 top-4 text-[#1A1A1A]/60 hover:text-[#1A1A1A] transition-colors z-10"
           >
             <X className="h-5 w-5" />
           </button>
           <div className="flex items-center gap-3">
-            <div className="p-3 bg-white/20 rounded-full backdrop-blur-sm">
-              <Tv className="h-6 w-6" />
+            <div className="p-2.5 bg-[#1A1A1A]/10 rounded-lg">
+              <Tv className="h-5 w-5 text-[#1A1A1A]" />
             </div>
             <div>
-              <DialogTitle className="text-xl font-bold text-white flex items-center gap-2">
+              <DialogTitle className="text-lg font-bold text-[#1A1A1A]">
                 Request a Channel
-                <Sparkles className="h-5 w-5" />
               </DialogTitle>
-              <p className="text-white/90 text-sm mt-1">
+              <p className="text-[#1A1A1A]/70 text-sm mt-0.5">
                 Help us grow our collection of Jewish content
               </p>
             </div>
           </div>
         </div>
 
-        {/* Form content */}
+        {/* Form */}
         <div className="p-6">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-              {/* Channel Name */}
               <FormField
                 control={form.control}
                 name="channelName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-sm font-medium flex items-center gap-2">
-                      <Tv className="h-4 w-4 text-yellow-500" />
+                    <FormLabel className="text-sm font-medium text-foreground flex items-center gap-2">
+                      <Tv className="h-4 w-4 text-[#FFCC00]" />
                       Channel Name
                     </FormLabel>
                     <FormControl>
                       <Input 
                         placeholder="Enter the channel name" 
-                        className="h-11 rounded-xl border-2 border-muted focus:border-yellow-400 transition-colors"
+                        className="h-11 rounded-lg border border-[#E5E5E5] dark:border-[#444] focus:border-[#FFCC00] focus:ring-1 focus:ring-[#FFCC00] transition-colors bg-white dark:bg-[#222]"
                         {...field} 
                       />
                     </FormControl>
@@ -155,21 +150,20 @@ export const RequestChannelDialog = ({ open, onOpenChange }: RequestChannelDialo
                 )}
               />
 
-              {/* Channel Link */}
               <FormField
                 control={form.control}
                 name="channelLink"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-sm font-medium flex items-center gap-2">
-                      <Link className="h-4 w-4 text-yellow-500" />
+                    <FormLabel className="text-sm font-medium text-foreground flex items-center gap-2">
+                      <Link className="h-4 w-4 text-[#FFCC00]" />
                       Channel Link
                       <span className="text-xs text-muted-foreground font-normal">(optional)</span>
                     </FormLabel>
                     <FormControl>
                       <Input 
                         placeholder="https://youtube.com/@channelname" 
-                        className="h-11 rounded-xl border-2 border-muted focus:border-yellow-400 transition-colors"
+                        className="h-11 rounded-lg border border-[#E5E5E5] dark:border-[#444] focus:border-[#FFCC00] focus:ring-1 focus:ring-[#FFCC00] transition-colors bg-white dark:bg-[#222]"
                         {...field} 
                       />
                     </FormControl>
@@ -178,15 +172,14 @@ export const RequestChannelDialog = ({ open, onOpenChange }: RequestChannelDialo
                 )}
               />
 
-              {/* Email - only for non-logged-in users */}
               {!isLoggedIn && (
                 <FormField
                   control={form.control}
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-sm font-medium flex items-center gap-2">
-                        <Mail className="h-4 w-4 text-yellow-500" />
+                      <FormLabel className="text-sm font-medium text-foreground flex items-center gap-2">
+                        <Mail className="h-4 w-4 text-[#FFCC00]" />
                         Your Email
                         <span className="text-xs text-muted-foreground font-normal">(optional)</span>
                       </FormLabel>
@@ -194,7 +187,7 @@ export const RequestChannelDialog = ({ open, onOpenChange }: RequestChannelDialo
                         <Input 
                           type="email"
                           placeholder="your@email.com" 
-                          className="h-11 rounded-xl border-2 border-muted focus:border-yellow-400 transition-colors"
+                          className="h-11 rounded-lg border border-[#E5E5E5] dark:border-[#444] focus:border-[#FFCC00] focus:ring-1 focus:ring-[#FFCC00] transition-colors bg-white dark:bg-[#222]"
                           {...field} 
                         />
                       </FormControl>
@@ -207,36 +200,29 @@ export const RequestChannelDialog = ({ open, onOpenChange }: RequestChannelDialo
                 />
               )}
 
-              {/* Logged in indicator */}
               {isLoggedIn && (
-                <div className="flex items-center gap-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-200 dark:border-green-800">
-                  <div className="p-2 bg-green-100 dark:bg-green-800 rounded-full">
-                    <Mail className="h-4 w-4 text-green-600 dark:text-green-400" />
-                  </div>
+                <div className="flex items-center gap-3 p-3 bg-[#F5F5F5] dark:bg-[#222] rounded-lg border border-[#E5E5E5] dark:border-[#444]">
+                  <Mail className="h-4 w-4 text-muted-foreground" />
                   <div>
-                    <p className="text-sm font-medium text-green-700 dark:text-green-400">Submitting as</p>
-                    <p className="text-xs text-green-600 dark:text-green-500">{session?.user?.email}</p>
+                    <p className="text-sm font-medium text-foreground">Submitting as</p>
+                    <p className="text-xs text-muted-foreground">{session?.user?.email}</p>
                   </div>
                 </div>
               )}
 
-              {/* Info box */}
-              <div className="flex items-start gap-3 p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-xl border border-yellow-200 dark:border-yellow-800">
-                <Sparkles className="h-5 w-5 text-yellow-600 dark:text-yellow-400 flex-shrink-0 mt-0.5" />
-                <p className="text-xs text-yellow-700 dark:text-yellow-400">
-                  Our team reviews all channel requests to ensure they meet our content guidelines. Most requests are processed within 24-48 hours.
-                </p>
-              </div>
+              {/* Info */}
+              <p className="text-xs text-muted-foreground border-t border-[#E5E5E5] dark:border-[#333] pt-4">
+                Our team reviews all requests to ensure they meet our content guidelines. Most requests are processed within 24–48 hours.
+              </p>
 
-              {/* Submit button */}
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full h-12 rounded-xl bg-gradient-to-r from-yellow-400 to-orange-400 hover:from-yellow-500 hover:to-orange-500 text-white font-semibold transition-all duration-200 hover:shadow-lg hover:shadow-yellow-200/50 disabled:opacity-50"
+                className="w-full h-11 rounded-lg bg-[#FFCC00] hover:bg-[#E6B800] text-[#1A1A1A] font-semibold transition-colors disabled:opacity-50"
               >
                 {isSubmitting ? (
                   <span className="flex items-center gap-2">
-                    <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    <div className="h-4 w-4 border-2 border-[#1A1A1A]/30 border-t-[#1A1A1A] rounded-full animate-spin" />
                     Submitting...
                   </span>
                 ) : (
