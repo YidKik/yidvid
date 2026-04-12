@@ -20,16 +20,16 @@ export const MobileBottomNav = ({ isAuthenticated = false }: MobileBottomNavProp
   const isActive = (path: string) => {
     if (path === "/") return location.pathname === "/";
     if (path === "/videos") return location.pathname === "/videos";
-    if (path === "/search") return location.pathname === "/search";
+    if (path === "/settings") return location.pathname === "/settings";
     return false;
   };
 
   const navItems = [
     { icon: Home, label: "Home", path: "/" },
     { icon: PlayCircle, label: "Videos", path: "/videos" },
-    { icon: Search, label: "Search", path: "/search" },
+    { icon: Settings, label: "Settings", path: "/settings" },
     { icon: Library, label: "Library", action: "library" as const },
-    { icon: Menu, label: "Menu", action: "menu" as const },
+    { icon: Info, label: "Info", path: "/about" },
   ];
 
   const libraryItems = [
@@ -38,11 +38,6 @@ export const MobileBottomNav = ({ isAuthenticated = false }: MobileBottomNavProp
     { icon: Clock, label: "Watch Later", path: "/watch-later" },
     { icon: ListMusic, label: "Playlists", path: "/playlists" },
     { icon: Users, label: "Subscriptions", path: "/subscriptions" },
-  ];
-
-  const menuItems = [
-    { icon: Settings, label: "Settings", path: "/settings" },
-    { icon: Info, label: "About", path: "/about" },
   ];
 
   const handleNavClick = (item: typeof navItems[0]) => {
