@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import { useParams, Link, useLocation } from "react-router-dom";
+import React, { useEffect, useRef, useCallback } from 'react';
+import { useParams, Link, useLocation, useNavigate } from "react-router-dom";
 import { VideoPlayer } from "@/components/video/VideoPlayer";
 import { useVideoQuery } from "@/components/video/details/VideoQuery";
 import { VideoComments } from "@/components/video/details/VideoComments";
@@ -20,6 +20,7 @@ import { usePlaylistAutoplay } from "@/hooks/video/usePlaylistAutoplay";
 const VideoDetails = () => {
   const { videoId } = useParams<{ videoId: string }>();
   const location = useLocation();
+  const navigate = useNavigate();
   const { isMobile, isTablet } = useIsMobile();
   const { isAuthenticated, session } = useAuth();
   const incrementView = useIncrementVideoView();
