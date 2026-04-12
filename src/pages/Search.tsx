@@ -153,22 +153,22 @@ const Search = () => {
             </h1>
           </div>
           <p className="text-sm text-[#999999] ml-9">
-            {(channels?.length || 0) + (videos?.length || 0)} results found
+            {filteredChannels.length + filteredVideos.length} results found
           </p>
         </div>
 
         {/* Channels Section */}
-        {channels && channels.length > 0 && (
+        {filteredChannels.length > 0 && (
           <section className="mb-10">
             <div className="flex items-center gap-2 mb-5 pb-3 border-b border-[#E5E5E5]">
               <Users className="h-5 w-5 text-[#FF0000]" />
               <h2 className="text-lg font-bold text-[#1A1A1A]">Channels</h2>
               <span className="bg-[#FF0000] text-white text-xs font-bold px-2.5 py-0.5 rounded-full">
-                {channels.length}
+                {filteredChannels.length}
               </span>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {channels.map((channel) => (
+              {filteredChannels.map((channel) => (
                 <Link
                   key={channel.id}
                   to={`/channel/${channel.channel_id}`}
@@ -200,7 +200,7 @@ const Search = () => {
         )}
 
         {/* No channels found */}
-        {channels?.length === 0 && (
+        {filteredChannels.length === 0 && (
           <section className="mb-10">
             <div className="flex items-center gap-2 mb-5 pb-3 border-b border-[#E5E5E5]">
               <Users className="h-5 w-5 text-[#FF0000]" />
@@ -218,20 +218,18 @@ const Search = () => {
           <div className="flex items-center gap-2 mb-5 pb-3 border-b border-[#E5E5E5]">
             <Play className="h-5 w-5 text-[#FF0000]" />
             <h2 className="text-lg font-bold text-[#1A1A1A]">Videos</h2>
-            {videos && (
-              <span className="bg-[#FF0000] text-white text-xs font-bold px-2.5 py-0.5 rounded-full">
-                {videos.length}
-              </span>
-            )}
+            <span className="bg-[#FF0000] text-white text-xs font-bold px-2.5 py-0.5 rounded-full">
+              {filteredVideos.length}
+            </span>
           </div>
 
-          {videos?.length === 0 ? (
+          {filteredVideos.length === 0 ? (
             <div className="text-center py-8 bg-[#FAFAFA] rounded-xl border border-[#E5E5E5]">
               <p className="text-sm text-[#999999]">No videos found matching "{query}"</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-              {videos?.map((video) => (
+              {filteredVideos.map((video) => (
                 <VideoCard
                   key={video.id}
                   id={video.video_id}
