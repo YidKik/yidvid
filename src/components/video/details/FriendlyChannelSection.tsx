@@ -148,10 +148,10 @@ export const FriendlyChannelSection = ({
       
       {/* Description - collapsible, minimal */}
       {description && (
-        <div className={`bg-[#F5F5F5] rounded-xl ${compact ? 'p-3' : 'p-4'}`}>
+        <div className={`bg-[#F5F5F5] rounded-xl ${compact ? 'p-2.5' : 'p-4'}`}>
           <p 
             ref={descriptionRef}
-            className={`${compact ? 'text-xs' : 'text-sm'} text-[#666666] leading-relaxed whitespace-pre-wrap ${
+            className={`${compact ? 'text-[11px]' : 'text-sm'} text-[#666666] leading-relaxed whitespace-pre-wrap ${
               !isDescriptionExpanded ? 'line-clamp-3' : ''
             }`}
           >
@@ -161,7 +161,7 @@ export const FriendlyChannelSection = ({
           {needsExpand && (
             <button
               onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
-              className="mt-2 text-sm font-medium text-[#1A1A1A] hover:text-[#FF0000] transition-colors"
+              className={`mt-1.5 ${compact ? 'text-[11px]' : 'text-sm'} font-medium text-[#1A1A1A] hover:text-[#FF0000] transition-colors`}
             >
               {isDescriptionExpanded ? "Show less" : "Show more"}
             </button>
@@ -177,8 +177,8 @@ export const FriendlyChannelSection = ({
       ) : channelVideos.length > 0 ? (
         <div>
           <div className="h-px bg-[#E5E5E5] mb-4" />
-          <div className="flex items-center justify-between mb-3">
-            <p className={`${compact ? 'text-xs' : 'text-sm'} font-semibold text-[#1A1A1A]`}>
+          <div className={`flex items-center justify-between ${compact ? 'mb-2' : 'mb-3'}`}>
+            <p className={`${compact ? 'text-[11px]' : 'text-sm'} font-semibold text-[#1A1A1A]`}>
               More from {channelName}
             </p>
             {channelId && (
@@ -192,15 +192,15 @@ export const FriendlyChannelSection = ({
           </div>
           
           {/* YouTube-style stacked list */}
-          <div className="space-y-2.5">
+          <div className={compact ? "space-y-1.5" : "space-y-2.5"}>
             {displayedVideos.map((video) => (
               <Link
                 key={video.id}
                 to={`/video/${video.video_id || video.id}`}
-                className="flex gap-3 group rounded-lg hover:bg-[#F5F5F5] transition-colors p-1 -mx-1"
+                className={`flex ${compact ? 'gap-2' : 'gap-3'} group rounded-lg hover:bg-[#F5F5F5] transition-colors p-1 -mx-1`}
               >
                 {/* Thumbnail */}
-                <div className={`${compact ? 'w-[140px]' : 'w-[168px]'} flex-shrink-0 aspect-video rounded-lg overflow-hidden bg-[#F0F0F0]`}>
+                <div className={`${compact ? 'w-[110px]' : 'w-[168px]'} flex-shrink-0 aspect-video rounded-lg overflow-hidden bg-[#F0F0F0]`}>
                   <img
                     src={video.thumbnail || "/placeholder.svg"}
                     alt={video.title}
@@ -211,13 +211,13 @@ export const FriendlyChannelSection = ({
                 
                 {/* Info */}
                 <div className="flex-1 min-w-0 py-0.5">
-                  <h4 className={`${compact ? 'text-xs' : 'text-[13px]'} font-medium text-[#1A1A1A] line-clamp-2 leading-snug group-hover:text-[#1A1A1A]`}>
+                  <h4 className={`${compact ? 'text-[11px]' : 'text-[13px]'} font-medium text-[#1A1A1A] line-clamp-2 leading-snug group-hover:text-[#1A1A1A]`}>
                     {video.title}
                   </h4>
-                  <p className="text-[11px] text-[#606060] mt-1 truncate">
+                  <p className={`${compact ? 'text-[9px]' : 'text-[11px]'} text-[#606060] ${compact ? 'mt-0.5' : 'mt-1'} truncate`}>
                     {video.channel_name}
                   </p>
-                  <p className="text-[11px] text-[#606060] mt-0.5">
+                  <p className={`${compact ? 'text-[9px]' : 'text-[11px]'} text-[#606060] mt-0.5`}>
                     {formatViewCount(video.views || 0)} • {getFormattedDate(video.uploaded_at)}
                   </p>
                 </div>

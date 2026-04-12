@@ -233,15 +233,15 @@ const VideoDetails = () => {
               
               {/* Divider */}
               <div className="h-px bg-[#E5E5E5]" />
-              
-              {/* Description + More Videos */}
+
+              {/* Description only */}
               <FriendlyChannelSection
                 channelName={video?.channel_name || ""}
                 channelId={video?.channel_id || ""}
                 channelThumbnail={video?.youtube_channels?.thumbnail_url || ""}
                 description={video?.description || ""}
-                channelVideos={channelVideos}
-                isLoadingVideos={isLoadingRelated}
+                channelVideos={[]}
+                isLoadingVideos={false}
                 compact
                 hideChannelInfo
               />
@@ -249,27 +249,27 @@ const VideoDetails = () => {
               {/* Divider */}
               <div className="h-px bg-[#E5E5E5]" />
               
-              {/* Comments - Mobile */}
+              {/* Comments - Mobile (before more videos) */}
               <div className="bg-[#F5F5F5] rounded-xl overflow-hidden">
-                <div className="px-4 py-3 border-b border-[#E5E5E5] bg-white">
-                  <h3 className="text-sm font-semibold text-[#1A1A1A] flex items-center gap-2">
-                    <MessageCircle className="h-4 w-4 text-[#999999]" />
+                <div className="px-3 py-2 border-b border-[#E5E5E5] bg-white">
+                  <h3 className="text-xs font-semibold text-[#1A1A1A] flex items-center gap-1.5">
+                    <MessageCircle className="h-3 w-3 text-[#999999]" />
                     Comments
                   </h3>
                 </div>
                 
-                <div className="p-4">
+                <div className="p-3">
                   {isAuthenticated ? (
                     <VideoComments videoId={video?.id || ""} />
                   ) : (
-                    <div className="text-center py-8">
-                      <MessageCircle className="h-7 w-7 text-[#999999] mx-auto mb-3" />
-                      <p className="text-[#666666] text-sm mb-3">
+                    <div className="text-center py-6">
+                      <MessageCircle className="h-5 w-5 text-[#999999] mx-auto mb-2" />
+                      <p className="text-[#666666] text-[11px] mb-2">
                         Sign in to view and post comments.
                       </p>
                       <button 
                         onClick={() => document.dispatchEvent(new CustomEvent('openAuthDialog'))}
-                        className="inline-block px-5 py-2 bg-[#FF0000] text-white rounded-full text-sm font-medium hover:brightness-90 transition-all"
+                        className="inline-block px-4 py-1.5 bg-[#FF0000] text-white rounded-full text-[11px] font-medium hover:brightness-90 transition-all"
                       >
                         Sign In
                       </button>
@@ -277,6 +277,20 @@ const VideoDetails = () => {
                   )}
                 </div>
               </div>
+
+              {/* Divider */}
+              <div className="h-px bg-[#E5E5E5]" />
+
+              {/* More from channel videos */}
+              <FriendlyChannelSection
+                channelName={video?.channel_name || ""}
+                channelId={video?.channel_id || ""}
+                channelThumbnail={video?.youtube_channels?.thumbnail_url || ""}
+                channelVideos={channelVideos}
+                isLoadingVideos={isLoadingRelated}
+                compact
+                hideChannelInfo
+              />
             </div>
           )}
         </div>

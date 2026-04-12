@@ -184,15 +184,15 @@ export const FriendlyVideoActionBar = ({
   ];
 
   const pillBtn = compact
-    ? "h-8 px-3 rounded-full text-xs font-medium transition-all duration-150 bg-[#F2F2F2] hover:bg-[#E5E5E5] text-[#1A1A1A]"
+    ? "h-7 px-2.5 rounded-full text-[11px] font-medium transition-all duration-150 bg-[#F2F2F2] hover:bg-[#E5E5E5] text-[#1A1A1A]"
     : "h-9 px-4 rounded-full text-sm font-medium transition-all duration-150 bg-[#F2F2F2] hover:bg-[#E5E5E5] text-[#1A1A1A]";
 
-  const iconSize = compact ? "h-3.5 w-3.5" : "h-4 w-4";
+  const iconSize = compact ? "h-3 w-3" : "h-4 w-4";
 
   return (
     <div className="space-y-3">
       {/* Views & date - small meta line */}
-      <div className="flex items-center gap-1.5 text-xs text-[#606060]">
+      <div className={`flex items-center gap-1.5 ${compact ? 'text-[10px]' : 'text-xs'} text-[#606060]`}>
         <span>{formatViewCount(views)} views</span>
         {uploadedAt && (
           <>
@@ -203,22 +203,22 @@ export const FriendlyVideoActionBar = ({
       </div>
 
       {/* YouTube-style combined row: Channel left, actions right */}
-      <div className="flex items-center gap-3 flex-wrap">
+      <div className={`flex items-center ${compact ? 'gap-2' : 'gap-3'} flex-wrap`}>
         {/* Channel avatar + name + subscribe */}
-        <div className="flex items-center gap-2.5 mr-auto min-w-0">
+        <div className={`flex items-center ${compact ? 'gap-2' : 'gap-2.5'} mr-auto min-w-0`}>
           {channelId ? (
             <Link to={`/channel/${channelId}`} className="flex-shrink-0">
-              <Avatar className={compact ? "h-8 w-8" : "h-9 w-9"}>
+              <Avatar className={compact ? "h-6 w-6" : "h-9 w-9"}>
                 <AvatarImage src={channelThumbnail} alt={channelName} />
-                <AvatarFallback className="bg-[#EF4444] text-white text-xs font-bold">
+                <AvatarFallback className={`bg-[#EF4444] text-white ${compact ? 'text-[9px]' : 'text-xs'} font-bold`}>
                   {channelName?.slice(0, 2).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
             </Link>
           ) : (
-            <Avatar className={compact ? "h-8 w-8" : "h-9 w-9"}>
+            <Avatar className={compact ? "h-6 w-6" : "h-9 w-9"}>
               <AvatarImage src={channelThumbnail} alt={channelName} />
-              <AvatarFallback className="bg-[#EF4444] text-white text-xs font-bold">
+              <AvatarFallback className={`bg-[#EF4444] text-white ${compact ? 'text-[9px]' : 'text-xs'} font-bold`}>
                 {channelName?.slice(0, 2).toUpperCase()}
               </AvatarFallback>
             </Avatar>
@@ -228,12 +228,12 @@ export const FriendlyVideoActionBar = ({
             {channelId ? (
               <Link 
                 to={`/channel/${channelId}`}
-                className={`${compact ? 'text-xs' : 'text-sm'} font-semibold text-[#1A1A1A] hover:text-[#1A1A1A] transition-colors block truncate leading-tight`}
+                className={`${compact ? 'text-[11px]' : 'text-sm'} font-semibold text-[#1A1A1A] hover:text-[#1A1A1A] transition-colors block truncate leading-tight`}
               >
                 {channelName}
               </Link>
             ) : (
-              <span className={`${compact ? 'text-xs' : 'text-sm'} font-semibold text-[#1A1A1A] truncate block leading-tight`}>{channelName}</span>
+              <span className={`${compact ? 'text-[11px]' : 'text-sm'} font-semibold text-[#1A1A1A] truncate block leading-tight`}>{channelName}</span>
             )}
           </div>
 
@@ -241,7 +241,7 @@ export const FriendlyVideoActionBar = ({
             <Button
               onClick={handleSubscribeClick}
               disabled={isSubLoading}
-              className={`${compact ? 'h-7 px-3 text-xs' : 'h-8 px-4 text-sm'} rounded-full font-semibold transition-all ml-1 ${
+              className={`${compact ? 'h-6 px-2.5 text-[10px]' : 'h-8 px-4 text-sm'} rounded-full font-semibold transition-all ml-0.5 ${
                 isSubscribed 
                   ? "bg-[#F2F2F2] text-[#1A1A1A] hover:bg-[#E5E5E5]" 
                   : "bg-[#1A1A1A] text-white hover:bg-[#333]"
@@ -251,7 +251,7 @@ export const FriendlyVideoActionBar = ({
                 <span className="opacity-70">...</span>
               ) : isSubscribed ? (
                 <>
-                  <Bell className="w-3.5 h-3.5 mr-1 fill-current" />
+                  <Bell className={`${compact ? 'w-2.5 h-2.5 mr-0.5' : 'w-3.5 h-3.5 mr-1'} fill-current`} />
                   Subscribed
                 </>
               ) : (
@@ -262,7 +262,7 @@ export const FriendlyVideoActionBar = ({
         </div>
 
         {/* Action buttons - right side */}
-        <div className="flex items-center gap-2">
+        <div className={`flex items-center ${compact ? 'gap-1.5' : 'gap-2'}`}>
           {/* Like pill */}
           <Button
             variant="ghost"
@@ -312,7 +312,7 @@ export const FriendlyVideoActionBar = ({
           {/* 3-dot menu: Report, Favorite, Watch Later, Playlist */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className={`${compact ? 'h-8 w-8' : 'h-9 w-9'} rounded-full bg-[#F2F2F2] hover:bg-[#E5E5E5] text-[#606060]`}>
+              <Button variant="ghost" size="icon" className={`${compact ? 'h-7 w-7' : 'h-9 w-9'} rounded-full bg-[#F2F2F2] hover:bg-[#E5E5E5] text-[#606060]`}>
                 <MoreVertical className={iconSize} />
               </Button>
             </DropdownMenuTrigger>
