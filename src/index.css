@@ -238,16 +238,15 @@ body {
 /* Mobile toast adjustments */
 @media (max-width: 768px) {
   [data-sonner-toaster] {
-    bottom: 70px !important;
-    right: 8px !important;
-    left: auto !important;
-    width: auto !important;
-    max-width: 280px !important;
+    --offset: 72px !important;
   }
   [data-sonner-toast] {
     padding: 0.5rem 0.75rem !important;
     font-size: 0.75rem !important;
     border-radius: 0.5rem !important;
+    max-width: 260px !important;
+    margin-left: auto !important;
+    margin-right: 8px !important;
   }
   [data-sonner-toast] [data-title] {
     font-size: 0.75rem !important;
