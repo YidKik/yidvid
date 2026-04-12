@@ -5,7 +5,6 @@ import { formatDistanceToNow } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { useUnifiedAuth } from "@/hooks/useUnifiedAuth";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Trash2, Play, Clock, ExternalLink } from "lucide-react";
@@ -156,54 +155,52 @@ export const VideoHistorySection = () => {
       </div>
 
       {/* History List */}
-      <ScrollArea className="h-[280px]">
-        <div className="space-y-2 pr-3">
-          {history.map((entry) => (
-            <Link
-              key={entry.id}
-              to={entry.youtube_videos ? `/video/${entry.youtube_videos.video_id}` : "#"}
-              className="flex gap-3 p-2 rounded-xl bg-white border border-gray-100 hover:border-red-200 hover:shadow-sm transition-all group"
-            >
-              {/* Thumbnail */}
-              <div className="relative flex-shrink-0 w-24 h-14 rounded-lg overflow-hidden bg-gray-200">
-                {entry.youtube_videos?.thumbnail ? (
-                  <img
-                    src={entry.youtube_videos.thumbnail}
-                    alt={entry.youtube_videos.title}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <Play className="h-6 w-6 text-gray-400" />
-                  </div>
-                )}
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                  <Play className="h-5 w-5 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+      <div className="space-y-2">
+        {history.map((entry) => (
+          <Link
+            key={entry.id}
+            to={entry.youtube_videos ? `/video/${entry.youtube_videos.video_id}` : "#"}
+            className="flex gap-3 p-2 rounded-xl bg-white border border-gray-100 hover:border-red-200 hover:shadow-sm transition-all group"
+          >
+            {/* Thumbnail */}
+            <div className="relative flex-shrink-0 w-24 h-14 rounded-lg overflow-hidden bg-gray-200">
+              {entry.youtube_videos?.thumbnail ? (
+                <img
+                  src={entry.youtube_videos.thumbnail}
+                  alt={entry.youtube_videos.title}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  <Play className="h-6 w-6 text-gray-400" />
                 </div>
+              )}
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                <Play className="h-5 w-5 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
               </div>
+            </div>
 
-              {/* Info */}
-              <div className="flex-1 min-w-0 py-0.5">
-                <p className="text-sm font-medium text-gray-900 line-clamp-1 group-hover:text-red-600 transition-colors">
-                  {entry.youtube_videos?.title || "Video unavailable"}
-                </p>
-                <p className="text-xs text-gray-500 mt-0.5">
-                  {entry.youtube_videos?.channel_name || "Unknown channel"}
-                </p>
-                <div className="flex items-center gap-1 mt-1 text-xs text-gray-400">
-                  <Clock className="h-3 w-3" />
-                  {formatDistanceToNow(new Date(entry.watched_at), { addSuffix: true })}
-                </div>
+            {/* Info */}
+            <div className="flex-1 min-w-0 py-0.5">
+              <p className="text-sm font-medium text-gray-900 line-clamp-1 group-hover:text-red-600 transition-colors">
+                {entry.youtube_videos?.title || "Video unavailable"}
+              </p>
+              <p className="text-xs text-gray-500 mt-0.5">
+                {entry.youtube_videos?.channel_name || "Unknown channel"}
+              </p>
+              <div className="flex items-center gap-1 mt-1 text-xs text-gray-400">
+                <Clock className="h-3 w-3" />
+                {formatDistanceToNow(new Date(entry.watched_at), { addSuffix: true })}
               </div>
+            </div>
 
-              {/* Arrow */}
-              <div className="flex-shrink-0 self-center opacity-0 group-hover:opacity-100 transition-opacity">
-                <ExternalLink className="h-4 w-4 text-gray-400" />
-              </div>
-            </Link>
-          ))}
-        </div>
-      </ScrollArea>
+            {/* Arrow */}
+            <div className="flex-shrink-0 self-center opacity-0 group-hover:opacity-100 transition-opacity">
+              <ExternalLink className="h-4 w-4 text-gray-400" />
+            </div>
+          </Link>
+        ))}
+      </div>
     </div>
   );
 };
