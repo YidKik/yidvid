@@ -74,6 +74,18 @@ export const useAuthSignUp = () => {
         if (data?.user?.id) {
           await prefetchUserData(data.user.id);
         }
+
+        // Send welcome email
+        if (data?.user?.email) {
+          supabase.functions.invoke('send-transactional-email', {
+            body: {
+              templateName: 'welcome',
+              recipientEmail: data.user.email,
+              idempotencyKey: `welcome-${data.user.id}`,
+              templateData: { name: data.user.email.split('@')[0] },
+            },
+          }).catch(err => console.error('Failed to send welcome email:', err));
+        }
         
         if (options?.onSuccess) {
           options.onSuccess();

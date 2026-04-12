@@ -52,14 +52,26 @@ export function ReportVideoDialog({ videoId, compact = false }: ReportVideoDialo
       const reportEmail = isAuthenticated && user?.email ? user.email : email;
       const userId = isAuthenticated && user?.id ? user.id : null;
 
-      const { error } = await supabase.from("video_reports").insert({
+      const { data: insertedReport, error } = await supabase.from("video_reports").insert({
         video_id: videoId,
         user_id: userId,
         message,
         email: reportEmail,
-      });
+      }).select().single();
 
       if (error) throw error;
+
+      // Send acknowledgment email
+      if (insertedReport) {
+        supabase.functions.invoke('send-transactional-email', {
+          body: {
+            templateName: 'video-report-acknowledgment',
+            recipientEmail: reportEmail,
+            idempotencyKey: `video-report-${insertedReport.id}`,
+            templateData: { name: reportEmail.split('@')[0] },
+          },
+        }).catch(err => console.error('Failed to send report acknowledgment email:', err));
+      }
 
       toast.success("Thank you! Your report has been submitted successfully.", {
         icon: "✅",
