@@ -96,7 +96,6 @@ export const VideoCardInfo = ({
 }: VideoCardInfoProps) => {
   const { isMobile } = useIsMobile();
   
-  // Format view count with appropriate suffix (K, M)
   const formatViewCount = (count: number): string => {
     if (count >= 1000000) {
       return `${(count / 1000000).toFixed(1)}M`;
@@ -107,31 +106,28 @@ export const VideoCardInfo = ({
     }
   };
 
-  // Clean title by removing emojis
   const cleanTitle = removeEmojis(title);
 
   return (
-    <div className="mt-3 px-1">
-      {/* Title - Quicksand/Rubik for both English and Hebrew */}
+    <div className="mt-2 xl:mt-3 px-1">
       <h3 
-        className="text-sm font-bold line-clamp-2 text-foreground leading-snug"
+        className="text-[12px] xl:text-sm font-bold line-clamp-2 text-foreground leading-snug"
         style={{ fontFamily: "'Quicksand', 'Rubik', 'Varela Round', sans-serif" }}
         title={cleanTitle}
       >
         {cleanTitle}
       </h3>
       
-      {/* Meta info - date and views with icons */}
       <div 
-        className="flex items-center gap-3 mt-1.5 text-muted-foreground"
+        className="flex items-center gap-2 xl:gap-3 mt-1 xl:mt-1.5 text-muted-foreground"
         style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
       >
-        <div className="flex items-center gap-1 text-xs">
-          <Clock size={12} className="text-muted-foreground" />
+        <div className="flex items-center gap-1 text-[10px] xl:text-xs">
+          <Clock size={10} className="text-muted-foreground xl:w-3 xl:h-3" />
           <span>{formattedDate}</span>
         </div>
-        <div className="flex items-center gap-1 text-xs">
-          <Eye size={12} className="text-muted-foreground" />
+        <div className="flex items-center gap-1 text-[10px] xl:text-xs">
+          <Eye size={10} className="text-muted-foreground xl:w-3 xl:h-3" />
           <span>{formatViewCount(views)}</span>
         </div>
       </div>
