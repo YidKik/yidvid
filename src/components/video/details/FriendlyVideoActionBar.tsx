@@ -338,12 +338,11 @@ export const FriendlyVideoActionBar = ({
                 <ListPlus className="h-4 w-4" />
                 <span className="text-sm">Add to Playlist</span>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setReportOpen(true)} className="rounded-lg cursor-pointer gap-3 py-2.5 px-3">
-                <Flag className="h-4 w-4" />
-                <span className="text-sm">Report</span>
-              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+
+          {/* Report - rendered inline, manages its own dialog */}
+          <ReportVideoDialog videoId={videoId} compact />
         </div>
       </div>
 
@@ -381,9 +380,6 @@ export const FriendlyVideoActionBar = ({
           </div>
         </DialogContent>
       </Dialog>
-
-      {/* Report Dialog */}
-      <ReportVideoDialog videoId={videoId} open={reportOpen} onOpenChange={setReportOpen} />
     </div>
   );
 };
