@@ -237,10 +237,6 @@ body {
 
 /* Mobile toast adjustments */
 @media (max-width: 768px) {
-  [data-sonner-toaster] {
-    bottom: 72px !important;
-    top: auto !important;
-  }
   [data-sonner-toast] {
     padding: 0.5rem 0.75rem !important;
     font-size: 0.75rem !important;
