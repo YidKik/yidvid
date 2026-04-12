@@ -130,15 +130,9 @@ const ShortCard = ({
         />
         {/* Gradient overlay at bottom */}
         <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/70 to-transparent" />
-        {/* Play icon on hover */}
-        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-          <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
-            <Play className="w-5 h-5 text-white fill-white" />
-          </div>
-        </div>
       </div>
       {/* Title */}
-      <p className={`mt-2.5 ${isMobile ? 'text-[11px] leading-[1.3]' : 'text-[13px] leading-[1.4]'} font-medium text-foreground line-clamp-2`}>
+      <p className={`mt-2 ${isMobile ? 'text-[11px] leading-[1.3]' : 'text-[13px] leading-[1.4]'} font-semibold text-foreground line-clamp-2`}>
         {short.title}
       </p>
       {/* Views below title */}
