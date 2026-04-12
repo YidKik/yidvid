@@ -144,16 +144,6 @@ export const TermsOfServiceDialog: React.FC<TermsOfServiceDialogProps> = ({
             </div>
           </div>
 
-          {/* Footer */}
-          <div className="px-6 py-4 border-t border-[#E5E5E5] dark:border-[#333]">
-            <button
-              onClick={() => onOpenChange(false)}
-              className="w-full h-10 text-sm font-bold rounded-full transition-opacity hover:opacity-90"
-              style={{ backgroundColor: '#FF0000', color: 'white' }}
-            >
-              I Understand
-            </button>
-          </div>
         </DialogPrimitive.Content>
       </DialogPrimitive.Portal>
 
