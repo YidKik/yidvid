@@ -31,6 +31,7 @@ import About from './pages/About';
 import Favorites from './pages/Favorites';
 import WatchLater from './pages/WatchLater';
 import Playlists from './pages/Playlists';
+import Subscriptions from './pages/Subscriptions';
 
 import { PagePreloader } from './components/PagePreloader';
 import { TopLoadingBar } from './components/ui/TopLoadingBar';
@@ -100,6 +101,7 @@ function AppContent() {
         <Route path="/favorites" element={<Favorites />} />
         <Route path="/watch-later" element={<WatchLater />} />
         <Route path="/playlists" element={<Playlists />} />
+        <Route path="/subscriptions" element={<Subscriptions />} />
         
         {/* Admin route - single entry point, tabs handled internally */}
         <Route path="/admin" element={<AdminDashboard />} />
