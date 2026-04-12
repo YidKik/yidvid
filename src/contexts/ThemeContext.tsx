@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 
-type ThemeMode = "light" | "dark" | "auto";
+type ThemeMode = "light" | "dark";
 
 interface ThemeContextType {
   mode: ThemeMode;
@@ -17,23 +17,12 @@ const getSystemPreference = (): boolean => {
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [mode, setMode] = useState<ThemeMode>(() => {
     const saved = localStorage.getItem("yidvid-theme");
-    return (saved as ThemeMode) || "light";
+    if (saved === "light" || saved === "dark") return saved;
+    return "light";
   });
 
-  const isDark = mode === "dark" || (mode === "auto" && getSystemPreference());
+  const isDark = mode === "dark";
 
-  // Listen for system preference changes when in auto mode
-  useEffect(() => {
-    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-    const handler = () => {
-      if (mode === "auto") {
-        // Force re-render by toggling state
-        setMode("auto");
-      }
-    };
-    mediaQuery.addEventListener("change", handler);
-    return () => mediaQuery.removeEventListener("change", handler);
-  }, [mode]);
 
   // Apply dark class to <html>
   useEffect(() => {
@@ -51,11 +40,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   }, [mode]);
 
   const cycleTheme = () => {
-    setMode((prev) => {
-      if (prev === "light") return "dark";
-      if (prev === "dark") return "auto";
-      return "light";
-    });
+    setMode((prev) => (prev === "light" ? "dark" : "light"));
   };
 
   return (

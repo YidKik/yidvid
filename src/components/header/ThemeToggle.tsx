@@ -1,13 +1,12 @@
-import { Sun, Moon, Monitor } from "lucide-react";
+import { Sun, Moon } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { cn } from "@/lib/utils";
 
 export const ThemeToggle = () => {
   const { mode, cycleTheme } = useTheme();
 
-  const icon = mode === "light" ? Sun : mode === "dark" ? Moon : Monitor;
-  const Icon = icon;
-  const label = mode === "light" ? "Light" : mode === "dark" ? "Dark" : "Auto";
+  const Icon = mode === "light" ? Sun : Moon;
+  const label = mode === "light" ? "Light" : "Dark";
 
   return (
     <button
