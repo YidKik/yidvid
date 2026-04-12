@@ -219,19 +219,22 @@ const VideoDetails = () => {
                 {video?.title}
               </h1>
               
-              {/* Action Buttons */}
+              {/* Channel + Actions combined */}
               <FriendlyVideoActionBar 
                 videoId={video?.id || ""} 
                 youtubeVideoId={video?.video_id || ""}
                 views={video?.views || 0}
                 uploadedAt={video?.uploaded_at || ""}
+                channelName={video?.channel_name || ""}
+                channelId={video?.channel_id || ""}
+                channelThumbnail={video?.youtube_channels?.thumbnail_url || ""}
                 compact
               />
               
               {/* Divider */}
               <div className="h-px bg-[#E5E5E5]" />
               
-              {/* Channel + Description + More Videos */}
+              {/* Description + More Videos */}
               <FriendlyChannelSection
                 channelName={video?.channel_name || ""}
                 channelId={video?.channel_id || ""}
@@ -240,6 +243,7 @@ const VideoDetails = () => {
                 channelVideos={channelVideos}
                 isLoadingVideos={isLoadingRelated}
                 compact
+                hideChannelInfo
               />
               
               {/* Divider */}
