@@ -29,14 +29,14 @@ export const AuthForm = ({ onOpenChange, initialTab = 'signin', hideOptions = fa
           isLoading={isLoading}
           setIsLoading={setIsLoading}
           hideRememberMe={true}
-          hideSocialButtons={true}
+          hideSocialButtons={false}
         />
       ) : (
         <SignUpForm 
           isLoading={isLoading}
           setIsLoading={setIsLoading}
           onOpenChange={onOpenChange}
-          hideSocialButtons={true}
+          hideSocialButtons={false}
         />
       )}
       
