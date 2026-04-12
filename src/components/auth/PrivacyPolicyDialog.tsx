@@ -23,7 +23,7 @@ export const PrivacyPolicyDialog: React.FC<PrivacyPolicyDialogProps> = ({
           style={{ animation: isOpen ? 'legalFadeIn 0.3s ease-out' : undefined }}
         />
         <DialogPrimitive.Content
-          className={`fixed left-[50%] top-[50%] z-50 translate-x-[-50%] translate-y-[-50%] ${isMobile ? 'w-[calc(100%-2rem)] max-h-[85vh]' : 'w-[640px] max-h-[80vh]'} rounded-2xl overflow-hidden shadow-xl p-0 bg-white dark:bg-[#1a1a1a]`}
+          className={`fixed left-[50%] top-[50%] z-50 translate-x-[-50%] translate-y-[-50%] ${isMobile ? 'w-[calc(100%-2rem)] max-h-[75vh]' : 'w-[640px] max-h-[80vh]'} rounded-2xl overflow-hidden shadow-xl p-0 bg-white dark:bg-[#1a1a1a]`}
           style={{
             border: '2px solid #FFCC00',
             animation: isOpen ? 'legalScaleIn 0.35s cubic-bezier(0.16, 1, 0.3, 1)' : undefined,

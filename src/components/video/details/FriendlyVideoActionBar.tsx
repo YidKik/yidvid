@@ -279,8 +279,8 @@ export const FriendlyVideoActionBar = ({
                 Share
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[340px] p-0 bg-white border border-[#E5E5E5] rounded-2xl overflow-hidden shadow-xl [&>button]:hidden">
-              <div className="flex items-center justify-between px-5 py-3.5 border-b border-[#E5E5E5]">
+            <DialogContent className="sm:max-w-[340px] max-[768px]:max-w-[calc(100%-2rem)] max-[768px]:max-h-[70vh] p-0 bg-white border border-[#E5E5E5] rounded-2xl overflow-hidden shadow-xl [&>button]:hidden">
+              <div className="flex items-center justify-between px-5 py-3.5 max-[768px]:px-4 max-[768px]:py-2.5 border-b border-[#E5E5E5]">
                 <h3 className="text-sm font-bold text-[#1A1A1A] tracking-tight">Share</h3>
                 <button onClick={() => setShareOpen(false)} className="text-[#999999] hover:text-[#1A1A1A] transition-colors">
                   <X className="h-4 w-4" />
