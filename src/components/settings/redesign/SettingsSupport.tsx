@@ -1,20 +1,41 @@
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { supabase } from "@/integrations/supabase/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormValues, formSchema } from "@/components/contact/types";
 import { ContactForm } from "@/components/contact/ContactForm";
 import { toast } from "sonner";
-import { HelpCircle, MessageSquare } from "lucide-react";
+import { HelpCircle } from "lucide-react";
+import { useUnifiedAuth } from "@/hooks/useUnifiedAuth";
 
 export const SettingsSupport = () => {
+  const { user } = useUnifiedAuth();
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: { category: "general", name: "", email: "", message: "" },
+    defaultValues: { category: "general", name: "", email: "", user_id_display: "", message: "" },
   });
+
+  useEffect(() => {
+    const prefill = async () => {
+      if (!user?.id) return;
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("display_name, name, username, email")
+        .eq("id", user.id)
+        .single();
+      if (profile) {
+        form.setValue("name", profile.display_name || profile.name || profile.username || "");
+        form.setValue("email", profile.email || user.email || "");
+        form.setValue("user_id_display", user.id);
+      }
+    };
+    prefill();
+  }, [user?.id]);
 
   const onSubmit = async (data: FormValues) => {
     try {
-      const user = await supabase.auth.getUser();
+      const authUser = await supabase.auth.getUser();
       const { data: insertedRequest, error } = await supabase
         .from("contact_requests")
         .insert({
@@ -22,7 +43,7 @@ export const SettingsSupport = () => {
           name: data.name,
           email: data.email,
           message: data.message,
-          user_id: user.data.user?.id,
+          user_id: authUser.data.user?.id,
         })
         .select()
         .single();
