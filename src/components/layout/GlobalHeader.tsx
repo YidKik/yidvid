@@ -122,10 +122,10 @@ export const GlobalHeader = () => {
         className="fixed top-0 z-40 bg-white dark:bg-[#0f0f0f] border-b border-[#E5E5E5] dark:border-[#333] transition-all duration-300"
         style={{ left: isDesktop ? sidebarWidth : 0, right: 0 }}
       >
-        <div className="w-full px-3 md:px-6">
-          <div className="flex items-center justify-between h-14 gap-4">
+        <div className={`w-full ${isMobile ? 'px-2' : 'px-3 md:px-6'}`}>
+          <div className={`flex items-center justify-between h-14 ${isMobile ? 'gap-2' : 'gap-4'}`}>
             {/* Left Side - Spacer */}
-            <div className={`${isMobile ? 'w-4' : 'w-10'} shrink-0 flex items-center`} />
+            <div className={`${isMobile ? 'w-1' : 'w-10'} shrink-0 flex items-center`} />
 
             {/* Center - Search Bar */}
             <div 
@@ -140,8 +140,8 @@ export const GlobalHeader = () => {
                       : 'border-[#E5E5E5] dark:border-[#333] hover:border-[#FFCC00] hover:bg-white dark:hover:bg-[#1a1a1a]'
                   }`}
                 >
-                  <div className="flex items-center flex-1 pl-4 pr-2">
-                    <Search className="w-4 h-4 text-[#999999] dark:text-[#717171] shrink-0 mr-2" />
+                  <div className={`flex items-center flex-1 ${isMobile ? 'pl-2.5 pr-1' : 'pl-4 pr-2'}`}>
+                    <Search className={`${isMobile ? 'w-3.5 h-3.5' : 'w-4 h-4'} text-[#999999] dark:text-[#717171] shrink-0 mr-2`} />
                     <input
                       type="text"
                       value={searchQuery}
@@ -151,7 +151,7 @@ export const GlobalHeader = () => {
                       }}
                       onFocus={() => setIsSearchOpen(true)}
                       placeholder="Search videos..."
-                      className={`flex-1 bg-transparent border-none outline-none ${isMobile ? 'py-2 text-xs' : 'py-2.5 text-sm'} text-[#1A1A1A] dark:text-[#e8e8e8] placeholder:text-[#999999] dark:placeholder:text-[#717171]`}
+                      className={`flex-1 bg-transparent border-none outline-none ${isMobile ? 'py-1.5 text-[11px]' : 'py-2.5 text-sm'} text-[#1A1A1A] dark:text-[#e8e8e8] placeholder:text-[#999999] dark:placeholder:text-[#717171]`}
                       style={{ fontFamily: "'Quicksand', sans-serif" }}
                     />
                     {searchQuery && (
@@ -169,9 +169,9 @@ export const GlobalHeader = () => {
                   </div>
                   <button
                     type="submit"
-                    className={`${isMobile ? 'h-8 px-3' : 'h-10 px-4'} rounded-r-full border-l border-[#E5E5E5] dark:border-[#333] hover:bg-[#E5E5E5] dark:hover:bg-[#3f3f3f] transition-colors flex items-center justify-center bg-white dark:bg-[#222]`}
+                    className={`${isMobile ? 'h-7 px-2.5' : 'h-10 px-4'} rounded-r-full border-l border-[#E5E5E5] dark:border-[#333] hover:bg-[#E5E5E5] dark:hover:bg-[#3f3f3f] transition-colors flex items-center justify-center bg-white dark:bg-[#222]`}
                   >
-                    <Search className="w-4 h-4 text-[#666666] dark:text-[#aaa]" />
+                    <Search className={`${isMobile ? 'w-3.5 h-3.5' : 'w-4 h-4'} text-[#666666] dark:text-[#aaa]`} />
                   </button>
                 </div>
               </form>
@@ -266,7 +266,7 @@ export const GlobalHeader = () => {
             </div>
 
             {/* Right Side - Notifications + Sign In / Profile */}
-            <div className="flex items-center gap-2 shrink-0">
+            <div className={`flex items-center ${isMobile ? 'gap-1' : 'gap-2'} shrink-0`}>
               {/* Theme Toggle */}
               <ThemeToggle />
               {/* Notification Bell */}
@@ -278,7 +278,9 @@ export const GlobalHeader = () => {
               {isAuthenticated ? (
                 <Link
                   to="/settings"
-                  className="flex items-center justify-center w-9 h-9 rounded-full font-semibold text-sm transition-all duration-200 hover:bg-[#F5F5F5] dark:hover:bg-[#3f3f3f] border-2 border-[#E5E5E5] dark:border-[#3f3f3f] bg-transparent text-[#666666] dark:text-[#aaa]"
+                  className={`flex items-center justify-center rounded-full font-semibold transition-all duration-200 hover:bg-[#F5F5F5] dark:hover:bg-[#3f3f3f] border-2 border-[#E5E5E5] dark:border-[#3f3f3f] bg-transparent text-[#666666] dark:text-[#aaa] ${
+                    isMobile ? 'w-7 h-7 text-xs' : 'w-9 h-9 text-sm'
+                  }`}
                   style={{ fontFamily: "'Quicksand', sans-serif" }}
                   title="Profile"
                 >
@@ -288,10 +290,12 @@ export const GlobalHeader = () => {
                 <Button
                   onClick={() => setIsAuthOpen(true)}
                   size={isMobile ? "sm" : "default"}
-                  className="rounded-full gap-2 font-medium hover:brightness-90 transition-all bg-[#FF0000] text-white"
+                  className={`rounded-full gap-1.5 font-medium hover:brightness-90 transition-all bg-[#FF0000] text-white ${
+                    isMobile ? 'h-7 px-2.5 text-[11px]' : ''
+                  }`}
                   style={{ fontFamily: "'Quicksand', sans-serif" }}
                 >
-                  <LogIn className="w-4 h-4" />
+                  <LogIn className={isMobile ? "w-3 h-3" : "w-4 h-4"} />
                   {!isMobile && <span>Sign In</span>}
                 </Button>
               )}
