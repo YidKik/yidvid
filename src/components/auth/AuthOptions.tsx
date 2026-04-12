@@ -18,7 +18,32 @@ export const AuthOptions = ({
   hideCloseButton = false 
 }: AuthOptionsProps) => {
   const { isMobile } = useIsMobile();
-  
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+
+  const handleGoogleSignIn = async () => {
+    try {
+      setIsGoogleLoading(true);
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: window.location.origin,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          },
+        }
+      });
+      if (error) {
+        console.error("Google sign-in error:", error);
+        toast.error("Failed to sign in with Google. Please try again.");
+      }
+    } catch (err) {
+      console.error("Google sign-in error:", err);
+      toast.error("Failed to sign in with Google. Please try again.");
+    } finally {
+      setIsGoogleLoading(false);
+    }
+  };
   return (
     <div 
       className="flex flex-col items-center justify-center w-full relative"
