@@ -52,7 +52,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       <Toaster 
         position="bottom-right"
         closeButton={true}
-        offset="80px"
+        style={{ '--offset': '80px' } as React.CSSProperties}
         toastOptions={{
           classNames: {
             toast: 'group toast',
