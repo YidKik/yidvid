@@ -146,7 +146,7 @@ export const ChannelRequestsPageV2 = () => {
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-[#c4c7d4] truncate">{request.channel_name}</p>
                         <p className="text-xs text-[#565b6e] mt-0.5 truncate">
-                          {request.profiles?.display_name || request.profiles?.email || "Anonymous"}
+                          {request.profiles?.username || request.profiles?.display_name || request.profiles?.email || "Anonymous"}
                           {" · "}
                           {formatDistanceToNow(new Date(request.created_at), { addSuffix: true })}
                         </p>
