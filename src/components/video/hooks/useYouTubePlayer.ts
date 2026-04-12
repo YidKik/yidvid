@@ -125,6 +125,8 @@ export const useYouTubePlayer = (
       container.appendChild(playerDiv);
 
       const player = new window.YT.Player(playerDiv.id, {
+        width: '100%',
+        height: '100%',
         videoId,
         playerVars: {
           autoplay: 0,
@@ -132,10 +134,10 @@ export const useYouTubePlayer = (
           modestbranding: 1,
           iv_load_policy: 3,
           cc_load_policy: 0,
-          disablekb: 1,        // Disable YouTube keyboard shortcuts
+          disablekb: 1,
           playsinline: 1,
           fs: 0,
-          controls: 0,         // Hide native controls
+          controls: 0,
           showinfo: 0,
           origin: window.location.origin,
         },

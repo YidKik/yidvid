@@ -2,7 +2,6 @@ import { useState, useRef, useCallback } from "react";
 import { usePlayback } from "@/contexts/PlaybackContext";
 import { VideoPlayerError } from "./components/VideoPlayerError";
 import { CustomVideoControls } from "./components/CustomVideoControls";
-import { VideoPlayerBranding } from "./components/VideoPlayerBranding";
 import { useYouTubePlayer } from "./hooks/useYouTubePlayer";
 
 interface VideoPlayerProps {
@@ -36,12 +35,6 @@ export const VideoPlayer = ({ videoId, onVideoEnd }: VideoPlayerProps) => {
     [setPlaybackSpeed, player]
   );
 
-  const handleIntroComplete = useCallback(() => {
-    player.play();
-  }, [player]);
-
-  const handleOutroComplete = useCallback(() => {}, []);
-
   if (hasError) {
     return <VideoPlayerError />;
   }
@@ -54,15 +47,7 @@ export const VideoPlayer = ({ videoId, onVideoEnd }: VideoPlayerProps) => {
       {/* YouTube player renders here via the API */}
       <div
         ref={playerContainerRef}
-        className="absolute inset-0 w-full h-full pointer-events-none"
-      />
-      <VideoPlayerBranding
-        isLoading={!player.isReady}
-        isReady={player.isReady}
-        isPlaying={player.isPlaying}
-        hasEnded={player.hasEnded}
-        onIntroComplete={handleIntroComplete}
-        onOutroComplete={handleOutroComplete}
+        className="absolute inset-0 w-full h-full pointer-events-none [&_iframe]:!w-full [&_iframe]:!h-full"
       />
       <CustomVideoControls
         isPlaying={player.isPlaying}
