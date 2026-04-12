@@ -151,7 +151,7 @@ const handler = async (req: Request): Promise<Response> => {
         });
 
         // User confirmation
-        await resend.emails.send({
+        const userConfirmResult = await resend.emails.send({
           from: "YidVid <noreply@yidvid.co>",
           replyTo: "yidvid.info@gmail.com",
           to: [request.email],
@@ -186,6 +186,16 @@ const handler = async (req: Request): Promise<Response> => {
               </tr>
             </table>
           `),
+        });
+
+        // Log contact confirmation to email_logs
+        await supabase.from("email_logs").insert({
+          email_type: "contact-request-confirmation",
+          recipient_email: request.email,
+          subject: "We received your message!",
+          status: userConfirmResult.data?.id ? "sent" : "failed",
+          resend_message_id: userConfirmResult.data?.id || null,
+          error_message: userConfirmResult.error?.message || null,
         });
       }
 
