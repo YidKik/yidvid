@@ -2,6 +2,7 @@
 import { FeaturedVideoSection } from "@/components/videos/FeaturedVideoSection";
 import { NewVideosSection } from "@/components/videos/NewVideosSection";
 import { TrendingSection } from "@/components/videos/TrendingSection";
+import { ShortsSection } from "@/components/videos/ShortsSection";
 import { ChannelsRowSection } from "@/components/videos/ChannelsRowSection";
 import { CategoryVideosGrid } from "@/components/videos/CategoryVideosGrid";
 import { VideoData } from "@/hooks/video/types/video-fetcher";
@@ -101,6 +102,9 @@ export const DesktopVideoView = ({
 
       {/* New Videos Section */}
       <NewVideosSection videos={videos} autoExpand={sortBy === 'newest'} />
+
+      {/* Shorts Section */}
+      <ShortsSection />
 
       {/* Trending Section - Different style */}
       <TrendingSection videos={videos} />
