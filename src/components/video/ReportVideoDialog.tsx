@@ -61,14 +61,24 @@ export function ReportVideoDialog({ videoId, compact = false }: ReportVideoDialo
 
       if (error) throw error;
 
-      // Send acknowledgment email
+      // Fetch video info for the email
       if (insertedReport) {
+        const { data: videoInfo } = await supabase
+          .from("youtube_videos")
+          .select("title, channel_name")
+          .eq("id", videoId)
+          .single();
+
         supabase.functions.invoke('send-transactional-email', {
           body: {
             templateName: 'video-report-acknowledgment',
             recipientEmail: reportEmail,
             idempotencyKey: `video-report-${insertedReport.id}`,
-            templateData: { name: reportEmail.split('@')[0] },
+            templateData: {
+              name: reportEmail.split('@')[0],
+              videoTitle: videoInfo?.title || undefined,
+              channelName: videoInfo?.channel_name || undefined,
+            },
           },
         }).catch(err => console.error('Failed to send report acknowledgment email:', err));
       }
