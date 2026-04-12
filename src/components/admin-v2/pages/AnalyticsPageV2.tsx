@@ -6,7 +6,7 @@ import { useAnalyticsData } from "@/hooks/useAnalyticsData";
 import { subDays, format } from "date-fns";
 import {
   Tv, Video, Eye, Users, Clock, Activity, UserCheck, CalendarDays,
-  Play, BarChart3, Loader2
+  Play, BarChart3, Loader2, Timer, MousePointerClick, Globe
 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from "recharts";
@@ -190,7 +190,7 @@ export const AnalyticsPageV2 = () => {
     );
   }
 
-  const s = stats || { totalChannels: 0, totalVideos: 0, totalViews: 0, totalUsers: 0, activeUsers: 0, weeklyUsers: 0, monthlyUsers: 0, totalHours: 0 };
+  const s = stats || { totalChannels: 0, totalVideos: 0, totalViews: 0, totalUsers: 0, activeUsers: 0, weeklyUsers: 0, monthlyUsers: 0, totalHours: 0, avgEngagementTime: 0, totalSessions: 0, engagementRate: 0, totalPageViews: 0 };
 
   return (
     <div className="space-y-6 max-w-[1400px]">
@@ -209,20 +209,37 @@ export const AnalyticsPageV2 = () => {
         ))}
       </div>
 
-      {/* KPI row 1 */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <KPI label="Total Channels" value={s.totalChannels} icon={Tv} accent="bg-indigo-600" />
-        <KPI label="Total Videos" value={s.totalVideos} icon={Video} accent="bg-sky-600" />
-        <KPI label="Total Views" value={s.totalViews} icon={Eye} accent="bg-emerald-600" />
-        <KPI label="Total Users" value={s.totalUsers} icon={Users} accent="bg-amber-600" />
+      {/* ── User & Engagement KPIs ─────────────────────────────── */}
+      <div>
+        <p className="text-xs text-gray-500 uppercase tracking-wider font-medium mb-3">Users & Engagement</p>
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+          <KPI label="Active Now" value={s.activeUsers} icon={Activity} accent="bg-emerald-600" subtitle="Live sessions" />
+          <KPI label="Total Users" value={s.totalUsers} icon={Users} accent="bg-indigo-600" />
+          <KPI label="Weekly Users" value={s.weeklyUsers} icon={CalendarDays} accent="bg-sky-600" />
+          <KPI label="Monthly Users" value={s.monthlyUsers} icon={UserCheck} accent="bg-violet-600" />
+          <KPI label="Total Hours" value={s.totalHours} icon={Clock} accent="bg-amber-600" subtitle="On site" />
+        </div>
       </div>
 
-      {/* KPI row 2 */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <KPI label="Active Now" value={s.activeUsers} icon={Activity} accent="bg-emerald-600" subtitle="Live sessions" />
-        <KPI label="Weekly Users" value={s.weeklyUsers} icon={CalendarDays} accent="bg-sky-600" />
-        <KPI label="Monthly Users" value={s.monthlyUsers} icon={UserCheck} accent="bg-indigo-600" />
-        <KPI label="Total Hours" value={s.totalHours} icon={Clock} accent="bg-amber-600" subtitle="Session time" />
+      {/* ── Engagement Details ─────────────────────────────────── */}
+      <div>
+        <p className="text-xs text-gray-500 uppercase tracking-wider font-medium mb-3">Engagement Details</p>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <KPI label="Avg. Engagement" value={`${s.avgEngagementTime} min`} icon={Timer} accent="bg-rose-600" subtitle="Per user" />
+          <KPI label="Engagement Rate" value={`${s.engagementRate}%`} icon={MousePointerClick} accent="bg-teal-600" />
+          <KPI label="Total Sessions" value={s.totalSessions} icon={Globe} accent="bg-sky-600" />
+          <KPI label="Page Views" value={s.totalPageViews} icon={Eye} accent="bg-amber-600" />
+        </div>
+      </div>
+
+      {/* ── Content Stats ──────────────────────────────────────── */}
+      <div>
+        <p className="text-xs text-gray-500 uppercase tracking-wider font-medium mb-3">Content</p>
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+          <KPI label="Total Channels" value={s.totalChannels} icon={Tv} accent="bg-indigo-600" />
+          <KPI label="Total Videos" value={s.totalVideos} icon={Video} accent="bg-sky-600" />
+          <KPI label="Total Views" value={s.totalViews} icon={Eye} accent="bg-emerald-600" subtitle="Video views" />
+        </div>
       </div>
 
       {/* Chart */}
