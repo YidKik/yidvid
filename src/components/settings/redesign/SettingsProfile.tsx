@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useUnifiedAuth } from "@/hooks/useUnifiedAuth";
@@ -6,21 +6,44 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
+import { Checkbox } from "@/components/ui/checkbox";
 import { 
   Dialog, DialogContent, DialogDescription, DialogFooter, 
   DialogHeader, DialogTitle, DialogTrigger 
 } from "@/components/ui/dialog";
-import { LogOut, Trash2, AlertTriangle, Mail, Calendar, User, Hash, Bell } from "lucide-react";
+import { LogOut, Trash2, AlertTriangle, Mail, Calendar, User, Hash, Bell, X } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import type { ProfilesTable } from "@/integrations/supabase/types/profiles";
 
 export const SettingsProfile = () => {
-  const { user, profile, signOut, isLoading: authLoading } = useUnifiedAuth();
+  const { user, profile, signOut, isLoading: authLoading, refreshProfile } = useUnifiedAuth();
   const { isMobile } = useIsMobile();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const queryClient = useQueryClient();
+
+  // Sync Google avatar to profile on mount if missing
+  useEffect(() => {
+    if (!user?.id) return;
+    const googleAvatar = user.user_metadata?.avatar_url || user.user_metadata?.picture;
+    if (!googleAvatar) return;
+    
+    // Check if profile already has an avatar
+    const currentAvatar = profile?.avatar_url;
+    if (!currentAvatar) {
+      supabase
+        .from("profiles")
+        .update({ avatar_url: googleAvatar })
+        .eq("id", user.id)
+        .then(({ error }) => {
+          if (!error) {
+            queryClient.invalidateQueries({ queryKey: ["user-profile", user.id] });
+            queryClient.invalidateQueries({ queryKey: ["user-profile-settings", user.id] });
+          }
+        });
+    }
+  }, [user?.id, user?.user_metadata, profile?.avatar_url, queryClient]);
 
   const { data: profileData } = useQuery({
     queryKey: ["user-profile-settings", user?.id],
@@ -63,11 +86,45 @@ export const SettingsProfile = () => {
         .eq("user_id", user.id);
       if (error) throw error;
     },
+    onMutate: async ({ enabled, frequency }) => {
+      await queryClient.cancelQueries({ queryKey: ["email-preferences", user?.id] });
+      const previous = queryClient.getQueryData(["email-preferences", user?.id]);
+      queryClient.setQueryData(["email-preferences", user?.id], (old: any) => ({
+        ...old,
+        new_video_emails: enabled,
+        digest_frequency: enabled ? (frequency || old?.digest_frequency || "daily") : null,
+      }));
+      return { previous };
+    },
+    onError: (_err, _vars, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(["email-preferences", user?.id], context.previous);
+      }
+      toast.error("Failed to update preferences");
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["email-preferences", user?.id] });
       toast.success("Email preferences updated");
     },
-    onError: () => toast.error("Failed to update preferences"),
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["email-preferences", user?.id] });
+    },
+  });
+
+  const removeAvatar = useMutation({
+    mutationFn: async () => {
+      if (!user?.id) throw new Error("Not authenticated");
+      const { error } = await supabase
+        .from("profiles")
+        .update({ avatar_url: null })
+        .eq("id", user.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["user-profile", user?.id] });
+      queryClient.invalidateQueries({ queryKey: ["user-profile-settings", user?.id] });
+      toast.success("Profile picture removed");
+    },
+    onError: () => toast.error("Failed to remove profile picture"),
   });
 
   const videoEmailsEnabled = emailPrefs?.new_video_emails ?? false;
@@ -106,17 +163,31 @@ export const SettingsProfile = () => {
     ? format(new Date(createdAt), "MMMM d, yyyy")
     : "Unknown";
   const initials = username.split(" ").map((n: string) => n[0]).join("").toUpperCase().slice(0, 2);
+  const avatarUrl = displayProfile.avatar_url || "";
+  const hasAvatar = !!avatarUrl;
 
   return (
     <div>
       {/* Profile Card */}
       <div className={cn("flex items-center gap-4 mb-6", isMobile && "flex-col text-center")}>
-        <Avatar className={cn(isMobile ? "h-20 w-20" : "h-16 w-16", "border-2 border-[#E5E5E5] dark:border-[#333]")}>
-          <AvatarImage src={displayProfile.avatar_url || ""} alt={username} />
-          <AvatarFallback className="bg-[#FF0000]/10 text-[#FF0000] font-bold text-lg">
-            {initials}
-          </AvatarFallback>
-        </Avatar>
+        <div className="relative group">
+          <Avatar className={cn(isMobile ? "h-20 w-20" : "h-16 w-16", "border-2 border-[#E5E5E5] dark:border-[#333]")}>
+            <AvatarImage src={avatarUrl} alt={username} />
+            <AvatarFallback className="bg-[#FF0000]/10 text-[#FF0000] font-bold text-lg">
+              {initials}
+            </AvatarFallback>
+          </Avatar>
+          {hasAvatar && (
+            <button
+              onClick={() => removeAvatar.mutate()}
+              disabled={removeAvatar.isPending}
+              className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-[#666]/80 hover:bg-[#FF0000] text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+              title="Remove profile picture"
+            >
+              <X className="h-3 w-3" />
+            </button>
+          )}
+        </div>
         <div>
           <h2 className="text-xl font-bold text-[#1A1A1A] dark:text-[#e8e8e8]">{username}</h2>
           <p className="text-sm text-[#666] dark:text-[#aaa]">Your account details</p>
@@ -144,30 +215,37 @@ export const SettingsProfile = () => {
           <Switch
             checked={videoEmailsEnabled}
             onCheckedChange={(checked) => {
-              updateEmailPrefs.mutate({ enabled: checked, frequency: checked ? digestFrequency : undefined });
+              updateEmailPrefs.mutate({ enabled: checked, frequency: checked ? "daily" : undefined });
             }}
             disabled={prefsLoading || updateEmailPrefs.isPending}
           />
         </div>
         {videoEmailsEnabled && (
           <div className="mt-3 pt-3 border-t border-[#E5E5E5] dark:border-[#333]">
-            <p className="text-xs text-[#888] mb-2">How often?</p>
-            <div className="flex gap-2">
-              {(["daily", "weekly"] as const).map((freq) => (
-                <button
-                  key={freq}
-                  onClick={() => updateEmailPrefs.mutate({ enabled: true, frequency: freq })}
+            <p className="text-xs text-[#888] mb-2.5">How often would you like to receive digests?</p>
+            <div className="space-y-2.5">
+              <label className="flex items-center gap-2.5 cursor-pointer">
+                <Checkbox
+                  checked={digestFrequency === "daily"}
+                  onCheckedChange={(checked) => {
+                    if (checked) updateEmailPrefs.mutate({ enabled: true, frequency: "daily" });
+                  }}
                   disabled={updateEmailPrefs.isPending}
-                  className={cn(
-                    "px-4 py-1.5 rounded-lg text-xs font-semibold transition-all capitalize",
-                    digestFrequency === freq
-                      ? "bg-[#FF0000] text-white"
-                      : "bg-[#E5E5E5] dark:bg-[#222] text-[#666] dark:text-[#aaa] hover:bg-[#ddd] dark:hover:bg-[#333]"
-                  )}
-                >
-                  {freq}
-                </button>
-              ))}
+                />
+                <span className="text-sm text-[#1A1A1A] dark:text-[#e8e8e8] font-medium">Daily</span>
+                <span className="text-xs text-[#888]">— Receive a summary every morning</span>
+              </label>
+              <label className="flex items-center gap-2.5 cursor-pointer">
+                <Checkbox
+                  checked={digestFrequency === "weekly"}
+                  onCheckedChange={(checked) => {
+                    if (checked) updateEmailPrefs.mutate({ enabled: true, frequency: "weekly" });
+                  }}
+                  disabled={updateEmailPrefs.isPending}
+                />
+                <span className="text-sm text-[#1A1A1A] dark:text-[#e8e8e8] font-medium">Weekly</span>
+                <span className="text-xs text-[#888]">— Receive a summary once a week</span>
+              </label>
             </div>
           </div>
         )}
