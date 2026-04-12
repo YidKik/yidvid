@@ -22,7 +22,7 @@ export const ChannelShortsSection = ({ shorts, isLoading }: ChannelShortsSection
 
   return (
     <div className={`${isMobile ? '' : 'max-w-[1200px] mx-auto'}`}>
-      <div className={`grid ${isMobile ? 'grid-cols-3 gap-2' : 'grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-7 gap-2'}`}>
+      <div className={`grid ${isMobile ? 'grid-cols-3 gap-2.5' : 'grid-cols-4 sm:grid-cols-5 md:grid-cols-5 lg:grid-cols-6 gap-3'}`}>
         {shorts.map((short, index) => (
           <div
             key={short.id}
