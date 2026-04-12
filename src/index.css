@@ -65,6 +65,11 @@ body {
   color: hsl(var(--video-subscribe-idle-fg)) !important;
 }
 
+.dark .video-subscribe-button,
+.dark .video-subscribe-button:hover {
+  color: hsl(var(--video-subscribe-idle-fg)) !important;
+}
+
 .video-subscribe-button[data-subscribed="true"] {
   background-color: hsl(var(--video-subscribe-active-bg));
   border-color: hsl(var(--video-subscribe-active-bg));
@@ -74,6 +79,11 @@ body {
 .video-subscribe-button[data-subscribed="true"]:hover {
   background-color: hsl(var(--video-subscribe-active-bg-hover));
   border-color: hsl(var(--video-subscribe-active-bg-hover));
+  color: hsl(var(--video-subscribe-active-fg)) !important;
+}
+
+.dark .video-subscribe-button[data-subscribed="true"],
+.dark .video-subscribe-button[data-subscribed="true"]:hover {
   color: hsl(var(--video-subscribe-active-fg)) !important;
 }
 
