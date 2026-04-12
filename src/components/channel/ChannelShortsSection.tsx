@@ -1,6 +1,6 @@
 
 import { useNavigate } from "react-router-dom";
-import { Play, Eye } from "lucide-react";
+import { Play } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 interface ChannelShortsSectionProps {
