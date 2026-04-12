@@ -1,5 +1,6 @@
 import { formatDistanceToNow } from "date-fns";
 import { VideoCommentsTable } from "@/integrations/supabase/types/video-comments";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 type Comment = VideoCommentsTable["Row"] & {
   profiles: {
