@@ -13,10 +13,59 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+const LOGO_URL = "https://yidvid.lovable.app/yidvid-logo-full.png";
+const SITE_URL = "https://yidvid.co";
+
 interface ContactNotificationRequest {
   type: "new_request" | "admin_reply";
   requestId: string;
   adminReply?: string;
+}
+
+function emailWrapper(content: string): string {
+  return `
+    <!DOCTYPE html>
+    <html lang="en">
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      </head>
+      <body style="margin: 0; padding: 0; background-color: #f5f5f5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color: #f5f5f5; padding: 40px 20px;">
+          <tr>
+            <td align="center">
+              <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width: 600px; width: 100%;">
+                <!-- Header -->
+                <tr>
+                  <td style="background-color: #FF0000; padding: 24px 40px; text-align: center; border-radius: 12px 12px 0 0;">
+                    <img src="${LOGO_URL}" alt="YidVid" height="36" style="height: 36px; width: auto;" />
+                  </td>
+                </tr>
+                <!-- Yellow accent -->
+                <tr>
+                  <td style="background-color: #FFCC00; height: 4px; font-size: 0; line-height: 0;">&nbsp;</td>
+                </tr>
+                <!-- Body -->
+                <tr>
+                  <td style="background-color: #ffffff; padding: 36px 40px;">
+                    ${content}
+                  </td>
+                </tr>
+                <!-- Footer -->
+                <tr>
+                  <td style="background-color: #1a1a1a; padding: 24px 40px; border-radius: 0 0 12px 12px; text-align: center;">
+                    <p style="margin: 0; font-size: 12px; color: #999999;">
+                      YidVid — Your Source for Jewish Video Content
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </body>
+    </html>
+  `;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -27,7 +76,6 @@ const handler = async (req: Request): Promise<Response> => {
   try {
     const { type, requestId, adminReply }: ContactNotificationRequest = await req.json();
 
-    // Get contact request details
     const { data: request, error: requestError } = await supabase
       .from("contact_requests")
       .select("*")
@@ -43,7 +91,6 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     if (type === "new_request") {
-      // Send notification to all admins
       const { data: adminEmails, error: adminError } = await supabase
         .from("admin_email_settings")
         .select("email")
@@ -60,134 +107,114 @@ const handler = async (req: Request): Promise<Response> => {
       if (adminEmails && adminEmails.length > 0) {
         const emails = adminEmails.map(admin => admin.email);
         
+        // Admin notification
         await resend.emails.send({
           from: "YidVid <noreply@yidvid.co>",
           replyTo: "yidvid.info@gmail.com",
           to: emails,
-          subject: `New Contact Request: ${request.category.replace("_", " ")}`,
-          html: `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-              <div style="text-align: center; padding: 20px; background-color: #f8f9fa;">
-                <img src="https://yidvid.co/logo.png" alt="YidVid Logo" style="height: 50px; margin-bottom: 10px;" />
-                <h1 style="color: #333; margin: 0;">New Contact Request</h1>
-              </div>
-              
-              <div style="padding: 20px; background-color: white;">
-                <h2 style="color: #333;">Request Details</h2>
-                
-                <p><strong>Category:</strong> ${request.category.replace("_", " ")}</p>
-                <p><strong>Name:</strong> ${request.name}</p>
-                <p><strong>Email:</strong> ${request.email}</p>
-                <p><strong>Date:</strong> ${new Date(request.created_at).toLocaleDateString()}</p>
-                
-                <h3 style="color: #333;">Message:</h3>
-                <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin: 10px 0;">
-                  ${request.message}
-                </div>
-                
-                <div style="text-align: center; margin-top: 30px;">
-                  <a href="https://yidvid.co/admin/contact-requests" 
-                     style="background-color: #007bff; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block;">
-                    View in Admin Dashboard
+          subject: `New Contact: ${request.category.replace("_", " ")}`,
+          html: emailWrapper(`
+            <h1 style="margin: 0 0 20px; font-size: 22px; font-weight: 700; color: #1a1a1a;">
+              New Contact Request
+            </h1>
+            
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color: #f5f5f5; border-radius: 8px; margin: 0 0 24px;">
+              <tr><td style="padding: 20px;">
+                <p style="margin: 0 0 8px; font-size: 14px; color: #444;"><strong>Category:</strong> ${request.category.replace("_", " ")}</p>
+                <p style="margin: 0 0 8px; font-size: 14px; color: #444;"><strong>Name:</strong> ${request.name}</p>
+                <p style="margin: 0 0 8px; font-size: 14px; color: #444;"><strong>Email:</strong> ${request.email}</p>
+                <p style="margin: 0; font-size: 14px; color: #444;"><strong>Date:</strong> ${new Date(request.created_at).toLocaleDateString()}</p>
+              </td></tr>
+            </table>
+            
+            <p style="margin: 0 0 8px; font-size: 14px; font-weight: 600; color: #1a1a1a;">Message:</p>
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-left: 4px solid #FFCC00; background-color: #FFF9E6; border-radius: 0 8px 8px 0; margin: 0 0 28px;">
+              <tr><td style="padding: 16px 20px;">
+                <p style="margin: 0; font-size: 14px; color: #444; line-height: 1.6;">${request.message}</p>
+              </td></tr>
+            </table>
+            
+            <table role="presentation" cellpadding="0" cellspacing="0" style="margin: 0 auto;">
+              <tr>
+                <td style="background-color: #FF0000; border-radius: 8px;">
+                  <a href="${SITE_URL}/admin/contact-requests" style="display: inline-block; padding: 12px 28px; color: #ffffff; font-size: 14px; font-weight: 600; text-decoration: none;">
+                    View in Dashboard
                   </a>
-                </div>
-              </div>
-              
-              <div style="text-align: center; padding: 20px; background-color: #f8f9fa; color: #666; font-size: 14px;">
-                <p>This is an automated notification from YidVid admin panel.</p>
-              </div>
-            </div>
-          `,
+                </td>
+              </tr>
+            </table>
+          `),
         });
 
-        // Send confirmation email to the user who submitted the request
+        // User confirmation
         await resend.emails.send({
           from: "YidVid <noreply@yidvid.co>",
           replyTo: "yidvid.info@gmail.com",
           to: [request.email],
-          subject: "We received your contact request",
-          html: `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-              <div style="text-align: center; padding: 20px; background-color: #f8f9fa;">
-                <img src="https://yidvid.co/logo.png" alt="YidVid Logo" style="height: 50px; margin-bottom: 10px;" />
-                <h1 style="color: #333; margin: 0;">Thank You for Contacting Us</h1>
-              </div>
-              
-              <div style="padding: 20px; background-color: white;">
-                <p>Dear ${request.name},</p>
-                
-                <p>Thank you for reaching out to us! We have received your contact request and our team will review it shortly.</p>
-                
-                <div style="background-color: #e7f3ff; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #007bff;">
-                  <h3 style="color: #333; margin-top: 0;">Your Request Details:</h3>
-                  <p><strong>Category:</strong> ${request.category.replace("_", " ")}</p>
-                  <p><strong>Message:</strong> ${request.message}</p>
-                  <p><strong>Submitted:</strong> ${new Date(request.created_at).toLocaleDateString()}</p>
-                </div>
-                
-                <p>We aim to respond to all inquiries within 24-48 hours. If you have any urgent matters, please don't hesitate to contact us directly at yidvid.info@gmail.com.</p>
-                
-                <div style="text-align: center; margin-top: 30px;">
-                  <a href="https://yidvid.co" 
-                     style="background-color: #007bff; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block;">
+          subject: "We received your message!",
+          html: emailWrapper(`
+            <h1 style="margin: 0 0 20px; font-size: 22px; font-weight: 700; color: #1a1a1a;">
+              Thanks for reaching out, ${request.name}!
+            </h1>
+            
+            <p style="margin: 0 0 20px; font-size: 15px; line-height: 1.6; color: #444444;">
+              We've received your message and our team will get back to you within 24–48 hours.
+            </p>
+            
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-left: 4px solid #FFCC00; background-color: #FFF9E6; border-radius: 0 8px 8px 0; margin: 0 0 28px;">
+              <tr><td style="padding: 16px 20px;">
+                <p style="margin: 0 0 6px; font-size: 13px; font-weight: 600; color: #1a1a1a;">Your message:</p>
+                <p style="margin: 0; font-size: 14px; color: #444; line-height: 1.6;">${request.message}</p>
+              </td></tr>
+            </table>
+            
+            <p style="margin: 0 0 28px; font-size: 14px; color: #888;">
+              Need immediate help? Reply to this email or contact us at yidvid.info@gmail.com
+            </p>
+            
+            <table role="presentation" cellpadding="0" cellspacing="0" style="margin: 0 auto;">
+              <tr>
+                <td style="background-color: #FF0000; border-radius: 8px;">
+                  <a href="${SITE_URL}" style="display: inline-block; padding: 12px 28px; color: #ffffff; font-size: 14px; font-weight: 600; text-decoration: none;">
                     Visit YidVid
                   </a>
-                </div>
-              </div>
-              
-              <div style="text-align: center; padding: 20px; background-color: #f8f9fa; color: #666; font-size: 14px;">
-                <p>Best regards,<br>The YidVid Team</p>
-                <p>For any questions, reply to: yidvid.info@gmail.com</p>
-              </div>
-            </div>
-          `,
+                </td>
+              </tr>
+            </table>
+          `),
         });
       }
 
     } else if (type === "admin_reply" && adminReply) {
-      // Send reply to user
       await resend.emails.send({
         from: "YidVid Support <support@yidvid.co>",
         replyTo: "yidvid.info@gmail.com",
         to: [request.email],
         subject: `Re: Your ${request.category.replace("_", " ")} request`,
-        html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <div style="text-align: center; padding: 20px; background-color: #f8f9fa;">
-              <img src="https://yidvid.co/logo.png" alt="YidVid Logo" style="height: 50px; margin-bottom: 10px;" />
-              <h1 style="color: #333; margin: 0;">Response to Your Request</h1>
-            </div>
-            
-            <div style="padding: 20px; background-color: white;">
-              <p>Hello ${request.name},</p>
-              
-              <p>Thank you for contacting us. We have reviewed your ${request.category.replace("_", " ")} request and here is our response:</p>
-              
-              <div style="background-color: #e7f3ff; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #007bff;">
-                ${adminReply}
-              </div>
-              
-              <h3 style="color: #333;">Your Original Message:</h3>
-              <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin: 10px 0;">
-                ${request.message}
-              </div>
-              
-              <p>If you have any further questions, please don't hesitate to contact us again at yidvid.info@gmail.com.</p>
-              
-              <div style="text-align: center; margin-top: 30px;">
-                <a href="https://yidvid.co" 
-                   style="background-color: #007bff; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block;">
-                  Visit YidVid
-                </a>
-              </div>
-            </div>
-            
-            <div style="text-align: center; padding: 20px; background-color: #f8f9fa; color: #666; font-size: 14px;">
-              <p>Best regards,<br>The YidVid Support Team</p>
-              <p>For any questions, reply to: yidvid.info@gmail.com</p>
-            </div>
-          </div>
-        `,
+        html: emailWrapper(`
+          <h1 style="margin: 0 0 20px; font-size: 22px; font-weight: 700; color: #1a1a1a;">
+            We've responded to your request
+          </h1>
+          
+          <p style="margin: 0 0 8px; font-size: 14px; color: #888;">Hello ${request.name},</p>
+          
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-left: 4px solid #FF0000; background-color: #FFF5F5; border-radius: 0 8px 8px 0; margin: 16px 0 28px;">
+            <tr><td style="padding: 16px 20px;">
+              <p style="margin: 0; font-size: 15px; color: #1a1a1a; line-height: 1.6;">${adminReply}</p>
+            </td></tr>
+          </table>
+          
+          <p style="margin: 0 0 8px; font-size: 13px; font-weight: 600; color: #888;">Your original message:</p>
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color: #f5f5f5; border-radius: 8px; margin: 0 0 28px;">
+            <tr><td style="padding: 16px 20px;">
+              <p style="margin: 0; font-size: 13px; color: #666; line-height: 1.5;">${request.message}</p>
+            </td></tr>
+          </table>
+          
+          <p style="margin: 0; font-size: 14px; color: #888;">
+            Need more help? Just reply to this email.
+          </p>
+        `),
       });
     }
 

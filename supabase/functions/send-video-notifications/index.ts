@@ -11,6 +11,9 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+const LOGO_URL = "https://yidvid.lovable.app/yidvid-logo-full.png";
+const SITE_URL = "https://yidvid.co";
+
 interface VideoNotificationRequest {
   videoId: string;
   channelId: string;
@@ -33,7 +36,6 @@ const handler = async (req: Request): Promise<Response> => {
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    // Get all subscribers who want email notifications
     const { data: subscribers, error: subError } = await supabase
       .from('channel_subscriptions')
       .select(`
@@ -61,7 +63,6 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log(`Found ${subscribers.length} subscribers to notify`);
 
-    // Send emails in batches of 50 to avoid rate limits
     const batchSize = 50;
     let sentCount = 0;
     let failedCount = 0;
@@ -69,77 +70,108 @@ const handler = async (req: Request): Promise<Response> => {
     for (let i = 0; i < subscribers.length; i += batchSize) {
       const batch = subscribers.slice(i, i + batchSize);
       
-      // Send emails in parallel within batch
       const emailPromises = batch.map(async (sub: any) => {
         try {
           const userEmail = sub.profiles.email;
           const userName = sub.profiles.name || userEmail.split('@')[0];
           const unsubscribeToken = sub.email_preferences.unsubscribe_token;
-          const unsubscribeUrl = `https://yidvid.com/unsubscribe?token=${unsubscribeToken}`;
+          const unsubscribeUrl = `${SITE_URL}/unsubscribe?token=${unsubscribeToken}`;
 
           const emailResponse = await resend.emails.send({
             from: "YidVid <noreply@yidvid.co>",
             to: [userEmail],
-            subject: `New Video from ${channelName} - ${videoTitle}`,
+            subject: `New from ${channelName}: ${videoTitle}`,
             html: `
               <!DOCTYPE html>
-              <html>
+              <html lang="en">
                 <head>
                   <meta charset="utf-8">
                   <meta name="viewport" content="width=device-width, initial-scale=1.0">
                 </head>
-                <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-                  <div style="background: linear-gradient(135deg, #ea384c 0%, #d32f3e 100%); padding: 30px 20px; text-align: center; border-radius: 10px 10px 0 0;">
-                    <h1 style="color: white; margin: 0; font-size: 24px;">🎬 New Video on YidVid</h1>
-                  </div>
-                  
-                  <div style="background: #ffffff; padding: 40px 30px; border: 1px solid #e0e0e0; border-top: none; border-radius: 0 0 10px 10px;">
-                    <p style="font-size: 16px; margin-top: 0;">Hi ${userName},</p>
-                    
-                    <p style="font-size: 16px;">
-                      <strong>${channelName}</strong> just uploaded a new video you might enjoy!
-                    </p>
-                    
-                    <div style="background: #f5f5f5; border-radius: 8px; overflow: hidden; margin: 30px 0;">
-                      <a href="${videoUrl}" style="text-decoration: none; color: inherit; display: block;">
-                        <img src="${thumbnailUrl}" alt="${videoTitle}" style="width: 100%; height: auto; display: block;">
-                        <div style="padding: 20px;">
-                          <h2 style="color: #333; margin: 0 0 10px 0; font-size: 20px;">${videoTitle}</h2>
-                          <p style="color: #666; margin: 0; font-size: 14px;">📺 ${channelName}</p>
-                        </div>
-                      </a>
-                    </div>
-                    
-                    <div style="text-align: center; margin: 30px 0;">
-                      <a href="${videoUrl}" style="display: inline-block; background: #ea384c; color: white; padding: 14px 32px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 16px;">
-                        Watch Now
-                      </a>
-                    </div>
-                    
-                    <hr style="border: none; border-top: 1px solid #e0e0e0; margin: 30px 0;">
-                    
-                    <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0; text-align: center;">
-                      <p style="font-size: 12px; color: #999; margin: 5px 0;">
-                        You received this because you're subscribed to ${channelName}
-                      </p>
-                      <p style="font-size: 12px; color: #999; margin: 5px 0;">
-                        <a href="https://yidvid.com/settings/email-preferences" style="color: #999; text-decoration: underline;">Manage email preferences</a> | 
-                        <a href="${unsubscribeUrl}" style="color: #999; text-decoration: underline;">Unsubscribe from all emails</a>
-                      </p>
-                    </div>
-                  </div>
+                <body style="margin: 0; padding: 0; background-color: #f5f5f5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color: #f5f5f5; padding: 40px 20px;">
+                    <tr>
+                      <td align="center">
+                        <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width: 600px; width: 100%;">
+                          
+                          <!-- Header -->
+                          <tr>
+                            <td style="background-color: #FF0000; padding: 24px 40px; text-align: center; border-radius: 12px 12px 0 0;">
+                              <img src="${LOGO_URL}" alt="YidVid" height="36" style="height: 36px; width: auto;" />
+                            </td>
+                          </tr>
+                          
+                          <!-- Yellow accent -->
+                          <tr>
+                            <td style="background-color: #FFCC00; height: 4px; font-size: 0; line-height: 0;">&nbsp;</td>
+                          </tr>
+                          
+                          <!-- Body -->
+                          <tr>
+                            <td style="background-color: #ffffff; padding: 36px 40px;">
+                              <p style="margin: 0 0 8px; font-size: 14px; color: #888888;">Hi ${userName},</p>
+                              <h1 style="margin: 0 0 24px; font-size: 22px; font-weight: 700; color: #1a1a1a;">
+                                New video from ${channelName}
+                              </h1>
+                              
+                              <!-- Video card -->
+                              <a href="${videoUrl}" style="text-decoration: none; display: block;">
+                                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border: 1px solid #e5e5e5; border-radius: 10px; overflow: hidden; margin: 0 0 28px;">
+                                  <tr>
+                                    <td>
+                                      <img src="${thumbnailUrl}" alt="${videoTitle}" width="520" style="width: 100%; height: auto; display: block;" />
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <td style="padding: 16px 20px;">
+                                      <p style="margin: 0 0 6px; font-size: 17px; font-weight: 600; color: #1a1a1a;">${videoTitle}</p>
+                                      <p style="margin: 0; font-size: 13px; color: #888888;">📺 ${channelName}</p>
+                                    </td>
+                                  </tr>
+                                </table>
+                              </a>
+                              
+                              <table role="presentation" cellpadding="0" cellspacing="0" style="margin: 0 auto 24px;">
+                                <tr>
+                                  <td style="background-color: #FF0000; border-radius: 8px;">
+                                    <a href="${videoUrl}" style="display: inline-block; padding: 14px 36px; color: #ffffff; font-size: 16px; font-weight: 600; text-decoration: none;">
+                                      Watch Now
+                                    </a>
+                                  </td>
+                                </tr>
+                              </table>
+                            </td>
+                          </tr>
+                          
+                          <!-- Footer -->
+                          <tr>
+                            <td style="background-color: #1a1a1a; padding: 24px 40px; border-radius: 0 0 12px 12px; text-align: center;">
+                              <p style="margin: 0 0 8px; font-size: 12px; color: #999999;">
+                                You're receiving this because you subscribed to ${channelName}
+                              </p>
+                              <p style="margin: 0; font-size: 12px;">
+                                <a href="${SITE_URL}/settings/email-preferences" style="color: #666666; text-decoration: underline;">Email preferences</a>
+                                <span style="color: #444444;"> · </span>
+                                <a href="${unsubscribeUrl}" style="color: #666666; text-decoration: underline;">Unsubscribe</a>
+                              </p>
+                            </td>
+                          </tr>
+                          
+                        </table>
+                      </td>
+                    </tr>
+                  </table>
                 </body>
               </html>
             `,
           });
 
-          // Log the email
           await supabase.from('email_logs').insert({
             user_id: sub.user_id,
             email_type: 'new_video',
             recipient_email: userEmail,
-            subject: `New Video from ${channelName} - ${videoTitle}`,
-            status: 'sent',
+            subject: `New from ${channelName}: ${videoTitle}`,
+            status: emailResponse.error ? 'failed' : 'sent',
             resend_message_id: emailResponse.data?.id
           });
 
@@ -148,12 +180,11 @@ const handler = async (req: Request): Promise<Response> => {
         } catch (emailError: any) {
           console.error(`Failed to send email to ${sub.profiles.email}:`, emailError);
           
-          // Log the failure
           await supabase.from('email_logs').insert({
             user_id: sub.user_id,
             email_type: 'new_video',
             recipient_email: sub.profiles.email,
-            subject: `New Video from ${channelName} - ${videoTitle}`,
+            subject: `New from ${channelName}: ${videoTitle}`,
             status: 'failed',
             error_message: emailError.message
           });
@@ -164,7 +195,6 @@ const handler = async (req: Request): Promise<Response> => {
 
       await Promise.all(emailPromises);
       
-      // Wait 1 second between batches to avoid rate limits
       if (i + batchSize < subscribers.length) {
         await new Promise(resolve => setTimeout(resolve, 1000));
       }
@@ -178,19 +208,13 @@ const handler = async (req: Request): Promise<Response> => {
       failed: failedCount 
     }), {
       status: 200,
-      headers: {
-        "Content-Type": "application/json",
-        ...corsHeaders,
-      },
+      headers: { "Content-Type": "application/json", ...corsHeaders },
     });
   } catch (error: any) {
     console.error("Error in send-video-notifications function:", error);
     return new Response(
       JSON.stringify({ error: error.message }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json", ...corsHeaders },
-      }
+      { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
     );
   }
 };

@@ -8,6 +8,7 @@ const corsHeaders = {
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 const BATCH_SIZE = 50;
+const LOGO_URL = "https://yidvid.lovable.app/yidvid-logo-full.png";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -25,7 +26,6 @@ serve(async (req) => {
       }
     );
 
-    // Get the authenticated user
     const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
     if (authError || !user) {
       return new Response(
@@ -34,7 +34,6 @@ serve(async (req) => {
       );
     }
 
-    // Verify admin role
     const { data: isAdmin } = await supabaseClient.rpc("has_role", {
       _user_id: user.id,
       _role: "admin",
@@ -56,13 +55,11 @@ serve(async (req) => {
       );
     }
 
-    // Use service role client to query all users
     const supabaseAdmin = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
-    // Get recipient emails based on filter
     let recipientEmails: string[] = [];
 
     if (filterType === "all") {
@@ -72,7 +69,6 @@ serve(async (req) => {
         .not("email", "is", null);
       recipientEmails = (profiles || []).map((p: any) => p.email);
     } else {
-      // subscribed only - respect email_preferences.general_emails
       const { data: prefs } = await supabaseAdmin
         .from("email_preferences")
         .select("user_id")
@@ -98,7 +94,6 @@ serve(async (req) => {
       );
     }
 
-    // Log broadcast to database
     const { data: broadcast, error: insertError } = await supabaseAdmin
       .from("broadcast_emails")
       .insert({
@@ -116,24 +111,59 @@ serve(async (req) => {
       console.error("Error logging broadcast:", insertError);
     }
 
-    // Send emails in batches
     let successCount = 0;
     let failCount = 0;
 
-    const unsubscribeBaseUrl = "https://yidvid.lovable.app/email-preferences";
+    const unsubscribeBaseUrl = "https://yidvid.co/email-preferences";
 
     for (let i = 0; i < recipientEmails.length; i += BATCH_SIZE) {
       const batch = recipientEmails.slice(i, i + BATCH_SIZE);
 
       const sendPromises = batch.map(async (email) => {
         try {
-          const htmlWithFooter = `
-            ${body}
-            <hr style="margin-top: 32px; border: none; border-top: 1px solid #e5e7eb;" />
-            <p style="font-size: 12px; color: #9ca3af; text-align: center; margin-top: 16px;">
-              You're receiving this because you're subscribed to YidVid updates.<br />
-              <a href="${unsubscribeBaseUrl}" style="color: #8B5CF6;">Unsubscribe</a> from these emails.
-            </p>
+          const htmlWithBranding = `
+            <!DOCTYPE html>
+            <html lang="en">
+              <head>
+                <meta charset="utf-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              </head>
+              <body style="margin: 0; padding: 0; background-color: #f5f5f5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color: #f5f5f5; padding: 40px 20px;">
+                  <tr>
+                    <td align="center">
+                      <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width: 600px; width: 100%;">
+                        <!-- Header -->
+                        <tr>
+                          <td style="background-color: #FF0000; padding: 24px 40px; text-align: center; border-radius: 12px 12px 0 0;">
+                            <img src="${LOGO_URL}" alt="YidVid" height="36" style="height: 36px; width: auto;" />
+                          </td>
+                        </tr>
+                        <!-- Yellow accent -->
+                        <tr>
+                          <td style="background-color: #FFCC00; height: 4px; font-size: 0; line-height: 0;">&nbsp;</td>
+                        </tr>
+                        <!-- Body -->
+                        <tr>
+                          <td style="background-color: #ffffff; padding: 36px 40px; font-size: 15px; line-height: 1.6; color: #444444;">
+                            ${body}
+                          </td>
+                        </tr>
+                        <!-- Footer -->
+                        <tr>
+                          <td style="background-color: #1a1a1a; padding: 24px 40px; border-radius: 0 0 12px 12px; text-align: center;">
+                            <p style="margin: 0 0 8px; font-size: 12px; color: #999999;">
+                              You're receiving this because you're subscribed to YidVid updates.
+                            </p>
+                            <a href="${unsubscribeBaseUrl}" style="font-size: 12px; color: #666666; text-decoration: underline;">Unsubscribe</a>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </body>
+            </html>
           `;
 
           const res = await fetch("https://api.resend.com/emails", {
@@ -146,7 +176,7 @@ serve(async (req) => {
               from: "YidVid <noreply@yidvid.co>",
               to: [email],
               subject,
-              html: htmlWithFooter,
+              html: htmlWithBranding,
             }),
           });
 
@@ -165,13 +195,11 @@ serve(async (req) => {
 
       await Promise.all(sendPromises);
 
-      // Small delay between batches to respect rate limits
       if (i + BATCH_SIZE < recipientEmails.length) {
         await new Promise((resolve) => setTimeout(resolve, 1000));
       }
     }
 
-    // Update broadcast status
     if (broadcast?.id) {
       await supabaseAdmin
         .from("broadcast_emails")
@@ -182,7 +210,6 @@ serve(async (req) => {
         .eq("id", broadcast.id);
     }
 
-    // Log to email_logs
     await supabaseAdmin.from("email_logs").insert({
       email_type: "broadcast",
       subject,
