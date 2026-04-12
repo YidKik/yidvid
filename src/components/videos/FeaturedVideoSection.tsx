@@ -125,14 +125,14 @@ export const FeaturedVideoSection = ({ videos }: FeaturedVideoSectionProps) => {
                 </div>
                 
                 {/* Content at Bottom */}
-                <div className={`absolute bottom-0 left-0 right-0 ${isMobile ? 'p-2' : 'p-2 sm:p-3 lg:p-4'}`}>
-                  <h3 className={`text-white font-semibold line-clamp-2 group-hover:text-yellow-400 transition-colors drop-shadow-md ${isMobile ? 'text-[11px]' : 'text-[11px] sm:text-xs md:text-sm lg:text-base'}`}>
+                <div className={`absolute bottom-0 left-0 right-0 ${isMobile ? 'p-2' : 'p-2 md:p-2.5 xl:p-4'}`}>
+                  <h3 className={`text-white font-semibold line-clamp-2 group-hover:text-yellow-400 transition-colors drop-shadow-md ${isMobile ? 'text-[11px]' : 'text-[10px] md:text-[11px] lg:text-xs xl:text-base'}`}>
                     {video.title}
                   </h3>
-                  <p className={`text-white/80 mt-0.5 truncate ${isMobile ? 'text-[9px]' : 'text-[9px] sm:text-[10px] md:text-xs lg:text-sm'}`}>
+                  <p className={`text-white/80 mt-0.5 truncate ${isMobile ? 'text-[9px]' : 'text-[8px] md:text-[9px] lg:text-[10px] xl:text-sm'}`}>
                     {video.channel_name}
                   </p>
-                  <div className={`flex items-center gap-1.5 text-white/60 mt-0.5 ${isMobile ? 'text-[8px]' : 'text-[8px] sm:text-[9px] md:text-[10px] lg:text-xs'}`}>
+                  <div className={`flex items-center gap-1.5 text-white/60 mt-0.5 ${isMobile ? 'text-[8px]' : 'text-[7px] md:text-[8px] lg:text-[9px] xl:text-xs'}`}>
                     <span>{getFormattedDate(video.uploaded_at)}</span>
                     <span>•</span>
                     <span>{video.views?.toLocaleString() || 0} views</span>
