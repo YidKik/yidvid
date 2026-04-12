@@ -142,7 +142,7 @@ const Dashboard = () => {
             onTabChange={handleTabChange}
           />
 
-          <main className="flex-1 overflow-y-auto p-6 bg-[#0a0b10]">
+          <main className="flex-1 overflow-hidden p-6 bg-[#0a0b10]">
             {renderPage()}
           </main>
         </div>
