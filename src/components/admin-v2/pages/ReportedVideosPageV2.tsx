@@ -112,7 +112,7 @@ export const ReportedVideosPageV2 = () => {
     },
     onSuccess: () => {
       toast.success("Video deleted from site");
-      setSelectedVideoId(null);
+      queryClient.invalidateQueries({ queryKey: ["video-reports"] });
       queryClient.invalidateQueries({ queryKey: ["video-reports"] });
       queryClient.invalidateQueries({ queryKey: ["moderation"] });
     },
