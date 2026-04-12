@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { format } from "date-fns";
 import {
   Search, Plus, Video, Trash2, RotateCcw, RefreshCw, Loader2, Tv,
-  ChevronRight, ExternalLink, Hash, Calendar, Eye, AlertCircle
+  ChevronRight, ExternalLink, Hash, Calendar, Eye, AlertCircle, Clock
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,6 +20,8 @@ import {
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
+import { useSessionManager } from "@/hooks/useSessionManager";
+import { useAnalyticsData } from "@/hooks/useAnalyticsData";
 
 // ─── dark card helper ───────────────────────────────────────────────
 const Card = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
@@ -29,6 +31,8 @@ const Card = ({ children, className = "" }: { children: React.ReactNode; classNa
 // ─── Main page ──────────────────────────────────────────────────────
 export const ChannelsPageV2 = () => {
   const { user } = useUnifiedAuth();
+  const { session } = useSessionManager();
+  const { totalStats: analyticsStats } = useAnalyticsData(session?.user?.id);
   const [search, setSearch] = useState("");
   const [selectedChannelId, setSelectedChannelId] = useState<string | null>(null);
   const [addChannelOpen, setAddChannelOpen] = useState(false);
@@ -158,6 +162,45 @@ export const ChannelsPageV2 = () => {
 
   return (
     <div className="space-y-6 max-w-[1400px]">
+      {/* Analytics summary */}
+      {analyticsStats && (
+        <div className="grid grid-cols-3 gap-4">
+          <div className="rounded-xl border border-[#1e2028] bg-[#12131a] p-4">
+            <div className="flex items-start justify-between">
+              <div className="space-y-1">
+                <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Total Channels</p>
+                <p className="text-2xl font-bold text-white">{analyticsStats.totalChannels}</p>
+              </div>
+              <div className="w-9 h-9 rounded-lg flex items-center justify-center bg-indigo-600">
+                <Tv className="w-4.5 h-4.5 text-white" />
+              </div>
+            </div>
+          </div>
+          <div className="rounded-xl border border-[#1e2028] bg-[#12131a] p-4">
+            <div className="flex items-start justify-between">
+              <div className="space-y-1">
+                <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Total Videos</p>
+                <p className="text-2xl font-bold text-white">{analyticsStats.totalVideos}</p>
+              </div>
+              <div className="w-9 h-9 rounded-lg flex items-center justify-center bg-sky-600">
+                <Video className="w-4.5 h-4.5 text-white" />
+              </div>
+            </div>
+          </div>
+          <div className="rounded-xl border border-[#1e2028] bg-[#12131a] p-4">
+            <div className="flex items-start justify-between">
+              <div className="space-y-1">
+                <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Total Watch Time</p>
+                <p className="text-2xl font-bold text-white">{analyticsStats.totalHours}h</p>
+              </div>
+              <div className="w-9 h-9 rounded-lg flex items-center justify-center bg-amber-600">
+                <Clock className="w-4.5 h-4.5 text-white" />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header bar */}
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div className="flex items-center gap-3">
