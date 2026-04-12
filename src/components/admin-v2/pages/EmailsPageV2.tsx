@@ -1,10 +1,10 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { 
   Mail, Send, BarChart3, Loader2, CheckCircle, XCircle, Clock, 
   AlertTriangle, ChevronDown, ChevronRight, Eye, Search, Filter,
-  Users, ArrowUpRight, Inbox, TrendingUp, Megaphone
+  Users, ArrowUpRight, Inbox, TrendingUp, Megaphone, X, UserCheck
 } from "lucide-react";
 import { format, subDays, subHours } from "date-fns";
 import { toast } from "sonner";
@@ -37,8 +37,108 @@ const TEMPLATE_LABELS: Record<string, string> = {
   "video-report-acknowledgment": "Video Report",
   "video-report-resolved": "Video Report Resolved",
   "video-digest": "Video Digest",
+  "new_video": "New Video Notification",
+  broadcast: "Broadcast",
   auth_emails: "Auth Email",
 };
+
+interface MergedEmail {
+  id: string;
+  template: string;
+  status: string;
+  recipient: string;
+  date: string;
+  error?: string;
+  subject?: string;
+}
+
+function getSinceDate(timeRange: TimeRange) {
+  if (timeRange === "24h") return subHours(new Date(), 24).toISOString();
+  if (timeRange === "7d") return subDays(new Date(), 7).toISOString();
+  if (timeRange === "30d") return subDays(new Date(), 30).toISOString();
+  return "2020-01-01T00:00:00Z";
+}
+
+/** Merge both email tables, dedup email_send_log by message_id, filter test entries */
+function useMergedEmails(timeRange: TimeRange) {
+  const sinceDate = useMemo(() => getSinceDate(timeRange), [timeRange]);
+
+  const { data: sendLogs, isLoading: l1 } = useQuery({
+    queryKey: ["email-sendlog", timeRange],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("email_send_log")
+        .select("id, template_name, status, recipient_email, created_at, message_id, error_message, metadata")
+        .gte("created_at", sinceDate)
+        .order("created_at", { ascending: false })
+        .limit(1000);
+      return data || [];
+    },
+  });
+
+  const { data: emailLogs, isLoading: l2 } = useQuery({
+    queryKey: ["email-emaillogs", timeRange],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("email_logs")
+        .select("id, email_type, status, recipient_email, sent_at, error_message, subject, resend_message_id")
+        .gte("sent_at", sinceDate)
+        .order("sent_at", { ascending: false })
+        .limit(1000);
+      return data || [];
+    },
+  });
+
+  const allEmails = useMemo<MergedEmail[]>(() => {
+    const results: MergedEmail[] = [];
+    const seenRecipientKeys = new Set<string>();
+
+    // email_logs is the primary source of truth for actually sent emails
+    for (const e of emailLogs || []) {
+      // Skip broadcast summary entries like "broadcast_X_recipients"
+      if (e.recipient_email?.startsWith("broadcast_")) continue;
+      const key = `${e.email_type}-${e.recipient_email}-${e.sent_at}`;
+      seenRecipientKeys.add(key);
+      results.push({
+        id: e.id,
+        template: e.email_type || "unknown",
+        status: e.status || "sent",
+        recipient: e.recipient_email || "N/A",
+        date: e.sent_at || "",
+        subject: e.subject || undefined,
+        error: e.error_message || undefined,
+      });
+    }
+
+    // Deduplicate send_log by message_id (keep latest = first since sorted desc)
+    const seenMsgIds = new Set<string>();
+    for (const e of sendLogs || []) {
+      const msgKey = e.message_id || e.id;
+      if (seenMsgIds.has(msgKey)) continue;
+      seenMsgIds.add(msgKey);
+
+      // Skip test entries
+      if (e.recipient_email === "test@example.com") continue;
+
+      // Only show final statuses (sent or failed/dlq), skip standalone pending
+      if (e.status === "pending") continue;
+
+      results.push({
+        id: e.id,
+        template: e.template_name || "unknown",
+        status: e.status || "pending",
+        recipient: e.recipient_email || "N/A",
+        date: e.created_at,
+        error: e.error_message || undefined,
+      });
+    }
+
+    results.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    return results;
+  }, [sendLogs, emailLogs]);
+
+  return { allEmails, isLoading: l1 || l2 };
+}
 
 // ─── Main Component ───────────────────────────────────────
 export const EmailsPageV2 = () => {
@@ -79,63 +179,7 @@ export const EmailsPageV2 = () => {
 // ─── Analytics Section ─────────────────────────────────────
 function EmailAnalytics() {
   const [timeRange, setTimeRange] = useState<TimeRange>("7d");
-
-  const sinceDate = useMemo(() => {
-    if (timeRange === "24h") return subHours(new Date(), 24).toISOString();
-    if (timeRange === "7d") return subDays(new Date(), 7).toISOString();
-    if (timeRange === "30d") return subDays(new Date(), 30).toISOString();
-    return "2020-01-01T00:00:00Z";
-  }, [timeRange]);
-
-  // Fetch from both email tables
-  const { data: sendLogs, isLoading: logsLoading } = useQuery({
-    queryKey: ["email-analytics-sendlog", timeRange],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from("email_send_log")
-        .select("id, template_name, status, recipient_email, created_at, message_id")
-        .gte("created_at", sinceDate)
-        .order("created_at", { ascending: false })
-        .limit(1000);
-      return data || [];
-    },
-  });
-
-  const { data: emailLogs, isLoading: emailLogsLoading } = useQuery({
-    queryKey: ["email-analytics-emaillogs", timeRange],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from("email_logs")
-        .select("id, email_type, status, recipient_email, sent_at")
-        .gte("sent_at", sinceDate)
-        .order("sent_at", { ascending: false })
-        .limit(1000);
-      return data || [];
-    },
-  });
-
-  // Deduplicate send_log by message_id (latest status)
-  const deduped = useMemo(() => {
-    if (!sendLogs) return [];
-    const map = new Map<string, any>();
-    for (const log of sendLogs) {
-      const key = log.message_id || log.id;
-      if (!map.has(key)) map.set(key, log);
-    }
-    return Array.from(map.values());
-  }, [sendLogs]);
-
-  // Merge both sources
-  const allEmails = useMemo(() => {
-    const merged: { template: string; status: string; recipient: string; date: string }[] = [];
-    for (const e of deduped) {
-      merged.push({ template: e.template_name || "unknown", status: e.status || "pending", recipient: e.recipient_email || "", date: e.created_at });
-    }
-    for (const e of emailLogs || []) {
-      merged.push({ template: e.email_type || "unknown", status: e.status || "sent", recipient: e.recipient_email || "", date: e.sent_at || "" });
-    }
-    return merged;
-  }, [deduped, emailLogs]);
+  const { allEmails, isLoading } = useMergedEmails(timeRange);
 
   const stats = useMemo(() => {
     const total = allEmails.length;
@@ -156,8 +200,6 @@ function EmailAnalytics() {
     }
     return Array.from(map.entries()).sort((a, b) => b[1].total - a[1].total);
   }, [allEmails]);
-
-  const isLoading = logsLoading || emailLogsLoading;
 
   return (
     <div className="space-y-6">
@@ -253,77 +295,13 @@ function EmailLogs() {
   const [page, setPage] = useState(0);
   const perPage = 50;
 
-  const sinceDate = useMemo(() => {
-    if (timeRange === "24h") return subHours(new Date(), 24).toISOString();
-    if (timeRange === "7d") return subDays(new Date(), 7).toISOString();
-    if (timeRange === "30d") return subDays(new Date(), 30).toISOString();
-    return "2020-01-01T00:00:00Z";
-  }, [timeRange]);
+  const { allEmails: allLogs, isLoading } = useMergedEmails(timeRange);
 
-  // Fetch send_log
-  const { data: sendLogs, isLoading: l1 } = useQuery({
-    queryKey: ["email-logs-sendlog", timeRange],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from("email_send_log")
-        .select("id, template_name, status, recipient_email, created_at, message_id, error_message, metadata")
-        .gte("created_at", sinceDate)
-        .order("created_at", { ascending: false })
-        .limit(1000);
-      return data || [];
-    },
-  });
-
-  // Fetch email_logs
-  const { data: emailLogs, isLoading: l2 } = useQuery({
-    queryKey: ["email-logs-emaillogs", timeRange],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from("email_logs")
-        .select("id, email_type, status, recipient_email, sent_at, error_message, subject")
-        .gte("sent_at", sinceDate)
-        .order("sent_at", { ascending: false })
-        .limit(1000);
-      return data || [];
-    },
-  });
-
-  // Merge and deduplicate
-  const allLogs = useMemo(() => {
-    const logs: { id: string; template: string; status: string; recipient: string; date: string; error?: string; subject?: string }[] = [];
-
-    // Deduplicate send_log by message_id
-    const seenMsgIds = new Set<string>();
-    for (const e of sendLogs || []) {
-      const key = e.message_id || e.id;
-      if (seenMsgIds.has(key)) continue;
-      seenMsgIds.add(key);
-      logs.push({
-        id: e.id, template: e.template_name || "unknown", status: e.status || "pending",
-        recipient: e.recipient_email || "N/A", date: e.created_at, error: e.error_message || undefined,
-      });
-    }
-
-    for (const e of emailLogs || []) {
-      logs.push({
-        id: e.id, template: e.email_type || "unknown", status: e.status || "sent",
-        recipient: e.recipient_email || "N/A", date: e.sent_at || "", subject: e.subject || undefined,
-        error: e.error_message || undefined,
-      });
-    }
-
-    // Sort by date desc
-    logs.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-    return logs;
-  }, [sendLogs, emailLogs]);
-
-  // Get unique templates
   const templates = useMemo(() => {
     const s = new Set(allLogs.map(l => l.template));
     return Array.from(s).sort();
   }, [allLogs]);
 
-  // Filter
   const filtered = useMemo(() => {
     return allLogs.filter(l => {
       if (templateFilter !== "all" && l.template !== templateFilter) return false;
@@ -336,7 +314,6 @@ function EmailLogs() {
     });
   }, [allLogs, templateFilter, statusFilter, searchQuery]);
 
-  // Group by template for drilldown view
   const grouped = useMemo(() => {
     const map = new Map<string, typeof filtered>();
     for (const l of filtered) {
@@ -346,9 +323,6 @@ function EmailLogs() {
     }
     return Array.from(map.entries()).sort((a, b) => b[1].length - a[1].length);
   }, [filtered]);
-
-  const paginated = filtered.slice(page * perPage, (page + 1) * perPage);
-  const totalPages = Math.ceil(filtered.length / perPage);
 
   return (
     <div className="space-y-5">
@@ -390,7 +364,6 @@ function EmailLogs() {
         >
           <option value="all">All Status</option>
           <option value="sent">Sent</option>
-          <option value="pending">Pending</option>
           <option value="failed">Failed</option>
           <option value="dlq">Dead Letter</option>
           <option value="suppressed">Suppressed</option>
@@ -411,8 +384,12 @@ function EmailLogs() {
         <span className="text-[11px] text-[#565b6e] ml-auto">{filtered.length} emails</span>
       </div>
 
-      {(l1 || l2) ? (
+      {(isLoading) ? (
         <div className="flex justify-center py-16"><Loader2 className="w-6 h-6 animate-spin text-[#6366f1]" /></div>
+      ) : filtered.length === 0 ? (
+        <div className="rounded-xl bg-[#13141b] border border-[#1e2028] py-16 text-center text-[#565b6e] text-sm">
+          No emails found for this period
+        </div>
       ) : (
         <>
           {/* Grouped Drilldown View */}
@@ -461,6 +438,11 @@ function EmailLogs() {
                                 {log.status}
                               </div>
                               <span className="text-[12px] text-[#c4c7d4] flex-1 truncate">{log.recipient}</span>
+                              {log.subject && (
+                                <span className="text-[11px] text-[#8b8fa3] truncate max-w-[200px]" title={log.subject}>
+                                  {log.subject}
+                                </span>
+                              )}
                               {log.error && (
                                 <span className="text-[11px] text-red-400/80 truncate max-w-[200px]" title={log.error}>
                                   {log.error}
@@ -486,7 +468,7 @@ function EmailLogs() {
           </div>
 
           {/* Pagination */}
-          {totalPages > 1 && (
+          {grouped.length > 0 && (
             <div className="flex justify-center gap-2 pt-2">
               <button
                 onClick={() => setPage(Math.max(0, page - 1))}
@@ -496,11 +478,11 @@ function EmailLogs() {
                 Previous
               </button>
               <span className="px-3 py-1.5 text-xs text-[#565b6e]">
-                Page {page + 1} of {totalPages}
+                Page {page + 1} of {Math.ceil(filtered.length / perPage)}
               </span>
               <button
-                onClick={() => setPage(Math.min(totalPages - 1, page + 1))}
-                disabled={page >= totalPages - 1}
+                onClick={() => setPage(Math.min(grouped.length - 1, page + 1))}
+                disabled={page >= grouped.length - 1}
                 className="px-3 py-1.5 text-xs font-medium rounded-lg bg-[#13141b] border border-[#1e2028] text-[#8b8fa3] hover:bg-[#1a1c25] disabled:opacity-40"
               >
                 Next
@@ -520,7 +502,35 @@ function BroadcastComposer() {
   const [filterType, setFilterType] = useState("subscribed");
   const [showConfirm, setShowConfirm] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
+  const [selectedUserEmails, setSelectedUserEmails] = useState<string[]>([]);
+  const [userSearch, setUserSearch] = useState("");
   const queryClient = useQueryClient();
+
+  // Fetch users for "selected" mode
+  const { data: allUsers } = useQuery({
+    queryKey: ["broadcast-all-users"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("id, email, display_name, username, name")
+        .not("email", "is", null)
+        .order("email");
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: filterType === "selected",
+  });
+
+  const filteredUsers = useMemo(() => {
+    if (!allUsers || !userSearch) return allUsers || [];
+    const q = userSearch.toLowerCase();
+    return allUsers.filter(u =>
+      u.email?.toLowerCase().includes(q) ||
+      u.display_name?.toLowerCase().includes(q) ||
+      u.username?.toLowerCase().includes(q) ||
+      u.name?.toLowerCase().includes(q)
+    );
+  }, [allUsers, userSearch]);
 
   const { data: broadcasts, isLoading } = useQuery({
     queryKey: ["broadcast-emails"],
@@ -537,8 +547,12 @@ function BroadcastComposer() {
 
   const sendBroadcast = useMutation({
     mutationFn: async () => {
+      const payload: any = { subject, body, filterType };
+      if (filterType === "selected") {
+        payload.selectedEmails = selectedUserEmails;
+      }
       const { data, error } = await supabase.functions.invoke("send-broadcast-email", {
-        body: { subject, body, filterType },
+        body: payload,
       });
       if (error) throw error;
       return data;
@@ -547,6 +561,7 @@ function BroadcastComposer() {
       toast.success(`Broadcast sent to ${data?.sent || 0} recipients`);
       setSubject("");
       setBody("");
+      setSelectedUserEmails([]);
       setShowConfirm(false);
       queryClient.invalidateQueries({ queryKey: ["broadcast-emails"] });
     },
@@ -555,6 +570,14 @@ function BroadcastComposer() {
       setShowConfirm(false);
     },
   });
+
+  const toggleUser = (email: string) => {
+    setSelectedUserEmails(prev =>
+      prev.includes(email) ? prev.filter(e => e !== email) : [...prev, email]
+    );
+  };
+
+  const canSend = subject.trim() && body.trim() && (filterType !== "selected" || selectedUserEmails.length > 0);
 
   return (
     <div className="space-y-6">
@@ -570,13 +593,79 @@ function BroadcastComposer() {
             <label className="text-[11px] font-semibold text-[#8b8fa3] uppercase tracking-wider mb-1.5 block">Recipients</label>
             <select
               value={filterType}
-              onChange={(e) => setFilterType(e.target.value)}
+              onChange={(e) => { setFilterType(e.target.value); setSelectedUserEmails([]); }}
               className="w-full bg-[#0a0b10] border border-[#1e2028] text-[#c4c7d4] text-sm px-3 py-2.5 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#6366f1]"
             >
               <option value="subscribed">Subscribed Users Only</option>
               <option value="all">All Users</option>
+              <option value="selected">Select Specific Users</option>
             </select>
           </div>
+
+          {/* User Selection Panel */}
+          {filterType === "selected" && (
+            <div className="rounded-lg border border-[#1e2028] bg-[#0a0b10] overflow-hidden">
+              {/* Selected pills */}
+              {selectedUserEmails.length > 0 && (
+                <div className="px-3 py-2 border-b border-[#1e2028] flex flex-wrap gap-1.5">
+                  {selectedUserEmails.map(email => (
+                    <span key={email} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#6366f1]/15 text-[#818cf8] text-[11px] font-medium">
+                      {email}
+                      <button onClick={() => toggleUser(email)} className="hover:text-white">
+                        <X className="w-3 h-3" />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+              {/* Search */}
+              <div className="relative px-3 py-2 border-b border-[#1e2028]">
+                <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#565b6e]" />
+                <input
+                  type="text"
+                  placeholder="Search users by email, name, or username..."
+                  value={userSearch}
+                  onChange={(e) => setUserSearch(e.target.value)}
+                  className="w-full bg-transparent text-[#c4c7d4] text-xs pl-6 pr-3 py-1 focus:outline-none placeholder:text-[#565b6e]"
+                />
+              </div>
+              {/* User list */}
+              <div className="max-h-[200px] overflow-y-auto divide-y divide-[#1e2028]/50">
+                {filteredUsers?.slice(0, 50).map(user => {
+                  const isSelected = selectedUserEmails.includes(user.email);
+                  return (
+                    <button
+                      key={user.id}
+                      onClick={() => toggleUser(user.email)}
+                      className={cn(
+                        "w-full flex items-center gap-3 px-3 py-2 text-left transition-colors",
+                        isSelected ? "bg-[#6366f1]/10" : "hover:bg-[#1a1c25]"
+                      )}
+                    >
+                      <div className={cn(
+                        "w-4 h-4 rounded border flex items-center justify-center shrink-0",
+                        isSelected ? "bg-[#6366f1] border-[#6366f1]" : "border-[#565b6e]"
+                      )}>
+                        {isSelected && <CheckCircle className="w-3 h-3 text-white" />}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-[12px] text-[#c4c7d4] truncate">{user.email}</p>
+                        {(user.display_name || user.username) && (
+                          <p className="text-[10px] text-[#565b6e] truncate">{user.display_name || user.username}</p>
+                        )}
+                      </div>
+                    </button>
+                  );
+                })}
+                {filteredUsers?.length === 0 && (
+                  <div className="px-3 py-4 text-center text-[11px] text-[#565b6e]">No users found</div>
+                )}
+              </div>
+              <div className="px-3 py-1.5 border-t border-[#1e2028] text-[10px] text-[#565b6e]">
+                {selectedUserEmails.length} user{selectedUserEmails.length !== 1 ? "s" : ""} selected
+              </div>
+            </div>
+          )}
 
           {/* Subject */}
           <div>
@@ -612,7 +701,7 @@ function BroadcastComposer() {
             </button>
             <button
               onClick={() => setShowConfirm(true)}
-              disabled={!subject.trim() || !body.trim() || sendBroadcast.isPending}
+              disabled={!canSend || sendBroadcast.isPending}
               className="px-5 py-2 rounded-lg text-[13px] font-semibold bg-[#6366f1] text-white hover:bg-[#5558e6] disabled:opacity-40 transition-all flex items-center gap-2"
             >
               {sendBroadcast.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
@@ -641,7 +730,7 @@ function BroadcastComposer() {
                   <div>
                     <p className="text-[13px] font-medium text-white">{b.subject}</p>
                     <p className="text-[11px] text-[#565b6e] mt-0.5">
-                      {format(new Date(b.created_at), "MMM d, yyyy h:mm a")} · {b.recipient_count} recipients · {b.filter_type === "all" ? "All Users" : "Subscribed"}
+                      {format(new Date(b.created_at), "MMM d, yyyy h:mm a")} · {b.recipient_count} recipients · {b.filter_type === "all" ? "All Users" : b.filter_type === "selected" ? "Selected Users" : "Subscribed"}
                     </p>
                   </div>
                   <div className={cn("flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold", sc.bg, sc.text)}>
@@ -672,7 +761,10 @@ function BroadcastComposer() {
             </div>
             <div className="space-y-1 text-[13px] text-[#c4c7d4]">
               <p><span className="text-[#8b8fa3]">Subject:</span> {subject}</p>
-              <p><span className="text-[#8b8fa3]">Recipients:</span> {filterType === "all" ? "All users" : "Subscribed users"}</p>
+              <p>
+                <span className="text-[#8b8fa3]">Recipients:</span>{" "}
+                {filterType === "all" ? "All users" : filterType === "selected" ? `${selectedUserEmails.length} selected users` : "Subscribed users"}
+              </p>
             </div>
             <div className="flex gap-3 pt-2">
               <button

@@ -46,7 +46,7 @@ serve(async (req) => {
       );
     }
 
-    const { subject, body, filterType = "subscribed" } = await req.json();
+    const { subject, body, filterType = "subscribed", selectedEmails } = await req.json();
 
     if (!subject || !body) {
       return new Response(
@@ -62,7 +62,10 @@ serve(async (req) => {
 
     let recipientEmails: string[] = [];
 
-    if (filterType === "all") {
+    if (filterType === "selected" && Array.isArray(selectedEmails) && selectedEmails.length > 0) {
+      // Send to specific selected emails
+      recipientEmails = selectedEmails.filter((e: any) => typeof e === "string" && e.includes("@"));
+    } else if (filterType === "all") {
       const { data: profiles } = await supabaseAdmin
         .from("profiles")
         .select("email")
