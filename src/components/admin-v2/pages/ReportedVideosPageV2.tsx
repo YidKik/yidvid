@@ -248,14 +248,30 @@ export const ReportedVideosPageV2 = () => {
                       }`}
                     >
                       {group.thumbnail && (
-                        <img
-                          src={group.thumbnail}
-                          alt=""
-                          className="w-16 h-10 rounded object-cover shrink-0"
-                        />
+                        <div className="relative w-16 h-10 shrink-0">
+                          <img
+                            src={group.thumbnail}
+                            alt=""
+                            className={`w-full h-full rounded object-cover ${group.isDeleted ? 'opacity-40 grayscale' : ''}`}
+                          />
+                          {group.isDeleted && (
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <CheckCircle className="w-5 h-5 text-emerald-400 drop-shadow-lg" />
+                            </div>
+                          )}
+                        </div>
                       )}
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-[#c4c7d4] truncate">{group.videoTitle}</p>
+                        <div className="flex items-center gap-1.5">
+                          <p className={`text-sm font-medium truncate ${group.isDeleted ? 'text-[#565b6e] line-through' : 'text-[#c4c7d4]'}`}>
+                            {group.videoTitle}
+                          </p>
+                          {group.isDeleted && (
+                            <Badge className="bg-emerald-500/15 text-emerald-400 border-emerald-500/20 text-[9px] px-1.5 py-0 shrink-0">
+                              Deleted
+                            </Badge>
+                          )}
+                        </div>
                         <p className="text-xs text-[#565b6e] mt-0.5 truncate">
                           {group.channelName}
                           {" · "}
