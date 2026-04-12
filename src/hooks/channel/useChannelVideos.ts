@@ -28,7 +28,8 @@ export const useChannelVideos = (channelId: string | undefined) => {
           .from("youtube_videos")
           .select("*")
           .eq("channel_id", channelId)
-          .is("deleted_at", null) // Filter out deleted videos
+          .is("deleted_at", null)
+          .eq("is_short", false)
           .order("uploaded_at", { ascending: false });
 
         if (!dbError && dbVideos && dbVideos.length > 0) {
