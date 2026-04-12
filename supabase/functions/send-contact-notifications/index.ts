@@ -200,7 +200,7 @@ const handler = async (req: Request): Promise<Response> => {
       }
 
     } else if (type === "admin_reply" && adminReply) {
-      await resend.emails.send({
+      const replyResult = await resend.emails.send({
         from: "YidVid Support <support@yidvid.co>",
         replyTo: "yidvid.info@gmail.com",
         to: [request.email],
@@ -229,6 +229,16 @@ const handler = async (req: Request): Promise<Response> => {
             Have more questions? Reach out to us at <a href="mailto:yidvid.info@gmail.com" style="color: #FF0000; text-decoration: none;">yidvid.info@gmail.com</a>
           </p>
         `),
+      });
+
+      // Log admin reply to email_logs
+      await supabase.from("email_logs").insert({
+        email_type: "contact-reply",
+        recipient_email: request.email,
+        subject: `Re: Your ${request.category.replace("_", " ")} request`,
+        status: replyResult.data?.id ? "sent" : "failed",
+        resend_message_id: replyResult.data?.id || null,
+        error_message: replyResult.error?.message || null,
       });
     }
 
