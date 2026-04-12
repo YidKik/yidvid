@@ -76,16 +76,16 @@ export const VideoCardWithOptions = ({
         </div>
         
         {/* Video Info - scales with viewport */}
-        <div className={isMobile ? 'mt-1' : 'mt-1 sm:mt-1.5 md:mt-2 lg:mt-3'}>
+        <div className={isMobile ? 'mt-1' : 'mt-1 md:mt-1.5 xl:mt-3'}>
           <h3 className={`${
             isMobile ? 'text-[10px] leading-tight min-h-[24px]' 
-            : 'text-[10px] sm:text-[11px] md:text-[12px] lg:text-[13px] xl:text-sm min-h-[24px] sm:min-h-[28px] md:min-h-[32px] lg:min-h-[38px]'
+            : 'text-[10px] md:text-[11px] lg:text-[11px] xl:text-sm min-h-[24px] md:min-h-[28px] xl:min-h-[38px]'
           } font-semibold font-friendly text-foreground line-clamp-2 leading-snug`}>
             {title}
           </h3>
           {!hideChannelInfo && (
-            <div className={`flex items-center gap-1 min-h-[14px] ${isMobile ? 'mt-0.5' : 'mt-0.5 sm:mt-1 lg:mt-1.5 xl:mt-2'}`}>
-              <div className={`${isMobile ? 'w-3 h-3' : 'w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4 lg:w-5 lg:h-5 xl:w-6 xl:h-6'} rounded-full overflow-hidden flex-shrink-0 bg-muted`}>
+            <div className={`flex items-center gap-1 min-h-[14px] ${isMobile ? 'mt-0.5' : 'mt-0.5 md:mt-1 xl:mt-2'}`}>
+              <div className={`${isMobile ? 'w-3 h-3' : 'w-3 h-3 md:w-3.5 md:h-3.5 lg:w-4 lg:h-4 xl:w-5 xl:h-5'} rounded-full overflow-hidden flex-shrink-0 bg-muted`}>
                 {channelThumbnail ? (
                   <img
                     src={channelThumbnail}
@@ -93,19 +93,19 @@ export const VideoCardWithOptions = ({
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className={`w-full h-full bg-[#FF0000] flex items-center justify-center ${isMobile ? 'text-[6px]' : 'text-[6px] sm:text-[7px] md:text-[8px] lg:text-[9px] xl:text-[10px]'} font-bold text-white`}>
+                  <div className={`w-full h-full bg-[#FF0000] flex items-center justify-center ${isMobile ? 'text-[6px]' : 'text-[6px] md:text-[7px] lg:text-[8px] xl:text-[10px]'} font-bold text-white`}>
                     {channelName.charAt(0).toUpperCase()}
                   </div>
                 )}
               </div>
-              <p className={`${isMobile ? 'text-[8px]' : 'text-[8px] sm:text-[9px] md:text-[10px] lg:text-[11px] xl:text-xs'} text-muted-foreground truncate`}>
+              <p className={`${isMobile ? 'text-[8px]' : 'text-[8px] md:text-[9px] lg:text-[9px] xl:text-xs'} text-muted-foreground truncate`}>
                 {channelName}
               </p>
             </div>
           )}
           <p className={`${
             isMobile ? 'text-[8px] mt-0 min-h-[10px]' 
-            : 'text-[8px] sm:text-[9px] md:text-[10px] lg:text-[11px] xl:text-xs mt-0 sm:mt-0.5 lg:mt-1 xl:mt-1.5 min-h-[10px] sm:min-h-[12px] md:min-h-[14px] lg:min-h-[16px]'
+            : 'text-[8px] md:text-[9px] lg:text-[9px] xl:text-xs mt-0 md:mt-0.5 xl:mt-1.5 min-h-[10px] md:min-h-[12px] xl:min-h-[16px]'
           } text-muted-foreground/80`}>
             {views?.toLocaleString() || 0} views • {formattedDate}
           </p>
