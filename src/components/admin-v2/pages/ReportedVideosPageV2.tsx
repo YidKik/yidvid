@@ -11,7 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import {
   Flag, ExternalLink, Search, X, Trash2, AlertTriangle,
-  Mail, Calendar, MessageSquare, User, Hash, Copy, Eye,
+  Mail, Calendar, MessageSquare, User, Hash, Copy, Eye, CheckCircle,
 } from "lucide-react";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel,
@@ -31,6 +31,7 @@ interface VideoReport {
     video_id: string;
     thumbnail: string;
     channel_name: string;
+    deleted_at: string | null;
   } | null;
   profiles: {
     display_name: string | null;
@@ -48,6 +49,7 @@ interface GroupedReport {
   reportCount: number;
   latestReport: string;
   reports: VideoReport[];
+  isDeleted: boolean;
 }
 
 export const ReportedVideosPageV2 = () => {
