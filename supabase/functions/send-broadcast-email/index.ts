@@ -133,15 +133,19 @@ serve(async (req) => {
                   <tr>
                     <td align="center">
                       <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width: 600px; width: 100%;">
-                        <!-- Header -->
+                        <!-- Red top bar -->
                         <tr>
-                          <td style="background-color: #FF0000; padding: 24px 40px; text-align: center; border-radius: 12px 12px 0 0;">
-                            <img src="${LOGO_URL}" alt="YidVid" height="36" style="height: 36px; width: auto;" />
-                          </td>
+                          <td style="background-color: #FF0000; height: 6px; font-size: 0; line-height: 0; border-radius: 12px 12px 0 0;">&nbsp;</td>
                         </tr>
                         <!-- Yellow accent -->
                         <tr>
                           <td style="background-color: #FFCC00; height: 4px; font-size: 0; line-height: 0;">&nbsp;</td>
+                        </tr>
+                        <!-- Logo -->
+                        <tr>
+                          <td style="background-color: #ffffff; padding: 28px 40px 20px; text-align: center;">
+                            <img src="${LOGO_URL}" alt="YidVid" height="40" style="height: 40px; width: auto;" />
+                          </td>
                         </tr>
                         <!-- Body -->
                         <tr>
