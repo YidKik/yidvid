@@ -188,7 +188,7 @@ export function ReportVideoDialog({ videoId, compact = false }: ReportVideoDialo
           <div className="flex items-start gap-3 p-3 bg-[#FFCC00] rounded-xl">
             <AlertTriangle className="h-5 w-5 text-[#1A1A1A] flex-shrink-0 mt-0.5" />
             <p className="text-xs font-medium text-[#1A1A1A]">
-              Our team reviews all reports within 24-48 hours. We take every report seriously to ensure a safe viewing experience for everyone.
+              Our team reviews all reports carefully. We take every report seriously to ensure a safe viewing experience for everyone.
             </p>
           </div>
 
