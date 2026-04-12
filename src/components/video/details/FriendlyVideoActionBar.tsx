@@ -54,7 +54,6 @@ export const FriendlyVideoActionBar = ({
   const [shareOpen, setShareOpen] = useState(false);
   const [playlistDialogOpen, setPlaylistDialogOpen] = useState(false);
   const [newPlaylistName, setNewPlaylistName] = useState("");
-  const [reportOpen, setReportOpen] = useState(false);
   
   const { isAuthenticated, user, isLoading: authLoading, isProfileLoading } = useUnifiedAuth();
   const userId = user?.id;
