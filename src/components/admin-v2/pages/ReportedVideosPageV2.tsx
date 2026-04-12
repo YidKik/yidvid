@@ -61,10 +61,29 @@ export const ReportedVideosPageV2 = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("video_reports")
-        .select(`*, youtube_videos (title, video_id, thumbnail, channel_name), profiles:user_id (display_name, username, email)`)
+        .select(`*, youtube_videos (title, video_id, thumbnail, channel_name)`)
         .order("created_at", { ascending: false });
       if (error) throw error;
-      return (data || []) as VideoReport[];
+
+      // Fetch profile info for reports with user_id
+      const userIds = [...new Set((data || []).map(r => r.user_id).filter(Boolean))] as string[];
+      let profilesMap: Record<string, { display_name: string | null; username: string | null; email: string }> = {};
+      if (userIds.length > 0) {
+        const { data: profiles } = await supabase
+          .from("profiles")
+          .select("id, display_name, username, email")
+          .in("id", userIds);
+        if (profiles) {
+          for (const p of profiles) {
+            profilesMap[p.id] = { display_name: p.display_name, username: p.username, email: p.email };
+          }
+        }
+      }
+
+      return (data || []).map(r => ({
+        ...r,
+        profiles: r.user_id ? profilesMap[r.user_id] || null : null,
+      })) as VideoReport[];
     },
   });
 
