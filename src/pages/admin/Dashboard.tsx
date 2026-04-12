@@ -22,6 +22,7 @@ import { ContactRequestsPageV2 } from "@/components/admin-v2/pages/ContactReques
 import { ChannelRequestsPageV2 } from "@/components/admin-v2/pages/ChannelRequestsPageV2";
 import { ShortsPageV2 } from "@/components/admin-v2/pages/ShortsPageV2";
 import { ReportedVideosPageV2 } from "@/components/admin-v2/pages/ReportedVideosPageV2";
+import { EmailsPageV2 } from "@/components/admin-v2/pages/EmailsPageV2";
 
 import { AnalyticsPageV2 } from "@/components/admin-v2/pages/AnalyticsPageV2";
 
@@ -38,6 +39,7 @@ const PAGE_META: Record<string, { title: string; description: string }> = {
   contacts: { title: "Contact Requests", description: "Manage contact requests & emails" },
   requests: { title: "Channel Requests", description: "Review & manage channel requests from users" },
   reports: { title: "Reported Videos", description: "Monitor and review reported video content" },
+  emails: { title: "Emails", description: "Monitor email delivery & send broadcasts" },
 };
 
 const Dashboard = () => {
@@ -113,6 +115,8 @@ const Dashboard = () => {
         return <ChannelRequestsPageV2 />;
       case "reports":
         return <ReportedVideosPageV2 />;
+      case "emails":
+        return <EmailsPageV2 />;
       default:
         return <OverviewPageV2 />;
     }
