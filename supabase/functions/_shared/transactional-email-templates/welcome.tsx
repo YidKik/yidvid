@@ -5,7 +5,8 @@ import {
 import type { TemplateEntry } from './registry.ts'
 
 const SITE_NAME = "YidVid"
-const SITE_URL = "https://yidvid.com"
+const SITE_URL = "https://yidvid.co"
+const LOGO_URL = "https://yidvid.lovable.app/yidvid-logo-full.png"
 
 interface WelcomeProps {
   name?: string
@@ -17,12 +18,10 @@ const WelcomeEmail = ({ name }: WelcomeProps) => (
     <Preview>Welcome to {SITE_NAME} — Your gateway to Jewish video content</Preview>
     <Body style={main}>
       <Container style={container}>
-        {/* Header */}
         <Section style={header}>
-          <Heading style={logoText}>🎬 {SITE_NAME}</Heading>
+          <Img src={LOGO_URL} alt={SITE_NAME} height="56" style={logo} />
         </Section>
 
-        {/* Content */}
         <Section style={content}>
           <Heading style={h1}>
             {name ? `Welcome, ${name}!` : 'Welcome to YidVid!'}
@@ -77,12 +76,7 @@ const header = {
   textAlign: 'center' as const,
   borderRadius: '8px 8px 0 0',
 }
-const logoText = {
-  color: '#ffffff',
-  fontSize: '28px',
-  fontWeight: 'bold' as const,
-  margin: '0',
-}
+const logo = { height: '56px', width: 'auto', margin: '0 auto' }
 const content = { padding: '32px 24px' }
 const h1 = { fontSize: '24px', fontWeight: 'bold' as const, color: '#1A1A1A', margin: '0 0 16px' }
 const text = { fontSize: '15px', color: '#444444', lineHeight: '1.6', margin: '0 0 24px' }
