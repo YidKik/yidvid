@@ -9,7 +9,7 @@ import {
   Dialog, DialogContent, DialogDescription, DialogFooter, 
   DialogHeader, DialogTitle, DialogTrigger 
 } from "@/components/ui/dialog";
-import { LogOut, Trash2, AlertTriangle, Mail, Calendar, User } from "lucide-react";
+import { LogOut, Trash2, AlertTriangle, Mail, Calendar, User, Hash } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import type { ProfilesTable } from "@/integrations/supabase/types/profiles";
@@ -89,6 +89,7 @@ export const SettingsProfile = () => {
       <div className="space-y-4 mb-8">
         <InfoRow icon={Mail} label="Email" value={email} />
         <InfoRow icon={User} label="Username" value={displayProfile.username || "Not set"} />
+        <InfoRow icon={Hash} label="User ID" value={user?.id || "Unknown"} />
         <InfoRow icon={Calendar} label="Member since" value={memberSince} />
       </div>
 
