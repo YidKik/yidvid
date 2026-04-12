@@ -89,10 +89,14 @@ serve(async (req) => {
 
     console.log('Access token obtained');
 
+    const resolvedStartDate = dateRange === 'allTime' ? '2000-01-01' : dateRange;
+
     // Determine metrics and dimensions based on type
-    let reportRequest: any = {
-      dateRanges: [{ startDate: dateRange, endDate: 'today' }],
-    };
+    let reportRequest: any = metricType === 'realtime'
+      ? {}
+      : {
+          dateRanges: [{ startDate: resolvedStartDate, endDate: 'today' }],
+        };
 
     switch (metricType) {
       case 'overview':
@@ -101,13 +105,13 @@ serve(async (req) => {
           { name: 'sessions' },
           { name: 'screenPageViews' },
           { name: 'engagementRate' },
+          { name: 'totalUsers' },
+          { name: 'userEngagementDuration' },
         ];
-        reportRequest.dimensions = [{ name: 'date' }];
         break;
       
       case 'realtime':
         reportRequest.metrics = [{ name: 'activeUsers' }];
-        reportRequest.dimensions = [{ name: 'unifiedScreenName' }];
         break;
       
       case 'traffic':
@@ -149,6 +153,9 @@ serve(async (req) => {
         ];
         reportRequest.limit = 10;
         break;
+      
+      default:
+        throw new Error(`Unsupported metric type: ${metricType}`);
     }
 
     console.log('Fetching GA data for property:', propertyId);
