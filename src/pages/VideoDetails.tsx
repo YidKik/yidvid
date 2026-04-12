@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import { useParams, Link, useLocation } from "react-router-dom";
+import React, { useEffect, useRef, useCallback } from 'react';
+import { useParams, Link, useLocation, useNavigate } from "react-router-dom";
 import { VideoPlayer } from "@/components/video/VideoPlayer";
 import { useVideoQuery } from "@/components/video/details/VideoQuery";
 import { VideoComments } from "@/components/video/details/VideoComments";
@@ -20,17 +20,40 @@ import { usePlaylistAutoplay } from "@/hooks/video/usePlaylistAutoplay";
 const VideoDetails = () => {
   const { videoId } = useParams<{ videoId: string }>();
   const location = useLocation();
+  const navigate = useNavigate();
   const { isMobile, isTablet } = useIsMobile();
   const { isAuthenticated, session } = useAuth();
   const incrementView = useIncrementVideoView();
   const viewIncrementedRef = useRef<string | null>(null);
   const { isPlaylistMode, totalVideos, currentPosition, goToNextVideo } = usePlaylistAutoplay(videoId || "");
+
+  const { data: video, isLoading: isLoadingVideo, error } = useVideoQuery(videoId || "");
+  
+  const { data: channelVideos = [], isLoading: isLoadingRelated } = useRelatedVideosQuery(
+    video?.channel_id || "",
+    videoId || ""
+  );
+
+  // Auto-play: navigate to first related video when current ends
+  const handleVideoEnd = useCallback(() => {
+    if (isPlaylistMode) {
+      goToNextVideo();
+      return;
+    }
+    if (channelVideos.length > 0) {
+      const nextVideo = channelVideos[0];
+      const nextId = nextVideo.video_id || nextVideo.id;
+      navigate(`/video/${nextId}`);
+    }
+  }, [isPlaylistMode, goToNextVideo, channelVideos, navigate]);
+
+  const isLoading = isLoadingVideo || isLoadingRelated;
+  usePageLoader('video-details', isLoading);
+
   useEffect(() => {
     if (!videoId) return;
-    
     console.log("VideoDetails page route:", location.pathname);
     console.log("VideoDetails page received videoId:", videoId);
-    
     if (viewIncrementedRef.current !== videoId) {
       viewIncrementedRef.current = videoId;
       incrementView(videoId);
@@ -41,16 +64,6 @@ const VideoDetails = () => {
     toast.error("Video ID not provided");
     return <div className="p-4">Video ID not provided</div>;
   }
-
-  const { data: video, isLoading: isLoadingVideo, error } = useVideoQuery(videoId);
-  
-  const { data: channelVideos = [], isLoading: isLoadingRelated } = useRelatedVideosQuery(
-    video?.channel_id || "",
-    videoId
-  );
-
-  const isLoading = isLoadingVideo || isLoadingRelated;
-  usePageLoader('video-details', isLoading);
 
   if (!video || error) {
     if (!isLoadingVideo) {
@@ -108,7 +121,7 @@ const VideoDetails = () => {
               <div className="flex-1 min-w-0">
                 {/* Video Player - clean, no card wrapper */}
                 <div className="rounded-xl overflow-hidden bg-black relative">
-                  <VideoPlayer videoId={video?.video_id || ""} onVideoEnd={isPlaylistMode ? goToNextVideo : undefined} />
+                  <VideoPlayer videoId={video?.video_id || ""} onVideoEnd={handleVideoEnd} />
                   {isPlaylistMode && (
                     <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-black/70 text-white text-xs font-medium px-2.5 py-1.5 rounded-full backdrop-blur-sm">
                       <ListMusic className="w-3.5 h-3.5" />
@@ -187,7 +200,7 @@ const VideoDetails = () => {
             <div className={`mt-2 space-y-${isMobile ? '3' : '4'}`}>
               {/* Video Player */}
               <div className={`rounded-xl overflow-hidden bg-black ${isMobile ? '-mx-3' : ''} relative`}>
-                <VideoPlayer videoId={video?.video_id || ""} onVideoEnd={isPlaylistMode ? goToNextVideo : undefined} />
+                <VideoPlayer videoId={video?.video_id || ""} onVideoEnd={handleVideoEnd} />
                 {isPlaylistMode && (
                   <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-black/70 text-white text-xs font-medium px-2.5 py-1.5 rounded-full backdrop-blur-sm">
                     <ListMusic className="w-3.5 h-3.5" />
