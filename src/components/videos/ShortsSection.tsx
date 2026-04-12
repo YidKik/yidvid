@@ -116,7 +116,7 @@ const ShortCard = ({
   return (
     <div
       className={`flex-none cursor-pointer group ${
-        isMobile ? 'w-[130px]' : isTablet ? 'w-[155px]' : 'w-[180px]'
+        isMobile ? 'w-[115px]' : isTablet ? 'w-[140px]' : 'w-[160px]'
       }`}
       onClick={() => navigate(`/shorts/${short.video_id}`)}
     >
