@@ -58,14 +58,9 @@ export const ShortsSection = () => {
     <section className={`${isMobile ? 'py-4 -mx-3 px-3' : 'py-6 -mx-6 px-6'} rounded-3xl`}>
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <div className="w-7 h-7 bg-red-500 rounded-lg flex items-center justify-center">
-            <Play className="w-3.5 h-3.5 text-white fill-white" />
-          </div>
-          <h2 className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+        <h2 className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
             Shorts
           </h2>
-        </div>
 
         <div className={`flex items-center ${isMobile ? 'gap-1' : 'gap-2'}`}>
           <button
@@ -121,7 +116,7 @@ const ShortCard = ({
   return (
     <div
       className={`flex-none cursor-pointer group ${
-        isMobile ? 'w-[120px]' : isTablet ? 'w-[140px]' : 'w-[165px]'
+        isMobile ? 'w-[130px]' : isTablet ? 'w-[155px]' : 'w-[180px]'
       }`}
       onClick={() => navigate(`/shorts/${short.video_id}`)}
     >
@@ -135,12 +130,6 @@ const ShortCard = ({
         />
         {/* Gradient overlay at bottom */}
         <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/70 to-transparent" />
-        {/* Views badge */}
-        {short.views != null && short.views > 0 && (
-          <span className={`absolute bottom-2 left-2 ${isMobile ? 'text-[9px]' : 'text-[10px]'} font-medium text-white/90`}>
-            {formatViews(short.views)} views
-          </span>
-        )}
         {/* Play icon on hover */}
         <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
           <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
@@ -149,9 +138,15 @@ const ShortCard = ({
         </div>
       </div>
       {/* Title */}
-      <p className={`mt-2 ${isMobile ? 'text-[11px]' : 'text-xs'} font-medium text-foreground line-clamp-2 leading-tight`}>
+      <p className={`mt-2.5 ${isMobile ? 'text-[11px] leading-[1.3]' : 'text-[13px] leading-[1.4]'} font-medium text-foreground line-clamp-2`}>
         {short.title}
       </p>
+      {/* Views below title */}
+      {short.views != null && short.views > 0 && (
+        <p className={`mt-0.5 ${isMobile ? 'text-[10px]' : 'text-[12px]'} text-muted-foreground`}>
+          {formatViews(short.views)} views
+        </p>
+      )}
     </div>
   );
 };
