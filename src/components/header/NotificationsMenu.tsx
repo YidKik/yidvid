@@ -55,8 +55,8 @@ export const NotificationsMenu = ({ onMarkAsRead }: NotificationsMenuProps) => {
     return null;
   }
 
-  // Outline-only style to match profile icon
-  const buttonClass = `h-9 w-9 rounded-full border-2 border-[#E5E5E5] bg-transparent hover:bg-[#F5F5F5] text-[#666666] transition-all duration-200`;
+  // Outline-only style to match profile icon - smaller on tiny screens
+  const buttonClass = `h-7 w-7 min-[360px]:h-9 min-[360px]:w-9 rounded-full border-2 border-[#E5E5E5] bg-transparent hover:bg-[#F5F5F5] text-[#666666] transition-all duration-200`;
 
   return (
     <Sheet>
@@ -66,7 +66,7 @@ export const NotificationsMenu = ({ onMarkAsRead }: NotificationsMenuProps) => {
           size="icon" 
           className={`${buttonClass} relative`}
         >
-          <Bell className="h-4 w-4" />
+          <Bell className="h-3.5 w-3.5 min-[360px]:h-4 min-[360px]:w-4" />
           {notifications && notifications.length > 0 && (
             <Badge 
               variant="destructive" 
