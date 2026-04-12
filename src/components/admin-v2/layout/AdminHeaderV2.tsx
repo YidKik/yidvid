@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useMemo } from "react";
-import { Bell, Mail, GitPullRequest, UserPlus, MessageSquare, Video, X, ChevronRight, ExternalLink } from "lucide-react";
+import { Bell, Mail, GitPullRequest, UserPlus, MessageSquare, Video, X, ChevronRight, ExternalLink, Flag } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { formatDistanceToNow } from "date-fns";
@@ -44,6 +44,12 @@ function parseNotificationContent(type: string, content: string) {
   if (type === "new_user") {
     return { title: content, subtitle: "New Registration", label: "User" };
   }
+  if (type === "reported_video") {
+    // Format: "Video reported: <title> by <email>"
+    const match = content.match(/^Video reported:\s*(.+?)\s+by\s+(.+)$/);
+    if (match) return { title: match[1], subtitle: match[2], label: "Report" };
+    return { title: content, subtitle: "", label: "Report" };
+  }
   return { title: content, subtitle: "", label: "" };
 }
 
@@ -60,11 +66,12 @@ const SECTION_CONFIG: Record<string, {
   new_comment:         { icon: MessageSquare,   color: "text-emerald-400",bg: "bg-emerald-500/10",border: "border-emerald-500/20",tab: "comments",  sectionLabel: "Comments" },
   new_contact_request: { icon: Mail,            color: "text-amber-400",  bg: "bg-amber-500/10",  border: "border-amber-500/20",  tab: "contacts",  sectionLabel: "Contact Requests" },
   new_user:            { icon: UserPlus,        color: "text-blue-400",   bg: "bg-blue-500/10",   border: "border-blue-500/20",   tab: "users",     sectionLabel: "New Users" },
+  reported_video:      { icon: Flag,            color: "text-red-400",    bg: "bg-red-500/10",    border: "border-red-500/20",    tab: "reports",   sectionLabel: "Reported Videos" },
 };
 
 const DEFAULT_CFG = { icon: Bell, color: "text-slate-400", bg: "bg-slate-500/10", border: "border-slate-500/20", tab: undefined as string | undefined, sectionLabel: "Other" };
 
-const SECTION_ORDER = ["new_video", "new_channel_request", "new_comment", "new_contact_request", "new_user"];
+const SECTION_ORDER = ["new_video", "new_channel_request", "new_comment", "new_contact_request", "new_user", "reported_video"];
 
 export const AdminHeaderV2 = ({ pageTitle, pageDescription, profile, onTabChange }: AdminHeaderV2Props) => {
   const [isOpen, setIsOpen] = useState(false);
