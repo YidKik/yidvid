@@ -4,16 +4,19 @@ import yidvidLogo from "@/assets/yidvid-logo-icon.png";
 import { TermsOfServiceDialog } from "@/components/auth/TermsOfServiceDialog";
 import { PrivacyPolicyDialog } from "@/components/auth/PrivacyPolicyDialog";
 import { ContactDialog } from "@/components/contact/ContactDialog";
+import { useSidebarContext } from "@/contexts/SidebarContext";
 
 export const Footer = () => {
   const [tosDialogOpen, setTosDialogOpen] = useState(false);
   const [privacyDialogOpen, setPrivacyDialogOpen] = useState(false);
   const [contactDialogOpen, setContactDialogOpen] = useState(false);
+  const { sidebarWidth } = useSidebarContext();
 
   return (
     <>
       <footer 
-        className="mt-auto border-t hidden md:block bg-[#FAFAFA] dark:bg-[#0f0f0f] border-[#EFEFEF] dark:border-[#333]"
+        className="mt-auto border-t hidden md:block bg-[#FAFAFA] dark:bg-[#0f0f0f] border-[#EFEFEF] dark:border-[#333] transition-all duration-300"
+        style={{ marginLeft: `${sidebarWidth}px` }}
       >
         <div className="max-w-[1600px] mx-auto px-6 lg:px-12 py-2.5">
           <div className="flex flex-col md:flex-row items-center justify-between gap-3">
