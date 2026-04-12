@@ -56,7 +56,7 @@ const handler = async (req: Request): Promise<Response> => {
                     <!-- Logo -->
                     <tr>
                       <td style="background-color: #ffffff; padding: 28px 40px 20px; text-align: center;">
-                        <img src="${LOGO_URL}" alt="YidVid" height="40" style="height: 40px; width: auto;" />
+                        <img src="${LOGO_URL}" alt="YidVid" height="56" style="height: 56px; width: auto;" />
                       </td>
                     </tr>
                     
@@ -82,12 +82,8 @@ const handler = async (req: Request): Promise<Response> => {
                           </tr>
                         </table>
                         
-                        <p style="margin: 0 0 8px; font-size: 15px; line-height: 1.6; color: #444444;">
-                          Our team will review the channel to make sure it fits our community standards. If approved, we'll add it to the site and you'll be able to find it in our library.
-                        </p>
-                        
                         <p style="margin: 0 0 28px; font-size: 15px; line-height: 1.6; color: #444444;">
-                          This usually takes 1–3 business days. We'll keep you posted!
+                          Our team will review the channel to make sure it meets our content standards. If it's a good fit, we'll add it to the site and let you know!
                         </p>
                         
                         <table role="presentation" cellpadding="0" cellspacing="0" style="margin: 0 auto 24px;">

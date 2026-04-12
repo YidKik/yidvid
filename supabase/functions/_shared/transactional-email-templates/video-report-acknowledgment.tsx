@@ -9,9 +9,11 @@ const SITE_URL = "https://yidvid.com"
 
 interface VideoReportProps {
   name?: string
+  videoTitle?: string
+  channelName?: string
 }
 
-const VideoReportAcknowledgmentEmail = ({ name }: VideoReportProps) => (
+const VideoReportAcknowledgmentEmail = ({ name, videoTitle, channelName }: VideoReportProps) => (
   <Html lang="en" dir="ltr">
     <Head />
     <Preview>Thanks for reporting — {SITE_NAME}</Preview>
@@ -30,11 +32,22 @@ const VideoReportAcknowledgmentEmail = ({ name }: VideoReportProps) => (
             We've received your video report and truly appreciate you helping us keep {SITE_NAME} a safe and enjoyable platform for everyone.
           </Text>
 
-          <Section style={infoBox}>
-            <Text style={infoText}>
-              Our moderation team reviews every report carefully. We'll take appropriate action if the content violates our community guidelines. Reviews are typically completed within <strong>24–48 hours</strong>.
-            </Text>
-          </Section>
+          {videoTitle && (
+            <Section style={infoBox}>
+              <Text style={infoText}>
+                <strong>Reported Video:</strong> {videoTitle}
+              </Text>
+              {channelName && (
+                <Text style={infoText}>
+                  <strong>Channel:</strong> {channelName}
+                </Text>
+              )}
+            </Section>
+          )}
+
+          <Text style={text}>
+            Our moderation team reviews every report carefully. We'll take appropriate action if the content violates our community guidelines.
+          </Text>
 
           <Text style={text}>
             Your vigilance helps us maintain a high-quality experience for the entire community. Thank you for being part of the solution!
@@ -59,7 +72,7 @@ export const template = {
   component: VideoReportAcknowledgmentEmail,
   subject: 'Thanks for keeping YidVid safe',
   displayName: 'Video report acknowledgment',
-  previewData: { name: 'Moshe' },
+  previewData: { name: 'Moshe', videoTitle: 'Sample Video Title', channelName: 'Sample Channel' },
 } satisfies TemplateEntry
 
 const main = { backgroundColor: '#ffffff', fontFamily: "'Segoe UI', Arial, sans-serif" }
@@ -81,7 +94,7 @@ const infoBox = {
   padding: '16px 20px',
   margin: '0 0 24px',
 }
-const infoText = { fontSize: '14px', color: '#333333', lineHeight: '1.5', margin: '0' }
+const infoText = { fontSize: '14px', color: '#333333', lineHeight: '1.5', margin: '0 0 4px' }
 const ctaSection = { textAlign: 'center' as const, margin: '0 0 24px' }
 const button = {
   backgroundColor: '#FF0000',

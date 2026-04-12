@@ -61,14 +61,24 @@ export function ReportVideoDialog({ videoId, compact = false }: ReportVideoDialo
 
       if (error) throw error;
 
-      // Send acknowledgment email
+      // Fetch video info for the email
       if (insertedReport) {
+        const { data: videoInfo } = await supabase
+          .from("youtube_videos")
+          .select("title, channel_name")
+          .eq("id", videoId)
+          .single();
+
         supabase.functions.invoke('send-transactional-email', {
           body: {
             templateName: 'video-report-acknowledgment',
             recipientEmail: reportEmail,
             idempotencyKey: `video-report-${insertedReport.id}`,
-            templateData: { name: reportEmail.split('@')[0] },
+            templateData: {
+              name: reportEmail.split('@')[0],
+              videoTitle: videoInfo?.title || undefined,
+              channelName: videoInfo?.channel_name || undefined,
+            },
           },
         }).catch(err => console.error('Failed to send report acknowledgment email:', err));
       }
@@ -178,7 +188,7 @@ export function ReportVideoDialog({ videoId, compact = false }: ReportVideoDialo
           <div className="flex items-start gap-3 p-3 bg-[#FFCC00] rounded-xl">
             <AlertTriangle className="h-5 w-5 text-[#1A1A1A] flex-shrink-0 mt-0.5" />
             <p className="text-xs font-medium text-[#1A1A1A]">
-              Our team reviews all reports within 24-48 hours. We take every report seriously to ensure a safe viewing experience for everyone.
+              Our team reviews all reports carefully. We take every report seriously to ensure a safe viewing experience for everyone.
             </p>
           </div>
 

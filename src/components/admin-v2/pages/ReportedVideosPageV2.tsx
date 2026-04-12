@@ -110,11 +110,28 @@ export const ReportedVideosPageV2 = () => {
       if (error) throw error;
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (_data, videoDbId) => {
       toast.success("Video deleted from site");
       queryClient.invalidateQueries({ queryKey: ["video-reports"] });
-      queryClient.invalidateQueries({ queryKey: ["video-reports"] });
       queryClient.invalidateQueries({ queryKey: ["moderation"] });
+
+      // Send email to all reporters of this video
+      const group = grouped.find(g => g.videoDbId === videoDbId);
+      if (group) {
+        const uniqueEmails = [...new Set(group.reports.map(r => r.email))];
+        for (const email of uniqueEmails) {
+          const reporter = group.reports.find(r => r.email === email);
+          const reporterName = (reporter as any)?.profiles?.username || (reporter as any)?.profiles?.display_name || email.split("@")[0];
+          supabase.functions.invoke("send-transactional-email", {
+            body: {
+              templateName: "video-report-resolved",
+              recipientEmail: email,
+              idempotencyKey: `video-resolved-${videoDbId}-${email}`,
+              templateData: { name: reporterName, videoTitle: group.videoTitle, channelName: group.channelName },
+            },
+          }).catch(err => console.error("Failed to send resolved email:", err));
+        }
+      }
     },
     onError: (e: any) => toast.error(e?.message || "Failed to delete video"),
   });

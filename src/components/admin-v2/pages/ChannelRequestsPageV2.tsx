@@ -54,6 +54,21 @@ export const ChannelRequestsPageV2 = () => {
       if (error) throw error;
       toast.success(`Request ${newStatus}`);
       queryClient.invalidateQueries({ queryKey: ["admin-channel-requests"] });
+
+      // Send email notification to the user who made the request
+      const request = requests?.find(r => r.id === requestId);
+      if (request?.profiles?.email) {
+        const templateName = newStatus === "approved" ? "channel-approved" : "channel-rejected";
+        const userName = request.profiles.username || request.profiles.display_name || request.profiles.email.split("@")[0];
+        supabase.functions.invoke("send-transactional-email", {
+          body: {
+            templateName,
+            recipientEmail: request.profiles.email,
+            idempotencyKey: `channel-${newStatus}-${requestId}`,
+            templateData: { name: userName, channelName: request.channel_name },
+          },
+        }).catch(err => console.error(`Failed to send ${newStatus} email:`, err));
+      }
     } catch (error) {
       console.error("Error updating request:", error);
       toast.error("Failed to update request");

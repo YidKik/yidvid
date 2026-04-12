@@ -46,7 +46,7 @@ function emailWrapper(content: string): string {
                 <!-- Logo -->
                 <tr>
                   <td style="background-color: #ffffff; padding: 28px 40px 20px; text-align: center;">
-                    <img src="${LOGO_URL}" alt="YidVid" height="40" style="height: 40px; width: auto;" />
+                    <img src="${LOGO_URL}" alt="YidVid" height="56" style="height: 56px; width: auto;" />
                   </td>
                 </tr>
                 <!-- Body -->
@@ -162,7 +162,7 @@ const handler = async (req: Request): Promise<Response> => {
             </h1>
             
             <p style="margin: 0 0 20px; font-size: 15px; line-height: 1.6; color: #444444;">
-              We've received your message and our team will get back to you within 24–48 hours.
+              We've received your message and our team will review it and get back to you as soon as possible.
             </p>
             
             <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-left: 4px solid #FFCC00; background-color: #FFF9E6; border-radius: 0 8px 8px 0; margin: 0 0 28px;">
@@ -173,7 +173,7 @@ const handler = async (req: Request): Promise<Response> => {
             </table>
             
             <p style="margin: 0 0 28px; font-size: 14px; color: #888;">
-              Need immediate help? Contact us at <a href="mailto:yidvid.info@gmail.com" style="color: #FF0000; text-decoration: none;">yidvid.info@gmail.com</a>
+              Have questions? Reach out to us at <a href="mailto:yidvid.info@gmail.com" style="color: #FF0000; text-decoration: none;">yidvid.info@gmail.com</a>
             </p>
             
             <table role="presentation" cellpadding="0" cellspacing="0" style="margin: 0 auto;">
@@ -216,7 +216,7 @@ const handler = async (req: Request): Promise<Response> => {
           </table>
           
           <p style="margin: 0; font-size: 14px; color: #888;">
-            Need more help? Just reply to this email.
+            Have more questions? Reach out to us at <a href="mailto:yidvid.info@gmail.com" style="color: #FF0000; text-decoration: none;">yidvid.info@gmail.com</a>
           </p>
         `),
       });

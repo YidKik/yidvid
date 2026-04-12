@@ -7,15 +7,16 @@ import type { TemplateEntry } from './registry.ts'
 const SITE_NAME = "YidVid"
 const SITE_URL = "https://yidvid.com"
 
-interface ChannelRequestProps {
+interface VideoReportResolvedProps {
   name?: string
+  videoTitle?: string
   channelName?: string
 }
 
-const ChannelRequestConfirmationEmail = ({ name, channelName }: ChannelRequestProps) => (
+const VideoReportResolvedEmail = ({ name, videoTitle, channelName }: VideoReportResolvedProps) => (
   <Html lang="en" dir="ltr">
     <Head />
-    <Preview>We received your channel request — {SITE_NAME}</Preview>
+    <Preview>Action taken on your report — {SITE_NAME}</Preview>
     <Body style={main}>
       <Container style={container}>
         <Section style={header}>
@@ -24,32 +25,40 @@ const ChannelRequestConfirmationEmail = ({ name, channelName }: ChannelRequestPr
 
         <Section style={content}>
           <Heading style={h1}>
-            {name ? `Thanks, ${name}!` : 'Thanks for your request!'}
+            {name ? `Hi ${name},` : 'Hi there,'}
           </Heading>
 
           <Text style={text}>
-            We've received your request to add {channelName ? <strong>{channelName}</strong> : 'a new channel'} to {SITE_NAME}. We really appreciate you helping us keep our content library updated!
+            Thank you so much for helping us keep {SITE_NAME} safe! We wanted to let you know that the video you reported has been reviewed and <strong>removed from our platform</strong>.
           </Text>
 
-          <Section style={infoBox}>
-            <Text style={infoText}>
-              <strong>What happens next?</strong>
-            </Text>
-            <Text style={infoText}>
-              Our team will review the channel to make sure it meets our content guidelines. If it's a good fit, we'll add it to our library and let you know!
-            </Text>
-          </Section>
+          {videoTitle && (
+            <Section style={infoBox}>
+              <Text style={infoText}>
+                <strong>Video removed:</strong> {videoTitle}
+              </Text>
+              {channelName && (
+                <Text style={infoText}>
+                  <strong>Channel:</strong> {channelName}
+                </Text>
+              )}
+            </Section>
+          )}
+
+          <Text style={text}>
+            Your report made a real difference. Community members like you are what keeps {SITE_NAME} a safe and enjoyable experience for everyone.
+          </Text>
 
           <Section style={ctaSection}>
             <Button style={button} href={`${SITE_URL}/videos`}>
-              Browse Videos
+              Continue Watching
             </Button>
           </Section>
 
           <Hr style={divider} />
 
           <Text style={footer}>
-            We appreciate you helping us grow our content library!
+            Thank you for being part of the {SITE_NAME} community!
           </Text>
           <Text style={signoff}>— The {SITE_NAME} Team</Text>
         </Section>
@@ -59,10 +68,10 @@ const ChannelRequestConfirmationEmail = ({ name, channelName }: ChannelRequestPr
 )
 
 export const template = {
-  component: ChannelRequestConfirmationEmail,
-  subject: 'We received your channel request',
-  displayName: 'Channel request confirmation',
-  previewData: { name: 'David', channelName: 'Torah Talks' },
+  component: VideoReportResolvedEmail,
+  subject: 'Action taken on your video report',
+  displayName: 'Video report resolved',
+  previewData: { name: 'Moshe', videoTitle: 'Inappropriate Video', channelName: 'Some Channel' },
 } satisfies TemplateEntry
 
 const main = { backgroundColor: '#ffffff', fontFamily: "'Segoe UI', Arial, sans-serif" }
@@ -84,7 +93,7 @@ const infoBox = {
   padding: '16px 20px',
   margin: '0 0 24px',
 }
-const infoText = { fontSize: '14px', color: '#333333', lineHeight: '1.5', margin: '0 0 8px' }
+const infoText = { fontSize: '14px', color: '#333333', lineHeight: '1.5', margin: '0 0 4px' }
 const ctaSection = { textAlign: 'center' as const, margin: '0 0 24px' }
 const button = {
   backgroundColor: '#FF0000',

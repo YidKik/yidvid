@@ -83,7 +83,7 @@ export const ContactRequestsSection = () => {
 
       if (updateError) throw updateError;
 
-      // Send email notification
+      // Send email notification via legacy function
       const { error: emailError } = await supabase.functions.invoke("send-contact-notifications", {
         body: {
           type: "admin_reply",
@@ -91,6 +91,21 @@ export const ContactRequestsSection = () => {
           adminReply: replyText
         }
       });
+
+      // Also send via transactional email
+      supabase.functions.invoke("send-transactional-email", {
+        body: {
+          templateName: "contact-reply",
+          recipientEmail: selectedRequest.email,
+          idempotencyKey: `contact-reply-${selectedRequest.id}-${Date.now()}`,
+          templateData: {
+            name: selectedRequest.name,
+            adminReply: replyText,
+            originalMessage: selectedRequest.message,
+            category: selectedRequest.category,
+          },
+        },
+      }).catch(err => console.error("Failed to send contact reply email:", err));
 
       if (emailError) {
         console.error("Email notification error:", emailError);
