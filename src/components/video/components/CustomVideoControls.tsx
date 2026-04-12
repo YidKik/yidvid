@@ -251,7 +251,7 @@ export const CustomVideoControls = ({
 
       {/* Big center play button when paused */}
       <button
-        className={`absolute inset-0 flex items-center justify-center bg-black/20 transition-all duration-300 ${
+        className={`absolute inset-0 flex items-center justify-center bg-black/20 ${
           !isPlaying && showControls && !centerFeedback
             ? "opacity-100 pointer-events-auto"
             : "opacity-0 pointer-events-none"
@@ -260,9 +260,7 @@ export const CustomVideoControls = ({
         onClick={handleVideoAreaClick}
       >
         <div
-          className={`${isMobile ? 'w-10 h-10' : 'w-14 h-14'} rounded-full flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110 ${
-            !isPlaying && showControls ? "scale-100" : "scale-75"
-          }`}
+          className={`${isMobile ? 'w-10 h-10' : 'w-14 h-14'} rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform duration-200`}
           style={{ backgroundColor: ACCENT }}
         >
           <Play className={`${isMobile ? 'w-4 h-4' : 'w-6 h-6'} text-[#1A1A1A] ml-0.5`} fill="#1A1A1A" />
