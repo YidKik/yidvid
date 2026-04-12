@@ -2,7 +2,8 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSessionManager } from "@/hooks/useSessionManager";
-import { startOfWeek, startOfMonth, subDays, format } from "date-fns";
+import { useAnalyticsData } from "@/hooks/useAnalyticsData";
+import { subDays, format } from "date-fns";
 import {
   Tv, Video, Eye, Users, Clock, Activity, UserCheck, CalendarDays,
   TrendingUp, Play, BarChart3, Loader2, ArrowUpRight, ArrowDownRight
@@ -12,101 +13,12 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   AreaChart, Area,
 } from "recharts";
-
-// ─── helpers ────────────────────────────────────────────────────────
-const Card = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
-  <div className={`rounded-xl border border-[#1e2028] bg-[#12131a] ${className}`}>{children}</div>
-);
-
-const fmt = (n: number) =>
-  n >= 1_000_000 ? `${(n / 1_000_000).toFixed(1)}M` : n >= 1_000 ? `${(n / 1_000).toFixed(1)}K` : String(n);
-
-// ─── KPI card ───────────────────────────────────────────────────────
-const KPI = ({
-  label, value, icon: Icon, accent, subtitle,
-}: {
-  label: string; value: number | string; icon: any; accent: string; subtitle?: string;
-}) => (
-  <Card className="p-4">
-    <div className="flex items-start justify-between">
-      <div className="space-y-1">
-        <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">{label}</p>
-        <p className="text-2xl font-bold text-white">{typeof value === "number" ? fmt(value) : value}</p>
-        {subtitle && <p className="text-xs text-gray-500">{subtitle}</p>}
-      </div>
-      <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${accent}`}>
-        <Icon className="w-4.5 h-4.5 text-white" />
-      </div>
-    </div>
-  </Card>
-);
-
-// ─── Main component ─────────────────────────────────────────────────
+...
 export const AnalyticsPageV2 = () => {
   const { session } = useSessionManager();
   const userId = session?.user?.id;
   const [period, setPeriod] = useState<"7d" | "30d" | "all">("30d");
-
-  // ── Core stats ────────────────────────────────────────────────────
-  const { data: stats, isLoading: statsLoading } = useQuery({
-    queryKey: ["analytics-v2-stats", userId],
-    queryFn: async () => {
-      const [
-        { count: totalChannels },
-        { count: totalVideos },
-        { count: totalViews },
-        { count: totalUsers },
-        { count: activeUsers },
-      ] = await Promise.all([
-        supabase.from("youtube_channels").select("*", { count: "exact", head: true }).is("deleted_at", null),
-        supabase.from("youtube_videos").select("*", { count: "exact", head: true }).is("deleted_at", null),
-        supabase.from("user_video_interactions").select("*", { count: "exact", head: true }).eq("interaction_type", "view"),
-        supabase.from("profiles").select("*", { count: "exact", head: true }),
-        supabase.from("user_analytics").select("*", { count: "exact", head: true }).is("session_end", null),
-      ]);
-
-      const now = new Date();
-      const weekStart = startOfWeek(now);
-      const monthStart = startOfMonth(now);
-
-      const { data: recentSessions } = await supabase
-        .from("user_analytics")
-        .select("user_id, session_start")
-        .gte("session_start", monthStart.toISOString())
-        .not("user_id", "is", null);
-
-      const weeklyIds = new Set<string>();
-      const monthlyIds = new Set<string>();
-      (recentSessions || []).forEach((s) => {
-        if (s.user_id) {
-          monthlyIds.add(s.user_id);
-          if (new Date(s.session_start) >= weekStart) weeklyIds.add(s.user_id);
-        }
-      });
-
-      // Total session hours
-      const { data: sessions } = await supabase.from("user_analytics").select("session_start, session_end");
-      let totalHours = 0;
-      (sessions || []).forEach((s) => {
-        if (!s.session_end) return;
-        const dur = (new Date(s.session_end).getTime() - new Date(s.session_start).getTime()) / 3600000;
-        if (dur > 0 && dur < 24) totalHours += dur;
-      });
-
-      return {
-        totalChannels: totalChannels || 0,
-        totalVideos: totalVideos || 0,
-        totalViews: totalViews || 0,
-        totalUsers: totalUsers || 0,
-        activeUsers: activeUsers || 0,
-        weeklyUsers: weeklyIds.size,
-        monthlyUsers: monthlyIds.size,
-        totalHours: Math.round(totalHours),
-      };
-    },
-    enabled: !!userId,
-    refetchInterval: 60000,
-  });
+  const { totalStats: stats, isLoading: statsLoading } = useAnalyticsData(userId);
 
   // ── Daily session chart ───────────────────────────────────────────
   const days = period === "7d" ? 7 : period === "30d" ? 30 : 90;
