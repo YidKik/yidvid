@@ -355,7 +355,7 @@ export const ContactRequestsPageV2 = () => {
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2 mb-1">
                           <User className="w-3.5 h-3.5 text-white/70 shrink-0" />
-                          <p className={`text-sm font-bold ${status.text} truncate drop-shadow`}>{request.name}</p>
+                          <p className={`text-sm font-bold ${status.text} truncate drop-shadow`}>{(request as any).display_username || request.name}</p>
                           {request.admin_reply && (
                             <CheckCircle className="w-3.5 h-3.5 text-white shrink-0 drop-shadow" />
                           )}
@@ -413,7 +413,7 @@ export const ContactRequestsPageV2 = () => {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <selStatus.icon className="w-5 h-5 text-white drop-shadow" />
-                      <h3 className="text-lg font-bold text-white drop-shadow">{selected.name}</h3>
+                      <h3 className="text-lg font-bold text-white drop-shadow">{(selected as any).display_username || selected.name}</h3>
                     </div>
                     <button onClick={() => setSelectedId(null)} className="text-white/70 hover:text-white">
                       <X className="w-4 h-4" />
