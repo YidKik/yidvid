@@ -1,12 +1,12 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Bell, ChevronDown, ChevronUp, Sparkles, Loader2 } from "lucide-react";
+import { Bell, ChevronDown, ChevronUp, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useEnhancedChannelSubscription } from "@/hooks/channel/useEnhancedChannelSubscription";
 import { useUnifiedAuth } from "@/hooks/useUnifiedAuth";
 import { toast } from "sonner";
 import { useState, useRef, useEffect } from "react";
-import { VideoCard } from "@/components/VideoCard";
+import { useVideoDate } from "@/components/video/useVideoDate";
 
 interface Video {
   id: string;
@@ -29,6 +29,12 @@ interface FriendlyChannelSectionProps {
   compact?: boolean;
 }
 
+const formatViewCount = (count: number): string => {
+  if (count >= 1000000) return `${(count / 1000000).toFixed(1)}M views`;
+  if (count >= 1000) return `${(count / 1000).toFixed(1)}K views`;
+  return `${count} views`;
+};
+
 export const FriendlyChannelSection = ({ 
   channelName, 
   channelId,
@@ -40,8 +46,10 @@ export const FriendlyChannelSection = ({
 }: FriendlyChannelSectionProps) => {
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [needsExpand, setNeedsExpand] = useState(false);
+  const [showAllVideos, setShowAllVideos] = useState(false);
   const descriptionRef = useRef<HTMLParagraphElement>(null);
   const { isAuthenticated, isLoading: authLoading, isProfileLoading } = useUnifiedAuth();
+  const { getFormattedDate } = useVideoDate();
   
   const { 
     isSubscribed, 
@@ -72,6 +80,8 @@ export const FriendlyChannelSection = ({
   };
 
   const isLoading = authLoading || isProfileLoading || subscriptionLoading;
+  const initialCount = compact ? 4 : 6;
+  const displayedVideos = showAllVideos ? channelVideos : channelVideos.slice(0, initialCount);
 
   return (
     <div className="space-y-4">
@@ -155,7 +165,7 @@ export const FriendlyChannelSection = ({
         </div>
       )}
       
-      {/* More from this channel - compact, max 1 row */}
+      {/* More from this channel - YouTube-style horizontal list */}
       {isLoadingVideos ? (
         <div className="flex items-center justify-center py-6">
           <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
@@ -163,27 +173,67 @@ export const FriendlyChannelSection = ({
       ) : channelVideos.length > 0 ? (
         <div>
           <div className="h-px bg-[#E5E5E5] mb-4" />
-          <p className={`${compact ? 'text-xs' : 'text-sm'} font-medium text-[#666666] mb-3`}>
-            More from {channelName}
-          </p>
+          <div className="flex items-center justify-between mb-3">
+            <p className={`${compact ? 'text-xs' : 'text-sm'} font-semibold text-[#1A1A1A]`}>
+              More from {channelName}
+            </p>
+            {channelId && (
+              <Link 
+                to={`/channel/${channelId}`}
+                className="text-xs font-medium text-[#606060] hover:text-[#1A1A1A] transition-colors"
+              >
+                View all
+              </Link>
+            )}
+          </div>
           
-          <div className={`grid ${compact ? 'gap-2 grid-cols-2' : 'gap-3 grid-cols-3'}`}>
-            {channelVideos.slice(0, compact ? 4 : 3).map((video) => (
-              <div key={video.id} className="rounded-lg overflow-hidden">
-                <VideoCard
-                  id={video.id}
-                  video_id={video.video_id}
-                  title={video.title}
-                  thumbnail={video.thumbnail || "/placeholder.svg"}
-                  channelName={video.channel_name}
-                  channelId={video.channel_id}
-                  views={video.views}
-                  uploadedAt={video.uploaded_at}
-                  hideChannelName
-                />
-              </div>
+          {/* YouTube-style stacked list */}
+          <div className="space-y-2.5">
+            {displayedVideos.map((video) => (
+              <Link
+                key={video.id}
+                to={`/video/${video.video_id || video.id}`}
+                className="flex gap-3 group rounded-lg hover:bg-[#F5F5F5] transition-colors p-1 -mx-1"
+              >
+                {/* Thumbnail */}
+                <div className={`${compact ? 'w-[140px]' : 'w-[168px]'} flex-shrink-0 aspect-video rounded-lg overflow-hidden bg-[#F0F0F0]`}>
+                  <img
+                    src={video.thumbnail || "/placeholder.svg"}
+                    alt={video.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    loading="lazy"
+                  />
+                </div>
+                
+                {/* Info */}
+                <div className="flex-1 min-w-0 py-0.5">
+                  <h4 className={`${compact ? 'text-xs' : 'text-[13px]'} font-medium text-[#1A1A1A] line-clamp-2 leading-snug group-hover:text-[#1A1A1A]`}>
+                    {video.title}
+                  </h4>
+                  <p className="text-[11px] text-[#606060] mt-1 truncate">
+                    {video.channel_name}
+                  </p>
+                  <p className="text-[11px] text-[#606060] mt-0.5">
+                    {formatViewCount(video.views || 0)} • {getFormattedDate(video.uploaded_at)}
+                  </p>
+                </div>
+              </Link>
             ))}
           </div>
+
+          {/* Show more / less toggle */}
+          {channelVideos.length > initialCount && (
+            <button
+              onClick={() => setShowAllVideos(!showAllVideos)}
+              className="mt-3 w-full flex items-center justify-center gap-1.5 py-2 text-xs font-medium text-[#606060] hover:text-[#1A1A1A] hover:bg-[#F5F5F5] rounded-lg transition-colors"
+            >
+              {showAllVideos ? (
+                <>Show less <ChevronUp className="w-3.5 h-3.5" /></>
+              ) : (
+                <>Show more <ChevronDown className="w-3.5 h-3.5" /></>
+              )}
+            </button>
+          )}
         </div>
       ) : null}
     </div>
