@@ -17,6 +17,7 @@ const fetchVideosFromDB = async (): Promise<VideoData[]> => {
     `)
     .is("deleted_at", null)
     .eq("content_analysis_status", "approved")
+    .eq("is_short", false)
     .order("uploaded_at", { ascending: false })
     .limit(500);
 
