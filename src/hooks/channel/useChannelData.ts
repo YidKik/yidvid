@@ -34,6 +34,7 @@ export const useChannelData = (channelId: string | undefined) => {
           .from("youtube_channels")
           .select("*")
           .or(`channel_id.ilike.${cleanedChannelId},title.ilike.%${cleanedChannelId}%`)
+          .is("deleted_at", null)
           .limit(1);
           
         if (!flexError && flexibleMatchData && flexibleMatchData.length > 0) {

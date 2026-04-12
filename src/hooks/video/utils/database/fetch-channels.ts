@@ -24,6 +24,7 @@ export const fetchActiveChannels = async (): Promise<ChannelData[]> => {
       const simpleQuery = await supabase
         .from("youtube_channels")
         .select("channel_id")
+        .is("deleted_at", null)
         .limit(30);
         
       if (!simpleQuery.error && simpleQuery.data?.length > 0) {
@@ -42,6 +43,7 @@ export const fetchActiveChannels = async (): Promise<ChannelData[]> => {
       const basicQuery = await supabase
         .from("youtube_channels")
         .select("channel_id")
+        .is("deleted_at", null)
         .limit(20);
         
       if (!basicQuery.error && basicQuery.data?.length > 0) {
@@ -61,6 +63,7 @@ export const fetchActiveChannels = async (): Promise<ChannelData[]> => {
       const lastQuery = await supabase
         .from("youtube_channels")
         .select("channel_id")
+        .is("deleted_at", null)
         .limit(10);
         
       if (!lastQuery.error && lastQuery.data?.length > 0) {

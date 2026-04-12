@@ -57,7 +57,8 @@ export const useAnalyticsData = (userId: string | undefined) => {
         // Get total videos count
         const { count: totalVideos, error: videosError } = await supabase
           .from("youtube_videos")
-          .select("*", { count: "exact", head: true });
+          .select("*", { count: "exact", head: true })
+          .is("deleted_at", null);
 
         if (videosError) throw videosError;
 

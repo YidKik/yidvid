@@ -271,6 +271,7 @@ export const getChannelById = async (channelId: string | undefined) => {
       .from("youtube_channels")
       .select("*")
       .eq("channel_id", channelId)
+      .is("deleted_at", null)
       .maybeSingle();
     
     if (!directError && directChannel) {
