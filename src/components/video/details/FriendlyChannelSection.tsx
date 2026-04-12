@@ -87,62 +87,64 @@ export const FriendlyChannelSection = ({
 
   return (
     <div className="space-y-4">
-      {/* Channel Info - simple row */}
-      <div className="flex items-center gap-3">
-        {channelId ? (
-          <Link to={`/channel/${channelId}`}>
+      {/* Channel Info - simple row (hidden when channel info is in action bar) */}
+      {!hideChannelInfo && (
+        <div className="flex items-center gap-3">
+          {channelId ? (
+            <Link to={`/channel/${channelId}`}>
+              <Avatar className={compact ? "h-8 w-8" : "h-10 w-10"}>
+                <AvatarImage src={channelThumbnail || ''} alt={channelName} />
+                <AvatarFallback className="bg-[#F5F5F5] text-[#666666] text-sm font-bold">
+                  {channelName?.slice(0, 2).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+            </Link>
+          ) : (
             <Avatar className={compact ? "h-8 w-8" : "h-10 w-10"}>
               <AvatarImage src={channelThumbnail || ''} alt={channelName} />
               <AvatarFallback className="bg-[#F5F5F5] text-[#666666] text-sm font-bold">
                 {channelName?.slice(0, 2).toUpperCase()}
               </AvatarFallback>
             </Avatar>
-          </Link>
-        ) : (
-          <Avatar className={compact ? "h-8 w-8" : "h-10 w-10"}>
-            <AvatarImage src={channelThumbnail || ''} alt={channelName} />
-            <AvatarFallback className="bg-[#F5F5F5] text-[#666666] text-sm font-bold">
-              {channelName?.slice(0, 2).toUpperCase()}
-            </AvatarFallback>
-          </Avatar>
-        )}
-        
-        <div className="flex-1 min-w-0">
-          {channelId ? (
-            <Link 
-              to={`/channel/${channelId}`}
-              className={`${compact ? 'text-xs' : 'text-sm'} font-semibold text-[#1A1A1A] hover:text-[#FF0000] transition-colors block truncate`}
+          )}
+          
+          <div className="flex-1 min-w-0">
+            {channelId ? (
+              <Link 
+                to={`/channel/${channelId}`}
+                className={`${compact ? 'text-xs' : 'text-sm'} font-semibold text-[#1A1A1A] hover:text-[#FF0000] transition-colors block truncate`}
+              >
+                {channelName}
+              </Link>
+            ) : (
+              <span className={`${compact ? 'text-xs' : 'text-sm'} font-semibold text-[#1A1A1A] truncate block`}>{channelName}</span>
+            )}
+          </div>
+          
+          {channelId && (
+            <Button
+              onClick={handleSubscribeClick}
+              disabled={isLoading}
+              className={`${compact ? 'h-7 px-3 text-xs' : 'h-9 px-4 text-sm'} rounded-full font-semibold transition-all ${
+                isSubscribed 
+                  ? "bg-[#F5F5F5] text-[#1A1A1A] hover:bg-[#E5E5E5]" 
+                  : "bg-[#FF0000] text-white hover:brightness-90"
+              }`}
             >
-              {channelName}
-            </Link>
-          ) : (
-            <span className={`${compact ? 'text-xs' : 'text-sm'} font-semibold text-[#1A1A1A] truncate block`}>{channelName}</span>
+              {isLoading ? (
+                <span className="opacity-70">...</span>
+              ) : isSubscribed ? (
+                <>
+                  <Bell className="w-3.5 h-3.5 mr-1.5 fill-current" />
+                  Subscribed
+                </>
+              ) : (
+                "Subscribe"
+              )}
+            </Button>
           )}
         </div>
-        
-        {channelId && (
-          <Button
-            onClick={handleSubscribeClick}
-            disabled={isLoading}
-            className={`${compact ? 'h-7 px-3 text-xs' : 'h-9 px-4 text-sm'} rounded-full font-semibold transition-all ${
-              isSubscribed 
-                ? "bg-[#F5F5F5] text-[#1A1A1A] hover:bg-[#E5E5E5]" 
-                : "bg-[#FF0000] text-white hover:brightness-90"
-            }`}
-          >
-            {isLoading ? (
-              <span className="opacity-70">...</span>
-            ) : isSubscribed ? (
-              <>
-                <Bell className="w-3.5 h-3.5 mr-1.5 fill-current" />
-                Subscribed
-              </>
-            ) : (
-              "Subscribe"
-            )}
-          </Button>
-        )}
-      </div>
+      )}
       
       {/* Description - collapsible, minimal */}
       {description && (
