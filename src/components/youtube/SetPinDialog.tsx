@@ -35,7 +35,7 @@ export const SetPinDialog = ({ isOpen, onClose, onSetPin, pin, onPinChange }: Se
               maxLength={6}
               value={pin}
               onChange={(e) => onPinChange(e.target.value)}
-              placeholder="Enter 6-digit PIN"
+              placeholder="••••••"
               className="text-center text-lg tracking-widest"
             />
           </div>
