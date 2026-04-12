@@ -85,7 +85,7 @@ export const BroadcastEmailSection = () => {
             Compose Broadcast Email
           </CardTitle>
           <p className="text-sm text-muted-foreground">
-            Resend free tier: 3,000 emails/month, 100/day. Emails sent from onboarding@resend.dev.
+            Resend free tier: 3,000 emails/month, 100/day. Emails sent from noreply@yidvid.co.
           </p>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -212,7 +212,7 @@ export const BroadcastEmailSection = () => {
             <DialogTitle>Email Preview</DialogTitle>
           </DialogHeader>
           <div className="border rounded-lg p-6 bg-white">
-            <p className="text-sm text-muted-foreground mb-1">From: YidVid &lt;onboarding@resend.dev&gt;</p>
+            <p className="text-sm text-muted-foreground mb-1">From: YidVid &lt;noreply@yidvid.co&gt;</p>
             <p className="text-sm text-muted-foreground mb-4">Subject: {subject}</p>
             <hr className="mb-4" />
             <div dangerouslySetInnerHTML={{ __html: body }} />
