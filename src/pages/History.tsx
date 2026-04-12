@@ -55,7 +55,7 @@ export default function History() {
           className="flex-1 pt-14 transition-all duration-300 pb-20 lg:pb-0"
           style={{ paddingLeft: `${sidebarWidth ? sidebarWidth + 16 : 0}px` }}
         >
-          <main className="max-w-5xl mx-auto px-4 lg:px-8 py-8 lg:py-12">
+          <main className="max-w-5xl mx-auto px-4 lg:px-8 py-8 lg:py-12 flex flex-col flex-1">
             <div className="flex items-center gap-3 mb-10">
               <div
                 className="w-10 h-10 rounded-full flex items-center justify-center"
@@ -71,7 +71,7 @@ export default function History() {
               </h1>
             </div>
 
-            <div className="min-h-[60vh]">
+            <div className="flex-1 pb-8">
               <VideoHistorySection />
             </div>
           </main>
