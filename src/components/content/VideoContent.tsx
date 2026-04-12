@@ -33,6 +33,7 @@ export const VideoContent = ({
   viewChannels = false
 }: VideoContentProps) => {
   const { session, isAuthenticated } = useSessionManager();
+  const [isRequestChannelOpen, setIsRequestChannelOpen] = useState(false);
   
   // Hook for video display and refresh control
   const {
