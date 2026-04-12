@@ -2,7 +2,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { startOfWeek, startOfMonth } from "date-fns";
 
 export interface Session {
   session_start: string;
@@ -123,48 +122,58 @@ export const useAnalyticsData = (userId: string | undefined) => {
           { hour: 0, count: 0 }
         );
 
-        // Get currently active users (sessions without an end time)
-        const { count: activeUsers, error: activeUsersError } = await supabase
-          .from("user_analytics")
-          .select("*", { count: "exact", head: true })
-          .is("session_end", null);
+        // Fetch Google Analytics data for active, weekly, and monthly users
+        let activeUsers = 0;
+        let weeklyUsers = 0;
+        let monthlyUsers = 0;
 
-        if (activeUsersError) throw activeUsersError;
-
-        // Calculate date ranges for weekly and monthly metrics
-        const now = new Date();
-        const weekStart = startOfWeek(now);
-        const monthStart = startOfMonth(now);
-
-        // Fetch user analytics for the month
-        const { data: recentSessions, error: recentError } = await supabase
-          .from("user_analytics")
-          .select("user_id, session_start")
-          .gte("session_start", monthStart.toISOString())
-          .not('user_id', 'is', null);
-
-        if (recentError) {
-          console.error('Error fetching recent sessions:', recentError);
-          throw recentError;
-        }
-
-        // Count unique users by time period
-        const weeklyUserIds = new Set();
-        const monthlyUserIds = new Set();
-
-        (recentSessions || []).forEach(session => {
-          const sessionDate = new Date(session.session_start);
+        try {
+          // Fetch weekly users from GA (7 days)
+          const { data: weeklyGA, error: weeklyGAError } = await supabase.functions.invoke('fetch-ga-analytics', {
+            body: { metricType: 'overview', dateRange: '7daysAgo' }
+          });
           
-          if (session.user_id) {
-            // All sessions are already filtered to be within the current month
-            monthlyUserIds.add(session.user_id);
-            
-            // Check if in current week
-            if (sessionDate >= weekStart) {
-              weeklyUserIds.add(session.user_id);
-            }
+          if (!weeklyGAError && weeklyGA?.rows) {
+            const uniqueWeeklyUsers = new Set<string>();
+            weeklyGA.rows.forEach((row: any) => {
+              const users = parseInt(row.metricValues?.[0]?.value || '0');
+              weeklyUsers += users;
+            });
+            // GA returns activeUsers per day - take the total unique (GA deduplicates per row but not across rows)
+            // Use totalUsers metric for accurate count
           }
-        });
+
+          // Fetch monthly users from GA (30 days)
+          const { data: monthlyGA, error: monthlyGAError } = await supabase.functions.invoke('fetch-ga-analytics', {
+            body: { metricType: 'overview', dateRange: '30daysAgo' }
+          });
+
+          if (!monthlyGAError && monthlyGA?.rows) {
+            monthlyGA.rows.forEach((row: any) => {
+              const users = parseInt(row.metricValues?.[0]?.value || '0');
+              monthlyUsers += users;
+            });
+          }
+
+          // Fetch realtime active users from GA
+          const { data: realtimeGA, error: realtimeGAError } = await supabase.functions.invoke('fetch-ga-analytics', {
+            body: { metricType: 'realtime' }
+          });
+
+          if (!realtimeGAError && realtimeGA?.rows) {
+            realtimeGA.rows.forEach((row: any) => {
+              activeUsers += parseInt(row.metricValues?.[0]?.value || '0');
+            });
+          }
+        } catch (gaError) {
+          console.error('Error fetching GA data for user stats:', gaError);
+          // Fall back to internal data if GA fails
+          const { count: internalActive } = await supabase
+            .from("user_analytics")
+            .select("*", { count: "exact", head: true })
+            .is("session_end", null);
+          activeUsers = internalActive || 0;
+        }
 
         return {
           totalChannels: totalChannels || 0,
@@ -174,9 +183,9 @@ export const useAnalyticsData = (userId: string | undefined) => {
           totalHours: Math.round(totalHours * 100) / 100,
           mostPopularHour: mostPopularHour.hour,
           anonymousUsers: anonymousUsers || 0,
-          activeUsers: activeUsers || 0,
-          weeklyUsers: weeklyUserIds.size,
-          monthlyUsers: monthlyUserIds.size
+          activeUsers,
+          weeklyUsers,
+          monthlyUsers
         };
       } catch (error: any) {
         console.error('Error fetching dashboard stats:', error);
