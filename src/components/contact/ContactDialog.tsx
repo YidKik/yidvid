@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Form } from "@/components/ui/form";
 import { Send, X } from "lucide-react";
@@ -9,6 +9,7 @@ import { ContactFormFields } from "./ContactFormFields";
 import { ContactSuccessOverlay } from "./ContactSuccessOverlay";
 import { FormValues, formSchema } from "./types";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useUnifiedAuth } from "@/hooks/useUnifiedAuth";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 
 interface ContactDialogProps {
@@ -18,6 +19,7 @@ interface ContactDialogProps {
 
 export const ContactDialog = ({ open, onOpenChange }: ContactDialogProps) => {
   const { isMobile } = useIsMobile();
+  const { user } = useUnifiedAuth();
   const [showSuccess, setShowSuccess] = useState(false);
   
   const form = useForm<FormValues>({
@@ -30,6 +32,23 @@ export const ContactDialog = ({ open, onOpenChange }: ContactDialogProps) => {
     },
   });
 
+  // Autofill from profile
+  useEffect(() => {
+    if (!user?.id || !open) return;
+    const prefill = async () => {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("display_name, name, username, email")
+        .eq("id", user.id)
+        .single();
+      if (profile) {
+        form.setValue("name", profile.display_name || profile.name || profile.username || "");
+        form.setValue("email", profile.email || user.email || "");
+      }
+    };
+    prefill();
+  }, [user?.id, open]);
+
   const onSubmit = (data: FormValues) => {
     // Immediately show success animation (optimistic)
     onOpenChange(false);
@@ -39,7 +58,7 @@ export const ContactDialog = ({ open, onOpenChange }: ContactDialogProps) => {
     // Send in background - don't block the UI
     (async () => {
       try {
-        const user = await supabase.auth.getUser();
+        const authUser = await supabase.auth.getUser();
         const { data: insertedRequest, error } = await supabase
           .from("contact_requests")
           .insert({
@@ -47,7 +66,7 @@ export const ContactDialog = ({ open, onOpenChange }: ContactDialogProps) => {
             name: data.name,
             email: data.email,
             message: data.message,
-            user_id: user.data.user?.id,
+            user_id: authUser.data.user?.id,
           })
           .select()
           .single();
@@ -58,6 +77,16 @@ export const ContactDialog = ({ open, onOpenChange }: ContactDialogProps) => {
           supabase.functions.invoke("send-contact-notifications", {
             body: { type: "new_request", requestId: insertedRequest.id }
           }).catch(e => console.error("Email notification error:", e));
+
+          // Send confirmation email to user
+          supabase.functions.invoke('send-transactional-email', {
+            body: {
+              templateName: 'contact-request-confirmation',
+              recipientEmail: data.email,
+              idempotencyKey: `contact-confirm-${insertedRequest.id}`,
+              templateData: { name: data.name },
+            },
+          }).catch(err => console.error('Failed to send contact confirmation email:', err));
         }
       } catch (error) {
         console.error("Error submitting contact request:", error);

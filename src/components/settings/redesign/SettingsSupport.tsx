@@ -1,15 +1,16 @@
-import { useEffect } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { supabase } from "@/integrations/supabase/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormValues, formSchema } from "@/components/contact/types";
 import { ContactForm } from "@/components/contact/ContactForm";
-import { toast } from "sonner";
+import { ContactSuccessOverlay } from "@/components/contact/ContactSuccessOverlay";
 import { HelpCircle } from "lucide-react";
 import { useUnifiedAuth } from "@/hooks/useUnifiedAuth";
 
 export const SettingsSupport = () => {
   const { user } = useUnifiedAuth();
+  const [showSuccess, setShowSuccess] = useState(false);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -34,6 +35,11 @@ export const SettingsSupport = () => {
   }, [user?.id]);
 
   const onSubmit = async (data: FormValues) => {
+    // Show success animation optimistically
+    setShowSuccess(true);
+    form.setValue("message", "");
+
+    // Send in background
     try {
       const authUser = await supabase.auth.getUser();
       const { data: insertedRequest, error } = await supabase
@@ -49,11 +55,10 @@ export const SettingsSupport = () => {
         .single();
       if (error) throw error;
       if (insertedRequest) {
-        await supabase.functions.invoke("send-contact-notifications", {
+        supabase.functions.invoke("send-contact-notifications", {
           body: { type: "new_request", requestId: insertedRequest.id }
         }).catch(() => {});
 
-        // Send confirmation email to user
         supabase.functions.invoke('send-transactional-email', {
           body: {
             templateName: 'contact-request-confirmation',
@@ -63,12 +68,14 @@ export const SettingsSupport = () => {
           },
         }).catch(err => console.error('Failed to send contact confirmation email:', err));
       }
-      form.reset();
-      toast.success("Your message has been sent!");
-    } catch {
-      toast.error("Failed to send your message. Please try again.");
+    } catch (err) {
+      console.error("Error submitting contact request:", err);
     }
   };
+
+  const handleSuccessComplete = useCallback(() => {
+    setShowSuccess(false);
+  }, []);
 
   return (
     <div>
@@ -80,6 +87,7 @@ export const SettingsSupport = () => {
         Need help or have suggestions? Send us a message and we'll get back to you.
       </p>
       <ContactForm form={form} onSubmit={onSubmit} />
+      <ContactSuccessOverlay show={showSuccess} onComplete={handleSuccessComplete} />
     </div>
   );
 };
