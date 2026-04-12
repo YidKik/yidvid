@@ -2,6 +2,7 @@
 import React, { useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import VideoDetails from './pages/VideoDetails';
+import ShortsViewer from './pages/ShortsViewer';
 import Search from './pages/Search';
 import ChannelDetails from './pages/ChannelDetails';
 import WritingVideos from './pages/WritingVideos';
@@ -81,6 +82,8 @@ function AppContent() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/videos" element={<Videos />} />
         <Route path="/video/:videoId" element={<VideoDetails />} />
+        <Route path="/shorts/:videoId" element={<ShortsViewer />} />
+        <Route path="/shorts" element={<ShortsViewer />} />
         <Route path="/search" element={<Search />} />
         <Route path="/channel/:channelId" element={<ChannelDetails />} />
         <Route path="/writing-videos" element={<WritingVideos />} />
