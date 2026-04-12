@@ -21,6 +21,31 @@ const addDays = (dateString: string, days: number) => {
   return date.toISOString().slice(0, 10);
 };
 
+const getPermissionDeniedResponse = (gaData: any, normalizedPropertyId: string, serviceAccountEmail: string) => {
+  const details = Array.isArray(gaData?.error?.details)
+    ? gaData.error.details.find((d: any) => d?.reason === 'SERVICE_DISABLED' || d?.metadata?.service === 'analyticsdata.googleapis.com')
+    : undefined;
+
+  if (gaData?.error?.status !== 'PERMISSION_DENIED' || !details) {
+    return null;
+  }
+
+  const activationUrl = details?.metadata?.activationUrl || 'https://console.developers.google.com/apis/api/analyticsdata.googleapis.com/overview';
+
+  return new Response(
+    JSON.stringify({
+      error: 'Google Analytics Data API is disabled for the Google Cloud project used by your service account.',
+      gcp_project: details?.metadata?.containerInfo,
+      ga_property: normalizedPropertyId,
+      next_steps: [
+        `Enable the API here: ${activationUrl}`,
+        `Add the service account (${serviceAccountEmail}) to GA4 property ${normalizedPropertyId.replace('properties/', '')} with at least Viewer access.`,
+      ],
+    }),
+    { status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+  );
+};
+
 const resolveAllTimeStartDate = (dateRange: string, fallbackStartDate?: string) => {
   if (dateRange !== 'allTime') return dateRange;
   return fallbackStartDate || '2015-08-13';
@@ -264,48 +289,14 @@ serve(async (req) => {
           gaData = retryData;
           console.log('GA data fetched successfully after retry');
         } else {
-          const details = Array.isArray(gaData?.error?.details)
-            ? gaData.error.details.find((d: any) => d?.reason === 'SERVICE_DISABLED' || d?.metadata?.service === 'analyticsdata.googleapis.com')
-            : undefined;
-
-          if (gaData?.error?.status === 'PERMISSION_DENIED' && details) {
-            const activationUrl = details?.metadata?.activationUrl || 'https://console.developers.google.com/apis/api/analyticsdata.googleapis.com/overview';
-            return new Response(
-              JSON.stringify({
-                error: 'Google Analytics Data API is disabled for the Google Cloud project used by your service account.',
-                gcp_project: details?.metadata?.containerInfo,
-                ga_property: normalizedPropertyId,
-                next_steps: [
-                  `Enable the API here: ${activationUrl}`,
-                  `Add the service account (${serviceAccount.client_email}) to GA4 property ${normalizedPropertyId.replace('properties/', '')} with at least Viewer access.`,
-                ],
-              }),
-              { status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-            );
-          }
+          const permissionDeniedResponse = getPermissionDeniedResponse(gaData, normalizedPropertyId, serviceAccount.client_email);
+          if (permissionDeniedResponse) return permissionDeniedResponse;
 
           throw new Error(gaData.error?.message || 'Failed to fetch GA data');
         }
       } else {
-        const details = Array.isArray(gaData?.error?.details)
-          ? gaData.error.details.find((d: any) => d?.reason === 'SERVICE_DISABLED' || d?.metadata?.service === 'analyticsdata.googleapis.com')
-          : undefined;
-
-        if (gaData?.error?.status === 'PERMISSION_DENIED' && details) {
-          const activationUrl = details?.metadata?.activationUrl || 'https://console.developers.google.com/apis/api/analyticsdata.googleapis.com/overview';
-          return new Response(
-            JSON.stringify({
-              error: 'Google Analytics Data API is disabled for the Google Cloud project used by your service account.',
-              gcp_project: details?.metadata?.containerInfo,
-              ga_property: normalizedPropertyId,
-              next_steps: [
-                `Enable the API here: ${activationUrl}`,
-                `Add the service account (${serviceAccount.client_email}) to GA4 property ${normalizedPropertyId.replace('properties/', '')} with at least Viewer access.`,
-              ],
-            }),
-            { status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-          );
-        }
+        const permissionDeniedResponse = getPermissionDeniedResponse(gaData, normalizedPropertyId, serviceAccount.client_email);
+        if (permissionDeniedResponse) return permissionDeniedResponse;
 
         throw new Error(gaData.error?.message || 'Failed to fetch GA data');
       }
