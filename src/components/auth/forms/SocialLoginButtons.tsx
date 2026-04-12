@@ -1,11 +1,9 @@
 
-import { useIsMobile } from "@/hooks/use-mobile";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useState } from "react";
 
 export const SocialLoginButtons = () => {
-  const isMobile = useIsMobile();
   const [isLoading, setIsLoading] = useState(false);
   
   const handleGoogleSignIn = async () => {
@@ -15,6 +13,10 @@ export const SocialLoginButtons = () => {
         provider: 'google',
         options: {
           redirectTo: window.location.origin,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          },
         }
       });
       if (error) {
