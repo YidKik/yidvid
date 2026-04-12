@@ -1,6 +1,6 @@
 
 import { useNavigate } from "react-router-dom";
-import { Play, Eye } from "lucide-react";
+import { Play } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 interface ChannelShortsSectionProps {
@@ -21,7 +21,7 @@ export const ChannelShortsSection = ({ shorts, isLoading }: ChannelShortsSection
   };
 
   return (
-    <div className={`grid ${isMobile ? 'grid-cols-3 gap-2' : 'grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 gap-3'}`}>
+    <div className={`grid ${isMobile ? 'grid-cols-3 gap-3' : 'grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4'}`}>
       {shorts.map((short, index) => (
         <div
           key={short.id}
@@ -36,20 +36,19 @@ export const ChannelShortsSection = ({ shorts, isLoading }: ChannelShortsSection
               className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
               loading="lazy"
             />
-            <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/70 to-transparent" />
+            <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/60 to-transparent" />
             {short.views > 0 && (
-              <div className="absolute bottom-1.5 left-1.5 flex items-center gap-0.5">
-                <Eye className="w-2.5 h-2.5 text-white/80" />
-                <span className="text-[9px] text-white/80 font-medium">{formatViews(short.views)}</span>
+              <div className="absolute bottom-2 left-2 flex items-center gap-1">
+                <span className="text-[11px] text-white/90 font-medium">{formatViews(short.views)} views</span>
               </div>
             )}
             <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-              <div className="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
-                <Play className="w-4 h-4 text-white fill-white" />
+              <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
+                <Play className="w-5 h-5 text-white fill-white" />
               </div>
             </div>
           </div>
-          <p className={`mt-1.5 ${isMobile ? 'text-[10px]' : 'text-[11px]'} font-medium text-foreground line-clamp-2 leading-tight`}>
+          <p className={`mt-2.5 ${isMobile ? 'text-[11px] leading-[1.3]' : 'text-[13px] leading-[1.4]'} font-medium text-foreground line-clamp-2`}>
             {short.title}
           </p>
         </div>
