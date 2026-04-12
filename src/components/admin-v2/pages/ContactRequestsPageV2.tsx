@@ -335,7 +335,7 @@ export const ContactRequestsPageV2 = () => {
         </div>
 
         <ScrollArea className="flex-1">
-          <div className="divide-y divide-white/[0.06] pr-2">
+          <div className="space-y-2 pr-2">
             {filtered.map(request => {
               const status = STATUS_CONFIG[request.status] || STATUS_CONFIG.pending;
               const category = CATEGORY_CONFIG[request.category] || CATEGORY_CONFIG.general;
@@ -347,23 +347,23 @@ export const ContactRequestsPageV2 = () => {
               return (
                 <Card
                   key={request.id}
-                  className={`cursor-pointer transition-all rounded-xl border-2 shadow-lg ${
-                    isSelected ? `${status.selectedBg} ${status.border} ring-2 ring-white/20` : `${status.bg} ${status.border} hover:brightness-110 hover:shadow-xl`
+                  className={`cursor-pointer transition-all rounded-lg border border-white/10 ${
+                    isSelected ? `${status.selectedBg} ring-1 ring-white/20` : `bg-[#1a1b23] hover:bg-white/5`
                   }`}
                   onClick={() => setSelectedId(request.id)}
                 >
                   <CardContent className="p-4">
                     {/* Top row: status + duration */}
-                    <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
-                        <StatusIcon className={`w-4 h-4 ${status.text} drop-shadow`} />
-                        <span className={`text-xs font-bold uppercase tracking-wide ${status.text} drop-shadow`}>
+                        <StatusIcon className={`w-3.5 h-3.5 ${status.accent} shrink-0`} />
+                        <span className={`text-xs font-semibold uppercase tracking-wide ${status.accent}`}>
                           {status.label}
                         </span>
                       </div>
-                      <div className="flex items-center gap-1.5 bg-black/20 rounded-full px-2.5 py-0.5">
-                        <Timer className="w-3 h-3 text-white/80" />
-                        <span className="text-[11px] font-mono font-semibold text-white/90">
+                      <div className="flex items-center gap-1.5">
+                        <Timer className="w-3 h-3 text-gray-500" />
+                        <span className="text-[11px] font-mono text-gray-400">
                           {isOpen ? `Open ${openDuration}` : openDuration}
                         </span>
                       </div>
@@ -373,33 +373,33 @@ export const ContactRequestsPageV2 = () => {
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2 mb-1">
-                          <User className="w-3.5 h-3.5 text-white/70 shrink-0" />
-                          <p className={`text-sm font-bold ${status.text} truncate drop-shadow`}>{(request as any).display_username || request.name}</p>
+                          <User className="w-3.5 h-3.5 text-gray-500 shrink-0" />
+                          <p className="text-sm font-semibold text-gray-200 truncate">{(request as any).display_username || request.name}</p>
                           {request.admin_reply && (
-                            <CheckCircle className="w-3.5 h-3.5 text-white shrink-0 drop-shadow" />
+                            <CheckCircle className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                           )}
                         </div>
-                        <div className="flex items-center gap-1.5 mb-2">
-                          <Mail className="w-3 h-3 text-white/60 shrink-0" />
-                          <p className="text-xs text-white/70 truncate">{request.email}</p>
+                        <div className="flex items-center gap-1.5 mb-1.5">
+                          <Mail className="w-3 h-3 text-gray-500 shrink-0" />
+                          <p className="text-xs text-gray-400 truncate">{request.email}</p>
                         </div>
-                        <p className="text-xs text-white/80 line-clamp-2 leading-relaxed">{request.message}</p>
+                        <p className="text-xs text-gray-400 line-clamp-2 leading-relaxed">{request.message}</p>
                       </div>
-                      <Badge className={`${category.color} border text-[10px] px-2 py-0.5 shrink-0 font-semibold`}>
+                      <Badge className={`${category.color} border text-[10px] px-2 py-0.5 shrink-0 font-medium`}>
                         {category.label}
                       </Badge>
                     </div>
 
                     {/* Footer */}
-                    <div className="flex items-center justify-between mt-3 pt-2 border-t border-white/15">
+                    <div className="flex items-center justify-between mt-2 pt-2 border-t border-white/5">
                       <div className="flex items-center gap-1.5">
-                        <Clock className="w-3 h-3 text-white/50" />
-                        <p className="text-[10px] text-white/60">
+                        <Clock className="w-3 h-3 text-gray-500" />
+                        <p className="text-[10px] text-gray-500">
                           {formatDistanceToNow(new Date(request.created_at), { addSuffix: true })}
                         </p>
                       </div>
                       {request.admin_reply && (
-                        <span className="text-[10px] text-white/60 bg-white/10 rounded px-1.5 py-0.5">Replied</span>
+                        <span className="text-[10px] text-gray-400 bg-white/5 rounded px-1.5 py-0.5">Replied</span>
                       )}
                     </div>
                   </CardContent>
