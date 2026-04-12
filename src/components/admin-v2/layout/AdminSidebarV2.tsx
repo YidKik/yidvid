@@ -13,6 +13,7 @@ import {
   GitPullRequest,
   Play,
   Flag,
+  Send,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
@@ -42,6 +43,7 @@ const navSections = [
       { id: "contacts", label: "Contact Requests", icon: Mail },
       { id: "requests", label: "Channel Requests", icon: GitPullRequest },
       { id: "reports", label: "Reported Videos", icon: Flag },
+      { id: "emails", label: "Emails", icon: Send },
     ],
   },
 ];
