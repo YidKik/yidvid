@@ -438,16 +438,24 @@ export const ReportedVideosPageV2 = () => {
                 <div>
                   <p className="text-[10px] uppercase tracking-wider text-[#565b6e] font-semibold mb-3">Actions</p>
                   <div className="flex gap-2">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="flex-1 h-9 text-xs text-[#818cf8] hover:text-[#a5b4fc] hover:bg-[#818cf8]/10 border border-[#6366f1]/20"
-                      onClick={() => window.open(`/video/${selected.videoSlug}`, "_blank")}
-                    >
-                      <Eye className="w-3.5 h-3.5 mr-1.5" />
-                      View Video
-                    </Button>
+                    {!selected.isDeleted && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="flex-1 h-9 text-xs text-[#818cf8] hover:text-[#a5b4fc] hover:bg-[#818cf8]/10 border border-[#6366f1]/20"
+                        onClick={() => window.open(`/video/${selected.videoSlug}`, "_blank")}
+                      >
+                        <Eye className="w-3.5 h-3.5 mr-1.5" />
+                        View Video
+                      </Button>
+                    )}
 
+                    {selected.isDeleted ? (
+                      <div className="flex-1 h-9 flex items-center justify-center gap-1.5 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-medium">
+                        <CheckCircle className="w-3.5 h-3.5" />
+                        Video Already Deleted
+                      </div>
+                    ) : (
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <Button
