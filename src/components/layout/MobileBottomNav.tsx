@@ -1,9 +1,8 @@
 import { useState, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Home, PlayCircle, Search, Library, Menu, History, Heart, Clock, ListMusic, Settings, Info, Bell, LogIn, Users } from "lucide-react";
+import { Home, PlayCircle, Library, Settings, Info, History, Heart, Clock, ListMusic, LogIn, Users } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { useSessionManager } from "@/hooks/useSessionManager";
 import { toast } from "sonner";
 
 interface MobileBottomNavProps {
@@ -13,23 +12,22 @@ interface MobileBottomNavProps {
 export const MobileBottomNav = ({ isAuthenticated = false }: MobileBottomNavProps) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { setIsAuthOpen } = useSessionManager();
   const [showLibrary, setShowLibrary] = useState(false);
-  const [showMenu, setShowMenu] = useState(false);
 
   const isActive = (path: string) => {
     if (path === "/") return location.pathname === "/";
     if (path === "/videos") return location.pathname === "/videos";
-    if (path === "/search") return location.pathname === "/search";
+    if (path === "/settings") return location.pathname === "/settings";
+    if (path === "/about") return location.pathname === "/about";
     return false;
   };
 
   const navItems = [
     { icon: Home, label: "Home", path: "/" },
     { icon: PlayCircle, label: "Videos", path: "/videos" },
-    { icon: Search, label: "Search", path: "/search" },
+    { icon: Settings, label: "Settings", path: "/settings" },
     { icon: Library, label: "Library", action: "library" as const },
-    { icon: Menu, label: "Menu", action: "menu" as const },
+    { icon: Info, label: "Info", path: "/about" },
   ];
 
   const libraryItems = [
@@ -40,21 +38,11 @@ export const MobileBottomNav = ({ isAuthenticated = false }: MobileBottomNavProp
     { icon: Users, label: "Subscriptions", path: "/subscriptions" },
   ];
 
-  const menuItems = [
-    { icon: Settings, label: "Settings", path: "/settings" },
-    { icon: Info, label: "About", path: "/about" },
-  ];
-
   const handleNavClick = (item: typeof navItems[0]) => {
     if ('action' in item && item.action === "library") {
-      setShowMenu(false);
       setShowLibrary(!showLibrary);
-    } else if ('action' in item && item.action === "menu") {
-      setShowLibrary(false);
-      setShowMenu(!showMenu);
     } else if ('path' in item) {
       setShowLibrary(false);
-      setShowMenu(false);
       navigate(item.path);
     }
   };
@@ -65,24 +53,22 @@ export const MobileBottomNav = ({ isAuthenticated = false }: MobileBottomNavProp
       return;
     }
     setShowLibrary(false);
-    setShowMenu(false);
     navigate(path);
   };
 
-  const isLibraryActive = ["/history", "/favorites", "/watch-later", "/playlists"].includes(location.pathname) || (location.pathname === "/settings" && showLibrary);
-  const isMenuActive = ["/settings", "/about"].includes(location.pathname);
+  const isLibraryActive = ["/history", "/favorites", "/watch-later", "/playlists", "/subscriptions"].includes(location.pathname);
 
   return (
     <>
       {/* Overlay */}
       <AnimatePresence>
-        {(showLibrary || showMenu) && (
+        {showLibrary && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black/30 z-40"
-            onClick={() => { setShowLibrary(false); setShowMenu(false); }}
+            onClick={() => setShowLibrary(false)}
           />
         )}
       </AnimatePresence>
@@ -125,55 +111,6 @@ export const MobileBottomNav = ({ isAuthenticated = false }: MobileBottomNavProp
         )}
       </AnimatePresence>
 
-      {/* Menu Sheet */}
-      <AnimatePresence>
-        {showMenu && (
-          <motion.div
-            initial={{ y: "100%" }}
-            animate={{ y: 0 }}
-            exit={{ y: "100%" }}
-            transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="fixed bottom-14 left-0 right-0 z-40 bg-white dark:bg-[#212121] rounded-t-2xl border-t border-[#E5E5E5] dark:border-[#333] shadow-2xl"
-          >
-            <div className="w-12 h-1 bg-[#E5E5E5] dark:bg-[#555] rounded-full mx-auto mt-3" />
-            <div className="p-4 pb-2">
-              <h3 className="text-sm font-bold text-[#1A1A1A] dark:text-[#e8e8e8] mb-3 px-1" style={{ fontFamily: "'Quicksand', sans-serif" }}>Menu</h3>
-              <div className="space-y-1 mb-2">
-                {menuItems.map((item) => {
-                  const Icon = item.icon;
-                  const active = location.pathname === item.path;
-                  return (
-                    <button
-                      key={item.path}
-                      onClick={() => handleSheetItemClick(item.path)}
-                      className={cn(
-                        "flex items-center gap-3 w-full px-3 py-3 rounded-xl text-sm font-medium transition-all",
-                        active ? "bg-[#F5F5F5] dark:bg-[#333] text-[#FF0000]" : "text-[#666666] dark:text-[#aaa] hover:bg-[#F5F5F5] dark:hover:bg-[#333]"
-                      )}
-                    >
-                      <Icon className={cn("w-5 h-5", active ? "text-[#FF0000]" : "text-[#666666]")} />
-                      <span>{item.label}</span>
-                    </button>
-                  );
-                })}
-              </div>
-              {/* Sign In */}
-              {!isAuthenticated && (
-                <div className="border-t border-[#E5E5E5] dark:border-[#333] pt-3 mt-3">
-                  <button
-                    onClick={() => { setShowMenu(false); setIsAuthOpen(true); }}
-                    className="flex items-center gap-3 w-full px-3 py-3 rounded-xl text-sm font-semibold text-[#FF0000] hover:bg-[#F5F5F5] dark:hover:bg-[#333] transition-all"
-                  >
-                    <LogIn className="w-5 h-5" />
-                    <span>Sign In</span>
-                  </button>
-                </div>
-              )}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       {/* Bottom Navigation Bar */}
       <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-[#212121] border-t border-[#E5E5E5] dark:border-[#333] shadow-lg lg:hidden" style={{ fontFamily: "'Quicksand', sans-serif" }}>
         <div className="flex items-center justify-around h-14 max-w-lg mx-auto">
@@ -181,7 +118,6 @@ export const MobileBottomNav = ({ isAuthenticated = false }: MobileBottomNavProp
             const Icon = item.icon;
             const active = 'path' in item ? isActive(item.path) 
               : item.action === 'library' ? (isLibraryActive || showLibrary)
-              : item.action === 'menu' ? (isMenuActive || showMenu)
               : false;
             
             return (
