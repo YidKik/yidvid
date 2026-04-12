@@ -50,6 +50,20 @@ const VideoDetails = () => {
     videoId
   );
 
+
+  // Auto-play: navigate to first related video when current ends
+  const handleVideoEnd = useCallback(() => {
+    if (isPlaylistMode) {
+      goToNextVideo();
+      return;
+    }
+    if (channelVideos.length > 0) {
+      const nextVideo = channelVideos[0];
+      const nextId = nextVideo.video_id || nextVideo.id;
+      navigate(`/video/${nextId}`);
+    }
+  }, [isPlaylistMode, goToNextVideo, channelVideos, navigate]);
+
   const isLoading = isLoadingVideo || isLoadingRelated;
   usePageLoader('video-details', isLoading);
 
