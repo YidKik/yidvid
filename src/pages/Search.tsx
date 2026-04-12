@@ -7,8 +7,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Youtube, Search as SearchIcon, Users, Play } from "lucide-react";
 import { Link } from "react-router-dom";
 import { usePageLoader } from "@/contexts/LoadingContext";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useHiddenChannels } from "@/hooks/channel/useHiddenChannels";
 
 const TypingSearchLoader = ({ query }: { query: string }) => {
   const prefix = 'Searching results for ';
@@ -64,6 +65,7 @@ const Search = () => {
   const [searchParams] = useSearchParams();
   const query = searchParams.get("q") || "";
   const { isMobile, isTablet } = useIsMobile();
+  const { filterVideos, filterChannels } = useHiddenChannels();
 
   const { data: videos, isLoading: isLoadingVideos } = useQuery({
     queryKey: ["search-videos", query],
@@ -122,6 +124,9 @@ const Search = () => {
     staleTime: 1000 * 60 * 5,
     gcTime: 1000 * 60 * 15,
   });
+
+  const filteredVideos = useMemo(() => filterVideos(videos || []), [videos, filterVideos]);
+  const filteredChannels = useMemo(() => filterChannels(channels || []), [channels, filterChannels]);
 
   const isLoading = isLoadingVideos || isLoadingChannels;
   usePageLoader('search', isLoading);
