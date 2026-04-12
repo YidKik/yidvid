@@ -439,6 +439,7 @@ export const ContactRequestsPageV2 = () => {
                 <Separator className="bg-white/5 mb-4" />
 
                 <div className="space-y-1">
+                  <DetailRow label="Username" value={(selected as any).display_username || selected.name} icon={User} />
                   <DetailRow label="Request ID" value={selected.id} icon={Hash} mono copyable />
                   <DetailRow label="Email" value={selected.email} icon={Mail} copyable />
                   <DetailRow label="Submitted" value={format(new Date(selected.created_at), "MMM d, yyyy 'at' h:mm a")} icon={Clock} />
