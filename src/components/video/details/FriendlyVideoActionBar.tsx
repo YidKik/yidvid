@@ -1,4 +1,4 @@
-import { ThumbsUp, Share2, Eye, Clock, Copy, Facebook, Twitter, Mail, MessageCircle, X, Heart, ListPlus, Plus, LogIn, MoreVertical, Flag, Bell } from "lucide-react";
+import { ThumbsUp, Share2, Clock, Copy, Facebook, Twitter, Mail, MessageCircle, X, Heart, ListPlus, Plus, LogIn, MoreVertical, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
