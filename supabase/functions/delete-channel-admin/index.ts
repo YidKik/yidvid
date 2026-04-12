@@ -53,47 +53,32 @@ Deno.serve(async (req) => {
     
     console.log('Validated delete request for channel')
     
-    // Check if user is admin using secure function
-    const { data: isAdmin, error: adminCheckError } = await adminClient
-      .rpc('has_role', { _user_id: userId, _role: 'admin' })
+    // Use the admin_delete_channel RPC which does a full hard delete
+    const { data, error } = await adminClient
+      .rpc('admin_delete_channel', { 
+        channel_id_param: channelId, 
+        admin_user_id: userId 
+      })
 
-    if (adminCheckError || !isAdmin) {
-      console.error('Admin check failed')
+    if (error) {
+      console.error('Error deleting channel:', error)
       return new Response(
         JSON.stringify({ error: 'Operation failed' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+      )
+    }
+
+    const result = data as { success: boolean; error?: string };
+    
+    if (!result?.success) {
+      console.error('Channel deletion failed:', result?.error)
+      return new Response(
+        JSON.stringify({ error: result?.error || 'Operation failed' }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 403 }
       )
     }
     
-    // First mark videos as deleted to avoid potential FK constraints
-    const { error: videoError } = await adminClient
-      .from('youtube_videos')
-      .update({ deleted_at: new Date().toISOString() })
-      .eq('channel_id', channelId)
-    
-    if (videoError && !videoError.message.includes('No rows')) {
-      console.error('Error soft deleting videos:', videoError)
-      return new Response(
-        JSON.stringify({ error: 'Operation failed' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
-      )
-    }
-    
-    // Then mark the channel as deleted
-    const { error: channelError } = await adminClient
-      .from('youtube_channels')
-      .update({ deleted_at: new Date().toISOString() })
-      .eq('channel_id', channelId)
-    
-    if (channelError) {
-      console.error('Error soft deleting channel:', channelError)
-      return new Response(
-        JSON.stringify({ error: 'Operation failed' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
-      )
-    }
-    
-    console.log('Channel successfully marked as deleted')
+    console.log('Channel permanently deleted with all related data')
     
     return new Response(
       JSON.stringify({ success: true }),
