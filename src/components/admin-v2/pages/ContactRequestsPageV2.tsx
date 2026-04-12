@@ -124,13 +124,32 @@ export const ContactRequestsPageV2 = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("contact_requests")
-        .select("*, profiles:user_id (username, display_name)")
+        .select("*")
         .order("created_at", { ascending: false });
       if (error) throw error;
-      return (data || []).map((r: any) => ({
-        ...r,
-        display_username: r.profiles?.username || r.profiles?.display_name || r.name,
-      })) as (ContactRequest & { display_username: string })[];
+
+      // Fetch profile info for requests with user_id
+      const userIds = [...new Set((data || []).map(r => r.user_id).filter(Boolean))] as string[];
+      let profilesMap: Record<string, { username: string | null; display_name: string | null }> = {};
+      if (userIds.length > 0) {
+        const { data: profiles } = await supabase
+          .from("profiles")
+          .select("id, username, display_name")
+          .in("id", userIds);
+        if (profiles) {
+          for (const p of profiles) {
+            profilesMap[p.id] = { username: p.username, display_name: p.display_name };
+          }
+        }
+      }
+
+      return (data || []).map((r: any) => {
+        const profile = r.user_id ? profilesMap[r.user_id] : null;
+        return {
+          ...r,
+          display_username: profile?.username || profile?.display_name || r.name,
+        };
+      }) as (ContactRequest & { display_username: string })[];
     },
     retry: 2,
     staleTime: 15000,
