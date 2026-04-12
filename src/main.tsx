@@ -54,23 +54,15 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         closeButton={true}
         toastOptions={{
           classNames: {
-            toast: 'group toast bg-white/90 backdrop-blur-sm text-gray-700 border border-gray-200 shadow-md rounded-xl px-4 py-3 text-sm',
-            title: 'text-gray-800 font-medium text-sm',
-            description: 'text-gray-500 text-xs',
-            success: 'border-green-200 bg-green-50/80',
-            error: 'border-red-200 bg-red-50/80',
-            warning: 'border-yellow-200 bg-yellow-50/80',
-            info: 'border-blue-200 bg-blue-50/80',
-            actionButton: 'bg-gray-800 hover:bg-gray-900 text-white font-medium rounded-lg text-xs',
-            cancelButton: 'bg-gray-100 text-gray-500 rounded-lg text-xs',
-            closeButton: 'text-gray-400 hover:text-gray-600 border-gray-200 hover:bg-gray-100',
+            toast: 'group toast',
+            closeButton: 'text-gray-400 hover:text-gray-700',
           },
-          duration: 3500,
+          duration: 3000,
         }}
         richColors={false}
         expand={false}
-        visibleToasts={3}
-        gap={8}
+        visibleToasts={2}
+        gap={6}
       />
     </QueryClientProvider>
   </React.StrictMode>,
