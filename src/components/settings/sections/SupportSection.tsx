@@ -1,15 +1,17 @@
-import { useState } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { supabase } from "@/integrations/supabase/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormValues, formSchema } from "@/components/contact/types";
-import { useIsMobile } from "@/hooks/use-mobile";
 import { ContactForm } from "@/components/contact/ContactForm";
-import { toast } from "sonner";
+import { ContactSuccessOverlay } from "@/components/contact/ContactSuccessOverlay";
 import { HelpCircle, MessageSquare } from "lucide-react";
+import { useUnifiedAuth } from "@/hooks/useUnifiedAuth";
 
 export const SupportSection = () => {
-  const isMobile = useIsMobile();
+  const { user } = useUnifiedAuth();
+  const [showSuccess, setShowSuccess] = useState(false);
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -21,9 +23,29 @@ export const SupportSection = () => {
     },
   });
 
+  useEffect(() => {
+    const prefill = async () => {
+      if (!user?.id) return;
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("display_name, name, username, email")
+        .eq("id", user.id)
+        .single();
+      if (profile) {
+        form.setValue("name", profile.display_name || profile.name || profile.username || "");
+        form.setValue("email", profile.email || user.email || "");
+        form.setValue("user_id_display", user.id);
+      }
+    };
+    prefill();
+  }, [user?.id]);
+
   const onSubmit = async (data: FormValues) => {
+    setShowSuccess(true);
+    form.setValue("message", "");
+
     try {
-      const user = await supabase.auth.getUser();
+      const authUser = await supabase.auth.getUser();
       const { data: insertedRequest, error } = await supabase
         .from("contact_requests")
         .insert({
@@ -31,7 +53,7 @@ export const SupportSection = () => {
           name: data.name,
           email: data.email,
           message: data.message,
-          user_id: user.data.user?.id,
+          user_id: authUser.data.user?.id,
         })
         .select()
         .single();
@@ -39,11 +61,10 @@ export const SupportSection = () => {
       if (error) throw error;
 
       if (insertedRequest) {
-        await supabase.functions.invoke("send-contact-notifications", {
+        supabase.functions.invoke("send-contact-notifications", {
           body: { type: "new_request", requestId: insertedRequest.id }
         }).catch(() => {});
 
-        // Send confirmation email to user
         supabase.functions.invoke('send-transactional-email', {
           body: {
             templateName: 'contact-request-confirmation',
@@ -53,17 +74,17 @@ export const SupportSection = () => {
           },
         }).catch(err => console.error('Failed to send contact confirmation email:', err));
       }
-
-      form.reset();
-      toast.success("Your message has been sent!");
     } catch (error) {
-      toast.error("Failed to send your message. Please try again.");
+      console.error("Error submitting contact request:", error);
     }
   };
 
+  const handleSuccessComplete = useCallback(() => {
+    setShowSuccess(false);
+  }, []);
+
   return (
     <div style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}>
-      {/* Section Header */}
       <div className="flex items-center gap-2 mb-5 pb-3 border-b border-gray-200">
         <HelpCircle size={18} className="text-yellow-600" />
         <h2 className="text-lg font-bold text-gray-900">Help & Support</h2>
@@ -79,6 +100,8 @@ export const SupportSection = () => {
         </p>
         <ContactForm form={form} onSubmit={onSubmit} />
       </div>
+
+      <ContactSuccessOverlay show={showSuccess} onComplete={handleSuccessComplete} />
     </div>
   );
 };
