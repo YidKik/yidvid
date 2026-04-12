@@ -8,6 +8,7 @@ import WritingVideos from './pages/WritingVideos';
 import ResetPassword from './pages/ResetPassword';
 import Videos from './pages/Videos';
 import History from './pages/History';
+import NotFound from './pages/NotFound';
 import LandingPage from './pages/LandingPage';
 import { PlaybackProvider } from './contexts/PlaybackContext';
 import { ColorProvider } from './contexts/ColorContext';
@@ -96,6 +97,9 @@ function AppContent() {
         
         {/* Admin route - single entry point, tabs handled internally */}
         <Route path="/admin" element={<AdminDashboard />} />
+        
+        {/* 404 catch-all */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
       
       {/* Add the PagePreloader to prefetch the Videos page */}
