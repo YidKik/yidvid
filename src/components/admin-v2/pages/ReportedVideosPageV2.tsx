@@ -182,7 +182,7 @@ export const ReportedVideosPageV2 = () => {
   };
 
   return (
-    <div className="flex gap-6 h-[calc(100vh-132px)]">
+    <div className="flex gap-6 h-[calc(100vh-140px)] overflow-hidden">
       {/* Left: list */}
       <div className="flex flex-col min-w-0 flex-1">
         {/* Stats row */}
