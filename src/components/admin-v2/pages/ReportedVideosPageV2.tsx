@@ -63,7 +63,7 @@ export const ReportedVideosPageV2 = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("video_reports")
-        .select(`*, youtube_videos (title, video_id, thumbnail, channel_name)`)
+        .select(`*, youtube_videos (title, video_id, thumbnail, channel_name, deleted_at)`)
         .order("created_at", { ascending: false });
       if (error) throw error;
 
@@ -135,6 +135,7 @@ export const ReportedVideosPageV2 = () => {
           reportCount: 0,
           latestReport: r.created_at,
           reports: [],
+          isDeleted: !!r.youtube_videos?.deleted_at,
         };
       }
       map[key].reportCount++;
