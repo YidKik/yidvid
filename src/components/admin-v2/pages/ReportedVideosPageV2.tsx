@@ -1,14 +1,23 @@
 import { useState, useEffect, useMemo } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { formatDistanceToNow } from "date-fns";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+import { formatDistanceToNow, format } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
-import {
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
-} from "@/components/ui/table";
-import { Flag, ExternalLink, ChevronDown, ChevronRight, Loader2, AlertTriangle, Search } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
+import {
+  Flag, ExternalLink, Search, X, Trash2, AlertTriangle,
+  Mail, Calendar, MessageSquare, User, Hash, Copy, Eye,
+} from "lucide-react";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel,
+  AlertDialogContent, AlertDialogDescription, AlertDialogFooter,
+  AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface VideoReport {
   id: string;
@@ -16,16 +25,22 @@ interface VideoReport {
   email: string;
   created_at: string;
   video_id: string;
+  user_id: string | null;
   youtube_videos: {
     title: string;
     video_id: string;
     thumbnail: string;
     channel_name: string;
   } | null;
+  profiles: {
+    display_name: string | null;
+    username: string | null;
+    email: string;
+  } | null;
 }
 
 interface GroupedReport {
-  videoId: string;
+  videoDbId: string;
   videoTitle: string;
   videoSlug: string;
   thumbnail: string;
@@ -37,7 +52,8 @@ interface GroupedReport {
 
 export const ReportedVideosPageV2 = () => {
   const queryClient = useQueryClient();
-  const [expandedVideo, setExpandedVideo] = useState<string | null>(null);
+  const { user } = useAuth();
+  const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
 
   const { data: reports, isLoading } = useQuery({
@@ -45,7 +61,7 @@ export const ReportedVideosPageV2 = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("video_reports")
-        .select(`*, youtube_videos (title, video_id, thumbnail, channel_name)`)
+        .select(`*, youtube_videos (title, video_id, thumbnail, channel_name), profiles:user_id (display_name, username, email)`)
         .order("created_at", { ascending: false });
       if (error) throw error;
       return (data || []) as VideoReport[];
@@ -63,6 +79,25 @@ export const ReportedVideosPageV2 = () => {
     return () => { supabase.removeChannel(channel); };
   }, [queryClient]);
 
+  // Delete mutation
+  const deleteMutation = useMutation({
+    mutationFn: async (videoDbId: string) => {
+      const { data, error } = await supabase.rpc("admin_delete_video", {
+        video_id_param: videoDbId,
+        admin_user_id: user?.id,
+      });
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      toast.success("Video deleted from site");
+      setSelectedVideoId(null);
+      queryClient.invalidateQueries({ queryKey: ["video-reports"] });
+      queryClient.invalidateQueries({ queryKey: ["moderation"] });
+    },
+    onError: (e: any) => toast.error(e?.message || "Failed to delete video"),
+  });
+
   // Group reports by video
   const grouped = useMemo(() => {
     if (!reports) return [];
@@ -71,7 +106,7 @@ export const ReportedVideosPageV2 = () => {
       const key = r.video_id;
       if (!map[key]) {
         map[key] = {
-          videoId: key,
+          videoDbId: key,
           videoTitle: r.youtube_videos?.title || "Unknown Video",
           videoSlug: r.youtube_videos?.video_id || "",
           thumbnail: r.youtube_videos?.thumbnail || "",
@@ -98,140 +133,313 @@ export const ReportedVideosPageV2 = () => {
     );
   }, [grouped, search]);
 
+  const selected = grouped.find(g => g.videoDbId === selectedVideoId) || null;
+
+  const copyToClipboard = (text: string, label: string) => {
+    navigator.clipboard.writeText(text);
+    toast.success(`${label} copied`);
+  };
+
+  const severityBadge = (count: number) => {
+    if (count >= 3) {
+      return (
+        <Badge className="bg-red-500/15 text-red-400 border-red-500/20 hover:bg-red-500/20">
+          <AlertTriangle className="w-3 h-3 mr-1" />{count} reports
+        </Badge>
+      );
+    }
+    if (count >= 2) {
+      return (
+        <Badge className="bg-amber-500/15 text-amber-400 border-amber-500/20 hover:bg-amber-500/20">
+          {count} reports
+        </Badge>
+      );
+    }
+    return (
+      <Badge className="bg-[#1e2028] text-[#8b8fa3] border-[#2a2d3a] hover:bg-[#1e2028]">
+        {count} report
+      </Badge>
+    );
+  };
+
   return (
-    <div className="space-y-6">
-      {/* Header stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-[#13141b] border border-[#1e2028] rounded-xl p-5">
-          <p className="text-[11px] uppercase tracking-wider text-[#565b6e] font-semibold mb-1">Total Reports</p>
-          <p className="text-2xl font-bold text-white">{reports?.length || 0}</p>
+    <div className="flex gap-6 h-[calc(100vh-132px)]">
+      {/* Left: list */}
+      <div className="flex flex-col min-w-0 flex-1">
+        {/* Stats row */}
+        <div className="flex items-center gap-4 mb-4 shrink-0">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#13141b] border border-[#1e2028]">
+            <Flag className="w-3.5 h-3.5 text-red-400" />
+            <span className="text-xs font-medium text-[#c4c7d4]">{reports?.length || 0} total reports</span>
+          </div>
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#13141b] border border-[#1e2028]">
+            <Eye className="w-3.5 h-3.5 text-[#818cf8]" />
+            <span className="text-xs font-medium text-[#c4c7d4]">{grouped.length} videos reported</span>
+          </div>
+          {grouped.filter(g => g.reportCount >= 3).length > 0 && (
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-red-500/10 border border-red-500/20">
+              <AlertTriangle className="w-3.5 h-3.5 text-red-400" />
+              <span className="text-xs font-medium text-red-400">
+                {grouped.filter(g => g.reportCount >= 3).length} high priority
+              </span>
+            </div>
+          )}
         </div>
-        <div className="bg-[#13141b] border border-[#1e2028] rounded-xl p-5">
-          <p className="text-[11px] uppercase tracking-wider text-[#565b6e] font-semibold mb-1">Reported Videos</p>
-          <p className="text-2xl font-bold text-white">{grouped.length}</p>
-        </div>
-        <div className="bg-[#13141b] border border-[#1e2028] rounded-xl p-5">
-          <p className="text-[11px] uppercase tracking-wider text-[#565b6e] font-semibold mb-1">Most Reported</p>
-          <p className="text-sm font-medium text-white truncate">
-            {grouped[0]?.videoTitle || "—"}{grouped[0] ? ` (${grouped[0].reportCount})` : ""}
-          </p>
-        </div>
-      </div>
 
-      {/* Search */}
-      <div className="relative max-w-md">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#565b6e]" />
-        <Input
-          placeholder="Search videos, channels or reporters..."
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-          className="pl-10 bg-[#13141b] border-[#1e2028] text-white placeholder:text-[#4a4e5e]"
-        />
-      </div>
+        {/* Search */}
+        <div className="relative mb-4 shrink-0">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#565b6e]" />
+          <Input
+            placeholder="Search videos, channels or reporters..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            className="pl-10 bg-[#13141b] border-[#1e2028] text-white placeholder:text-[#4a4e5e] h-9 text-sm"
+          />
+        </div>
 
-      {/* Main table */}
-      {isLoading ? (
-        <div className="flex items-center justify-center py-16">
-          <Loader2 className="w-6 h-6 animate-spin text-[#565b6e]" />
-        </div>
-      ) : filtered.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-16 text-[#565b6e]">
-          <Flag className="w-12 h-12 mb-4 opacity-20" />
-          <p className="text-sm font-medium">No reported videos</p>
-        </div>
-      ) : (
-        <div className="bg-[#13141b] border border-[#1e2028] rounded-xl overflow-hidden">
-          <ScrollArea className="max-h-[calc(100vh-340px)]">
-            <Table>
-              <TableHeader>
-                <TableRow className="border-[#1e2028] hover:bg-transparent">
-                  <TableHead className="text-[#8b8fa3] w-10"></TableHead>
-                  <TableHead className="text-[#8b8fa3]">Video</TableHead>
-                  <TableHead className="text-[#8b8fa3]">Channel</TableHead>
-                  <TableHead className="text-[#8b8fa3] text-center">Reports</TableHead>
-                  <TableHead className="text-[#8b8fa3]">Latest Report</TableHead>
-                  <TableHead className="text-[#8b8fa3] w-[80px]">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filtered.map(group => (
-                  <>
-                    <TableRow
-                      key={group.videoId}
-                      className="border-[#1e2028] hover:bg-[#1a1c25] cursor-pointer"
-                      onClick={() => setExpandedVideo(expandedVideo === group.videoId ? null : group.videoId)}
+        {/* List */}
+        <div className="rounded-xl border border-[#1e2028] bg-[#0f1117] overflow-hidden flex-1 min-h-0">
+          {isLoading ? (
+            <div className="p-6 space-y-3">
+              {[...Array(6)].map((_, i) => (
+                <Skeleton key={i} className="h-16 w-full bg-[#1a1c25] rounded-lg" />
+              ))}
+            </div>
+          ) : filtered.length === 0 ? (
+            <div className="flex flex-col items-center justify-center h-full text-[#565b6e]">
+              <Flag className="w-8 h-8 mb-3 opacity-40" />
+              <p className="text-sm">No reported videos found</p>
+            </div>
+          ) : (
+            <ScrollArea className="h-full">
+              <div className="p-2 divide-y divide-[#1e2028]">
+                {filtered.map(group => {
+                  const isActive = selectedVideoId === group.videoDbId;
+                  return (
+                    <button
+                      key={group.videoDbId}
+                      onClick={() => setSelectedVideoId(isActive ? null : group.videoDbId)}
+                      className={`w-full flex items-center gap-4 px-4 py-3 rounded-lg text-left transition-all ${
+                        isActive
+                          ? "bg-[#6366f1]/10 border border-[#6366f1]/20"
+                          : "hover:bg-[#1a1c25] border border-transparent"
+                      }`}
                     >
-                      <TableCell className="text-center">
-                        {expandedVideo === group.videoId
-                          ? <ChevronDown className="w-4 h-4 text-[#8b8fa3] inline" />
-                          : <ChevronRight className="w-4 h-4 text-[#8b8fa3] inline" />}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-3">
-                          {group.thumbnail && (
-                            <img src={group.thumbnail} alt="" className="w-12 h-8 rounded object-cover shrink-0" />
-                          )}
-                          <span className="text-sm text-white font-medium line-clamp-1">{group.videoTitle}</span>
+                      {group.thumbnail && (
+                        <img
+                          src={group.thumbnail}
+                          alt=""
+                          className="w-16 h-10 rounded object-cover shrink-0"
+                        />
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-[#c4c7d4] truncate">{group.videoTitle}</p>
+                        <p className="text-xs text-[#565b6e] mt-0.5 truncate">
+                          {group.channelName}
+                          {" · "}
+                          {formatDistanceToNow(new Date(group.latestReport), { addSuffix: true })}
+                        </p>
+                      </div>
+                      {severityBadge(group.reportCount)}
+                    </button>
+                  );
+                })}
+              </div>
+            </ScrollArea>
+          )}
+        </div>
+      </div>
+
+      {/* Right: detail panel */}
+      <div className="w-[420px] shrink-0 rounded-xl border border-[#1e2028] bg-[#0f1117] flex flex-col overflow-hidden">
+        {selected ? (
+          <>
+            {/* Panel header */}
+            <div className="flex items-center justify-between px-5 py-4 border-b border-[#1e2028] shrink-0">
+              <h3 className="text-sm font-semibold text-white truncate pr-3">Report Details</h3>
+              <button
+                onClick={() => setSelectedVideoId(null)}
+                className="p-1 rounded hover:bg-white/5 text-[#565b6e] hover:text-[#8b8fa3] transition-colors shrink-0"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <ScrollArea className="flex-1">
+              <div className="p-5 space-y-6">
+                {/* Video info */}
+                <div>
+                  <p className="text-[10px] uppercase tracking-wider text-[#565b6e] font-semibold mb-3">Video</p>
+                  {selected.thumbnail && (
+                    <img
+                      src={selected.thumbnail}
+                      alt=""
+                      className="w-full h-40 rounded-lg object-cover mb-3"
+                    />
+                  )}
+                  <div className="space-y-2.5">
+                    <div className="bg-[#13141b] rounded-lg p-3.5 border border-[#1e2028]">
+                      <p className="text-[10px] text-[#565b6e] mb-1">Title</p>
+                      <p className="text-sm font-medium text-[#c4c7d4]">{selected.videoTitle}</p>
+                    </div>
+                    <div className="bg-[#13141b] rounded-lg p-3.5 border border-[#1e2028]">
+                      <p className="text-[10px] text-[#565b6e] mb-1">Channel</p>
+                      <p className="text-sm text-[#c4c7d4]">{selected.channelName}</p>
+                    </div>
+                    <div className="bg-[#13141b] rounded-lg p-3.5 border border-[#1e2028] flex items-center justify-between">
+                      <div>
+                        <p className="text-[10px] text-[#565b6e] mb-1">Report Count</p>
+                        {severityBadge(selected.reportCount)}
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-[#818cf8] hover:text-[#a5b4fc] hover:bg-[#818cf8]/10 text-xs"
+                        onClick={() => window.open(`/video/${selected.videoSlug}`, "_blank")}
+                      >
+                        <ExternalLink className="w-3.5 h-3.5 mr-1.5" />
+                        View Video
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* All reporters */}
+                <div>
+                  <p className="text-[10px] uppercase tracking-wider text-[#565b6e] font-semibold mb-3">
+                    Reporters ({selected.reportCount})
+                  </p>
+                  <div className="space-y-3">
+                    {selected.reports.map((report, idx) => {
+                      const name = report.profiles?.display_name || report.profiles?.username || null;
+                      return (
+                        <div
+                          key={report.id}
+                          className="bg-[#13141b] rounded-lg border border-[#1e2028] overflow-hidden"
+                        >
+                          {/* Reporter header */}
+                          <div className="px-3.5 py-2.5 border-b border-[#1e2028]/50 flex items-center justify-between">
+                            <div className="flex items-center gap-2 min-w-0">
+                              <div className="w-6 h-6 rounded-full bg-[#6366f1]/15 flex items-center justify-center shrink-0">
+                                <User className="w-3 h-3 text-[#818cf8]" />
+                              </div>
+                              <div className="min-w-0">
+                                <p className="text-xs font-medium text-[#c4c7d4] truncate">
+                                  {name || "Anonymous User"}
+                                </p>
+                              </div>
+                            </div>
+                            <span className="text-[9px] text-[#4a4e5e] shrink-0 ml-2">
+                              #{idx + 1}
+                            </span>
+                          </div>
+
+                          {/* Reporter details */}
+                          <div className="px-3.5 py-2.5 space-y-2">
+                            <div className="flex items-center gap-2">
+                              <Mail className="w-3 h-3 text-[#565b6e] shrink-0" />
+                              <p className="text-xs text-[#8b8fa3] truncate flex-1">{report.email}</p>
+                              <button
+                                onClick={() => copyToClipboard(report.email, "Email")}
+                                className="text-[#565b6e] hover:text-[#818cf8] transition-colors shrink-0"
+                              >
+                                <Copy className="w-3 h-3" />
+                              </button>
+                            </div>
+                            {report.user_id && (
+                              <div className="flex items-center gap-2">
+                                <Hash className="w-3 h-3 text-[#565b6e] shrink-0" />
+                                <p className="text-[10px] text-[#6b7084] font-mono truncate flex-1">{report.user_id}</p>
+                                <button
+                                  onClick={() => copyToClipboard(report.user_id!, "User ID")}
+                                  className="text-[#565b6e] hover:text-[#818cf8] transition-colors shrink-0"
+                                >
+                                  <Copy className="w-3 h-3" />
+                                </button>
+                              </div>
+                            )}
+                            <div className="flex items-center gap-2">
+                              <Calendar className="w-3 h-3 text-[#565b6e] shrink-0" />
+                              <p className="text-xs text-[#6b7084]">
+                                {format(new Date(report.created_at), "MMM d, yyyy 'at' h:mm a")}
+                              </p>
+                            </div>
+
+                            {/* Report message */}
+                            <div className="mt-1.5 bg-[#0d0e14] rounded-md p-2.5 border border-[#1a1c25]">
+                              <div className="flex items-start gap-2">
+                                <MessageSquare className="w-3 h-3 text-[#565b6e] mt-0.5 shrink-0" />
+                                <p className="text-xs text-[#8b8fa3] leading-relaxed">{report.message}</p>
+                              </div>
+                            </div>
+                          </div>
                         </div>
-                      </TableCell>
-                      <TableCell className="text-[#8b8fa3] text-sm">{group.channelName}</TableCell>
-                      <TableCell className="text-center">
-                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold ${
-                          group.reportCount >= 3
-                            ? "bg-red-500/15 text-red-400 border border-red-500/20"
-                            : group.reportCount >= 2
-                            ? "bg-amber-500/15 text-amber-400 border border-amber-500/20"
-                            : "bg-[#1e2028] text-[#8b8fa3]"
-                        }`}>
-                          {group.reportCount >= 3 && <AlertTriangle className="w-3 h-3" />}
-                          {group.reportCount}
-                        </span>
-                      </TableCell>
-                      <TableCell className="text-[#8b8fa3] text-sm">
-                        {formatDistanceToNow(new Date(group.latestReport), { addSuffix: true })}
-                      </TableCell>
-                      <TableCell>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div>
+                  <p className="text-[10px] uppercase tracking-wider text-[#565b6e] font-semibold mb-3">Actions</p>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="flex-1 h-9 text-xs text-[#818cf8] hover:text-[#a5b4fc] hover:bg-[#818cf8]/10 border border-[#6366f1]/20"
+                      onClick={() => window.open(`/video/${selected.videoSlug}`, "_blank")}
+                    >
+                      <Eye className="w-3.5 h-3.5 mr-1.5" />
+                      View Video
+                    </Button>
+
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
                         <Button
                           variant="ghost"
-                          size="icon"
-                          className="text-[#8b8fa3] hover:text-white hover:bg-[#1e2028]"
-                          onClick={e => {
-                            e.stopPropagation();
-                            window.open(`/video/${group.videoSlug}`, "_blank");
-                          }}
-                          title="Open video"
+                          size="sm"
+                          className="flex-1 h-9 text-xs text-red-400 hover:text-red-300 hover:bg-red-500/10 border border-red-500/20"
+                          disabled={deleteMutation.isPending}
                         >
-                          <ExternalLink className="w-4 h-4" />
+                          <Trash2 className="w-3.5 h-3.5 mr-1.5" />
+                          {deleteMutation.isPending ? "Deleting..." : "Delete Video"}
                         </Button>
-                      </TableCell>
-                    </TableRow>
-
-                    {/* Expanded reports */}
-                    {expandedVideo === group.videoId && group.reports.map(report => (
-                      <TableRow key={report.id} className="border-[#1e2028]/50 bg-[#0d0e14]">
-                        <TableCell />
-                        <TableCell colSpan={2}>
-                          <div className="pl-4 border-l-2 border-[#2a2d3a]">
-                            <p className="text-xs text-[#8b8fa3]">
-                              <span className="text-[#c4c7d4] font-medium">{report.email}</span>
-                            </p>
-                            <p className="text-xs text-[#6b7084] mt-1 line-clamp-2">{report.message}</p>
-                          </div>
-                        </TableCell>
-                        <TableCell />
-                        <TableCell className="text-[#565b6e] text-xs">
-                          {formatDistanceToNow(new Date(report.created_at), { addSuffix: true })}
-                        </TableCell>
-                        <TableCell />
-                      </TableRow>
-                    ))}
-                  </>
-                ))}
-              </TableBody>
-            </Table>
-          </ScrollArea>
-        </div>
-      )}
+                      </AlertDialogTrigger>
+                      <AlertDialogContent className="bg-[#13141b] border-[#1e2028] text-white">
+                        <AlertDialogHeader>
+                          <AlertDialogTitle className="text-white">Delete this video?</AlertDialogTitle>
+                          <AlertDialogDescription className="text-[#8b8fa3]">
+                            This will remove "{selected.videoTitle}" from the entire site. The video can be restored from the Deleted Items section.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel className="bg-[#1a1c25] border-[#2a2d3a] text-[#c4c7d4] hover:bg-[#22242e] hover:text-white">
+                            Cancel
+                          </AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() => deleteMutation.mutate(selected.videoDbId)}
+                            className="bg-red-500/15 text-red-400 border border-red-500/20 hover:bg-red-500/25"
+                          >
+                            Delete Video
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </div>
+                </div>
+              </div>
+            </ScrollArea>
+          </>
+        ) : (
+          <div className="flex-1 flex flex-col items-center justify-center text-[#565b6e] px-6">
+            <div className="w-12 h-12 rounded-xl bg-[#1a1c25] flex items-center justify-center mb-4">
+              <Flag className="w-5 h-5 opacity-50" />
+            </div>
+            <p className="text-sm font-medium text-[#8b8fa3] mb-1">No video selected</p>
+            <p className="text-xs text-center">Select a reported video from the list to view all reports and take action</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
