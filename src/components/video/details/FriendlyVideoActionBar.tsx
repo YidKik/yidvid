@@ -184,8 +184,8 @@ export const FriendlyVideoActionBar = ({
   ];
 
   const pillBtn = compact
-    ? "h-7 px-2.5 rounded-full text-[11px] font-medium transition-all duration-150 bg-[#F2F2F2] hover:bg-[#E5E5E5] text-[#1A1A1A]"
-    : "h-9 px-4 rounded-full text-sm font-medium transition-all duration-150 bg-[#F2F2F2] hover:bg-[#E5E5E5] text-[#1A1A1A]";
+    ? "h-7 px-2.5 rounded-full text-[11px] font-medium transition-all duration-150 bg-[#F2F2F2] dark:bg-[#272727] hover:bg-[#E5E5E5] dark:hover:bg-[#333] text-[#1A1A1A] dark:text-[#e8e8e8]"
+    : "h-9 px-4 rounded-full text-sm font-medium transition-all duration-150 bg-[#F2F2F2] dark:bg-[#272727] hover:bg-[#E5E5E5] dark:hover:bg-[#333] text-[#1A1A1A] dark:text-[#e8e8e8]";
 
   const iconSize = compact ? "h-3 w-3" : "h-4 w-4";
 
