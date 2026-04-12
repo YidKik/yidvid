@@ -26,30 +26,13 @@ const VideoDetails = () => {
   const incrementView = useIncrementVideoView();
   const viewIncrementedRef = useRef<string | null>(null);
   const { isPlaylistMode, totalVideos, currentPosition, goToNextVideo } = usePlaylistAutoplay(videoId || "");
-  useEffect(() => {
-    if (!videoId) return;
-    
-    console.log("VideoDetails page route:", location.pathname);
-    console.log("VideoDetails page received videoId:", videoId);
-    
-    if (viewIncrementedRef.current !== videoId) {
-      viewIncrementedRef.current = videoId;
-      incrementView(videoId);
-    }
-  }, [videoId, location.pathname, incrementView]);
 
-  if (!videoId) {
-    toast.error("Video ID not provided");
-    return <div className="p-4">Video ID not provided</div>;
-  }
-
-  const { data: video, isLoading: isLoadingVideo, error } = useVideoQuery(videoId);
+  const { data: video, isLoading: isLoadingVideo, error } = useVideoQuery(videoId || "");
   
   const { data: channelVideos = [], isLoading: isLoadingRelated } = useRelatedVideosQuery(
     video?.channel_id || "",
-    videoId
+    videoId || ""
   );
-
 
   // Auto-play: navigate to first related video when current ends
   const handleVideoEnd = useCallback(() => {
@@ -66,6 +49,21 @@ const VideoDetails = () => {
 
   const isLoading = isLoadingVideo || isLoadingRelated;
   usePageLoader('video-details', isLoading);
+
+  useEffect(() => {
+    if (!videoId) return;
+    console.log("VideoDetails page route:", location.pathname);
+    console.log("VideoDetails page received videoId:", videoId);
+    if (viewIncrementedRef.current !== videoId) {
+      viewIncrementedRef.current = videoId;
+      incrementView(videoId);
+    }
+  }, [videoId, location.pathname, incrementView]);
+
+  if (!videoId) {
+    toast.error("Video ID not provided");
+    return <div className="p-4">Video ID not provided</div>;
+  }
 
   if (!video || error) {
     if (!isLoadingVideo) {
