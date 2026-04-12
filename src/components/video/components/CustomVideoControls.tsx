@@ -230,35 +230,42 @@ export const CustomVideoControls = ({
         </div>
       </div>
 
-      {/* Big center play button with logo when paused */}
+      {/* Logo in top-left when paused */}
+      {!isPlaying && showControls && !centerFeedback && (
+        <div
+          className="absolute top-4 left-4 transition-all duration-300"
+          style={{ zIndex: 21 }}
+        >
+          <img
+            src={yvPlayerLogo}
+            alt="YV"
+            className="rounded-lg shadow-lg opacity-80"
+            style={{
+              width: isMobile ? '32px' : '44px',
+              height: 'auto',
+              filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.5))',
+            }}
+          />
+        </div>
+      )}
+
+      {/* Big center play button when paused */}
       <button
         className={`absolute inset-0 flex items-center justify-center bg-black/20 transition-all duration-300 ${
           !isPlaying && showControls && !centerFeedback
             ? "opacity-100 pointer-events-auto"
             : "opacity-0 pointer-events-none"
         }`}
-        style={{ zIndex: 21 }}
+        style={{ zIndex: 20 }}
         onClick={handleVideoAreaClick}
       >
-        <div className="flex flex-col items-center gap-3">
-          <img
-            src={yvPlayerLogo}
-            alt="YV"
-            className="rounded-lg shadow-lg"
-            style={{
-              width: isMobile ? '40px' : '56px',
-              height: 'auto',
-              filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.4))',
-            }}
-          />
-          <div
-            className={`${isMobile ? 'w-10 h-10' : 'w-14 h-14'} rounded-full flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110 ${
-              !isPlaying && showControls ? "scale-100" : "scale-75"
-            }`}
-            style={{ backgroundColor: ACCENT }}
-          >
-            <Play className={`${isMobile ? 'w-4 h-4' : 'w-6 h-6'} text-[#1A1A1A] ml-0.5`} fill="#1A1A1A" />
-          </div>
+        <div
+          className={`${isMobile ? 'w-10 h-10' : 'w-14 h-14'} rounded-full flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110 ${
+            !isPlaying && showControls ? "scale-100" : "scale-75"
+          }`}
+          style={{ backgroundColor: ACCENT }}
+        >
+          <Play className={`${isMobile ? 'w-4 h-4' : 'w-6 h-6'} text-[#1A1A1A] ml-0.5`} fill="#1A1A1A" />
         </div>
       </button>
 
