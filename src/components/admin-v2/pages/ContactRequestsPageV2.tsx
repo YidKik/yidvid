@@ -124,10 +124,13 @@ export const ContactRequestsPageV2 = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("contact_requests")
-        .select("*")
+        .select("*, profiles:user_id (username, display_name)")
         .order("created_at", { ascending: false });
       if (error) throw error;
-      return data as ContactRequest[];
+      return (data || []).map((r: any) => ({
+        ...r,
+        display_username: r.profiles?.username || r.profiles?.display_name || r.name,
+      })) as (ContactRequest & { display_username: string })[];
     },
     retry: 2,
     staleTime: 15000,
