@@ -58,7 +58,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             toast: 'group toast',
             closeButton: 'text-gray-400 hover:text-gray-700',
           },
-          duration: 3000,
+          duration: 3500,
         }}
         richColors={false}
         expand={false}
