@@ -238,6 +238,21 @@ export const ContactRequestsPageV2 = () => {
         body: { type: "admin_reply", requestId: selected.id, adminReply: replyText },
       }).catch(() => {});
 
+      // Also send via transactional email for better deliverability
+      supabase.functions.invoke("send-transactional-email", {
+        body: {
+          templateName: "contact-reply",
+          recipientEmail: selected.email,
+          idempotencyKey: `contact-reply-${selected.id}-${Date.now()}`,
+          templateData: {
+            name: selected.name,
+            adminReply: replyText,
+            originalMessage: selected.message,
+            category: selected.category,
+          },
+        },
+      }).catch(err => console.error("Failed to send contact reply email:", err));
+
       toast.success("Reply sent successfully");
       setReplyText("");
       await invalidate();
