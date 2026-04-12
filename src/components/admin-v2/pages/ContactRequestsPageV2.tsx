@@ -335,7 +335,7 @@ export const ContactRequestsPageV2 = () => {
         </div>
 
         <ScrollArea className="flex-1">
-          <div className="divide-y divide-white/[0.06] pr-2">
+          <div className="space-y-2 pr-2">
             {filtered.map(request => {
               const status = STATUS_CONFIG[request.status] || STATUS_CONFIG.pending;
               const category = CATEGORY_CONFIG[request.category] || CATEGORY_CONFIG.general;
@@ -347,8 +347,8 @@ export const ContactRequestsPageV2 = () => {
               return (
                 <Card
                   key={request.id}
-                  className={`cursor-pointer transition-all rounded-xl border-2 shadow-lg ${
-                    isSelected ? `${status.selectedBg} ${status.border} ring-2 ring-white/20` : `${status.bg} ${status.border} hover:brightness-110 hover:shadow-xl`
+                  className={`cursor-pointer transition-all rounded-lg border border-white/10 ${
+                    isSelected ? `${status.selectedBg} ring-1 ring-white/20` : `bg-[#1a1b23] hover:bg-white/5`
                   }`}
                   onClick={() => setSelectedId(request.id)}
                 >
