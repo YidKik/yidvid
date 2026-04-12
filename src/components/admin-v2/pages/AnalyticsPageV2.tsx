@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSessionManager } from "@/hooks/useSessionManager";
@@ -6,14 +6,37 @@ import { useAnalyticsData } from "@/hooks/useAnalyticsData";
 import { subDays, format } from "date-fns";
 import {
   Tv, Video, Eye, Users, Clock, Activity, UserCheck, CalendarDays,
-  TrendingUp, Play, BarChart3, Loader2, ArrowUpRight, ArrowDownRight
+  Play, BarChart3, Loader2
 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  AreaChart, Area,
-} from "recharts";
-...
+import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from "recharts";
+
+const Card = ({ children, className = "" }: { children: ReactNode; className?: string }) => (
+  <div className={`rounded-xl border border-[#1e2028] bg-[#12131a] ${className}`}>{children}</div>
+);
+
+const fmt = (n: number) =>
+  n >= 1_000_000 ? `${(n / 1_000_000).toFixed(1)}M` : n >= 1_000 ? `${(n / 1_000).toFixed(1)}K` : String(n);
+
+const KPI = ({
+  label, value, icon: Icon, accent, subtitle,
+}: {
+  label: string; value: number | string; icon: any; accent: string; subtitle?: string;
+}) => (
+  <Card className="p-4">
+    <div className="flex items-start justify-between">
+      <div className="space-y-1">
+        <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">{label}</p>
+        <p className="text-2xl font-bold text-white">{typeof value === "number" ? fmt(value) : value}</p>
+        {subtitle && <p className="text-xs text-gray-500">{subtitle}</p>}
+      </div>
+      <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${accent}`}>
+        <Icon className="w-4.5 h-4.5 text-white" />
+      </div>
+    </div>
+  </Card>
+);
+
 export const AnalyticsPageV2 = () => {
   const { session } = useSessionManager();
   const userId = session?.user?.id;
