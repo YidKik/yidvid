@@ -11,6 +11,9 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+const LOGO_URL = "https://yidvid.lovable.app/yidvid-logo-full.png";
+const SITE_URL = "https://yidvid.co";
+
 interface WelcomeEmailRequest {
   userId: string;
   email: string;
@@ -28,7 +31,6 @@ const handler = async (req: Request): Promise<Response> => {
     const { userId, email, name }: WelcomeEmailRequest = await req.json();
     console.log(`Sending welcome email to ${email}`);
 
-    // Get unsubscribe token
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
     const { data: preferences } = await supabase
       .from('email_preferences')
@@ -37,69 +39,90 @@ const handler = async (req: Request): Promise<Response> => {
       .single();
 
     const unsubscribeToken = preferences?.unsubscribe_token || '';
-    const unsubscribeUrl = `https://yidvid.com/unsubscribe?token=${unsubscribeToken}`;
+    const unsubscribeUrl = `${SITE_URL}/unsubscribe?token=${unsubscribeToken}`;
 
     const emailResponse = await resend.emails.send({
       from: "YidVid <noreply@yidvid.co>",
       to: [email],
-      subject: "Welcome to YidVid - Your Gateway to Jewish Content! 🎥",
+      subject: "Welcome to YidVid! 🎬",
       html: `
         <!DOCTYPE html>
-        <html>
+        <html lang="en">
           <head>
             <meta charset="utf-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
           </head>
-          <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-            <div style="background: linear-gradient(135deg, #ea384c 0%, #d32f3e 100%); padding: 40px 20px; text-align: center; border-radius: 10px 10px 0 0;">
-              <h1 style="color: white; margin: 0; font-size: 32px;">🎬 YidVid</h1>
-            </div>
-            
-            <div style="background: #ffffff; padding: 40px 30px; border: 1px solid #e0e0e0; border-top: none; border-radius: 0 0 10px 10px;">
-              <h2 style="color: #ea384c; margin-top: 0;">Welcome, ${name}! 🎉</h2>
-              
-              <p style="font-size: 16px; margin: 20px 0;">
-                We're thrilled to have you join the YidVid community! Get ready to explore a world of inspiring Jewish content.
-              </p>
-              
-              <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 30px 0;">
-                <h3 style="color: #ea384c; margin-top: 0;">What You Can Do on YidVid:</h3>
-                <ul style="margin: 0; padding-left: 20px;">
-                  <li style="margin: 10px 0;">📺 Browse 20,000+ curated Jewish videos</li>
-                  <li style="margin: 10px 0;">🔔 Subscribe to your favorite channels</li>
-                  <li style="margin: 10px 0;">📧 Get notified of new content via email</li>
-                  <li style="margin: 10px 0;">📝 Create and manage playlists</li>
-                  <li style="margin: 10px 0;">💬 Engage with the community</li>
-                </ul>
-              </div>
-              
-              <div style="text-align: center; margin: 40px 0;">
-                <a href="https://yidvid.com" style="display: inline-block; background: #ea384c; color: white; padding: 14px 32px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 16px;">
-                  Explore Videos
-                </a>
-              </div>
-              
-              <div style="text-align: center; margin: 20px 0;">
-                <a href="https://yidvid.com/channels" style="color: #ea384c; text-decoration: none; font-size: 14px;">
-                  Browse Channels →
-                </a>
-              </div>
-              
-              <hr style="border: none; border-top: 1px solid #e0e0e0; margin: 40px 0;">
-              
-              <p style="font-size: 14px; color: #666; margin: 20px 0;">
-                Need help getting started? Check out our <a href="https://yidvid.com/about" style="color: #ea384c; text-decoration: none;">About page</a> or <a href="https://yidvid.com/contact" style="color: #ea384c; text-decoration: none;">contact us</a>.
-              </p>
-              
-              <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e0e0e0; text-align: center;">
-                <p style="font-size: 12px; color: #999; margin: 5px 0;">
-                  YidVid - Your Source for Jewish Video Content
-                </p>
-                <p style="font-size: 12px; color: #999; margin: 5px 0;">
-                  <a href="${unsubscribeUrl}" style="color: #999; text-decoration: underline;">Unsubscribe from all emails</a>
-                </p>
-              </div>
-            </div>
+          <body style="margin: 0; padding: 0; background-color: #f5f5f5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color: #f5f5f5; padding: 40px 20px;">
+              <tr>
+                <td align="center">
+                  <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width: 600px; width: 100%;">
+                    
+                    <!-- Header -->
+                    <tr>
+                      <td style="background-color: #FF0000; padding: 32px 40px; text-align: center; border-radius: 12px 12px 0 0;">
+                        <img src="${LOGO_URL}" alt="YidVid" height="48" style="height: 48px; width: auto;" />
+                      </td>
+                    </tr>
+                    
+                    <!-- Yellow accent bar -->
+                    <tr>
+                      <td style="background-color: #FFCC00; height: 4px; font-size: 0; line-height: 0;">&nbsp;</td>
+                    </tr>
+                    
+                    <!-- Body -->
+                    <tr>
+                      <td style="background-color: #ffffff; padding: 40px;">
+                        <h1 style="margin: 0 0 16px; font-size: 24px; font-weight: 700; color: #1a1a1a;">
+                          Welcome, ${name}! 🎉
+                        </h1>
+                        
+                        <p style="margin: 0 0 24px; font-size: 16px; line-height: 1.6; color: #444444;">
+                          You're now part of the YidVid community — your home for curated, kosher Jewish video content.
+                        </p>
+                        
+                        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color: #FFF9E6; border-left: 4px solid #FFCC00; border-radius: 8px; margin: 0 0 28px;">
+                          <tr>
+                            <td style="padding: 20px 24px;">
+                              <p style="margin: 0 0 12px; font-size: 15px; font-weight: 600; color: #1a1a1a;">Here's what you can do:</p>
+                              <p style="margin: 0 0 8px; font-size: 14px; color: #444444;">📺 Browse thousands of curated Jewish videos</p>
+                              <p style="margin: 0 0 8px; font-size: 14px; color: #444444;">🔔 Subscribe to your favorite channels</p>
+                              <p style="margin: 0 0 8px; font-size: 14px; color: #444444;">📝 Create and manage playlists</p>
+                              <p style="margin: 0; font-size: 14px; color: #444444;">💬 Join the community conversation</p>
+                            </td>
+                          </tr>
+                        </table>
+                        
+                        <table role="presentation" cellpadding="0" cellspacing="0" style="margin: 0 auto 28px;">
+                          <tr>
+                            <td style="background-color: #FF0000; border-radius: 8px;">
+                              <a href="${SITE_URL}/videos" style="display: inline-block; padding: 14px 36px; color: #ffffff; font-size: 16px; font-weight: 600; text-decoration: none;">
+                                Start Watching
+                              </a>
+                            </td>
+                          </tr>
+                        </table>
+                        
+                        <p style="margin: 0; font-size: 14px; color: #888888; text-align: center;">
+                          Questions? <a href="${SITE_URL}/contact" style="color: #FF0000; text-decoration: none;">Get in touch</a>
+                        </p>
+                      </td>
+                    </tr>
+                    
+                    <!-- Footer -->
+                    <tr>
+                      <td style="background-color: #1a1a1a; padding: 24px 40px; border-radius: 0 0 12px 12px; text-align: center;">
+                        <p style="margin: 0 0 8px; font-size: 12px; color: #999999;">
+                          YidVid — Your Source for Jewish Video Content
+                        </p>
+                        <a href="${unsubscribeUrl}" style="font-size: 12px; color: #666666; text-decoration: underline;">Unsubscribe</a>
+                      </td>
+                    </tr>
+                    
+                  </table>
+                </td>
+              </tr>
+            </table>
           </body>
         </html>
       `,
@@ -107,31 +130,25 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log("Welcome email sent successfully:", emailResponse);
 
-    // Log the email
     await supabase.from('email_logs').insert({
       user_id: userId,
       email_type: 'welcome',
       recipient_email: email,
-      subject: 'Welcome to YidVid - Your Gateway to Jewish Content! 🎥',
-      status: 'sent',
-      resend_message_id: emailResponse.data?.id
+      subject: 'Welcome to YidVid! 🎬',
+      status: emailResponse.error ? 'failed' : 'sent',
+      resend_message_id: emailResponse.data?.id,
+      error_message: emailResponse.error?.message
     });
 
     return new Response(JSON.stringify({ success: true, messageId: emailResponse.data?.id }), {
       status: 200,
-      headers: {
-        "Content-Type": "application/json",
-        ...corsHeaders,
-      },
+      headers: { "Content-Type": "application/json", ...corsHeaders },
     });
   } catch (error: any) {
     console.error("Error in send-welcome-email function:", error);
     return new Response(
       JSON.stringify({ error: error.message }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json", ...corsHeaders },
-      }
+      { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
     );
   }
 };
