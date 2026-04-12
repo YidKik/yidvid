@@ -179,7 +179,7 @@ export const MobileVideosHeader = ({
 
       {/* Notifications Sheet */}
       <Sheet open={isNotificationsOpen} onOpenChange={setIsNotificationsOpen}>
-        <SheetContent side="right" className="w-[320px] sm:w-[400px] bg-background p-0">
+        <SheetContent side="right" className="w-[280px] min-[360px]:w-[320px] sm:w-[400px] bg-background p-0">
           <div className="flex flex-col h-full">
             <NotificationHeader 
               hasNotifications={!!notifications?.length}
