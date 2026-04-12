@@ -87,13 +87,15 @@ export const RequestChannelDialog = ({ open, onOpenChange }: RequestChannelDialo
 
       // Send confirmation email
       const recipientEmail = isLoggedIn && session?.user?.email ? session.user.email : data.email;
-      if (recipientEmail && insertedData) {
-        supabase.functions.invoke('send-transactional-email', {
+      if (recipientEmail) {
+        const userName = isLoggedIn && session?.user?.user_metadata?.username 
+          ? session.user.user_metadata.username 
+          : recipientEmail.split('@')[0];
+        supabase.functions.invoke('send-channel-request-email', {
           body: {
-            templateName: 'channel-request-confirmation',
-            recipientEmail,
-            idempotencyKey: `channel-request-${insertedData.id}`,
-            templateData: { name: recipientEmail.split('@')[0], channelName: data.channelName },
+            email: recipientEmail,
+            name: userName,
+            channelName: data.channelName,
           },
         }).catch(err => console.error('Failed to send channel request email:', err));
       }
