@@ -44,21 +44,24 @@ export const VideoPlayer = ({ videoId, onVideoEnd }: VideoPlayerProps) => {
       ref={containerRef}
       className="aspect-video w-full mb-4 relative rounded-lg overflow-hidden bg-black group"
     >
-      {/* YouTube player renders here via the API — scaled up slightly to crop native YT overlays */}
+      {/* YouTube player — oversized to crop native YT overlays that flash during state changes */}
       <div className="absolute inset-0 overflow-hidden">
         <div
           ref={playerContainerRef}
           className="absolute pointer-events-none [&_iframe]:!w-full [&_iframe]:!h-full"
           style={{
-            top: '-10px',
-            left: '-10px',
-            right: '-10px',
-            bottom: '-10px',
-            width: 'calc(100% + 20px)',
-            height: 'calc(100% + 20px)',
+            top: '-60px',
+            left: '-2px',
+            right: '-2px',
+            bottom: '-50px',
+            width: 'calc(100% + 4px)',
+            height: 'calc(100% + 110px)',
           }}
         />
       </div>
+      {/* Opaque masks to guarantee YT overlays are hidden even during buffering flashes */}
+      <div className="absolute top-0 left-0 right-0 h-[2px] bg-black z-[5]" />
+      <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-black z-[5]" />
       <CustomVideoControls
         isPlaying={player.isPlaying}
         currentTime={player.currentTime}
