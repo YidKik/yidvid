@@ -104,13 +104,13 @@ export const Header = ({ selectedCategory, onCategoryChange }: { selectedCategor
           scrolled 
             ? 'border-primary/60 shadow-sm' 
             : 'border-gray-200'
-        } ${isMobile ? 'h-14 w-full max-w-[100vw]' : ''} ${isVideosPage ? 'videos-page' : isHomePage ? 'home-page' : ''}`}
+        } ${isMobile ? 'h-12 min-[360px]:h-14 w-full max-w-[100vw]' : ''} ${isVideosPage ? 'videos-page' : isHomePage ? 'home-page' : ''}`}
         style={!isMobile && isVideosPage ? { left: `${sidebarWidth}px`, width: `calc(100% - ${sidebarWidth}px)` } : { width: '100%', maxWidth: '100vw' }}
         initial={{ opacity: 1, y: 0 }}
         animate={{ opacity: 1, y: 0 }}
       >
       <div className="container mx-auto px-0 max-w-[100vw]">
-        <div className={`flex ${isMobile ? 'h-14' : 'h-14'} items-center relative max-w-[100vw]`}>
+        <div className={`flex ${isMobile ? 'h-12 min-[360px]:h-14' : 'h-14'} items-center relative max-w-[100vw]`}>
           {isMobile ? (
             <>
               {isVideosPage ? (
@@ -125,7 +125,7 @@ export const Header = ({ selectedCategory, onCategoryChange }: { selectedCategor
                   />
                 </div>
               ) : (
-                <div className="w-full flex items-center px-3">
+                <div className="w-full flex items-center px-2 min-[360px]:px-3">
                   <div className="w-1/5 flex justify-start">
                     <HeaderLogo
                       isMobile={isMobile}

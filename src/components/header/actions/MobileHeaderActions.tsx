@@ -32,7 +32,7 @@ export const MobileHeaderActions = ({
       : 'bg-[#222222] hover:bg-[#333333] text-primary';
 
   return (
-    <div className="flex items-center gap-1.5">
+    <div className="flex items-center gap-1">
       {session ? (
         <>
           <NotificationsMenu onMarkAsRead={onMarkNotificationsAsRead} />
@@ -40,7 +40,7 @@ export const MobileHeaderActions = ({
             onClick={handleSettingsClick}
             variant="ghost" 
             size="sm"
-            className={`${buttonClass} text-[0.7rem] rounded-full flex items-center px-2 py-1`}
+            className={`${buttonClass} text-[0.7rem] rounded-full flex items-center w-7 h-7 min-w-0 p-0`}
           >
             <Settings className="h-3 w-3" />
           </Button>
@@ -54,7 +54,7 @@ export const MobileHeaderActions = ({
             className={`${buttonClass} text-[0.6rem] rounded-full flex items-center px-1.5 py-0.5 gap-0.5`}
           >
             <User className="h-2.5 w-2.5" />
-            <span>Sign in</span>
+            <span className="hidden min-[360px]:inline">Sign in</span>
           </Button>
         </>
       )}

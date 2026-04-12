@@ -55,14 +55,14 @@ export const MobileVideosHeader = ({
 
   return (
     <>
-      <div className="flex items-center justify-between w-full px-3 h-16">
+      <div className="flex items-center justify-between w-full px-2 min-[360px]:px-3 h-14 min-[360px]:h-16">
         {/* Left: Logo or Search */}
         {!isSearchExpanded ? (
           <Link to="/" className="flex items-center">
             <img 
               src={yidvidLogoIcon} 
               alt="YidVid Logo" 
-              className="h-12 w-auto"
+              className="h-9 min-[360px]:h-12 w-auto"
             />
           </Link>
         ) : (
@@ -72,17 +72,17 @@ export const MobileVideosHeader = ({
         )}
 
         {/* Right: Search/Close and Menu buttons */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 min-[360px]:gap-2">
           <Button
             variant="ghost"
             size="icon"
             onClick={() => setIsSearchExpanded(!isSearchExpanded)}
-            className="h-9 w-9 rounded-full bg-primary hover:bg-primary text-primary-foreground"
+            className="h-7 w-7 min-[360px]:h-9 min-[360px]:w-9 rounded-full bg-primary hover:bg-primary text-primary-foreground"
           >
             {isSearchExpanded ? (
-              <X className="h-4 w-4" />
+              <X className="h-3.5 w-3.5 min-[360px]:h-4 min-[360px]:w-4" />
             ) : (
-              <Search className="h-4 w-4" />
+              <Search className="h-3.5 w-3.5 min-[360px]:h-4 min-[360px]:w-4" />
             )}
           </Button>
 
@@ -91,9 +91,9 @@ export const MobileVideosHeader = ({
               variant="ghost"
               size="icon"
               onClick={() => setIsMenuOpen(true)}
-              className="h-9 w-9 rounded-full bg-primary hover:bg-primary text-primary-foreground"
+              className="h-7 w-7 min-[360px]:h-9 min-[360px]:w-9 rounded-full bg-primary hover:bg-primary text-primary-foreground"
             >
-              <Menu className="h-4 w-4" />
+              <Menu className="h-3.5 w-3.5 min-[360px]:h-4 min-[360px]:w-4" />
             </Button>
           )}
         </div>
@@ -179,7 +179,7 @@ export const MobileVideosHeader = ({
 
       {/* Notifications Sheet */}
       <Sheet open={isNotificationsOpen} onOpenChange={setIsNotificationsOpen}>
-        <SheetContent side="right" className="w-[320px] sm:w-[400px] bg-background p-0">
+        <SheetContent side="right" className="w-[280px] min-[360px]:w-[320px] sm:w-[400px] bg-background p-0">
           <div className="flex flex-col h-full">
             <NotificationHeader 
               hasNotifications={!!notifications?.length}
