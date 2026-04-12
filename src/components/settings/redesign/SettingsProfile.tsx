@@ -214,7 +214,7 @@ export const SettingsProfile = () => {
 
       {/* Remove Avatar Confirmation Dialog */}
       <Dialog open={isRemoveAvatarDialogOpen} onOpenChange={setIsRemoveAvatarDialogOpen}>
-        <DialogContent className="rounded-2xl max-w-sm">
+        <DialogContent className="rounded-2xl max-w-sm bg-white dark:bg-[#1A1A1A] border border-[#E5E5E5] dark:border-[#333] shadow-xl">
           <DialogHeader className="text-center sm:text-center">
             <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-[#F5F5F5] dark:bg-[#222]">
               <ImageOff className="h-6 w-6 text-[#888]" />

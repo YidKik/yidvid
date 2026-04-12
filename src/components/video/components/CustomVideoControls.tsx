@@ -214,18 +214,19 @@ export const CustomVideoControls = ({
     >
       {/* Persistent YV logo watermark — top-left, always visible */}
 
-      {/* Center feedback icon */}
+      {/* Center feedback icon — yellow, instant */}
       <div
-        className={`absolute inset-0 z-20 flex items-center justify-center pointer-events-none transition-opacity duration-500 ${
+        className={`absolute inset-0 z-20 flex items-center justify-center pointer-events-none ${
           centerFeedback ? "opacity-100" : "opacity-0"
         }`}
+        style={{ transition: 'opacity 150ms ease-in-out' }}
       >
         <div className={`${isMobile ? 'w-12 h-12' : 'w-16 h-16'} rounded-full flex items-center justify-center`}
-          style={{ backgroundColor: 'rgba(0,0,0,0.55)' }}>
+          style={{ backgroundColor: ACCENT }}>
           {centerFeedback === "pause" ? (
-            <Pause className={`${isMobile ? 'w-5 h-5' : 'w-7 h-7'} text-white`} fill="white" />
+            <Pause className={`${isMobile ? 'w-5 h-5' : 'w-7 h-7'} text-[#1A1A1A]`} fill="#1A1A1A" />
           ) : (
-            <Play className={`${isMobile ? 'w-5 h-5' : 'w-7 h-7'} text-white ml-0.5`} fill="white" />
+            <Play className={`${isMobile ? 'w-5 h-5' : 'w-7 h-7'} text-[#1A1A1A] ml-0.5`} fill="#1A1A1A" />
           )}
         </div>
       </div>
@@ -251,12 +252,12 @@ export const CustomVideoControls = ({
 
       {/* Big center play button when paused */}
       <button
-        className={`absolute inset-0 flex items-center justify-center bg-black/20 ${
+        className={`absolute inset-0 flex items-center justify-center ${
           !isPlaying && showControls && !centerFeedback
             ? "opacity-100 pointer-events-auto"
             : "opacity-0 pointer-events-none"
         }`}
-        style={{ zIndex: 20 }}
+        style={{ zIndex: 20, transition: 'opacity 150ms ease-in-out' }}
         onClick={handleVideoAreaClick}
       >
         <div

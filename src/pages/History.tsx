@@ -55,8 +55,8 @@ export default function History() {
           className="flex-1 pt-14 transition-all duration-300 pb-20 lg:pb-0"
           style={{ paddingLeft: `${sidebarWidth ? sidebarWidth + 16 : 0}px` }}
         >
-          <main className="max-w-4xl mx-auto px-4 lg:px-6 py-6 lg:py-8">
-            <div className="flex items-center gap-3 mb-8">
+          <main className="max-w-5xl mx-auto px-4 lg:px-8 py-8 lg:py-12">
+            <div className="flex items-center gap-3 mb-10">
               <div
                 className="w-10 h-10 rounded-full flex items-center justify-center"
                 style={{ backgroundColor: '#FFCC00' }}
@@ -64,14 +64,16 @@ export default function History() {
                 <HistoryIcon className="w-5 h-5" style={{ color: '#1A1A1A' }} />
               </div>
               <h1
-                className="text-2xl font-bold"
+                className="text-2xl font-bold dark:text-[#e8e8e8]"
                 style={{ fontFamily: "'Quicksand', sans-serif", color: '#1A1A1A' }}
               >
                 Watch History
               </h1>
             </div>
 
-            <VideoHistorySection />
+            <div className="min-h-[60vh]">
+              <VideoHistorySection />
+            </div>
           </main>
         </div>
         <Footer />

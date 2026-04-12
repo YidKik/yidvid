@@ -186,7 +186,7 @@ export const SettingsContent = () => {
             <Input
               type="password"
               maxLength={6}
-              placeholder="Enter 6-digit PIN"
+              placeholder="••••••"
               value={pin}
               onChange={(e) => setPin(e.target.value.replace(/\D/g, ""))}
               className="text-center text-2xl tracking-widest h-12 rounded-xl mb-4 bg-[#F9F9F9] dark:bg-[#0f0f0f] border-[#E5E5E5] dark:border-[#333]"

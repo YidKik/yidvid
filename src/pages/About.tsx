@@ -75,7 +75,7 @@ const About = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 + index * 0.1, duration: 0.5 }}
-                className={`${isMobile ? 'p-4' : 'p-6'} rounded-2xl bg-[#F5F5F5] dark:bg-[#1a1a1a] border border-[#E5E5E5] dark:border-[#333] text-center`}
+                className={`${isMobile ? 'p-4' : 'p-6'} rounded-2xl bg-white dark:bg-[#1a1a1a] border border-[#E5E5E5] dark:border-[#333] text-center shadow-sm hover:shadow-md transition-shadow duration-300 hover:border-[#FFCC00] dark:hover:border-[#FFCC00]`}
               >
                 <feature.icon 
                   className={`${isMobile ? 'w-8 h-8' : 'w-10 h-10'} mb-4 mx-auto`}
@@ -98,7 +98,7 @@ const About = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.5 }}
-            className={`text-center ${isMobile ? 'p-5' : 'p-8'} rounded-2xl bg-[#F5F5F5] dark:bg-[#1a1a1a] max-w-3xl mx-auto mb-10`}
+            className={`text-center ${isMobile ? 'p-5' : 'p-8'} rounded-2xl bg-white dark:bg-[#1a1a1a] border-2 border-[#FFCC00]/30 dark:border-[#FFCC00]/20 max-w-3xl mx-auto mb-10 shadow-sm`}
           >
             <h2 
               className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold mb-4 text-[#000000] dark:text-[#e8e8e8]`}
