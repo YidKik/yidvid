@@ -121,7 +121,7 @@ const VideoDetails = () => {
               <div className="flex-1 min-w-0">
                 {/* Video Player - clean, no card wrapper */}
                 <div className="rounded-xl overflow-hidden bg-black relative">
-                  <VideoPlayer videoId={video?.video_id || ""} onVideoEnd={isPlaylistMode ? goToNextVideo : undefined} />
+                  <VideoPlayer videoId={video?.video_id || ""} onVideoEnd={handleVideoEnd} />
                   {isPlaylistMode && (
                     <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-black/70 text-white text-xs font-medium px-2.5 py-1.5 rounded-full backdrop-blur-sm">
                       <ListMusic className="w-3.5 h-3.5" />
@@ -200,7 +200,7 @@ const VideoDetails = () => {
             <div className={`mt-2 space-y-${isMobile ? '3' : '4'}`}>
               {/* Video Player */}
               <div className={`rounded-xl overflow-hidden bg-black ${isMobile ? '-mx-3' : ''} relative`}>
-                <VideoPlayer videoId={video?.video_id || ""} onVideoEnd={isPlaylistMode ? goToNextVideo : undefined} />
+                <VideoPlayer videoId={video?.video_id || ""} onVideoEnd={handleVideoEnd} />
                 {isPlaylistMode && (
                   <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-black/70 text-white text-xs font-medium px-2.5 py-1.5 rounded-full backdrop-blur-sm">
                     <ListMusic className="w-3.5 h-3.5" />
