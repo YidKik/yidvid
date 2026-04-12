@@ -252,12 +252,12 @@ export const CustomVideoControls = ({
 
       {/* Big center play button when paused */}
       <button
-        className={`absolute inset-0 flex items-center justify-center bg-black/20 ${
+        className={`absolute inset-0 flex items-center justify-center ${
           !isPlaying && showControls && !centerFeedback
             ? "opacity-100 pointer-events-auto"
             : "opacity-0 pointer-events-none"
         }`}
-        style={{ zIndex: 20 }}
+        style={{ zIndex: 20, transition: 'opacity 150ms ease-in-out' }}
         onClick={handleVideoAreaClick}
       >
         <div

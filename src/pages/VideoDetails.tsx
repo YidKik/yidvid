@@ -111,7 +111,7 @@ const VideoDetails = () => {
       <VideoSEO video={videoForSEO} />
       {isAuthenticated && <VideoHistory videoId={video?.id || ""} />}
       
-      <div className="min-h-screen bg-white pt-14 pl-0 lg:pl-[200px] pb-20 lg:pb-0 transition-all duration-300">
+      <div className="min-h-screen bg-white dark:bg-[#0f0f0f] pt-14 pl-0 lg:pl-[200px] pb-20 lg:pb-0 transition-all duration-300">
         <div className={`${isMobile ? 'px-3' : 'px-4'} lg:px-6 pt-4 pb-12`}>
           
         {/* Desktop Layout - two column */}
@@ -132,7 +132,7 @@ const VideoDetails = () => {
                 </div>
                 
                 {/* Title */}
-                <h1 className="text-xl font-bold text-[#1A1A1A] leading-tight mt-4">
+                <h1 className="text-xl font-bold text-[#1A1A1A] dark:text-[#e8e8e8] leading-tight mt-4">
                   {video?.title}
                 </h1>
                 
