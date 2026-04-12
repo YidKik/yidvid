@@ -129,7 +129,7 @@ export const useYouTubePlayer = (
         height: '100%',
         videoId,
         playerVars: {
-          autoplay: 0,
+          autoplay: 1,
           rel: 0,
           modestbranding: 1,
           iv_load_policy: 3,
@@ -146,6 +146,7 @@ export const useYouTubePlayer = (
             if (destroyed) return;
             const vol = event.target.getVolume();
             const dur = event.target.getDuration();
+            event.target.playVideo();
             setState((s) => ({
               ...s,
               isReady: true,
