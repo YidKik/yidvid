@@ -215,12 +215,13 @@ export const CustomVideoControls = ({
       {/* Persistent YV logo watermark — top-left, always visible */}
       <div className="absolute top-3 left-3 z-40 pointer-events-none">
         <img
-          src={yvLogoIcon}
+          src={yvPlayerLogo}
           alt="YV"
-          className="opacity-60 hover:opacity-80 transition-opacity"
+          className="opacity-50 transition-opacity rounded-md"
           style={{
-            width: isMobile ? '24px' : '30px',
-            height: isMobile ? '24px' : '30px',
+            width: isMobile ? '22px' : '28px',
+            height: isMobile ? '22px' : '28px',
+            objectFit: 'contain',
             filter: 'drop-shadow(0 1px 3px rgba(0,0,0,0.5))',
           }}
         />
