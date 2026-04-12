@@ -123,7 +123,7 @@ const ShortCard = ({
       className={`flex-none cursor-pointer group ${
         isMobile ? 'w-[120px]' : isTablet ? 'w-[140px]' : 'w-[165px]'
       }`}
-      onClick={() => navigate(`/video/${short.video_id}`)}
+      onClick={() => navigate(`/shorts/${short.video_id}`)}
     >
       {/* Thumbnail - 9:16 aspect ratio */}
       <div className="relative w-full overflow-hidden rounded-xl" style={{ aspectRatio: '9/16' }}>
