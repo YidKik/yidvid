@@ -113,9 +113,9 @@ export function ReportVideoDialog({ videoId, compact = false }: ReportVideoDialo
           {!compact && <span className="ml-2 font-medium">Report</span>}
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[450px] bg-white border-2 border-[#E5E5E5] shadow-xl rounded-2xl p-0 overflow-hidden [&>button]:hidden">
+      <DialogContent className="sm:max-w-[450px] max-[768px]:max-w-[calc(100%-2rem)] max-[768px]:max-h-[75vh] max-[768px]:overflow-y-auto bg-white border-2 border-[#E5E5E5] shadow-xl rounded-2xl p-0 overflow-hidden [&>button]:hidden">
         {/* Header - solid red */}
-        <div className="bg-[#FF0000] px-6 py-5 text-white">
+        <div className="bg-[#FF0000] px-6 py-5 max-[768px]:px-4 max-[768px]:py-3.5 text-white">
           <button 
             onClick={() => setIsOpen(false)}
             className="absolute right-4 top-4 text-white/80 hover:text-white transition-colors z-10"
@@ -123,18 +123,18 @@ export function ReportVideoDialog({ videoId, compact = false }: ReportVideoDialo
             <X className="h-5 w-5" />
           </button>
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-white/20 rounded-full">
-              <AlertTriangle className="h-6 w-6" />
+              <div className="p-2 max-[768px]:p-1.5 bg-white/20 rounded-full">
+                <AlertTriangle className="h-6 w-6 max-[768px]:h-5 max-[768px]:w-5" />
             </div>
             <div>
-              <DialogTitle className="text-xl font-bold text-white">Report Video</DialogTitle>
-              <p className="text-white/90 text-sm mt-0.5">Help us keep our community safe</p>
+                <DialogTitle className="text-xl max-[768px]:text-base font-bold text-white">Report Video</DialogTitle>
+                <p className="text-white/90 text-sm max-[768px]:text-xs mt-0.5">Help us keep our community safe</p>
             </div>
           </div>
         </div>
 
         {/* Content */}
-        <div className="p-6 space-y-5">
+        <div className="p-6 max-[768px]:p-4 space-y-5 max-[768px]:space-y-3">
           {/* Email field for non-logged-in users */}
           {!isAuthenticated && (
             <div className="space-y-2">
@@ -180,7 +180,7 @@ export function ReportVideoDialog({ videoId, compact = false }: ReportVideoDialo
               placeholder="Please describe what's wrong with this video..."
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              className="min-h-[120px] rounded-xl border-2 border-[#E5E5E5] focus:border-[#FFCC00] transition-colors resize-none"
+              className="min-h-[120px] max-[768px]:min-h-[80px] rounded-xl border-2 border-[#E5E5E5] focus:border-[#FFCC00] transition-colors resize-none"
             />
           </div>
 
@@ -196,7 +196,7 @@ export function ReportVideoDialog({ videoId, compact = false }: ReportVideoDialo
           <Button
             onClick={handleSubmit}
             disabled={!isFormValid || isSubmitting}
-            className="w-full h-12 rounded-xl bg-[#FF0000] hover:brightness-90 text-white font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full h-12 max-[768px]:h-10 rounded-xl bg-[#FF0000] hover:brightness-90 text-white font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isSubmitting ? (
               <span className="flex items-center gap-2">
