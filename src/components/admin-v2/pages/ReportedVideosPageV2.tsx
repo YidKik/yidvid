@@ -488,6 +488,7 @@ export const ReportedVideosPageV2 = () => {
                         </AlertDialogFooter>
                       </AlertDialogContent>
                     </AlertDialog>
+                    )}
                   </div>
                 </div>
               </div>
