@@ -168,24 +168,19 @@ const ChannelDetails = () => {
             <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-6">
               <EyeOff className="w-10 h-10 text-gray-400" />
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-3">Channel Hidden</h2>
-            <p className="text-gray-600 mb-6 max-w-md">
-              You've hidden this channel from your feed. Videos from this channel won't appear in your recommendations.
+            <h2 className="text-2xl font-bold text-[#1A1A1A] dark:text-[#e8e8e8] mb-3">Channel Hidden</h2>
+            <p className="text-[#666] dark:text-[#aaa] mb-4 max-w-md">
+              You've chosen to hide this channel from your feed. Videos from this channel won't appear in your recommendations or search results.
             </p>
-            <div className="flex gap-3">
-              <Button
-                variant="outline"
-                onClick={() => navigate(-1)}
-              >
-                Go Back
-              </Button>
-              <Button
-                onClick={handleUnhideChannel}
-                className="bg-primary hover:bg-primary/90"
-              >
-                Show Channel
-              </Button>
-            </div>
+            <p className="text-xs text-[#999] dark:text-[#777] mb-6 max-w-sm">
+              To change this, go to the <span className="font-semibold text-[#FF0000]">Settings</span> page → <span className="font-semibold">Content</span> tab and toggle the channel back on.
+            </p>
+            <Button
+              variant="outline"
+              onClick={() => navigate(-1)}
+            >
+              Go Back
+            </Button>
           </div>
         </div>
       </div>
