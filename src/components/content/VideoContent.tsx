@@ -1,10 +1,13 @@
 
+import { useState } from "react";
 import { VideoData } from "@/hooks/video/types/video-fetcher";
 import { useSessionManager } from "@/hooks/useSessionManager";
 import { VideoContentDisplay } from "./VideoContentDisplay";
 import { VideoRecoverySection } from "./VideoRecoverySection";
 import { useVideoContentDisplay } from "./useVideoContentDisplay";
 import { useVideoContentRefresh } from "@/hooks/video/useVideoContentRefresh";
+import { RequestChannelDialog } from "@/components/youtube/RequestChannelDialog";
+import { Plus } from "lucide-react";
 
 interface VideoContentProps {
   videos: VideoData[];
