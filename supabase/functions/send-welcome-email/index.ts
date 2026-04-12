@@ -69,7 +69,7 @@ const handler = async (req: Request): Promise<Response> => {
                     <!-- Logo -->
                     <tr>
                       <td style="background-color: #ffffff; padding: 28px 40px 20px; text-align: center;">
-                        <img src="${LOGO_URL}" alt="YidVid" height="44" style="height: 44px; width: auto;" />
+                        <img src="${LOGO_URL}" alt="YidVid" height="56" style="height: 56px; width: auto;" />
                       </td>
                     </tr>
                     
