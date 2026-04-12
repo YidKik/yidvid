@@ -125,7 +125,7 @@ export const Header = ({ selectedCategory, onCategoryChange }: { selectedCategor
                   />
                 </div>
               ) : (
-                <div className="w-full flex items-center px-3">
+                <div className="w-full flex items-center px-2 min-[360px]:px-3">
                   <div className="w-1/5 flex justify-start">
                     <HeaderLogo
                       isMobile={isMobile}
