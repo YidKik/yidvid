@@ -61,7 +61,7 @@ const handler = async (req: Request): Promise<Response> => {
         const emails = adminEmails.map(admin => admin.email);
         
         await resend.emails.send({
-          from: "YidVid <onboarding@resend.dev>",
+          from: "YidVid <noreply@yidvid.co>",
           replyTo: "yidvid.info@gmail.com",
           to: emails,
           subject: `New Contact Request: ${request.category.replace("_", " ")}`,
@@ -102,7 +102,7 @@ const handler = async (req: Request): Promise<Response> => {
 
         // Send confirmation email to the user who submitted the request
         await resend.emails.send({
-          from: "YidVid <onboarding@resend.dev>",
+          from: "YidVid <noreply@yidvid.co>",
           replyTo: "yidvid.info@gmail.com",
           to: [request.email],
           subject: "We received your contact request",
@@ -147,7 +147,7 @@ const handler = async (req: Request): Promise<Response> => {
     } else if (type === "admin_reply" && adminReply) {
       // Send reply to user
       await resend.emails.send({
-        from: "YidVid Support <onboarding@resend.dev>",
+        from: "YidVid Support <support@yidvid.co>",
         replyTo: "yidvid.info@gmail.com",
         to: [request.email],
         subject: `Re: Your ${request.category.replace("_", " ")} request`,

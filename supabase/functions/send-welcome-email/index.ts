@@ -40,7 +40,7 @@ const handler = async (req: Request): Promise<Response> => {
     const unsubscribeUrl = `https://yidvid.com/unsubscribe?token=${unsubscribeToken}`;
 
     const emailResponse = await resend.emails.send({
-      from: "YidVid <onboarding@resend.dev>",
+      from: "YidVid <noreply@yidvid.co>",
       to: [email],
       subject: "Welcome to YidVid - Your Gateway to Jewish Content! 🎥",
       html: `
