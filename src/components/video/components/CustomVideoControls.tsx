@@ -8,7 +8,7 @@ import {
   Maximize,
 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
-import yvLogoIcon from "@/assets/yv-logo-icon.png";
+import yvPlayerLogo from "@/assets/yv-player-logo.png";
 
 interface CustomVideoControlsProps {
   isPlaying: boolean;
