@@ -42,6 +42,16 @@ export const SupportSection = () => {
         await supabase.functions.invoke("send-contact-notifications", {
           body: { type: "new_request", requestId: insertedRequest.id }
         }).catch(() => {});
+
+        // Send confirmation email to user
+        supabase.functions.invoke('send-transactional-email', {
+          body: {
+            templateName: 'contact-request-confirmation',
+            recipientEmail: data.email,
+            idempotencyKey: `contact-confirm-${insertedRequest.id}`,
+            templateData: { name: data.name },
+          },
+        }).catch(err => console.error('Failed to send contact confirmation email:', err));
       }
 
       form.reset();

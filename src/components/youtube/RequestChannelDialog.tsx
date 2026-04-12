@@ -77,12 +77,25 @@ export const RequestChannelDialog = ({ open, onOpenChange }: RequestChannelDialo
         requestData.user_id = session.user.id;
       }
 
-      const { error } = await supabase.from("channel_requests").insert(requestData);
+      const { data: insertedData, error } = await supabase.from("channel_requests").insert(requestData).select().single();
 
       if (error) {
         console.error("Error submitting channel request:", error);
         toast.error("Failed to submit request. Please try again.");
         return;
+      }
+
+      // Send confirmation email
+      const recipientEmail = isLoggedIn && session?.user?.email ? session.user.email : data.email;
+      if (recipientEmail && insertedData) {
+        supabase.functions.invoke('send-transactional-email', {
+          body: {
+            templateName: 'channel-request-confirmation',
+            recipientEmail,
+            idempotencyKey: `channel-request-${insertedData.id}`,
+            templateData: { name: recipientEmail.split('@')[0], channelName: data.channelName },
+          },
+        }).catch(err => console.error('Failed to send channel request email:', err));
       }
 
       toast.success("Channel request submitted successfully!", {

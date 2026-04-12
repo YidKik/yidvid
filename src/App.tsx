@@ -26,6 +26,7 @@ import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import AdminDashboard from './pages/admin/Dashboard';
 import { EmailPreferences } from './pages/EmailPreferences';
 import { Unsubscribe } from './pages/Unsubscribe';
+import EmailUnsubscribe from './pages/EmailUnsubscribe';
 import About from './pages/About';
 import Favorites from './pages/Favorites';
 import WatchLater from './pages/WatchLater';
@@ -92,6 +93,7 @@ function AppContent() {
         <Route path="/settings" element={<Settings />} />
         <Route path="/settings/email-preferences" element={<EmailPreferences />} />
         <Route path="/unsubscribe" element={<Unsubscribe />} />
+        <Route path="/email-unsubscribe" element={<EmailUnsubscribe />} />
         
         <Route path="/history" element={<History />} />
         <Route path="/about" element={<About />} />
