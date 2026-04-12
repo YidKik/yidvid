@@ -564,8 +564,10 @@ export type Database = {
       email_preferences: {
         Row: {
           created_at: string | null
+          digest_frequency: string | null
           general_emails: boolean | null
           id: string
+          last_digest_sent_at: string | null
           new_video_emails: boolean | null
           unsubscribe_token: string
           unsubscribed_at: string | null
@@ -575,8 +577,10 @@ export type Database = {
         }
         Insert: {
           created_at?: string | null
+          digest_frequency?: string | null
           general_emails?: boolean | null
           id?: string
+          last_digest_sent_at?: string | null
           new_video_emails?: boolean | null
           unsubscribe_token?: string
           unsubscribed_at?: string | null
@@ -586,8 +590,10 @@ export type Database = {
         }
         Update: {
           created_at?: string | null
+          digest_frequency?: string | null
           general_emails?: boolean | null
           id?: string
+          last_digest_sent_at?: string | null
           new_video_emails?: boolean | null
           unsubscribe_token?: string
           unsubscribed_at?: string | null
