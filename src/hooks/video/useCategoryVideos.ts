@@ -22,7 +22,7 @@ export const useCategoryVideos = (categoryId: string) => {
           `)
           .is("deleted_at", null)
           .eq("content_analysis_status", "approved")
-          .eq("category", categoryId)
+          .eq("category", categoryId as any)
           .order("uploaded_at", { ascending: false });
 
         if (error) throw error;
