@@ -1,15 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useUnifiedAuth } from "@/hooks/useUnifiedAuth";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { 
   Dialog, DialogContent, DialogDescription, DialogFooter, 
   DialogHeader, DialogTitle, DialogTrigger 
 } from "@/components/ui/dialog";
-import { LogOut, Trash2, AlertTriangle, Mail, Calendar, User, Hash } from "lucide-react";
+import { LogOut, Trash2, AlertTriangle, Mail, Calendar, User, Hash, Bell } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import type { ProfilesTable } from "@/integrations/supabase/types/profiles";
@@ -19,6 +20,7 @@ export const SettingsProfile = () => {
   const { isMobile } = useIsMobile();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const queryClient = useQueryClient();
 
   const { data: profileData } = useQuery({
     queryKey: ["user-profile-settings", user?.id],
@@ -34,6 +36,42 @@ export const SettingsProfile = () => {
     enabled: !!user?.id,
     staleTime: 10000,
   });
+
+  const { data: emailPrefs, isLoading: prefsLoading } = useQuery({
+    queryKey: ["email-preferences", user?.id],
+    queryFn: async () => {
+      if (!user?.id) return null;
+      const { data } = await supabase
+        .from("email_preferences")
+        .select("new_video_emails, digest_frequency")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      return data;
+    },
+    enabled: !!user?.id,
+  });
+
+  const updateEmailPrefs = useMutation({
+    mutationFn: async ({ enabled, frequency }: { enabled: boolean; frequency?: string }) => {
+      if (!user?.id) throw new Error("Not authenticated");
+      const updates: any = { new_video_emails: enabled };
+      if (frequency !== undefined) updates.digest_frequency = frequency;
+      if (!enabled) updates.digest_frequency = null;
+      const { error } = await supabase
+        .from("email_preferences")
+        .update(updates)
+        .eq("user_id", user.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["email-preferences", user?.id] });
+      toast.success("Email preferences updated");
+    },
+    onError: () => toast.error("Failed to update preferences"),
+  });
+
+  const videoEmailsEnabled = emailPrefs?.new_video_emails ?? false;
+  const digestFrequency = (emailPrefs as any)?.digest_frequency || "daily";
 
   const displayProfile = profile || profileData || (user?.id ? {
     id: user.id, email: user.email, name: user.email?.split("@")[0],
@@ -86,11 +124,53 @@ export const SettingsProfile = () => {
       </div>
 
       {/* Info Fields */}
-      <div className="space-y-4 mb-8">
+      <div className="space-y-4 mb-6">
         <InfoRow icon={Mail} label="Email" value={email} />
         <InfoRow icon={User} label="Username" value={displayProfile.username || "Not set"} />
         <InfoRow icon={Hash} label="User ID" value={user?.id || "Unknown"} />
         <InfoRow icon={Calendar} label="Member since" value={memberSince} />
+      </div>
+
+      {/* Video Digest Email Preferences */}
+      <div className="mb-8 p-4 rounded-xl bg-[#F9F9F9] dark:bg-[#0f0f0f] border border-[#E5E5E5] dark:border-[#333]">
+        <div className="flex items-center justify-between mb-1">
+          <div className="flex items-center gap-2.5">
+            <Bell className="h-4 w-4 text-[#FF0000]" />
+            <div>
+              <p className="text-sm font-semibold text-[#1A1A1A] dark:text-[#e8e8e8]">Video digest emails</p>
+              <p className="text-xs text-[#888] mt-0.5">Get notified about new videos from your subscribed channels</p>
+            </div>
+          </div>
+          <Switch
+            checked={videoEmailsEnabled}
+            onCheckedChange={(checked) => {
+              updateEmailPrefs.mutate({ enabled: checked, frequency: checked ? digestFrequency : undefined });
+            }}
+            disabled={prefsLoading || updateEmailPrefs.isPending}
+          />
+        </div>
+        {videoEmailsEnabled && (
+          <div className="mt-3 pt-3 border-t border-[#E5E5E5] dark:border-[#333]">
+            <p className="text-xs text-[#888] mb-2">How often?</p>
+            <div className="flex gap-2">
+              {(["daily", "weekly"] as const).map((freq) => (
+                <button
+                  key={freq}
+                  onClick={() => updateEmailPrefs.mutate({ enabled: true, frequency: freq })}
+                  disabled={updateEmailPrefs.isPending}
+                  className={cn(
+                    "px-4 py-1.5 rounded-lg text-xs font-semibold transition-all capitalize",
+                    digestFrequency === freq
+                      ? "bg-[#FF0000] text-white"
+                      : "bg-[#E5E5E5] dark:bg-[#222] text-[#666] dark:text-[#aaa] hover:bg-[#ddd] dark:hover:bg-[#333]"
+                  )}
+                >
+                  {freq}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Actions */}
