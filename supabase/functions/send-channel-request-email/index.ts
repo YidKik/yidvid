@@ -1,7 +1,12 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.47.12";
 import { Resend } from "npm:resend@2.0.0";
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
+const supabaseAdmin = createClient(
+  Deno.env.get("SUPABASE_URL") ?? "",
+  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+);
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -121,6 +126,16 @@ const handler = async (req: Request): Promise<Response> => {
     });
 
     console.log("Channel request email sent:", emailResponse);
+
+    // Log to email_logs for dashboard tracking
+    await supabaseAdmin.from("email_logs").insert({
+      email_type: "channel-request-confirmation",
+      recipient_email: email,
+      subject: `Channel Request Received: ${channelName}`,
+      status: emailResponse.data?.id ? "sent" : "failed",
+      resend_message_id: emailResponse.data?.id || null,
+      error_message: emailResponse.error?.message || null,
+    });
 
     return new Response(JSON.stringify({ success: true, messageId: emailResponse.data?.id }), {
       status: 200,
