@@ -134,7 +134,7 @@ export const useSecureAdminAuth = () => {
         setAdminPin("");
         
         // Navigate to dashboard
-        setTimeout(() => navigate("/dashboard"), 100);
+        setTimeout(() => navigate("/admin"), 100);
       } else {
         // Log failed attempt and increment rate limit
         await Promise.all([

@@ -15,7 +15,7 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import { LoadingProvider } from './contexts/LoadingContext';
 import { SidebarProvider } from './contexts/SidebarContext';
 import Settings from './pages/Settings';
-import Dashboard from './pages/Dashboard';
+
 import { recordNavigation, setupScrollRestoration } from './utils/scrollRestoration';
 import { useSessionTracking } from './hooks/useSessionTracking';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
@@ -87,7 +87,7 @@ function AppContent() {
         <Route path="/settings" element={<Settings />} />
         <Route path="/settings/email-preferences" element={<EmailPreferences />} />
         <Route path="/unsubscribe" element={<Unsubscribe />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        
         <Route path="/history" element={<History />} />
         <Route path="/about" element={<About />} />
         <Route path="/favorites" element={<Favorites />} />

@@ -24,7 +24,7 @@ export const VideoGridHeader = ({
         <p className="text-muted-foreground mb-4">
           Start by adding some YouTube channels to see their videos here
         </p>
-        <Link to="/dashboard">
+        <Link to="/admin">
           <Button>Add Channels</Button>
         </Link>
       </div>

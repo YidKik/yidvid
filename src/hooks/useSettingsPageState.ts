@@ -160,7 +160,7 @@ export const useSettingsPageState = () => {
 
   // Dashboard navigation handler
   const handleDashboardClick = () => {
-    navigate("/dashboard");
+    navigate("/admin");
   };
 
   return {

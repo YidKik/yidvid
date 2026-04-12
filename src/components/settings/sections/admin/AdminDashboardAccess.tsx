@@ -18,7 +18,7 @@ export const AdminDashboardAccess = ({
   const navigate = useNavigate();
   
   const handleDashboardClick = () => {
-    navigate("/dashboard");
+    navigate("/admin");
   };
 
   if (isAdmin) {
