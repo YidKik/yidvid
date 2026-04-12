@@ -237,6 +237,12 @@ body {
 
 /* Mobile toast adjustments */
 @media (max-width: 768px) {
+  [data-sonner-toaster] {
+    z-index: 999999999 !important;
+  }
+  [data-sonner-toaster][data-y-position="bottom"] {
+    bottom: 80px !important;
+  }
   [data-sonner-toast] {
     padding: 0.5rem 0.75rem !important;
     font-size: 0.75rem !important;

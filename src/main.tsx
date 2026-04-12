@@ -50,7 +50,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <App />
       </BrowserRouter>
       <Toaster 
-        position="top-center"
+        position="bottom-right"
         closeButton={true}
         toastOptions={{
           classNames: {
