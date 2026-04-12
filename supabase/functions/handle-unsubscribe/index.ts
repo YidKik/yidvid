@@ -86,7 +86,7 @@ const handler = async (req: Request): Promise<Response> => {
             <div class="container">
               <h1>✓ Already Unsubscribed</h1>
               <p>You have already unsubscribed from all YidVid emails.</p>
-              <a href="https://yidvid.com">Return to YidVid</a>
+              <a href="https://yidvid.co">Return to YidVid</a>
             </div>
           </body>
         </html>
@@ -164,8 +164,8 @@ const handler = async (req: Request): Promise<Response> => {
             <p>You have been unsubscribed from all YidVid emails.</p>
             <p>We're sorry to see you go! You can always resubscribe in your account settings.</p>
             <div>
-              <a href="https://yidvid.com/settings/email-preferences" class="button secondary">Manage Preferences</a>
-              <a href="https://yidvid.com" class="button">Return to YidVid</a>
+              <a href="https://yidvid.co/settings/email-preferences" class="button secondary">Manage Preferences</a>
+              <a href="https://yidvid.co" class="button">Return to YidVid</a>
             </div>
           </div>
         </body>
