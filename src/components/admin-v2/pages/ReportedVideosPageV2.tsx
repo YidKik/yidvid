@@ -308,12 +308,29 @@ export const ReportedVideosPageV2 = () => {
                 {/* Video info */}
                 <div>
                   <p className="text-[10px] uppercase tracking-wider text-[#565b6e] font-semibold mb-3">Video</p>
+                  
+                  {selected.isDeleted && (
+                    <div className="flex items-center gap-2 px-3.5 py-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 mb-3">
+                      <CheckCircle className="w-4 h-4 text-emerald-400 shrink-0" />
+                      <p className="text-xs font-medium text-emerald-400">This video has been deleted from the site</p>
+                    </div>
+                  )}
+
                   {selected.thumbnail && (
-                    <img
-                      src={selected.thumbnail}
-                      alt=""
-                      className="w-full h-40 rounded-lg object-cover mb-3"
-                    />
+                    <div className="relative mb-3">
+                      <img
+                        src={selected.thumbnail}
+                        alt=""
+                        className={`w-full h-40 rounded-lg object-cover ${selected.isDeleted ? 'opacity-40 grayscale' : ''}`}
+                      />
+                      {selected.isDeleted && (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="bg-black/60 rounded-lg px-4 py-2">
+                            <p className="text-xs font-semibold text-emerald-400">Video Removed</p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   )}
                   <div className="space-y-2.5">
                     <div className="bg-[#13141b] rounded-lg p-3.5 border border-[#1e2028]">
