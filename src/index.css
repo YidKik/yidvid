@@ -7,6 +7,12 @@
   /* Keep a single, theme-driven source of truth for text/background colors.
      Using prefers-color-scheme here caused "white on white" in some preview environments. */
   --search-text: #606060;
+  --video-subscribe-idle-bg: 0 0% 100%;
+  --video-subscribe-idle-bg-hover: 0 0% 96%;
+  --video-subscribe-idle-fg: 0 0% 8%;
+  --video-subscribe-active-bg: 0 0% 8%;
+  --video-subscribe-active-bg-hover: 0 0% 16%;
+  --video-subscribe-active-fg: 0 0% 100%;
 }
 
 /* Prevent auto-zoom on input focus (iOS Safari) */
@@ -46,6 +52,39 @@ body {
   overflow-x: hidden;
   width: 100%;
   max-width: 100vw;
+}
+
+.video-subscribe-button {
+  background-color: hsl(var(--video-subscribe-idle-bg));
+  border: 1px solid hsl(var(--border));
+  color: hsl(var(--video-subscribe-idle-fg)) !important;
+}
+
+.video-subscribe-button:hover {
+  background-color: hsl(var(--video-subscribe-idle-bg-hover));
+  color: hsl(var(--video-subscribe-idle-fg)) !important;
+}
+
+.dark .video-subscribe-button,
+.dark .video-subscribe-button:hover {
+  color: hsl(var(--video-subscribe-idle-fg)) !important;
+}
+
+.video-subscribe-button[data-subscribed="true"] {
+  background-color: hsl(var(--video-subscribe-active-bg));
+  border-color: hsl(var(--video-subscribe-active-bg));
+  color: hsl(var(--video-subscribe-active-fg)) !important;
+}
+
+.video-subscribe-button[data-subscribed="true"]:hover {
+  background-color: hsl(var(--video-subscribe-active-bg-hover));
+  border-color: hsl(var(--video-subscribe-active-bg-hover));
+  color: hsl(var(--video-subscribe-active-fg)) !important;
+}
+
+.dark .video-subscribe-button[data-subscribed="true"],
+.dark .video-subscribe-button[data-subscribed="true"]:hover {
+  color: hsl(var(--video-subscribe-active-fg)) !important;
 }
 
 /* Custom scrollbar */

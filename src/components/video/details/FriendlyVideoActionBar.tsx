@@ -242,11 +242,8 @@ export const FriendlyVideoActionBar = ({
               variant="ghost"
               onClick={handleSubscribeClick}
               disabled={isSubLoading}
-              className={`${compact ? 'h-6 px-2.5 text-[10px]' : 'h-8 px-4 text-sm'} rounded-full font-semibold transition-all ml-0.5 ${
-                isSubscribed 
-                  ? "bg-[#F2F2F2] dark:bg-[#272727] text-[#1A1A1A] dark:text-[#e8e8e8] hover:bg-[#E5E5E5] dark:hover:bg-[#333]" 
-                  : "bg-[#1A1A1A] dark:bg-[#e8e8e8] text-white dark:text-[#1A1A1A] hover:bg-[#333] dark:hover:bg-[#d4d4d4]"
-              }`}
+              data-subscribed={isSubscribed ? "true" : "false"}
+              className={`${compact ? 'h-6 px-2.5 text-[10px]' : 'h-8 px-4 text-sm'} video-subscribe-button rounded-full font-semibold transition-all ml-0.5`}
             >
               {isSubLoading ? (
                 <span className="opacity-70">...</span>
